@@ -1,0 +1,14 @@
+.button {
+  justify-content: space-between;
+  &:not(:hover) {
+    span {
+      color: var(--euiTextSubduedColor);
+    }
+  }
+}
+
+.buttonText {
+  flex: 1;
+  text-align: center;
+  letter-spacing: 1.1px;
+}

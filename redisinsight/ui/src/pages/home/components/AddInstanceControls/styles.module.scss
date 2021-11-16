@@ -1,0 +1,174 @@
+.container {
+  height: 50px;
+}
+
+.separator {
+  width: 0;
+  height: 64px;
+  border: solid 0 var(--separatorColor);
+  border-right-width: 1px;
+}
+
+.addInstanceBtn {
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 43px;
+  margin: 0 auto;
+  width: 200px;
+  text-decoration: none !important;
+}
+
+.createBtn {
+  border: 2px solid var(--euiColorSecondary);
+  padding: 9px 24px;
+  border-radius: 4px;
+  text-align: left;
+  position: relative;
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.createTitle {
+  padding-top: 0;
+  color: var(--euiTextColor) !important;
+  line-height: 16px;
+}
+
+.createText {
+  font-size: 12px !important;
+  color: var(--euiTextColor) !important;
+  opacity: 0.7;
+  margin-top: -3px;
+}
+
+.followText {
+  padding-top: 7px;
+  font-size: 12px !important;
+  text-align: left;
+  color: var(--euiTextColor) !important;
+  opacity: 0.7;
+}
+
+.clearMarginFlexItem {
+  margin-bottom: 0px !important;
+}
+
+.links {
+  font-size: 14px;
+  text-align: left;
+  div {
+    display: inline-block;
+
+    a {
+      color: var(--euiTextColor);
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &.dockerText {
+      padding-left: 60px;
+    }
+
+    &.homebrewText {
+      text-align: right;
+    }
+  }
+}
+
+.arrowRight {
+  display: none !important;
+}
+
+.containerDl {
+
+  .arrowRight {
+    display: block !important;
+    position: absolute;
+    right: 14px;
+    top: calc(50% - 11px);
+    color: var(--euiTextColor);
+    width: 20px;
+    height: 20px;
+  }
+
+  .createBtn {
+    height: 64px;
+    padding-right: 40px;
+    letter-spacing: 0.12px;
+    width: 412px;
+  }
+
+  .createTitle {
+    margin-top: -1px;
+    padding-top: 0;
+    font-weight: 500;
+  }
+
+  .createText {
+    margin-top: -5px;
+  }
+
+  .links {
+    max-width: 330px;
+    display: none;
+
+    .followText {
+      position: absolute;
+      padding-top: 0 !important;
+      margin-top: -11px !important;
+    }
+
+    div {
+      margin: 0 !important;
+      padding-top: 12px;
+      text-decoration: none;
+
+      a {
+        color: var(--euiTextColor);
+        text-decoration: underline;
+        font-weight: 500;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+
+      &.dockerText {
+        padding-left: 0;
+      }
+
+      &.homebrewText {
+        text-align: center;
+      }
+    }
+  }
+}
+
+.contentDL {
+  @media only screen and (max-width: 574px) {
+    justify-content: space-between;
+    & > div:first-of-type {
+      margin-left: 0 !important;
+    }
+    & > div:last-of-type {
+      margin-right: 0 !important;
+    }
+  }
+}
+
+.containerWelc {
+  .links div {
+    width: 33%;
+  }
+
+  .separator {
+    width: 150px;
+    height: 0;
+    border-top-width: 1px;
+    margin: 25px auto 20px;
+  }
+}

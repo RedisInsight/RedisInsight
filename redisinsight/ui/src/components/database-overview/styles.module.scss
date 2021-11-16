@@ -1,0 +1,72 @@
+.overviewItem {
+  padding: 8px 20px;
+  min-width: 116px;
+
+  @media only screen and (max-width: 1024px) {
+    padding: 8px 10px;
+    min-width: 96px;
+  }
+  &:not(:last-child) {
+    border-right: 1px solid var(--tableLightestBorderColor);
+  }
+
+  @media only screen and (max-width: 1124px) {
+    border-right: 1px solid var(--tableLightestBorderColor);
+  }
+}
+.icon {
+  margin-right: 6px;
+  width: auto !important;
+  height: 18px !important;
+  max-width: 22px;
+}
+
+.tooltip {
+  max-width: 372px;
+}
+
+.commandsPerSecTip {
+  margin-bottom: 8px;
+  .moreInfoOverviewIcon {
+    margin-right: 8px;
+    width: auto !important;
+    max-width: 20px;
+    height: 18px !important;
+  }
+
+  .moreInfoOverviewContent {
+    margin-right: 6px;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .moreInfoOverviewTitle {
+    margin-right: 6px;
+    font-size: 12px;
+  }
+}
+
+.calculationWrapper {
+  display: flex;
+  align-items: center;
+  min-width: 134px;
+}
+
+.cpuWrapper {
+  min-width: 132px;
+
+  @media only screen and (max-width: 1024px) {
+    min-width: 114px;
+  }
+}
+
+.calculation {
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.spinner {
+  width: 18px !important;
+  height: 18px !important;
+}

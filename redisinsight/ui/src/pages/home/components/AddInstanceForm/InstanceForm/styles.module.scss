@@ -1,0 +1,131 @@
+.errorFieldText {
+  float: left;
+  font-size: 12px !important;
+}
+
+.error {
+  color: var(--euiColorDangerText) !important;
+}
+
+.errorForm {
+  color: var(--euiColorDangerText) !important;
+  padding-top: 25px;
+  display: inline-block;
+}
+
+.dbInfoGroup {
+  padding-bottom: 12px !important;
+  max-width: 100% !important;
+
+  :global {
+    .euiListGroupItem__label {
+      pointer-events: none;
+      word-break: break-word;
+      white-space: initial;
+    }
+
+    .euiListGroupItem {
+      padding: 3px 13px;
+      margin-top: 0 !important;
+
+      &:nth-of-type(odd) {
+        border: 1px solid var(--tableDarkestBorderColor);
+        background-color: var(--browserTableRowEven) !important;
+      }
+    }
+  }
+}
+
+.dbInfoListValue {
+  margin-left: 10px;
+}
+
+.anchorEndpoints {
+  position: absolute;
+  right: 12px;
+  top: 5px;
+  pointer-events: auto !important;
+
+  svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+.endpointsList * {
+  font-weight: 300 !important;
+}
+
+.dbAliasInputContainer {
+  display: inline-block;
+  position: relative;
+  width: calc(100% - 190px);
+}
+
+.btnOpen {
+  float: right;
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.hostPort {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.hostPort:hover .copyHostPortBtn {
+  opacity: 1;
+}
+
+.copyHostPortBtn {
+  margin-left: 10px;
+  margin-bottom: 3px;
+  opacity: 0;
+  height: 0;
+  transition: opacity 250ms ease-in-out;
+}
+
+.sentinelCollapsedField {
+  font-size: 12px !important;
+  word-break: break-all;
+  padding-bottom: 5px;
+}
+
+:global(.euiFlexGroup--gutterLarge) > .dbInput {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 10px;
+
+  &.dbInputBig{
+    padding-bottom: 20px;
+    max-width: calc(50% - 24px);
+  }
+}
+
+#dbAliasInputIcon {
+  color: var(--euiTextSubduedColor) !important;
+  width: 32px !important;
+}
+
+.message {
+  margin-top: 5px;
+  padding: 16px;
+  background-color: var(--euiColorLightestShade);
+  font-family: 'Graphik', sans-serif;
+  color: var(--euiTextSubduedColor) !important;
+  border: 1px solid var(--euiColorLightShade);
+
+  :global(.euiTextColor), :global(.euiLink) {
+    color: currentColor !important;
+  }
+}
+
+.link {
+  text-decoration: underline !important;
+
+  &:hover {
+    text-decoration: none !important;
+  }
+}

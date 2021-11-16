@@ -1,0 +1,3 @@
+HGETALL permit:1  // Read the whole document
+
+HGET permit:1 description // Read only the field description

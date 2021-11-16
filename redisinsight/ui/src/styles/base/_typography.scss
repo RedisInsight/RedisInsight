@@ -1,0 +1,98 @@
+body {
+  font-family: 'Graphik', sans-serif;
+  font-size: 14px;
+
+  b {
+    font-weight: 500;
+  }
+
+  .euiSuperSelect__item {
+    font-size: 13px;
+  }
+
+  .euiText {
+    font-size: 0.875rem;
+  }
+
+  .euiText--small {
+    font-size: 0.8125rem;
+    line-height: 1.1875rem;
+  }
+
+  .euiText--extraSmall {
+    font-size: 0.75rem;
+  }
+
+  .euiTitle {
+    font-weight: 500;
+  }
+
+  .euiHealth--textSizeS {
+    font-size: 0.8125rem;
+  }
+}
+
+body {
+  input, textarea, select, button {
+    font-family: 'Graphik', sans-serif;
+  }
+}
+
+
+.euiSuperSelectControl {
+  font-family: 'Graphik', sans-serif !important;
+}
+
+.euiText, .euiTitle {
+  color: var(--htmlColor) !important;
+}
+
+.euiTextColor.euiTextColor--default {
+  color: var(--htmlColor);
+}
+
+.euiText h4, .euiText dt {
+ color: var(--euiTextSubduedColor) !important;
+}
+
+.euiTextColor--danger {
+  color: var(--euiColorDangerText) !important;
+}
+
+.euiTextColor--subdued {
+  color: var(--euiTextSubduedColor) !important;
+}
+
+.euiIcon--ghost {
+  color: var(--euiColorGhost) !important;
+}
+
+.euiButtonIcon.euiButtonIcon--primary {
+  color: var(--iconsDefaultColor);
+  &:hover {
+    color: var(--iconsDefaultHoverColor);
+  }
+  &[disabled] {
+    color: var(--controlsBorderColor);
+  }
+}
+
+.euiContextMenuItem,
+.euiSelect,
+.euiSuperSelectControl,
+.euiFieldText,
+.euiFieldSearch,
+.euiFieldNumber,
+.euiFieldPassword,
+.euiTextArea {
+  font-family: 'Graphik', sans-serif !important;
+  color: var(--inputTextColor) !important;
+}
+
+.euiFieldText:disabled {
+  background-color: var(--inputDisabledBackgroundColor) !important;
+}
+
+.euiButtonIcon--success {
+  color: var(--euiColorSuccess) !important;
+}

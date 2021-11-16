@@ -1,0 +1,15 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.container {
+  @include euiScrollBar;
+
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  background-color: var(--euiColorEmptyShade);
+  color: var(--euiTextSubduedColor) !important;
+  border: 1px solid var(--euiColorLightShade);
+  overflow: auto;
+}

@@ -1,0 +1,56 @@
+{
+  "version": "1.0.4",
+  "agreements": {
+    "analytics": {
+      "defaultValue": false,
+      "displayInSetting": true,
+      "required": false,
+      "editable": true,
+      "disabled": false,
+      "since": "1.0.1",
+      "title": "Analytics",
+      "label": "Analytics",
+      "description": "We will store data in an aggregate form about user's experience with RedisInsight. We use these data to fix bugs and improve the experience for all users."
+    },
+    "encryption": {
+      "conditional": true,
+      "checker": "KEYTAR",
+      "defaultOption": "false",
+      "options": {
+        "true": {
+          "defaultValue": true,
+          "displayInSetting": false,
+          "required": false,
+          "editable": true,
+          "disabled": false,
+          "since": "1.0.3",
+          "title": "Encryption",
+          "label": "Encrypt sensitive information",
+          "description": "We will encrypt your sensitive information added to the application using the system keychain. Otherwise, this information will be stored locally in plain text and may lead to security risks."
+        },
+        "false": {
+          "defaultValue": false,
+          "displayInSetting": false,
+          "required": false,
+          "editable": true,
+          "disabled": true,
+          "since": "1.0.3",
+          "title": "Encryption",
+          "label": "Encrypt sensitive information",
+          "description": "Install or enable the system keychain to encrypt and securely store your sensitive information added before using the application. Otherwise, this information will be stored locally in plain text and may lead to security risks."
+        }
+      }
+    },
+    "eula": {
+      "defaultValue": false,
+      "displayInSetting": false,
+      "required": true,
+      "editable": false,
+      "disabled": false,
+      "since": "1.0.4",
+      "title": "Server Side Public License",
+      "label": "I have read and understood the <a target=\"_blank\" href=\"https://github.com/RedisInsight/RedisInsight/blob/master/LICENSE\">Server Side Public License</a>",
+      "requiredText": "Accept the Server Side Public License"
+    }
+  }
+}

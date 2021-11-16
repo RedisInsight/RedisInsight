@@ -1,0 +1,17 @@
+{
+  "name": "redis-app-plugin-api",
+  "description": "Redis API for creating packages for Redis v.2 application",
+  "keywords": [
+    "redis-app"
+  ],
+  "version": "0.0.1",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "main": "index.js"
+}

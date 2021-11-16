@@ -1,0 +1,17 @@
+.container {
+  font: normal normal 500 14px/21px Graphik, sans-serif !important;
+}
+
+.title {
+  padding: 0 7px;
+  display: inline;
+  vertical-align: text-top;
+}
+
+.badge {
+  background-color: var(--badgeBackgroundColor) !important;
+}
+
+.groupBadge {
+  background-color: var(--commandGroupBadgeColor) !important;
+}

@@ -1,0 +1,67 @@
+:global {
+  .euiPopoverTitle {
+    text-transform: none !important;
+  }
+
+  .euiButton {
+    min-width: 93px !important;
+
+    &--small {
+      min-width: 67px !important;
+    }
+
+    &:focus {
+      text-decoration: none !important;
+    }
+  }
+}
+
+.containerWrapper {
+  position: absolute;
+
+  min-width: 332px;
+  min-height: 48px;
+  left: 0;
+  bottom: 12px;
+  width: 100%;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  background-color: var(--euiTooltipBackgroundColor);
+  border-radius: 20px;
+  padding: 0 25px 0 35px;
+  flex-grow: 0 !important;
+  max-width: 80%;
+  min-height: 48px;
+  box-shadow: 0 3px 15px var(--controlsBoxShadowColor);
+}
+
+.text {
+  font-size: 13px;
+  text-align: center;
+  color: var(--euiColorPrimaryText);
+  > div {
+    font-size: 13px;
+  }
+}
+.actions {
+  span,
+  svg {
+    font-size: 14px !important;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.cross svg {
+  width: 20px;
+  height: 20px;
+}

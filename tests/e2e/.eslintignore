@@ -1,0 +1,4 @@
+#Each of the following lines is a glob pattern indicating which paths should be omitted from linting...
+#1st path here
+#2nd path here
+#3rd path here

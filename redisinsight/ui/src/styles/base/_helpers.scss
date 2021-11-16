@@ -1,0 +1,69 @@
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.fluid {
+  width: 100%;
+}
+
+.flex-row {
+  display: flex !important;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.relative {
+  position: relative;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.truncateText {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
+  & > div,
+  & > span,
+  & > p {
+    max-width: 100%;
+  }
+}
+
+.copy-btn,
+.copy-near-btn {
+  display: flex;
+  margin-left: 25px;
+  opacity: 0;
+  height: 100% !important;
+  transition: opacity 250ms ease-in-out;
+}
+
+.copy-near-btn {
+  margin-left: 5px;
+}
+
+.copy-btn-wrapper {
+  position: relative;
+  display: flex;
+  max-width: 100%;
+  float: left;
+
+  &:hover .copy-btn,
+  &:hover .copy-near-btn {
+    opacity: 1;
+  }
+}

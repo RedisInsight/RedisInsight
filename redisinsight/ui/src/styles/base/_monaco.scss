@@ -1,0 +1,18 @@
+.monaco-editor * {
+  // font: initial !important;
+}
+.monaco-editor .markdown-docs {
+ h1, h2, h3 {
+   font-weight: bold;
+   margin: 12px 0;
+   font-size: 1.1em;
+ }
+  h2 {
+    margin: 14px 0;
+    font-size: 1.4em;
+  }
+  h1 {
+    margin: 16px 0;
+    font-size: 1.6em;
+  }
+}

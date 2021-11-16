@@ -1,0 +1,46 @@
+.euiFormControlLayout--group {
+  .euiFieldText,
+  .euiFieldNumber,
+  .euiFieldPassword,
+  .euiSelect,
+  .euiSuperSelectControl,
+  .euiTextArea {
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+}
+.euiFieldSearch.euiFieldSearch--inGroup {
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+.euiTableCellContent__text {
+  pointer-events: none !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--inputPlaceHolderColor) !important;
+}
+
+input[type='password'] ~ .euiFormControlLayoutIcons,
+input[name='password'] ~ .euiFormControlLayoutIcons,
+input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons {
+  display: none;
+}
+
+.euiFieldPassword.euiFieldPassword--compressed {
+  padding: 8px !important;
+}
+
+.euiFormControlLayout > .euiFormControlLayout__append,
+.inputAppendIcon > svg {
+  width: 41px !important;
+  color: var(--iconsDefaultColor) !important;
+  background-color: var(--browserTableRowEven) !important;
+}
+
+.euiFormControlLayout--compressed .inputAppendIcon > svg,
+.euiFormControlLayout--compressed > .euiFormControlLayout__append {
+  width: 34px !important;
+  height: 30px !important;
+}

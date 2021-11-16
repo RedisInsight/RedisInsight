@@ -1,0 +1,18 @@
+// Perform a text search on a specific field: query for documents which have a field 'building_type' inside which the word 'detached' occurs
+
+FT.SEARCH "permits" "@building_type:detached"
+
+// See the "permits" index schema for reference
+
+// FT.CREATE "permits"
+//  ON HASH
+//     PREFIX 1 "permit:"
+//  SCHEMA
+//     "permit_timestamp" NUMERIC SORTABLE
+//     "address_street" AS street TEXT NOSTEM
+//     "address_city" AS city TAG SORTABLE
+//     "description" TEXT
+//     "building_type" TEXT NOSTEM SORTABLE
+//     "work_type" TAG SEPARATOR ";"
+//     "construction_value" NUMERIC SORTABLE
+//     "location" GEO

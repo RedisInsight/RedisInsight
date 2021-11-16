@@ -1,0 +1,18 @@
+// Perform a combined search on two fields (OR): query for union of both search terms. The brackets are important.
+
+FT.SEARCH "permits" "(@city:{Lagos})|(@description:detached)"
+
+// See the "permits" index schema for reference
+
+// FT.CREATE "permits"
+//  ON HASH
+//     PREFIX 1 "permit:"
+//  SCHEMA
+//     "permit_timestamp" NUMERIC SORTABLE
+//     "address_street" AS street TEXT NOSTEM
+//     "address_city" AS city TAG SORTABLE
+//     "description" TEXT
+//     "building_type" TEXT NOSTEM SORTABLE
+//     "work_type" TAG SEPARATOR ";"
+//     "construction_value" NUMERIC SORTABLE
+//     "location" GEO

@@ -1,0 +1,49 @@
+[
+  {
+    "type": "group",
+    "id": "quick-guides",
+    "label": "QUICK GUIDES",
+    "args": {
+      "withBorder": true,
+      "initialIsOpen": true
+    },
+    "children": [
+      {
+        "type": "group",
+        "id": "document-capabilities",
+        "label": "Document Capabilities",
+        "args": {
+          "initialIsOpen": true
+        },
+        "children": [
+          {
+            "type": "internal-link",
+            "id": "introduction",
+            "label": "Introduction",
+            "args": {
+              "backTitle": "Document Capabilities",
+              "path": "/static/workbench/guides/document-capabilities/introduction.html"
+            }
+          },
+          {
+            "type": "internal-link",
+            "id": "working-with-hashes",
+            "label": "Working with Hashes",
+            "args": {
+              "backTitle": "Document Capabilities",
+              "path": "/static/workbench/guides/document-capabilities/working-with-hashes.html"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "code-button",
+    "id": "manual",
+    "label": "Manual",
+    "args": {
+      "path": "/static/workbench/scripts/manual.txt"
+    }
+  }
+]

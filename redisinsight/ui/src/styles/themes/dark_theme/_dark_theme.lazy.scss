@@ -1,0 +1,141 @@
+@import '../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_dark';
+@import 'theme_color';
+
+// Global styling
+@import '../../../../../../node_modules/@elastic/eui/src/global_styling/index';
+
+// Components
+@import '../../../../../../node_modules/@elastic/eui/src/components/index';
+
+// Packages
+@import '../../../../../../node_modules/@elastic/eui/packages/index';
+
+:root {
+  // Core
+  --navBackgroundColor: #{$navBackgroundColor};
+  --tableRowHoverColor: #{$tableRowHoverColor};
+  --tableRowSelectedColor: #{$tableRowSelectedColor};
+  --euiColorPrimary: #{$euiColorPrimary};
+  --euiColorSecondary: #{$euiColorSecondary};
+  --euiColorSuccess: #{$euiColorSuccess};
+  --euiColorAccent: #{$euiColorAccent};
+  --euiColorHighlight: #{$euiColorHighlight};
+
+  // Status
+  --euiColorColorSuccess: #{$euiColorSuccess};
+  --euiColorColorWarning: #{$euiColorWarning};
+  --euiColorColorDanger: #{$euiColorDanger};
+
+  // Grays
+  --euiColorEmptyShade: #{$euiColorEmptyShade};
+  --euiColorLightestShade: #{$euiColorLightestShade};
+  --euiColorLightShade: #{$euiColorLightShade};
+  --euiColorMediumShade: #{$euiColorMediumShade};
+  --euiColorDarkShade: #{$euiColorDarkShade};
+  --euiColorDarkestShade: #{$euiColorDarkestShade};
+  --euiColorFullShade: #{$euiColorFullShade};
+  --euiColorGhost: #{$euiColorGhost};
+
+  // Variations from core
+  --euiTextColor: #{$htmlColor};
+  --euiLinkColor: #{$euiLinkColor};
+  --euiShadowColor: #{$euiShadowColor};
+  --euiShadowColorLarge: #{$euiShadowColorLarge};
+  --euiPageBackgroundColor: #{$euiPageBackgroundColor};
+  --euiTextSubduedColor: #{$euiTextSubduedColor};
+  --euiTextSubduedColorHover: #{$euiTextSubduedColorHover};
+  --euiTitleColor: #{$euiTitleColor};
+  --euiBreadcrumbActive: #{$euiBreadcrumbActive};
+
+  // Contrasty text variants
+  --euiColorPrimaryText: #{$euiColorPrimaryText};
+  --euiColorSecondaryText: #{$euiColorSecondaryText};
+  --euiColorSuccessText: #{$euiColorSuccessText};
+  --euiColorAccentText: #{$euiColorAccentText};
+  --euiColorWarningText: #{$euiColorWarningText};
+  --euiColorDangerText: #{$euiColorDangerText};
+
+  // Charts
+  --euiColorChartLines: #{$euiColorChartLines};
+  --euiColorChartBand: #{$euiColorChartBand};
+
+  // Tooltip
+  --euiTooltipBackgroundColor: #{$euiTooltipBackgroundColor};
+  --euiTooltipTextColor: #{$euiTooltipTextColor};
+  --euiTooltipTextSecondColor: #{$euiTooltipTextSecondColor};
+  --euiTooltipTitleTextColor: #{$euiTooltipTitleTextColor};
+  --euiToastBackgroundColor: #{$euiToastBackgroundColor};
+  --euiToastSuccessBtnColor: #{$euiToastSuccessBtnColor};
+  --euiToastSuccessBorderColor: #{$euiToastSuccessBorderColor};
+  --euiToastDangerBtnColor: #{$euiToastDangerBtnColor};
+  --euiToastDangerBorderColor: #{$euiToastDangerBorderColor};
+
+  // Custom
+  --htmlColor: #{$htmlColor};
+  --textColorShade: #{$textColorShade};
+  --tableLightestBorderColor: #{$tableLightestBorderColor};
+  --tableDarkestBorderColor: #{$tableDarkestBorderColor};
+  --browserTableRowEven: #{$browserTableRowEven};
+  --inputPlaceHolderColor: #{$inputPlaceHolderColor};
+  --inputDisabledBackgroundColor: #{$inputDisabledBackgroundColor};
+  --inputTextColor: #{$inputTextColor};
+  --controlsBoxShadowColor: #{$controlsBoxShadowColor};
+  --controlsBorderColor: #{$controlsBorderColor};
+  --controlsLabelColor: #{$controlsLabelColor};
+  --hoverInListColor: #{$hoverInListColor};
+  --hoverInListColorLight: #{$hoverInListColorLight};
+
+  --iconsDefaultColor: #{$iconsDefaultColor};
+  --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
+
+  --separatorColor: #{$separatorColor};
+
+  --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
+  --buttonSecondaryTextColor: #{$buttonSecondaryTextColor};
+  --buttonSecondaryDisabledTextColor: #{$buttonSecondaryDisabledTextColor};
+  --buttonDangerHoverColor: #{$buttonDangerHoverColor};
+
+  --cliOutputResponseColor: #{$cliOutputResponseColor};
+  --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};
+
+  --badgeBackgroundColor: #{$badgeBackgroundColor};
+  --commandGroupBadgeColor: #{$commandGroupBadgeColor};
+
+  --moduleBackgroundColor: #{$commandGroupBadgeColor};
+
+  // KeyTypes
+  --typeHashColor: #{$typeHashColor};
+  --typeListColor: #{$typeListColor};
+  --typeSetColor: #{$typeSetColor};
+  --typeZSetColor: #{$typeZSetColor};
+  --typeStringColor: #{$typeStringColor};
+  --typeReJSONColor: #{$typeReJSONColor};
+  --typeStreamColor: #{$typeStreamColor};
+  --typeGraphColor: #{$typeGraphColor};
+  --typeTimeSeriesColor: #{$typeTimeSeriesColor};
+  --groupSortedSetColor: #{$groupSortedSetColor};
+  --groupBitmapColor: #{$groupBitmapColor};
+  --groupClusterColor: #{$groupClusterColor};
+  --groupConnectionColor: #{$groupConnectionColor};
+  --groupGeoColor: #{$groupGeoColor};
+  --groupGenericColor: #{$groupGenericColor};
+  --groupPubSubColor: #{$groupPubSubColor};
+  --groupScriptingColor: #{$groupScriptingColor};
+  --groupTransactionsColor: #{$groupTransactionsColor};
+  --groupServerColor: #{$groupServerColor};
+  --groupHyperLolLogColor: #{$groupHyperLolLogColor};
+
+  // JSON colors
+  --jsonKeyNameColor: #{$jsonKeyNameColor};
+  --jsonKeyNameArrayColor: #{$jsonKeyNameArrayColor};
+  --jsonStringColor: #{$jsonStringColor};
+  --jsonNumberColor: #{$jsonNumberColor};
+  --jsonBooleanColor: #{$jsonBooleanColor};
+  --jsonNullColor: #{$jsonNullColor};
+  --jsonNonStringPrimitiveColor: #{$jsonNonStringPrimitiveColor};
+
+  // RediSearch colors;
+  --rsSubmitBtn: #{$rsSubmitBtn};
+  --rsInputColor: #{$rsInputColor};
+  --rsInputWrapperColor: #{$rsInputWrapperColor};
+}

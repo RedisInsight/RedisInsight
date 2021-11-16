@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  flex-grow: 1;
+  padding: 16px 40px 30px;
+
+  text-align: center;
+  color: #FFFFFFAD;
+
+  h4 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 16px;
+  }
+}
+
+.textWrapper {
+  max-width: 640px;
+  position: relative;
+  top: -7%;
+}
+
+.link {
+  text-decoration: underline;
+  color: currentColor;
+}

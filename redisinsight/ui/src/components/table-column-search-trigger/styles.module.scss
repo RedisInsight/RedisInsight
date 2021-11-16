@@ -1,0 +1,33 @@
+.search {
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 0;
+
+  :global {
+    .euiFormControlLayout--group {
+      border: 0;
+      height: 100%;
+    }
+
+    .euiFieldSearch {
+      padding-left: 6px !important;
+    }
+
+    .euiFormControlLayoutIcons:not(.euiFormControlLayoutIcons--right) {
+      display: none;
+    }
+
+    .euiFormControlLayout__prepend {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      margin-top: 1px;
+    }
+  }
+}

@@ -1,0 +1,9 @@
+HGET permit:2  construction_value // Read the construction_value field before deletion
+
+HDEL permit:2  construction_value // Delete only the construction_value field from the document
+
+HGETALL permit:2  // Read the whole document to confirm the construction_value field has been deleted
+
+DEL permit:2  // Delete the entire document
+
+HGETALL permit:2 // Confirm the entire document has been deleted

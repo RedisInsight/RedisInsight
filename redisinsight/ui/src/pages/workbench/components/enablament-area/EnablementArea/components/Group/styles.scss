@@ -1,0 +1,40 @@
+.enablement-area {
+  .euiAccordion {
+    backface-visibility: hidden;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease-in-out;
+    will-change: border-color;
+    .group-header {
+      font: normal normal medium 11px/15px Graphik;
+      letter-spacing: 1.1px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  .euiAccordion__button {
+    padding: 3px 0;
+    & > span {
+      overflow: hidden;
+    }
+  }
+  .euiAccordion-isOpen {
+    min-width: 100%;
+    &.withBorder {
+      border-color: var(--separatorColor)
+    }
+  }
+  .euiAccordion__triggerWrapper, .euiAccordion__childWrapper {
+    border: none !important;
+    background-color: transparent !important;
+  }
+  .euiAccordion__childWrapper {
+    padding-left: 8px;
+    margin-bottom: 4px;
+    .euiListGroupItem {
+      button {
+        padding: 3px 8px;
+      }
+    }
+  }
+}

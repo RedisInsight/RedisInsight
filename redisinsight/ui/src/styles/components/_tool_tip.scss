@@ -1,0 +1,28 @@
+.euiToolTip {
+  max-width: 470px;
+  padding: 12px 15px !important;
+  color: var(--euiTooltipTextColor) !important;
+  box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
+  font-weight: 400;
+  font-size: 12px !important;
+
+  &__title {
+    color: var(--euiTooltipTitleTextColor) !important;
+  }
+}
+.euiToolTip__title {
+  border-bottom: none !important;
+  font: normal normal 500 12px/17px Graphik, sans-serif !important;
+}
+.euiToolTip__content {
+  font: normal normal 400 13px/16px Graphik, sans-serif !important;
+}
+.euiToolTip__btn-disabled {
+  cursor: not-allowed !important;
+  svg {
+    width: 22px !important;
+    height: 22px !important;
+    margin-top: 2px;
+    margin-right: -3px;
+  }
+}

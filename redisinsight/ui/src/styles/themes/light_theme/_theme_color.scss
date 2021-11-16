@@ -1,0 +1,100 @@
+$euiColorPrimary: #3953C3;
+$euiColorPrimaryText: #ffffff;
+$euiColorSecondary: #243DAC;
+$euiColorSecondaryText: #ffffff;
+$euiColorSuccess: #3953C3;
+$euiColorSuccessText: #8ba2ff;
+$euiColorDanger: #B92733;
+$euiColorDangerText: #AA131F;
+$euiColorWarning: #B92733;
+$euiColorWarningText: #B92733;
+$euiTextSubduedColor: #355683;
+$euiTextSubduedColorHover: #173369;
+$euiPageBackgroundColor: #F5F6F8;
+$euiTooltipBackgroundColor: #FFFFFF;
+$euiTooltipTextColor: #173369;
+$euiTooltipTextSecondColor: #395B88;
+$euiTooltipTitleTextColor: #395984;
+$euiColorLightShade: #E9EDF3;
+$euiColorLightestShade: #F6F8FD;
+$euiColorEmptyShade: #ffffff;
+$euiBreadcrumbActive: #395984;
+$euiToastBackgroundColor: #243DAC;
+$euiToastSuccessBtnColor: #5165BD;
+$euiToastSuccessBorderColor: #5165BD;
+$euiToastDangerBtnColor: #C7535D;
+$euiToastDangerBorderColor: #C7535D;
+$euiColorMediumShade: #59759B;
+$euiColorFullShade: #173369;
+$euiColorGhost: #ffffff;
+
+$htmlColor: #173369;
+$navBackgroundColor: #0f1633;
+
+$tableRowHoverColor: #fafbfd;
+$tableRowSelectedColor: #E9EDFA;
+$tableLightestBorderColor: #C1CBD9;
+$tableDarkestBorderColor: #E9EDF3;
+
+$browserTableRowEven: #F6F8FD;
+
+$inputTextColor: #173369;
+$inputPlaceHolderColor: #395984;
+$inputDisabledBackgroundColor: #F6F8FD;
+$controlsBoxShadowColor: #C1CBD9;
+$controlsBorderColor: #C1CBD9;
+$controlsLabelColor: #385985;
+$controlsLabelHoverColor: #173369;
+$iconsDefaultColor: #728BAF;
+$iconsDefaultHoverColor: #173369;
+$separatorColor: #C1CBD9;
+
+$buttonSecondaryHoverColor: #3C56C7;
+$buttonSecondaryTextColor: #243DAC;
+$buttonSecondaryDisabledTextColor: #DFE4FB;
+$buttonDangerHoverColor: #CB3844;
+
+$hoverInListColor: #E9EDFA;
+$hoverInListColorLight: #E9EDFA;
+$textColorShade: #355683;
+$cliOutputResponseColor: #395B88;
+$cliOutputResponseFailColor: #AA131F;
+
+$badgeBackgroundColor: #E8EFFF;
+$commandGroupBadgeColor: #B8C5DB;
+
+// Types colors
+$typeHashColor: #CDDDF8;
+$typeListColor: #A5D4C3;
+$typeSetColor: #D4BAA7;
+$typeZSetColor: #D9A0C6;
+$typeStringColor: #C7B0EA;
+$typeReJSONColor: #B8C5DB;
+$typeStreamColor: #C7CEA8;
+$typeGraphColor: #ACCCD7;
+$typeTimeSeriesColor: #C7C7C7;
+$groupSortedSetColor: #D9A0C6;
+$groupBitmapColor: #3f4b5f;
+$groupClusterColor: #6E6E6E;
+$groupConnectionColor: #FFB4D3;
+$groupGeoColor: #BBC4BC;
+$groupGenericColor: #F8F8AA;
+$groupPubSubColor: #BEF0F2;
+$groupScriptingColor: #FFADAD;
+$groupTransactionsColor: #14708D;
+$groupServerColor: #E8E8E8;
+$groupHyperLolLogColor: #3F4B5F;
+
+// JSON colors
+$jsonKeyNameColor: #A00595;
+$jsonKeyNameArrayColor: #00677E;
+$jsonStringColor: #006915;
+$jsonNumberColor: #00677E;
+$jsonBooleanColor: #9E6600;
+$jsonNullColor: #395984;
+$jsonNonStringPrimitiveColor: #6b9fff;
+
+// RediSearch colors
+$rsSubmitBtn: #1ae26e;
+$rsInputColor: #fff;
+$rsInputWrapperColor: #EDF0F4;

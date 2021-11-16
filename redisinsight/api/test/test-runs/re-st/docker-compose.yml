@@ -1,0 +1,17 @@
+version: "3.4"
+
+services:
+  test:
+    env_file:
+      - ./re-st/.env
+    command: ['./wait-for-it.sh', 'redis:12000', '-s', '-t', '120', '--', 'yarn', 'test:api:ci:cov']
+  redis:
+    build: ./re-st
+    cap_add:
+      - sys_resource
+    environment:
+      - CREATE_SIMPLE_DB=true
+#    ports:
+#      - 12000:12000
+#      - 8443:8443
+#      - 9443:9443

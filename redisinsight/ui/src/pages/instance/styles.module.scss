@@ -1,0 +1,15 @@
+.mainComponent {
+  height: calc(100% - 35px) !important;
+}
+
+.resizableButton {
+  display: none;
+  margin: 1px 16px 0 !important;
+  z-index: 10;
+  background-color: var(--euiPageBackgroundColor);
+}
+
+:global(.show-cli) .resizableButton {
+  display: block;
+  z-index: 10;
+}

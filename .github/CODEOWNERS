@@ -1,0 +1,3 @@
+# Add reviewers for the most sensitive folders
+/.github/ egor.zalenski@softeq.com artem.horuzhenko@softeq.com
+/.circleci/ egor.zalenski@softeq.com artem.horuzhenko@softeq.com

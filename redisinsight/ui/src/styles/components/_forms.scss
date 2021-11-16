@@ -1,0 +1,141 @@
+.euiFormRow {
+  .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
+  .euiSelect:not(.euiSelect--compressed),
+  .euiFormControlLayout:not(.euiFormControlLayout--compressed),
+  .euiFieldText:not(.euiFieldText--compressed),
+  .euiFieldNumber:not(.euiFieldNumber--compressed) {
+    height: 100%;
+  }
+  .euiFormLegend,
+  .euiFormRow__label,
+  .euiRadio__label,
+  .euiCheckbox__label {
+    font-size: 13px;
+    font-weight: 400;
+
+    &:not(.euiFormLabel-isFocused, .euiFormLabel-isInvalid) {
+      color: var(--euiTextSubduedColor);
+    }
+  }
+
+  .euiSuperSelectControl {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    line-height: 43px;
+  }
+
+  .euiFormRow__label {
+    font-size: 12px;
+  }
+
+  .euiFieldText:disabled {
+    background-color: initial;
+    color: #757575;
+  }
+}
+
+.euiButton,
+.euiCollapsibleNav,
+.euiHeaderSectionItem__button {
+  backface-visibility: hidden;
+}
+
+.euiFormControlLayout--compressed {
+  height: 33px !important;
+}
+
+.formFooterBar {
+  position: absolute;
+  bottom: 0;
+  background: var(--browserTableRowEven);
+  border-style: solid;
+  border-width: 0;
+  border-color: var(--euiColorLightShade);
+  border-top-width: 1px;
+  width: 100%;
+}
+
+.euiRadio .euiRadio__circle,
+.euiCheckbox .euiCheckbox__square {
+    border-width: 2px !important;
+}
+
+body {
+  .euiFieldText,
+  .euiFieldNumber,
+  .euiFieldPassword,
+  .euiFieldSearch,
+  .euiSelect,
+  .euiSuperSelectControl,
+  .euiTextArea {
+    background-color: var(--euiColorEmptyShade) !important;
+    max-width: 100% !important;
+    border: 1px solid var(--controlsBorderColor) !important;
+    box-shadow: none !important;
+    font-size: 13px;
+  }
+
+  .euiFormHelpText {
+    padding-top: 2px;
+  }
+}
+
+.euiFormControlLayout--group {
+  box-shadow: none !important;
+  border: 1px solid var(--controlsBorderColor);
+  padding: 0 !important;
+}
+
+.euiCheckbox .euiCheckbox__input ~ .euiCheckbox__label,
+.euiRadio .euiRadio__input ~ .euiRadio__label {
+  color: var(--controlsLabelColor);
+}
+
+.euiCheckbox .euiCheckbox__input + .euiCheckbox__square,
+.euiRadio .euiRadio__input + .euiRadio__circle {
+  border-color: var(--iconsDefaultColor) !important;
+  &:hover {
+    border-color: var(--iconsDefaultHoverColor) !important;
+  }
+}
+
+.euiRadio .euiRadio__input:checked + .euiRadio__circle,
+.euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square{
+  border-color: var(--euiColorPrimary) !important;
+}
+
+.euiRadio:hover,
+.euiCheckbox:hover, {
+  .euiRadio__label,
+  .euiCheckbox__label {
+    transition: color 150ms ease-in;
+    color: var(--controlsLabelHoverColor) !important;
+  }
+}
+.euiCheckbox .euiCheckbox__input:checked  ~ .euiCheckbox__label,
+.euiRadio .euiRadio__input:checked  ~ .euiRadio__label {
+  color: var(--controlsLabelHoverColor) !important;
+}
+
+.euiRadio:hover .euiRadio__circle,
+.euiRadio:hover .euiCheckbox__square,
+.euiCheckbox:hover .euiRadio__circle,
+.euiCheckbox:hover .euiCheckbox__square {
+  border-color: var(--iconsDefaultHoverColor) !important;
+}
+
+.euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square {
+  border-color: var(--euiColorPrimary) !important;
+  background-color: var(--euiColorPrimary) !important;
+}
+
+.inlineFieldsNoSpace {
+  .euiFlexGroup {
+    .euiFlexItem:not(:first-child) {
+      .euiFieldText, .euiFormControlLayout--group {
+        border-left: 0 !important;
+      }
+    }
+  }
+}

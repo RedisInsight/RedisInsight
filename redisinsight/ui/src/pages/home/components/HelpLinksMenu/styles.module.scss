@@ -1,0 +1,40 @@
+@import '@elastic/eui/src/global_styling/index';
+
+.button {
+  @include euiButtonBase;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+  border: 2px solid var(--euiColorSecondary);
+  padding: 0 20px;
+  font: normal normal bold 14px/17px Graphik, sans-serif;
+}
+
+.buttonOpen {
+  border-bottom-color: transparent;
+  border-radius: 4px 4px 0 0;
+}
+
+.popover {
+  border: 2px solid var(--euiColorSecondary) !important;
+  border-top: 1px solid var(--separatorColor) !important;
+}
+
+.item {
+  padding: 10px 20px;
+  background-color: transparent !important;
+  transition: background-color 0.3s ease-in-out;
+  will-change: background-color;
+  text-decoration: none !important;
+  font: normal normal bold 12px/17px Graphik, sans-serif;
+  letter-spacing: 0;
+  &:hover {
+    background-color: var(--euiColorSecondary) !important;
+    text-decoration: none !important;
+  }
+  a {
+    text-decoration: none !important;
+  }
+}

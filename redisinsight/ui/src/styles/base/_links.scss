@@ -1,0 +1,11 @@
+.euiLink {
+  text-decoration: underline !important;
+
+  &:hover {
+    text-decoration: none !important;
+  }
+
+  &:focus {
+    background-color: inherit !important;
+  }
+}

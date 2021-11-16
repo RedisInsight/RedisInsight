@@ -1,0 +1,174 @@
+{
+    "root": true,
+    "env": {
+      "browser": true,
+      "es2017": true
+    },
+    "extends": ["plugin:@typescript-eslint/recommended", "plugin:import/errors"],
+    "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "overrides": [
+      {
+        "files": ["*.ts", "**/*.ts, *.js", "**/*.js"],
+        "rules": {
+          "no-multi-spaces": [
+            "error",
+            {
+              "exceptions": {
+                //our imports
+                "ImportDeclaration": true,
+                //our variables
+                "VariableDeclarator": true
+              }
+            }
+          ],
+          //Makes sure that the identation is 4 each all the time.
+          "indent": ["error", 4, { "SwitchCase": 1 }],
+          //Limits the length of a row to 100
+          "max-len": ["off", 200],
+          //Forcing a function to have a return type
+          "@typescript-eslint/explicit-function-return-type": "error",
+          //Forcing that all of the comments are with spaces.
+          "spaced-comment": "off",
+          //Forcing not to have random spaces.
+          "no-trailing-spaces": [
+            "error",
+            {
+              "ignoreComments": false
+            }
+          ],
+          //Forcing to use json.['dot'] vs json.dot
+          "dot-notation": "error",
+          //Require === and !== (eqeqeq)
+          "eqeqeq": "error",
+          //preventing from us to keep unused variables. relevant for imports as well.
+          "no-unused-vars": "error",
+          //prevents from having multiple empty lines, our standard should be max of 1 empty line.
+          "no-multiple-empty-lines": [
+            "error",
+            {
+              "max": 1
+            }
+          ],
+          "comma-dangle": ["error", "never"],
+          "brace-style": ["error", "stroustrup"],
+          //using { key: value } or { 'key': value } consistently only!
+          "quote-props": ["error", "consistent"],
+          //cannot use constructor () only constructor()
+          "space-before-function-paren": ["error", "never"],
+          //cannot use else return
+          "no-else-return": [
+            "error",
+            {
+              "allowElseIf": true
+            }
+          ],
+          //spaces between ops, bad: a+ b, good: a + b
+          "space-infix-ops": "error",
+          "radix": "off",
+          "prefer-const": "error",
+          "comma-spacing": [
+            "error",
+            {
+              "before": false,
+              "after": true
+            }
+          ],
+          "import/no-unresolved": "off",
+          "space-in-parens": ["error", "never"],
+          "quotes": ["error", "single"],
+          "prefer-template": "error",
+          "default-case": "error",
+          "nonblock-statement-body-position": [
+            "error", "beside", { "overrides": { "if": "any" }}
+          ],
+          "no-extra-semi": "error",
+          "no-empty-function": "error",
+          "no-spaced-func": "off",
+          "func-call-spacing": "off",
+          "dot-location": "off",
+          "arrow-spacing": [
+            "error",
+            {
+              "before": true,
+              "after": true
+            }
+          ],
+          "import/order": "error",
+          "import/no-duplicates": "error",
+          /* below are extended rules regarding the recommended typescript rule package...*/
+          "@typescript-eslint/type-annotation-spacing": "error", //RELEVANT: makes sure you have spaces around type declaration.
+          "@typescript-eslint/member-delimiter-style": [
+            "error",
+            {
+              "multiline": {
+                "delimiter": "comma",
+                "requireLast": false
+              },
+              "singleline": {
+                "delimiter": "comma",
+                "requireLast": false
+              }
+            }
+          ], //interface styling for each row, we use comma
+          "@typescript-eslint/no-inferrable-types": "error", // Tells you not to add a type, because it automatically taken it!
+
+          //Additional rules..
+          "key-spacing": [
+            "error",
+            {
+              "beforeColon": false,
+              "afterColon": true
+            }
+          ]
+        }
+      },
+      {
+        //Exceptions for our tests
+        "files": ["tests/*.ts", "tests/**/*.ts"],
+        "rules": {
+          "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
+          "key-spacing": "off",
+          "indent": "off",
+          "@typescript-eslint/camelcase": "off"
+        }
+      },
+      {
+        //Exceptions for our API files
+        "files": "api/*.ts",
+        "rules": {
+          "@typescript-eslint/camelcase": "off",
+          "@typescript-eslint/no-use-before-define": "off"
+        }
+      },
+      {
+        //Exceptions for our page models
+        "files": "pageObjects/*.ts",
+        "rules": {
+          "no-multi-spaces": "off",
+          "@typescript-eslint/type-annotation-spacing": "off",
+          "@typescript-eslint/no-use-before-define": "off",
+          "key-spacing": "off"
+        }
+      },
+      {
+        //Exceptions for filler file.
+        "files": "*/filler.ts",
+        "rules": {
+          "indent": "off",
+          "@typescript-eslint/no-var-requires": "off"
+        }
+      },
+      {
+        "files": "common-actions/*.ts",
+        "rules": {
+          "@typescript-eslint/camelcase": "off",
+          "space-infix-ops": "off"
+        }
+      }
+    ]
+  }

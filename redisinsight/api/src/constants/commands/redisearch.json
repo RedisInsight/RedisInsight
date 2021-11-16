@@ -1,0 +1,34 @@
+{
+  "FT.CREATE": {
+    "summary": "Creates an index with the given spec",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "index",
+        "type": "key"
+      }
+    ],
+    "since": "1.0.0",
+    "group": "search"
+  },
+  "FT.DROPINDEX": {
+    "summary": "Deletes the index",
+    "complexity": "O(N)",
+    "arguments": [
+      {
+        "name": "index",
+        "type": "key"
+      },
+      {
+        "name": "deletedocs",
+        "type": "enum",
+        "enum": [
+          "DD"
+        ],
+        "optional": true
+      }
+    ],
+    "since": "2.0.0",
+    "group": "search"
+  }
+}

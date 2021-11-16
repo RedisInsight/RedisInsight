@@ -1,0 +1,45 @@
+
+# Base compose file that includes all BE, RTE builds
+version: "3.4"
+
+x-constants:
+  - &apiRoot ./../../
+
+services:
+  test:
+    cap_add:
+      - ipc_lock
+    build:
+      context: *apiRoot
+      dockerfile: ./test/test-runs/test.Dockerfile
+    tty: true
+    volumes:
+      - ${COV_FOLDER}:/usr/src/app/coverage
+      - ${COV_FOLDER}:/root/.redisinsight-v2.0
+    depends_on:
+      - redis
+      - app
+    environment:
+      TEST_REDIS_HOST: "redis"
+      DB_SYNC: "true"
+      TEST_BE_SERVER: ${TEST_BE_SERVER}
+      TEST_LOCAL_DB_FILE_PATH: "/root/.redisinsight-v2.0/redisinsight.db"
+      SECRET_STORAGE_PASSWORD: "somepassword"
+  app:
+    cap_add:
+      - ipc_lock
+    image: ${APP_IMAGE}
+    depends_on:
+      - redis
+    volumes:
+      - ${COV_FOLDER}:/root/.redisinsight-v2.0
+    environment:
+      DB_SYNC: "true"
+      DB_MIGRATIONS: "false"
+      APP_FOLDER_NAME: ".redisinsight-v2.0"
+      SECRET_STORAGE_PASSWORD: "somepassword"
+
+networks:
+  default:
+    name: ${ID}
+

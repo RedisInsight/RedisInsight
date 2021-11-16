@@ -1,0 +1,7 @@
+version: "3.4"
+
+services:
+  redis:
+# todo: change back after redislabs/redismod image will be fixed
+#    image: redislabs/redismod
+    image: redis:6

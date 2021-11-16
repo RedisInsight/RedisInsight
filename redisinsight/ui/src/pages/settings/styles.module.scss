@@ -1,0 +1,88 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.cover {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  opacity: 0.8;
+  background-color: var(--euiColorLightestShade);
+}
+
+.title {
+  padding-bottom: 16px;
+  font: normal normal 600 24px/29px Graphik, sans-serif !important;
+}
+
+.accordion {
+  margin-top: 0 !important;
+}
+
+.accordionWithSubTitle {
+  :global(.euiAccordion__triggerWrapper) {
+    padding: 8px 16px !important;
+    min-height: 64px;
+  }
+  :global(.euiCollapsibleNavGroup__title) {
+    height: auto;
+  }
+
+  .subtitle {
+    font-size: 12px !important;
+    margin-top: -4px;
+  }
+}
+
+.container {
+  @include euiScrollBar;
+  position: relative;
+  height: 100%;
+  overflow: auto;
+
+  :global {
+    .euiAccordion {
+      &:not(:last-of-type) {
+        .euiAccordion__triggerWrapper {
+          border-bottom: 0;
+        }
+      }
+    }
+    .euiAccordion__triggerWrapper {
+      background-color: var(--euiColorEmptyShade);
+      margin-top: -2px;
+    }
+    .euiAccordion-isOpen {
+      .euiAccordion__triggerWrapper {
+        background-color: var(--tableRowSelectedColor);
+        border-color: var(--euiColorPrimary);
+        border-bottom: 0 !important;
+      }
+      .euiAccordion__childWrapper {
+        border-color: var(--euiColorPrimary);
+        border-width: 2px !important;
+      }
+    }
+
+    .euiAccordion__childWrapper {
+      background-color: var(--browserTableRowEven) !important;
+      border: 1px solid var(--euiColorLightestShade);
+      border-top: 0 !important;
+
+      .euiFieldText,
+      .euiFieldNumber,
+      .euiFieldPassword,
+      .euiSelect,
+      .euiSuperSelectControl,
+      .euiTextArea {
+        background-color: var(--browserTableRowEven) !important;
+      }
+    }
+  }
+}

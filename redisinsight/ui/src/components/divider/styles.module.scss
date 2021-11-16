@@ -1,0 +1,42 @@
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+  hr {
+    border: none;
+    height: 1px;
+    width: 100%;
+    background-color: var(--tableLightestBorderColor)
+  }
+  &-vertical {
+    height: auto;
+    margin: 0 8px;
+    hr {
+      height: 100%;
+      width: 1px;
+    }
+  }
+
+  &-middle {
+    margin: 8px 6px;
+    &.divider-vertical {
+      margin: 6px 8px;
+    }
+  }
+
+  &-half {
+    margin: 8px 0;
+    hr {
+      width: 50%;
+    }
+    &.divider-vertical {
+      margin: 0 8px;
+      hr {
+        width: 1px;
+        height: 50%;
+      }
+    }
+  }
+}
+

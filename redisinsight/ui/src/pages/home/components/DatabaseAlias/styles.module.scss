@@ -1,0 +1,40 @@
+.btnOpen {
+  float: right;
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.hiddenText {
+  display: inline-block;
+  visibility: hidden;
+  height: 1px;
+  overflow: hidden;
+  max-width: 100%;
+  margin-right: 80px;
+  word-break: break-all;
+}
+
+.input {
+  font: normal normal 500 20px/24px 'Graphik' !important;
+  backface-visibility: hidden;
+}
+
+.alias {
+  display: flex;
+  width: 100%;
+  min-width: 100%;
+  padding-left: 9px;
+  padding-top: 4px;
+  margin-bottom: 5px;
+  font: normal normal 500 20px/24px 'Graphik' !important;
+}
+
+.aliasText {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
+  padding-right: 5px;
+}

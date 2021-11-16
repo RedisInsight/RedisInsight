@@ -1,0 +1,16 @@
+.euiSwitch {
+  .euiSwitch__thumb {
+    background-color: var(--euiColorPrimaryText) !important;
+    border-color: transparent !important;
+  }
+  .euiSwitch__button[aria-checked='false'] .euiSwitch__body {
+    background-color: var(--tableLightestBorderColor) !important;
+  }
+  .euiSwitch__body {
+    background-color: var(--euiColorSecondary) !important;
+
+    .euiSwitch__icon--checked {
+      fill: #fff;
+    }
+  }
+}

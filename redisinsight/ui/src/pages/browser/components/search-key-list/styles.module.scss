@@ -1,0 +1,33 @@
+.container {
+  max-width: calc(100% - 160px);
+  height: 38px;
+  margin-left: 106px;
+
+  :global(.euiFormControlLayout) {
+    max-width: calc(100%) !important;
+    height: 38px !important;
+  }
+}
+
+:global(.euiFieldSearch) {
+  &.input {
+    min-width: 345px;
+    height: 38px !important;
+    max-width: 100% !important;
+
+    box-shadow: none !important;
+    border: 1px solid var(--euiColorLightShade) !important;
+  }
+}
+
+.hiddenText {
+  display: inline-block;
+  visibility: hidden;
+  height: 1px;
+  overflow: hidden;
+  font-size: 15px;
+  max-width: 100%;
+  margin-left: 40px;
+  margin-right: 50px;
+  word-break: break-all;
+}

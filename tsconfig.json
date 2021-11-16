@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "jsx": "react",
+    "strict": true,
+    "pretty": true,
+    "sourceMap": true,
+    "baseUrl": "./",
+    /* Additional Checks */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    /* Module Resolution Options */
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "paths": {
+      "uiSrc/*": [
+        "redisinsight/ui/src/*"
+      ],
+      "apiSrc/*": [
+        "redisinsight/api/src/*"
+      ],
+      "src/*": [
+        "redisinsight/api/src/*"
+      ],
+      "tests/*": [
+        "redisinsight/ui/__tests__/*"
+      ]
+    }
+  },
+  "include": [
+    "redisinsight/ui/src/**/*",
+    "redisinsight/ui/index.tsx",
+    "redisinsight/ui/indexElectron.tsx",
+    "redisinsight/main.dev.ts"
+  ],
+  "exclude": [
+    "./redisinsight/api",
+    "main.prod.js",
+    "renderer.prod.js",
+    "dist"
+  ]
+}

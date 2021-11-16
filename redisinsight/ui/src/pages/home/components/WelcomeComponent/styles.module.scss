@@ -1,0 +1,58 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.welcome {
+  @include euiScrollBar;
+
+  background-size: cover;
+  height: 100%;
+  overflow-y: scroll;
+
+  text-align: center;
+
+  &.welcome_dark {
+    background-image: url('uiSrc/assets/img/welcome_bg_dark.jpg');
+  }
+
+  &.welcome_light {
+    background-image: url('uiSrc/assets/img/welcome_bg_light.jpg');
+  }
+}
+
+.content {
+  max-width: 550px;
+  margin: 17vh auto 0;
+  height: 600px;
+}
+
+.controls {
+  margin: 7vh auto 0;
+  max-width: 390px;
+}
+
+.logo {
+  display: inline-block;
+  width: 215px;
+  height: 45px;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 500 !important;
+}
+
+.subTitle {
+  padding-top: 25px;
+  font-size: 24px;
+  font-weight: 500 !important;
+}
+
+.text {
+  font-weight: normal;
+  padding-top: 8px;
+  font-size: 14px;
+  color: var(--euiTextColor) !important;
+  opacity: 0.7;
+}

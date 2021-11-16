@@ -1,0 +1,139 @@
+$breakpoint-s: 850px;
+$breakpoint-m: 1050px;
+$breakpoint-l: 1300px;
+$breakpoint-xl: 1650px;
+
+$marginIcon: 12px;
+
+.container {
+  display: flex;
+  align-items: center;
+  height: 45px;
+  padding: 0 20px;
+  cursor: pointer;
+
+  :global(.copy-btn) {
+    margin-left: 5px;
+    @media (min-width: $breakpoint-m) {
+      margin-left: 10px;
+    }
+  }
+
+  :global(.euiFlexGroup--gutterLarge>.euiFlexItem) {
+    margin: $marginIcon $marginIcon/2 !important;
+
+    @media (min-width: $breakpoint-m) {
+      margin: $marginIcon !important;
+    }
+  }
+}
+
+.isOpen {
+  &.container {
+    color: var(--euiColorPrimary);
+    background-color: var(--tableRowSelectedColor) !important;
+  }
+
+  .title {
+    color: var(--euiColorFullShade) !important;
+  }
+}
+
+.titleWrapper {
+  width: calc(100% - 350px);
+
+  @media (min-width: $breakpoint-m) {
+    width: calc(100% - 420px);
+  }
+}
+
+:global(.fullscreen) .titleWrapper {
+  width: calc(100% - 270px);
+
+  @media (min-width: $breakpoint-m) {
+    width: calc(100% - 320px);
+  }
+}
+
+.title {
+  display: inline-block;
+  font: normal normal normal 13px/17px Graphik, sans-serif !important;
+  overflow: hidden;
+
+  :global(.euiToolTipAnchor) {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    max-width: 100%;
+    vertical-align: middle;
+  }
+}
+
+.time {
+  max-width: 95px;
+  position: relative;
+  height: 18px;
+}
+
+.timeText, .summaryText {
+  font: normal normal normal 12px/16px Graphik, sans-serif;
+  color: var(--euiColorMediumShade) !important;
+  min-width: 75px;
+  text-align: left;
+}
+
+.summaryText {
+  position: absolute;
+  right: -120px;
+}
+
+.extraInfo {
+  width: 210px;
+  text-align: right;
+}
+
+.changeViewWrapper {
+  display: flex;
+}
+
+.tooltipIcon {
+  display: flex !important;
+  flex: 1;
+}
+
+.changeView:global(.euiSuperSelectControl) {
+  border: none !important;
+  background-color: inherit !important;
+  color: var(--iconsDefaultColor) !important;
+  width: 46px;
+  padding-right: 0;
+
+  & ~ div {
+    right: 4px;
+    svg {
+      width: 10px !important;
+      height: 10px !important;
+    }
+  }
+}
+
+.changeViewItem {
+  overflow-wrap: break-word;
+}
+
+.buttonIcon {
+  padding: 0 4px;
+  width: 32px;
+}
+
+.container :global(.euiFlexItem).viewTypeIcon {
+  width: 54px;
+  min-width: 54px;
+  margin: 0 $marginIcon/3 !important;
+}
+
+.container :global(.euiFlexItem).playIcon {
+  margin-right: $marginIcon/3 !important;
+}

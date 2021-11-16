@@ -1,0 +1,17 @@
+version: "3.4"
+
+services:
+  test:
+    env_file:
+      - ./re-clu/.env
+    command: ['./wait-for-it.sh', 'redis:12010', '-s', '-t', '120', '--', 'yarn', 'test:api:ci:cov']
+  redis:
+    build: ./re-clu
+    cap_add:
+      - sys_resource
+    environment:
+      - CREATE_CLUSTER_DB=1
+#    ports:
+#      - 12010:12010
+#      - 8443:8443
+#      - 9443:9443

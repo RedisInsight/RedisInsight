@@ -1,0 +1,26 @@
+.circle {
+  background-color: var(--moduleBackgroundColor);
+  border: none !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 14px !important;
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    background-color: var(--moduleBackgroundColor) !important;
+  }
+}
+
+button.icon {
+  width: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  * {
+    padding: 0 !important;
+  }
+}
+
+.anchorCircleIcon {
+  margin-right: 14px;
+}

@@ -1,0 +1,4 @@
+@function vh($base) {
+  $result: calc($base - 320px);
+  @return $result;
+}

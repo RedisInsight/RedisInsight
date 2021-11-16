@@ -1,0 +1,103 @@
+.container {
+  font-family: 'Graphik', sans-serif !important;
+
+  br {
+    display: block !important;
+    content: "";
+    margin: 2em;
+    font-size: 34%;
+  }
+
+  ul {
+    list-style: disc !important;
+    padding-left: 20px !important;
+  }
+
+  :global(.query-card-output-response-fail) {
+    padding: 6px 0;
+    color: var(--euiColorDanger) !important
+  }
+}
+
+.table {
+  margin: 0 -20px !important;
+
+  :global(.euiTableRowCell) {
+    background-color: var(--euiPageBackgroundColor) !important;
+  }
+
+  br {
+    font-size: 18%;
+  }
+
+  a {
+    line-height: 24px;
+    text-align: left;
+    text-decoration: underline;
+    color: var(--buttonSecondaryTextColor);
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.createCloudBtn {
+  margin: 16px 0;
+  max-width: 420px !important;
+}
+
+
+.summary {
+  display: flex;
+
+  > div {
+    padding-bottom: 10px;
+  }
+}
+
+.alertIconWrapper {
+  height: 19px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.summaryImg {
+  width: 468px !important;
+  height: 174px !important;
+  margin-right: 22px;
+}
+
+@media only screen and (max-width: 700px) {
+  .summaryImg {
+    width: 312px !important;
+    height: 116px !important;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  .summary {
+    display: block;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .container :global(.euiFlexGroup--responsive .query-card-output-response-fail) {
+    margin: 10px 0 !important;
+  }
+
+  .table {
+    :global(.euiTableRowCell) {
+      background-color: initial !important;
+      max-width: 100% !important;
+      width: 100%;
+      border-top: 1px solid var(--euiColorLightShade) !important;
+    }
+
+    :global(.euiTableRow) {
+      padding: 0 !important;
+      border-right: 0 !important;
+      background-color: var(--euiPageBackgroundColor) !important;
+    }
+  }
+}

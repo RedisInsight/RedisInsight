@@ -1,0 +1,420 @@
+{
+  "AI.TENSORSET":
+  {
+    "summary": "stores a tensor as the value of a key.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "type",
+        "type": "enum",
+        "enum": [
+          "FLOAT" , "DOUBLE" , "INT8" , "INT16" , "INT32" , "INT64" , "UINT8", "UINT16", "STRING", "BOOL"
+        ]
+      },
+      {
+        "name": "shape",
+        "type": "integer",
+        "multiple": true
+      },
+      {
+        "name": "blob",
+        "command": "BLOB",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "value",
+        "command": "VALUES",
+        "type": "string",
+        "multiple": true,
+        "optional": true
+      }
+
+    ],
+    "since": "1.2.5",
+    "group": "tensor"
+  },
+  "AI.TENSORGET":
+  {
+    "summary": "returns a tensor stored as key's value.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "meta",
+        "type": "enum",
+        "enum": [
+          "META"
+        ]
+      },
+      {
+        "name": "format",
+        "type": "enum",
+        "enum": [
+          "BLOB", "VALUES"
+        ],
+        "optional": true
+      }
+
+    ],
+    "since": "1.2.5",
+    "group": "tensor"
+  },
+  "AI.MODELSETORE":
+  {
+    "summary": "stores a model as the value of a key",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "backend",
+        "type": "enum",
+        "enum":["TF", "TORCH", "ONNX"]
+      },
+      {
+        "name": "device",
+        "type": "enum",
+        "enum":["CPU", "GPU"]
+      },
+      {
+        "name": "tag",
+        "command": "TAG",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "batchsize",
+        "command": "BATCHSIZE ",
+        "type": "integer",
+        "optional": true
+      },
+      {
+        "name": "minbatchsize",
+        "command": "BATCHSIZE ",
+        "type": "integer",
+        "optional": true
+      },
+      {
+        "name": "minbatchtimeout",
+        "command": "MINBATCHTIMEOUT  ",
+        "type": "integer",
+        "optional": true
+      },
+      {
+        "type": "block",
+        "optional": true,
+        "block": [
+          {
+            "name": "input_count",
+            "type": "integer",
+            "command":"INPUTS"
+          },
+          {
+            "name": "input",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "type": "block",
+        "optional": true,
+        "block": [
+          {
+            "name": "output_count",
+            "type": "integer",
+            "command":"OUTPUTS"
+          },
+          {
+            "name": "output",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "name": "blob",
+        "command": "BLOB",
+        "type": "string",
+        "optional": true
+      }
+
+    ],
+    "since": "1.2.5",
+    "group": "model"
+  },
+  "AI.MODELGET": {
+    "summary": "returns a model's metadata and blob stored as a key's value.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "meta",
+        "type": "enum",
+        "enum": [
+          "META"
+        ],
+        "optional": true
+      },
+      {
+        "name": "blob",
+        "type": "enum",
+        "enum": [
+          "BLOB"
+        ],
+        "optional": true
+      }
+    ],
+    "since": "1.2.5",
+    "group": "model"
+  },
+  "AI.MODELDEL":
+  {
+    "summary": "deletes a model stored as a key's value.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      }
+    ],
+    "since": "1.2.5",
+    "group": "model"
+  },
+  "AI.MODELEXECUTE":
+  {
+    "summary": "runs a model stored as a key's value using its specified backend and device. It accepts one or more input tensors and store output tensors.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "type": "block",
+        "block": [
+          {
+            "name": "input_count",
+            "type": "integer",
+            "command":"INPUTS"
+          },
+          {
+            "name": "input",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "type": "block",
+        "block": [
+          {
+            "name": "output_count",
+            "type": "integer",
+            "command":"OUTPUTS"
+          },
+          {
+            "name": "output",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "name": "timeout",
+        "command": "TIMEOUT",
+        "type": "integer",
+        "optional": true
+      }
+    ],
+    "since": "1.2.5",
+    "group": "inference"
+  },
+  "AI.SCRIPTSTORE": {
+    "summary": "stores a TorchScript as the value of a key.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "device",
+        "type": "enum",
+        "enum":["CPU", "GPU"]
+      },
+      {
+        "name": "tag",
+        "command": "TAG",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "type": "block",
+        "block": [
+          {
+            "name": "entry_point_count",
+            "type": "integer",
+            "command":"ENTRY_POINTS"
+          },
+          {
+            "name": "entry_point",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      }
+    ],
+    "since": "1.2.5",
+    "group": "script"
+  },
+  "AI.SCRIPTGET": {
+    "summary": "returns the TorchScript stored as a key's value.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "meta",
+        "type": "enum",
+        "enum": [
+          "META"
+        ],
+        "optional": true
+      },
+      {
+        "name": "source",
+        "type": "enum",
+        "enum": [
+          "SOURCE"
+        ],
+        "optional": true
+      }
+    ],
+    "since": "1.2.5",
+    "group": "script"
+  },
+  "AI.SCRIPTDEL": {
+    "summary": "deletes a script stored as a key's value.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      }
+    ],
+    "since": "1.2.5",
+    "group": "script"
+  },
+  "AI.SCRIPTEXECUTE":
+  {
+    "summary": "command runs a script stored as a key's value on its specified device.",
+    "complexity": "O(1)",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "function",
+        "type": "string"
+      },
+      {
+        "type": "block",
+        "optional": true,
+        "block": [
+          {
+            "name": "key_count",
+            "type": "integer",
+            "command":"KEYS"
+          },
+          {
+            "name": "key",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "type": "block",
+        "optional": true,
+        "block": [
+          {
+            "name": "input_count",
+            "type": "integer",
+            "command":"INPUTS"
+          },
+          {
+            "name": "input",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "type": "block",
+        "optional": true,
+        "block": [
+          {
+            "name": "arg_count",
+            "type": "integer",
+            "command":"ARGS"
+          },
+          {
+            "name": "arg",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "type": "block",
+        "optional": true,
+        "block": [
+          {
+            "name": "output_count",
+            "type": "integer",
+            "command":"OUTPUTS"
+          },
+          {
+            "name": "output",
+            "type": "string",
+            "multiple": true
+          }
+
+        ]
+      },
+      {
+        "name": "timeout",
+        "command": "TIMEOUT",
+        "type": "integer",
+        "optional": true
+      }
+    ],
+    "since": "1.2.5",
+    "group": "inference"
+  }
+}

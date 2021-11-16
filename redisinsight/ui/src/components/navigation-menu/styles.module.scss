@@ -1,0 +1,154 @@
+$sideBarWidth: 60px;
+
+.container, .bottomContainer {
+  min-width: $sideBarWidth;
+  position: relative;
+  display: flex;
+
+  @media only screen and (min-width: 768px) {
+    flex-direction: column;
+  }
+
+  .navigationButton {
+    min-width: 60px;
+    min-height: 60px;
+    height: 60px;
+    width: 60px;
+
+    border-radius: 0;
+    color: #BDC3D7 !important;
+
+    &:hover {
+      background-color: #34406f !important;
+      &.navigationButtonNotified {
+        &:before {
+          border-color: #34406f !important;
+        }
+      }
+    }
+
+    &.active {
+      background-color: var(--euiColorSuccessText) !important;
+    }
+
+    &.navigationButtonNotified {
+      &:before {
+        content: '';
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 12px;
+        height: 12px;
+        border: 2px solid var(--navBackgroundColor);
+        background-color: var(--euiColorPrimary);
+        border-radius: 100%;
+        z-index: 1;
+      }
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+
+.navigation {
+  background: var(--navBackgroundColor) !important;
+  padding: 32px 0;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 0 !important;
+
+  @media screen and (max-width: 767px) {
+    flex-direction: row !important;
+  }
+}
+
+.dockController {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--navBackgroundColor);
+}
+
+.iconLogo {
+  display: inline-flex;
+  height: 60px;
+  width: 60px;
+
+  align-items: center;
+  justify-content: center;
+
+  @media only screen and (min-width: 768px) {
+    height: 60px;
+    width: 60px;
+  }
+
+  :global(.euiIcon) {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.popoverWrapper {
+  min-width: 354px !important;
+}
+
+.popover {
+  padding: 5px 15px 5px;
+}
+
+.helpMenuItem {
+  align-items: center;
+
+  :global(.euiButtonIcon), :global(.euiIcon) {
+    color: var(--euiTooltipTextColor) !important;
+  }
+
+  .helpMenuItemLink {
+    &:global(.euiLink) {
+      text-decoration: none !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &:focus {
+        animation: none !important;
+      }
+    }
+  }
+}
+
+.helpMenuItemDisabled {
+  :global(.euiIcon), div {
+    color: var(--buttonSecondaryDisabledTextColor) !important;
+  }
+}
+
+.helpMenuItemNotified {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: -3px;
+    display: block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--euiColorPrimary);
+    border-radius: 100%;
+  }
+}
+
+.helpMenuText {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}

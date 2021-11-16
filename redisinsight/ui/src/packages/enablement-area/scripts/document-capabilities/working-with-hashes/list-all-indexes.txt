@@ -1,0 +1,3 @@
+// Command to return the list of all existing indexes
+
+FT._LIST

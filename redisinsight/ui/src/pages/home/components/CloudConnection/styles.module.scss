@@ -1,0 +1,20 @@
+.message {
+  margin-top: 5px;
+  padding: 16px;
+  background-color: var(--euiColorLightestShade);
+  font-family: 'Graphik', sans-serif;
+  color: var(--euiTextSubduedColor) !important;
+  border: 1px solid var(--euiColorLightShade);
+
+  :global(.euiTextColor), :global(.euiLink) {
+    color: currentColor !important;
+  }
+}
+
+.link {
+  text-decoration: underline !important;
+
+  &:hover {
+    text-decoration: none !important;
+  }
+}

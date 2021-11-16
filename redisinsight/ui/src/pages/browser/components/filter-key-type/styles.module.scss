@@ -1,0 +1,107 @@
+.container {
+  position: absolute;
+  height: 38px;
+  width: 180px;
+
+  :global {
+    .euiFormControlLayout {
+      .euiSuperSelectControl {
+        display: flex;
+        align-items: center;
+        height: 38px !important;
+        background-color: var(--euiColorLightShade) !important;
+        box-shadow: none !important;
+        border: 0 !important;
+
+        .euiHealth {
+          margin-left: -5px;
+        }
+
+        &.euiSuperSelect--isOpen__button {
+          background-color: var(--euiColorLightShade) !important;
+        }
+        &:focus {
+          background-color: var(--euiColorLightShade) !important;
+        }
+      }
+    }
+
+    .euiPopover:not(.euiSuperSelect) {
+      position: absolute;
+      z-index: 10;
+      top: 7px;
+      right: 88px;
+
+      svg {
+        width: 24px !important;
+        height: 24px !important;
+      }
+    }
+    .euiFormControlLayoutIcons {
+      right: 88px;
+    }
+  }
+}
+
+.filterKeyType {
+  height: 32px;
+  line-height: 16px !important;
+  padding: 4px !important;
+}
+
+.controlsIcon {
+  cursor: pointer;
+  margin-left: 3px;
+  height: 20px !important;
+  width: 20px !important;
+  &:global(.euiIcon) {
+    color: var(--inputTextColor) !important;
+  }
+}
+
+.allTypes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+
+  width: 106px;
+  height: 38px;
+  padding-left: 12px;
+
+  cursor: pointer;
+  z-index: 5;
+}
+
+.unsupported {
+  .allTypes {
+    cursor: not-allowed;
+  }
+  .allTypesIcon {
+    cursor: not-allowed;
+    color: var(--euiTextSubduedColor);
+  }
+
+  .unsupportedInfo {
+    display: inline-block;
+  }
+
+  :global(.euiFormControlLayoutIcons) {
+    display: none;
+  }
+}
+
+.infoIcon {
+  color: var(--euiTextSubduedColor);
+}
+
+.unsupportedInfoPanel {
+  border: none;
+  max-width: 267px !important;
+  background-color: var(--euiTooltipBackgroundColor) !important;
+
+  :global(.euiPopover__panelArrow:after) {
+    border-bottom-color: var(--euiTooltipBackgroundColor) !important;
+  }
+}

@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  padding: 16px 16px 30px;
+  background-color: var(--euiColorEmptyShade);
+}
+
+.inlineItemEditor {
+  max-width: calc(100% - 20px);
+}

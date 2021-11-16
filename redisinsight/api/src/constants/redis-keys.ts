@@ -1,0 +1,1 @@
+export const MAX_TTL_NUMBER = 2147483647;

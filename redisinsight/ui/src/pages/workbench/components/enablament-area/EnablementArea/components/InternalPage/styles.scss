@@ -1,0 +1,78 @@
+.enablement-area__page {
+  height: 100%;
+  font: normal normal normal 12px/18px Graphik;
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--euiColorGhost);
+    font: normal normal medium 12px/16px Graphik;
+    margin-bottom: 12px;
+    letter-spacing: 1.1px;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+
+  a {
+    color: var(--euiColorGhost);
+    text-decoration: underline;
+  }
+  b, strong {
+    font: normal normal normal 12px/16px Graphik;
+    color: var(--htmlColor);
+  }
+  hr {
+    border: none;
+    height: 1px;
+    width: 100%;
+    background-color: var(--separatorColor);
+    margin: 12px 0;
+  }
+
+  code {
+    display: flex;
+    padding: 12px;
+    width: 100%;
+    background-color: var(--euiColorLightShade);
+    border-radius: 2px;
+  }
+
+  b + ul, strong + ul, b + ol, strong + ol {
+    margin-top: 10px;
+  }
+  ul:not(.euiPagination__list) {
+    list-style-type: disc;
+    list-style-position: outside;
+    margin-left: 15px;
+    li:not(:last-of-type) {
+      margin-bottom: 5px;
+    }
+    ul, ol {
+      list-style-type: circle;
+      list-style-position: outside;
+      margin-left: 15px;
+    }
+  }
+
+  ol {
+    list-style-type: decimal;
+    list-style-position: outside;
+    margin-left: 15px;
+    li:not(:last-of-type) {
+      margin-bottom: 5px;
+    }
+    ol, ul {
+      list-style-type: circle;
+      list-style-position: outside;
+      margin-left: 15px;
+    }
+  }
+
+  .sticky-footer {
+    position: sticky;
+    bottom: 0;
+    border-top: 1px solid var(--separatorColor);
+    padding-top: 12px;
+    background-color: var(--euiColorEmptyShade);
+  }
+}

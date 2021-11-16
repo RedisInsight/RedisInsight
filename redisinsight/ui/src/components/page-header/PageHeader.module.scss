@@ -1,0 +1,37 @@
+@import '@elastic/eui/src/global_styling/index';
+
+.pageHeader {
+  background-color: var(--euiColorEmptyShade);
+  border-bottom: 1px solid var(--euiColorLightShade);
+}
+
+.pageHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 16px;
+  @include euiBreakpoint('s', 'xs') {
+    flex-direction: column-reverse;
+    > div {
+      width: 100%;
+    }
+    .pageHeaderLogo {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}
+
+.logo {
+  transition: transform 0.1s linear;
+
+  &:hover {
+    transform: translateY(-1px) !important;
+  }
+
+  img {
+    height: 28px !important;
+    width: 150px !important;
+  }
+}

@@ -1,0 +1,95 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+$breakpoint-m: 1150px;
+$breakpoint-l: 1400px;
+
+.deletePopover {
+  padding: 31px 33px;
+}
+
+.popoverSubTitle {
+  width: 372px;
+  color: var(--textColorShade) !important;
+  line-height: 1.3;
+  font-size: 14px;
+}
+
+.deleteNameList:not(:last-child) {
+  padding-bottom: 7px;
+}
+
+.deleteNameListText {
+  line-height: 22px;
+}
+
+.deleteBoxSection {
+  @include euiScrollBar;
+
+  width: 400px;
+  max-height: 189px;
+  overflow-y: scroll;
+
+  padding: 13px 15px;
+  margin-top: 10px;
+
+  color: var(--textColorShade) !important;
+  background-color: var(--euiColorLightestShade) !important;
+
+  svg {
+    color: var(--euiTextColor) !important;
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+
+.tooltipColumnName {
+  max-width: 370px !important;
+  * {
+    line-height: 1.19;
+    font-size: 14px !important;
+    &:not(:global(.euiToolTip__title)) {
+      font-weight: 300 !important;
+    }
+  }
+}
+
+.tooltipAnchorColumnName {
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none
+  }
+}
+
+.tooltipColumnNameText {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  vertical-align: top;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: inherit;
+
+  &.withDb {
+    max-width: 89%;
+
+    @media (min-width: $breakpoint-m) {
+      max-width: 92%;
+    }
+
+    @media (min-width: $breakpoint-l) {
+      max-width: 95%;
+    }
+  }
+}
+
+.popoverFooter {
+  text-align: right;
+  margin-top: 24px;
+
+  span {
+    font-size: 13px !important;
+  }
+}

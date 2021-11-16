@@ -1,0 +1,191 @@
+:global {
+  .browserPage {
+    .key-details-header {
+      .euiFieldText--compressed,
+      .euiFormControlLayout--compressed {
+        height: 31px !important;
+      }
+
+      .euiFormControlLayout {
+        width: 100%;
+        max-width: 100%;
+
+        &.euiFormControlLayout--readOnly {
+          border: 1px solid var(--controlsBorderColor);
+          cursor: auto;
+        }
+
+        input {
+          height: 29px !important;
+          cursor: pointer;
+          max-width: none;
+          font-family: 'Graphik', sans-serif !important;
+        }
+      }
+    }
+  }
+}
+
+:global(.browserPage .key-details-header .euiFormControlLayout) {
+  .keyInputEditing {
+    height: 31px !important;
+  }
+}
+
+.container {
+  padding: 12px 12px 12px 16px;
+  border-bottom: 1px solid var(--euiColorLightShade);
+  min-width: 100%;
+  width: 1px;
+  min-height: 84px;
+  position: relative;
+}
+
+.key {
+  display: flex;
+  width: 100%;
+  min-width: 100%;
+
+  padding-left: 9px;
+  line-height: 31px !important;
+}
+
+.keyType {
+  padding-top: 6px;
+  padding-right: 5px;
+}
+
+.flexItemTTL {
+  width: 180px;
+  min-width: 180px;
+}
+
+.ttlInput {
+  min-width: 110px;
+  &.editing {
+    width: 150px;
+  }
+}
+
+.keyInput {
+  height: 31px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.ttlGridComponent,
+.classNameGridComponent {
+  position: relative;
+}
+
+.subtitleText {
+  padding: 6px 2px 6px 0;
+}
+
+.ttlTextValue {
+  padding-left: 11px;
+}
+
+.groupSecondLine {
+  margin-bottom: -20px !important;
+}
+
+.controlsTTL,
+.controlsKey {
+  position: absolute;
+  background-color: var(--euiColorLightestShade);
+  margin-top: 30px;
+  right: 0;
+  width: 80px;
+  height: 33px;
+  border-radius: 0 0 10px 10px;
+
+  z-index: 1;
+
+  :global(.euiButtonIcon) {
+    width: 50% !important;
+    height: 100% !important;
+  }
+}
+
+.controlsKey {
+  right: 25px;
+}
+
+.keyFlexItem {
+  overflow: hidden;
+}
+
+.keyFlexItemEditing {
+  overflow: inherit;
+}
+
+.cancelEditBtn:hover {
+  color: var(--euiColorColorDanger) !important;
+}
+
+.applyEditBtn:hover {
+  color: var(--euiColorSecondary) !important;
+}
+
+.popoverDeleteContainer {
+  overflow: hidden;
+  max-width: 350px !important;
+}
+
+.popoverFooter {
+  margin-top: 10px;
+}
+
+.closeBtn {
+  padding-top: 0 !important;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.flexItemKeyInput {
+  flex-direction: row !important;
+  width: 100% !important;
+}
+
+.copyKey {
+  position: absolute;
+  padding-left: 7px;
+  padding-top: 2px;
+  right: 0;
+  height: 25px;
+  width: 25px;
+}
+
+.subtitleActionBtns {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+  right: 13px;
+}
+
+.toolTipAnchorKey {
+  max-width: calc(100% - 25px);
+  height: 31px !important;
+}
+
+.keyHiddenText {
+  display: inline-block;
+  visibility: hidden;
+  height: 1px;
+  overflow: hidden;
+  max-width: 100%;
+  margin-right: 80px;
+  word-break: break-all;
+}
+
+.refreshKeyTooltip {
+  padding-right: 7%;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}

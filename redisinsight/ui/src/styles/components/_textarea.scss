@@ -1,0 +1,9 @@
+@import '../../../../../node_modules/@elastic/eui/src/global_styling/index';
+
+.euiTextArea {
+  @include euiScrollBar;
+  min-height: 50px;
+  //&::-webkit-resizer{
+  //  background-image: url("uiSrc/assets/img/resize-corner.svg");
+  //}
+}

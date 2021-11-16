@@ -1,0 +1,10 @@
+version: "3.4"
+
+services:
+  test:
+    env_file:
+      - ./oss-st-6-tls-auth/.env
+  redis:
+    build:
+      context: ./oss-st-6-tls-auth
+      dockerfile: Dockerfile

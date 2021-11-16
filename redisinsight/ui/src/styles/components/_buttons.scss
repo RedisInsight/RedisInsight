@@ -1,0 +1,97 @@
+.euiButton {
+  &.euiButton--secondary {
+    color: var(--buttonSecondaryTextColor) !important;
+    border-color: var(--euiColorSecondary);
+    &:not([class*='isDisabled']) {
+      &:hover,
+      &:focus,
+      &:focus-within {
+        background-color: var(--buttonSecondaryHoverColor);
+        border-color: var(--buttonSecondaryHoverColor);
+        color: var(--euiColorPrimaryText) !important;
+      }
+    }
+    .euiTextColor--default {
+      color: currentColor;
+    }
+  }
+  &.euiButton--primary {
+    &:not([class*='isDisabled']) {
+      box-shadow: none;
+    }
+  }
+}
+.euiButton.euiButton--fill {
+  &.euiButton--secondary {
+    border-color: var(--euiColorSecondary);
+    background-color: var(--euiColorSecondary);
+
+    &:not([class*='isDisabled']) {
+      &:hover,
+      &:focus,
+      &:focus-within {
+        background-color: var(--buttonSecondaryHoverColor);
+        border-color: var(--buttonSecondaryHoverColor);
+      }
+    }
+  }
+}
+
+.euiButton.euiButton-isDisabled.euiButton--fill {
+  opacity: 0.6;
+  &.euiButton--secondary {
+    border-color: var(--euiColorSecondary);
+    background-color: var(--euiColorSecondary);
+    color: var(--buttonSecondaryDisabledTextColor) !important;
+    &:hover {
+      background-color: var(--euiColorSecondary);
+    }
+  }
+  &.euiButton--primary {
+    border-color: var(--euiColorPrimary);
+    background-color: var(--euiColorPrimary);
+    &:hover {
+      background-color: var(--euiColorPrimary);
+    }
+  }
+  &.euiButton--warning {
+    border-color: var(--euiColorColorWarning);
+    background-color: var(--euiColorColorWarning);
+    &:hover {
+      background-color: var(--euiColorColorWarning);
+    }
+  }
+  &.euiButton--danger {
+    border-color: var(--euiColorColorDanger);
+    background-color: var(--euiColorColorDanger);
+    &:hover {
+      background-color: var(--euiColorColorDanger);
+    }
+  }
+}
+
+.euiButton {
+  text-decoration: none !important;
+  color: var(--euiColorGhost) !important;
+
+  &.euiButton--fill {
+    color: white !important;
+  }
+}
+
+.euiButton__text {
+  font: normal normal normal 14px/20px Graphik, sans-serif !important;
+}
+
+.euiButton--small .euiButton__text {
+  font: normal normal normal 13px/16px Graphik, sans-serif !important;
+}
+
+.euiButton {
+  &.euiButton--warning.euiButton--fill:not([class*='isDisabled']) {
+    &:hover, &:focus, &:focus-within {
+      background-color: var(--buttonDangerHoverColor);
+      border-color: var(--buttonDangerHoverColor);
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "productName": "RedisInsight-preview",
+  "appId": "org.RedisLabs.RedisInsight-V2",
+  "copyright": "Copyright © 2021 Redis Ltd.",
+  "files": [
+    "dist/",
+    "node_modules/",
+    "index.html",
+    "main.prod.js",
+    "main.prod.js.map",
+    "package.json"
+  ],
+  "afterSign": "electron-builder-notarize",
+  "artifactName": "RedisInsight.${ext}",
+  "compression": "normal",
+  "mac": {
+    "target": ["dmg", "zip"],
+    "type": "distribution",
+    "hardenedRuntime": true,
+    "darkModeSupport": true,
+    "entitlements": "resources/entitlements.mac.plist",
+    "entitlementsInherit": "resources/entitlements.mac.plist",
+    "gatekeeperAssess": false
+  },
+  "dmg": {
+    "artifactName": "RedisInsight-${os}-x64.${ext}",
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  },
+  "win": {
+    "target": ["nsis"],
+    "artifactName": "RedisInsight-${os}-installer.${ext}"
+  },
+  "linux": {
+    "icon": "./resources/icons",
+    "target": ["deb", "AppImage"],
+    "synopsis": "Redis GUI by Redis Ltd.",
+    "category": "Development",
+    "artifactName": "RedisInsight-${os}.${ext}",
+    "desktop": {
+      "Name": "RedisInsight",
+      "Type": "Application",
+      "Comment": "Redis GUI by Redis Ltd",
+      "Terminal": "true"
+    }
+  },
+  "directories": {
+    "app": "redisinsight",
+    "buildResources": "resources",
+    "output": "release"
+  },
+  "extraResources": [
+    "./resources/**",
+    {
+      "from": "./redisinsight/api/src/static",
+      "to": "static",
+      "filter": ["**/*"]
+    }
+  ]
+}

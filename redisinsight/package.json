@@ -1,0 +1,19 @@
+{
+  "name": "redisinsight",
+  "productName": "RedisInsight",
+  "private": true,
+  "version": "2.0.2-preview",
+  "description": "RedisInsight",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Redis Ltd.",
+    "email": "support@redis.com",
+    "url": "https://redis.com/redis-enterprise/redis-insight"
+  },
+  "scripts": {},
+  "dependencies": {
+    "jsonpath": "^1.1.1",
+    "keytar": "^7.7.0",
+    "sqlite3": "^5.0.2"
+  }
+}

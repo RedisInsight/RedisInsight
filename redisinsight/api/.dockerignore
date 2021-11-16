@@ -1,0 +1,11 @@
+.git
+.idea
+.vscode
+.circleci
+
+.nyc_output
+coverage
+node_modules
+dist
+
+test/test-runs/results

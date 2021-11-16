@@ -1,0 +1,56 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.section {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 34px);
+  display: flex;
+}
+
+.container {
+  @include euiScrollBar;
+  flex: auto;
+  border-top: inherit;
+  padding: 9px 18px;
+  height: 100%;
+  word-break: break-all;
+
+  font: normal normal normal 14px/17px Inconsolata;
+  text-align: left;
+  letter-spacing: 0;
+  color: var(--textColorShade);
+
+  border-top: 1px solid var(--euiColorLightShade);
+  border-right: 1px solid var(--euiColorLightShade);
+
+  z-index: 10;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.title {
+  padding-left: 18px;
+}
+
+.output {
+  white-space: pre-wrap;
+}
+
+.input {
+  padding-bottom: 7px;
+}
+
+:global(.cli-output-response-success) {
+  color: var(--cliOutputResponseColor) !important;
+}
+
+:global(.cli-output-response-fail) {
+  color: var(--cliOutputResponseFailColor) !important;
+}
+
+:global(.cli-command-wrapper) {
+  font: normal normal bold 14px/15px Inconsolata !important;
+}

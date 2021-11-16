@@ -1,0 +1,253 @@
+import React, { Ref, useEffect, useRef, useState } from 'react'
+import { EuiFlexGroup, EuiFlexItem, keys } from '@elastic/eui'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { Nullable } from 'uiSrc/utils'
+import { isModifiedEvent } from 'uiSrc/services'
+import { ClearCommand } from 'uiSrc/constants/cliOutput'
+import { outputSelector } from 'uiSrc/slices/cli/cli-output'
+import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
+import CliInputWrapper from 'uiSrc/components/cli/components/cli-input'
+import { clearOutput, updateCliHistoryStorage } from 'uiSrc/utils/cli'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+
+import styles from './styles.module.scss'
+
+export interface Props {
+  data: (string | JSX.Element)[];
+  command: string;
+  error: string;
+  setCommand: (command: string) => void;
+  onSubmit: () => void;
+}
+
+const commandTabPosInit = 0
+const commandHistoryPosInit = -1
+const CliBody = (props: Props) => {
+  const { data, command = '', error, setCommand, onSubmit } = props
+
+  const [inputEl, setInputEl] = useState<Nullable<HTMLSpanElement>>(null)
+  const [commandHistory, setCommandHistory] = useState<string[]>([])
+  const [commandHistoryPos, setCommandHistoryPos] = useState<number>(commandHistoryPosInit)
+  const [commandTabPos, setCommandTabPos] = useState<number>(commandTabPosInit)
+  const [wordsTyped, setWordsTyped] = useState<number>(0)
+  const [matchingCmds, setMatchingCmds] = useState<string[]>([])
+  const { loading: settingsLoading } = useSelector(cliSettingsSelector)
+  const { loading, commandHistory: commandHistoryStore } = useSelector(outputSelector)
+  const { commandsArray } = useSelector(appRedisCommandsSelector)
+
+  const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    inputEl?.focus()
+    scrollDivRef?.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'end',
+    })
+  }, [command, data, inputEl, scrollDivRef])
+
+  useEffect(() => {
+    setCommandHistory(commandHistoryStore)
+  }, [commandHistoryStore])
+
+  useEffect(() => {
+    if (command) {
+      setWordsTyped(
+        command.trim().match(/(?:'[^']*'|[^\s'"]|"[^"]*"|\[[^\]]*\])+/g)?.length ?? wordsTyped
+      )
+    }
+  }, [command])
+
+  const onClearOutput = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    event.preventDefault()
+
+    clearOutput(dispatch)
+    setCommand('')
+  }
+
+  const onKeyDownEnter = (commandLine: string, event: React.KeyboardEvent<HTMLSpanElement>) => {
+    event.preventDefault()
+
+    setWordsTyped(0)
+    setCommandHistoryPos(commandHistoryPosInit)
+    updateCliHistoryStorage(commandLine, dispatch)
+
+    if (commandLine === ClearCommand) {
+      onClearOutput(event)
+      return
+    }
+
+    onSubmit()
+  }
+
+  const onKeyDownArrowUp = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    event.preventDefault()
+    const newPos = commandHistoryPos + 1
+    if (newPos >= commandHistory.length) {
+      return
+    }
+
+    setCommandFromHistory(newPos)
+  }
+
+  const onKeyDownArrowDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    const newPos = commandHistoryPos - 1
+
+    if (commandHistoryPos === commandHistoryPosInit) {
+      event.preventDefault()
+      return
+    }
+
+    setCommandFromHistory(newPos)
+  }
+
+  const onKeyDownTab = (event: React.KeyboardEvent<HTMLSpanElement>, commandLine: string) => {
+    event.preventDefault()
+
+    const nextPos = commandTabPos === matchingCmds.length - 1 ? commandTabPosInit : commandTabPos + 1
+    let matchingCmdsCurrent = matchingCmds
+
+    if (commandTabPos === commandTabPosInit) {
+      matchingCmdsCurrent = updateMatchingCmds(commandLine)
+    }
+
+    if (matchingCmdsCurrent.length > 1) {
+      setCommand(matchingCmdsCurrent[nextPos])
+      setCommandTabPos(nextPos)
+    }
+  }
+
+  const onKeyDownShiftTab = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    event.preventDefault()
+
+    let matchingCmdsCurrent = matchingCmds
+
+    if (commandTabPos === commandTabPosInit) {
+      matchingCmdsCurrent = updateMatchingCmds(command)
+    }
+
+    const nextPos = commandTabPos ? commandTabPos - 1 : matchingCmdsCurrent.length - 1
+
+    if (!matchingCmdsCurrent.length) {
+      return
+    }
+
+    if (matchingCmdsCurrent.length > 1) {
+      setCommand(matchingCmdsCurrent[nextPos])
+      setCommandTabPos(nextPos)
+    }
+  }
+
+  const onKeyEsc = () => {
+    document.getElementById('collapse-cli')?.focus()
+  }
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    const commandLine = command?.trim()
+
+    const isModifierKey = isModifiedEvent(event)
+
+    if (event.shiftKey && event.key === keys.TAB) {
+      onKeyDownShiftTab(event)
+      return
+    }
+
+    if (event.key === keys.TAB) {
+      onKeyDownTab(event, commandLine)
+      return
+    }
+
+    // reset command tab position
+    if (!event.shiftKey || (event.shiftKey && event.key !== 'Shift')) {
+      setCommandTabPos(commandTabPosInit)
+    }
+
+    if (event.key === keys.ENTER) {
+      onKeyDownEnter(commandLine, event)
+      return
+    }
+
+    if (event.key === keys.ARROW_UP && !isModifierKey) {
+      onKeyDownArrowUp(event)
+      return
+    }
+
+    if (event.key === keys.ARROW_DOWN && !isModifierKey) {
+      onKeyDownArrowDown(event)
+      return
+    }
+
+    if (event.key === keys.ESCAPE) {
+      onKeyEsc()
+      return
+    }
+
+    if ((event.metaKey && event.key === 'k') || (event.ctrlKey && event.key === 'l')) {
+      onClearOutput(event)
+    }
+  }
+
+  const updateMatchingCmds = (command: string = '') => {
+    const matchingCmdsCurrent = [
+      command,
+      ...commandsArray.filter((cmd: string) => cmd.startsWith(command.toUpperCase())),
+    ]
+
+    setMatchingCmds(matchingCmdsCurrent)
+
+    return matchingCmdsCurrent
+  }
+
+  const setCommandFromHistory = (newPos: number) => {
+    const newCommand = commandHistory[newPos] ?? ''
+
+    setCommand(newCommand)
+    setCommandHistoryPos(newPos)
+
+    setTimeout(() => {
+      inputEl?.focus()
+    })
+  }
+
+  const onMouseUpOutput = () => {
+    if (!window.getSelection()?.toString()) {
+      inputEl?.focus()
+      document.execCommand('selectAll', false)
+      document.getSelection()?.collapseToEnd()
+    }
+  }
+
+  return (
+    <div className={styles.container} onMouseUp={onMouseUpOutput} role="textbox" tabIndex={0}>
+      <EuiFlexGroup
+        justifyContent="spaceBetween"
+        gutterSize="none"
+        responsive={false}
+        direction="row"
+        style={{ height: '100%' }}
+      >
+        <EuiFlexItem grow>
+          <div className={styles.output}>{data}</div>
+          {!error && !(loading || settingsLoading) ? (
+            <span style={{ paddingBottom: 5 }}>
+              <CliInputWrapper
+                command={command}
+                setCommand={setCommand}
+                setInputEl={setInputEl}
+                onKeyDown={onKeyDown}
+                wordsTyped={wordsTyped}
+              />
+            </span>
+          ) : (
+            !error && <span>Executing command...</span>
+          )}
+          <div ref={scrollDivRef} />
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </div>
+  )
+}
+
+export default CliBody

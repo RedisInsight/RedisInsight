@@ -1,0 +1,71 @@
+.euiToast {
+  border-width: 0 !important;
+  box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
+}
+.euiToast--danger, .euiToast--success {
+  border-top-width: 3px !important;
+}
+
+.euiToast--danger {
+  border-color: var(--euiToastDangerBorderColor) !important;
+  background-color: var(--euiColorColorWarning) !important;
+}
+
+.euiToast--success {
+  border-color: var(--euiToastSuccessBorderColor) !important;
+}
+
+.euiToast__closeButton {
+  svg {
+    fill: #ffffff !important;
+  }
+
+  &:focus {
+    background-color: initial !important;
+  }
+}
+
+.euiToastHeader__title {
+  font-size: 18px !important;
+}
+
+.euiToastHeader__icon {
+  transform: translateY(3px) !important;
+  width: 20px !important;
+  height: 20px !important;
+  fill: #fff !important;
+}
+
+.toast-danger-btn {
+  box-shadow: none !important;
+  border-color: var(--euiToastDangerBtnColor) !important;
+  float: right;
+  &.euiButton {
+    color: white !important;
+  }
+  &.euiButton--fill {
+    border-color: var(--euiColorColorWarning) !important;
+    background-color: var(--euiToastDangerBtnColor) !important;
+  }
+}
+
+.euiGlobalToastList--right:not(:empty) {
+  right: 14px !important;
+}
+
+.euiGlobalToastList--left:not(:empty) {
+  left: 14px !important;
+}
+
+
+@media only screen and (max-width: 767px) {
+  .euiGlobalToastList {
+    width: 400px !important;
+    max-width: 90vw;
+  }
+  .euiGlobalToastList--right:not(:empty) {
+    left: auto !important;
+  }
+}
+
+

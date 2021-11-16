@@ -1,0 +1,24 @@
+.defaultScreen {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  line-height: 21px;
+}
+
+.description, .description div {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title {
+  &:global(.euiLink) {
+    color: var(--euiTextSubduedColorHover) !important;
+  }
+}
+
+.summary, .summary div {
+  color: var(--inputPlaceHolderColor) !important;
+}

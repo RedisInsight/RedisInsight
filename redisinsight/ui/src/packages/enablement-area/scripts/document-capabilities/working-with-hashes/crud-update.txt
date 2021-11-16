@@ -1,0 +1,5 @@
+HGET permit:1 construction_value // Read the construction_value field before the update
+
+HSET permit:1 "construction_value"  36000 // Update the construction_value field
+
+HGET permit:1 construction_value // Read the construction_value field after the update

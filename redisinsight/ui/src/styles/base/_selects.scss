@@ -1,0 +1,32 @@
+.euiSuperSelect {
+  .euiFormControlLayoutCustomIcon {
+    transition: transform 0.1s linear;
+  }
+  &.euiPopover-isOpen {
+    .euiFormControlLayoutCustomIcon {
+      transform: rotateX(180deg);
+    }
+  }
+}
+
+.euiContextMenuItem.euiSuperSelect {
+  &__item {
+    min-height: 40px;
+    &:focus {
+      background: none;
+      text-decoration: none;
+    }
+    &:hover {
+      background: var(--hoverInListColorLight);
+      text-decoration: none;
+      color: var(--euiColorGhost);
+    }
+    &.withColorDefinition {
+      min-height: auto;
+      &:hover,
+      &:focus {
+        background: var(--hoverInListColor);
+      }
+    }
+  }
+}

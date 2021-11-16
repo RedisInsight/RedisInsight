@@ -1,0 +1,23 @@
+.tooltip {
+  max-width: 312px !important;
+}
+
+.popover {
+  max-width: 312px !important;
+  word-wrap: break-word;
+}
+
+.popoverTitle {
+  margin-top: 0 !important;
+}
+
+.appendInfo {
+  color: var(--euiTextSubduedColor);
+
+  display: flex;
+  margin-top: 1rem;
+
+  > div {
+    font-size: 12px !important;
+  }
+}

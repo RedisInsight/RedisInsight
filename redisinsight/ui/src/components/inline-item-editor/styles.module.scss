@@ -1,0 +1,75 @@
+.container {
+  max-width: 100%;
+
+  :global(.euiFormControlLayout) {
+    max-width: 100% !important;
+  }
+}
+
+.field {
+  min-width: 110px;
+  max-width: 100% !important;
+  box-shadow: 0 3px 3px var(--controlsBoxShadowColor) !important;
+  height: 33px !important;
+  border: 1px solid var(--controlsBoxShadowColor) !important;
+}
+
+.controls {
+  position: absolute;
+  background-color: var(--euiColorLightestShade);
+  width: 80px;
+  height: 33px;
+
+  z-index: 1;
+
+  :global(.euiButtonIcon) {
+    width: 50% !important;
+    height: 100% !important;
+  }
+}
+
+.controlsBottom {
+  top: 100%;
+  right: 0;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
+}
+
+.controlsTop {
+  bottom: 100%;
+  right: 0;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -3px 3px var(--controlsBoxShadowColor);
+}
+
+.controlsRight {
+  top: 0;
+  left: 100%;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
+}
+
+.controlsLeft {
+  top: 0;
+  right: 100%;
+  border-radius: 10px 0 0 10px;
+  box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
+}
+
+.declineBtn:hover {
+  color: var(--euiColorColorDanger) !important;
+}
+
+.applyBtn:hover {
+  color: var(--euiColorPrimary) !important;
+}
+
+.keyHiddenText {
+  display: inline-block;
+  visibility: hidden;
+  height: 1px;
+  overflow: hidden;
+  max-width: 100%;
+  margin-right: 80px;
+  word-break: break-all;
+}

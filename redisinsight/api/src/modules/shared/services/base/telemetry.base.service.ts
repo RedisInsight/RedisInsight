@@ -1,0 +1,36 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { HttpException } from '@nestjs/common';
+import { AppAnalyticsEvents } from 'src/constants';
+
+export abstract class TelemetryBaseService {
+  protected eventEmitter: EventEmitter2;
+
+  protected constructor(eventEmitter: EventEmitter2) {
+    this.eventEmitter = eventEmitter;
+  }
+
+  protected sendEvent(event: string, eventData: object = {}): void {
+    try {
+      this.eventEmitter.emit(AppAnalyticsEvents.Track, {
+        event,
+        eventData,
+      });
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
+  protected sendFailedEvent(event: string, exception: HttpException, eventData: object = {}): void {
+    try {
+      this.eventEmitter.emit(AppAnalyticsEvents.Track, {
+        event,
+        eventData: {
+          error: exception.getResponse()['error'] || exception.message,
+          ...eventData,
+        },
+      });
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+}

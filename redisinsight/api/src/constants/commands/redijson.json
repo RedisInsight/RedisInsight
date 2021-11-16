@@ -1,0 +1,59 @@
+{
+  "JSON.DEL": {
+    "summary": "Deletes a value",
+    "complexity": "O(N), where N is the size of the deleted value",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "path",
+        "type": "json path string",
+        "optional": true
+      }
+    ],
+    "since": "1.0.0",
+    "group": "json"
+  },
+  "JSON.GET": {
+    "summary": "Gets the value at one or more paths in JSON serialized form",
+    "complexity": "O(N), where N is the size of the value",
+    "arguments": [
+      {
+        "name": "key",
+        "type": "key"
+      },
+      {
+        "name": "indent",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "newline",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "space",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "escape",
+        "type": "enum",
+        "enum": [
+          "NOESCAPE"
+        ],
+        "optional": true
+      },
+      {
+        "name": "paths",
+        "type": "json path string",
+        "optional": true
+      }
+    ],
+    "since": "1.0.0",
+    "group": "json"
+  }
+}

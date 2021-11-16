@@ -1,0 +1,63 @@
+$sideBarSize: 60px;
+
+* {
+  box-sizing: border-box;
+}
+
+.euiPage.main {
+  color: var(--htmlColor);
+}
+
+.euiPage .euiPage {
+  padding-bottom: 0;
+}
+
+.euiPage {
+  background-color: var(--euiPageBackgroundColor) !important;
+}
+
+main.euiPageBody {
+  height: calc(100vh - 60px);
+  @media only screen and (min-width: 768px) {
+    height: auto;
+  }
+}
+
+.euiPageSideBar {
+  margin-right: 0 !important;
+  width: $sideBarSize;
+  min-width: $sideBarSize !important;
+  overflow: hidden !important;
+  height: $sideBarSize !important;
+  max-height: $sideBarSize !important;
+  min-height: $sideBarSize !important;
+  padding: 0;
+  flex: 1 1 $sideBarSize !important;
+
+  @media only screen and (min-width: 768px) {
+    display: block;
+    height: 100% !important;
+    max-height: 100% !important;
+    flex: 0 1 0 !important;
+    padding: 4px 0 20px !important;
+    overflow: auto !important;
+  }
+}
+
+.euiLoadingSpinner {
+  border-top-color: var(--euiColorDarkestShade) !important;
+}
+
+.link-underline {
+  color: currentColor;
+  text-decoration: underline;
+}
+
+.color-shade {
+  color: var(--textColorShade) !important;
+}
+
+.euiHealth .euiIcon {
+  width: 18px !important;
+  height: 18px !important;
+}

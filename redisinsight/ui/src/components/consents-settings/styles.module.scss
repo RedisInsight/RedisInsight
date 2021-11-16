@@ -1,0 +1,47 @@
+.redisIcon {
+  width: 140px;
+  height: auto;
+}
+
+.consentsPopup {
+  background-color: var(--tableRowHoverColor);
+  border-color: var(--tableRowHoverColor);
+  :global {
+    min-width: 744px !important;
+    width: 874px;
+    max-width: 94vw;
+    .euiModal__closeIcon {
+      display: none;
+    }
+  }
+
+  a {
+    color: currentColor !important;
+    text-decoration: underline;
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+}
+
+.modalHeader {
+  padding-bottom: 4px;
+}
+
+.consentsPopupTitle {
+  color: var(--euiTextSubduedColorHover);
+  font-weight: 500 !important;
+}
+
+.switchOption {
+  color: var(--euiTextSubduedColorHover);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.label {
+  color: var(--inputTextColor) !important;
+  line-height: 20px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}

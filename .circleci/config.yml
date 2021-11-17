@@ -96,7 +96,7 @@ aliases:
     filters:
       branches:
         only:
-          - develop
+          - main
   stage-filter: &stageFilter
     filters:
       branches:
@@ -106,7 +106,7 @@ aliases:
     filters:
       branches:
         only:
-          - master
+          - latest
   ui-deps-cache-key: &uiDepsCacheKey
     key: v1-ui-deps-{{ checksum "yarn.lock" }}
   api-deps-cache-key: &apiDepsCacheKey
@@ -759,8 +759,8 @@ workflows:
                 - /^release.*/
                 - /^e2e.*/
                 - /^feature/e2e.*/
-                - develop
-                - master
+                - main
+                - latest
       - e2e-tests:
           name: E2ETest
           build: docker
@@ -847,7 +847,7 @@ workflows:
       #            parameters:
       #              rte: *iTestsNames
       #          name: Itest - << matrix.rte >> (code)
-      # Needs approval from QA team that build was tested before merging to master
+      # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team
           type: approval
@@ -931,14 +931,14 @@ workflows:
           requires:
             - Release AWS S3 Private (prod)
             - Release Github (prod)
-          <<: *prodFilter # double check for "master"
+          <<: *prodFilter # double check for "latest"
 
       # Publish release
       - publish-prod-aws:
           name: Publish AWS S3
           requires:
             - Approve Publish Release (prod)
-          <<: *prodFilter # double check for "master"
+          <<: *prodFilter # double check for "latest"
 
   # Nightly tests
   nightly:
@@ -948,8 +948,8 @@ workflows:
           filters:
             branches:
               only:
-                - master
-                - develop
+                - main
+                - latest
     jobs:
       - docker:
           name: Build docker image

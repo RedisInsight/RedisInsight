@@ -34,6 +34,10 @@
     .euiListGroupItem {
       button {
         padding: 3px 8px;
+        line-height: 24px;
+      }
+      .euiListGroupItem__label {
+       line-height: 20px;
       }
     }
   }

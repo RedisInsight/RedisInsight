@@ -1,0 +1,19 @@
+// Perform a combined search on two fields (AND): query for intersection of both search terms, a text search and a tag match
+
+FT.SEARCH "schools" "@description:girls @status:{closed}"
+
+// See the "schools" index schema for reference
+
+// FT.CREATE schools
+// on JSON
+//   PREFIX 1 "school:"
+// SCHEMA
+//   $.name AS name TEXT NOSTEM SORTABLE
+//   $.description AS description TEXT
+//   $.school_type AS school_type TAG SEPARATOR ";"
+//   $.class AS class TAG
+//   $.address.street AS address TEXT NOSTEM
+//   $.address.city AS city TAG
+//   $.pupils AS pupils NUMERIC SORTABLE
+//   $.location AS location GEO
+//   $.status_log.[-1] as status TAG

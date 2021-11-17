@@ -8,9 +8,16 @@ Awesome Redis GUI written in Electron, NodeJS and React
 
 - `redisinsight/ui` - Contains the frontend code
 - `redisinsight/api` - Contains the backend code
+- `docs` - Contains the documentation
 - `scripts` - Build scripts and other build-related files
 - `configs` - Webpack configuration files and other build-related files
 - `tests` - Contains the e2e
+
+## Plugins documentation
+
+* [Introduction](docs/plugins/introduction.md)
+* [Installation and Usage](docs/plugins/installation.md)
+* [Plugin Development](docs/plugins/development.md)
 
 ## Prerequisites
 

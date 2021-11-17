@@ -120,6 +120,7 @@ const TableInfoResult = React.memo((props: Props) => {
             className={cx('inMemoryTableDefault', 'tableInfo', {
               tableWithPagination: result?.length > 10,
             })}
+            responsive={false}
             data-testid={`query-table-result-${query}`}
           />
           {Footer()}

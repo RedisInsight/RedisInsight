@@ -7,6 +7,8 @@
     "test:live": "testcafe --live chrome ",
     "start:api": "cross-env SERVER_STATIC_CONTENT=true yarn --cwd ../../redisinsight/api start:prod",
     "build:api": "yarn --cwd ../../redisinsight/api build:prod",
+    "build:statics": "yarn --cwd ../../ build:statics",
+    "build:statics:win": "yarn --cwd ../../ build:statics:win",
     "build:web": "yarn --cwd ../../ build:web",
     "redis:last": "docker run --name redis-last-version -p 7777:6379 -d redislabs/redismod",
     "start:app": "cross-env SERVER_STATIC_CONTENT=true yarn start:api",

@@ -33,6 +33,24 @@
               "backTitle": "Document Capabilities",
               "path": "/static/workbench/guides/document-capabilities/working-with-hashes.html"
             }
+          },
+          {
+            "type": "internal-link",
+            "id": "working-with-json",
+            "label": "Working with JSON",
+            "args": {
+              "backTitle": "Document Capabilities",
+              "path": "/static/workbench/guides/document-capabilities/working-with-json.html"
+            }
+          },
+          {
+            "type": "internal-link",
+            "id": "learn-more",
+            "label": "Learn More",
+            "args": {
+              "backTitle": "Document Capabilities",
+              "path": "/static/workbench/guides/document-capabilities/learn-more.html"
+            }
           }
         ]
       }

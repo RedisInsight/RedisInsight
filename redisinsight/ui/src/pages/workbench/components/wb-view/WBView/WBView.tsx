@@ -79,7 +79,7 @@ const WBView = (props: Props) => {
               <EuiResizablePanel
                 id={horizontalPanelIds.firstPanelId}
                 mode="collapsible"
-                className={styles.sidebar}
+                className={cx(styles.sidebar, styles.sidebarPanel)}
                 initialSize={horizontal[horizontalPanelIds.firstPanelId] ?? 25}
                 minSize="250px"
                 onToggleCollapsed={() => { isCollapsed.current = !isCollapsed.current }}
@@ -92,11 +92,12 @@ const WBView = (props: Props) => {
                 data-test-subj="resize-btn-preselects-area"
               />
               <EuiResizablePanel
-                className={styles.content}
+                className={cx(styles.content, styles.contentPanel)}
                 mode="main"
                 initialSize={horizontal[horizontalPanelIds.secondPanelId] ?? 75}
                 minSize="75%"
                 id={horizontalPanelIds.secondPanelId}
+                scrollable={false}
               >
                 <EuiResizableContainer onPanelWidthChange={onVerticalPanelWidthChange} direction="vertical" style={{ height: '100%' }}>
                   {(EuiResizablePanel, EuiResizableButton) => (
@@ -106,6 +107,7 @@ const WBView = (props: Props) => {
                         minSize="140px"
                         paddingSize="none"
                         scrollable={false}
+                        className={styles.queryPanel}
                         initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
                         style={{ minHeight: '140px' }}
                       >
@@ -129,7 +131,9 @@ const WBView = (props: Props) => {
                         paddingSize="none"
                         scrollable={false}
                         initialSize={vertical[verticalPanelIds.secondPanelId] ?? 80}
-                        className={styles.queryResults}
+                        className={cx(styles.queryResults, styles.queryResultsPanel)}
+                        // Fix scroll on low height - 140px (queryPanel)
+                        style={{ maxHeight: 'calc(100% - 140px)' }}
                       >
                         <WBResultsWrapper
                           historyItems={historyItems}

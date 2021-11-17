@@ -3,6 +3,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
+import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
@@ -22,7 +23,7 @@ export default async function bootstrap() {
   }
 
   const app = await NestFactory.create(AppModule, options);
-
+  app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();

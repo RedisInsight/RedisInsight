@@ -117,6 +117,7 @@ const TableResult = React.memo((props: Props) => {
               tableWithPagination: result?.length > 10,
             }
           )}
+          responsive={false}
           data-testid={`query-table-result-${query}`}
         />
       )}

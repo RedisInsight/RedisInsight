@@ -94,7 +94,7 @@ export const getDisplayAppInTrayValue = (): boolean => {
 /**
  * Backend part...
  */
-const port = 5000;
+const port = 5001;
 const launchApiServer = async () => {
   try {
     const detectPortConst = await detectPort(port);
@@ -134,19 +134,35 @@ const bootstrap = async () => {
 
 export const windows = new Set<BrowserWindow>();
 
-export const createWindow = async () => {
+const titleSplash = 'splash';
+export const createSplashScreen = async () => {
+  const splash = new BrowserWindow({
+    width: 500,
+    height: 200,
+    transparent: true,
+    frame: false,
+    resizable: false,
+    alwaysOnTop: true,
+    title: titleSplash,
+  });
+
+  splash.loadURL(`file://${__dirname}/splash.html`);
+
+  return splash;
+};
+
+export const createWindow = async (splash: BrowserWindow | null) => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'resources')
     : path.join(__dirname, '../resources');
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
+  const getAssetPath = (...paths: string[]): string => path.join(RESOURCES_PATH, ...paths);
 
   let x;
   let y;
   const currentWindow = BrowserWindow.getFocusedWindow();
-  if (currentWindow) {
+
+  if (currentWindow && currentWindow?.getTitle() !== titleSplash) {
     const [currentWindowX, currentWindowY] = currentWindow.getPosition();
     x = currentWindowX + 24;
     y = currentWindowY + 24;
@@ -188,8 +204,9 @@ export const createWindow = async () => {
     if (process.env.START_MINIMIZED) {
       newWindow.minimize();
     } else {
-      newWindow.show();
-      newWindow.focus();
+      newWindow?.show();
+      newWindow?.focus();
+      splash?.close();
     }
   });
 
@@ -293,7 +310,11 @@ app.on('continue-activity-error', (event, type, error) => {
   }
 });
 
-app.whenReady().then(bootstrap).then(createWindow).catch(console.log);
+app.whenReady()
+  .then(bootstrap)
+  .then(createSplashScreen)
+  .then(createWindow)
+  .catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the

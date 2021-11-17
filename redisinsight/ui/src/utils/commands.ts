@@ -49,26 +49,30 @@ export const generateArgsNames = (
     isEmpty
   )
 
+const getExternalCommandFormat = (commandName = '') =>
+  commandName
+    .replace(/\s+/g, '_')
+    .replace(/[.]+/g, '')
+    .toLowerCase()
+
 export const getDocUrlForCommand = (
   commandName: string,
   commandGroup: CommandGroup | string = CommandGroup.Generic
 ): string => {
-  let commandPage = ''
+  let command = getExternalCommandFormat(commandName)
   switch (commandGroup) {
     case CommandGroup.Search:
-      commandPage = commandName
-        .replace(/\s+/g, '_')
-        .replace(/[.]+/g, '')
-        .toLowerCase()
-      return `https://oss.redis.com/redisearch/Commands/#${commandPage}`
+      return `https://oss.redis.com/redisearch/Commands/#${command}`
     case CommandGroup.JSON:
-      commandPage = commandName
-        .replace(/\s+/g, '_')
-        .replace(/[.]+/g, '')
-        .toLowerCase()
-      return `https://oss.redis.com/redisjson/commands/#${commandPage}`
+      return `https://oss.redis.com/redisjson/commands/#${command}`
+    case CommandGroup.TimeSeries:
+      return `https://oss.redis.com/redistimeseries/commands/#${command}`
+    case CommandGroup.Graph:
+      return `https://oss.redis.com/redisgraph/commands/#${command}`
+    case CommandGroup.AI:
+      return `https://oss.redis.com/redisai/commands/#${command}`
     default:
-      commandPage = commandName.replace(/\s+/g, '-').toLowerCase()
-      return `https://redis.io/commands/${commandPage}`
+      command = commandName.replace(/\s+/g, '-').toLowerCase()
+      return `https://redis.io/commands/${command}`
   }
 }

@@ -1,0 +1,11 @@
+// Let's add four documents as JSON to the index. Note the format of the key names.
+// Each document represents a school.
+
+JSON.SET school:1 . '{"name":"Hall School", "description":"Independent primary school for boys aged 5 to 11","school_type":"single;boys","class":"independent", "address":{"city":"London", "street":"Manor Street"}, "pupils":342, "location":"51.445417, -0.258352", "status_log":["new", "operating"]}'
+
+JSON.SET school:2 . '{"name":"Garden School", "description":"State school for boys and girls aged 5 to 18","school_type":"mixed;boys;girls","class":"state", "address":{"city":"London", "street":"Gordon Street"}, "pupils":1452, "location":"51.402926, -0.321523", "status_log":["new", "operating"]}'
+
+JSON.SET school:3 . '{"name":"Gillford School", "description":"Independent school for girls aged 5 to 18","school_type":"single;girls","class":"private", "address":{"city":"Goudhurst", "street":"Goudhurst"}, "pupils":721, "location":"51.112685, 0.451076", "status_log":["new", "operating", "closed"]}'
+
+JSON.SET school:4 . '{"name":"Old Boys School", "description":"Independent school for boys aged 5 to 18","school_type":"single;boys","class":"independent", "address":{"city":"Oxford", "street":"Trident Street"}, "pupils":1200, "location":"51.781756, -1.123196", "status_log":["new", "operating"]}'
+

@@ -417,9 +417,11 @@ export function fetchMoreKeys(cursor: string, count: number) {
         dispatch(loadMoreKeysSuccess(parseKeysListResponse(state.browser.keys.data.shardsMeta, data)))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(loadMoreKeysFailure(errorMessage))
+      if (!axios.isCancel(error)) {
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadMoreKeysFailure(errorMessage))
+      }
     }
   }
 }

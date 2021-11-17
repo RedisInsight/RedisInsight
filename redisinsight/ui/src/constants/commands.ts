@@ -56,6 +56,9 @@ export enum CommandGroup {
   String = 'string',
   Search = 'search',
   JSON = 'json',
+  TimeSeries = 'timeseries',
+  Graph = 'graph',
+  AI = 'ai'
 }
 
 export enum CommandRediSearch {

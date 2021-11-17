@@ -4,6 +4,7 @@ import cx from 'classnames'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 
 import styles from './styles.module.scss'
+import './styles.scss'
 
 export interface Props {
   testId: string,

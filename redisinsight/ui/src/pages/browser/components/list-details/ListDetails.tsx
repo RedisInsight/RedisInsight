@@ -2,7 +2,7 @@ import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { isNull } from 'lodash'
+import { isEqual, isNull } from 'lodash'
 
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
@@ -66,10 +66,16 @@ const ListDetails = (props: Props) => {
   }, [loadedElements])
 
   const handleEditElement = (index = 0, editing: boolean) => {
-    const elems = [...elements]
-    elems[index].editing = editing
+    const newElemsState = elements.map((item) => {
+      if (item.index === index) {
+        return { ...item, editing }
+      }
+      return item
+    })
 
-    setElements(elems)
+    if (!isEqual(elements, newElemsState)) {
+      setElements(newElemsState)
+    }
   }
 
   const handleApplyEditElement = (index = 0, element: string) => {

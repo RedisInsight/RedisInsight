@@ -1,0 +1,5 @@
+// Command to display information about a particular index.
+// In this case display the information about the newly created "schools" index
+
+FT.INFO "schools"
+

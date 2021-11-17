@@ -1,0 +1,5 @@
+JSON.GET school:1 // Read the whole document
+
+// RedisJSON supports JSONPath, so we can easily access nested properties using $.<field_name> construct
+
+JSON.GET school:1 $.description // Read only the field description

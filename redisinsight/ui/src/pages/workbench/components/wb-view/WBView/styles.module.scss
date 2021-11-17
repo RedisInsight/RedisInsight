@@ -41,7 +41,22 @@
 
 .resizeButton {
   z-index: 1 !important;
-  margin: 0 !important;
+}
+
+.queryPanel {
+  padding-bottom: 8px;
+}
+
+.queryResultsPanel {
+  padding-top: 8px;
+}
+
+.sidebarPanel {
+  padding-right: 8px !important;
+}
+
+.contentPanel {
+  padding-left: 8px !important;
 }
 
 .sidebar, .queryResults {

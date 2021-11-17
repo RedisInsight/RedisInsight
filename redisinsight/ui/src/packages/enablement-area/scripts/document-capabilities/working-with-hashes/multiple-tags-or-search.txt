@@ -1,4 +1,4 @@
-​​// Perform a search for documents that have one of multiple tags (OR condition)
+// Perform a search for documents that have one of multiple tags (OR condition)
 
 FT.SEARCH "permits" "@work_type:{construction|design}"
 

@@ -6,6 +6,7 @@
     "dist/",
     "node_modules/",
     "index.html",
+    "splash.html",
     "main.prod.js",
     "main.prod.js.map",
     "package.json"

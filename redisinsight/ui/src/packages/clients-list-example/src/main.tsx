@@ -20,4 +20,5 @@ if (process.env.NODE_ENV === 'development') {
   renderClientsList({ command: '', data: response, status: 'success' })
 }
 
+// This is a required action - export the main function for execution of the visualization
 export default { renderClientsList }

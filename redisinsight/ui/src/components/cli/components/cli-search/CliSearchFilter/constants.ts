@@ -69,4 +69,16 @@ export const FILTER_GROUP_TYPE_OPTIONS = [
     text: 'JSON',
     value: CommandGroup.JSON,
   },
+  {
+    text: 'TimeSeries',
+    value: CommandGroup.TimeSeries,
+  },
+  {
+    text: 'Graph',
+    value: CommandGroup.Graph,
+  },
+  {
+    text: 'AI',
+    value: CommandGroup.AI,
+  },
 ]

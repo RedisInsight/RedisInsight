@@ -150,7 +150,7 @@ const listSlice = createSlice({
       state,
       { payload }: { payload: SetListElementDto }
     ) => {
-      state.data.elements[payload.index] = payload.element
+      state.data.elements[state.data.elements.length === 1 ? 0 : payload.index] = payload.element
     },
     insertListElements: (state) => {
       state.loading = true

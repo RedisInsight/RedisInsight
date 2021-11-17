@@ -192,6 +192,12 @@ const getDocUrlForCommandTests: any[] = [
   ['JSON.GET', CommandGroup.JSON, 'https://oss.redis.com/redisjson/commands/#jsonget'],
   ['FT.CREATE', CommandGroup.Search, 'https://oss.redis.com/redisearch/Commands/#ftcreate'],
   ['FT.ALTER SCHEMA ADD', CommandGroup.Search, 'https://oss.redis.com/redisearch/Commands/#ftalter_schema_add'],
+  ['TS.ADD', CommandGroup.TimeSeries, 'https://oss.redis.com/redistimeseries/commands/#tsadd'],
+  ['TS.CREATE', CommandGroup.TimeSeries, 'https://oss.redis.com/redistimeseries/commands/#tscreate'],
+  ['GRAPH.EXPLAIN', CommandGroup.Graph, 'https://oss.redis.com/redisgraph/commands/#graphexplain'],
+  ['GRAPH.QUERY', CommandGroup.Graph, 'https://oss.redis.com/redisgraph/commands/#graphquery'],
+  ['AI.MODELRUN', CommandGroup.AI, 'https://oss.redis.com/redisai/commands/#aimodelrun'],
+  ['AI.SCRIPTDEL', CommandGroup.AI, 'https://oss.redis.com/redisai/commands/#aiscriptdel'],
   ['NON EXIST COMMAND', 'non-exist', 'https://redis.io/commands/non-exist-command'],
 ]
 

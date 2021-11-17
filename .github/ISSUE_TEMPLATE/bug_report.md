@@ -9,9 +9,12 @@ assignees: ''
 
 **Preconditions** (Any important steps we need to know)
 
+
 **Steps to reproduce** (How to reproduce what you found step by step)
 
+
 **Actual behavior** (A short description of what you found)
+
 
 **Expected behavior** (A short description of what you expected to find)
 

@@ -22,4 +22,4 @@ assignees: ''
 **Screenshots** (Paste or drag-and-drop a screenshot or a link to a recording)
 
 
-**Additional context** (Operating system, version of RedisInsight, Redis database version, Redis module version, database type, connection type, any other information)
+**Additional context** (Operating system, version of RedisInsight, Redis database version, Redis module version, database type, connection type, logs, or any other information)

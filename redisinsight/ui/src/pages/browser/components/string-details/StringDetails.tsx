@@ -7,9 +7,11 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiTextArea } from '@elastic/eui'
+import { EuiLoadingSpinner, EuiText, EuiTextArea } from '@elastic/eui'
 
+import { Nullable } from 'uiSrc/utils'
 import {
+  resetStringValue,
   stringDataSelector,
   stringSelector,
   updateStringValueAction,
@@ -32,7 +34,7 @@ const StringDetails = (props: Props) => {
   const { isEditItem, setIsEdit } = props
 
   const [rows, setRows] = useState<number>(5)
-  const [value, setValue] = useState<string>('')
+  const [value, setValue] = useState<Nullable<string>>(null)
   const [areaValue, setAreaValue] = useState<string>('')
 
   const { loading } = useSelector(stringSelector)
@@ -42,14 +44,18 @@ const StringDetails = (props: Props) => {
 
   const dispatch = useDispatch()
 
+  useEffect(() => () => {
+    dispatch(resetStringValue())
+  }, [])
+
   useEffect(() => {
     setValue(initialValue)
-    setAreaValue(initialValue)
+    setAreaValue(initialValue || '')
   }, [initialValue])
 
   useEffect(() => {
     // Approximate calculation of textarea rows by initialValue
-    if (!isEditItem || !textAreaRef.current) {
+    if (!isEditItem || !textAreaRef.current || value === null) {
       return
     }
 
@@ -78,18 +84,25 @@ const StringDetails = (props: Props) => {
   }
 
   const onDeclineChanges = () => {
-    setAreaValue(value)
+    setAreaValue(value || '')
     setIsEdit(false)
   }
 
+  const isLoading = loading || value === null
+
   return (
     <div className={styles.container}>
-      {!isEditItem && !loading && (
+      {isLoading && (
+        <div className={styles.spinnerWrapper}>
+          <EuiLoadingSpinner size="xl" />
+        </div>
+      )}
+      {!isEditItem && !isLoading && (
         <EuiText
           onClick={() => setIsEdit(true)}
         >
           <pre className={styles.stringValue} data-testid="string-value">
-            {value.length ? value : (<span style={{ fontStyle: 'italic' }}>Empty</span>)}
+            {value !== '' ? value : (<span style={{ fontStyle: 'italic' }}>Empty</span>)}
           </pre>
         </EuiText>
       )}

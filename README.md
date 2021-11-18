@@ -1,6 +1,6 @@
 # RedisInsight
 
-[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/master.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/master)
+[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/latest.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/latest)
 
 Awesome Redis GUI written in Electron, NodeJS and React
 

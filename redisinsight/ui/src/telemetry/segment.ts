@@ -94,7 +94,7 @@ export class SegmentTelemetryService implements ITelemetryService {
   async event({ event, properties }: ITelemetryEvent): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        window.analytics.track(event, properties, { context: { ip: '0.0.0.0', ...this._pageInfo } }, resolve)
+        window.analytics.track(event, properties, { context: { ip: '0.0.0.0', ...this._getPageInfo() } }, resolve)
       } catch (e) {
         reject(e)
       }

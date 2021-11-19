@@ -32,7 +32,7 @@ test.only('Verify that user can resize(maximize)/(minimize) the enablement area 
     await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).lt(areaWidthBefore, 'Default scripts area is smaller after resize');
     //Maximize the area with default scripts
     const areaWidthAfter = await workbenchPage.preselectsAreaContainer.clientWidth;
-    await t.click(workbenchPage.resizeButtonForScriptingAndResults);
+    await t.doubleClick(workbenchPage.preselectsAreaContainer);
     await t.drag(workbenchPage.resizeButtonForPreselectsArea, offsetX, 0, { speed: 0.2 });
     await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).gt(areaWidthAfter, 'Default scripts area is bigger after resize');
 });

@@ -24,7 +24,7 @@ fixture `Default scripts area at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-test('Verify that user can resize(maximize)/(minimize) the enablement area (the one with default scripts)', async t => {
+test.only('Verify that user can resize(maximize)/(minimize) the enablement area (the one with default scripts)', async t => {
     const offsetX = 100;
     const areaWidthBefore = await workbenchPage.preselectsAreaContainer.clientWidth;
     //Minimize the area with default scripts
@@ -32,7 +32,7 @@ test('Verify that user can resize(maximize)/(minimize) the enablement area (the 
     await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).lt(areaWidthBefore, 'Default scripts area is smaller after resize');
     //Maximize the area with default scripts
     const areaWidthAfter = await workbenchPage.preselectsAreaContainer.clientWidth;
-    await t.click(workbenchPage.queryInput);
+    await t.click(workbenchPage.resizeButtonForScriptingAndResults);
     await t.drag(workbenchPage.resizeButtonForPreselectsArea, offsetX, 0, { speed: 0.2 });
     await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).gt(areaWidthAfter, 'Default scripts area is bigger after resize');
 });

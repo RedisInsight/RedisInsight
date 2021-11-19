@@ -36,7 +36,8 @@
     "start:web": "webpack serve --config ./configs/webpack.config.web.dev.babel.js",
     "test": "jest ./redisinsight/ui -w 1",
     "test:watch": "jest ./redisinsight/ui --watch -w 1",
-    "test:cov": "jest ./redisinsight/ui --coverage -w 1"
+    "test:cov": "jest ./redisinsight/ui --coverage -w 1",
+    "plugin:create": "node ./scripts/CreatePlugin.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -180,6 +181,7 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-sonarjs": "^0.10.0",
     "file-loader": "^6.0.0",
+    "fs-extra": "^10.0.0",
     "html-webpack-plugin": "^4.5.0",
     "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",

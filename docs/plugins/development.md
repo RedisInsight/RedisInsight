@@ -8,6 +8,13 @@ Plugin visualization in the Workbench is rendered using Iframe to encapsulate pl
 the main plugin script and the stylesheet (if it has been specified in the `package.json`), 
 iframe includes basic styles as well.
 
+
+## How to start
+The following commands will create plugin project from boilerplate inside `redisinsight/ui/src/packages`:
+```
+yarn plugin:create my-plug
+```
+
 ## Plugin structure
 
 Each plugin should have a unique name with all its files [loaded](installation.md) to 

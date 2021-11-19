@@ -10,7 +10,7 @@ iframe includes basic styles as well.
 
 
 ## How to start
-The following commands will create plugin project from boilerplate inside `redisinsight/ui/src/packages`:
+The following command will create plugin project from boilerplate inside `redisinsight/ui/src/packages`:
 ```
 yarn plugin:create my-plug
 ```

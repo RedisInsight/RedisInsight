@@ -108,7 +108,7 @@ const StringDetails = (props: Props) => {
       )}
       {isEditItem && (
         <InlineItemEditor
-          initialValue={value}
+          initialValue={value || ''}
           controlsPosition="bottom"
           placeholder="Enter Value"
           fieldName="value"

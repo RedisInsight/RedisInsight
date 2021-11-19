@@ -52,7 +52,7 @@ const stringSlice = createSlice({
     },
     resetStringValue: (state) => {
       state.data.key = ''
-      state.data.value = ''
+      state.data.value = null
     },
   },
 })

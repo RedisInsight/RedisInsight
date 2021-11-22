@@ -1,233 +1,60 @@
-# RedisInsight
-
 [![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/latest.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/latest)
 
-Awesome Redis GUI written in Electron, NodeJS and React
+# <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  RedisInsight
 
-## Directory Structure
+**Best in class Redis developer GUI to view and interact with your data!**
 
-- `redisinsight/ui` - Contains the frontend code
-- `redisinsight/api` - Contains the backend code
-- `docs` - Contains the documentation
-- `scripts` - Build scripts and other build-related files
-- `configs` - Webpack configuration files and other build-related files
-- `tests` - Contains the e2e
+![RedisInsight Browser screenshot](/.github/redisinsight_browser.png)
 
-## Plugins documentation
+Built with love using Electron, [Elastic UI](https://elastic.github.io/eui/#/), [Monaco Editor](https://microsoft.github.io/monaco-editor/) and NodeJS.
 
-* [Introduction](docs/plugins/introduction.md)
-* [Installation and Usage](docs/plugins/installation.md)
-* [Plugin Development](docs/plugins/development.md)
+## Overview
 
-## Prerequisites
+RedisInsight is an intuitive and efficient GUI for Redis, allowing you to interact with your databases and manage your data—with built-in support for Redis modules.
 
-Make sure you have installed following packages:
-* [Node](https://nodejs.org/en/download/) >=14.x and <16
-* [yarn](https://www.npmjs.com/package/yarn) >=1.21.3
+### RedisInsight features:
 
-## Installation
+* Browse, filter and visualise your key-value Redis data structures
+* CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets 
+* CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
+* Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index queries
+* Intelligent Redis command auto-complete with support for [RedisJSON](https://oss.redis.com/redisjson/), [RediSearch](https://oss.redis.com/redisearch/), [RedisGraph](https://oss.redis.com/redisgraph/), [RedisTimeSeries](https://oss.redis.com/redistimeseries/), [RedisAI](https://oss.redis.com/redisai/)
+* Command-line interface (CLI) that lets you run commands against your Redis server
+* Ability to build your own visualization plugins
+* Built-in click-through guides for Redis capabilities
+* Oficially supported for Redis OSS, [Redis Cloud](https://redis.com/try-free/). Works with Microsoft Azure Cache for Redis (official support upcoming).
+* Available for macOS, Windows and Linux 
 
-Before development or build you have to install required dependencies
+Check out the [release notes](https://docs.redis.com/staging/release-ri-v2.0/ri/release-notes/). 
 
-```bash
-$ yarn install
-$ yarn --cwd redisinsight/api/
-```
+### Telemetry
 
-## Development
+RedisInsight collects telemetry data, that is leveraged to help improve the developer experience (DX) within the app. We value your privacy and all the data collected is anonymised. Of course, you also have the option to not enable it at all.
 
-There are 2 ways to develop:
+## Try RedisInsight
 
-### Developing using electron app
+This repository includes the code for the newly released in public preview RedisInsight 2.0. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
 
-After you have installed all dependencies you can now run the app.
-Run `yarn start` to start an electron application that will watch and build for you.
+The current GA version of RedisInsight is 1.11. You can run RedisInsight 2.0 along with the GA version. 
 
-```bash
-# Development
-$ yarn start
-```
+Both versions are available for download as a packaged solution for free from [here](https://docs.redis.com/latest/ri/installing/). 
 
-### Developing using web
+## Feedback
 
-#### Running backend part of the app
+* Request a new [feature](https://github.com/RedisInsight/RedisInsight/issues/new?assignees=&labels=&template=feature_request.md&title=%5BFeature+Request%5D%3A)
+* Upvote [popular feature requests](https://github.com/RedisInsight/RedisInsight/issues?q=is%3Aopen+is%3Aissue+label%3Afeature+sort%3Areactions-%2B1-desc)
+* File a [bug](https://github.com/RedisInsight/RedisInsight/issues/new?assignees=&labels=&template=bug_report.md&title=%5BBug%5D%3A)
 
-Run `yarn --cwd redisinsight/api/ start:dev` to start a local API at `localhost:5000`.
 
-```bash
-# Development
-$ yarn --cwd redisinsight/api/ start:dev
-```
+## RedisInsight Plugins
 
-While the API is running, open your browser and navigate to http://localhost:5000/api/docs. You should see the Swagger UI.
+With RedisInsight you can now also extend the core functionality by building your own data visualizations. See our wiki for more information.
 
-#### Running frontend part of the app
+## Contributing
 
-Run `yarn start:web` to start a local server for UI.
+If you would like to contribute to the code base or fix and issue, please consult the wiki.
 
-```bash
-# Development
-$ yarn start:web
-```
+## License 
 
-Web interface will be available at http://localhost:8080
+RedisInsight is licensed under [SSPL](/LICENSE) license.
 
-Now servers will watch for changes and automatically build for you
-
-## Build
-
-### Packaging the desktop app
-
-#### Building statics for enablement area and default plugins
-
-Run `yarn build:statics` or `yarn build:statics:win` for Windows
-
-After you have installed all dependencies you can package the app.
-Run `yarn package:prod` to package app for the local platform:
-
-```bash
-# Production
-$ yarn package:prod
-```
-
-And packaged installer will be in the folder _./release_
-
-### Create docker image
-
-There are 2 different docker images available
-
-- Image with API and UI
-- Image with API only
-
-#### Build Docker image with UI
-
-```bash
-  docker build .
-```
-
-Image exposes 5000 port
-
-Api docs - /api/docs
-
-Main UI - /
-
-Example:
-
-```bash
-  docker build -t redisinsight .
-```
-
-```bash
-  docker run -p 5000:5000 -d --cap-add ipc_lock redisinsight
-```
-
-Then api docs and main ui should be available on http://localhost:5000/api/docs and http://localhost:5000
-
-#### Build Docker with API only
-
-Image exposes 5000 port
-
-Api docs - /api/docs
-
-Example:
-
-```bash
-  docker build -f api.Dockerfile -t api.redisinsight .
-```
-
-```bash
-  docker run -p 5000:5000 -d --cap-add ipc_lock api.redisinsight
-```
-
-Then api docs and main ui should be available on http://localhost:5000/api/docs
-
-## Tests
-
-### Running frontend tests
-
-#### Run UI unit tests 
-
-```bash
-  yarn test
-```
-
-### Running backend tests
-
-#### Run backend unit tests
-
-```bash
-  # Plain tests
-  yarn --cwd redisinsight/api test
-  
-  # Tests with coverage
-  yarn --cwd redisinsight/api test:cov
-```
-
-### Run backend integration tests (using local server)
-
-```bash
-  # Plain tests
-  yarn --cwd redisinsight/api test:api
-  
-  # Tests with coverage
-  yarn --cwd redisinsight/api test:api:cov
-```
-
-> **_NOTE_**: Using `yarn test:api*` scripts you should have redis server up and running.  
-By default tests will look on `localhost:6379` without any auth  
-To customize tests configs you should run test with proper environment variables
-
-Example:
-
-If you have redis server running on a different host or port `somehost:7777` with default user pass `somepass`
-
-You should run test commands with such environment variables
-
-```bash
-  # Plain tests
-  TEST_REDIS_HOST=somehost \ 
-  TEST_REDIS_PORT=7777 \
-  TEST_REDIS_PASSWORD-somepass \
-  yarn --cwd redisinsight/api test:api
-```
-
-You can find all possible environment variable available in the [constants.ts](redisinsight/api/test/helpers/constants.ts) file
-
-### Run backend integration tests (using docker)
-
-Here you should not care about tests and local redis database configuration
-
-We will spin up server inside docker container and run tests over it
-
-```bash
-  # run this this command
-  ./redisinsight/api/test/test-runs/start-test-run.sh -r oss-st-6
-```
-- -r - is the Redis Test Environment name
-
-We are supporting several test environments to run tests on various Redis databases:
-- **oss-st-5**            - _OSS Standalone v5_
-- **oss-st-5-pass**       - _OSS Standalone v5 with admin pass required_
-- **oss-st-6**            - _OSS Standalone v6 and all modules_
-- **oss-st-6-tls**        - _OSS Standalone v6 with TLS enabled_
-- **oss-st-6-tls-auth**   - _OSS Standalone v6 with TLS auth required_
-- **oss-clu**             - _OSS Cluster_
-- **oss-clu-tls**         - _OSS Cluster with TLS enabled_
-- **oss-sent**            - _OSS Sentinel_
-- **re-st**               - _Redis Enterprise with Standalone inside_
-- **re-clu**              - _Redis Enterprise with Cluster inside_
-
-
-### Running E2E tests
-
-Install E2E tests deps
-
-```bash
-  yarn --cwd tests/e2e 
-```
-
-Run E2E tests
-
-```bash
-  yarn --cwd tests/e2e test:chrome
-```

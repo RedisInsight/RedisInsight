@@ -47,10 +47,8 @@ const HelpLinksMenu = ({ onLinkClick }: IProps) => {
       onClick={onButtonClick}
       className={[styles.button, isPopoverOpen ? styles.buttonOpen : ''].join(' ')}
     >
-      <EuiText size="m" color="default">
-        CREATE DATABASE
-      </EuiText>
-      <EuiIcon type="arrowDown" />
+      <EuiText size="m">CREATE DATABASE</EuiText>
+      <EuiIcon type="arrowDown" className={styles.arrowIcon} />
     </button>
   )
 

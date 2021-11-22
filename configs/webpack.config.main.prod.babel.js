@@ -64,6 +64,8 @@ export default merge(baseConfig, {
       SERVER_TLS: true,
       SERVER_TLS_CERT: process.env.SERVER_TLS_CERT || '',
       SERVER_TLS_KEY: process.env.SERVER_TLS_KEY || '',
+      APP_FOLDER_NAME: process.env.APP_FOLDER_NAME || '',
+      UPGRADES_LINK: process.env.UPGRADES_LINK || '',
       BUILD_TYPE: 'ELECTRON',
       APP_VERSION: version,
       AWS_BUCKET_NAME: 'AWS_BUCKET_NAME' in process.env ? process.env.AWS_BUCKET_NAME : '',

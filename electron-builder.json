@@ -12,7 +12,7 @@
     "package.json"
   ],
   "afterSign": "electron-builder-notarize",
-  "artifactName": "RedisInsight.${ext}",
+  "artifactName": "${productName}.${ext}",
   "compression": "normal",
   "mac": {
     "target": ["dmg", "zip"],
@@ -24,7 +24,7 @@
     "gatekeeperAssess": false
   },
   "dmg": {
-    "artifactName": "RedisInsight-${os}-x64.${ext}",
+    "artifactName": "${productName}-${os}-x64.${ext}",
     "contents": [
       {
         "x": 130,
@@ -40,14 +40,14 @@
   },
   "win": {
     "target": ["nsis"],
-    "artifactName": "RedisInsight-${os}-installer.${ext}"
+    "artifactName": "${productName}-${os}-installer.${ext}"
   },
   "linux": {
     "icon": "./resources/icons",
     "target": ["deb", "AppImage"],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
-    "artifactName": "RedisInsight-${os}.${ext}",
+    "artifactName": "${productName}-${os}.${ext}",
     "desktop": {
       "Name": "RedisInsight",
       "Type": "Application",

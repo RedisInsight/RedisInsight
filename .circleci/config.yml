@@ -671,26 +671,26 @@ jobs:
             declare -A tag0=(
                 [key]='platform'
                 [value]='macos'
-                [objectDownload]=${appFileName}'-mac-x64.dmg'
-                [objectUpgrade]=${appFileName}'.zip'
+                [objectDownload]=${applicationName}'-mac-x64.dmg'
+                [objectUpgrade]=${applicationName}'.zip'
             )
 
             declare -A tag1=(
                 [key]='platform'
                 [value]='windows'
-                [objectDownload]=${appFileName}'-win-installer.exe'
+                [objectDownload]=${applicationName}'-win-installer.exe'
             )
 
             declare -A tag2=(
                 [key]='platform'
                 [value]='linux_AppImage'
-                [objectDownload]=${appFileName}'-linux.AppImage'
+                [objectDownload]=${applicationName}'-linux.AppImage'
             )
 
             declare -A tag3=(
                 [key]='platform'
                 [value]='linux_deb'
-                [objectDownload]=${appFileName}'-linux.deb'
+                [objectDownload]=${applicationName}'-linux.deb'
             )
 
             # loop for add all tags to each app and create metrics

@@ -28,13 +28,13 @@ test('Verify that user can resize(maximize)/(minimize) the enablement area (the 
     const offsetX = 100;
     const areaWidthBefore = await workbenchPage.preselectsAreaContainer.clientWidth;
     //Minimize the area with default scripts
-    await t.drag(workbenchPage.resizeButtonForPreselectsArea, -offsetX, 0, { speed: 0.2 });
+    await t.drag(workbenchPage.resizeButtonForPreselectsArea, -offsetX, 0, { speed: 0.1 });
     await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).lt(areaWidthBefore, 'Default scripts area is smaller after resize');
     //Maximize the area with default scripts
     const areaWidthAfter = await workbenchPage.preselectsAreaContainer.clientWidth;
     await t.click(workbenchPage.preselectsAreaContainer);
-    await t.drag(workbenchPage.resizeButtonForPreselectsArea, offsetX, 0, { speed: 0.2 });
-    await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).gt(areaWidthAfter, 'Default scripts area is bigger after resize');
+    await t.drag(workbenchPage.resizeButtonForPreselectsArea, offsetX, 0, { speed: 0.1 });
+    await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).gte(areaWidthAfter, 'Default scripts area is bigger after resize');
 });
 test('Verify that user can expand/collapse the enablement area', async t => {
     //Collapse the area with default scripts

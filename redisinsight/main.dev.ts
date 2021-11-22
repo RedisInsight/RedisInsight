@@ -49,10 +49,8 @@ export default class AppUpdater {
     log.transports.file.level = 'info';
 
     autoUpdater.setFeedURL({
-      provider: 's3',
-      path: 'public/upgrades/',
-      bucket: process.env.MANUAL_UPDATE_BUCKET || process.env.AWS_BUCKET_NAME,
-      region: 'us-east-1',
+      provider: 'generic',
+      url: process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
     });
 
     autoUpdater.checkForUpdatesAndNotify();

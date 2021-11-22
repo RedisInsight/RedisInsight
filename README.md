@@ -4,6 +4,19 @@
 
 Awesome Redis GUI written in Electron, NodeJS and React
 
+## Supported Platforms
+
+| Redis Versions        | Redis Enterprise Software |
+| :-------------------- | :-------------------------| 
+| 6.x                   | 6.x                       |
+| 5.x                   |
+
+| Windows                |   Mac                                | Linux                       |        
+|:---------------------- | :------------------------------------| :---------------------------|
+| Windows 64-bit 10      |  Mac OS X 12 (Monterey) 64-bit Intel | Linux Ubuntu 18.04 64-bit   |
+|                        |  Mac OS X 11 (Big Sur) 64-bit Intel  |                             |
+
+
 ## Directory Structure
 
 - `redisinsight/ui` - Contains the frontend code

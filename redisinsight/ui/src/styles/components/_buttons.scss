@@ -1,3 +1,5 @@
+@import '@elastic/eui/src/global_styling/index';
+
 .euiButton {
   &.euiButton--secondary {
     color: var(--buttonSecondaryTextColor) !important;
@@ -35,6 +37,9 @@
       }
     }
   }
+}
+.euiButton.euiBorderWidthThick {
+  border-width: $euiBorderWidthThick;
 }
 
 .euiButton.euiButton-isDisabled.euiButton--fill {

@@ -18,10 +18,11 @@ import styles from './styles.module.scss'
 export interface Props {
   items: IEnablementAreaItem[];
   loading: boolean;
-  openScript: (script: string) => void;
+  openScript: (script: string, path: string) => void;
+  openInternalPage: (page: IInternalPage) => void;
 }
 
-const EnablementArea = ({ items, openScript, loading }: Props) => {
+const EnablementArea = ({ items, openScript, openInternalPage, loading }: Props) => {
   const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
   const [internalPage, setInternalPage] = useState<IInternalPage>(
     { backTitle: '', path: '', label: '' }
@@ -30,6 +31,7 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
   const handleOpenInternalPage = (page: IInternalPage) => {
     setIsInternalPageVisible(true)
     setInternalPage(page)
+    openInternalPage(page)
   }
 
   const handleCloseInternalPage = () => {
@@ -44,7 +46,7 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
       case EnablementAreaComponent.CodeButton:
         return args?.path
           ? <LazyCodeButton label={label} {...args} />
-          : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />
+          : <CodeButton onClick={() => openScript(args?.content || '', '')} label={label} {...args} />
       case EnablementAreaComponent.InternalLink:
         return (
           <InternalLink testId={id || label} label={label} {...args}>

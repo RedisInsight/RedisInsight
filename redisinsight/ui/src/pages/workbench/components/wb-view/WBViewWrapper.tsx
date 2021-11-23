@@ -2,7 +2,6 @@ import React, { Ref, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
-import { isEmpty, reject } from 'lodash'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 
 import {
@@ -13,6 +12,8 @@ import {
   getWBQueryType,
   checkUnsupportedModuleCommand,
   cliParseTextResponse,
+  splitMonacoValuePerLines,
+  getMultiCommands,
 } from 'uiSrc/utils'
 import {
   sendWBCommandAction,
@@ -158,10 +159,9 @@ const WBViewWrapper = () => {
   ) => {
     const { loading } = state
     const isNewCommand = () => !historyId
-    const commandsList = commandInit.split(/\n(?=[^\s])/g)
+    const [command, ...rest] = splitMonacoValuePerLines(commandInit)
 
-    const [command, ...rest] = commandsList
-    const multiCommands = reject(rest, isEmpty).join('\n')
+    const multiCommands = getMultiCommands(rest)
     setMultiCommands(multiCommands)
 
     let commandLine = decode(command).trim()

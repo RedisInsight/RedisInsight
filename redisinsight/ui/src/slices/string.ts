@@ -7,13 +7,14 @@ import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { refreshKeyInfoAction } from './keys'
 import { addErrorNotification } from './app/notifications'
 import { AppDispatch, RootState } from './store'
+import { StringState } from './interfaces/string'
 
-export const initialState = {
+export const initialState: StringState = {
   loading: false,
   error: '',
   data: {
     key: '',
-    value: '',
+    value: null,
   },
 }
 
@@ -51,7 +52,7 @@ const stringSlice = createSlice({
     },
     resetStringValue: (state) => {
       state.data.key = ''
-      state.data.value = ''
+      state.data.value = null
     },
   },
 })

@@ -27,7 +27,7 @@ RedisInsight is an intuitive and efficient GUI for Redis, allowing you to intera
 * Oficially supported for Redis OSS, [Redis Cloud](https://redis.com/try-free/). Works with Microsoft Azure Cache for Redis (official support upcoming).
 * Available for macOS, Windows and Linux 
 
-Check out the [release notes](https://docs.redis.com/staging/release-ri-v2.0/ri/release-notes/). 
+Check out the [release notes](https://docs.redis.com/latest/ri/release-notes/). 
 
 ## Get started with RedisInsight
 

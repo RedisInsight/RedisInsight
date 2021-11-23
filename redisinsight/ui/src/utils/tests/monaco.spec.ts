@@ -19,7 +19,7 @@ describe('removeMonacoComments', () => {
     ],
     // Multiline command with comments slashes in the apostrophes
     [
-      "set\r\n  foo `// key name`\r\n  // comment line\r\n // key value",
+      'set\r\n  foo `// key name`\r\n  // comment line\r\n // key value',
       'set\r\n  foo `// key name`'
     ],
     // Multiline command with comments
@@ -56,8 +56,8 @@ describe('multilineCommandToOneLine', () => {
     ],
     // Multiline command with quotes
     [
-      `"hset test2\n 'http://' 'http://123'\n 'test//test' 'test//test'"`,
-      `"hset test2 'http://' 'http://123' 'test//test' 'test//test'"`
+      '"hset test2\n \'http://\' \'http://123\'\n \'test//test\' \'test//test\'"',
+      '"hset test2 \'http://\' \'http://123\' \'test//test\' \'test//test\'"'
     ],
   ]
   test.each(cases)(

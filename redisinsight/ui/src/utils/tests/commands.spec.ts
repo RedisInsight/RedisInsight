@@ -13,8 +13,8 @@ interface IMockedCommands {
 }
 
 beforeEach(() => {
-  cleanup();
-});
+  cleanup()
+})
 
 const mockedCommands: IMockedCommands[] = [
   {
@@ -133,58 +133,58 @@ const mockedCommands: IMockedCommands[] = [
     ],
     complexityShortMock: 'O(log(N))',
   },
-];
+]
 
 describe('getComplexityShortNotation', () => {
   it('Complexity short should return text according mocked data', () => {
     mockedCommands.forEach(({ matchedCommand = '', complexityShortMock }) => {
-      const complexity = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.complexity ?? '';
-      const complexityShort = getComplexityShortNotation(complexity);
+      const complexity = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.complexity ?? ''
+      const complexityShort = getComplexityShortNotation(complexity)
 
       if (complexityShort) {
-        expect(complexityShort).toEqual(complexityShortMock);
+        expect(complexityShort).toEqual(complexityShortMock)
       } else {
-        expect(complexityShort).toEqual('');
+        expect(complexityShort).toEqual('')
       }
-    });
-  });
-});
+    })
+  })
+})
 
 describe('generateArgs', () => {
   it('generateArgs short should return argument with GeneratedName (with Enums names)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesMock = [] }) => {
-      const argsInit = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? [];
+      const argsInit = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
       const argsMocked: ICommandArgGenerated[] = argsInit.map((arg, i) => ({
         ...arg,
         generatedName: argsNamesMock[i] ?? '',
-      }));
+      }))
 
-      const args = generateArgs(argsInit);
+      const args = generateArgs(argsInit)
 
-      expect(args).toEqual(argsMocked);
-    });
-  });
-});
+      expect(args).toEqual(argsMocked)
+    })
+  })
+})
 
 describe('generateArgName', () => {
   it('Arguments names should return text according mocked data (with Enums values)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesWithEnumsMock }) => {
-      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? [];
+      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args);
-      expect(generatedArgNames).toEqual(argsNamesWithEnumsMock);
-    });
-  });
+      const generatedArgNames = generateArgsNames(args)
+      expect(generatedArgNames).toEqual(argsNamesWithEnumsMock)
+    })
+  })
   it('Arguments names should return text according mocked data (with Enums names)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesMock }) => {
-      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? [];
+      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args, true);
-      expect(generatedArgNames).toEqual(argsNamesMock);
-    });
-  });
-});
+      const generatedArgNames = generateArgsNames(args, true)
+      expect(generatedArgNames).toEqual(argsNamesMock)
+    })
+  })
+})
 
 const getDocUrlForCommandTests: any[] = [
   ['SET', CommandGroup.String, 'https://redis.io/commands/set'],

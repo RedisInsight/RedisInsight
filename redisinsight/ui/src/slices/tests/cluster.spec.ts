@@ -1,16 +1,16 @@
-import { AxiosError } from 'axios';
-import { cloneDeep } from 'lodash';
-import { apiService } from 'uiSrc/services';
+import { AxiosError } from 'axios'
+import { cloneDeep } from 'lodash'
+import { apiService } from 'uiSrc/services'
 import {
   cleanup,
   initialStateDefault,
   mockedStore,
-} from 'uiSrc/utils/test-utils';
+} from 'uiSrc/utils/test-utils'
 import {
   ClusterConnectionDetailsDto,
   RedisEnterpriseDatabase,
-} from 'apiSrc/modules/redis-enterprise/dto/cluster.dto';
-import { AddRedisEnterpriseDatabaseResponse } from 'apiSrc/modules/instances/dto/redis-enterprise-cluster.dto';
+} from 'apiSrc/modules/redis-enterprise/dto/cluster.dto'
+import { AddRedisEnterpriseDatabaseResponse } from 'apiSrc/modules/instances/dto/redis-enterprise-cluster.dto'
 import reducer, {
   initialState,
   loadInstancesRedisCluster,
@@ -22,27 +22,27 @@ import reducer, {
   createInstancesRedisClusterSuccess,
   createInstancesRedisClusterFailure,
   addInstancesRedisCluster,
-} from '../cluster';
+} from '../cluster'
 
-import { addErrorNotification } from '../app/notifications';
+import { addErrorNotification } from '../app/notifications'
 
-jest.mock('uiSrc/services');
+jest.mock('uiSrc/services')
 
-let store: typeof mockedStore;
-let defaultCredentials: ClusterConnectionDetailsDto;
-let defaultData: RedisEnterpriseDatabase[];
-let defaultDataAdded: AddRedisEnterpriseDatabaseResponse[];
+let store: typeof mockedStore
+let defaultCredentials: ClusterConnectionDetailsDto
+let defaultData: RedisEnterpriseDatabase[]
+let defaultDataAdded: AddRedisEnterpriseDatabaseResponse[]
 beforeEach(() => {
-  cleanup();
-  store = cloneDeep(mockedStore);
-  store.clearActions();
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
 
   defaultCredentials = {
     host: 'localhost',
     port: 9443,
     username: 'e@e.com',
     password: '1',
-  };
+  }
 
   defaultData = [
     {
@@ -87,7 +87,7 @@ beforeEach(() => {
         isReplicaSource: false,
       },
     },
-  ];
+  ]
 
   defaultDataAdded = [
     {
@@ -143,22 +143,22 @@ beforeEach(() => {
         },
       },
     },
-  ];
-});
+  ]
+})
 
 describe('cluster slice', () => {
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
-      const nextState = initialState;
+      const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {});
+      const result = reducer(undefined, {})
 
       // Assert
-      expect(result).toEqual(nextState);
-    });
-  });
+      expect(result).toEqual(nextState)
+    })
+  })
 
   describe('loadInstancesRedisCluster', () => {
     it('should properly set loading = true', () => {
@@ -166,20 +166,20 @@ describe('cluster slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadInstancesRedisCluster());
+      const nextState = reducer(initialState, loadInstancesRedisCluster())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadInstancesRedisClusterSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -187,13 +187,13 @@ describe('cluster slice', () => {
 
       const data = [
         { id: '70b95d32-c19d-4311-bb24-e684af12cf15', name: 'ca cert' },
-      ];
+      ]
       const state = {
         ...initialState,
         loading: false,
         data: defaultData,
         credentials: defaultCredentials,
-      };
+      }
 
       // Act
       const nextState = reducer(
@@ -202,27 +202,27 @@ describe('cluster slice', () => {
           data: defaultData,
           credentials: defaultCredentials,
         })
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
-      const data: any = [];
+      const data: any = []
 
       const state = {
         ...initialState,
         loading: false,
         data,
         credentials: defaultCredentials,
-      };
+      }
 
       // Act
       const nextState = reducer(
@@ -231,43 +231,43 @@ describe('cluster slice', () => {
           data,
           credentials: defaultCredentials,
         })
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadInstancesRedisClusterFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         ...initialState,
         loading: false,
         error: data,
-      };
+      }
 
       // Act
       const nextState = reducer(
         initialState,
         loadInstancesRedisClusterFailure(data)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('createInstancesRedisCluster', () => {
     it('should properly set the state before the fetch data', () => {
@@ -275,20 +275,20 @@ describe('cluster slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, createInstancesRedisCluster());
+      const nextState = reducer(initialState, createInstancesRedisCluster())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('createInstancesRedisClusterSuccess', () => {
     it('should properly set the state with created instances', () => {
@@ -305,93 +305,93 @@ describe('cluster slice', () => {
           statusAdded: 'active',
           messageAdded: undefined,
         },
-      ];
+      ]
 
       const state = {
         ...initialState,
         loading: false,
         dataAdded,
-      };
+      }
 
       // Act
       const nextState = reducer(
         initialState,
         createInstancesRedisClusterSuccess(defaultData)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
-      const data: any = [];
+      const data: any = []
 
       const state = {
         ...initialState,
         loading: false,
         dataAdded: data,
-      };
+      }
 
       // Act
       const nextState = reducer(
         initialState,
         createInstancesRedisClusterSuccess(data)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('createInstancesRedisClusterFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         ...initialState,
         loading: false,
         error: data,
-      };
+      }
 
       // Act
       const nextState = reducer(
         initialState,
         createInstancesRedisClusterFailure(data)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           cluster: nextState,
         },
-      });
-      expect(clusterSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(clusterSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('thunks', () => {
     describe('fetchInstancesRedisCluster', () => {
       it('call both fetchInstancesRedisCluster and loadInstancesRedisClusterSuccess when fetch is successed', async () => {
         // Arrange
-        const responsePayload = { data: defaultData, status: 200 };
+        const responsePayload = { data: defaultData, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchInstancesRedisCluster(defaultCredentials)
-        );
+        )
 
         // Assert
         const expectedActions = [
@@ -400,27 +400,26 @@ describe('cluster slice', () => {
             data: responsePayload.data,
             credentials: defaultCredentials,
           }),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('call both fetchInstancesRedisCluster and loadInstancesRedisClusterFailure when fetch is fail', async () => {
         // Arrange
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchInstancesRedisCluster(defaultCredentials)
-        );
+        )
 
         // Assert
         const expectedActions = [
@@ -429,52 +428,51 @@ describe('cluster slice', () => {
             responsePayload.response.data.message
           ),
           addErrorNotification(responsePayload as AxiosError),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('addInstancesRedisCluster', () => {
       it('call both addInstancesRedisCluster and createInstancesRedisClusterSuccess when fetch is successed', async () => {
         // Arrange
 
-        const uids = [1, 2];
-        const responsePayload = { data: defaultDataAdded, status: 200 };
+        const uids = [1, 2]
+        const responsePayload = { data: defaultDataAdded, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           addInstancesRedisCluster({ uids, credentials: defaultCredentials })
-        );
+        )
 
         // Assert
         const expectedActions = [
           createInstancesRedisCluster(),
           createInstancesRedisClusterSuccess(responsePayload.data),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('call both addInstancesRedisCluster and createInstancesRedisClusterFailure when fetch is fail', async () => {
         // Arrange
-        const uids = [1, 2];
+        const uids = [1, 2]
 
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(
           addInstancesRedisCluster({ uids, credentials: defaultCredentials })
-        );
+        )
 
         // Assert
         const expectedActions = [
@@ -483,9 +481,9 @@ describe('cluster slice', () => {
             responsePayload.response.data.message
           ),
           addErrorNotification(responsePayload as AxiosError),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
-  });
-});
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+  })
+})

@@ -1,6 +1,6 @@
 # Ignores folders covered with custom linters configs
 redisinsight/api
-tests
+tests/e2e
 
 # Logs
 logs

@@ -1,21 +1,21 @@
-import { cloneDeep } from 'lodash';
-import { AxiosError } from 'axios';
-import { apiService } from 'uiSrc/services';
+import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
+import { apiService } from 'uiSrc/services'
 import {
   cleanup,
   initialStateDefault,
   mockedStore,
   mockStore,
-} from 'uiSrc/utils/test-utils';
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications';
-import successMessages from 'uiSrc/components/notifications/success-messages';
+} from 'uiSrc/utils/test-utils'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   defaultSelectedKeyAction,
   deleteKeyFromList,
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
-} from '../keys';
+} from '../keys'
 import reducer, {
   initialState,
   loadMoreSetMembers,
@@ -36,39 +36,39 @@ import reducer, {
   fetchMoreSetMembers,
   addSetMembersAction,
   deleteSetMembers,
-} from '../set';
+} from '../set'
 
-jest.mock('uiSrc/services');
+jest.mock('uiSrc/services')
 
-let store: typeof mockedStore;
-let dateNow: jest.SpyInstance<number>;
+let store: typeof mockedStore
+let dateNow: jest.SpyInstance<number>
 beforeEach(() => {
-  cleanup();
-  store = cloneDeep(mockedStore);
-  store.clearActions();
-});
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('set slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027);
-  });
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+  })
 
   afterAll(() => {
-    dateNow.mockRestore();
-  });
+    dateNow.mockRestore()
+  })
 
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
-      const nextState = initialState;
+      const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {});
+      const result = reducer(undefined, {})
 
       // Assert
-      expect(result).toEqual(nextState);
-    });
-  });
+      expect(result).toEqual(nextState)
+    })
+  })
 
   describe('loadSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
@@ -76,18 +76,18 @@ describe('set slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadSetMembers(''));
+      const nextState = reducer(initialState, loadSetMembers(''))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -101,29 +101,29 @@ describe('set slice', () => {
         nextCursor: 67,
         members: ['1', '2'],
         match: '*1*'
-      };
+      }
 
       const state = {
         loading: false,
         error: '',
         data,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
       const data: any = {
         keyName: ''
-      };
+      }
 
       const state = {
         loading: false,
@@ -132,23 +132,23 @@ describe('set slice', () => {
           ...initialState.data,
           ...data
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         loading: false,
         error: data,
@@ -160,18 +160,18 @@ describe('set slice', () => {
           nextCursor: 0,
           match: '*'
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadSetMembersFailure(data));
+      const nextState = reducer(initialState, loadSetMembersFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadMoreSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
@@ -187,18 +187,18 @@ describe('set slice', () => {
           nextCursor: 0,
           match: '*'
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreSetMembers());
+      const nextState = reducer(initialState, loadMoreSetMembers())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadMoreSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -211,23 +211,23 @@ describe('set slice', () => {
         total: 0,
         members: ['2', '3'],
         match: '*2*'
-      };
+      }
 
       const state = {
         loading: false,
         error: '',
         data,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadMoreSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
@@ -237,7 +237,7 @@ describe('set slice', () => {
         total: 10,
         nextCursor: 67,
         members: [],
-      };
+      }
 
       const state = {
         ...initialState,
@@ -246,23 +246,23 @@ describe('set slice', () => {
           ...initialState.data,
           ...data,
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadMoreSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadMoreSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         loading: false,
         error: data,
@@ -274,18 +274,18 @@ describe('set slice', () => {
           nextCursor: 0,
           match: '*'
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreSetMembersFailure(data));
+      const nextState = reducer(initialState, loadMoreSetMembersFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('addSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
@@ -293,18 +293,18 @@ describe('set slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, addSetMembers());
+      const nextState = reducer(initialState, addSetMembers())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('addSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -312,39 +312,39 @@ describe('set slice', () => {
       const state = {
         ...initialState,
         loading: false,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, addSetMembersSuccess());
+      const nextState = reducer(initialState, addSetMembersSuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('addSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         ...initialState,
         loading: false,
         error: data
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, addSetMembersFailure(data));
+      const nextState = reducer(initialState, addSetMembersFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('removeSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
@@ -352,18 +352,18 @@ describe('set slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, removeSetMembers());
+      const nextState = reducer(initialState, removeSetMembers())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('removeSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -375,23 +375,23 @@ describe('set slice', () => {
           ...initialState.data,
           members: ['1', '2', '3'],
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initailStateRemove, removeSetMembersSuccess());
+      const nextState = reducer(initailStateRemove, removeSetMembersSuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(initailStateRemove);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(initailStateRemove)
+    })
+  })
 
   describe('removeSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         loading: false,
         error: data,
@@ -403,18 +403,18 @@ describe('set slice', () => {
           nextCursor: 0,
           match: '*'
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, removeSetMembersFailure(data));
+      const nextState = reducer(initialState, removeSetMembersFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
   describe('removeMembersFromList', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -424,9 +424,9 @@ describe('set slice', () => {
           ...initialState.data,
           members: ['1', '2', '3'],
         },
-      };
+      }
 
-      const data = ['1', '3'];
+      const data = ['1', '3']
 
       const state = {
         ...initailStateRemove,
@@ -435,21 +435,21 @@ describe('set slice', () => {
           total: initailStateRemove.data.total - 1,
           members: ['2'],
         },
-      };
+      }
 
       // Act
       const nextState = reducer(
         initailStateRemove,
         removeMembersFromList(data)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      });
-      expect(setSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(setSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('thunks', () => {
     describe('fetchSetMembers', () => {
@@ -460,50 +460,50 @@ describe('set slice', () => {
         members: ['123', '123', '1'],
         total: 3,
         match: '*'
-      };
+      }
       it('call fetchSetMembers, loadSetMembersSuccess when fetch is successed', async () => {
         // Arrange
-        const responsePayload = { data, status: 200 };
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchSetMembers(data.keyName, 0, 20, '*'));
+        await store.dispatch<any>(fetchSetMembers(data.keyName, 0, 20, '*'))
 
         // Assert
         const expectedActions = [
           loadSetMembers(data.match),
           loadSetMembersSuccess(responsePayload.data),
           updateSelectedKeyRefreshTime(Date.now()),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
       it('failed to fetch Set members', async () => {
         // Arrange
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.post = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchSetMembers(data.keyName, 0, 20, '*'));
+        await store.dispatch<any>(fetchSetMembers(data.keyName, 0, 20, '*'))
 
         // Assert
         const expectedActions = [
           loadSetMembers('*'),
           addErrorNotification(responsePayload as AxiosError),
           loadSetMembersFailure(errorMessage),
-        ];
+        ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions);
-      });
-    });
-  });
+        expect(mockedStore.getActions()).toEqual(expectedActions)
+      })
+    })
+  })
 
   describe('fetchMoreSetMembers', () => {
     // Arrange
@@ -512,101 +512,101 @@ describe('set slice', () => {
       nextCursor: 0,
       members: ['123', '123', '1'],
       total: 3,
-    };
+    }
     it('call fetchMoreSetMembers, loadMoreSetMembersSuccess when fetch is successed', async () => {
-      const responsePayload = { data, status: 200 };
+      const responsePayload = { data, status: 200 }
 
-      apiService.post = jest.fn().mockResolvedValue(responsePayload);
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchMoreSetMembers(data.keyName, 0, 20, '*'));
+      await store.dispatch<any>(fetchMoreSetMembers(data.keyName, 0, 20, '*'))
 
       // Assert
       const expectedActions = [
         loadMoreSetMembers(),
         loadMoreSetMembersSuccess(responsePayload.data),
-      ];
+      ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions);
-    });
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
     it('failed to fetch more Set members', async () => {
       // Arrange
-      const errorMessage = 'Something was wrong!';
+      const errorMessage = 'Something was wrong!'
       const responsePayload = {
         response: {
           status: 500,
           data: { message: errorMessage },
         },
-      };
-      apiService.post = jest.fn().mockRejectedValue(responsePayload);
+      }
+      apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchMoreSetMembers(data.keyName, 0, 20, '*'));
+      await store.dispatch<any>(fetchMoreSetMembers(data.keyName, 0, 20, '*'))
 
       // Assert
       const expectedActions = [
         loadMoreSetMembers(),
         addErrorNotification(responsePayload as AxiosError),
         loadMoreSetMembersFailure(errorMessage),
-      ];
+      ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions);
-    });
-  });
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+  })
 
   describe('addSetMembersAction', () => {
-    const keyName = 'key';
-    const members = ['member1', 'member2'];
+    const keyName = 'key'
+    const members = ['member1', 'member2']
     it('succeed to add members to set', async () => {
       // Arrange
-      const responsePayload = { status: 200 };
-      apiService.put = jest.fn().mockResolvedValue(responsePayload);
+      const responsePayload = { status: 200 }
+      apiService.put = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(addSetMembersAction({ keyName, members }, jest.fn));
+      await store.dispatch<any>(addSetMembersAction({ keyName, members }, jest.fn))
 
       // Assert
       const expectedActions = [
         addSetMembers(),
         addSetMembersSuccess(),
         defaultSelectedKeyAction(),
-      ];
+      ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions);
-    });
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
     it('failed to add members to set', async () => {
       // Arrange
-      const errorMessage = 'Something was wrong!';
+      const errorMessage = 'Something was wrong!'
       const responsePayload = {
         response: {
           status: 500,
           data: { message: errorMessage },
         },
-      };
-      apiService.put = jest.fn().mockRejectedValue(responsePayload);
+      }
+      apiService.put = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(addSetMembersAction({ keyName, members }, jest.fn(), jest.fn()));
+      await store.dispatch<any>(addSetMembersAction({ keyName, members }, jest.fn(), jest.fn()))
 
       // Assert
       const expectedActions = [
         addSetMembers(),
         addErrorNotification(responsePayload as AxiosError),
         addSetMembersFailure(errorMessage),
-      ];
+      ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions);
-    });
-  });
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+  })
 
   describe('deleteSetMembers', () => {
-    const key = 'key';
-    const members = ['123', '123', '1'];
+    const key = 'key'
+    const members = ['123', '123', '1']
     it('call removeSetMembers, removeSetMembersSuccess, and removeMembersFromList when fetch is successed', async () => {
       // Arrange
-      const responsePayload = { status: 200, data: { affected: 3 } };
+      const responsePayload = { status: 200, data: { affected: 3 } }
 
-      apiService.delete = jest.fn().mockResolvedValue(responsePayload);
+      apiService.delete = jest.fn().mockResolvedValue(responsePayload)
       const nextState = Object.assign(initialStateDefault, {
         browser: {
           set: {
@@ -617,12 +617,12 @@ describe('set slice', () => {
             }
           }
         },
-      });
+      })
 
-      const mockedStore = mockStore(nextState);
+      const mockedStore = mockStore(nextState)
 
       // Act
-      await mockedStore.dispatch<any>(deleteSetMembers(key, members));
+      await mockedStore.dispatch<any>(deleteSetMembers(key, members))
 
       // Assert
       const expectedActions = [
@@ -637,16 +637,16 @@ describe('set slice', () => {
             'Member'
           )
         )
-      ];
+      ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions);
-    });
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
 
     it('succeed to delete all members from set', async () => {
       // Arrange
-      const responsePayload = { status: 200, data: { affected: 3 } };
+      const responsePayload = { status: 200, data: { affected: 3 } }
 
-      apiService.delete = jest.fn().mockResolvedValue(responsePayload);
+      apiService.delete = jest.fn().mockResolvedValue(responsePayload)
       const nextState = Object.assign(initialStateDefault, {
         browser: {
           set: {
@@ -657,12 +657,12 @@ describe('set slice', () => {
             }
           }
         },
-      });
+      })
 
-      const mockedStore = mockStore(nextState);
+      const mockedStore = mockStore(nextState)
 
       // Act
-      await mockedStore.dispatch<any>(deleteSetMembers(key, members));
+      await mockedStore.dispatch<any>(deleteSetMembers(key, members))
 
       // Assert
       const expectedActions = [
@@ -672,33 +672,33 @@ describe('set slice', () => {
         deleteKeySuccess(),
         deleteKeyFromList(key),
         addMessageNotification(successMessages.DELETED_KEY(key))
-      ];
+      ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions);
-    });
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
 
     it('failed to delete member from set', async () => {
       // Arrange
-      const errorMessage = 'Something was wrong!';
+      const errorMessage = 'Something was wrong!'
       const responsePayload = {
         response: {
           status: 500,
           data: { message: errorMessage },
         },
-      };
-      apiService.delete = jest.fn().mockRejectedValue(responsePayload);
+      }
+      apiService.delete = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(deleteSetMembers(key, members));
+      await store.dispatch<any>(deleteSetMembers(key, members))
 
       // Assert
       const expectedActions = [
         removeSetMembers(),
         addErrorNotification(responsePayload as AxiosError),
         removeSetMembersFailure(errorMessage),
-      ];
+      ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions);
-    });
-  });
-});
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+  })
+})

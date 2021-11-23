@@ -105,7 +105,10 @@ export class BrowserPage {
   keysTotalNumber: Selector
   overviewTotalKeys: Selector
   overviewTotalMemory: Selector
+  overviewConnectedClients: Selector
   selectedFilterTypeString: Selector
+  overviewCommandsSec: Selector
+  overviewCpu: Selector
   modulesButton: Selector
 
   constructor() {
@@ -214,6 +217,9 @@ export class BrowserPage {
       this.keysTotalNumber = Selector('[data-testid=keys-total]');
       this.overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
       this.overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
+      this.overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
+      this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
+      this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
   }
 

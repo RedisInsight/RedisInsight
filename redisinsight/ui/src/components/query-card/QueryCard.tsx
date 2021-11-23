@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiLoadingContent, keys } from '@elastic/eui'
+import { useParams } from 'react-router-dom'
+
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { getWBQueryType, Nullable, getVisualizationsByCommand, Maybe } from 'uiSrc/utils'
-
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import QueryCardHeader from './QueryCardHeader'
 import QueryCardCliResult from './QueryCardCliResult'
@@ -34,10 +37,9 @@ const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
   getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || ''
 
 const QueryCard = (props: Props) => {
-  const { visualizations = [] } = useSelector(appPluginsSelector)
   const {
     id,
-    query,
+    query = '',
     data,
     status,
     fromStore,
@@ -48,15 +50,19 @@ const QueryCard = (props: Props) => {
     loading
   } = props
 
+  const { visualizations = [] } = useSelector(appPluginsSelector)
+  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
   const [isOpen, setIsOpen] = useState(!fromStore)
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const [result, setResult] = useState<Nullable<any>>(data)
   const [queryType, setQueryType] = useState<WBQueryType>(getWBQueryType(query, visualizations))
   const [viewTypeSelected, setViewTypeSelected] = useState<WBQueryType>(queryType)
+  const [summaryText, setSummaryText] = useState<string>('')
   const [selectedViewValue, setSelectedViewValue] = useState<string>(
     getDefaultPlugin(visualizations, query) || queryType
   )
-  const [summaryText, setSummaryText] = useState<string>('')
 
   useEffect(() => {
     window.addEventListener('keydown', handleEscFullScreen)
@@ -72,7 +78,17 @@ const QueryCard = (props: Props) => {
   }
 
   const toggleFullScreen = () => {
-    setIsFullScreen((value) => !value)
+    setIsFullScreen((isFull) => {
+      sendEventTelemetry({
+        event: TelemetryEvent.WORKBENCH_RESULTS_IN_FULL_SCREEN,
+        eventData: {
+          databaseId: instanceId,
+          state: isFull ? 'Close' : 'Open'
+        }
+      })
+
+      return !isFull
+    })
   }
 
   useEffect(() => {
@@ -94,8 +110,25 @@ const QueryCard = (props: Props) => {
     }
   }, [data, time])
 
+  const sendEventToggleOpenTelemetry = () => {
+    const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
+      query.toUpperCase().startsWith(commandName))
+
+    sendEventTelemetry({
+      event: isOpen
+        ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED
+        : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
+      eventData: {
+        databaseId: instanceId,
+        command: matchedCommand ?? query.split(' ')?.[0]
+      }
+    })
+  }
+
   const toggleOpen = () => {
     if (isFullScreen) return
+
+    sendEventToggleOpenTelemetry()
     setIsOpen(!isOpen)
 
     if (!isOpen && !data) {

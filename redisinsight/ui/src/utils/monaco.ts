@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash'
+import { isEmpty, reject } from 'lodash'
 
 const COMMENT_SYMBOLS = '//'
 const BLANK_LINE_REGEX = /^\s*\n/gm
@@ -16,6 +16,10 @@ const removeCommentsFromLine = (text: string = '', prefix: string = ''): string 
 
   return prefix + text.replace(/\/\/.*/, '')
 }
+
+export const splitMonacoValuePerLines = (command = '') => command.split(/\n(?=[^\s])/g)
+
+export const getMultiCommands = (commands:string[] = []) => reject(commands, isEmpty).join('\n') ?? ''
 
 export const removeMonacoComments = (text: string = '') => text
   .split('\n')

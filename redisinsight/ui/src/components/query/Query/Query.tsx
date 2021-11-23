@@ -1,10 +1,12 @@
 import React, { useContext, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { findIndex } from 'lodash'
+import { decode } from 'html-entities'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor from 'react-monaco-editor'
+import { useParams } from 'react-router-dom'
 
 import {
   Theme,
@@ -12,11 +14,18 @@ import {
   redisLanguageConfig,
   KEYBOARD_SHORTCUTS,
 } from 'uiSrc/constants'
+import {
+  getMultiCommands,
+  getRedisCompletionProvider,
+  getRedisMonarchTokensProvider,
+  removeMonacoComments,
+  splitMonacoValuePerLines
+} from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { getRedisCompletionProvider, getRedisMonarchTokensProvider } from 'uiSrc/utils'
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
 
@@ -31,6 +40,8 @@ export interface Props {
 
 const Query = (props: Props) => {
   const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl } = props
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+
   const {
     commandsArray: REDIS_COMMANDS_ARRAY,
     spec: REDIS_COMMANDS_SPEC
@@ -54,7 +65,35 @@ const Query = (props: Props) => {
     onKeyDown?.(e, query)
   }
 
+  const sendEventSubmitTelemetry = (commandInit = query) => {
+    const eventData = (() => {
+      const commands = splitMonacoValuePerLines(commandInit)
+
+      const [commandLine, ...rest] = commands.map((command = '') => {
+        const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
+          command.toUpperCase().startsWith(commandName))
+        return matchedCommand ?? command.split(' ')?.[0]
+      })
+      const multiCommands = getMultiCommands(rest)
+
+      const command = removeMonacoComments(decode([commandLine, multiCommands].join('\n')).trim())
+
+      return {
+        command,
+        databaseId: instanceId,
+        multiple: multiCommands ? 'Multiple' : 'Single'
+      }
+    })()
+
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
+      eventData
+    })
+  }
+
   const handleSubmit = (value?: string) => {
+    sendEventSubmitTelemetry(value)
+
     onSubmit(value)
   }
 

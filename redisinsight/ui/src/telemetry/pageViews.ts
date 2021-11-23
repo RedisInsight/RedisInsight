@@ -3,4 +3,5 @@ export enum TelemetryPageView {
   WELCOME_PAGE = 'Welcome',
   SETTINGS_PAGE = 'Settings',
   BROWSER_PAGE = 'Browser',
+  WORKBENCH_PAGE = 'Workbench',
 }

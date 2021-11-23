@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface IContext {
-  setScript: (script: string) => void;
+  setScript: (script: string, path: string) => void;
   openPage: (page: IInternalPage) => void;
 }
 export interface IInternalPage {
@@ -10,7 +10,7 @@ export interface IInternalPage {
   backTitle: string;
 }
 export const defaultValue = {
-  setScript: (script: string) => script,
+  setScript: (script: string, path: string) => script,
   openPage: (page: IInternalPage) => page
 }
 const EnablementAreaContext = React.createContext<IContext>(defaultValue)

@@ -178,5 +178,10 @@ export default { renderVisualization }
 
 
 ## Plugins communication
-> **_Future updates:_**
-Support of communication with the main application via a third-party library - _redisinsight-plugin-sdk_.
+
+Use the [redisinsight-plugin-sdk](https://www.npmjs.com/package/redisinsight-plugin-sdk), which is a third party library, 
+to communicate with the main app.
+
+Find the list and 
+description of methods called [here](../../redisinsight/ui/src/packages/redisinsight-plugin-sdk/README.md).
+

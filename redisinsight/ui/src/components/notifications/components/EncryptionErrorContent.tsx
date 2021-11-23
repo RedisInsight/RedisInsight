@@ -52,7 +52,7 @@ const EncryptionErrorContent = (props: Props) => {
               size="s"
               color="warning"
               onClick={disableEncryption}
-              className="toast-danger-btn"
+              className="toast-danger-btn euiBorderWidthThick"
               data-testid="toast-action-btn"
             >
               Disable Encryption

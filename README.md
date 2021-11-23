@@ -1,4 +1,3 @@
-[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/latest.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/latest)
 [![Forum](https://img.shields.io/badge/Forum-RedisInsight-red)](https://forum.redis.com/c/redisinsight/65)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
@@ -41,6 +40,8 @@ Available to download for free from [here](https://redis.com/redis-enterprise/re
 ### Build 
 Alternatively you can also build from source. See our wiki for instructions.
 
+* [How to build](https://github.com/RedisInsight/RedisInsight/wiki/How-to-build-and-contribute)
+
 ## Feedback
 
 * Request a new [feature](https://github.com/RedisInsight/RedisInsight/issues/new?assignees=&labels=&template=feature_request.md&title=%5BFeature+Request%5D%3A)
@@ -52,9 +53,13 @@ Alternatively you can also build from source. See our wiki for instructions.
 
 With RedisInsight you can now also extend the core functionality by building your own data visualizations. See our wiki for more information.
 
+* [Plugin Documentation](https://github.com/RedisInsight/RedisInsight/wiki/Plugin-Documentation)
+
 ## Contributing
 
 If you would like to contribute to the code base or fix and issue, please consult the wiki.
+
+* [How to build and contribute](https://github.com/RedisInsight/RedisInsight/wiki/How-to-build-and-contribute)
 
 ## Telemetry
 

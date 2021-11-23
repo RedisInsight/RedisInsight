@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 import { PageNames } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
@@ -7,7 +9,6 @@ import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { loadPluginsAction } from 'uiSrc/slices/app/plugins'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
-import { useParams } from 'react-router-dom'
 import WBViewWrapper from './components/wb-view'
 
 const WorkbenchPage = () => {

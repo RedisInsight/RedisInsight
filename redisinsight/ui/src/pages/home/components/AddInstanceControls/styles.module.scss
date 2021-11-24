@@ -14,8 +14,12 @@
   padding-right: 10px;
   height: 43px;
   margin: 0 auto;
-  width: 200px;
+  width: 210px;
   text-decoration: none !important;
+
+  :global(.euiButton__text) {
+    font-weight: 500 !important;
+  }
 }
 
 .createBtn {

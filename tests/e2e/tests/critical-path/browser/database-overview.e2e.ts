@@ -37,6 +37,9 @@ fixture `Database overview`
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
         await t.pressKey('enter');
         await t.click(cliPage.cliCollapseButton);
+        //Delete all databases
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await myRedisDatabasePage.deleteAllDatabases();
     })
 test('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
     let firstDatabaseModules = [];

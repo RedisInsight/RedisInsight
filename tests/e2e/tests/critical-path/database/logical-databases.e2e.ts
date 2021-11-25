@@ -21,6 +21,10 @@ fixture `Logical databases`
         await myRedisDatabasePage.deleteAllDatabases();
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
     })
+    .afterEach(async t => {
+        //Delete databases
+        await myRedisDatabasePage.deleteAllDatabases();
+    })
 test('Verify that user can add DB with logical index via host and port from Add DB manually form', async t => {
     const index = '0';
     await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);

@@ -1,4 +1,5 @@
 import React from 'react'
+import { isString } from 'lodash'
 import cx from 'classnames'
 import { EuiBadge, EuiText } from '@elastic/eui'
 
@@ -14,7 +15,7 @@ const KeyboardShortcut = ({ items = [], separator = '', transparent = false }: P
   <div className={styles.container}>
     {
         items.map((item: string | JSX.Element, index: number) => (
-          <div key={typeof item === 'string' ? item : item?.props?.children}>
+          <div key={isString(item) ? item : item?.props?.children}>
             { (index !== 0) && <div className={styles.separator}>{separator}</div> }
             <EuiBadge className={cx(styles.badge, { [styles.transparent]: transparent })}>
               <EuiText size="s">{item}</EuiText>

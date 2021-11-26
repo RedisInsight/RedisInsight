@@ -38,12 +38,12 @@ export enum TelemetryEvents {
   BrowserJSONPropertyDeleted = 'BROWSER_JSON_PROPERTY_DELETED',
 
   // Events for cli tool
-  CliClientCreated = 'CLI_CLIENT_CREATED',
-  CliClientCreationFailed = 'CLI_CLIENT_CREATION_FAILED',
-  CliClientConnectionError = 'CLI_CLIENT_CONNECTION_ERROR',
-  CliClientDeleted = 'CLI_CLIENT_DELETED',
-  CliClientRecreated = 'CLI_CLIENT_RECREATED',
-  CliCommandExecuted = 'CLI_COMMAND_EXECUTED',
-  CliClusterNodeCommandExecuted = 'CLI_CLUSTER_COMMAND_EXECUTED',
-  CliCommandErrorReceived = 'CLI_COMMAND_ERROR_RECEIVED',
+  ClientCreated = 'CLIENT_CREATED',
+  ClientCreationFailed = 'CLIENT_CREATION_FAILED',
+  ClientConnectionError = 'CLIENT_CONNECTION_ERROR',
+  ClientDeleted = 'CLIENT_DELETED',
+  ClientRecreated = 'CLIENT_RECREATED',
+  CommandExecuted = 'COMMAND_EXECUTED',
+  ClusterNodeCommandExecuted = 'CLUSTER_COMMAND_EXECUTED',
+  CommandErrorReceived = 'COMMAND_ERROR_RECEIVED',
 }

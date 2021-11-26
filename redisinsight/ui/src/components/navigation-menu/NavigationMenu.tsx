@@ -20,7 +20,7 @@ import {
 import { PageNames, Pages } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { setReleaseNotesViewed, appElectronInfoSelector } from 'uiSrc/slices/app/info'
+import { setReleaseNotesViewed, appElectronInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import LogoSVG from 'uiSrc/assets/img/logo.svg'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
@@ -69,6 +69,11 @@ const NavigationMenu = () => {
   }
   const handleGoBrowserPage = () => {
     history.push(Pages.browser(connectedInstanceId))
+  }
+
+  const onKeyboardShortcutClick = () => {
+    setIsHelpMenuActive(false)
+    dispatch(setShortcutsFlyoutState(true))
   }
 
   const privateRoutes: INavigations[] = [
@@ -177,16 +182,21 @@ const NavigationMenu = () => {
             </EuiLink>
           </EuiFlexItem>
 
-          <EuiFlexItem className={cx(styles.helpMenuItem, styles.helpMenuItemDisabled)}>
-            <EuiIcon type="keyboardShortcut" size="xl" />
-            <EuiSpacer size="s" />
-            <EuiText
-              size="xs"
-              textAlign="center"
-              className={styles.helpMenuText}
-            >
-              Keyboard Shortcuts
-            </EuiText>
+          <EuiFlexItem
+            className={styles.helpMenuItem}
+            onClick={() => onKeyboardShortcutClick()}
+          >
+            <div className={styles.helpMenuItemLink}>
+              <EuiIcon type="keyboardShortcut" size="xl" />
+              <EuiSpacer size="s" />
+              <EuiText
+                size="xs"
+                textAlign="center"
+                className={styles.helpMenuText}
+              >
+                Keyboard Shortcuts
+              </EuiText>
+            </div>
           </EuiFlexItem>
 
           <EuiFlexItem className={styles.helpMenuItem}>

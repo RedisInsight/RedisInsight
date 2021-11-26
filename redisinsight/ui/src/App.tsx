@@ -7,7 +7,7 @@ import Router from './Router'
 import store from './slices/store'
 import { Theme } from './constants'
 import { themeService } from './services'
-import { NavigationMenu, Notifications, Config } from './components'
+import { NavigationMenu, Notifications, Config, ShortcutsFlyout } from './components'
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 
@@ -32,6 +32,7 @@ const App = ({ children }: { children?: ReactElement }) => (
             </EuiPageBody>
           </EuiPage>
           <Notifications />
+          <ShortcutsFlyout />
         </div>
       </Router>
     </ThemeProvider>

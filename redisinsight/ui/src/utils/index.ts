@@ -27,6 +27,8 @@ export * from './formatBytes'
 export * from './instanceModules'
 export * from './monacoRedisComplitionProvider'
 export * from './monacoRedisMonarchTokensProvider'
+export * from './monacoActions'
+export * from './monacoDecorations'
 export * from './handlePlatforms'
 export * from './plugins'
 

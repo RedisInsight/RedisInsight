@@ -1,4 +1,6 @@
 import {
+  Direction,
+  Criteria,
   EuiBasicTableColumn,
   EuiButton,
   EuiFlexGroup,
@@ -44,7 +46,6 @@ function DatabasesList({
 }: Props) {
   const [columns, setColumns] = useState(first(columnVariations))
   const [selection, setSelection] = useState<Instance[]>([])
-
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const { loading, data: instances } = useSelector(instancesSelector)
@@ -111,6 +112,19 @@ function DatabasesList({
       'euiTableRow-isSelected': instance?.id === editedInstance?.id,
     }),
   })
+
+  const onTableChange = ({ sort, page }: Criteria<Instance>) => {
+    // calls also with page changing
+    if (sort && !page) {
+      sendEventSortedTelemetry(sort)
+    }
+  }
+
+  const sendEventSortedTelemetry = (sort: { field: keyof Instance; direction: Direction }) =>
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
+      eventData: sort
+    })
 
   const deleteBtn = (
     <EuiButton
@@ -197,6 +211,7 @@ function DatabasesList({
         sorting={{ sort }}
         selection={selectionValue}
         onWheel={onWheel}
+        onTableChange={onTableChange}
         isSelectable
       />
 

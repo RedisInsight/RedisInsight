@@ -28,6 +28,7 @@ export interface StateAppInfo {
     updateDownloadedVersion: string;
     isReleaseNotesViewed: Nullable<boolean>;
   };
+  isShortcutsFlyoutOpen: boolean;
 }
 
 export interface StateAppContext {

@@ -13,6 +13,7 @@ import Config from './config'
 import AdvancedSettings from './advanced-settings/AdvancedSettings'
 import { ConsentsSettings, ConsentsSettingsPopup } from './consents-settings'
 import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
+import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
 
 export {
   NavigationMenu,
@@ -30,5 +31,6 @@ export {
   ConsentsSettings,
   ConsentsSettingsPopup,
   AdvancedSettings,
-  KeyboardShortcut
+  KeyboardShortcut,
+  ShortcutsFlyout
 }

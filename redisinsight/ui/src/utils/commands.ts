@@ -1,8 +1,10 @@
 import { flatten, isArray, isEmpty, reject } from 'lodash'
 import { CommandArgsType, CommandGroup, ICommandArg, ICommandArgGenerated } from 'uiSrc/constants'
 
-export const getComplexityShortNotation = (text: string) =>
-  (text.endsWith(')') && text.startsWith('O') ? text : '')
+export const getComplexityShortNotation = (complexity: string[] | string): string => {
+  const value = isArray(complexity) ? complexity.join(' ') : complexity
+  return value.endsWith(')') && value.startsWith('O') ? value : ''
+}
 
 const generateArgName = (
   arg: ICommandArg,

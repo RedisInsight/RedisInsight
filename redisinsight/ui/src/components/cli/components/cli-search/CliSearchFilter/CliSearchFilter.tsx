@@ -39,7 +39,7 @@ const CliSearchFilter = ({ submitFilter, isLoading }: Props) => {
   }, [matchedCommand])
 
   const groupOptions = [...commandGroups].sort().map((group: string) => ({
-    text: (GROUP_TYPES_DISPLAY as any)[group] || group.replace(/_/, ' '),
+    text: (GROUP_TYPES_DISPLAY as any)[group] || group.replace(/_/g, ' '),
     value: group
   }))
 

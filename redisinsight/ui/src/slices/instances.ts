@@ -7,6 +7,7 @@ import ApiErrors from 'uiSrc/constants/apiErrors'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
 
 import { AppDispatch, RootState } from './store'
@@ -270,17 +271,24 @@ export function updateInstanceAction({ id, ...payload }: Instance) {
 
 // Asynchronous thunk action
 export function deleteInstancesAction(instances: Instance[]) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(setDefaultInstance())
 
     try {
+      const state = stateInit()
+      const instancesIds = map(instances, 'id')
       const { status } = await apiService.delete(ApiEndpoints.INSTANCE, {
-        data: { ids: map(instances, 'id') },
+        data: { ids: instancesIds },
       })
 
       if (isStatusSuccessful(status)) {
         dispatch(setDefaultInstanceSuccess())
         dispatch<any>(fetchInstancesAction())
+
+        if (instancesIds.includes(state.app.context.contextInstanceId)) {
+          dispatch(resetConnectedInstance())
+          dispatch(setAppContextInitialState())
+        }
 
         if (instances.length === 1) {
           dispatch(

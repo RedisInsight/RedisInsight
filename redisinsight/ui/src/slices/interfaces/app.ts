@@ -60,8 +60,9 @@ export interface StateAppContext {
 export interface StateAppRedisCommands {
   loading: boolean;
   error: string;
-  spec: ICommands,
-  commandsArray: string[],
+  spec: ICommands;
+  commandsArray: string[];
+  commandGroups: string[];
 }
 
 export interface IPluginVisualization {

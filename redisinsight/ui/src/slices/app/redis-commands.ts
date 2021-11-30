@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { uniqBy } from 'lodash'
+import { isString, uniqBy } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, ICommand, ICommands } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
@@ -30,6 +30,7 @@ const appRedisCommandsSlice = createSlice({
       state.commandsArray = Object.keys(state.spec).sort()
       state.commandGroups = uniqBy(Object.values(payload), 'group')
         .map((item: ICommand) => item.group)
+        .filter((group: string) => isString(group))
     },
     getRedisCommandsFailure: (state, { payload }) => {
       state.loading = false

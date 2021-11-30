@@ -113,10 +113,10 @@ test('Verify that user can see ZSet Key details', async t => {
     const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-    await t.expect(keyDetails).contains('Zset', 'The Key Type');
+    await t.expect(keyDetails).contains('Sorted Set', 'The Key Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
     await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
-    await t.expect(keyBadge).contains('Zset', 'The Key Badge');
+    await t.expect(keyBadge).contains('Sorted Set', 'The Key Badge');
 });
 test('Verify that user can see JSON Key details', async t => {
     const keyName = 'JSON1testKeyForEdit';

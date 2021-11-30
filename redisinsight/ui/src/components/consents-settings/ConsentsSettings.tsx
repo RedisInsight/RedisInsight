@@ -12,7 +12,9 @@ import {
   EuiToolTip,
   EuiForm,
   EuiHorizontalRule,
+  EuiCallOut,
 } from '@elastic/eui'
+import cx from 'classnames'
 import parse from 'html-react-parser'
 
 import { compareConsents } from 'uiSrc/utils'
@@ -149,34 +151,38 @@ const ConsentsSettings = ({ liveEditMode = false }: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={formik.handleSubmit} data-testid="consents-settings-form">
-      {!!nonRequiredConsents.length && (
-        <>
-          <EuiSpacer size="s" />
-          <EuiText size="s" color="subdued">
-            To improve your experience, we use third party tools in RedisInsight. All data collected
-            are completely anonymized, but we will not use these data for any purpose that you do
-            not consent to.
-          </EuiText>
-          <EuiSpacer size="xl" />
-        </>
-      )}
-      {
-        nonRequiredConsents
-          .map((consent: IConsent) => renderConsentOption(consent, nonRequiredConsents.length > 1))
-      }
+      <div className={styles.consentsWrapper}>
+        {!!nonRequiredConsents.length && (
+          <>
+            <EuiSpacer size="s" />
+            <EuiText size="s" color="subdued">
+              To improve your experience, we use third party tools in RedisInsight. All data collected
+              are completely anonymized, but we will not use these data for any purpose that you do
+              not consent to.
+            </EuiText>
+            <EuiSpacer size="xl" />
+          </>
+        )}
+        {
+          nonRequiredConsents
+            .map((consent: IConsent) => renderConsentOption(consent, nonRequiredConsents.length > 1))
+        }
 
-      {!liveEditMode && (
-        <>
-          <EuiText size="s" color="subdued">
-            While adding new plugins for Workbench, use files only from trusted authors
-            to avoid automatic execution of malicious code.
-          </EuiText>
-          <EuiHorizontalRule margin="l" />
-        </>
-      )}
-
+        {!liveEditMode && (
+          <>
+            <EuiCallOut>
+              <EuiText size="s">
+                While adding new plugins for Workbench, use files only from trusted authors
+                to avoid automatic execution of malicious code.
+              </EuiText>
+            </EuiCallOut>
+            <EuiHorizontalRule margin="l" className={cx({ [styles.pluginWarningHR]: !!requiredConsents.length })} />
+          </>
+        )}
+      </div>
       {!!requiredConsents.length && (
         <>
+          <EuiSpacer size="l" />
           <EuiText color="subdued" size="s">
             To use RedisInsight, please accept the terms and conditions:
           </EuiText>
@@ -185,39 +191,42 @@ const ConsentsSettings = ({ liveEditMode = false }: Props) => {
       )}
 
       {requiredConsents.map((consent: IConsent) => renderConsentOption(consent))}
+
       {!liveEditMode && (
-        <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
-          <EuiSpacer size="l" />
-          <EuiFlexItem grow={false}>
-            <EuiToolTip
-              position="top"
-              anchorClassName="euiToolTip__btn-disabled"
-              content={
-                submitIsDisabled() ? (
-                  <span className="euiToolTip__content">
-                    {Object.values(errors).map((err) => [
-                      spec?.agreements[err as string]?.requiredText,
-                      <br key={err} />,
-                    ])}
-                  </span>
-                ) : null
-              }
-            >
-              <EuiButton
-                fill
-                color="secondary"
-                className="btn-add"
-                type="submit"
-                onClick={() => {}}
-                disabled={submitIsDisabled()}
-                iconType={submitIsDisabled() ? 'iInCircle' : undefined}
-                data-testid="btn-submit"
+        <>
+          {!requiredConsents.length && (<EuiSpacer size="l" />)}
+          <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
+            <EuiFlexItem grow={false}>
+              <EuiToolTip
+                position="top"
+                anchorClassName="euiToolTip__btn-disabled"
+                content={
+                  submitIsDisabled() ? (
+                    <span className="euiToolTip__content">
+                      {Object.values(errors).map((err) => [
+                        spec?.agreements[err as string]?.requiredText,
+                        <br key={err} />,
+                      ])}
+                    </span>
+                  ) : null
+                }
               >
-                Submit
-              </EuiButton>
-            </EuiToolTip>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+                <EuiButton
+                  fill
+                  color="secondary"
+                  className="btn-add"
+                  type="submit"
+                  onClick={() => {}}
+                  disabled={submitIsDisabled()}
+                  iconType={submitIsDisabled() ? 'iInCircle' : undefined}
+                  data-testid="btn-submit"
+                >
+                  Submit
+                </EuiButton>
+              </EuiToolTip>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </>
       )}
     </EuiForm>
   )

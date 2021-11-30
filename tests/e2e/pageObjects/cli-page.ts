@@ -32,6 +32,8 @@ export class CliPage {
   cliCommandAutocomplete: Selector
   cliResizeButton: Selector
   cliCommandExecuted: Selector
+  cliReadMoreJSONCommandDocumentation: Selector
+  cliReadMoreRediSearchCommandDocumentation: Selector
 
   constructor() {
       //-------------------------------------------------------------------------------------------
@@ -64,6 +66,8 @@ export class CliPage {
       this.cliCommandAutocomplete = Selector('[data-testid=cli-command-autocomplete]');
       this.cliResizeButton = Selector('[data-test-subj=resize-btn-browser-cli]');
       this.cliCommandExecuted = Selector('[data-testid=cli-command-wrapper]');
+      this.cliReadMoreJSONCommandDocumentation = Selector('[id=jsonset]');
+      this.cliReadMoreRediSearchCommandDocumentation = Selector('[id=ftexplain]');
   }
   /**
   * Select filter group type

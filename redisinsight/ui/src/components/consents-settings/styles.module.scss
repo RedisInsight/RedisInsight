@@ -1,3 +1,6 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/global_styling/index';
+
 .redisIcon {
   width: 140px;
   height: auto;
@@ -12,6 +15,9 @@
     max-width: 94vw;
     .euiModal__closeIcon {
       display: none;
+    }
+    .euiModal__flex {
+      max-height: 84vh !important;
     }
   }
 
@@ -28,9 +34,21 @@
   padding-bottom: 4px;
 }
 
+.consentsWrapper {
+  @include euiScrollBar;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: calc(84vh - 260px);
+}
+
+.pluginWarningHR {
+  margin-bottom: 0 !important;
+}
+
 .consentsPopupTitle {
   color: var(--euiTextSubduedColorHover);
   font-weight: 500 !important;
+  font-size: 18px !important;
 }
 
 .switchOption {

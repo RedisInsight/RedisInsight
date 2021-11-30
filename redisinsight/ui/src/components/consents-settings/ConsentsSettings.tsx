@@ -172,7 +172,7 @@ const ConsentsSettings = ({ liveEditMode = false }: Props) => {
           <>
             <EuiCallOut>
               <EuiText size="s">
-                While adding new plugins for Workbench, use files only from trusted authors
+                While adding new visualization plugins, use files only from trusted authors
                 to avoid automatic execution of malicious code.
               </EuiText>
             </EuiCallOut>

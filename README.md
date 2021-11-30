@@ -1,7 +1,11 @@
+[![Release](https://img.shields.io/github/v/release/RedisInsight/RedisInsight.svg?sort=semver)](https://github.com/RedisInsight/RedisInsight/releases)
+[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/master.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsighth/tree/master)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisInsight/RedisInsight.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisInsight/RedisInsight/alerts/)
+
+# <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  RedisInsight
 [![Forum](https://img.shields.io/badge/Forum-RedisInsight-red)](https://forum.redis.com/c/redisinsight/65)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
-# <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  RedisInsight
 
 **Best in class Redis developer GUI to view and interact with your data! [Download it from here](https://redis.com/redis-enterprise/redis-insight/#insight-form)!**
 

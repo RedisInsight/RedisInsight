@@ -86,3 +86,26 @@ test('Verify that user can scroll commands using "Tab" in CLI & execute it', asy
     //Check that command was executed and user got success result
     await t.expect(cliPage.cliOutputResponseSuccess.exists).ok('Command from autocomplete was found & executed');
 });
+test('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, FT.DROPINDEX/JSON.GET, JSON.DEL), he can see hints with arguments', async t => {
+    const commandHints =[
+        'index [ON HASH|JSON] [PREFIX count prefix [prefix ...]] [LANGUAGE default_lang] [LANGUAGE_FIELD lang_attribute] [SCORE default_score] [SCORE_FIELD score_attribute] [PAYLOAD_FIELD payload_attribute] [MAXTEXTFIELDS] [TEMPORARY seconds] [NOOFFSETS] [NOHL] [NOFIELDS] [NOFREQS] [count stopword [stopword ...]] SCHEMA field_name [AS alias] TEXT|TAG|NUMERIC|GEO [SORTABLE [UNF]] [NOINDEX]',
+        'index [DD]',
+        'key [INDENT indent] [NEWLINE newline] [SPACE space] [paths [paths ...]]',
+        'key [path]'
+    ];
+    const commands = [
+        'FT.CREATE',
+        'FT.DROPINDEX',
+        'JSON.GET',
+        'JSON.DEL'
+    ];
+    await addNewStandaloneDatabase(ossStandaloneConfig);
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Enter commands and check hints with arguments
+    for(let command of commands) {
+        await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+        await t.expect(cliPage.cliCommandAutocomplete.textContent).eql(commandHints[commands.indexOf(command)], `The hints with arguments for command ${command}`);
+    }
+});

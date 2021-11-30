@@ -11,6 +11,7 @@ export enum TelemetryEvents {
   RedisInstanceDeleted = 'CONFIG_DATABASES_DATABASE_DELETED',
   RedisInstanceEditedByUser = 'CONFIG_DATABASES_DATABASE_EDITED_BY_USER',
   RedisInstanceConnectionFailed = 'DATABASE_CONNECTION_FAILED',
+  RedisInstanceListReceived = 'CONFIG_DATABASES_DATABASE_LIST_DISPLAYED',
 
   // Events for autodiscovery flows
   REClusterDiscoverySucceed = 'CONFIG_DATABASES_RE_CLUSTER_AUTODISCOVERY_SUCCEEDED',

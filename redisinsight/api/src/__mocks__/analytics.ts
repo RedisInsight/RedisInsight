@@ -1,4 +1,5 @@
 export const mockInstancesAnalyticsService = () => ({
+  sendInstanceListReceivedEvent: jest.fn(),
   sendInstanceAddedEvent: jest.fn(),
   sendInstanceAddFailedEvent: jest.fn(),
   sendInstanceEditedEvent: jest.fn(),

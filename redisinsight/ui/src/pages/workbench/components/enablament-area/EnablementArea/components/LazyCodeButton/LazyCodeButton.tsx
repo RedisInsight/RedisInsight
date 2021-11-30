@@ -11,7 +11,7 @@ export interface Props {
 }
 const LazyCodeButton = ({ path = '', ...rest }: Props) => {
   const [isLoading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string>('')
+  const [, setError] = useState<string>('')
   const { setScript } = useContext(EnablementAreaContext)
 
   const loadContent = async () => {
@@ -22,7 +22,7 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
         const { data, status } = await resourcesService.get<string>(path)
         if (isStatusSuccessful(status)) {
           setLoading(false)
-          setScript(data)
+          setScript(data, path)
         }
       } catch (error) {
         setLoading(false)

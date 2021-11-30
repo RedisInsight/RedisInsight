@@ -1,21 +1,17 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { WORKBENCH_HISTORY_WRAPPER_NAME } from 'uiSrc/pages/workbench/constants'
 import { WBHistoryObject } from 'uiSrc/pages/workbench/interfaces'
-import HistoryContainer from 'uiSrc/services/queryHistory'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import WBResults, { Props } from './WBResults'
 
 const mockedProps = mock<Props>()
 
 let store: typeof mockedStore
-let history: HistoryContainer<WBHistoryObject>
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
-  history = new HistoryContainer<WBHistoryObject>(WORKBENCH_HISTORY_WRAPPER_NAME)
 })
 
 jest.mock('uiSrc/services', () => ({
@@ -37,11 +33,11 @@ describe('WBResults', () => {
 
     // sendCliClusterCommandAction.mockImplementation(() => sendCliClusterActionMock);
 
-    expect(render(<WBResults {...instance(mockedProps)} history={history} />)).toBeTruthy()
+    expect(render(<WBResults {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should render with custom props', () => {
-    const historyObjectsMock: WBHistoryObject[] = [
+    const historyItemsMock: WBHistoryObject[] = [
       {
         query: 'query1',
         data: 'data1',
@@ -56,10 +52,27 @@ describe('WBResults', () => {
       },
     ]
 
-    const historyProp = {
-      getData: () => historyObjectsMock,
-    }
+    expect(render(<WBResults {...instance(mockedProps)} historyItems={historyItemsMock} />)).toBeTruthy()
+  })
 
-    expect(render(<WBResults {...instance(mockedProps)} history={historyProp} />)).toBeTruthy()
+  it('should not render NoResults component with empty history', () => {
+    const { getByTestId } = render(<WBResults {...instance(mockedProps)} historyItems={[]} />)
+
+    expect(getByTestId('wb_no-results')).toBeInTheDocument()
+  })
+
+  it('should render NoResults component with history', () => {
+    const historyItemsMock: WBHistoryObject[] = [{
+      query: 'query1',
+      data: 'data1',
+      id: 1,
+      fromPersistentStore: true,
+    }]
+
+    const { queryByTestId } = render(<WBResults {...instance(mockedProps)} historyItems={historyItemsMock} />)
+
+    const noResultsEl = queryByTestId('wb_no-results')
+
+    expect(noResultsEl).not.toBeInTheDocument()
   })
 })

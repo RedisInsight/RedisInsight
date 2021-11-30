@@ -54,7 +54,7 @@ const HelpLinksMenu = ({ onLinkClick }: IProps) => {
 
   return (
     <EuiInputPopover
-      style={{ minWidth: '244px' }}
+      style={{ width: '245px' }}
       display="block"
       id="databasesMenu"
       input={button}

@@ -148,6 +148,14 @@ describe('getComplexityShortNotation', () => {
       }
     })
   })
+  it('handle case when complexity is array of strings', () => {
+    const result = getComplexityShortNotation([
+      'O(1) for each field/value pair added',
+      'O(N) to add N field/value pairs when the command is called with multiple field/value pairs.'
+    ])
+
+    expect(result).toEqual('')
+  })
 })
 
 describe('generateArgs', () => {

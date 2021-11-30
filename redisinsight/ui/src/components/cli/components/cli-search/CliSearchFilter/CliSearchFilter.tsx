@@ -9,8 +9,9 @@ import {
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
+import { GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
-import { FILTER_GROUP_TYPE_OPTIONS } from 'uiSrc/components/cli/components/cli-search/CliSearchFilter/constants'
 
 import styles from './styles.module.scss'
 
@@ -20,6 +21,8 @@ export interface Props {
 }
 
 const CliSearchFilter = ({ submitFilter, isLoading }: Props) => {
+  const { commandGroups = [] } = useSelector(appRedisCommandsSelector)
+
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [typeSelected, setTypeSelected] = useState<string>('')
 
@@ -35,17 +38,22 @@ const CliSearchFilter = ({ submitFilter, isLoading }: Props) => {
     setTypeSelected('')
   }, [matchedCommand])
 
-  const options: EuiSuperSelectOption<string>[] = FILTER_GROUP_TYPE_OPTIONS.map(
+  const groupOptions = [...commandGroups].sort().map((group: string) => ({
+    text: (GROUP_TYPES_DISPLAY as any)[group] || group.replace(/_/g, ' '),
+    value: group
+  }))
+
+  const options: EuiSuperSelectOption<string>[] = groupOptions.map(
     (item) => {
       const { value, text } = item
       return {
         value,
         inputDisplay: (
-          <EuiText className={styles.selectedType} size="s">
+          <EuiText className={cx(styles.selectedType, 'text-capitalize')} size="s">
             {text}
           </EuiText>
         ),
-        dropdownDisplay: <EuiText>{text}</EuiText>,
+        dropdownDisplay: <EuiText className="text-capitalize">{text}</EuiText>,
         'data-test-subj': `filter-option-group-type-${value}`,
       }
     }

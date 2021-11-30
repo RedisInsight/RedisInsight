@@ -3,7 +3,7 @@ import { EuiBadge, EuiText } from '@elastic/eui'
 import { CommandGroup, KeyTypes, GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
 
 export interface Props {
-  type: KeyTypes | CommandGroup;
+  type: KeyTypes | CommandGroup | string;
   name?: string,
   className?: string
 }
@@ -15,7 +15,7 @@ const GroupBadge = ({ type, name = '', className = '' }: Props) => (
     data-testid={`badge-${type} ${name}`}
   >
     <EuiText style={{ color: 'var(--euiTextSubduedColorHover)' }} className="text-uppercase" size="xs">
-      {GROUP_TYPES_DISPLAY[type] ?? type}
+      {(GROUP_TYPES_DISPLAY as any)[type] ?? type.replace(/_/g, ' ')}
     </EuiText>
   </EuiBadge>
 )

@@ -1,8 +1,22 @@
 import React from 'react'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-
-import { FILTER_GROUP_TYPE_OPTIONS } from './constants'
+import { GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
 import CliSearchFilter from './CliSearchFilter'
+
+const redisCommandsPath = 'uiSrc/slices/app/redis-commands'
+
+const commandGroupsMock = ['list', 'hash', 'set']
+
+jest.mock(redisCommandsPath, () => {
+  const defaultState = jest.requireActual(redisCommandsPath).initialState
+  return {
+    ...jest.requireActual(redisCommandsPath),
+    appRedisCommandsSelector: jest.fn().mockReturnValue({
+      ...defaultState,
+      commandGroups: commandGroupsMock
+    }),
+  }
+})
 
 describe('CliSearchFilter', () => {
   it('should render', () => {
@@ -12,9 +26,10 @@ describe('CliSearchFilter', () => {
   it('should call submitFilter after choose options', () => {
     const submitFilter = jest.fn()
     const { queryByText } = render(<CliSearchFilter submitFilter={submitFilter} />)
+    const testGroup = commandGroupsMock[0]
     fireEvent.click(screen.getByTestId('select-filter-group-type'))
-    fireEvent.click(queryByText(FILTER_GROUP_TYPE_OPTIONS[0].text) || document)
+    fireEvent.click(queryByText((GROUP_TYPES_DISPLAY as any)[testGroup]) || document)
 
-    expect(submitFilter).toBeCalledWith(FILTER_GROUP_TYPE_OPTIONS[0].value)
+    expect(submitFilter).toBeCalledWith(testGroup)
   })
 })

@@ -12,11 +12,13 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { format } from 'date-fns'
+import { useParams } from 'react-router-dom'
 
 import { Theme } from 'uiSrc/constants'
 import { getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
@@ -57,6 +59,7 @@ const QueryCardHeader = (props: Props) => {
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { theme } = useContext(ThemeContext)
 
@@ -66,6 +69,12 @@ const QueryCardHeader = (props: Props) => {
   }
 
   const handleCopy = (event: React.MouseEvent, text: string) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_COMMAND_COPIED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
     eventStop(event)
     navigator.clipboard.writeText(text)
   }
@@ -81,11 +90,23 @@ const QueryCardHeader = (props: Props) => {
   }
 
   const handleQueryDelete = (event: React.MouseEvent) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_COMMAND_DELETE_COMMAND,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
     eventStop(event)
     onQueryDelete()
   }
 
   const handleQueryReRun = (event: React.MouseEvent) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
     eventStop(event)
     onQueryReRun()
   }

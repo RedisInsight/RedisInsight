@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { findIndex } from 'lodash'
+import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
@@ -12,10 +12,17 @@ import {
   redisLanguageConfig,
   KEYBOARD_SHORTCUTS,
 } from 'uiSrc/constants'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { getRedisCompletionProvider, getRedisMonarchTokensProvider } from 'uiSrc/utils'
-import { WBQueryType } from 'uiSrc/pages/workbench/constants'
+import {
+  decoration,
+  geMonacoAction,
+  getRedisCompletionProvider,
+  getRedisMonarchTokensProvider,
+  MonacoAction,
+  Nullable,
+  toModelDeltaDecoration
+} from 'uiSrc/utils'
 import { KeyboardShortcut } from 'uiSrc/components'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import styles from './styles.module.scss'
@@ -25,18 +32,26 @@ export interface Props {
   loading: boolean;
   setQueryEl: Function;
   setQuery: (script: string) => void;
-  onSubmit: (query?: string, historyId?: number, type?: WBQueryType) => void;
+  onSubmit: (query?: string) => void;
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void;
 }
 
+interface IEditorMount {
+  editor: monacoEditor.editor.IStandaloneCodeEditor
+  monaco: typeof monacoEditor
+}
+
+let decorations: string[] = []
+
 const Query = (props: Props) => {
   const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl } = props
+
   const {
     commandsArray: REDIS_COMMANDS_ARRAY,
     spec: REDIS_COMMANDS_SPEC
   } = useSelector(appRedisCommandsSelector)
-  const editorRef = React.createRef<MonacoEditor>()
   const { theme } = useContext(ThemeContext)
+  const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   let disposeCompletionItemProvider = () => {}
 
   useEffect(() =>
@@ -45,6 +60,27 @@ const Query = (props: Props) => {
       disposeCompletionItemProvider()
     },
   [])
+
+  useEffect(() => {
+    if (!monacoObjects.current) return
+    const commands = query.split('\n')
+    const { monaco, editor } = monacoObjects.current
+    const notCommandRegEx = /^[\s|//]/
+
+    const newDecorations = compact(commands.map((command, index) => {
+      if (!command || notCommandRegEx.test(command)) return null
+      const lineNumber = index + 1
+
+      return toModelDeltaDecoration(
+        decoration(monaco, `decoration_${lineNumber}`, lineNumber, 1, lineNumber, 1)
+      )
+    }))
+
+    decorations = editor.deltaDecorations(
+      decorations,
+      newDecorations
+    )
+  }, [query])
 
   const onChange = (value: string = '') => {
     setQuery(value)
@@ -62,14 +98,13 @@ const Query = (props: Props) => {
     editor: monacoEditor.editor.IStandaloneCodeEditor,
     monaco: typeof monacoEditor
   ) => {
+    monacoObjects.current = { editor, monaco }
+
     editor.focus()
     setQueryEl(editor)
 
     setupMonacoRedisLang(monaco)
-    editor.addCommand(
-      monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-      () => handleSubmit(editor.getValue())
-    )
+    editor.addAction(geMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco))
   }
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
@@ -95,6 +130,8 @@ const Query = (props: Props) => {
     padding: { top: 10 },
     automaticLayout: true,
     formatOnPaste: false,
+    glyphMargin: true,
+    lineNumbersMinChars: 4
     // fontFamily: 'Inconsolata',
     // fontSize: 16,
     // minimap: {
@@ -106,11 +143,11 @@ const Query = (props: Props) => {
     <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
       <div className={styles.input} data-testid="query-input-container">
         <MonacoEditor
-          ref={editorRef}
           language={MonacoLanguage.Redis}
           theme={theme === Theme.Dark ? 'vs-dark' : 'vs-light'}
           value={query}
           options={options}
+          className={`${MonacoLanguage.Redis}-editor`}
           onChange={onChange}
           editorDidMount={editorDidMount}
         />

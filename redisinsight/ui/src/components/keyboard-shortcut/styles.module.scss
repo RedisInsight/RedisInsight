@@ -13,5 +13,10 @@
 
 .badge {
   background-color: var(--euiTooltipBackgroundColor) !important;
-  border: 1px solid var(--euiToastSuccessBtnColor) !important;;
+  border: 1px solid var(--euiToastSuccessBtnColor) !important;
+}
+
+.transparent {
+  background-color: transparent !important;
+  border-color: var(--separatorColor) !important;
 }

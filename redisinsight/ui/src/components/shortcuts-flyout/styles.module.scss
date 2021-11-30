@@ -1,0 +1,38 @@
+.title {
+  font-size: 18px;
+  font-weight: 600 !important;
+}
+.table {
+  :global(thead) {
+    display: none;
+  }
+  &:global(.inMemoryTableDefault .euiTableCellContent span) {
+    padding-top: 0 !important;
+    white-space: normal;
+
+  }
+  :global(.euiBadge) {
+    height: 22px;
+    min-width: 34px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    :global(.euiText) {
+      font-weight: 500;
+    }
+
+    :global(.badgeArrowUp), :global(.badgeArrowDown), :global(.shiftSymbol) {
+      position: relative;
+      top: -3px
+    }
+
+    :global(.shiftSymbol) {
+      top: -2px
+    }
+
+    :global(.cmdSymbol) {
+      font-size: 12px;
+    }
+  }
+}

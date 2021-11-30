@@ -28,6 +28,7 @@ export interface StateAppInfo {
     updateDownloadedVersion: string;
     isReleaseNotesViewed: Nullable<boolean>;
   };
+  isShortcutsFlyoutOpen: boolean;
 }
 
 export interface StateAppContext {
@@ -59,8 +60,9 @@ export interface StateAppContext {
 export interface StateAppRedisCommands {
   loading: boolean;
   error: string;
-  spec: ICommands,
-  commandsArray: string[],
+  spec: ICommands;
+  commandsArray: string[];
+  commandGroups: string[];
 }
 
 export interface IPluginVisualization {

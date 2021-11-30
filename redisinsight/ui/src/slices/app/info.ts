@@ -21,7 +21,8 @@ export const initialState: StateAppInfo = {
     isUpdateAvailable: null,
     updateDownloadedVersion: '',
     isReleaseNotesViewed: null,
-  }
+  },
+  isShortcutsFlyoutOpen: false
 }
 
 // A slice for recipes
@@ -51,6 +52,9 @@ const appInfoSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    setShortcutsFlyoutState: (state, { payload }) => {
+      state.isShortcutsFlyoutOpen = payload
+    }
   },
 })
 
@@ -63,6 +67,7 @@ export const {
   getServerInfo,
   getServerInfoSuccess,
   getServerInfoFailure,
+  setShortcutsFlyoutState
 } = appInfoSlice.actions
 
 // A selector

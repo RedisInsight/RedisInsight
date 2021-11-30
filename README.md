@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
 
-**Best in class Redis developer GUI to view and interact with your data! [Download it from here](https://redis.com/redis-enterprise/redis-insight/#insight-form)!**
+**Best in class Redis developer GUI to view and interact with your data! [Download it here!](https://redis.com/redis-enterprise/redis-insight/#insight-form)!**
 
 ![RedisInsight Browser screenshot](/.github/redisinsight_browser.png)
 
@@ -24,7 +24,7 @@ RedisInsight is an intuitive and efficient GUI for Redis, allowing you to intera
 * CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
 * Introducing Workbench - advanced command line interface with intelligent command auto-complete and complex data visualizations
 * Command auto-complete support for [RediSearch](https://oss.redis.com/redisearch/), [RedisJSON](https://oss.redis.com/redisjson/), [RedisGraph](https://oss.redis.com/redisgraph/), [RedisTimeSeries](https://oss.redis.com/redistimeseries/), [RedisAI](https://oss.redis.com/redisai/)
-* Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index queries and aggregations
+* Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index, queries, and aggregations
 * Ability to build your own data visualization plugins
 * Built-in click-through guides for Redis capabilities
 * Oficially supported for Redis OSS, [Redis Cloud](https://redis.com/try-free/). Works with Microsoft Azure Cache for Redis (official support upcoming).
@@ -34,7 +34,7 @@ Check out the [release notes](https://docs.redis.com/latest/ri/release-notes/).
 
 ## Get started with RedisInsight
 
-This repository includes the code for the newly released in public preview RedisInsight 2.0. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
+This repository includes the code for RedisInsight 2.0, Currently available in public preview. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
 
 The current GA version of RedisInsight is 1.11. You can install RedisInsight 2.0 along with the GA version. 
 

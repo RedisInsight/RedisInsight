@@ -30,7 +30,7 @@ fixture `CLI Command helper`
 
 const getPageUrl = ClientFunction(() => window.location.href);
 
-test.only('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
+test('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
     const commandForCheck = 'JSON.SET';
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI

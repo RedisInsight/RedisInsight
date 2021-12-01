@@ -49,6 +49,10 @@ const COMMON_SHORTCUTS = {
     listOfCommands: {
       description: 'Display the list of commands and information about commands and their arguments in the suggestion list',
       keys: ['Ctrl', 'Space']
+    },
+    triggerHints: {
+      description: 'Trigger Command Hints',
+      keys: ['Ctrl', 'Shift', 'Space']
     }
   }
 }
@@ -76,7 +80,7 @@ const MAC_SHORTCUTS = {
     },
     clearSearch: {
       description: 'Clear the screen',
-      keys: [(<span className="cmdSymbol">⌘</span>), 'L']
+      keys: [(<span className="cmdSymbol">⌘</span>), 'K']
     },
     prevCommand: {
       description: 'Return to the previous command',
@@ -100,6 +104,10 @@ const MAC_SHORTCUTS = {
     listOfCommands: {
       description: 'Display the list of commands and information about commands and their arguments in the suggestion list',
       keys: [(<span className="cmdSymbol">⌘</span>), 'Space']
+    },
+    triggerHints: {
+      description: 'Trigger Command Hints',
+      keys: [(<span className="cmdSymbol">⌘</span>), (<span className="shiftSymbol">⇧</span>), 'Space']
     }
   }
 }

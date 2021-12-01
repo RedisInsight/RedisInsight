@@ -3,6 +3,7 @@ export interface ICommands {
 }
 
 export interface ICommand {
+  name?: string;
   summary: string;
   complexity?: string;
   arguments?: ICommandArg[];

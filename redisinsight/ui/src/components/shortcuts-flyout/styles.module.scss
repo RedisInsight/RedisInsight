@@ -24,11 +24,6 @@
 
     :global(.badgeArrowUp), :global(.badgeArrowDown), :global(.shiftSymbol) {
       position: relative;
-      top: -3px
-    }
-
-    :global(.shiftSymbol) {
-      top: -2px
     }
 
     :global(.cmdSymbol) {

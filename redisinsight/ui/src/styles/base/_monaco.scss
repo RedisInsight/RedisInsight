@@ -15,10 +15,15 @@
     margin: 16px 0;
     font-size: 1.6em;
   }
-}
 
-.monaco-editor.redisLanguage-editor .suggest-icon {
-  display: none !important;
+  a {
+    color: var(--euiTextSubduedColor) !important;
+    text-decoration: underline !important;
+
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
 }
 
 .monaco-glyph-run-command {

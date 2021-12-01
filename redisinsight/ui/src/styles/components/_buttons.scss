@@ -1,6 +1,11 @@
-@import '@elastic/eui/src/global_styling/index';
+@import '../../../../../node_modules/@elastic/eui/src/global_styling/index';
 
 .euiButton {
+  text-decoration: none !important;
+  color: var(--euiColorGhost) !important;
+  font-weight: 500 !important;
+  letter-spacing: normal !important;
+
   &.euiButton--secondary {
     color: var(--buttonSecondaryTextColor) !important;
     border-color: var(--euiColorSecondary);
@@ -20,6 +25,12 @@
   &.euiButton--primary {
     &:not([class*='isDisabled']) {
       box-shadow: none;
+    }
+  }
+  &.euiButton--fill {
+    color: var(--euiColorPrimaryText) !important;
+    &:hover {
+      color: var(--euiColorPrimaryText) !important;
     }
   }
 }
@@ -75,21 +86,12 @@
   }
 }
 
-.euiButton {
-  text-decoration: none !important;
-  color: var(--euiColorGhost) !important;
-
-  &.euiButton--fill {
-    color: white !important;
-  }
-}
-
 .euiButton__text {
-  font: normal normal normal 14px/20px Graphik, sans-serif !important;
+  font: normal normal 500 14px/20px Graphik, sans-serif !important;
 }
 
 .euiButton--small .euiButton__text {
-  font: normal normal normal 13px/16px Graphik, sans-serif !important;
+  font: normal normal 500 13px/16px Graphik, sans-serif !important;
 }
 
 .euiButton {

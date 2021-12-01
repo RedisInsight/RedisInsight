@@ -6,8 +6,7 @@ interface IContext {
 }
 export interface IInternalPage {
   path: string,
-  label: string;
-  backTitle: string;
+  label?: string;
 }
 export const defaultValue = {
   setScript: (script: string, path: string) => script,

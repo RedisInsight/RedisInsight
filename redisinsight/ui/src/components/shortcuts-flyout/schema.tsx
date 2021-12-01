@@ -36,7 +36,8 @@ export const SHORTCUTS: ShortcutGroup[] = [
     items: [
       KEYBOARD_SHORTCUTS.workbench.runQuery,
       KEYBOARD_SHORTCUTS.workbench.nextLine,
-      KEYBOARD_SHORTCUTS.workbench.listOfCommands
+      KEYBOARD_SHORTCUTS.workbench.listOfCommands,
+      KEYBOARD_SHORTCUTS.workbench.triggerHints,
     ]
   },
 ]

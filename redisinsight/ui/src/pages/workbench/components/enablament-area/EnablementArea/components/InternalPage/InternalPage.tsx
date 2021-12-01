@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useRef, useEffect } from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -10,6 +10,7 @@ import {
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
+import { debounce } from 'lodash'
 
 import {
   LazyCodeButton,
@@ -29,9 +30,26 @@ export interface Props {
   content: string;
   isLoading?: boolean;
   error?: string;
+  scrollTop?: number;
+  onScroll?: (top: number) => void;
 }
-const InternalPage = ({ onClose, title, backTitle, isLoading, error, content }: Props) => {
+const InternalPage = (props: Props) => {
+  const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop } = props
   const components: any = { LazyCodeButton, Carousel, InternalLink, Image }
+  const containerRef = useRef<HTMLDivElement>(null)
+  const handleScroll = debounce(() => {
+    if (containerRef.current && onScroll) {
+      onScroll(containerRef.current.scrollTop)
+    }
+  }, 500)
+
+  useEffect(() => {
+    if (!isLoading && !error && scrollTop && containerRef.current) {
+      setTimeout(() => {
+        containerRef?.current?.scroll(0, scrollTop)
+      }, 0)
+    }
+  }, [isLoading, scrollTop])
 
   const contentComponent = useMemo(() => (
     <JsxParser
@@ -43,7 +61,7 @@ const InternalPage = ({ onClose, title, backTitle, isLoading, error, content }: 
   ), [content])
 
   return (
-    <div className={styles.container} data-test-subj="internal-page">
+    <div ref={containerRef} className={styles.container} data-test-subj="internal-page" onScroll={handleScroll}>
       <EuiFlyoutHeader className={styles.header}>
         <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
           <EuiFlexItem grow={false}>

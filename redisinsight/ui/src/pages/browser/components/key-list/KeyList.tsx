@@ -309,7 +309,7 @@ const KeyList = (props: Props) => {
           <div className="key-list-table" data-testid="keyList-table">
             <VirtualTable
               onRowClick={selectKey}
-              headerHeight={64}
+              headerHeight={60}
               rowHeight={43}
               columns={columns}
               isRowSelectable

@@ -1,12 +1,13 @@
 .enablement-area__page {
   height: 100%;
   font: normal normal normal 12px/18px Graphik;
+  letter-spacing: -0.12px;
 
   h1, h2, h3, h4, h5, h6 {
     color: var(--euiColorGhost);
     font: normal normal medium 12px/16px Graphik;
     margin-bottom: 12px;
-    letter-spacing: 1.1px;
+    letter-spacing: -0.12px;
   }
 
   p {
@@ -19,6 +20,7 @@
   }
   b, strong {
     font: normal normal normal 12px/16px Graphik;
+    letter-spacing: -0.12px;
     color: var(--htmlColor);
   }
   hr {
@@ -72,7 +74,7 @@
     position: sticky;
     bottom: 0;
     border-top: 1px solid var(--separatorColor);
-    padding-top: 12px;
+    padding: 12px 0;
     background-color: var(--euiColorEmptyShade);
   }
 }

@@ -4,7 +4,7 @@ export enum MonacoAction {
   Submit = 'submit'
 }
 
-export const geMonacoAction = (
+export const getMonacoAction = (
   actionId: MonacoAction,
   action: (editor: monacoEditor.editor.IStandaloneCodeEditor, ...args: any[]) => void | Promise<void>,
   monaco: typeof monacoEditor,
@@ -20,3 +20,6 @@ export const geMonacoAction = (
 
   return { id: '', label: '', run: () => {} }
 }
+
+export const actionTriggerParameterHints = (editor:monacoEditor.editor.IStandaloneCodeEditor) =>
+  editor.trigger('', 'editor.action.triggerParameterHints', '')

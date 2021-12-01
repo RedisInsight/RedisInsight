@@ -11,7 +11,9 @@
   .euiRadio__label,
   .euiCheckbox__label {
     font-size: 13px;
+    line-height: 18px;
     font-weight: 400;
+    letter-spacing: -.13px;
 
     &:not(.euiFormLabel-isFocused, .euiFormLabel-isInvalid) {
       color: var(--euiTextSubduedColor);
@@ -26,12 +28,12 @@
   }
 
   .euiFormRow__label {
-    font-size: 12px;
+    padding-bottom: 2px;
   }
 
   .euiFieldText:disabled {
     background-color: initial;
-    color: #757575;
+    color: #b5b6c0;
   }
 }
 
@@ -73,7 +75,9 @@ body {
     max-width: 100% !important;
     border: 1px solid var(--controlsBorderColor) !important;
     box-shadow: none !important;
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: -0.14px;
   }
 
   .euiFormHelpText {

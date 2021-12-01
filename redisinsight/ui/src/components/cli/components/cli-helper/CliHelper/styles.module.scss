@@ -49,16 +49,19 @@
 
 .summary {
   font: normal normal normal 13px/18px Graphik, sans-serif !important;
+  letter-spacing: -0.13px;
   padding: 10px 0 5px;
 }
 
 .field {
   padding-top: 12px;
   font: normal normal normal 13px/17px Graphik, sans-serif !important;
+  letter-spacing: -0.13px;
 }
 
 .fieldTitle {
   font: normal normal 500 14px/17px Graphik, sans-serif !important;
+  letter-spacing: -0.14px;
   color: var(--euiTextSubduedColorHover);
   padding-bottom: 3px;
 }

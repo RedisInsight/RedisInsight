@@ -122,6 +122,20 @@ export default merge(commonConfig, {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+      // WOFF2 Font
+      {
+        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[hash]-[name].[ext]',
+              outputPath: 'static',
+              publicPath: 'static',
+            },
+          },
+        ],
+      },
       // TTF Font
       {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,

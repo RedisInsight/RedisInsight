@@ -49,7 +49,7 @@
       "disabled": false,
       "since": "1.0.4",
       "title": "Server Side Public License",
-      "label": "I have read and understood the <a target=\"_blank\" href=\"https://github.com/RedisInsight/RedisInsight/blob/master/LICENSE\">Server Side Public License</a>",
+      "label": "I have read and understood the <a target=\"_blank\" href=\"https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE\">Server Side Public License</a>",
       "requiredText": "Accept the Server Side Public License"
     }
   }

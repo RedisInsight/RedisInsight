@@ -28,7 +28,7 @@
 
     thead tr {
       background-color: var(--euiColorEmptyShade);
-      height: 58px;
+      height: 54px;
 
       &:first-child {
         border-left: 1px solid var(--euiColorLightShade);
@@ -59,7 +59,7 @@
 
     .euiTableRow {
       font-size: 14px !important;
-      height: 50px;
+      height: 48px;
 
       .column_name {
         cursor: pointer;
@@ -67,7 +67,7 @@
         padding-bottom: 0;
 
         div {
-          line-height: 49px;
+          line-height: 47px;
           display: block;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -209,6 +209,7 @@
       .euiTableCellContent__text {
         font-size: 16px !important;
         font-family: 'Graphik', sans-serif !important;
+        font-weight: 500 !important;
       }
 
       .euiTableHeaderButton {
@@ -237,7 +238,8 @@
     textarea {
       max-width: 100% !important;
       opacity: 0.9;
-      font-size: 13px;
+      font-size: 14px;
+      line-height: 24px;
     }
   }
 
@@ -305,7 +307,6 @@
 
   .getStartedForm {
     max-width: 752px;
-    letter-spacing: 0.14px !important;
     padding-top: 3px;
     font-family: 'Graphik', sans-serif;
     font-weight: 400 !important;

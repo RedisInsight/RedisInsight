@@ -62,7 +62,7 @@ export enum CommandGroup {
   AI = 'ai'
 }
 
-export enum CommandGroupsStartsWith {
+export enum CommandPrefix {
   AI = 'AI',
   Graph = 'GRAPH',
   TimeSeries = 'TS',

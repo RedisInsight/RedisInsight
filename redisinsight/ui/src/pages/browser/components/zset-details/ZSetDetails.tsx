@@ -32,7 +32,7 @@ import PopoverDelete from '../popover-delete/PopoverDelete'
 import styles from './styles.module.scss'
 
 const suffix = '_zset'
-const headerHeight = 64
+const headerHeight = 60
 const rowHeight = 43
 
 interface IZsetMember extends ZSetMemberDto {

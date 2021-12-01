@@ -5,13 +5,13 @@
 
   :global(.euiFormControlLayout) {
     max-width: calc(100%) !important;
-    height: 38px !important;
+    height: 36px !important;
   }
 }
 
 .searchInput {
   &:global(.euiFieldSearch) {
     border: 1px solid var(--euiColorLightShade) !important;
-    height: 38px !important;
+    height: 36px !important;
   }
 }

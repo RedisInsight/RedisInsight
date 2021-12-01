@@ -16,6 +16,9 @@
   a {
     color: var(--euiColorGhost);
     text-decoration: underline;
+    &:focus {
+      text-decoration: underline;
+    }
   }
   b, strong {
     font: normal normal normal 12px/16px Graphik;

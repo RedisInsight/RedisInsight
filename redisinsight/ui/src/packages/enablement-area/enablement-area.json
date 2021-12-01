@@ -10,8 +10,8 @@
     "children": [
       {
         "type": "group",
-        "id": "document-capabilities",
-        "label": "Document Capabilities",
+        "id": "document",
+        "label": "Document",
         "args": {
           "initialIsOpen": true
         },
@@ -21,7 +21,7 @@
             "id": "introduction",
             "label": "Introduction",
             "args": {
-              "path": "/static/workbench/guides/document-capabilities/introduction.html"
+              "path": "/static/workbench/guides/document/introduction.html"
             }
           },
           {
@@ -29,7 +29,7 @@
             "id": "working-with-hashes",
             "label": "Working with Hashes",
             "args": {
-              "path": "/static/workbench/guides/document-capabilities/working-with-hashes.html"
+              "path": "/static/workbench/guides/document/working-with-hashes.html"
             }
           },
           {
@@ -37,7 +37,7 @@
             "id": "working-with-json",
             "label": "Working with JSON",
             "args": {
-              "path": "/static/workbench/guides/document-capabilities/working-with-json.html"
+              "path": "/static/workbench/guides/document/working-with-json.html"
             }
           },
           {
@@ -45,7 +45,7 @@
             "id": "learn-more",
             "label": "Learn More",
             "args": {
-              "path": "/static/workbench/guides/document-capabilities/learn-more.html"
+              "path": "/static/workbench/guides/document/learn-more.html"
             }
           }
         ]

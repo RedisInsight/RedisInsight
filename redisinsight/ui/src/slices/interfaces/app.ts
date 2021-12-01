@@ -46,6 +46,10 @@ export interface StateAppContext {
   },
   workbench: {
     script: string;
+    enablementArea: {
+      guidePath: string;
+      guideScrollTop: number;
+    },
     panelSizes: {
       horizontal: {
         [key: string]: number;

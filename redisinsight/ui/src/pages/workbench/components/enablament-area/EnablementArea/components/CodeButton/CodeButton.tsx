@@ -7,8 +7,9 @@ export interface Props {
   onClick: () => void;
   label: string;
   isLoading?: boolean;
+  className?: string;
 }
-const CodeButton = ({ onClick, label, isLoading }: Props) => (
+const CodeButton = ({ onClick, label, isLoading, ...rest }: Props) => (
   <EuiButton
     iconSide="right"
     isLoading={isLoading}
@@ -19,6 +20,7 @@ const CodeButton = ({ onClick, label, isLoading }: Props) => (
     contentProps={{ className: styles.button }}
     textProps={{ className: styles.buttonText }}
     data-testid={`preselect-${label}`}
+    {...rest}
   >
     {label}
   </EuiButton>

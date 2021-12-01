@@ -10,10 +10,11 @@ export interface Props {
   initialIsOpen?: boolean;
   forceState?: 'open' | 'closed';
   arrowDisplay?: 'left' | 'right' | 'none';
+  onToggle?: (isOpen: boolean) => void;
 }
 
 const Group = (props: Props) => {
-  const { label, children, testId, forceState, withBorder = false, arrowDisplay = 'right', initialIsOpen = false } = props
+  const { label, children, testId, forceState, withBorder = false, arrowDisplay = 'right', initialIsOpen = false, onToggle } = props
   const buttonContent = (
     <EuiText className="group-header" size="m">
       {label}
@@ -29,6 +30,7 @@ const Group = (props: Props) => {
       buttonProps={buttonProps}
       forceState={forceState}
       arrowDisplay={arrowDisplay}
+      onToggle={onToggle}
       initialIsOpen={initialIsOpen}
       style={{ whiteSpace: 'nowrap', width: 'auto' }}
       className={[withBorder ? 'withBorder' : ''].join(' ')}

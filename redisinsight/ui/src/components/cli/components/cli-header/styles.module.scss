@@ -30,6 +30,7 @@
 .endpointContainer {
   cursor: default;
   font: normal normal normal 12px/15px Graphik, sans-serif !important;
+  letter-spacing: -0.12px;
   max-width: 210px;
   display: inline-flex;
   padding-right: 10px;
@@ -37,6 +38,7 @@
 
 .endpoint {
   font: normal normal normal 12px/15px Graphik, sans-serif !important;
+  letter-spacing: -0.12px;
   display: inline-block !important;
   overflow: hidden;
   white-space: nowrap;

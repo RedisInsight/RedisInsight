@@ -125,7 +125,7 @@ const AddKey = (props: Props) => {
                 helpText={
                   typeSelected === KeyTypes.ReJSON
                     ? (
-                      <span style={{ color: '#757575' }}>
+                      <span style={{ color: '#b5b6c0' }}>
                         {HelpTexts.REJSON_SHOULD_BE_LOADED}
                       </span>
                     )

@@ -58,6 +58,7 @@ $marginIcon: 12px;
 .title {
   display: inline-block;
   font: normal normal normal 13px/17px Graphik, sans-serif !important;
+  letter-spacing: -0.13px;
   overflow: hidden;
 
   :global(.euiToolTipAnchor) {
@@ -79,8 +80,9 @@ $marginIcon: 12px;
 
 .timeText, .summaryText {
   font: normal normal normal 12px/16px Graphik, sans-serif;
-  color: var(--euiColorMediumShade) !important;
-  min-width: 75px;
+  letter-spacing: -0.12px;
+  color: var(--euiTextSubduedColor) !important;
+  min-width: 104px;
   text-align: left;
 }
 

@@ -37,11 +37,11 @@ const InternalPage = (props: Props) => {
   const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop } = props
   const components: any = { LazyCodeButton, Carousel, InternalLink, Image }
   const containerRef = useRef<HTMLDivElement>(null)
-  const handleScroll = () => {
+  const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
       onScroll(containerRef.current.scrollTop)
     }
-  }
+  }, 500)
 
   useEffect(() => {
     if (!isLoading && !error && scrollTop && containerRef.current) {
@@ -61,7 +61,7 @@ const InternalPage = (props: Props) => {
   ), [content])
 
   return (
-    <div ref={containerRef} className={styles.container} data-test-subj="internal-page" onScroll={debounce(handleScroll, 500)}>
+    <div ref={containerRef} className={styles.container} data-test-subj="internal-page" onScroll={handleScroll}>
       <EuiFlyoutHeader className={styles.header}>
         <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
           <EuiFlexItem grow={false}>

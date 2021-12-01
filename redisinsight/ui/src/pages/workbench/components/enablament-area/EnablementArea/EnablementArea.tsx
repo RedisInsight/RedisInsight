@@ -38,11 +38,13 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
     if (pagePath) {
       setIsInternalPageVisible(true)
       setInternalPage({ path: pagePath })
-    } else if (guideFromContext) {
-      handleOpenInternalPage({ path: guideFromContext })
-    } else {
-      setIsInternalPageVisible(false)
+      return
     }
+    if (guideFromContext) {
+      handleOpenInternalPage({ path: guideFromContext })
+      return
+    }
+    setIsInternalPageVisible(false)
   }, [search])
 
   const handleOpenInternalPage = (page: IInternalPage) => {

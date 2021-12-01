@@ -62,6 +62,14 @@ export enum CommandGroup {
   AI = 'ai'
 }
 
+export enum CommandPrefix {
+  AI = 'AI',
+  Graph = 'GRAPH',
+  TimeSeries = 'TS',
+  Search = 'FT',
+  JSON = 'JSON'
+}
+
 export enum CommandRediSearch {
   Search = 'FT.SEARCH',
   Aggregate = 'FT.AGGREGATE',

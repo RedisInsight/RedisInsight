@@ -161,15 +161,6 @@ export class CliAnalyticsService extends TelemetryBaseService {
   }
 
   private getNamespaceEvent(event: TelemetryEvents, namespace: string = AppTool.CLI): string {
-    switch (namespace.toLowerCase()) {
-      case 'workbench': {
-        return `WORKBENCH_${event}`;
-      }
-      case 'cli': {
-        return `CLI_${event}`;
-      }
-      default:
-        return `CLI_${event}`;
-    }
+    return namespace.toLowerCase() === 'workbench' ? `WORKBENCH_${event}` : `CLI_${event}`;
   }
 }

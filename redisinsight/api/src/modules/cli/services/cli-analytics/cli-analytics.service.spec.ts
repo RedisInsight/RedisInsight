@@ -42,7 +42,7 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientCreatedEvent', () => {
     it('should emit CliClientCreated event', () => {
-      service.sendClientCreatedEvent(instanceId, 'cli', { data: 'Some data' });
+      service.sendClientCreatedEvent(instanceId, AppTool.CLI, { data: 'Some data' });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientCreated}`,
@@ -66,7 +66,7 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientCreationFailedEvent', () => {
     it('should emit CliClientCreationFailed event', () => {
-      service.sendClientCreationFailedEvent(instanceId, 'cli', httpException, { data: 'Some data' });
+      service.sendClientCreationFailedEvent(instanceId, AppTool.CLI, httpException, { data: 'Some data' });
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientCreationFailed}`,
@@ -78,7 +78,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliClientCreationFailed event without additional data', () => {
-      service.sendClientCreationFailedEvent(instanceId, 'cli', httpException);
+      service.sendClientCreationFailedEvent(instanceId, AppTool.CLI, httpException);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientCreationFailed}`,
@@ -92,7 +92,7 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientRecreatedEvent', () => {
     it('should emit CliClientRecreated event', () => {
-      service.sendClientRecreatedEvent(instanceId, 'cli', { data: 'Some data' });
+      service.sendClientRecreatedEvent(instanceId, AppTool.CLI, { data: 'Some data' });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientRecreated}`,
@@ -103,7 +103,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliClientRecreated event without additional data', () => {
-      service.sendClientRecreatedEvent(instanceId, 'cli');
+      service.sendClientRecreatedEvent(instanceId, AppTool.CLI);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientRecreated}`,
@@ -116,7 +116,7 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientDeletedEvent', () => {
     it('should emit CliClientDeleted event', () => {
-      service.sendClientDeletedEvent(1, instanceId, 'cli', { data: 'Some data' });
+      service.sendClientDeletedEvent(1, instanceId, AppTool.CLI, { data: 'Some data' });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientDeleted}`,
@@ -127,7 +127,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliClientDeleted event without additional data', () => {
-      service.sendClientDeletedEvent(1, instanceId, 'cli');
+      service.sendClientDeletedEvent(1, instanceId, AppTool.CLI);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientDeleted}`,
@@ -137,22 +137,22 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should not emit event', () => {
-      service.sendClientDeletedEvent(0, instanceId, 'cli');
+      service.sendClientDeletedEvent(0, instanceId, AppTool.CLI);
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
     it('should not emit event on invalid input values', () => {
       const input: any = {};
-      service.sendClientDeletedEvent(input, instanceId, 'cli');
+      service.sendClientDeletedEvent(input, instanceId, AppTool.CLI);
 
-      expect(() => service.sendClientDeletedEvent(input, instanceId, 'cli')).not.toThrow();
+      expect(() => service.sendClientDeletedEvent(input, instanceId, AppTool.CLI)).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
 
   describe('sendCliCommandExecutedEvent', () => {
     it('should emit CliCommandExecuted event', () => {
-      service.sendCommandExecutedEvent(instanceId, 'cli', { command: 'info' });
+      service.sendCommandExecutedEvent(instanceId, AppTool.CLI, { command: 'info' });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandExecuted}`,
@@ -163,7 +163,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliCommandExecuted event without additional data', () => {
-      service.sendCommandExecutedEvent(instanceId, 'cli');
+      service.sendCommandExecutedEvent(instanceId, AppTool.CLI);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandExecuted}`,
@@ -208,7 +208,7 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliCommandErrorEvent', () => {
     it('should emit CliCommandError event', () => {
-      service.sendCommandErrorEvent(instanceId, 'cli', redisReplyError, { data: 'Some data' });
+      service.sendCommandErrorEvent(instanceId, AppTool.CLI, redisReplyError, { data: 'Some data' });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandErrorReceived}`,
@@ -221,7 +221,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliCommandError event without additional data', () => {
-      service.sendCommandErrorEvent(instanceId, 'cli', redisReplyError);
+      service.sendCommandErrorEvent(instanceId, AppTool.CLI, redisReplyError);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandErrorReceived}`,
@@ -234,7 +234,7 @@ describe('CliAnalyticsService', () => {
     });
     it('should emit event for custom error', () => {
       const error: any = CliParsingError;
-      service.sendCommandErrorEvent(instanceId, 'cli', error);
+      service.sendCommandErrorEvent(instanceId, AppTool.CLI, error);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandErrorReceived}`,
@@ -248,7 +248,7 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientCreationFailedEvent', () => {
     it('should emit CliConnectionError event', () => {
-      service.sendConnectionErrorEvent(instanceId, 'cli', httpException, { data: 'Some data' });
+      service.sendConnectionErrorEvent(instanceId, AppTool.CLI, httpException, { data: 'Some data' });
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientConnectionError}`,
@@ -260,7 +260,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliConnectionError event without additional data', () => {
-      service.sendConnectionErrorEvent(instanceId, 'cli', httpException);
+      service.sendConnectionErrorEvent(instanceId, AppTool.CLI, httpException);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClientConnectionError}`,
@@ -281,7 +281,7 @@ describe('CliAnalyticsService', () => {
         status: CommandExecutionStatus.Success,
       };
 
-      service.sendClusterCommandExecutedEvent(instanceId, 'cli', nodExecResult, { command: 'sadd' });
+      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult, { command: 'sadd' });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.ClusterNodeCommandExecuted}`,
@@ -300,7 +300,7 @@ describe('CliAnalyticsService', () => {
         status: CommandExecutionStatus.Fail,
       };
 
-      service.sendClusterCommandExecutedEvent(instanceId, 'cli', nodExecResult);
+      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandErrorReceived}`,
@@ -320,7 +320,7 @@ describe('CliAnalyticsService', () => {
         status: CommandExecutionStatus.Fail,
       };
 
-      service.sendClusterCommandExecutedEvent(instanceId, 'cli', nodExecResult);
+      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandErrorReceived}`,
@@ -337,7 +337,7 @@ describe('CliAnalyticsService', () => {
         port: 7002,
         status: 'undefined status',
       };
-      service.sendClusterCommandExecutedEvent(instanceId, 'cli', nodExecResult);
+      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult);
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });

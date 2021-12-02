@@ -3,7 +3,7 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .container {
-  overflow-x: hidden;
+  overflow: hidden;
   height: 100%;
   padding: 0 8px;
   background-color: var(--euiColorEmptyShade);
@@ -29,7 +29,6 @@
   padding-top: 60px;
   width: 100%;
   max-width: 100%;
-  overflow: auto;
   position: absolute;
   top: 0;
   height: 100%;

@@ -1,17 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Generator: Adobe Illustrator 26.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 17 16.018" style="enable-background:new 0 0 17 16.018;" xml:space="preserve">
-<g id="Group_6605" transform="translate(-1541.75 -288)">
-	<path id="Path_10189" style="fill:#b5b6c0;" d="M1554.75,289v7.969h3V289H1554.75 M1554.75,288h3c0.552,0,1,0.448,1,1v7.969
-		c0,0.552-0.448,1-1,1h-3c-0.552,0-1-0.448-1-1V289C1553.75,288.448,1554.198,288,1554.75,288z"/>
-	<path id="Rectangle_16736" style="fill:#b5b6c0;" d="M1548.75,289v14h3v-14H1548.75 M1548.75,288h3c0.552,0,1,0.448,1,1v14
-		c0,0.552-0.448,1-1,1h-3c-0.552,0-1-0.448-1-1v-14C1547.75,288.448,1548.198,288,1548.75,288z"/>
-	<path id="Path_10190" style="fill:#b5b6c0;" d="M1542.75,295.036V303h3v-7.964H1542.75 M1542.75,294.036h3c0.552,0,1,0.448,1,1V303
-		c0,0.552-0.448,1-1,1h-3c-0.552,0-1-0.448-1-1v-7.964C1541.75,294.484,1542.198,294.036,1542.75,294.036z"/>
-	<path id="Path_10185" style="fill:#b5b6c0;" d="M1542.75,289v3h3v-3H1542.75 M1542.75,288h3c0.552,0,1,0.448,1,1v3
-		c0,0.552-0.448,1-1,1h-3c-0.552,0-1-0.448-1-1v-3C1541.75,288.448,1542.198,288,1542.75,288z"/>
-	<path id="Path_10188" style="fill:#b5b6c0;" d="M1554.75,300.018v3h3v-3H1554.75 M1554.75,299.018h3c0.552,0,1,0.448,1,1v3
-		c0,0.552-0.448,1-1,1h-3c-0.552,0-1-0.448-1-1v-3C1553.75,299.466,1554.198,299.018,1554.75,299.018z"/>
-</g>
+<svg id="Ico_btn" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <rect id="Rectangle_16996" data-name="Rectangle 16996" width="20" height="20" fill="none"/>
+  <path id="Path_10266" data-name="Path 10266" d="M19610,2876h0v-9l0,0h-2l0-2h-3v2h-4v-2h-3v2h-2s0,0,0,.006v9h14m0,1h-14a1,1,0,0,1-1-1v-9a1,1,0,0,1,1-1h1v-1a1,1,0,0,1,1-1h3a1,1,0,0,1,1,1v1h2v-1a1,1,0,0,1,1-1h3a1,1,0,0,1,1,1v1h1a1,1,0,0,1,1,1v9A1,1,0,0,1,19610,2877Z" transform="translate(-19593 -2861)" fill="#dfe5ef"/>
 </svg>

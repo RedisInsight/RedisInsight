@@ -81,7 +81,7 @@ $marginIcon: 12px;
 .timeText, .summaryText {
   font: normal normal normal 12px/16px Graphik, sans-serif;
   letter-spacing: -0.12px;
-  color: var(--euiTextSubduedColor) !important;
+  color: var(--euiColorMediumShade) !important;
   min-width: 104px;
   text-align: left;
 }
@@ -105,6 +105,59 @@ $marginIcon: 12px;
   flex: 1;
 }
 
+.dropdownWrapper {
+  position: relative;
+  height: 40px;
+}
+
+.dropdown {
+  width: 168px;
+  position: absolute;
+  z-index: 1;
+
+  // move a little bit left to align with dropdown options icons
+  left: -21px;
+
+  :global {
+    .euiFormControlLayout__childrenWrapper {
+      width: 46px;
+      position: relative;
+      // move right to align self
+      left: 21px;
+    }
+  }
+}
+
+.dropdownOption {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 3px 0 3px 8px;
+
+  span {
+    margin-left: 10px;
+    line-height: 20px;
+    overflow: hidden;
+    max-width: 100px;
+  }
+}
+
+.iconDropdownOption {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.dropdownOptionSeparator:after {
+  content: '';
+  display: block;
+  height: 0;
+  width: 100%;
+  border-bottom: 1px solid var(--separatorDropdownColor);
+  opacity: 0.5;
+  position: absolute;
+  bottom: -8.5px;
+}
+
 .changeView:global(.euiSuperSelectControl) {
   border: none !important;
   background-color: inherit !important;
@@ -123,11 +176,41 @@ $marginIcon: 12px;
 
 .changeViewItem {
   overflow-wrap: break-word;
+  :global {
+    .euiContextMenuItem__text {
+      overflow: visible;
+    }
+    .euiContextMenu__icon {
+      margin-right: 0;
+    }
+  }
+  &:global(.euiContextMenuItem-isDisabled) {
+    padding-top: 0;
+    padding-bottom: 0;
+    min-height: 12px !important;
+    cursor: auto !important;
+    &:hover {
+      background: transparent !important;
+    }
+    :global(.euiContextMenu__icon) {
+      height: 0;
+    }
+  }
+}
+
+.separator {
+  height: 1px;
+  width: 100%;
+  background: var(--separatorDropdownColor);
+  display: block;
+  opacity: 0.5;
 }
 
 .buttonIcon {
   padding: 0 4px;
   width: 32px;
+  position: relative;
+  z-index: 2;
 }
 
 .container :global(.euiFlexItem).viewTypeIcon {

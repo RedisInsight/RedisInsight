@@ -2,7 +2,7 @@ export enum KeyTypesTexts {
     Hash = 'Hash',
     List = 'List',
     Set = 'Set',
-    ZSet = 'Zset',
+    ZSet = 'Sorted Set',
     String = 'String',
     ReJSON = 'JSON',
     Stream = 'STREAM',

@@ -5,9 +5,9 @@ FT.SEARCH "schools" "@school_type:{single} @school_type:{girls}"
 // See the "schools" index schema for reference
 
 // FT.CREATE schools
-//  on JSON
+// on JSON
 //   PREFIX 1 "school:"
-//  SCHEMA
+// SCHEMA
 //   $.name AS name TEXT NOSTEM SORTABLE
 //   $.description AS description TEXT
 //   $.school_type AS school_type TAG SEPARATOR ";"

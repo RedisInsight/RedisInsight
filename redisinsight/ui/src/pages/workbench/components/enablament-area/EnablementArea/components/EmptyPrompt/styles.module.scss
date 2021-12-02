@@ -6,12 +6,12 @@
   min-height: 200px;
   align-items: center;
   justify-content: center;
-}
-
-.title {
-  font: normal normal normal 17px/20px Graphik, sans-serif !important;
-  margin-bottom: 0 !important;
-  font-weight: 300 !important;
+  h2 {
+    font: normal normal normal 17px/20px Graphik, sans-serif !important;
+    margin-bottom: 0 !important;
+    color: var(--euiTextSubduedColor) !important;
+    font-weight: 300 !important;
+  }
 }
 
 .body {

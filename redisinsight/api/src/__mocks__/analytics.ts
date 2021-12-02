@@ -24,14 +24,14 @@ export const mockBrowserAnalyticsService = () => ({
 });
 
 export const mockCliAnalyticsService = () => ({
-  sendCliClientCreatedEvent: jest.fn(),
-  sendCliClientCreationFailedEvent: jest.fn(),
-  sendCliClientDeletedEvent: jest.fn(),
-  sendCliClientRecreatedEvent: jest.fn(),
-  sendCliCommandExecutedEvent: jest.fn(),
-  sendCliCommandErrorEvent: jest.fn(),
-  sendCliClusterCommandExecutedEvent: jest.fn(),
-  sendCliConnectionErrorEvent: jest.fn(),
+  sendClientCreatedEvent: jest.fn(),
+  sendClientCreationFailedEvent: jest.fn(),
+  sendClientDeletedEvent: jest.fn(),
+  sendClientRecreatedEvent: jest.fn(),
+  sendCommandExecutedEvent: jest.fn(),
+  sendCommandErrorEvent: jest.fn(),
+  sendClusterCommandExecutedEvent: jest.fn(),
+  sendConnectionErrorEvent: jest.fn(),
 });
 
 export const mockSettingsAnalyticsService = () => ({

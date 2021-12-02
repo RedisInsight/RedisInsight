@@ -48,6 +48,7 @@ const mockRedisConsumer = () => ({
   createNewToolClient: jest.fn(),
   reCreateToolClient: jest.fn(),
   deleteToolClient: jest.fn(),
+  getRedisClientNamespace: jest.fn(),
 });
 
 const mockENotFoundMessage = 'ENOTFOUND some message';

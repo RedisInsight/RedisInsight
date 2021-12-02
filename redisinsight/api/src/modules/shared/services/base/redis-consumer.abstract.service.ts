@@ -1,7 +1,11 @@
 import IORedis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { AppTool, ReplyError, IRedisConsumer } from 'src/models';
-import { catchRedisConnectionError, generateRedisConnectionName } from 'src/utils';
+import {
+  catchRedisConnectionError,
+  generateRedisConnectionName,
+  getConnectionNamespace,
+} from 'src/utils';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
@@ -114,6 +118,18 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     }
 
     return redisClientInstance.client;
+  }
+
+  getRedisClientNamespace(options: IFindRedisClientInstanceByOptions): string {
+    try {
+      const clientInstance = this.redisService.getClientInstance({
+        ...options,
+        tool: this.consumer,
+      });
+      return clientInstance?.client ? getConnectionNamespace(clientInstance.client) : '';
+    } catch (e) {
+      return '';
+    }
   }
 
   protected async createNewClient(

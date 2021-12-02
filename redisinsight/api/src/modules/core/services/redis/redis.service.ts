@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConnectionOptions, SecureContextOptions } from 'tls';
 import * as Redis from 'ioredis';
+import { isEmpty } from 'lodash';
 import IORedis, { RedisOptions } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -120,7 +121,7 @@ export class RedisService {
         });
         cluster.on('error', (e): void => {
           this.logger.error('Failed connection to the redis oss cluster', e);
-          reject(e);
+          reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
         });
         cluster.on('ready', (): void => {
           this.logger.log('Successfully connected to the redis oss cluster.');

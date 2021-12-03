@@ -13,6 +13,7 @@ import {
 } from '@elastic/eui'
 import { format } from 'date-fns'
 import { useParams } from 'react-router-dom'
+import { findIndex } from 'lodash'
 
 import { Theme } from 'uiSrc/constants'
 import { getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
@@ -20,6 +21,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
@@ -116,7 +118,7 @@ const QueryCardHeader = (props: Props) => {
   ) || ''
 
   const pluginsOptions = getVisualizationsByCommand(query, visualizations)
-    .map((visualization: any) => ({
+    .map((visualization: IPluginVisualization) => ({
       id: visualization.uniqId,
       value: WBQueryType.Plugin,
       text: visualization.name,
@@ -126,11 +128,12 @@ const QueryCardHeader = (props: Props) => {
       iconLight: (visualization.plugin.internal && visualization.iconLight)
         ? urlForAsset(visualization.plugin.baseUrl, visualization.iconLight)
         : DefaultPluginIconLight,
+      internal: visualization.plugin.internal
     }))
 
-  const options: EuiSuperSelectOption<string>[] = getViewTypeOptions()
+  const options: any[] = getViewTypeOptions()
   options.push(...pluginsOptions)
-  const modifiedOptions = options.map((item) => {
+  const modifiedOptions: EuiSuperSelectOption<any>[] = options.map((item) => {
     const { value, id, text, iconDark, iconLight } = item
     return {
       value: id ?? value,
@@ -142,16 +145,34 @@ const QueryCardHeader = (props: Props) => {
             anchorClassName={styles.tooltipIcon}
           >
             <EuiIcon
+              className={styles.iconDropdownOption}
               type={theme === Theme.Dark ? iconDark : iconLight}
               data-testid={`view-type-selected-${value}-${id}`}
             />
           </EuiToolTip>
         </div>
       ),
-      dropdownDisplay: truncateText(text, 20),
+      dropdownDisplay: (
+        <div className={cx(styles.dropdownOption)}>
+          <EuiIcon
+            className={styles.iconDropdownOption}
+            type={theme === Theme.Dark ? iconDark : iconLight}
+          />
+          <span>{truncateText(text, 20)}</span>
+        </div>
+      ),
       'data-test-subj': `view-type-option-${value}-${id}`,
     }
   })
+
+  const indexForSeparator = findIndex(pluginsOptions, (option) => !option.internal)
+  if (indexForSeparator > -1) {
+    modifiedOptions.splice(indexForSeparator + 1, 0, {
+      value: '',
+      disabled: true,
+      inputDisplay: (<span className={styles.separator} />)
+    })
+  }
 
   return (
     <div
@@ -194,14 +215,18 @@ const QueryCardHeader = (props: Props) => {
           onClick={onDropDownViewClick}
         >
           {isOpen && options.length > 1 && (
-            <EuiSuperSelect
-              options={modifiedOptions}
-              itemClassName={cx('withColorDefinition', styles.changeViewItem)}
-              className={cx(styles.changeView)}
-              valueOfSelected={selectedValue}
-              onChange={(value: string) => onChangeView(value)}
-              data-testid="select-view-type"
-            />
+            <div className={styles.dropdownWrapper}>
+              <div className={styles.dropdown}>
+                <EuiSuperSelect
+                  options={modifiedOptions}
+                  itemClassName={cx(styles.changeViewItem)}
+                  className={cx(styles.changeView)}
+                  valueOfSelected={selectedValue}
+                  onChange={(value: string) => onChangeView(value)}
+                  data-testid="select-view-type"
+                />
+              </div>
+            </div>
           )}
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.buttonIcon} onClick={onDropDownViewClick}>

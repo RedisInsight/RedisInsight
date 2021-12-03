@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
   EuiButton,
-  EuiText,
   EuiContextMenuPanel,
   EuiContextMenuItem,
   EuiPopover
@@ -58,8 +57,8 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
     <EuiPopover
       id="enablementAreaPagesMenu"
       button={(
-        <button type="button" onClick={togglePopover}>
-          <EuiText style={{ textDecoration: 'underline' }}>{`${activePage + 1} of ${items.length}`}</EuiText>
+        <button className={styles.popoverButton} type="button" onClick={togglePopover}>
+          {`${activePage + 1} of ${items.length}`}
         </button>
       )}
       isOpen={isPopoverOpen}
@@ -67,7 +66,12 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
       panelClassName={styles.popover}
       panelPaddingSize="none"
     >
-      <EuiContextMenuPanel style={{ minWidth: !compressed ? '280px' : 'none' }} className={styles.panel} size="s" items={pages} />
+      <EuiContextMenuPanel
+        style={{ minWidth: !compressed ? '280px' : 'none' }}
+        className={styles.panel}
+        size="s"
+        items={pages}
+      />
     </EuiPopover>
   )
 

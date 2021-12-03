@@ -179,11 +179,10 @@ export const createWindow = async (splash: BrowserWindow | null) => {
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
-      webSecurity: false,
+      webSecurity: true,
       contextIsolation: false,
       spellcheck: true,
-      allowRunningInsecureContent: true,
-      enableRemoteModule: true,
+      allowRunningInsecureContent: false,
       scrollBounce: true,
     },
   });

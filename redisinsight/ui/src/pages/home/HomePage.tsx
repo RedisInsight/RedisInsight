@@ -159,6 +159,13 @@ const HomePage = () => {
     setAddDialogIsOpen(false)
   }
 
+  const handleDeleteInstances = (instances: Instance[]) => {
+    if (instances.find((instance) => instance.id === editedInstance?.id)) {
+      setEditedInstance(null)
+      setEditDialogIsOpen(false)
+    }
+  }
+
   const onResize = ({ width: innerWidth }: { width: number }) => {
     setWidth(innerWidth)
   }
@@ -200,6 +207,7 @@ const HomePage = () => {
                               dialogIsOpen={dialogIsOpen}
                               editedInstance={editedInstance}
                               onEditInstance={handleEditInstance}
+                              onDeleteInstances={handleDeleteInstances}
                             />
                           </div>
                         </EuiResizablePanel>

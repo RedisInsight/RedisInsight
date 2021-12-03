@@ -270,7 +270,7 @@ export function updateInstanceAction({ id, ...payload }: Instance) {
 }
 
 // Asynchronous thunk action
-export function deleteInstancesAction(instances: Instance[]) {
+export function deleteInstancesAction(instances: Instance[], onSuccess?: () => void) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(setDefaultInstance())
 
@@ -289,6 +289,7 @@ export function deleteInstancesAction(instances: Instance[]) {
           dispatch(resetConnectedInstance())
           dispatch(setAppContextInitialState())
         }
+        onSuccess?.()
 
         if (instances.length === 1) {
           dispatch(

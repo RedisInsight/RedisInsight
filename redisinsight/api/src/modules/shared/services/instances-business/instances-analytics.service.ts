@@ -12,6 +12,23 @@ export class InstancesAnalyticsService extends TelemetryBaseService {
     super(eventEmitter);
   }
 
+  sendInstanceListReceivedEvent(
+    instances: DatabaseInstanceResponse[],
+    additionalData: object = {},
+  ): void {
+    try {
+      this.sendEvent(
+        TelemetryEvents.RedisInstanceListReceived,
+        {
+          numberOfDatabases: instances.length,
+          ...additionalData,
+        },
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
   sendInstanceAddedEvent(
     instance: DatabaseInstanceResponse,
     additionalInfo: RedisDatabaseInfoResponse,
@@ -35,6 +52,8 @@ export class InstancesAnalyticsService extends TelemetryBaseService {
           numberOfKeysRange: getRangeForNumber(additionalInfo.totalKeys, TOTAL_KEYS_BREAKPOINTS),
           totalMemory: additionalInfo.usedMemory,
           numberedDatabases: additionalInfo.databases,
+          numberOfModules: instance.modules.length,
+          modules: instance.modules,
         },
       );
     } catch (e) {

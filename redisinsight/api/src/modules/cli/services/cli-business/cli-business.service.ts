@@ -73,11 +73,11 @@ export class CliBusinessService {
     try {
       const uuid = await this.cliTool.createNewToolClient(instanceId, namespace);
       this.logger.log('Succeed to create Redis client for CLI.');
-      this.cliAnalyticsService.sendCliClientCreatedEvent(instanceId);
+      this.cliAnalyticsService.sendClientCreatedEvent(instanceId, namespace);
       return { uuid };
     } catch (error) {
       this.logger.error('Failed to create redis client for CLI.', error);
-      this.cliAnalyticsService.sendCliClientCreationFailedEvent(instanceId, error);
+      this.cliAnalyticsService.sendClientCreationFailedEvent(instanceId, namespace, error);
       throw error;
     }
   }
@@ -86,23 +86,22 @@ export class CliBusinessService {
    * Method to close exist client and create a new one
    * @param instanceId
    * @param uuid
+   * @param namespace
    */
   public async reCreateClient(
     instanceId: string,
     uuid: string,
+    namespace: string = AppTool.CLI,
   ): Promise<CreateCliClientResponse> {
     this.logger.log('re-create Redis client for CLI.');
     try {
-      const clientUuid = await this.cliTool.reCreateToolClient(
-        instanceId,
-        uuid,
-      );
+      const clientUuid = await this.cliTool.reCreateToolClient(instanceId, uuid, namespace);
       this.logger.log('Succeed to re-create Redis client for CLI.');
-      this.cliAnalyticsService.sendCliClientRecreatedEvent(instanceId);
+      this.cliAnalyticsService.sendClientRecreatedEvent(instanceId, namespace);
       return { uuid: clientUuid };
     } catch (error) {
       this.logger.error('Failed to re-create redis client for CLI.', error);
-      this.cliAnalyticsService.sendCliClientCreationFailedEvent(instanceId, error);
+      this.cliAnalyticsService.sendClientCreationFailedEvent(instanceId, namespace, error);
       throw error;
     }
   }
@@ -118,9 +117,12 @@ export class CliBusinessService {
   ): Promise<DeleteClientResponse> {
     this.logger.log('Deleting Redis client for CLI.');
     try {
+      const namespace = this.cliTool.getRedisClientNamespace({ instanceId, uuid });
       const affected = await this.cliTool.deleteToolClient(instanceId, uuid);
       this.logger.log('Succeed to delete Redis client for CLI.');
-      this.cliAnalyticsService.sendCliClientDeletedEvent(affected, instanceId);
+      if (affected) {
+        this.cliAnalyticsService.sendClientDeletedEvent(affected, instanceId, namespace);
+      }
       return { affected };
     } catch (error) {
       this.logger.error('Failed to delete Redis client for CLI.', error);
@@ -139,6 +141,7 @@ export class CliBusinessService {
   ): Promise<SendCommandResponse> {
     this.logger.log('Executing redis CLI command.');
     const { command: commandLine } = dto;
+    let namespace = AppTool.CLI.toString();
     const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Text;
     try {
       const formatter = this.outputFormatterManager.getStrategy(outputFormat);
@@ -147,10 +150,12 @@ export class CliBusinessService {
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
 
       const reply = await this.cliTool.execCommand(clientOptions, command, args, replyEncoding);
+      namespace = this.cliTool.getRedisClientNamespace(clientOptions);
 
       this.logger.log('Succeed to execute redis CLI command.');
-      this.cliAnalyticsService.sendCliCommandExecutedEvent(
+      this.cliAnalyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,
+        namespace,
         {
           command,
           outputFormat,
@@ -168,10 +173,10 @@ export class CliBusinessService {
         || error instanceof CliCommandNotSupportedError
         || error?.name === 'ReplyError'
       ) {
-        this.cliAnalyticsService.sendCliCommandErrorEvent(clientOptions.instanceId, error);
+        this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, namespace, error);
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
-      this.cliAnalyticsService.sendCliConnectionErrorEvent(clientOptions.instanceId, error);
+      this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, namespace, error);
 
       if (error instanceof EncryptionServiceErrorException) {
         throw error;
@@ -213,6 +218,7 @@ export class CliBusinessService {
     role: ClusterNodeRole,
     outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Text,
   ): Promise<SendClusterCommandResponse[]> {
+    let namespace = AppTool.CLI.toString();
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
     try {
       const formatter = this.outputFormatterManager.getStrategy(outputFormat);
@@ -226,9 +232,12 @@ export class CliBusinessService {
         role,
         replyEncoding,
       );
+
+      namespace = this.cliTool.getRedisClientNamespace(clientOptions);
       return result.map((nodeExecReply) => {
-        this.cliAnalyticsService.sendCliClusterCommandExecutedEvent(
+        this.cliAnalyticsService.sendClusterCommandExecutedEvent(
           clientOptions.instanceId,
+          namespace,
           nodeExecReply,
           { command, outputFormat },
         );
@@ -245,13 +254,13 @@ export class CliBusinessService {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
 
       if (error instanceof CliParsingError || error instanceof CliCommandNotSupportedError) {
-        this.cliAnalyticsService.sendCliCommandErrorEvent(clientOptions.instanceId, error);
+        this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, namespace, error);
         return [
           { response: error.message, status: CommandExecutionStatus.Fail },
         ];
       }
 
-      this.cliAnalyticsService.sendCliConnectionErrorEvent(clientOptions.instanceId, error);
+      this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, namespace, error);
 
       if (error instanceof EncryptionServiceErrorException) {
         throw error;
@@ -300,8 +309,9 @@ export class CliBusinessService {
       } else {
         result.response = formatter.format(result.response);
       }
-      this.cliAnalyticsService.sendCliClusterCommandExecutedEvent(
+      this.cliAnalyticsService.sendClusterCommandExecutedEvent(
         clientOptions.instanceId,
+        'cli',
         result,
         { command, outputFormat },
       );
@@ -313,11 +323,11 @@ export class CliBusinessService {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
 
       if (error instanceof CliParsingError || error instanceof CliCommandNotSupportedError) {
-        this.cliAnalyticsService.sendCliCommandErrorEvent(clientOptions.instanceId, error);
+        this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, 'cli', error);
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
 
-      this.cliAnalyticsService.sendCliConnectionErrorEvent(clientOptions.instanceId, error);
+      this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, 'cli', error);
 
       if (error instanceof EncryptionServiceErrorException) {
         throw error;

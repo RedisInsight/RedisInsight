@@ -48,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RedisLabs/redisinsight-v2.git"
+    "url": "git+https://github.com/RedisInsight/RedisInsight.git"
   },
   "author": {
     "name": "Redis Ltd.",
@@ -56,7 +56,7 @@
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
   "bugs": {
-    "url": "https://github.com/RedisLabs/redisinsight-v2/issues"
+    "url": "https://github.com/RedisInsight/RedisInsight/issues"
   },
   "keywords": [
     "redisinsight",
@@ -68,7 +68,7 @@
     "sass",
     "webpack"
   ],
-  "homepage": "https://github.com/RedisLabs/redisinsight-v2#readme",
+  "homepage": "https://github.com/RedisInsight/RedisInsight#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {

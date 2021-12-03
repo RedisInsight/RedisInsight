@@ -3,7 +3,7 @@
   border: 2px solid var(--tableDarkestBorderColor);
   h3 {
     font: normal normal 500 15px/24px Graphik, sans-serif !important;
-    letter-spacing: 0.53px;
+    letter-spacing: normal;
   }
 }
 
@@ -21,6 +21,7 @@
 
 .euiCollapsibleNavGroup__title {
   font: normal normal normal 14px/16px Graphik, sans-serif !important;
+  letter-spacing: -0.14px;
   padding-bottom: 0 !important;
   height: 26px;
   line-height: 26px !important;

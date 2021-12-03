@@ -84,11 +84,14 @@
   --controlsLabelColor: #{$controlsLabelColor};
   --hoverInListColor: #{$hoverInListColor};
   --hoverInListColorLight: #{$hoverInListColorLight};
+  --externalLinkColor: #{$externalLinkColor};
+  --externalLinkTooltipColor: #{$externalLinkTooltipColor};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
 
   --separatorColor: #{$separatorColor};
+  --separatorDropdownColor: #{$separatorDropdownColor};
 
   --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
   --buttonSecondaryTextColor: #{$buttonSecondaryTextColor};
@@ -102,6 +105,7 @@
   --commandGroupBadgeColor: #{$commandGroupBadgeColor};
 
   --moduleBackgroundColor: #{$commandGroupBadgeColor};
+  --callOutBackgroundColor: #{$euiTooltipBackgroundColor};
 
   // KeyTypes
   --typeHashColor: #{$typeHashColor};

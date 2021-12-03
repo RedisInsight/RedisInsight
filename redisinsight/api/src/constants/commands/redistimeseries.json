@@ -122,6 +122,8 @@
         "multiple": true,
         "optional": true
       }
-    ]
+    ],
+    "since": "1.0.0",
+    "group": "timeseries"
   }
 }

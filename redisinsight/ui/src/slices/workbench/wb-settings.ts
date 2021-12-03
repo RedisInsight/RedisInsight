@@ -98,7 +98,8 @@ export function updateWBClientAction(
 
     try {
       const { data, status } = await apiService.patch<CreateCliClientResponse>(
-        getUrl(instanceId, ApiEndpoints.CLI, uuid)
+        getUrl(instanceId, ApiEndpoints.CLI, uuid),
+        { namespace: 'workbench' },
       )
 
       if (isStatusSuccessful(status)) {

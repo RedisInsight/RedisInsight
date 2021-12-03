@@ -80,7 +80,7 @@ export default {
     redijsonUrl: process.env.COMMANDS_REDIJSON_URL
       || 'https://raw.githubusercontent.com/RedisJSON/RedisJSON/master/commands.json',
     redistimeseriesUrl: process.env.COMMANDS_REDISTIMESERIES_URL
-      || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/src/commands.json',
+      || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/commands.json',
     redisaiUrl: process.env.COMMANDS_REDISAI_URL
       || 'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
     redisgraphUrl: process.env.COMMANDS_REDISGRAPH_URL

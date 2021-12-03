@@ -1,5 +1,7 @@
 import RSNotAvailableLightImg from 'uiSrc/assets/img/workbench/RediSearchNotAvailableLight.jpg'
 import RSNotAvailableDarkImg from 'uiSrc/assets/img/workbench/RediSearchNotAvailableDark.jpg'
+import TextViewIconDark from 'uiSrc/assets/img/workbench/text_view_dark.svg'
+import TextViewIconLight from 'uiSrc/assets/img/workbench/text_view_light.svg'
 import { IModuleNotLoadedContent } from './components/module-not-loaded'
 
 export const WORKBENCH_HISTORY_WRAPPER_NAME = 'WORKBENCH'
@@ -14,8 +16,8 @@ export const VIEW_TYPE_OPTIONS = [
   {
     text: 'Text',
     value: WBQueryType.Text,
-    iconDark: 'visVega',
-    iconLight: 'visVega',
+    iconDark: TextViewIconDark,
+    iconLight: TextViewIconLight,
   },
 ]
 

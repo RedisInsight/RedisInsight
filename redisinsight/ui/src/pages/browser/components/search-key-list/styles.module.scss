@@ -5,14 +5,14 @@
 
   :global(.euiFormControlLayout) {
     max-width: calc(100%) !important;
-    height: 38px !important;
+    height: 36px !important;
   }
 }
 
 :global(.euiFieldSearch) {
   &.input {
     min-width: 345px;
-    height: 38px !important;
+    height: 36px !important;
     max-width: 100% !important;
 
     box-shadow: none !important;

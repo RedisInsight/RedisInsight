@@ -8,8 +8,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiTitle,
-  EuiSpacer,
-  EuiText,
 } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
@@ -35,7 +33,12 @@ const ConsentsSettingsPopup = () => {
     <EuiOverlayMask>
       <EuiModal className={styles.consentsPopup} onClose={() => {}} data-testid="consents-settings-popup">
         <EuiModalHeader className={styles.modalHeader}>
-          <EuiFlexGroup justifyContent="flexEnd">
+          <EuiFlexGroup justifyContent="spaceBetween">
+            <EuiFlexItem grow={false}>
+              <EuiTitle size="s">
+                <h3 className={styles.consentsPopupTitle}>EULA and Privacy Settings</h3>
+              </EuiTitle>
+            </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiIcon
                 className={styles.redisIcon}
@@ -46,11 +49,6 @@ const ConsentsSettingsPopup = () => {
           </EuiFlexGroup>
         </EuiModalHeader>
         <EuiModalBody>
-          <EuiTitle size="xs">
-            <EuiText className={styles.consentsPopupTitle}>EULA and Privacy Settings</EuiText>
-          </EuiTitle>
-          <EuiSpacer size="xl" />
-
           <ConsentsSettings />
         </EuiModalBody>
       </EuiModal>

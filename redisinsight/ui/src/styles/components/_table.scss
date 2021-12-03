@@ -69,6 +69,7 @@ table {
   .euiTableCellContent {
     white-space: nowrap !important;
     font: normal normal normal 13px/17px Graphik, sans-serif;
+    letter-spacing: -0.13px;
     padding: 10px 18px;
   }
 
@@ -96,6 +97,7 @@ table {
     .euiTableCellContent__text {
       color: var(--htmlColor) !important;
       font: normal normal 500 14px/17px Graphik, sans-serif !important;
+      letter-spacing: -0.14px;
     }
   }
 
@@ -103,6 +105,7 @@ table {
     padding: 10px 18px !important;
     color: var(--htmlColor) !important;
     font: normal normal 500 14px/17px Graphik, sans-serif !important;
+    letter-spacing: -0.14px;
   }
 
   .euiSpacer {

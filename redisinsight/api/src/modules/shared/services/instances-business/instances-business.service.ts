@@ -92,7 +92,9 @@ export class InstancesBusinessService {
 
   async getAll(): Promise<DatabaseInstanceResponse[]> {
     try {
-      return (await this.databasesProvider.getAll()).map(convertEntityToDto);
+      const result = (await this.databasesProvider.getAll()).map(convertEntityToDto);
+      this.instancesAnalyticsService.sendInstanceListReceivedEvent(result);
+      return result;
     } catch (error) {
       this.logger.error('Failed to get database instance list.', error);
       throw new InternalServerErrorException();

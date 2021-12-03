@@ -77,6 +77,8 @@ export interface IPluginVisualization {
   activationMethod: string;
   matchCommands: string[];
   default?: boolean;
+  iconDark?: string;
+  iconLight?: string;
 }
 
 export interface PluginsResponse {

@@ -48,10 +48,14 @@ export default class AppUpdater {
     log.info('AppUpdater initialization');
     log.transports.file.level = 'info';
 
-    autoUpdater.setFeedURL({
-      provider: 'generic',
-      url: process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
-    });
+    try {
+      autoUpdater.setFeedURL({
+        provider: 'generic',
+        url: process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
+      });
+    } catch (error) {
+      log.error(error);
+    }
 
     autoUpdater.checkForUpdatesAndNotify();
     autoUpdater.autoDownload = true;

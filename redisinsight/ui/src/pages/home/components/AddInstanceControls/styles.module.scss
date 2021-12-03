@@ -14,8 +14,12 @@
   padding-right: 10px;
   height: 43px;
   margin: 0 auto;
-  width: 200px;
+  width: 210px;
   text-decoration: none !important;
+
+  :global(.euiButton__text) {
+    font-weight: 500 !important;
+  }
 }
 
 .createBtn {
@@ -98,7 +102,7 @@
   .createBtn {
     height: 64px;
     padding-right: 40px;
-    letter-spacing: 0.12px;
+    letter-spacing: normal;
     width: 412px;
   }
 
@@ -130,7 +134,7 @@
       a {
         color: var(--euiTextColor);
         text-decoration: underline;
-        font-weight: 500;
+        font-weight: 400;
 
         &:hover {
           text-decoration: none;

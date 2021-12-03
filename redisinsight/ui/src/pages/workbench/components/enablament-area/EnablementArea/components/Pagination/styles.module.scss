@@ -1,0 +1,82 @@
+@import '@elastic/eui/src/global_styling/index';
+
+.pagination {
+  padding: 12px 18px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--separatorColor);
+  & > div:first-of-type,& > div:last-of-type  {
+    min-width: 94px;
+  }
+}
+
+.paginationCompressed {
+  padding: 8px 6px;
+  & > div:first-of-type,& > div:last-of-type  {
+    min-width: 70px;
+  }
+}
+
+.panel {
+  padding-bottom: 1px;
+  button:first-of-type {
+    border-radius: 3px 3px 0 0;
+  }
+  button:last-of-type {
+    border-radius: 0 0 2px 2px;
+  }
+}
+
+.popover {
+  border: 1px solid var(--euiColorPrimary) !important;
+  & > div:before {
+    border-top-color: var(--euiColorPrimary) !important;
+  }
+}
+
+.pagesItem {
+  padding: 4px 18px !important;
+  background-color: transparent;
+  text-decoration: none !important;
+  font: normal normal normal 14px/30px Graphik, sans-serif;
+  letter-spacing: 0;
+  span {
+    color: var(--euiTextSubduedColor);
+  }
+  &:hover {
+    background-color: var(--hoverInListColorLight) !important;
+    span {
+      color: inherit;
+    }
+  }
+  a {
+    text-decoration: none !important;
+  }
+}
+
+.pagesItemActive, .pagesItemActive:hover {
+  background-color: var(--euiColorPrimary) !important;
+  cursor: default !important;
+  span {
+    color: var(--euiColorEmptyShade);
+  }
+}
+
+.prevPage, .nextPage {
+  & > span {
+    justify-content: flex-start;
+  }
+}
+
+.prevPageCompressed {
+  & > span {
+    padding: 0 12px 0 4px !important;
+  }
+}
+.nextPageCompressed {
+  & > span {
+    padding: 0 4px 0 12px !important;
+  }
+}

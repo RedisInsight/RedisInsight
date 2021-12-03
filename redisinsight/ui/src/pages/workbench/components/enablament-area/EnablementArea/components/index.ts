@@ -8,6 +8,7 @@ import InternalPage from './InternalPage'
 import LazyCodeButton from './LazyCodeButton'
 import LazyInternalPage from './LazyInternalPage'
 import PlainText from './PlainText'
+import Pagination from './Pagination'
 
 export {
   Carousel,
@@ -20,4 +21,5 @@ export {
   LazyCodeButton,
   LazyInternalPage,
   PlainText,
+  Pagination,
 }

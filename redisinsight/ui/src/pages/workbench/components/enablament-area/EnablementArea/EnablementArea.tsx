@@ -19,7 +19,7 @@ import './styles.scss'
 import styles from './styles.module.scss'
 
 export interface Props {
-  items: IEnablementAreaItem[];
+  items: Record<string, IEnablementAreaItem>;
   loading: boolean;
   openScript: (script: string, path: string) => void;
   openInternalPage: (page: IInternalPage) => void;
@@ -69,7 +69,7 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
             label={label}
             {...args}
           >
-            {renderTreeView(children || [])}
+            {renderTreeView(Object.values(children || {}) || [])}
           </Group>
         )
       case EnablementAreaComponent.CodeButton:
@@ -108,7 +108,7 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
               flush
               className={cx(styles.innerContainer)}
             >
-              {renderTreeView(items)}
+              {renderTreeView(Object.values(items))}
             </EuiListGroup>
           )}
         <div

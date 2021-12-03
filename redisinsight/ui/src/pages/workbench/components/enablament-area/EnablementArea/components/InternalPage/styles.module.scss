@@ -3,36 +3,35 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .container {
-  @include euiScrollBar;
-  padding: 10px 12px 0 12px !important;
-  overflow: auto;
+  min-height: 1px;
   height: 100%;
   background-color: var(--euiColorEmptyShade);
   text-align: left;
   letter-spacing: 0;
   color: var(--euiTextSubduedColor) !important;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-  position: fixed;
-  left: 0;
-  top: 0;
   padding: 10px 4px;
   width: 100%;
   background-color: var(--euiColorEmptyShade);
 }
 
 .footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
   width: 100%;
   background-color: var(--euiColorEmptyShade);
 }
 
 
 .content {
-  padding: 4px 0;
+  @include euiScrollBar;
+  padding: 14px 12px 4px 12px !important;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 

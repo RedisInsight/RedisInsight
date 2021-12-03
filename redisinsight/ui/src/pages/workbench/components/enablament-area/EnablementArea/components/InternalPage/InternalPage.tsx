@@ -17,8 +17,9 @@ import {
   Carousel,
   InternalLink,
   Image,
-  EmptyPrompt
+  EmptyPrompt, Pagination
 } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
+import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 import './styles.scss'
@@ -32,16 +33,18 @@ export interface Props {
   error?: string;
   scrollTop?: number;
   onScroll?: (top: number) => void;
+  id: string;
+  pagination?: IEnablementAreaItem[]
 }
 const InternalPage = (props: Props) => {
-  const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop } = props
+  const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop, pagination, id } = props
   const components: any = { LazyCodeButton, Carousel, InternalLink, Image }
   const containerRef = useRef<HTMLDivElement>(null)
-  const handleScroll = () => {
+  const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
       onScroll(containerRef.current.scrollTop)
     }
-  }
+  }, 500)
 
   useEffect(() => {
     if (!isLoading && !error && scrollTop && containerRef.current) {
@@ -61,7 +64,7 @@ const InternalPage = (props: Props) => {
   ), [content])
 
   return (
-    <div ref={containerRef} className={styles.container} data-test-subj="internal-page" onScroll={debounce(handleScroll, 500)}>
+    <div className={styles.container} data-test-subj="internal-page">
       <EuiFlyoutHeader className={styles.header}>
         <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
           <EuiFlexItem grow={false}>
@@ -86,12 +89,21 @@ const InternalPage = (props: Props) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlyoutHeader>
-      <div className={cx(styles.content, 'enablement-area__page')}>
+      <div ref={containerRef} className={cx(styles.content, 'enablement-area__page')} onScroll={handleScroll}>
         { isLoading && <EuiLoadingContent data-testid="enablement-area__page-loader" lines={3} /> }
         { !isLoading && error && <EmptyPrompt /> }
         { !isLoading && !error && contentComponent }
       </div>
-      <div className={styles.footer} id="internalPageFooter" />
+      {!!pagination?.length && (
+        <>
+          <div className={cx(styles.footer, 'eui-showFor--xl')}>
+            <Pagination items={pagination} activePageId={id} />
+          </div>
+          <div className={cx(styles.footer, 'eui-hideFor--xl')}>
+            <Pagination items={pagination} activePageId={id} compressed />
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -1,5 +1,5 @@
-[
-  {
+{
+  "quick-guides": {
     "type": "group",
     "id": "quick-guides",
     "label": "QUICK GUIDES",
@@ -7,57 +7,57 @@
       "withBorder": true,
       "initialIsOpen": true
     },
-    "children": [
-      {
+    "children": {
+      "document": {
         "type": "group",
         "id": "document",
         "label": "Document",
         "args": {
           "initialIsOpen": true
         },
-        "children": [
-          {
+        "children": {
+          "introduction": {
             "type": "internal-link",
             "id": "introduction",
             "label": "Introduction",
             "args": {
-              "path": "/static/workbench/guides/document/introduction.html"
+              "path": "/static/workbench/quick-guides/document/introduction.html"
             }
           },
-          {
+          "working-with-hashes": {
             "type": "internal-link",
             "id": "working-with-hashes",
             "label": "Working with Hashes",
             "args": {
-              "path": "/static/workbench/guides/document/working-with-hashes.html"
+              "path": "/static/workbench/quick-guides/document/working-with-hashes.html"
             }
           },
-          {
+          "working-with-json": {
             "type": "internal-link",
             "id": "working-with-json",
             "label": "Working with JSON",
             "args": {
-              "path": "/static/workbench/guides/document/working-with-json.html"
+              "path": "/static/workbench/quick-guides/document/working-with-json.html"
             }
           },
-          {
+          "learn-more": {
             "type": "internal-link",
             "id": "learn-more",
             "label": "Learn More",
             "args": {
-              "path": "/static/workbench/guides/document/learn-more.html"
+              "path": "/static/workbench/quick-guides/document/learn-more.html"
             }
           }
-        ]
+        }
       }
-    ]
+    }
   },
-  {
+  "manual": {
     "type": "code-button",
     "id": "manual",
     "label": "Manual",
     "args": {
-      "path": "/static/workbench/scripts/manual.txt"
+      "path": "/static/workbench/_scripts/manual.txt"
     }
   }
-]
+}

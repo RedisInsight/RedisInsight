@@ -1,41 +1,42 @@
-import { getFileInfo } from './getFileInfo'
+import { MOCK_ENABLEMENT_AREA_ITEMS } from 'uiSrc/constants'
+import { getFileInfo, getPagesInsideGroup } from './getFileInfo'
 
 const getFileInfoTests = [
   {
-    input: '/parent-folder/file-name.txt',
-    expected: { title: 'file name', parent: 'parent folder', extension: 'txt' }
+    input: 'static/workbench/quick-guides/file-name.txt',
+    expected: { name: 'file-name', parent: 'quick guides', extension: 'txt', location: '/static/workbench/quick-guides' }
   },
   {
     input: 'parent_folder\\file_name.txt',
-    expected: { title: 'file name', parent: 'parent folder', extension: 'txt' }
+    expected: { name: 'file_name', parent: 'parent folder', extension: 'txt', location: '/parent_folder' }
   },
   {
     input: 'https://domen.com/workbench/enablement-area/introduction.html',
-    expected: { title: 'introduction', parent: 'enablement area', extension: 'html' }
+    expected: { name: 'introduction', parent: 'enablement area', extension: 'html', location: '/workbench/enablement-area' }
   },
   {
     input: 'https://domen.com/introduction.html',
-    expected: { title: 'introduction', parent: '', extension: 'html' }
+    expected: { name: 'introduction', parent: '', extension: 'html', location: '' }
   },
   {
     input: '/introduction.html',
-    expected: { title: 'introduction', parent: '', extension: 'html' }
+    expected: { name: 'introduction', parent: '', extension: 'html', location: '' }
   },
   {
     input: '//parent/markdown.md',
-    expected: { title: '', parent: '', extension: '' }
+    expected: { name: '', parent: '', extension: '', location: '' }
   },
   {
     input: '/file.txt',
-    expected: { title: 'file', parent: '', extension: 'txt' }
+    expected: { name: 'file', parent: '', extension: 'txt', location: '' }
   },
   {
     input: '',
-    expected: { title: '', parent: '', extension: '' }
+    expected: { name: '', parent: '', extension: '', location: '' }
   },
   {
     input: '/',
-    expected: { title: '', parent: '', extension: '' }
+    expected: { name: '', parent: '', extension: '', location: '' }
   },
 ]
 
@@ -44,6 +45,24 @@ describe('getFileInfo', () => {
     '%j',
     ({ input, expected }) => {
       const result = getFileInfo(input)
+      expect(result).toEqual(expected)
+    }
+  )
+})
+
+const getPagesInsideGroupTests = [
+  {
+    input: [MOCK_ENABLEMENT_AREA_ITEMS, '/static/workbench/quick-guides'],
+    expected: Object.values(MOCK_ENABLEMENT_AREA_ITEMS['quick-guides'].children || {})
+  },
+]
+
+describe('getPagesInsideGroup', () => {
+  test.each(getPagesInsideGroupTests)(
+    '%j',
+    ({ input, expected }) => {
+      // @ts-ignore
+      const result = getPagesInsideGroup(...input)
       expect(result).toEqual(expected)
     }
   )

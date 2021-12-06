@@ -18,6 +18,8 @@ const addRedisDatabasePage = new AddRedisDatabasePage();
 const defaultHelperText = 'Enter any command in CLI or use search to see detailed information.';
 const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
+const COMMAND_GROUP_TIMESERIES = 'TimeSeries';
+const COMMAND_GROUP_GRAPH = 'Graph';
 
 fixture `CLI Command helper`
     .meta({ type: 'critical_path' })
@@ -111,4 +113,50 @@ test('Verify that when user has used search and apply filters, search results in
     await t.expect(cliPage.cliHelperOutputTitles.withText('SAVE').exists).notOk('No command found from another group');
     //Check that command from 'Set' group was found
     await t.expect(cliPage.cliHelperOutputTitles.withText('SADD').exists).ok('Proper command was found');
+});
+test('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
+    const commandForSearch = 'TS.';
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Select group from list and remeber commands
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
+    const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
+    let timeSeriesCommands = [];
+    for(let i = 0; i < commandsFilterCount; i++) {
+        timeSeriesCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
+    }
+    //Reload Page
+    await t.eval(() => location.reload());
+    //Search per command
+    await t.click(cliPage.cliExpandButton);
+    await t.typeText(cliPage.cliHelperSearch, commandForSearch);
+    //Verify results in the output
+    const commandsCount = await cliPage.cliHelperOutputTitles.count;
+    for(let i = 0; i < commandsCount; i++){
+        await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(timeSeriesCommands[i], 'Results in the output contains searched value');
+    }
+});
+test('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
+    const commandForSearch = 'GRAPH.';
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Select group from list and remeber commands
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
+    const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
+    let graphCommands = [];
+    for(let i = 0; i < commandsFilterCount; i++) {
+        graphCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
+    }
+    //Reload Page
+    await t.eval(() => location.reload());
+    //Search per command
+    await t.click(cliPage.cliExpandButton);
+    await t.typeText(cliPage.cliHelperSearch, commandForSearch);
+    //Verify results in the output
+    const commandsCount = await cliPage.cliHelperOutputTitles.count;
+    for(let i = 0; i < commandsCount; i++){
+        await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(graphCommands[i], 'Results in the output contains searched value');
+    }
 });

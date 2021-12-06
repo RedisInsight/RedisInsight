@@ -14,12 +14,20 @@ export const MOCK_ENABLEMENT_AREA_ITEMS: Record<string, IEnablementAreaItem> = {
           path: 'static/workbench/quick-guides/document-capabilities.html',
         },
       },
-      'document': {
+      'working-with-json': {
         type: EnablementAreaComponent.InternalLink,
-        id: 'document',
-        label: 'Document',
+        id: 'working-with-json',
+        label: 'Working with JSON',
         args: {
-          path: 'static/workbench/quick-guides/document.html',
+          path: 'static/workbench/quick-guides/working-with-json.html',
+        },
+      },
+      'working-with-hash': {
+        type: EnablementAreaComponent.InternalLink,
+        id: 'working-with-hash',
+        label: 'Working with HASH',
+        args: {
+          path: 'static/workbench/quick-guides/working-with-hash.html',
         },
       }
     }
@@ -28,6 +36,14 @@ export const MOCK_ENABLEMENT_AREA_ITEMS: Record<string, IEnablementAreaItem> = {
     type: EnablementAreaComponent.InternalLink,
     id: 'internal-page',
     label: 'Internal Page',
+    args: {
+      path: 'static/workbench/quick-guides/document-capabilities.html'
+    },
+  },
+  'second-internal-page': {
+    type: EnablementAreaComponent.InternalLink,
+    id: 'second-internal-page',
+    label: 'Second Internal Page',
     args: {
       path: 'static/workbench/quick-guides/document-capabilities.html'
     },

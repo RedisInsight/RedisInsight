@@ -14,13 +14,13 @@
 
 .paginationCompressed {
   padding: 8px 6px;
-  & > div:first-of-type,& > div:last-of-type  {
+  & > div:first-of-type, & > div:last-of-type {
     min-width: 70px;
   }
 }
 
 .panel {
-  padding-bottom: 1px;
+  padding: 1px 0;
   button:first-of-type {
     border-radius: 3px 3px 0 0;
   }
@@ -31,8 +31,15 @@
 
 .popover {
   border: 1px solid var(--euiColorPrimary) !important;
-  & > div:before {
-    border-top-color: var(--euiColorPrimary) !important;
+  [class~=euiPopover__panelArrow] {
+    &:before {
+      border-top-color: var(--euiColorPrimary) !important;
+    }
+  }
+  [class~=euiPopover__panelArrow--bottom] {
+    &:before {
+      border-bottom-color: var(--euiColorPrimary) !important;
+    }
   }
 }
 

@@ -36,17 +36,29 @@ export const getFileInfo = (path: string): IFileInfo => {
 }
 
 const EA_STATIC_PATH_REGEX = /^\/?static\/(workbench|enablement-area)\//
+const EA_STATIC_ROOT_PATH = /^\/?static\/(workbench|enablement-area)\/?$/
 
 export const getPagesInsideGroup = (
   structure: Record<string, IEnablementAreaItem>,
   path: string
 ): IEnablementAreaItem[] => {
-  if (!IS_ABSOLUTE_PATH.test(path) && EA_STATIC_PATH_REGEX.test(path)) {
-    const groupPath = path.replace(EA_STATIC_PATH_REGEX, '').replace('/', '.children.')
-    const groupChildren = get(structure, groupPath, undefined)?.children
-    if (groupChildren) {
-      return Object.values(groupChildren).filter((item) => item.type === EnablementAreaComponent.InternalLink)
+  try {
+    if (EA_STATIC_PATH_REGEX.test(path)) {
+      let groupPath = path.replace(EA_STATIC_PATH_REGEX, '')
+      let groupChildren
+      if (!EA_STATIC_ROOT_PATH.test(path)) {
+        groupPath = groupPath.replace('/', '.children.')
+        groupChildren = get(structure, groupPath, undefined)?.children
+      } else {
+        groupChildren = structure
+      }
+      if (groupChildren) {
+        return Object.values(groupChildren)
+          .filter((item) => item.type === EnablementAreaComponent.InternalLink)
+      }
     }
+    return []
+  } catch (e) {
+    return []
   }
-  return []
 }

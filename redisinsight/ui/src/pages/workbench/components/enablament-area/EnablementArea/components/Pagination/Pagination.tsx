@@ -13,18 +13,20 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: IEnablementAreaItem[];
-  activePageId: string;
+  activePageId?: string;
   compressed?: boolean;
 }
 
 const Pagination = ({ items = [], activePageId, compressed }: Props) => {
   const [isPopoverOpen, setPopover] = useState(false)
-  const [activePage, setActivePage] = useState(-1)
+  const [activePage, setActivePage] = useState(0)
   const { openPage } = useContext(EnablementAreaContext)
 
   useEffect(() => {
-    const index = items.findIndex((item) => item.id === activePageId)
-    setActivePage(index)
+    if (activePageId) {
+      const index = items.findIndex((item) => item.id === activePageId)
+      setActivePage(index)
+    }
   }, [activePageId])
 
   const togglePopover = () => {
@@ -57,7 +59,12 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
     <EuiPopover
       id="enablementAreaPagesMenu"
       button={(
-        <button className={styles.popoverButton} type="button" onClick={togglePopover}>
+        <button
+          data-testid="enablement-area__pagination-popover-btn"
+          className={styles.popoverButton}
+          type="button"
+          onClick={togglePopover}
+        >
           {`${activePage + 1} of ${items.length}`}
         </button>
       )}
@@ -67,6 +74,7 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
       panelPaddingSize="none"
     >
       <EuiContextMenuPanel
+        data-testid="enablement-area__pagination-popover"
         style={{ minWidth: !compressed ? '280px' : 'none' }}
         className={styles.panel}
         size="s"
@@ -82,6 +90,7 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
           <EuiButton
             aria-label="Previous page"
             fill
+            data-testid="enablement-area__prev-page-btn"
             color="secondary"
             iconType="arrowLeft"
             iconSide="left"
@@ -101,6 +110,7 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
           <EuiButton
             aria-label="Next page"
             fill
+            data-testid="enablement-area__next-page-btn"
             color="secondary"
             iconType="arrowRight"
             iconSide="right"

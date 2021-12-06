@@ -3,7 +3,8 @@ import {
   EuiFlyoutHeader,
   EuiText,
   EuiButtonEmpty,
-  EuiLoadingContent, EuiHorizontalRule,
+  EuiLoadingContent,
+  EuiHorizontalRule,
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
@@ -13,7 +14,8 @@ import {
   LazyCodeButton,
   InternalLink,
   Image,
-  EmptyPrompt, Pagination
+  EmptyPrompt,
+  Pagination
 } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 

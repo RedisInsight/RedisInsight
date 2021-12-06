@@ -55,6 +55,18 @@ const getPagesInsideGroupTests = [
     input: [MOCK_ENABLEMENT_AREA_ITEMS, '/static/workbench/quick-guides'],
     expected: Object.values(MOCK_ENABLEMENT_AREA_ITEMS['quick-guides'].children || {})
   },
+  {
+    input: [MOCK_ENABLEMENT_AREA_ITEMS, '/static/workbench/'],
+    expected: [MOCK_ENABLEMENT_AREA_ITEMS['internal-page'], MOCK_ENABLEMENT_AREA_ITEMS['second-internal-page']]
+  },
+  {
+    input: [MOCK_ENABLEMENT_AREA_ITEMS, 'https://domen.com/workbench/enablement-area/'],
+    expected: []
+  },
+  {
+    input: [],
+    expected: []
+  },
 ]
 
 describe('getPagesInsideGroup', () => {

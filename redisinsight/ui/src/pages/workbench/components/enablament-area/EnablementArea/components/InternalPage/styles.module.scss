@@ -44,7 +44,7 @@
     justify-content: flex-start;
   }
   &:hover {
-    background-color: var(--hoverInListColorLight);
+    background-color: var(--hoverInListColorDarken);
     color: var(--euiTextColor) !important;
     text-decoration: none !important;
   }

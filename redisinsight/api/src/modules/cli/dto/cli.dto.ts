@@ -51,7 +51,7 @@ export class SendCommandDto {
 
   @ApiPropertyOptional({
     description: 'Define output format',
-    default: CliOutputFormatterTypes.Text,
+    default: CliOutputFormatterTypes.Raw,
     enum: CliOutputFormatterTypes,
   })
   @IsOptional()

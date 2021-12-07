@@ -8,17 +8,18 @@ import styles from './styles.module.scss'
 
 export interface Props {
   status: Maybe<CommandExecutionStatus>;
+  query: string;
   result: any;
 }
 
 const QueryCardCliResult = (props: Props) => {
-  const { result, status } = props
+  const { result, query, status } = props
 
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
       {!!result && (
         <div data-testid="query-cli-result">
-          {cliParseTextResponse(result, status, CliPrefix.QueryCard)}
+          {cliParseTextResponse(result, query, status, CliPrefix.QueryCard)}
         </div>
       )}
       {!result && (

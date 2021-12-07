@@ -11,7 +11,7 @@ class TestFormatterStrategy implements IOutputFormatterStrategy {
     return '';
   }
 }
-const strategyName = CliOutputFormatterTypes.Text;
+const strategyName = CliOutputFormatterTypes.Raw;
 const testStrategy = new TestFormatterStrategy();
 
 describe('OutputFormatterManager', () => {

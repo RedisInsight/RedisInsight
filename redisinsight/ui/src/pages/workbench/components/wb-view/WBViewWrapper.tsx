@@ -9,7 +9,6 @@ import {
   checkBlockingCommand,
   checkUnsupportedCommand,
   removeMonacoComments,
-  getWBQueryType,
   checkUnsupportedModuleCommand,
   cliParseTextResponse,
   splitMonacoValuePerLines,
@@ -37,7 +36,6 @@ import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import WBView from './WBView'
 import ModuleNotLoaded from '../module-not-loaded'
 import {
-  WBQueryType,
   RSNotLoadedContent,
   WORKBENCH_HISTORY_MAX_LENGTH,
   WORKBENCH_HISTORY_WRAPPER_NAME,
@@ -138,9 +136,10 @@ const WBViewWrapper = () => {
       return cliParseTextResponse(
         cliTexts.WORKBENCH_UNSUPPORTED_COMMANDS(
           commandLine.slice(0, unsupportedCommand.length),
-          [...blockingCommands, ...unsupportedCommands].join(', ')
+          [...blockingCommands, ...unsupportedCommands].join(', '),
         ),
-        CommandExecutionStatus.Fail
+        commandLine,
+        CommandExecutionStatus.Fail,
       )
     }
     const unsupportedModule = checkUnsupportedModuleCommand(modules, commandLine)
@@ -155,7 +154,6 @@ const WBViewWrapper = () => {
   const handleSubmit = (
     commandInit: string = script,
     historyId?: number,
-    type?: WBQueryType,
   ) => {
     const { loading } = state
     const isNewCommand = () => !historyId
@@ -188,18 +186,17 @@ const WBViewWrapper = () => {
       return
     }
 
-    sendCommand(commandLine, type, historyId || Date.now())
+    sendCommand(commandLine, historyId || Date.now())
   }
 
   const sendCommand = (
     command: string,
-    queryType = getWBQueryType(command, state.visualizations),
     historyId = Date.now(),
   ) => {
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
-        command, historyId, queryType, onSuccessAction: onSuccess
+        command, historyId, onSuccessAction: onSuccess
       }))
       return
     }
@@ -217,7 +214,6 @@ const WBViewWrapper = () => {
       sendWBCommandClusterAction({
         command,
         historyId,
-        queryType,
         options,
         onSuccessAction: onSuccess,
       })

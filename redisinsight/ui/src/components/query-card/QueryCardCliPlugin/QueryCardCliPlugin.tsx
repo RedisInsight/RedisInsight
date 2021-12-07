@@ -45,8 +45,6 @@ const QueryCardCliPlugin = (props: Props) => {
   const generatedIframeNameRef = useRef<string>('')
   const { theme } = useContext(ThemeContext)
 
-  const dispatch = useDispatch()
-
   const executeCommand = () => {
     pluginIframeRef?.current?.contentWindow?.postMessage({
       event: 'executeCommand',
@@ -55,20 +53,20 @@ const QueryCardCliPlugin = (props: Props) => {
     }, '*')
   }
 
-  const sendRedisCommand = (command: string, requestId: string) => {
-    dispatch(
-      sendPluginCommandAction({
-        command,
-        onSuccessAction: (response) => {
-          pluginIframeRef?.current?.contentWindow?.postMessage({
-            event: 'executeRedisCommand',
-            requestId,
-            data: response
-          }, '*')
-        }
-      })
-    )
-  }
+  // const sendRedisCommand = (command: string, requestId: string) => {
+  //   dispatch(
+  //     sendPluginCommandAction({
+  //       command,
+  //       onSuccessAction: (response) => {
+  //         pluginIframeRef?.current?.contentWindow?.postMessage({
+  //           event: 'executeRedisCommand',
+  //           requestId,
+  //           data: response
+  //         }, '*')
+  //       }
+  //     })
+  //   )
+  // }
 
   useEffect(() => {
     if (currentView === null) return

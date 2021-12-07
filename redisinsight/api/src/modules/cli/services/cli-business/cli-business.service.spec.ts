@@ -197,7 +197,7 @@ describe('CliBusinessService', () => {
   });
 
   describe('sendCommand', () => {
-    it('should successfully execute command and return text response', async () => {
+    it('should successfully execute command (RAW format)', async () => {
       const dto: SendCommandDto = { command: mockMemoryUsageCommand };
       const formatSpy = jest.spyOn(rawFormatter, 'format');
       const mockResult: SendCommandResponse = {

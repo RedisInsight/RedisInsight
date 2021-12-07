@@ -29,7 +29,8 @@ jest.mock('uiSrc/slices/workbench/wb-enablement-area', () => {
 
 describe('EnablementArea', () => {
   it('should render', () => {
-    expect(render(<EnablementArea {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<EnablementArea {...instance(mockedProps)} items={MOCK_ENABLEMENT_AREA_ITEMS} />))
+      .toBeTruthy()
   })
 
   it('should render loading', () => {
@@ -53,7 +54,7 @@ describe('EnablementArea', () => {
 
     expect(loaderEl).not.toBeInTheDocument()
     expect(treeViewEl).toBeInTheDocument()
-    expect(treeViewEl?.childNodes.length).toEqual(MOCK_ENABLEMENT_AREA_ITEMS.length)
+    expect(treeViewEl?.childNodes.length).toEqual(Object.values(MOCK_ENABLEMENT_AREA_ITEMS).length)
   })
   it('should render Group component', () => {
     const item = {
@@ -66,7 +67,7 @@ describe('EnablementArea', () => {
           id: 'document-capabilities',
           label: 'Document Capabilities',
           args: {
-            path: 'static/workbench/guides/document-capabilities.html'
+            path: 'static/workbench/quick-guides/document-capabilities.html'
           },
         }
       ]
@@ -75,7 +76,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={[item]}
+        items={{ 'quick-guides': item }}
       />
     )
 
@@ -89,13 +90,13 @@ describe('EnablementArea', () => {
       id: 'manual',
       label: 'Manual',
       args: {
-        path: 'static/workbench/scripts/manual.txt'
+        path: 'static/workbench/_scripts/manual.txt'
       },
     }
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={[item]}
+        items={{ manual: item }}
       />
     )
     const codeButtonEl = queryByTestId(`preselect-${item.label}`)
@@ -108,13 +109,13 @@ describe('EnablementArea', () => {
       id: 'internal-page',
       label: 'Internal Page',
       args: {
-        path: 'static/workbench/guides/document-capabilities.html',
+        path: 'static/workbench/quick-guides/document-capabilities.html',
       }
     }
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={[item]}
+        items={{ 'internal-page': item }}
       />
     )
 

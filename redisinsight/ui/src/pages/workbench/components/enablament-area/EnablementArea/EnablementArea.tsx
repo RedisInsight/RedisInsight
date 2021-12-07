@@ -19,7 +19,7 @@ import './styles.scss'
 import styles from './styles.module.scss'
 
 export interface Props {
-  items: IEnablementAreaItem[];
+  items: Record<string, IEnablementAreaItem>;
   loading: boolean;
   openScript: (script: string, path: string) => void;
   openInternalPage: (page: IInternalPage) => void;
@@ -71,13 +71,13 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
             label={label}
             {...args}
           >
-            {renderTreeView(children || [])}
+            {renderTreeView(Object.values(children || {}) || [])}
           </Group>
         )
       case EnablementAreaComponent.CodeButton:
         return args?.path
-          ? <LazyCodeButton label={label} {...args} />
-          : <CodeButton onClick={() => openScript(args?.content || '', '')} label={label} {...args} />
+          ? <div style={{ marginTop: '16px' }}><LazyCodeButton label={label} {...args} /></div>
+          : <div style={{ marginTop: '16px' }}><CodeButton onClick={() => openScript(args?.content || '', '')} label={label} {...args} /></div>
       case EnablementAreaComponent.InternalLink:
         return (
           <InternalLink testId={id || label} label={label} {...args}>
@@ -91,7 +91,7 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
 
   const renderTreeView = (elements: IEnablementAreaItem[]) => (
     elements?.map((item) => (
-      <div className={styles.item} key={item.id}>
+      <div className="fluid" key={item.id}>
         {renderSwitch(item)}
       </div>
     )))
@@ -110,7 +110,7 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
               flush
               className={cx(styles.innerContainer)}
             >
-              {renderTreeView(items)}
+              {renderTreeView(Object.values(items))}
             </EuiListGroup>
           )}
         <div

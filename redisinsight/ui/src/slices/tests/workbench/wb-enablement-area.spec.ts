@@ -61,7 +61,7 @@ describe('slices', () => {
   describe('getWBEnablementAreaSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
-      const items: IEnablementAreaItem[] = MOCK_ENABLEMENT_AREA_ITEMS
+      const items: Record<string, IEnablementAreaItem> = MOCK_ENABLEMENT_AREA_ITEMS
       const state = {
         ...initialState,
         items,

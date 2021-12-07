@@ -1,12 +1,10 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFlyoutHeader,
-  EuiTitle,
   EuiText,
-  EuiButtonIcon,
+  EuiButtonEmpty,
   EuiLoadingContent,
+  EuiHorizontalRule,
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
@@ -14,11 +12,12 @@ import { debounce } from 'lodash'
 
 import {
   LazyCodeButton,
-  Carousel,
   InternalLink,
   Image,
-  EmptyPrompt
+  EmptyPrompt,
+  Pagination
 } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
+import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 import './styles.scss'
@@ -32,10 +31,12 @@ export interface Props {
   error?: string;
   scrollTop?: number;
   onScroll?: (top: number) => void;
+  id: string;
+  pagination?: IEnablementAreaItem[]
 }
 const InternalPage = (props: Props) => {
-  const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop } = props
-  const components: any = { LazyCodeButton, Carousel, InternalLink, Image }
+  const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop, pagination, id } = props
+  const components: any = { LazyCodeButton, InternalLink, Image }
   const containerRef = useRef<HTMLDivElement>(null)
   const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
@@ -61,37 +62,41 @@ const InternalPage = (props: Props) => {
   ), [content])
 
   return (
-    <div ref={containerRef} className={styles.container} data-test-subj="internal-page" onScroll={handleScroll}>
+    <div className={styles.container} data-test-subj="internal-page">
       <EuiFlyoutHeader className={styles.header}>
-        <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
-          <EuiFlexItem grow={false}>
-            <EuiButtonIcon
-              data-testid="enablement-area__page-close"
-              iconType="arrowLeft"
-              onClick={onClose}
-              aria-label="Back"
-            />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <div>
-              <EuiText size="s" color="subdued" style={{ fontWeight: 'normal' }}>{backTitle}</EuiText>
-            </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexGroup style={{ padding: '0 8px' }} responsive={false} gutterSize="s" alignItems="center">
-          <EuiFlexItem grow={false}>
-            <EuiTitle>
-              <EuiText size="s" color="default" style={{ fontWeight: 'normal' }}>{title?.toUpperCase()}</EuiText>
-            </EuiTitle>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+        <div style={{ padding: 0 }}>
+          <EuiButtonEmpty
+            data-testid="enablement-area__page-close"
+            iconType="arrowLeft"
+            onClick={onClose}
+            className={styles.backButton}
+            aria-label="Back"
+          >
+            {backTitle}
+          </EuiButtonEmpty>
+        </div>
+        <div>
+          <EuiHorizontalRule margin="xs" />
+        </div>
+        <div>
+          <EuiText className={styles.pageTitle} color="default">{title?.toUpperCase()}</EuiText>
+        </div>
       </EuiFlyoutHeader>
-      <div className={cx(styles.content, 'enablement-area__page')}>
+      <div ref={containerRef} className={cx(styles.content, 'enablement-area__page')} onScroll={handleScroll}>
         { isLoading && <EuiLoadingContent data-testid="enablement-area__page-loader" lines={3} /> }
         { !isLoading && error && <EmptyPrompt /> }
         { !isLoading && !error && contentComponent }
       </div>
-      <div className={styles.footer} id="internalPageFooter" />
+      {!!pagination?.length && (
+        <>
+          <div className={cx(styles.footer, 'eui-showFor--xl')}>
+            <Pagination items={pagination} activePageId={id} />
+          </div>
+          <div className={cx(styles.footer, 'eui-hideFor--xl')}>
+            <Pagination items={pagination} activePageId={id} compressed />
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -170,7 +170,7 @@ const QueryCard = (props: Props) => {
         {isOpen && (
           <>
             {React.isValidElement(result)
-              ? <QueryCardCommonResult result={result} />
+              ? <QueryCardCommonResult loading={loading} result={result} />
               : (
                 <>
                   {viewTypeSelected === WBQueryType.Plugin && (
@@ -191,7 +191,7 @@ const QueryCard = (props: Props) => {
                     </>
                   )}
                   {viewTypeSelected === WBQueryType.Text && (
-                    <QueryCardCliResult status={status} result={result} />
+                    <QueryCardCliResult loading={loading} status={status} result={result} />
                   )}
                 </>
               )}

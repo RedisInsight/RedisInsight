@@ -9,19 +9,20 @@ import styles from './styles.module.scss'
 export interface Props {
   status: Maybe<CommandExecutionStatus>;
   result: any;
+  loading?: boolean;
 }
 
 const QueryCardCliResult = (props: Props) => {
-  const { result, status } = props
+  const { result, status, loading } = props
 
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
-      {!!result && (
+      {!loading && (
         <div data-testid="query-cli-result">
-          {cliParseTextResponse(result, status, CliPrefix.QueryCard)}
+          {cliParseTextResponse(result || '(nil)', status, CliPrefix.QueryCard)}
         </div>
       )}
-      {!result && (
+      {loading && (
         <div className={styles.loading}>
           <EuiLoadingContent lines={1} />
         </div>

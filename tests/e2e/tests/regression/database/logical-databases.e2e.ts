@@ -36,5 +36,5 @@ test('Verify that if user enters any index of the logical database that does not
     await t.typeText(cliPage.cliCommandInput, 'Select 19', { paste: true });
     await t.pressKey('enter');
     //Verify the error
-    await t.expect(cliPage.cliOutputResponseFail.textContent).eql('ERR DB index is out of range', 'Error is dispalyed in CLI');
+    await t.expect(cliPage.cliOutputResponseFail.textContent).eql('"ERR DB index is out of range"', 'Error is dispalyed in CLI');
 });

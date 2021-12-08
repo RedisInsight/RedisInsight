@@ -29,7 +29,8 @@ fixture `CLI critical`
         await userAgreementPage.acceptLicenseTerms();
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
     })
-test
+//skipped due the bug RI-2156
+test.skip
     .after(async t => {
         //Clear database
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');

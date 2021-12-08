@@ -44,14 +44,14 @@ if (process.env.NODE_ENV !== 'production') {
 log.info('App starting.....');
 
 export default class AppUpdater {
-  constructor() {
+  constructor(url: string = '') {
     log.info('AppUpdater initialization');
     log.transports.file.level = 'info';
 
     try {
       autoUpdater.setFeedURL({
         provider: 'generic',
-        url: process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
+        url,
       });
     } catch (error) {
       log.error(error);
@@ -119,8 +119,20 @@ const bootstrap = async () => {
     trayInstance = tray.buildTray();
   }
 
-  if (process.env.NODE_ENV === 'production') {
-    new AppUpdater();
+  let upgradeUrl;
+  switch (process.env.NODE_ENV) {
+    case 'production':
+      upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK;
+      break;
+    case 'staging':
+      upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK_STAGE;
+      break;
+    default:
+      upgradeUrl = process.env.MANUAL_UPGRADES_LINK || '';
+  }
+
+  if (upgradeUrl) {
+    new AppUpdater(upgradeUrl);
   }
 
   app.setName('RedisInsight');

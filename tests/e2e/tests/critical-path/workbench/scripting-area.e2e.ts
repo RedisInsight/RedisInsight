@@ -88,8 +88,7 @@ test.skip('Verify that user when he have more than 10 results can request to vie
     await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
 });
 //skipped due the inaccessibility of the iframe
-test.skip
-    .after(async t => {
+test.only.after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
     })
@@ -105,6 +104,8 @@ test.skip
         //Send search command
         await workbenchPage.sendCommandInWorkbench(searchCommand);
         //Check that result is displayed in Table view
+        t.wait(10000)
+        t.debug()
         await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
         //Select Text view type
         await workbenchPage.selectViewTypeText();

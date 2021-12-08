@@ -20,6 +20,7 @@ export enum PluginEvents {
 
 export const listenPluginsEvents = () => {
   globalThis.onmessage = (e: MessageEvent) => {
+    console.log(22222, e.data)
     switch (e.data?.event) {
       case 'loaded': {
         pluginApi.sendEvent(e.data.iframeId, 'loaded')

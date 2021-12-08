@@ -14,6 +14,7 @@ interface Props {
 
 const renderRediSearch = (props:Props) => {
   const { command = '', status = '', data: response = {} } = props
+  alert('renderRediSearch')
   render(<App command={command} response={response} status={status} />,
     document.getElementById('app'))
 }

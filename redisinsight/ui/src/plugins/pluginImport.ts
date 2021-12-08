@@ -20,7 +20,12 @@ export const importPluginScript = () => (config) => {
   const { callbacks } = globalThis.state
 
   const sendMessageToMain = (data = {}) => {
-    globalThis.top.postMessage(data, '*')
+    const event = document.createEvent('Event')
+    event.initEvent('message', true, true)
+    event.data = data
+    event.origin = '*'
+    // eslint-disable-next-line no-restricted-globals
+    parent.dispatchEvent(event)
   }
 
   const providePluginSDK = () => {
@@ -36,9 +41,22 @@ export const importPluginScript = () => (config) => {
   }
 
   const listenEvents = () => {
+
     globalThis.onmessage = (e) => {
       if (e.data.event === events.EXECUTE_COMMAND) {
-        plugin[e.data.method] && plugin[e.data.method](e.data.data)
+        const event = document.createEvent('Event')
+        event.initEvent('message', true, true)
+        event.data = {
+          event: events.EXECUTE_COMMAND,
+          method: e.data.method,
+          data: e.data.data,
+          plugin: globalThis.plugin,
+          iframeId: `${iframeId}`
+        }
+        event.origin = '*'
+        // eslint-disable-next-line no-restricted-globals
+        parent.dispatchEvent(event)
+        globalThis.plugin[e.data.method] && globalThis.plugin[e.data.method](e.data.data)
       }
 
       if (e.data.event === events.EXECUTE_REDIS_COMMAND) {
@@ -84,22 +102,29 @@ export const prepareIframeHtml = (config) => {
       <body class="${bodyClass}" style="height: fit-content">
         <div id="app"></div>
         <script>
-          let plugin = {}
           ;(${importPluginScriptInner})(\`${configString}\`);
           import(\`${scriptSrc}\`)
               .then((module) => {
-                  plugin = { ...module.default };
-                  globalThis.top.postMessage({
+                  globalThis.plugin = { ...module.default };
+                  var event = document.createEvent('Event')
+                  event.initEvent("message", true, true);
+                  event.data = {
                     event: 'loaded',
                     iframeId: \`${iframeId}\`
-                  }, '*')
+                  }
+                  event.origin = '*'
+                  parent.dispatchEvent(event);
               })
-              .catch(() => {
-                globalThis.top.postMessage({
+              .catch((e) => {
+                  var event = document.createEvent('Event')
+                  event.initEvent("message", true, true);
+                  event.data = {
                     event: 'error',
                     iframeId: \`${iframeId}\`,
                     error: \`${scriptPath} not found. Check if it has been renamed or deleted and try again.\`
-                  }, '*')
+                  }
+                  event.origin = '*'
+                  parent.dispatchEvent(event);
               })
         </script>
         <script src="${scriptSrc}" type="module"></script>

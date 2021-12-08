@@ -48,11 +48,15 @@ const QueryCardCliPlugin = (props: Props) => {
   const dispatch = useDispatch()
 
   const executeCommand = () => {
-    pluginIframeRef?.current?.contentWindow?.postMessage({
+    const event:any = document.createEvent('Event')
+    event.initEvent('message', true, true)
+    event.data = {
       event: 'executeCommand',
       method: currentView.activationMethod,
       data: { command: query, data: result, status }
-    }, '*')
+    }
+    event.origin = '*'
+    pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
   }
 
   const sendRedisCommand = (command: string, requestId: string) => {
@@ -60,11 +64,15 @@ const QueryCardCliPlugin = (props: Props) => {
       sendPluginCommandAction({
         command,
         onSuccessAction: (response) => {
-          pluginIframeRef?.current?.contentWindow?.postMessage({
+          const event:any = document.createEvent('Event')
+          event.initEvent('message', true, true)
+          event.data = {
             event: 'executeRedisCommand',
             requestId,
             data: response
-          }, '*')
+          }
+          event.origin = '*'
+          pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
         }
       })
     )
@@ -107,8 +115,9 @@ const QueryCardCliPlugin = (props: Props) => {
       bodyClass: theme === Theme.Dark ? 'theme_DARK' : 'theme_LIGHT',
       modules
     })
+    //pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
     // @ts-ignore
-    pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
+    pluginIframeRef.current.srcdoc = html
   }
 
   const getGlobalStylesSrc = (): string =>
@@ -155,7 +164,7 @@ const QueryCardCliPlugin = (props: Props) => {
           title={id}
           ref={pluginIframeRef}
           referrerPolicy="no-referrer"
-          sandbox="allow-same-origin allow-scripts"
+          sandbox="allow-same-origin allow-scripts allow-modals"
         />
         {!!error && (
           <div className={styles.container}>

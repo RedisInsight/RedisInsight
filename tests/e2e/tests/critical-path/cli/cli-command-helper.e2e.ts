@@ -126,10 +126,9 @@ test('Verify that user can type TS. in Command helper and see commands from Redi
     for(let i = 0; i < commandsFilterCount; i++) {
         timeSeriesCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
     }
-    //Reload Page
-    await t.eval(() => location.reload());
+    //Unselect group from list
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
     //Search per command
-    await t.click(cliPage.cliExpandButton);
     await t.typeText(cliPage.cliHelperSearch, commandForSearch);
     //Verify results in the output
     const commandsCount = await cliPage.cliHelperOutputTitles.count;
@@ -149,10 +148,9 @@ test('Verify that user can type GRAPH. in Command helper and see auto-suggestion
     for(let i = 0; i < commandsFilterCount; i++) {
         graphCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
     }
-    //Reload Page
-    await t.eval(() => location.reload());
+    //Unselect group from list
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
     //Search per command
-    await t.click(cliPage.cliExpandButton);
     await t.typeText(cliPage.cliHelperSearch, commandForSearch);
     //Verify results in the output
     const commandsCount = await cliPage.cliHelperOutputTitles.count;

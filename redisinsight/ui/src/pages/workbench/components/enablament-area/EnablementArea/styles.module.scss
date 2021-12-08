@@ -2,10 +2,11 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
+$paddingHorizontal: 18px;
 .container {
   overflow: hidden;
   height: 100%;
-  padding: 0 8px;
+  padding: 0 $paddingHorizontal;
   background-color: var(--euiColorEmptyShade);
   border: 1px solid var(--euiColorLightShade) !important;
 }
@@ -20,13 +21,7 @@
   color: var(--euiTextSubduedColor) !important;
 }
 
-.item {
-  padding: 6px 0;
-  min-width: 100%;
-}
-
 .internalPage {
-  padding-top: 60px;
   width: 100%;
   max-width: 100%;
   position: absolute;
@@ -39,5 +34,5 @@
 }
 
 .internalPageVisible {
-  transform: translateX(-8px);
+  transform: translateX(-$paddingHorizontal);
 }

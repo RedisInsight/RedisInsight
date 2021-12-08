@@ -10,6 +10,7 @@ import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
+import formatToText from './cliTextFormatter'
 
 export enum CliPrefix {
   Cli = 'cli',
@@ -18,11 +19,13 @@ export enum CliPrefix {
 
 const cliParseTextResponseWithOffset = (
   text: string = '',
+  command: string = '',
   status: CommandExecutionStatus = CommandExecutionStatus.Success,
-) => [cliParseTextResponse(text, status), '\n\n']
+) => [cliParseTextResponse(text, command, status), '\n\n']
 
 const cliParseTextResponse = (
   text: string = '',
+  command: string = '',
   status: CommandExecutionStatus = CommandExecutionStatus.Success,
   prefix: CliPrefix = CliPrefix.Cli
 ) => (
@@ -39,7 +42,7 @@ const cliParseTextResponse = (
         : `${prefix}-output-response-fail`
     }
   >
-    {text.toString()}
+    {formatToText(text, command)}
   </span>
 )
 

@@ -22,12 +22,12 @@ export interface IEnablementAreaItem {
   id: string,
   type: EnablementAreaComponent,
   label: string,
-  children?: IEnablementAreaItem[],
+  children?: Record<string, IEnablementAreaItem>,
   args?: Record<string, any>,
 }
 
 export interface StateWorkbenchEnablementArea {
   loading: boolean;
   error: string;
-  items: IEnablementAreaItem[];
+  items: Record<string, IEnablementAreaItem>;
 }

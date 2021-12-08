@@ -1,4 +1,3 @@
-import Carousel from './Carousel'
 import CodeButton from './CodeButton'
 import EmptyPrompt from './EmptyPrompt'
 import Group from './Group'
@@ -8,9 +7,9 @@ import InternalPage from './InternalPage'
 import LazyCodeButton from './LazyCodeButton'
 import LazyInternalPage from './LazyInternalPage'
 import PlainText from './PlainText'
+import Pagination from './Pagination'
 
 export {
-  Carousel,
   CodeButton,
   EmptyPrompt,
   Group,
@@ -20,4 +19,5 @@ export {
   LazyCodeButton,
   LazyInternalPage,
   PlainText,
+  Pagination,
 }

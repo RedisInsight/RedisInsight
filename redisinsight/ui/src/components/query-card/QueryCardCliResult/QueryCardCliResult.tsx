@@ -4,22 +4,24 @@ import { EuiLoadingContent } from '@elastic/eui'
 
 import { cliParseTextResponse, CliPrefix, Maybe } from 'uiSrc/utils'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+
 import styles from './styles.module.scss'
 
 export interface Props {
   status: Maybe<CommandExecutionStatus>;
+  query: string;
   result: any;
   loading?: boolean;
 }
 
 const QueryCardCliResult = (props: Props) => {
-  const { result, status, loading } = props
+  const { result, query, status, loading } = props
 
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
         <div data-testid="query-cli-result">
-          {cliParseTextResponse(result || '(nil)', status, CliPrefix.QueryCard)}
+          {cliParseTextResponse(result || '(nil)', query, status, CliPrefix.QueryCard)}
         </div>
       )}
       {loading && (

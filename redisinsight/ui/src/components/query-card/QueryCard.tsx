@@ -10,7 +10,6 @@ import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import QueryCardHeader from './QueryCardHeader'
 import QueryCardCliResult from './QueryCardCliResult'
@@ -25,7 +24,6 @@ export interface Props {
   data: any;
   status: Maybe<CommandExecutionStatus>;
   fromStore: boolean;
-  matched?: number;
   time?: number;
   loading?: boolean;
   onQueryRun: (queryType: WBQueryType) => void;
@@ -51,7 +49,6 @@ const QueryCard = (props: Props) => {
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
-  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const [isOpen, setIsOpen] = useState(!fromStore)
@@ -110,25 +107,9 @@ const QueryCard = (props: Props) => {
     }
   }, [data, time])
 
-  const sendEventToggleOpenTelemetry = () => {
-    const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
-      query.toUpperCase().startsWith(commandName))
-
-    sendEventTelemetry({
-      event: isOpen
-        ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED
-        : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
-      eventData: {
-        databaseId: instanceId,
-        command: matchedCommand ?? query.split(' ')?.[0]
-      }
-    })
-  }
-
   const toggleOpen = () => {
     if (isFullScreen) return
 
-    sendEventToggleOpenTelemetry()
     setIsOpen(!isOpen)
 
     if (!isOpen && !data) {
@@ -137,8 +118,6 @@ const QueryCard = (props: Props) => {
   }
 
   const changeViewTypeSelected = (type: WBQueryType, value: string) => {
-    onQueryRun(type)
-    setResult(undefined)
     setViewTypeSelected(type)
     setSelectedViewValue(value)
   }
@@ -191,7 +170,7 @@ const QueryCard = (props: Props) => {
                     </>
                   )}
                   {viewTypeSelected === WBQueryType.Text && (
-                    <QueryCardCliResult loading={loading} status={status} result={result} />
+                    <QueryCardCliResult loading={loading} query={query} status={status} result={result} />
                   )}
                 </>
               )}

@@ -26,7 +26,7 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { sessionStorageService } from 'uiSrc/services'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cli'
+import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cliHelper'
 import { InitOutputText, ConnectionSuccessOutputText } from 'uiSrc/constants/cliOutput'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 

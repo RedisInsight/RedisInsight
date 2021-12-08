@@ -1,10 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { first } from 'lodash'
 
-import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { CliOutputFormatterType, cliTexts } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { cliCommandOutput, cliParseTextResponseWithOffset } from 'uiSrc/utils/cli'
+import { cliCommandOutput, cliParseTextResponseWithOffset } from 'uiSrc/utils/cliHelper'
 import { getUrl, getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import {
   SendClusterCommandDto,
@@ -95,21 +94,21 @@ export function sendCliCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data, status } = await apiService.post<SendCommandResponse>(
+      const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
         getUrl(id, ApiEndpoints.CLI, state.cli.settings?.cliClientUuid, ApiEndpoints.SEND_COMMAND),
-        { command }
+        { command, outputFormat: CliOutputFormatterType.Raw }
       )
 
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
-        dispatch(concatToOutput(cliParseTextResponseWithOffset(data.response, data.status)))
+        dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(sendCliCommandFailure(errorMessage))
       dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail))
+        concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
       )
       onFailAction?.()
     }
@@ -136,28 +135,33 @@ export function sendCliClusterCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data, status } = await apiService.post<SendClusterCommandResponse[]>(
+      const {
+        data: [
+          { response, status: dataStatus }
+        ] = [],
+        status
+      } = await apiService.post<SendClusterCommandResponse[]>(
         getUrl(
           id,
           ApiEndpoints.CLI,
           state.cli.settings?.cliClientUuid,
           ApiEndpoints.SEND_CLUSTER_COMMAND
         ),
-        { ...options, command }
+        { ...options, command, outputFormat: CliOutputFormatterType.Raw }
       )
 
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
         dispatch(
-          concatToOutput(cliParseTextResponseWithOffset(first(data)?.response, first(data)?.status))
+          concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus))
         )
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(sendCliCommandFailure(errorMessage))
       dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail))
+        concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
       )
       onFailAction?.()
     }
@@ -182,6 +186,7 @@ export function processUnsupportedCommand(
             command.slice(0, unsupportedCommand.length),
             unsupportedCommands.join(', ')
           ),
+          command,
           CommandExecutionStatus.Fail
         )
       )

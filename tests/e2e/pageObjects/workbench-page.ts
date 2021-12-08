@@ -41,6 +41,9 @@ export class WorkbenchPage {
   monacoCloseCommandDetails: Selector
   monacoSuggestion: Selector
   iframe: Selector
+  internalLinkWorkingWithHashes: Selector
+  preselectExactSearch: Selector
+  preselectGroupBy: Selector
 
   constructor() {
       //CSS selectors
@@ -66,9 +69,12 @@ export class WorkbenchPage {
       this.preselectList = Selector('[data-testid*=preselect-List]');
       this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
       this.preselectSearch = Selector('[data-testid=preselect-Search]');
+      this.preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
+      this.preselectGroupBy = Selector('[data-testid*=preselect-Group]');
       this.preselectButtons = Selector('[data-testid^=preselect-]');
       this.reRunCommandButton = Selector('[data-testid=re-run-command]');
       this.preselectManual = Selector('[data-testid=preselect-Manual]');
+      this.internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.queryInput = Selector('[data-testid=query-input-container]');
       this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');

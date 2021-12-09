@@ -47,16 +47,20 @@ const QueryCardCliPlugin = (props: Props) => {
 
   const dispatch = useDispatch()
 
+  const sendMessageToPlugin = (data = {}) => {
+    const event: any = document.createEvent('Event')
+    event.initEvent('message', false, false)
+    event.data = data
+    event.origin = '*'
+    pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
+  }
+
   const executeCommand = () => {
-    const event:any = document.createEvent('Event')
-    event.initEvent('message', true, true)
-    event.data = {
+    sendMessageToPlugin({
       event: 'executeCommand',
       method: currentView.activationMethod,
       data: { command: query, data: result, status }
-    }
-    event.origin = '*'
-    pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
+    })
   }
 
   const sendRedisCommand = (command: string, requestId: string) => {
@@ -64,15 +68,11 @@ const QueryCardCliPlugin = (props: Props) => {
       sendPluginCommandAction({
         command,
         onSuccessAction: (response) => {
-          const event:any = document.createEvent('Event')
-          event.initEvent('message', true, true)
-          event.data = {
+          sendMessageToPlugin({
             event: 'executeRedisCommand',
             requestId,
             data: response
-          }
-          event.origin = '*'
-          pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
+          })
         }
       })
     )
@@ -115,7 +115,6 @@ const QueryCardCliPlugin = (props: Props) => {
       bodyClass: theme === Theme.Dark ? 'theme_DARK' : 'theme_LIGHT',
       modules
     })
-    // pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
     // @ts-ignore
     pluginIframeRef.current.srcdoc = html
   }

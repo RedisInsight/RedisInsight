@@ -35,9 +35,11 @@
     height: 32px !important;
     background-color: var(--euiColorLightestShade) !important;
     border: 1px solid var(--euiColorPrimary) !important;
+    transition: none;
 
     &:hover {
       background-color: var(--buttonIconPrimaryHover) !important;
+      transition: transform 250ms ease-in-out, background 250ms ease-in-out;
     }
   }
 }

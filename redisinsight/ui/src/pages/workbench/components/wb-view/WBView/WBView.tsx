@@ -5,6 +5,8 @@ import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 
 import { Nullable } from 'uiSrc/utils'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import QueryWrapper from 'uiSrc/components/query'
 import { WBHistoryObject } from 'uiSrc/pages/workbench/interfaces'
@@ -39,7 +41,9 @@ export interface Props {
 const WBView = (props: Props) => {
   const { script = '', loading, setScript, setScriptEl,
     scriptEl, onSubmit, onQueryDelete, scrollDivRef, historyItems } = props
-  const [isMinimized, setIsMinimized] = useState<boolean>(false)
+  const [isMinimized, setIsMinimized] = useState<boolean>(
+    (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
+  )
 
   const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
 
@@ -50,6 +54,10 @@ const WBView = (props: Props) => {
   useEffect(() => () => {
     dispatch(setWorkbenchVerticalPanelSizes(verticalSizesRef.current))
   }, [])
+
+  useEffect(() => {
+    localStorageService.set(BrowserStorageItem.isEnablementAreaMinimized, isMinimized)
+  }, [isMinimized])
 
   const onVerticalPanelWidthChange = useCallback((newSizes: any) => {
     verticalSizesRef.current = newSizes

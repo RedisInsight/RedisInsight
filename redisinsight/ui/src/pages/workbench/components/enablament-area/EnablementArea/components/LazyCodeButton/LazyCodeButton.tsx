@@ -22,7 +22,7 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
         const { data, status } = await resourcesService.get<string>(path)
         if (isStatusSuccessful(status)) {
           setLoading(false)
-          setScript(data, path)
+          setScript(data)
         }
       } catch (error) {
         setLoading(false)

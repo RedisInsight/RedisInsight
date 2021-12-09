@@ -243,7 +243,13 @@
     "react-redux": "^7.2.2",
     "react-jsx-parser": "^1.28.4",
     "react-router-dom": "^5.2.0",
-    "react-virtualized": "^9.22.2"
+    "react-virtualized": "^9.22.2",
+    "remark-parse": "^10.0.1",
+    "remark-rehype": "^10.0.1",
+    "rehype-external-links": "^1.0.0",
+    "rehype-stringify": "^9.0.2",
+    "unified": "^10.1.1",
+    "unist-util-visit": "^4.1.0"
   },
   "devEngines": {
     "node": ">=14.x <16",

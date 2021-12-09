@@ -1,3 +1,4 @@
+import Code from './Code'
 import CodeButton from './CodeButton'
 import EmptyPrompt from './EmptyPrompt'
 import Group from './Group'
@@ -10,6 +11,7 @@ import PlainText from './PlainText'
 import Pagination from './Pagination'
 
 export {
+  Code,
   CodeButton,
   EmptyPrompt,
   Group,

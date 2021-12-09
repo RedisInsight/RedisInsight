@@ -14,6 +14,7 @@ import {
   LazyCodeButton,
   InternalLink,
   Image,
+  Code,
   EmptyPrompt,
   Pagination
 } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
@@ -36,7 +37,7 @@ export interface Props {
 }
 const InternalPage = (props: Props) => {
   const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop, pagination, id } = props
-  const components: any = { LazyCodeButton, InternalLink, Image }
+  const components: any = { LazyCodeButton, InternalLink, Image, Code }
   const containerRef = useRef<HTMLDivElement>(null)
   const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {

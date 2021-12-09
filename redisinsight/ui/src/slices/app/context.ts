@@ -21,7 +21,6 @@ export const initialState: StateAppContext = {
       guideScrollTop: 0,
     },
     panelSizes: {
-      horizontal: {},
       vertical: {}
     }
   }
@@ -51,9 +50,6 @@ const appContextSlice = createSlice({
     },
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
-    },
-    setWorkbenchHorizontalPanelSizes: (state, { payload }: { payload: any }) => {
-      state.workbench.panelSizes.horizontal = payload
     },
     setWorkbenchVerticalPanelSizes: (state, { payload }: { payload: any }) => {
       state.workbench.panelSizes.vertical = payload
@@ -87,7 +83,6 @@ export const {
   setBrowserKeyListScrollPosition,
   setBrowserPanelSizes,
   setWorkbenchScript,
-  setWorkbenchHorizontalPanelSizes,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
   setWorkbenchEAGuide,

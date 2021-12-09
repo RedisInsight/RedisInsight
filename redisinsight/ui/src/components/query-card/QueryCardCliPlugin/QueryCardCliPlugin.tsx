@@ -47,12 +47,20 @@ const QueryCardCliPlugin = (props: Props) => {
 
   const dispatch = useDispatch()
 
+  const sendMessageToPlugin = (data = {}) => {
+    const event: any = document.createEvent('Event')
+    event.initEvent('message', false, false)
+    event.data = data
+    event.origin = '*'
+    pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
+  }
+
   const executeCommand = () => {
-    pluginIframeRef?.current?.contentWindow?.postMessage({
+    sendMessageToPlugin({
       event: 'executeCommand',
       method: currentView.activationMethod,
       data: { command: query, data: result, status }
-    }, '*')
+    })
   }
 
   const sendRedisCommand = (command: string, requestId: string) => {
@@ -60,11 +68,11 @@ const QueryCardCliPlugin = (props: Props) => {
       sendPluginCommandAction({
         command,
         onSuccessAction: (response) => {
-          pluginIframeRef?.current?.contentWindow?.postMessage({
+          sendMessageToPlugin({
             event: 'executeRedisCommand',
             requestId,
             data: response
-          }, '*')
+          })
         }
       })
     )
@@ -108,7 +116,7 @@ const QueryCardCliPlugin = (props: Props) => {
       modules
     })
     // @ts-ignore
-    pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
+    pluginIframeRef.current.srcdoc = html
   }
 
   const getGlobalStylesSrc = (): string =>

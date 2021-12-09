@@ -7,8 +7,7 @@ $paddingHorizontal: 18px;
   overflow: hidden;
   height: 100%;
   padding: 0 $paddingHorizontal;
-  background-color: var(--euiColorEmptyShade);
-  border: 1px solid var(--euiColorLightShade) !important;
+  flex-grow: 1;
 }
 
 .innerContainer {

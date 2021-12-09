@@ -75,7 +75,13 @@
       "\\.(jpg|jpeg|png|ico|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/redisinsight/__mocks__/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy",
       "uiSrc/(.*)": "<rootDir>/redisinsight/ui/src/$1",
-      "monaco-editor": "<rootDir>/redisinsight/__mocks__/monacoMock.js"
+      "monaco-editor": "<rootDir>/redisinsight/__mocks__/monacoMock.js",
+      "unified": "<rootDir>/redisinsight/__mocks__/unified.js",
+      "remark-parse": "<rootDir>/redisinsight/__mocks__/remarkParse.js",
+      "remark-rehype": "<rootDir>/redisinsight/__mocks__/remarkRehype.js",
+      "rehype-external-links": "<rootDir>/redisinsight/__mocks__/rehypeExternalLinks.js",
+      "rehype-stringify": "<rootDir>/redisinsight/__mocks__/rehypeStringify.js",
+      "unist-util-visit": "<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js"
     },
     "setupFilesAfterEnv": [
       "<rootDir>/redisinsight/ui/src/setup-tests.ts"

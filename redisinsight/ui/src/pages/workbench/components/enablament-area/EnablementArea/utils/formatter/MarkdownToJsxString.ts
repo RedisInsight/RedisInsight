@@ -4,6 +4,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
 import { visit } from 'unist-util-visit'
+
 import { IFormatter } from './formatter.interfaces'
 
 class MarkdownToJsxString implements IFormatter {

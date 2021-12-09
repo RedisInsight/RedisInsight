@@ -1,7 +1,7 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, clearStoreActions, mockedEAFormatSelector, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { getWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
 import EnablementAreaWrapper, { Props } from './EnablementAreaWrapper'
 
@@ -23,10 +23,6 @@ jest.mock('uiSrc/slices/workbench/wb-enablement-area', () => {
       ...defaultState,
     }),
   }
-})
-
-jest.mock('./EnablementArea/utils/formatter/FormatSelector', () => {
-  return mockedEAFormatSelector
 })
 
 describe('EnablementAreaWrapper', () => {

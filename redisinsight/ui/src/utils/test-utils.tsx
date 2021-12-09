@@ -163,11 +163,3 @@ window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock
 export * from '@testing-library/react'
 // override render method
 export { initialStateDefault, render, renderWithRouter, clearStoreActions }
-
-// mocked enablement-area
-export const mockedEAFormatter = {
-  format: jest.fn().mockResolvedValue('')
-}
-export const mockedEAFormatSelector = {
-  selectFor: jest.fn().mockReturnValue(mockedEAFormatter)
-}

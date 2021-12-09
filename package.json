@@ -79,7 +79,6 @@
       "unified": "<rootDir>/redisinsight/__mocks__/unified.js",
       "remark-parse": "<rootDir>/redisinsight/__mocks__/remarkParse.js",
       "remark-rehype": "<rootDir>/redisinsight/__mocks__/remarkRehype.js",
-      "rehype-external-links": "<rootDir>/redisinsight/__mocks__/rehypeExternalLinks.js",
       "rehype-stringify": "<rootDir>/redisinsight/__mocks__/rehypeStringify.js",
       "unist-util-visit": "<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js"
     },
@@ -252,7 +251,6 @@
     "react-virtualized": "^9.22.2",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.0.1",
-    "rehype-external-links": "^1.0.0",
     "rehype-stringify": "^9.0.2",
     "unified": "^10.1.1",
     "unist-util-visit": "^4.1.0"

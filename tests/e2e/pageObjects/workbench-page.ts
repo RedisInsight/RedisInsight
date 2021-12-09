@@ -7,6 +7,7 @@ export class WorkbenchPage {
   cssReRunCommandButton: string
   cssDeleteCommandButton: string
   cssQueryCardOutputResponceSuccess: string
+  cssTableViewTypeOption: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -52,6 +53,7 @@ export class WorkbenchPage {
       this.cssReRunCommandButton = '[data-testid=re-run-command]';
       this.cssDeleteCommandButton = '[data-testid=delete-command]';
       this.cssQueryCardOutputResponceSuccess = '[data-testid=query-card-output-response-success]';
+      this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.

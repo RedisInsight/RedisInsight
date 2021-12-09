@@ -25,6 +25,7 @@ const EnablementAreaCollapse = ({ isMinimized, setIsMinimized }: Props) => (
           size="m"
           onClick={() => setIsMinimized(false)}
           data-testid="expand-enablement-area"
+          aria-label="expand-enablement-area"
         />
       </EuiToolTip>
     ) : (
@@ -41,6 +42,7 @@ const EnablementAreaCollapse = ({ isMinimized, setIsMinimized }: Props) => (
           size="m"
           onClick={() => setIsMinimized(true)}
           data-testid="collapse-enablement-area"
+          aria-label="collapse-enablement-area"
         />
       </EuiToolTip>
     )}

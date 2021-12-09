@@ -22,10 +22,10 @@ export interface Props {
   items: Record<string, IEnablementAreaItem>;
   loading: boolean;
   openScript: (script: string, path: string) => void;
-  openInternalPage: (page: IInternalPage) => void;
+  onOpenInternalPage: (page: IInternalPage) => void;
 }
 
-const EnablementArea = ({ items, openScript, loading }: Props) => {
+const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Props) => {
   const { search } = useLocation()
   const history = useHistory()
   const dispatch = useDispatch()
@@ -51,6 +51,7 @@ const EnablementArea = ({ items, openScript, loading }: Props) => {
     history.push({
       search: `?guide=${page.path}`
     })
+    onOpenInternalPage(page)
   }
 
   const handleCloseInternalPage = () => {

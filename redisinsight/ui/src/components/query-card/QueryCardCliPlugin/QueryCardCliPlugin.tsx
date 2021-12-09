@@ -115,7 +115,7 @@ const QueryCardCliPlugin = (props: Props) => {
       bodyClass: theme === Theme.Dark ? 'theme_DARK' : 'theme_LIGHT',
       modules
     })
-    //pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
+    // pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
     // @ts-ignore
     pluginIframeRef.current.srcdoc = html
   }
@@ -164,7 +164,7 @@ const QueryCardCliPlugin = (props: Props) => {
           title={id}
           ref={pluginIframeRef}
           referrerPolicy="no-referrer"
-          sandbox="allow-same-origin allow-scripts allow-modals"
+          sandbox="allow-same-origin allow-scripts"
         />
         {!!error && (
           <div className={styles.container}>

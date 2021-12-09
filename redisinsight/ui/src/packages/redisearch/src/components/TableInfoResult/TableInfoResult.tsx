@@ -112,7 +112,6 @@ const TableInfoResult = React.memo((props: Props) => {
         <div className="content">
           {Header()}
           <EuiInMemoryTable
-            pagination
             items={items ?? []}
             loading={!result}
             message={loadingMessage}

@@ -2,21 +2,21 @@ import { IFormatter } from './formatter.interfaces'
 import MarkdownToJsxString from './MarkdownToJsxString'
 import HtmlToJsxString from './HtmlToJsxString'
 
-enum FilesFormat {
+export enum FileExtension {
   Html = 'html',
   Markdown = 'md'
 }
 
 class FormatSelector {
   private static formatters = {
-    [FilesFormat.Html]: HtmlToJsxString,
-    [FilesFormat.Markdown]: MarkdownToJsxString,
+    [FileExtension.Html]: new HtmlToJsxString(),
+    [FileExtension.Markdown]: new MarkdownToJsxString(),
   }
 
-  static selectFor(fileFormat: string): IFormatter {
-    const FormatterFactory = FormatSelector.formatters[fileFormat as FilesFormat]
+  static selectFor(extension: string): IFormatter {
+    const FormatterFactory = FormatSelector.formatters[extension as FileExtension]
     if (FormatterFactory) {
-      return new FormatterFactory()
+      return FormatterFactory
     }
     throw new Error('Unsupported format')
   }

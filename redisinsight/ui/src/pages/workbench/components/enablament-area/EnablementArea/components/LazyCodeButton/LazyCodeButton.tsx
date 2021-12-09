@@ -1,7 +1,10 @@
 import React, { useContext, useState } from 'react'
+import { startCase } from 'lodash'
+
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
+import { getFileInfo } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/utils/getFileInfo'
 
 import CodeButton from '../CodeButton'
 
@@ -22,7 +25,8 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
         const { data, status } = await resourcesService.get<string>(path)
         if (isStatusSuccessful(status)) {
           setLoading(false)
-          setScript(data)
+          const pageInfo = getFileInfo(path)
+          setScript(data, pageInfo.location, startCase(pageInfo.name))
         }
       } catch (error) {
         setLoading(false)

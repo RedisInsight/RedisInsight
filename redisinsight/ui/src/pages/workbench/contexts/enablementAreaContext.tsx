@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface IContext {
-  setScript: (script: string) => void;
+  setScript: (script: string, path?: string, name?: string) => void;
   openPage: (page: IInternalPage) => void;
 }
 export interface IInternalPage {

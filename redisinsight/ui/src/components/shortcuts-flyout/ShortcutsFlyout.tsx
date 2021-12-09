@@ -36,7 +36,7 @@ const ShortcutsFlyout = () => {
 
   const ShortcutsTable = ({ name, items }: ShortcutGroup) => (
     <div key={name}>
-      <EuiTitle size="xxs" data-test-subj={`shortcut-title-${name}`}>
+      <EuiTitle size="xxs" data-test-subj={`shortcuts-section-${name}`}>
         <h6>{name}</h6>
       </EuiTitle>
       <EuiSpacer size="m" />
@@ -55,9 +55,10 @@ const ShortcutsFlyout = () => {
       ownFocus
       size="538px"
       onClose={() => dispatch(setShortcutsFlyoutState(false))}
+      data-test-subj="shortcuts-flyout"
     >
       <EuiFlyoutBody>
-        <EuiTitle size="s" className={styles.title}>
+        <EuiTitle size="s" className={styles.title} data-testid="shortcuts-title">
           <h4>Shortcuts</h4>
         </EuiTitle>
         <EuiSpacer size="m" />

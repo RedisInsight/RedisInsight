@@ -23,7 +23,7 @@ const EnablementAreaCollapse = ({ isMinimized, setIsMinimized }: Props) => (
           iconType="menuRight"
           color="subdued"
           size="m"
-          onClick={() => setIsMinimized(true)}
+          onClick={() => setIsMinimized(false)}
           data-testid="expand-enablement-area"
         />
       </EuiToolTip>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import EnablementAreaCollapse from './EnablementAreaCollapse'
 
 describe('EnablementAreaCollapse', () => {
@@ -15,5 +15,19 @@ describe('EnablementAreaCollapse', () => {
   it('should be expanded', () => {
     const { queryByTestId } = render(<EnablementAreaCollapse isMinimized={false} setIsMinimized={jest.fn} />)
     expect(queryByTestId('collapse-enablement-area')).toBeInTheDocument()
+  })
+
+  it('should expand', () => {
+    const setIsMinimized = jest.fn()
+    render(<EnablementAreaCollapse isMinimized setIsMinimized={setIsMinimized} />)
+    fireEvent.click(screen.getByTestId('expand-enablement-area'))
+    expect(setIsMinimized).toBeCalledWith(false)
+  })
+
+  it('should collapse', () => {
+    const setIsMinimized = jest.fn()
+    render(<EnablementAreaCollapse isMinimized={false} setIsMinimized={setIsMinimized} />)
+    fireEvent.click(screen.getByTestId('collapse-enablement-area'))
+    expect(setIsMinimized).toBeCalledWith(true)
   })
 })

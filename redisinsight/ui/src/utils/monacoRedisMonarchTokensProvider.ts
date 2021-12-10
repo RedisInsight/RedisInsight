@@ -31,6 +31,7 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
         { include: '@numbers' },
         { include: '@strings' },
         { include: '@scopes' },
+        { include: '@keyword' },
         [/[;,.]/, 'delimiter'],
         [/[()]/, '@brackets'],
         [
@@ -46,6 +47,13 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
           },
         ],
         [/[<>=!%&+\-*/|~^]/, 'operator'],
+      ],
+      keyword: [
+        [
+          `(${commands.join('|')})\\b`,
+          // '(important|true)\\b',
+          'keyword'
+        ]
       ],
       whitespace: [
         [/\s+/, 'white'],

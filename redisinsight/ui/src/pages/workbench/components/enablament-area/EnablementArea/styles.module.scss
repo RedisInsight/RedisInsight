@@ -2,11 +2,9 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
-$paddingHorizontal: 18px;
 .container {
   overflow: hidden;
   height: 100%;
-  padding: 0 $paddingHorizontal;
   flex-grow: 1;
 }
 
@@ -26,12 +24,16 @@ $paddingHorizontal: 18px;
   position: absolute;
   top: 0;
   height: 100%;
-  transform: translateX(calc(100% + 8px));
+  transform: translateX(calc(100% + 18px));
   backface-visibility: hidden;
   transition: transform 0.4s ease-in-out;
   box-shadow: -5px 1px 10px rgba(0, 0, 0, 0.2);
 }
 
 .internalPageVisible {
-  transform: translateX(-$paddingHorizontal);
+  transform: translateX(0);
+}
+
+:export {
+  paddingHorizontal: 18
 }

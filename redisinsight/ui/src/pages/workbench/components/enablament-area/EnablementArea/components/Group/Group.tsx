@@ -11,16 +11,30 @@ export interface Props {
   forceState?: 'open' | 'closed';
   arrowDisplay?: 'left' | 'right' | 'none';
   onToggle?: (isOpen: boolean) => void;
+  triggerStyle?: any,
 }
 
 const Group = (props: Props) => {
-  const { label, children, testId, forceState, withBorder = false, arrowDisplay = 'right', initialIsOpen = false, onToggle } = props
+  const {
+    label,
+    children,
+    testId,
+    forceState,
+    withBorder = false,
+    arrowDisplay = 'right',
+    initialIsOpen = false,
+    onToggle,
+    triggerStyle,
+  } = props
   const buttonContent = (
     <EuiText className="group-header" size="m">
       {label}
     </EuiText>
   )
-  const buttonProps: any = { 'data-testid': `accordion-button-${testId}` }
+  const buttonProps: any = {
+    'data-testid': `accordion-button-${testId}`,
+    style: triggerStyle,
+  }
 
   return (
     <EuiAccordion
@@ -35,7 +49,10 @@ const Group = (props: Props) => {
       style={{ whiteSpace: 'nowrap', width: 'auto' }}
       className={[withBorder ? 'withBorder' : ''].join(' ')}
     >
-      {children}
+      <>
+        {children}
+        {withBorder && <div style={triggerStyle} className="divider"><hr /></div> }
+      </>
     </EuiAccordion>
   )
 }

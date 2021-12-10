@@ -94,7 +94,7 @@ export class WorkbenchPage {
       this.monacoCommandDetails = Selector('div.suggest-details-container');
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
-      this.iframe = Selector('[data-testid=pluginIframe]');
+      this.iframe = Selector('[data-testid=pluginIframe]', { timeout: 60000 });
   }
 
   /**

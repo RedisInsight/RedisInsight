@@ -26,6 +26,10 @@
   }
 }
 
+.monaco-editor .accessibilityHelpWidget {
+  overflow: auto;
+}
+
 .monaco-glyph-run-command {
   color: var(--rsSubmitBtn);
   opacity: .5 !important;

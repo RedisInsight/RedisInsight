@@ -51,7 +51,6 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
       keyword: [
         [
           `(${commands.join('|')})\\b`,
-          // '(important|true)\\b',
           'keyword'
         ]
       ],

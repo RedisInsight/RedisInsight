@@ -68,6 +68,7 @@ const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptE
       onClick={() => isMinimized && setIsMinimized(false)}
       direction="column"
       gutterSize="none"
+      data-testid="enablement-area-container"
     >
       <EuiFlexItem
         className={cx(styles.collapseWrapper, { [styles.minimized]: isMinimized })}

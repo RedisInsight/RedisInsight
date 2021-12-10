@@ -15,9 +15,9 @@ import {
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { workbenchEnablementAreaSelector } from 'uiSrc/slices/workbench/wb-enablement-area'
 
+import InternalPage from '../InternalPage'
 import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
 import FormatSelector from '../../utils/formatter/FormatSelector'
-import InternalPage from '../InternalPage'
 
 interface IPageData extends IFileInfo {
   content: string;

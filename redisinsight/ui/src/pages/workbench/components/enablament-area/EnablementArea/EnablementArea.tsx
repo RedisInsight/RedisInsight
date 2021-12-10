@@ -17,6 +17,8 @@ import {
 
 import styles from './styles.module.scss'
 
+const padding = parseInt(styles.paddingHorizontal)
+
 export interface Props {
   items: Record<string, IEnablementAreaItem>;
   loading: boolean;
@@ -61,38 +63,39 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
     })
   }
 
-  const renderSwitch = (item: IEnablementAreaItem) => {
+  const renderSwitch = (item: IEnablementAreaItem, level: number) => {
     const { label, type, children, id, args } = item
+    const paddingsStyle = { paddingLeft: `${padding + level * 8}px`, paddingRight: `${padding}px` }
     switch (type) {
       case EnablementAreaComponent.Group:
         return (
-          <Group
-            testId={id}
-            label={label}
-            {...args}
-          >
-            {renderTreeView(Object.values(children || {}) || [])}
+          <Group triggerStyle={paddingsStyle} testId={id} label={label}{...args}>
+            {renderTreeView(Object.values(children || {}) || [], level + 1)}
           </Group>
         )
       case EnablementAreaComponent.CodeButton:
-        return args?.path
-          ? <div style={{ marginTop: '16px' }}><LazyCodeButton label={label} {...args} /></div>
-          : <div style={{ marginTop: '16px' }}><CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} /></div>
+        return (
+          <div style={{ marginTop: '12px', ...paddingsStyle }}>
+            {args?.path
+              ? <LazyCodeButton label={label} {...args} />
+              : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />}
+          </div>
+        )
       case EnablementAreaComponent.InternalLink:
         return (
-          <InternalLink testId={id || label} label={label} {...args}>
+          <InternalLink style={paddingsStyle} testId={id || label} label={label}{...args}>
             {args?.content || label}
           </InternalLink>
         )
       default:
-        return <PlainText>{label}</PlainText>
+        return <PlainText style={paddingsStyle}>{label}</PlainText>
     }
   }
 
-  const renderTreeView = (elements: IEnablementAreaItem[]) => (
+  const renderTreeView = (elements: IEnablementAreaItem[], level: number = 0) => (
     elements?.map((item) => (
       <div className="fluid" key={item.id}>
-        {renderSwitch(item)}
+        {renderSwitch(item, level)}
       </div>
     )))
 

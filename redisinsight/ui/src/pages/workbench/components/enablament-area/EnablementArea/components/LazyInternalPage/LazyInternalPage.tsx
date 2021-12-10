@@ -75,6 +75,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
   return (
     <InternalPage
       id={pageData.name}
+      path={path}
       onClose={onClose}
       title={startCase(title || pageData.name)}
       backTitle={startCase(pageData?.parent)}

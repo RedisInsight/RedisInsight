@@ -52,7 +52,7 @@ const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptE
     }, 0)
   }
 
-  const openInternalPage = ({ path }: IInternalPage) => {
+  const onOpenInternalPage = ({ path }: IInternalPage) => {
     sendEventTelemetry({
       event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED,
       eventData: {
@@ -83,7 +83,7 @@ const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptE
           items={items}
           loading={loading}
           openScript={openScript}
-          openInternalPage={openInternalPage}
+          onOpenInternalPage={onOpenInternalPage}
         />
       </EuiFlexItem>
     </EuiFlexGroup>

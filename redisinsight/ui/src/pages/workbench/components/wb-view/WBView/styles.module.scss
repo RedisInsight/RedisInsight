@@ -8,35 +8,47 @@
 .main {
   display: flex;
   flex: 1;
-  min-width: 100%;
-  width: 1px;
   padding: 0 16px 0;
   height: 100%;
-
-  & > div {
-    min-height: 100%;
-    height: 1px !important;
-    min-width: 100%;
-    width: 1px !important;
-  }
 }
 
 .sidebar {
-  padding: 0 !important;
-  min-height: 100%;
-  height: 1px !important;
+  flex-shrink: 0;
+  margin-right: 12px;
+  position: relative;
+  width: 24%;
+  min-width: 324px;
+  max-width: 420px;
+  @media only screen and (max-width: 992px) {
+    width: 240px;
+    min-width: auto;
+    max-width: none;
+  }
+
+  &.minimized {
+    width: 38px;
+    min-width: auto;
+    max-width: none;
+  }
 }
 
 .content {
   display: flex;
-  width: 100%;
-  min-height: 100%;
-  height: 1px !important;
-  padding: 0 !important;
-  align-content: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
+  flex-grow: 1;
+  width: 76%;
+  max-width: calc(100% - 336px);
+  min-width: calc(100% - 452px);
+  @media only screen and (max-width: 992px) {
+    width: calc(100% - 252px);
+    min-width: auto;
+    max-width: none;
+  }
+
+  &.minimized {
+    width: calc(100% - 50px);
+    min-width: auto;
+    max-width: none;
+  }
 }
 
 .resizeButton {
@@ -49,14 +61,6 @@
 
 .queryResultsPanel {
   padding-top: 8px;
-}
-
-.sidebarPanel {
-  padding-right: 8px !important;
-}
-
-.contentPanel {
-  padding-left: 8px !important;
 }
 
 .sidebar, .queryResults {

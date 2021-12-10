@@ -50,7 +50,7 @@ describe('QueryCardCliResult', () => {
     expect(resultEl).toHaveTextContent(result)
   })
 
-  it('Result element should not render without result prop', () => {
+  it('Result element should render (nil) result', () => {
     const result = ''
 
     const { queryByTestId } = render(
@@ -59,6 +59,6 @@ describe('QueryCardCliResult', () => {
 
     const resultEl = queryByTestId(resultTestId)
 
-    expect(resultEl).not.toBeInTheDocument()
+    expect(resultEl).toHaveTextContent('(nil)')
   })
 })

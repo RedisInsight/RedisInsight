@@ -7,6 +7,7 @@ export class WorkbenchPage {
   cssReRunCommandButton: string
   cssDeleteCommandButton: string
   cssQueryCardOutputResponceSuccess: string
+  cssTableViewTypeOption: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -41,6 +42,9 @@ export class WorkbenchPage {
   monacoCloseCommandDetails: Selector
   monacoSuggestion: Selector
   iframe: Selector
+  internalLinkWorkingWithHashes: Selector
+  preselectExactSearch: Selector
+  preselectGroupBy: Selector
 
   constructor() {
       //CSS selectors
@@ -49,6 +53,7 @@ export class WorkbenchPage {
       this.cssReRunCommandButton = '[data-testid=re-run-command]';
       this.cssDeleteCommandButton = '[data-testid=delete-command]';
       this.cssQueryCardOutputResponceSuccess = '[data-testid=query-card-output-response-success]';
+      this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.
@@ -66,9 +71,12 @@ export class WorkbenchPage {
       this.preselectList = Selector('[data-testid*=preselect-List]');
       this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
       this.preselectSearch = Selector('[data-testid=preselect-Search]');
+      this.preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
+      this.preselectGroupBy = Selector('[data-testid*=preselect-Group]');
       this.preselectButtons = Selector('[data-testid^=preselect-]');
       this.reRunCommandButton = Selector('[data-testid=re-run-command]');
       this.preselectManual = Selector('[data-testid=preselect-Manual]');
+      this.internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.queryInput = Selector('[data-testid=query-input-container]');
       this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');

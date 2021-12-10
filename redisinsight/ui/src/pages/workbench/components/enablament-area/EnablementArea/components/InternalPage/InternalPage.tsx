@@ -9,6 +9,7 @@ import {
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
+import { useParams } from 'react-router-dom'
 
 import {
   LazyCodeButton,
@@ -19,6 +20,7 @@ import {
   Pagination
 } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
 import './styles.scss'
@@ -33,17 +35,51 @@ export interface Props {
   scrollTop?: number;
   onScroll?: (top: number) => void;
   id: string;
+  path: string;
   pagination?: IEnablementAreaItem[]
 }
 const InternalPage = (props: Props) => {
-  const { onClose, title, backTitle, isLoading, error, content, onScroll, scrollTop, pagination, id } = props
+  const {
+    onClose,
+    title,
+    backTitle,
+    isLoading,
+    error,
+    content,
+    onScroll,
+    scrollTop,
+    pagination,
+    id,
+    path,
+  } = props
   const components: any = { LazyCodeButton, InternalLink, Image, Code }
   const containerRef = useRef<HTMLDivElement>(null)
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
   const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
       onScroll(containerRef.current.scrollTop)
     }
   }, 500)
+
+  const sendEventClickExternalLinkTelemetry = (link: string = '') => {
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_LINK_CLICKED,
+      eventData: {
+        path,
+        link,
+        databaseId: instanceId,
+      }
+    })
+  }
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement
+
+    // send telemetry event after click on an external link
+    if (target?.getAttribute('href') && target?.getAttribute('target')) {
+      sendEventClickExternalLinkTelemetry(target?.innerText)
+    }
+  }
 
   useEffect(() => {
     if (!isLoading && !error && scrollTop && containerRef.current) {
@@ -58,7 +94,7 @@ const InternalPage = (props: Props) => {
       components={components}
       autoCloseVoidElements
       jsx={content}
-      onError={(e) => console.log(e)}
+      onError={(e) => console.error(e)}
     />
   ), [content])
 
@@ -83,7 +119,13 @@ const InternalPage = (props: Props) => {
           <EuiText className={styles.pageTitle} color="default">{title?.toUpperCase()}</EuiText>
         </div>
       </EuiFlyoutHeader>
-      <div ref={containerRef} className={cx(styles.content, 'enablement-area__page')} onScroll={handleScroll}>
+      <div
+        ref={containerRef}
+        className={cx(styles.content, 'enablement-area__page')}
+        onScroll={handleScroll}
+        onClick={handleClick}
+        role="none"
+      >
         { isLoading && <EuiLoadingContent data-testid="enablement-area__page-loader" lines={3} /> }
         { !isLoading && error && <EmptyPrompt /> }
         { !isLoading && !error && contentComponent }

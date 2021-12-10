@@ -261,6 +261,7 @@ const HomePage = () => {
                       editedInstance={editedInstance}
                       dialogIsOpen={dialogIsOpen}
                       onEditInstance={handleEditInstance}
+                      onDeleteInstances={handleDeleteInstances}
                     />
                   ) : (
                     <>

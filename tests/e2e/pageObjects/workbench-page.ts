@@ -67,7 +67,7 @@ export class WorkbenchPage {
       this.paginationButtonPrevious = Selector(this.cssSelectorPaginationButtonPrevious);
       this.paginationButtonNext = Selector(this.cssSelectorPaginationButtonNext);
       this.selectViewType = Selector('[data-testid=select-view-type]');
-      this.textViewTypeOption = Selector('[data-test-subj=view-type-option-Text]');
+      this.textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
       this.preselectList = Selector('[data-testid*=preselect-List]');
       this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
       this.preselectSearch = Selector('[data-testid=preselect-Search]');
@@ -94,7 +94,7 @@ export class WorkbenchPage {
       this.monacoCommandDetails = Selector('div.suggest-details-container');
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
-      this.iframe = Selector('.pluginIframe', { timeout: 90000 });
+      this.iframe = Selector('[data-testid=pluginIframe]');
   }
 
   /**

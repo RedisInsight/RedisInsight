@@ -30,8 +30,7 @@ fixture `Default scripts area at Workbench`
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
     })
-//skipped due the inaccessibility of the iframe
-test.skip('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+test('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         'HMSET product:1 name "Apple Juice" ',
@@ -54,7 +53,9 @@ test.skip('Verify that user can edit and run automatically added "FT._LIST" and 
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(addedScript);
     //Check the FT.INFO result
+    await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command');
+    await t.switchToMainWindow();
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
@@ -72,10 +73,12 @@ test.skip('Verify that user can edit and run automatically added "Search" script
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     //Check the FT.SEARCH result
+    await t.switchToIframe(workbenchPage.iframe);
     const key = workbenchPage.queryTableResult.withText('product:1');
     const name = workbenchPage.queryTableResult.withText('Apple Juice');
     await t.expect(key.exists).ok('The added key is in the Search result');
     await t.expect(name.exists).ok('The added key name field is in the Search result');
+    await t.switchToMainWindow();
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
@@ -94,8 +97,10 @@ test.skip('Verify that user can edit and run automatically added "Aggregate" scr
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     //Check the FT.Aggregate result
+    await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryTableResult.textContent).contains(aggregationResultField, 'The aggregation field name is in the Search result');
     await t.expect(workbenchPage.queryTableResult.textContent).contains('100', 'The aggregation max value is in the Search result');
+    await t.switchToMainWindow();
 });
 test('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
     const information = [

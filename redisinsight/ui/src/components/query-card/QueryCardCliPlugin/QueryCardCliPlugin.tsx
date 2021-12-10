@@ -164,6 +164,7 @@ const QueryCardCliPlugin = (props: Props) => {
           ref={pluginIframeRef}
           referrerPolicy="no-referrer"
           sandbox="allow-same-origin allow-scripts"
+          data-testid="pluginIframe"
         />
         {!!error && (
           <div className={styles.container}>

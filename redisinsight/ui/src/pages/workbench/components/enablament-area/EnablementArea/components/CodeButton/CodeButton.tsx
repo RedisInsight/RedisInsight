@@ -9,7 +9,7 @@ export interface Props {
   isLoading?: boolean;
   className?: string;
 }
-const CodeButton = ({ onClick, label, isLoading, ...rest }: Props) => (
+const CodeButton = ({ onClick, label, isLoading, className, ...rest }: Props) => (
   <EuiButton
     iconSide="right"
     isLoading={isLoading}
@@ -17,7 +17,7 @@ const CodeButton = ({ onClick, label, isLoading, ...rest }: Props) => (
     onClick={onClick}
     fullWidth
     color="secondary"
-    className={styles.button}
+    className={[className, styles.button].join(' ')}
     textProps={{ className: styles.buttonText }}
     data-testid={`preselect-${label}`}
     {...rest}

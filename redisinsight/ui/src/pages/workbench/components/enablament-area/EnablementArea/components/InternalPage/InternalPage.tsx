@@ -15,6 +15,7 @@ import {
   LazyCodeButton,
   InternalLink,
   Image,
+  Code,
   EmptyPrompt,
   Pagination
 } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
@@ -51,7 +52,7 @@ const InternalPage = (props: Props) => {
     id,
     path,
   } = props
-  const components: any = { LazyCodeButton, InternalLink, Image }
+  const components: any = { LazyCodeButton, InternalLink, Image, Code }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const handleScroll = debounce(() => {

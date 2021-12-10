@@ -32,18 +32,18 @@ const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptE
     dispatch(fetchEnablementArea())
   }, [])
 
-  const sendEventButtonClickedTelemetry = (path: string = '') => {
+  const sendEventButtonClickedTelemetry = (data: Record<string, any>) => {
     sendEventTelemetry({
       event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_COMMAND_CLICKED,
       eventData: {
-        path,
         databaseId: instanceId,
+        ...data,
       }
     })
   }
 
-  const openScript = (script: string, path: string) => {
-    sendEventButtonClickedTelemetry(path)
+  const openScript = (script: string, path?: string, name?: string) => {
+    sendEventButtonClickedTelemetry({ path, name })
     setScript(script)
 
     setTimeout(() => {

@@ -35,15 +35,15 @@
         padding: 3px 8px;
         line-height: 24px;
         max-height: 30px;
-        &:hover {
-          background-color: var(--hoverInListColorDarken);
-          color: var(--euiTextColor)
-        }
       }
       .euiListGroupItem__label {
         font: normal normal normal 14px/20px Graphik;
         letter-spacing: -0.14px;
       }
+    }
+    .euiListGroupItem:hover {
+      color: var(--euiTextColor);
+      background-color: var(--hoverInListColorDarken);
     }
   }
 }

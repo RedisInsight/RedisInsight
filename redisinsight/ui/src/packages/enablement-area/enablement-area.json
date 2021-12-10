@@ -21,7 +21,7 @@
             "id": "introduction",
             "label": "Introduction",
             "args": {
-              "path": "/static/workbench/quick-guides/document/introduction.html"
+              "path": "/static/workbench/quick-guides/document/introduction.md"
             }
           },
           "working-with-hashes": {
@@ -29,7 +29,7 @@
             "id": "working-with-hashes",
             "label": "Working with Hashes",
             "args": {
-              "path": "/static/workbench/quick-guides/document/working-with-hashes.html"
+              "path": "/static/workbench/quick-guides/document/working-with-hashes.md"
             }
           },
           "working-with-json": {
@@ -37,7 +37,7 @@
             "id": "working-with-json",
             "label": "Working with JSON",
             "args": {
-              "path": "/static/workbench/quick-guides/document/working-with-json.html"
+              "path": "/static/workbench/quick-guides/document/working-with-json.md"
             }
           },
           "learn-more": {
@@ -45,7 +45,7 @@
             "id": "learn-more",
             "label": "Learn More",
             "args": {
-              "path": "/static/workbench/quick-guides/document/learn-more.html"
+              "path": "/static/workbench/quick-guides/document/learn-more.md"
             }
           }
         }

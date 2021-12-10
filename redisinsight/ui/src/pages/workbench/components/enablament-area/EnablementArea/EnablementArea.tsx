@@ -15,13 +15,12 @@ import {
   PlainText
 } from './components'
 
-import './styles.scss'
 import styles from './styles.module.scss'
 
 export interface Props {
   items: Record<string, IEnablementAreaItem>;
   loading: boolean;
-  openScript: (script: string, path: string) => void;
+  openScript: (script: string, path?: string, name?: string) => void;
   onOpenInternalPage: (page: IInternalPage) => void;
 }
 
@@ -78,7 +77,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
       case EnablementAreaComponent.CodeButton:
         return args?.path
           ? <div style={{ marginTop: '16px' }}><LazyCodeButton label={label} {...args} /></div>
-          : <div style={{ marginTop: '16px' }}><CodeButton onClick={() => openScript(args?.content || '', '')} label={label} {...args} /></div>
+          : <div style={{ marginTop: '16px' }}><CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} /></div>
       case EnablementAreaComponent.InternalLink:
         return (
           <InternalLink testId={id || label} label={label} {...args}>

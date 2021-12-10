@@ -10,8 +10,10 @@
     letter-spacing: -0.12px;
   }
 }
+$margin-size-pace: 4;
 
 .enablement-area__page {
+  padding-bottom: 12px;
   height: 100%;
   @include font;
   letter-spacing: -0.12px;
@@ -19,12 +21,24 @@
   h1, h2, h3, h4, h5, h6 {
     color: var(--euiColorGhost);
     font: normal normal 500 14px/24px Graphik;
-    margin-bottom: 12px;
+    margin-bottom: ($margin-size-pace * 3 + px);
+    margin-top: ($margin-size-pace * 3 + px);
     letter-spacing: 0;
+  }
+
+  hr + h1, hr + h2, hr + h3, hr + h4, hr + h5, hr + h6 {
+    margin-top: 0;
   }
 
   p {
     margin-bottom: 20px;
+  }
+
+  .mb-s {
+    margin-bottom: ($margin-size-pace * 3 + px);
+  }
+  .mt-s {
+    margin-top: ($margin-size-pace * 3 + px);
   }
 
   a {
@@ -44,7 +58,7 @@
     height: 1px;
     width: 100%;
     background-color: var(--separatorColor);
-    margin: 12px 0;
+    margin: ($margin-size-pace * 3 + px) 0;
   }
 
   code {
@@ -52,6 +66,7 @@
     padding: 12px;
     width: 100%;
     background-color: var(--euiColorLightShade);
+    white-space: pre-wrap;
     border-radius: 2px;
   }
 
@@ -86,11 +101,15 @@
     }
   }
 
-  .sticky-footer {
-    position: sticky;
-    bottom: 0;
-    border-top: 1px solid var(--separatorColor);
-    padding: 12px 0;
-    background-color: var(--euiColorEmptyShade);
+  ul, ol {
+    + p {
+      margin-top: ($margin-size-pace * 3 + px);
+    }
+    li p {
+      margin-bottom: 0;
+    }
+  }
+  p + ul, p + ol {
+    margin-top: -($margin-size-pace * 3 + px);
   }
 }

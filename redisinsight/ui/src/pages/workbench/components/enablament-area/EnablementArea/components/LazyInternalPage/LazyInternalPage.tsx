@@ -15,8 +15,9 @@ import {
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { workbenchEnablementAreaSelector } from 'uiSrc/slices/workbench/wb-enablement-area'
 
-import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
 import InternalPage from '../InternalPage'
+import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
+import FormatSelector from '../../utils/formatter/FormatSelector'
 
 interface IPageData extends IFileInfo {
   content: string;
@@ -46,10 +47,12 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
     const relatedPages = getPagesInsideGroup(enablementArea.items, pageInfo.location)
     setPageData({ ...DEFAULT_PAGE_DATA, ...pageInfo, relatedPages })
     try {
+      const formatter = FormatSelector.selectFor(pageInfo.extension)
       const { data, status } = await fetchService.get<string>(path)
       if (isStatusSuccessful(status)) {
         dispatch(setWorkbenchEAGuide(path))
-        setPageData((prevState) => ({ ...prevState, content: data }))
+        const contentData = await formatter.format(data)
+        setPageData((prevState) => ({ ...prevState, content: contentData }))
         setLoading(false)
       }
     } catch (error) {

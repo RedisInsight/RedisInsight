@@ -112,12 +112,4 @@ $margin-size-pace: 4;
   p + ul, p + ol {
     margin-top: -($margin-size-pace * 3 + px);
   }
-
-  //.sticky-footer {
-  //  position: sticky;
-  //  bottom: 0;
-  //  border-top: 1px solid var(--separatorColor);
-  //  padding: 12px 0;
-  //  background-color: var(--euiColorEmptyShade);
-  //}
 }

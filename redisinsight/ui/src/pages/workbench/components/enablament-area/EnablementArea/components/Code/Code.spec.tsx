@@ -17,7 +17,7 @@ describe('Code', () => {
     expect(component).toBeTruthy()
     expect(container).toHaveTextContent(label)
   })
-  it('should call onClick function if path provided', () => {
+  it('should correctly set script', () => {
     const setScript = jest.fn()
     const label = 'Manual'
 

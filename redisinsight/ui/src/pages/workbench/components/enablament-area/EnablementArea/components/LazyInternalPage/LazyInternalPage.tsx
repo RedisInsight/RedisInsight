@@ -44,10 +44,10 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
     setLoading(true)
     setError('')
     const pageInfo = getFileInfo(path)
-    const formatter = FormatSelector.selectFor(pageInfo.extension)
     const relatedPages = getPagesInsideGroup(enablementArea.items, pageInfo.location)
     setPageData({ ...DEFAULT_PAGE_DATA, ...pageInfo, relatedPages })
     try {
+      const formatter = FormatSelector.selectFor(pageInfo.extension)
       const { data, status } = await fetchService.get<string>(path)
       if (isStatusSuccessful(status)) {
         dispatch(setWorkbenchEAGuide(path))

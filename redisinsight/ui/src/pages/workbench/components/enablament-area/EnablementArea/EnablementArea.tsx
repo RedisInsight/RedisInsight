@@ -15,7 +15,6 @@ import {
   PlainText
 } from './components'
 
-import './styles.scss'
 import styles from './styles.module.scss'
 
 export interface Props {

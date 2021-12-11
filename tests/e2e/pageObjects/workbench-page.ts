@@ -32,9 +32,9 @@ export class WorkbenchPage {
   queryInputScriptArea: Selector
   overviewTotalKeys: Selector
   overviewTotalMemory: Selector
-  resizeButtonForPreselectsArea: Selector
+  collapsePreselectAreaButton: Selector
+  expandPreselectAreaButton: Selector
   preselectButtons: Selector
-  preselectsAreaContainer: Selector
   reRunCommandButton: Selector
   queryCardNoModuleOutput: Selector
   queryCardNoModuleButton: Selector
@@ -45,6 +45,8 @@ export class WorkbenchPage {
   internalLinkWorkingWithHashes: Selector
   preselectExactSearch: Selector
   preselectGroupBy: Selector
+  preselectArea: Selector
+  expandArea: Selector
 
   constructor() {
       //CSS selectors
@@ -63,7 +65,8 @@ export class WorkbenchPage {
       //BUTTONS
       this.submitCommandButton = Selector('[data-testid=btn-submit]');
       this.resizeButtonForScriptingAndResults = Selector('[data-test-subj=resize-btn-scripting-area-and-results]');
-      this.resizeButtonForPreselectsArea = Selector('[data-test-subj=resize-btn-preselects-area]');
+      this.collapsePreselectAreaButton = Selector('[data-testid=collapse-enablement-area]');
+      this.expandPreselectAreaButton = Selector('[data-testid=expand-enablement-area]');
       this.paginationButtonPrevious = Selector(this.cssSelectorPaginationButtonPrevious);
       this.paginationButtonNext = Selector(this.cssSelectorPaginationButtonNext);
       this.selectViewType = Selector('[data-testid=select-view-type]');
@@ -88,13 +91,15 @@ export class WorkbenchPage {
       this.queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
       this.overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
       this.overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
-      this.preselectsAreaContainer = Selector('[data-test-subj=resize-container-preselects-area]');
       this.queryCardNoModuleOutput = Selector('[data-testid=query-card-no-module-output]');
       this.queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
       this.monacoCommandDetails = Selector('div.suggest-details-container');
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
       this.iframe = Selector('.pluginIframe', { timeout: 90000 });
+      // Panel
+      this.preselectArea = Selector('[data-testid=enablementArea]');
+      this.expandArea = Selector('[]')
   }
 
   /**

@@ -19,10 +19,10 @@ export class HelpCenterPage {
         //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
         //-------------------------------------------------------------------------------------------
         // BUTTONS
-        this.helpCenterSubmitBugButton = Selector('[data-testid="submit-bug-btn"]');
-        this.helpCenterShortcutButton = Selector('[data-testid="shortcuts-btn"]');
-        this.helpCenterReleaseNotesButton = Selector('[data-testid="release-notes-btn"]');
+        this.helpCenterSubmitBugButton = Selector('[data-testid=submit-bug-btn]');
+        this.helpCenterShortcutButton = Selector('[data-testid=shortcuts-btn]');
+        this.helpCenterReleaseNotesButton = Selector('[data-testid=release-notes-btn]');
         // Panel
-        this.helpCenterPanel = Selector('[data-testid="help-center"]')
+        this.helpCenterPanel = Selector('[data-testid=help-center]')
     }
 }

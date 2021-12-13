@@ -22,12 +22,12 @@ export class ShortcutsPage {
         //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
         //-------------------------------------------------------------------------------------------
         // BUTTONS
-        this.shortcutsTitle = Selector('[data-testid="shortcuts-title"]');
+        this.shortcutsTitle = Selector('[data-testid=shortcuts-title]');
         this.shortcutsDesktopApplicationSection = Selector('[data-test-subj="shortcuts-section-Desktop application"]');
-        this.shortcutsCLISection = Selector('[data-test-subj="shortcuts-section-CLI"]');
-        this.shortcutsWorkbenchSection = Selector('[data-test-subj="shortcuts-section-Workbench"]');
-        this.shortcutsCloseButton = Selector('[data-test-subj="euiFlyoutCloseButton"]')
+        this.shortcutsCLISection = Selector('[data-test-subj=shortcuts-section-CLI]');
+        this.shortcutsWorkbenchSection = Selector('[data-test-subj=shortcuts-section-Workbench]');
+        this.shortcutsCloseButton = Selector('[data-test-subj=euiFlyoutCloseButton]')
         // Panel
-        this.shortcutsPanel = Selector('[data-test-subj="shortcuts-flyout"]');
+        this.shortcutsPanel = Selector('[data-test-subj=shortcuts-flyout]');
     }
 }

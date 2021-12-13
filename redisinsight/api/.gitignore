@@ -1,7 +1,8 @@
 # compiled output
 /dist
 /node_modules
-/src/static
+/static
+/defaults
 
 # Logs
 logs

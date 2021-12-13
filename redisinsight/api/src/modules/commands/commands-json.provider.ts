@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -7,35 +7,23 @@ import config from 'src/utils/config';
 const PATH_CONFIG = config.get('dir_path');
 
 @Injectable()
-export class CommandsJsonProvider implements OnModuleInit {
+export class CommandsJsonProvider {
   private readonly logger: Logger;
 
   private readonly name: string;
 
   private readonly url: string;
 
-  private readonly defaultCommands: Record<string, any>;
-
-  constructor(name, url, defaultCommands) {
+  constructor(name, url) {
     this.name = name;
     this.url = url;
-    this.defaultCommands = defaultCommands;
-    this.logger = new Logger(this.name);
-  }
-
-  /**
-   * Updates latest json on startup
-   */
-  async onModuleInit() {
-    // async operation to not wait for it and not block user in case when no internet connection
-    this.updateLatestJson();
+    this.logger = new Logger(`CommandsJsonProvider:${this.name}`);
   }
 
   /**
    * Get latest json from external resource and save it locally
-   * @private
    */
-  private async updateLatestJson() {
+  async updateLatestJson() {
     try {
       this.logger.log(`Trying to update ${this.name} commands...`);
       const { data } = await axios.get(this.url, {
@@ -68,8 +56,24 @@ export class CommandsJsonProvider implements OnModuleInit {
         'utf8',
       ));
     } catch (error) {
-      this.logger.error(`Unable to get latest ${this.name} commands. Return default.`, error);
-      return this.defaultCommands;
+      this.logger.warn(`Unable to get latest ${this.name} commands. Return default.`, error);
+      return this.getDefaultCommands();
+    }
+  }
+
+  /**
+   * Try to get default json that was delivered with build
+   * In case when no default data we will return empty object to not fail api call
+   */
+  async getDefaultCommands() {
+    try {
+      return JSON.parse(fs.readFileSync(
+        path.join(PATH_CONFIG.defaultCommandsDir, `${this.name}.json`),
+        'utf8',
+      ));
+    } catch (error) {
+      this.logger.error(`Unable to get default ${this.name} commands.`, error);
+      return {};
     }
   }
 }

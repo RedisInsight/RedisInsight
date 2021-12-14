@@ -153,7 +153,7 @@ export const createSplashScreen = async () => {
   return splash;
 };
 
-export const createWindow = async (splash: BrowserWindow | null) => {
+export const createWindow = async (splash: BrowserWindow | null = null) => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'resources')
     : path.join(__dirname, '../resources');

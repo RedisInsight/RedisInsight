@@ -120,7 +120,7 @@ export default class MenuBuilder {
           label: 'New Window',
           accelerator: 'Command+N',
           click: () => {
-            createWindow(null);
+            createWindow();
           },
         },
         {
@@ -186,7 +186,7 @@ export default class MenuBuilder {
             label: 'New Window',
             accelerator: 'Ctrl+N',
             click: () => {
-              createWindow(null);
+              createWindow();
             },
           },
           {

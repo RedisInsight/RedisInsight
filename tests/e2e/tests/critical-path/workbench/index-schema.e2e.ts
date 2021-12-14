@@ -34,7 +34,8 @@ fixture `Index Schema at Workbench`
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
     })
-test('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
+//skipped due the inaccessibility of the iframe
+test.skip('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         `HMSET product:1 name "Apple Juice"`
@@ -53,7 +54,8 @@ test('Verify that user can open results in Text and Table views for FT.INFO for 
     //Check that result is displayed in Text view
     await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
 });
-test('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
+//skipped due the inaccessibility of the iframe
+test.skip('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
     const commandsForSend = [
         `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,
         `JSON.SET myDoc1 $ '{"user":{"name":"John Smith","tag":"foo,bar","hp":1000, "dmg":150}}'`

@@ -193,6 +193,7 @@ export interface ClusterNode {
   host: string;
   port: number;
   role?: 'slave' | 'master';
+  slot?: number;
 }
 
 export enum RedisCloudSubscriptionStatus {

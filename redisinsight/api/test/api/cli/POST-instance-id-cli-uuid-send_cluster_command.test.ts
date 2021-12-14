@@ -37,6 +37,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   node: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().integer().required(),
+    slot: Joi.number().integer(),
   })
 }).required());
 
@@ -46,6 +47,7 @@ const responseRawSchema = Joi.array().items(Joi.object().keys({
   node: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().integer().required(),
+    slot: Joi.number().integer(),
   })
 }).required());
 

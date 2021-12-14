@@ -6,7 +6,7 @@ import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-output'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
-import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
@@ -15,6 +15,20 @@ import formatToText from './cliTextFormatter'
 export enum CliPrefix {
   Cli = 'cli',
   QueryCard = 'query-card',
+}
+
+const cliParseTextResponseWithRedirect = (
+  text: string = '',
+  command: string = '',
+  status: CommandExecutionStatus = CommandExecutionStatus.Success,
+  redirectTo: ClusterNode | undefined,
+) => {
+  let redirectMessage = ''
+  if (redirectTo) {
+    const { host, port, slot } = redirectTo
+    redirectMessage = `-> Redirected to slot [${slot}] located at ${host}:${port}`
+  }
+  return [redirectMessage, '\n', cliParseTextResponse(text, command, status), '\n\n']
 }
 
 const cliParseTextResponseWithOffset = (
@@ -110,6 +124,7 @@ const checkUnsupportedModuleCommand = (loadedModules: RedisModuleDto[], commandL
 export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
+  cliParseTextResponseWithRedirect,
   cliCommandOutput,
   bashTextValue,
   cliCommandWrapper,

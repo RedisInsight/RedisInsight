@@ -3,7 +3,7 @@ import {
 } from 'lodash'
 import { bulkReplyCommands } from 'uiSrc/constants'
 
-const formatToText = (reply: any, command: string = '', redirectedTo: any = false): string => {
+const formatToText = (reply: any, command: string = ''): string => {
   let result
   if (isNull(reply)) {
     result = '(nil)'
@@ -19,10 +19,6 @@ const formatToText = (reply: any, command: string = '', redirectedTo: any = fals
     result = reply
   }
 
-  if (redirectedTo) {
-    const { slot, address } = redirectedTo
-    result = `-> Redirected to slot [${slot}] located at ${address}\n${result}`
-  }
   return result
 }
 

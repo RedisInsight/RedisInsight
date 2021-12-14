@@ -56,8 +56,7 @@ test('Verify that user can see static list of arguments is displayed when he ent
     //Check that no hints are displayed
     await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed yet')
     //Add space after the printed command
-    const command_hint = 'AI.SCRIPTEXECUTE '
-    await t.typeText(workbenchPage.queryInput, command_hint, { replace: true })
+    await t.typeText(workbenchPage.queryInput, `${command} `, { replace: true })
     //Check that hint with arguments are displayed
     await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
 });

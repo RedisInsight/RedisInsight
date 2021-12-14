@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { instance, mock } from 'ts-mockito'
 
 import {
   cleanup,
@@ -12,12 +11,10 @@ import {
   waitFor,
 } from 'uiSrc/utils/test-utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { processCliClient, toggleCli, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import { processCliClient, toggleCli } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sessionStorageService } from 'uiSrc/services'
-import CliHeader, { Props } from './CliHeader'
-
-const mockedProps = mock<Props>()
+import CliHeader from './CliHeader'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -44,11 +41,11 @@ jest.mock('uiSrc/services', () => ({
 
 describe('CliHeader', () => {
   it('should render', () => {
-    expect(render(<CliHeader {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<CliHeader />)).toBeTruthy()
   })
 
   it('should "toggleCli" action be called after click "collapse-cli" button', () => {
-    render(<CliHeader {...instance(mockedProps)} />)
+    render(<CliHeader />)
     fireEvent.click(screen.getByTestId('collapse-cli'))
 
     const expectedActions = [toggleCli()]
@@ -59,7 +56,7 @@ describe('CliHeader', () => {
     const mockUuid = 'test-uuid'
     sessionStorageMock.getItem = jest.fn().mockReturnValue(mockUuid)
 
-    render(<CliHeader {...instance(mockedProps)} />)
+    render(<CliHeader />)
 
     await waitFor(() => {
       fireEvent.click(screen.getByTestId('collapse-cli'))
@@ -69,25 +66,25 @@ describe('CliHeader', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should "toggleCliHelper" action be called after click "collapse-cli-helper" button', async () => {
-    const mockUuid = 'test-uuid'
-    sessionStorageMock.getItem = jest.fn().mockReturnValue(mockUuid)
-
-    render(<CliHeader {...instance(mockedProps)} />)
-
-    await waitFor(() => {
-      fireEvent.click(screen.getByTestId('collapse-cli-helper'))
-    })
-
-    const expectedActions = [toggleCliHelper()]
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
-  })
+  // it('should "toggleCliHelper" action be called after click "collapse-cli-helper" button', async () => {
+  //   const mockUuid = 'test-uuid'
+  //   sessionStorageMock.getItem = jest.fn().mockReturnValue(mockUuid)
+  //
+  //   render(<CliHeader {...instance(mockedProps)} />)
+  //
+  //   await waitFor(() => {
+  //     fireEvent.click(screen.getByTestId('collapse-cli-helper'))
+  //   })
+  //
+  //   const expectedActions = [toggleCliHelper()]
+  //   expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+  // })
 
   it('should "processCliClient" action be called after unmount with mocked sessionStorage item ', () => {
     const mockUuid = 'test-uuid'
     sessionStorageService.get = jest.fn().mockReturnValue(mockUuid)
 
-    const { unmount } = render(<CliHeader {...instance(mockedProps)} />)
+    const { unmount } = render(<CliHeader />)
 
     unmount()
 
@@ -108,7 +105,7 @@ describe('CliHeader', () => {
       port,
     }))
 
-    const { queryByTestId } = render(<CliHeader {...instance(mockedProps)} />)
+    const { queryByTestId } = render(<CliHeader />)
 
     const endpointEl = queryByTestId(mockEndpoint)
 

@@ -1,5 +1,4 @@
-.container,
-.containerMinimized {
+.container {
   height: 34px;
   line-height: 34px;
   width: 100%;
@@ -11,20 +10,8 @@
   z-index: 10;
 }
 
-.containerMinimized {
-  margin-left: 16px;
-  cursor: pointer;
-  width: calc(100% - 32px);
-  border: 1px solid var(--euiColorLightShade);
-}
-
 .icon {
   margin-left: 5px;
-}
-
-.iconHelper svg {
-  width: 24px;
-  height: 24px;
 }
 
 .endpointContainer {
@@ -44,4 +31,16 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   padding-left: 5px;
+}
+
+.title {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  :global {
+    .euiIcon {
+      color: var(--euiColorPrimary);
+      margin-right: 8px;
+    }
+  }
 }

@@ -7,10 +7,8 @@ import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cl
 import { AppDispatch, RootState } from '../store'
 import { StateCliSettings } from '../interfaces/cli'
 
-const isShowHelper = (localStorageService?.get(BrowserStorageItem.cliIsShowHelper) ?? 'true') === 'true'
-
 export const initialState: StateCliSettings = {
-  isShowHelper,
+  isShowHelper: false,
   isShowCli: false,
   loading: false,
   errorClient: '',

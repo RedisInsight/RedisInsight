@@ -14,7 +14,6 @@ import reducer, {
   setBrowserKeyListScrollPosition,
   setBrowserPanelSizes,
   setWorkbenchScript,
-  setWorkbenchHorizontalPanelSizes,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
   appContextSelector,
@@ -174,33 +173,6 @@ describe('slices', () => {
 
       // Act
       const nextState = reducer(initialState, setWorkbenchScript(script))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextWorkbench(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setWorkbenchHorizontalPanelSizes', () => {
-    it('should properly set wb panel sizes', () => {
-      // Arrange
-      const panelSizes = {
-        first: 100,
-        second: 200
-      }
-      const state = {
-        ...initialState.workbench,
-        panelSizes: {
-          ...initialState.workbench.panelSizes,
-          horizontal: panelSizes
-        }
-      }
-
-      // Act
-      const nextState = reducer(initialState, setWorkbenchHorizontalPanelSizes(panelSizes))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

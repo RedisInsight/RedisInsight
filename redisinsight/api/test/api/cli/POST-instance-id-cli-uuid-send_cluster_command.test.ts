@@ -37,6 +37,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   node: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().integer().required(),
+    slot: Joi.number().integer(),
   })
 }).required());
 
@@ -46,6 +47,7 @@ const responseRawSchema = Joi.array().items(Joi.object().keys({
   node: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().integer().required(),
+    slot: Joi.number().integer(),
   })
 }).required());
 
@@ -85,6 +87,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
         name: 'Should create string',
         data: {
           command: `set ${constants.TEST_STRING_KEY_1} ${constants.TEST_STRING_VALUE_1}`,
+          outputFormat: 'TEXT',
           role: 'ALL',
         },
         responseSchema,
@@ -99,6 +102,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
         name: 'Should get string',
         data: {
           command: `get ${constants.TEST_STRING_KEY_1}`,
+          outputFormat: 'TEXT',
           role: 'ALL',
         },
         responseSchema,
@@ -111,6 +115,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
         name: 'Should remove string',
         data: {
           command: `del ${constants.TEST_STRING_KEY_1}`,
+          outputFormat: 'TEXT',
           role: 'ALL',
         },
         responseSchema,
@@ -134,6 +139,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
           name: 'Should create string',
           data: {
             command: `set ${constants.TEST_STRING_KEY_1} ${constants.TEST_STRING_VALUE_1}`,
+            outputFormat: 'TEXT',
             role: 'ALL',
             nodeOptions
           },
@@ -152,6 +158,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
           name: 'Should get string',
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
+            outputFormat: 'TEXT',
             role: 'ALL',
             nodeOptions
           },
@@ -165,6 +172,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
           name: 'Should remove string',
           data: {
             command: `del ${constants.TEST_STRING_KEY_1}`,
+            outputFormat: 'TEXT',
             role: 'ALL',
             nodeOptions
           },
@@ -259,6 +267,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
       name: `Should create string with redirection if needed (${node.host}:${node.port})`,
       data: {
         command: `set ${constants.TEST_STRING_KEY_1} ${node.host}`,
+        outputFormat: 'TEXT',
         role: 'ALL',
         nodeOptions: {
           host: node.host,

@@ -1,4 +1,15 @@
-@import "main";
+@import 'base/react_virtualized';
+@import 'base/base';
+@import 'base/helpers';
+@import 'base/typography';
+@import 'base/inputs';
+@import 'base/selects';
+@import 'base/functions';
+@import 'base/flex_groups';
+@import 'base/links';
+@import 'base/overrides';
+
+@import 'components/components';
 
 // relative path for import fonts to plugins static
 @font-face {

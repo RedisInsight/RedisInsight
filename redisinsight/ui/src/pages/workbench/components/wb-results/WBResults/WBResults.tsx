@@ -25,10 +25,11 @@ const WBResults = ({ historyItems = [], onQueryRun, onQueryDelete, scrollDivRef 
       <EuiIcon
         type={theme === Theme.Dark ? MultiPlayIconDark : MultiPlayIconLight}
         className={styles.playIcon}
+        data-testid="wb_no-results__icon"
       />
-      <EuiText className={styles.noResultsTitle} color="subdued">No results to display.</EuiText>
-      <EuiText className={styles.noResultsText} color="subdued">
-        Run Redis commands to get results or see the left menu to learn more.
+      <EuiText className={styles.noResultsTitle} color="subdued" data-testid="wb_no-results__title">No results to display</EuiText>
+      <EuiText className={styles.noResultsText} color="subdued" data-testid="wb_no-results__summary">
+        Run Redis commands to get results or see the left menu to learn more
       </EuiText>
     </div>
   )
@@ -36,7 +37,7 @@ const WBResults = ({ historyItems = [], onQueryRun, onQueryDelete, scrollDivRef 
   return (
     <div className={cx(styles.container)}>
       <div ref={scrollDivRef} />
-      {historyItems.map(({ query, data, id, time, fromPersistentStore, matched, loading, status }) => (
+      {historyItems.map(({ query, data, id, time, fromPersistentStore, loading, status }) => (
         <QueryCard
           id={id}
           key={id}
@@ -44,7 +45,6 @@ const WBResults = ({ historyItems = [], onQueryRun, onQueryDelete, scrollDivRef 
           status={status}
           loading={loading}
           query={query}
-          matched={matched}
           time={time}
           fromStore={!!fromPersistentStore}
           onQueryRun={(queryType: WBQueryType) => onQueryRun(query, id, queryType)}

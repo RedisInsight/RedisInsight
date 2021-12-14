@@ -142,7 +142,7 @@ export class CliBusinessService {
     this.logger.log('Executing redis CLI command.');
     const { command: commandLine } = dto;
     let namespace = AppTool.CLI.toString();
-    const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Text;
+    const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Raw;
     try {
       const formatter = this.outputFormatterManager.getStrategy(outputFormat);
       const [command, ...args] = splitCliCommandLine(commandLine);
@@ -216,7 +216,7 @@ export class CliBusinessService {
     clientOptions: IFindRedisClientInstanceByOptions,
     commandLine: string,
     role: ClusterNodeRole,
-    outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Text,
+    outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Raw,
   ): Promise<SendClusterCommandResponse[]> {
     let namespace = AppTool.CLI.toString();
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
@@ -278,7 +278,7 @@ export class CliBusinessService {
     commandLine: string,
     role: ClusterNodeRole,
     nodeOptions: ClusterSingleNodeOptions,
-    outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Text,
+    outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Raw,
   ): Promise<SendClusterCommandResponse> {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
     try {
@@ -306,6 +306,7 @@ export class CliBusinessService {
           replyEncoding,
         );
         result.response = formatter.format(result.response, { slot, address });
+        result.slot = parseInt(slot, 10);
       } else {
         result.response = formatter.format(result.response);
       }
@@ -316,9 +317,9 @@ export class CliBusinessService {
         { command, outputFormat },
       );
       const {
-        host, port, error, ...rest
+        host, port, error, slot, ...rest
       } = result;
-      return { ...rest, node: { host, port } };
+      return { ...rest, node: { host, port, slot } };
     } catch (error) {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
 

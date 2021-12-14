@@ -25,6 +25,7 @@ export interface ICliExecResultFromNode {
   port: number;
   response: any;
   status: CommandExecutionStatus;
+  slot?: number;
   error?: any,
 }
 

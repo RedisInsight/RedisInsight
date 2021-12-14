@@ -9,7 +9,7 @@ export enum HelpLink {
 
 export const HELP_LINKS = {
   [HelpLink.CreateRedisCloud]: {
-    label: 'Create a FREE on Redis Cloud',
+    label: 'Create a free Redis Database on Redis Cloud',
     link: 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight',
     event: TelemetryEvent.CONFIG_DATABASES_GET_REDIS_CLOUD_ACCOUNT_CLICKED
   },

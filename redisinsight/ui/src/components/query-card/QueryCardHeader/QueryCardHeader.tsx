@@ -13,6 +13,7 @@ import {
 } from '@elastic/eui'
 import { format } from 'date-fns'
 import { useParams } from 'react-router-dom'
+import { findIndex } from 'lodash'
 
 import { Theme } from 'uiSrc/constants'
 import { getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
@@ -20,6 +21,8 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
@@ -59,6 +62,7 @@ const QueryCardHeader = (props: Props) => {
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
+  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { theme } = useContext(ThemeContext)
@@ -87,6 +91,7 @@ const QueryCardHeader = (props: Props) => {
     if (selectedValue === initValue) return
     const type: string = initValue in WBQueryType ? initValue : WBQueryType.Plugin
     setSelectedValue(type as WBQueryType, initValue)
+    sendEventChangeVisualizationTelemetry(initValue)
   }
 
   const handleQueryDelete = (event: React.MouseEvent) => {
@@ -115,8 +120,51 @@ const QueryCardHeader = (props: Props) => {
     && format(time, `${new Date(time).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
   ) || ''
 
+  const isViewInternal = (view: string = '') => !!options.find(({ id }) => id === view)?.internal
+
+  const getCommandForTelemetry = (query: string = '') => REDIS_COMMANDS_ARRAY.find((commandName) =>
+    query.toUpperCase().startsWith(commandName)) ?? query.split(' ')?.[0]
+
+  const sendEventToggleOpenTelemetry = () => {
+    const matchedCommand = getCommandForTelemetry(query)
+
+    sendEventTelemetry({
+      event: isOpen
+        ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED
+        : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
+      eventData: {
+        databaseId: instanceId,
+        command: matchedCommand
+      }
+    })
+  }
+
+  const sendEventChangeVisualizationTelemetry = (value: string = '') => {
+    const matchedCommand = getCommandForTelemetry(query)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED,
+      eventData: {
+        databaseId: instanceId,
+        command: matchedCommand,
+        previousView: selectedValue,
+        isPreviousViewInternal: isViewInternal(selectedValue),
+        currentView: value,
+        isCurrentViewInternal: isViewInternal(value),
+      }
+    })
+  }
+
+  const handleToggleOpen = () => {
+    if (!isFullScreen) {
+      sendEventToggleOpenTelemetry()
+    }
+
+    toggleOpen()
+  }
+
   const pluginsOptions = getVisualizationsByCommand(query, visualizations)
-    .map((visualization: any) => ({
+    .map((visualization: IPluginVisualization) => ({
       id: visualization.uniqId,
       value: WBQueryType.Plugin,
       text: visualization.name,
@@ -126,11 +174,12 @@ const QueryCardHeader = (props: Props) => {
       iconLight: (visualization.plugin.internal && visualization.iconLight)
         ? urlForAsset(visualization.plugin.baseUrl, visualization.iconLight)
         : DefaultPluginIconLight,
+      internal: visualization.plugin.internal
     }))
 
-  const options: EuiSuperSelectOption<string>[] = getViewTypeOptions()
+  const options: any[] = getViewTypeOptions()
   options.push(...pluginsOptions)
-  const modifiedOptions = options.map((item) => {
+  const modifiedOptions: EuiSuperSelectOption<any>[] = options.map((item) => {
     const { value, id, text, iconDark, iconLight } = item
     return {
       value: id ?? value,
@@ -142,20 +191,38 @@ const QueryCardHeader = (props: Props) => {
             anchorClassName={styles.tooltipIcon}
           >
             <EuiIcon
+              className={styles.iconDropdownOption}
               type={theme === Theme.Dark ? iconDark : iconLight}
               data-testid={`view-type-selected-${value}-${id}`}
             />
           </EuiToolTip>
         </div>
       ),
-      dropdownDisplay: truncateText(text, 20),
+      dropdownDisplay: (
+        <div className={cx(styles.dropdownOption)}>
+          <EuiIcon
+            className={styles.iconDropdownOption}
+            type={theme === Theme.Dark ? iconDark : iconLight}
+          />
+          <span>{truncateText(text, 20)}</span>
+        </div>
+      ),
       'data-test-subj': `view-type-option-${value}-${id}`,
     }
   })
 
+  const indexForSeparator = findIndex(pluginsOptions, (option) => !option.internal)
+  if (indexForSeparator > -1) {
+    modifiedOptions.splice(indexForSeparator + 1, 0, {
+      value: '',
+      disabled: true,
+      inputDisplay: (<span className={styles.separator} />)
+    })
+  }
+
   return (
     <div
-      onClick={toggleOpen}
+      onClick={handleToggleOpen}
       tabIndex={0}
       onKeyDown={() => {}}
       className={cx(styles.container, 'query-card-header', { [styles.isOpen]: isOpen })}
@@ -194,14 +261,18 @@ const QueryCardHeader = (props: Props) => {
           onClick={onDropDownViewClick}
         >
           {isOpen && options.length > 1 && (
-            <EuiSuperSelect
-              options={modifiedOptions}
-              itemClassName={cx('withColorDefinition', styles.changeViewItem)}
-              className={cx(styles.changeView)}
-              valueOfSelected={selectedValue}
-              onChange={(value: string) => onChangeView(value)}
-              data-testid="select-view-type"
-            />
+            <div className={styles.dropdownWrapper}>
+              <div className={styles.dropdown}>
+                <EuiSuperSelect
+                  options={modifiedOptions}
+                  itemClassName={cx(styles.changeViewItem)}
+                  className={cx(styles.changeView)}
+                  valueOfSelected={selectedValue}
+                  onChange={(value: string) => onChangeView(value)}
+                  data-testid="select-view-type"
+                />
+              </div>
+            </div>
           )}
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.buttonIcon} onClick={onDropDownViewClick}>

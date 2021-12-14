@@ -7,6 +7,7 @@ export class WorkbenchPage {
   cssReRunCommandButton: string
   cssDeleteCommandButton: string
   cssQueryCardOutputResponceSuccess: string
+  cssTableViewTypeOption: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -31,9 +32,9 @@ export class WorkbenchPage {
   queryInputScriptArea: Selector
   overviewTotalKeys: Selector
   overviewTotalMemory: Selector
-  resizeButtonForPreselectsArea: Selector
+  collapsePreselectAreaButton: Selector
+  expandPreselectAreaButton: Selector
   preselectButtons: Selector
-  preselectsAreaContainer: Selector
   reRunCommandButton: Selector
   queryCardNoModuleOutput: Selector
   queryCardNoModuleButton: Selector
@@ -41,6 +42,11 @@ export class WorkbenchPage {
   monacoCloseCommandDetails: Selector
   monacoSuggestion: Selector
   iframe: Selector
+  internalLinkWorkingWithHashes: Selector
+  preselectExactSearch: Selector
+  preselectGroupBy: Selector
+  preselectArea: Selector
+  expandArea: Selector
 
   constructor() {
       //CSS selectors
@@ -49,6 +55,7 @@ export class WorkbenchPage {
       this.cssReRunCommandButton = '[data-testid=re-run-command]';
       this.cssDeleteCommandButton = '[data-testid=delete-command]';
       this.cssQueryCardOutputResponceSuccess = '[data-testid=query-card-output-response-success]';
+      this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.
@@ -58,7 +65,8 @@ export class WorkbenchPage {
       //BUTTONS
       this.submitCommandButton = Selector('[data-testid=btn-submit]');
       this.resizeButtonForScriptingAndResults = Selector('[data-test-subj=resize-btn-scripting-area-and-results]');
-      this.resizeButtonForPreselectsArea = Selector('[data-test-subj=resize-btn-preselects-area]');
+      this.collapsePreselectAreaButton = Selector('[data-testid=collapse-enablement-area]');
+      this.expandPreselectAreaButton = Selector('[data-testid=expand-enablement-area]');
       this.paginationButtonPrevious = Selector(this.cssSelectorPaginationButtonPrevious);
       this.paginationButtonNext = Selector(this.cssSelectorPaginationButtonNext);
       this.selectViewType = Selector('[data-testid=select-view-type]');
@@ -66,9 +74,12 @@ export class WorkbenchPage {
       this.preselectList = Selector('[data-testid*=preselect-List]');
       this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
       this.preselectSearch = Selector('[data-testid=preselect-Search]');
+      this.preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
+      this.preselectGroupBy = Selector('[data-testid*=preselect-Group]');
       this.preselectButtons = Selector('[data-testid^=preselect-]');
       this.reRunCommandButton = Selector('[data-testid=re-run-command]');
       this.preselectManual = Selector('[data-testid=preselect-Manual]');
+      this.internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.queryInput = Selector('[data-testid=query-input-container]');
       this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -80,13 +91,15 @@ export class WorkbenchPage {
       this.queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
       this.overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
       this.overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
-      this.preselectsAreaContainer = Selector('[data-test-subj=resize-container-preselects-area]');
       this.queryCardNoModuleOutput = Selector('[data-testid=query-card-no-module-output]');
       this.queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
       this.monacoCommandDetails = Selector('div.suggest-details-container');
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
       this.iframe = Selector('.pluginIframe', { timeout: 90000 });
+      // Panel
+      this.preselectArea = Selector('[data-testid=enablementArea]');
+      this.expandArea = Selector('[]')
   }
 
   /**

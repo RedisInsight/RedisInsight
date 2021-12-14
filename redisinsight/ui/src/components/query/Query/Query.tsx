@@ -114,11 +114,13 @@ const Query = (props: Props) => {
     }
   }
 
-  const onKeyDownMonaco = (e:monacoEditor.IKeyboardEvent) => {
+  const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
+    // trigger parameter hints
     if (
       e.keyCode === monaco.KeyCode.Tab
-      || e.keyCode === monaco.KeyCode.Space
       || e.keyCode === monaco.KeyCode.Enter
+      || (e.keyCode === monaco.KeyCode.Space && e.ctrlKey && e.shiftKey)
+      || (e.keyCode === monaco.KeyCode.Space && !e.ctrlKey && !e.shiftKey)
     ) {
       onTriggerParameterHints()
     }

@@ -17,6 +17,10 @@ const EuiIconArrowRight = function EuiIconArrowRight(_ref) {
   const { titleId } = _ref
   const props = _objectWithoutProperties(_ref, ['title', 'titleId'])
 
+  // For e2e tests. TestCafe is failing for default icons
+  if(process.env.E2E) {
+    return <span>&#8594;</span>
+  }
   return /* #__PURE__ */React.createElement('svg', { width: 16,
     height: 16,
     viewBox: '0 0 16 16',

@@ -1,5 +1,0 @@
-JSON.GET school:1 $.pupils // Read the pupils field before the update
-
-JSON.SET school:1 $.pupils 430 // Update the pupils field
-
-JSON.GET school:1 $.pupils // Read the pupils field after the update

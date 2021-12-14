@@ -37,7 +37,7 @@ const QueryWrapper = (props: Props) => {
       })
       const multiCommands = getMultiCommands(rest)
 
-      const command = removeMonacoComments(decode([commandLine, multiCommands].join('\n')).trim())
+      const command = removeMonacoComments(decode([commandLine, multiCommands].join(';')).trim())
 
       return {
         command,

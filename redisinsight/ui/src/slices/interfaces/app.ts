@@ -51,9 +51,6 @@ export interface StateAppContext {
       guideScrollTop: number;
     },
     panelSizes: {
-      horizontal: {
-        [key: string]: number;
-      },
       vertical: {
         [key: string]: number;
       }
@@ -77,6 +74,8 @@ export interface IPluginVisualization {
   activationMethod: string;
   matchCommands: string[];
   default?: boolean;
+  iconDark?: string;
+  iconLight?: string;
 }
 
 export interface PluginsResponse {

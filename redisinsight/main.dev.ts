@@ -136,7 +136,7 @@ const bootstrap = async () => {
 
 export const windows = new Set<BrowserWindow>();
 
-const titleSplash = 'splash';
+const titleSplash = 'RedisInsight';
 export const createSplashScreen = async () => {
   const splash = new BrowserWindow({
     width: 500,

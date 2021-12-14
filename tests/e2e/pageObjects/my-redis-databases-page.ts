@@ -10,6 +10,7 @@ export class MyRedisDatabasePage {
   dbNameList: Selector
   settingsButton: Selector
   workbenchButton: Selector
+  helpCenterButton: Selector
   myRedisDBButton: Selector
   toastCloseButton: Selector
   deleteDatabaseButton: Selector
@@ -32,6 +33,7 @@ export class MyRedisDatabasePage {
       //BUTTONS
       this.settingsButton = Selector('[data-testid=settings-page-btn]');
       this.workbenchButton = Selector('[data-testid=workbench-page-btn]');
+      this.helpCenterButton = Selector('[data-testid=help-menu-button]');
       this.browserButton = Selector('[data-testid=browser-page-btn]');
       this.myRedisDBButton = Selector('[data-test-subj=home-page-btn]');
       this.deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
@@ -70,7 +72,7 @@ export class MyRedisDatabasePage {
           await t.click(this.confirmDeleteButton);
       }
       if (await this.toastCloseButton.exists) {
-        await t.click(this.toastCloseButton);
+          await t.click(this.toastCloseButton);
       }
   }
 

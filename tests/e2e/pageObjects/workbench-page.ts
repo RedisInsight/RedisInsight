@@ -47,6 +47,8 @@ export class WorkbenchPage {
   preselectGroupBy: Selector
   preselectArea: Selector
   expandArea: Selector
+  monacoHintWithArguments: Selector
+  noCommandHistorySection: Selector
 
   constructor() {
       //CSS selectors
@@ -97,6 +99,8 @@ export class WorkbenchPage {
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
       this.iframe = Selector('.pluginIframe', { timeout: 90000 });
+      this.monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]')
+      this.noCommandHistorySection = Selector('[data-testid=wb_no-results]')
       // Panel
       this.preselectArea = Selector('[data-testid=enablementArea]');
       this.expandArea = Selector('[]')

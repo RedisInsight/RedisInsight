@@ -25,9 +25,10 @@ const WBResults = ({ historyItems = [], onQueryRun, onQueryDelete, scrollDivRef 
       <EuiIcon
         type={theme === Theme.Dark ? MultiPlayIconDark : MultiPlayIconLight}
         className={styles.playIcon}
+        data-testid="wb_no-results__icon"
       />
-      <EuiText className={styles.noResultsTitle} color="subdued">No results to display</EuiText>
-      <EuiText className={styles.noResultsText} color="subdued">
+      <EuiText className={styles.noResultsTitle} color="subdued" data-testid="wb_no-results__title">No results to display</EuiText>
+      <EuiText className={styles.noResultsText} color="subdued" data-testid="wb_no-results__summary">
         Run Redis commands to get results or see the left menu to learn more
       </EuiText>
     </div>

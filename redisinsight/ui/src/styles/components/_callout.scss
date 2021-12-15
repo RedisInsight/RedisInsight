@@ -1,7 +1,7 @@
 .euiCallOut {
   padding: 12px 24px !important;
   &--primary {
-    background-color: var(--euiTooltipBackgroundColor) !important;
+    background-color: var(--callOutBackgroundColor) !important;
     border-color: var(--euiColorPrimary) !important;
     .euiText {
       color: var(--euiTooltipTextColor) !important;

@@ -4,7 +4,7 @@ import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import MonacoEditor from 'react-monaco-editor'
+import MonacoEditor, { monaco } from 'react-monaco-editor'
 
 import {
   Theme,
@@ -13,10 +13,12 @@ import {
   KEYBOARD_SHORTCUTS,
 } from 'uiSrc/constants'
 import {
+  actionTriggerParameterHints,
   decoration,
-  geMonacoAction,
+  getMonacoAction,
   getRedisCompletionProvider,
   getRedisMonarchTokensProvider,
+  getRedisSignatureHelpProvider,
   MonacoAction,
   Nullable,
   toModelDeltaDecoration
@@ -53,11 +55,13 @@ const Query = (props: Props) => {
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   let disposeCompletionItemProvider = () => {}
+  let disposeSignatureHelpProvider = () => {}
 
   useEffect(() =>
   // componentWillUnmount
     () => {
       disposeCompletionItemProvider()
+      disposeSignatureHelpProvider()
     },
   [])
 
@@ -65,7 +69,7 @@ const Query = (props: Props) => {
     if (!monacoObjects.current) return
     const commands = query.split('\n')
     const { monaco, editor } = monacoObjects.current
-    const notCommandRegEx = /^[\s|//]/
+    const notCommandRegEx = /^\s|\/\//
 
     const newDecorations = compact(commands.map((command, index) => {
       if (!command || notCommandRegEx.test(command)) return null
@@ -94,6 +98,34 @@ const Query = (props: Props) => {
     onSubmit(value)
   }
 
+  const onTriggerParameterHints = () => {
+    if (!monacoObjects.current) return
+
+    const { editor } = monacoObjects?.current
+    const model = editor.getModel()
+    const { lineNumber = 0 } = editor.getPosition() ?? {}
+    const lineContent = model?.getLineContent(lineNumber)?.trim() ?? ''
+    const matchedCommand = REDIS_COMMANDS_ARRAY.find((command) => lineContent?.trim().startsWith(command)) ?? ''
+    // trigger parameter hints only ones between command and arguments in the same line
+    const isTriggerHints = lineContent.split(' ').length < (2 + matchedCommand.split(' ').length)
+
+    if (isTriggerHints) {
+      actionTriggerParameterHints(editor)
+    }
+  }
+
+  const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
+    // trigger parameter hints
+    if (
+      e.keyCode === monaco.KeyCode.Tab
+      || e.keyCode === monaco.KeyCode.Enter
+      || (e.keyCode === monaco.KeyCode.Space && e.ctrlKey && e.shiftKey)
+      || (e.keyCode === monaco.KeyCode.Space && !e.ctrlKey && !e.shiftKey)
+    ) {
+      onTriggerParameterHints()
+    }
+  }
+
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
     monaco: typeof monacoEditor
@@ -103,8 +135,12 @@ const Query = (props: Props) => {
     editor.focus()
     setQueryEl(editor)
 
+    editor.onKeyDown(onKeyDownMonaco)
+
     setupMonacoRedisLang(monaco)
-    editor.addAction(geMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco))
+    editor.addAction(
+      getMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco)
+    )
   }
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
@@ -117,6 +153,12 @@ const Query = (props: Props) => {
       MonacoLanguage.Redis,
       getRedisCompletionProvider(REDIS_COMMANDS_SPEC)
     ).dispose
+
+    disposeSignatureHelpProvider = monaco.languages.registerSignatureHelpProvider(
+      MonacoLanguage.Redis,
+      getRedisSignatureHelpProvider(REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY)
+    ).dispose
+
     monaco.languages.setLanguageConfiguration(MonacoLanguage.Redis, redisLanguageConfig)
     monaco.languages.setMonarchTokensProvider(
       MonacoLanguage.Redis,
@@ -131,6 +173,11 @@ const Query = (props: Props) => {
     automaticLayout: true,
     formatOnPaste: false,
     glyphMargin: true,
+    suggest: {
+      preview: true,
+      showStatusBar: true,
+      showIcons: false,
+    },
     lineNumbersMinChars: 4
     // fontFamily: 'Inconsolata',
     // fontSize: 16,

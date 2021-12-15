@@ -1,4 +1,5 @@
 /* eslint-disable sonarjs/no-nested-template-literals */
+/* eslint-disable no-restricted-globals */
 // @ts-nocheck
 export const importPluginScript = () => (config) => {
   const { scriptSrc, stylesSrc, iframeId, modules, baseUrl } = JSON.parse(config)
@@ -20,7 +21,11 @@ export const importPluginScript = () => (config) => {
   const { callbacks } = globalThis.state
 
   const sendMessageToMain = (data = {}) => {
-    globalThis.top.postMessage(data, '*')
+    const event = document.createEvent('Event')
+    event.initEvent('message', false, false)
+    event.data = data
+    event.origin = '*'
+    parent.dispatchEvent(event)
   }
 
   const providePluginSDK = () => {
@@ -31,6 +36,19 @@ export const importPluginScript = () => (config) => {
           iframeId,
           text
         })
+      },
+      setPluginLoadSucceed: () => {
+        sendMessageToMain({
+          event: 'loaded',
+          iframeId,
+        })
+      },
+      setPluginLoadFailed: (error) => {
+        sendMessageToMain({
+          event: 'error',
+          iframeId,
+          error,
+        })
       }
     }
   }
@@ -39,6 +57,7 @@ export const importPluginScript = () => (config) => {
     globalThis.onmessage = (e) => {
       // eslint-disable-next-line sonarjs/no-collapsible-if
       if (e.data.event === events.EXECUTE_COMMAND) {
+        globalThis.plugin[e.data.method] && globalThis.plugin[e.data.method](e.data.data)
         const { plugin } = globalThis
         // eslint-disable-next-line no-prototype-builtins
         if (plugin.hasOwnProperty(e.data.method)) {
@@ -86,7 +105,7 @@ export const importPluginScript = () => (config) => {
 
 export const prepareIframeHtml = (config) => {
   const importPluginScriptInner: string = importPluginScript().toString()
-  const { scriptSrc, scriptPath, stylesSrc, iframeId, bodyClass } = config
+  const { scriptSrc, scriptPath, stylesSrc, bodyClass } = config
   const stylesLinks = stylesSrc.map((styleSrc: string) => `<link rel="stylesheet" href=${styleSrc} />`).join('')
   const configString = JSON.stringify(config)
 
@@ -104,17 +123,11 @@ export const prepareIframeHtml = (config) => {
           import(\`${scriptSrc}\`)
               .then((module) => {
                   globalThis.plugin = { ...module.default };
-                  globalThis.top.postMessage({
-                    event: 'loaded',
-                    iframeId: \`${iframeId}\`
-                  }, '*')
+                  globalThis.PluginSDK.setPluginLoadSucceed();
               })
-              .catch(() => {
-                globalThis.top.postMessage({
-                    event: 'error',
-                    iframeId: \`${iframeId}\`,
-                    error: \`${scriptPath} not found. Check if it has been renamed or deleted and try again.\`
-                  }, '*')
+              .catch((e) => {
+                  var error = \`${scriptPath} not found. Check if it has been renamed or deleted and try again.\`
+                  globalThis.PluginSDK.setPluginLoadFailed(error)
               })
         </script>
         <script src="${scriptSrc}" type="module"></script>

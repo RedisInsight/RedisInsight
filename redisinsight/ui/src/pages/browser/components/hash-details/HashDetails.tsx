@@ -35,7 +35,7 @@ import styles from './styles.module.scss'
 
 const suffix = '_hash'
 const matchAllValue = '*'
-const headerHeight = 64
+const headerHeight = 60
 const rowHeight = 43
 
 interface IHashField extends HashFieldDto {

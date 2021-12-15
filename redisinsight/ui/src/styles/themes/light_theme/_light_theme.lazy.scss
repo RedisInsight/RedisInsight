@@ -86,16 +86,21 @@
   --controlsLabelHoverColor: #{$controlsLabelHoverColor};
   --hoverInListColor: #{$hoverInListColor};
   --hoverInListColorLight: #{$hoverInListColor};
+  --hoverInListColorDarken: #{$hoverInListColorLight};
+  --externalLinkColor: #{$externalLinkColor};
+  --externalLinkTooltipColor: #{$externalLinkTooltipColor};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
 
   --separatorColor: #{$separatorColor};
+  --separatorDropdownColor: #{$separatorDropdownColor};
 
   --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
   --buttonSecondaryTextColor: #{$buttonSecondaryTextColor};
   --buttonSecondaryDisabledTextColor: #{$buttonSecondaryDisabledTextColor};
   --buttonDangerHoverColor: #{$buttonDangerHoverColor};
+  --buttonIconPrimaryHover: #{$buttonIconPrimaryHover};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};
@@ -104,6 +109,7 @@
   --commandGroupBadgeColor: #{$commandGroupBadgeColor};
 
   --moduleBackgroundColor: #{$typeHashColor};
+  --callOutBackgroundColor: #{$callOutBackgroundColor};
 
   // KeyTypes
   --typeHashColor: #{$typeHashColor};

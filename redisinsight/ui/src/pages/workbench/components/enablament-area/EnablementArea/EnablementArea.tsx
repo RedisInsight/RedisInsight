@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 import cx from 'classnames'
 import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
+import { appContextWorkbenchEA, resetWorkbenchEAGuide } from 'uiSrc/slices/app/context'
 import {
   CodeButton,
   Group,
@@ -12,56 +15,87 @@ import {
   PlainText
 } from './components'
 
-import './styles.scss'
 import styles from './styles.module.scss'
 
+const padding = parseInt(styles.paddingHorizontal)
+
 export interface Props {
-  items: IEnablementAreaItem[];
+  items: Record<string, IEnablementAreaItem>;
   loading: boolean;
-  openScript: (script: string, path: string) => void;
-  openInternalPage: (page: IInternalPage) => void;
+  openScript: (script: string, path?: string, name?: string) => void;
+  onOpenInternalPage: (page: IInternalPage) => void;
 }
 
-const EnablementArea = ({ items, openScript, openInternalPage, loading }: Props) => {
+const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Props) => {
+  const { search } = useLocation()
+  const history = useHistory()
+  const dispatch = useDispatch()
+  const { guidePath: guideFromContext } = useSelector(appContextWorkbenchEA)
   const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
-  const [internalPage, setInternalPage] = useState<IInternalPage>(
-    { backTitle: '', path: '', label: '' }
-  )
+  const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
+
+  useEffect(() => {
+    const pagePath = new URLSearchParams(search).get('guide')
+    if (pagePath) {
+      setIsInternalPageVisible(true)
+      setInternalPage({ path: pagePath })
+      return
+    }
+    if (guideFromContext) {
+      handleOpenInternalPage({ path: guideFromContext })
+      return
+    }
+    setIsInternalPageVisible(false)
+  }, [search])
 
   const handleOpenInternalPage = (page: IInternalPage) => {
-    setIsInternalPageVisible(true)
-    setInternalPage(page)
-    openInternalPage(page)
+    history.push({
+      search: `?guide=${page.path}`
+    })
+    onOpenInternalPage(page)
   }
 
   const handleCloseInternalPage = () => {
-    setIsInternalPageVisible(false)
+    dispatch(resetWorkbenchEAGuide())
+    history.push({
+      // TODO: better to use query-string parser and update only one parameter (instead of replacing all)
+      search: ''
+    })
   }
 
-  const renderSwitch = (item: IEnablementAreaItem) => {
+  const renderSwitch = (item: IEnablementAreaItem, level: number) => {
     const { label, type, children, id, args } = item
+    const paddingsStyle = { paddingLeft: `${padding + level * 8}px`, paddingRight: `${padding}px` }
     switch (type) {
       case EnablementAreaComponent.Group:
-        return <Group testId={id || label} label={label} {...args}>{renderTreeView(children || [])}</Group>
+        return (
+          <Group triggerStyle={paddingsStyle} testId={id} label={label}{...args}>
+            {renderTreeView(Object.values(children || {}) || [], level + 1)}
+          </Group>
+        )
       case EnablementAreaComponent.CodeButton:
-        return args?.path
-          ? <LazyCodeButton label={label} {...args} />
-          : <CodeButton onClick={() => openScript(args?.content || '', '')} label={label} {...args} />
+        return (
+          <div style={{ marginTop: '12px', ...paddingsStyle }}>
+            {args?.path
+              ? <LazyCodeButton label={label} {...args} />
+              : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />}
+          </div>
+        )
       case EnablementAreaComponent.InternalLink:
         return (
-          <InternalLink testId={id || label} label={label} {...args}>
+          <InternalLink style={paddingsStyle} testId={id || label} label={label}{...args}>
             {args?.content || label}
           </InternalLink>
         )
       default:
-        return <PlainText>{label}</PlainText>
+        return <PlainText style={paddingsStyle}>{label}</PlainText>
     }
   }
 
-  const renderTreeView = (elements: IEnablementAreaItem[]) => (
+  const renderTreeView = (elements: IEnablementAreaItem[], level: number = 0) => (
     elements?.map((item) => (
-      <div className={styles.item} key={item.id}>
-        {renderSwitch(item)}
+      <div className="fluid" key={item.id}>
+        {renderSwitch(item, level)}
       </div>
     )))
 
@@ -79,7 +113,7 @@ const EnablementArea = ({ items, openScript, openInternalPage, loading }: Props)
               flush
               className={cx(styles.innerContainer)}
             >
-              {renderTreeView(items)}
+              {renderTreeView(Object.values(items))}
             </EuiListGroup>
           )}
         <div
@@ -91,7 +125,6 @@ const EnablementArea = ({ items, openScript, openInternalPage, loading }: Props)
           {internalPage?.path && (
             <LazyInternalPage
               onClose={handleCloseInternalPage}
-              backTitle={internalPage.backTitle}
               title={internalPage?.label}
               path={internalPage?.path}
             />

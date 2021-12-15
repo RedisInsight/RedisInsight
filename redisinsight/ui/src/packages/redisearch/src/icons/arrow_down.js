@@ -11,6 +11,10 @@ var EuiIconArrowDown = function EuiIconArrowDown(_ref) {
       titleId = _ref.titleId,
       props = _objectWithoutProperties(_ref, ["title", "titleId"]);
 
+  // For e2e tests. TestCafe is failing for default icons
+  if(process.env.E2E) {
+    return <span>&#8595;</span>
+  }
   return /*#__PURE__*/React.createElement("svg", _extends({
     width: 16,
     height: 16,

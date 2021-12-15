@@ -14,11 +14,15 @@ import reducer, {
   setBrowserKeyListScrollPosition,
   setBrowserPanelSizes,
   setWorkbenchScript,
-  setWorkbenchHorizontalPanelSizes,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
   appContextSelector,
-  appContextBrowser, appContextWorkbench
+  appContextBrowser,
+  appContextWorkbench,
+  setWorkbenchEAGuide,
+  appContextWorkbenchEA,
+  setWorkbenchEAGuideScrollTop,
+  resetWorkbenchEAGuide
 } from '../../app/context'
 
 jest.mock('uiSrc/services')
@@ -179,33 +183,6 @@ describe('slices', () => {
     })
   })
 
-  describe('setWorkbenchHorizontalPanelSizes', () => {
-    it('should properly set wb panel sizes', () => {
-      // Arrange
-      const panelSizes = {
-        first: 100,
-        second: 200
-      }
-      const state = {
-        ...initialState.workbench,
-        panelSizes: {
-          ...initialState.workbench.panelSizes,
-          horizontal: panelSizes
-        }
-      }
-
-      // Act
-      const nextState = reducer(initialState, setWorkbenchHorizontalPanelSizes(panelSizes))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextWorkbench(rootState)).toEqual(state)
-    })
-  })
-
   describe('setWorkbenchVerticalPanelSizes', () => {
     it('should properly set wb panel sizes', () => {
       // Arrange
@@ -230,6 +207,89 @@ describe('slices', () => {
       })
 
       expect(appContextWorkbench(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setWorkbenchEAGuide', () => {
+    it('should properly set path to opened guide page', () => {
+      // Arrange
+      const prevState = {
+        ...initialState,
+        workbench: {
+          ...initialState.workbench,
+          enablementArea: {
+            guidePath: 'static/enablement-area/guides/guide1.html',
+            guideScrollTop: 200,
+          }
+        },
+      }
+      const guidePath = 'static/enablement-area/guides/guide2.html'
+      const state = {
+        ...initialState.workbench.enablementArea,
+        guidePath,
+        guideScrollTop: 0,
+      }
+
+      // Act
+      const nextState = reducer(prevState, setWorkbenchEAGuide(guidePath))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextWorkbenchEA(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setWorkbenchEAGuideScrollTop', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState.workbench.enablementArea,
+        guideScrollTop: 200,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setWorkbenchEAGuideScrollTop(200))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextWorkbenchEA(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetWorkbenchEAGuide', () => {
+    it('should properly reset enablement-area context', () => {
+      // Arrange
+      const prevState = {
+        ...initialState,
+        workbench: {
+          ...initialState.workbench,
+          enablementArea: {
+            guidePath: 'static/enablement-area/guides/guide1.html',
+            guideScrollTop: 200,
+          }
+        },
+      }
+      const state = {
+        ...initialState.workbench.enablementArea,
+        guidePath: '',
+        guideScrollTop: 0,
+      }
+
+      // Act
+      const nextState = reducer(prevState, resetWorkbenchEAGuide())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextWorkbenchEA(rootState)).toEqual(state)
     })
   })
 

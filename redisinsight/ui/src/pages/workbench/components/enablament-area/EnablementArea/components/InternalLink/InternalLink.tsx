@@ -11,18 +11,18 @@ export interface Props {
   label: string;
   children: React.ReactElement[] | string;
   path?: string,
-  backTitle?: string;
   size?: 's' | 'xs' | 'm' | 'l';
   iconType?: string;
   iconPosition?: 'left' | 'right';
   toolTip?: string;
+  style?: any;
 }
 const InternalLink = (props: Props) => {
-  const { label, testId, children, backTitle = '', path = '', size = 's', iconType, iconPosition = 'left', toolTip } = props
+  const { label, testId, children, path = '', size = 's', iconType, iconPosition = 'left', toolTip, ...rest } = props
   const { openPage } = useContext(EnablementAreaContext)
   const handleOpenPage = () => {
     if (path) {
-      openPage({ path, label, backTitle: backTitle || label })
+      openPage({ path, label })
     }
   }
 
@@ -44,6 +44,7 @@ const InternalLink = (props: Props) => {
       color="subdued"
       onClick={handleOpenPage}
       label={content}
+      {...rest}
     />
   )
 }

@@ -1,7 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render } from 'uiSrc/utils/test-utils'
-
 import InternalPage, { Props } from './InternalPage'
 
 const mockedProps = mock<Props>()

@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
-import { ReplyError } from 'src/models';
+import { AppTool, ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { ICliExecResultFromNode } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 
@@ -12,9 +12,13 @@ export class CliAnalyticsService extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendCliClientCreatedEvent(instanceId: string, additionalData: object = {}): void {
+  sendClientCreatedEvent(
+    instanceId: string,
+    namespace: string,
+    additionalData: object = {},
+  ): void {
     this.sendEvent(
-      TelemetryEvents.CliClientCreated,
+      this.getNamespaceEvent(TelemetryEvents.ClientCreated, namespace),
       {
         databaseId: instanceId,
         ...additionalData,
@@ -22,13 +26,14 @@ export class CliAnalyticsService extends TelemetryBaseService {
     );
   }
 
-  sendCliClientCreationFailedEvent(
+  sendClientCreationFailedEvent(
     instanceId: string,
+    namespace: string,
     exception: HttpException,
     additionalData: object = {},
   ): void {
     this.sendFailedEvent(
-      TelemetryEvents.CliClientCreationFailed,
+      this.getNamespaceEvent(TelemetryEvents.ClientCreationFailed, namespace),
       exception,
       {
         databaseId: instanceId,
@@ -37,9 +42,13 @@ export class CliAnalyticsService extends TelemetryBaseService {
     );
   }
 
-  sendCliClientRecreatedEvent(instanceId: string, additionalData: object = {}): void {
+  sendClientRecreatedEvent(
+    instanceId: string,
+    namespace: string,
+    additionalData: object = {},
+  ): void {
     this.sendEvent(
-      TelemetryEvents.CliClientRecreated,
+      this.getNamespaceEvent(TelemetryEvents.ClientRecreated, namespace),
       {
         databaseId: instanceId,
         ...additionalData,
@@ -47,15 +56,16 @@ export class CliAnalyticsService extends TelemetryBaseService {
     );
   }
 
-  sendCliClientDeletedEvent(
+  sendClientDeletedEvent(
     affected: number,
     instanceId: string,
+    namespace: string,
     additionalData: object = {},
   ): void {
     try {
       if (affected > 0) {
         this.sendEvent(
-          TelemetryEvents.CliClientDeleted,
+          this.getNamespaceEvent(TelemetryEvents.ClientDeleted, namespace),
           {
             databaseId: instanceId,
             ...additionalData,
@@ -67,9 +77,13 @@ export class CliAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendCliCommandExecutedEvent(instanceId: string, additionalData: object = {}): void {
+  sendCommandExecutedEvent(
+    instanceId: string,
+    namespace: string,
+    additionalData: object = {},
+  ): void {
     this.sendEvent(
-      TelemetryEvents.CliCommandExecuted,
+      this.getNamespaceEvent(TelemetryEvents.CommandExecuted, namespace),
       {
         databaseId: instanceId,
         ...additionalData,
@@ -77,45 +91,15 @@ export class CliAnalyticsService extends TelemetryBaseService {
     );
   }
 
-  sendCliClusterCommandExecutedEvent(
+  sendCommandErrorEvent(
     instanceId: string,
-    result: ICliExecResultFromNode,
-    additionalData: object = {},
-  ): void {
-    const { status, error } = result;
-    try {
-      if (status === CommandExecutionStatus.Success) {
-        this.sendEvent(
-          TelemetryEvents.CliClusterNodeCommandExecuted,
-          {
-            databaseId: instanceId,
-            ...additionalData,
-          },
-        );
-      }
-      if (status === CommandExecutionStatus.Fail) {
-        this.sendEvent(
-          TelemetryEvents.CliCommandErrorReceived,
-          {
-            databaseId: instanceId,
-            error: error.name,
-            command: error?.command?.name,
-          },
-        );
-      }
-    } catch (e) {
-      // continue regardless of error
-    }
-  }
-
-  sendCliCommandErrorEvent(
-    instanceId: string,
+    namespace: string,
     error: ReplyError,
     additionalData: object = {},
   ): void {
     try {
       this.sendEvent(
-        TelemetryEvents.CliCommandErrorReceived,
+        this.getNamespaceEvent(TelemetryEvents.CommandErrorReceived, namespace),
         {
           databaseId: instanceId,
           error: error?.name,
@@ -128,18 +112,55 @@ export class CliAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendCliConnectionErrorEvent(
+  sendClusterCommandExecutedEvent(
     instanceId: string,
+    namespace: string,
+    result: ICliExecResultFromNode,
+    additionalData: object = {},
+  ): void {
+    const { status, error } = result;
+    try {
+      if (status === CommandExecutionStatus.Success) {
+        this.sendEvent(
+          this.getNamespaceEvent(TelemetryEvents.ClusterNodeCommandExecuted, namespace),
+          {
+            databaseId: instanceId,
+            ...additionalData,
+          },
+        );
+      }
+      if (status === CommandExecutionStatus.Fail) {
+        this.sendEvent(
+          this.getNamespaceEvent(TelemetryEvents.CommandErrorReceived, namespace),
+          {
+            databaseId: instanceId,
+            error: error.name,
+            command: error?.command?.name,
+          },
+        );
+      }
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
+  sendConnectionErrorEvent(
+    instanceId: string,
+    namespace: string,
     exception: HttpException,
     additionalData: object = {},
   ): void {
     this.sendFailedEvent(
-      TelemetryEvents.CliClientConnectionError,
+      this.getNamespaceEvent(TelemetryEvents.ClientConnectionError, namespace),
       exception,
       {
         databaseId: instanceId,
         ...additionalData,
       },
     );
+  }
+
+  private getNamespaceEvent(event: TelemetryEvents, namespace: string = AppTool.CLI): string {
+    return namespace.toLowerCase() === 'workbench' ? `WORKBENCH_${event}` : `CLI_${event}`;
   }
 }

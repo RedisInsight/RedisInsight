@@ -1,6 +1,7 @@
 body {
   font-family: 'Graphik', sans-serif;
   font-size: 14px;
+  letter-spacing: -0.14px;
 
   b {
     font-weight: 500;
@@ -8,27 +9,33 @@ body {
 
   .euiSuperSelect__item {
     font-size: 13px;
+    letter-spacing: -0.13px;
   }
 
   .euiText {
     font-size: 0.875rem;
+    letter-spacing: -0.14px;
   }
 
   .euiText--small {
     font-size: 0.8125rem;
+    letter-spacing: -0.13px;
     line-height: 1.1875rem;
   }
 
   .euiText--extraSmall {
     font-size: 0.75rem;
+    letter-spacing: -0.12px;
   }
 
   .euiTitle {
     font-weight: 500;
+    letter-spacing: normal;
   }
 
   .euiHealth--textSizeS {
     font-size: 0.8125rem;
+    letter-spacing: -0.13px;
   }
 }
 
@@ -86,7 +93,7 @@ body {
 .euiFieldPassword,
 .euiTextArea {
   font-family: 'Graphik', sans-serif !important;
-  color: var(--inputTextColor) !important;
+  color: var(--htmlColor) !important;
 }
 
 .euiFieldText:disabled {

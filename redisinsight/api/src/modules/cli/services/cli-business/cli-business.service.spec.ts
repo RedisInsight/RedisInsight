@@ -48,13 +48,14 @@ const mockRedisConsumer = () => ({
   createNewToolClient: jest.fn(),
   reCreateToolClient: jest.fn(),
   deleteToolClient: jest.fn(),
+  getRedisClientNamespace: jest.fn(),
 });
 
 const mockENotFoundMessage = 'ENOTFOUND some message';
 const mockMemoryUsageCommand = 'memory usage key';
 const mockGetEscapedKeyCommand = 'get "\\\\key';
 const mockServerInfoCommand = 'info server';
-const mockIntegerResponse = '(integer) 5';
+const mockIntegerResponse = 5;
 
 describe('CliBusinessService', () => {
   let service: CliBusinessService;
@@ -196,9 +197,9 @@ describe('CliBusinessService', () => {
   });
 
   describe('sendCommand', () => {
-    it('should successfully execute command and return text response', async () => {
+    it('should successfully execute command (RAW format)', async () => {
       const dto: SendCommandDto = { command: mockMemoryUsageCommand };
-      const formatSpy = jest.spyOn(textFormatter, 'format');
+      const formatSpy = jest.spyOn(rawFormatter, 'format');
       const mockResult: SendCommandResponse = {
         response: mockIntegerResponse,
         status: CommandExecutionStatus.Success,
@@ -550,11 +551,11 @@ describe('CliBusinessService', () => {
       );
     });
 
-    it('should successfully execute command for single node with redirection', async () => {
+    it('should successfully execute command for single node with redirection (RAW format)', async () => {
       const command = 'set foo bar';
       const mockResult: SendClusterCommandResponse = {
-        response: '-> Redirected to slot [7008] located at 127.0.0.1:7002\nOK',
-        node: { ...mockNode, port: 7002 },
+        response: 'OK',
+        node: { ...mockNode, port: 7002, slot: 7008 },
         status: CommandExecutionStatus.Success,
       };
       cliTool.execCommandForNode
@@ -575,6 +576,38 @@ describe('CliBusinessService', () => {
         command,
         ClusterNodeRole.All,
         nodeOptions,
+        CliOutputFormatterTypes.Raw,
+      );
+
+      expect(cliTool.execCommandForNode).toHaveBeenCalledTimes(2);
+      expect(result).toEqual(mockResult);
+    });
+    it('should successfully execute command for single node with redirection (Text format)', async () => {
+      const command = 'set foo bar';
+      const mockResult: SendClusterCommandResponse = {
+        response: '-> Redirected to slot [7008] located at 127.0.0.1:7002\nOK',
+        node: { ...mockNode, port: 7002, slot: 7008 },
+        status: CommandExecutionStatus.Success,
+      };
+      cliTool.execCommandForNode
+        .mockResolvedValueOnce({
+          response: mockRedisMovedError.message,
+          error: mockRedisMovedError,
+          status: CommandExecutionStatus.Fail,
+        })
+        .mockResolvedValueOnce({
+          response: 'OK',
+          host: '127.0.0.1',
+          port: 7002,
+          status: CommandExecutionStatus.Success,
+        });
+
+      const result = await service.sendCommandForSingleNode(
+        mockClientOptions,
+        command,
+        ClusterNodeRole.All,
+        nodeOptions,
+        CliOutputFormatterTypes.Text,
       );
 
       expect(cliTool.execCommandForNode).toHaveBeenCalledTimes(2);

@@ -3,11 +3,9 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .container {
-  overflow-x: hidden;
+  overflow: hidden;
   height: 100%;
-  padding: 0 8px;
-  background-color: var(--euiColorEmptyShade);
-  border: 1px solid var(--euiColorLightShade) !important;
+  flex-grow: 1;
 }
 
 .innerContainer {
@@ -20,25 +18,22 @@
   color: var(--euiTextSubduedColor) !important;
 }
 
-.item {
-  padding: 6px 0;
-  min-width: 100%;
-}
-
 .internalPage {
-  padding-top: 60px;
   width: 100%;
   max-width: 100%;
-  overflow: auto;
   position: absolute;
   top: 0;
   height: 100%;
-  transform: translateX(calc(100% + 8px));
+  transform: translateX(calc(100% + 18px));
   backface-visibility: hidden;
   transition: transform 0.4s ease-in-out;
   box-shadow: -5px 1px 10px rgba(0, 0, 0, 0.2);
 }
 
 .internalPageVisible {
-  transform: translateX(-8px);
+  transform: translateX(0);
+}
+
+:export {
+  paddingHorizontal: 18
 }

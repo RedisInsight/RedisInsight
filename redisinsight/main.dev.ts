@@ -48,10 +48,14 @@ export default class AppUpdater {
     log.info('AppUpdater initialization');
     log.transports.file.level = 'info';
 
-    autoUpdater.setFeedURL({
-      provider: 'generic',
-      url: process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
-    });
+    try {
+      autoUpdater.setFeedURL({
+        provider: 'generic',
+        url: process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
+      });
+    } catch (error) {
+      log.error(error);
+    }
 
     autoUpdater.checkForUpdatesAndNotify();
     autoUpdater.autoDownload = true;
@@ -132,7 +136,7 @@ const bootstrap = async () => {
 
 export const windows = new Set<BrowserWindow>();
 
-const titleSplash = 'splash';
+const titleSplash = 'RedisInsight';
 export const createSplashScreen = async () => {
   const splash = new BrowserWindow({
     width: 500,
@@ -149,7 +153,7 @@ export const createSplashScreen = async () => {
   return splash;
 };
 
-export const createWindow = async (splash: BrowserWindow | null) => {
+export const createWindow = async (splash: BrowserWindow | null = null) => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'resources')
     : path.join(__dirname, '../resources');

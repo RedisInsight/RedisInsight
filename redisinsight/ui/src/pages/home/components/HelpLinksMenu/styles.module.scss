@@ -13,6 +13,7 @@ $borderWidth: 2px;
   padding: 0 20px;
   color: var(--inputTextColor);
   font: normal normal bold 14px/17px Graphik, sans-serif;
+  letter-spacing: -0.14px;
 }
 
 .buttonOpen {
@@ -32,7 +33,7 @@ $borderWidth: 2px;
   background-color: transparent !important;
   text-decoration: none !important;
   font: normal normal bold 12px/17px Graphik, sans-serif;
-  letter-spacing: 0;
+  letter-spacing: -0.12px;
   &:hover {
     background-color: var(--hoverInListColorLight) !important;
     text-decoration: none !important;

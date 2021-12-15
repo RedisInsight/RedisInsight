@@ -3,6 +3,7 @@ export interface ICommands {
 }
 
 export interface ICommand {
+  name?: string;
   summary: string;
   complexity?: string;
   arguments?: ICommandArg[];
@@ -59,6 +60,14 @@ export enum CommandGroup {
   TimeSeries = 'timeseries',
   Graph = 'graph',
   AI = 'ai'
+}
+
+export enum CommandPrefix {
+  AI = 'AI',
+  Graph = 'GRAPH',
+  TimeSeries = 'TS',
+  Search = 'FT',
+  JSON = 'JSON'
 }
 
 export enum CommandRediSearch {

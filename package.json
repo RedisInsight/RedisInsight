@@ -48,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RedisLabs/redisinsight-v2.git"
+    "url": "git+https://github.com/RedisInsight/RedisInsight.git"
   },
   "author": {
     "name": "Redis Ltd.",
@@ -56,7 +56,7 @@
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
   "bugs": {
-    "url": "https://github.com/RedisLabs/redisinsight-v2/issues"
+    "url": "https://github.com/RedisInsight/RedisInsight/issues"
   },
   "keywords": [
     "redisinsight",
@@ -68,14 +68,19 @@
     "sass",
     "webpack"
   ],
-  "homepage": "https://github.com/RedisLabs/redisinsight-v2#readme",
+  "homepage": "https://github.com/RedisInsight/RedisInsight#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|ico|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/redisinsight/__mocks__/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy",
       "uiSrc/(.*)": "<rootDir>/redisinsight/ui/src/$1",
-      "monaco-editor": "<rootDir>/redisinsight/__mocks__/monacoMock.js"
+      "monaco-editor": "<rootDir>/redisinsight/__mocks__/monacoMock.js",
+      "unified": "<rootDir>/redisinsight/__mocks__/unified.js",
+      "remark-parse": "<rootDir>/redisinsight/__mocks__/remarkParse.js",
+      "remark-rehype": "<rootDir>/redisinsight/__mocks__/remarkRehype.js",
+      "rehype-stringify": "<rootDir>/redisinsight/__mocks__/rehypeStringify.js",
+      "unist-util-visit": "<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js"
     },
     "setupFilesAfterEnv": [
       "<rootDir>/redisinsight/ui/src/setup-tests.ts"
@@ -243,7 +248,12 @@
     "react-redux": "^7.2.2",
     "react-jsx-parser": "^1.28.4",
     "react-router-dom": "^5.2.0",
-    "react-virtualized": "^9.22.2"
+    "react-virtualized": "^9.22.2",
+    "remark-parse": "^10.0.1",
+    "remark-rehype": "^10.0.1",
+    "rehype-stringify": "^9.0.2",
+    "unified": "^10.1.1",
+    "unist-util-visit": "^4.1.0"
   },
   "devEngines": {
     "node": ">=14.x <16",

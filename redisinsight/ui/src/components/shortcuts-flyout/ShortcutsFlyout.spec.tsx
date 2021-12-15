@@ -31,7 +31,7 @@ describe('ShortcutsFlyout', () => {
 
     SHORTCUTS.forEach((group: ShortcutGroup) => {
       expect(
-        document.querySelector(`[data-test-subj="shortcut-title-${group.name}"]`)
+        document.querySelector(`[data-test-subj="shortcuts-section-${group.name}"]`)
       ).toBeInTheDocument()
     })
   })

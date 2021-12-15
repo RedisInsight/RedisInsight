@@ -39,12 +39,14 @@ export interface Props {
   dialogIsOpen: boolean;
   editedInstance: Nullable<Instance>;
   onEditInstance: (instance: Instance) => void;
+  onDeleteInstances: (instances: Instance[]) => void;
 }
 const DatabasesListWrapper = ({
   width,
   dialogIsOpen,
   onEditInstance,
   editedInstance,
+  onDeleteInstances
 }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
@@ -145,11 +147,11 @@ const DatabasesListWrapper = ({
   }
 
   const handleDeleteInstance = (instance: Instance) => {
-    dispatch(deleteInstancesAction([instance]))
+    dispatch(deleteInstancesAction([instance], () => onDeleteInstances([instance])))
   }
 
   const handleDeleteInstances = (instances: Instance[]) => {
-    dispatch(deleteInstancesAction(instances))
+    dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
   const PopoverDelete = ({ id, ...instance }: Instance) => (

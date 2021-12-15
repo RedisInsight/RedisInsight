@@ -63,21 +63,6 @@ const QueryCardCliPlugin = (props: Props) => {
     })
   }
 
-  const sendRedisCommand = (command: string, requestId: string) => {
-    dispatch(
-      sendPluginCommandAction({
-        command,
-        onSuccessAction: (response) => {
-          sendMessageToPlugin({
-            event: 'executeRedisCommand',
-            requestId,
-            data: response
-          })
-        }
-      })
-    )
-  }
-
   useEffect(() => {
     if (currentView === null) return
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.heightChanged, (height: string) => {

@@ -19,14 +19,12 @@ import {
   workbenchResultsSelector,
   sendWBCommandClusterAction,
 } from 'uiSrc/slices/workbench/wb-results'
-import { localStorageService } from 'uiSrc/services'
-import { BrowserStorageItem } from 'uiSrc/constants'
 import { ConnectionType, Instance, IPluginVisualization, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances'
 import HistoryContainer from 'uiSrc/services/queryHistory'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 
-import { createWBClientAction, updateWBClientAction } from 'uiSrc/slices/workbench/wb-settings'
+import { createWBClientAction, updateWBClientAction, workbenchSettingsSelector } from 'uiSrc/slices/workbench/wb-settings'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
@@ -68,14 +66,13 @@ const WBViewWrapper = () => {
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
-  const wbClientUuid = localStorageService.get(BrowserStorageItem.wbClientUuid) ?? ''
-
   const [historyItems, setHistoryItems] = useState<Array<WBHistoryObject>>([])
   const [script, setScript] = useState(scriptContext)
   const [multiCommands, setMultiCommands] = useState('')
   const [scriptEl, setScriptEl] = useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
 
   const instance = useSelector(connectedInstanceSelector)
+  const { wbClientUuid = '' } = useSelector(workbenchSettingsSelector)
   const { visualizations = [] } = useSelector(appPluginsSelector)
   state = {
     scriptEl,
@@ -186,7 +183,18 @@ const WBViewWrapper = () => {
       return
     }
 
-    sendCommand(commandLine, historyId || Date.now())
+    checkClient(commandLine, historyId || Date.now())
+  }
+
+  const checkClient = (
+    command: string,
+    historyId = Date.now()
+  ) => {
+    if (!wbClientUuid) {
+      dispatch(createWBClientAction(instanceId, () => sendCommand(command, historyId || Date.now())))
+    } else {
+      sendCommand(command, historyId || Date.now())
+    }
   }
 
   const sendCommand = (

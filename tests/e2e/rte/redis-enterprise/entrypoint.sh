@@ -1,5 +1,8 @@
 #! /bin/bash
 
+TEST_RE_USER=${TEST_RE_USER:-"demo@redislabs.com"}
+TEST_RE_PASS=${TEST_RE_PASS:-"123456"}
+
 set -e
 
 # enable job control
@@ -8,7 +11,7 @@ set -m
 /opt/start.sh &
 
 # This command queries the REST API and outputs the status code
-CURL_CMD="curl --silent --fail --output /dev/null -i -w %{http_code} -u demo@redislabs.com:123456 -k https://localhost:9443/v1/nodes"
+CURL_CMD="curl --silent --fail --output /dev/null -i -w %{http_code} -u $TEST_RE_USER:$TEST_RE_PASS -k https://localhost:9443/v1/nodes"
 
 # Wait to get 2 consecutive 200 responses from the REST API
 while true
@@ -30,9 +33,9 @@ do
     fi
 done
 
-echo "Running Python script to create databases..."
-python3 create_dbs.py
+echo "Creating databases..."
 
+curl -k -u "$TEST_RE_USER:$TEST_RE_PASS" --request POST --url "https://localhost:9443/v1/bdbs" --header 'content-type: application/json' --data-binary "@db.json"
 
 # now we bring the primary process back into the foreground
 # and leave it there

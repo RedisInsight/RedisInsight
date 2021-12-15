@@ -10,13 +10,12 @@ import {
   EuiText,
   EuiToolTip,
   EuiTextColor,
+  EuiIcon,
 } from '@elastic/eui'
 
 import {
-  cliSettingsSelector,
   deleteCliClientAction,
   toggleCli,
-  toggleCliHelper,
 } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -30,7 +29,6 @@ const CliHeader = () => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { isShowHelper } = useSelector(cliSettingsSelector)
   const { host, port } = useSelector(connectedInstanceSelector)
   const endpoint = `${host}:${port}`
 
@@ -58,27 +56,17 @@ const CliHeader = () => {
     dispatch(toggleCli())
   }
 
-  const handleCollapseCliHelper = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.stopPropagation()
-    sendEventTelemetry({
-      event: isShowHelper ? TelemetryEvent.COMMAND_HELPER_COLLAPSED : TelemetryEvent.COMMAND_HELPER_EXPANDED,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
-    dispatch(toggleCliHelper())
-  }
-
   return (
-    <div className={styles.container} onClick={handleCollapseCli} id="cli-header">
+    <div className={styles.container} id="cli-header">
       <EuiFlexGroup
         justifyContent="spaceBetween"
         gutterSize="none"
         alignItems="center"
         responsive={false}
-        style={{ height: '100%', cursor: 'pointer' }}
+        style={{ height: '100%' }}
       >
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem grow={false} className={styles.title}>
+          <EuiIcon type="console" size="m" />
           <EuiText>CLI</EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow />
@@ -102,37 +90,19 @@ const CliHeader = () => {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
-            content={`${isShowHelper ? 'Collapse' : 'Expand'} Command Helper`}
+            content="Close"
             position="top"
             display="inlineBlock"
             anchorClassName="flex-row"
           >
             <EuiButtonIcon
-              iconType="questionInCircle"
-              color={isShowHelper ? 'success' : 'primary'}
-              id="collapse-cli-helper"
-              aria-label="collapse cli helper"
-              data-testid="collapse-cli-helper"
-              className={cx(styles.icon, styles.iconHelper)}
-              onClick={handleCollapseCliHelper}
-            />
-          </EuiToolTip>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiToolTip
-            content="Hide CLI"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiButtonIcon
-              iconType="minus"
+              iconType="cross"
               color="primary"
               id="collapse-cli"
               aria-label="collapse cli"
               data-testid="collapse-cli"
               className={styles.icon}
-              onClick={() => {}}
+              onClick={handleCollapseCli}
             />
           </EuiToolTip>
         </EuiFlexItem>

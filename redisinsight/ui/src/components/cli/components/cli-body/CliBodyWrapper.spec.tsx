@@ -110,12 +110,6 @@ describe('CliBodyWrapper', () => {
     )
   })
 
-  it('CliHelper should be opened by default', () => {
-    render(<CliBodyWrapper />)
-
-    expect(screen.getByTestId('cli-helper')).toBeInTheDocument()
-  })
-
   // It's not possible to simulate events on contenteditable with testing-react-library,
   // or any testing library that uses js - dom, because of a limitation on js - dom itself.
   // https://github.com/testing-library/dom-testing-library/pull/235

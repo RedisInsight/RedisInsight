@@ -45,8 +45,6 @@ const QueryCardCliPlugin = (props: Props) => {
   const generatedIframeNameRef = useRef<string>('')
   const { theme } = useContext(ThemeContext)
 
-  const dispatch = useDispatch()
-
   const sendMessageToPlugin = (data = {}) => {
     const event: any = document.createEvent('Event')
     event.initEvent('message', false, false)

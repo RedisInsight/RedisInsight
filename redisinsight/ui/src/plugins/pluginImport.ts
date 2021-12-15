@@ -57,7 +57,6 @@ export const importPluginScript = () => (config) => {
     globalThis.onmessage = (e) => {
       // eslint-disable-next-line sonarjs/no-collapsible-if
       if (e.data.event === events.EXECUTE_COMMAND) {
-        globalThis.plugin[e.data.method] && globalThis.plugin[e.data.method](e.data.data)
         const { plugin } = globalThis
         // eslint-disable-next-line no-prototype-builtins
         if (plugin.hasOwnProperty(e.data.method)) {

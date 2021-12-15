@@ -179,8 +179,9 @@ class JSONObject extends React.Component<Props, State> {
   }
 
   onClickSetKVPair = () => {
+    const { addNewKeyValuePair } = this.state
     this.setState({
-      addNewKeyValuePair: !this.state.addNewKeyValuePair,
+      addNewKeyValuePair: !addNewKeyValuePair,
       newKey: '',
       newValue: '',
     })
@@ -286,11 +287,11 @@ class JSONObject extends React.Component<Props, State> {
     onJSONKeyExpandAndCollapse(!openIndex, path)
 
     if (!openIndex) {
-      const { shouldRejsonDataBeDownloaded } = this.props
+      const { shouldRejsonDataBeDownloaded, value } = this.props
 
       if (!shouldRejsonDataBeDownloaded) {
         this.setState({
-          value: this.props.value,
+          value,
           openIndex: true,
         })
         return

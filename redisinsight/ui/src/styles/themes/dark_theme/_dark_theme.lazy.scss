@@ -84,6 +84,7 @@
   --controlsLabelColor: #{$controlsLabelColor};
   --hoverInListColor: #{$hoverInListColor};
   --hoverInListColorLight: #{$hoverInListColorLight};
+  --hoverInListColorDarken: #{$hoverInListColorDarken};
   --externalLinkColor: #{$externalLinkColor};
   --externalLinkTooltipColor: #{$externalLinkTooltipColor};
 
@@ -97,6 +98,7 @@
   --buttonSecondaryTextColor: #{$buttonSecondaryTextColor};
   --buttonSecondaryDisabledTextColor: #{$buttonSecondaryDisabledTextColor};
   --buttonDangerHoverColor: #{$buttonDangerHoverColor};
+  --buttonIconPrimaryHover: #{$buttonIconPrimaryHover};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};

@@ -15,9 +15,10 @@ export interface Props {
   iconType?: string;
   iconPosition?: 'left' | 'right';
   toolTip?: string;
+  style?: any;
 }
 const InternalLink = (props: Props) => {
-  const { label, testId, children, path = '', size = 's', iconType, iconPosition = 'left', toolTip } = props
+  const { label, testId, children, path = '', size = 's', iconType, iconPosition = 'left', toolTip, ...rest } = props
   const { openPage } = useContext(EnablementAreaContext)
   const handleOpenPage = () => {
     if (path) {
@@ -43,6 +44,7 @@ const InternalLink = (props: Props) => {
       color="subdued"
       onClick={handleOpenPage}
       label={content}
+      {...rest}
     />
   )
 }

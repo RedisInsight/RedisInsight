@@ -30,7 +30,7 @@ fixture `Default scripts area at Workbench`
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
     })
-//skipped due the disabled default scripts area
+//skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
@@ -40,33 +40,35 @@ test.skip('Verify that user can edit and run automatically added "FT._LIST" and 
     //Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
     //Run automatically added "FT._LIST" script
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
     await t.click(workbenchPage.preselectList);
     await t.click(workbenchPage.submitCommandButton);
     //Check the FT._LIST result
     await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command');
     //Run automatically added "FT.INFO {index}" script with added index
     await t.click(workbenchPage.preselectIndexInfo);
-    let addedScript = await workbenchPage.queryInputScriptArea.textContent;
+    let addedScript = await workbenchPage.queryInputScriptArea.nth(3).textContent;
     //Replace the {index} with indexName value in script and send
-    addedScript = addedScript.replace('{index}', indexName);
+    addedScript = addedScript.replace('"permits"', indexName);
     addedScript = addedScript.replace(/\s/g, ' ');
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(addedScript);
     //Check the FT.INFO result
     await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command');
 });
-//skipped due the disabled default scripts area
+//skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         'HMSET product:1 name "Apple Juice"',
         'HMSET product:2 name "Apple Juice"'
     ];
-    const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
+    const searchCommand = `FT.SEARCH "${indexName}" "Apple Juice"`;
     //Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
     //Run automatically added FT.SEARCH script with edits
-    await t.click(workbenchPage.preselectSearch);
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    await t.click(workbenchPage.preselectExactSearch);
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     //Check the FT.SEARCH result
@@ -75,7 +77,7 @@ test.skip('Verify that user can edit and run automatically added "Search" script
     await t.expect(key.exists).ok('The added key is in the Search result');
     await t.expect(name.exists).ok('The added key name field is in the Search result');
 });
-//skipped due the disabled default scripts area
+//skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
     const aggregationResultField = 'max_price';
     const commandsForSend = [
@@ -87,7 +89,8 @@ test.skip('Verify that user can edit and run automatically added "Aggregate" scr
     //Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     //Run automatically added FT.Aggregate script with edits
-    await t.click(workbenchPage.preselectSearch);
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    await t.click(workbenchPage.preselectGroupBy);
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     //Check the FT.Aggregate result

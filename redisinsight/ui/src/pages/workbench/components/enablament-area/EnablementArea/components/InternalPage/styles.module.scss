@@ -3,36 +3,59 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .container {
-  @include euiScrollBar;
-  padding: 10px 12px 0 12px !important;
-  overflow: auto;
+  min-height: 1px;
   height: 100%;
   background-color: var(--euiColorEmptyShade);
   text-align: left;
   letter-spacing: 0;
   color: var(--euiTextSubduedColor) !important;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-  position: fixed;
-  left: 0;
-  top: 0;
-  padding: 10px 4px;
+  padding: 6px 0;
   width: 100%;
   background-color: var(--euiColorEmptyShade);
+  & > div {
+    width: 100%;
+    padding: 0 18px;
+  }
 }
 
 .footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
   width: 100%;
   background-color: var(--euiColorEmptyShade);
 }
-
-
-.content {
-  padding: 4px 0;
+.pageTitle {
+  margin: 8px 0 4px;
+  font: normal normal 500 14px/24px Graphik, sans-serif;
 }
+.backButton {
+  padding: 0 4px;
+  max-height: 30px;
+  line-height: 24px;
+  width: 100%;
+  font: normal normal 14px/24px Graphik, sans-serif !important;
+  text-decoration: none;
+  color: var(--euiTextSubduedColor) !important;
+  & > span {
+    justify-content: flex-start;
+  }
+  &:hover {
+    background-color: var(--hoverInListColorDarken);
+    color: var(--euiTextColor) !important;
+    text-decoration: none !important;
+  }
+}
+.content {
+  @include euiScrollBar;
+  padding: 8px 12px 4px 18px !important;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 

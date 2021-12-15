@@ -11,7 +11,11 @@ import {
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { apiService } from 'uiSrc/services'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
-import { cliCommandOutput, cliParseTextResponseWithOffset } from 'uiSrc/utils/cli'
+import {
+  cliCommandOutput,
+  cliParseTextResponseWithOffset,
+  cliParseTextResponseWithRedirect
+} from 'uiSrc/utils/cliHelper'
 import reducer, {
   initialState,
   concatToOutput,
@@ -177,6 +181,7 @@ describe('cliOutput slice', () => {
         concatToOutput(
           cliParseTextResponseWithOffset(
             cliTexts.CLI_UNSUPPORTED_COMMANDS(command, unsupportedCommands.join(', ')),
+            command,
             CommandExecutionStatus.Fail
           )
         ),
@@ -208,7 +213,7 @@ describe('cliOutput slice', () => {
           concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, data.status)),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -232,7 +237,7 @@ describe('cliOutput slice', () => {
           concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, data.status)),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
         ]
 
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -259,7 +264,7 @@ describe('cliOutput slice', () => {
           concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
-          concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail)),
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -281,9 +286,9 @@ describe('cliOutput slice', () => {
         const command = 'keys *'
         const data: SendClusterCommandResponse[] = [
           {
-            response: '-> Redirected to slot [6918] located at 127.0.0.1:7002\n(nil)',
+            response: '(nil)',
             status: 'success',
-            node: { host: '127.0.0.1', port: 7002 },
+            node: { host: '127.0.0.1', port: 7002, slot: 6918 },
           },
         ]
         const responsePayload = { data, status: 200 }
@@ -299,7 +304,9 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandSuccess(),
           concatToOutput(
-            cliParseTextResponseWithOffset(first(data)?.response, first(data)?.status)
+            cliParseTextResponseWithRedirect(
+              first(data)?.response, command, first(data)?.status, first(data)?.node
+            )
           ),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -310,9 +317,9 @@ describe('cliOutput slice', () => {
         const command = 'keys *'
         const data: SendClusterCommandResponse[] = [
           {
-            response: '-> Redirected to slot [6918] located at 127.0.0.1:7002\n(nil)',
+            response: null,
             status: 'success',
-            node: { host: '127.0.0.1', port: 7002 },
+            node: { host: '127.0.0.1', port: 7002, slot: 6918 },
           },
         ]
         const responsePayload = { data, status: 200 }
@@ -328,7 +335,9 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandSuccess(),
           concatToOutput(
-            cliParseTextResponseWithOffset(first(data)?.response, first(data)?.status)
+            cliParseTextResponseWithRedirect(
+              first(data)?.response, command, first(data)?.status, first(data)?.node
+            )
           ),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -355,7 +364,7 @@ describe('cliOutput slice', () => {
           concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
-          concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail)),
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })

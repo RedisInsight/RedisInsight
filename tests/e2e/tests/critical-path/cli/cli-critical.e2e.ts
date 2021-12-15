@@ -29,7 +29,8 @@ fixture `CLI critical`
         await userAgreementPage.acceptLicenseTerms();
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
     })
-test
+//skipped due the bug RI-2156
+test.skip
     .after(async t => {
         //Clear database
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
@@ -108,4 +109,15 @@ test('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, F
         await t.typeText(cliPage.cliCommandInput, command, { replace: true });
         await t.expect(cliPage.cliCommandAutocomplete.textContent).eql(commandHints[commands.indexOf(command)], `The hints with arguments for command ${command}`);
     }
+});
+test('Verify that user can type AI command in CLI and see agruments in hints from RedisAI commands.json', async t => {
+    const commandHints = 'key [META] [BLOB]';
+    const command = 'ai.modelget';
+    await addNewStandaloneDatabase(ossStandaloneConfig);
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open CLI and type AI command
+    await t.click(cliPage.cliExpandButton);
+    await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+    //Verify the hints
+    await t.expect(cliPage.cliCommandAutocomplete.textContent).eql(commandHints, `The hints with arguments for command ${command}`);
 });

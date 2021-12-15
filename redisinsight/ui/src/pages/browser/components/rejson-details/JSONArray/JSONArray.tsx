@@ -228,8 +228,9 @@ class JSONArrayComponent extends Component<Props, State> {
   }
 
   onClickSetKVPair = () => {
+    const { addNewKeyValuePair } = this.state
     this.setState({
-      addNewKeyValuePair: !this.state.addNewKeyValuePair,
+      addNewKeyValuePair: !addNewKeyValuePair,
       newValue: '',
       error: ''
     })
@@ -299,11 +300,12 @@ class JSONArrayComponent extends Component<Props, State> {
       const {
         shouldRejsonDataBeDownloaded,
         handleFetchVisualisationResults,
+        value
       } = this.props
 
       if (!shouldRejsonDataBeDownloaded) {
         this.setState({
-          value: this.props.value,
+          value,
           openIndex: true,
         })
         return

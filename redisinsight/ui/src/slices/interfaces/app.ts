@@ -51,9 +51,6 @@ export interface StateAppContext {
       guideScrollTop: number;
     },
     panelSizes: {
-      horizontal: {
-        [key: string]: number;
-      },
       vertical: {
         [key: string]: number;
       }

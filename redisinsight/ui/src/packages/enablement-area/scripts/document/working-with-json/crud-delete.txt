@@ -1,9 +1,0 @@
-JSON.GET school:1 $.pupils // Read the pupils field before deletion
-
-JSON.DEL school:1 $.pupils // Delete only the pupils field from the document
-
-JSON.GET school:1  // Read the whole document to confirm the construction_value field has been deleted
-
-JSON.DEL school:1  // Delete the entire document
-
-JSON.GET school:1 // Confirm the entire document has been deleted

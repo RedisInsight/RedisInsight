@@ -60,5 +60,3 @@ services:
     build: ./rte/redis-enterprise
     cap_add:
       - sys_resource
-    environment:
-      - CREATE_SIMPLE_DB=1

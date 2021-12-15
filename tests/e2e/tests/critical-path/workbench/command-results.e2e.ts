@@ -64,3 +64,15 @@ test('Verify that user can delete command with result from table with results in
     //Verify that deleted command is not in results
     await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend1).exists).notOk(`Command ${commandForSend1} is deleted from table with results`);
 });
+test('Verify that user can see the results found in the table view by default for FT.INFO, FT.SEARCH and FT.AGGREGATE', async t => {
+    const commands = [
+        'FT.INFO',
+        'FT.SEARCH',
+        'FT.AGGREGATE'
+    ];
+    //Send commands and check table view is default
+    for(let command of commands) {
+        await workbenchPage.sendCommandInWorkbench(command);
+        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command ${command}`);
+    }
+});

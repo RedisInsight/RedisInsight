@@ -26,13 +26,12 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { sessionStorageService } from 'uiSrc/services'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cli'
+import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cliHelper'
 import { InitOutputText, ConnectionSuccessOutputText } from 'uiSrc/constants/cliOutput'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
-
 import CliBody from './CliBody'
+
 import styles from './CliBody/styles.module.scss'
-import CliHelperWrapper from '../cli-helper'
 
 const CliBodyWrapper = () => {
   const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
@@ -45,7 +44,6 @@ const CliBodyWrapper = () => {
   const {
     errorClient: error,
     unsupportedCommands,
-    isShowHelper,
     isEnteringCommand,
     isSearching,
     matchedCommand
@@ -147,7 +145,6 @@ const CliBodyWrapper = () => {
         setCommand={setCommand}
         onSubmit={handleSubmit}
       />
-      {isShowHelper && <CliHelperWrapper />}
     </section>
   )
 }

@@ -161,7 +161,7 @@ const NavigationMenu = () => {
         </>
         )}
     >
-      <div className={styles.popover}>
+      <div className={styles.popover} data-testid="help-center">
         <EuiTitle size="xs">
           <span>Help Center</span>
         </EuiTitle>
@@ -173,6 +173,7 @@ const NavigationMenu = () => {
               className={styles.helpMenuItemLink}
               href="https://github.com/RedisInsight/RedisInsight/issues"
               target="_blank"
+              data-testid="submit-bug-btn"
             >
               <EuiIcon type="flag" size="xl" />
               <EuiSpacer size="s" />
@@ -185,6 +186,7 @@ const NavigationMenu = () => {
           <EuiFlexItem
             className={styles.helpMenuItem}
             onClick={() => onKeyboardShortcutClick()}
+            data-testid="shortcuts-btn"
           >
             <div className={styles.helpMenuItemLink}>
               <EuiIcon type="keyboardShortcut" size="xl" />
@@ -206,6 +208,7 @@ const NavigationMenu = () => {
               onClick={onClickReleaseNotes}
               href="https://docs.redis.com/staging/release-ri-v2.0/ri/release-notes/"
               target="_blank"
+              data-testid="release-notes-btn"
             >
               <div className={cx({ [styles.helpMenuItemNotified]: isReleaseNotesViewed === false })}>
                 <EuiIcon type="package" size="xl" />

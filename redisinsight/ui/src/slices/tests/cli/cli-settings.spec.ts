@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { apiService, localStorageService } from 'uiSrc/services'
+import { apiService } from 'uiSrc/services'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
@@ -42,11 +41,11 @@ jest.mock('uiSrc/services', () => ({
 
 describe('cliSettings slice', () => {
   describe('toggleCliHelper', () => {
-    it('default state.isShowHelper should be truth', () => {
+    it('default state.isShowHelper should be falsy', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
-        isShowHelper: true,
+        isShowHelper: false,
       }
 
       expect(cliSettingsSelector(initialStateDefault)).toEqual(state)
@@ -56,7 +55,7 @@ describe('cliSettings slice', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
-        isShowHelper: false,
+        isShowHelper: true,
       }
 
       // Act
@@ -69,23 +68,6 @@ describe('cliSettings slice', () => {
         },
       })
       expect(cliSettingsSelector(rootState)).toEqual(state)
-    })
-
-    it('should properly set to localStorageService', () => {
-      // Arrange
-      localStorageService.set = jest.fn()
-      const state: typeof initialState = {
-        ...initialState,
-        isShowHelper: false,
-      }
-
-      // Act
-      reducer(initialState, toggleCliHelper())
-
-      expect(localStorageService.set).toBeCalledWith(
-        BrowserStorageItem.cliIsShowHelper,
-        state.isShowHelper
-      )
     })
   })
 

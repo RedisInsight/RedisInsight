@@ -1,16 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { first } from 'lodash'
 
-import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { CliOutputFormatterType, cliTexts } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { cliCommandOutput, cliParseTextResponseWithOffset } from 'uiSrc/utils/cli'
-import { getUrl, getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import {
-  SendClusterCommandDto,
-  SendClusterCommandResponse,
-  SendCommandResponse,
-} from 'apiSrc/modules/cli/dto/cli.dto'
+  cliCommandOutput,
+  cliParseTextResponseWithOffset,
+  cliParseTextResponseWithRedirect,
+} from 'uiSrc/utils/cliHelper'
+import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
@@ -95,21 +94,21 @@ export function sendCliCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data, status } = await apiService.post<SendCommandResponse>(
+      const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
         getUrl(id, ApiEndpoints.CLI, state.cli.settings?.cliClientUuid, ApiEndpoints.SEND_COMMAND),
-        { command }
+        { command, outputFormat: CliOutputFormatterType.Raw }
       )
 
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
-        dispatch(concatToOutput(cliParseTextResponseWithOffset(data.response, data.status)))
+        dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(sendCliCommandFailure(errorMessage))
       dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail))
+        concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
       )
       onFailAction?.()
     }
@@ -125,6 +124,7 @@ export function sendCliClusterCommandAction(
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
+      const outputFormat = CliOutputFormatterType.Raw
       const state = stateInit()
       const { id = '' } = state.connections.instances?.connectedInstance
 
@@ -136,28 +136,41 @@ export function sendCliClusterCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data, status } = await apiService.post<SendClusterCommandResponse[]>(
+      const {
+        data: [
+          { response, status: dataStatus, node: nodeOptionsResponse }
+        ] = [],
+        status
+      } = await apiService.post<SendClusterCommandResponse[]>(
         getUrl(
           id,
           ApiEndpoints.CLI,
           state.cli.settings?.cliClientUuid,
           ApiEndpoints.SEND_CLUSTER_COMMAND
         ),
-        { ...options, command }
+        { ...options, command, outputFormat }
       )
 
       if (isStatusSuccessful(status)) {
+        let isRedirected = false
+        if (options.nodeOptions && nodeOptionsResponse) {
+          const requestNodeAddress = `${options.nodeOptions.host}:${options.nodeOptions.port}`
+          const responseNodeAddress = `${nodeOptionsResponse.host}:${nodeOptionsResponse.port}`
+          isRedirected = requestNodeAddress !== responseNodeAddress
+        }
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
-        dispatch(
-          concatToOutput(cliParseTextResponseWithOffset(first(data)?.response, first(data)?.status))
-        )
+        const result = outputFormat === CliOutputFormatterType.Raw && isRedirected
+          ? cliParseTextResponseWithRedirect(response, command, dataStatus, nodeOptionsResponse)
+          : cliParseTextResponseWithOffset(response, command, dataStatus)
+
+        dispatch(concatToOutput(result))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(sendCliCommandFailure(errorMessage))
       dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail))
+        concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
       )
       onFailAction?.()
     }
@@ -182,6 +195,7 @@ export function processUnsupportedCommand(
             command.slice(0, unsupportedCommand.length),
             unsupportedCommands.join(', ')
           ),
+          command,
           CommandExecutionStatus.Fail
         )
       )

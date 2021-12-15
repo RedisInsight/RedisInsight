@@ -21,6 +21,9 @@ beforeEach(() => {
   store.clearActions()
 })
 
+const commandHelperId = 'command-helper'
+const cliId = 'cli'
+
 describe('BottomGroupComponents', () => {
   it('should render', () => {
     expect(
@@ -30,19 +33,19 @@ describe('BottomGroupComponents', () => {
 
   it('should render Cli when isShowCli truthy', () => {
     render(<BottomGroupComponents />)
-    expect(screen.getByTestId('cli')).toBeInTheDocument()
+    expect(screen.getByTestId(cliId)).toBeInTheDocument()
   })
 
   it('should render Command Helper when isShowHelper truthy', () => {
     render(<BottomGroupComponents />)
-    expect(screen.getByTestId('command-helper')).toBeInTheDocument()
+    expect(screen.getByTestId(commandHelperId)).toBeInTheDocument()
   })
 
   it('should not to close command helper after closing cli', () => {
     render(<BottomGroupComponents />)
     fireEvent.click(screen.getByTestId('collapse-cli'))
     const expectedActions = [toggleCli()]
-    expect(store.getActions()).toEqual(expectedActions)
+    expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
 
     expect(screen.getByTestId('command-helper')).toBeInTheDocument()
   })
@@ -52,7 +55,7 @@ describe('BottomGroupComponents', () => {
     fireEvent.click(screen.getByTestId('close-command-helper'))
 
     const expectedActions = [toggleCliHelper()]
-    expect(store.getActions()).toEqual(expectedActions)
+    expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
 
     expect(screen.getByTestId('cli')).toBeInTheDocument()
   })

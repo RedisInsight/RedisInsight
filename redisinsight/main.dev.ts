@@ -119,17 +119,7 @@ const bootstrap = async () => {
     trayInstance = tray.buildTray();
   }
 
-  let upgradeUrl;
-  switch (process.env.NODE_ENV) {
-    case 'production':
-      upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK;
-      break;
-    case 'staging':
-      upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK_STAGE;
-      break;
-    default:
-      upgradeUrl = process.env.MANUAL_UPGRADES_LINK || '';
-  }
+  const upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK;
 
   if (upgradeUrl) {
     new AppUpdater(upgradeUrl);

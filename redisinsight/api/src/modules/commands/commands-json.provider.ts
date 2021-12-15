@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import config from 'src/utils/config';
 
@@ -31,11 +31,9 @@ export class CommandsJsonProvider {
         transformResponse: [(raw) => raw],
       });
 
-      if (!fs.existsSync(PATH_CONFIG.commands)) {
-        fs.mkdirSync(PATH_CONFIG.commands);
-      }
+      await fs.ensureDir(PATH_CONFIG.commands);
 
-      fs.writeFileSync(
+      await fs.writeFile(
         path.join(PATH_CONFIG.commands, `${this.name}.json`),
         JSON.stringify(JSON.parse(data)), // check that we received proper json object
       );
@@ -51,7 +49,7 @@ export class CommandsJsonProvider {
    */
   async getCommands() {
     try {
-      return JSON.parse(fs.readFileSync(
+      return JSON.parse(await fs.readFile(
         path.join(PATH_CONFIG.commands, `${this.name}.json`),
         'utf8',
       ));
@@ -67,7 +65,7 @@ export class CommandsJsonProvider {
    */
   async getDefaultCommands() {
     try {
-      return JSON.parse(fs.readFileSync(
+      return JSON.parse(await fs.readFile(
         path.join(PATH_CONFIG.defaultCommandsDir, `${this.name}.json`),
         'utf8',
       ));

@@ -14,52 +14,37 @@ import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provide
 
 describe('CommandsService', () => {
   let service: CommandsService;
-  let mainCommandsProvider: MockType<CommandsJsonProvider>;
-  let redisearchCommandsProvider: MockType<CommandsJsonProvider>;
-  let redijsonCommandsProvider: MockType<CommandsJsonProvider>;
-  let redistimeseriesCommandsProvider: MockType<CommandsJsonProvider>;
-  let redisaiCommandsProvider: MockType<CommandsJsonProvider>;
-  let redisgraphCommandsProvider: MockType<CommandsJsonProvider>;
+
+  const mainCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
+  const redisearchCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
+  const redijsonCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
+  const redistimeseriesCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
+  const redisaiCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
+  const redisgraphCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
 
   beforeEach(async () => {
     jest.clearAllMocks();
+
+    const commandsProviders = [
+      mainCommandsProvider,
+      redisearchCommandsProvider,
+      redijsonCommandsProvider,
+      redistimeseriesCommandsProvider,
+      redisaiCommandsProvider,
+      redisgraphCommandsProvider,
+    ];
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CommandsService,
         {
-          provide: 'mainCommandsProvider',
-          useFactory: mockCommandsJsonProvider,
-        },
-        {
-          provide: 'redisearchCommandsProvider',
-          useFactory: mockCommandsJsonProvider,
-        },
-        {
-          provide: 'redijsonCommandsProvider',
-          useFactory: mockCommandsJsonProvider,
-        },
-        {
-          provide: 'redistimeseriesCommandsProvider',
-          useFactory: mockCommandsJsonProvider,
-        },
-        {
-          provide: 'redisaiCommandsProvider',
-          useFactory: mockCommandsJsonProvider,
-        },
-        {
-          provide: 'redisgraphCommandsProvider',
-          useFactory: mockCommandsJsonProvider,
+          provide: CommandsService,
+          // @ts-ignore
+          useFactory: () => new CommandsService(commandsProviders),
         },
       ],
     }).compile();
 
     service = module.get(CommandsService);
-    mainCommandsProvider = module.get('mainCommandsProvider');
-    redisearchCommandsProvider = module.get('redisearchCommandsProvider');
-    redijsonCommandsProvider = module.get('redijsonCommandsProvider');
-    redistimeseriesCommandsProvider = module.get('redistimeseriesCommandsProvider');
-    redisaiCommandsProvider = module.get('redisaiCommandsProvider');
-    redisgraphCommandsProvider = module.get('redisgraphCommandsProvider');
 
     mainCommandsProvider.getCommands.mockResolvedValue(mockMainCommands);
     redisearchCommandsProvider.getCommands.mockResolvedValue(mockRedisearchCommands);
@@ -67,6 +52,19 @@ describe('CommandsService', () => {
     redistimeseriesCommandsProvider.getCommands.mockResolvedValue(mockRedistimeseriesCommands);
     redisaiCommandsProvider.getCommands.mockResolvedValue(mockRedisaiCommands);
     redisgraphCommandsProvider.getCommands.mockResolvedValue(mockRedisgraphCommands);
+  });
+
+  describe('onModuleInit', () => {
+    it('should trigger updateLatestJson function', async () => {
+      await service.onModuleInit();
+
+      expect(mainCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redisearchCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redijsonCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redistimeseriesCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redisaiCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redisgraphCommandsProvider.updateLatestJson).toHaveBeenCalled();
+    });
   });
 
   describe('getAll', () => {

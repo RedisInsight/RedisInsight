@@ -66,20 +66,6 @@ describe('CliHeader', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  // it('should "toggleCliHelper" action be called after click "collapse-cli-helper" button', async () => {
-  //   const mockUuid = 'test-uuid'
-  //   sessionStorageMock.getItem = jest.fn().mockReturnValue(mockUuid)
-  //
-  //   render(<CliHeader {...instance(mockedProps)} />)
-  //
-  //   await waitFor(() => {
-  //     fireEvent.click(screen.getByTestId('collapse-cli-helper'))
-  //   })
-  //
-  //   const expectedActions = [toggleCliHelper()]
-  //   expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
-  // })
-
   it('should "processCliClient" action be called after unmount with mocked sessionStorage item ', () => {
     const mockUuid = 'test-uuid'
     sessionStorageService.get = jest.fn().mockReturnValue(mockUuid)

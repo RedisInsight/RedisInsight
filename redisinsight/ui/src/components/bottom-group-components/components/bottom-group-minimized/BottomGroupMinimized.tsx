@@ -57,7 +57,7 @@ const BottomGroupMinimized = () => {
           className={styles.componentBadgeItem}
           grow={false}
           onClick={handleExpandHelper}
-          data-testid="expand-helper"
+          data-testid="expand-command-helper"
         >
           <EuiBadge className={cx(styles.componentBadge, { [styles.active]: isShowHelper })}>
             <EuiIcon type="documents" size="m" />

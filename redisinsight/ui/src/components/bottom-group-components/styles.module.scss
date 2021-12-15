@@ -44,7 +44,7 @@
   border: none !important;
 
   &:hover {
-    background-color: #364DA8 !important;
+    background-color: var(--buttonIconPrimaryHover) !important;
   }
 
   &.active {

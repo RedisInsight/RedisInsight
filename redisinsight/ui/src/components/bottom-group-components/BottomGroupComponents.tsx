@@ -9,10 +9,7 @@ import BottomGroupMinimized from './components/bottom-group-minimized/BottomGrou
 import styles from './styles.module.scss'
 
 const BottomGroupComponents = () => {
-  const { isShowCli } = useSelector(cliSettingsSelector)
-  const {
-    isShowHelper,
-  } = useSelector(cliSettingsSelector)
+  const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
 
   return (
     <div className={styles.groupComponentsWrapper}>

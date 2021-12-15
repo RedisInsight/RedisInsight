@@ -19,8 +19,8 @@ import styles from './CommandHelper/styles.module.scss'
 
 const CommandHelperWrapper = () => {
   const {
-    matchedCommand,
-    searchedCommand,
+    matchedCommand = '',
+    searchedCommand = '',
     isSearching,
     isEnteringCommand,
     searchingCommand,
@@ -90,7 +90,7 @@ const CommandHelperWrapper = () => {
   }
 
   return (
-    <div className={styles.commandHelperWrapper}>
+    <div className={styles.commandHelperWrapper} data-testid="command-helper">
       <CommandHelperHeader />
       <CommandHelper
         commandLine={lastMatchedCommand}

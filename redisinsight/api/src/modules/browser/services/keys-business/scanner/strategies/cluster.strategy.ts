@@ -12,15 +12,11 @@ import {
   GetKeysWithDetailsResponse,
   RedisDataType,
 } from 'src/modules/browser/dto';
-import ERROR_MESSAGES from 'src/constants/error-messages';
+import { parseClusterCursor } from 'src/modules/browser/utils/clusterCursor';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import { AbstractStrategy } from './abstract.strategy';
 import { IGetNodeKeysResult } from '../scanner.interface';
 
-const NODES_SEPARATOR = '||';
-const CURSOR_SEPARATOR = '@';
-// Correct format 172.17.0.1:7001@-1||172.17.0.1:7002@33
-const CLUSTER_CURSOR_REGEX = /^(([a-z0-9.])+:[0-9]+(@-?\d+))+((\|\|)?([a-z0-9.])+:[0-9]+(@-?\d+))*$/;
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
 export class ClusterStrategy extends AbstractStrategy {
@@ -100,7 +96,7 @@ export class ClusterStrategy extends AbstractStrategy {
     initialCursor: string,
   ): Promise<IGetNodeKeysResult[]> {
     if (Number.isNaN(toNumber(initialCursor))) {
-      return this.getNodesFromClusterCursor(initialCursor);
+      return parseClusterCursor(initialCursor);
     }
 
     const clusterNodes = await this.redisManager.getNodes(
@@ -116,35 +112,6 @@ export class ClusterStrategy extends AbstractStrategy {
       total: 0,
       scanned: 0,
     }));
-  }
-
-  /**
-   * Parses composed custom cursor from FE and returns nodes
-   * Format: 172.17.0.1:7001@22||172.17.0.1:7002@33
-   */
-  private getNodesFromClusterCursor(cursor: string): IGetNodeKeysResult[] {
-    const isCorrectFormat = CLUSTER_CURSOR_REGEX.test(cursor);
-    if (!isCorrectFormat) {
-      throw new Error(ERROR_MESSAGES.INCORRECT_CLUSTER_CURSOR_FORMAT);
-    }
-    const nodeStrings = cursor.split(NODES_SEPARATOR);
-    const nodes = [];
-
-    nodeStrings.forEach((item: string) => {
-      const [address, nextCursor] = item.split(CURSOR_SEPARATOR);
-      const [host, port] = address.split(':');
-      if (parseInt(nextCursor, 10) >= 0) {
-        nodes.push({
-          total: 0,
-          scanned: 0,
-          host,
-          port: parseInt(port, 10),
-          cursor: parseInt(nextCursor, 10),
-          keys: [],
-        });
-      }
-    });
-    return nodes;
   }
 
   private async calculateNodesTotalKeys(

@@ -201,7 +201,7 @@ export class UpdateKeyTtlDto {
   @ApiProperty({
     type: Number,
     description:
-      'Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted.'
+      'Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted. '
       + 'If the property has value of -1, then the key timeout will be removed.',
     maximum: MAX_TTL_NUMBER,
   })
@@ -216,7 +216,7 @@ export class KeyTtlResponse {
     type: Number,
     description:
       'The remaining time to live of a key that has a timeout. '
-      + 'If value equals -2 then the key does not exist or has deleted.'
+      + 'If value equals -2 then the key does not exist or has deleted. '
       + 'If value equals -1 then the key has no associated expire (No limit).',
     maximum: MAX_TTL_NUMBER,
   })

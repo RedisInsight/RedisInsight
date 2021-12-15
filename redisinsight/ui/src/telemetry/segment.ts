@@ -31,7 +31,7 @@ export class SegmentTelemetryService implements ITelemetryService {
     return pageObject
   }
 
-  constructor(private _sourceWriteKey: string) {
+  constructor(private readonly _sourceWriteKey: string) {
     this._sourceWriteKey = _sourceWriteKey
   }
 

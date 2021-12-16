@@ -117,7 +117,7 @@ export class WorkbenchPage {
       await t.click(this.textViewTypeOption);
   }
 
-  //Select Tab;e view option in Workbench results
+  //Select Table view option in Workbench results
   async selectViewTypeTable(): Promise<void>{
     await t.click(this.selectViewType);
     await t.click(this.tableViewTypeOption);
@@ -131,5 +131,15 @@ export class WorkbenchPage {
   async sendCommandInWorkbench(command: string, speed = 1): Promise<void>{
       await t.typeText(this.queryInput, command, { replace: true, speed: speed});
       await t.click(this.submitCommandButton);
+  }
+
+  /**
+  * Send commands array in Workbench page
+  * @param commands The array of commands to send
+  */
+  async sendCommandsArrayInWorkbench(commands: string[]): Promise<void> {
+      for(let command of commands) {
+          await this.sendCommandInWorkbench(command);
+      }
   }
 }

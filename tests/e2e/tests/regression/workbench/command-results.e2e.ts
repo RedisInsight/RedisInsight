@@ -1,14 +1,12 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 
 const indexName = 'idx';
@@ -18,29 +16,22 @@ const commandsForIndex = [
     'HMSET product:2 price 100'
 ];
 
-fixture `Command results at Workbench`
+//skipped due the inaccessibility of the iframe
+fixture.skip `Command results at Workbench`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Add index and data
         await t.click(myRedisDatabasePage.workbenchButton);
-        for(let command of commandsForIndex) {
-            await workbenchPage.sendCommandInWorkbench(command);
-        }
+        await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
     })
-    .afterEach(async t => {
+    .afterEach(async() => {
         //Drop index and dbs
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
         await myRedisDatabasePage.deleteAllDatabases();
     })
-//skipped due the inaccessibility of the iframe
-test.skip('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
+test('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
     const infoCommand = `FT.INFO ${indexName}`;
     //Send FT.INFO and switch to Text view
     await workbenchPage.sendCommandInWorkbench(infoCommand);
@@ -50,8 +41,7 @@ test.skip('Verify that user can switches between Table and Text for FT.INFO and 
     await workbenchPage.selectViewTypeTable();
     await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.INFO`);
 });
-//skipped due the inaccessibility of the iframe
-test.skip('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
+test('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
     const searchCommand = `FT.SEARCH ${indexName} *`;
     //Send FT.SEARCH and switch to Text view
     await workbenchPage.sendCommandInWorkbench(searchCommand);
@@ -61,8 +51,7 @@ test.skip('Verify that user can switches between Table and Text for FT.SEARCH an
     await workbenchPage.selectViewTypeTable();
     await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.SEARCH`);
 });
-//skipped due the inaccessibility of the iframe
-test.skip('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
+test('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
     const aggregateCommand = `FT.Aggregate ${indexName} * GROUPBY 0 REDUCE MAX 1 @price AS max_price`;
     //Send FT.AGGREGATE and switch to Text view
     await workbenchPage.sendCommandInWorkbench(aggregateCommand);

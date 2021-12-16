@@ -16,7 +16,7 @@ const CodeButton = ({ onClick, label, isLoading, className, ...rest }: Props) =>
     size="s"
     onClick={onClick}
     fullWidth
-    color="secondary"
+    color="success"
     className={[className, styles.button].join(' ')}
     textProps={{ className: styles.buttonText }}
     data-testid={`preselect-${label}`}

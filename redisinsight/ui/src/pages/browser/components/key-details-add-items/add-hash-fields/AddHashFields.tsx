@@ -181,7 +181,7 @@ const AddHashFields = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-fields-btn">
+              <EuiButton color="success" onClick={() => onCancel(true)} data-testid="cancel-fields-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
@@ -191,7 +191,7 @@ const AddHashFields = (props: Props) => {
               <EuiButton
                 fill
                 size="m"
-                color="secondary"
+                color="success"
                 disabled={loading}
                 isLoading={loading}
                 onClick={submitData}

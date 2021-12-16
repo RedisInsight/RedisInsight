@@ -116,7 +116,7 @@ const AddListElements = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
+              <EuiButton color="success" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
@@ -126,7 +126,7 @@ const AddListElements = (props: Props) => {
               <EuiButton
                 fill
                 size="m"
-                color="secondary"
+                color="success"
                 onClick={submitData}
                 data-testid="save-elements-btn"
               >

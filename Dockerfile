@@ -1,4 +1,4 @@
-FROM node:14.17-alpine as front
+FROM node:16.13.1-alpine as front
 RUN apk update
 RUN apk add --no-cache --virtual .gyp \
         python \
@@ -13,7 +13,7 @@ RUN SKIP_POSTINSTALL=1 yarn install
 RUN yarn build:web
 RUN yarn build:statics
 
-FROM node:14.17-alpine as back
+FROM node:16.13.1-alpine as back
 WORKDIR /usr/src/app
 COPY redisinsight/api/package.json redisinsight/api/yarn.lock ./
 RUN yarn install
@@ -21,7 +21,7 @@ COPY redisinsight/api ./
 COPY --from=front /usr/src/app/redisinsight/api/src/static ./src/static
 RUN yarn run build:prod
 
-FROM node:14.17-slim
+FROM node:16.13.1-slim
 # Set up mDNS functionality, to play well with Redis Enterprise
 # clusters on the network.
 RUN set -ex \

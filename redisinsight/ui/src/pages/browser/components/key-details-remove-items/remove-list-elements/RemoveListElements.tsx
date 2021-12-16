@@ -135,7 +135,7 @@ const RemoveListElements = (props: Props) => {
         <EuiButton
           fill
           size="m"
-          color="secondary"
+          color="success"
           onClick={showPopover}
           disabled={!isFormValid}
           data-testid="remove-elements-btn"
@@ -255,7 +255,7 @@ const RemoveListElements = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel()} data-testid="cancel-elements-btn">
+              <EuiButton color="success" onClick={() => onCancel()} data-testid="cancel-elements-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

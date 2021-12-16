@@ -128,7 +128,7 @@ const SentinelDatabases = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={(
-        <EuiButton onClick={showPopover} color="secondary" className="btn-cancel" data-testid="btn-cancel">
+        <EuiButton onClick={showPopover} color="success" className="btn-cancel" data-testid="btn-cancel">
           Cancel
         </EuiButton>
       )}
@@ -176,7 +176,7 @@ const SentinelDatabases = ({
       >
         <EuiButton
           fill
-          color="secondary"
+          color="success"
           className="btn-add"
           type="submit"
           onClick={onClick}
@@ -250,7 +250,7 @@ const SentinelDatabases = ({
             <div className={cx(styles.footer, 'footerAddDatabase')}>
               <EuiButton
                 onClick={onBack}
-                color="secondary"
+                color="success"
                 className="btn-cancel btn-back"
                 data-testid="btn-back-to-adding"
               >

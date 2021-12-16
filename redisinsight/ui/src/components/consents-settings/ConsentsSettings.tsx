@@ -213,7 +213,7 @@ const ConsentsSettings = ({ liveEditMode = false }: Props) => {
               >
                 <EuiButton
                   fill
-                  color="secondary"
+                  color="success"
                   className="btn-add"
                   type="submit"
                   onClick={() => {}}

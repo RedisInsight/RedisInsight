@@ -10,6 +10,31 @@ updates:
     directory: /
     schedule:
       interval: weekly
+  - package-ecosystem: npm
+    directory: /redisinsight
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    open-pull-requests-limit: 100
+    directory: /redisinsight/api
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /redisinsight/ui/src/packages/redisearch
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /redisinsight/ui/src/packages/clients-list-example
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /redisinsight/ui/src/packages/redis-app-plugin-api
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /tests/e2e
+    schedule:
+      interval: weekly
   - package-ecosystem: docker
     directory: /
     schedule:

@@ -147,7 +147,7 @@ const SentinelDatabasesResult = ({
             <div className={cx(styles.footer, 'footerAddDatabase')}>
               <EuiButton
                 onClick={onBack}
-                color="secondary"
+                color="success"
                 className="btn-cancel btn-back"
                 data-testid="btn-back-to-adding"
               >
@@ -157,7 +157,7 @@ const SentinelDatabasesResult = ({
                 fill
                 size="m"
                 onClick={handleViewDatabases}
-                color="secondary"
+                color="success"
                 className="btn-add"
                 data-testid="btn-view-databases"
               >

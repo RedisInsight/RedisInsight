@@ -347,7 +347,7 @@ const SentinelDatabasesResultPage = () => {
               <EuiButton
                 fill
                 size="s"
-                color="secondary"
+                color="success"
                 isDisabled={isDisabled}
                 isLoading={loading}
                 onClick={() => handleAddInstance(name)}

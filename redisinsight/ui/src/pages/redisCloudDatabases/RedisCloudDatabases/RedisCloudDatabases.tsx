@@ -126,7 +126,7 @@ const RedisCloudDatabasesPage = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={(
-        <EuiButton onClick={showPopover} color="secondary" className="btn-cancel" data-testid="btn-cancel">
+        <EuiButton onClick={showPopover} color="success" className="btn-cancel" data-testid="btn-cancel">
           Cancel
         </EuiButton>
       )}
@@ -167,7 +167,7 @@ const RedisCloudDatabasesPage = ({
         disabled={isDisabled}
         onClick={handleSubmit}
         isLoading={loading}
-        color="secondary"
+        color="success"
         className="btn-add"
         iconType={isDisabled ? 'iInCircle' : undefined}
         data-testid="btn-add-databases"
@@ -232,7 +232,7 @@ const RedisCloudDatabasesPage = ({
             <div className={cx(styles.footer, 'footerAddDatabase')}>
               <EuiButton
                 onClick={onBack}
-                color="secondary"
+                color="success"
                 className="btn-cancel btn-back"
                 data-testid="btn-back-to-adding"
               >

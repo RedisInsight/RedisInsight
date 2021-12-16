@@ -126,7 +126,7 @@ jobs:
   # Test jobs
   unit-tests-ui:
     docker:
-      - image: circleci/node:15.14.0
+      - image: circleci/node:16.13.1
     steps:
       - checkout
       - restore_cache:
@@ -170,7 +170,7 @@ jobs:
             - ./node_modules
   unit-tests-api:
     docker:
-      - image: circleci/node:15.14.0
+      - image: circleci/node:16.13.1
     steps:
       - checkout
       - restore_cache:
@@ -402,7 +402,7 @@ jobs:
             - electron
   linux:
     docker:
-      - image: circleci/node:15.14.0
+      - image: circleci/node:16.13.1
     resource_class: large
     parameters:
       env:
@@ -451,7 +451,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '15.14.0'
+          node-version: '16.13.1'
       - attach_workspace:
           at: .
       - run:
@@ -503,7 +503,7 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=15.14.0
+            choco install nodejs --version=16.13.1
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install

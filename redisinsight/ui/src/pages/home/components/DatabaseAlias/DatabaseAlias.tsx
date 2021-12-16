@@ -135,7 +135,7 @@ const DatabaseAlias = (props: Props) => {
       <EuiFlexItem grow={false}>
         <EuiButton
           size="s"
-          color="secondary"
+          color="success"
           iconType="kqlFunction"
           aria-label="Connect to database"
           className={styles.btnOpen}

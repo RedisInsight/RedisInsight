@@ -124,7 +124,7 @@ const CloudConnectionForm = (props: Props) => {
 
   const CancelButton = ({ onClick }: { onClick: () => void }) => (
     <EuiButton
-      color="secondary"
+      color="success"
       className="btn-cancel"
       onClick={onClick}
       style={{ marginRight: '20px' }}
@@ -150,7 +150,7 @@ const CloudConnectionForm = (props: Props) => {
     >
       <EuiButton
         fill
-        color="secondary"
+        color="success"
         className="btn-add"
         type="submit"
         onClick={onClick}

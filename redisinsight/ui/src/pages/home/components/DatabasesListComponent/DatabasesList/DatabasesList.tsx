@@ -130,7 +130,7 @@ function DatabasesList({
     <EuiButton
       onClick={onButtonClick}
       fill
-      color="secondary"
+      color="success"
       size="s"
       iconType="trash"
       className={styles.actionDeleteBtn}

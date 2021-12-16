@@ -394,7 +394,7 @@ const VirtualTable = (props: IProps) => {
                         <EuiButton
                           fill
                           size="s"
-                          color="secondary"
+                          color="success"
                           style={{ marginLeft: 25, height: 26 }}
                           disabled={loading}
                           onClick={() =>

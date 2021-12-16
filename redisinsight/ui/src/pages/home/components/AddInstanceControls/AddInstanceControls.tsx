@@ -43,7 +43,7 @@ const AddInstanceControls = ({ onAddInstance, direction }: Props) => {
   const AddInstanceBtn = () => (
     <EuiButton
       fill
-      color="secondary"
+      color="success"
       onClick={handleOnAddDatabase}
       className={styles.addInstanceBtn}
       data-testid="add-redis-database"

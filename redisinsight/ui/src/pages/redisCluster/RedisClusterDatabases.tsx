@@ -107,7 +107,7 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={(
-        <EuiButton onClick={showPopover} color="secondary" className="btn-cancel" data-testid="btn-back">
+        <EuiButton onClick={showPopover} color="success" className="btn-cancel" data-testid="btn-back">
           Cancel
         </EuiButton>
       )}
@@ -184,7 +184,7 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
             <div className={cx(styles.footer, 'footerAddDatabase', styles.footerClusterDatabases)}>
               <EuiButton
                 onClick={onBack}
-                color="secondary"
+                color="success"
                 className="btn-cancel btn-back"
                 data-testid="btn-back-to-adding"
               >
@@ -208,7 +208,7 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
                     disabled={isSubmitDisabled()}
                     onClick={handleSubmit}
                     isLoading={loading}
-                    color="secondary"
+                    color="success"
                     className="btn-add"
                     iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
                     data-testid="btn-add-databases"

@@ -82,7 +82,7 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
             <EuiButton
               fill
               size="s"
-              color="secondary"
+              color="success"
               fullWidth={false}
               className={cx(styles.createCloudBtn)}
               href={createCloudBtnHref}

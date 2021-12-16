@@ -150,7 +150,7 @@ const AddSetMembers = (props: Props) => {
       >
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
-            <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
+            <EuiButton color="success" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
               <EuiTextColor color="default">Cancel</EuiTextColor>
             </EuiButton>
           </EuiFlexItem>
@@ -158,7 +158,7 @@ const AddSetMembers = (props: Props) => {
             <EuiButton
               fill
               size="m"
-              color="secondary"
+              color="success"
               disabled={loading}
               isLoading={loading}
               onClick={submitData}

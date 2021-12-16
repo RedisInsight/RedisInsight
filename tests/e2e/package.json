@@ -20,20 +20,20 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "cli-argument-parser": "0.4.5"
+    "cli-argument-parser": "0.6.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.25.0",
-    "@typescript-eslint/parser": "^2.25.0",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
     "cross-env": "^7.0.3",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-airbnb-typescript": "^9.0.0",
-    "eslint-plugin-import": "2.20.2",
-    "testcafe": "1.14.2",
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb": "^19.0.2",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-plugin-import": "2.25.3",
+    "testcafe": "1.17.1",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "^2.2.0",
     "testcafe-reporter-spec": "2.1.1",
-    "typescript": "4.1.5"
+    "typescript": "4.5.4"
   }
 }

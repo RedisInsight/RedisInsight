@@ -146,7 +146,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
             <div className={cx(styles.footer, 'footerAddDatabase')}>
               <EuiButton
                 onClick={() => onBack(false)}
-                color="secondary"
+                color="success"
                 className="btn-cancel btn-back"
                 data-testid="btn-back-to-adding"
               >
@@ -156,7 +156,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
                 fill
                 size="m"
                 onClick={() => onView(false)}
-                color="secondary"
+                color="success"
                 className="btn-add"
                 data-testid="btn-view-databases"
               >

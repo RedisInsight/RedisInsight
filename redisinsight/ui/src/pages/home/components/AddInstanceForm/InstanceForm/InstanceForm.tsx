@@ -574,7 +574,7 @@ const AddStandaloneForm = (props: Props) => {
                 name="host"
                 id="host"
                 data-testid="host"
-                color="secondary"
+                color="success"
                 maxLength={200}
                 placeholder="Enter Hostname / IP address / Connection URL"
                 value={formik.values.host ?? ''}
@@ -1024,7 +1024,7 @@ const AddStandaloneForm = (props: Props) => {
     >
       <EuiButton
         fill
-        color="secondary"
+        color="success"
         className="btn-add"
         type="submit"
         onClick={onClick}
@@ -1050,7 +1050,7 @@ const AddStandaloneForm = (props: Props) => {
         <div className="footerAddDatabase">
           <EuiButton
             onClick={handleClose}
-            color="secondary"
+            color="success"
             className="btn-cancel"
             data-testid="btn-cancel"
           >

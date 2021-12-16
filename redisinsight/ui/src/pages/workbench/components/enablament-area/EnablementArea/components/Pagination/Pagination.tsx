@@ -91,7 +91,7 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
             aria-label="Previous page"
             fill
             data-testid="enablement-area__prev-page-btn"
-            color="secondary"
+            color="success"
             iconType="arrowLeft"
             iconSide="left"
             onClick={() => handleOpenPage(activePage - 1)}
@@ -111,7 +111,7 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
             aria-label="Next page"
             fill
             data-testid="enablement-area__next-page-btn"
-            color="secondary"
+            color="success"
             iconType="arrowRight"
             iconSide="right"
             onClick={() => handleOpenPage(activePage + 1)}

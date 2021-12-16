@@ -128,7 +128,7 @@ const RedisCloudSubscriptions = ({
       button={(
         <EuiButton
           onClick={showPopover}
-          color="secondary"
+          color="success"
           className="btn-cancel"
           data-testid="btn-cancel"
         >
@@ -168,7 +168,7 @@ const RedisCloudSubscriptions = ({
         disabled={isDisabled}
         onClick={handleSubmit}
         isLoading={loading}
-        color="secondary"
+        color="success"
         className="btn-add"
         iconType={isDisabled ? 'iInCircle' : undefined}
         data-testid="btn-show-databases"
@@ -282,7 +282,7 @@ const RedisCloudSubscriptions = ({
             <div className={cx(styles.footer, 'footerAddDatabase')}>
               <EuiButton
                 onClick={onBack}
-                color="secondary"
+                color="success"
                 className="btn-cancel btn-back"
                 data-testid="btn-back-adding"
               >

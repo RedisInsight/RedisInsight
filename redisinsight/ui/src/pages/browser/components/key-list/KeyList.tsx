@@ -146,7 +146,7 @@ const KeyList = (props: Props) => {
           style={{ marginLeft: '12px' }}
           fill
           size="s"
-          color="secondary"
+          color="success"
           onClick={openAddKeyPanel}
           data-testid="btn-add-key"
         >

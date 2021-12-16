@@ -95,7 +95,7 @@ const AddKeyList = (props: Props) => {
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
               <EuiButton
-                color="secondary"
+                color="success"
                 onClick={() => props.onCancel(true)}
                 className="btn-cancel btn-back"
               >
@@ -106,7 +106,7 @@ const AddKeyList = (props: Props) => {
               <EuiButton
                 fill
                 size="m"
-                color="secondary"
+                color="success"
                 className="btn-add"
                 isLoading={loading}
                 onClick={submitData}

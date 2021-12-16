@@ -5,6 +5,8 @@
   color: var(--euiColorGhost) !important;
   font-weight: 500 !important;
   letter-spacing: normal !important;
+  height: 42px !important;
+  line-height: 42px !important;
 
   &.euiButton--secondary {
     color: var(--buttonSecondaryTextColor) !important;
@@ -25,12 +27,6 @@
   &.euiButton--primary {
     &:not([class*='isDisabled']) {
       box-shadow: none;
-    }
-  }
-  &.euiButton--fill {
-    color: var(--euiColorPrimaryText) !important;
-    &:hover {
-      color: var(--euiColorPrimaryText) !important;
     }
   }
 }
@@ -87,11 +83,15 @@
 }
 
 .euiButton__text {
-  font: normal normal 500 14px/20px Graphik, sans-serif !important;
+  font: normal normal 500 15px/20px Graphik, sans-serif !important;
 }
 
-.euiButton--small .euiButton__text {
-  font: normal normal 500 13px/16px Graphik, sans-serif !important;
+.euiButton--small {
+  height: 30px !important;
+  line-height: 30px !important;
+  .euiButton__text {
+    font: normal normal 500 13px/16px Graphik, sans-serif !important;
+  }
 }
 
 .euiButton {

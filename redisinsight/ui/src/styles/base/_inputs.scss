@@ -19,7 +19,7 @@
 }
 
 input::placeholder, textarea::placeholder {
-  color: var(--inputPlaceHolderColor) !important;
+  color: var(--inputPlaceholderColor) !important;
 }
 
 input[type='password'] ~ .euiFormControlLayoutIcons,

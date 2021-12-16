@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { clearSearchingCommand, setCliEnteringCommand } from 'uiSrc/slices/cli/cli-settings'
+import { processCliClient, setCliEnteringCommand } from 'uiSrc/slices/cli/cli-settings'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import CliWrapper from './CliWrapper'
 
@@ -35,7 +35,7 @@ describe('CliWrapper', () => {
 
     unmount()
 
-    const expectedActions = [clearSearchingCommand(), setCliEnteringCommand()]
+    const expectedActions = [processCliClient(), setCliEnteringCommand()]
     expect(store.getActions().slice(-2)).toEqual(expectedActions)
   })
 })

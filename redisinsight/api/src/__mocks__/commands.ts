@@ -165,5 +165,7 @@ export const mockRedisgraphCommands = {
 };
 
 export const mockCommandsJsonProvider = () => ({
+  updateLatestJson: jest.fn(),
   getCommands: jest.fn(),
+  getDefaultCommands: jest.fn(),
 });

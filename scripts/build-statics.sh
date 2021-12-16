@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # =============== Plugins ===============
-PLUGINS_DIR="./redisinsight/api/src/static/plugins"
-PLUGINS_VENDOR_DIR="./redisinsight/api/src/static/resources/plugins"
+PLUGINS_DIR="./redisinsight/api/static/plugins"
+PLUGINS_VENDOR_DIR="./redisinsight/api/static/resources/plugins"
 
 # Default plugins assets
 node-sass "./redisinsight/ui/src/styles/main_plugin.scss" "./vendor/global_styles.css" --output-style compressed;
@@ -20,4 +20,4 @@ mkdir -p "${PLUGINS_DIR}/redisearch"
 cp -R "${REDISEARCH_DIR}/dist" "${REDISEARCH_DIR}/package.json" "${PLUGINS_DIR}/redisearch"
 
 # =============== Enablement area ===============
-cp -R "./redisinsight/ui/src/packages/enablement-area" "./redisinsight/api/src/static/workbench"
+cp -R "./redisinsight/ui/src/packages/enablement-area" "./redisinsight/api/static/workbench"

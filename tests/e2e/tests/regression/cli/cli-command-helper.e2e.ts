@@ -34,8 +34,8 @@ const getPageUrl = ClientFunction(() => window.location.href);
 test('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
     const commandForCheck = 'JSON.SET';
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     //Select one command from the list
     await cliPage.selectFilterGroupType(COMMAND_GROUP_JSON);
     await t.click(cliPage.cliHelperOutputTitles.withExactText(commandForCheck));
@@ -51,8 +51,8 @@ test('Verify that user can see in Command helper and click on new group "JSON", 
 test('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
     const commandForCheck = 'FT.EXPLAIN';
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     //Select one command from the list
     await cliPage.selectFilterGroupType(COMMAND_GROUP_SEARCH);
     await t.click(cliPage.cliHelperOutputTitles.withExactText(commandForCheck));
@@ -68,8 +68,8 @@ test('Verify that user can see in Command helper and click on new group "Search"
 test('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
     const commandForCheck = 'PFCOUNT';
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     //Select one command from the list
     await cliPage.selectFilterGroupType(COMMAND_GROUP_HyperLogLog);
     await t.click(cliPage.cliHelperOutputTitles.withExactText(commandForCheck));
@@ -106,8 +106,8 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         '/#aitensorset'
     ];
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     let i = 0;
     while (i <= 3) {
         //Select one group from the list

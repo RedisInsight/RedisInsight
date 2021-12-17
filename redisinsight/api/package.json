@@ -9,6 +9,8 @@
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
   "scripts": {
+    "build:defaults:commands": "ts-node ./scripts/default-commands.ts",
+    "build:defaults": "yarn build:defaults:commands",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "build:prod": "rimraf dist && nest build -p ./tsconfig.build.prod.json && cross-env NODE_ENV=production",
@@ -49,6 +51,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "express": "^4.17.1",
+    "fs-extra": "^10.0.0",
     "ioredis": "^4.27.1",
     "is-glob": "^4.0.1",
     "jsonpath": "^1.1.1",

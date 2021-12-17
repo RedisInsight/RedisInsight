@@ -47,6 +47,11 @@ export class WorkbenchPage {
   preselectGroupBy: Selector
   preselectArea: Selector
   expandArea: Selector
+  monacoHintWithArguments: Selector
+  noCommandHistorySection: Selector
+  noCommandHistoryIcon: Selector
+  noCommandHistoryTitle: Selector
+  noCommandHistoryText: Selector
 
   constructor() {
       //CSS selectors
@@ -97,9 +102,13 @@ export class WorkbenchPage {
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
       this.iframe = Selector('.pluginIframe', { timeout: 90000 });
-      // Panel
+      this.monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
+      this.noCommandHistorySection = Selector('[data-testid=wb_no-results]');
       this.preselectArea = Selector('[data-testid=enablementArea]');
-      this.expandArea = Selector('[]')
+      this.expandArea = Selector('[data-testid=enablement-area-container]');
+      this.noCommandHistoryIcon = Selector ('[data-testid=wb_no-results__icon]');
+      this.noCommandHistoryTitle = Selector ('[data-testid=wb_no-results__title]');
+      this.noCommandHistoryText = Selector ('[data-testid=wb_no-results__summary]');
   }
 
   /**

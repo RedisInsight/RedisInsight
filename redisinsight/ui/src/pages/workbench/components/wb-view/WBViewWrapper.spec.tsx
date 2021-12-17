@@ -11,8 +11,6 @@ import {
   waitFor,
 } from 'uiSrc/utils/test-utils'
 import QueryWrapper, { Props as QueryProps } from 'uiSrc/components/query'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { processWBClient } from 'uiSrc/slices/workbench/wb-settings'
 import { sendWBCommandClusterAction } from 'uiSrc/slices/workbench/wb-results'
@@ -99,15 +97,6 @@ describe('WBViewWrapper', () => {
     // sendWBCommandClusterAction.mockImplementation(() => sendWBCommandClusterActionMock);
 
     expect(render(<WBViewWrapper />)).toBeTruthy()
-  })
-
-  it('should localStorage be called', () => {
-    const mockUuid = 'test-uuid'
-    localStorageService.get = jest.fn().mockReturnValue(mockUuid)
-
-    render(<WBViewWrapper />)
-
-    expect(localStorageService.get).toBeCalledWith(BrowserStorageItem.wbClientUuid)
   })
 
   it('should render with SessionStorage', () => {

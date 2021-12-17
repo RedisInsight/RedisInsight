@@ -306,6 +306,7 @@ export class CliBusinessService {
           replyEncoding,
         );
         result.response = formatter.format(result.response, { slot, address });
+        result.slot = parseInt(slot, 10);
       } else {
         result.response = formatter.format(result.response);
       }
@@ -316,9 +317,9 @@ export class CliBusinessService {
         { command, outputFormat },
       );
       const {
-        host, port, error, ...rest
+        host, port, error, slot, ...rest
       } = result;
-      return { ...rest, node: { host, port } };
+      return { ...rest, node: { host, port, slot } };
     } catch (error) {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
 

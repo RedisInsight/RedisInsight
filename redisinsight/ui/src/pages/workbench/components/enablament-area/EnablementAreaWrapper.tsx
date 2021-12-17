@@ -67,6 +67,7 @@ const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptE
       className={cx(styles.areaWrapper, { [styles.minimized]: isMinimized })}
       onClick={() => isMinimized && setIsMinimized(false)}
       direction="column"
+      responsive={false}
       gutterSize="none"
       data-testid="enablement-area-container"
     >

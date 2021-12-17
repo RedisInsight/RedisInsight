@@ -555,7 +555,7 @@ describe('CliBusinessService', () => {
       const command = 'set foo bar';
       const mockResult: SendClusterCommandResponse = {
         response: 'OK',
-        node: { ...mockNode, port: 7002 },
+        node: { ...mockNode, port: 7002, slot: 7008 },
         status: CommandExecutionStatus.Success,
       };
       cliTool.execCommandForNode
@@ -586,7 +586,7 @@ describe('CliBusinessService', () => {
       const command = 'set foo bar';
       const mockResult: SendClusterCommandResponse = {
         response: '-> Redirected to slot [7008] located at 127.0.0.1:7002\nOK',
-        node: { ...mockNode, port: 7002 },
+        node: { ...mockNode, port: 7002, slot: 7008 },
         status: CommandExecutionStatus.Success,
       };
       cliTool.execCommandForNode

@@ -62,11 +62,6 @@ export interface Props {
 
 interface State {
   path: string | undefined;
-  data: JSONArrayValue | IJSONDocument | IJSONDocument[];
-  openIndex: number;
-  prevPath: string;
-  currentPath: string;
-  dataContainer: object;
   addRootKVPair: boolean;
   newRootKey: string | undefined;
   newRootValue: JSONScalarValue | JSONArrayValue | IJSONObject;
@@ -78,11 +73,6 @@ class RejsonDetails extends React.Component<Props, State> {
     super(props)
     this.state = {
       path: '',
-      data: this.props.data,
-      openIndex: -1,
-      prevPath: '',
-      currentPath: '',
-      dataContainer: {},
       addRootKVPair: false,
       newRootKey: '',
       newRootValue: '',
@@ -132,8 +122,9 @@ class RejsonDetails extends React.Component<Props, State> {
   }
 
   onClickSetRootKVPair = () => {
+    const { addRootKVPair } = this.state
     this.setState({
-      addRootKVPair: !this.state.addRootKVPair,
+      addRootKVPair: !addRootKVPair,
     })
   }
 
@@ -213,7 +204,7 @@ class RejsonDetails extends React.Component<Props, State> {
     const error: string = this.validateRootKVPair()
 
     if (error === '') {
-      let updatedPath = '.'
+      let updatedPath
 
       body.operation = 'update'
       body.value = newRootValue as string
@@ -603,7 +594,7 @@ class RejsonDetails extends React.Component<Props, State> {
             )
           )}
           <>
-            {data && data !== null ? (
+            {data ? (
               this.renderResultArray(data as string)
             ) : (
               <JSONScalar

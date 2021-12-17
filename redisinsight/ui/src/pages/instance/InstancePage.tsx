@@ -10,15 +10,14 @@ import {
 } from 'uiSrc/slices/instances'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
-import CliWrapper from 'uiSrc/components/cli/CliWrapper'
 import { cliSettingsSelector, resetIsShowCli } from 'uiSrc/slices/cli/cli-settings'
-import CliHeaderMinimized from 'uiSrc/components/cli/components/cli-header-minimized'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
+import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -46,8 +45,10 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   const dispatch = useDispatch()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
-  const { isShowCli } = useSelector(cliSettingsSelector)
+  const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
+
+  const isShowBottomGroup = isShowCli || isShowHelper
 
   useEffect(() => {
     dispatch(fetchInstanceAction(connectionInstanceId))
@@ -80,7 +81,7 @@ const InstancePage = ({ routes = [] }: Props) => {
       direction="vertical"
       style={{ height: '100%' }}
       onPanelWidthChange={onPanelWidthChange}
-      className={cx({ 'show-cli': isShowCli })}
+      className={cx({ 'show-cli': isShowBottomGroup })}
     >
       {(EuiResizablePanel, EuiResizableButton) => (
         <>
@@ -89,8 +90,8 @@ const InstancePage = ({ routes = [] }: Props) => {
             scrollable={false}
             minSize="55px"
             paddingSize="none"
-            size={isShowCli ? sizes[firstPanelId] : 100}
-            wrapperProps={{ className: cx({ [styles.mainComponent]: !isShowCli }) }}
+            size={isShowBottomGroup ? sizes[firstPanelId] : 100}
+            wrapperProps={{ className: cx({ [styles.mainComponent]: !isShowBottomGroup }) }}
             data-testid={firstPanelId}
           >
             <InstancePageRouter routes={routes} />
@@ -101,13 +102,13 @@ const InstancePage = ({ routes = [] }: Props) => {
           <EuiResizablePanel
             id={secondPanelId}
             scrollable={false}
-            size={isShowCli ? sizes[secondPanelId] : 0}
+            size={isShowBottomGroup ? sizes[secondPanelId] : 0}
             style={{ zIndex: 10 }}
-            minSize="70px"
+            minSize="140px"
             data-testid={secondPanelId}
             paddingSize="none"
           >
-            {!isShowCli ? <CliHeaderMinimized /> : <CliWrapper />}
+            <BottomGroupComponents />
           </EuiResizablePanel>
         </>
       )}

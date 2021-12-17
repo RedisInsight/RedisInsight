@@ -12,7 +12,7 @@ fixture `Agreements Verification`
     .beforeEach(async t => {
         await t.maximizeWindow();
     });
-test.only('Verify that user can see message "While adding new visualization plugins, use files only from trusted authors to avoid automatic execution of malicious code." on EULA and Privacy Settings window when he opens the application for the very first time', async t => {
+test('Verify that user can see message "While adding new visualization plugins, use files only from trusted authors to avoid automatic execution of malicious code." on EULA and Privacy Settings window when he opens the application for the very first time', async t => {
     //Verify that User Agreements modal form is displayed
     await t.expect(userAgreementPage.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
     //Verify that section with plugin warning is displayed

@@ -13,6 +13,7 @@ import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
+import { MonitorModule } from './modules/monitor/monitor.module';
 import { CliModule } from './modules/cli/cli.module';
 import { SettingsController } from './controllers/settings.controller';
 import { ServerInfoController } from './controllers/server-info.controller';
@@ -34,15 +35,12 @@ const PATH_CONFIG = config.get('dir_path');
     CliModule,
     PluginModule,
     CommandsModule,
+    MonitorModule,
     EventEmitterModule.forRoot(),
-    ...(SERVER_CONFIG.staticContent
-      ? [
-        ServeStaticModule.forRoot({
-          rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
-          exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
-        }),
-      ]
-      : []),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'static'),
+      exclude: ['/api/**'],
+    }),
     ServeStaticModule.forRoot({
       serveRoot: SERVER_CONFIG.customPluginsUri,
       rootPath: join(PATH_CONFIG.customPlugins),

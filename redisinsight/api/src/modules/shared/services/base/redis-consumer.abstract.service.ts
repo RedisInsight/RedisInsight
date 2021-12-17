@@ -37,9 +37,7 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
 
   abstract execPipeline(
     clientOptions: IFindRedisClientInstanceByOptions,
-    toolCommands: Array<
-    [toolCommand: any, ...args: Array<string | number | Buffer>]
-    >,
+    toolCommands: Array<[toolCommand: any, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]>;
 
   private prepareCommands(
@@ -90,31 +88,19 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     });
   }
 
-  async getRedisClient(
-    options: IFindRedisClientInstanceByOptions,
-  ): Promise<any> {
-    const redisClientInstance = this.redisService.getClientInstance({
-      ...options,
-      tool: this.consumer,
-    });
+  async getRedisClient(options: IFindRedisClientInstanceByOptions): Promise<any> {
+    const redisClientInstance = this.redisService.getClientInstance({ ...options, tool: this.consumer });
+
     if (!redisClientInstance) {
-      return await this.createNewClient(
-        options.instanceId,
-        options.uuid,
-      );
+      return await this.createNewClient(options.instanceId, options.uuid);
     }
-    const isConnected: boolean = this.redisService.isClientConnected(
-      redisClientInstance.client,
-    );
+    const isConnected = this.redisService.isClientConnected(redisClientInstance.client);
     if (!isConnected) {
       this.redisService.removeClientInstance({
         instanceId: redisClientInstance.instanceId,
         tool: this.consumer,
       });
-      return await this.createNewClient(
-        options.instanceId,
-        options.uuid,
-      );
+      return await this.createNewClient(options.instanceId, options.uuid);
     }
 
     return redisClientInstance.client;

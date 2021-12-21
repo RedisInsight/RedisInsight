@@ -11,7 +11,7 @@ import {
   EuiIcon,
 } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { cliSettingsSelector, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import { cliSettingsSelector, resetCliHelperSettings, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
 
 import styles from './styles.module.scss'
 
@@ -27,6 +27,10 @@ const CommandHelperHeader = () => {
         databaseId: instanceId
       }
     })
+    dispatch(resetCliHelperSettings())
+  }
+
+  const handleHideHelper = () => {
     dispatch(toggleCliHelper())
   }
 
@@ -44,6 +48,24 @@ const CommandHelperHeader = () => {
           <EuiText>Command Helper</EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow />
+        <EuiFlexItem grow={false}>
+          <EuiToolTip
+            content="Minimize"
+            position="top"
+            display="inlineBlock"
+            anchorClassName="flex-row"
+          >
+            <EuiButtonIcon
+              iconType="minus"
+              color="primary"
+              id="hide-command-helper"
+              aria-label="hide command helper"
+              data-testid="hide-command-helper"
+              className={styles.icon}
+              onClick={handleHideHelper}
+            />
+          </EuiToolTip>
+        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
             content="Close"

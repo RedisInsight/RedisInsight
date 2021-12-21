@@ -50,7 +50,7 @@ test('Verify that user can run multiple commands written in multiple lines in Wo
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     //Check the result
     for(let i = 1; i < commandsForSend.length + 1; i++) {
-        let resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
+        const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
         await t.expect(resultCommand).eql(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in the result`);
     }
 });
@@ -63,7 +63,7 @@ test('Verify that user can use double slashes (//) wrapped in double quotes and 
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n"//"'), 0.5);
     //Check that all commands are executed
     for(let i = 1; i < commandsForSend.length + 1; i++) {
-        let resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
+        const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
         await t.expect(resultCommand).contains(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in the result`);
     }
 });

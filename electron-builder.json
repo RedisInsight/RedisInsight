@@ -63,8 +63,13 @@
   "extraResources": [
     "./resources/**",
     {
-      "from": "./redisinsight/api/src/static",
+      "from": "./redisinsight/api/static",
       "to": "static",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "./redisinsight/api/defaults",
+      "to": "defaults",
       "filter": ["**/*"]
     }
   ]

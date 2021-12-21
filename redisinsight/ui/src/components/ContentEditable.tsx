@@ -28,9 +28,9 @@ export const parseMultilineContentEditableChangeHtml = (text: string = '') =>
 export const parseContentEditableHtml = (text: string = '') =>
   text
     .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
     .replace(/&lt;/gi, '<')
     .replace(/&gt;/gi, '>')
+    .replace(/&amp;/gi, '&')
 
 const onPaste = (e: React.ClipboardEvent) => {
   e.preventDefault()

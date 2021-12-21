@@ -168,7 +168,7 @@
     "core-js": "^3.6.5",
     "cross-env": "^7.0.2",
     "css-loader": "^6.5.1",
-    "css-minimizer-webpack-plugin": "^3.3.0",
+    "css-minimizer-webpack-plugin": "^3.3.1",
     "electron": "^16.0.5",
     "electron-builder": "^22.14.5",
     "electron-builder-notarize": "^1.2.0",

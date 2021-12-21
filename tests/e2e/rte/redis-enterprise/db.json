@@ -1,5 +1,5 @@
 {
-  "name": "testdb",
+  "name": "test-re-standalone",
   "type": "redis",
   "memory_size": 1073741824,
   "port": 12000

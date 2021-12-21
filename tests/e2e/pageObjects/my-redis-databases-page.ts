@@ -60,6 +60,7 @@ export class MyRedisDatabasePage {
 
   //Delete all the databases from the list
   async deleteAllDatabases(): Promise<void> {
+      await t.click(this.myRedisDBButton);
       const dbNames = this.tableRowContent;
       const count = await dbNames.count;
       if(count > 1) {

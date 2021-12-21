@@ -144,7 +144,7 @@
     "@types/ioredis": "^4.28.5",
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
-    "@types/node": "16.11.14",
+    "@types/node": "16.11.15",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
     "@types/react-monaco-editor": "^0.16.0",

@@ -10,13 +10,14 @@ import {
 } from 'uiSrc/slices/instances'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
-import { cliSettingsSelector, resetIsShowCli } from 'uiSrc/slices/cli/cli-settings'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/keys'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
+import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
 import InstancePageRouter from './InstancePageRouter'
 
@@ -55,9 +56,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
 
     if (contextInstanceId !== connectionInstanceId) {
-      dispatch(setAppContextInitialState())
-      dispatch(resetIsShowCli())
-      dispatch(resetOutput())
+      resetContext()
     }
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
@@ -68,6 +67,14 @@ const InstancePage = ({ routes = [] }: Props) => {
       localStorageService.set(BrowserStorageItem.cliResizableContainer, prevSizes)
     })
   }, [])
+
+  const resetContext = () => {
+    dispatch(setAppContextInitialState())
+    dispatch(resetKeys())
+    setTimeout(() => {
+      dispatch(resetOutput())
+    }, 0)
+  }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {
     setSizes((prevSizes: any) => ({

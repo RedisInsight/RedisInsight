@@ -48,7 +48,7 @@ const CliHeader = () => {
 
   const handleCloseCli = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.CLI_HIDDEN,
+      event: TelemetryEvent.CLI_CLOSED,
       eventData: {
         databaseId: instanceId
       }

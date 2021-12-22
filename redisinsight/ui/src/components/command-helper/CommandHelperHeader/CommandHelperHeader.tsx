@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -11,18 +11,17 @@ import {
   EuiIcon,
 } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { cliSettingsSelector, resetCliHelperSettings, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import { resetCliHelperSettings, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
 
 import styles from './styles.module.scss'
 
 const CommandHelperHeader = () => {
-  const { isShowHelper } = useSelector(cliSettingsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
-  const handleExpandHelper = () => {
+  const handleCloseHelper = () => {
     sendEventTelemetry({
-      event: isShowHelper ? TelemetryEvent.COMMAND_HELPER_COLLAPSED : TelemetryEvent.COMMAND_HELPER_EXPANDED,
+      event: TelemetryEvent.COMMAND_HELPER_CLOSED,
       eventData: {
         databaseId: instanceId
       }
@@ -31,6 +30,12 @@ const CommandHelperHeader = () => {
   }
 
   const handleHideHelper = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.COMMAND_HELPER_MINIMIZED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
     dispatch(toggleCliHelper())
   }
 
@@ -80,7 +85,7 @@ const CommandHelperHeader = () => {
               aria-label="close command helper"
               data-testid="close-command-helper"
               className={styles.icon}
-              onClick={handleExpandHelper}
+              onClick={handleCloseHelper}
             />
           </EuiToolTip>
         </EuiFlexItem>

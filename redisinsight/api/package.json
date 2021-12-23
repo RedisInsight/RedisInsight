@@ -58,7 +58,6 @@
     "lodash": "^4.17.20",
     "nest-router": "^1.0.9",
     "nest-winston": "^1.4.0",
-    "nestjs-asyncapi": "^0.2.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.7",
     "socket.io": "^4.4.0",

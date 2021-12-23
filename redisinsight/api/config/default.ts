@@ -48,7 +48,7 @@ export default {
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : true,
   },
   redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://qa-api.redislabs.com/v1/',
+    url: process.env.REDIS_CLOUD_URL || 'https://api.qa.redislabs.com/v1',
   },
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr

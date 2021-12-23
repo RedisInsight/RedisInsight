@@ -22,7 +22,7 @@ export const ConnectionSuccessOutputText = [
   'Connected.',
   '\n',
   'Ready to execute commands.',
-  '\n\n\n',
+  '\n\n',
 ]
 
 const unsupportedCommandTextCli = ' is not supported by the RedisInsight CLI. The list of all unsupported commands: '
@@ -32,4 +32,5 @@ export const cliTexts = {
     commandLine + unsupportedCommandTextCli + commands,
   WORKBENCH_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
     commandLine + unsupportedCommandTextWorkbench + commands,
+  REPEAT_COUNT_INVALID: 'Invalid repeat command option value'
 }

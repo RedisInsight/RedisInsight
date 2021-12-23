@@ -8,14 +8,14 @@ import {
   fetchInstanceAction,
   getDatabaseConfigInfoAction,
 } from 'uiSrc/slices/instances'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/keys'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'

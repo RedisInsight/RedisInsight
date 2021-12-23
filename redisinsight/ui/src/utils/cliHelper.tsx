@@ -28,14 +28,14 @@ const cliParseTextResponseWithRedirect = (
     const { host, port, slot } = redirectTo
     redirectMessage = `-> Redirected to slot [${slot}] located at ${host}:${port}`
   }
-  return [redirectMessage, '\n', cliParseTextResponse(text, command, status), '\n\n']
+  return [redirectMessage, '\n', cliParseTextResponse(text, command, status), '\n']
 }
 
 const cliParseTextResponseWithOffset = (
   text: string = '',
   command: string = '',
   status: CommandExecutionStatus = CommandExecutionStatus.Success,
-) => [cliParseTextResponse(text, command, status), '\n\n']
+) => [cliParseTextResponse(text, command, status), '\n']
 
 const cliParseTextResponse = (
   text: string = '',
@@ -60,7 +60,7 @@ const cliParseTextResponse = (
   </span>
 )
 
-const cliCommandOutput = (command: string) => [bashTextValue(), cliCommandWrapper(command), '\n']
+const cliCommandOutput = (command: string) => ['\n', bashTextValue(), cliCommandWrapper(command), '\n']
 
 const bashTextValue = () => '> '
 

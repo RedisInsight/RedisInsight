@@ -1,4 +1,4 @@
-import { multilineCommandToOneLine, removeMonacoComments } from 'uiSrc/utils'
+import { multilineCommandToOneLine, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 
 describe('removeMonacoComments', () => {
   const cases = [
@@ -64,6 +64,38 @@ describe('multilineCommandToOneLine', () => {
     'given %p as argument, returns %p',
     (arg: string, expectedResult) => {
       const result = multilineCommandToOneLine(arg)
+      expect(result).toEqual(expectedResult)
+    }
+  )
+})
+
+describe.only('splitMonacoValuePerLines', () => {
+  const cases = [
+    // Multi commands
+    [
+      'get test\nget test2\nget bar',
+      ['get test', 'get test2', 'get bar']
+    ],
+    // Multi commands a lot of lines
+    [
+      'get test\nget test2\nget bar\nget bar\nget bar\nget bar\nget bar\nget bar',
+      ['get test', 'get test2', 'get bar', 'get bar', 'get bar', 'get bar', 'get bar', 'get bar']
+    ],
+    // Multi commands with repeating
+    [
+      'get test\n3 get test2\nget bar',
+      ['get test', 'get test2', 'get test2', 'get test2', 'get bar']
+    ],
+    // Multi commands with repeating syntax error
+    [
+      'get test\n3get test2\nget bar',
+      ['get test', '3get test2', 'get bar']
+    ],
+  ]
+  test.each(cases)(
+    'given %p as argument, returns %p',
+    (arg: string, expectedResult) => {
+      const result = splitMonacoValuePerLines(arg)
       expect(result).toEqual(expectedResult)
     }
   )

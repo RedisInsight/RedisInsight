@@ -120,12 +120,12 @@ const InternalPage = (props: Props) => {
         </div>
       </EuiFlyoutHeader>
       <div
-        data-testid="enablement-area__page"
         ref={containerRef}
         className={cx(styles.content, 'enablement-area__page')}
         onScroll={handleScroll}
         onClick={handleClick}
         role="none"
+        data-testid="enablement-area__page"
       >
         { isLoading && <EuiLoadingContent data-testid="enablement-area__page-loader" lines={3} /> }
         { !isLoading && error && <EmptyPrompt /> }

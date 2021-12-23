@@ -72,3 +72,26 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     //Check that user is on Workbench page and "Working with Hashes" page is displayed
     await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
 });
+test('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
+    //Open Working with Hashes section
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    //Evaluate the last button in Enablement Area
+    const buttonsQuantity = await workbenchPage.preselectButtons.count;
+    const lastButton = workbenchPage.preselectButtons.nth(buttonsQuantity - 1);
+    //Scroll to the very bottom of the page
+    await t.scrollIntoView(lastButton);
+    //Check the scroll position
+    const scrollPosition = await workbenchPage.scrolledEnablementArea.scrollTop;
+    //Go to Browser page
+    await t.click(myRedisDatabasePage.browserButton);
+    //Go back to Workbench page
+    await t.click(myRedisDatabasePage.workbenchButton);
+    //Check that scroll position is saved
+    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
+    //Go to list of DBs page
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    //Go back to active DB again
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Check that scroll position is saved
+    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
+});

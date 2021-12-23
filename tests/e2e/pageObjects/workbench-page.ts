@@ -6,7 +6,7 @@ export class WorkbenchPage {
   cssSelectorPaginationButtonNext: string
   cssReRunCommandButton: string
   cssDeleteCommandButton: string
-  cssQueryCardOutputResponceSuccess: string
+  cssQueryCardOutputResponseSuccess: string
   cssTableViewTypeOption: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
@@ -62,7 +62,7 @@ export class WorkbenchPage {
       this.cssSelectorPaginationButtonNext = '[data-test-subj=pagination-button-next]';
       this.cssReRunCommandButton = '[data-testid=re-run-command]';
       this.cssDeleteCommandButton = '[data-testid=delete-command]';
-      this.cssQueryCardOutputResponceSuccess = '[data-testid=query-card-output-response-success]';
+      this.cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
       this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS

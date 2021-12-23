@@ -64,7 +64,11 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   useEffect(() => () => {
     setSizes((prevSizes: any) => {
-      localStorageService.set(BrowserStorageItem.cliResizableContainer, prevSizes)
+      localStorageService.set(BrowserStorageItem.cliResizableContainer, {
+        [firstPanelId]: prevSizes[firstPanelId],
+        // partially fix elastic resizable issue with zooming
+        [secondPanelId]: 100 - prevSizes[firstPanelId],
+      })
     })
   }, [])
 
@@ -98,7 +102,7 @@ const InstancePage = ({ routes = [] }: Props) => {
             minSize="55px"
             paddingSize="none"
             size={isShowBottomGroup ? sizes[firstPanelId] : 100}
-            wrapperProps={{ className: cx({ [styles.mainComponent]: !isShowBottomGroup }) }}
+            wrapperProps={{ className: cx(styles.panelTop, { [styles.mainComponent]: !isShowBottomGroup }) }}
             data-testid={firstPanelId}
           >
             <InstancePageRouter routes={routes} />
@@ -110,8 +114,9 @@ const InstancePage = ({ routes = [] }: Props) => {
             id={secondPanelId}
             scrollable={false}
             size={isShowBottomGroup ? sizes[secondPanelId] : 0}
-            style={{ zIndex: 10 }}
+            style={{ zIndex: 9 }}
             minSize="140px"
+            wrapperProps={{ className: cx(styles.panelBottom) }}
             data-testid={secondPanelId}
             paddingSize="none"
           >

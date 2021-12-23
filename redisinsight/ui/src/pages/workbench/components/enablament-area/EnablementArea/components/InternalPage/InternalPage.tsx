@@ -125,6 +125,7 @@ const InternalPage = (props: Props) => {
         onScroll={handleScroll}
         onClick={handleClick}
         role="none"
+        data-testid="enablement-area__page"
       >
         { isLoading && <EuiLoadingContent data-testid="enablement-area__page-loader" lines={3} /> }
         { !isLoading && error && <EmptyPrompt /> }

@@ -1,3 +1,4 @@
+import { Selector } from 'testcafe';
 import { addNewStandaloneDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
@@ -66,4 +67,16 @@ test('Verify that user can use double slashes (//) wrapped in double quotes and 
         const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
         await t.expect(resultCommand).contains(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in the result`);
     }
+});
+test('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
+    //Open Working with Hashes page
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    //Put Create Hash commands into Editing area
+    await t.click(workbenchPage.preselectHashCreate);
+    //Maximize Scripting area to see all the commands
+    await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, 300, { speed: 0.4 });
+    //Get number of commands in scripting area
+    const numberOfCommands = await Selector('span').withExactText('HSET').count;
+    //Compare number of indicator displayed and expected value
+    await t.expect(workbenchPage.monacoCommandIndicator.count).eql(numberOfCommands, 'Number of command indicator');
 });

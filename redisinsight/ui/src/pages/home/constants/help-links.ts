@@ -9,9 +9,14 @@ export enum HelpLink {
 
 export const HELP_LINKS = {
   [HelpLink.CreateRedisCloud]: {
-    label: 'Create a free Redis Database on Redis Cloud',
+    label: 'Limited offer: Up to 6 months free with $200 credits.',
     link: 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight',
-    event: TelemetryEvent.CONFIG_DATABASES_GET_REDIS_CLOUD_ACCOUNT_CLICKED
+    event: TelemetryEvent.CREATE_FREE_CLOUD_DATABASE_CLICKED,
+    sources: {
+      welcome: 'Welcome page',
+      databaseList: 'My Redis databases',
+      redisearch: 'RediSearch is not loaded'
+    }
   },
   [HelpLink.BuildRedisFromSource]: {
     label: 'Build from source',

@@ -69,7 +69,7 @@ describe('multilineCommandToOneLine', () => {
   )
 })
 
-describe.only('splitMonacoValuePerLines', () => {
+describe('splitMonacoValuePerLines', () => {
   const cases = [
     // Multi commands
     [

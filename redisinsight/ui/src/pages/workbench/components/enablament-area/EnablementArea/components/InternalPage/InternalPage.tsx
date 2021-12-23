@@ -120,6 +120,7 @@ const InternalPage = (props: Props) => {
         </div>
       </EuiFlyoutHeader>
       <div
+        data-testid="enablement-area__page"
         ref={containerRef}
         className={cx(styles.content, 'enablement-area__page')}
         onScroll={handleScroll}

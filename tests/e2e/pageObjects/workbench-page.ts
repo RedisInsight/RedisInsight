@@ -27,6 +27,7 @@ export class WorkbenchPage {
   preselectIndexInfo: Selector
   queryColumns: Selector
   preselectSearch: Selector
+  preselectHashCreate: Selector
   preselectManual: Selector
   scriptsLines: Selector
   queryInputScriptArea: Selector
@@ -41,6 +42,7 @@ export class WorkbenchPage {
   monacoCommandDetails: Selector
   monacoCloseCommandDetails: Selector
   monacoSuggestion: Selector
+  monacoCommandIndicator: Selector
   iframe: Selector
   internalLinkWorkingWithHashes: Selector
   preselectExactSearch: Selector
@@ -52,6 +54,7 @@ export class WorkbenchPage {
   noCommandHistoryIcon: Selector
   noCommandHistoryTitle: Selector
   noCommandHistoryText: Selector
+  scrolledEnablementArea: Selector
 
   constructor() {
       //CSS selectors
@@ -77,6 +80,7 @@ export class WorkbenchPage {
       this.selectViewType = Selector('[data-testid=select-view-type]');
       this.textViewTypeOption = Selector('[data-test-subj=view-type-option-Text]');
       this.preselectList = Selector('[data-testid*=preselect-List]');
+      this.preselectHashCreate = Selector('[data-testid=preselect-Create]');
       this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
       this.preselectSearch = Selector('[data-testid=preselect-Search]');
       this.preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
@@ -109,6 +113,8 @@ export class WorkbenchPage {
       this.noCommandHistoryIcon = Selector ('[data-testid=wb_no-results__icon]');
       this.noCommandHistoryTitle = Selector ('[data-testid=wb_no-results__title]');
       this.noCommandHistoryText = Selector ('[data-testid=wb_no-results__summary]');
+      this.monacoCommandIndicator = Selector('div.monaco-glyph-run-command');
+      this.scrolledEnablementArea = Selector('[data-testid=enablement-area__page]')
   }
 
   /**

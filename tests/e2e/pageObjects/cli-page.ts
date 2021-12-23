@@ -45,7 +45,7 @@ export class CliPage {
       //-------------------------------------------------------------------------------------------
       //BUTTONS
       this.cliExpandButton = Selector('[data-testid=expand-cli]');
-      this.cliCollapseButton = Selector('[data-testid=collapse-cli]');
+      this.cliCollapseButton = Selector('[data-testid=close-cli]');
       this.expandCommandHelperButton = Selector('[data-testid=expand-command-helper]');
       this.closeCommandHelperButton = Selector('[data-testid=close-command-helper]');
       this.filterGroupTypeButton = Selector('[data-testid=select-filter-group-type]');

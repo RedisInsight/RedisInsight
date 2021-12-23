@@ -14,13 +14,13 @@ import {
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 
-import { setTitle } from 'uiSrc/utils'
 import {
   AddRedisDatabaseStatus,
   InstanceRedisCluster,
 } from 'uiSrc/slices/interfaces'
-import { clusterSelector } from 'uiSrc/slices/cluster'
+import { setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
+import { clusterSelector } from 'uiSrc/slices/cluster'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 
 import styles from './styles.module.scss'

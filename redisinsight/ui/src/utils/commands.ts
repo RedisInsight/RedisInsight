@@ -30,7 +30,7 @@ const generateArgName = (
   const multipleName = optional ? `[${multipleNameTemp.join(' ')}]` : multipleNameTemp
 
   if (type === CommandArgsType.Block && isArray(block)) {
-    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName)))
+    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName, onlyMandatory)))
     return optional ? `[${blocks?.join?.(' ')}]` : blocks
   }
 

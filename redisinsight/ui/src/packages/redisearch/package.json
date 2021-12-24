@@ -21,7 +21,7 @@
     "build:css:dark": "parcel build src/styles/dark_theme.scss --no-source-maps --no-cache --dist-dir dist",
     "build:css:light": "parcel build src/styles/light_theme.scss --no-source-maps --no-cache --dist-dir dist",
     "build:assets": "parcel build src/assets/**/* --dist-dir dist",
-    "minify:js": "terser --compress --mangle -- dist/main.js > dist/index.js && rimraf dist/main.js"
+    "minify:js": "terser --compress -- dist/main.js > dist/index.js && rimraf dist/main.js"
   },
   "targets": {
     "main": false,

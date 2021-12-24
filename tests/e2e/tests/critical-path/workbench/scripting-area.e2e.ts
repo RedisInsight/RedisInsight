@@ -47,8 +47,7 @@ test('Verify that user can resize scripting area in Workbench', async t => {
     await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
     await t.expect(await workbenchPage.queryInput.clientHeight).eql(inputHeightStart + offsetY, 'Scripting area after resize has proper size');
 });
-//skipped due the inaccessibility of the iframe
-test.skip('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
+test('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
     const commandsForSendInCli = [
         'HMSET product:1 name "Apple Juice"',
         'HMSET product:2 name "Apple Juice"',
@@ -89,8 +88,7 @@ test.skip('Verify that user when he have more than 10 results can request to vie
     await t.switchToMainWindow();
     await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
 });
-//skipped due the inaccessibility of the iframe
-test.skip
+test
     .after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');

@@ -11,7 +11,7 @@ import {
   EuiIcon,
 } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { resetCliHelperSettings, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import { resetCliHelperSettings, toggleCliHelper, toggleHideCliHelper } from 'uiSrc/slices/cli/cli-settings'
 
 import styles from './styles.module.scss'
 
@@ -37,6 +37,7 @@ const CommandHelperHeader = () => {
       }
     })
     dispatch(toggleCliHelper())
+    dispatch(toggleHideCliHelper())
   }
 
   return (

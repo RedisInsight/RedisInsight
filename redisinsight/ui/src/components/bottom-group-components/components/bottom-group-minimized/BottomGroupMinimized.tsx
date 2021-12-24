@@ -10,14 +10,20 @@ import {
   cliSettingsSelector,
   clearSearchingCommand,
   setCliEnteringCommand,
+  toggleHideCliHelper,
 } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from '../../styles.module.scss'
 
 const BottomGroupMinimized = () => {
-  const { isShowHelper, isShowCli } = useSelector(cliSettingsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const {
+    isShowCli,
+    cliClientUuid,
+    isShowHelper,
+    isMinimizedHelper,
+  } = useSelector(cliSettingsSelector)
   const dispatch = useDispatch()
 
   useEffect(() =>
@@ -43,6 +49,7 @@ const BottomGroupMinimized = () => {
         databaseId: instanceId
       }
     })
+    isMinimizedHelper && dispatch(toggleHideCliHelper())
     dispatch(toggleCliHelper())
   }
 
@@ -60,7 +67,7 @@ const BottomGroupMinimized = () => {
           onClick={handleExpandCli}
           data-testid="expand-cli"
         >
-          <EuiBadge className={cx(styles.componentBadge, { [styles.active]: isShowCli })}>
+          <EuiBadge className={cx(styles.componentBadge, { [styles.active]: isShowCli || cliClientUuid })}>
             <EuiIcon type="console" size="m" />
             <span>CLI</span>
           </EuiBadge>
@@ -71,7 +78,11 @@ const BottomGroupMinimized = () => {
           onClick={handleExpandHelper}
           data-testid="expand-command-helper"
         >
-          <EuiBadge className={cx(styles.componentBadge, { [styles.active]: isShowHelper })}>
+          <EuiBadge className={cx(
+            styles.componentBadge,
+            { [styles.active]: isShowHelper || isMinimizedHelper }
+          )}
+          >
             <EuiIcon type="documents" size="m" />
             <span>Command Helper</span>
           </EuiBadge>

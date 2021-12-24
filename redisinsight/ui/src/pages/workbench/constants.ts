@@ -31,7 +31,7 @@ export enum ModuleCommandPrefix {
 export const RSNotLoadedContent: IModuleNotLoadedContent = {
   output: 'RediSearch module is not loaded for this database',
   createCloudBtnText: 'Create your free Redis database with RediSearch on Redis Cloud​',
-  createCloudBtnHref: 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_offer_jan',
+  createCloudBtnHref: 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redisearch_offer_jan',
   summaryText: 'RedisInsight supports RediSearch and allows you to:<br/><br/>'
     + '<ul><li>Build and execute queries</li><li>Browse, analyse and export results</li></ul></br>'
     + 'As a benefit you get faster turnarounds when building your application using Redis and RediSearch.',

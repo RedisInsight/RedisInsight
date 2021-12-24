@@ -1,13 +1,20 @@
 import React, { useContext } from 'react'
 import cx from 'classnames'
 import {
-  EuiBasicTableColumn, EuiButton,
-  EuiFlexGroup, EuiFlexItem, EuiIcon, EuiInMemoryTable, EuiTextColor
+  EuiBasicTableColumn,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiInMemoryTable,
+  EuiText,
+  EuiTextColor,
 } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme } from 'uiSrc/constants'
+import { HELP_LINKS } from 'uiSrc/pages/home/constants/help-links'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
 interface IContentColumn {
@@ -54,6 +61,36 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
 
   const item = columns.reduce((obj, { text }, i) => ({ ...obj, [`text${i}`]: text }), {})
 
+  const handleClickLink = (event: TelemetryEvent, eventData: any = {}) => {
+    sendEventTelemetry({
+      event,
+      eventData: {
+        ...eventData
+      }
+    })
+  }
+
+  const CreateCloudBtn = () => (
+    <a
+      className={styles.createCloudBtn}
+      href={createCloudBtnHref}
+      target="_blank"
+      rel="noreferrer"
+      onClick={() => handleClickLink(
+        HELP_LINKS.createRedisCloud.event,
+        { source: HELP_LINKS.createRedisCloud.sources.redisearch }
+      )}
+    >
+      <EuiText className={styles.createTitle}>
+        {HELP_LINKS.createRedisCloud.label}
+      </EuiText>
+      <EuiText className={styles.createText}>
+        Try Redis Cloud with enhanced database capabilities.
+      </EuiText>
+      <EuiIcon type="arrowRight" size="m" className={styles.arrowRight} />
+    </a>
+  )
+
   return (
     <div className={cx(styles.container)}>
       <EuiFlexGroup direction="column" gutterSize="s">
@@ -79,17 +116,7 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
         )}
         {!!createCloudBtnText && (
           <EuiFlexItem grow={false} data-testid="query-card-no-module-button">
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              fullWidth={false}
-              className={cx(styles.createCloudBtn)}
-              href={createCloudBtnHref}
-              target="_blank"
-            >
-              {createCloudBtnText}
-            </EuiButton>
+            <CreateCloudBtn />
           </EuiFlexItem>
         ) }
         {(!!summaryText || !!summaryImgPath || !!summaryImgDark || !!summaryImgLight) && (

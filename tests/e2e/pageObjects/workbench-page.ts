@@ -9,6 +9,8 @@ export class WorkbenchPage {
   cssQueryCardOutputResponseSuccess: string
   cssTableViewTypeOption: string
   cssMonacoCommandPaletteLine: string
+  cssQueryTextResult: string
+  cssQueryTableResult: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -51,6 +53,7 @@ export class WorkbenchPage {
   internalLinkWorkingWithHashes: Selector
   preselectExactSearch: Selector
   preselectGroupBy: Selector
+  tableViewTypeOption: Selector
   preselectArea: Selector
   expandArea: Selector
   monacoHintWithArguments: Selector
@@ -69,6 +72,8 @@ export class WorkbenchPage {
       this.cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
       this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
       this.cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
+      this.cssQueryTextResult = '[data-testid=query-cli-result]';
+      this.cssQueryTableResult = '[data-testid^=query-table-result-]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.
@@ -83,7 +88,8 @@ export class WorkbenchPage {
       this.paginationButtonPrevious = Selector(this.cssSelectorPaginationButtonPrevious);
       this.paginationButtonNext = Selector(this.cssSelectorPaginationButtonNext);
       this.selectViewType = Selector('[data-testid=select-view-type]');
-      this.textViewTypeOption = Selector('[data-test-subj=view-type-option-Text]');
+      this.textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
+      this.tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
       this.preselectList = Selector('[data-testid*=preselect-List]');
       this.preselectHashCreate = Selector('[data-testid=preselect-Create]');
       this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
@@ -100,7 +106,7 @@ export class WorkbenchPage {
       this.queryCardContainer = Selector('[data-testid^=query-card-container]');
       this.queryCardCommand = Selector('[data-testid=query-card-command]');
       this.queryTableResult = Selector('[data-testid^=query-table-result-]');
-      this.queryTextResult = Selector('[data-testid=query-cli-result]');
+      this.queryTextResult = Selector(this.cssQueryTextResult);
       this.queryColumns = Selector('[data-testid*=query-column-]');
       this.queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
       this.overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
@@ -113,7 +119,7 @@ export class WorkbenchPage {
       this.monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
       this.monacoShortcutInput = Selector('input.input');
       this.monacoSuggestionOption = Selector('div.monaco-list-row');
-      this.iframe = Selector('.pluginIframe', { timeout: 90000 });
+      this.iframe = Selector('[data-testid=pluginIframe]', { timeout: 60000 });
       this.monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
       this.noCommandHistorySection = Selector('[data-testid=wb_no-results]');
       this.preselectArea = Selector('[data-testid=enablementArea]');
@@ -139,6 +145,12 @@ export class WorkbenchPage {
       await t.click(this.textViewTypeOption);
   }
 
+  //Select Table view option in Workbench results
+  async selectViewTypeTable(): Promise<void>{
+    await t.click(this.selectViewType);
+    await t.click(this.tableViewTypeOption);
+}
+
   /**
   * Send a command in Workbench
   * @param command The command
@@ -147,5 +159,15 @@ export class WorkbenchPage {
   async sendCommandInWorkbench(command: string, speed = 1): Promise<void>{
       await t.typeText(this.queryInput, command, { replace: true, speed: speed});
       await t.click(this.submitCommandButton);
+  }
+
+  /**
+  * Send commands array in Workbench page
+  * @param commands The array of commands to send
+  */
+  async sendCommandsArrayInWorkbench(commands: string[]): Promise<void> {
+      for(let command of commands) {
+          await this.sendCommandInWorkbench(command);
+      }
   }
 }

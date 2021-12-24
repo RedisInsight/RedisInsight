@@ -2,7 +2,8 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { toggleCli, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import { resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
+import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 
 import BottomGroupComponents from './BottomGroupComponents'
 
@@ -43,8 +44,8 @@ describe('BottomGroupComponents', () => {
 
   it('should not to close command helper after closing cli', () => {
     render(<BottomGroupComponents />)
-    fireEvent.click(screen.getByTestId('collapse-cli'))
-    const expectedActions = [toggleCli()]
+    fireEvent.click(screen.getByTestId('close-cli'))
+    const expectedActions = [resetCliSettings(), resetOutputLoading()]
     expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
 
     expect(screen.getByTestId('command-helper')).toBeInTheDocument()
@@ -54,7 +55,7 @@ describe('BottomGroupComponents', () => {
     render(<BottomGroupComponents />)
     fireEvent.click(screen.getByTestId('close-command-helper'))
 
-    const expectedActions = [toggleCliHelper()]
+    const expectedActions = [resetCliHelperSettings()]
     expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
 
     expect(screen.getByTestId('cli')).toBeInTheDocument()

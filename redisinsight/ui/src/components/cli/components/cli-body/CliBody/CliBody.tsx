@@ -141,7 +141,7 @@ const CliBody = (props: Props) => {
   }
 
   const onKeyEsc = () => {
-    document.getElementById('collapse-cli')?.focus()
+    document.getElementById('close-cli')?.focus()
   }
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {

@@ -53,7 +53,7 @@ const Config = () => {
     if (serverInfo && checkIsAnalyticsGranted()) {
       (async () => {
         const telemetryService = getTelemetryService(segmentWriteKey)
-        await telemetryService.identify({ installationId: serverInfo.id })
+        await telemetryService.identify({ installationId: serverInfo.id, sessionId: serverInfo.sessionId })
 
         dispatch(setAnalyticsIdentified(true))
       })()

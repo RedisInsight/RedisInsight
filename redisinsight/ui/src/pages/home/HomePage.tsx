@@ -188,7 +188,12 @@ const HomePage = () => {
         {(resizeRef) => (
           <EuiPage>
             <EuiPageBody component="div">
-              <AddInstanceControls key="instance-controls" onAddInstance={handleAddInstance} direction={Direction.row} />
+              <AddInstanceControls
+                key="instance-controls"
+                onAddInstance={handleAddInstance}
+                direction={Direction.row}
+                welcomePage={!instances.length}
+              />
               {dialogIsOpen ? (
                 <div key="homePage" className="homePage">
                   <EuiResizableContainer style={{ height: '100%' }}>

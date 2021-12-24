@@ -80,6 +80,7 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
         HELP_LINKS.createRedisCloud.event,
         { source: HELP_LINKS.createRedisCloud.sources.redisearch }
       )}
+      data-testid="promo-btn"
     >
       <EuiText className={styles.createTitle}>
         {HELP_LINKS.createRedisCloud.label}

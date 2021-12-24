@@ -15,9 +15,16 @@ export interface ITelemetryEvent {
   nonTracking: boolean;
 }
 
+export interface ITelemetryInitEvent {
+  anonymousId: string;
+  sessionId: number;
+}
+
 @Injectable()
 export class AnalyticsService {
   private anonymousId: string = NON_TRACKING_ANONYMOUS_ID;
+
+  private sessionId: number = -1;
 
   private analytics;
 
@@ -31,7 +38,9 @@ export class AnalyticsService {
   }
 
   @OnEvent(AppAnalyticsEvents.Initialize)
-  public initialize(anonymousId: string) {
+  public initialize(payload: ITelemetryInitEvent) {
+    const { anonymousId, sessionId } = payload;
+    this.sessionId = sessionId;
     this.anonymousId = anonymousId;
     this.analytics = new Analytics(ANALYTICS_CONFIG.writeKey);
   }
@@ -55,6 +64,7 @@ export class AnalyticsService {
       if (isAnalyticsGranted) {
         this.analytics.track({
           anonymousId: this.anonymousId,
+          integrations: { Amplitude: { session_id: this.sessionId } },
           event,
           properties: {
             ...eventData,
@@ -63,6 +73,7 @@ export class AnalyticsService {
       } else if (nonTracking) {
         this.analytics.track({
           anonymousId: NON_TRACKING_ANONYMOUS_ID,
+          integrations: { Amplitude: { session_id: this.sessionId } },
           event,
           properties: {
             ...eventData,

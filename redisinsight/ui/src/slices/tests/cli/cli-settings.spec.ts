@@ -4,7 +4,7 @@ import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-util
 import reducer, {
   initialState,
   toggleCli,
-  resetIsShowCli,
+  resetCliSettings,
   processCliClient,
   processCliClientSuccess,
   processCliClientFailure,
@@ -22,6 +22,8 @@ import reducer, {
   setSearchingCommandFilter,
   setSearchingCommand,
   clearSearchingCommand,
+  resetCliClientUuid,
+  resetCliHelperSettings,
 } from '../../cli/cli-settings'
 
 let store: typeof mockedStore
@@ -46,6 +48,7 @@ describe('cliSettings slice', () => {
       const state: typeof initialState = {
         ...initialState,
         isShowHelper: false,
+        isMinimizedHelper: false,
       }
 
       expect(cliSettingsSelector(initialStateDefault)).toEqual(state)
@@ -56,6 +59,7 @@ describe('cliSettings slice', () => {
       const state: typeof initialState = {
         ...initialState,
         isShowHelper: true,
+        isMinimizedHelper: true,
       }
 
       // Act
@@ -77,6 +81,7 @@ describe('cliSettings slice', () => {
       const state: typeof initialState = {
         ...initialState,
         isShowCli: true,
+        isMinimizedHelper: false,
       }
 
       // Act
@@ -93,7 +98,7 @@ describe('cliSettings slice', () => {
   })
 
   describe('setMatchedCommand', () => {
-    it('should properly set !isShowCli', () => {
+    it('should properly set matchedCommand', () => {
       // Arrange
       const matchedCommand = 'get'
       const state: typeof initialState = {
@@ -115,7 +120,7 @@ describe('cliSettings slice', () => {
   })
 
   describe('setCliEnteringCommand', () => {
-    it('should properly set !isShowCli', () => {
+    it('should properly set isEnteringCommand = true', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
@@ -230,7 +235,7 @@ describe('cliSettings slice', () => {
     })
   })
 
-  describe('resetIsShowCli', () => {
+  describe('resetCliSettings', () => {
     it('should properly set isShowCli = false', () => {
       // Arrange
       const state: typeof initialState = {
@@ -239,7 +244,7 @@ describe('cliSettings slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, resetIsShowCli())
+      const nextState = reducer(initialState, resetCliSettings())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -247,6 +252,65 @@ describe('cliSettings slice', () => {
           settings: nextState,
         },
       })
+      expect(cliSettingsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetCliClientUuid', () => {
+    it('should properly set cliClientUuid = ""', () => {
+      // Arrange
+      const state: typeof initialState = {
+        ...initialState,
+        cliClientUuid: '',
+      }
+
+      // Act
+      const nextState = reducer({ ...initialState, cliClientUuid: '123' }, resetCliClientUuid())
+
+      // Assert
+      const rootState = { ...initialStateDefault,
+        cli: {
+          settings: nextState,
+        }, }
+      expect(cliSettingsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetCliHelperSettings', () => {
+    it('should properly set Cli Helper settings to default', () => {
+      // Arrange
+      const initState: typeof initialState = {
+        ...initialState,
+        isShowHelper: true,
+        isSearching: true,
+        isEnteringCommand: true,
+        isMinimizedHelper: true,
+        matchedCommand: '123',
+        searchingCommand: '123',
+        searchedCommand: '123',
+        searchingCommandFilter: '123',
+      }
+
+      const state: typeof initialState = {
+        ...initialState,
+        isShowHelper: false,
+        isSearching: false,
+        isEnteringCommand: false,
+        isMinimizedHelper: false,
+        matchedCommand: '',
+        searchingCommand: '',
+        searchedCommand: '',
+        searchingCommandFilter: '',
+      }
+
+      // Act
+      const nextState = reducer(initState, resetCliHelperSettings())
+
+      // Assert
+      const rootState = { ...initialStateDefault,
+        cli: {
+          settings: nextState,
+        }, }
       expect(cliSettingsSelector(rootState)).toEqual(state)
     })
   })

@@ -42,4 +42,10 @@ export class GetServerInfoResponse {
     example: ['PLAIN', 'KEYTAR'],
   })
   encryptionStrategies: string[];
+
+  @ApiProperty({
+    description: 'Server session id.',
+    type: Number,
+  })
+  sessionId: number;
 }

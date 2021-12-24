@@ -171,7 +171,7 @@ const ConsentsSettings = ({ liveEditMode = false }: Props) => {
         {!liveEditMode && (
           <>
             <EuiCallOut>
-              <EuiText size="s">
+              <EuiText size="s" data-testid="plugin-section">
                 While adding new visualization plugins, use files only from trusted authors
                 to avoid automatic execution of malicious code.
               </EuiText>

@@ -18,7 +18,6 @@ export class CliPage {
   cliOutputResponseFail: Selector
   cliArea: Selector
   cliCollapseButton: Selector
-  collapseCliHelperButton: Selector
   cliHelperSearch: Selector
   cliHelperOutputTitles: Selector
   filterGroupTypeButton: Selector
@@ -34,6 +33,8 @@ export class CliPage {
   cliCommandExecuted: Selector
   cliReadMoreJSONCommandDocumentation: Selector
   cliReadMoreRediSearchCommandDocumentation: Selector
+  expandCommandHelperButton: Selector
+  closeCommandHelperButton: Selector
 
   constructor() {
       //-------------------------------------------------------------------------------------------
@@ -44,8 +45,9 @@ export class CliPage {
       //-------------------------------------------------------------------------------------------
       //BUTTONS
       this.cliExpandButton = Selector('[data-testid=expand-cli]');
-      this.cliCollapseButton = Selector('[data-testid=collapse-cli]');
-      this.collapseCliHelperButton = Selector('[data-testid=collapse-cli-helper]');
+      this.cliCollapseButton = Selector('[data-testid=close-cli]');
+      this.expandCommandHelperButton = Selector('[data-testid=expand-command-helper]');
+      this.closeCommandHelperButton = Selector('[data-testid=close-command-helper]');
       this.filterGroupTypeButton = Selector('[data-testid=select-filter-group-type]');
       this.filterOptionGroupType = Selector('[data-test-subj^=filter-option-group-type-]');
       this.readMoreButton = Selector('[data-testid=read-more]');

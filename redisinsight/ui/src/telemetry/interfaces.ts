@@ -2,6 +2,7 @@ import { TelemetryEvent } from './events'
 
 export interface ITelemetryIdentify {
   installationId: string;
+  sessionId: number;
 }
 
 export interface ITelemetryService {

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-
 import cx from 'classnames'
 import {
   EuiFlexGroup,
@@ -14,13 +13,15 @@ import {
 } from '@elastic/eui'
 
 import {
-  deleteCliClientAction,
   toggleCli,
+  resetCliSettings,
+  deleteCliClientAction,
 } from 'uiSrc/slices/cli/cli-settings'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { sessionStorageService } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 
 import styles from './styles.module.scss'
 
@@ -41,14 +42,25 @@ const CliHeader = () => {
   useEffect(() => {
     window.addEventListener('beforeunload', removeCliClient, false)
     return () => {
-      removeCliClient()
       window.removeEventListener('beforeunload', removeCliClient, false)
     }
   }, [])
 
-  const handleCollapseCli = () => {
+  const handleCloseCli = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.CLI_HIDDEN,
+      event: TelemetryEvent.CLI_CLOSED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
+    removeCliClient()
+    dispatch(resetCliSettings())
+    dispatch(resetOutputLoading())
+  }
+
+  const handleHideCli = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CLI_MINIMIZED,
       eventData: {
         databaseId: instanceId
       }
@@ -90,6 +102,24 @@ const CliHeader = () => {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
+            content="Minimize"
+            position="top"
+            display="inlineBlock"
+            anchorClassName="flex-row"
+          >
+            <EuiButtonIcon
+              iconType="minus"
+              color="primary"
+              id="hide-cli"
+              aria-label="hide cli"
+              data-testid="hide-cli"
+              className={styles.icon}
+              onClick={handleHideCli}
+            />
+          </EuiToolTip>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiToolTip
             content="Close"
             position="top"
             display="inlineBlock"
@@ -98,11 +128,11 @@ const CliHeader = () => {
             <EuiButtonIcon
               iconType="cross"
               color="primary"
-              id="collapse-cli"
-              aria-label="collapse cli"
-              data-testid="collapse-cli"
+              id="close-cli"
+              aria-label="close cli"
+              data-testid="close-cli"
               className={styles.icon}
-              onClick={handleCollapseCli}
+              onClick={handleCloseCli}
             />
           </EuiToolTip>
         </EuiFlexItem>

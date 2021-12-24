@@ -6,7 +6,7 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { resetCliHelperSettings, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import { resetCliHelperSettings, toggleCliHelper, toggleHideCliHelper } from 'uiSrc/slices/cli/cli-settings'
 import CommandHelperHeader from './CommandHelperHeader'
 
 let store: typeof mockedStore
@@ -33,7 +33,7 @@ describe('CommandHelperHeader', () => {
     render(<CommandHelperHeader />)
     fireEvent.click(screen.getByTestId('hide-command-helper'))
 
-    const expectedActions = [toggleCliHelper()]
+    const expectedActions = [toggleCliHelper(), toggleHideCliHelper()]
     expect(store.getActions()).toEqual(expectedActions)
   })
 })

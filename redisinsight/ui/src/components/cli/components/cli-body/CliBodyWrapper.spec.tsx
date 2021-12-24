@@ -78,15 +78,6 @@ describe('CliBodyWrapper', () => {
     expect(render(<CliBodyWrapper />)).toBeTruthy()
   })
 
-  it('should SessionStorage be called', () => {
-    const mockUuid = 'test-uuid'
-    sessionStorageService.get = jest.fn().mockReturnValue(mockUuid)
-
-    render(<CliBodyWrapper />)
-
-    expect(sessionStorageService.get).toBeCalledWith(BrowserStorageItem.cliClientUuid)
-  })
-
   it('should render with SessionStorage', () => {
     render(<CliBodyWrapper />)
 

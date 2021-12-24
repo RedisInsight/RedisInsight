@@ -29,6 +29,12 @@
       box-shadow: none;
     }
   }
+  &.euiButton--fill {
+    color: var(--euiColorPrimaryText) !important;
+    &:hover {
+      color: var(--euiColorPrimaryText) !important;
+    }
+  }
 }
 .euiButton.euiButton--fill {
   &.euiButton--secondary {

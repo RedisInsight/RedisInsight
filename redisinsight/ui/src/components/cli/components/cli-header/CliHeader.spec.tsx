@@ -11,9 +11,10 @@ import {
   waitFor,
 } from 'uiSrc/utils/test-utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { processCliClient, toggleCli } from 'uiSrc/slices/cli/cli-settings'
+import { processCliClient, resetCliSettings, toggleCli } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sessionStorageService } from 'uiSrc/services'
+import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import CliHeader from './CliHeader'
 
 let store: typeof mockedStore
@@ -44,39 +45,47 @@ describe('CliHeader', () => {
     expect(render(<CliHeader />)).toBeTruthy()
   })
 
-  it('should "toggleCli" action be called after click "collapse-cli" button', () => {
+  it('should "resetCliSettings" action be called after click "close-cli" button', () => {
     render(<CliHeader />)
-    fireEvent.click(screen.getByTestId('collapse-cli'))
+    fireEvent.click(screen.getByTestId('close-cli'))
 
-    const expectedActions = [toggleCli()]
+    const expectedActions = [resetCliSettings(), resetOutputLoading()]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should "toggleCli" action be called after click "collapse-cli" button', async () => {
+  it('should "resetCliSettings" action be called after click "close-cli" button', async () => {
     const mockUuid = 'test-uuid'
     sessionStorageMock.getItem = jest.fn().mockReturnValue(mockUuid)
 
     render(<CliHeader />)
 
     await waitFor(() => {
-      fireEvent.click(screen.getByTestId('collapse-cli'))
+      fireEvent.click(screen.getByTestId('close-cli'))
     })
+
+    const expectedActions = [resetCliSettings(), resetOutputLoading()]
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should "toggleCli" action be called after click "hide-cli" button', () => {
+    render(<CliHeader />)
+    fireEvent.click(screen.getByTestId('hide-cli'))
 
     const expectedActions = [toggleCli()]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should "processCliClient" action be called after unmount with mocked sessionStorage item ', () => {
+  it('should "toggleCli" action be called after click "hide-cli" button', async () => {
     const mockUuid = 'test-uuid'
-    sessionStorageService.get = jest.fn().mockReturnValue(mockUuid)
+    sessionStorageMock.getItem = jest.fn().mockReturnValue(mockUuid)
 
-    const { unmount } = render(<CliHeader />)
+    render(<CliHeader />)
 
-    unmount()
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId('hide-cli'))
+    })
 
-    expect(sessionStorageService.get).toBeCalledWith(BrowserStorageItem.cliClientUuid)
-
-    const expectedActions = [processCliClient()]
+    const expectedActions = [toggleCli()]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
@@ -98,4 +107,24 @@ describe('CliHeader', () => {
     expect(endpointEl).toBeInTheDocument()
     expect(endpointEl).toHaveTextContent(endpoint)
   })
+})
+
+it('should "processCliClient" action be called after close cli with mocked sessionStorage item ', async () => {
+  const mockUuid = 'test-uuid'
+  sessionStorageService.get = jest.fn().mockReturnValue(mockUuid)
+
+  render(<CliHeader />)
+
+  await waitFor(() => {
+    fireEvent.click(screen.getByTestId('close-cli'))
+  })
+
+  expect(sessionStorageService.get).toBeCalledWith(BrowserStorageItem.cliClientUuid)
+
+  const expectedActions = [
+    processCliClient(),
+    resetCliSettings(),
+    resetOutputLoading(),
+  ]
+  expect(store.getActions()).toEqual(expectedActions)
 })

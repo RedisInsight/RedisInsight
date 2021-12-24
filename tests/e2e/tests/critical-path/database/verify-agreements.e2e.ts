@@ -1,30 +1,16 @@
-import { RequestMock } from 'testcafe';
 import { commonUrl } from '../../../helpers/conf';
-import { UserAgreementPage, AddRedisDatabasePage, SettingsPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { UserAgreementPage, AddRedisDatabasePage, SettingsPage } from '../../../pageObjects';
+import { Common } from '../../../helpers/common';
 
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const settingsPage = new SettingsPage();
-const myRedisDatabasePage = new MyRedisDatabasePage();
-
-const mockedSettingsResponse = {
-    agreements: {
-        version: '0',
-        eula: false,
-        analytics: false
-    }
-};
-const settingsApiUrl = `${commonUrl}/api/settings`;
-
-const mock = RequestMock()
-    .onRequestTo(settingsApiUrl)
-    .respond(mockedSettingsResponse, 200);
-
+const common = new Common();
 const userAgreementPage = new UserAgreementPage();
 
 fixture `Agreements Verification`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .requestHooks(mock)
+    .requestHooks(common.mock)
     .beforeEach(async t => {
         await t.maximizeWindow();
     });

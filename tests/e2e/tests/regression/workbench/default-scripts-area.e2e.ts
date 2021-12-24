@@ -54,3 +54,21 @@ test('Verify that user can see the [Manual] option in the Enablement area', asyn
         await t.expect(displayedOptions[i]).eql(optionsForCheck[i], `Option ${optionsForCheck} is in the Enablement area`);
     }
 });
+test('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
+    //Open Working with Hashes section
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    //Check the button from Hash page is visible
+    await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
+    //Go to Browser page
+    await t.click(myRedisDatabasePage.browserButton);
+    //Go back to Workbench page
+    await t.click(myRedisDatabasePage.workbenchButton);
+    //Verify that the same article is opened in Enablement area
+    await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
+    //Go to list of DBs page
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    //Go back to active DB again
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Check that user is on Workbench page and "Working with Hashes" page is displayed
+    await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
+});

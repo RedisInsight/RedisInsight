@@ -70,7 +70,7 @@ export const constants = {
 
   // cloud
   TEST_CLOUD_RTE: process.env.TEST_CLOUD_RTE,
-  TEST_CLOUD_API: process.env.REDIS_CLOUD_URL || process.env.TEST_CLOUD_API || 'https://qa-api.redislabs.com/v1',
+  TEST_CLOUD_API: process.env.REDIS_CLOUD_URL || process.env.TEST_CLOUD_API || 'https://api.qa.redislabs.com/v1',
   TEST_CLOUD_API_KEY: process.env.TEST_CLOUD_API_KEY,
   TEST_CLOUD_API_SECRET_KEY: process.env.TEST_CLOUD_API_SECRET_KEY,
   TEST_CLOUD_SUBSCRIPTION_NAME: process.env.TEST_CLOUD_SUBSCRIPTION_NAME || 'ITests',

@@ -104,9 +104,27 @@ const cliSettingsSlice = createSlice({
       state.blockingCommands = payload.map((command) => command.toLowerCase())
     },
 
+    // reset cli client uuid
+    resetCliClientUuid: (state) => {
+      state.cliClientUuid = ''
+    },
+
     // reset to collapse CLI
-    resetIsShowCli: (state) => {
+    resetCliSettings: (state) => {
       state.isShowCli = false
+      state.cliClientUuid = ''
+      state.loading = false
+    },
+
+    // reset to collapse CLI Helper
+    resetCliHelperSettings: (state) => {
+      state.isShowHelper = false
+      state.isSearching = false
+      state.isEnteringCommand = false
+      state.matchedCommand = ''
+      state.searchingCommand = ''
+      state.searchedCommand = ''
+      state.searchingCommandFilter = ''
     },
   },
 })
@@ -126,7 +144,9 @@ export const {
   processCliClientSuccess,
   processCliClientFailure,
   deleteCliClientSuccess,
-  resetIsShowCli,
+  resetCliClientUuid,
+  resetCliSettings,
+  resetCliHelperSettings,
   getUnsupportedCommandsSuccess,
   getBlockingCommandsSuccess,
 } = cliSettingsSlice.actions
@@ -216,6 +236,20 @@ export function deleteCliClientAction(
       dispatch(processCliClientFailure(errorMessage))
       onFailAction?.()
     }
+  }
+}
+
+// Asynchronous thunk action
+export function resetCliSettingsAction(
+  onSuccessAction?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const { contextInstanceId } = state.app.context
+    const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
+
+    dispatch(resetCliSettings())
+    dispatch(deleteCliClientAction(contextInstanceId, cliClientUuid, onSuccessAction))
   }
 }
 

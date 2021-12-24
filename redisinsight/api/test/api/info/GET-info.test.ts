@@ -18,6 +18,7 @@ const responseSchema = Joi.object().keys({
   osPlatform: Joi.string().required(),
   buildType: Joi.string().valid('ELECTRON', 'DOCKER_ON_PREMISE').required(),
   encryptionStrategies: Joi.array().items(Joi.string()),
+  sessionId: Joi.number().required(),
 }).required();
 
 const mainCheckFn = async (testCase) => {

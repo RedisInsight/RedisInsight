@@ -22,11 +22,10 @@ export interface Props {
 
 const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
   const { commandGroups = [] } = useSelector(appRedisCommandsSelector)
+  const { isEnteringCommand, matchedCommand, searchingCommandFilter } = useSelector(cliSettingsSelector)
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
-  const [typeSelected, setTypeSelected] = useState<string>('')
-
-  const { isEnteringCommand, matchedCommand } = useSelector(cliSettingsSelector)
+  const [typeSelected, setTypeSelected] = useState<string>(searchingCommandFilter)
 
   useEffect(() => {
     if (isEnteringCommand && matchedCommand) {
@@ -35,7 +34,7 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
   }, [isEnteringCommand])
 
   useEffect(() => {
-    setTypeSelected('')
+    matchedCommand && setTypeSelected('')
   }, [matchedCommand])
 
   const groupOptions = [...commandGroups].sort().map((group: string) => ({

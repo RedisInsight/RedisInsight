@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 export default {
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
+  COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',
   UNDEFINED_INSTANCE_ID: 'Undefined redis database instance id.',
   NO_CONNECTION_TO_REDIS_DB: 'No connection to the Redis Database.',
   WRONG_DATABASE_TYPE: 'Wrong database type.',

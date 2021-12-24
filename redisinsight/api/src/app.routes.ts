@@ -4,6 +4,7 @@ import { BrowserModule } from 'src/modules/browser/browser.module';
 import { RedisEnterpriseModule } from 'src/modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from 'src/modules/redis-sentinel/redis-sentinel.module';
 import { CliModule } from 'src/modules/cli/cli.module';
+import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,10 @@ export const routes: Routes = [
       {
         path: '/:dbInstance',
         module: CliModule,
+      },
+      {
+        path: '/:dbInstance',
+        module: WorkbenchModule,
       },
     ],
   },

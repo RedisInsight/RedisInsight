@@ -23,6 +23,8 @@ export const mockQueryBuilderGetMany = jest.fn();
 export const mockCreateQueryBuilder = jest.fn(() => ({
   where: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
+  orderBy: jest.fn().mockReturnThis(),
+  limit: jest.fn().mockReturnThis(),
   leftJoin: jest.fn().mockReturnThis(),
   getMany: mockQueryBuilderGetMany,
   getOne: mockQueryBuilderGetOne,

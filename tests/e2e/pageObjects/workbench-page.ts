@@ -8,6 +8,7 @@ export class WorkbenchPage {
   cssDeleteCommandButton: string
   cssQueryCardOutputResponseSuccess: string
   cssTableViewTypeOption: string
+  cssMonacoCommandPaletteLine: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -43,6 +44,9 @@ export class WorkbenchPage {
   monacoCloseCommandDetails: Selector
   monacoSuggestion: Selector
   monacoCommandIndicator: Selector
+  monacoContextMenu: Selector
+  monacoShortcutInput: Selector
+  monacoSuggestionOption: Selector
   iframe: Selector
   internalLinkWorkingWithHashes: Selector
   preselectExactSearch: Selector
@@ -64,6 +68,7 @@ export class WorkbenchPage {
       this.cssDeleteCommandButton = '[data-testid=delete-command]';
       this.cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
       this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
+      this.cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.
@@ -105,6 +110,9 @@ export class WorkbenchPage {
       this.monacoCommandDetails = Selector('div.suggest-details-container');
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
+      this.monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
+      this.monacoShortcutInput = Selector('input.input');
+      this.monacoSuggestionOption = Selector('div.monaco-list-row');
       this.iframe = Selector('.pluginIframe', { timeout: 90000 });
       this.monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
       this.noCommandHistorySection = Selector('[data-testid=wb_no-results]');

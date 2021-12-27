@@ -35,6 +35,12 @@
       margin-right: 4px;
     }
   }
+
+  &:hover {
+    .componentBadge {
+      background-color: var(--buttonIconPrimaryHover) !important;
+    }
+  }
 }
 
 .componentBadge {
@@ -43,8 +49,8 @@
   height: 18px !important;
   border: none !important;
 
-  &:hover {
-    background-color: var(--buttonIconPrimaryHover) !important;
+  &[title] {
+    pointer-events: none;
   }
 
   &.active {

@@ -80,11 +80,13 @@ test.skip('Verify that user when he have more than 10 results can request to vie
     //Get needed container
     const containerOfCommand = await workbenchPage.getCardContainerByCommand(searchCommand);
     //Verify that we have pagination buttons
+    await t.switchToIframe(workbenchPage.iframe);
     await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonPrevious).exists)
         .ok('Pagination previous button exists');
     await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonNext).exists)
         .ok('Pagination next button exists');
     //Drop index and documents
+    await t.switchToMainWindow();
     await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
 });
 //skipped due the inaccessibility of the iframe
@@ -105,8 +107,10 @@ test.skip
         //Send search command
         await workbenchPage.sendCommandInWorkbench(searchCommand);
         //Check that result is displayed in Table view
+        await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
         //Select Text view type
+        await t.switchToMainWindow();
         await workbenchPage.selectViewTypeText();
         //Check that result is displayed in Text view
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');

@@ -54,6 +54,11 @@ const outputSlice = createSlice({
     },
     resetOutput: (state) => {
       state.data = []
+      state.loading = false
+    },
+
+    resetOutputLoading: (state) => {
+      state.loading = false
     },
   },
 })
@@ -63,6 +68,7 @@ export const {
   concatToOutput,
   setOutputInitialState,
   resetOutput,
+  resetOutputLoading,
   updateCliCommandHistory,
   sendCliCommand,
   sendCliCommandSuccess,
@@ -96,7 +102,7 @@ export function sendCliCommandAction(
 
       const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
         getUrl(id, ApiEndpoints.CLI, state.cli.settings?.cliClientUuid, ApiEndpoints.SEND_COMMAND),
-        { command, outputFormat: CliOutputFormatterType.Raw }
+        { command, outputFormat: CliOutputFormatterType.Raw },
       )
 
       if (isStatusSuccessful(status)) {
@@ -148,7 +154,7 @@ export function sendCliClusterCommandAction(
           state.cli.settings?.cliClientUuid,
           ApiEndpoints.SEND_CLUSTER_COMMAND
         ),
-        { ...options, command, outputFormat }
+        { ...options, command, outputFormat },
       )
 
       if (isStatusSuccessful(status)) {

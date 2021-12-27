@@ -18,6 +18,6 @@ export default {
     database: join(homedir, 'redisinsight.db'),
   },
   redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://api.redislabs.com/v1/',
+    url: process.env.REDIS_CLOUD_URL || 'https://api.redislabs.com/v1',
   },
 };

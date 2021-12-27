@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom'
 import {
   cliSettingsSelector,
   createCliClientAction,
-  updateCliClientAction,
   setCliEnteringCommand,
   clearSearchingCommand,
 } from 'uiSrc/slices/cli/cli-settings'
@@ -21,9 +20,7 @@ import {
   processUnsupportedCommand,
 } from 'uiSrc/slices/cli/cli-output'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { BrowserStorageItem } from 'uiSrc/constants'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { sessionStorageService } from 'uiSrc/services'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cliHelper'
@@ -34,8 +31,6 @@ import CliBody from './CliBody'
 import styles from './CliBody/styles.module.scss'
 
 const CliBodyWrapper = () => {
-  const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
-
   const [command, setCommand] = useState('')
 
   const dispatch = useDispatch()
@@ -46,7 +41,8 @@ const CliBodyWrapper = () => {
     unsupportedCommands,
     isEnteringCommand,
     isSearching,
-    matchedCommand
+    matchedCommand,
+    cliClientUuid,
   } = useSelector(cliSettingsSelector)
   const { host, port, connectionType } = useSelector(connectedInstanceSelector)
 
@@ -55,12 +51,7 @@ const CliBodyWrapper = () => {
       dispatch(concatToOutput(InitOutputText(host, port)))
     }
 
-    if (cliClientUuid) {
-      dispatch(updateCliClientAction(cliClientUuid, onSuccess, onFail))
-      return
-    }
-
-    dispatch(createCliClientAction(onSuccess, onFail))
+    !cliClientUuid && dispatch(createCliClientAction(onSuccess, onFail))
   }, [])
 
   useEffect(() => {

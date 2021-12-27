@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -7,7 +7,7 @@ import {
   clearSearchingCommand,
   setSearchingCommand,
   setSearchingCommandFilter,
-  setCliEnteringCommand
+  setCliEnteringCommand,
 } from 'uiSrc/slices/cli/cli-settings'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
@@ -18,15 +18,10 @@ import styles from './styles.module.scss'
 
 const CHSearchWrapper = () => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { loading } = useSelector(appRedisCommandsSelector)
   const [filterType, setFilterType] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
-  const { loading } = useSelector(appRedisCommandsSelector)
   const dispatch = useDispatch()
-
-  useEffect(() => () => {
-    dispatch(clearSearchingCommand())
-    dispatch(setCliEnteringCommand())
-  }, [])
 
   const onChangeSearch = (value: string) => {
     setSearchValue(value)

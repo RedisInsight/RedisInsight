@@ -10,6 +10,10 @@ COPY configs ./configs
 COPY scripts ./scripts
 COPY redisinsight ./redisinsight
 RUN SKIP_POSTINSTALL=1 yarn install
+ARG SERVER_TLS_CERT
+ARG SERVER_TLS_KEY
+ENV SERVER_TLS_CERT=${SERVER_TLS_CERT}
+ENV SERVER_TLS_KEY=${SERVER_TLS_KEY}
 RUN yarn build:web
 RUN yarn build:statics
 

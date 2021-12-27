@@ -4,5 +4,5 @@ const isWebApp = process.env.APP_ENV === 'web'
 const apiPort = process.env.API_PORT
 
 export const getBaseApiUrl = () => (!isDevelopment && isWebApp
-  ? window.location.host
+  ? window.location.origin
   : `${baseApiUrl}:${apiPort}`)

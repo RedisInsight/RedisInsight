@@ -94,5 +94,5 @@ test('Verify that user can find (using right click) "Run Commands" custom shortc
     await t.click(workbenchPage.monacoSuggestionOption);
     //Check the result with sent command
     const commandTextInResult = await workbenchPage.queryCardCommand.withExactText(command);
-    await t.expect(commandTextInResult.exists).ok('Result of sent command exists');
+    await t.expect(commandTextInResult.exists).ok('The result of sent command');
 });

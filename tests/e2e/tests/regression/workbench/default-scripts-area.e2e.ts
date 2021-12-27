@@ -87,7 +87,7 @@ test('Verify that user can see saved scroll position in Enablement area when he 
     //Go back to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
     //Check that scroll position is saved
-    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
+    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status');
     //Go to list of DBs page
     await t.click(myRedisDatabasePage.myRedisDBButton);
     //Go back to active DB again

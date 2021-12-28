@@ -92,6 +92,11 @@ aliases:
     - oss-sent            # OSS Sentinel
     - re-st               # Redis Enterprise with Standalone inside
     - re-clu              # Redis Enterprise with Cluster inside
+  guides-filter: &guidesFilter
+    filters:
+      branches:
+        only:
+          - guides
   dev-filter: &devFilter
     filters:
       branches:
@@ -729,6 +734,18 @@ jobs:
 
             done
 
+  release-guides:
+    docker:
+      - image: circleci/node:15.14.0
+    steps:
+      - checkout
+      - run:
+          name: Release guides
+          command: |
+            cd ./redisinsight/ui/src/packages/enablement-area && zip -r data.zip .
+            mkdir -p _build && mv data.zip ./_build
+            echo "{\"timestamp\":$(date +%s)}" > ./_build/build.json
+            aws s3 cp _build/ s3://${AWS_BUCKET_NAME}/public/guides --recursive
 workflows:
   build:
     jobs:
@@ -969,3 +986,12 @@ workflows:
           report: true
           requires:
             - Build docker image
+  guides:
+    jobs:
+      - guides-approve:
+          name: Approve guides release
+          <<: *guidesFilter
+      - release-guides:
+          name: Build & release
+          requires:
+            - Approve guides release

@@ -8,6 +8,7 @@ export default {
     logs: join(homedir, 'logs'),
     customPlugins: join(homedir, 'plugins'),
     commands: join(homedir, 'commands'),
+    enablementArea: join(homedir, 'enablement-area'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },

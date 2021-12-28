@@ -989,6 +989,7 @@ workflows:
   guides:
     jobs:
       - guides-approve:
+          type: approval
           name: Approve guides release
           <<: *guidesFilter
       - release-guides:

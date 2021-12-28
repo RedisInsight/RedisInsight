@@ -109,5 +109,15 @@ export default {
       url: process.env.COMMANDS_REDISGRAPH_URL
         || 'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',
     },
+    {
+      name: 'redisgears',
+      url: process.env.COMMANDS_REDISGEARS_URL
+        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
+    },
+    {
+      name: 'redisbloom',
+      url: process.env.COMMANDS_REDISBLOOM_URL
+        || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
+    },
   ],
 };

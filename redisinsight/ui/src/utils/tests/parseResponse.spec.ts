@@ -1,5 +1,5 @@
-import { parseKeysListResponse } from 'uiSrc/utils';
-import { omit } from 'lodash';
+import { parseKeysListResponse } from 'uiSrc/utils'
+import { omit } from 'lodash'
 
 describe('parseKeysListResponse', () => {
   it('should handle empty array in response', () => {
@@ -9,17 +9,17 @@ describe('parseKeysListResponse', () => {
       nextCursor: '0',
       keys: [],
       shardsMeta: {},
-    };
-    const scanResponse = [];
-    expect(parseKeysListResponse(currentState.shardsMeta, scanResponse)).toEqual(currentState);
-  });
+    }
+    const scanResponse = []
+    expect(parseKeysListResponse(currentState.shardsMeta, scanResponse)).toEqual(currentState)
+  })
   it('should summarize data with initial state (standalone)', () => {
     const currentState = {
       nextCursor: '0',
       total: 0,
       scanned: 0,
       shardsMeta: {},
-    };
+    }
     const scanResponse = [
       {
         cursor: 100,
@@ -27,29 +27,29 @@ describe('parseKeysListResponse', () => {
         scanned: 150,
         keys: ['keywithdetails']
       }
-    ];
-    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse);
+    ]
+    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
       ...omit(scanResponse[0], 'cursor'),
-      nextCursor: '' + scanResponse[0].cursor,
+      nextCursor: `${scanResponse[0].cursor}`,
       shardsMeta: {
-        'standalone': omit(scanResponse[0], 'keys'),
+        standalone: omit(scanResponse[0], 'keys'),
       }
     })
-  });
+  })
   it('should summarize data with existing one (standalone)', () => {
     const currentState = {
       nextCursor: '100',
       total: 200,
       scanned: 150,
       shardsMeta: {
-        'standalone': {
+        standalone: {
           cursor: 100,
           total: 200,
           scanned: 150,
         }
       },
-    };
+    }
     const scanResponse = [
       {
         cursor: 0,
@@ -57,27 +57,27 @@ describe('parseKeysListResponse', () => {
         scanned: 150,
         keys: ['keywithdetails']
       }
-    ];
-    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse);
+    ]
+    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
       ...omit(scanResponse[0], 'cursor'),
       scanned: scanResponse[0].total,
-      nextCursor: '' + scanResponse[0].cursor,
+      nextCursor: `${scanResponse[0].cursor}`,
       shardsMeta: {
-        'standalone': {
+        standalone: {
           ...omit(scanResponse[0], 'keys'),
           scanned: scanResponse[0].total,
         },
       }
     })
-  });
+  })
   it('should summarize data  with initial state (cluster)', () => {
     const currentState = {
       nextCursor: '127.0.0.1:7000@100||127.0.0.1:7002@9',
       total: 200 + 50 + 400,
       scanned: 150 + 50 + 150,
       shardsMeta: {},
-    };
+    }
     const scanResponse = [
       {
         cursor: 100,
@@ -103,8 +103,8 @@ describe('parseKeysListResponse', () => {
         host: '127.0.0.1',
         port: 7002,
       }
-    ];
-    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse);
+    ]
+    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
       nextCursor: '127.0.0.1:7000@100||127.0.0.1:7002@9',
       total: 200 + 50 + 400,
@@ -133,8 +133,8 @@ describe('parseKeysListResponse', () => {
           port: 7002,
         },
       }
-    });
-  });
+    })
+  })
   it('should summarize data  with initial one (cluster)', () => {
     const currentState = {
       nextCursor: '127.0.0.1:7000@100||127.0.0.1:7002@9',
@@ -164,7 +164,7 @@ describe('parseKeysListResponse', () => {
           port: 7002,
         },
       },
-    };
+    }
     const scanResponse = [
       {
         cursor: 0,
@@ -182,8 +182,8 @@ describe('parseKeysListResponse', () => {
         host: '127.0.0.1',
         port: 7002,
       }
-    ];
-    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse);
+    ]
+    const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
       nextCursor: '127.0.0.1:7002@18',
       total: 201 + 50 + 400,
@@ -212,6 +212,6 @@ describe('parseKeysListResponse', () => {
           port: 7002,
         },
       }
-    });
-  });
-});
+    })
+  })
+})

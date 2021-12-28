@@ -76,7 +76,7 @@
   --tableLightestBorderColor: #{$tableLightestBorderColor};
   --tableDarkestBorderColor: #{$tableDarkestBorderColor};
   --browserTableRowEven: #{$browserTableRowEven};
-  --inputPlaceHolderColor: #{$inputPlaceHolderColor};
+  --inputPlaceholderColor: #{$inputPlaceholderColor};
   --inputDisabledBackgroundColor: #{$inputDisabledBackgroundColor};
   --inputTextColor: #{$inputTextColor};
   --controlsBoxShadowColor: #{$controlsBoxShadowColor};
@@ -84,16 +84,21 @@
   --controlsLabelColor: #{$controlsLabelColor};
   --hoverInListColor: #{$hoverInListColor};
   --hoverInListColorLight: #{$hoverInListColorLight};
+  --hoverInListColorDarken: #{$hoverInListColorDarken};
+  --externalLinkColor: #{$externalLinkColor};
+  --externalLinkTooltipColor: #{$externalLinkTooltipColor};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
 
   --separatorColor: #{$separatorColor};
+  --separatorDropdownColor: #{$separatorDropdownColor};
 
   --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
   --buttonSecondaryTextColor: #{$buttonSecondaryTextColor};
   --buttonSecondaryDisabledTextColor: #{$buttonSecondaryDisabledTextColor};
   --buttonDangerHoverColor: #{$buttonDangerHoverColor};
+  --buttonIconPrimaryHover: #{$buttonIconPrimaryHover};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};
@@ -102,6 +107,9 @@
   --commandGroupBadgeColor: #{$commandGroupBadgeColor};
 
   --moduleBackgroundColor: #{$commandGroupBadgeColor};
+  --callOutBackgroundColor: #{$euiTooltipBackgroundColor};
+
+  --overlayPromoNYColor: #{$overlayPromoNYColor};
 
   // KeyTypes
   --typeHashColor: #{$typeHashColor};

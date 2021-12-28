@@ -1,5 +1,15 @@
+@import '@elastic/eui/src/global_styling/index';
+
 .button {
   justify-content: space-between;
+  &[class*='euiButton--secondary']:not([class*='isDisabled']) {
+    &:hover,
+    &:focus,
+    &:focus-within {
+      background-color: var(--euiColorSecondary) !important;
+      border-color: var(--euiColorSecondary) !important;
+    }
+  }
   &:not(:hover) {
     span {
       color: var(--euiTextSubduedColor);
@@ -10,5 +20,5 @@
 .buttonText {
   flex: 1;
   text-align: center;
-  letter-spacing: 1.1px;
+  letter-spacing: normal;
 }

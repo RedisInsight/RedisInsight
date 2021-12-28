@@ -1,8 +1,16 @@
 import { flatten, isArray, isEmpty, reject } from 'lodash'
-import { CommandArgsType, CommandGroup, ICommandArg, ICommandArgGenerated } from 'uiSrc/constants'
+import {
+  CommandArgsType,
+  CommandGroup,
+  CommandPrefix,
+  ICommandArg,
+  ICommandArgGenerated
+} from 'uiSrc/constants'
 
-export const getComplexityShortNotation = (text: string) =>
-  (text.endsWith(')') && text.startsWith('O') ? text : '')
+export const getComplexityShortNotation = (complexity: string[] | string): string => {
+  const value = isArray(complexity) ? complexity.join(' ') : complexity
+  return value.endsWith(')') && value.startsWith('O') ? value : ''
+}
 
 const generateArgName = (
   arg: ICommandArg,
@@ -22,7 +30,7 @@ const generateArgName = (
   const multipleName = optional ? `[${multipleNameTemp.join(' ')}]` : multipleNameTemp
 
   if (type === CommandArgsType.Block && isArray(block)) {
-    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName)))
+    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName, onlyMandatory)))
     return optional ? `[${blocks?.join?.(' ')}]` : blocks
   }
 
@@ -60,16 +68,18 @@ export const getDocUrlForCommand = (
   commandGroup: CommandGroup | string = CommandGroup.Generic
 ): string => {
   let command = getExternalCommandFormat(commandName)
-  switch (commandGroup) {
-    case CommandGroup.Search:
+  const commandStartsWith = commandName.split('.')[0]
+
+  switch (commandStartsWith) {
+    case CommandPrefix.Search:
       return `https://oss.redis.com/redisearch/Commands/#${command}`
-    case CommandGroup.JSON:
+    case CommandPrefix.JSON:
       return `https://oss.redis.com/redisjson/commands/#${command}`
-    case CommandGroup.TimeSeries:
+    case CommandPrefix.TimeSeries:
       return `https://oss.redis.com/redistimeseries/commands/#${command}`
-    case CommandGroup.Graph:
+    case CommandPrefix.Graph:
       return `https://oss.redis.com/redisgraph/commands/#${command}`
-    case CommandGroup.AI:
+    case CommandPrefix.AI:
       return `https://oss.redis.com/redisai/commands/#${command}`
     default:
       command = commandName.replace(/\s+/g, '-').toLowerCase()

@@ -1,6 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
-import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -24,25 +23,17 @@ fixture `Default scripts area at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-test('Verify that user can resize(maximize)/(minimize) the enablement area (the one with default scripts)', async t => {
-    const offsetX = 100;
-    const areaWidthBefore = await workbenchPage.preselectsAreaContainer.clientWidth;
-    //Minimize the area with default scripts
-    await t.drag(workbenchPage.resizeButtonForPreselectsArea, -offsetX, 0, { speed: 0.1 });
-    await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).lt(areaWidthBefore, 'Default scripts area is smaller after resize');
-    //Maximize the area with default scripts
-    const areaWidthAfter = await workbenchPage.preselectsAreaContainer.clientWidth;
-    await t.click(workbenchPage.preselectsAreaContainer);
-    await t.drag(workbenchPage.resizeButtonForPreselectsArea, offsetX, 0, { speed: 0.1 });
-    await t.expect(await workbenchPage.preselectsAreaContainer.clientWidth).gte(areaWidthAfter, 'Default scripts area is bigger after resize');
-});
 test('Verify that user can expand/collapse the enablement area', async t => {
+    //Hover over Enablement area
+    await t.hover(workbenchPage.preselectArea);
     //Collapse the area with default scripts
-    await t.doubleClick(workbenchPage.resizeButtonForPreselectsArea);
-    await t.expect(await workbenchPage.preselectButtons.visible).eql(false, 'Default scripts area after resize is minimized');
-    //Expand the area with default scripts
-    await t.click(workbenchPage.preselectsAreaContainer);
-    await t.expect(await workbenchPage.preselectButtons.visible).eql(true, 'Default scripts area after resize is maximized');
+    await t.click(workbenchPage.collapsePreselectAreaButton);
+    //Validate that Enablement area is not displayed
+    await t.expect(workbenchPage.preselectArea.visible).notOk('Enablement area is collapsed');
+    //Expand Enablement area
+    await t.click(workbenchPage.expandPreselectAreaButton);
+    //Validate that Enablement area is displayed
+    await t.expect(workbenchPage.preselectArea.visible).ok('Enablement area is expanded');
 });
 test('Verify that user can see the [Manual] option in the Enablement area', async t => {
     const optionsForCheck = [
@@ -62,4 +53,22 @@ test('Verify that user can see the [Manual] option in the Enablement area', asyn
     for(let i = 0; i < countOfOptions; i++) {
         await t.expect(displayedOptions[i]).eql(optionsForCheck[i], `Option ${optionsForCheck} is in the Enablement area`);
     }
+});
+test('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
+    //Open Working with Hashes section
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    //Check the button from Hash page is visible
+    await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
+    //Go to Browser page
+    await t.click(myRedisDatabasePage.browserButton);
+    //Go back to Workbench page
+    await t.click(myRedisDatabasePage.workbenchButton);
+    //Verify that the same article is opened in Enablement area
+    await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
+    //Go to list of DBs page
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    //Go back to active DB again
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Check that user is on Workbench page and "Working with Hashes" page is displayed
+    await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
 });

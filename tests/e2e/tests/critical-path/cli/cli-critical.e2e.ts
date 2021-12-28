@@ -29,7 +29,8 @@ fixture `CLI critical`
         await userAgreementPage.acceptLicenseTerms();
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
     })
-test
+//skipped due the bug RI-2156
+test.skip
     .after(async t => {
         //Clear database
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
@@ -85,4 +86,38 @@ test('Verify that user can scroll commands using "Tab" in CLI & execute it', asy
     await t.pressKey('enter');
     //Check that command was executed and user got success result
     await t.expect(cliPage.cliOutputResponseSuccess.exists).ok('Command from autocomplete was found & executed');
+});
+test('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, FT.DROPINDEX/JSON.GET, JSON.DEL), he can see hints with arguments', async t => {
+    const commandHints =[
+        'index [ON HASH|JSON] [PREFIX count prefix [prefix ...]] [LANGUAGE default_lang] [LANGUAGE_FIELD lang_attribute] [SCORE default_score] [SCORE_FIELD score_attribute] [PAYLOAD_FIELD payload_attribute] [MAXTEXTFIELDS] [TEMPORARY seconds] [NOOFFSETS] [NOHL] [NOFIELDS] [NOFREQS] [count stopword [stopword ...]] SCHEMA field_name [AS alias] TEXT|TAG|NUMERIC|GEO [SORTABLE [UNF]] [NOINDEX]',
+        'index [DD]',
+        'key [INDENT indent] [NEWLINE newline] [SPACE space] [paths [paths ...]]',
+        'key [path]'
+    ];
+    const commands = [
+        'FT.CREATE',
+        'FT.DROPINDEX',
+        'JSON.GET',
+        'JSON.DEL'
+    ];
+    await addNewStandaloneDatabase(ossStandaloneConfig);
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Enter commands and check hints with arguments
+    for(let command of commands) {
+        await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+        await t.expect(cliPage.cliCommandAutocomplete.textContent).eql(commandHints[commands.indexOf(command)], `The hints with arguments for command ${command}`);
+    }
+});
+test('Verify that user can type AI command in CLI and see agruments in hints from RedisAI commands.json', async t => {
+    const commandHints = 'key [META] [BLOB]';
+    const command = 'ai.modelget';
+    await addNewStandaloneDatabase(ossStandaloneConfig);
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open CLI and type AI command
+    await t.click(cliPage.cliExpandButton);
+    await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+    //Verify the hints
+    await t.expect(cliPage.cliCommandAutocomplete.textContent).eql(commandHints, `The hints with arguments for command ${command}`);
 });

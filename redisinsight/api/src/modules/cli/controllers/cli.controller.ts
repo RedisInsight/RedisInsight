@@ -132,7 +132,8 @@ export class CliController {
   async reCreateClient(
     @Param('dbInstance') dbInstance: string,
       @Param('uuid') uuid: string,
+      @Body() dto: CreateCliClientDto,
   ): Promise<CreateCliClientResponse> {
-    return this.service.reCreateClient(dbInstance, uuid);
+    return this.service.reCreateClient(dbInstance, uuid, dto.namespace);
   }
 }

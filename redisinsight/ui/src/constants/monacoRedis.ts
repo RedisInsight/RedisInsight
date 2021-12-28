@@ -1,6 +1,7 @@
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 
 export const redisLanguageConfig: monacoEditor.languages.LanguageConfiguration = {
+  wordPattern: /(#?-?\d*\.\d\w*%?)|([@#!.:]?[\w-?]+%?)|[@#!.]/g,
   comments: {
     lineComment: '//',
     // blockComment: ['/*', '*/'],

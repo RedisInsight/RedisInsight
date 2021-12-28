@@ -45,29 +45,20 @@ const QueryCardCliPlugin = (props: Props) => {
   const generatedIframeNameRef = useRef<string>('')
   const { theme } = useContext(ThemeContext)
 
-  const dispatch = useDispatch()
+  const sendMessageToPlugin = (data = {}) => {
+    const event: any = document.createEvent('Event')
+    event.initEvent('message', false, false)
+    event.data = data
+    event.origin = '*'
+    pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
+  }
 
   const executeCommand = () => {
-    pluginIframeRef?.current?.contentWindow?.postMessage({
+    sendMessageToPlugin({
       event: 'executeCommand',
       method: currentView.activationMethod,
       data: { command: query, data: result, status }
-    }, '*')
-  }
-
-  const sendRedisCommand = (command: string, requestId: string) => {
-    dispatch(
-      sendPluginCommandAction({
-        command,
-        onSuccessAction: (response) => {
-          pluginIframeRef?.current?.contentWindow?.postMessage({
-            event: 'executeRedisCommand',
-            requestId,
-            data: response
-          }, '*')
-        }
-      })
-    )
+    })
   }
 
   useEffect(() => {
@@ -108,7 +99,7 @@ const QueryCardCliPlugin = (props: Props) => {
       modules
     })
     // @ts-ignore
-    pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
+    pluginIframeRef.current.srcdoc = html
   }
 
   const getGlobalStylesSrc = (): string =>
@@ -156,6 +147,7 @@ const QueryCardCliPlugin = (props: Props) => {
           ref={pluginIframeRef}
           referrerPolicy="no-referrer"
           sandbox="allow-same-origin allow-scripts"
+          data-testid="pluginIframe"
         />
         {!!error && (
           <div className={styles.container}>

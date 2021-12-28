@@ -28,6 +28,7 @@ export interface StateAppInfo {
     updateDownloadedVersion: string;
     isReleaseNotesViewed: Nullable<boolean>;
   };
+  isShortcutsFlyoutOpen: boolean;
 }
 
 export interface StateAppContext {
@@ -45,10 +46,11 @@ export interface StateAppContext {
   },
   workbench: {
     script: string;
+    enablementArea: {
+      guidePath: string;
+      guideScrollTop: number;
+    },
     panelSizes: {
-      horizontal: {
-        [key: string]: number;
-      },
       vertical: {
         [key: string]: number;
       }
@@ -59,8 +61,9 @@ export interface StateAppContext {
 export interface StateAppRedisCommands {
   loading: boolean;
   error: string;
-  spec: ICommands,
-  commandsArray: string[],
+  spec: ICommands;
+  commandsArray: string[];
+  commandGroups: string[];
 }
 
 export interface IPluginVisualization {
@@ -71,6 +74,8 @@ export interface IPluginVisualization {
   activationMethod: string;
   matchCommands: string[];
   default?: boolean;
+  iconDark?: string;
+  iconLight?: string;
 }
 
 export interface PluginsResponse {

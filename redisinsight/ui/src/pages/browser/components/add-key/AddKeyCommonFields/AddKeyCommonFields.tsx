@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Fragment } from 'react'
+import React, { ChangeEvent } from 'react'
 import { toNumber } from 'lodash'
 import { EuiFieldText, EuiFormRow } from '@elastic/eui'
 

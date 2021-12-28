@@ -20,7 +20,7 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [KeyTypes.Hash]: 'Hash',
   [KeyTypes.List]: 'List',
   [KeyTypes.Set]: 'Set',
-  [KeyTypes.ZSet]: 'Zset',
+  [KeyTypes.ZSet]: 'Sorted Set',
   [KeyTypes.String]: 'String',
   [KeyTypes.ReJSON]: 'JSON',
   [KeyTypes.JSON]: 'JSON',
@@ -32,11 +32,12 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [CommandGroup.Connection]: 'Connection',
   [CommandGroup.Geo]: 'Geo',
   [CommandGroup.Generic]: 'Generic',
-  [CommandGroup.PubSub]: 'PubSub',
+  [CommandGroup.PubSub]: 'Pub/Sub',
   [CommandGroup.Scripting]: 'Scripting',
   [CommandGroup.Transactions]: 'Transactions',
+  [CommandGroup.TimeSeries]: 'TimeSeries',
   [CommandGroup.Server]: 'Server',
-  [CommandGroup.SortedSet]: 'ZSet',
+  [CommandGroup.SortedSet]: 'Sorted Set',
   [CommandGroup.HyperLogLog]: 'HyperLogLog',
 })
 

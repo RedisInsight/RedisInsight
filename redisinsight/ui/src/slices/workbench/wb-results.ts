@@ -75,13 +75,11 @@ export default workbenchResultsSlice.reducer
 export function sendWBCommandAction({
   command = '',
   historyId,
-  queryType,
   onSuccessAction,
   onFailAction,
 }: {
   command: string;
   historyId: number;
-  queryType: WBQueryType;
   onSuccessAction?: (historyResponse: WBHistoryObject) => void;
   onFailAction?: () => void;
 }) {
@@ -89,9 +87,6 @@ export function sendWBCommandAction({
     try {
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
-      const outputFormat = queryType === WBQueryType.Text
-        ? CliOutputFormatterType.Text
-        : CliOutputFormatterType.Raw
 
       dispatch(sendWBCommand())
 
@@ -104,7 +99,7 @@ export function sendWBCommandAction({
         ),
         {
           command: multilineCommandToOneLine(command),
-          outputFormat,
+          outputFormat: CliOutputFormatterType.Raw,
         }
       )
 
@@ -132,14 +127,12 @@ export function sendWBCommandAction({
 export function sendWBCommandClusterAction({
   command = '',
   historyId,
-  queryType,
   options,
   onSuccessAction,
   onFailAction,
 }: {
   command: string;
   historyId: number;
-  queryType: WBQueryType;
   options: SendClusterCommandDto;
   onSuccessAction?: (historyResponse: WBHistoryObject) => void;
   onFailAction?: () => void;
@@ -148,9 +141,6 @@ export function sendWBCommandClusterAction({
     try {
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
-      const outputFormat = queryType === WBQueryType.Text
-        ? CliOutputFormatterType.Text
-        : CliOutputFormatterType.Raw
 
       dispatch(sendWBCommand())
 
@@ -164,7 +154,7 @@ export function sendWBCommandClusterAction({
         {
           ...options,
           command: multilineCommandToOneLine(command),
-          outputFormat,
+          outputFormat: CliOutputFormatterType.Raw,
         }
       )
 

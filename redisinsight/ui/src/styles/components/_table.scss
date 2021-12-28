@@ -1,37 +1,45 @@
 table .euiTableHeaderCellCheckbox {
   width: 44px;
 }
-table .euiTableRow {
-  td {
-    &:first-child {
-      border-left: 1px solid var(--euiColorLightShade);
+table {
+  &.euiTable--responsive .euiTableRow {
+    td {
       @media only screen and (max-width: 767px) {
-        border-left: none;
-      }
-    }
-    &:last-child {
-      border-right: 1px solid var(--euiColorLightShade);
-      @media only screen and (max-width: 767px) {
-        border-right: none;
+        &:first-child {
+          border-left: none;
+        }
+        &:last-child {
+          border-right: none;
+        }
       }
     }
   }
-  &-isSelected {
-    border-color: var(--euiColorPrimary) !important;
-    background: var(--tableRowSelectedColor) !important;
+  .euiTableRow {
     td {
       &:first-child {
-        border-left-color: var(--euiColorPrimary);
+        border-left: 1px solid var(--euiColorLightShade);
       }
       &:last-child {
-        border-right-color: var(--euiColorPrimary);
+        border-right: 1px solid var(--euiColorLightShade);
       }
-      border-top: 1px solid var(--euiColorPrimary);
-      border-bottom: 1px solid var(--euiColorPrimary) !important;
     }
-  }
-  &:hover {
-    background-color: var(--tableRowHoverColor);
+    &-isSelected {
+      border-color: var(--euiColorPrimary) !important;
+      background: var(--tableRowSelectedColor) !important;
+      td {
+        &:first-child {
+          border-left-color: var(--euiColorPrimary);
+        }
+        &:last-child {
+          border-right-color: var(--euiColorPrimary);
+        }
+        border-top: 1px solid var(--euiColorPrimary);
+        border-bottom: 1px solid var(--euiColorPrimary) !important;
+      }
+    }
+    &:hover {
+      background-color: var(--tableRowHoverColor);
+    }
   }
 }
 
@@ -61,6 +69,7 @@ table .euiTableRow {
   .euiTableCellContent {
     white-space: nowrap !important;
     font: normal normal normal 13px/17px Graphik, sans-serif;
+    letter-spacing: -0.13px;
     padding: 10px 18px;
   }
 
@@ -88,6 +97,7 @@ table .euiTableRow {
     .euiTableCellContent__text {
       color: var(--htmlColor) !important;
       font: normal normal 500 14px/17px Graphik, sans-serif !important;
+      letter-spacing: -0.14px;
     }
   }
 
@@ -95,6 +105,7 @@ table .euiTableRow {
     padding: 10px 18px !important;
     color: var(--htmlColor) !important;
     font: normal normal 500 14px/17px Graphik, sans-serif !important;
+    letter-spacing: -0.14px;
   }
 
   .euiSpacer {

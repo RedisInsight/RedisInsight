@@ -1,54 +1,65 @@
-@import "main";
+@import 'base/react_virtualized';
+@import 'base/base';
+@import 'base/helpers';
+@import 'base/typography';
+@import 'base/inputs';
+@import 'base/selects';
+@import 'base/functions';
+@import 'base/flex_groups';
+@import 'base/links';
+@import 'base/overrides';
+
+@import 'components/components';
 
 // relative path for import fonts to plugins static
 @font-face {
   font-family: 'Graphik';
   font-weight: 300;
-  src: url('./fonts/Graphik-Light.otf') format('opentype');
+  src: url('./fonts/Graphik-Light.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Graphik';
   font-weight: 300;
   font-style: italic;
-  src: url('./fonts/Graphik-LightItalic.otf') format('opentype');
+  src: url('./fonts/Graphik-LightItalic.woff2') format('woff2');
 }
 
 
 @font-face {
   font-family: 'Graphik';
-  src: url('./fonts/Graphik-Regular.otf') format('opentype');
+  src: url('./fonts/Graphik-Regular.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Graphik';
   font-style: italic;
-  src: url('./fonts/Graphik-RegularItalic.otf') format('opentype');
+  src: url('./fonts/Graphik-RegularItalic.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Graphik';
   font-weight: 500;
-  src: url('./fonts/Graphik-Medium.otf') format('opentype');
+  src: url('./fonts/Graphik-Medium.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Graphik';
   font-weight: 500;
   font-style: italic;
-  src: url('./fonts/Graphik-MediumItalic.otf') format('opentype');
+  src: url('./fonts/Graphik-MediumItalic.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Graphik';
   font-weight: 600;
-  src: url('./fonts/Graphik-Semibold.otf') format('opentype');
+  src: url('./fonts/Graphik-Semibold.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Graphik';
   font-weight: 600;
   font-style: italic;
-  src: url('./fonts/Graphik-SemiboldItalic.otf') format('opentype');
+  src: url('./fonts/Graphik-SemiboldItalic.woff2') format('woff2');
 }
 

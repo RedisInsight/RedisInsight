@@ -25,6 +25,7 @@ export interface ICliExecResultFromNode {
   port: number;
   response: any;
   status: CommandExecutionStatus;
+  slot?: number;
   error?: any,
 }
 
@@ -159,13 +160,13 @@ export class CliToolService extends RedisConsumerAbstractService {
     return uuid;
   }
 
-  async reCreateToolClient(instanceId: string, uuid: string): Promise<string> {
+  async reCreateToolClient(instanceId: string, uuid: string, namespace: string): Promise<string> {
     this.redisService.removeClientInstance({
       instanceId,
       uuid,
       tool: this.consumer,
     });
-    await this.createNewClient(instanceId, uuid);
+    await this.createNewClient(instanceId, uuid, namespace);
 
     return uuid;
   }

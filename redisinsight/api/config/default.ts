@@ -6,15 +6,21 @@ const staticDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesPat
   ? join(process['resourcesPath'], 'static')
   : join(__dirname, '..', 'static');
 
+const defaultsDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
+  ? join(process['resourcesPath'], 'defaults')
+  : join(__dirname, '..', 'defaults');
+
 export default {
   dir_path: {
     homedir,
     staticDir,
+    defaultsDir,
     logs: join(homedir, 'logs'),
     defaultPlugins: join(staticDir, 'plugins'),
     customPlugins: join(homedir, 'plugins'),
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
+    defaultCommandsDir: join(defaultsDir, 'commands'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },
@@ -42,7 +48,7 @@ export default {
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : true,
   },
   redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://qa-api.redislabs.com/v1/',
+    url: process.env.REDIS_CLOUD_URL || 'https://api.qa.redislabs.com/v1',
   },
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
@@ -72,18 +78,36 @@ export default {
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,
     pipelineSummaryLimit: parseInt(process.env.LOGGER_PIPELINE_SUMMARY_LIMIT, 10) || 5,
   },
-  commands: {
-    mainUrl: process.env.COMMANDS_MAIN_URL
-      || 'https://raw.githubusercontent.com/redis/redis-doc/master/commands.json',
-    redisearchUrl: process.env.COMMANDS_REDISEARCH_URL
-      || 'https://raw.githubusercontent.com/RediSearch/RediSearch/master/commands.json',
-    redijsonUrl: process.env.COMMANDS_REDIJSON_URL
-      || 'https://raw.githubusercontent.com/RedisJSON/RedisJSON/master/commands.json',
-    redistimeseriesUrl: process.env.COMMANDS_REDISTIMESERIES_URL
-      || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/src/commands.json',
-    redisaiUrl: process.env.COMMANDS_REDISAI_URL
-      || 'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
-    redisgraphUrl: process.env.COMMANDS_REDISGRAPH_URL
-      || 'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',
-  },
+  commands: [
+    {
+      name: 'main',
+      url: process.env.COMMANDS_MAIN_URL
+        || 'https://raw.githubusercontent.com/redis/redis-doc/master/commands.json',
+    },
+    {
+      name: 'redisearch',
+      url: process.env.COMMANDS_REDISEARCH_URL
+        || 'https://raw.githubusercontent.com/RediSearch/RediSearch/master/commands.json',
+    },
+    {
+      name: 'redijson',
+      url: process.env.COMMANDS_REDIJSON_URL
+        || 'https://raw.githubusercontent.com/RedisJSON/RedisJSON/master/commands.json',
+    },
+    {
+      name: 'redistimeseries',
+      url: process.env.COMMANDS_REDISTIMESERIES_URL
+        || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/commands.json',
+    },
+    {
+      name: 'redisai',
+      url: process.env.COMMANDS_REDISAI_URL
+        || 'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
+    },
+    {
+      name: 'redisgraph',
+      url: process.env.COMMANDS_REDISGRAPH_URL
+        || 'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',
+    },
+  ],
 };

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { apiService } from 'uiSrc/services'
+import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 
@@ -12,7 +12,7 @@ export const initialState: StateWorkbenchSettings = {
   loading: false,
   error: '',
   errorClient: '',
-  wbClientUuid: '',
+  wbClientUuid: localStorageService.get(BrowserStorageItem.wbClientUuid) ?? '',
   unsupportedCommands: [],
 }
 
@@ -43,9 +43,6 @@ const workbenchSettingsSlice = createSlice({
 // Actions generated from the slice
 export const {
   setWBSettingsInitialState,
-  // isModuleLoaded,
-  // isModuleLoadedSuccess,
-  // isModuleLoadedFailure,
   processWBClient,
   processWBClientSuccess,
   processWBClientFailure,
@@ -91,14 +88,15 @@ export function updateWBClientAction(
   instanceId: string = '',
   uuid: string,
   onSuccessAction?: () => void,
-  onFailAction?: (message: string) => void
+  onFailAction?: (message: string) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(processWBClient())
 
     try {
       const { data, status } = await apiService.patch<CreateCliClientResponse>(
-        getUrl(instanceId, ApiEndpoints.CLI, uuid)
+        getUrl(instanceId, ApiEndpoints.CLI, uuid),
+        { namespace: 'workbench' },
       )
 
       if (isStatusSuccessful(status)) {

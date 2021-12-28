@@ -2,7 +2,6 @@ import React, { Ref, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
-import { isEmpty, reject } from 'lodash'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 
 import {
@@ -10,23 +9,22 @@ import {
   checkBlockingCommand,
   checkUnsupportedCommand,
   removeMonacoComments,
-  getWBQueryType,
   checkUnsupportedModuleCommand,
   cliParseTextResponse,
+  splitMonacoValuePerLines,
+  getMultiCommands,
 } from 'uiSrc/utils'
 import {
   sendWBCommandAction,
   workbenchResultsSelector,
   sendWBCommandClusterAction,
 } from 'uiSrc/slices/workbench/wb-results'
-import { localStorageService } from 'uiSrc/services'
-import { BrowserStorageItem } from 'uiSrc/constants'
 import { ConnectionType, Instance, IPluginVisualization, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances'
 import HistoryContainer from 'uiSrc/services/queryHistory'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 
-import { createWBClientAction, updateWBClientAction } from 'uiSrc/slices/workbench/wb-settings'
+import { createWBClientAction, updateWBClientAction, workbenchSettingsSelector } from 'uiSrc/slices/workbench/wb-settings'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
@@ -36,7 +34,6 @@ import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import WBView from './WBView'
 import ModuleNotLoaded from '../module-not-loaded'
 import {
-  WBQueryType,
   RSNotLoadedContent,
   WORKBENCH_HISTORY_MAX_LENGTH,
   WORKBENCH_HISTORY_WRAPPER_NAME,
@@ -69,14 +66,13 @@ const WBViewWrapper = () => {
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
-  const wbClientUuid = localStorageService.get(BrowserStorageItem.wbClientUuid) ?? ''
-
   const [historyItems, setHistoryItems] = useState<Array<WBHistoryObject>>([])
   const [script, setScript] = useState(scriptContext)
   const [multiCommands, setMultiCommands] = useState('')
   const [scriptEl, setScriptEl] = useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
 
   const instance = useSelector(connectedInstanceSelector)
+  const { wbClientUuid = '' } = useSelector(workbenchSettingsSelector)
   const { visualizations = [] } = useSelector(appPluginsSelector)
   state = {
     scriptEl,
@@ -137,9 +133,10 @@ const WBViewWrapper = () => {
       return cliParseTextResponse(
         cliTexts.WORKBENCH_UNSUPPORTED_COMMANDS(
           commandLine.slice(0, unsupportedCommand.length),
-          [...blockingCommands, ...unsupportedCommands].join(', ')
+          [...blockingCommands, ...unsupportedCommands].join(', '),
         ),
-        CommandExecutionStatus.Fail
+        commandLine,
+        CommandExecutionStatus.Fail,
       )
     }
     const unsupportedModule = checkUnsupportedModuleCommand(modules, commandLine)
@@ -154,14 +151,12 @@ const WBViewWrapper = () => {
   const handleSubmit = (
     commandInit: string = script,
     historyId?: number,
-    type?: WBQueryType,
   ) => {
     const { loading } = state
     const isNewCommand = () => !historyId
-    const commandsList = commandInit.split(/\n(?=[^\s])/g)
+    const [command, ...rest] = splitMonacoValuePerLines(commandInit)
 
-    const [command, ...rest] = commandsList
-    const multiCommands = reject(rest, isEmpty).join('\n')
+    const multiCommands = getMultiCommands(rest)
     setMultiCommands(multiCommands)
 
     let commandLine = decode(command).trim()
@@ -188,18 +183,28 @@ const WBViewWrapper = () => {
       return
     }
 
-    sendCommand(commandLine, type, historyId || Date.now())
+    checkClient(commandLine, historyId || Date.now())
+  }
+
+  const checkClient = (
+    command: string,
+    historyId = Date.now()
+  ) => {
+    if (!wbClientUuid) {
+      dispatch(createWBClientAction(instanceId, () => sendCommand(command, historyId || Date.now())))
+    } else {
+      sendCommand(command, historyId || Date.now())
+    }
   }
 
   const sendCommand = (
     command: string,
-    queryType = getWBQueryType(command, state.visualizations),
     historyId = Date.now(),
   ) => {
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
-        command, historyId, queryType, onSuccessAction: onSuccess
+        command, historyId, onSuccessAction: onSuccess
       }))
       return
     }
@@ -217,7 +222,6 @@ const WBViewWrapper = () => {
       sendWBCommandClusterAction({
         command,
         historyId,
-        queryType,
         options,
         onSuccessAction: onSuccess,
       })

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiLoadingContent, keys } from '@elastic/eui'
+import { useParams } from 'react-router-dom'
+
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { getWBQueryType, Nullable, getVisualizationsByCommand, Maybe } from 'uiSrc/utils'
-
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import QueryCardHeader from './QueryCardHeader'
 import QueryCardCliResult from './QueryCardCliResult'
@@ -22,7 +24,6 @@ export interface Props {
   data: any;
   status: Maybe<CommandExecutionStatus>;
   fromStore: boolean;
-  matched?: number;
   time?: number;
   loading?: boolean;
   onQueryRun: (queryType: WBQueryType) => void;
@@ -34,10 +35,9 @@ const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
   getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || ''
 
 const QueryCard = (props: Props) => {
-  const { visualizations = [] } = useSelector(appPluginsSelector)
   const {
     id,
-    query,
+    query = '',
     data,
     status,
     fromStore,
@@ -48,15 +48,18 @@ const QueryCard = (props: Props) => {
     loading
   } = props
 
+  const { visualizations = [] } = useSelector(appPluginsSelector)
+
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
   const [isOpen, setIsOpen] = useState(!fromStore)
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const [result, setResult] = useState<Nullable<any>>(data)
   const [queryType, setQueryType] = useState<WBQueryType>(getWBQueryType(query, visualizations))
   const [viewTypeSelected, setViewTypeSelected] = useState<WBQueryType>(queryType)
+  const [summaryText, setSummaryText] = useState<string>('')
   const [selectedViewValue, setSelectedViewValue] = useState<string>(
     getDefaultPlugin(visualizations, query) || queryType
   )
-  const [summaryText, setSummaryText] = useState<string>('')
 
   useEffect(() => {
     window.addEventListener('keydown', handleEscFullScreen)
@@ -72,7 +75,17 @@ const QueryCard = (props: Props) => {
   }
 
   const toggleFullScreen = () => {
-    setIsFullScreen((value) => !value)
+    setIsFullScreen((isFull) => {
+      sendEventTelemetry({
+        event: TelemetryEvent.WORKBENCH_RESULTS_IN_FULL_SCREEN,
+        eventData: {
+          databaseId: instanceId,
+          state: isFull ? 'Close' : 'Open'
+        }
+      })
+
+      return !isFull
+    })
   }
 
   useEffect(() => {
@@ -96,6 +109,7 @@ const QueryCard = (props: Props) => {
 
   const toggleOpen = () => {
     if (isFullScreen) return
+
     setIsOpen(!isOpen)
 
     if (!isOpen && !data) {
@@ -104,8 +118,6 @@ const QueryCard = (props: Props) => {
   }
 
   const changeViewTypeSelected = (type: WBQueryType, value: string) => {
-    onQueryRun(type)
-    setResult(undefined)
     setViewTypeSelected(type)
     setSelectedViewValue(value)
   }
@@ -137,7 +149,7 @@ const QueryCard = (props: Props) => {
         {isOpen && (
           <>
             {React.isValidElement(result)
-              ? <QueryCardCommonResult result={result} />
+              ? <QueryCardCommonResult loading={loading} result={result} />
               : (
                 <>
                   {viewTypeSelected === WBQueryType.Plugin && (
@@ -158,7 +170,7 @@ const QueryCard = (props: Props) => {
                     </>
                   )}
                   {viewTypeSelected === WBQueryType.Text && (
-                    <QueryCardCliResult status={status} result={result} />
+                    <QueryCardCliResult loading={loading} query={query} status={status} result={result} />
                   )}
                 </>
               )}

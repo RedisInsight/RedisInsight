@@ -1,6 +1,20 @@
-import { t } from 'testcafe';
+import {RequestMock, t} from 'testcafe';
+import {commonUrl} from "./conf";
+
+const settingsApiUrl = `${commonUrl}/api/settings`;
+
+const mockedSettingsResponse = {
+    agreements: {
+        version: '0',
+        eula: false,
+        analytics: false
+    }}
 
 export class Common {
+    mock = RequestMock()
+            .onRequestTo(settingsApiUrl)
+            .respond(mockedSettingsResponse, 200);
+
     async waitForElementNotVisible(elm): Promise<void> {
         await t.expect(elm.exists).notOk({ timeout: 20000 });
     }

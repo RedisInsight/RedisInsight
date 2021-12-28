@@ -10,15 +10,15 @@ import {
 } from 'uiSrc/slices/instances'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
-import CliWrapper from 'uiSrc/components/cli/CliWrapper'
-import { cliSettingsSelector, resetIsShowCli } from 'uiSrc/slices/cli/cli-settings'
-import CliHeaderMinimized from 'uiSrc/components/cli/components/cli-header-minimized'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/keys'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
+import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
+import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -46,17 +46,17 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   const dispatch = useDispatch()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
-  const { isShowCli } = useSelector(cliSettingsSelector)
+  const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
+
+  const isShowBottomGroup = isShowCli || isShowHelper
 
   useEffect(() => {
     dispatch(fetchInstanceAction(connectionInstanceId))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
 
     if (contextInstanceId !== connectionInstanceId) {
-      dispatch(setAppContextInitialState())
-      dispatch(resetIsShowCli())
-      dispatch(resetOutput())
+      resetContext()
     }
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
@@ -64,9 +64,21 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   useEffect(() => () => {
     setSizes((prevSizes: any) => {
-      localStorageService.set(BrowserStorageItem.cliResizableContainer, prevSizes)
+      localStorageService.set(BrowserStorageItem.cliResizableContainer, {
+        [firstPanelId]: prevSizes[firstPanelId],
+        // partially fix elastic resizable issue with zooming
+        [secondPanelId]: 100 - prevSizes[firstPanelId],
+      })
     })
   }, [])
+
+  const resetContext = () => {
+    dispatch(setAppContextInitialState())
+    dispatch(resetKeys())
+    setTimeout(() => {
+      dispatch(resetOutput())
+    }, 0)
+  }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {
     setSizes((prevSizes: any) => ({
@@ -80,7 +92,7 @@ const InstancePage = ({ routes = [] }: Props) => {
       direction="vertical"
       style={{ height: '100%' }}
       onPanelWidthChange={onPanelWidthChange}
-      className={cx({ 'show-cli': isShowCli })}
+      className={cx({ 'show-cli': isShowBottomGroup })}
     >
       {(EuiResizablePanel, EuiResizableButton) => (
         <>
@@ -89,8 +101,8 @@ const InstancePage = ({ routes = [] }: Props) => {
             scrollable={false}
             minSize="55px"
             paddingSize="none"
-            size={isShowCli ? sizes[firstPanelId] : 100}
-            wrapperProps={{ className: cx({ [styles.mainComponent]: !isShowCli }) }}
+            size={isShowBottomGroup ? sizes[firstPanelId] : 100}
+            wrapperProps={{ className: cx(styles.panelTop, { [styles.mainComponent]: !isShowBottomGroup }) }}
             data-testid={firstPanelId}
           >
             <InstancePageRouter routes={routes} />
@@ -101,13 +113,14 @@ const InstancePage = ({ routes = [] }: Props) => {
           <EuiResizablePanel
             id={secondPanelId}
             scrollable={false}
-            size={isShowCli ? sizes[secondPanelId] : 0}
-            style={{ zIndex: 10 }}
-            minSize="70px"
+            size={isShowBottomGroup ? sizes[secondPanelId] : 0}
+            style={{ zIndex: 9 }}
+            minSize="140px"
+            wrapperProps={{ className: cx(styles.panelBottom) }}
             data-testid={secondPanelId}
             paddingSize="none"
           >
-            {!isShowCli ? <CliHeaderMinimized /> : <CliWrapper />}
+            <BottomGroupComponents />
           </EuiResizablePanel>
         </>
       )}

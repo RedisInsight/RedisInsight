@@ -1,0 +1,17 @@
+.container {
+  max-width: 100%;
+  height: 38px;
+  margin-left: 106px;
+
+  :global(.euiFormControlLayout) {
+    max-width: calc(100%) !important;
+    height: 36px !important;
+  }
+}
+
+.searchInput {
+  &:global(.euiFieldSearch) {
+    border: 1px solid var(--euiColorLightShade) !important;
+    height: 36px !important;
+  }
+}

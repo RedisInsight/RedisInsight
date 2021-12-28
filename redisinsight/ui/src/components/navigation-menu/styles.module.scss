@@ -103,23 +103,25 @@ $sideBarWidth: 60px;
 
 .helpMenuItem {
   align-items: center;
+  cursor: pointer;
 
   :global(.euiButtonIcon), :global(.euiIcon) {
     color: var(--euiTooltipTextColor) !important;
   }
 
   .helpMenuItemLink {
+    text-decoration: none !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
     &:global(.euiLink) {
       text-decoration: none !important;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.3s ease;
-
-      &:hover {
-        transform: translateY(-1px);
-      }
-
       &:focus {
         animation: none !important;
       }
@@ -128,6 +130,7 @@ $sideBarWidth: 60px;
 }
 
 .helpMenuItemDisabled {
+  cursor: auto;
   :global(.euiIcon), div {
     color: var(--buttonSecondaryDisabledTextColor) !important;
   }

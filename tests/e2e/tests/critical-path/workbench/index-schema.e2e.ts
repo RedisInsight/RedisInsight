@@ -49,6 +49,7 @@ test.skip('Verify that user can open results in Text and Table views for FT.INFO
     await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
     //Select Text view type
+    await t.switchToMainWindow();
     await workbenchPage.selectViewTypeText();
     //Check that result is displayed in Text view
     await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
@@ -65,8 +66,10 @@ test.skip('Verify that user can open results in Text and Table views for FT.INFO
     //Send search command
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     //Check that result is displayed in Table view
+    await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
     //Select Text view type
+    await t.switchToMainWindow();
     await workbenchPage.selectViewTypeText();
     //Check that result is displayed in Text view
     await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');

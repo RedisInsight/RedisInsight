@@ -258,14 +258,6 @@ const AddStandaloneForm = (props: Props) => {
     if (
       values.tls
       && values.tlsClientAuthRequired
-      && values.selectedTlsClientCertId === ''
-    ) {
-      errs.selectedTlsClientCertId
-        === fieldDisplayNames.selectedTlsClientCertId
-    }
-    if (
-      values.tls
-      && values.tlsClientAuthRequired
       && values.selectedTlsClientCertId === ADD_NEW
     ) {
       if (values.newTlsCertPairName === '') {

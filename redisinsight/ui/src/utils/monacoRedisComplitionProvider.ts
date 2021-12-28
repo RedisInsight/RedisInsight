@@ -1,13 +1,15 @@
 import * as monacoEditor from 'monaco-editor'
 import { ICommand, ICommandArgGenerated, ICommands } from 'uiSrc/constants'
-import { generateArgs, generateArgsNames } from 'uiSrc/utils/commands'
+import { generateArgs, generateArgsNames, getDocUrlForCommand } from 'uiSrc/utils/commands'
 
 type DependencyProposals = {
   [key: string]: monacoEditor.languages.CompletionItem
 }
 
-const getCommandMarkdown = (command: ICommand): string => {
-  const lines: string[] = [command?.summary]
+const getCommandMarkdown = (commandName = '', command: ICommand): string => {
+  const docUrl = getDocUrlForCommand(commandName, command?.group)
+  const linkMore = ` [Read more](${docUrl})`
+  const lines: string[] = [command?.summary + linkMore]
   if (command?.arguments?.length) {
     // TODO: use i18n file for texts
     lines.push('### Arguments:')
@@ -41,7 +43,7 @@ const createDependencyProposals = (commandsSpec: ICommands): DependencyProposals
       detail,
       insertText,
       documentation: {
-        value: getCommandMarkdown(commandsSpec[command]),
+        value: getCommandMarkdown(command, commandsSpec[command]),
       },
       insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range

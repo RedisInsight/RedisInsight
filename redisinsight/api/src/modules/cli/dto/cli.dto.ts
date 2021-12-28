@@ -27,6 +27,15 @@ export enum ClusterNodeRole {
   Slave = 'SLAVE',
 }
 
+class ClusterNode extends EndpointDto {
+  @ApiPropertyOptional({
+    description: 'Cluster node slot.',
+    type: Number,
+    example: 0,
+  })
+  slot?: number;
+}
+
 export class CreateCliClientDto {
   @ApiPropertyOptional({
     type: String,
@@ -51,7 +60,7 @@ export class SendCommandDto {
 
   @ApiPropertyOptional({
     description: 'Define output format',
-    default: CliOutputFormatterTypes.Text,
+    default: CliOutputFormatterTypes.Raw,
     enum: CliOutputFormatterTypes,
   })
   @IsOptional()
@@ -123,10 +132,10 @@ export class SendClusterCommandResponse {
   response: any;
 
   @ApiPropertyOptional({
-    type: () => EndpointDto,
+    type: () => ClusterNode,
     description: 'Redis Cluster Node info',
   })
-  node?: EndpointDto;
+  node?: ClusterNode;
 
   @ApiProperty({
     description: 'Redis CLI command execution status',

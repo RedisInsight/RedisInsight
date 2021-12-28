@@ -3,6 +3,7 @@ import { isNumber } from 'lodash'
 
 import { MAX_TTL_NUMBER } from './validations'
 
+const TRUNCATE_DELIMITER = ', '
 // Replace default strings of duration to cutted
 // 94 years, 9 month, 3 minutes => 94 yr, 9mo, 3min
 const cutDurationText = (text = '') => text
@@ -60,11 +61,11 @@ export const truncateTTLToDuration = (ttl: number): string => {
       end: ttl * 1_000,
     })
 
-    const formatedDuration = formatDuration(duration, {
-      delimiter: ', ',
+    const formattedDuration = formatDuration(duration, {
+      delimiter: TRUNCATE_DELIMITER,
     })
 
-    return cutDurationText(formatedDuration)
+    return cutDurationText(formattedDuration)
   } catch (e) {
     return ''
   }
@@ -74,4 +75,8 @@ export const truncateTTLToDuration = (ttl: number): string => {
 // 500 => 500
 // 1500 => 1 500
 // 2500000 => 2 500 000
-export const truncateTTLToSeconds = (ttl: number) => ttl?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') ?? ''
+export const truncateTTLToSeconds = (ttl: number) =>
+  ttl?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') ?? ''
+
+export const truncateTTLToFirstUnit = (ttl: number): string =>
+  truncateTTLToDuration(ttl).split(TRUNCATE_DELIMITER)[0]

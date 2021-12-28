@@ -37,6 +37,8 @@ fixture `Database overview`
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
         await t.pressKey('enter');
         await t.click(cliPage.cliCollapseButton);
+        //Delete all databases
+        await myRedisDatabasePage.deleteAllDatabases();
     })
 test('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
     let firstDatabaseModules = [];
@@ -126,4 +128,24 @@ test('Verify that user can see total memory rounded in format B, KB, MB, GB, TB 
     //Verify total memory
     await t.wait(fiveSecondsTimeout);
     await t.expect(browserPage.overviewTotalMemory.textContent).contains('MB', 'Total memory value is MB');
+});
+test('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
+    //Connect to DB
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    const cpuBeforeEdit = await browserPage.overviewCpu.textContent;
+    const commandsSecBeforeEdit = await browserPage.overviewCommandsSec.textContent;
+    //Verify that additional information in Overview: Connected Clients, Commands/Sec, CPU (%) is displayed
+    await t.expect(browserPage.overviewConnectedClients.visible).ok('Connected Clients is dispalyed in the Overview');
+    await t.expect(browserPage.overviewCommandsSec.visible).ok('Commands/Sec is dispalyed in the Overview');
+    await t.expect(browserPage.overviewCpu.visible).ok('CPU (%) is dispalyed in the Overview');
+    //Add 1M keys
+    for(let i = 0; i < 10; i++) {
+        await cliPage.addKeysFromCli('MSET', 100000, `keyName${i}`);
+    }
+    //Verify that CPU and commands per second parameters are changed
+    const cpuAfterEdit = await browserPage.overviewCpu.textContent;
+    const commandsSecAfterEdit = await browserPage.overviewCommandsSec.textContent;
+
+    await t.expect(cpuAfterEdit).notEql(cpuBeforeEdit, 'CPU parameter is changed');
+    await t.expect(commandsSecAfterEdit).notEql(commandsSecBeforeEdit, 'Commands per second parameter is changed');
 });

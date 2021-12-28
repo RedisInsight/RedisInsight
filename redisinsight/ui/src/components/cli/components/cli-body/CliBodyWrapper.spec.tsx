@@ -1,6 +1,5 @@
 import React from 'react'
 import { cloneDeep, first } from 'lodash'
-import { instance, mock } from 'ts-mockito'
 import {
   cleanup,
   fireEvent,
@@ -21,9 +20,7 @@ import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sessionStorageService } from 'uiSrc/services'
 
-import CliBodyWrapper, { Props } from './CliBodyWrapper'
-
-const mockedProps = mock<Props>()
+import CliBodyWrapper from './CliBodyWrapper'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -55,8 +52,8 @@ jest.mock('uiSrc/slices/cli/cli-output', () => ({
   updateCliCommandHistory: jest.fn,
 }))
 
-jest.mock('uiSrc/utils/cli', () => ({
-  ...jest.requireActual('uiSrc/utils/cli'),
+jest.mock('uiSrc/utils/cliHelper', () => ({
+  ...jest.requireActual('uiSrc/utils/cliHelper'),
   updateCliHistoryStorage: jest.fn(),
   clearOutput: jest.fn(),
   cliParseTextResponse: jest.fn(),
@@ -78,20 +75,11 @@ jest.mock('uiSrc/slices/cli/cli-settings', () => ({
 
 describe('CliBodyWrapper', () => {
   it('should render', () => {
-    expect(render(<CliBodyWrapper {...instance(mockedProps)} />)).toBeTruthy()
-  })
-
-  it('should SessionStorage be called', () => {
-    const mockUuid = 'test-uuid'
-    sessionStorageService.get = jest.fn().mockReturnValue(mockUuid)
-
-    render(<CliBodyWrapper {...instance(mockedProps)} />)
-
-    expect(sessionStorageService.get).toBeCalledWith(BrowserStorageItem.cliClientUuid)
+    expect(render(<CliBodyWrapper />)).toBeTruthy()
   })
 
   it('should render with SessionStorage', () => {
-    render(<CliBodyWrapper {...instance(mockedProps)} />)
+    render(<CliBodyWrapper />)
 
     const expectedActions = [concatToOutput(InitOutputText('', 0)), processCliClient()]
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
@@ -100,7 +88,7 @@ describe('CliBodyWrapper', () => {
   })
 
   it('"onSubmit" should be called after keyDown Enter', () => {
-    render(<CliBodyWrapper {...instance(mockedProps)} />)
+    render(<CliBodyWrapper />)
 
     fireEvent.keyDown(screen.getByTestId(cliCommandTestId), {
       key: 'Enter',
@@ -113,12 +101,6 @@ describe('CliBodyWrapper', () => {
     )
   })
 
-  it('CliHelper should be opened by default', () => {
-    render(<CliBodyWrapper {...instance(mockedProps)} />)
-
-    expect(screen.getByTestId('cli-helper')).toBeInTheDocument()
-  })
-
   // It's not possible to simulate events on contenteditable with testing-react-library,
   // or any testing library that uses js - dom, because of a limitation on js - dom itself.
   // https://github.com/testing-library/dom-testing-library/pull/235
@@ -127,7 +109,7 @@ describe('CliBodyWrapper', () => {
 
     processUnsupportedCommand.mockImplementation(() => processUnsupportedCommandMock)
 
-    render(<CliBodyWrapper {...instance(mockedProps)} />)
+    render(<CliBodyWrapper />)
 
     // Act
     fireEvent.change(screen.getByTestId(cliCommandTestId), {
@@ -152,7 +134,7 @@ describe('CliBodyWrapper', () => {
 
     sendCliClusterCommandAction.mockImplementation(() => sendCliClusterActionMock)
 
-    render(<CliBodyWrapper {...instance(mockedProps)} />)
+    render(<CliBodyWrapper />)
 
     // Act
     fireEvent.keyDown(screen.getByTestId(cliCommandTestId), {

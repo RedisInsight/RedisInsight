@@ -28,7 +28,7 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 import styles from './styles.module.scss'
 
 const suffix = '_set'
-const headerHeight = 64
+const headerHeight = 60
 const rowHeight = 43
 const footerHeight = 0
 const matchAllValue = '*'

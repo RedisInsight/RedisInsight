@@ -8,7 +8,7 @@ const EmptyPrompt = () => (
     <EuiEmptyPrompt
       data-testid="enablement-area__empty-prompt"
       icon={<EuiIcon type="alert" color="danger" size="l" />}
-      title={<h2 className={styles.title}>No information to display</h2>}
+      title={<h2>No information to display</h2>}
       body={(
         <p className={styles.body}>
           <span>Restart the application.</span>
@@ -17,7 +17,7 @@ const EmptyPrompt = () => (
             If the problem persists, please
             {' '}
             <EuiLink
-              color="text"
+              color="ghost"
               href="https://github.com/RedisInsight/RedisInsight/issues"
               external={false}
               target="_blank"

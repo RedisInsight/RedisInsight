@@ -1,15 +1,15 @@
-import { AxiosError } from 'axios';
-import { cloneDeep } from 'lodash';
+import { AxiosError } from 'axios'
+import { cloneDeep } from 'lodash'
 
 import {
   cleanup,
   initialStateDefault,
   mockedStore,
-} from 'uiSrc/utils/test-utils';
-import { apiService } from 'uiSrc/services';
-import { parseAddedMastersSentinel, parseMastersSentinel } from 'uiSrc/utils';
-import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel';
-import { AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto';
+} from 'uiSrc/utils/test-utils'
+import { apiService } from 'uiSrc/services'
+import { parseAddedMastersSentinel, parseMastersSentinel } from 'uiSrc/utils'
+import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel'
+import { AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
 
 import reducer, {
   initialState,
@@ -24,22 +24,22 @@ import reducer, {
   createMastersSentinel,
   createMastersSentinelFailure,
   updateMastersSentinel,
-} from '../sentinel';
-import { addErrorNotification } from '../app/notifications';
-import { LoadedSentinel, ModifiedSentinelMaster } from '../interfaces';
+} from '../sentinel'
+import { addErrorNotification } from '../app/notifications'
+import { LoadedSentinel, ModifiedSentinelMaster } from '../interfaces'
 
-jest.mock('uiSrc/services');
+jest.mock('uiSrc/services')
 
-let store: typeof mockedStore;
-let masters: SentinelMaster[];
-let parsedMasters: ModifiedSentinelMaster[];
-let parsedAddedMasters: ModifiedSentinelMaster[];
-let addedMastersStatuses: AddSentinelMasterResponse[];
+let store: typeof mockedStore
+let masters: SentinelMaster[]
+let parsedMasters: ModifiedSentinelMaster[]
+let parsedAddedMasters: ModifiedSentinelMaster[]
+let addedMastersStatuses: AddSentinelMasterResponse[]
 
 beforeEach(() => {
-  cleanup();
-  store = cloneDeep(mockedStore);
-  store.clearActions();
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
 
   masters = [
     {
@@ -59,7 +59,7 @@ beforeEach(() => {
         { host: '127.0.0.1', port: 5006 },
       ],
     },
-  ];
+  ]
 
   addedMastersStatuses = [
     {
@@ -79,28 +79,28 @@ beforeEach(() => {
         error: 'Unauthorized',
       },
     },
-  ];
+  ]
 
-  parsedMasters = parseMastersSentinel(masters);
+  parsedMasters = parseMastersSentinel(masters)
   parsedAddedMasters = parseAddedMastersSentinel(
     parsedMasters,
     addedMastersStatuses
-  );
-});
+  )
+})
 
 describe('sentinel slice', () => {
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
-      const nextState = initialState;
+      const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {});
+      const result = reducer(undefined, {})
 
       // Assert
-      expect(result).toEqual(nextState);
-    });
-  });
+      expect(result).toEqual(nextState)
+    })
+  })
 
   describe('loadMastersSentinel', () => {
     it('should properly set loading = true', () => {
@@ -108,20 +108,20 @@ describe('sentinel slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMastersSentinel());
+      const nextState = reducer(initialState, loadMastersSentinel())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('updateMastersSentinel', () => {
     it('should properly set loading = true', () => {
@@ -129,25 +129,25 @@ describe('sentinel slice', () => {
 
       const data: ModifiedSentinelMaster[] = [
         { name: 'mymaster', host: 'localhost', port: 0, numberOfSlaves: 10 },
-      ];
+      ]
 
       const state = {
         ...initialState,
         data,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, updateMastersSentinel(data));
+      const nextState = reducer(initialState, updateMastersSentinel(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadMastersSentinelSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -161,26 +161,26 @@ describe('sentinel slice', () => {
           ...initialState.loaded,
           [LoadedSentinel.Masters]: true,
         },
-      };
+      }
 
       // Act
       const nextState = reducer(
         initialState,
         loadMastersSentinelSuccess(masters)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
-      const data: any = [];
+      const data: any = []
 
       const state = {
         ...initialState,
@@ -190,44 +190,44 @@ describe('sentinel slice', () => {
           ...initialState.loaded,
           [LoadedSentinel.Masters]: true,
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMastersSentinelSuccess(data));
+      const nextState = reducer(initialState, loadMastersSentinelSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadMastersSentinelFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         ...initialState,
         loading: false,
         error: data,
         data: [],
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMastersSentinelFailure(data));
+      const nextState = reducer(initialState, loadMastersSentinelFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('createMastersSentinel', () => {
     it('should properly set loading = true', () => {
@@ -235,20 +235,20 @@ describe('sentinel slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, createMastersSentinel());
+      const nextState = reducer(initialState, createMastersSentinel())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('createMastersSentinelSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -263,26 +263,26 @@ describe('sentinel slice', () => {
           ...initialState.loaded,
           [LoadedSentinel.MastersAdded]: true,
         },
-      };
+      }
 
       // Act
       const nextState = reducer(
         { ...initialState, data: parsedMasters },
         createMastersSentinelSuccess(addedMastersStatuses)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
-      const data: any = [];
+      const data: any = []
 
       const state = {
         ...initialState,
@@ -292,50 +292,50 @@ describe('sentinel slice', () => {
           ...initialState.loaded,
           [LoadedSentinel.MastersAdded]: true,
         },
-      };
+      }
 
       // Act
       const nextState = reducer(
         initialState,
         createMastersSentinelSuccess(data)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('createMastersSentinelFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         ...initialState,
         loading: false,
         error: data,
         data: [],
-      };
+      }
 
       // Act
       const nextState = reducer(
         initialState,
         createMastersSentinelFailure(data)
-      );
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           sentinel: nextState,
         },
-      });
-      expect(sentinelSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(sentinelSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('thunks', () => {
     it('call both fetchMastersSentinelAction and loadMastersSentinelSuccess when fetch is successed', async () => {
@@ -343,54 +343,53 @@ describe('sentinel slice', () => {
       const requestData = {
         host: 'localhost',
         port: 5005,
-      };
+      }
 
-      const responsePayload = { data: masters, status: 200 };
+      const responsePayload = { data: masters, status: 200 }
 
-      apiService.post = jest.fn().mockResolvedValue(responsePayload);
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchMastersSentinelAction(requestData));
+      await store.dispatch<any>(fetchMastersSentinelAction(requestData))
 
       // Assert
       const expectedActions = [
         loadMastersSentinel(),
         setInstanceSentinel(requestData),
         loadMastersSentinelSuccess(responsePayload.data),
-      ];
-      expect(store.getActions()).toEqual(expectedActions);
-    });
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
 
     it('call both fetchMastersSentinelAction and loadMastersSentinelFailure when fetch is fail', async () => {
       // Arrange
       const requestData = {
         host: 'localhost',
         port: 5005,
-      };
+      }
 
-      const errorMessage =
-        'Could not connect to aoeu:123, please check the connection details.';
+      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
       const responsePayload = {
         response: {
           status: 500,
           data: { message: errorMessage },
         },
-      };
+      }
 
-      apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+      apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchMastersSentinelAction(requestData));
+      await store.dispatch<any>(fetchMastersSentinelAction(requestData))
 
       // Assert
       const expectedActions = [
         loadMastersSentinel(),
         loadMastersSentinelFailure(responsePayload.response.data.message),
         addErrorNotification(responsePayload as AxiosError),
-      ];
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-  });
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+  })
 
   it('call both createMastersSentinelAction and createMastersSentinelSuccess when fetch is successed', async () => {
     // Arrange
@@ -405,22 +404,22 @@ describe('sentinel slice', () => {
         username: 'egor',
         password: '123',
       },
-    ];
+    ]
 
-    const responsePayload = { data: addedMastersStatuses, status: 200 };
+    const responsePayload = { data: addedMastersStatuses, status: 200 }
 
-    apiService.post = jest.fn().mockResolvedValue(responsePayload);
+    apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
     // Act
-    await store.dispatch<any>(createMastersSentinelAction(requestData));
+    await store.dispatch<any>(createMastersSentinelAction(requestData))
 
     // Assert
     const expectedActions = [
       createMastersSentinel(),
       createMastersSentinelSuccess(responsePayload.data),
-    ];
-    expect(store.getActions()).toEqual(expectedActions);
-  });
+    ]
+    expect(store.getActions()).toEqual(expectedActions)
+  })
 
   it('call both createMastersSentinelAction and createMastersSentinelFailure when fetch is fail', async () => {
     // Arrange
@@ -435,28 +434,27 @@ describe('sentinel slice', () => {
         username: 'egor',
         password: '123',
       },
-    ];
+    ]
 
-    const errorMessage =
-      'Could not connect to aoeu:123, please check the connection details.';
+    const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
     const responsePayload = {
       response: {
         status: 500,
         data: { message: errorMessage },
       },
-    };
+    }
 
-    apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+    apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
     // Act
-    await store.dispatch<any>(createMastersSentinelAction(requestData));
+    await store.dispatch<any>(createMastersSentinelAction(requestData))
 
     // Assert
     const expectedActions = [
       createMastersSentinel(),
       createMastersSentinelFailure(responsePayload.response.data.message),
       addErrorNotification(responsePayload as AxiosError),
-    ];
-    expect(store.getActions()).toEqual(expectedActions);
-  });
-});
+    ]
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+})

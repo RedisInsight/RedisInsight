@@ -18,6 +18,8 @@ const addRedisDatabasePage = new AddRedisDatabasePage();
 const defaultHelperText = 'Enter any command in CLI or use search to see detailed information.';
 const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
+const COMMAND_GROUP_TIMESERIES = 'TimeSeries';
+const COMMAND_GROUP_GRAPH = 'Graph';
 
 fixture `CLI Command helper`
     .meta({ type: 'critical_path' })
@@ -30,8 +32,8 @@ fixture `CLI Command helper`
     })
 test('Verify that user can see relevant search results in Command Helper per every entered symbol', async t => {
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     //Start search from 1 symbol
     await t.typeText(cliPage.cliHelperSearch, 's');
     //Verify that we found commands
@@ -45,23 +47,24 @@ test('Verify that user can see relevant search results in Command Helper per eve
 });
 test('Verify that when user clears the input in the Search of CLI Helper (via x icon), he can see the default screen with proper the text', async t => {
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     //Verify default text
     await t.expect(cliPage.cliHelperText.textContent).eql(defaultHelperText, 'Default text for CLI Helper is shown');
     //Search any command
     await t.typeText(cliPage.cliHelperSearch, 'SET');
     await t.expect(cliPage.cliHelperOutputTitles.count).gt(0, 'List of commands were found');
     //Clear search input
-    const clearButton = await cliPage.cliHelper.find('[aria-label="Clear input"]')
+    const clearButton = cliPage.cliHelper.find('[aria-label="Clear input"]');
     await t.click(clearButton);
     //Verify default text after clear
     await t.expect(cliPage.cliHelperText.textContent).eql(defaultHelperText, 'Default text for CLI Helper is shown');
 });
 test('Verify that when user enters command in CLI, Helper displays additional info about the command', async t => {
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
+    //Open CLI and Helper
     await t.click(cliPage.cliExpandButton);
+    await t.click(cliPage.expandCommandHelperButton);
     //Enter command into CLI
     await t.typeText(cliPage.cliCommandInput, COMMAND_APPEND);
     //Verify details of the command
@@ -72,8 +75,9 @@ test('Verify that when user enters command in CLI, Helper displays additional in
 test('Verify that Command helper cleared when user runs the command in CLI', async t => {
     const searchText = 'sa';
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
+    //Open CLI and Helper
     await t.click(cliPage.cliExpandButton);
+    await t.click(cliPage.expandCommandHelperButton);
     //Select group from list
     await cliPage.selectFilterGroupType(COMMAND_GROUP_SET);
     //Type text in search
@@ -86,8 +90,8 @@ test('Verify that Command helper cleared when user runs the command in CLI', asy
 });
 test('Verify that user can unselect the command filtered to remove filters', async t => {
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     //Select one command from list
     await cliPage.selectFilterGroupType(COMMAND_GROUP_SET);
     await t.expect(cliPage.cliHelperOutputTitles.count).gt(0, 'List of commands were found');
@@ -101,8 +105,8 @@ test('Verify that user can unselect the command filtered to remove filters', asy
 test('Verify that when user has used search and apply filters, search results include only commands from the filter group applied', async t => {
     const searchText = 'sa';
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
     //Select group from list
     await cliPage.selectFilterGroupType(COMMAND_GROUP_SET);
     //Type text in search
@@ -111,4 +115,48 @@ test('Verify that when user has used search and apply filters, search results in
     await t.expect(cliPage.cliHelperOutputTitles.withText('SAVE').exists).notOk('No command found from another group');
     //Check that command from 'Set' group was found
     await t.expect(cliPage.cliHelperOutputTitles.withText('SADD').exists).ok('Proper command was found');
+});
+test('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
+    const commandForSearch = 'TS.';
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    //Select group from list and remeber commands
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
+    const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
+    let timeSeriesCommands = [];
+    for(let i = 0; i < commandsFilterCount; i++) {
+        timeSeriesCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
+    }
+    //Unselect group from list
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
+    //Search per command
+    await t.typeText(cliPage.cliHelperSearch, commandForSearch);
+    //Verify results in the output
+    const commandsCount = await cliPage.cliHelperOutputTitles.count;
+    for(let i = 0; i < commandsCount; i++){
+        await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(timeSeriesCommands[i], 'Results in the output contains searched value');
+    }
+});
+test('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
+    const commandForSearch = 'GRAPH.';
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    //Select group from list and remeber commands
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
+    const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
+    let graphCommands = [];
+    for(let i = 0; i < commandsFilterCount; i++) {
+        graphCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
+    }
+    //Unselect group from list
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
+    //Search per command
+    await t.typeText(cliPage.cliHelperSearch, commandForSearch);
+    //Verify results in the output
+    const commandsCount = await cliPage.cliHelperOutputTitles.count;
+    for(let i = 0; i < commandsCount; i++){
+        await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(graphCommands[i], 'Results in the output contains searched value');
+    }
 });

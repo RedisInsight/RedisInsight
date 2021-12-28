@@ -156,7 +156,7 @@ export default class MenuBuilder {
         {
           label: 'License Terms',
           click() {
-            shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/master/LICENSE');
+            shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE');
           },
         },
         {
@@ -256,7 +256,7 @@ export default class MenuBuilder {
           {
             label: 'License Terms',
             click() {
-              shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/master/LICENSE');
+              shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE');
             },
           },
           {

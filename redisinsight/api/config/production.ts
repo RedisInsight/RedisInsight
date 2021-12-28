@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-const homedir = join(require('os').homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2.0');
+const homedir = join(require('os').homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-preview');
 
 export default {
   dir_path: {
@@ -18,6 +18,6 @@ export default {
     database: join(homedir, 'redisinsight.db'),
   },
   redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://api.redislabs.com/v1/',
+    url: process.env.REDIS_CLOUD_URL || 'https://api.redislabs.com/v1',
   },
 };

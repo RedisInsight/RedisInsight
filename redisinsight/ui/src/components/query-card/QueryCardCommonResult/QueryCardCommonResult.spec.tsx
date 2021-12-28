@@ -17,4 +17,14 @@ describe('QueryCardCliResult', () => {
   it('should render', () => {
     expect(render(<QueryCardCommonResult {...instance(mockedProps)} />)).toBeTruthy()
   })
+  it('should render (nil) result', () => {
+    const result = ''
+    const { queryByTestId } = render(
+      <QueryCardCommonResult {...instance(mockedProps)} result={result} />
+    )
+
+    const resultEl = queryByTestId('query-common-result')
+
+    expect(resultEl).toHaveTextContent('(nil)')
+  })
 })

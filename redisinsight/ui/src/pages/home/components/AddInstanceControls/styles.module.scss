@@ -14,32 +14,73 @@
   padding-right: 10px;
   height: 43px;
   margin: 0 auto;
-  width: 200px;
+  width: 220px;
   text-decoration: none !important;
+
+  :global(.euiButton__text) {
+    font-weight: 500 !important;
+  }
+}
+
+.arrowRight {
+  display: block !important;
+  position: absolute;
+  right: 14px;
+  top: calc(50% - 11px);
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
 }
 
 .createBtn {
   border: 2px solid var(--euiColorSecondary);
   padding: 9px 24px;
+  letter-spacing: normal;
   border-radius: 4px;
   text-align: left;
   position: relative;
+  width: 413px;
+  height: 64px;
+  padding-right: 40px;
+  background: url(../../../../assets/img/NYbg.jpg) center;
+  background-size: cover;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    background-color: var(--overlayPromoNYColor);
+  }
+
   &:hover {
     transform: translateY(-1px);
   }
-}
 
-.createTitle {
-  padding-top: 0;
-  color: var(--euiTextColor) !important;
-  line-height: 16px;
-}
+  .createTitle {
+    padding-top: 3px;
+    line-height: 16px;
+    color: #ffffff !important;
+    position: relative;
+    font-weight: 500 !important;
+  }
 
-.createText {
-  font-size: 12px !important;
-  color: var(--euiTextColor) !important;
-  opacity: 0.7;
-  margin-top: -3px;
+  .createText {
+    font-size: 12px !important;
+    color: #ffffff !important;
+    position: relative;
+  }
+
+  .arrowRight {
+    position: absolute;
+    right: 14px;
+    top: calc(50% - 11px);
+    color: #ffffff;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .followText {
@@ -79,39 +120,7 @@
   }
 }
 
-.arrowRight {
-  display: none !important;
-}
-
 .containerDl {
-
-  .arrowRight {
-    display: block !important;
-    position: absolute;
-    right: 14px;
-    top: calc(50% - 11px);
-    color: var(--euiTextColor);
-    width: 20px;
-    height: 20px;
-  }
-
-  .createBtn {
-    height: 64px;
-    padding-right: 40px;
-    letter-spacing: 0.12px;
-    width: 412px;
-  }
-
-  .createTitle {
-    margin-top: -1px;
-    padding-top: 0;
-    font-weight: 500;
-  }
-
-  .createText {
-    margin-top: -5px;
-  }
-
   .links {
     max-width: 330px;
     display: none;
@@ -130,7 +139,7 @@
       a {
         color: var(--euiTextColor);
         text-decoration: underline;
-        font-weight: 500;
+        font-weight: 400;
 
         &:hover {
           text-decoration: none;

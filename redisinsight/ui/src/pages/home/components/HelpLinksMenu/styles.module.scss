@@ -1,40 +1,49 @@
 @import '@elastic/eui/src/global_styling/index';
 
+$borderWidth: 2px;
+
 .button {
   @include euiButtonBase;
   display: flex;
-  width: 100%;
+  min-width: 245px;
   justify-content: space-between;
   align-items: center;
   border-radius: 4px;
-  border: 2px solid var(--euiColorSecondary);
+  border: $borderWidth solid var(--euiColorSecondary);
   padding: 0 20px;
+  color: var(--inputTextColor);
   font: normal normal bold 14px/17px Graphik, sans-serif;
+  letter-spacing: -0.14px;
 }
 
 .buttonOpen {
-  border-bottom-color: transparent;
+  border-bottom-width: 0 !important;
+  padding-bottom: $borderWidth;
   border-radius: 4px 4px 0 0;
 }
 
 .popover {
-  border: 2px solid var(--euiColorSecondary) !important;
-  border-top: 1px solid var(--separatorColor) !important;
+  border: $borderWidth solid var(--euiColorSecondary) !important;
+  background-color: var(--euiPageBackgroundColor) !important;
+  border-top-width: 0 !important;
 }
 
 .item {
-  padding: 10px 20px;
+  padding: 10px 20px !important;
   background-color: transparent !important;
-  transition: background-color 0.3s ease-in-out;
-  will-change: background-color;
   text-decoration: none !important;
   font: normal normal bold 12px/17px Graphik, sans-serif;
-  letter-spacing: 0;
+  letter-spacing: -0.12px;
   &:hover {
-    background-color: var(--euiColorSecondary) !important;
+    background-color: var(--hoverInListColorLight) !important;
     text-decoration: none !important;
   }
   a {
     text-decoration: none !important;
   }
 }
+
+.arrowIcon {
+  fill: var(--iconsDefaultColor) !important;
+}
+

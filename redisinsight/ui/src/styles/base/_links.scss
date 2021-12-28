@@ -9,3 +9,13 @@
     background-color: inherit !important;
   }
 }
+
+a[target="_blank"], a.euiLink[target="_blank"] {
+  color: var(--externalLinkColor) !important;
+}
+
+.euiToolTip {
+  a[target="_blank"], a.euiLink[target="_blank"] {
+    color: var(--externalLinkTooltipColor) !important;
+  }
+}

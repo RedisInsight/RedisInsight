@@ -1,0 +1,27 @@
+.container {
+  height: 34px;
+  line-height: 34px;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--browserTableRowEven);
+
+  padding-left: 18px;
+  padding-right: 18px;
+  z-index: 10;
+}
+
+.icon {
+  margin-left: 5px;
+}
+
+.title {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  :global {
+    .euiIcon {
+      color: var(--euiColorPrimary);
+      margin-right: 8px;
+    }
+  }
+}

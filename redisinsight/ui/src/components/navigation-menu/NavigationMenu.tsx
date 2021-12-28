@@ -20,7 +20,7 @@ import {
 import { PageNames, Pages } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { setReleaseNotesViewed, appElectronInfoSelector } from 'uiSrc/slices/app/info'
+import { setReleaseNotesViewed, appElectronInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import LogoSVG from 'uiSrc/assets/img/logo.svg'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
@@ -69,6 +69,11 @@ const NavigationMenu = () => {
   }
   const handleGoBrowserPage = () => {
     history.push(Pages.browser(connectedInstanceId))
+  }
+
+  const onKeyboardShortcutClick = () => {
+    setIsHelpMenuActive(false)
+    dispatch(setShortcutsFlyoutState(true))
   }
 
   const privateRoutes: INavigations[] = [
@@ -156,7 +161,7 @@ const NavigationMenu = () => {
         </>
         )}
     >
-      <div className={styles.popover}>
+      <div className={styles.popover} data-testid="help-center">
         <EuiTitle size="xs">
           <span>Help Center</span>
         </EuiTitle>
@@ -168,6 +173,7 @@ const NavigationMenu = () => {
               className={styles.helpMenuItemLink}
               href="https://github.com/RedisInsight/RedisInsight/issues"
               target="_blank"
+              data-testid="submit-bug-btn"
             >
               <EuiIcon type="flag" size="xl" />
               <EuiSpacer size="s" />
@@ -177,16 +183,22 @@ const NavigationMenu = () => {
             </EuiLink>
           </EuiFlexItem>
 
-          <EuiFlexItem className={cx(styles.helpMenuItem, styles.helpMenuItemDisabled)}>
-            <EuiIcon type="keyboardShortcut" size="xl" />
-            <EuiSpacer size="s" />
-            <EuiText
-              size="xs"
-              textAlign="center"
-              className={styles.helpMenuText}
-            >
-              Keyboard Shortcuts
-            </EuiText>
+          <EuiFlexItem
+            className={styles.helpMenuItem}
+            onClick={() => onKeyboardShortcutClick()}
+            data-testid="shortcuts-btn"
+          >
+            <div className={styles.helpMenuItemLink}>
+              <EuiIcon type="keyboardShortcut" size="xl" />
+              <EuiSpacer size="s" />
+              <EuiText
+                size="xs"
+                textAlign="center"
+                className={styles.helpMenuText}
+              >
+                Keyboard Shortcuts
+              </EuiText>
+            </div>
           </EuiFlexItem>
 
           <EuiFlexItem className={styles.helpMenuItem}>
@@ -196,6 +208,7 @@ const NavigationMenu = () => {
               onClick={onClickReleaseNotes}
               href="https://docs.redis.com/staging/release-ri-v2.0/ri/release-notes/"
               target="_blank"
+              data-testid="release-notes-btn"
             >
               <div className={cx({ [styles.helpMenuItemNotified]: isReleaseNotesViewed === false })}>
                 <EuiIcon type="package" size="xl" />

@@ -27,13 +27,16 @@ implements OnApplicationBootstrap, IServerProvider {
 
   private encryptionService: EncryptionService;
 
+  private sessionId: number;
+
   constructor(repository, eventEmitter, encryptionService) {
     this.repository = repository;
     this.eventEmitter = eventEmitter;
     this.encryptionService = encryptionService;
   }
 
-  async onApplicationBootstrap() {
+  async onApplicationBootstrap(sessionId: number = new Date().getTime()) {
+    this.sessionId = sessionId;
     await this.upsertServerInfo();
   }
 
@@ -45,7 +48,7 @@ implements OnApplicationBootstrap, IServerProvider {
       // Create default server info on first application launch
       serverInfo = this.repository.create({});
       await this.repository.save(serverInfo);
-      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, serverInfo.id);
+      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, { anonymousId: serverInfo.id, sessionId: this.sessionId });
       this.eventEmitter.emit(AppAnalyticsEvents.Track, {
         event: TelemetryEvents.ApplicationFirstStart,
         eventData: {
@@ -57,7 +60,7 @@ implements OnApplicationBootstrap, IServerProvider {
       });
     } else {
       this.logger.log('Application started.');
-      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, serverInfo.id);
+      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, { anonymousId: serverInfo.id, sessionId: this.sessionId });
       this.eventEmitter.emit(AppAnalyticsEvents.Track, {
         event: TelemetryEvents.ApplicationStarted,
         eventData: {
@@ -82,6 +85,7 @@ implements OnApplicationBootstrap, IServerProvider {
       }
       const result = {
         ...info,
+        sessionId: this.sessionId,
         appVersion: SERVER_CONFIG.appVersion,
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,

@@ -1,0 +1,69 @@
+.groupComponentsWrapper {
+  flex-grow: 1;
+  height: 100%;
+  padding: 0 16px;
+}
+
+.groupComponents {
+  display: flex;
+  flex-grow: 1;
+  height: calc(100% - 26px);
+}
+
+.containerMinimized {
+  height: 26px;
+  line-height: 26px;
+  border: 1px solid var(--euiColorLightShade);
+}
+
+.componentBadgeItem {
+  margin: 0 2px;
+  cursor: pointer;
+  user-select: none;
+
+  :global {
+    .euiBadge__text, .euiBadge__content {
+      cursor: pointer !important;
+    }
+
+    .euiBadge__text {
+      display: flex;
+      align-items: center;
+    }
+
+    .euiIcon {
+      margin-right: 4px;
+    }
+  }
+
+  &:hover {
+    .componentBadge {
+      background-color: var(--buttonIconPrimaryHover) !important;
+    }
+  }
+}
+
+.componentBadge {
+  background-color: transparent !important;
+  color: var(--euiTextSubduedColor) !important;
+  height: 18px !important;
+  border: none !important;
+
+  &[title] {
+    pointer-events: none;
+  }
+
+  &.active {
+    background-color: var(--hoverInListColorDarken) !important;
+    color: var(--euiColorPrimary) !important;
+  }
+}
+
+
+.helperWrapper {
+  width: 100%;
+  max-width: 360px;
+  &.fullWidth {
+    max-width: 100%;
+  }
+}

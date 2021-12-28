@@ -49,7 +49,7 @@ test('Verify that user can see saved CLI size on Browser page when he returns ba
     await t.expect(await cliPage.cliArea.clientHeight).eql(cliAreaHeight + offsetY, 'Saved context for resizable cli is proper');
 });
 test('Verify that user can see saved Key details and Keys tables size on Browser page when he returns back to Browser page', async t => {
-    const offsetX = 200;
+    const offsetX = 50;
 
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
@@ -60,7 +60,7 @@ test('Verify that user can see saved Key details and Keys tables size on Browser
     await t.click(myRedisDatabasePage.myRedisDBButton);
 
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
+    
     await t.expect(await browserPage.keyListTable.clientWidth).eql(keyListWidth + offsetX, 'Saved browser resizable context is proper');
 });
 test('Verify that user can see saved filter per key type applied when he returns back to Browser page', async t => {

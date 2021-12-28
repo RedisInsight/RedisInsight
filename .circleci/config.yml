@@ -735,8 +735,7 @@ jobs:
             done
 
   release-guides:
-    docker:
-      - image: circleci/node:15.14.0
+    executor: linux-executor
     steps:
       - checkout
       - run:

@@ -1,14 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as Redis from 'ioredis-mock';
 import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
-import {
-  IFindRedisClientInstanceByOptions,
-  RedisService,
-} from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { InternalServerErrorException } from '@nestjs/common';
-import { CliToolService } from 'src/modules/cli/services/cli-tool/cli-tool.service';
+import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -17,13 +14,13 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
 const mockClient = new Redis();
 
 describe('CliToolService', () => {
-  let service: CliToolService;
+  let service: RedisToolService;
   let getRedisClient;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CliToolService,
+        RedisToolService,
         {
           provide: RedisService,
           useFactory: () => ({}),
@@ -35,8 +32,8 @@ describe('CliToolService', () => {
       ],
     }).compile();
 
-    service = await module.get<CliToolService>(CliToolService);
-    getRedisClient = jest.spyOn<CliToolService, any>(service, 'getRedisClient');
+    service = await module.get<RedisToolService>(RedisToolService);
+    getRedisClient = jest.spyOn<RedisToolService, any>(service, 'getRedisClient');
     mockClient.sendCommand = jest.fn();
   });
 

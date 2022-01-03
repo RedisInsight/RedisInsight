@@ -13,15 +13,15 @@ import {
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
-import { CliToolService } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {
   private logger = new Logger('WorkbenchCommandsExecutor');
 
-  constructor(private cliTool: CliToolService) {}
+  constructor(private redisTool: RedisToolService) {}
 
   public async sendCommand(
     clientOptions: IFindRedisClientInstanceByOptions,
@@ -56,7 +56,7 @@ export class WorkbenchCommandsExecutor {
 
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const response = await this.cliTool.execCommand(clientOptions, command, args, 'utf-8');
+      const response = await this.redisTool.execCommand(clientOptions, command, args, 'utf-8');
       this.logger.log('Succeed to execute workbench command.');
       return {
         response,
@@ -88,7 +88,7 @@ export class WorkbenchCommandsExecutor {
       const [command, ...args] = splitCliCommandLine(commandLine);
       // this.checkUnsupportedCommands(`${command} ${args[0]}`);
       const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
-      let result = await this.cliTool.execCommandForNode(
+      let result = await this.redisTool.execCommandForNode(
         clientOptions,
         command,
         args,
@@ -98,7 +98,7 @@ export class WorkbenchCommandsExecutor {
       );
       if (result.error && checkRedirectionError(result.error) && nodeOptions.enableRedirection) {
         const { slot, address } = parseRedirectionError(result.error);
-        result = await this.cliTool.execCommandForNode(
+        result = await this.redisTool.execCommandForNode(
           clientOptions,
           command,
           args,
@@ -137,7 +137,7 @@ export class WorkbenchCommandsExecutor {
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
 
-      const result = await this.cliTool.execCommandForNodes(
+      const result = await this.redisTool.execCommandForNodes(
         clientOptions,
         command,
         args,

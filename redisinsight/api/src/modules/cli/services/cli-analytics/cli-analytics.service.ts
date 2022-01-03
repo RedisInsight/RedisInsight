@@ -4,7 +4,7 @@ import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
 import { AppTool, ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { ICliExecResultFromNode } from 'src/modules/cli/services/cli-tool/cli-tool.service';
+import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
 
 @Injectable()
 export class CliAnalyticsService extends TelemetryBaseService {

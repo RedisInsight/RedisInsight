@@ -6,12 +6,12 @@ import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbenc
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
-import { CliToolService, ICliExecResultFromNode } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 import {
   CliCommandNotSupportedError,
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
+import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
@@ -62,14 +62,14 @@ describe('WorkbenchCommandsExecutor', () => {
       providers: [
         WorkbenchCommandsExecutor,
         {
-          provide: CliToolService,
+          provide: RedisToolService,
           useFactory: mockCliTool,
         },
       ],
     }).compile();
 
     service = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
-    cliTool = module.get<CliToolService>(CliToolService);
+    cliTool = module.get<RedisToolService>(RedisToolService);
   });
 
   describe('sendCommand', () => {

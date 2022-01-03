@@ -4,12 +4,14 @@ import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middl
 import { RouterModule } from 'nest-router';
 import { SharedModule } from 'src/modules/shared/shared.module';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
-import { CliToolService } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CoreModule } from 'src/modules/core/core.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
+import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolFactory } from 'src/modules/shared/services/base/redis-tool.factory';
+import { AppTool } from 'src/models';
 
 @Module({
   imports: [
@@ -24,7 +26,11 @@ import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-e
     WorkbenchService,
     WorkbenchCommandsExecutor,
     CommandExecutionProvider,
-    CliToolService,
+    {
+      provide: RedisToolService,
+      useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(AppTool.Workbench),
+      inject: [RedisToolFactory],
+    },
   ],
 })
 export class WorkbenchModule implements NestModule {

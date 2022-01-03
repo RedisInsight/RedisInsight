@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import IORedis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
@@ -29,15 +29,16 @@ export interface ICliExecResultFromNode {
   error?: any,
 }
 
-@Injectable()
-export class CliToolService extends RedisConsumerAbstractService {
-  private logger = new Logger('CliToolService');
+export class RedisToolService extends RedisConsumerAbstractService {
+  private logger: Logger;
 
   constructor(
+    private appTool: AppTool,
     protected redisService: RedisService,
     protected instancesBusinessService: InstancesBusinessService,
   ) {
-    super(AppTool.CLI, redisService, instancesBusinessService);
+    super(appTool, redisService, instancesBusinessService);
+    this.logger = new Logger(`${appTool}ToolService`);
   }
 
   async execCommand(

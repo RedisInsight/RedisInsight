@@ -2,9 +2,11 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
 import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
+import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolFactory } from 'src/modules/shared/services/base/redis-tool.factory';
+import { AppTool } from 'src/models';
 import { CliController } from './controllers/cli.controller';
 import { CliBusinessService } from './services/cli-business/cli-business.service';
-import { CliToolService } from './services/cli-tool/cli-tool.service';
 import { CliAnalyticsService } from './services/cli-analytics/cli-analytics.service';
 
 @Module({
@@ -12,8 +14,12 @@ import { CliAnalyticsService } from './services/cli-analytics/cli-analytics.serv
   controllers: [CliController],
   providers: [
     CliBusinessService,
-    CliToolService,
     CliAnalyticsService,
+    {
+      provide: RedisToolService,
+      useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(AppTool.CLI),
+      inject: [RedisToolFactory],
+    },
   ],
 })
 export class CliModule implements NestModule {

@@ -6,8 +6,9 @@ export class WorkbenchPage {
   cssSelectorPaginationButtonNext: string
   cssReRunCommandButton: string
   cssDeleteCommandButton: string
-  cssQueryCardOutputResponceSuccess: string
+  cssQueryCardOutputResponseSuccess: string
   cssTableViewTypeOption: string
+  cssMonacoCommandPaletteLine: string
   cssQueryTextResult: string
   cssQueryTableResult: string
   //------------------------------------------------------------------------------------------
@@ -45,6 +46,9 @@ export class WorkbenchPage {
   monacoCloseCommandDetails: Selector
   monacoSuggestion: Selector
   monacoCommandIndicator: Selector
+  monacoContextMenu: Selector
+  monacoShortcutInput: Selector
+  monacoSuggestionOption: Selector
   iframe: Selector
   internalLinkWorkingWithHashes: Selector
   preselectExactSearch: Selector
@@ -65,8 +69,9 @@ export class WorkbenchPage {
       this.cssSelectorPaginationButtonNext = '[data-test-subj=pagination-button-next]';
       this.cssReRunCommandButton = '[data-testid=re-run-command]';
       this.cssDeleteCommandButton = '[data-testid=delete-command]';
-      this.cssQueryCardOutputResponceSuccess = '[data-testid=query-card-output-response-success]';
+      this.cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
       this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
+      this.cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
       this.cssQueryTextResult = '[data-testid=query-cli-result]';
       this.cssQueryTableResult = '[data-testid^=query-table-result-]';
       //-------------------------------------------------------------------------------------------
@@ -111,6 +116,9 @@ export class WorkbenchPage {
       this.monacoCommandDetails = Selector('div.suggest-details-container');
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
+      this.monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
+      this.monacoShortcutInput = Selector('input.input');
+      this.monacoSuggestionOption = Selector('div.monaco-list-row');
       this.iframe = Selector('[data-testid=pluginIframe]', { timeout: 60000 });
       this.monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
       this.noCommandHistorySection = Selector('[data-testid=wb_no-results]');
@@ -139,9 +147,9 @@ export class WorkbenchPage {
 
   //Select Table view option in Workbench results
   async selectViewTypeTable(): Promise<void>{
-    await t.click(this.selectViewType);
-    await t.click(this.tableViewTypeOption);
-}
+      await t.click(this.selectViewType);
+      await t.click(this.tableViewTypeOption);
+  }
 
   /**
   * Send a command in Workbench
@@ -158,7 +166,7 @@ export class WorkbenchPage {
   * @param commands The array of commands to send
   */
   async sendCommandsArrayInWorkbench(commands: string[]): Promise<void> {
-      for(let command of commands) {
+      for(const command of commands) {
           await this.sendCommandInWorkbench(command);
       }
   }

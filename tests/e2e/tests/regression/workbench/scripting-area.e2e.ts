@@ -80,3 +80,19 @@ test('Verify that user can see an indication (green triangle) of commands from t
     //Compare number of indicator displayed and expected value
     await t.expect(workbenchPage.monacoCommandIndicator.count).eql(numberOfCommands, 'Number of command indicator');
 });
+test('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
+    const command = 'HSET key field value';
+    //Put a command in Editing Area
+    await t.typeText(workbenchPage.queryInput, command);
+    //Right click to get context menu
+    await t.rightClick(workbenchPage.queryInput);
+    //Select Command Palette option
+    await t.click(workbenchPage.monacoContextMenu.find(workbenchPage.cssMonacoCommandPaletteLine));
+    //Print "Run Commands" shortcut
+    await t.typeText(workbenchPage.monacoShortcutInput, 'Run Commands');
+    //Select "Run Commands" from menu
+    await t.click(workbenchPage.monacoSuggestionOption);
+    //Check the result with sent command
+    const commandTextInResult = await workbenchPage.queryCardCommand.withExactText(command);
+    await t.expect(commandTextInResult.exists).ok('The result of sent command');
+});

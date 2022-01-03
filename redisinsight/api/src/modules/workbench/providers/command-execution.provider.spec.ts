@@ -16,7 +16,6 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import {
   NotFoundException,
 } from '@nestjs/common';
-import { ICliExecResultFromNode } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { Repository } from 'typeorm';
@@ -24,6 +23,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { KeytarDecryptionErrorException } from 'src/modules/core/encryption/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
 
 const mockNodeEndpoint = {
   host: '127.0.0.1',

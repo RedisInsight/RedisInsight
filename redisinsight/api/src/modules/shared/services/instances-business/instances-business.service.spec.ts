@@ -15,7 +15,6 @@ import {
   mockClientCertEntity,
   mockDatabasesProvider,
   mockInstancesAnalyticsService,
-  mockPluginWhiteListCommandsResponse,
   mockRepository,
   mockSentinelDatabaseEntity,
   mockStandaloneDatabaseEntity,
@@ -781,70 +780,6 @@ describe('InstancesBusinessService', () => {
           ),
         );
       }
-    });
-  });
-
-  describe('getPluginCommands', () => {
-    const mockClient = new Redis();
-    beforeEach(() => {
-      service.connectToInstance = jest.fn();
-      redisService.getClientInstance = jest.fn().mockReturnValue(undefined);
-      redisService.isClientConnected = jest.fn();
-      redisConfBusinessService.getPluginWhiteListCommands = jest
-        .fn().mockResolvedValue(mockPluginWhiteListCommandsResponse);
-    });
-    it('successfully get plugin commands by using exist client', async () => {
-      redisService.getClientInstance.mockReturnValue(mockRedisClientInstance);
-      redisService.isClientConnected = jest.fn().mockReturnValue(true);
-      redisConfBusinessService.getRedisGeneralInfo = jest.fn().mockResolvedValue(mockRedisGeneralInfo);
-
-      const result = await service.getPluginCommands(mockStandaloneDatabaseEntity.id);
-
-      expect(result).toEqual(mockPluginWhiteListCommandsResponse);
-      expect(service.connectToInstance).not.toHaveBeenCalled();
-      expect(redisConfBusinessService.getPluginWhiteListCommands).toHaveBeenCalledWith(
-        mockRedisClientInstance.client,
-      );
-    });
-    it('successfully get plugin commands without storing client', async () => {
-      service.connectToInstance = jest.fn().mockResolvedValue(mockClient);
-
-      const result = await service.getPluginCommands(mockStandaloneDatabaseEntity.id);
-
-      expect(result).toEqual(mockPluginWhiteListCommandsResponse);
-      expect(service.connectToInstance).toHaveBeenCalledWith(
-        mockStandaloneDatabaseEntity.id,
-        AppTool.Browser,
-        true,
-      );
-      expect(redisConfBusinessService.getPluginWhiteListCommands).toHaveBeenCalledWith(
-        mockClient,
-      );
-    });
-    it('successfully get plugin commands and store client', async () => {
-      service.connectToInstance = jest.fn().mockResolvedValue(mockClient);
-
-      const result = await service.getPluginCommands(mockStandaloneDatabaseEntity.id);
-
-      expect(result).toEqual(mockPluginWhiteListCommandsResponse);
-      expect(service.connectToInstance).toHaveBeenCalledWith(
-        mockStandaloneDatabaseEntity.id,
-        AppTool.Browser,
-        true,
-      );
-
-      expect(redisConfBusinessService.getPluginWhiteListCommands).toHaveBeenCalledWith(mockClient);
-    });
-
-    it('throw error database instance not found when trying to get plugin commands', async () => {
-      service.connectToInstance = jest.fn().mockRejectedValue(new NotFoundException());
-
-      await expect(
-        service.getPluginCommands(mockStandaloneDatabaseEntity.id),
-      ).rejects.toThrow(NotFoundException);
-      expect(
-        redisConfBusinessService.getPluginWhiteListCommands,
-      ).not.toHaveBeenCalled();
     });
   });
 });

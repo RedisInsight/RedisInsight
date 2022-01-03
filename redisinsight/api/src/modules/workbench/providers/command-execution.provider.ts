@@ -8,6 +8,7 @@ import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-e
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
+import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 
 @Injectable()
 export class CommandExecutionProvider {
@@ -39,7 +40,7 @@ export class CommandExecutionProvider {
   /**
    * @param databaseId
    */
-  async getList(databaseId: string): Promise<CommandExecution[]> {
+  async getList(databaseId: string): Promise<ShortCommandExecution[]> {
     this.logger.log('Getting command executions');
     const entities = await this.commandExecutionRepository
       .createQueryBuilder('e')
@@ -62,7 +63,7 @@ export class CommandExecutionProvider {
     );
 
     return filter(decryptedEntities, (entity) => !isNull(entity))
-      .map((entity) => classToClass(CommandExecution, entity));
+      .map((entity) => classToClass(ShortCommandExecution, entity));
   }
 
   /**

@@ -9,8 +9,8 @@ import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbenc
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { CliCommandNotSupportedError } from 'src/modules/cli/constants/errors';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -87,31 +87,37 @@ describe('WorkbenchService', () => {
 
       expect(result).toEqual(mockCommandExecution);
     });
-    it('should throw an error when unsupported command called', async () => {
+    it('should return status failed when unsupported command called', async () => {
       const dto = {
-        ...mockCommandExecutionResults,
         command: 'subscribe',
       };
 
-      try {
-        await service.createCommandExecution(mockClientOptions, dto);
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(CliCommandNotSupportedError);
-      }
+      const result = await service.createCommandExecution(mockClientOptions, dto);
+
+      expect(result).toEqual(new CommandExecution({
+        ...dto,
+        databaseId: mockClientOptions.instanceId,
+        result: [new CommandExecutionResult({
+          response: ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED('subscribe'.toUpperCase()),
+          status: CommandExecutionStatus.Fail,
+        })],
+      }));
     });
     it('should throw an error when blocking command called', async () => {
       const dto = {
-        ...mockCommandExecutionResults,
         command: 'blpop list',
       };
 
-      try {
-        await service.createCommandExecution(mockClientOptions, dto);
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(CliCommandNotSupportedError);
-      }
+      const result = await service.createCommandExecution(mockClientOptions, dto);
+
+      expect(result).toEqual(new CommandExecution({
+        ...dto,
+        databaseId: mockClientOptions.instanceId,
+        result: [new CommandExecutionResult({
+          response: ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED('blpop'.toUpperCase()),
+          status: CommandExecutionStatus.Fail,
+        })],
+      }));
     });
     it('should throw an error when command execution failed', async () => {
       workbenchCommandsExecutor.sendCommand.mockRejectedValueOnce(new BadRequestException('error'));

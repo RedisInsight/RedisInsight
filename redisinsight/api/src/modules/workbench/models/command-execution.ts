@@ -26,7 +26,7 @@ export class CommandExecution {
   @Expose()
   command: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Command execution result',
     type: () => CommandExecutionResult,
     isArray: true,

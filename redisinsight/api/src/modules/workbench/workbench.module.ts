@@ -12,6 +12,9 @@ import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-e
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { RedisToolFactory } from 'src/modules/shared/services/base/redis-tool.factory';
 import { AppTool } from 'src/models';
+import { PluginsService } from 'src/modules/workbench/plugins.service';
+import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
+import { PluginsController } from 'src/modules/workbench/plugins.controller';
 
 @Module({
   imports: [
@@ -21,7 +24,10 @@ import { AppTool } from 'src/models';
     CoreModule,
     SharedModule,
   ],
-  controllers: [WorkbenchController],
+  controllers: [
+    WorkbenchController,
+    PluginsController,
+  ],
   providers: [
     WorkbenchService,
     WorkbenchCommandsExecutor,
@@ -31,6 +37,8 @@ import { AppTool } from 'src/models';
       useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(AppTool.Workbench),
       inject: [RedisToolFactory],
     },
+    PluginsService,
+    PluginCommandsWhitelistProvider,
   ],
 })
 export class WorkbenchModule implements NestModule {

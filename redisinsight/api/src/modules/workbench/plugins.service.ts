@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
-import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { getBlockingCommands, getUnsupportedCommands } from 'src/utils/cli-helper';
 import { CliCommandNotSupportedError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
+import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
+import { plainToClass } from 'class-transformer';
+import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 
 @Injectable()
-export class WorkbenchService {
+export class PluginsService {
   constructor(
     private commandsExecutor: WorkbenchCommandsExecutor,
-    private commandExecutionProvider: CommandExecutionProvider,
+    private whitelistProvider: PluginCommandsWhitelistProvider,
   ) {}
 
   /**
@@ -24,23 +23,23 @@ export class WorkbenchService {
    * @param clientOptions
    * @param dto
    */
-  async createCommandExecution(
+  async sendCommand(
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionDto,
-  ): Promise<CommandExecution> {
+  ): Promise<PluginCommandExecution> {
     try {
-      this.checkUnsupportedCommands(dto.command);
+      await this.checkWhitelistedCommands(clientOptions.instanceId, dto.command);
 
       const result = await this.commandsExecutor.sendCommand(clientOptions, dto);
 
-      return await this.commandExecutionProvider.create({
+      return plainToClass(PluginCommandExecution, {
         ...dto,
         databaseId: clientOptions.instanceId,
         result,
       });
     } catch (error) {
       if (error instanceof CliCommandNotSupportedError) {
-        return new CommandExecution({
+        return new PluginCommandExecution({
           ...dto,
           databaseId: clientOptions.instanceId,
           result: [new CommandExecutionResult({
@@ -55,38 +54,29 @@ export class WorkbenchService {
   }
 
   /**
-   * Get list command execution history per instance (last 30 items)
-   *
-   * @param databaseId
+   * Get database white listed commands for plugins
+   * @param instanceId
    */
-  async listCommandExecutions(databaseId: string): Promise<ShortCommandExecution[]> {
-    return this.commandExecutionProvider.getList(databaseId);
-  }
-
-  /**
-   * Get command execution details
-   *
-   * @param databaseId
-   * @param id
-   */
-  async getCommandExecution(databaseId: string, id: string): Promise<CommandExecution> {
-    return this.commandExecutionProvider.getOne(databaseId, id);
+  async getWhitelistCommands(instanceId: string): Promise<string[]> {
+    return await this.whitelistProvider.getWhitelistCommands(instanceId);
   }
 
   /**
    * Check if command outside workbench commands black list
+   * @param databaseId
    * @param commandLine
    * @private
    */
-  private checkUnsupportedCommands(commandLine: string) {
+  private async checkWhitelistedCommands(databaseId: string, commandLine: string) {
     const targetCommand = commandLine.toLowerCase();
-    const unsupportedCommand = getUnsupportedCommands()
-      .concat(getBlockingCommands())
+
+    const isWhiteListed = (await this.getWhitelistCommands(databaseId))
       .find((command) => targetCommand.startsWith(command));
-    if (unsupportedCommand) {
+
+    if (!isWhiteListed) {
       throw new CliCommandNotSupportedError(
-        ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(
-          unsupportedCommand.toUpperCase(),
+        ERROR_MESSAGES.PLUGIN_COMMAND_NOT_SUPPORTED(
+          (targetCommand.split(' '))[0].toUpperCase(),
         ),
       );
     }

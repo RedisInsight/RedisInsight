@@ -77,7 +77,7 @@ test('Verify that user can see the results found in the table view by default fo
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command ${command}`);
     }
 });
-test('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
+test.skip('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
     const commands = [
         'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
         `FT.CREATE ${indexName} ON HASH PREFIX 1 doc: SCHEMA title TEXT WEIGHT 5.0 body TEXT url TEXT author TEXT rate TEXT review TEXT comment TEXT`,

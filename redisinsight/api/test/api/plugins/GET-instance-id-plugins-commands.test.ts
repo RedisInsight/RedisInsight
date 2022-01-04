@@ -3,7 +3,7 @@ import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/instance/${instanceId}/plugin-commands`);
+  request(server).get(`/instance/${instanceId}/plugins/commands`);
 
 const responseSchema = Joi.array().items(Joi.string()).required();
 
@@ -16,7 +16,7 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-describe('GET /instance/:instanceId/plugin-commands', () => {
+describe('GET /instance/:instanceId/plugins/commands', () => {
   before(localDb.createDatabaseInstances);
 
   [

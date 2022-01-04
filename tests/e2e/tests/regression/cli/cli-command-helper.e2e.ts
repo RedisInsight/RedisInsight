@@ -125,11 +125,31 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         i++;
     }
 });
-test('Verify that user can use Command Helper separately from CLI', async t => {
+test('Verify that user can open/close CLI separately from Command Helper', async t => {
+    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Verify that CLI is opened separately
+    await t.expect(cliPage.commandHelperArea.visible).notOk('Command Helper is closed');
+    await t.expect(cliPage.cliCollapseButton.visible).ok('CLI is opended');
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    //Verify that user can close CLI separately
+    await t.click(cliPage.cliCollapseButton);
+    await t.expect(cliPage.commandHelperArea.visible).ok('Command Helper is displayed');
+    await t.expect(cliPage.cliCollapseButton.visible).notOk('CLI is closed');
+});
+test('Verify that user can open/close Command Helper separately from CLI', async t => {
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
-    //Verify that only Command Helper is opened
-    await t.expect(cliPage.commandHelperArea.visible).ok('Command Helper is displayed');
+    //Verify that Command Helper is opened separately
+    await t.expect(cliPage.commandHelperArea.visible).ok('Command Helper is opened');
     await t.expect(cliPage.cliCollapseButton.visible).notOk('CLI is closed');
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Verify that Command Helper is closed separately
+    await t.click(cliPage.closeCommandHelperButton);
+    await t.expect(cliPage.commandHelperArea.visible).notOk('Command Helper is closed');
+    await t.expect(cliPage.cliCollapseButton.visible).ok('CLI is opended');
 });

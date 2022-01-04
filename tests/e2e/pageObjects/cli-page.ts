@@ -35,6 +35,7 @@ export class CliPage {
   cliReadMoreRediSearchCommandDocumentation: Selector
   expandCommandHelperButton: Selector
   closeCommandHelperButton: Selector
+  commandHelperArea: Selector
 
   constructor() {
       //-------------------------------------------------------------------------------------------
@@ -70,6 +71,7 @@ export class CliPage {
       this.cliCommandExecuted = Selector('[data-testid=cli-command-wrapper]');
       this.cliReadMoreJSONCommandDocumentation = Selector('[id=jsonset]');
       this.cliReadMoreRediSearchCommandDocumentation = Selector('[id=ftexplain]');
+      this.commandHelperArea = Selector('[data-testid=command-helper]');
   }
   /**
   * Select filter group type

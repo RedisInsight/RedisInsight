@@ -62,6 +62,10 @@ export class WorkbenchPage {
   noCommandHistoryTitle: Selector
   noCommandHistoryText: Selector
   scrolledEnablementArea: Selector
+  enablementAreaPagination: Selector
+  enablementAreaPaginationPopover: Selector
+  paginationPopoverButtons: Selector
+  enablementAreaTreeView: Selector
 
   constructor() {
       //CSS selectors
@@ -100,6 +104,8 @@ export class WorkbenchPage {
       this.reRunCommandButton = Selector('[data-testid=re-run-command]');
       this.preselectManual = Selector('[data-testid=preselect-Manual]');
       this.internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
+      this.enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
+      this.paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.queryInput = Selector('[data-testid=query-input-container]');
       this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -128,7 +134,9 @@ export class WorkbenchPage {
       this.noCommandHistoryTitle = Selector ('[data-testid=wb_no-results__title]');
       this.noCommandHistoryText = Selector ('[data-testid=wb_no-results__summary]');
       this.monacoCommandIndicator = Selector('div.monaco-glyph-run-command');
-      this.scrolledEnablementArea = Selector('[data-testid=enablement-area__page]')
+      this.scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
+      this.enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
+      this.enablementAreaTreeView = Selector('[data-testid=enablementArea-treeView]');
   }
 
   /**

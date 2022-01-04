@@ -95,3 +95,27 @@ test('Verify that user can see saved scroll position in Enablement area when he 
     //Check that scroll position is saved
     await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
 });
+test('Verify that user can see the siblings menu by clicking on page counter element between Back and Next buttons', async t => {
+    const popoverButtons = [
+        'Introduction',
+        'Working with Hashes',
+        'Working with JSON',
+        'Learn More'
+    ]
+    //Open Working with Hashes section and click on the on page counter
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    await t.click(workbenchPage.enablementAreaPagination);
+    //Verify the siblings menu
+    await t.expect(workbenchPage.enablementAreaPaginationPopover.visible).ok('The siblings menu is displayed');
+    const countOfButtons = await workbenchPage.paginationPopoverButtons.count;
+    for (let i = 0; i < countOfButtons; i++) {
+        let popoverButton = workbenchPage.paginationPopoverButtons.nth(i);
+        await t.expect(popoverButton.textContent).eql(popoverButtons[i], `The siblings menu button ${popoverButtons[i]} is displayed`);    
+    }
+});
+test('Verify that user can see the quick navigation section to navigate between siblings under the scrolling content', async t => {
+    //Open Working with Hashes section
+    await t.click(workbenchPage.internalLinkWorkingWithHashes);
+    //Verify the quick navigation section
+    await t.expect(workbenchPage.enablementAreaPagination.visible).ok('The quick navigation section is displayed');
+});

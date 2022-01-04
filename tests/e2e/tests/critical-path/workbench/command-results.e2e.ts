@@ -77,6 +77,7 @@ test('Verify that user can see the results found in the table view by default fo
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command ${command}`);
     }
 });
+//skipped due the inaccessibility of the iframe
 test.skip('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
     const commands = [
         'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
@@ -87,9 +88,9 @@ test.skip('Verify that user can switches between views and see results according
     for(let command of commands) {
         await workbenchPage.sendCommandInWorkbench(command);
     }
-    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command FT.SEARCH`);
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok('The table view is selected by default for command FT.SEARCH');
     await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(await workbenchPage.queryTableResult.visible).ok(`The table result is displayed for command FT.SEARCH`);
+    await t.expect(await workbenchPage.queryTableResult.visible).ok('The table result is displayed for command FT.SEARCH');
     //Select Text view and check result
     await t.switchToMainWindow();
     await workbenchPage.selectViewTypeText();

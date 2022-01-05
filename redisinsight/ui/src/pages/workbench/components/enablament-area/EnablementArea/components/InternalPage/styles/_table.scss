@@ -1,0 +1,12 @@
+@import './variables';
+
+table {
+  th {
+    color: var(--htmlColor);
+  }
+  th, td {
+    border: 1px solid var(--euiColorLightShade);
+    padding: 8px;
+  }
+  margin-bottom: ($margin-size-pace * 3 + px);
+}

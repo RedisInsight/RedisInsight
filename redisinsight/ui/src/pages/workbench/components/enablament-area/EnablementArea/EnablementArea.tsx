@@ -104,7 +104,9 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
       <div data-testid="enablementArea" className={cx(styles.container, 'relative', 'enablement-area')}>
         { loading
           ? (
-            <div data-testid="enablementArea-loader" className={styles.innerContainer}><EuiLoadingContent lines={3} /></div>
+            <div data-testid="enablementArea-loader" className={cx(styles.innerContainer, styles.innerContainerLoader)}>
+              <EuiLoadingContent lines={3} />
+            </div>
           )
           : (
             <EuiListGroup

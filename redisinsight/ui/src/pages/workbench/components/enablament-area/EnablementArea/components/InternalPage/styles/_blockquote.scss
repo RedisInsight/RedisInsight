@@ -1,0 +1,7 @@
+@import './variables';
+
+blockquote {
+  padding: 0 16px;
+  border-left: 4px solid var(--separatorColor);
+  margin-bottom: ($margin-size-pace * 3 + px);
+}

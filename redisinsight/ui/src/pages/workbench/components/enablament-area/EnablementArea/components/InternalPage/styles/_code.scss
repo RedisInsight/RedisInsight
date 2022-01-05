@@ -1,0 +1,17 @@
+@import './variables';
+
+code {
+  background-color: var(--euiColorLightestShade);
+  border-radius: 2px;
+  padding: 0 4px;
+}
+
+pre > code {
+  display: flex;
+  padding: 12px;
+  width: 100%;
+  white-space: pre-wrap;
+  background-color: var(--euiColorLightestShade);
+  border-radius: 2px;
+  margin-bottom: ($margin-size-pace * 3 + px);
+}

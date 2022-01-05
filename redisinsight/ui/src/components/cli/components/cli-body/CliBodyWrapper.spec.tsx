@@ -14,11 +14,9 @@ import {
   processUnsupportedCommand,
   sendCliClusterCommandAction,
 } from 'uiSrc/slices/cli/cli-output'
-import { BrowserStorageItem } from 'uiSrc/constants'
 import { InitOutputText } from 'uiSrc/constants/cliOutput'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { sessionStorageService } from 'uiSrc/services'
 
 import CliBodyWrapper from './CliBodyWrapper'
 

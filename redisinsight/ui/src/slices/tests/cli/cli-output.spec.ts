@@ -177,7 +177,6 @@ describe('cliOutput slice', () => {
 
       // Assert
       const expectedActions = [
-        concatToOutput(cliCommandOutput(command)),
         concatToOutput(
           cliParseTextResponseWithOffset(
             cliTexts.CLI_UNSUPPORTED_COMMANDS(command, unsupportedCommands.join(', ')),
@@ -210,7 +209,6 @@ describe('cliOutput slice', () => {
 
         // Assert
         const expectedActions = [
-          concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandSuccess(),
           concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
@@ -234,7 +232,6 @@ describe('cliOutput slice', () => {
 
         // Assert
         const expectedActions = [
-          concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandSuccess(),
           concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
@@ -261,7 +258,6 @@ describe('cliOutput slice', () => {
 
         // Assert
         const expectedActions = [
-          concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
           concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
@@ -300,7 +296,6 @@ describe('cliOutput slice', () => {
 
         // Assert
         const expectedActions = [
-          concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandSuccess(),
           concatToOutput(
@@ -331,7 +326,6 @@ describe('cliOutput slice', () => {
 
         // Assert
         const expectedActions = [
-          concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandSuccess(),
           concatToOutput(
@@ -361,7 +355,6 @@ describe('cliOutput slice', () => {
 
         // Assert
         const expectedActions = [
-          concatToOutput(cliCommandOutput(command)),
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
           concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),

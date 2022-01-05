@@ -18,13 +18,15 @@ import {
   sendCliCommandAction,
   sendCliClusterCommandAction,
   processUnsupportedCommand,
+  processUnrepeatableNumber,
 } from 'uiSrc/slices/cli/cli-output'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cliHelper'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { InitOutputText, ConnectionSuccessOutputText } from 'uiSrc/constants/cliOutput'
+import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import CliBody from './CliBody'
 
@@ -88,15 +90,23 @@ const CliBodyWrapper = () => {
   }
 
   const handleSubmit = () => {
-    const commandLine = decode(command).trim()
+    const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
+    dispatch(concatToOutput(cliCommandOutput(command)))
+
+    if (!isRepeatCountCorrect(countRepeat)) {
+      dispatch(processUnrepeatableNumber(commandLine, resetCommand))
+      return
+    }
 
     if (unsupportedCommand) {
       dispatch(processUnsupportedCommand(commandLine, unsupportedCommand, resetCommand))
       return
     }
 
-    sendCommand(commandLine)
+    for (let i = 0; i < countRepeat; i++) {
+      sendCommand(commandLine)
+    }
   }
 
   const sendCommand = (command: string) => {

@@ -45,6 +45,10 @@ export default {
     appVersion: process.env.APP_VERSION || '2.0.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
   },
+  sockets: {
+    cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
+    serveClient: process.env.SOCKETS_SERVE_CLIENT ? process.env.SOCKETS_SERVE_CLIENT === 'true' : false,
+  },
   db: {
     database: join(homedir, 'redisinsight.db'),
     synchronize: process.env.DB_SYNC ? process.env.DB_SYNC === 'true' : false,

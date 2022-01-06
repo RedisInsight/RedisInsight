@@ -10,11 +10,14 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { get } from 'lodash';
+import config from 'src/utils/config';
 import { MonitorService } from './monitor.service';
 import { MonitorGatewayClientEvents } from './constants/events';
 import ClientMonitorObserver from './helpers/client-monitor-observer/client-monitor-observer';
 
-@WebSocketGateway({ namespace: 'monitor' })
+const SOCKETS_CONFIG = config.get('sockets');
+
+@WebSocketGateway({ namespace: 'monitor', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
 export class MonitorGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 

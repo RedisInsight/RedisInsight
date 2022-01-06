@@ -69,7 +69,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
     switch (type) {
       case EnablementAreaComponent.Group:
         return (
-          <Group triggerStyle={paddingsStyle} testId={id} label={label}{...args}>
+          <Group triggerStyle={paddingsStyle} testId={id} label={label} {...args}>
             {renderTreeView(Object.values(children || {}) || [], level + 1)}
           </Group>
         )
@@ -83,7 +83,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
         )
       case EnablementAreaComponent.InternalLink:
         return (
-          <InternalLink style={paddingsStyle} testId={id || label} label={label}{...args}>
+          <InternalLink style={paddingsStyle} testId={id || label} label={label} {...args}>
             {args?.content || label}
           </InternalLink>
         )

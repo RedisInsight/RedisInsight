@@ -67,14 +67,14 @@ const Monitor = (props: Props) => {
     if (autoScroll) {
       scrollToBottom()
     }
-  }, [items, monitorRef, autoScroll])
+  }, [items, monitorRef, isRunning, autoScroll])
 
   const getArgs = (args: string[]): JSX.Element => (
     <div className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: isShowCli || isShowHelper })}>
       {args?.map((arg, i) => (
         <>
           {i === 0 && (
-            <span className={cx(styles.itemCommandFirst)} key={`${arg}`}>{`"${arg}"`}</span>
+            <span className={cx(styles.itemCommandFirst)} key={`${arg + i}`}>{`"${arg}"`}</span>
           )}
           { i !== 0 && ` "${arg}"`}
         </>

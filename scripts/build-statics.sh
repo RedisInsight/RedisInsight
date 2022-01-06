@@ -18,6 +18,3 @@ yarn --cwd "${REDISEARCH_DIR}"
 yarn --cwd "${REDISEARCH_DIR}" build
 mkdir -p "${PLUGINS_DIR}/redisearch"
 cp -R "${REDISEARCH_DIR}/dist" "${REDISEARCH_DIR}/package.json" "${PLUGINS_DIR}/redisearch"
-
-# =============== Enablement area ===============
-cp -R "./redisinsight/ui/src/packages/enablement-area" "./redisinsight/api/static/workbench"

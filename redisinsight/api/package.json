@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build:defaults:commands": "ts-node ./scripts/default-commands.ts",
-    "build:defaults": "yarn build:defaults:commands",
+    "build:defaults:enablement-area": "ts-node ./scripts/default-enablement-area.ts",
+    "build:defaults": "yarn build:defaults:enablement-area && yarn build:defaults:commands",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "build:prod": "rimraf dist && nest build -p ./tsconfig.build.prod.json && cross-env NODE_ENV=production",
@@ -44,6 +45,7 @@
     "@nestjs/swagger": "^4.6.1",
     "@nestjs/typeorm": "^7.1.5",
     "@nestjs/websockets": "^8.2.3",
+    "adm-zip": "^0.5.9",
     "analytics-node": "^4.0.1",
     "axios": "^0.21.0",
     "body-parser": "^1.19.0",

@@ -21,7 +21,7 @@ import {
 import styles from './styles.module.scss'
 
 const MonitorHeader = () => {
-  const { isRunning, isStarted } = useSelector(monitorSelector)
+  const { isRunning, isStarted, items } = useSelector(monitorSelector)
 
   const dispatch = useDispatch()
 
@@ -68,12 +68,11 @@ const MonitorHeader = () => {
             />
           </EuiToolTip>
           <EuiToolTip
-            content="Clear"
-            anchorClassName="inline-flex"
+            content={!isStarted || !items.length ? '' : 'Clear'}
+            anchorClassName={cx('inline-flex', { transparent: !isStarted || !items.length })}
           >
             <EuiButtonIcon
               iconType="eraser"
-              className={cx(!isStarted && 'transparent')}
               onClick={handleClearMonitor}
               aria-label="clear monitor"
               data-testid="clear-monitor"

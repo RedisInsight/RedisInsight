@@ -37,11 +37,10 @@ const MonitorConfig = () => {
       query: { instanceId },
     })
     dispatch(setSocket(newSocket))
+    const payloads: IMonitorDataPayload[] = []
 
     // Trigger Monitor event
     newSocket.emit(MonitorEvent.Monitor, () => {
-      const payloads: IMonitorDataPayload[] = []
-
       newSocket.on(MonitorEvent.MonitorData, (payload:IOnDatePayload) => {
         payloads.push(payload)
 
@@ -52,7 +51,15 @@ const MonitorConfig = () => {
 
     // Catch exceptions
     newSocket.on(MonitorEvent.Exception, (payload) => {
-      setNewItems([{ isError: true, ...payload }])
+      payloads.push({ isError: true, time: `${Date.now()}`, ...payload })
+      setNewItems(payloads, () => { payloads.length = 0 })
+      dispatch(toggleRunMonitor())
+    })
+
+    // Catch connect error
+    newSocket.on(MonitorEvent.ConnectionError, (error: Error) => {
+      payloads.push({ isError: true, time: `${Date.now()}`, message: `${error?.name}: ${error?.message}` })
+      setNewItems(payloads, () => { payloads.length = 0 })
       dispatch(toggleRunMonitor())
     })
   }, [instanceId, isRunning])

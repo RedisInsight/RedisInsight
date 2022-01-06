@@ -19,6 +19,10 @@
     border-left: 1px solid var(--euiColorLightShade);
     border-right: 1px solid var(--euiColorLightShade);
   }
+
+  :global(.transparent button) {
+    cursor: default;
+  }
 }
 
 .icon {

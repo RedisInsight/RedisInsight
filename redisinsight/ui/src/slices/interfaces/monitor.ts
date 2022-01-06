@@ -2,7 +2,7 @@ import { Socket } from 'socket.io-client'
 import { Nullable } from 'uiSrc/utils'
 import { IOnDatePayload } from 'apiSrc/modules/monitor/helpers/client-monitor-observer'
 
-export interface IMonitorDataPayload extends IOnDatePayload{
+export interface IMonitorDataPayload extends Partial<IOnDatePayload>{
   isError?: boolean
   message?: string
 }

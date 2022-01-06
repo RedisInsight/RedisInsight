@@ -1,5 +1,6 @@
 export enum MonitorEvent {
   Monitor = 'monitor',
   MonitorData = 'monitorData',
-  Exception = 'exception'
+  Exception = 'exception',
+  ConnectionError = 'connect_error',
 }

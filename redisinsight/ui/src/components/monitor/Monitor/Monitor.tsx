@@ -72,12 +72,12 @@ const Monitor = (props: Props) => {
   const getArgs = (args: string[]): JSX.Element => (
     <div className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: isShowCli || isShowHelper })}>
       {args?.map((arg, i) => (
-        <>
+        <span key={`${arg + i}`}>
           {i === 0 && (
-            <span className={cx(styles.itemCommandFirst)} key={`${arg + i}`}>{`"${arg}"`}</span>
+            <span className={cx(styles.itemCommandFirst)}>{`"${arg}"`}</span>
           )}
           { i !== 0 && ` "${arg}"`}
-        </>
+        </span>
       ))}
     </div>
   )
@@ -123,43 +123,43 @@ const Monitor = (props: Props) => {
     <>
       <div className={styles.container} data-testid="monitor">
         {(!isStarted || (!isRunning && !items?.length)) && <MonitorNotStarted />}
+        {!items?.length && isRunning && <div data-testid="monitor-started" style={{ paddingTop: 10 }}>Monitor is started.</div>}
 
-        {isStarted && (
-        <div className={styles.content} ref={monitorRef} onWheel={onWheel}>
+        {isStarted && !!items?.length && (
+          <div className={styles.content} ref={monitorRef} onWheel={onWheel}>
 
-          {items.map((item) => (
-            <div className={styles.item} key={!item?.isError ? (item?.time + item?.args?.toString() ?? '') : Date.now()}>
-              {!item?.isError && (
-              <EuiFlexGroup responsive={false}>
-                <EuiFlexItem grow={false} className={styles.itemTime}>
-                  {getFormatTime(item?.time)}
-                </EuiFlexItem>
-                <EuiFlexItem grow={false} className={styles.itemSource} style={{ paddingRight: 10 }}>
-                  {`[${item?.database} ${item?.source}]`}
-                </EuiFlexItem>
-                <EuiFlexItem>
-                  {getArgs(item?.args)}
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              )}
-              {item?.isError && (
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <EuiTextColor color="danger">{item?.message ?? DEFAULT_TEXT}</EuiTextColor>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              )}
-            </div>
-          ))}
+            {items.map(({ time = '', args = [], database = '', source = '', isError, message = '' }) => (
+              <div className={styles.item} key={time + args?.toString() ?? ''}>
+                {!isError && (
+                <EuiFlexGroup responsive={false}>
+                  <EuiFlexItem grow={false} className={styles.itemTime}>
+                    {getFormatTime(time)}
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false} className={styles.itemSource} style={{ paddingRight: 10 }}>
+                    {`[${database} ${source}]`}
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    {getArgs(args)}
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+                )}
+                {isError && (
+                <EuiFlexGroup>
+                  <EuiFlexItem>
+                    <EuiTextColor color="danger">{message ?? DEFAULT_TEXT}</EuiTextColor>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+                )}
+              </div>
+            ))}
 
-          {!items?.length && isRunning && <span data-testid="monitor-started">Monitor is started.</span>}
-          {!!items?.length && !isRunning && (
-            <span data-testid="monitor-stopped">
-              <br />
-              Monitor is stopped.
-            </span>
-          )}
-        </div>
+            {!!items?.length && !isRunning && (
+              <span data-testid="monitor-stopped">
+                <br />
+                Monitor is stopped.
+              </span>
+            )}
+          </div>
         )}
       </div>
     </>

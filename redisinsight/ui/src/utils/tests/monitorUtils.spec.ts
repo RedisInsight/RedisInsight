@@ -7,7 +7,7 @@ const getOutputForFormatTime: any[] = [
   ['1641450858.616121', '09:34:18.616'],
 ]
 
-describe('formatToText', () => {
+describe.skip('formatToText', () => {
   it.each(getOutputForFormatTime)('for input: %s (reply), should be output: %s',
     (reply, expected) => {
       const result = getFormatTime(reply)

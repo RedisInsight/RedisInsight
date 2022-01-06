@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { IClientMonitorObserver } from 'src/modules/monitor/helpers/client-monitor-observer/client-monitor-observer.interface';
+import { IClientMonitorObserver } from 'src/modules/monitor/helpers/client-monitor-observer';
 import { IMonitorObserver, IShardObserver, MonitorObserverStatus } from 'src/modules/monitor/helpers/monitor-observer';
 
 export const mockClientMonitorObserver: IClientMonitorObserver = {

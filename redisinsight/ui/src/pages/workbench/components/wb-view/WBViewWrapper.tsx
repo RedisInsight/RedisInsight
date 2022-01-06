@@ -31,6 +31,8 @@ import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slice
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { CommandMonitor } from 'uiSrc/constants'
+import { showMonitor } from 'uiSrc/slices/cli/monitor'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import WBView from './WBView'
@@ -129,12 +131,23 @@ const WBViewWrapper = () => {
     const [commandLine, countRepeat] = getCommandRepeat(command)
     const { modules } = state.instance
     const { unsupportedCommands, blockingCommands } = state
+
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
       || checkBlockingCommand(blockingCommands, commandLine)
 
     if (!isRepeatCountCorrect(countRepeat)) {
       return cliParseTextResponse(
         cliTexts.REPEAT_COUNT_INVALID,
+        commandLine,
+        CommandExecutionStatus.Fail,
+      )
+    }
+
+    if (unsupportedCommand === CommandMonitor.toLowerCase()) {
+      dispatch(showMonitor())
+
+      return cliParseTextResponse(
+        cliTexts.MONITOR_COMMAND,
         commandLine,
         CommandExecutionStatus.Fail,
       )

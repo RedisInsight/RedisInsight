@@ -1,0 +1,163 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.container {
+  @include euiScrollBar;
+  height: calc(100% - 34px);
+  position: relative;
+  width: 100%;
+  padding-left: 12px;
+
+  background-color: var(--browserTableRowEven);
+  text-align: left;
+  letter-spacing: 0;
+  white-space: pre-line;
+  color: var(--euiTextSubduedColor) !important;
+  border-top: 1px solid var(--euiColorLightShade);
+
+  font: normal normal normal 14px/17px Inconsolata;
+
+  z-index: 10;
+  overflow: auto;
+
+  :global {
+    .euiFlexGroup, .euiFlexItem {
+      margin: 0px !important;
+    }
+  }
+}
+
+.content {
+  @include euiScrollBar;
+
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: auto;
+
+  &:first-child {
+    padding-top: 10px;
+  }
+
+  &:last-child {
+    padding-bottom: 10px;
+  }
+}
+
+.startContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+
+  height: 100%;
+}
+
+.startContent {
+  display: flex;
+  align-items: center;
+  max-width: 264px;
+  flex-direction: column;
+  align-items: center;
+
+  font: normal normal normal 12px/18px Graphik, sans-serif;
+}
+
+.autoScrollContainer {
+  :global {
+    .react-auto-scroll__scroll-container {
+      @include euiScrollBar;
+    }
+
+    .react-auto-scroll__option {
+      // display: none;
+    }
+  }
+}
+
+.table {
+  table {
+    background-color: initial !important;
+  }
+
+  thead {
+    display: none;
+  }
+
+  :global {
+    .euiTableCellContent {
+      padding: 0;
+    }
+    .euiTableRow {
+      td:first-child,
+      td:last-child {
+         border: none
+      }
+
+      &:hover {
+        background-color: inherit !important;
+      }
+    }
+
+    .euiTableRowCell {
+      border: none;
+    }
+  }
+}
+
+.startTitle {
+  font-size: 13px;
+  letter-spacing: -0.13px;
+  padding: 4px 0 18px;
+}
+
+.startTitleIcon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.itemCommand {
+  padding-right: 6px;
+}
+
+.itemCommandFirst {
+  color: #569cd6;
+}
+
+.itemSource {
+  white-space: nowrap;
+}
+
+.itemArgs {
+  word-break: break-word;
+  padding-right: 10px;
+}
+
+.itemArgs__compressed {
+  max-width: 330px;
+  width: max-content;
+}
+
+.item {
+  display: block;
+}
+
+.itemTime {
+  width: 94px;
+  padding-right: 10px;
+}
+
+.monitorWrapper {
+  height: 100%;
+  white-space: pre-line;
+  border-top: 1px solid var(--euiColorLightShade);
+  border-left: 1px solid var(--euiColorLightShade);
+  border-right: 1px solid var(--euiColorLightShade);
+}
+
+
+.scrollDivRef {
+  padding-top: 10px;
+  margin-left: -12px;
+}

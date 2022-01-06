@@ -5,6 +5,7 @@
 .container {
   height: 100%;
   width: 100%;
+  min-width: 230px;
 }
 
 .main {
@@ -13,7 +14,7 @@
   height: 100%;
   width: 100%;
   position: relative;
-  background-color: var(--euiColorEmptyShade);
+  background-color: var(--browserTableRowEven);
   border-left: 1px solid var(--euiColorLightShade);
   border-right: 1px solid var(--euiColorLightShade);
   border-top: 1px solid var(--euiColorLightShade);

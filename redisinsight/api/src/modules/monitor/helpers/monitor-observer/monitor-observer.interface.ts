@@ -1,4 +1,4 @@
-import { IClientMonitorObserver } from '../client-monitor-observer/client-monitor-observer.interface';
+import { IClientMonitorObserver } from '../client-monitor-observer';
 
 export enum MonitorObserverStatus {
   Wait = 'wait',

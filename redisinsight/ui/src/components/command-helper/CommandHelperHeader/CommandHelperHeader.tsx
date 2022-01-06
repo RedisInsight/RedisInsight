@@ -51,7 +51,7 @@ const CommandHelperHeader = () => {
       >
         <EuiFlexItem grow={false} className={styles.title}>
           <EuiIcon type="documents" size="m" />
-          <EuiText>Command Helper</EuiText>
+          <EuiText style={{ lineHeight: '1rem' }}>Command Helper</EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow />
         <EuiFlexItem grow={false}>

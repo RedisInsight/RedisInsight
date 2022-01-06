@@ -3,7 +3,7 @@ import IORedis from 'ioredis';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { IMonitorObserver, MonitorObserverStatus } from './monitor-observer.interface';
 import { IShardObserver } from './shard-obsever.interface';
-import { IClientMonitorObserver } from '../client-monitor-observer/client-monitor-observer.interface';
+import { IClientMonitorObserver } from '../client-monitor-observer';
 
 export class MonitorObserver implements IMonitorObserver {
   private readonly redis: IORedis.Redis | IORedis.Cluster;

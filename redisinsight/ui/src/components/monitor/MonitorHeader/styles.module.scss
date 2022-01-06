@@ -7,6 +7,18 @@
 
   padding: 0 10px 0 16px;
   z-index: 10;
+
+  .actions {
+    width: 82px;
+    height: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-left: 12px;
+
+    border-left: 1px solid var(--euiColorLightShade);
+    border-right: 1px solid var(--euiColorLightShade);
+  }
 }
 
 .icon {

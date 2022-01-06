@@ -32,5 +32,6 @@ export const cliTexts = {
     commandLine + unsupportedCommandTextCli + commands,
   WORKBENCH_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
     commandLine + unsupportedCommandTextWorkbench + commands,
-  REPEAT_COUNT_INVALID: 'Invalid repeat command option value'
+  REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
+  MONITOR_COMMAND: 'Use the "Monitor" tool to see all the requests processed by the server.'
 }

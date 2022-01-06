@@ -70,6 +70,8 @@ export enum CommandPrefix {
   JSON = 'JSON'
 }
 
+export const CommandMonitor = 'MONITOR'
+
 export enum CommandRediSearch {
   Search = 'FT.SEARCH',
   Aggregate = 'FT.AGGREGATE',

@@ -97,6 +97,7 @@ aliases:
       branches:
         only:
           - main
+          - feature/RI-1227_monitor
   stage-filter: &stageFilter
     filters:
       branches:

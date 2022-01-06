@@ -4,12 +4,14 @@ import { CliOutputFormatterType, cliTexts } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import {
+  cliCommandOutput,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
 } from 'uiSrc/utils/cliHelper'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
 
+import { showMonitor } from './monitor'
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
 
@@ -215,6 +217,27 @@ export function processUnrepeatableNumber(
       concatToOutput(
         cliParseTextResponseWithOffset(
           cliTexts.REPEAT_COUNT_INVALID,
+          command,
+          CommandExecutionStatus.Fail
+        )
+      )
+    )
+
+    onSuccessAction?.()
+  }
+}
+
+export function processMonitorCommand(
+  command: string = '',
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(showMonitor())
+
+    dispatch(
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          cliTexts.MONITOR_COMMAND,
           command,
           CommandExecutionStatus.Fail
         )

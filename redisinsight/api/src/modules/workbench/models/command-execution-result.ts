@@ -30,4 +30,8 @@ export class CommandExecutionResult {
     description: 'Redis Cluster Node info',
   })
   node?: ClusterNode;
+
+  constructor(partial: Partial<CommandExecutionResult> = {}) {
+    Object.assign(this, partial);
+  }
 }

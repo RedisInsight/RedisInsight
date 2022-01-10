@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn,
+  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
 } from 'typeorm';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { Transform } from 'class-transformer';
@@ -22,10 +22,10 @@ export class CommandExecutionEntity {
   @JoinColumn({ name: 'databaseId' })
   database: DatabaseInstanceEntity;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'text' })
   command: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'text' })
   @Transform((object) => JSON.stringify(object), { toClassOnly: true })
   @Transform((string) => {
     try {
@@ -54,6 +54,7 @@ export class CommandExecutionEntity {
   encryption: string;
 
   @CreateDateColumn()
+  @Index()
   createdAt: Date;
 
   constructor(entity: Partial<CommandExecutionEntity>) {

@@ -9,8 +9,8 @@ import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbenc
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { CliCommandNotSupportedError } from 'src/modules/cli/constants/errors';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -27,7 +27,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
 };
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [
-  {
+  new CommandExecutionResult({
     status: CommandExecutionStatus.Success,
     response: 'OK',
     node: {
@@ -35,20 +35,21 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
       port: 6379,
       slot: 0,
     },
-  },
+  }),
 ];
-const mockCommandExecution: CommandExecution = {
+const mockCommandExecution: CommandExecution = new CommandExecution({
   ...mockCreateCommandExecutionDto,
   databaseId: mockStandaloneDatabaseEntity.id,
   id: uuidv4(),
   createdAt: new Date(),
   result: mockCommandExecutionResults,
-};
+});
 
 const mockCommandExecutionProvider = () => ({
   create: jest.fn(),
   getList: jest.fn(),
   getOne: jest.fn(),
+  delete: jest.fn(),
 });
 
 describe('WorkbenchService', () => {
@@ -85,33 +86,29 @@ describe('WorkbenchService', () => {
 
       const result = await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto);
 
+      expect(result).toBeInstanceOf(CommandExecution);
       expect(result).toEqual(mockCommandExecution);
     });
-    it('should throw an error when unsupported command called', async () => {
+    it('should save result as unsupported command message', async () => {
+      workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
+
       const dto = {
         ...mockCommandExecutionResults,
         command: 'subscribe',
       };
 
-      try {
-        await service.createCommandExecution(mockClientOptions, dto);
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(CliCommandNotSupportedError);
-      }
-    });
-    it('should throw an error when blocking command called', async () => {
-      const dto = {
-        ...mockCommandExecutionResults,
-        command: 'blpop list',
-      };
+      await service.createCommandExecution(mockClientOptions, dto);
 
-      try {
-        await service.createCommandExecution(mockClientOptions, dto);
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(CliCommandNotSupportedError);
-      }
+      expect(commandExecutionProvider.create).toHaveBeenCalledWith({
+        ...dto,
+        databaseId: mockClientOptions.instanceId,
+        result: [
+          {
+            response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(dto.command.toUpperCase()),
+            status: CommandExecutionStatus.Fail,
+          },
+        ],
+      });
     });
     it('should throw an error when command execution failed', async () => {
       workbenchCommandsExecutor.sendCommand.mockRejectedValueOnce(new BadRequestException('error'));
@@ -182,6 +179,15 @@ describe('WorkbenchService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
       }
+    });
+  });
+  describe('deleteCommandExecution', () => {
+    it('should not return anything on delete', async () => {
+      commandExecutionProvider.delete.mockResolvedValueOnce('some response');
+
+      const result = await service.deleteCommandExecution(mockClientOptions.instanceId, mockCommandExecution.id);
+
+      expect(result).toEqual(undefined);
     });
   });
 });

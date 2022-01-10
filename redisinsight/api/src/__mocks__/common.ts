@@ -20,12 +20,18 @@ export const mockRedisClusterConsumer = () => ({
 
 export const mockQueryBuilderGetOne = jest.fn();
 export const mockQueryBuilderGetMany = jest.fn();
+export const mockQueryBuilderGetManyRaw = jest.fn();
 export const mockCreateQueryBuilder = jest.fn(() => ({
   where: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
   orderBy: jest.fn().mockReturnThis(),
   limit: jest.fn().mockReturnThis(),
   leftJoin: jest.fn().mockReturnThis(),
+  offset: jest.fn().mockReturnThis(),
+  delete: jest.fn().mockReturnThis(),
+  whereInIds: jest.fn().mockReturnThis(),
+  execute: jest.fn().mockReturnThis(),
+  getRawMany: mockQueryBuilderGetManyRaw,
   getMany: mockQueryBuilderGetMany,
   getOne: mockQueryBuilderGetOne,
 }));

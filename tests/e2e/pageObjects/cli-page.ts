@@ -36,6 +36,10 @@ export class CliPage {
   expandCommandHelperButton: Selector
   closeCommandHelperButton: Selector
   commandHelperArea: Selector
+  minimizeCliButton: Selector
+  minimizeCommandHelperButton: Selector
+  cliBadge: Selector
+  commandHelperBadge: Selector
 
   constructor() {
       //-------------------------------------------------------------------------------------------
@@ -52,6 +56,10 @@ export class CliPage {
       this.filterGroupTypeButton = Selector('[data-testid=select-filter-group-type]');
       this.filterOptionGroupType = Selector('[data-test-subj^=filter-option-group-type-]');
       this.readMoreButton = Selector('[data-testid=read-more]');
+      this.minimizeCliButton = Selector('[data-testid=hide-cli]');
+      this.minimizeCommandHelperButton = Selector('[data-testid=hide-command-helper]');
+      this.cliBadge = Selector('[data-testid=expand-cli] span');
+      this.commandHelperBadge = Selector('[data-testid=expand-command-helper] span');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.cliHelper = Selector('[data-testid=cli-helper]');
       this.cliHelperText = Selector('[data-testid=cli-helper-default]');

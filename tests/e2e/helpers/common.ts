@@ -75,4 +75,12 @@ export class Common {
         }
         return arr;
     }
+
+    /**
+    * Get background colour of element
+    * @param element The selector of the element
+    */
+     async getBackgroundColour(element: Selector): Promise<string> {
+        return element.getStyleProperty('background-color');
+    }
 }

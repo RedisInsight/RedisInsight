@@ -8,9 +8,13 @@ services:
     tty: true
     volumes:
       - ./results:/usr/src/app/results
+      - ./plugins:/usr/src/app/plugins
     env_file:
       - ./.env
     entrypoint: [
+        './upload-custom-plugins.sh'
+    ]
+    command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',
         'npx', 'yarn', 'test:chrome:ci'
@@ -20,6 +24,8 @@ services:
   app:
     cap_add:
       - ipc_lock
+    env_file:
+      - ./.env
     build:
       context: ./../../
       dockerfile: Dockerfile

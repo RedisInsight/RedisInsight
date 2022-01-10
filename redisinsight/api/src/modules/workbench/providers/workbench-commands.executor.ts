@@ -80,13 +80,13 @@ export class WorkbenchCommandsExecutor {
   private async sendCommandForSingleNode(
     clientOptions: IFindRedisClientInstanceByOptions,
     commandLine: string,
-    role: ClusterNodeRole,
+    role: ClusterNodeRole = ClusterNodeRole.All,
     nodeOptions: ClusterSingleNodeOptions,
   ): Promise<CommandExecutionResult> {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      // this.checkUnsupportedCommands(`${command} ${args[0]}`);
+
       const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
       let result = await this.redisTool.execCommandForNode(
         clientOptions,

@@ -4,12 +4,10 @@ import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workb
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { getBlockingCommands, getUnsupportedCommands } from 'src/utils/cli-helper';
-import { CliCommandNotSupportedError } from 'src/modules/cli/constants/errors';
+import { getBlockingCommands, getUnsupportedCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 
 @Injectable()
 export class WorkbenchService {
@@ -28,30 +26,25 @@ export class WorkbenchService {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecution> {
-    try {
-      this.checkUnsupportedCommands(dto.command);
+    const commandExecution: Partial<CommandExecution> = {
+      ...dto,
+      databaseId: clientOptions.instanceId,
+    };
 
-      const result = await this.commandsExecutor.sendCommand(clientOptions, dto);
-
-      return await this.commandExecutionProvider.create({
-        ...dto,
-        databaseId: clientOptions.instanceId,
-        result,
-      });
-    } catch (error) {
-      if (error instanceof CliCommandNotSupportedError) {
-        return new CommandExecution({
-          ...dto,
-          databaseId: clientOptions.instanceId,
-          result: [new CommandExecutionResult({
-            response: error.message,
-            status: CommandExecutionStatus.Fail,
-          })],
-        });
-      }
-
-      throw error;
+    const command = multilineCommandToOneLine(dto.command);
+    const deprecatedCommand = this.findCommandInBlackList(command);
+    if (deprecatedCommand) {
+      commandExecution.result = [
+        {
+          response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
+          status: CommandExecutionStatus.Fail,
+        },
+      ];
+    } else {
+      commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
     }
+
+    return this.commandExecutionProvider.create(commandExecution);
   }
 
   /**
@@ -74,21 +67,24 @@ export class WorkbenchService {
   }
 
   /**
-   * Check if command outside workbench commands black list
+   * Delete command execution by id and databaseId
+   *
+   * @param databaseId
+   * @param id
+   */
+  async deleteCommandExecution(databaseId: string, id: string): Promise<void> {
+    await this.commandExecutionProvider.delete(databaseId, id);
+  }
+
+  /**
+   * Check if workbench allows such command
    * @param commandLine
    * @private
    */
-  private checkUnsupportedCommands(commandLine: string) {
+  private findCommandInBlackList(commandLine: string): string {
     const targetCommand = commandLine.toLowerCase();
-    const unsupportedCommand = getUnsupportedCommands()
+    return getUnsupportedCommands()
       .concat(getBlockingCommands())
       .find((command) => targetCommand.startsWith(command));
-    if (unsupportedCommand) {
-      throw new CliCommandNotSupportedError(
-        ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(
-          unsupportedCommand.toUpperCase(),
-        ),
-      );
-    }
   }
 }

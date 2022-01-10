@@ -1,5 +1,5 @@
 import {
-  Body, ClassSerializerInterceptor, Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
+  Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
@@ -80,5 +80,18 @@ export class WorkbenchController {
       @Param('id') id: string,
   ): Promise<CommandExecution> {
     return this.service.getCommandExecution(databaseId, id);
+  }
+
+  @ApiEndpoint({
+    description: 'Delete command execution',
+    statusCode: 200,
+  })
+  @Delete('/command-executions/:id')
+  @ApiRedisParams()
+  async deleteCommandExecution(
+    @Param('dbInstance') databaseId: string,
+      @Param('id') id: string,
+  ): Promise<void> {
+    return this.service.deleteCommandExecution(databaseId, id);
   }
 }

@@ -4,6 +4,7 @@ import {
   mockEncryptionService,
   mockEncryptResult,
   mockQueryBuilderGetMany,
+  mockQueryBuilderGetManyRaw,
   mockRepository,
   mockStandaloneDatabaseEntity,
   MockType,
@@ -13,9 +14,7 @@ import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbenc
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import {
-  NotFoundException,
-} from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { Repository } from 'typeorm';
@@ -24,6 +23,9 @@ import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-e
 import { KeytarDecryptionErrorException } from 'src/modules/core/encryption/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
+import config from 'src/utils/config';
+
+const WORKBENCH_CONFIG = config.get('workbench');
 
 const mockNodeEndpoint = {
   host: '127.0.0.1',
@@ -99,14 +101,38 @@ describe('CommandExecutionProvider', () => {
     it('should process new entity', async () => {
       repository.save.mockReturnValueOnce(mockCommandExecutionEntity);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
-      encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
-      encryptionService.decrypt.mockReturnValueOnce(JSON.stringify([mockCommandExecutionResult]));
 
       expect(await service.create(mockCommandExecutionPartial)).toEqual(new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
       }));
+    });
+    it('should return full result even if size limit exceeded', async () => {
+      repository.save.mockReturnValueOnce(mockCommandExecutionEntity);
+      encryptionService.encrypt.mockReturnValue(mockEncryptResult);
+
+      const executionResult = [new CommandExecutionResult({
+        status: CommandExecutionStatus.Success,
+        response: `${Buffer.alloc(WORKBENCH_CONFIG.maxResultSize, 'a').toString()}`,
+      })];
+
+      expect(await service.create({
+        ...mockCommandExecutionPartial,
+        result: executionResult,
+      })).toEqual(new CommandExecution({
+        ...mockCommandExecutionPartial,
+        id: mockCommandExecutionEntity.id,
+        createdAt: mockCommandExecutionEntity.createdAt,
+        result: executionResult,
+      }));
+
+      expect(encryptionService.encrypt).toHaveBeenLastCalledWith(JSON.stringify([
+        new CommandExecutionResult({
+          status: CommandExecutionStatus.Success,
+          response: 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
+        }),
+      ]));
     });
   });
   describe('getList', () => {
@@ -186,6 +212,26 @@ describe('CommandExecutionProvider', () => {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toEqual(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
       }
+    });
+  });
+  describe('delete', () => {
+    it('Should not return anything on delete', async () => {
+      repository.delete.mockResolvedValueOnce(1);
+      expect(await service.delete(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id)).toEqual(
+        undefined,
+      );
+    });
+  });
+  describe('cleanupDatabaseHistory', () => {
+    it('Should should not return anything on cleanup', async () => {
+      mockQueryBuilderGetManyRaw.mockReturnValueOnce([
+        { id: mockCommandExecutionEntity.id },
+        { id: mockCommandExecutionEntity.id },
+      ]);
+
+      expect(await service.cleanupDatabaseHistory(mockStandaloneDatabaseEntity.id)).toEqual(
+        undefined,
+      );
     });
   });
 });

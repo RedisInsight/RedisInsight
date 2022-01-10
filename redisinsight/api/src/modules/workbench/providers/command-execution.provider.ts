@@ -9,6 +9,10 @@ import { CommandExecution } from 'src/modules/workbench/models/command-execution
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
+import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
+import config from 'src/utils/config';
+
+const WORKBENCH_CONFIG = config.get('workbench');
 
 @Injectable()
 export class CommandExecutionProvider {
@@ -28,16 +32,37 @@ export class CommandExecutionProvider {
   async create(commandExecution: Partial<CommandExecution>): Promise<CommandExecution> {
     const entity = plainToClass(CommandExecutionEntity, commandExecution);
 
-    return classToClass(
+    // Do not store command execution result that exceeded limitation
+    if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
+      entity.result = JSON.stringify([
+        {
+          status: CommandExecutionStatus.Success,
+          response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
+        },
+      ]);
+    }
+
+    const response = await classToClass(
       CommandExecution,
-      await this.decryptEntity(
-        await this.commandExecutionRepository.save(await this.encryptEntity(entity)),
-        true,
-      ),
+      {
+        ...await this.commandExecutionRepository.save(await this.encryptEntity(entity)),
+        command: commandExecution.command,
+        result: commandExecution.result,
+        nodeOptions: commandExecution.nodeOptions,
+      },
     );
+
+    // cleanup history and ignore error if any
+    try {
+      await this.cleanupDatabaseHistory(entity.databaseId);
+    } catch (e) {
+      this.logger.error('Error when trying to cleanup history after insert', e);
+    }
+    return response;
   }
 
   /**
+   * Fetch only needed fiels to show in list to avoid huge decryption work
    * @param databaseId
    */
   async getList(databaseId: string): Promise<ShortCommandExecution[]> {
@@ -47,7 +72,7 @@ export class CommandExecutionProvider {
       .where({ databaseId })
       .select(['e.id', 'e.command', 'e.databaseId', 'e.createdAt', 'e.encryption', 'e.role', 'e.nodeOptions'])
       .orderBy('e.createdAt', 'DESC')
-      .limit(30)
+      .limit(WORKBENCH_CONFIG.maxItemsPerDb)
       .getMany();
 
     this.logger.log('Succeed to get command executions');
@@ -87,6 +112,41 @@ export class CommandExecutionProvider {
     const decryptedEntity = await this.decryptEntity(entity, true);
 
     return classToClass(CommandExecution, decryptedEntity);
+  }
+
+  /**
+   * Delete single item
+   *
+   * @param databaseId
+   * @param id
+   */
+  async delete(databaseId: string, id: string): Promise<void> {
+    this.logger.log('Delete command execution');
+
+    await this.commandExecutionRepository.delete({ id, databaseId });
+
+    this.logger.log('Command execution deleted');
+  }
+
+  /**
+   * Clean history for particular database to fit 30 items limitation
+   * @param databaseId
+   */
+  async cleanupDatabaseHistory(databaseId: string): Promise<void> {
+    // todo: investigate why delete with sub-query doesn't works
+    const idsToDelete = (await this.commandExecutionRepository
+      .createQueryBuilder()
+      .where({ databaseId })
+      .select('id')
+      .orderBy('createdAt', 'DESC')
+      .offset(WORKBENCH_CONFIG.maxItemsPerDb)
+      .getRawMany()).map((item) => item.id);
+
+    await this.commandExecutionRepository
+      .createQueryBuilder()
+      .delete()
+      .whereInIds(idsToDelete)
+      .execute();
   }
 
   /**

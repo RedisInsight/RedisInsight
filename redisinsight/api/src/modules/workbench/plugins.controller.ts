@@ -84,7 +84,7 @@ export class PluginsController {
     responses: [
       {
         status: 200,
-        description: 'List of available commands',
+        description: 'Plugin state',
         type: () => PluginState,
       },
     ],

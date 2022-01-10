@@ -185,5 +185,8 @@ export const constants = {
   // Command Executions
   TEST_COMMAND_EXECUTION_ID_1: uuidv4(),
 
+  // Plugins
+  TEST_PLUGIN_VISUALIZATION_ID_1: uuidv4(),
+
   // etc...
 }

@@ -28,7 +28,7 @@ export class PluginStateEntity {
   @PrimaryColumn()
   visualizationId: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'text' })
   @Transform((object) => JSON.stringify(object), { toClassOnly: true })
   @Transform((string) => {
     try {

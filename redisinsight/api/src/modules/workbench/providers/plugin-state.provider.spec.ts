@@ -72,6 +72,21 @@ describe('PluginStateProvider', () => {
 
       expect(await service.upsert(mockPluginStatePartial)).toEqual(undefined);
     });
+    it('should throw not found error ON SQL constraint error', async () => {
+      const constraintError: any = new Error('FOREIGN_KEY error');
+      constraintError.code = 'SQLITE_CONSTRAINT';
+
+      repository.save.mockRejectedValueOnce(constraintError);
+      encryptionService.encrypt.mockReturnValue(mockEncryptResult);
+
+      try {
+        await service.upsert(mockPluginStatePartial);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
+      }
+    });
   });
   describe('getOne', () => {
     it('should return decrypted and transformed state', async () => {

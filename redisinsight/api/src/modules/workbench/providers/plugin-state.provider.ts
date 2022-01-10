@@ -26,7 +26,15 @@ export class PluginStateProvider {
    */
   async upsert(pluginState: Partial<PluginState>): Promise<void> {
     const entity = plainToClass(PluginStateEntity, pluginState);
-    await this.repository.save(await this.encryptEntity(entity));
+    try {
+      await this.repository.save(await this.encryptEntity(entity));
+    } catch (e) {
+      if (e.code === 'SQLITE_CONSTRAINT') {
+        throw new NotFoundException(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
+      }
+
+      throw e;
+    }
   }
 
   /**

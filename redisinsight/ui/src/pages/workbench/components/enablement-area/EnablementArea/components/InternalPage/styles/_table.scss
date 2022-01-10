@@ -3,10 +3,11 @@
 table {
   th {
     color: var(--htmlColor);
+    font-weight: normal;
   }
   th, td {
     border: 1px solid var(--euiColorLightShade);
-    padding: 8px;
+    padding: 8px 12px;
   }
-  margin-bottom: ($margin-size-pace * 3 + px);
+  margin-bottom: ($margin-size-pace * 6 + px);
 }

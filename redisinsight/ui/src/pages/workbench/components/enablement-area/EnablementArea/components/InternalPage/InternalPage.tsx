@@ -17,7 +17,7 @@ import {
   Code,
   EmptyPrompt,
   Pagination
-} from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
+} from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 

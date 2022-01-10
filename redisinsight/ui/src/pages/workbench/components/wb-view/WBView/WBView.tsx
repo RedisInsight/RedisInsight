@@ -17,7 +17,7 @@ import {
 } from 'uiSrc/slices/app/context'
 
 import WBResultsWrapper from '../../wb-results'
-import EnablementAreaWrapper from '../../enablament-area'
+import EnablementAreaWrapper from '../../enablement-area'
 
 import styles from './styles.module.scss'
 

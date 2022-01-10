@@ -14,7 +14,7 @@ hr + h1, hr + h2, hr + h3, hr + h4, hr + h5, hr + h6 {
 }
 
 p {
-  margin-bottom: 20px;
+  margin-bottom: ($margin-size-pace * 3 + px);
 }
 
 

@@ -2,16 +2,19 @@
 
 code {
   background-color: var(--euiColorLightestShade);
-  border-radius: 2px;
-  padding: 3px 7px;
+  border-radius: 4px;
+  padding: 3px 6px;
 }
 
 pre > code {
   display: flex;
-  padding: 8px;
+  padding: 12px;
   width: 100%;
   white-space: pre-wrap;
   background-color: var(--euiColorLightestShade);
   border-radius: 2px;
-  margin-bottom: ($margin-size-pace * 3 + px);
+  margin-bottom: ($margin-size-pace * 6 + px);
+  @media only screen and (max-width: ($m-breakpoint + px)) {
+    padding:6px;
+  }
 }

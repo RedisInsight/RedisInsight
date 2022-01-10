@@ -29,20 +29,9 @@ describe('InternalPage', () => {
     expect(onClose).toBeCalled()
   })
   it('should parse and render JSX string', () => {
-    const content = `
-      <h1 data-testid="header">Header</h1>
-      <InternalLink
-       backTitle="Enablement Area"
-       path="/static/page.html"
-       label="Internal Link"
-       testId="next-page"
-      >
-       <span>Internal Link</span>
-      </InternalLink>
-    `
+    const content = `<h1 data-testid="header">Header</h1>`
     const { queryByTestId } = render(<InternalPage {...instance(mockedProps)} content={content} />)
 
     expect(queryByTestId('header')).toBeInTheDocument()
-    expect(queryByTestId('internal-link-next-page')).toBeInTheDocument()
   })
 })

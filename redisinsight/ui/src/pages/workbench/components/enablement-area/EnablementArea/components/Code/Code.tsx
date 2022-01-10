@@ -3,7 +3,7 @@ import { startCase } from 'lodash'
 import { useLocation } from 'react-router-dom'
 
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { getFileInfo } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/utils/getFileInfo'
+import { getFileInfo } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils/getFileInfo'
 
 import CodeButton from '../CodeButton'
 

@@ -69,7 +69,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
     switch (type) {
       case EnablementAreaComponent.Group:
         return (
-          <Group triggerStyle={paddingsStyle} testId={id} label={label}{...args}>
+          <Group triggerStyle={paddingsStyle} testId={id} label={label} {...args}>
             {renderTreeView(Object.values(children || {}) || [], level + 1)}
           </Group>
         )
@@ -83,7 +83,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
         )
       case EnablementAreaComponent.InternalLink:
         return (
-          <InternalLink style={paddingsStyle} testId={id || label} label={label}{...args}>
+          <InternalLink style={paddingsStyle} testId={id || label} label={label} {...args}>
             {args?.content || label}
           </InternalLink>
         )
@@ -104,7 +104,9 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
       <div data-testid="enablementArea" className={cx(styles.container, 'relative', 'enablement-area')}>
         { loading
           ? (
-            <div data-testid="enablementArea-loader" className={styles.innerContainer}><EuiLoadingContent lines={3} /></div>
+            <div data-testid="enablementArea-loader" className={cx(styles.innerContainer, styles.innerContainerLoader)}>
+              <EuiLoadingContent lines={3} />
+            </div>
           )
           : (
             <EuiListGroup

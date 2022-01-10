@@ -10,6 +10,7 @@ COPY configs ./configs
 COPY scripts ./scripts
 COPY redisinsight ./redisinsight
 RUN SKIP_POSTINSTALL=1 yarn install
+RUN yarn --cwd redisinsight/api
 RUN yarn build:web
 RUN yarn build:statics
 

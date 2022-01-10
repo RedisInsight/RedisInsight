@@ -37,3 +37,19 @@ test('Verify that user can see results history when he re-opens CLI after minimi
     //Verify cli results history
     await t.expect(cliPage.cliCommandExecuted.textContent).eql(command, 'CLI results history persists after reopening');
 });
+test
+    .after(async t => {
+        //Clear database
+        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
+        await t.pressKey('enter');
+    })
+    ('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
+        const command = 'SET a a';
+        const repeats = 10;
+        //Open CLI and run command with repeats
+        await t.click(cliPage.cliExpandButton);
+        await t.typeText(cliPage.cliCommandInput, `${repeats} ${command}`);
+        await t.pressKey('enter');
+        //Verify result
+        await t.expect(cliPage.cliOutputResponseSuccess.count).eql(repeats, `CLI contains ${repeats} results`);
+});

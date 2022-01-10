@@ -1,20 +1,12 @@
 import { Selector } from 'testcafe';
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    AddRedisDatabasePage,
-    WorkbenchPage,
-    CliPage
-} from '../../../pageObjects';
+import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
 
@@ -24,12 +16,7 @@ fixture `Scripting area at Workbench`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
@@ -95,4 +82,14 @@ test('Verify that user can find (using right click) "Run Commands" custom shortc
     //Check the result with sent command
     const commandTextInResult = await workbenchPage.queryCardCommand.withExactText(command);
     await t.expect(commandTextInResult.exists).ok('The result of sent command');
+});
+test('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
+    const command = 'FT._LIST';
+    const repeats = 5;
+    //Rum command in Workbench with repeats
+    await workbenchPage.sendCommandInWorkbench(`${repeats} ${command}`);
+    //Verify result
+    for (let i = 0; i < repeats; i++) {
+        await t.expect(workbenchPage.queryCardContainer.nth(i).textContent).contains(command, `Workbench contains separate results`);
+    }
 });

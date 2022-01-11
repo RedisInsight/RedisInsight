@@ -9,12 +9,12 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import QueryWrapper from 'uiSrc/components/query'
-import { WBHistoryObject } from 'uiSrc/pages/workbench/interfaces'
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import {
   setWorkbenchVerticalPanelSizes,
   appContextWorkbench
 } from 'uiSrc/slices/app/context'
+import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 
 import WBResultsWrapper from '../../wb-results'
 import EnablementAreaWrapper from '../../enablament-area'
@@ -29,18 +29,29 @@ const verticalPanelIds = {
 export interface Props {
   script: string;
   loading: boolean;
-  historyItems: Array<WBHistoryObject>;
+  items: CommandExecutionUI[];
   setScript: (script: string) => void;
   setScriptEl: Function;
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>;
   scrollDivRef: Ref<HTMLDivElement>;
-  onSubmit: (query?: string, historyId?: number, type?: WBQueryType) => void;
-  onQueryDelete: (historyId: number) => void
+  onSubmit: (query?: string, commandId?: string, type?: WBQueryType) => void;
+  onQueryOpen: (commandId?: string) => void;
+  onQueryDelete: (commandId: string) => void
 }
 
 const WBView = (props: Props) => {
-  const { script = '', loading, setScript, setScriptEl,
-    scriptEl, onSubmit, onQueryDelete, scrollDivRef, historyItems } = props
+  const {
+    script = '',
+    items,
+    loading,
+    setScript,
+    setScriptEl,
+    scriptEl,
+    onSubmit,
+    onQueryOpen,
+    onQueryDelete,
+    scrollDivRef,
+  } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
     (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
   )
@@ -113,9 +124,10 @@ const WBView = (props: Props) => {
                   style={{ maxHeight: 'calc(100% - 140px)' }}
                 >
                   <WBResultsWrapper
-                    historyItems={historyItems}
+                    items={items}
                     scrollDivRef={scrollDivRef}
-                    onQueryRun={onSubmit}
+                    onQueryReRun={onSubmit}
+                    onQueryOpen={onQueryOpen}
                     onQueryDelete={onQueryDelete}
                   />
                 </EuiResizablePanel>

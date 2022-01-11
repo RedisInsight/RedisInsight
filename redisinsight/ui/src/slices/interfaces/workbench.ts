@@ -1,3 +1,5 @@
+import { CommandExecution } from './api'
+
 export interface StateWorkbenchSettings {
   wbClientUuid: string;
   loading: boolean;
@@ -7,9 +9,9 @@ export interface StateWorkbenchSettings {
 }
 
 export interface StateWorkbenchResults {
-  loading: boolean;
-  error: string;
-  commandHistory: string[];
+  loading: boolean
+  error: string
+  items: CommandExecutionUI[]
 }
 
 export enum EnablementAreaComponent {
@@ -30,4 +32,10 @@ export interface StateWorkbenchEnablementArea {
   loading: boolean;
   error: string;
   items: Record<string, IEnablementAreaItem>;
+}
+
+export interface CommandExecutionUI extends Partial<CommandExecution> {
+  loading?: boolean
+  isOpen?: boolean
+  error?: string
 }

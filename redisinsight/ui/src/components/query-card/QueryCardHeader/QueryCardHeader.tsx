@@ -11,7 +11,7 @@ import {
   EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { useParams } from 'react-router-dom'
 import { findIndex } from 'lodash'
 
@@ -35,10 +35,11 @@ export interface Props {
   query: string;
   isOpen: boolean;
   isFullScreen: boolean;
-  time?: number;
+  createdAt?: Date;
   summaryText?: string;
   queryType: WBQueryType;
   selectedValue: string;
+  loading?: boolean;
   toggleOpen: () => void;
   toggleFullScreen: () => void;
   setSelectedValue: (type: WBQueryType, value: string) => void;
@@ -53,8 +54,9 @@ const QueryCardHeader = (props: Props) => {
     isFullScreen,
     toggleFullScreen,
     query = '',
+    loading,
     summaryText,
-    time,
+    createdAt,
     selectedValue,
     setSelectedValue,
     onQueryDelete,
@@ -116,8 +118,8 @@ const QueryCardHeader = (props: Props) => {
     onQueryReRun()
   }
 
-  const getLocaleTime = () => (time
-    && format(time, `${new Date(time).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
+  const getLocaleTime = () => (createdAt
+    && format(parseISO(createdAt?.toString()), `${parseISO(createdAt?.toString()).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
   ) || ''
 
   const isViewInternal = (view: string = '') => !!options.find(({ id }) => id === view)?.internal
@@ -230,7 +232,10 @@ const QueryCardHeader = (props: Props) => {
       role="button"
     >
       <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
-        <EuiFlexItem className={cx(styles.titleWrapper, { [styles.titleWrapperShort]: !!time })} grow={!time}>
+        <EuiFlexItem
+          className={cx(styles.titleWrapper, { [styles.titleWrapperShort]: !!createdAt })}
+          grow={!createdAt}
+        >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
               <QueryCardTooltip query={query} />
@@ -244,7 +249,7 @@ const QueryCardHeader = (props: Props) => {
           </div>
         </EuiFlexItem>
         <EuiFlexItem className={cx(styles.time)}>
-          {!!time && (
+          {!!createdAt && (
             <EuiTextColor className={styles.timeText} component="div">
               {getLocaleTime()}
             </EuiTextColor>
@@ -292,7 +297,13 @@ const QueryCardHeader = (props: Props) => {
           )}
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.buttonIcon}>
-          <EuiButtonIcon iconType="trash" aria-label="Delete command" data-testid="delete-command" onClick={handleQueryDelete} />
+          <EuiButtonIcon
+            disabled={loading}
+            iconType="trash"
+            aria-label="Delete command"
+            data-testid="delete-command"
+            onClick={handleQueryDelete}
+          />
         </EuiFlexItem>
         {!isFullScreen && (
           <EuiFlexItem grow={false} className={cx(styles.buttonIcon, styles.playIcon)}>

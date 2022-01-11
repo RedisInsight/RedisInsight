@@ -127,6 +127,18 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
         },
       ].map(mainCheckFn);
     });
+    describe('RediSearch', () => {
+      requirements('rte.modules.search');
+      [
+        {
+          name: 'Should support ft.info command (whitelist case insensitive check)',
+          data: {
+            command: `ft.info ${constants.TEST_STRING_KEY_1}`,
+          },
+          responseSchema,
+        },
+      ].map(mainCheckFn);
+    });
     describe('Bad commands', () => {
       [
         {

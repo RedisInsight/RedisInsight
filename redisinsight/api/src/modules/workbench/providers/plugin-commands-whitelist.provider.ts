@@ -73,6 +73,6 @@ export class PluginCommandsWhitelistProvider {
       // ignore any error to not block main process of client creation
     }
 
-    return pluginWhiteListCommands;
+    return pluginWhiteListCommands.map((cmd) => cmd.toLowerCase());
   }
 }

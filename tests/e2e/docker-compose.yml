@@ -12,7 +12,7 @@ services:
     env_file:
       - ./.env
     entrypoint: [
-        './upload-custom-plugins.sh'
+        './upload-custom-plugins.sh',
     ]
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',

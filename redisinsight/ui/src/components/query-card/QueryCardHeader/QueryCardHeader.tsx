@@ -118,7 +118,7 @@ const QueryCardHeader = (props: Props) => {
     onQueryReRun()
   }
 
-  const getLocaleTime = () => (createdAt
+  const getFormatTime = () => (createdAt
     && format(parseISO(createdAt?.toString()), `${parseISO(createdAt?.toString()).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
   ) || ''
 
@@ -251,7 +251,7 @@ const QueryCardHeader = (props: Props) => {
         <EuiFlexItem className={cx(styles.time)}>
           {!!createdAt && (
             <EuiTextColor className={styles.timeText} component="div">
-              {getLocaleTime()}
+              {getFormatTime()}
             </EuiTextColor>
           )}
           {!!summaryText && !isOpen && (

@@ -4,7 +4,6 @@ import { CliOutputFormatterType, cliTexts } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import {
-  cliCommandOutput,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
 } from 'uiSrc/utils/cliHelper'
@@ -54,6 +53,11 @@ const outputSlice = createSlice({
     },
     resetOutput: (state) => {
       state.data = []
+      state.loading = false
+    },
+
+    resetOutputLoading: (state) => {
+      state.loading = false
     },
   },
 })
@@ -63,6 +67,7 @@ export const {
   concatToOutput,
   setOutputInitialState,
   resetOutput,
+  resetOutputLoading,
   updateCliCommandHistory,
   sendCliCommand,
   sendCliCommandSuccess,
@@ -86,7 +91,6 @@ export function sendCliCommandAction(
       const state = stateInit()
       const { id = '' } = state.connections?.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -96,7 +100,7 @@ export function sendCliCommandAction(
 
       const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
         getUrl(id, ApiEndpoints.CLI, state.cli.settings?.cliClientUuid, ApiEndpoints.SEND_COMMAND),
-        { command, outputFormat: CliOutputFormatterType.Raw }
+        { command, outputFormat: CliOutputFormatterType.Raw },
       )
 
       if (isStatusSuccessful(status)) {
@@ -128,7 +132,6 @@ export function sendCliClusterCommandAction(
       const state = stateInit()
       const { id = '' } = state.connections.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -148,7 +151,7 @@ export function sendCliClusterCommandAction(
           state.cli.settings?.cliClientUuid,
           ApiEndpoints.SEND_CLUSTER_COMMAND
         ),
-        { ...options, command, outputFormat }
+        { ...options, command, outputFormat },
       )
 
       if (isStatusSuccessful(status)) {
@@ -186,8 +189,6 @@ export function processUnsupportedCommand(
     const state = stateInit()
     const { unsupportedCommands } = state.cli.settings
 
-    dispatch(concatToOutput(cliCommandOutput(command)))
-
     dispatch(
       concatToOutput(
         cliParseTextResponseWithOffset(
@@ -195,6 +196,25 @@ export function processUnsupportedCommand(
             command.slice(0, unsupportedCommand.length),
             unsupportedCommands.join(', ')
           ),
+          command,
+          CommandExecutionStatus.Fail
+        )
+      )
+    )
+
+    onSuccessAction?.()
+  }
+}
+
+export function processUnrepeatableNumber(
+  command: string = '',
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          cliTexts.REPEAT_COUNT_INVALID,
           command,
           CommandExecutionStatus.Fail
         )

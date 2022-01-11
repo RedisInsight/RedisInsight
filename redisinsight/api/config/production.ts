@@ -8,6 +8,7 @@ export default {
     logs: join(homedir, 'logs'),
     customPlugins: join(homedir, 'plugins'),
     commands: join(homedir, 'commands'),
+    enablementArea: join(homedir, 'enablement-area'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },
@@ -18,6 +19,6 @@ export default {
     database: join(homedir, 'redisinsight.db'),
   },
   redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://api.redislabs.com/v1/',
+    url: process.env.REDIS_CLOUD_URL || 'https://api.redislabs.com/v1',
   },
 };

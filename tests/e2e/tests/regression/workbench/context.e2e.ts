@@ -69,3 +69,12 @@ test('Verify that user can see all the information removed when reloads the page
     await t.expect(await cliPage.cliCollapseButton.exists).notOk('CLI is collapsed');
     await t.expect(await workbenchPage.queryInputScriptArea.textContent).eql('', 'Input in Editor is removed');
 });
+test('Verify that user can see saved state of the Enablement area when navigates back to the Workbench from other page', async t => {
+    //Collapse the Enablement area and open Settings
+    await t.hover(workbenchPage.preselectArea);
+    await t.click(workbenchPage.collapsePreselectAreaButton);
+    await t.click(myRedisDatabasePage.settingsButton);
+    //Navigate back to Workbench and Verify the context
+    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.expect(workbenchPage.enablementAreaTreeView.visible).notOk('The Enablement area is still collapsed');
+});

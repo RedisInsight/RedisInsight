@@ -13,6 +13,8 @@ import {
   cliParseTextResponse,
   splitMonacoValuePerLines,
   getMultiCommands,
+  isRepeatCountCorrect,
+  getCommandRepeat,
 } from 'uiSrc/utils'
 import {
   sendWBCommandAction,
@@ -123,11 +125,20 @@ const WBViewWrapper = () => {
     }
   }, [historyItems])
 
-  const getUnsupportedCommandResponse = (commandLine = '') => {
+  const getUnsupportedCommandResponse = (command = '') => {
+    const [commandLine, countRepeat] = getCommandRepeat(command)
     const { modules } = state.instance
     const { unsupportedCommands, blockingCommands } = state
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
       || checkBlockingCommand(blockingCommands, commandLine)
+
+    if (!isRepeatCountCorrect(countRepeat)) {
+      return cliParseTextResponse(
+        cliTexts.REPEAT_COUNT_INVALID,
+        commandLine,
+        CommandExecutionStatus.Fail,
+      )
+    }
 
     if (unsupportedCommand) {
       return cliParseTextResponse(

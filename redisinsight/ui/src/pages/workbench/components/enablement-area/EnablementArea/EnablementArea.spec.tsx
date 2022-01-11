@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MOCK_ENABLEMENT_AREA_ITEMS } from 'uiSrc/constants'
-import { EnablementAreaComponent } from 'uiSrc/slices/interfaces'
+import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import EnablementArea, { Props } from './EnablementArea'
 
@@ -57,12 +57,12 @@ describe('EnablementArea', () => {
     expect(treeViewEl?.childNodes.length).toEqual(Object.values(MOCK_ENABLEMENT_AREA_ITEMS).length)
   })
   it('should render Group component', () => {
-    const item = {
+    const item: IEnablementAreaItem = {
       type: EnablementAreaComponent.Group,
       id: 'quick-guides',
       label: 'Quick Guides',
-      children: [
-        {
+      children: {
+        document: {
           type: EnablementAreaComponent.InternalLink,
           id: 'document-capabilities',
           label: 'Document Capabilities',
@@ -70,7 +70,7 @@ describe('EnablementArea', () => {
             path: 'static/workbench/quick-guides/document-capabilities.html'
           },
         }
-      ]
+      }
     }
 
     const { queryByTestId } = render(

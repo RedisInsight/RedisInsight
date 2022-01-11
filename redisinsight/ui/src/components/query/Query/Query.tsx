@@ -26,6 +26,7 @@ import {
 import { KeyboardShortcut } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -38,15 +39,11 @@ export interface Props {
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void;
 }
 
-interface IEditorMount {
-  editor: monacoEditor.editor.IStandaloneCodeEditor
-  monaco: typeof monacoEditor
-}
-
 let decorations: string[] = []
 
 const Query = (props: Props) => {
   const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl } = props
+  let contribution: Nullable<ISnippetController> = null
 
   const {
     commandsArray: REDIS_COMMANDS_ARRAY,
@@ -60,6 +57,7 @@ const Query = (props: Props) => {
   useEffect(() =>
   // componentWillUnmount
     () => {
+      contribution?.dispose?.()
       disposeCompletionItemProvider()
       disposeSignatureHelpProvider()
     },
@@ -124,6 +122,21 @@ const Query = (props: Props) => {
     ) {
       onTriggerParameterHints()
     }
+
+    if (e.keyCode === monaco.KeyCode.Enter || e.keyCode === monaco.KeyCode.Space) {
+      onExitSnippetMode()
+    }
+  }
+
+  const onExitSnippetMode = () => {
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    if (contribution?.isInSnippet?.()) {
+      const { lineNumber = 0, column = 0 } = editor?.getPosition() ?? {}
+      editor.setSelection(new monaco.Selection(lineNumber, column, lineNumber, column))
+      contribution?.cancel?.()
+    }
   }
 
   const editorDidMount = (
@@ -131,6 +144,10 @@ const Query = (props: Props) => {
     monaco: typeof monacoEditor
   ) => {
     monacoObjects.current = { editor, monaco }
+
+    // hack for exit from snippet mode after click Enter until no answer from monaco authors
+    // https://github.com/microsoft/monaco-editor/issues/2756
+    contribution = editor.getContribution<ISnippetController>('snippetController2')
 
     editor.focus()
     setQueryEl(editor)
@@ -179,11 +196,6 @@ const Query = (props: Props) => {
       showIcons: false,
     },
     lineNumbersMinChars: 4
-    // fontFamily: 'Inconsolata',
-    // fontSize: 16,
-    // minimap: {
-    //   enabled: false,
-    // },
   }
 
   return (

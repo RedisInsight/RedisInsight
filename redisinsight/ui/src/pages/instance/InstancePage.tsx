@@ -8,15 +8,16 @@ import {
   fetchInstanceAction,
   getDatabaseConfigInfoAction,
 } from 'uiSrc/slices/instances'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
-import { cliSettingsSelector, resetIsShowCli } from 'uiSrc/slices/cli/cli-settings'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/keys'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
+import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
 import InstancePageRouter from './InstancePageRouter'
 
@@ -55,9 +56,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
 
     if (contextInstanceId !== connectionInstanceId) {
-      dispatch(setAppContextInitialState())
-      dispatch(resetIsShowCli())
-      dispatch(resetOutput())
+      resetContext()
     }
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
@@ -65,9 +64,21 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   useEffect(() => () => {
     setSizes((prevSizes: any) => {
-      localStorageService.set(BrowserStorageItem.cliResizableContainer, prevSizes)
+      localStorageService.set(BrowserStorageItem.cliResizableContainer, {
+        [firstPanelId]: prevSizes[firstPanelId],
+        // partially fix elastic resizable issue with zooming
+        [secondPanelId]: 100 - prevSizes[firstPanelId],
+      })
     })
   }, [])
+
+  const resetContext = () => {
+    dispatch(setAppContextInitialState())
+    dispatch(resetKeys())
+    setTimeout(() => {
+      dispatch(resetOutput())
+    }, 0)
+  }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {
     setSizes((prevSizes: any) => ({
@@ -91,7 +102,7 @@ const InstancePage = ({ routes = [] }: Props) => {
             minSize="55px"
             paddingSize="none"
             size={isShowBottomGroup ? sizes[firstPanelId] : 100}
-            wrapperProps={{ className: cx({ [styles.mainComponent]: !isShowBottomGroup }) }}
+            wrapperProps={{ className: cx(styles.panelTop, { [styles.mainComponent]: !isShowBottomGroup }) }}
             data-testid={firstPanelId}
           >
             <InstancePageRouter routes={routes} />
@@ -103,8 +114,9 @@ const InstancePage = ({ routes = [] }: Props) => {
             id={secondPanelId}
             scrollable={false}
             size={isShowBottomGroup ? sizes[secondPanelId] : 0}
-            style={{ zIndex: 10 }}
+            style={{ zIndex: 9 }}
             minSize="140px"
+            wrapperProps={{ className: cx(styles.panelBottom) }}
             data-testid={secondPanelId}
             paddingSize="none"
           >

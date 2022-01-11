@@ -16,7 +16,7 @@ import {
   formatLongName,
   replaceSpaces,
   truncateTTLToDuration,
-  truncateTTLToRange,
+  truncateTTLToFirstUnit,
   truncateTTLToSeconds,
 } from 'uiSrc/utils'
 import {
@@ -192,7 +192,7 @@ const KeyList = (props: Props) => {
     },
     {
       id: 'ttl',
-      label: 'TTL(s)',
+      label: 'TTL',
       absoluteWidth: 65,
       minWidth: 65,
       truncateText: true,
@@ -221,7 +221,7 @@ const KeyList = (props: Props) => {
                   </>
                 )}
               >
-                <>{truncateTTLToRange(cellData)}</>
+                <>{truncateTTLToFirstUnit(cellData)}</>
               </EuiToolTip>
             </div>
           </EuiText>

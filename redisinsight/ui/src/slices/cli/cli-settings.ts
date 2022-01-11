@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
+import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cli/dto/cli.dto'
@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from '../store'
 import { StateCliSettings } from '../interfaces/cli'
 
 export const initialState: StateCliSettings = {
+  isMinimizedHelper: false,
   isShowHelper: false,
   isShowCli: false,
   loading: false,
@@ -35,10 +36,12 @@ const cliSettingsSlice = createSlice({
     },
     // collapse / uncollapse CLI Helper
     toggleCliHelper: (state) => {
-      const isShowHelper = !state.isShowHelper
-      state.isShowHelper = isShowHelper
-
-      localStorageService?.set(BrowserStorageItem.cliIsShowHelper, isShowHelper)
+      state.isShowHelper = !state.isShowHelper
+      state.isMinimizedHelper = !state.isMinimizedHelper
+    },
+    // hide / unhide CLI Helper
+    toggleHideCliHelper: (state) => {
+      state.isMinimizedHelper = !state.isMinimizedHelper
     },
 
     setMatchedCommand: (state, { payload }: { payload: string }) => {
@@ -104,9 +107,28 @@ const cliSettingsSlice = createSlice({
       state.blockingCommands = payload.map((command) => command.toLowerCase())
     },
 
+    // reset cli client uuid
+    resetCliClientUuid: (state) => {
+      state.cliClientUuid = ''
+    },
+
     // reset to collapse CLI
-    resetIsShowCli: (state) => {
+    resetCliSettings: (state) => {
       state.isShowCli = false
+      state.cliClientUuid = ''
+      state.loading = false
+    },
+
+    // reset to collapse CLI Helper
+    resetCliHelperSettings: (state) => {
+      state.isShowHelper = false
+      state.isSearching = false
+      state.isEnteringCommand = false
+      state.isMinimizedHelper = false
+      state.matchedCommand = ''
+      state.searchingCommand = ''
+      state.searchedCommand = ''
+      state.searchingCommandFilter = ''
     },
   },
 })
@@ -116,6 +138,7 @@ export const {
   setCliSettingsInitialState,
   toggleCli,
   toggleCliHelper,
+  toggleHideCliHelper,
   setMatchedCommand,
   setSearchedCommand,
   setSearchingCommand,
@@ -126,7 +149,9 @@ export const {
   processCliClientSuccess,
   processCliClientFailure,
   deleteCliClientSuccess,
-  resetIsShowCli,
+  resetCliClientUuid,
+  resetCliSettings,
+  resetCliHelperSettings,
   getUnsupportedCommandsSuccess,
   getBlockingCommandsSuccess,
 } = cliSettingsSlice.actions
@@ -216,6 +241,20 @@ export function deleteCliClientAction(
       dispatch(processCliClientFailure(errorMessage))
       onFailAction?.()
     }
+  }
+}
+
+// Asynchronous thunk action
+export function resetCliSettingsAction(
+  onSuccessAction?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const { contextInstanceId } = state.app.context
+    const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
+
+    dispatch(resetCliSettings())
+    dispatch(deleteCliClientAction(contextInstanceId, cliClientUuid, onSuccessAction))
   }
 }
 

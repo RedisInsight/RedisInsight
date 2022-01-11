@@ -149,8 +149,8 @@ export class CliBusinessService {
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
 
-      const reply = await this.cliTool.execCommand(clientOptions, command, args, replyEncoding);
       namespace = this.cliTool.getRedisClientNamespace(clientOptions);
+      const reply = await this.cliTool.execCommand(clientOptions, command, args, replyEncoding);
 
       this.logger.log('Succeed to execute redis CLI command.');
       this.cliAnalyticsService.sendCommandExecutedEvent(
@@ -225,6 +225,8 @@ export class CliBusinessService {
       const [command, ...args] = splitCliCommandLine(commandLine);
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
+      namespace = this.cliTool.getRedisClientNamespace(clientOptions);
+
       const result = await this.cliTool.execCommandForNodes(
         clientOptions,
         command,
@@ -233,7 +235,6 @@ export class CliBusinessService {
         replyEncoding,
       );
 
-      namespace = this.cliTool.getRedisClientNamespace(clientOptions);
       return result.map((nodeExecReply) => {
         this.cliAnalyticsService.sendClusterCommandExecutedEvent(
           clientOptions.instanceId,

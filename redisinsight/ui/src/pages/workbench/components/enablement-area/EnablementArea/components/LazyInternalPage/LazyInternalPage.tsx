@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { startCase } from 'lodash'
+import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 
@@ -32,6 +33,7 @@ export interface Props {
 }
 
 const LazyInternalPage = ({ onClose, title, path }: Props) => {
+  const history = useHistory()
   const { guideScrollTop } = useSelector(appContextWorkbenchEA)
   const enablementArea = useSelector(workbenchEnablementAreaSelector)
   const [isLoading, setLoading] = useState<boolean>(false)
@@ -51,7 +53,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
       const { data, status } = await fetchService.get<string>(path)
       if (isStatusSuccessful(status)) {
         dispatch(setWorkbenchEAGuide(path))
-        const contentData = await formatter.format(data)
+        const contentData = await formatter.format(data, { history })
         setPageData((prevState) => ({ ...prevState, content: contentData }))
         setLoading(false)
       }

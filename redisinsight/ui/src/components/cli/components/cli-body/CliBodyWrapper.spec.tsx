@@ -14,11 +14,9 @@ import {
   processUnsupportedCommand,
   sendCliClusterCommandAction,
 } from 'uiSrc/slices/cli/cli-output'
-import { BrowserStorageItem } from 'uiSrc/constants'
 import { InitOutputText } from 'uiSrc/constants/cliOutput'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { sessionStorageService } from 'uiSrc/services'
 
 import CliBodyWrapper from './CliBodyWrapper'
 
@@ -76,15 +74,6 @@ jest.mock('uiSrc/slices/cli/cli-settings', () => ({
 describe('CliBodyWrapper', () => {
   it('should render', () => {
     expect(render(<CliBodyWrapper />)).toBeTruthy()
-  })
-
-  it('should SessionStorage be called', () => {
-    const mockUuid = 'test-uuid'
-    sessionStorageService.get = jest.fn().mockReturnValue(mockUuid)
-
-    render(<CliBodyWrapper />)
-
-    expect(sessionStorageService.get).toBeCalledWith(BrowserStorageItem.cliClientUuid)
   })
 
   it('should render with SessionStorage', () => {

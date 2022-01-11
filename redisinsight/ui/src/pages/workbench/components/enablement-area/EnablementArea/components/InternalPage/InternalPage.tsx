@@ -13,17 +13,16 @@ import { useParams } from 'react-router-dom'
 
 import {
   LazyCodeButton,
-  InternalLink,
   Image,
   Code,
   EmptyPrompt,
   Pagination
-} from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/components'
+} from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
-import './styles.scss'
+import './styles/main.scss'
 
 export interface Props {
   onClose: () => void;
@@ -52,7 +51,7 @@ const InternalPage = (props: Props) => {
     id,
     path,
   } = props
-  const components: any = { LazyCodeButton, InternalLink, Image, Code }
+  const components: any = { LazyCodeButton, Image, Code }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const handleScroll = debounce(() => {
@@ -93,6 +92,7 @@ const InternalPage = (props: Props) => {
     <JsxParser
       components={components}
       autoCloseVoidElements
+      blacklistedTags={['script', 'iframe']}
       jsx={content}
       onError={(e) => console.error(e)}
     />
@@ -125,6 +125,7 @@ const InternalPage = (props: Props) => {
         onScroll={handleScroll}
         onClick={handleClick}
         role="none"
+        data-testid="enablement-area__page"
       >
         { isLoading && <EuiLoadingContent data-testid="enablement-area__page-loader" lines={3} /> }
         { !isLoading && error && <EmptyPrompt /> }

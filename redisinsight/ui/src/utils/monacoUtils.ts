@@ -3,6 +3,7 @@ import { isEmpty, isUndefined, reject } from 'lodash'
 import { ICommands } from 'uiSrc/constants'
 import { IMonacoCommand } from './monacoInterfaces'
 import { Nullable } from './types'
+import { getCommandRepeat, isRepeatCountCorrect } from './commands'
 
 const COMMENT_SYMBOLS = '//'
 const BLANK_LINE_REGEX = /^\s*\n/gm
@@ -21,7 +22,20 @@ const removeCommentsFromLine = (text: string = '', prefix: string = ''): string 
   return prefix + text.replace(/\/\/.*/, '')
 }
 
-export const splitMonacoValuePerLines = (command = '') => command.split(/\n(?=[^\s])/g)
+export const splitMonacoValuePerLines = (command = '') => {
+  const linesResult: string[] = []
+  const lines = command.split(/\n(?=[^\s])/g)
+  lines.forEach((line) => {
+    const [commandLine, countRepeat] = getCommandRepeat(line)
+
+    if (!isRepeatCountCorrect(countRepeat)) {
+      linesResult.push(line)
+      return
+    }
+    linesResult.push(...Array(countRepeat).fill(commandLine))
+  })
+  return linesResult
+}
 
 export const getMultiCommands = (commands:string[] = []) => reject(commands, isEmpty).join('\n') ?? ''
 

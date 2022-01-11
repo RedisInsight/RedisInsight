@@ -50,7 +50,7 @@ export class RedisCloudBusinessService {
     try {
       const {
         data: { account },
-      }: AxiosResponse = await this.api.get(`${this.config.url}`, {
+      }: AxiosResponse = await this.api.get(`${this.config.url}/`, {
         headers: this.getAuthHeaders(apiKey, apiSecretKey),
       });
       this.logger.log('Succeed to get RE cloud account.');

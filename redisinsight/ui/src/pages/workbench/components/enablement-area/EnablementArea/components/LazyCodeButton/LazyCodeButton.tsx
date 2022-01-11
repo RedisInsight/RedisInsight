@@ -4,7 +4,7 @@ import { startCase } from 'lodash'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { getFileInfo } from 'uiSrc/pages/workbench/components/enablament-area/EnablementArea/utils/getFileInfo'
+import { getFileInfo } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils/getFileInfo'
 
 import CodeButton from '../CodeButton'
 

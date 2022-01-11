@@ -17,7 +17,7 @@ import {
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 
 import WBResultsWrapper from '../../wb-results'
-import EnablementAreaWrapper from '../../enablament-area'
+import EnablementAreaWrapper from '../../enablement-area'
 
 import styles from './styles.module.scss'
 

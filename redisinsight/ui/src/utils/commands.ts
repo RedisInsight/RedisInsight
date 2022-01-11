@@ -1,4 +1,4 @@
-import { flatten, isArray, isEmpty, reject } from 'lodash'
+import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
 import {
   CommandArgsType,
   CommandGroup,
@@ -30,7 +30,7 @@ const generateArgName = (
   const multipleName = optional ? `[${multipleNameTemp.join(' ')}]` : multipleNameTemp
 
   if (type === CommandArgsType.Block && isArray(block)) {
-    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName)))
+    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName, onlyMandatory)))
     return optional ? `[${blocks?.join?.(' ')}]` : blocks
   }
 
@@ -86,3 +86,17 @@ export const getDocUrlForCommand = (
       return `https://redis.io/commands/${command}`
   }
 }
+
+export const getCommandRepeat = (command = ''): [string, number] => {
+  const [countRepeatStr, ...restCommand] = command.split(' ')
+  let countRepeat = toNumber(countRepeatStr)
+  let commandLine = restCommand.join(' ')
+  if (!isNumber(countRepeat) || isNaN(countRepeat) || !command) {
+    countRepeat = 1
+    commandLine = command
+  }
+
+  return [commandLine, countRepeat]
+}
+
+export const isRepeatCountCorrect = (number: number): boolean => number >= 1 && isInteger(number)

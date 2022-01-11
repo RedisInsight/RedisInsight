@@ -21,6 +21,8 @@ export default {
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),
+    enablementArea: join(homedir, 'enablement-area'),
+    defaultEnablementArea: join(defaultsDir, 'enablement-area'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },
@@ -31,6 +33,7 @@ export default {
     globalPrefix: 'api',
     customPluginsUri: '/plugins',
     staticUri: '/static',
+    enablementAreaUri: '/static/workbench',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
     secretStoragePassword: process.env.SECRET_STORAGE_PASSWORD,
@@ -48,7 +51,7 @@ export default {
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : true,
   },
   redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://qa-api.redislabs.com/v1/',
+    url: process.env.REDIS_CLOUD_URL || 'https://api.qa.redislabs.com/v1',
   },
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
@@ -77,6 +80,12 @@ export default {
     files: process.env.FILES_LOGGER ? process.env.FILES_LOGGER === 'true' : true, // enabled by default
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,
     pipelineSummaryLimit: parseInt(process.env.LOGGER_PIPELINE_SUMMARY_LIMIT, 10) || 5,
+  },
+  enablementArea: {
+    updateUrl: process.env.ENABLEMENT_AREA_UPDATE_URL
+      || 'https://s3.amazonaws.com/redisinsight.download/public/guides',
+    zip: process.env.ENABLEMENT_AREA_ZIP || 'data.zip',
+    buildInfo: process.env.ENABLEMENT_AREA_CHECKSUM || 'build.json',
   },
   workbench: {
     maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,

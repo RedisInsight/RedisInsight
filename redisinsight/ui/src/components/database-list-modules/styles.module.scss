@@ -16,8 +16,12 @@ button.icon {
   width: 28px !important;
   min-width: 28px !important;
   max-width: 28px !important;
+  height: 28px !important;
   * {
     padding: 0 !important;
+  }
+  :global(.euiButton__text) {
+    font-size: 13px !important;
   }
 }
 

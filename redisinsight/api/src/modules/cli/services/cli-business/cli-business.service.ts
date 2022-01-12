@@ -20,7 +20,6 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   checkHumanReadableCommands,
   checkRedirectionError,
-  getUnsupportedCommands,
   parseRedirectionError,
   splitCliCommandLine,
 } from 'src/utils/cli-helper';
@@ -34,6 +33,7 @@ import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-
 import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exceptions';
 import { AppTool } from 'src/models';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';

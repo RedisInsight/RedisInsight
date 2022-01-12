@@ -57,7 +57,7 @@ test('Verify that user can see TTL in the list of keys rounded down to the neare
     await t.click(browserPage.refreshKeysButton);
     //Check that Keys has correct TTL value in keys table
     for (let i = 0; i < keysData.length; i++) {
-        const ttlValueElement = Selector(`[data-testid=ttl-${keysData[i].keyName}]`);
+        const ttlValueElement = Selector(`[data-testid="ttl-${keysData[i].keyName}"]`);
         await t.expect(ttlValueElement.textContent).contains(ttlValues[i], 'TTL value in keys table');
     }
 });

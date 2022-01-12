@@ -1,11 +1,11 @@
+import { Chance } from 'chance';
 import { KeyTypesTexts } from './constants';
 
 export function getRandomKeyName(keyNameLength: number): string {
+    const chance = new Chance();
     let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
     for (let i = 0; i < keyNameLength; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        result += chance.character();
     }
     return result;
 }

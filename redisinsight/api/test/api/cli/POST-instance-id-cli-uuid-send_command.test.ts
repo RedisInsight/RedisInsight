@@ -61,7 +61,10 @@ const mainCheckFn = async (testCase) => {
 describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
   requirements('rte.type=STANDALONE');
 
+
   before(rte.data.truncate);
+  // Create Redis client for CLI
+  before(async () => await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`))
 
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
@@ -863,7 +866,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
           before: async function () {
             // unblock command after 1 sec
             setTimeout(async () => {
-              await request(server).delete(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`);
+              await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`);
             }, 1000)
           },
         },
@@ -958,6 +961,30 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
           expect(body.response).to.be.an('object');
           expect(body.response).to.deep.eql({[constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE});
         }
+      },
+    ].map(mainCheckFn);
+  })
+
+  describe('Client', () => {
+    [
+      {
+        name: 'Should throw ClientNotFoundError',
+        data: {
+          command: `info`,
+          outputFormat: 'TEXT',
+        },
+        statusCode: 404,
+        responseBody: {
+          statusCode: 404,
+          message: 'Client not found or it has been disconnected.',
+          name: 'ClientNotFoundError',
+        },
+        before: async function () {
+          await request(server).delete(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`)
+        },
+        after: async function () {
+          await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`)
+        },
       },
     ].map(mainCheckFn);
   })

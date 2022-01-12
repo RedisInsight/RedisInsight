@@ -34,6 +34,7 @@ import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exc
 import { AppTool } from 'src/models';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
+import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
@@ -178,7 +179,7 @@ export class CliBusinessService {
       }
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, namespace, error);
 
-      if (error instanceof EncryptionServiceErrorException) {
+      if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;
       }
 
@@ -263,7 +264,7 @@ export class CliBusinessService {
 
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, namespace, error);
 
-      if (error instanceof EncryptionServiceErrorException) {
+      if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;
       }
 
@@ -331,7 +332,7 @@ export class CliBusinessService {
 
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, 'cli', error);
 
-      if (error instanceof EncryptionServiceErrorException) {
+      if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;
       }
 

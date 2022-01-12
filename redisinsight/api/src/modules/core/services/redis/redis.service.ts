@@ -131,13 +131,14 @@ export class RedisService {
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<IORedis.Redis> {
     const {
-      username, password, sentinelMaster, tls,
+      username, password, sentinelMaster, tls, db,
     } = options;
     const config: RedisOptions = {
       sentinels,
       name: sentinelMaster.name,
       sentinelUsername: username,
       sentinelPassword: password,
+      db,
       username: sentinelMaster?.username,
       password: sentinelMaster?.password,
     };

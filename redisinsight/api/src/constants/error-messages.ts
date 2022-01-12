@@ -36,6 +36,7 @@ export default {
   SCAN_PER_KEY_TYPE_NOT_SUPPORT: () => 'Filtering per Key types is available for Redis databases v. 6.0 or later.',
   WRONG_DISCOVERY_TOOL: () => 'Selected discovery tool is incorrect, please add this database manually using Host and Port.',
   COMMAND_NOT_SUPPORTED: (command: string) => `Redis does not support '${command}' command.`,
+  PLUGIN_COMMAND_NOT_SUPPORTED: (command: string) => `Plugin ERROR: The '${command}' command is not supported by the RedisInsight Plugins.`,
   WORKBENCH_COMMAND_NOT_SUPPORTED: (command) => `Workbench ERROR: The '${command}' command is not supported by the RedisInsight Workbench.`,
   WORKBENCH_RESPONSE_TOO_BIG: () => 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
   CLI_COMMAND_NOT_SUPPORTED: (command: string) => `CLI ERROR: The '${command}' command is not supported by the RedisInsight CLI.`,

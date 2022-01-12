@@ -8,6 +8,7 @@ import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-e
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
+import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import config from 'src/utils/config';
 
@@ -64,7 +65,7 @@ export class CommandExecutionProvider {
    * Fetch only needed fiels to show in list to avoid huge decryption work
    * @param databaseId
    */
-  async getList(databaseId: string): Promise<CommandExecution[]> {
+  async getList(databaseId: string): Promise<ShortCommandExecution[]> {
     this.logger.log('Getting command executions');
     const entities = await this.commandExecutionRepository
       .createQueryBuilder('e')
@@ -87,7 +88,7 @@ export class CommandExecutionProvider {
     );
 
     return filter(decryptedEntities, (entity) => !isNull(entity))
-      .map((entity) => classToClass(CommandExecution, entity));
+      .map((entity) => classToClass(ShortCommandExecution, entity));
   }
 
   /**

@@ -7,11 +7,9 @@ import {
   mockRedisClusterFailInfoResponse,
   mockRedisClusterNodesResponse,
   mockRedisClusterOkInfoResponse,
-  mockRedisCommandReply,
   mockRedisSentinelMasterResponse,
   mockRedisServerInfoResponse,
   mockStandaloneRedisInfoReply,
-  mockWhitelistCommandsResponse,
 } from 'src/__mocks__';
 import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
 import { REDIS_MODULES_COMMANDS, RedisModules } from 'src/constants';
@@ -334,39 +332,6 @@ describe('ConfigurationBusinessService', () => {
         usedMemory: mockRedisGeneralInfo.usedMemory * 2,
         nodes: [mockRedisGeneralInfo, mockRedisGeneralInfo],
       });
-    });
-  });
-
-  describe('getPluginWhiteListCommands', () => {
-    beforeEach(() => {
-      service.getDatabasesCount = jest.fn().mockResolvedValue(16);
-    });
-    it('should return 2 readonly commands', async () => {
-      mockClient.send_command.mockResolvedValueOnce(mockRedisCommandReply);
-      mockClient.send_command.mockResolvedValueOnce([]);
-      mockClient.send_command.mockResolvedValueOnce([]);
-
-      const result = await service.getPluginWhiteListCommands(mockClient);
-
-      expect(result).toEqual(mockWhitelistCommandsResponse);
-    });
-    it('should return 1 readonly commands excluded by dangerous filter', async () => {
-      mockClient.send_command.mockResolvedValueOnce(mockRedisCommandReply);
-      mockClient.send_command.mockResolvedValueOnce(['custom.command']);
-      mockClient.send_command.mockResolvedValueOnce([]);
-
-      const result = await service.getPluginWhiteListCommands(mockClient);
-
-      expect(result).toEqual(['get']);
-    });
-    it('should return 1 readonly commands excluded by blocking filter', async () => {
-      mockClient.send_command.mockResolvedValueOnce(mockRedisCommandReply);
-      mockClient.send_command.mockResolvedValueOnce([]);
-      mockClient.send_command.mockResolvedValueOnce(['custom.command']);
-
-      const result = await service.getPluginWhiteListCommands(mockClient);
-
-      expect(result).toEqual(['get']);
     });
   });
 });

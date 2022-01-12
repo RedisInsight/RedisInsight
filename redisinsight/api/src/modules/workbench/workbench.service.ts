@@ -6,6 +6,7 @@ import { CommandExecution } from 'src/modules/workbench/models/command-execution
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { getBlockingCommands, getUnsupportedCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 
 @Injectable()
@@ -51,7 +52,7 @@ export class WorkbenchService {
    *
    * @param databaseId
    */
-  async listCommandExecutions(databaseId: string): Promise<CommandExecution[]> {
+  async listCommandExecutions(databaseId: string): Promise<ShortCommandExecution[]> {
     return this.commandExecutionProvider.getList(databaseId);
   }
 

@@ -19,14 +19,16 @@ import {
 import {
   sendWBCommandAction,
   workbenchResultsSelector,
+  fetchWBHistoryAction,
+  deleteWBCommandAction,
   sendWBCommandClusterAction,
+  resetWBHistoryItems,
+  fetchWBCommandAction,
 } from 'uiSrc/slices/workbench/wb-results'
 import { ConnectionType, Instance, IPluginVisualization, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances'
-import HistoryContainer from 'uiSrc/services/queryHistory'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 
-import { createWBClientAction, updateWBClientAction, workbenchSettingsSelector } from 'uiSrc/slices/workbench/wb-settings'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
@@ -35,14 +37,8 @@ import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import WBView from './WBView'
 import ModuleNotLoaded from '../module-not-loaded'
-import {
-  RSNotLoadedContent,
-  WORKBENCH_HISTORY_MAX_LENGTH,
-  WORKBENCH_HISTORY_WRAPPER_NAME,
-} from '../../constants'
-import { WBHistoryObject } from '../../interfaces'
+import { RSNotLoadedContent } from '../../constants'
 
-let historyContainer: HistoryContainer<WBHistoryObject>
 interface IState {
   loading: boolean,
   instance: Instance,
@@ -64,17 +60,15 @@ let state: IState = {
 const WBViewWrapper = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const { loading } = useSelector(workbenchResultsSelector)
+  const { loading, items } = useSelector(workbenchResultsSelector)
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
-  const [historyItems, setHistoryItems] = useState<Array<WBHistoryObject>>([])
   const [script, setScript] = useState(scriptContext)
   const [multiCommands, setMultiCommands] = useState('')
   const [scriptEl, setScriptEl] = useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
 
   const instance = useSelector(connectedInstanceSelector)
-  const { wbClientUuid = '' } = useSelector(workbenchSettingsSelector)
   const { visualizations = [] } = useSelector(appPluginsSelector)
   state = {
     scriptEl,
@@ -90,21 +84,10 @@ const WBViewWrapper = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    historyContainer = new HistoryContainer<WBHistoryObject>(
-      `${WORKBENCH_HISTORY_WRAPPER_NAME}_${instanceId}`
-    )
-    if (!instanceId) {
-      return
-    }
-    setHistoryItems(historyContainer.getData())
-    if (wbClientUuid) {
-      dispatch(updateWBClientAction(instanceId, wbClientUuid))
-    } else {
-      dispatch(createWBClientAction(instanceId))
-    }
+    dispatch(fetchWBHistoryAction(instanceId))
 
-    // componentWillUnmount
     return () => {
+      dispatch(resetWBHistoryItems())
       dispatch(setWorkbenchScript(scriptRef.current))
     }
   }, [])
@@ -123,8 +106,9 @@ const WBViewWrapper = () => {
     if (multiCommands) {
       handleSubmit(multiCommands)
     }
-  }, [historyItems])
+  }, [multiCommands])
 
+  // TODO [zalenski] remove if unsupported command should be saved in the db
   const getUnsupportedCommandResponse = (command = '') => {
     const [commandLine, countRepeat] = getCommandRepeat(command)
     const { modules } = state.instance
@@ -161,14 +145,13 @@ const WBViewWrapper = () => {
 
   const handleSubmit = (
     commandInit: string = script,
-    historyId?: number,
+    commandId?: string,
   ) => {
     const { loading } = state
-    const isNewCommand = () => !historyId
+    const isNewCommand = () => !commandId
     const [command, ...rest] = splitMonacoValuePerLines(commandInit)
 
     const multiCommands = getMultiCommands(rest)
-    setMultiCommands(multiCommands)
 
     let commandLine = decode(command).trim()
 
@@ -176,46 +159,37 @@ const WBViewWrapper = () => {
     commandLine = removeMonacoComments(commandLine)
 
     if (!commandLine || loading) {
-      multiCommands && setHistoryItems((history) => [...history])
+      setMultiCommands(multiCommands)
       return
     }
 
     isNewCommand() && scrollResults('start')
 
-    const unsupportedCommand = getUnsupportedCommandResponse(commandLine)
+    // TODO [zalenski] remove if unsupported command should be saved in the db
+    // const unsupportedCommand = getUnsupportedCommandResponse(commandLine)
 
-    if (unsupportedCommand) {
-      onSuccess({
-        id: historyId || Date.now(),
-        query: commandLine,
-        data: unsupportedCommand,
-        time: Date.now()
-      })
-      return
-    }
+    // if (unsupportedCommand) {
+    //   dispatch(sendUnsupportedWBCommandAction({
+    //     command: commandLine,
+    //     error: unsupportedCommand,
+    //     onSuccessAction: onSuccess,
+    //   }))
+    //   return
+    // }
 
-    checkClient(commandLine, historyId || Date.now())
-  }
-
-  const checkClient = (
-    command: string,
-    historyId = Date.now()
-  ) => {
-    if (!wbClientUuid) {
-      dispatch(createWBClientAction(instanceId, () => sendCommand(command, historyId || Date.now())))
-    } else {
-      sendCommand(command, historyId || Date.now())
-    }
+    sendCommand(commandLine, multiCommands)
   }
 
   const sendCommand = (
     command: string,
-    historyId = Date.now(),
+    multiCommands = ''
   ) => {
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
-        command, historyId, onSuccessAction: onSuccess
+        command,
+        multiCommands,
+        onSuccessAction: onSuccess,
       }))
       return
     }
@@ -232,26 +206,16 @@ const WBViewWrapper = () => {
     dispatch(
       sendWBCommandClusterAction({
         command,
-        historyId,
         options,
+        multiCommands,
         onSuccessAction: onSuccess,
       })
     )
   }
 
-  const onSuccess = (historyResponse: WBHistoryObject) => {
-    if (historyContainer.hasId(historyResponse?.id)) {
-      historyContainer.replaceHistoryItem(historyResponse?.id, historyResponse)
-    } else {
-      if (historyContainer.getLength() >= WORKBENCH_HISTORY_MAX_LENGTH) {
-        historyContainer.deleteHistoryLastItem()
-      }
-
-      historyContainer.pushData(historyResponse)
-      resetCommand()
-    }
-
-    setHistoryItems(historyContainer.getData())
+  const onSuccess = (multiCommands = '') => {
+    resetCommand()
+    setMultiCommands(multiCommands)
   }
 
   const scrollResults = (inline: ScrollLogicalPosition = 'start') => {
@@ -262,11 +226,12 @@ const WBViewWrapper = () => {
     })
   }
 
-  const onQueryDelete = (historyId: number) => {
-    if (historyContainer.hasId(historyId)) {
-      historyContainer.deleteHistoryItem(historyId)
-      setHistoryItems(historyContainer.getData())
-    }
+  const handleQueryDelete = (commandId: string) => {
+    dispatch(deleteWBCommandAction(commandId, onSuccess))
+  }
+
+  const handleQueryOpen = (commandId: string = '') => {
+    dispatch(fetchWBCommandAction(commandId))
   }
 
   const resetCommand = () => {
@@ -276,7 +241,7 @@ const WBViewWrapper = () => {
 
   return (
     <WBView
-      historyItems={historyItems}
+      items={items}
       script={script}
       loading={loading}
       setScript={setScript}
@@ -284,7 +249,8 @@ const WBViewWrapper = () => {
       scriptEl={scriptEl}
       scrollDivRef={scrollDivRef}
       onSubmit={handleSubmit}
-      onQueryDelete={onQueryDelete}
+      onQueryOpen={handleQueryOpen}
+      onQueryDelete={handleQueryDelete}
     />
   )
 }

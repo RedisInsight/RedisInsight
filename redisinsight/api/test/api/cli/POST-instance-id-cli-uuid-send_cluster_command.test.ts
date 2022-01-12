@@ -292,7 +292,8 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
       {
         name: 'Should throw ClientNotFoundError',
         data: {
-          command: `info`,
+          command: 'info',
+          role: 'ALL',
           outputFormat: 'TEXT',
         },
         statusCode: 404,

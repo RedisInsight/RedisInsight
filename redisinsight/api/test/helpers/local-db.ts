@@ -1,15 +1,18 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { SettingsEntity } from 'src/modules/core/models/settings.entity';
 import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
+import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
 import { constants } from './constants';
-import { createCipheriv, createHash } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
-const repositories = {
+export const repositories = {
   INSTANCE: 'DatabaseInstanceEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
   AGREEMENTS: 'AgreementsEntity',
+  COMMAND_EXECUTION: 'CommandExecutionEntity',
   SETTINGS: 'SettingsEntity'
 }
 
@@ -36,11 +39,11 @@ const getDBConnection = async (): Promise<Connection> => {
   return localDbConnection;
 }
 
-const getRepository = async (repository: string) => {
+export const getRepository = async (repository: string) => {
   return (await getDBConnection()).getRepository(repository);
 };
 
-const encryptData = (data) => {
+export const encryptData = (data) => {
   if (!data) {
     return null;
   }
@@ -57,6 +60,66 @@ const encryptData = (data) => {
   }
 
   return data;
+}
+
+export const decryptData = (data) => {
+  if (!data) {
+    return null;
+  }
+
+  if (constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR') {
+    let cipherKey = createHash('sha256')
+      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8')
+      .digest();
+
+    const decipher = createDecipheriv('aes-256-cbc', cipherKey, Buffer.alloc(16, 0));
+    let decrypted = decipher.update(data, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+
+    return decrypted;
+  }
+
+  return data;
+}
+
+export const generateNCommandExecutions = async (
+  partial: Record<string, any>,
+  number: number,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.COMMAND_EXECUTION);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  for (let i = 0; i < number; i++) {
+    result.push(await rep.save({
+      id: uuidv4(),
+      command: encryptData('set foo bar'),
+      result: encryptData(JSON.stringify([{
+        status: 'success',
+        response: `"OK_${i}"`,
+        node: {
+          host: 'localhost',
+          port: 6479,
+          slot: 12499
+        }
+      }])),
+      nodeOptions: JSON.stringify({
+        host: 'localhost',
+        port: 6479,
+        enableRedirection: true,
+      }),
+      role: 'ALL',
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      createdAt: new Date(),
+      ...partial,
+    }));
+  }
+
+  return result;
 }
 
 const createCACertificate = async (certificate) => {

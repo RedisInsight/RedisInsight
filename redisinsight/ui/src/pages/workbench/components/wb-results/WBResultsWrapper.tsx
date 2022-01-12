@@ -1,13 +1,14 @@
 import React from 'react'
+import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import WBResults from './WBResults'
-import { WBHistoryObject } from '../../interfaces'
 import { WBQueryType } from '../../constants'
 
 export interface Props {
-  historyItems: Array<WBHistoryObject>;
+  items: CommandExecutionUI[];
   scrollDivRef: React.Ref<HTMLDivElement>;
-  onQueryRun: (query: string, historyId?: number, type?: WBQueryType) => void;
-  onQueryDelete: (historyId: number) => void
+  onQueryReRun: (query: string, commandId?: string, type?: WBQueryType) => void;
+  onQueryOpen: (commandId: string) => void
+  onQueryDelete: (commandId: string) => void
 }
 
 const WBResultsWrapper = (props: Props) => (

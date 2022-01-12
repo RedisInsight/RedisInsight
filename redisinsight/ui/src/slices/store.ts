@@ -23,7 +23,6 @@ import appInfoReducer from './app/info'
 import appContextReducer from './app/context'
 import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
-import workbenchSettingsReducer from './workbench/wb-settings'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchEnablementAreaReducer from './workbench/wb-enablement-area'
 
@@ -63,7 +62,6 @@ export const rootReducer = combineReducers({
     settings: userSettingsReducer,
   }),
   workbench: combineReducers({
-    settings: workbenchSettingsReducer,
     results: workbenchResultsReducer,
     enablementArea: workbenchEnablementAreaReducer,
   }),

@@ -41,6 +41,7 @@ enum ApiEndpoints {
   INFO = 'info',
   SETTINGS = 'settings',
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
+  WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
 
   REDIS_COMMANDS = 'commands',
   ENABLEMENT_AREA = 'static/workbench/enablement-area.json',

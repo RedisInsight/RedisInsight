@@ -31,7 +31,6 @@ import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-outp
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
 import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user-settings'
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
-import { initialState as initialStateWBSettings } from 'uiSrc/slices/workbench/wb-settings'
 import { initialState as initialStateWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
 
 interface Options {
@@ -77,7 +76,6 @@ const initialStateDefault: RootState = {
   },
   workbench: {
     results: cloneDeep(initialStateWBResults),
-    settings: cloneDeep(initialStateWBSettings),
     enablementArea: cloneDeep(initialStateWBEnablementArea),
   },
 }

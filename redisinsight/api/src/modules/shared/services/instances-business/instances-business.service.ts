@@ -674,19 +674,4 @@ export class InstancesBusinessService {
       throw catchRedisConnectionError(error, databaseDto);
     }
   }
-
-  /**
-   * Get whitelisted commands available for plugins for particular database
-   */
-  async getPluginCommands(
-    instanceId: string,
-    tool = AppTool.Browser,
-  ): Promise<string[]> {
-    let client = this.redisService.getClientInstance({ instanceId, tool })?.client;
-    if (!client || !this.redisService.isClientConnected(client)) {
-      client = await this.connectToInstance(instanceId, tool, true);
-    }
-
-    return await this.redisConfBusinessService.getPluginWhiteListCommands(client);
-  }
 }

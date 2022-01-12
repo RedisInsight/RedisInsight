@@ -79,6 +79,7 @@
       "monaco-editor": "<rootDir>/redisinsight/__mocks__/monacoMock.js",
       "unified": "<rootDir>/redisinsight/__mocks__/unified.js",
       "remark-parse": "<rootDir>/redisinsight/__mocks__/remarkParse.js",
+      "remark-gfm": "<rootDir>/redisinsight/__mocks__/remarkGfm.js",
       "remark-rehype": "<rootDir>/redisinsight/__mocks__/remarkRehype.js",
       "rehype-stringify": "<rootDir>/redisinsight/__mocks__/rehypeStringify.js",
       "unist-util-visit": "<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js"
@@ -252,6 +253,7 @@
     "react-router-dom": "^5.2.0",
     "react-virtualized": "^9.22.2",
     "rehype-stringify": "^9.0.2",
+    "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.0.1",
     "socket.io-client": "^4.4.0",

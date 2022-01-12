@@ -1,7 +1,8 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
+import { cleanup, clearStoreActions, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import QueryCard, { Props } from './QueryCard'
 
 const mockedProps = mock<Props>()
@@ -42,25 +43,66 @@ describe('QueryCard', () => {
     expect(cliResultEl).not.toBeInTheDocument()
   })
 
-  it.only('Cli result should in the document after Expand', () => {
-    const cardHeaderTestId = 'query-card-open'
+  it('Cli result should in the document when "isOpen = true"', () => {
     const cliResultTestId = 'query-cli-result'
+
+    const mockResult = [{
+      response: 'response',
+      status: 'success'
+    }]
 
     const { queryByTestId } = render(<QueryCard
       {...instance(mockedProps)}
-      fromStore
-      data="results"
+      isOpen
+      result={mockResult}
+    />)
+
+    const cliResultEl = queryByTestId(cliResultTestId)
+
+    expect(cliResultEl).toBeInTheDocument()
+  })
+
+  it('Cli result should not in the document when "isOpen = true"', () => {
+    const cliResultTestId = 'query-cli-result'
+
+    const mockResult = [{
+      response: 'response',
+      status: 'success'
+    }]
+
+    const { queryByTestId } = render(<QueryCard
+      {...instance(mockedProps)}
+      isOpen={false}
+      result={mockResult}
+    />)
+
+    const cliResultEl = queryByTestId(cliResultTestId)
+
+    expect(cliResultEl).not.toBeInTheDocument()
+  })
+
+  it('Click on the header should call toggleOpenWBResult', () => {
+    const cardHeaderTestId = 'query-card-open'
+    const mockId = '123'
+
+    const mockResult = [{
+      response: 'response',
+      status: 'success'
+    }]
+
+    const { queryByTestId } = render(<QueryCard
+      {...instance(mockedProps)}
+      id={mockId}
+      result={mockResult}
     />)
 
     const cardHeaderTestEl = queryByTestId(cardHeaderTestId)
-    let cliResultEl = queryByTestId(cliResultTestId)
-
-    expect(cliResultEl).not.toBeInTheDocument()
 
     fireEvent.click(cardHeaderTestEl)
 
-    cliResultEl = queryByTestId(cliResultTestId)
-
-    expect(cliResultEl).toBeInTheDocument()
+    const expectedActions = [toggleOpenWBResult(mockId)]
+    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
+      clearStoreActions(expectedActions)
+    )
   })
 })

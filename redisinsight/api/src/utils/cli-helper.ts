@@ -1,4 +1,4 @@
-import { take } from 'lodash';
+import { take, isEmpty } from 'lodash';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CliParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
@@ -7,6 +7,7 @@ import { IRedirectionInfo } from 'src/modules/cli/services/cli-business/output-f
 
 const REDIS_CLI_CONFIG = config.get('redis_cli');
 const LOGGER_CONFIG = config.get('logger');
+const BLANK_LINE_REGEX = /^\s*\n/gm;
 
 export enum CliToolUnsupportedCommands {
   Monitor = 'monitor',
@@ -72,6 +73,7 @@ function getSpecChar(str: string): string {
 }
 
 // todo: review/rewrite this function. Pay attention on handling data inside '' vs ""
+// todo: rethink implementation. set key {value} where {value} is string ~500KB take ~15s
 export const splitCliCommandLine = (line: string): string[] => {
   // Splits a command line into a list of arguments.
   // Ported from sdssplitargs() function in sds.c from Redis source code.
@@ -227,3 +229,8 @@ export function getRedisPipelineSummary(
   }
   return result;
 }
+
+export const multilineCommandToOneLine = (text: string = '') => text
+  .split(/(\r\n|\n|\r)+\s+/gm)
+  .filter((line: string) => !(BLANK_LINE_REGEX.test(line) || isEmpty(line)))
+  .join(' ');

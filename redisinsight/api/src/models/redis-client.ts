@@ -13,6 +13,7 @@ export enum AppTool {
   Common = 'Common',
   Browser = 'Browser',
   CLI = 'CLI',
+  Workbench = 'Workbench',
 }
 
 export class IRedisModule {

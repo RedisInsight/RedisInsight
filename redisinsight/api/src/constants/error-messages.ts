@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 export default {
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
+  COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',
   UNDEFINED_INSTANCE_ID: 'Undefined redis database instance id.',
   NO_CONNECTION_TO_REDIS_DB: 'No connection to the Redis Database.',
   WRONG_DATABASE_TYPE: 'Wrong database type.',
@@ -35,6 +36,8 @@ export default {
   SCAN_PER_KEY_TYPE_NOT_SUPPORT: () => 'Filtering per Key types is available for Redis databases v. 6.0 or later.',
   WRONG_DISCOVERY_TOOL: () => 'Selected discovery tool is incorrect, please add this database manually using Host and Port.',
   COMMAND_NOT_SUPPORTED: (command: string) => `Redis does not support '${command}' command.`,
+  WORKBENCH_COMMAND_NOT_SUPPORTED: (command) => `Workbench ERROR: The '${command}' command is not supported by the RedisInsight Workbench.`,
+  WORKBENCH_RESPONSE_TOO_BIG: () => 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
   CLI_COMMAND_NOT_SUPPORTED: (command: string) => `CLI ERROR: The '${command}' command is not supported by the RedisInsight CLI.`,
   CLI_UNTERMINATED_QUOTES: () => 'Invalid argument(s): Unterminated quotes.',
   CLI_INVALID_QUOTES_CLOSING: () => 'Invalid argument(s): Closing quote must be followed by a space or nothing at all.',

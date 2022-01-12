@@ -6,3 +6,4 @@ export * from './redis-reply-converter';
 export * from './hosting-provider-helper';
 export * from './analytics-helper';
 export * from './redis-connection-helper';
+export * from './class-transformer';

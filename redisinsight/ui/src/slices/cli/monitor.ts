@@ -50,6 +50,12 @@ const monitorSlice = createSlice({
     },
 
     concatMonitorItems: (state, { payload }: { payload: IMonitorDataPayload[] }) => {
+      // small optimization to not unnecessary concat big arrays since we know max logs to show limitations
+      if (payload.length >= MONITOR_ITEMS_MAX_COUNT) {
+        state.items = [...payload.slice(-MONITOR_ITEMS_MAX_COUNT)]
+        return
+      }
+
       let newItems = [...state.items, ...payload]
 
       if (newItems.length > MONITOR_ITEMS_MAX_COUNT) {

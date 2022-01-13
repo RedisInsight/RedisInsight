@@ -11,24 +11,13 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts } from '../../../helpers/constants';
+import { keyTypes } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
-
-const filteringTypes = [
-    { textType: KeyTypesTexts.Hash, keyName: 'hash' },
-    { textType: KeyTypesTexts.Set, keyName: 'set' },
-    { textType: KeyTypesTexts.ZSet, keyName: 'zset' },
-    { textType: KeyTypesTexts.List, keyName: 'list' },
-    { textType: KeyTypesTexts.String, keyName: 'string' },
-    { textType: KeyTypesTexts.Graph, keyName: 'graph' },
-    { textType: KeyTypesTexts.ReJSON, keyName: 'json' },
-    { textType: KeyTypesTexts.Stream, keyName: 'stream' },
-    { textType: KeyTypesTexts.TimeSeries, keyName: 'timeSeries' }
-]
 
 fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path'})
@@ -64,7 +53,7 @@ test('Verify that user can filter keys per data type in Browser page', async t =
 
     //Create new keys
     await t.click(cliPage.cliExpandButton);
-    for (const { textType, keyName } of filteringTypes) {
+    for (const { textType, keyName } of keyTypes) {
         if (textType in COMMANDS_TO_CREATE_KEY) {
             await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName));
             await t.pressKey('enter');
@@ -72,7 +61,7 @@ test('Verify that user can filter keys per data type in Browser page', async t =
     }
     await t.click(cliPage.cliCollapseButton);
 
-    for (const { textType, keyName } of filteringTypes) {
+    for (const { textType, keyName } of keyTypes) {
         await browserPage.selectFilterGroupType(textType);
         const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
         await t.expect(isKeyIsDisplayedInTheList).ok(`The key of type ${textType} was found`);

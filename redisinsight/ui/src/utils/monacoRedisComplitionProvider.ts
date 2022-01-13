@@ -1,3 +1,4 @@
+import { isNaN } from 'lodash'
 import * as monacoEditor from 'monaco-editor'
 import { ICommand, ICommandArgGenerated, ICommands } from 'uiSrc/constants'
 import { generateArgs, generateArgsNames, getDocUrlForCommand } from 'uiSrc/utils/commands'
@@ -65,12 +66,19 @@ monacoEditor.languages.CompletionItemProvider => {
       position: monacoEditor.Position
     ): monacoEditor.languages.CompletionList => {
       const word = model.getWordUntilPosition(position)
+      const line = model.getLineContent(position.lineNumber)
+      const indexOfSpace = line.indexOf(' ')
+
       const range = {
         startLineNumber: position.lineNumber,
         endLineNumber: position.lineNumber,
-        startColumn: 1,
-        endColumn: word.endColumn
+        endColumn: word.endColumn,
+        startColumn:
+          word.startColumn > indexOfSpace && !isNaN(+line.slice(0, indexOfSpace))
+            ? indexOfSpace + 2
+            : 1,
       }
+
       // display suggestions only for words that don't belong to a folding area
       if (!model.getValueInRange(range).startsWith(' ')) {
         return {

@@ -141,7 +141,7 @@ const CliBody = (props: Props) => {
   }
 
   const onKeyEsc = () => {
-    document.getElementById('collapse-cli')?.focus()
+    document.getElementById('close-cli')?.focus()
   }
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
@@ -231,7 +231,7 @@ const CliBody = (props: Props) => {
         <EuiFlexItem grow>
           <div className={styles.output}>{data}</div>
           {!error && !(loading || settingsLoading) ? (
-            <span style={{ paddingBottom: 5 }}>
+            <span style={{ paddingBottom: 5, paddingTop: 17 }}>
               <CliInputWrapper
                 command={command}
                 setCommand={setCommand}

@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom'
 import {
   cliSettingsSelector,
   createCliClientAction,
-  updateCliClientAction,
   setCliEnteringCommand,
   clearSearchingCommand,
 } from 'uiSrc/slices/cli/cli-settings'
@@ -19,23 +18,21 @@ import {
   sendCliCommandAction,
   sendCliClusterCommandAction,
   processUnsupportedCommand,
+  processUnrepeatableNumber,
 } from 'uiSrc/slices/cli/cli-output'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { sessionStorageService } from 'uiSrc/services'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cliHelper'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { InitOutputText, ConnectionSuccessOutputText } from 'uiSrc/constants/cliOutput'
+import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import CliBody from './CliBody'
 
 import styles from './CliBody/styles.module.scss'
 
 const CliBodyWrapper = () => {
-  const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
-
   const [command, setCommand] = useState('')
 
   const dispatch = useDispatch()
@@ -46,7 +43,8 @@ const CliBodyWrapper = () => {
     unsupportedCommands,
     isEnteringCommand,
     isSearching,
-    matchedCommand
+    matchedCommand,
+    cliClientUuid,
   } = useSelector(cliSettingsSelector)
   const { host, port, connectionType } = useSelector(connectedInstanceSelector)
 
@@ -55,12 +53,7 @@ const CliBodyWrapper = () => {
       dispatch(concatToOutput(InitOutputText(host, port)))
     }
 
-    if (cliClientUuid) {
-      dispatch(updateCliClientAction(cliClientUuid, onSuccess, onFail))
-      return
-    }
-
-    dispatch(createCliClientAction(onSuccess, onFail))
+    !cliClientUuid && dispatch(createCliClientAction(onSuccess, onFail))
   }, [])
 
   useEffect(() => {
@@ -97,15 +90,23 @@ const CliBodyWrapper = () => {
   }
 
   const handleSubmit = () => {
-    const commandLine = decode(command).trim()
+    const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
+    dispatch(concatToOutput(cliCommandOutput(command)))
+
+    if (!isRepeatCountCorrect(countRepeat)) {
+      dispatch(processUnrepeatableNumber(commandLine, resetCommand))
+      return
+    }
 
     if (unsupportedCommand) {
       dispatch(processUnsupportedCommand(commandLine, unsupportedCommand, resetCommand))
       return
     }
 
-    sendCommand(commandLine)
+    for (let i = 0; i < countRepeat; i++) {
+      sendCommand(commandLine)
+    }
   }
 
   const sendCommand = (command: string) => {

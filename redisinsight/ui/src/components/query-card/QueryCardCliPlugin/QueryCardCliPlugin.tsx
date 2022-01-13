@@ -1,25 +1,23 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { getBaseApiUrl, Nullable, Maybe } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
-import { IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
 import { prepareIframeHtml } from 'uiSrc/plugins/pluginImport'
 import { appPluginsSelector, sendPluginCommandAction } from 'uiSrc/slices/app/plugins'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  result: any
+  result: CommandExecutionResult[]
   query: any
   id: string
-  status: Maybe<CommandExecutionStatus>
   setSummaryText: (text: string) => void
 }
 
@@ -32,7 +30,7 @@ enum StylesNamePostfix {
 const baseUrl = getBaseApiUrl()
 
 const QueryCardCliPlugin = (props: Props) => {
-  const { result, query, id, status, setSummaryText } = props
+  const { query, id, result, setSummaryText } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
 
@@ -57,7 +55,7 @@ const QueryCardCliPlugin = (props: Props) => {
     sendMessageToPlugin({
       event: 'executeCommand',
       method: currentView.activationMethod,
-      data: { command: query, data: result, status }
+      data: { command: query, data: result }
     })
   }
 
@@ -147,6 +145,7 @@ const QueryCardCliPlugin = (props: Props) => {
           ref={pluginIframeRef}
           referrerPolicy="no-referrer"
           sandbox="allow-same-origin allow-scripts"
+          data-testid="pluginIframe"
         />
         {!!error && (
           <div className={styles.container}>

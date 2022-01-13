@@ -11,6 +11,7 @@ export class UserAgreementPage {
   submitButton: Selector
   switchOptionEula: Selector
   switchOptionEncryption: Selector
+  pluginSectionWithText: Selector
 
   constructor() {
       //-------------------------------------------------------------------------------------------
@@ -25,6 +26,7 @@ export class UserAgreementPage {
       this.submitButton = Selector('[data-testid=btn-submit]');
       this.switchOptionEula = Selector('[data-testid=switch-option-eula]');
       this.switchOptionEncryption = Selector('[data-testid=switch-option-encryption]');
+      this.pluginSectionWithText = Selector('[data-testid=plugin-section]')
   }
 
   //Accept RedisInsight License Terms

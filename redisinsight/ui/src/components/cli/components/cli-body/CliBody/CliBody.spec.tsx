@@ -244,7 +244,7 @@ describe('CliBody', () => {
         key: keys.ESCAPE,
       })
 
-      expect(screen.getByTestId('collapse-cli')).toHaveFocus()
+      expect(screen.getByTestId('close-cli')).toHaveFocus()
     })
 
     it('"Tab" with command="" should setCommand first command from constants/commands ', () => {

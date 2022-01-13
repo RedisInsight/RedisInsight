@@ -12,8 +12,8 @@ export interface Props {
 }
 
 const CHSearchInput = ({ submitSearch, isLoading = false }: Props) => {
-  const [searchValue, setSearchValue] = useState<string>('')
-  const { isEnteringCommand, matchedCommand } = useSelector(cliSettingsSelector)
+  const { isEnteringCommand, searchingCommand = '', matchedCommand = '' } = useSelector(cliSettingsSelector)
+  const [searchValue, setSearchValue] = useState<string>(matchedCommand || searchingCommand)
 
   useEffect(() => {
     if (isEnteringCommand && matchedCommand) {
@@ -22,7 +22,7 @@ const CHSearchInput = ({ submitSearch, isLoading = false }: Props) => {
   }, [isEnteringCommand])
 
   useEffect(() => {
-    setSearchValue('')
+    matchedCommand && setSearchValue('')
   }, [matchedCommand])
 
   const onChangeSearch = (value: string) => {

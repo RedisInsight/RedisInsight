@@ -1,6 +1,7 @@
 import { isUndefined } from 'lodash'
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { getCommandRepeat } from 'uiSrc/utils'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import CliAutocomplete from './CliAutocomplete'
 
@@ -17,7 +18,9 @@ export interface Props {
 const CliInputWrapper = (props: Props) => {
   const { command = '', wordsTyped, setInputEl, setCommand, onKeyDown } = props
   const { spec: ALL_REDIS_COMMANDS } = useSelector(appRedisCommandsSelector)
-  const [firstCommand, secondCommand] = command.split(' ')
+
+  const [commandLine, repeatCommand] = getCommandRepeat(command)
+  const [firstCommand, secondCommand] = commandLine.split(' ')
   const firstCommandMatch = firstCommand.toUpperCase()
   const secondCommandMatch = `${firstCommandMatch} ${secondCommand ? secondCommand.toUpperCase() : null}`
 
@@ -35,7 +38,11 @@ const CliInputWrapper = (props: Props) => {
         onKeyDown={onKeyDown}
       />
       {matchedCmd && (
-        <CliAutocomplete commandName={commandName} wordsTyped={wordsTyped} {...matchedCmd} />
+        <CliAutocomplete
+          commandName={commandName}
+          wordsTyped={repeatCommand === 1 ? wordsTyped : wordsTyped - 1}
+          {...matchedCmd}
+        />
       )}
     </>
   )

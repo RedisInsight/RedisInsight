@@ -106,10 +106,9 @@ export class PluginsService {
   private async checkWhitelistedCommands(databaseId: string, commandLine: string) {
     const targetCommand = commandLine.toLowerCase();
 
-    const isWhiteListed = (await this.getWhitelistCommands(databaseId))
-      .find((command) => targetCommand.startsWith(command));
+    const whitelist = await this.getWhitelistCommands(databaseId);
 
-    if (!isWhiteListed) {
+    if (!whitelist.find((command) => targetCommand.startsWith(command))) {
       throw new CliCommandNotSupportedError(
         ERROR_MESSAGES.PLUGIN_COMMAND_NOT_SUPPORTED(
           (targetCommand.split(' '))[0].toUpperCase(),

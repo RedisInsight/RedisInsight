@@ -31,11 +31,11 @@ fixture `Autocomplete for entered commands`
 test('Verify that user can open the "read more" about the command by clicking on the ">" icon or "ctrl+space"', async t => {
     const command = 'HSET'
     const commandDetails = [
-      'HSET key field value [field value ...]',
+      'HSET key field_value [field_value ...]',
       'Set the string value of a hash field',
       'Arguments:',
       'required key',
-      'multiple field value'
+      'multiple field_value'
     ];
     //Type command
     await t.typeText(workbenchPage.queryInput, command, { replace: true });

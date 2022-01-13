@@ -15,7 +15,8 @@ export enum PluginEvents {
   loaded = 'loaded',
   error = 'error',
   heightChanged = 'heightChanged',
-  setHeaderText = 'setHeaderText'
+  setHeaderText = 'setHeaderText',
+  executeRedisCommand = 'executeRedisCommand'
 }
 
 export const listenPluginsEvents = () => {
@@ -34,10 +35,10 @@ export const listenPluginsEvents = () => {
         break
       }
       case 'executeRedisCommand': {
-        // pluginApi.sendEvent(e.data.iframeId, 'executeRedisCommand', {
-        //   command: e.data.command,
-        //   requestId: e.data.requestId
-        // })
+        pluginApi.sendEvent(e.data.iframeId, 'executeRedisCommand', {
+          command: e.data.command,
+          requestId: e.data.requestId
+        })
         break
       }
       case 'setHeaderText': {

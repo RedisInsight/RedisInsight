@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-globals */
 // @ts-nocheck
 export const importPluginScript = () => (config) => {
-  const { scriptSrc, stylesSrc, iframeId, modules, baseUrl } = JSON.parse(config)
+  const { scriptSrc, stylesSrc, iframeId, modules, baseUrl, appVersion } = JSON.parse(config)
   const events = {
     EXECUTE_COMMAND: 'executeCommand',
     EXECUTE_REDIS_COMMAND: 'executeRedisCommand'
@@ -12,7 +12,7 @@ export const importPluginScript = () => (config) => {
     value: {
       callbacks: { counter: 0 },
       pluginState: {},
-      config: { scriptSrc, stylesSrc, iframeId, baseUrl },
+      config: { scriptSrc, stylesSrc, iframeId, baseUrl, appVersion },
       modules
     },
     writable: false
@@ -48,6 +48,16 @@ export const importPluginScript = () => (config) => {
           event: 'error',
           iframeId,
           error,
+        })
+      },
+      executeRedisCommand: (command = '', callback = () => {}) => {
+        const { callbacks } = globalThis.state
+        callbacks[callbacks.counter] = callback
+        sendMessageToMain({
+          event: 'executeRedisCommand',
+          iframeId,
+          command,
+          requestId: callbacks.counter++
         })
       }
     }

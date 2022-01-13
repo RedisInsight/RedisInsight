@@ -6,15 +6,9 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 
 import {
   Nullable,
-  checkBlockingCommand,
-  checkUnsupportedCommand,
   removeMonacoComments,
-  checkUnsupportedModuleCommand,
-  cliParseTextResponse,
   splitMonacoValuePerLines,
   getMultiCommands,
-  isRepeatCountCorrect,
-  getCommandRepeat,
 } from 'uiSrc/utils'
 import {
   sendWBCommandAction,
@@ -25,19 +19,16 @@ import {
   resetWBHistoryItems,
   fetchWBCommandAction,
 } from 'uiSrc/slices/workbench/wb-results'
-import { ConnectionType, Instance, IPluginVisualization, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { ConnectionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
-import { cliTexts } from 'uiSrc/constants/cliOutput'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import WBView from './WBView'
-import ModuleNotLoaded from '../module-not-loaded'
-import { RSNotLoadedContent } from '../../constants'
 
 interface IState {
   loading: boolean,
@@ -108,41 +99,6 @@ const WBViewWrapper = () => {
     }
   }, [multiCommands])
 
-  // TODO [zalenski] remove if unsupported command should be saved in the db
-  const getUnsupportedCommandResponse = (command = '') => {
-    const [commandLine, countRepeat] = getCommandRepeat(command)
-    const { modules } = state.instance
-    const { unsupportedCommands, blockingCommands } = state
-    const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
-      || checkBlockingCommand(blockingCommands, commandLine)
-
-    if (!isRepeatCountCorrect(countRepeat)) {
-      return cliParseTextResponse(
-        cliTexts.REPEAT_COUNT_INVALID,
-        commandLine,
-        CommandExecutionStatus.Fail,
-      )
-    }
-
-    if (unsupportedCommand) {
-      return cliParseTextResponse(
-        cliTexts.WORKBENCH_UNSUPPORTED_COMMANDS(
-          commandLine.slice(0, unsupportedCommand.length),
-          [...blockingCommands, ...unsupportedCommands].join(', '),
-        ),
-        commandLine,
-        CommandExecutionStatus.Fail,
-      )
-    }
-    const unsupportedModule = checkUnsupportedModuleCommand(modules, commandLine)
-
-    if (unsupportedModule === RedisDefaultModules.Search) {
-      return <ModuleNotLoaded content={RSNotLoadedContent} />
-    }
-
-    return null
-  }
-
   const handleSubmit = (
     commandInit: string = script,
     commandId?: string,
@@ -164,18 +120,6 @@ const WBViewWrapper = () => {
     }
 
     isNewCommand() && scrollResults('start')
-
-    // TODO [zalenski] remove if unsupported command should be saved in the db
-    // const unsupportedCommand = getUnsupportedCommandResponse(commandLine)
-
-    // if (unsupportedCommand) {
-    //   dispatch(sendUnsupportedWBCommandAction({
-    //     command: commandLine,
-    //     error: unsupportedCommand,
-    //     onSuccessAction: onSuccess,
-    //   }))
-    //   return
-    // }
 
     sendCommand(commandLine, multiCommands)
   }

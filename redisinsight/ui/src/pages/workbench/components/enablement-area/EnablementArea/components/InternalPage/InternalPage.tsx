@@ -93,7 +93,6 @@ const InternalPage = (props: Props) => {
       components={components}
       blacklistedTags={['iframe', 'script']}
       autoCloseVoidElements
-      blacklistedTags={['script', 'iframe']}
       jsx={content}
       onError={(e) => console.error(e)}
     />

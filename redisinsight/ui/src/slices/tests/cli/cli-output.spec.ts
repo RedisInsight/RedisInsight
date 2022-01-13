@@ -12,7 +12,6 @@ import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces
 import { apiService } from 'uiSrc/services'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
 import {
-  cliCommandOutput,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect
 } from 'uiSrc/utils/cliHelper'

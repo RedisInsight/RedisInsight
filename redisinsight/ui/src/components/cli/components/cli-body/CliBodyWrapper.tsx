@@ -102,7 +102,8 @@ const CliBodyWrapper = () => {
       return
     }
 
-    if (unsupportedCommand === CommandMonitor.toLowerCase()) {
+    // Flow if monitor command was executed
+    if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
       dispatch(processMonitorCommand(commandLine, resetCommand))
       return
     }

@@ -9,7 +9,7 @@ import {
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import {
   LazyCodeButton,
@@ -38,6 +38,7 @@ export interface Props {
   pagination?: IEnablementAreaItem[]
 }
 const InternalPage = (props: Props) => {
+  const location = useLocation()
   const {
     onClose,
     title,
@@ -81,12 +82,23 @@ const InternalPage = (props: Props) => {
   }
 
   useEffect(() => {
-    if (!isLoading && !error && scrollTop && containerRef.current) {
-      setTimeout(() => {
-        containerRef?.current?.scroll(0, scrollTop)
-      }, 0)
+    if (!isLoading && !error && containerRef.current) {
+      if (location.hash) {
+        const item = containerRef.current?.querySelector(location.hash) as HTMLElement
+        if (item) {
+          // HACK: force scroll to element for electron app
+          item.setAttribute('tabindex', '-1')
+          item?.focus()
+          return
+        }
+      }
+      if (scrollTop) {
+        setTimeout(() => {
+          containerRef.current?.scroll(0, scrollTop)
+        }, 0)
+      }
     }
-  }, [isLoading, scrollTop])
+  }, [isLoading, location])
 
   const contentComponent = useMemo(() => (
     <JsxParser

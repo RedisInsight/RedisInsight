@@ -29,6 +29,8 @@ services:
     build:
       context: ./../../
       dockerfile: Dockerfile
+    volumes:
+      - ./plugins:/root/.redisinsight-preview/plugins
     ports:
       - 5000:5000
   # oss standalone

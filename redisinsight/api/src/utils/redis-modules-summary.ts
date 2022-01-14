@@ -5,6 +5,7 @@ import { RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto'
 interface IModuleSummary {
   loaded: boolean;
   version?: number;
+  semanticVersion?: number;
 }
 interface IRedisModulesSummary extends Record<keyof typeof RedisModules, IModuleSummary> {
   customModules: RedisModuleDto[]
@@ -37,6 +38,7 @@ export const getRedisModulesSummary = (modules: RedisModuleDto[] = []): IRedisMo
         summary[moduleName] = {
           loaded: true,
           version: module.version,
+          semanticVersion: module.semanticVersion,
         };
       } else {
         summary.customModules.push(module);

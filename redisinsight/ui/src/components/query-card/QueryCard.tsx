@@ -5,7 +5,11 @@ import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
-import { getWBQueryType, getVisualizationsByCommand, Maybe } from 'uiSrc/utils'
+import {
+  getWBQueryType,
+  getVisualizationsByCommand,
+  Maybe
+} from 'uiSrc/utils'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -14,7 +18,7 @@ import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 import QueryCardHeader from './QueryCardHeader'
 import QueryCardCliResult from './QueryCardCliResult'
 import QueryCardCliPlugin from './QueryCardCliPlugin'
-import QueryCardCommonResult from './QueryCardCommonResult'
+import QueryCardCommonResult, { CommonErrorResponse } from './QueryCardCommonResult'
 
 import styles from './styles.module.scss'
 
@@ -114,6 +118,8 @@ const QueryCard = (props: Props) => {
     setSelectedViewValue(value)
   }
 
+  const commonError = CommonErrorResponse(command)
+
   return (
     <div className={cx(styles.containerWrapper, {
       fullscreen: isFullScreen,
@@ -141,8 +147,8 @@ const QueryCard = (props: Props) => {
         />
         {isOpen && (
           <>
-            {React.isValidElement(result)
-              ? <QueryCardCommonResult loading={loading} result={result} />
+            {React.isValidElement(commonError)
+              ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>
                   {viewTypeSelected === WBQueryType.Plugin && (

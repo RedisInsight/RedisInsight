@@ -83,12 +83,12 @@ const InternalPage = (props: Props) => {
 
   useEffect(() => {
     if (!isLoading && !error && containerRef.current) {
-      if (location.hash) {
-        const item = containerRef.current?.querySelector(location.hash) as HTMLElement
-        if (item) {
+      if (location?.hash) {
+        const target = containerRef.current?.querySelector(location.hash) as HTMLElement
+        if (target) {
           // HACK: force scroll to element for electron app
-          item.setAttribute('tabindex', '-1')
-          item?.focus()
+          target.setAttribute('tabindex', '-1')
+          target?.focus()
           return
         }
       }

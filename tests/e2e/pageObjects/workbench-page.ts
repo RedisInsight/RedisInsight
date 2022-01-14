@@ -66,6 +66,8 @@ export class WorkbenchPage {
   enablementAreaPaginationPopover: Selector
   paginationPopoverButtons: Selector
   enablementAreaTreeView: Selector
+  fullScreenButton: Selector
+  customPluginsViewType: Selector
 
   constructor() {
       //CSS selectors
@@ -106,6 +108,7 @@ export class WorkbenchPage {
       this.internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
       this.enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
       this.paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
+      this.fullScreenButton = Selector('[data-testid=toggle-full-screen]');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.queryInput = Selector('[data-testid=query-input-container]');
       this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -137,6 +140,7 @@ export class WorkbenchPage {
       this.scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
       this.enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
       this.enablementAreaTreeView = Selector('[data-testid=enablementArea-treeView]');
+      this.customPluginsViewType = Selector('[data-test-subj*=clients-list]');
   }
 
   /**

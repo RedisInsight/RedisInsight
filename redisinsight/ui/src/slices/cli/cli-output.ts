@@ -2,13 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { CliOutputFormatterType, cliTexts } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, CommandMonitor } from 'uiSrc/constants'
 import {
-  cliCommandOutput,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
 } from 'uiSrc/utils/cliHelper'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { cliUnsupportedCommandsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import { showMonitor } from './monitor'
@@ -189,8 +189,9 @@ export function processUnsupportedCommand(
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
-    const { unsupportedCommands } = state.cli.settings
-
+    // Due to requirements, the monitor command should not appear in the list of supported commands
+    // That is why we exclude it here
+    const unsupportedCommands = cliUnsupportedCommandsSelector(state, [CommandMonitor.toLowerCase()])
     dispatch(
       concatToOutput(
         cliParseTextResponseWithOffset(

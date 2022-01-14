@@ -9,18 +9,35 @@ import {
   isRepeatCountCorrect
 } from 'uiSrc/utils'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { RootState } from 'uiSrc/slices/store'
+import { CommandMonitor } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { RSNotLoadedContent } from 'uiSrc/pages/workbench/constants'
 
-import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
+import { cliSettingsSelector, cliUnsupportedCommandsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import ModuleNotLoaded from 'uiSrc/pages/workbench/components/module-not-loaded'
 
 const CommonErrorResponse = (command = '') => {
-  const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
+  const { blockingCommands } = useSelector(cliSettingsSelector)
+  // Due to requirements, the monitor command should not appear in the list of supported commands
+  // That is why we exclude it here
+  const unsupportedCommands = useSelector(
+    (state) => cliUnsupportedCommandsSelector(state as RootState, [CommandMonitor.toLowerCase()])
+  )
   const { modules } = useSelector(connectedInstanceSelector)
   const [commandLine, countRepeat] = getCommandRepeat(command)
+
+  // Flow if monitor command was executed
+  if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
+    return cliParseTextResponse(
+      cliTexts.MONITOR_COMMAND,
+      commandLine,
+      CommandExecutionStatus.Fail,
+    )
+  }
+
   const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
     || checkBlockingCommand(blockingCommands, commandLine)
 

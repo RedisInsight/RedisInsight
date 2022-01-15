@@ -37,7 +37,6 @@ export interface Props {
   onEditKey: (key: string, newKey: string, onFailure?: () => void) => void;
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 const KeyDetails = ({ ...props }: Props) => {
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const { type: selectedDataType, name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {

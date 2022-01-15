@@ -1,4 +1,4 @@
-export type KeyType = string | number
+export type DataType = string | number
 
 export type JSONScalarValue = string | number | boolean | null
 

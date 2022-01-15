@@ -17,7 +17,7 @@ import cx from 'classnames'
 import { formatDistanceToNow } from 'date-fns'
 
 import { GroupBadge } from 'uiSrc/components'
-import { KeyTypes, KEY_TYPES_ACTIONS, LENGTH_NAMING_BY_TYPE } from 'uiSrc/constants'
+import { DataTypes, DATA_TYPES_ACTIONS, LENGTH_NAMING_BY_TYPE } from 'uiSrc/constants'
 import { selectedKeyDataSelector, selectedKeySelector, } from 'uiSrc/slices/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
@@ -28,9 +28,9 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEdit
 import styles from './styles.module.scss'
 
 export interface Props {
-  keyType: KeyTypes;
+  dataType: DataTypes;
   onClose: (key: string) => void;
-  onRefresh: (key: string, type: KeyTypes) => void;
+  onRefresh: (key: string, type: DataTypes) => void;
   onDelete: (key: string, type: string) => void;
   onEditTTL: (key: string, ttl: number) => void;
   onEditKey: (key: string, newKey: string, onFailure?: () => void) => void;
@@ -43,7 +43,7 @@ const COPY_KEY_NAME_ICON = 'copyKeyNameIcon'
 const initialKeyInfo = {
   ttl: -1,
   name: '',
-  type: KeyTypes.String,
+  type: DataTypes.String,
   size: 1,
   length: 0,
 }
@@ -54,7 +54,7 @@ const KeyDetailsHeader = ({
   onDelete,
   onEditTTL,
   onEditKey,
-  keyType,
+  dataType,
   onAddItem = () => {},
   onEditItem = () => {},
   onRemoveItem = () => {},
@@ -134,7 +134,7 @@ const KeyDetailsHeader = ({
       event: TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
       eventData: {
         databaseId: instanceId,
-        keyType: type
+        dataType: type
       }
     })
   }
@@ -157,7 +157,7 @@ const KeyDetailsHeader = ({
       event: TelemetryEvent.BROWSER_KEY_COPIED,
       eventData: {
         databaseId: instanceId,
-        keyType: type
+        dataType: type
       }
     })
   }
@@ -167,7 +167,7 @@ const KeyDetailsHeader = ({
       event: TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
       eventData: {
         databaseId: instanceId,
-        keyType: type
+        dataType: type
       }
     })
     onRefresh(key, type)
@@ -235,7 +235,7 @@ const KeyDetailsHeader = ({
             gutterSize="s"
             className={styles.keyFlexGroup}
           >
-            <EuiFlexItem className={styles.keyType} grow={false}>
+            <EuiFlexItem className={styles.dataType} grow={false}>
               <GroupBadge type={type} />
             </EuiFlexItem>
             <EuiFlexItem
@@ -464,10 +464,10 @@ const KeyDetailsHeader = ({
             <EuiFlexItem>
               <div className={styles.subtitleActionBtns}>
                 {
-                    keyType && KEY_TYPES_ACTIONS[keyType] && ('removeItems' in KEY_TYPES_ACTIONS[keyType]) && (
+                    dataType && DATA_TYPES_ACTIONS[dataType] && ('removeItems' in DATA_TYPES_ACTIONS[dataType]) && (
                       <EuiToolTip
                         // @ts-ignore
-                        content={KEY_TYPES_ACTIONS[keyType].removeItems.name}
+                        content={DATA_TYPES_ACTIONS[dataType].removeItems.name}
                         position="left"
                         anchorClassName={styles.refreshKeyTooltip}
                       >
@@ -475,7 +475,7 @@ const KeyDetailsHeader = ({
                           iconType="minusInCircle"
                           color="primary"
                           // @ts-ignore
-                          aria-label={KEY_TYPES_ACTIONS[keyType].removeItems.name}
+                          aria-label={DATA_TYPES_ACTIONS[dataType].removeItems.name}
                           onClick={onRemoveItem}
                           data-testid="remove-key-value-items-btn"
                         />
@@ -483,10 +483,10 @@ const KeyDetailsHeader = ({
                     )
                   }
                 {
-                    keyType && KEY_TYPES_ACTIONS[keyType] && ('addItems' in KEY_TYPES_ACTIONS[keyType]) && (
+                    dataType && DATA_TYPES_ACTIONS[dataType] && ('addItems' in DATA_TYPES_ACTIONS[dataType]) && (
                       <EuiToolTip
                         // @ts-ignore
-                        content={KEY_TYPES_ACTIONS[keyType].addItems.name}
+                        content={DATA_TYPES_ACTIONS[dataType].addItems.name}
                         position="left"
                         anchorClassName={styles.refreshKeyTooltip}
                       >
@@ -494,7 +494,7 @@ const KeyDetailsHeader = ({
                           iconType="plusInCircle"
                           color="primary"
                           // @ts-ignore
-                          aria-label={KEY_TYPES_ACTIONS[keyType].addItems.name}
+                          aria-label={DATA_TYPES_ACTIONS[dataType].addItems.name}
                           onClick={onAddItem}
                           data-testid="add-key-value-items-btn"
                         />
@@ -502,13 +502,13 @@ const KeyDetailsHeader = ({
                     )
                   }
                 {
-                    keyType && KEY_TYPES_ACTIONS[keyType] && ('editItem' in KEY_TYPES_ACTIONS[keyType]) && (
+                    dataType && DATA_TYPES_ACTIONS[dataType] && ('editItem' in DATA_TYPES_ACTIONS[dataType]) && (
                       <div className={styles.refreshKeyTooltip}>
                         <EuiButtonIcon
                           iconType="pencil"
                           color="primary"
                           // @ts-ignore
-                          aria-label={KEY_TYPES_ACTIONS[keyType].editItem.name}
+                          aria-label={DATA_TYPES_ACTIONS[dataType].editItem.name}
                           onClick={onEditItem}
                           data-testid="edit-key-value-btn"
                         />

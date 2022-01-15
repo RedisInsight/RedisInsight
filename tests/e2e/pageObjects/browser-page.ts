@@ -15,7 +15,7 @@ export class BrowserPage {
 
   plusAddKeyButton: Selector
   addKeyButton: Selector
-  keyTypeDropDown: Selector
+  dataTypeDropDown: Selector
   progressLine: Selector
   keyDetailsHeader: Selector
   keyListTable: Selector
@@ -33,7 +33,7 @@ export class BrowserPage {
   refreshKeyButton: Selector
   applyButton: Selector
   applyEditButton: Selector
-  filterByKeyTypeDropDown: Selector
+  filterByDataTypeDropDown: Selector
   filterOptionType: Selector
   scanMoreButton: Selector
   resizeBtnKeyList: Selector
@@ -147,7 +147,7 @@ export class BrowserPage {
       this.saveMemberButton = Selector('[data-testid=save-members-btn]');
       this.searchButton = Selector('[data-testid=search-button]');
       this.addKeyButton = Selector('span').withExactText('Add Key');
-      this.keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
+      this.dataTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
       this.progressLine = Selector('div.euiProgress');
       this.confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
       this.removeButton = Selector('[data-testid*=-icon]');
@@ -165,7 +165,7 @@ export class BrowserPage {
       this.scoreButton = Selector('[data-testid=score-button]');
       this.editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
       this.applyEditButton = Selector('[data-testid=apply-edit-btn]');
-      this.filterByKeyTypeDropDown = Selector('[data-testid=select-filter-key-type]');
+      this.filterByDataTypeDropDown = Selector('[data-testid=select-filter-data-type]');
       this.filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
@@ -233,7 +233,7 @@ export class BrowserPage {
    */
   async addStringKey(keyName: string, value = ' ', TTL?: string): Promise<void> {
       await t.click(this.plusAddKeyButton);
-      await t.click(this.keyTypeDropDown);
+      await t.click(this.dataTypeDropDown);
       await t.click(this.stringOption);
       await t.click(this.addKeyNameInput);
       await t.typeText(this.addKeyNameInput, keyName);
@@ -254,7 +254,7 @@ export class BrowserPage {
   */
   async addJsonKey(keyName: string, TTL = ' ', value = ' '): Promise<void> {
       await t.click(this.plusAddKeyButton);
-      await t.click(this.keyTypeDropDown);
+      await t.click(this.dataTypeDropDown);
       await t.click(this.jsonOption);
       await t.click(this.addKeyNameInput);
       await t.typeText(this.addKeyNameInput, keyName);
@@ -274,7 +274,7 @@ export class BrowserPage {
   async addSetKey(keyName: string, TTL = ' ', members = ' '): Promise<void> {
       await common.waitForElementNotVisible(this.progressLine);
       await t.click(this.plusAddKeyButton);
-      await t.click(this.keyTypeDropDown);
+      await t.click(this.dataTypeDropDown);
       await t.click(this.setOption);
       await t.click(this.addKeyNameInput);
       await t.typeText(this.addKeyNameInput, keyName);
@@ -294,7 +294,7 @@ export class BrowserPage {
   async addZSetKey(keyName: string, scores = ' ', TTL = ' ', members = ' '): Promise<void> {
       await common.waitForElementNotVisible(this.progressLine);
       await t.click(this.plusAddKeyButton);
-      await t.click(this.keyTypeDropDown);
+      await t.click(this.dataTypeDropDown);
       await t.click(this.zsetOption);
       await t.click(this.addKeyNameInput);
       await t.typeText(this.addKeyNameInput, keyName);
@@ -314,7 +314,7 @@ export class BrowserPage {
   async addListKey(keyName: string, TTL = ' ', element = ' '): Promise<void> {
       await common.waitForElementNotVisible(this.progressLine);
       await t.click(this.plusAddKeyButton);
-      await t.click(this.keyTypeDropDown);
+      await t.click(this.dataTypeDropDown);
       await t.click(this.listOption);
       await t.click(this.addKeyNameInput);
       await t.typeText(this.addKeyNameInput, keyName);
@@ -335,7 +335,7 @@ export class BrowserPage {
   async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
       await common.waitForElementNotVisible(this.progressLine);
       await t.click(this.plusAddKeyButton);
-      await t.click(this.keyTypeDropDown);
+      await t.click(this.dataTypeDropDown);
       await t.click(this.hashOption);
       await t.click(this.addKeyNameInput);
       await t.typeText(this.addKeyNameInput, keyName);
@@ -351,7 +351,7 @@ export class BrowserPage {
   * @param groupName The group name
   */
   async selectFilterGroupType(groupName: string): Promise<void> {
-      await t.click(this.filterByKeyTypeDropDown);
+      await t.click(this.filterByDataTypeDropDown);
       await t.click(this.filterOptionType.withExactText(groupName));
   }
 

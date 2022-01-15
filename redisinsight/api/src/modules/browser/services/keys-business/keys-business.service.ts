@@ -153,7 +153,7 @@ export class KeysBusinessService {
         && dto.type
       ) {
         throw new BadRequestException(
-          ERROR_MESSAGES.SCAN_PER_KEY_TYPE_NOT_SUPPORT(),
+          ERROR_MESSAGES.SCAN_PER_DATA_TYPE_NOT_SUPPORT(),
         );
       }
       throw catchAclError(error);

@@ -1,8 +1,8 @@
-import { KeyTypes } from '../keys'
+import { DataTypes } from '../keys'
 
 export interface IKeyPropTypes {
   name: string;
-  type: KeyTypes;
+  type: DataTypes;
   ttl: number;
   size: number;
   length: number;

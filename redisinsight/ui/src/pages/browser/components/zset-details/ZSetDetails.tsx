@@ -15,7 +15,7 @@ import {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
 } from 'uiSrc/slices/zset'
-import { KeyTypes, SortOrder } from 'uiSrc/constants'
+import { DataTypes, SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -109,7 +109,7 @@ const ZSetDetails = (props: Props) => {
       event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.ZSet
+        dataType: DataTypes.ZSet
       }
     })
   }

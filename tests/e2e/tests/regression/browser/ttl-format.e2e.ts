@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
 import { addNewStandaloneDatabase } from '../../../helpers/database';
-import { keyTypes, getRandomKeyName } from '../../../helpers/keys';
+import { dataTypes, getRandomKeyName } from '../../../helpers/keys';
 import {COMMANDS_TO_CREATE_KEY, keyLength} from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
@@ -19,7 +19,7 @@ const browserPage = new BrowserPage();
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
-const keysData = keyTypes.slice(0, 6);
+const keysData = dataTypes.slice(0, 6);
 for (const key of keysData) {
     key.keyName = `${key.keyName}` + '-' + `${getRandomKeyName(keyLength)}`
 }

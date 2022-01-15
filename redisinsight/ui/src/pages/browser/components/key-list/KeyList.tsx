@@ -46,7 +46,7 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 
-import FilterKeyType from '../filter-key-type'
+import FilterDataType from '../filter-data-type'
 import SearchKeyList from '../search-key-list'
 
 import styles from './styles.module.scss'
@@ -282,7 +282,7 @@ const KeyList = (props: Props) => {
     <div className={styles.page}>
       <div className={styles.content}>
         <div className={styles.header}>
-          <FilterKeyType />
+          <FilterDataType />
           <SearchKeyList />
           <div className={styles.refresh}>
             <EuiToolTip

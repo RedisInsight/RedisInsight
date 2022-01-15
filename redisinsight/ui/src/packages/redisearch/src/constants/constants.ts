@@ -38,7 +38,7 @@ export const ResultInfoAttributes: string[] = [
   'PHONETIC',
 ]
 
-export enum KeyTypes {
+export enum DataTypes {
   Hash = 'hash',
   List = 'list',
   Set = 'set',
@@ -49,22 +49,22 @@ export enum KeyTypes {
 }
 
 export const GROUP_TYPES_DISPLAY = Object.freeze({
-  [KeyTypes.Hash]: 'Hash',
-  [KeyTypes.List]: 'List',
-  [KeyTypes.Set]: 'Set',
-  [KeyTypes.ZSet]: 'Zset',
-  [KeyTypes.String]: 'String',
-  [KeyTypes.ReJSON]: 'JSON',
-  [KeyTypes.JSON]: 'JSON'
+  [DataTypes.Hash]: 'Hash',
+  [DataTypes.List]: 'List',
+  [DataTypes.Set]: 'Set',
+  [DataTypes.ZSet]: 'Zset',
+  [DataTypes.String]: 'String',
+  [DataTypes.ReJSON]: 'JSON',
+  [DataTypes.JSON]: 'JSON'
 })
 
 // Enums don't allow to use dynamic key
 export const GROUP_TYPES_COLORS = Object.freeze({
-  [KeyTypes.Hash]: 'var(--typeHashColor)',
-  [KeyTypes.List]: 'var(--typeListColor)',
-  [KeyTypes.Set]: 'var(--typeSetColor)',
-  [KeyTypes.ZSet]: 'var(--typeZSetColor)',
-  [KeyTypes.String]: 'var(--typeStringColor)',
-  [KeyTypes.ReJSON]: 'var(--typeReJSONColor)',
-  [KeyTypes.JSON]: 'var(--typeReJSONColor)',
+  [DataTypes.Hash]: 'var(--typeHashColor)',
+  [DataTypes.List]: 'var(--typeListColor)',
+  [DataTypes.Set]: 'var(--typeSetColor)',
+  [DataTypes.ZSet]: 'var(--typeZSetColor)',
+  [DataTypes.String]: 'var(--typeStringColor)',
+  [DataTypes.ReJSON]: 'var(--typeReJSONColor)',
+  [DataTypes.JSON]: 'var(--typeReJSONColor)',
 })

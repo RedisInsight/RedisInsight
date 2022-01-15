@@ -11,7 +11,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { KeyTypesTexts } from '../../../helpers/constants';
+import { DataTypesTexts } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -63,7 +63,7 @@ test('Verify that user can search iteratively via Scan more for search pattern a
     await t.pressKey('enter');
     await t.click(cliPage.cliCollapseButton);
     //Search all string keys
-    await browserPage.selectFilterGroupType(KeyTypesTexts.String)
+    await browserPage.selectFilterGroupType(DataTypesTexts.String)
     await browserPage.searchByKeyName('*');
     //Verify that scan more button is not shown
     await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is shown');

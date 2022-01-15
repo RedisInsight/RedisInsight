@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import { refreshHashFieldsAction } from 'uiSrc/slices/hash'
 import { refreshZsetMembersAction } from 'uiSrc/slices/zset'
 import { refreshSetMembersAction } from 'uiSrc/slices/set'
@@ -22,14 +22,14 @@ const mockedProps = mock<Props>()
 const key = 'key'
 
 interface ExtendedKeyDetailsProps extends KeyDetailsProps {
-  keyType: string
+  dataType: string
 }
 
 const MockKeyDetails = (props: ExtendedKeyDetailsProps) => (
   <div>
     <button
       type="button"
-      onClick={() => props.onRefresh(key, props.keyType as KeyTypes)}
+      onClick={() => props.onRefresh(key, props.dataType as DataTypes)}
       data-testid="refresh-btn"
     >
       Refresh
@@ -90,11 +90,11 @@ describe('KeyDetailsWrapper', () => {
   })
 
   describe('should call onRefresh', () => {
-    test.each(Object.values(KeyTypes))('should call onRefresh', (keyType) => {
+    test.each(Object.values(DataTypes))('should call onRefresh', (dataType) => {
       KeyDetails.mockImplementationOnce((props: KeyDetailsProps) => (
         <MockKeyDetails
           {...props}
-          keyType={keyType}
+          dataType={dataType}
         />
       ))
       const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)

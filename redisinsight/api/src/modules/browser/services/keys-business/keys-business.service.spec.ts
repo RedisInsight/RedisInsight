@@ -231,7 +231,7 @@ describe('KeysBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.SCAN_PER_KEY_TYPE_NOT_SUPPORT(),
+          ERROR_MESSAGES.SCAN_PER_DATA_TYPE_NOT_SUPPORT(),
         );
       }
     });

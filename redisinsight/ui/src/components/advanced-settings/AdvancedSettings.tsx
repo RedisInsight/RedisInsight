@@ -67,7 +67,7 @@ const AdvancedSettings = () => {
     <>
       <EuiSpacer size="s" />
       <EuiTitle size="xxs">
-        <span>Filter by Key Type or Pattern</span>
+        <span>Filter by Data Type or Pattern</span>
       </EuiTitle>
       <EuiText size="s" color="subdued">
         Filtering by pattern per a large number of keys may decrease performance. Clear

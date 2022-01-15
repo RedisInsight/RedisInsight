@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, KeyTypes, SortOrder } from 'uiSrc/constants'
+import { ApiEndpoints, DataTypes, SortOrder } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -330,13 +330,13 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
-    if (type === KeyTypes.Hash) {
+    if (type === DataTypes.Hash) {
       dispatch(setHashInitialState())
     }
-    if (type === KeyTypes.List) {
+    if (type === DataTypes.List) {
       dispatch(setListInitialState())
     }
-    if (type === KeyTypes.ZSet) {
+    if (type === DataTypes.ZSet) {
       dispatch(setZsetInitialState())
     }
   }
@@ -449,24 +449,24 @@ export function fetchKeyInfo(key: string) {
         }
       }
 
-      if (data.type === KeyTypes.Hash) {
+      if (data.type === DataTypes.Hash) {
         dispatch<any>(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, '*'))
       }
-      if (data.type === KeyTypes.List) {
+      if (data.type === DataTypes.List) {
         dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT))
       }
-      if (data.type === KeyTypes.String) {
+      if (data.type === DataTypes.String) {
         dispatch<any>(fetchString(key))
       }
-      if (data.type === KeyTypes.ZSet) {
+      if (data.type === DataTypes.ZSet) {
         dispatch<any>(
           fetchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, SortOrder.ASC)
         )
       }
-      if (data.type === KeyTypes.Set) {
+      if (data.type === DataTypes.Set) {
         dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*'))
       }
-      if (data.type === KeyTypes.ReJSON) {
+      if (data.type === DataTypes.ReJSON) {
         dispatch<any>(fetchReJSON(key, '.'))
       }
     } catch (error) {

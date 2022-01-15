@@ -55,13 +55,13 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
     key: string,
   ): Promise<number> {
     try {
-      const objectKeyType = await this.redisManager.execCommand(
+      const objectDataType = await this.redisManager.execCommand(
         clientOptions,
         BrowserToolRejsonRlCommands.JsonType,
         [key, '.'],
       );
 
-      switch (objectKeyType) {
+      switch (objectDataType) {
         case 'object':
           return await this.redisManager.execCommand(
             clientOptions,

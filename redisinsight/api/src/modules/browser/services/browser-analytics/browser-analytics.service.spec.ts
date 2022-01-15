@@ -62,19 +62,19 @@ describe('BrowserAnalyticsService', () => {
         },
       );
     });
-    it('should emit event with filter by key type', () => {
+    it('should emit event with filter by data type', () => {
       service.sendKeysScannedEvent(instanceId, '*', RedisDataType.String);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.BrowserKeysScannedWithFilters,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.String,
+          dataType: RedisDataType.String,
           match: '*',
         },
       );
     });
-    it('should emit event with filter by key type and pattern', () => {
+    it('should emit event with filter by data type and pattern', () => {
       service.sendKeysScannedEvent(
         instanceId,
         'string*',
@@ -87,7 +87,7 @@ describe('BrowserAnalyticsService', () => {
         {
           databaseId: instanceId,
           match: 'PATTERN',
-          keyType: RedisDataType.String,
+          dataType: RedisDataType.String,
           count: 200,
         },
       );
@@ -102,7 +102,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyAdded,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.String,
+          dataType: RedisDataType.String,
         },
       );
     });
@@ -113,7 +113,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyAdded,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.String,
+          dataType: RedisDataType.String,
           TTL: -1,
         },
       );
@@ -157,7 +157,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueAdded,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
         },
       );
     });
@@ -171,7 +171,7 @@ describe('BrowserAnalyticsService', () => {
         {
           databaseId: instanceId,
           numberOfAdded: 1,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
         },
       );
     });
@@ -185,7 +185,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueEdited,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
         },
       );
     });
@@ -198,7 +198,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueEdited,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
           numberOfEdited: 1,
         },
       );
@@ -213,7 +213,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueRemoved,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
         },
       );
     });
@@ -226,7 +226,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueRemoved,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
           numberOfRemoved: 1,
         },
       );
@@ -241,7 +241,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueFiltered,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.Hash,
+          dataType: RedisDataType.Hash,
           match: 'EXACT_VALUE_NAME',
         },
       );
@@ -253,7 +253,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueFiltered,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.Hash,
+          dataType: RedisDataType.Hash,
           match: 'PATTERN',
         },
       );
@@ -267,7 +267,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueFiltered,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.Hash,
+          dataType: RedisDataType.Hash,
           match: 'PATTERN',
           length: 10,
         },
@@ -288,7 +288,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueFiltered,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
           match: 'EXACT_VALUE_NAME',
         },
       );
@@ -302,7 +302,7 @@ describe('BrowserAnalyticsService', () => {
         TelemetryEvents.BrowserKeyValueFiltered,
         {
           databaseId: instanceId,
-          keyType: RedisDataType.List,
+          dataType: RedisDataType.List,
           match: 'EXACT_VALUE_NAME',
           length: 10,
         },

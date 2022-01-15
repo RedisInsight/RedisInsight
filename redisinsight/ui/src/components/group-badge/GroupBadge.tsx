@@ -1,9 +1,9 @@
 import React from 'react'
 import { EuiBadge, EuiText } from '@elastic/eui'
-import { CommandGroup, KeyTypes, GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
+import { CommandGroup, DataTypes, GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
 
 export interface Props {
-  type: KeyTypes | CommandGroup | string;
+  type: DataTypes | CommandGroup | string;
   name?: string,
   className?: string
 }

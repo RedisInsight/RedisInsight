@@ -40,7 +40,7 @@ test('Verify that user can see Hash Key details', async t => {
     const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-    await t.expect(keyDetails).contains('Hash', 'The Key Type');
+    await t.expect(keyDetails).contains('Hash', 'The Data Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
     await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('Hash', 'The Key Badge');
@@ -58,7 +58,7 @@ test('Verify that user can see List Key details', async t => {
     const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-    await t.expect(keyDetails).contains('List', 'The Key Type');
+    await t.expect(keyDetails).contains('List', 'The Data Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
     await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('List', 'The Key Badge');
@@ -76,7 +76,7 @@ test('Verify that user can see Set Key details', async t => {
     const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-    await t.expect(keyDetails).contains('Set', 'The Key Type');
+    await t.expect(keyDetails).contains('Set', 'The Data Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
     await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('Set', 'The Key Badge');
@@ -95,7 +95,7 @@ test('Verify that user can see String Key details', async t => {
     const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-    await t.expect(keyDetails).contains('String', 'The Key Type');
+    await t.expect(keyDetails).contains('String', 'The Data Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
     await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('String', 'The Key Badge');
@@ -113,7 +113,7 @@ test('Verify that user can see ZSet Key details', async t => {
     const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-    await t.expect(keyDetails).contains('Sorted Set', 'The Key Type');
+    await t.expect(keyDetails).contains('Sorted Set', 'The Data Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
     await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('Sorted Set', 'The Key Badge');
@@ -132,7 +132,7 @@ test('Verify that user can see JSON Key details', async t => {
     const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-    await t.expect(keyDetails).contains('JSON', 'The Key Type');
+    await t.expect(keyDetails).contains('JSON', 'The Data Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
     await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('JSON', 'The Key Badge');

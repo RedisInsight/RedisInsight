@@ -8,7 +8,7 @@ import {
   refreshKeyInfoAction,
   selectedKeySelector,
 } from 'uiSrc/slices/keys'
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import { refreshHashFieldsAction } from 'uiSrc/slices/hash'
 import { refreshZsetMembersAction } from 'uiSrc/slices/zset'
 import { resetStringValue } from 'uiSrc/slices/string'
@@ -38,7 +38,7 @@ const KeyDetailsWrapper = ({ onCloseKey, onEditKey, onDeleteKey, keyProp }: Prop
   }, [keyProp])
 
   const handleDeleteKey = (key: string, type: string) => {
-    if (type === KeyTypes.String) {
+    if (type === DataTypes.String) {
       dispatch(deleteKeyAction(key, () => {
         dispatch(resetStringValue())
         onDeleteKey()
@@ -48,24 +48,24 @@ const KeyDetailsWrapper = ({ onCloseKey, onEditKey, onDeleteKey, keyProp }: Prop
     dispatch(deleteKeyAction(key, onDeleteKey))
   }
 
-  const handleRefreshKey = (key: string, type: KeyTypes) => {
+  const handleRefreshKey = (key: string, type: DataTypes) => {
     switch (type) {
-      case KeyTypes.Hash: {
+      case DataTypes.Hash: {
         dispatch(refreshKeyInfoAction(key))
         dispatch(refreshHashFieldsAction(key))
         break
       }
-      case KeyTypes.ZSet: {
+      case DataTypes.ZSet: {
         dispatch(refreshKeyInfoAction(key))
         dispatch(refreshZsetMembersAction(key))
         break
       }
-      case KeyTypes.Set: {
+      case DataTypes.Set: {
         dispatch(refreshKeyInfoAction(key))
         dispatch(refreshSetMembersAction(key))
         break
       }
-      case KeyTypes.List: {
+      case DataTypes.List: {
         dispatch(refreshKeyInfoAction(key))
         dispatch(refreshListElementsAction(key))
         break

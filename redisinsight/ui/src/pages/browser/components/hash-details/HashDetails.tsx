@@ -28,7 +28,7 @@ import {
   AddFieldsToHashDto,
   HashFieldDto,
 } from 'apiSrc/modules/browser/dto/hash.dto'
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -112,7 +112,7 @@ const HashDetails = (props: Props) => {
       event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.Hash
+        dataType: DataTypes.Hash
       }
     })
   }

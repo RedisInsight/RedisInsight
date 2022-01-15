@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { parseKeysListResponse } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
@@ -900,7 +900,7 @@ describe('keys slice', () => {
         // Arrange
         const data = {
           name: 'string',
-          type: KeyTypes.String,
+          type: DataTypes.String,
           ttl: -1,
           size: 10,
         }
@@ -1153,7 +1153,7 @@ describe('keys slice', () => {
         // Arrange
         const data = {
           name: 'string',
-          type: KeyTypes.String,
+          type: DataTypes.String,
           ttl: -1,
           size: 10,
         }

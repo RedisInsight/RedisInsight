@@ -35,7 +35,7 @@ export class StringBusinessService {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: SetStringWithExpireDto,
   ): Promise<void> {
-    this.logger.log('Setting string key type.');
+    this.logger.log('Setting string data type.');
     const { keyName, value, expire } = dto;
     let result;
     try {
@@ -53,12 +53,12 @@ export class StringBusinessService {
         );
       }
     } catch (error) {
-      this.logger.error('Failed to set string key type', error);
+      this.logger.error('Failed to set string data type', error);
       catchAclError(error);
     }
     if (!result) {
       this.logger.error(
-        `Failed to set string key type. ${ERROR_MESSAGES.KEY_NAME_EXIST} key: ${keyName}`,
+        `Failed to set string data type. ${ERROR_MESSAGES.KEY_NAME_EXIST} key: ${keyName}`,
       );
       throw new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST);
     }
@@ -70,7 +70,7 @@ export class StringBusinessService {
         TTL: dto.expire || -1,
       },
     );
-    this.logger.log('Succeed to set string key type.');
+    this.logger.log('Succeed to set string data type.');
   }
 
   public async getStringValue(

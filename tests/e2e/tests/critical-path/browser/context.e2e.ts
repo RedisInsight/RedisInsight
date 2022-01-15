@@ -11,7 +11,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { KeyTypesTexts } from '../../../helpers/constants';
+import { DataTypesTexts } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -63,14 +63,14 @@ test('Verify that user can see saved Key details and Keys tables size on Browser
 
     await t.expect(await browserPage.keyListTable.clientWidth).eql(keyListWidth + offsetX, 'Saved browser resizable context is proper');
 });
-test('Verify that user can see saved filter per key type applied when he returns back to Browser page', async t => {
+test('Verify that user can see saved filter per data type applied when he returns back to Browser page', async t => {
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Filter per key type Strting and open Settings
-    await browserPage.selectFilterGroupType(KeyTypesTexts.String);
+    //Filter per data type String and open Settings
+    await browserPage.selectFilterGroupType(DataTypesTexts.String);
     await t.click(myRedisDatabasePage.settingsButton);
-    //Return back to Browser and check filter applied
+    //Return to Browser and check filter applied
     await t.click(myRedisDatabasePage.browserButton);
-    await t.expect(await browserPage.selectedFilterTypeString.visible).eql(true, 'Filter per key type is still applied');
+    await t.expect(await browserPage.selectedFilterTypeString.visible).eql(true, 'Filter per data type is still applied');
 });
 test('Verify that user can see saved executed commands in CLI on Browser page when he returns back to Browser page', async t => {
     const commands = [

@@ -40,3 +40,5 @@ lerna-debug.log*
 /secrets
 /ca_certificates
 /client_certificates
+/enablement-area
+/commands

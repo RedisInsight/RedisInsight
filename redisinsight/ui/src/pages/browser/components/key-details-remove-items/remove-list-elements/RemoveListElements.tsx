@@ -18,7 +18,7 @@ import {
   EuiIcon,
 } from '@elastic/eui'
 
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import { validateCountNumber, isVersionHigherOrEquals, formatNameShort } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpTexts from 'uiSrc/constants/help-texts'
@@ -105,7 +105,7 @@ const RemoveListElements = (props: Props) => {
       event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.List
+        dataType: DataTypes.List
       }
     })
   }

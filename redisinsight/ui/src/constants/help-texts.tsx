@@ -39,7 +39,7 @@ export default {
   ),
   FILTER_UNSUPPORTED: (
     <>
-      Filtering per Key types is available for Redis databases v. 6.0 or later.
+      Filtering per Data types is available for Redis databases v. 6.0 or later.
       Update your Redis database or create a new&nbsp;
       <a
         href={`${tryFreeHref}?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redis_latest`}

@@ -621,7 +621,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
               expect(response[2]).to.eql('index_options');
               expect(response[3]).to.eql(['NOOFFSETS']);
               expect(response[4]).to.eql('index_definition');
-              expect(_.take(response[5], 4)).to.eql( ['key_type', 'HASH', 'prefixes', [constants.TEST_SEARCH_HASH_KEY_PREFIX_1]]);
+              expect(_.take(response[5], 4)).to.eql( ['data_type', 'HASH', 'prefixes', [constants.TEST_SEARCH_HASH_KEY_PREFIX_1]]);
             },
           },
           {
@@ -726,7 +726,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
               expect(response[2]).to.eql('index_options');
               expect(response[3]).to.eql(['NOOFFSETS']);
               expect(response[4]).to.eql('index_definition');
-              expect(_.take(response[5], 4)).to.eql( ['key_type', 'JSON', 'prefixes', ['']]);
+              expect(_.take(response[5], 4)).to.eql( ['data_type', 'JSON', 'prefixes', ['']]);
             },
           },
           {

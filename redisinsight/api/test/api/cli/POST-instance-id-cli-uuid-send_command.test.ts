@@ -473,7 +473,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
               expect(body.response[2]).to.eql('index_options');
               expect(body.response[3]).to.eql(['NOOFFSETS']);
               expect(body.response[4]).to.eql('index_definition');
-              expect(_.take(body.response[5], 4)).to.eql( ['key_type', 'HASH', 'prefixes', [constants.TEST_SEARCH_HASH_KEY_PREFIX_1]]);
+              expect(_.take(body.response[5], 4)).to.eql( ['data_type', 'HASH', 'prefixes', [constants.TEST_SEARCH_HASH_KEY_PREFIX_1]]);
               expect(body.response[6]).to.eql('fields');
               expect(body.response[7]).to.deep.include( [ 'title', 'type', 'TEXT', 'WEIGHT', '5' ]);
             },
@@ -557,7 +557,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
               expect(body.response[2]).to.eql('index_options');
               expect(body.response[3]).to.eql(['NOOFFSETS']);
               expect(body.response[4]).to.eql('index_definition');
-              expect(_.take(body.response[5], 4)).to.eql( ['key_type', 'JSON', 'prefixes', ['']]);
+              expect(_.take(body.response[5], 4)).to.eql( ['data_type', 'JSON', 'prefixes', ['']]);
               expect(body.response[6]).to.eql('fields');
               expect(body.response[7]).to.deep.include( [ 'name', 'type', 'TEXT', 'WEIGHT', '1' ]);
             },

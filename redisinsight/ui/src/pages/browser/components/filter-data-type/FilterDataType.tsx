@@ -15,11 +15,11 @@ import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
 import { fetchKeys, keysSelector, setFilter } from 'uiSrc/slices/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { FILTER_KEY_TYPE_OPTIONS } from './constants'
+import { FILTER_DATA_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
 
-const FilterKeyType = () => {
+const FilterDataType = () => {
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [typeSelected, setTypeSelected] = useState<string>('')
   const [isVersionSupported, setIsVersionSupported] = useState<boolean>(true)
@@ -33,7 +33,7 @@ const FilterKeyType = () => {
     setIsVersionSupported(
       isVersionHigherOrEquals(
         version,
-        CommandsVersions.FILTER_PER_KEY_TYPES.since
+        CommandsVersions.FILTER_PER_DATA_TYPES.since
       )
     )
   }, [version])
@@ -42,7 +42,7 @@ const FilterKeyType = () => {
     filter && setTypeSelected(filter)
   }, [filter])
 
-  const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS.map(
+  const options: EuiSuperSelectOption<string>[] = FILTER_DATA_TYPE_OPTIONS.map(
     (item) => {
       const { value, color, text } = item
       return {
@@ -119,17 +119,17 @@ const FilterKeyType = () => {
         {!isVersionSupported && UnsupportedInfo()}
         <EuiSuperSelect
           fullWidth
-          itemClassName={cx('withColorDefinition', styles.filterKeyType)}
+          itemClassName={cx('withColorDefinition', styles.filterDataType)}
           disabled={!isVersionSupported}
           options={options}
           isOpen={isSelectOpen}
           valueOfSelected={typeSelected}
           onChange={(value: string) => onChangeType(value)}
-          data-testid="select-filter-key-type"
+          data-testid="select-filter-data-type"
         />
       </div>
     </EuiOutsideClickDetector>
   )
 }
 
-export default FilterKeyType
+export default FilterDataType

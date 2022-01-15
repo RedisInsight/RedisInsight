@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { KeyTypesTexts } from './constants';
+import { DataTypesTexts } from './constants';
 
 export function getRandomKeyName(keyNameLength: number): string {
     const chance = new Chance();
@@ -10,14 +10,14 @@ export function getRandomKeyName(keyNameLength: number): string {
     return result;
 }
 
-export const keyTypes = [
-    { textType: KeyTypesTexts.Hash, keyName: 'hash' },
-    { textType: KeyTypesTexts.Set, keyName: 'set' },
-    { textType: KeyTypesTexts.ZSet, keyName: 'zset' },
-    { textType: KeyTypesTexts.List, keyName: 'list' },
-    { textType: KeyTypesTexts.String, keyName: 'string' },
-    { textType: KeyTypesTexts.Graph, keyName: 'graph' },
-    { textType: KeyTypesTexts.ReJSON, keyName: 'json' },
-    { textType: KeyTypesTexts.Stream, keyName: 'stream' },
-    { textType: KeyTypesTexts.TimeSeries, keyName: 'timeSeries' }
+export const dataTypes = [
+    { textType: DataTypesTexts.Hash, keyName: 'hash' },
+    { textType: DataTypesTexts.Set, keyName: 'set' },
+    { textType: DataTypesTexts.ZSet, keyName: 'zset' },
+    { textType: DataTypesTexts.List, keyName: 'list' },
+    { textType: DataTypesTexts.String, keyName: 'string' },
+    { textType: DataTypesTexts.Graph, keyName: 'graph' },
+    { textType: DataTypesTexts.ReJSON, keyName: 'json' },
+    { textType: DataTypesTexts.Stream, keyName: 'stream' },
+    { textType: DataTypesTexts.TimeSeries, keyName: 'timeSeries' }
 ]

@@ -1,4 +1,4 @@
-import { KeyTypes, UnsupportedKeyTypes } from 'uiSrc/constants'
+import { DataTypes, UnsupportedDataTypes } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { Maybe, Nullable } from 'uiSrc/utils'
 
@@ -8,7 +8,7 @@ export interface RouteParams {
 
 export interface Key {
   name: string;
-  type: KeyTypes;
+  type: DataTypes;
   ttl: number;
   size: number;
 }
@@ -17,7 +17,7 @@ export interface KeysStore {
   loading: boolean;
   error: string;
   search: string;
-  filter: Nullable<KeyTypes | UnsupportedKeyTypes>;
+  filter: Nullable<DataTypes | UnsupportedDataTypes>;
   isFiltered: boolean;
   isSearched: boolean;
   data: {

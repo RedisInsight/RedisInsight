@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import { ADD_KEY_TYPE_OPTIONS } from 'uiSrc/pages/browser/components/add-key/constants/key-type-options'
+import { ADD_DATA_TYPE_OPTIONS } from 'uiSrc/pages/browser/components/add-key/constants/data-type-options'
 import AddKey from './AddKey'
 
 const handleAddKeyPanelMock = () => {}
@@ -21,15 +21,15 @@ describe('AddKey', () => {
       handleCloseKey={handleCloseKeyMock}
     />)
 
-    expect(screen.getByText(/Key Type\*/i)).toBeInTheDocument()
+    expect(screen.getByText(/Data Type\*/i)).toBeInTheDocument()
   })
 
-  it('should have key type select with predefined first value from options', () => {
+  it('should have data type select with predefined first value from options', () => {
     render(<AddKey
       handleAddKeyPanel={handleAddKeyPanelMock}
       handleCloseKey={handleCloseKeyMock}
     />)
 
-    expect(screen.getByDisplayValue(ADD_KEY_TYPE_OPTIONS[0].value)).toBeInTheDocument()
+    expect(screen.getByDisplayValue(ADD_DATA_TYPE_OPTIONS[0].value)).toBeInTheDocument()
   })
 })

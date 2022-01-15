@@ -23,7 +23,7 @@ fixture `Settings`
         await t.maximizeWindow();
         await userAgreementPage.acceptLicenseTerms();
     })
-test('Verify that user can customize a number of keys to scan in filters per key name or key type', async t => {
+test('Verify that user can customize a number of keys to scan in filters per key name or data type', async t => {
     //Go to Settings page
     await t.click(myRedisDatabasePage.settingsButton);
     // Change keys to Scan

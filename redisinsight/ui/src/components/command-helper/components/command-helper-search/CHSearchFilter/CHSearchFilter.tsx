@@ -90,7 +90,7 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
           disabled={isLoading}
           isLoading={isLoading}
           fullWidth
-          itemClassName={cx('withColorDefinition', styles.filterKeyType)}
+          itemClassName={cx('withColorDefinition', styles.filterDataType)}
           options={options}
           isOpen={isSelectOpen}
           valueOfSelected={typeSelected}

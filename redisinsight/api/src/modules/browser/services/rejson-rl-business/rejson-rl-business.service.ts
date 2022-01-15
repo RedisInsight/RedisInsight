@@ -113,14 +113,14 @@ export class RejsonRlBusinessService {
       cardinality: 1,
     };
 
-    const objectKeyType = await this.getJsonDataType(
+    const objectDataType = await this.getJsonDataType(
       clientOptions,
       keyName,
       path,
     );
 
-    details['type'] = objectKeyType;
-    switch (objectKeyType) {
+    details['type'] = objectDataType;
+    switch (objectDataType) {
       case 'object':
         details[
           'cardinality'
@@ -231,7 +231,7 @@ export class RejsonRlBusinessService {
         throw new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST);
       }
 
-      this.logger.log('Succeed to create REJSON-RL key type.');
+      this.logger.log('Succeed to create REJSON-RL data type.');
       this.browserAnalyticsService.sendKeyAddedEvent(
         clientOptions.instanceId,
         RedisDataType.JSON,
@@ -259,7 +259,7 @@ export class RejsonRlBusinessService {
         }
       }
     } catch (error) {
-      this.logger.error('Failed to create REJSON-RL key type.', error);
+      this.logger.error('Failed to create REJSON-RL data type.', error);
 
       if (error instanceof ConflictException) {
         throw error;
@@ -373,9 +373,9 @@ export class RejsonRlBusinessService {
         );
       }
 
-      this.logger.log('Succeed to modify REJSON-RL key type.');
+      this.logger.log('Succeed to modify REJSON-RL data type.');
     } catch (error) {
-      this.logger.error('Failed to modify REJSON-RL key type.', error);
+      this.logger.error('Failed to modify REJSON-RL data type.', error);
 
       if (error instanceof NotFoundException) {
         throw error;
@@ -429,9 +429,9 @@ export class RejsonRlBusinessService {
         clientOptions.instanceId,
         path,
       );
-      this.logger.log('Succeed to modify REJSON-RL key type.');
+      this.logger.log('Succeed to modify REJSON-RL data type.');
     } catch (error) {
-      this.logger.error('Failed to modify REJSON-RL key type', error);
+      this.logger.error('Failed to modify REJSON-RL data type', error);
 
       if (error instanceof NotFoundException) {
         throw error;

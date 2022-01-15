@@ -7,7 +7,7 @@ import {
 } from '@elastic/eui'
 
 import { formatLongName } from 'uiSrc/utils'
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
@@ -67,7 +67,7 @@ const SetDetails = (props: Props) => {
       event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.Set
+        dataType: DataTypes.Set
       }
     })
   }

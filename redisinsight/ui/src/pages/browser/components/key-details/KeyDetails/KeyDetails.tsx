@@ -6,7 +6,7 @@ import {
 import { isNull } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import {
   selectedKeyDataSelector,
   selectedKeySelector,
@@ -31,16 +31,17 @@ import styles from '../styles.module.scss'
 
 export interface Props {
   onClose: (key: string) => void;
-  onRefresh: (key: string, type: KeyTypes) => void;
+  onRefresh: (key: string, type: DataTypes) => void;
   onDelete: (key: string) => void;
   onEditTTL: (key: string, ttl: number) => void;
   onEditKey: (key: string, newKey: string, onFailure?: () => void) => void;
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 const KeyDetails = ({ ...props }: Props) => {
   const { loading, error = '', data } = useSelector(selectedKeySelector)
-  const { type: selectedKeyType, name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {
-    type: KeyTypes.String,
+  const { type: selectedDataType, name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {
+    type: DataTypes.String,
   }
   const isKeySelected = !isNull(useSelector(selectedKeyDataSelector))
   const { id: instanceId } = useSelector(connectedInstanceSelector)
@@ -60,7 +61,7 @@ const KeyDetails = ({ ...props }: Props) => {
       event: TelemetryEvent.BROWSER_KEY_ADD_VALUE_CLICKED,
       eventData: {
         databaseId: instanceId,
-        keyType: selectedKeyType
+        dataType: selectedDataType
       }
     })
   }
@@ -76,7 +77,7 @@ const KeyDetails = ({ ...props }: Props) => {
         event: TelemetryEvent.BROWSER_KEY_ADD_VALUE_CANCELLED,
         eventData: {
           databaseId: instanceId,
-          keyType: selectedKeyType
+          dataType: selectedDataType
         }
       })
     }
@@ -113,66 +114,66 @@ const KeyDetails = ({ ...props }: Props) => {
                 onAddItem={openAddItemPanel}
                 onRemoveItem={openRemoveItemPanel}
                 onEditItem={() => setEditItem(!editItem)}
-                keyType={selectedKeyType}
+                dataType={selectedDataType}
                 {...props}
               />
               <div className="key-details-body" key="key-details-body">
                 {!loading && (
                   <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-                    {selectedKeyType === KeyTypes.ZSet && (
+                    {selectedDataType === DataTypes.ZSet && (
                       <ZSetDetails
                         isFooterOpen={isAddItemPanelOpen}
                       />
                     )}
-                    {selectedKeyType === KeyTypes.Set && (
+                    {selectedDataType === DataTypes.Set && (
                       <SetDetails
                         isFooterOpen={isAddItemPanelOpen}
                       />
                     )}
-                    {selectedKeyType === KeyTypes.String && (
+                    {selectedDataType === DataTypes.String && (
                       <StringDetails
                         isEditItem={editItem}
                         setIsEdit={(isEdit) => setEditItem(isEdit)}
                       />
                     )}
-                    {selectedKeyType === KeyTypes.Hash && (
+                    {selectedDataType === DataTypes.Hash && (
                       <HashDetails
                         isFooterOpen={isAddItemPanelOpen}
                       />
                     )}
-                    {selectedKeyType === KeyTypes.List && (
+                    {selectedDataType === DataTypes.List && (
                       <ListDetails
                         isFooterOpen={isAddItemPanelOpen || isRemoveItemPanelOpen}
                       />
                     )}
-                    {selectedKeyType === KeyTypes.ReJSON && (
+                    {selectedDataType === DataTypes.ReJSON && (
                       <RejsonDetailsWrapper />
                     )}
 
-                    {!(Object.values(KeyTypes).includes(selectedKeyType)) && (
+                    {!(Object.values(DataTypes).includes(selectedDataType)) && (
                       <UnsupportedTypeDetails />
                     )}
                   </div>
                 )}
                 {isAddItemPanelOpen && (
                   <div className={cx('formFooterBar', styles.contentActive)}>
-                    {selectedKeyType === KeyTypes.Hash && (
+                    {selectedDataType === DataTypes.Hash && (
                       <AddHashFields onCancel={closeAddItemPanel} />
                     )}
-                    {selectedKeyType === KeyTypes.ZSet && (
+                    {selectedDataType === DataTypes.ZSet && (
                       <AddZsetMembers onCancel={closeAddItemPanel} />
                     )}
-                    {selectedKeyType === KeyTypes.Set && (
+                    {selectedDataType === DataTypes.Set && (
                       <AddSetMembers onCancel={closeAddItemPanel} />
                     )}
-                    {selectedKeyType === KeyTypes.List && (
+                    {selectedDataType === DataTypes.List && (
                       <AddListElements onCancel={closeAddItemPanel} />
                     )}
                   </div>
                 )}
                 {isRemoveItemPanelOpen && (
                   <div className={cx('formFooterBar', styles.contentActive)}>
-                    {selectedKeyType === KeyTypes.List && (
+                    {selectedDataType === DataTypes.List && (
                       <RemoveListElements onCancel={closeRemoveItemPanel} />
                     )}
                   </div>

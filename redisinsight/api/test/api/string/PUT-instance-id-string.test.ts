@@ -110,7 +110,7 @@ describe('PUT /instance/:instanceId/string', () => {
         }
       },
       {
-        name: 'Should edit existing value for different key type',
+        name: 'Should edit existing value for different data type',
         data: {
           keyName: constants.TEST_HASH_KEY_1,
           value: '',

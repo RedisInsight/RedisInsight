@@ -15,11 +15,11 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
   sendKeysScannedEvent(
     instanceId: string,
     match: string = '*',
-    keyType?: RedisDataType,
+    dataType?: RedisDataType,
     additionalData?: object,
   ): void {
     try {
-      if (match !== '*' || keyType) {
+      if (match !== '*' || dataType) {
         let matchValue = '*';
         if (match !== '*') {
           matchValue = !isGlob(match, { strict: false })
@@ -31,7 +31,7 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
           {
             databaseId: instanceId,
             match: matchValue,
-            keyType,
+            dataType,
             ...additionalData,
           },
         );
@@ -51,14 +51,14 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
 
   sendKeyAddedEvent(
     instanceId: string,
-    keyType: RedisDataType,
+    dataType: RedisDataType,
     additionalData: object = {},
   ): void {
     this.sendEvent(
       TelemetryEvents.BrowserKeyAdded,
       {
         databaseId: instanceId,
-        keyType,
+        dataType,
         ...additionalData,
       },
     );
@@ -91,14 +91,14 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
 
   sendKeyValueAddedEvent(
     instanceId: string,
-    keyType: RedisDataType,
+    dataType: RedisDataType,
     additionalData: object = {},
   ): void {
     this.sendEvent(
       TelemetryEvents.BrowserKeyValueAdded,
       {
         databaseId: instanceId,
-        keyType,
+        dataType,
         ...additionalData,
       },
     );
@@ -106,14 +106,14 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
 
   sendKeyValueEditedEvent(
     instanceId: string,
-    keyType: RedisDataType,
+    dataType: RedisDataType,
     additionalData: object = {},
   ): void {
     this.sendEvent(
       TelemetryEvents.BrowserKeyValueEdited,
       {
         databaseId: instanceId,
-        keyType,
+        dataType,
         ...additionalData,
       },
     );
@@ -121,14 +121,14 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
 
   sendKeyValueRemovedEvent(
     instanceId: string,
-    keyType: RedisDataType,
+    dataType: RedisDataType,
     additionalData: object = {},
   ): void {
     this.sendEvent(
       TelemetryEvents.BrowserKeyValueRemoved,
       {
         databaseId: instanceId,
-        keyType,
+        dataType,
         ...additionalData,
       },
     );
@@ -136,7 +136,7 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
 
   sendKeyScannedEvent(
     instanceId: string,
-    keyType: RedisDataType,
+    dataType: RedisDataType,
     match: string = '*',
     additionalData: object = {},
   ): void {
@@ -149,7 +149,7 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
           TelemetryEvents.BrowserKeyValueFiltered,
           {
             databaseId: instanceId,
-            keyType,
+            dataType,
             match: matchValue,
             ...additionalData,
           },
@@ -165,7 +165,7 @@ export class BrowserAnalyticsService extends TelemetryBaseService {
       TelemetryEvents.BrowserKeyValueFiltered,
       {
         databaseId: instanceId,
-        keyType: RedisDataType.List,
+        dataType: RedisDataType.List,
         match: 'EXACT_VALUE_NAME',
         ...additionalData,
       },

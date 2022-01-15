@@ -12,12 +12,12 @@ import {
   EuiToolTip,
   EuiButtonIcon,
 } from '@elastic/eui'
-import { KeyTypes } from 'uiSrc/constants'
+import { DataTypes } from 'uiSrc/constants'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { addKeyStateSelector, resetAddKey } from 'uiSrc/slices/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
+import { ADD_DATA_TYPE_OPTIONS } from './constants/data-type-options'
 import AddKeyHash from './AddKeyHash/AddKeyHash'
 import AddKeyZset from './AddKeyZset/AddKeyZset'
 import AddKeyString from './AddKeyString/AddKeyString'
@@ -45,7 +45,7 @@ const AddKey = (props: Props) => {
     },
   [])
 
-  const options = ADD_KEY_TYPE_OPTIONS.map((item) => {
+  const options = ADD_DATA_TYPE_OPTIONS.map((item) => {
     const { value, color, text } = item
     return {
       value,
@@ -117,13 +117,13 @@ const AddKey = (props: Props) => {
               </EuiToolTip>
             </EuiFlexItem>
             <EuiFormFieldset
-              legend={{ children: 'Select key type', display: 'hidden' }}
+              legend={{ children: 'Select data type', display: 'hidden' }}
               style={{ marginBottom: '16px' }}
             >
               <EuiFormRow
-                label="Key Type*"
+                label="Data Type*"
                 helpText={
-                  typeSelected === KeyTypes.ReJSON
+                  typeSelected === DataTypes.ReJSON
                     ? (
                       <span style={{ color: '#b5b6c0' }}>
                         {HelpTexts.REJSON_SHOULD_BE_LOADED}
@@ -143,22 +143,22 @@ const AddKey = (props: Props) => {
                 />
               </EuiFormRow>
             </EuiFormFieldset>
-            {typeSelected === KeyTypes.Hash && (
+            {typeSelected === DataTypes.Hash && (
               <AddKeyHash onCancel={closeAddKeyPanel} />
             )}
-            {typeSelected === KeyTypes.ZSet && (
+            {typeSelected === DataTypes.ZSet && (
               <AddKeyZset onCancel={closeAddKeyPanel} />
             )}
-            {typeSelected === KeyTypes.Set && (
+            {typeSelected === DataTypes.Set && (
               <AddKeySet onCancel={closeAddKeyPanel} />
             )}
-            {typeSelected === KeyTypes.String && (
+            {typeSelected === DataTypes.String && (
               <AddKeyString onCancel={closeAddKeyPanel} />
             )}
-            {typeSelected === KeyTypes.List && (
+            {typeSelected === DataTypes.List && (
               <AddKeyList onCancel={closeAddKeyPanel} />
             )}
-            {typeSelected === KeyTypes.ReJSON && (
+            {typeSelected === DataTypes.ReJSON && (
               <AddKeyReJSON onCancel={closeAddKeyPanel} />
             )}
           </EuiFlexGroup>

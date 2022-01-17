@@ -1,5 +1,4 @@
 import React, { Ref, useEffect, useRef, useState } from 'react'
-import cx from 'classnames'
 import {
   EuiButtonIcon,
   EuiFlexGroup,
@@ -9,9 +8,8 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 
-import { getFormatTime } from 'uiSrc/utils'
-import { DEFAULT_TEXT } from 'uiSrc/components/notifications'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
+import MonitorOutputList from 'uiSrc/components/monitor/MonitorOutputList/MonitorOutputList'
 
 import styles from './styles.module.scss'
 
@@ -69,19 +67,6 @@ const Monitor = (props: Props) => {
     }
   }, [items, monitorRef, isRunning, autoScroll])
 
-  const getArgs = (args: string[]): JSX.Element => (
-    <div className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: isShowCli || isShowHelper })}>
-      {args?.map((arg, i) => (
-        <span key={`${arg + i}`}>
-          {i === 0 && (
-            <span className={cx(styles.itemCommandFirst)}>{`"${arg}"`}</span>
-          )}
-          { i !== 0 && ` "${arg}"`}
-        </span>
-      ))}
-    </div>
-  )
-
   const MonitorNotStarted = () => (
     <div className={styles.startContainer} data-testid="monitor-not-started">
       <div className={styles.startContent}>
@@ -127,32 +112,7 @@ const Monitor = (props: Props) => {
 
         {isStarted && !!items?.length && (
           <div className={styles.content} ref={monitorRef} onWheel={onWheel}>
-
-            {items.map(({ time = '', args = [], database = '', source = '', isError, message = '' }) => (
-              <div className={styles.item} key={time + args?.toString() ?? ''}>
-                {!isError && (
-                <EuiFlexGroup responsive={false}>
-                  <EuiFlexItem grow={false} className={styles.itemTime}>
-                    {getFormatTime(time)}
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false} className={styles.itemSource} style={{ paddingRight: 10 }}>
-                    {`[${database} ${source}]`}
-                  </EuiFlexItem>
-                  <EuiFlexItem>
-                    {getArgs(args)}
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-                )}
-                {isError && (
-                <EuiFlexGroup>
-                  <EuiFlexItem>
-                    <EuiTextColor color="danger">{message ?? DEFAULT_TEXT}</EuiTextColor>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-                )}
-              </div>
-            ))}
-
+            <MonitorOutputList items={items} compressed={isShowCli || isShowHelper} />
             {!!items?.length && !isRunning && (
               <span data-testid="monitor-stopped">
                 <br />

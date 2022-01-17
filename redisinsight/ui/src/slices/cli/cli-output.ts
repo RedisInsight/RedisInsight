@@ -4,7 +4,6 @@ import { CliOutputFormatterType, cliTexts } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import {
-  cliCommandOutput,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
 } from 'uiSrc/utils/cliHelper'
@@ -92,7 +91,6 @@ export function sendCliCommandAction(
       const state = stateInit()
       const { id = '' } = state.connections?.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -134,7 +132,6 @@ export function sendCliClusterCommandAction(
       const state = stateInit()
       const { id = '' } = state.connections.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -192,8 +189,6 @@ export function processUnsupportedCommand(
     const state = stateInit()
     const { unsupportedCommands } = state.cli.settings
 
-    dispatch(concatToOutput(cliCommandOutput(command)))
-
     dispatch(
       concatToOutput(
         cliParseTextResponseWithOffset(
@@ -201,6 +196,25 @@ export function processUnsupportedCommand(
             command.slice(0, unsupportedCommand.length),
             unsupportedCommands.join(', ')
           ),
+          command,
+          CommandExecutionStatus.Fail
+        )
+      )
+    )
+
+    onSuccessAction?.()
+  }
+}
+
+export function processUnrepeatableNumber(
+  command: string = '',
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          cliTexts.REPEAT_COUNT_INVALID,
           command,
           CommandExecutionStatus.Fail
         )

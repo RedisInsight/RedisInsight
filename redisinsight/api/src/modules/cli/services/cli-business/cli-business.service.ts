@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CliToolService } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import {
   ClusterNodeRole,
@@ -34,6 +33,7 @@ import {
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exceptions';
 import { AppTool } from 'src/models';
+import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
@@ -46,7 +46,7 @@ export class CliBusinessService {
   private outputFormatterManager: OutputFormatterManager;
 
   constructor(
-    private cliTool: CliToolService,
+    private cliTool: RedisToolService,
     private cliAnalyticsService: CliAnalyticsService,
   ) {
     this.outputFormatterManager = new OutputFormatterManager();

@@ -1,6 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
-import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -30,7 +29,8 @@ fixture `Command results at Workbench`
     })
     .afterEach(async t => {
         //Drop index and documents
-        await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
+        await t.switchToMainWindow();
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
     })
 test('Verify that user can see re-run icon near the already executed command and re-execute the command by clicking on the icon in Workbench page', async t => {
     //Send commands
@@ -52,7 +52,7 @@ test('Verify that user can see expanded result after command re-run at the top o
     const containerOfCommand = await workbenchPage.getCardContainerByCommand(commandForSend1);
     await t.click(containerOfCommand.find(workbenchPage.cssReRunCommandButton));
     //Verify that re-executed command is expanded
-    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryCardOutputResponceSuccess).visible).ok('Re-executed command is expanded');
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryCardOutputResponseSuccess).visible).ok('Re-executed command is expanded');
     //Verify that re-executed command is at the top of results
     await t.expect(workbenchPage.queryCardCommand.nth(0).textContent).eql(commandForSend1, 'The re-executed command is at the top of results table');
 });
@@ -72,11 +72,12 @@ test('Verify that user can see the results found in the table view by default fo
         'FT.AGGREGATE'
     ];
     //Send commands and check table view is default
-    for(let command of commands) {
+    for(const command of commands) {
         await workbenchPage.sendCommandInWorkbench(command);
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command ${command}`);
     }
 });
+//skipped due the inaccessibility of the iframe
 test.skip('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
     const commands = [
         'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
@@ -86,10 +87,10 @@ test.skip('Verify that user can switches between views and see results according
     //Send commands and check table view is default for Search command
     for(let command of commands) {
         await workbenchPage.sendCommandInWorkbench(command);
-        await t.debug();
     }
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok('The table view is selected by default for command FT.SEARCH');
     await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command FT.SEARCH`);
+    await t.expect(await workbenchPage.queryTableResult.visible).ok('The table result is displayed for command FT.SEARCH');
     //Select Text view and check result
     await t.switchToMainWindow();
     await workbenchPage.selectViewTypeText();

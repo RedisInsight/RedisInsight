@@ -8,6 +8,8 @@ import { join } from 'path';
 import config from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
 import { CommandsModule } from 'src/modules/commands/commands.module';
+import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
+import { EnablementAreaModule } from 'src/modules/enablement-area/enablement-area.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -32,6 +34,7 @@ const PATH_CONFIG = config.get('dir_path');
     RedisSentinelModule,
     BrowserModule,
     CliModule,
+    WorkbenchModule,
     PluginModule,
     CommandsModule,
     EventEmitterModule.forRoot(),
@@ -59,6 +62,7 @@ const PATH_CONFIG = config.get('dir_path');
         fallthrough: false,
       },
     }),
+    EnablementAreaModule,
   ],
   controllers: [SettingsController, ServerInfoController],
   providers: [],

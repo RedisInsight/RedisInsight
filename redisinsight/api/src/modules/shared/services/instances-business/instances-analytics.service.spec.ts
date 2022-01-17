@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { mockCaCertEntity, mockClientCertEntity, mockStandaloneDatabaseEntity } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
+import { DEFAULT_SUMMARY as DEFAULT_REDIS_MODULES_SUMMARY } from 'src/utils/redis-modules-summary';
 import { DatabaseInstanceResponse } from 'src/modules/instances/dto/database-instance.dto';
 import { HostingProvider } from 'src/modules/core/models/database-instance.entity';
 import {
@@ -118,7 +119,7 @@ describe('InstancesAnalytics', () => {
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
           numberOfModules: 0,
-          modules: [],
+          ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
     });
@@ -144,12 +145,15 @@ describe('InstancesAnalytics', () => {
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
           numberOfModules: 0,
-          modules: [],
+          ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
     });
     it('should emit event without additional info', () => {
-      const instance = { ...mockDatabaseInstanceDto, modules: [{ name: 'search', version: 20000 }] };
+      const instance = {
+        ...mockDatabaseInstanceDto,
+        modules: [{ name: 'search', version: 20000 }, { name: 'rediSQL', version: 1 }],
+      };
       service.sendInstanceAddedEvent(instance, {
         version: mockRedisGeneralInfo.version,
       });
@@ -168,8 +172,13 @@ describe('InstancesAnalytics', () => {
           numberOfKeysRange: undefined,
           totalMemory: undefined,
           numberedDatabases: undefined,
-          numberOfModules: 1,
-          modules: [{ name: 'search', version: 20000 }],
+          numberOfModules: 2,
+          ...DEFAULT_REDIS_MODULES_SUMMARY,
+          RediSearch: {
+            loaded: true,
+            version: 20000,
+          },
+          customModules: [{ name: 'rediSQL', version: 1 }],
         },
       );
     });

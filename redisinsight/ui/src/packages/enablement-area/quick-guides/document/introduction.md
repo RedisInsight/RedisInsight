@@ -18,8 +18,8 @@
 
 Follow these instructions to set up the RedisJSON and RediSearch modules on Redis OSS.\
 \
-For working with Hashes you will need Redis {">"}=6, [RediSearch](https://oss.redis.com/redisearch/) {">"}=2.0.\
+For working with Hashes you will need Redis >=6, [RediSearch](https://oss.redis.com/redisearch/) >=2.0.\
 \
-For working with JSON you will need Redis {">"}=6, [RediSearch](https://oss.redis.com/redisearch/) {">"}=2.2 and [RedisJSON](https://oss.redis.com/redisjson/) {">"}=2.0.\
+For working with JSON you will need Redis >=6, [RediSearch](https://oss.redis.com/redisearch/) >=2.2 and [RedisJSON](https://oss.redis.com/redisjson/) >=2.0.\
 \
 You could also create a free and ready to use instance on [Redis Cloud](https://redis.com/try-free/?utm_source=redis\&utm_medium=app\&utm_campaign=redisinsight_doc_guide).

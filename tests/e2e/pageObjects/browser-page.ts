@@ -42,6 +42,7 @@ export class BrowserPage {
   addKeyNameInput: Selector
   keyNameInput: Selector
   keyTTLInput: Selector
+  ttlValueInKeysTable: Selector
   listKeyElementInput: Selector
   jsonKeyValueInput: Selector
   setMemberInput: Selector
@@ -132,6 +133,7 @@ export class BrowserPage {
       this.editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
       this.closeEditTTL = Selector('[data-testid=cancel-btn]');
       this.saveTTLValue = Selector('[data-testid=apply-btn]');
+      this.ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
       this.refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
       this.refreshKeyButton = Selector('[data-testid=refresh-key-btn]')
       this.applyButton = Selector('[data-testid=apply-btn]');
@@ -590,13 +592,13 @@ export class BrowserPage {
   * Add json structure
   * @param jsonStructure The structure of the json key
   */
-   async addJsonSctucture(jsonStructure: string): Promise<void>{
+  async addJsonSctucture(jsonStructure: string): Promise<void>{
       await t.click(this.expandJsonObject);
       await t.click(this.editJsonObjectButton);
       await t.pressKey('ctrl+a delete');
       await t.typeText(this.jsonValueInput, jsonStructure);
       await t.click(this.applyEditButton);
-}
+  }
 
   /**
   * Get Values list of the key

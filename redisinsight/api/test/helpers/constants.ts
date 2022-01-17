@@ -17,6 +17,7 @@ export const constants = {
   KEY_TTL,
   CLUSTER_HASH_SLOT,
   getRandomString: () => TEST_RUN_ID + '_' + uuidv4(),
+  generateRandomKey: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   APP_DEFAULT_SETTINGS,
   TEST_KEYTAR_PASSWORD: process.env.SECRET_STORAGE_PASSWORD || 'somepassword',
   TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
@@ -180,6 +181,12 @@ export const constants = {
   TEST_SEARCH_HASH_KEY_PREFIX_1: TEST_RUN_ID + '_hash_search:',
   TEST_SEARCH_JSON_INDEX_1: TEST_RUN_ID + '_json_search_idx_1' + CLUSTER_HASH_SLOT,
   TEST_SEARCH_JSON_KEY_PREFIX_1: TEST_RUN_ID + '_json_search:',
+
+  // Command Executions
+  TEST_COMMAND_EXECUTION_ID_1: uuidv4(),
+
+  // Plugins
+  TEST_PLUGIN_VISUALIZATION_ID_1: uuidv4(),
 
   // etc...
 }

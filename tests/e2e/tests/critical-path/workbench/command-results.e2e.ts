@@ -101,8 +101,8 @@ test('Verify that user can see all views (custom+default) in the control to chan
     //Send command and check custom view in the control
     await workbenchPage.sendCommandInWorkbench(command);
     await t.click(workbenchPage.selectViewType);
-    await t.expect(await workbenchPage.customPluginsViewType.visible).ok(`The custom view type option is in the control to change the views`);
-    await t.expect(await workbenchPage.textViewTypeOption.visible).ok(`The default text view type option is in the control to change the views`);
+    await t.expect(await workbenchPage.customPluginsViewType.visible).ok('The custom view type option is in the control to change the views');
+    await t.expect(await workbenchPage.textViewTypeOption.visible).ok('The default text view type option is in the control to change the views');
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
@@ -110,7 +110,7 @@ test.skip('Verify that user can switches between Table and Text for Client List 
     //Send command and check table view is default
     await workbenchPage.sendCommandInWorkbench(command);
     await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).visible).ok('The search results are displayed in Table view by default');
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCustomPluginTableResult).visible).ok('The search results are displayed in  Custom Table view by default');
     //Select Text view from dropdown and check search results
     await t.switchToMainWindow();
     await workbenchPage.selectViewTypeText();

@@ -11,6 +11,7 @@ export class WorkbenchPage {
   cssMonacoCommandPaletteLine: string
   cssQueryTextResult: string
   cssQueryTableResult: string
+  cssCustomPluginTableResult: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -80,6 +81,7 @@ export class WorkbenchPage {
       this.cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
       this.cssQueryTextResult = '[data-testid=query-cli-result]';
       this.cssQueryTableResult = '[data-testid^=query-table-result-]';
+      this.cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.

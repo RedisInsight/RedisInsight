@@ -81,6 +81,9 @@ export default {
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,
     pipelineSummaryLimit: parseInt(process.env.LOGGER_PIPELINE_SUMMARY_LIMIT, 10) || 5,
   },
+  plugins: {
+    stateMaxSize: parseInt(process.env.PLUGIN_STATE_MAX_SIZE, 10) || 1024 * 1024,
+  },
   enablementArea: {
     updateUrl: process.env.ENABLEMENT_AREA_UPDATE_URL
       || 'https://s3.amazonaws.com/redisinsight.download/public/guides',

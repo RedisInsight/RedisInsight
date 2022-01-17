@@ -15,11 +15,14 @@ import { AppTool } from 'src/models';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { PluginsController } from 'src/modules/workbench/plugins.controller';
+import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       CommandExecutionEntity,
+      PluginStateEntity,
     ]),
     CoreModule,
     SharedModule,
@@ -39,6 +42,7 @@ import { PluginsController } from 'src/modules/workbench/plugins.controller';
     },
     PluginsService,
     PluginCommandsWhitelistProvider,
+    PluginStateProvider,
   ],
 })
 export class WorkbenchModule implements NestModule {

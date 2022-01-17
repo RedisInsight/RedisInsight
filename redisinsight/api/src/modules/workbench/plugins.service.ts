@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
@@ -9,11 +9,18 @@ import { plainToClass } from 'class-transformer';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
+import { CreatePluginStateDto } from 'src/modules/workbench/dto/create-plugin-state.dto';
+import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { PluginState } from 'src/modules/workbench/models/plugin-state';
+import config from 'src/utils/config';
+
+const PLUGINS_CONFIG = config.get('plugins');
 
 @Injectable()
 export class PluginsService {
   constructor(
     private commandsExecutor: WorkbenchCommandsExecutor,
+    private pluginStateProvider: PluginStateProvider,
     private whitelistProvider: PluginCommandsWhitelistProvider,
   ) {}
 
@@ -59,6 +66,35 @@ export class PluginsService {
    */
   async getWhitelistCommands(instanceId: string): Promise<string[]> {
     return await this.whitelistProvider.getWhitelistCommands(instanceId);
+  }
+
+  /**
+   * Save plugin state
+   *
+   * @param visualizationId
+   * @param commandExecutionId
+   * @param dto
+   */
+  async saveState(visualizationId: string, commandExecutionId: string, dto: CreatePluginStateDto): Promise<void> {
+    if (JSON.stringify(dto.state).length > PLUGINS_CONFIG.stateMaxSize) {
+      throw new BadRequestException(ERROR_MESSAGES.PLUGIN_STATE_MAX_SIZE(PLUGINS_CONFIG.stateMaxSize));
+    }
+
+    await this.pluginStateProvider.upsert({
+      visualizationId,
+      commandExecutionId,
+      ...dto,
+    });
+  }
+
+  /**
+   * Get plugin state
+   *
+   * @param visualizationId
+   * @param commandExecutionId
+   */
+  async getState(visualizationId: string, commandExecutionId: string): Promise<PluginState> {
+    return this.pluginStateProvider.getOne(visualizationId, commandExecutionId);
   }
 
   /**

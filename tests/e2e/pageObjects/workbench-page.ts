@@ -11,6 +11,7 @@ export class WorkbenchPage {
   cssMonacoCommandPaletteLine: string
   cssQueryTextResult: string
   cssQueryTableResult: string
+  cssCustomPluginTableResult: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -66,6 +67,8 @@ export class WorkbenchPage {
   enablementAreaPaginationPopover: Selector
   paginationPopoverButtons: Selector
   enablementAreaTreeView: Selector
+  fullScreenButton: Selector
+  customPluginsViewType: Selector
 
   constructor() {
       //CSS selectors
@@ -78,6 +81,7 @@ export class WorkbenchPage {
       this.cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
       this.cssQueryTextResult = '[data-testid=query-cli-result]';
       this.cssQueryTableResult = '[data-testid^=query-table-result-]';
+      this.cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.
@@ -106,6 +110,7 @@ export class WorkbenchPage {
       this.internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
       this.enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
       this.paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
+      this.fullScreenButton = Selector('[data-testid=toggle-full-screen]');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.queryInput = Selector('[data-testid=query-input-container]');
       this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -137,6 +142,7 @@ export class WorkbenchPage {
       this.scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
       this.enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
       this.enablementAreaTreeView = Selector('[data-testid=enablementArea-treeView]');
+      this.customPluginsViewType = Selector('[data-test-subj*=clients-list]');
   }
 
   /**

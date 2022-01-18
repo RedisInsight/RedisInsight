@@ -13,7 +13,7 @@ export const initialState: StateMonitor = {
   items: [],
 }
 
-export const MONITOR_ITEMS_MAX_COUNT = 30_000
+export const MONITOR_ITEMS_MAX_COUNT = 5_000
 
 // A slice for recipes
 const monitorSlice = createSlice({

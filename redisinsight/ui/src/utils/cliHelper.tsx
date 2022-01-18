@@ -121,6 +121,18 @@ const checkUnsupportedModuleCommand = (loadedModules: RedisModuleDto[], commandL
   return commandModule
 }
 
+const getDbIndexFromSelectQuery = (query: string): number => {
+  const [command, ...args] = query.trim().split(' ')
+  if (command.toLowerCase() !== 'select') {
+    throw new Error('Invalid command')
+  }
+  try {
+    return parseInt(args[0].replace(/['"]/g, '').trim())
+  } catch (e) {
+    throw Error('Parsing error')
+  }
+}
+
 export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
@@ -133,4 +145,5 @@ export {
   checkUnsupportedCommand,
   checkBlockingCommand,
   checkUnsupportedModuleCommand,
+  getDbIndexFromSelectQuery,
 }

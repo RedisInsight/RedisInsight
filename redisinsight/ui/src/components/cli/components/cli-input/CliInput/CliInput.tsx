@@ -11,10 +11,11 @@ export interface Props {
   setInputEl: Function;
   setCommand: (command: string) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => void;
+  dbIndex: number;
 }
 
 const CliInput = (props: Props) => {
-  const { command = '', setInputEl, setCommand, onKeyDown } = props
+  const { command = '', setInputEl, setCommand, onKeyDown, dbIndex = 0 } = props
 
   const onMouseUp = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation()
@@ -26,7 +27,10 @@ const CliInput = (props: Props) => {
 
   return (
     <>
-      &gt;&nbsp;
+      <span>
+        {dbIndex !== 0 && <span data-testid="cli-db-index">{`[${dbIndex}]`}</span>}
+        &gt;&nbsp;
+      </span>
       <ContentEditable
         tagName="span"
         html={command}

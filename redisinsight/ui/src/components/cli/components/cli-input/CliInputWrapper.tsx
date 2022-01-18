@@ -6,6 +6,7 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import CliAutocomplete from './CliAutocomplete'
 
 import CliInput from './CliInput'
+import { outputSelector } from 'uiSrc/slices/cli/cli-output';
 
 export interface Props {
   command: string;
@@ -18,6 +19,7 @@ export interface Props {
 const CliInputWrapper = (props: Props) => {
   const { command = '', wordsTyped, setInputEl, setCommand, onKeyDown } = props
   const { spec: ALL_REDIS_COMMANDS } = useSelector(appRedisCommandsSelector)
+  const { db } = useSelector(outputSelector)
 
   const [commandLine, repeatCommand] = getCommandRepeat(command)
   const [firstCommand, secondCommand] = commandLine.split(' ')
@@ -36,6 +38,7 @@ const CliInputWrapper = (props: Props) => {
         setInputEl={setInputEl}
         setCommand={setCommand}
         onKeyDown={onKeyDown}
+        dbIndex={db}
       />
       {matchedCmd && (
         <CliAutocomplete

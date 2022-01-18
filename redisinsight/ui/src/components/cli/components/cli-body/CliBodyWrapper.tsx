@@ -45,16 +45,19 @@ const CliBodyWrapper = () => {
     isSearching,
     matchedCommand,
     cliClientUuid,
+    loading,
   } = useSelector(cliSettingsSelector)
-  const { host, port, connectionType } = useSelector(connectedInstanceSelector)
+  const { host, port, connectionType, db } = useSelector(connectedInstanceSelector)
 
   useEffect(() => {
-    if (isEmpty(data) || error) {
-      dispatch(concatToOutput(InitOutputText(host, port)))
-    }
-
     !cliClientUuid && dispatch(createCliClientAction(onSuccess, onFail))
   }, [])
+
+  useEffect(() => {
+    if (loading) {
+      dispatch(concatToOutput(InitOutputText(host, port, db)))
+    }
+  }, [loading])
 
   useEffect(() => {
     if (!isEnteringCommand) {

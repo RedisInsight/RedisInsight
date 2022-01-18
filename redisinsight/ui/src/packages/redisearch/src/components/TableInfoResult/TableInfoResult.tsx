@@ -26,7 +26,6 @@ const TableInfoResult = React.memo((props: Props) => {
   const { result: resultProp, query } = props
 
   const [result, setResult] = useState(resultProp)
-
   const [items, setItems] = useState([])
 
   useEffect(() => {
@@ -70,7 +69,7 @@ const TableInfoResult = React.memo((props: Props) => {
         <>
           <EuiText className="row" size="s" color="subdued">
             Indexing
-            <GroupBadge type={result?.index_definition?.data_type?.toLowerCase()} className="badge" />
+            <GroupBadge type={Object.values(result.index_definition)[0].toLowerCase()} className="badge" />
             documents prefixed by
             {' '}
             {result?.index_definition?.prefixes?.map((prefix: any) => `"${prefix}"`).join(',')}

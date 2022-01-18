@@ -10,7 +10,7 @@
       ],
       "index_definition",
       [
-          "data_type",
+          "key_type",
           "HASH",
           "prefixes",
           [

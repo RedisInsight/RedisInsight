@@ -43,7 +43,7 @@ services:
 
   # oss standalone redisearch
   oss-standalone-redisearch:
-    image: redislabs/redisearch:edge
+    image: redislabs/redismod
 
   # oss sentinel
   oss-sentinel:

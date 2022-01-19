@@ -68,3 +68,6 @@ services:
     build: ./rte/redis-enterprise
     cap_add:
       - sys_resource
+
+  oss-standalone-big:
+    build: ./rte/oss-standalone-big

@@ -255,7 +255,7 @@ export function processUnrepeatableNumber(
     onSuccessAction?.()
   }
 }
-handleRecreateClient
+
 function handleRecreateClient(dispatch: AppDispatch, stateInit: () => RootState, command = ''): void {
   const state = stateInit()
   const { cliClientUuid } = state.cli.settings

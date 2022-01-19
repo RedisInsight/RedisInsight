@@ -6,6 +6,7 @@ import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-output'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
+import { SelectCommand } from 'uiSrc/constants/cliOutput'
 import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
@@ -123,7 +124,7 @@ const checkUnsupportedModuleCommand = (loadedModules: RedisModuleDto[], commandL
 
 const getDbIndexFromSelectQuery = (query: string): number => {
   const [command, ...args] = query.trim().split(' ')
-  if (command.toLowerCase() !== 'select') {
+  if (command.toLowerCase() !== SelectCommand.toLowerCase()) {
     throw new Error('Invalid command')
   }
   try {

@@ -3,10 +3,10 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { getCommandRepeat } from 'uiSrc/utils'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+import { outputSelector } from 'uiSrc/slices/cli/cli-output'
 import CliAutocomplete from './CliAutocomplete'
 
 import CliInput from './CliInput'
-import { outputSelector } from 'uiSrc/slices/cli/cli-output';
 
 export interface Props {
   command: string;

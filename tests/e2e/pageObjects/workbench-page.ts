@@ -12,6 +12,7 @@ export class WorkbenchPage {
   cssQueryTextResult: string
   cssQueryTableResult: string
   cssCustomPluginTableResult: string
+  cssCommandExecutionDateTime: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -82,6 +83,7 @@ export class WorkbenchPage {
       this.cssQueryTextResult = '[data-testid=query-cli-result]';
       this.cssQueryTableResult = '[data-testid^=query-table-result-]';
       this.cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
+      this.cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.
@@ -170,8 +172,8 @@ export class WorkbenchPage {
   * @param command The command
   * @param speed The speed in seconds. Default is 1
   */
-  async sendCommandInWorkbench(command: string, speed = 1): Promise<void>{
-      await t.typeText(this.queryInput, command, { replace: true, speed: speed});
+  async sendCommandInWorkbench(command: string, speed = 1, paste = false): Promise<void>{
+      await t.typeText(this.queryInput, command, { replace: true, speed: speed, paste: paste});
       await t.click(this.submitCommandButton);
   }
 

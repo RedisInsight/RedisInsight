@@ -10,6 +10,11 @@ export function getRandomKeyName(keyNameLength: number): string {
     return result;
 }
 
+export function getRandomParagraph(sentences: number): string {
+    const chance = new Chance();
+    return chance.paragraph({ sentences: sentences });
+}
+
 export const keyTypes = [
     { textType: KeyTypesTexts.Hash, keyName: 'hash' },
     { textType: KeyTypesTexts.Set, keyName: 'set' },

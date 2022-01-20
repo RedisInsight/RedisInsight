@@ -1,4 +1,4 @@
-import { CommandGroup, ICommandArgGenerated, ICommands, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
+import { ICommandArgGenerated, ICommands, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { generateArgs, generateArgsNames, getComplexityShortNotation, getDocUrlForCommand } from '../commands'
 import { cleanup } from '../test-utils'
 
@@ -195,24 +195,29 @@ describe('generateArgName', () => {
 })
 
 const getDocUrlForCommandTests: any[] = [
-  ['SET', CommandGroup.String, 'https://redis.io/commands/set'],
-  ['ACL SETUSER', CommandGroup.Server, 'https://redis.io/commands/acl-setuser'],
-  ['JSON.GET', CommandGroup.JSON, 'https://oss.redis.com/redisjson/commands/#jsonget'],
-  ['FT.CREATE', CommandGroup.Search, 'https://oss.redis.com/redisearch/Commands/#ftcreate'],
-  ['FT.ALTER SCHEMA ADD', CommandGroup.Search, 'https://oss.redis.com/redisearch/Commands/#ftalter_schema_add'],
-  ['TS.ADD', CommandGroup.TimeSeries, 'https://oss.redis.com/redistimeseries/commands/#tsadd'],
-  ['TS.CREATE', CommandGroup.TimeSeries, 'https://oss.redis.com/redistimeseries/commands/#tscreate'],
-  ['GRAPH.EXPLAIN', CommandGroup.Graph, 'https://oss.redis.com/redisgraph/commands/#graphexplain'],
-  ['GRAPH.QUERY', CommandGroup.Graph, 'https://oss.redis.com/redisgraph/commands/#graphquery'],
-  ['AI.MODELRUN', CommandGroup.AI, 'https://oss.redis.com/redisai/commands/#aimodelrun'],
-  ['AI.SCRIPTDEL', CommandGroup.AI, 'https://oss.redis.com/redisai/commands/#aiscriptdel'],
-  ['NON EXIST COMMAND', 'non-exist', 'https://redis.io/commands/non-exist-command'],
+  ['SET', 'https://redis.io/commands/set'],
+  ['ACL SETUSER', 'https://redis.io/commands/acl-setuser'],
+  ['JSON.GET', 'https://oss.redis.com/redisjson/commands/#jsonget'],
+  ['FT.CREATE', 'https://oss.redis.com/redisearch/Commands/#ftcreate'],
+  ['FT.ALTER SCHEMA ADD', 'https://oss.redis.com/redisearch/Commands/#ftalter_schema_add'],
+  ['TS.ADD', 'https://oss.redis.com/redistimeseries/commands/#tsadd'],
+  ['TS.CREATE', 'https://oss.redis.com/redistimeseries/commands/#tscreate'],
+  ['GRAPH.EXPLAIN', 'https://oss.redis.com/redisgraph/commands/#graphexplain'],
+  ['GRAPH.QUERY', 'https://oss.redis.com/redisgraph/commands/#graphquery'],
+  ['AI.MODELRUN', 'https://oss.redis.com/redisai/commands/#aimodelrun'],
+  ['BF.INFO', 'https://oss.redis.com/redisbloom/Bloom_Commands/#bfinfo'],
+  ['CMS.INITBYDIM', 'https://oss.redis.com/redisbloom/CountMinSketch_Commands/#cmsinitbydim'],
+  ['CF.INSERT', 'https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinsert'],
+  ['RG.CONFIGSET', 'https://oss.redis.com/redisgears/commands.html#rgconfigset'],
+  ['TOPK.INFO', 'https://oss.redis.com/redisbloom/TopK_Commands/#topkinfo'],
+  ['AI.SCRIPTDEL', 'https://oss.redis.com/redisai/commands/#aiscriptdel'],
+  ['NON EXIST COMMAND', 'https://redis.io/commands/non-exist-command'],
 ]
 
 describe('getDocUrlForCommand', () => {
-  it.each(getDocUrlForCommandTests)('for input: %s (command), %s (group), should be output: %s',
-    (command, group, expected) => {
-      const result = getDocUrlForCommand(command, group)
+  it.each(getDocUrlForCommandTests)('for input: %s (command), should be output: %s',
+    (command, expected) => {
+      const result = getDocUrlForCommand(command)
       expect(result).toBe(expected)
     })
 })

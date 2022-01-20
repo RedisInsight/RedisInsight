@@ -67,7 +67,12 @@ export enum CommandPrefix {
   Graph = 'GRAPH',
   TimeSeries = 'TS',
   Search = 'FT',
-  JSON = 'JSON'
+  JSON = 'JSON',
+  Gears = 'RG',
+  BloomFilter = 'BF',
+  CuckooFilter = 'CF',
+  CountMinSketchFilter = 'CMS',
+  TopK = 'TOPK',
 }
 
 export enum CommandRediSearch {

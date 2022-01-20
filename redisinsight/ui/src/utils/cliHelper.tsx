@@ -61,9 +61,9 @@ const cliParseTextResponse = (
   </span>
 )
 
-const cliCommandOutput = (command: string) => ['\n', bashTextValue(), cliCommandWrapper(command), '\n']
+const cliCommandOutput = (command: string, dbIndex = 0) => ['\n', bashTextValue(dbIndex), cliCommandWrapper(command), '\n']
 
-const bashTextValue = () => '> '
+const bashTextValue = (dbIndex = 0) => (dbIndex > 0 ? `[${dbIndex}] > ` : '> ')
 
 const cliCommandWrapper = (command: string) => (
   <span className="cli-command-wrapper" data-testid="cli-command-wrapper" key={Math.random()}>

@@ -28,7 +28,7 @@ const CliInput = (props: Props) => {
   return (
     <>
       <span>
-        {dbIndex !== 0 && <span data-testid="cli-db-index">{`[${dbIndex}]`}</span>}
+        {dbIndex !== 0 && <span data-testid="cli-db-index">{`[${dbIndex}] `}</span>}
         &gt;&nbsp;
       </span>
       <ContentEditable

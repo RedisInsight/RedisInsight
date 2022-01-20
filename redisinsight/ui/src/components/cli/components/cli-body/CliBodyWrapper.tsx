@@ -48,6 +48,7 @@ const CliBodyWrapper = () => {
     loading,
   } = useSelector(cliSettingsSelector)
   const { host, port, connectionType, db } = useSelector(connectedInstanceSelector)
+  const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
     !cliClientUuid && dispatch(createCliClientAction(onSuccess, onFail))
@@ -95,7 +96,7 @@ const CliBodyWrapper = () => {
   const handleSubmit = () => {
     const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
-    dispatch(concatToOutput(cliCommandOutput(command)))
+    dispatch(concatToOutput(cliCommandOutput(command, currentDbIndex)))
 
     if (!isRepeatCountCorrect(countRepeat)) {
       dispatch(processUnrepeatableNumber(commandLine, resetCommand))

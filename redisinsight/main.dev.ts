@@ -138,6 +138,14 @@ const bootstrap = async () => {
 
 export const windows = new Set<BrowserWindow>();
 
+const getAssetPath = (...paths: string[]): string => {
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'resources')
+    : path.join(__dirname, '../resources');
+
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
 const titleSplash = 'RedisInsight';
 export const createSplashScreen = async () => {
   const splash = new BrowserWindow({
@@ -148,6 +156,7 @@ export const createSplashScreen = async () => {
     resizable: false,
     alwaysOnTop: true,
     title: titleSplash,
+    icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -160,12 +169,6 @@ export const createSplashScreen = async () => {
 };
 
 export const createWindow = async (splash: BrowserWindow | null = null) => {
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'resources')
-    : path.join(__dirname, '../resources');
-
-  const getAssetPath = (...paths: string[]): string => path.join(RESOURCES_PATH, ...paths);
-
   let x;
   let y;
   const currentWindow = BrowserWindow.getFocusedWindow();

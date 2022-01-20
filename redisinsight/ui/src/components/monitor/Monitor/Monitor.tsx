@@ -110,7 +110,7 @@ const Monitor = (props: Props) => {
             />
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiTextColor color="danger" style={{ paddingLeft: 4 }}>
+            <EuiTextColor color="danger" style={{ paddingLeft: 4 }} data-testid="monitor-warning-message">
               Running Monitor will decrease throughput, avoid running it in production databases
             </EuiTextColor>
           </EuiFlexItem>

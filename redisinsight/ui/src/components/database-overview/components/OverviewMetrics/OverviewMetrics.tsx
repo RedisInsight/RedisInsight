@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 
 import { formatBytes, Nullable, truncateNumberToRange, truncatePercentage } from 'uiSrc/utils'
@@ -24,58 +24,49 @@ import {
   OutputTipIcon,
 } from 'uiSrc/components/database-overview/components/icons'
 
-import styles from 'uiSrc/components/database-overview/styles.module.scss'
+import styles from './styles.module.scss'
 
 interface Props {
   theme: string;
   items: {
-    usedMemory: Nullable<number>;
-    totalKeys: Nullable<number>;
-    connectedClients: Nullable<number>;
-    opsPerSecond: Nullable<number>;
-    networkInKbps: Nullable<number>;
-    networkOutKbps: Nullable<number>;
-    cpuUsagePercentage: Nullable<number>;
+    version: string,
+    usedMemory?: Nullable<number>;
+    totalKeys?: Nullable<number>;
+    connectedClients?: Nullable<number>;
+    opsPerSecond?: Nullable<number>;
+    networkInKbps?: Nullable<number>;
+    networkOutKbps?: Nullable<number>;
+    cpuUsagePercentage?: Nullable<number>;
   };
 }
+export interface IMetric {
+  id: string;
+  content: ReactNode;
+  tooltip: {
+    title: string;
+    content: ReactNode | string;
+  }
+  icon?: Nullable<string>;
+  tooltipIcon?: Nullable<string>;
+  className?: string;
+}
 
-export const getOverviewItems = ({ theme, items }: Props) => {
+export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
   const {
     usedMemory,
     totalKeys,
-    connectedClients = 0,
+    connectedClients,
     cpuUsagePercentage,
     opsPerSecond,
     networkInKbps,
     networkOutKbps
   } = items
 
-  const commandsPerSecTooltip = [
-    {
-      id: 'commands-per-sec-tip',
-      title: 'Commands/Sec',
-      icon: theme === Theme.Dark ? MeasureTipIcon : MeasureLightIcon,
-      value: opsPerSecond
-    },
-    {
-      id: 'network-input-tip',
-      title: 'Network Input',
-      icon: theme === Theme.Dark ? InputTipIcon : InputLightIcon,
-      value: `${networkInKbps} kbps`
-    },
-    {
-      id: 'network-output-tip',
-      title: 'Network Output',
-      icon: theme === Theme.Dark ? OutputTipIcon : OutputLightIcon,
-      value: `${networkOutKbps} kbps`
-    }
-  ]
+  const availableItems: Array<IMetric> = []
 
-  const getConnectedClient = (connectedClients: number = 0) =>
-    (Number.isInteger(connectedClients) ? connectedClients : `~${Math.round(connectedClients)}`)
-
-  return [
-    {
+  // CPU
+  if (cpuUsagePercentage !== undefined) {
+    availableItems.push({
       id: 'overview-cpu',
       tooltip: {
         title: 'CPU',
@@ -91,10 +82,40 @@ export const getOverviewItems = ({ theme, items }: Props) => {
           </div>
         </>
       ) : `${truncatePercentage(cpuUsagePercentage, 2)} %`,
-    },
-    {
+    })
+  }
+
+  // Ops per second with tooltip
+  if (opsPerSecond !== undefined) {
+    const opsPerSecItem: any = {
       id: 'overview-commands-sec',
-      tooltip: {
+      icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
+      content: opsPerSecond,
+    }
+
+    if (networkInKbps !== undefined && networkOutKbps !== undefined) {
+      const commandsPerSecTooltip = [
+        {
+          id: 'commands-per-sec-tip',
+          title: 'Commands/Sec',
+          icon: theme === Theme.Dark ? MeasureTipIcon : MeasureLightIcon,
+          value: opsPerSecond
+        },
+        {
+          id: 'network-input-tip',
+          title: 'Network Input',
+          icon: theme === Theme.Dark ? InputTipIcon : InputLightIcon,
+          value: `${networkInKbps} kbps`
+        },
+        {
+          id: 'network-output-tip',
+          title: 'Network Output',
+          icon: theme === Theme.Dark ? OutputTipIcon : OutputLightIcon,
+          value: `${networkOutKbps} kbps`
+        }
+      ]
+
+      opsPerSecItem.tooltip = {
         content: commandsPerSecTooltip.map((tooltipItem) => (
           <EuiFlexGroup
             className={styles.commandsPerSecTip}
@@ -118,11 +139,15 @@ export const getOverviewItems = ({ theme, items }: Props) => {
             </EuiFlexItem>
           </EuiFlexGroup>
         ))
-      },
-      icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
-      content: opsPerSecond,
-    },
-    {
+      }
+    }
+
+    availableItems.push(opsPerSecItem)
+  }
+
+  // Used memory
+  if (usedMemory !== undefined) {
+    availableItems.push({
       id: 'overview-total-memory',
       tooltip: {
         title: 'Total Memory',
@@ -130,8 +155,12 @@ export const getOverviewItems = ({ theme, items }: Props) => {
       },
       icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
       content: formatBytes(usedMemory || 0, 0),
-    },
-    {
+    })
+  }
+
+  // Total keys
+  if (totalKeys !== undefined) {
+    availableItems.push({
       id: 'overview-total-keys',
       tooltip: {
         title: 'Total Keys',
@@ -140,8 +169,15 @@ export const getOverviewItems = ({ theme, items }: Props) => {
       icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
       tooltipIcon: theme === Theme.Dark ? KeyTipIcon : KeyLightIcon,
       content: truncateNumberToRange(totalKeys || 0),
-    },
-    {
+    })
+  }
+
+  // Connected clients
+  if (connectedClients !== undefined) {
+    const getConnectedClient = (connectedClients: number = 0) =>
+      (Number.isInteger(connectedClients) ? connectedClients : `~${Math.round(connectedClients)}`)
+
+    availableItems.push({
       id: 'overview-connected-clients',
       tooltip: {
         title: 'Connected Clients',
@@ -150,6 +186,8 @@ export const getOverviewItems = ({ theme, items }: Props) => {
       icon: theme === Theme.Dark ? UserDarkIcon : UserLightIcon,
       tooltipIcon: theme === Theme.Dark ? UserTipIcon : UserLightIcon,
       content: getConnectedClient(connectedClients ?? 0),
-    }
-  ]
+    })
+  }
+
+  return availableItems
 }

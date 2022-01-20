@@ -1,0 +1,48 @@
+import React, { useContext, useEffect } from 'react'
+import { DatabaseOverview } from 'uiSrc/components'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  connectedInstanceOverviewSelector,
+  connectedInstanceSelector,
+  getDatabaseConfigInfoAction
+} from 'uiSrc/slices/instances'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+
+import { getOverviewMetrics } from './components/OverviewMetrics/OverviewMetrics'
+
+const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 100000
+
+interface IProps { windowDimensions: number }
+
+const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
+  let interval: NodeJS.Timeout
+  const { theme } = useContext(ThemeContext)
+  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { modules = [] } = useSelector(connectedInstanceSelector)
+  const overview = useSelector(connectedInstanceOverviewSelector)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    interval = setInterval(() => {
+      if (document.hidden) return
+
+      dispatch(getDatabaseConfigInfoAction(
+        connectedInstanceId,
+        () => {},
+        () => clearInterval(interval)
+      ))
+    }, TIMEOUT_TO_GET_INFO)
+    return () => clearInterval(interval)
+  }, [connectedInstanceId])
+
+  return (
+    <DatabaseOverview
+      modules={modules}
+      metrics={getOverviewMetrics({ theme, items: overview })}
+      windowDimensions={windowDimensions}
+    />
+  )
+}
+
+export default DatabaseOverviewWrapper

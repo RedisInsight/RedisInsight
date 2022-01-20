@@ -1,77 +1,6 @@
 .container {
   padding: 6px 16px 6px;
   height: 70px;
-
-  @media only screen and (max-width: 1124px) {
-    .modules {
-      margin-left: 0;
-      border-left: 0;
-      padding-left: 12px;
-      padding-right: 8px;
-    }
-
-    .overview {
-      border-right: 0;
-    }
-  }
-}
-
-.moreInfo {
-  margin-right: 5px;
-}
-
-.moreInfoOverview {
-  margin-bottom: 14px;
-}
-
-.moreInfoOverviewItem {
-  margin-bottom: 8px;
-
-  .moreInfoOverviewIcon {
-    margin-right: 8px;
-  }
-
-  .moreInfoOverviewContent {
-    margin-right: 6px;
-    font-weight: 500;
-    font-size: 13px;
-  }
-
-  .moreInfoOverviewTitle {
-    margin-right: 6px;
-    font-size: 12px;
-  }
-}
-
-.mi_wrapper {
-  width: 220px !important;
-  white-space: pre-wrap;
-}
-
-.mi_fieldName {
-  font-size: 13px !important;
-  line-height: 16px;
-  padding-bottom: 4px;
-  font-weight: 500;
-}
-
-.mi_smallText {
-  font: normal normal normal 12px/18px Graphik, sans-serif !important;
-  color: var(--euiTooltipTextSecondColor) !important;
-  margin-bottom: 8px;
-
-  a {
-    color: var(--euiTooltipTextColor) !important;
-  }
-}
-
-.mi_version {
-  color: var(--euiTooltipTextSecondColor) !important;
-}
-
-.mi_moduleName {
-  padding-top: 4px;
-  line-height: 15px;
 }
 
 .breadcrumbsContainer {
@@ -81,24 +10,3 @@
   padding: 0 12px;
 }
 
-.itemContainer {
-  height: 58px;
-  background-color: var(--euiColorEmptyShade);
-  border: 1px solid var(--euiColorLightShade);
-  align-items: center;
-  justify-content: center;
-  margin-left: 6px;
-}
-
-.modules {
-  padding-left: 22px;
-  padding-right: 8px;
-
-  @media only screen and (max-width: 767px) {
-    padding-left: 10px;
-  }
-
-  &.noModules {
-    padding-left: 12px;
-  }
-}

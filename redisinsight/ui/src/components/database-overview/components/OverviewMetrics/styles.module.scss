@@ -1,0 +1,45 @@
+.calculationWrapper {
+  display: flex;
+  align-items: center;
+  min-width: 134px;
+}
+
+.cpuWrapper {
+  min-width: 132px;
+
+  @media only screen and (max-width: 1024px) {
+    min-width: 114px;
+  }
+}
+
+.calculation {
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.spinner {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.commandsPerSecTip {
+  margin-bottom: 8px;
+  .moreInfoOverviewIcon {
+    margin-right: 8px;
+    width: auto !important;
+    max-width: 20px;
+    height: 18px !important;
+  }
+
+  .moreInfoOverviewContent {
+    margin-right: 6px;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .moreInfoOverviewTitle {
+    margin-right: 6px;
+    font-size: 12px;
+  }
+}

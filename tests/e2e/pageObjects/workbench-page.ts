@@ -173,7 +173,7 @@ export class WorkbenchPage {
   * @param speed The speed in seconds. Default is 1
   */
   async sendCommandInWorkbench(command: string, speed = 1, paste = false): Promise<void>{
-      await t.typeText(this.queryInput, command, { replace: true, speed: speed, paste: paste});
+      await t.typeText(this.queryInput, command, { replace: true, speed, paste });
       await t.click(this.submitCommandButton);
   }
 

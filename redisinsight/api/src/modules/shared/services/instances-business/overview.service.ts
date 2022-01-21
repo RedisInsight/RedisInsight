@@ -225,7 +225,7 @@ export class OverviewService {
    * @private
    */
   private calculateCpuUsage(id: string, nodes = []): number {
-    if (!this.isMetricsAvailable(nodes, 'cpu.used_cpu_sys', [0, undefined])) {
+    if (!this.isMetricsAvailable(nodes, 'cpu.used_cpu_sys', [0, '0', undefined])) {
       return undefined;
     }
 

@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import { setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import reducer, {
   initialState,
   toggleCli,
@@ -443,6 +444,7 @@ describe('cliSettings slice', () => {
       const expectedActions = [
         processCliClient(),
         processCliClientSuccess(responsePayload.data?.uuid),
+        setCliDbIndex(0)
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })
@@ -485,6 +487,7 @@ describe('cliSettings slice', () => {
       const expectedActions = [
         processCliClient(),
         processCliClientSuccess(responsePayload.data?.uuid),
+        setCliDbIndex(0)
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

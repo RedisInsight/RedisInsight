@@ -1,35 +1,34 @@
 import { SendClusterCommandDto, SendClusterCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import { cloneDeep, first } from 'lodash'
 
-import {
-  cleanup,
-  mockedStore,
-  initialStateDefault,
-  clearStoreActions,
-  mockStore,
-} from 'uiSrc/utils/test-utils'
+import { AppDispatch, RootState } from 'uiSrc/slices/store'
+import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore, } from 'uiSrc/utils/test-utils'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { apiService } from 'uiSrc/services'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
-import {
-  cliCommandOutput,
-  cliParseTextResponseWithOffset,
-  cliParseTextResponseWithRedirect
-} from 'uiSrc/utils/cliHelper'
+import { cliParseTextResponseWithOffset, cliParseTextResponseWithRedirect } from 'uiSrc/utils/cliHelper'
+import ApiErrors from 'uiSrc/constants/apiErrors'
+import { updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
 import reducer, {
-  initialState,
   concatToOutput,
-  sendCliCommand,
-  sendCliCommandSuccess,
-  sendCliCommandFailure,
-  sendCliCommandAction,
-  sendCliClusterCommandAction,
+  initialState,
   outputSelector,
   processUnsupportedCommand,
+  sendCliClusterCommandAction,
+  sendCliCommand,
+  sendCliCommandAction,
+  sendCliCommandFailure,
+  sendCliCommandSuccess,
+  setCliDbIndex,
   updateCliCommandHistory,
 } from '../../cli/cli-output'
 
 jest.mock('uiSrc/services')
+jest.mock('uiSrc/slices/cli/cli-settings', () => ({
+  ...jest.requireActual('uiSrc/slices/cli/cli-settings'),
+  updateCliClientAction: jest.fn()
+    .mockImplementation((_dispatch: AppDispatch, stateInit: () => RootState) => stateInit())
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -191,6 +190,25 @@ describe('cliOutput slice', () => {
     })
   })
 
+  describe('setCliDbIndex', () => {
+    it('should set correct value', () => {
+      // Arrange
+      const db = 1
+      const state: typeof initialState = { ...initialState, db }
+
+      // Act
+      const nextState = reducer(initialState, setCliDbIndex(db))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        cli: {
+          output: nextState,
+        },
+      })
+      expect(outputSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('Standalone Cli command', () => {
       it('call both sendCliStandaloneCommandAction and sendCliCommandSuccess when response status is successed', async () => {
@@ -212,6 +230,28 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandSuccess(),
           concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('call setCliDbIndex when response status is successed', async () => {
+        // Arrange
+        const dbIndex = 1
+        const command = `SELECT ${dbIndex}`
+        const data = { response: 'OK', status: CommandExecutionStatus.Success }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(sendCliCommandAction(command))
+
+        // Assert
+        const expectedActions = [
+          sendCliCommand(),
+          sendCliCommandSuccess(),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+          setCliDbIndex(dbIndex)
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -264,6 +304,39 @@ describe('cliOutput slice', () => {
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
+
+      it('call both updateCliClientAction on ClientNotFound error', async () => {
+        // Arrange
+        const command = 'keys *'
+        const errorMessage = cliTexts.CONNECTION_CLOSED
+        const responsePayload = {
+          response: {
+            status: 404,
+            data: { message: errorMessage, name: ApiErrors.ClientNotFound },
+          },
+        }
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+        const rootState = Object.assign(initialStateDefault, {
+          cli: {
+            settings: { ...initialStateDefault.cli.settings, cliClientUuid: '123' },
+          },
+        })
+        const tempStore = mockStore(rootState)
+
+        // Act
+        await tempStore.dispatch<any>(sendCliCommandAction(command))
+
+        // Assert
+        const expectedActions = [
+          sendCliCommand(),
+          sendCliCommandFailure(responsePayload.response.data.message),
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
+          concatToOutput(['\n']),
+          concatToOutput(['\n'])
+        ]
+        expect(updateCliClientAction).toHaveBeenCalled()
+        expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
     })
 
     describe('Single Node Cluster Cli command', () => {
@@ -283,7 +356,7 @@ describe('cliOutput slice', () => {
         const data: SendClusterCommandResponse[] = [
           {
             response: '(nil)',
-            status: 'success',
+            status: CommandExecutionStatus.Success,
             node: { host: '127.0.0.1', port: 7002, slot: 6918 },
           },
         ]
@@ -313,7 +386,7 @@ describe('cliOutput slice', () => {
         const data: SendClusterCommandResponse[] = [
           {
             response: null,
-            status: 'success',
+            status: CommandExecutionStatus.Success,
             node: { host: '127.0.0.1', port: 7002, slot: 6918 },
           },
         ]
@@ -360,6 +433,39 @@ describe('cliOutput slice', () => {
           concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('call both updateCliClientAction on ClientNotFound error', async () => {
+        // Arrange
+        const command = 'keys *'
+        const errorMessage = cliTexts.CONNECTION_CLOSED
+        const responsePayload = {
+          response: {
+            status: 404,
+            data: { message: errorMessage, name: ApiErrors.ClientNotFound },
+          },
+        }
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+        const rootState = Object.assign(initialStateDefault, {
+          cli: {
+            settings: { ...initialStateDefault.cli.settings, cliClientUuid: '123' },
+          },
+        })
+        const tempStore = mockStore(rootState)
+
+        // Act
+        await tempStore.dispatch<any>(sendCliClusterCommandAction(command, options))
+
+        // Assert
+        const expectedActions = [
+          sendCliCommand(),
+          sendCliCommandFailure(responsePayload.response.data.message),
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
+          concatToOutput(['\n']),
+          concatToOutput(['\n'])
+        ]
+        expect(updateCliClientAction).toHaveBeenCalled()
+        expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
       })
     })
   })

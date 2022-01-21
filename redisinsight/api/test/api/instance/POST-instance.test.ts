@@ -121,6 +121,12 @@ describe('POST /instance', () => {
             },
           });
 
+          // Create client for CLI
+          await validateApiCall({
+            endpoint: () => request(server).patch(`/instance/${addedId}/cli/${cliUuid}`),
+            statusCode: 200,
+          });
+
           // Create string using CLI API to 0 db index
           await validateApiCall({
             endpoint: () => request(server).post(`/instance/${addedId}/cli/${cliUuid}/send-command`),
@@ -130,14 +136,15 @@ describe('POST /instance', () => {
             },
           });
 
+
           // check data created by db index
           await rte.data.executeCommand('select', `${constants.TEST_REDIS_DB_INDEX}`);
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1)
           expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(1)
 
           // check data created by db index
           await rte.data.executeCommand('select', '0');
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1)
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
           expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(0)
         });
       });

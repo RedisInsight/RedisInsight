@@ -47,11 +47,11 @@ export class MonitorPage {
     async checkCommandInMonitorResults(command: string, parameters?: string[]): Promise<void> {
         const commandArray = command.split(' ');
         for (const value of commandArray) {
-            await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({timeout: 5000});
+            await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({timeout: 6000});
         }
         if (!!parameters) {
             for (const argument of parameters) {
-                await t.expect(this.monitorCommandLinePart.withText(argument).exists).ok({timeout: 5000});
+                await t.expect(this.monitorCommandLinePart.withText(argument).exists).ok({timeout: 6000});
             }
         }
     }
@@ -63,5 +63,12 @@ export class MonitorPage {
         await t.click(this.startMonitorButton);
         //Check for "info" command that is sent automatically every 5 seconds from BE side
         await this.checkCommandInMonitorResults('info');
+    }
+    /**
+     * Stop monitor function
+     */
+    async stopMonitor(): Promise<void> {
+        await t.click(this.runMonitorToggle);
+        await t.expect(this.monitorIsStoppedText.exists).ok('Monitor is stopped text');
     }
 }

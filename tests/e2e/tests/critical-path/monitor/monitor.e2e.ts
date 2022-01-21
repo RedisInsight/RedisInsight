@@ -66,7 +66,7 @@ test('Verify that user can see the list of all commands from all clients ran for
     const cli_command = 'command';
     const workbench_command = 'hello';
     const common_command = 'info';
-    const browser_command = 'ttl';
+    const browser_command = 'dbsize';
     //Expand Monitor panel
     await t.click(monitorPage.expandMonitor);
     //Start monitor (using run button in header)

@@ -157,6 +157,10 @@ export const createSplashScreen = async () => {
     alwaysOnTop: true,
     title: titleSplash,
     icon: getAssetPath('icon.png'),
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
 
   splash.loadURL(`file://${__dirname}/splash.html`);
@@ -377,6 +381,8 @@ app.on('certificate-error', (event, _webContents, _url, _error, _certificate, ca
 });
 
 // ipc events
+ipcMain.handle(ipcEvent.getAppVersion, () => app?.getVersion());
+
 ipcMain.handle(ipcEvent.getStoreValue, (_event, key) => store?.get(key));
 
 ipcMain.handle(ipcEvent.deleteStoreValue, (_event, key) => store?.delete(key));

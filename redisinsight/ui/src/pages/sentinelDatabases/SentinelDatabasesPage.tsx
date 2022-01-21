@@ -246,7 +246,7 @@ const SentinelDatabasesPage = () => {
                 <EuiToolTip
                   anchorClassName="inputAppendIcon"
                   position="left"
-                  content="Select the Redis logical database to work with in Browser."
+                  content="Select the Redis logical database to work with in Browser and Workbench."
                 >
                   <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
                 </EuiToolTip>

@@ -107,14 +107,11 @@ export function sendPluginCommandAction({ command = '', onSuccessAction, onFailA
       const { data, status } = await apiService.post<SendCommandResponse>(
         getUrl(
           id,
-          ApiEndpoints.CLI,
-          state.workbench.settings?.wbClientUuid,
-          ApiEndpoints.SEND_COMMAND
+          ApiEndpoints.PLUGINS,
+          ApiEndpoints.COMMAND_EXECUTIONS
         ),
         {
-          command: multilineCommandToOneLine(command),
-          outputFormat: 'RAW',
-          plugins: true
+          command: multilineCommandToOneLine(command)
         }
       )
 

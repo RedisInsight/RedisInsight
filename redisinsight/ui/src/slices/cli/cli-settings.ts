@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -181,6 +182,7 @@ export function createCliClientAction(
       if (isStatusSuccessful(status)) {
         sessionStorageService.set(BrowserStorageItem.cliClientUuid, data?.uuid)
         dispatch(processCliClientSuccess(data?.uuid))
+        dispatch(setCliDbIndex(state.connections?.instances?.connectedInstance?.db || 0))
 
         onSuccessAction?.()
       }
@@ -209,6 +211,7 @@ export function updateCliClientAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(processCliClientSuccess(data?.uuid))
+        dispatch(setCliDbIndex(state.connections?.instances?.connectedInstance?.db || 0))
         onSuccessAction?.()
       }
     } catch (error) {

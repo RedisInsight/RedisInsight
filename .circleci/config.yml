@@ -102,7 +102,7 @@ aliases:
       branches:
         only:
           - main
-          - /^build/.*/
+          - /^build\/.*/
   stage-filter: &stageFilter
     filters:
       branches:

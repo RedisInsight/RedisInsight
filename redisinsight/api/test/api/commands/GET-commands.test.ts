@@ -33,6 +33,8 @@ describe('GET /commands', () => {
         expect(body['GET']).to.be.an('object');
         expect(body['FT.CREATE']).to.be.an('object');
         expect(body['JSON.GET']).to.be.an('object');
+        expect(body['RG.PYEXECUTE']).to.be.an('object');
+        expect(body['BF.RESERVE']).to.be.an('object');
       },
     },
   ].map(mainCheckFn);

@@ -37,7 +37,7 @@ const CommandHelper = (props: Props) => {
   } = props
 
   const readMore = (commandName = '') => {
-    const docUrl = getDocUrlForCommand(commandName, group)
+    const docUrl = getDocUrlForCommand(commandName)
     return (
       <EuiLink
         color="subdued"

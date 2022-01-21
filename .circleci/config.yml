@@ -102,6 +102,7 @@ aliases:
       branches:
         only:
           - main
+          - /^build\/.*/
   stage-filter: &stageFilter
     filters:
       branches:
@@ -446,7 +447,7 @@ jobs:
             - release/*-linux.yml
   macosx:
     macos:
-      xcode: 11.3.0
+      xcode: 13.2.1
     parameters:
       env:
         description: Build environment (stage || prod)

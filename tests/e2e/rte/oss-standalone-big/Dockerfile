@@ -1,7 +1,7 @@
 FROM redislabs/redismod
 
-RUN apt update
-RUN apt install curl -y
+ARG TEST_BIG_DB_DUMP
+ADD $TEST_BIG_DB_DUMP /data/dump.tar.gz
 
 ADD entrypoint.sh .
 RUN chmod +x entrypoint.sh

@@ -1,11 +1,9 @@
 #!/bin/sh
 
-echo 'Downloading .rdb file...'
-curl --request GET -sL \
-     --url 'https://s3.amazonaws.com/redisinsight.test/public/rte/big_db.tar.gz'\
-     --output './dump.tar.gz'
-
-echo 'Extracting .rdb file...'
-tar -zxvf dump.tar.gz
+if [ -e dump.tar.gz ]
+then
+  echo 'Extracting .rdb file...'
+  tar -zxvf dump.tar.gz
+fi
 
 exec "$@"

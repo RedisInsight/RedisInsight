@@ -62,6 +62,7 @@ export enum CommandGroup {
   AI = 'ai',
   TDigest = 'tdigest',
   CMS = 'cms',
+  TopK = 'topk',
 }
 
 export enum CommandPrefix {

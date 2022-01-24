@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import parse from 'html-react-parser'
 
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { getModule, truncateText } from 'uiSrc/utils'
+import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 
 import { IMetric } from '../OverviewMetrics/OverviewMetrics'
 
@@ -19,6 +19,7 @@ interface IProps {
 
 const MoreInfoPopover = ({ metrics, modules }: IProps) => {
   const [isShowMoreInfoPopover, setIsShowMoreInfoPopover] = useState(false)
+
   return (
     <EuiPopover
       ownFocus={false}
@@ -35,38 +36,46 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
         />
       )}
     >
-      <>
-        <>
-          { metrics.map((overviewItem) => (
-            <EuiFlexGroup
-              className={styles.moreInfoOverviewItem}
-              key={overviewItem.id}
-              data-test-subj={overviewItem.id}
-              gutterSize="none"
-              responsive={false}
-              alignItems="center"
-            >
-              {overviewItem.tooltipIcon && (
-                <EuiFlexItem className={styles.moreInfoOverviewIcon} grow={false}>
-                  <EuiIcon
-                    size="m"
-                    type={overviewItem.tooltipIcon}
-                    className={styles.icon}
-                  />
+      <div className="flex-row space-between">
+        {!!metrics.length && (
+          <div className={styles.metricsContainer}>
+            <h4 className={styles.mi_fieldName}>Database statistics</h4>
+            { metrics.map((overviewItem) => (
+              <EuiFlexGroup
+                className={styles.moreInfoOverviewItem}
+                key={overviewItem.id}
+                data-test-subj={overviewItem.id}
+                gutterSize="none"
+                responsive={false}
+                alignItems="center"
+              >
+                {overviewItem.loading && (
+                  <EuiLoadingSpinner style={{ marginRight: '8px' }} size="m" />
+                )}
+                {!overviewItem.loading && overviewItem?.tooltip?.icon && (
+                  <EuiFlexItem className={styles.moreInfoOverviewIcon} grow={false}>
+                    <EuiIcon
+                      size="m"
+                      type={overviewItem.tooltip?.icon}
+                      className={styles.icon}
+                    />
+                  </EuiFlexItem>
+                )}
+                {overviewItem.loading ? (<span>... </span>)
+                  : (
+                    <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
+                      { overviewItem.value === undefined ? 'N/A' : overviewItem.tooltip.content }
+                    </EuiFlexItem>
+                  )}
+                <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
+                  { overviewItem.tooltip.title }
                 </EuiFlexItem>
-              )}
-              <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
-                { overviewItem.tooltip.content }
-              </EuiFlexItem>
-              <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
-                { overviewItem.tooltip.title }
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          ))}
-        </>
-        <>
-          <h4 className={styles.mi_fieldName}>Modules:</h4>
-          <p className={styles.mi_smallText}>{parse(ModulesInfoText)}</p>
+              </EuiFlexGroup>
+            ))}
+          </div>
+        )}
+        <div className={styles.modulesContainer}>
+          <h4 className={styles.mi_fieldName}>Modules</h4>
           {
               modules?.map(({ name = '', semanticVersion = '', version = '' }) => (
                 <div key={name} className={cx(styles.mi_moduleName)}>
@@ -81,8 +90,9 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
                 </div>
               ))
             }
-        </>
-      </>
+          <p style={{ marginTop: '12px' }} className={styles.mi_smallText}>{parse(ModulesInfoText)}</p>
+        </div>
+      </div>
     </EuiPopover>
   )
 }

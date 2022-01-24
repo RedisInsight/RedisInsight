@@ -2,6 +2,14 @@
   margin-right: 5px;
 }
 
+.metricsContainer {
+  min-width: 180px;
+  margin-right: 20px;
+}
+.modulesContainer {
+  min-width: 180px;
+}
+
 .moreInfoOverview {
   margin-bottom: 14px;
 }
@@ -10,7 +18,12 @@
   margin-bottom: 8px;
 
   .moreInfoOverviewIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
     margin-right: 8px;
+    min-width: 22px;
   }
 
   .moreInfoOverviewContent {
@@ -22,18 +35,19 @@
   .moreInfoOverviewTitle {
     margin-right: 6px;
     font-size: 12px;
+    font-weight: 200;
   }
 }
 
 .mi_wrapper {
-  width: 220px !important;
-  white-space: pre-wrap;
+  width: auto !important;
+  min-width: 400px !important;
 }
 
 .mi_fieldName {
   font-size: 13px !important;
   line-height: 16px;
-  padding-bottom: 4px;
+  margin-bottom: 8px;
   font-weight: 500;
 }
 
@@ -52,12 +66,11 @@
 }
 
 .mi_moduleName {
-  padding-top: 4px;
+  margin-top: 4px;
   line-height: 15px;
 }
 
 .icon {
-  margin-right: 6px;
   width: auto !important;
   height: 18px !important;
   max-width: 22px;

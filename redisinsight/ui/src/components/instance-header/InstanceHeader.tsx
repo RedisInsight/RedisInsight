@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { capitalize } from 'lodash'
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui'
 
-import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
-
-import { BreadcrumbsLinks, BrowserPageOptions } from 'uiSrc/constants/breadcrumbs'
+import { Pages } from 'uiSrc/constants'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { CONNECTION_TYPE_DISPLAY } from 'uiSrc/slices/interfaces'
-import { getDbIndex } from 'uiSrc/utils'
-import PageBreadcrumbs from '../page-breadcrumbs'
+import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
+import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
 
 import styles from './styles.module.scss'
 
 const InstanceHeader = () => {
-  const { name = '', username = '', connectionType = '', db = 0 } = useSelector(connectedInstanceSelector)
+  const { name = '', username, connectionType = ConnectionType.Standalone, db = 0 } = useSelector(connectedInstanceSelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
+  const history = useHistory()
   const [windowDimensions, setWindowDimensions] = useState(0)
 
   useEffect(() => {
@@ -31,24 +30,48 @@ const InstanceHeader = () => {
     setWindowDimensions(globalThis.innerWidth)
   }
 
-  const getBreadcrumbsInstanceOptions = (): BrowserPageOptions => ({
-    connectedInstanceName: name,
-    postfix: getDbIndex(db),
-    connection: connectionType ? CONNECTION_TYPE_DISPLAY[connectionType] : capitalize(connectionType),
-    version,
-    user: username || 'Default'
-  })
+  const goHome = () => {
+    history.push(Pages.home)
+  }
 
   return (
     <div className={cx(styles.container)}>
       <EuiFlexGroup gutterSize="none" responsive={false}>
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <div className={styles.breadcrumbsContainer}>
-            <PageBreadcrumbs
-              breadcrumbs={
-                BreadcrumbsLinks.BrowserPage({ ...getBreadcrumbsInstanceOptions() })
-              }
-            />
+            <div>
+              <EuiToolTip
+                position="bottom"
+                content="My Redis databases"
+              >
+                <EuiButtonIcon
+                  display="empty"
+                  size="s"
+                  iconSize="l"
+                  iconType="sortLeft"
+                  aria-label="My Redis databases"
+                  onClick={goHome}
+                />
+              </EuiToolTip>
+            </div>
+            <div style={{ maxWidth: '80%', flex: 1 }}>
+              <EuiToolTip
+                position="bottom"
+                anchorClassName={styles.tooltipAnchor}
+                className={styles.tooltip}
+                content={(
+                  <ShortInstanceInfo
+                    name={name}
+                    user={username}
+                    connectionType={connectionType}
+                    version={version}
+                    dbIndex={db}
+                  />
+                )}
+              >
+                <b className={styles.dbName}>{db > 0 ? `${name} [${db}]` : name}</b>
+              </EuiToolTip>
+            </div>
           </div>
         </EuiFlexItem>
 

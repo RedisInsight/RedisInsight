@@ -44,6 +44,43 @@ interface ITooltipProps {
   content: any;
   abbreviation?: string;
 }
+export const modulesDefaultInit = {
+  [RedisDefaultModules.AI]: {
+    iconDark: RedisAIDark,
+    iconLight: RedisAILight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.AI],
+  },
+  [RedisDefaultModules.Bloom]: {
+    iconDark: RedisBloomDark,
+    iconLight: RedisBloomLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Bloom],
+  },
+  [RedisDefaultModules.Gears]: {
+    iconDark: RedisGearsDark,
+    iconLight: RedisGearsLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Gears],
+  },
+  [RedisDefaultModules.Graph]: {
+    iconDark: RedisGraphDark,
+    iconLight: RedisGraphLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Graph],
+  },
+  [RedisDefaultModules.ReJSON]: {
+    iconDark: RedisJSONDark,
+    iconLight: RedisJSONLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.ReJSON],
+  },
+  [RedisDefaultModules.Search]: {
+    iconDark: RedisSearchDark,
+    iconLight: RedisSearchLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Search],
+  },
+  [RedisDefaultModules.TimeSeries]: {
+    iconDark: RedisTimeSeriesDark,
+    iconLight: RedisTimeSeriesLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.TimeSeries],
+  },
+}
 
 const DatabaseListModules = React.memo(({ modules: modulesProp, inCircle, maxLength }: Props) => {
   const modules = isNumber(maxLength) ? modulesProp.slice(0, maxLength) : modulesProp
@@ -51,44 +88,6 @@ const DatabaseListModules = React.memo(({ modules: modulesProp, inCircle, maxLen
 
   const handleCopy = (text = '') => {
     navigator?.clipboard?.writeText(text)
-  }
-
-  const modulesDefaultInit = {
-    [RedisDefaultModules.AI]: {
-      iconDark: RedisAIDark,
-      iconLight: RedisAILight,
-      text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.AI],
-    },
-    [RedisDefaultModules.Bloom]: {
-      iconDark: RedisBloomDark,
-      iconLight: RedisBloomLight,
-      text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Bloom],
-    },
-    [RedisDefaultModules.Gears]: {
-      iconDark: RedisGearsDark,
-      iconLight: RedisGearsLight,
-      text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Gears],
-    },
-    [RedisDefaultModules.Graph]: {
-      iconDark: RedisGraphDark,
-      iconLight: RedisGraphLight,
-      text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Graph],
-    },
-    [RedisDefaultModules.ReJSON]: {
-      iconDark: RedisJSONDark,
-      iconLight: RedisJSONLight,
-      text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.ReJSON],
-    },
-    [RedisDefaultModules.Search]: {
-      iconDark: RedisSearchDark,
-      iconLight: RedisSearchLight,
-      text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Search],
-    },
-    [RedisDefaultModules.TimeSeries]: {
-      iconDark: RedisTimeSeriesDark,
-      iconLight: RedisTimeSeriesLight,
-      text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.TimeSeries],
-    },
   }
 
   const Tooltip = ({ icon, content, abbreviation }: ITooltipProps) => (

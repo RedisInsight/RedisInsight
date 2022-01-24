@@ -4,9 +4,35 @@
 }
 
 .breadcrumbsContainer {
-  height: 58px;
+  height: 100%;
+  display: flex;
+  align-items: center;
   background-color: var(--euiColorEmptyShade);
   border: 1px solid var(--euiColorLightShade);
   padding: 0 12px;
+
+  & > div {
+    display: flex;
+    &:not(:last-of-type) {
+      margin-right: 12px;
+    }
+  }
+}
+
+.tooltip {
+  max-width: 372px !important;
+}
+
+.tooltipAnchor {
+  max-width: 100%;
+}
+
+.dbName {
+  display: inline-block !important;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  white-space: nowrap;
 }
 

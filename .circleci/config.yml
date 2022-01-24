@@ -307,6 +307,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose -f tests/e2e/docker-compose.yml -f tests/e2e/docker.docker-compose.yml up --abort-on-container-exit
                 no_output_timeout: 5m
       - when:
@@ -316,6 +317,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose -f tests/e2e/docker-compose.yml up --abort-on-container-exit
                 no_output_timeout: 5m
       - when:

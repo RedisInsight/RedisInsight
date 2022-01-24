@@ -15,7 +15,7 @@ const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const monitorPage = new MonitorPage();
 
-fixture `Monitor`
+fixture.only `Monitor`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {

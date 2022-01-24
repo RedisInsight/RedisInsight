@@ -27,8 +27,13 @@ const CONFIG = {
       modules: 0,
     },
     {
-      width: -1,
+      width: 720,
       metrics: 3,
+      modules: 0,
+    },
+    {
+      width: -1,
+      metrics: 2,
       modules: 0,
     },
   ],

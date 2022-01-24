@@ -3,11 +3,11 @@
 }
 
 .metricsContainer {
-  min-width: 180px;
+  width: 180px;
   margin-right: 20px;
 }
 .modulesContainer {
-  min-width: 180px;
+  width: 180px;
 }
 
 .moreInfoOverview {
@@ -37,11 +37,6 @@
     font-size: 12px;
     font-weight: 200;
   }
-}
-
-.mi_wrapper {
-  width: auto !important;
-  min-width: 400px !important;
 }
 
 .mi_fieldName {

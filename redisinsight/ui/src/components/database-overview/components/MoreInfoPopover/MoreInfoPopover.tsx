@@ -8,6 +8,7 @@ import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.d
 
 import { IMetric } from '../OverviewMetrics/OverviewMetrics'
 
+import './styles.scss'
 import styles from './styles.module.scss'
 
 const ModulesInfoText = 'More information about Redis modules can be found <a class="link-underline" href="https://redis.io/modules" target="_blank" rel="noreferrer">here</a>.\nCreate a <a class="link-underline" href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight" target="_blank" rel="noreferrer">free Redis database</a> with modules support on Redis Cloud.\n'
@@ -27,7 +28,7 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
       isOpen={isShowMoreInfoPopover}
       closePopover={() => setIsShowMoreInfoPopover(false)}
       anchorClassName={styles.moreInfo}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.mi_wrapper)}
+      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', 'mi_wrapper')}
       button={(
         <EuiButtonIcon
           iconType="boxesVertical"

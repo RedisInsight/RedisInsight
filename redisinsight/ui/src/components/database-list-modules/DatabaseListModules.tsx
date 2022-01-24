@@ -1,8 +1,6 @@
-/* eslint-disable import/no-webpack-loader-syntax */
 import React, { useContext } from 'react'
 import { EuiButton, EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
-import { isNumber } from 'lodash'
 
 import {
   RedisDefaultModules,
@@ -36,7 +34,6 @@ export interface Props {
   modules: RedisModuleDto[];
   inCircle?: boolean;
   dark?: boolean;
-  maxLength?: number;
 }
 
 interface ITooltipProps {
@@ -82,8 +79,7 @@ export const modulesDefaultInit = {
   },
 }
 
-const DatabaseListModules = React.memo(({ modules: modulesProp, inCircle, maxLength }: Props) => {
-  const modules = isNumber(maxLength) ? modulesProp.slice(0, maxLength) : modulesProp
+const DatabaseListModules = React.memo(({ modules, inCircle }: Props) => {
   const { theme } = useContext(ThemeContext)
 
   const handleCopy = (text = '') => {

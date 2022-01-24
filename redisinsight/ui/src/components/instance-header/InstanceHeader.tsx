@@ -54,7 +54,7 @@ const InstanceHeader = () => {
                 />
               </EuiToolTip>
             </div>
-            <div style={{ maxWidth: '80%', flex: 1 }}>
+            <div style={{ flex: 1, overflow: 'hidden' }}>
               <EuiToolTip
                 position="bottom"
                 anchorClassName={styles.tooltipAnchor}

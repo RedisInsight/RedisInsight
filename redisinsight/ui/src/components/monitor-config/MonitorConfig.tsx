@@ -35,6 +35,7 @@ const MonitorConfig = () => {
     const newSocket = io(`${getBaseApiUrl()}/monitor`, {
       forceNew: true,
       query: { instanceId },
+      rejectUnauthorized: false,
     })
     dispatch(setSocket(newSocket))
     const payloads: IMonitorDataPayload[] = []

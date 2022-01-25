@@ -46,7 +46,8 @@ enum ApiEndpoints {
 
   REDIS_COMMANDS = 'commands',
   ENABLEMENT_AREA = 'static/workbench/enablement-area.json',
-  PLUGINS = 'plugins'
+  PLUGINS = 'plugins',
+  STATE = 'state',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

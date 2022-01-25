@@ -8,7 +8,7 @@ import {
 } from 'uiSrc/slices/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
-import { getOverviewMetrics } from './components/OverviewMetrics/OverviewMetrics'
+import { getOverviewMetrics } from './components/OverviewMetrics'
 
 const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 100000
 
@@ -17,8 +17,7 @@ interface IProps { windowDimensions: number }
 const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
   let interval: NodeJS.Timeout
   const { theme } = useContext(ThemeContext)
-  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
-  const { modules = [] } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', modules = [] } = useSelector(connectedInstanceSelector)
   const overview = useSelector(connectedInstanceOverviewSelector)
 
   const dispatch = useDispatch()

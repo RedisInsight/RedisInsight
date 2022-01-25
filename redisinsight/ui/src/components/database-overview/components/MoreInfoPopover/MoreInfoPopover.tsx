@@ -6,7 +6,7 @@ import parse from 'html-react-parser'
 import { getModule, truncateText } from 'uiSrc/utils'
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 
-import { IMetric } from '../OverviewMetrics/OverviewMetrics'
+import { IMetric } from '../OverviewMetrics'
 
 import './styles.scss'
 import styles from './styles.module.scss'

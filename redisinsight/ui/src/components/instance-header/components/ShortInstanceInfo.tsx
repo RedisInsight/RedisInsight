@@ -1,6 +1,7 @@
 import React from 'react'
-import { CONNECTION_TYPE_DISPLAY, ConnectionType } from 'uiSrc/slices/interfaces'
 import { capitalize } from 'lodash'
+
+import { CONNECTION_TYPE_DISPLAY, ConnectionType } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'

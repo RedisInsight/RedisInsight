@@ -1,5 +1,5 @@
 import { find, min } from 'lodash'
-import { IMetric } from 'uiSrc/components/database-overview/components/OverviewMetrics/OverviewMetrics'
+import { IMetric } from 'uiSrc/components/database-overview/components/OverviewMetrics'
 
 interface ILimits {
   width: number; // resolution

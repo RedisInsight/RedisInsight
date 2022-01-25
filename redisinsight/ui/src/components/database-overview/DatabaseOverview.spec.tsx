@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from 'uiSrc/utils/test-utils'
 
-import { getOverviewMetrics } from './components/OverviewMetrics/OverviewMetrics'
+import { getOverviewMetrics } from './components/OverviewMetrics'
 import DatabaseOverview from './DatabaseOverview'
 
 const overviewMetrics = getOverviewMetrics({

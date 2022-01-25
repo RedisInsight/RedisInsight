@@ -4,7 +4,7 @@ import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 import MoreInfoPopover from 'uiSrc/components/database-overview/components/MoreInfoPopover'
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { getResolutionLimits } from './utils/resolutionHelper'
-import { IMetric } from './components/OverviewMetrics/OverviewMetrics'
+import { IMetric } from './components/OverviewMetrics'
 import DatabaseListModules from '../database-list-modules/DatabaseListModules'
 
 import styles from './styles.module.scss'

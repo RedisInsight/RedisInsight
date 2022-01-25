@@ -110,15 +110,17 @@ export const importPluginScript = () => (config) => {
       // eslint-disable-next-line sonarjs/no-collapsible-if
       if (promiseEvents.includes(e.data.event)) {
         // eslint-disable-next-line no-prototype-builtins
-        if (!callbacks.hasOwnProperty(e.data.requestId)) {
-          return
+        if (callbacks.hasOwnProperty(e.data.requestId)) {
+          const actions = callbacks[e.data.requestId]
+          // eslint-disable-next-line no-prototype-builtins
+          if (actions && actions.hasOwnProperty(e.data.actionType)) {
+            const action = actions[e.data.actionType]
+            if (typeof action === 'function') {
+              action(e.data.data)
+            }
+            delete callbacks[e.data.requestId]
+          }
         }
-        const actions = callbacks[e.data.requestId]
-        const action = actions[e.data.actionType]
-        if (typeof action === 'function') {
-          action(e.data.data)
-        }
-        delete callbacks[e.data.requestId]
       }
     }
 

@@ -14,8 +14,10 @@ interface Props {
   metrics?: Array<IMetric>;
   modules?: Array<RedisModuleDto>;
 }
+
 interface IState<T> {
-  visible: Array<T>, hidden: Array<T>
+  visible: Array<T>,
+  hidden: Array<T>
 }
 
 const DatabaseOverview = (props: Props) => {
@@ -33,6 +35,9 @@ const DatabaseOverview = (props: Props) => {
       hidden: []
     }
     metricsProps?.forEach((item) => {
+      if (item.value !== undefined && item.groupId) {
+        return
+      }
       if (item.value === undefined || metricsState.visible.length >= resolutionLimits.metrics) {
         metricsState.hidden.push(item)
       } else {
@@ -45,6 +50,39 @@ const DatabaseOverview = (props: Props) => {
       hidden: modulesProps.slice(resolutionLimits.modules)
     })
   }, [windowDimensions, metricsProps, modulesProps])
+
+  const getTooltipContent = (metric: IMetric) => {
+    if (!metric.children?.length) {
+      return metric.tooltip.content
+    }
+    return metric.children
+      .filter((item) => item.value !== undefined)
+      .map((tooltipItem) => (
+        <EuiFlexGroup
+          className={styles.commandsPerSecTip}
+          key={tooltipItem.id}
+          gutterSize="none"
+          responsive={false}
+          alignItems="center"
+        >
+          {tooltipItem.icon && (
+            <EuiFlexItem grow={false}>
+              <EuiIcon
+                className={styles.moreInfoOverviewIcon}
+                size="m"
+                type={tooltipItem.icon}
+              />
+            </EuiFlexItem>
+          )}
+          <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
+            {tooltipItem.content}
+          </EuiFlexItem>
+          <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
+            {tooltipItem.title}
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      ))
+  }
 
   return (
     <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
@@ -64,7 +102,7 @@ const DatabaseOverview = (props: Props) => {
                       position="bottom"
                       className={styles.tooltip}
                       title={overviewItem.tooltip.title ?? ''}
-                      content={overviewItem.tooltip.content}
+                      content={getTooltipContent(overviewItem)}
                     >
                       <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">
                         {overviewItem.icon && (
@@ -77,19 +115,21 @@ const DatabaseOverview = (props: Props) => {
                           </EuiFlexItem>
                         )}
                         <EuiFlexItem grow={false}>
-                          { overviewItem.content }
+                          {overviewItem.content}
                         </EuiFlexItem>
                       </EuiFlexGroup>
                     </EuiToolTip>
                   </EuiFlexItem>
                 ))
-}
+              }
             </EuiFlexGroup>
           </div>
         </EuiFlexItem>
       )}
       <EuiFlexItem grow={false} style={{ flexShrink: 0 }}>
-        <div className={cx('flex-row', styles.itemContainer, styles.modules, { [styles.noModules]: !modules.visible?.length })}>
+        <div
+          className={cx('flex-row', styles.itemContainer, styles.modules, { [styles.noModules]: !modules.visible?.length })}
+        >
           {!!modules.visible?.length && (
             <DatabaseListModules dark inCircle modules={modules.visible} />
           )}

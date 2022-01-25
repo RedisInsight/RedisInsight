@@ -41,7 +41,7 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
         {!!metrics.length && (
           <div className={styles.metricsContainer}>
             <h4 className={styles.mi_fieldName}>Database statistics</h4>
-            { metrics.map((overviewItem) => (
+            {metrics.map((overviewItem) => (
               <EuiFlexGroup
                 className={styles.moreInfoOverviewItem}
                 key={overviewItem.id}
@@ -51,26 +51,45 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
                 alignItems="center"
               >
                 {overviewItem.loading && (
-                  <EuiLoadingSpinner style={{ marginRight: '8px' }} size="m" />
-                )}
-                {!overviewItem.loading && overviewItem?.tooltip?.icon && (
-                  <EuiFlexItem className={styles.moreInfoOverviewIcon} grow={false}>
-                    <EuiIcon
-                      size="m"
-                      type={overviewItem.tooltip?.icon}
-                      className={styles.icon}
-                    />
-                  </EuiFlexItem>
-                )}
-                {overviewItem.loading ? (<span>... </span>)
-                  : (
-                    <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
-                      { overviewItem.value === undefined ? 'N/A' : overviewItem.tooltip.content }
+                  <>
+                    <EuiLoadingSpinner style={{ marginRight: '8px' }} size="m" />
+                    <span>... </span>
+                    <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
+                      {overviewItem.tooltip.title}
                     </EuiFlexItem>
-                  )}
-                <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
-                  { overviewItem.tooltip.title }
-                </EuiFlexItem>
+                  </>
+                )}
+                {!overviewItem.loading && (
+                  <>
+                    {overviewItem?.tooltip?.icon && (
+                      <EuiFlexItem className={styles.moreInfoOverviewIcon} grow={false}>
+                        <EuiIcon
+                          size="m"
+                          type={overviewItem.tooltip?.icon}
+                          className={styles.icon}
+                        />
+                      </EuiFlexItem>
+                    )}
+                  </>
+                )}
+                {
+                  overviewItem.value !== undefined
+                    ? (
+                      <>
+                        <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
+                          {overviewItem.tooltip.content}
+                        </EuiFlexItem>
+                        <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
+                          {overviewItem.tooltip.title}
+                        </EuiFlexItem>
+                      </>
+                    )
+                    : (
+                      <EuiFlexItem grow={false}>
+                        <i>{overviewItem.unavailableText}</i>
+                      </EuiFlexItem>
+                    )
+                }
               </EuiFlexGroup>
             ))}
           </div>
@@ -78,19 +97,19 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
         <div className={styles.modulesContainer}>
           <h4 className={styles.mi_fieldName}>Modules</h4>
           {
-              modules?.map(({ name = '', semanticVersion = '', version = '' }) => (
-                <div key={name} className={cx(styles.mi_moduleName)}>
-                  {`${truncateText(getModule(name)?.name ?? name, 50)} `}
-                  {!!(semanticVersion || version) && (
-                    <span className={styles.mi_version}>
-                      v.
-                      {' '}
-                      {semanticVersion || version}
-                    </span>
-                  )}
-                </div>
-              ))
-            }
+            modules?.map(({ name = '', semanticVersion = '', version = '' }) => (
+              <div key={name} className={cx(styles.mi_moduleName)}>
+                {`${truncateText(getModule(name)?.name ?? name, 50)} `}
+                {!!(semanticVersion || version) && (
+                  <span className={styles.mi_version}>
+                    v.
+                    {' '}
+                    {semanticVersion || version}
+                  </span>
+                )}
+              </div>
+            ))
+          }
           <p style={{ marginTop: '12px' }} className={styles.mi_smallText}>{parse(ModulesInfoText)}</p>
         </div>
       </div>

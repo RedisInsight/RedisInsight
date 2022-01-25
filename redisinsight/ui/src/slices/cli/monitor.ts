@@ -21,6 +21,7 @@ const monitorSlice = createSlice({
   initialState,
   reducers: {
     setMonitorInitialState: (state) => {
+      state.socket?.removeAllListeners()
       state.socket?.disconnect()
       return { ...initialState }
     },

@@ -8,6 +8,7 @@ import {
   monitorSelector,
   toggleRunMonitor,
   concatMonitorItems,
+  stopMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl } from 'uiSrc/utils'
 import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
@@ -56,11 +57,11 @@ const MonitorConfig = () => {
       dispatch(toggleRunMonitor())
     })
 
-    // Fix for RI-2166, but it's crushes app if start monitor and switch to another database
-    // // Catch disconnect
-    // newSocket.on(SocketEvent.Disconnect, () => {
-    //   if (isShowMonitor) dispatch(stopMonitor())
-    // })
+    // Catch disconnect
+    newSocket.on(SocketEvent.Disconnect, () => {
+      newSocket.removeAllListeners()
+      dispatch(stopMonitor())
+    })
 
     // Catch connect error
     newSocket.on(SocketEvent.ConnectionError, (error: Error) => {
@@ -71,7 +72,10 @@ const MonitorConfig = () => {
   }, [instanceId, isRunning])
 
   useEffect(() => {
-    !isRunning && socket?.disconnect()
+    if (!isRunning) {
+      socket?.removeAllListeners()
+      socket?.disconnect()
+    }
   }, [socket, isRunning, isShowMonitor, isMinimizedMonitor])
 
   return null

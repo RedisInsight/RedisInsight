@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
-import { monitorSelector, setSocket, toggleRunMonitor } from 'uiSrc/slices/cli/monitor'
+import { monitorSelector, setSocket, stopMonitor, toggleRunMonitor } from 'uiSrc/slices/cli/monitor'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
 import MonitorConfig from './MonitorConfig'
@@ -127,4 +127,22 @@ describe('MonitorConfig', () => {
     unmount()
   })
 
+  it('monitor should catch disconnect', () => {
+    const { unmount } = render(<MonitorConfig />)
+
+    const monitorSelectorMock = jest.fn().mockReturnValue({
+      isRunning: true,
+    })
+    monitorSelector.mockImplementation(monitorSelectorMock)
+
+    socket.socketClient.emit(SocketEvent.Disconnect)
+
+    const afterRenderActions = [
+      setSocket(socket),
+      stopMonitor()
+    ]
+    expect(store.getActions()).toEqual([...afterRenderActions])
+
+    unmount()
+  })
 })

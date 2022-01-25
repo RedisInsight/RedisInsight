@@ -4,10 +4,11 @@ import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workb
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { getBlockingCommands, getUnsupportedCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
+import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
+import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
 
 @Injectable()
 export class WorkbenchService {

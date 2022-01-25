@@ -8,7 +8,7 @@ type DependencyProposals = {
 }
 
 const getCommandMarkdown = (commandName = '', command: ICommand): string => {
-  const docUrl = getDocUrlForCommand(commandName, command?.group)
+  const docUrl = getDocUrlForCommand(commandName)
   const linkMore = ` [Read more](${docUrl})`
   const lines: string[] = [command?.summary + linkMore]
   if (command?.arguments?.length) {

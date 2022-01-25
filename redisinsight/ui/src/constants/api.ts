@@ -38,6 +38,7 @@ enum ApiEndpoints {
   CLI_UNSUPPORTED_COMMANDS = 'info/cli-unsupported-commands',
   SEND_COMMAND = 'send-command',
   SEND_CLUSTER_COMMAND = 'send-cluster-command',
+  COMMAND_EXECUTIONS = 'command-executions',
   INFO = 'info',
   SETTINGS = 'settings',
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
@@ -45,7 +46,8 @@ enum ApiEndpoints {
 
   REDIS_COMMANDS = 'commands',
   ENABLEMENT_AREA = 'static/workbench/enablement-area.json',
-  PLUGINS = 'plugins'
+  PLUGINS = 'plugins',
+  STATE = 'state',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

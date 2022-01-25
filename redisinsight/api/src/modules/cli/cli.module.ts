@@ -17,7 +17,10 @@ import { CliAnalyticsService } from './services/cli-analytics/cli-analytics.serv
     CliAnalyticsService,
     {
       provide: RedisToolService,
-      useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(AppTool.CLI),
+      useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(
+        AppTool.CLI,
+        { enableAutoConnection: false },
+      ),
       inject: [RedisToolFactory],
     },
   ],

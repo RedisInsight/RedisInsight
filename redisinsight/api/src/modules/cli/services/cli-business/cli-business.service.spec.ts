@@ -21,7 +21,7 @@ import {
 } from 'src/modules/cli/dto/cli.dto';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { ReplyError } from 'src/models';
-import { CliToolUnsupportedCommands } from 'src/utils/cli-helper';
+import { CliToolUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
 import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
 import { ClusterNodeNotFoundError, WrongDatabaseTypeError } from 'src/modules/cli/constants/errors';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';

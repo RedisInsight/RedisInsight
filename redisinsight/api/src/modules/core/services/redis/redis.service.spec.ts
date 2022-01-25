@@ -317,44 +317,31 @@ describe('RedisService', () => {
       service.getTLSConfig = jest.fn().mockResolvedValue(mockTlsConfigResult);
       const dto = convertEntityToDto(mockStandaloneDatabaseEntity);
       const {
-        host,
-        port,
-        password,
-        username,
+        host, port, password, username, db,
       } = dto;
 
-      const mockResult = {
-        host,
-        port,
-        username,
-        password,
-        tls: mockTlsConfigResult,
+      const expectedResult = {
+        host, port, username, password, db, tls: mockTlsConfigResult,
       };
 
       const result = await service.getRedisConnectionConfig(dto);
 
-      expect(JSON.stringify(result)).toEqual(JSON.stringify(mockResult));
+      expect(JSON.stringify(result)).toEqual(JSON.stringify(expectedResult));
     });
     it('should return without tls', async () => {
       const dto = convertEntityToDto(mockStandaloneDatabaseEntity);
       delete dto.tls;
       const {
-        host,
-        port,
-        password,
-        username,
+        host, port, password, username, db,
       } = dto;
 
-      const mockResult = {
-        host,
-        port,
-        username,
-        password,
+      const expectedResult = {
+        host, port, username, password, db,
       };
 
       const result = await service.getRedisConnectionConfig(dto);
 
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(expectedResult);
     });
   });
 

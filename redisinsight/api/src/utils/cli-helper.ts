@@ -5,18 +5,8 @@ import { CliParsingError, RedirectionParsingError } from 'src/modules/cli/consta
 import { ReplyError } from 'src/models';
 import { IRedirectionInfo } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
 
-const REDIS_CLI_CONFIG = config.get('redis_cli');
 const LOGGER_CONFIG = config.get('logger');
 const BLANK_LINE_REGEX = /^\s*\n/gm;
-
-export enum CliToolUnsupportedCommands {
-  Monitor = 'monitor',
-  Subscribe = 'subscribe',
-  PSubscribe = 'psubscribe',
-  Sync = 'sync',
-  PSync = 'psync',
-  ScriptDebug = 'script debug',
-}
 
 export enum CliToolBlockingCommands {
   BLPop = 'blpop',
@@ -165,11 +155,6 @@ export const splitCliCommandLine = (line: string): string[] => {
   }
   return args;
 };
-
-export const getUnsupportedCommands = (): string[] => [
-  ...Object.values(CliToolUnsupportedCommands),
-  ...REDIS_CLI_CONFIG.unsupportedCommands,
-];
 
 export const getBlockingCommands = (): string[] => Object.values(CliToolBlockingCommands);
 

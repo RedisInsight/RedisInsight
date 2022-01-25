@@ -2,18 +2,20 @@ import { EuiTextColor } from '@elastic/eui'
 import React from 'react'
 
 export const ClearCommand = 'clear'
+export const SelectCommand = 'select'
 
 export enum CliOutputFormatterType {
   Text = 'TEXT',
   Raw = 'RAW',
 }
 
-export const InitOutputText = (host: string = '', port: number = 0) => [
+export const InitOutputText = (host: string = '', port: number = 0, dbIndex: number = 0) => [
   'Connecting...',
   '\n\n',
   'Pinging Redis server on ',
   <EuiTextColor color="default" key={Math.random()}>
     {`${host}:${port}`}
+    {dbIndex > 0 && `[${dbIndex}]`}
   </EuiTextColor>,
 ]
 
@@ -33,5 +35,6 @@ export const cliTexts = {
   WORKBENCH_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
     commandLine + unsupportedCommandTextWorkbench + commands,
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
-  MONITOR_COMMAND: 'Use the "Monitor" tool to see all the requests processed by the server.'
+  MONITOR_COMMAND: 'Use the "Monitor" tool to see all the requests processed by the server.',
+  CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.'
 }

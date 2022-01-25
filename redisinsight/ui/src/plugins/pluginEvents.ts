@@ -15,33 +15,49 @@ export enum PluginEvents {
   loaded = 'loaded',
   error = 'error',
   heightChanged = 'heightChanged',
-  setHeaderText = 'setHeaderText'
+  setHeaderText = 'setHeaderText',
+  executeRedisCommand = 'executeRedisCommand',
+  getState = 'getState',
+  setState = 'setState'
 }
 
 export const listenPluginsEvents = () => {
   globalThis.onmessage = (e: MessageEvent) => {
     switch (e.data?.event) {
-      case 'loaded': {
-        pluginApi.sendEvent(e.data.iframeId, 'loaded')
+      case PluginEvents.loaded: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.loaded)
         break
       }
-      case 'error': {
-        pluginApi.sendEvent(e.data.iframeId, 'error', e.data.error)
+      case PluginEvents.error: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.error, e.data.error)
         break
       }
-      case 'heightChanged': {
-        pluginApi.sendEvent(e.data.iframeId, 'heightChanged', e.data.height)
+      case PluginEvents.heightChanged: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.heightChanged, e.data.height)
         break
       }
-      case 'executeRedisCommand': {
-        // pluginApi.sendEvent(e.data.iframeId, 'executeRedisCommand', {
-        //   command: e.data.command,
-        //   requestId: e.data.requestId
-        // })
+      case PluginEvents.executeRedisCommand: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.executeRedisCommand, {
+          command: e.data.command,
+          requestId: e.data.requestId
+        })
         break
       }
-      case 'setHeaderText': {
-        pluginApi.sendEvent(e.data.iframeId, 'setHeaderText', e.data.text)
+      case PluginEvents.setHeaderText: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.setHeaderText, e.data.text)
+        break
+      }
+      case PluginEvents.getState: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.getState, {
+          requestId: e.data.requestId
+        })
+        break
+      }
+      case PluginEvents.setState: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.setState, {
+          requestId: e.data.requestId,
+          state: e.data.state
+        })
         break
       }
       case 'click': {

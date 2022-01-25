@@ -1,4 +1,4 @@
-import { describe, it, deps, validateApiCall, before, expect } from '../deps';
+import { describe, it, deps, validateApiCall, before, expect, requirements } from '../deps';
 import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
@@ -56,4 +56,25 @@ describe('GET /instance/:instanceId/overview', () => {
       },
     },
   ].map(mainCheckFn);
+
+  describe('Enterprise', () => {
+    requirements('rte.re');
+
+    [
+      {
+        name: 'Should get database overview except CPU',
+        responseSchema,
+        checkFn: ({body}) => {
+          expect(body.version).to.eql(rte.env.version);
+          expect(body.cpuUsagePercentage).to.eql(undefined)
+          expect(body.totalKeys).to.not.eql(undefined)
+          expect(body.connectedClients).to.not.eql(undefined)
+          expect(body.opsPerSecond).to.not.eql(undefined)
+          expect(body.networkInKbps).to.not.eql(undefined)
+          expect(body.networkOutKbps).to.not.eql(undefined)
+          expect(body.usedMemory).to.not.eql(undefined)
+        }
+      },
+    ].map(mainCheckFn);
+  })
 });

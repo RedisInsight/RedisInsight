@@ -4,6 +4,7 @@ import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instanc
 import { SettingsEntity } from 'src/modules/core/models/settings.entity';
 import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
 import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
+import { PluginStateEntity } from "src/modules/workbench/entities/plugin-state.entity";
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
@@ -13,6 +14,7 @@ export const repositories = {
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
   AGREEMENTS: 'AgreementsEntity',
   COMMAND_EXECUTION: 'CommandExecutionEntity',
+  PLUGIN_STATE: 'PluginStateEntity',
   SETTINGS: 'SettingsEntity'
 }
 
@@ -120,6 +122,25 @@ export const generateNCommandExecutions = async (
   }
 
   return result;
+}
+
+export const generatePluginState = async (
+  partial: Record<string, any>,
+  truncate: boolean = false,
+) => {
+  const rep = await getRepository(repositories.PLUGIN_STATE);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  return rep.save({
+    id: uuidv4(),
+    state: encryptData(JSON.stringify('some state')),
+    encryption: constants.TEST_ENCRYPTION_STRATEGY,
+    createdAt: new Date(),
+    ...partial,
+  })
 }
 
 const createCACertificate = async (certificate) => {
@@ -290,6 +311,18 @@ export const applyEulaAgreement = async () => {
   await rep.save(agreements);
 }
 
+export const setAgreements = async (agreements = {}) => {
+  const defaultAgreements = {eula: true, encryption: true};
+
+  const rep = await getRepository(repositories.AGREEMENTS);
+  const entity: any = await rep.findOne();
+
+  entity.version = '1.0.0';
+  entity.data = JSON.stringify({ ...defaultAgreements, ...agreements });
+
+  await rep.save(entity);
+}
+
 const resetAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
   const agreements: any = await rep.findOne();
@@ -299,7 +332,7 @@ const resetAgreements = async () => {
   await rep.save(agreements);
 }
 
-const initAgreements = async () => {
+export const initAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
   const agreements: any = await rep.findOne();
   agreements.version = constants.TEST_AGREEMENTS_VERSION;

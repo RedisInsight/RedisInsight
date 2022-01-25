@@ -1,14 +1,13 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import {
-  checkBlockingCommand,
   checkUnsupportedCommand,
   checkUnsupportedModuleCommand,
   cliParseTextResponse,
   getCommandRepeat,
   isRepeatCountCorrect
 } from 'uiSrc/utils'
-import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { cliTexts, SelectCommand } from 'uiSrc/constants/cliOutput'
 import { RootState } from 'uiSrc/slices/store'
 import { CommandMonitor } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
@@ -20,13 +19,9 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import ModuleNotLoaded from 'uiSrc/pages/workbench/components/module-not-loaded'
 
 const CommonErrorResponse = (command = '') => {
-  const { blockingCommands } = useSelector(cliSettingsSelector)
-  // Due to requirements, the monitor command should not appear in the list of supported commands
-  // That is why we exclude it here
-  const unsupportedCommands = useSelector(
-    (state) => cliUnsupportedCommandsSelector(state as RootState, [CommandMonitor.toLowerCase()])
-  )
+  const { unsupportedCommands: cliUnsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { modules } = useSelector(connectedInstanceSelector)
+  const unsupportedCommands = [SelectCommand.toLowerCase(), ...cliUnsupportedCommands, ...blockingCommands]
   const [commandLine, countRepeat] = getCommandRepeat(command)
 
   // Flow if monitor command was executed
@@ -39,7 +34,6 @@ const CommonErrorResponse = (command = '') => {
   }
 
   const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
-    || checkBlockingCommand(blockingCommands, commandLine)
 
   if (!isRepeatCountCorrect(countRepeat)) {
     return cliParseTextResponse(

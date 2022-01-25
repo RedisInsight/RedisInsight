@@ -1,16 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConnectionOptions, SecureContextOptions } from 'tls';
 import * as Redis from 'ioredis';
-import { isEmpty } from 'lodash';
 import IORedis, { RedisOptions } from 'ioredis';
-import { v4 as uuidv4 } from 'uuid';
 import {
-  find,
-  findIndex,
-  isNil,
-  omitBy,
-  remove,
+  find, findIndex, isEmpty, isNil, omitBy, remove,
 } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import { AppTool } from 'src/models';
 import apiConfig from 'src/utils/config';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
@@ -68,11 +63,6 @@ export class RedisService {
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<IORedis.Redis> {
     const config = await this.getRedisConnectionConfig(options);
-
-    // Connect to particular logical database for browser clients only
-    if ([AppTool.Browser, AppTool.Common].includes(appTool)) {
-      config.db = options.db;
-    }
 
     return new Promise((resolve, reject) => {
       try {
@@ -141,21 +131,17 @@ export class RedisService {
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<IORedis.Redis> {
     const {
-      username, password, sentinelMaster, tls,
+      username, password, sentinelMaster, tls, db,
     } = options;
     const config: RedisOptions = {
       sentinels,
       name: sentinelMaster.name,
       sentinelUsername: username,
       sentinelPassword: password,
+      db,
       username: sentinelMaster?.username,
       password: sentinelMaster?.password,
     };
-
-    // Connect to particular logical database for browser clients only
-    if ([AppTool.Browser, AppTool.Common].includes(appTool)) {
-      config.db = options.db;
-    }
 
     if (tls) {
       const tlsConfig = await this.getTLSConfig(tls);
@@ -293,10 +279,10 @@ export class RedisService {
     options: ConnectionOptionsDto,
   ): Promise<IORedis.RedisOptions> {
     const {
-      host, port, password, username, tls,
+      host, port, password, username, tls, db,
     } = options;
     const config: IORedis.RedisOptions = {
-      host, port, username, password,
+      host, port, username, password, db,
     };
     if (tls) {
       config.tls = await this.getTLSConfig(tls);

@@ -19,6 +19,7 @@ import {
   CommandExecutionStatus,
 } from 'src/modules/cli/dto/cli.dto';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
+import { IRedisToolOptions } from './redis-tool-options';
 
 export interface ICliExecResultFromNode {
   host: string;
@@ -36,8 +37,9 @@ export class RedisToolService extends RedisConsumerAbstractService {
     private appTool: AppTool,
     protected redisService: RedisService,
     protected instancesBusinessService: InstancesBusinessService,
+    options: IRedisToolOptions = {},
   ) {
-    super(appTool, redisService, instancesBusinessService);
+    super(appTool, redisService, instancesBusinessService, options);
     this.logger = new Logger(`${appTool}ToolService`);
   }
 

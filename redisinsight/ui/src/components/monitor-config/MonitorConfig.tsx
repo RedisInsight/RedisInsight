@@ -8,9 +8,10 @@ import {
   monitorSelector,
   toggleRunMonitor,
   concatMonitorItems,
+  stopMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl } from 'uiSrc/utils'
-import { MonitorEvent } from 'uiSrc/constants'
+import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { IOnDatePayload } from 'apiSrc/modules/monitor/helpers/client-monitor-observer'
@@ -57,8 +58,13 @@ const MonitorConfig = () => {
       dispatch(toggleRunMonitor())
     })
 
+    // Catch disconnect
+    newSocket.on(SocketEvent.Disconnect, () => {
+      dispatch(stopMonitor())
+    })
+
     // Catch connect error
-    newSocket.on(MonitorEvent.ConnectionError, (error: Error) => {
+    newSocket.on(SocketEvent.ConnectionError, (error: Error) => {
       payloads.push({ isError: true, time: `${Date.now()}`, message: `${error?.name}: ${error?.message}` })
       setNewItems(payloads, () => { payloads.length = 0 })
       dispatch(toggleRunMonitor())

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockStandaloneDatabaseEntity, mockWhitelistCommandsResponse } from 'src/__mocks__';
+import { v4 as uuidv4 } from 'uuid';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
@@ -10,6 +11,11 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
+import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { PluginState } from 'src/modules/workbench/models/plugin-state';
+import config from 'src/utils/config';
+
+const PLUGINS_CONFIG = config.get('plugins');
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -42,14 +48,34 @@ const mockPluginCommandExecution = new PluginCommandExecution({
   result: mockCommandExecutionResults,
 });
 
+const mockVisualizationId = 'pluginName_visualizationName';
+const mockCommandExecutionId = uuidv4();
+const mockState = {
+  some: 'object',
+};
+
+const mockPluginState: PluginState = new PluginState({
+  visualizationId: mockVisualizationId,
+  commandExecutionId: mockCommandExecutionId,
+  state: mockState,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
 const mockPluginCommandsWhitelistProvider = () => ({
   getWhitelistCommands: jest.fn(),
+});
+
+const mockPluginStateProvider = () => ({
+  upsert: jest.fn(),
+  getOne: jest.fn(),
 });
 
 describe('PluginsService', () => {
   let service: PluginsService;
   let workbenchCommandsExecutor;
   let pluginsCommandsWhitelistProvider;
+  let pluginStateProvider;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -65,12 +91,17 @@ describe('PluginsService', () => {
           provide: PluginCommandsWhitelistProvider,
           useFactory: mockPluginCommandsWhitelistProvider,
         },
+        {
+          provide: PluginStateProvider,
+          useFactory: mockPluginStateProvider,
+        },
       ],
     }).compile();
 
     service = module.get<PluginsService>(PluginsService);
     workbenchCommandsExecutor = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
     pluginsCommandsWhitelistProvider = module.get<PluginCommandsWhitelistProvider>(PluginCommandsWhitelistProvider);
+    pluginStateProvider = module.get<PluginStateProvider>(PluginStateProvider);
   });
 
   describe('sendCommand', () => {
@@ -127,6 +158,57 @@ describe('PluginsService', () => {
       const result = await service.getWhitelistCommands(mockClientOptions.instanceId);
 
       expect(result).toEqual(mockWhitelistCommandsResponse);
+    });
+  });
+  describe('saveState', () => {
+    it('should successfully save state', async () => {
+      pluginStateProvider.upsert.mockResolvedValueOnce(mockPluginState);
+
+      const dto = {
+        state: mockState,
+      };
+      const result = await service.saveState(mockVisualizationId, mockCommandExecutionId, dto);
+
+      expect(result).toEqual(undefined);
+    });
+    it('should throw an error when state too large', async () => {
+      pluginStateProvider.upsert.mockResolvedValueOnce(mockPluginState);
+
+      try {
+        const dto = {
+          state: Buffer.alloc(PLUGINS_CONFIG.stateMaxSize + 1, 0),
+        };
+        await service.saveState(mockVisualizationId, mockCommandExecutionId, dto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual(ERROR_MESSAGES.PLUGIN_STATE_MAX_SIZE(PLUGINS_CONFIG.stateMaxSize));
+      }
+      expect(pluginStateProvider.upsert).not.toHaveBeenCalled();
+    });
+  });
+  describe('getState', () => {
+    it('should successfully save state', async () => {
+      pluginStateProvider.getOne.mockResolvedValueOnce(mockPluginState);
+
+      const result = await service.getState(mockVisualizationId, mockCommandExecutionId);
+
+      expect(result).toEqual(mockPluginState);
+    });
+    it('should throw an error when state too large', async () => {
+      pluginStateProvider.upsert.mockResolvedValueOnce(mockPluginState);
+
+      try {
+        const dto = {
+          state: Buffer.alloc(PLUGINS_CONFIG.stateMaxSize + 1, 0),
+        };
+        await service.saveState(mockVisualizationId, mockCommandExecutionId, dto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual(ERROR_MESSAGES.PLUGIN_STATE_MAX_SIZE(PLUGINS_CONFIG.stateMaxSize));
+      }
+      expect(pluginStateProvider.upsert).not.toHaveBeenCalled();
     });
   });
 });

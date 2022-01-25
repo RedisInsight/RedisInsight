@@ -248,7 +248,7 @@ const QueryCardHeader = (props: Props) => {
             />
           </div>
         </EuiFlexItem>
-        <EuiFlexItem className={cx(styles.time)}>
+        <EuiFlexItem className={cx(styles.time)} data-testid="command-execution-date-time">
           {!!createdAt && (
             <EuiTextColor className={styles.timeText} component="div">
               {getFormatTime()}

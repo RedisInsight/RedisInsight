@@ -48,16 +48,20 @@ const CliBodyWrapper = () => {
     isSearching,
     matchedCommand,
     cliClientUuid,
+    loading,
   } = useSelector(cliSettingsSelector)
-  const { host, port, connectionType } = useSelector(connectedInstanceSelector)
+  const { host, port, connectionType, db } = useSelector(connectedInstanceSelector)
+  const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
-    if (isEmpty(data) || error) {
-      dispatch(concatToOutput(InitOutputText(host, port)))
-    }
-
     !cliClientUuid && dispatch(createCliClientAction(onSuccess, onFail))
   }, [])
+
+  useEffect(() => {
+    if (loading) {
+      dispatch(concatToOutput(InitOutputText(host, port, db)))
+    }
+  }, [loading])
 
   useEffect(() => {
     if (!isEnteringCommand) {
@@ -95,7 +99,7 @@ const CliBodyWrapper = () => {
   const handleSubmit = () => {
     const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
-    dispatch(concatToOutput(cliCommandOutput(command)))
+    dispatch(concatToOutput(cliCommandOutput(command, currentDbIndex)))
 
     if (!isRepeatCountCorrect(countRepeat)) {
       dispatch(processUnrepeatableNumber(commandLine, resetCommand))

@@ -14,6 +14,7 @@ export * from './keyboardShortcuts'
 export * from './pages'
 export * from './workbenchResults'
 export * from './monitorEvents'
+export * from './socketEvents'
 export * from './mocks/mock-redis-commands'
 export * from './mocks/mock-enablement-area'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

@@ -49,6 +49,10 @@ const monitorSlice = createSlice({
       state.isRunning = !state.isRunning
     },
 
+    stopMonitor: (state) => {
+      state.isRunning = false
+    },
+
     concatMonitorItems: (state, { payload }: { payload: IMonitorDataPayload[] }) => {
       let newItems = [...state.items, ...payload]
 
@@ -73,6 +77,7 @@ export const {
   toggleHideMonitor,
   setSocket,
   toggleRunMonitor,
+  stopMonitor,
   concatMonitorItems,
   resetMonitorItems,
 } = monitorSlice.actions

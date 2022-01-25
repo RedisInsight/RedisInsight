@@ -18,6 +18,21 @@ describe('CliInput', () => {
     expect(render(<CliInput {...instance(mockedProps)} />)).toBeTruthy()
   })
 
+  it('should render db index if it is greater than 0', () => {
+    const { queryByTestId } = render(<CliInput {...instance(mockedProps)} dbIndex={1} />)
+    const dbIndexEl = queryByTestId('cli-db-index')
+
+    expect(dbIndexEl).toBeInTheDocument()
+    expect(dbIndexEl).toHaveTextContent('[1]')
+  })
+
+  it('should not render db index if it is 0', () => {
+    const { queryByTestId } = render(<CliInput {...instance(mockedProps)} dbIndex={0} />)
+    const dbIndexEl = queryByTestId('cli-db-index')
+
+    expect(dbIndexEl).not.toBeInTheDocument()
+  })
+
   // It's not possible to simulate events on contenteditable with testing-react-library,
   // or any testing library that uses js - dom, because of a limitation on js - dom itself.
   // https://github.com/testing-library/dom-testing-library/pull/235

@@ -159,6 +159,7 @@ const QueryCard = (props: Props) => {
                           result={result}
                           query={command}
                           setSummaryText={setSummaryText}
+                          commandId={id}
                         />
                       ) : (
                         <div className={styles.loading}>

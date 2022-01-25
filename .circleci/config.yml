@@ -102,7 +102,7 @@ aliases:
       branches:
         only:
           - main
-          - feature/RI-1227_monitor
+          - /^build\/.*/
   stage-filter: &stageFilter
     filters:
       branches:
@@ -307,6 +307,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose -f tests/e2e/docker-compose.yml -f tests/e2e/docker.docker-compose.yml up --abort-on-container-exit
                 no_output_timeout: 5m
       - when:
@@ -316,6 +317,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose -f tests/e2e/docker-compose.yml up --abort-on-container-exit
                 no_output_timeout: 5m
       - when:
@@ -447,7 +449,7 @@ jobs:
             - release/*-linux.yml
   macosx:
     macos:
-      xcode: 11.3.0
+      xcode: 13.2.1
     parameters:
       env:
         description: Build environment (stage || prod)

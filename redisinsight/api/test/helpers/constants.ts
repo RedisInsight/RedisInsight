@@ -116,6 +116,9 @@ export const constants = {
   TEST_LIST_ELEMENT_2: TEST_RUN_ID + '_list_el_2',
   TEST_LIST_EXPIRE_1: KEY_TTL,
   TEST_LIST_KEY_2: TEST_RUN_ID + '_list_2' + CLUSTER_HASH_SLOT,
+  TEST_LIST_HUGE_KEY: 'big list 1M',
+  TEST_LIST_HUGE_INDEX: 678900,
+  TEST_LIST_HUGE_ELEMENT: ' 321099',
 
   // Redis Set
   TEST_SET_TYPE: 'set',
@@ -124,6 +127,8 @@ export const constants = {
   TEST_SET_MEMBER_2: TEST_RUN_ID + '_set_mem_2',
   TEST_SET_EXPIRE_1: KEY_TTL,
   TEST_SET_KEY_2: TEST_RUN_ID + '_set_2' + CLUSTER_HASH_SLOT,
+  TEST_SET_HUGE_KEY: 'big set 1M',
+  TEST_SET_HUGE_ELEMENT: ' 356897',
 
   // Redis ZSet
   TEST_ZSET_TYPE: 'zset',
@@ -135,6 +140,9 @@ export const constants = {
   TEST_ZSET_EXPIRE_1: KEY_TTL,
   TEST_ZSET_KEY_2: TEST_RUN_ID + '_zset_2' + CLUSTER_HASH_SLOT,
   TEST_ZSET_KEY_3: TEST_RUN_ID + '_zset_3' + CLUSTER_HASH_SLOT,
+  TEST_ZSET_HUGE_KEY: 'big zset 1M',
+  TEST_ZSET_HUGE_MEMBER: ' 356897',
+  TEST_ZSET_HUGE_SCORE: '356897',
 
   // Redis Hash
   TEST_HASH_TYPE: 'hash',

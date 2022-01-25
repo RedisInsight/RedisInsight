@@ -1,7 +1,3 @@
-/*
- This function is rendering as clean js
- Do not use TypeScript here
- */
 /* eslint-disable sonarjs/no-nested-template-literals */
 /* eslint-disable no-restricted-globals */
 // @ts-nocheck
@@ -118,7 +114,7 @@ export const importPluginScript = () => (config) => {
           return
         }
         const actions = callbacks[e.data.requestId]
-        const action = actions?.[e.data.actionType]
+        const action = actions[e.data.actionType]
         if (typeof action === 'function') {
           action(e.data.data)
         }

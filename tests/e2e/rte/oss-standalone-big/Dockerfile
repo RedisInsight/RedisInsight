@@ -1,7 +1,7 @@
 FROM redislabs/redismod
 
-ARG TEST_BIG_DB_DUMP
-ADD $TEST_BIG_DB_DUMP /data/dump.tar.gz
+ARG TEST_DB_DUMP
+ADD $TEST_DB_DUMP /data/
 
 ADD entrypoint.sh .
 RUN chmod +x entrypoint.sh

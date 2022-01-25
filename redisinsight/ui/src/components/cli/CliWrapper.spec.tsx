@@ -4,6 +4,11 @@ import { processCliClient, setCliEnteringCommand } from 'uiSrc/slices/cli/cli-se
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import CliWrapper from './CliWrapper'
 
+jest.mock('uiSrc/slices/cli/cli-output', () => ({
+  ...jest.requireActual('uiSrc/slices/cli/cli-output'),
+  concatToOutput: () => jest.fn(),
+}))
+
 const redisCommandsPath = 'uiSrc/slices/app/redis-commands'
 
 let store: typeof mockedStore

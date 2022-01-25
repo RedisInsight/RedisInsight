@@ -1,7 +1,13 @@
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
-import { setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
+import { concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
+import {
+  cliTexts,
+  ConnectionSuccessOutputText,
+  InitOutputText,
+  mockInitOutputText,
+} from 'uiSrc/constants/cliOutput'
 import reducer, {
   initialState,
   toggleCli,
@@ -26,6 +32,11 @@ import reducer, {
   resetCliClientUuid,
   resetCliHelperSettings,
 } from '../../cli/cli-settings'
+
+jest.mock('uiSrc/constants/cliOutput', () => ({
+  ...jest.requireActual('uiSrc/constants/cliOutput'),
+  InitOutputText: jest.fn().mockReturnValue([]),
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -443,7 +454,9 @@ describe('cliSettings slice', () => {
       // Assert
       const expectedActions = [
         processCliClient(),
+        concatToOutput(InitOutputText()),
         processCliClientSuccess(responsePayload.data?.uuid),
+        concatToOutput(ConnectionSuccessOutputText),
         setCliDbIndex(0)
       ]
       expect(store.getActions()).toEqual(expectedActions)
@@ -467,7 +480,9 @@ describe('cliSettings slice', () => {
       // Assert
       const expectedActions = [
         processCliClient(),
+        concatToOutput(InitOutputText()),
         processCliClientFailure(responsePayload.response.data.message),
+        concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage))
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

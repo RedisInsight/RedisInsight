@@ -1,10 +1,9 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
 import {
   MyRedisDatabasePage,
   BrowserPage,
-  UserAgreementPage,
   CliPage,
-  AddRedisDatabasePage,
   DatabaseOverviewPage
 } from '../../../pageObjects';
 import {
@@ -15,8 +14,6 @@ import {
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
 const databaseOverviewPage = new DatabaseOverviewPage();
 
@@ -25,26 +22,18 @@ const fiveSecondsTimeout = 5000;
 fixture `Database overview`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async(t) => {
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
-        //Delete all databases
-        await myRedisDatabasePage.deleteAllDatabases();
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
     let firstDatabaseModules = [];
     let secondDatabaseModules = [];
-    //Connect to DB and remember modules
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    //Remember modules
     let countOfModules = await browserPage.modulesButton.count;
     for(let i = 0; i < countOfModules; i++) {
         firstDatabaseModules.push(await browserPage.modulesButton.nth(i).getAttribute('data-testid'));
@@ -74,8 +63,6 @@ test('Verify that user can see the list of Modules updated each time when he con
 });
 test('Verify that when user adds or deletes a new key, info in DB header is updated in 5 seconds', async t => {
     const keyName = 'keyName123';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Remember the total keys number
     const totalKeysBeforeAdd = await browserPage.overviewTotalKeys.innerText;
     //Add new key
@@ -94,8 +81,6 @@ test('Verify that when user adds or deletes a new key, info in DB header is upda
     await t.expect(totalKeysAftreDelete).eql((Number(totalKeysAftreAdd) - 1).toString(), 'Info in DB header after DELETE');
 });
 test('Verify that user can see total number of keys rounded in format 100, 1K, 1M, 1B in DB header in Browser page', async t => {
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add 100 keys
     await cliPage.addKeysFromCli('MSET', 100);
     //Wait 5 seconds
@@ -121,8 +106,6 @@ test('Verify that user can see total number of keys rounded in format 100, 1K, 1
     await t.expect(totalKeys).eql('1 M', 'Info in DB header after ADD 1M keys');
 });
 test('Verify that user can see total memory rounded in format B, KB, MB, GB, TB in DB header in Browser page', async t => {
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add new keys
     await cliPage.addKeysFromCli('MSET', 100);
     //Verify total memory
@@ -130,8 +113,6 @@ test('Verify that user can see total memory rounded in format B, KB, MB, GB, TB 
     await t.expect(browserPage.overviewTotalMemory.textContent).contains('MB', 'Total memory value is MB');
 });
 test('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     const cpuBeforeEdit = await browserPage.overviewCpu.textContent;
     const commandsSecBeforeEdit = await browserPage.overviewCommandsSec.textContent;
     //Verify that additional information in Overview: Connected Clients, Commands/Sec, CPU (%) is displayed

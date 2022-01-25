@@ -1,39 +1,25 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage,
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { BrowserPage, CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
 const common = new Common();
 
 fixture `Cases with large data`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see relevant information about key size', async t => {
     const keyName = 'HashKey-Lorem123';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new key with a lot of members
@@ -51,7 +37,6 @@ test('Verify that user can see relevant information about key size', async t => 
 });
 test('Verify that user can see relevant information about key length', async t => {
     const keyName = 'HashKey-Lorem123';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new key with a lot of members

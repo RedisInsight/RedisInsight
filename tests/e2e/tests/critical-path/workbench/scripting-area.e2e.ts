@@ -1,19 +1,8 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    AddRedisDatabasePage,
-    WorkbenchPage,
-    CliPage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
 
@@ -23,14 +12,15 @@ fixture `Scripting area at Workbench`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
+    })
+    .afterEach(async t => {
+        await t.switchToMainWindow();
+        //Drop index, documents and database
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can run any script from CLI in Workbench and see the results', async t => {
     const commandForSend = 'info';
@@ -63,8 +53,8 @@ test.skip('Verify that user when he have more than 10 results can request to vie
         'HMSET product:11 name "Apple Juice"',
         'HMSET product:12 name "Apple Juice"'
     ];
-    const commandToCreateSchema = 'FT.CREATE products ON HASH PREFIX 1 product: SCHEMA name TEXT';
-    const searchCommand = 'FT.SEARCH products * LIMIT 0 20';
+    const commandToCreateSchema = `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`;
+    const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new keys for search
@@ -84,74 +74,56 @@ test.skip('Verify that user when he have more than 10 results can request to vie
     await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonPrevious).exists)
         .ok('Pagination previous button exists');
     await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonNext).exists)
-        .ok('Pagination next button exists');
-    //Drop index and documents
-    await t.switchToMainWindow();
-    await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
+        .ok('Pagination next button exists'); 
 });
 //skipped due the inaccessibility of the iframe
-test.skip
-    .after(async t => {
-        //Drop index and documents
-        await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
-    })
-    ('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
-        const commandsForSend = [
-            'FT.CREATE products ON HASH PREFIX 1 product: SCHEMA name TEXT',
-            'HMSET product:1 name "Apple Juice" ',
-            'HMSET product:2 name "Apple Juice"'
-        ];
-        const searchCommand = 'FT.SEARCH products * LIMIT 0 20';
-        //Send commands
-        await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
-        //Send search command
-        await workbenchPage.sendCommandInWorkbench(searchCommand);
-        //Check that result is displayed in Table view
-        await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
-        //Select Text view type
-        await t.switchToMainWindow();
-        await workbenchPage.selectViewTypeText();
-        //Check that result is displayed in Text view
-        await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
-    });
-test
-    .after(async t => {
-        //Drop index and documents
-        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-    })
-    ('Verify that user can run one command in multiple lines in Workbench page', async t => {
-        const multipleLinesCommand = [
-            `FT.CREATE ${indexName}`,
-            'ON HASH PREFIX 1 product:',
-            'SCHEMA price NUMERIC SORTABLE'
-        ];
-        //Send command in multiple lines
-        await workbenchPage.sendCommandInWorkbench(multipleLinesCommand.join('\n\t'), 0.5);
-        //Check the result
-        const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
-        for(const commandPart of multipleLinesCommand) {
-            await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');
-        }
-    });
-test
-    .after(async t => {
-        //Drop index and documents
-        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-    })
-    ('Verify that user can use one indent to indicate command in several lines in Workbench page', async t => {
-        const multipleLinesCommand = [
-            `FT.CREATE ${indexName}`,
-            'ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE'
-        ];
-        //Send command in multiple lines
-        await t.typeText(workbenchPage.queryInput, multipleLinesCommand[0]);
-        await t.pressKey('enter tab');
-        await t.typeText(workbenchPage.queryInput, multipleLinesCommand[1]);
-        await t.click(workbenchPage.submitCommandButton);
-        //Check the result
-        const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
-        for(const commandPart of multipleLinesCommand) {
-            await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');
-        }
-    });
+test.skip('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
+    const commandsForSend = [
+        `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
+        'HMSET product:1 name "Apple Juice" ',
+        'HMSET product:2 name "Apple Juice"'
+    ];
+    const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
+    //Send commands
+    await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
+    //Send search command
+    await workbenchPage.sendCommandInWorkbench(searchCommand);
+    //Check that result is displayed in Table view
+    await t.switchToIframe(workbenchPage.iframe);
+    await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
+    //Select Text view type
+    await t.switchToMainWindow();
+    await workbenchPage.selectViewTypeText();
+    //Check that result is displayed in Text view
+    await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
+});
+test('Verify that user can run one command in multiple lines in Workbench page', async t => {
+    const multipleLinesCommand = [
+        `FT.CREATE ${indexName}`,
+        'ON HASH PREFIX 1 product:',
+        'SCHEMA price NUMERIC SORTABLE'
+    ];
+    //Send command in multiple lines
+    await workbenchPage.sendCommandInWorkbench(multipleLinesCommand.join('\n\t'), 0.5);
+    //Check the result
+    const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
+    for(const commandPart of multipleLinesCommand) {
+        await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');
+    }
+});
+test('Verify that user can use one indent to indicate command in several lines in Workbench page', async t => {
+    const multipleLinesCommand = [
+        `FT.CREATE ${indexName}`,
+        'ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE'
+    ];
+    //Send command in multiple lines
+    await t.typeText(workbenchPage.queryInput, multipleLinesCommand[0]);
+    await t.pressKey('enter tab');
+    await t.typeText(workbenchPage.queryInput, multipleLinesCommand[1]);
+    await t.click(workbenchPage.submitCommandButton);
+    //Check the result
+    const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
+    for(const commandPart of multipleLinesCommand) {
+        await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');
+    }
+});

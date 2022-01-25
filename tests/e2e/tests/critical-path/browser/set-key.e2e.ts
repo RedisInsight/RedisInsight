@@ -1,37 +1,25 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+
+const keyName = 'Set1testKeyForAddMember';
+const keyTTL = '2147476121';
+const keyMember = '1111setMember11111';
 
 fixture `Set Key fields verification`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    const keyName = 'Set1testKeyForAddMember';
-    const keyTTL = '2147476121';
-    const keyMember = '1111setMember11111';
 test('Verify that user can search by part member name with pattern * in Set', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await browserPage.addSetKey(keyName, keyTTL, '1111');
     //Add member to the Set key
     await browserPage.addMemberToSet(keyMember);
@@ -52,7 +40,6 @@ test('Verify that user can search by part member name with pattern * in Set', as
     await t.expect(result).eql(keyMember, 'The set member');
 });
 test('Verify that user can search by full member name in Set', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await browserPage.addSetKey(keyName, keyTTL, '1111');
     //Add member to the Set key
     await browserPage.addMemberToSet(keyMember);

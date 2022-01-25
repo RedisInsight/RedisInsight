@@ -1,14 +1,9 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { MyRedisDatabasePage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 
 const indexName =  'products';
@@ -17,18 +12,14 @@ fixture `Default scripts area at Workbench`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async t => {
-        //Drop index and documents
-        await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
+    .afterEach(async () => {
+        //Drop index, documents and database
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {

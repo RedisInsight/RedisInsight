@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { CliPage } from '../../../pageObjects';
 import {
@@ -13,15 +13,18 @@ const COMMAND_GROUP_JSON = 'JSON';
 const COMMAND_GROUP_SEARCH = 'Search';
 const COMMAND_GROUP_HyperLogLog = 'HyperLogLog';
 
+const getPageUrl = ClientFunction(() => window.location.href);
+
 fixture `CLI Command helper`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-
-const getPageUrl = ClientFunction(() => window.location.href);
-
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
     const commandForCheck = 'JSON.SET';
     //Open Command Helper
@@ -37,6 +40,7 @@ test('Verify that user can see in Command helper and click on new group "JSON", 
     await t.expect(getPageUrl()).contains('/#jsonset');
     //Check that command info is displayed on the page
     await t.expect(cliPage.cliReadMoreJSONCommandDocumentation().textContent).contains('JSON.SET');
+    await t.switchToParentWindow();
 });
 test('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
     const commandForCheck = 'FT.EXPLAIN';
@@ -53,6 +57,7 @@ test('Verify that user can see in Command helper and click on new group "Search"
     await t.expect(getPageUrl()).contains('/#ftexplain');
     //Check that command info is displayed on the page
     await t.expect(cliPage.cliReadMoreRediSearchCommandDocumentation().textContent).contains('FT.EXPLAIN');
+    await t.switchToParentWindow();
 });
 test('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
     const commandForCheck = 'PFCOUNT';
@@ -67,6 +72,7 @@ test('Verify that user can see HyperLogLog title in Command Helper for this comm
     await t.click(cliPage.readMoreButton);
     //Check new opened window page with the correct URL
     await t.expect(getPageUrl()).contains('/pfcount');
+    await t.switchToParentWindow();
 });
 test('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
     const AIGroups = [

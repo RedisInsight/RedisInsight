@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
@@ -27,9 +27,9 @@ fixture.skip `Command results at Workbench`
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
     })
     .afterEach(async() => {
-        //Drop index and dbs
-        await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
-        await myRedisDatabasePage.deleteAllDatabases();
+        //Drop index and database
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
     const infoCommand = `FT.INFO ${indexName}`;

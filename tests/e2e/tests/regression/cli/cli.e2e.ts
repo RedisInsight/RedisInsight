@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase, clearDatabaseInCli } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { CliPage } from '../../../pageObjects';
 import {
@@ -12,8 +12,13 @@ const common = new Common();
 fixture `CLI`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see CLI is minimized when he clicks the "minimize" button', async t => {
     const cliColourBefore = await common.getBackgroundColour(cliPage.cliBadge);
@@ -39,9 +44,10 @@ test('Verify that user can see results history when he re-opens CLI after minimi
 });
 test
     .after(async t => {
-        //Clear database
+        //Clear database and delete
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
         await t.pressKey('enter');
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
         const command = 'SET a a';

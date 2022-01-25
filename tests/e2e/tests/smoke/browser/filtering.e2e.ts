@@ -1,20 +1,8 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage, CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
 
 const searchedKeyName = 'KeyForSearch\\*\\?\\[]789';
@@ -22,24 +10,16 @@ const searchedKeyName = 'KeyForSearch\\*\\?\\[]789';
 fixture `Filtering per key name in Browser page`
     .meta({type: 'smoke'})
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        //await browserPage.deleteKeyByName(searchedKeyName);
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search per full key name', async t => {
     const keyName = 'KeyForSearch*?[]789';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add new key
     await browserPage.addStringKey(keyName);
     //Search by key with full name
@@ -50,8 +30,6 @@ test('Verify that user can search per full key name', async t => {
 });
 test('Verify that user can filter per exact key without using any patterns', async t => {
     const keyName = 'KeyForSearch*?[]789';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new key for search
@@ -67,8 +45,6 @@ test('Verify that user can filter per combined pattern with ?, *, [xy], [^x], [a
     const keyName = 'KeyForSearch';
     const keyName2 = 'KeyForSomething';
     const valueWithEscapedSymbols = 'KeyFor[A-G]*(';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add keys
     await browserPage.addStringKey(keyName);
     await browserPage.addHashKey(keyName2);

@@ -1,19 +1,8 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    AddRedisDatabasePage,
-    CliPage,
-    WorkbenchPage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, CliPage, WorkbenchPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
 
@@ -23,15 +12,13 @@ fixture `Workbench Context`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await myRedisDatabasePage.deleteAllDatabases();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
+    })
+    .afterEach(async() => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see saved CLI state when navigates away to any other page', async t => {
     //Expand CLI and navigte to Browser

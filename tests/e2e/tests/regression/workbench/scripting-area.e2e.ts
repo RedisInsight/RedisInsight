@@ -1,14 +1,10 @@
 import { Selector } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const cliPage = new CliPage();
 
 const indexName =  'products';
 
@@ -21,12 +17,10 @@ fixture `Scripting area at Workbench`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async(t) => {
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
-    });
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
     const commandsForSend = [
         'info',

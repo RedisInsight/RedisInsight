@@ -1,37 +1,24 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 fixture `Set TTL for Key`
-  .meta({ type: 'smoke' })
-  .page(commonUrl)
-  .beforeEach(async t => {
-      await t.maximizeWindow();
-      await userAgreementPage.acceptLicenseTerms();
-      await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-      await addNewStandaloneDatabase(ossStandaloneConfig);
-  })
-  .afterEach(async() => {
-      await browserPage.deleteKey();
-  })
+    .meta({ type: 'smoke' })
+    .page(commonUrl)
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    });
 test('Verify that user can specify TTL for Key', async t => {
     const keyName = 'StringKey-Lorem ipsum dolor sit amet consectetur adipiscing elit';
     const ttlValue = '2147476121';
     //Create new key without TTL
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await browserPage.addStringKey(keyName);
     //Open Key details
     await browserPage.openKeyDetails(keyName);

@@ -1,23 +1,11 @@
 import { Selector } from 'testcafe';
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
 import { keyTypes, getRandomKeyName } from '../../../helpers/keys';
-import {COMMANDS_TO_CREATE_KEY, keyLength} from '../../../helpers/constants';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { COMMANDS_TO_CREATE_KEY, keyLength } from '../../../helpers/constants';
+import { BrowserPage, CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
 const keysData = keyTypes.slice(0, 6);
 for (const key of keysData) {
@@ -30,19 +18,14 @@ const ttlValues = ['s', '13 min', '5 h', '23 d', '11 mo', '68 yr'];
 fixture `TTL values in Keys Table`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        //Flush DB
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-    });
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {
     //Create new keys with TTL
     await t.click(cliPage.cliExpandButton);

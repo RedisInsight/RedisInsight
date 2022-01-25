@@ -1,44 +1,25 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
-const cliPage = new CliPage();
 
-fixture `List of keys verifications`
-    .meta({ type: 'smoke' })
-    .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    })
-    .afterEach(async t => {
-        //Clear database
-        await t.wait(10000);
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
-    })
 const keyName1 = 'keyName1';
 const keyName2 = 'keyName2';
 const keyName3 = 'keyName3';
 const keyName4 = 'keyName4';
+
+fixture `List of keys verifications`
+    .meta({ type: 'smoke' })
+    .page(commonUrl)
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test('Verify that user can see List of Keys in DB', async t => {
     await browserPage.addStringKey(keyName1);
     await browserPage.addHashKey(keyName2);

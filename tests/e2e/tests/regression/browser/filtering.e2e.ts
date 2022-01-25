@@ -1,43 +1,22 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
-const cliPage = new CliPage();
 
 fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        //await browserPage.deleteKeyByName(searchedKeyName);
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
     const keyName = 'KeyForSearch*?[]789';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add new key
     await browserPage.addStringKey(keyName);
     //Search not existed key
@@ -51,8 +30,6 @@ test('Verify that when user searches not existed key, he can see the standard sc
 });
 test('Verify that user can filter per pattern with * (matches keys with any number of characters instead of *)', async t => {
     const keyName = 'KeyForSearch*?[]789';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add new key
     await browserPage.addStringKey(keyName);
     //Filter per pattern with *
@@ -63,8 +40,6 @@ test('Verify that user can filter per pattern with * (matches keys with any numb
 });
 test('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
     const keyName = 'KeyForSearch*?[]789';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add new key
     await browserPage.addStringKey(keyName);
     //Filter per pattern with ?
@@ -76,8 +51,6 @@ test('Verify that user can filter per pattern with ? (matches keys with any char
 test('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
     const keyName = 'KeyForSearch';
     const keyName2 = 'KeyForFearch';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add keys
     await browserPage.addStringKey(keyName);
     await browserPage.addHashKey(keyName2);
@@ -91,8 +64,6 @@ test('Verify that user can filter per pattern with [xy] (matches one symbol: eit
 test('Verify that user can filter per pattern with [^x] (matches one symbol except x)', async t => {
     const keyName = 'KeyForSearch';
     const keyName2 = 'KeyForFearch';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add keys
     await browserPage.addStringKey(keyName);
     await browserPage.addHashKey(keyName2);
@@ -106,8 +77,6 @@ test('Verify that user can filter per pattern with [^x] (matches one symbol exce
 test('Verify that user can filter per pattern with [a-z] (matches any symbol in range from A till Z)', async t => {
     const keyName = 'KeyForSearch';
     const keyName2 = 'KeyForFearch';
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Add keys
     await browserPage.addStringKey(keyName);
     await browserPage.addHashKey(keyName2);

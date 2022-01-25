@@ -1,14 +1,10 @@
 import { getRandomParagraph } from '../../../helpers/keys';
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase, clearDatabaseInCli } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const cliPage = new CliPage();
 
 const oneMinuteTimeout = 60000;
 const command = 'set key test';
@@ -21,13 +17,11 @@ fixture `History of results at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async(t) => {
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
-    });
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
     //Send command and remember the time
     await workbenchPage.sendCommandInWorkbench(command);

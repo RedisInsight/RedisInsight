@@ -1,37 +1,23 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage} from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 fixture `Key details verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await clearDatabaseInCli();
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see Hash Key details', async t => {
     const keyName = 'Hash1testKeyForEdit';
     const keyTTL = '2147476121';
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
     await browserPage.addHashKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -49,8 +35,6 @@ test('Verify that user can see List Key details', async t => {
     const keyName = 'List1testKeyForEdit';
     const keyTTL = '2147476121';
 
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
     await browserPage.addListKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
     const keyBadge = await browserPage.keyDetailsBadge.textContent;
@@ -66,8 +50,6 @@ test('Verify that user can see List Key details', async t => {
 test('Verify that user can see Set Key details', async t => {
     const keyName = 'Set1testKeyForEdit';
     const keyTTL = '2147476121';
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
     await browserPage.addSetKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -86,8 +68,6 @@ test('Verify that user can see String Key details', async t => {
     const keyTTL = '2147476121';
     const value = 'keyValue12334353434;'
 
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
     await browserPage.addStringKey(keyName, value, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
     const keyBadge = await browserPage.keyDetailsBadge.textContent;
@@ -103,8 +83,6 @@ test('Verify that user can see String Key details', async t => {
 test('Verify that user can see ZSet Key details', async t => {
     const keyName = 'ZSet1testKeyForEdit';
     const keyTTL = '2147476121';
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
     await browserPage.addZSetKey(keyName, '1', keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -122,8 +100,6 @@ test('Verify that user can see JSON Key details', async t => {
     const keyName = 'JSON1testKeyForEdit';
     const keyTTL = '2147476121';
     const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
     await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;

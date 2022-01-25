@@ -40,10 +40,14 @@ const PATH_CONFIG = config.get('dir_path');
     CommandsModule,
     MonitorModule,
     EventEmitterModule.forRoot(),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'static'),
-      exclude: ['/api/**'],
-    }),
+    ...(SERVER_CONFIG.staticContent
+      ? [
+        ServeStaticModule.forRoot({
+          rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
+          exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
+        }),
+      ]
+      : []),
     ServeStaticModule.forRoot({
       serveRoot: SERVER_CONFIG.customPluginsUri,
       rootPath: join(PATH_CONFIG.customPlugins),

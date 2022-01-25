@@ -35,6 +35,6 @@ export const cliTexts = {
   WORKBENCH_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
     commandLine + unsupportedCommandTextWorkbench + commands,
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
-  MONITOR_COMMAND: 'Use the "Monitor" tool to see all the requests processed by the server.',
-  CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.'
+  CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.',
+  MONITOR_COMMAND: 'Use the "Monitor" tool to see all the requests processed by the server.'
 }

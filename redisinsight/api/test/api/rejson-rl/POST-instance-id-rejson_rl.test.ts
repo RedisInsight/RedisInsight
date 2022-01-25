@@ -55,7 +55,11 @@ const mainCheckFn = async (testCase) => {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
         expect(await rte.data.executeCommand('json.get', testCase.data.keyName, '.'))
           .to.deep.eql(testCase.data.data);
-        expect(await rte.client.ttl(testCase.data.keyName)).to.eql(testCase.data.expire || -1);
+        if (testCase.data.expire) {
+          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
+        } else {
+          expect(await rte.client.ttl(testCase.data.keyName)).to.eql(-1);
+        }
       }
     }
   });

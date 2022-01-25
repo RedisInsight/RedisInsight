@@ -56,7 +56,11 @@ const mainCheckFn = async (testCase) => {
         const scanResult = await rte.client.sscan(testCase.data.keyName, 0, 'count', 100);
         expect(scanResult[0]).to.eql('0'); // full scan completed
         expect(scanResult[1]).to.eql(testCase.data.members);
-        expect(await rte.client.ttl(testCase.data.keyName)).to.eql(testCase.data.expire || -1);
+        if (testCase.data.expire) {
+          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
+        } else {
+          expect(await rte.client.ttl(testCase.data.keyName)).to.eql(-1);
+        }
       }
     }
   });

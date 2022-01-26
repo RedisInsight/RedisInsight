@@ -50,7 +50,7 @@ Click on the button, see the command and the comments in the Workbench editor, a
     // It is possible to index either every hash or every JSON document in the keyspace or configure indexing only for a subset of the same data type documents described by a prefix.
     
     // RedisJSON supports JSONPath, so we can easily access and index nested properties and array elements.
-    // Note that you cannot index values that contain JSON objects. To be indexed, a JSONPath expression must return a single scalar value (string, number or geo). If the JSONPath expression returns an object, it will be ignored. If the JSONPath expression returns multiple scalar values (string or boolean), or if it returns an array of string or boolean values, the values can be indexed only as TAG.
+    // Note that you cannot index values that contain JSON objects. To be indexed, a JSONPath expression must return a single scalar value (string, number, or geo). If the JSONPath expression returns an object, it will be ignored. If the JSONPath expression returns multiple scalar values (string or boolean), or if it returns an array of string or boolean values, the values can be indexed only as TAG.
     
     // JSON Strings can only be indexed as TEXT, TAG and GEO (using the right syntax).
     // JSON numbers can only be indexed as NUMERIC.

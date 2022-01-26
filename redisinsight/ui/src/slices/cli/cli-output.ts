@@ -117,7 +117,10 @@ export function sendCliCommandAction(
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
         dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
-        if (command.toLowerCase().startsWith(SelectCommand.toLowerCase())) {
+        if (
+          dataStatus === CommandExecutionStatus.Success
+          && command.toLowerCase().startsWith(SelectCommand.toLowerCase())
+        ) {
           try {
             const dbIndex = getDbIndexFromSelectQuery(command)
             dispatch(setCliDbIndex(dbIndex))
@@ -290,7 +293,7 @@ function handleRecreateClient(dispatch: AppDispatch, stateInit: () => RootState,
       cliClientUuid,
       () => dispatch(concatToOutput(ConnectionSuccessOutputText)),
       (message:string) => dispatch(concatToOutput(
-        cliParseTextResponseWithOffset(`\n${message}`, command, CommandExecutionStatus.Fail)
+        cliParseTextResponseWithOffset(`${message}`, command, CommandExecutionStatus.Fail)
       )),
     ))
   }

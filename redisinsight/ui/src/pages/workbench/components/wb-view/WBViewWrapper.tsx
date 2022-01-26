@@ -26,9 +26,6 @@ import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
-import { cliTexts } from 'uiSrc/constants/cliOutput'
-import { CommandMonitor } from 'uiSrc/constants'
-import { showMonitor } from 'uiSrc/slices/cli/monitor'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import WBView from './WBView'
@@ -101,53 +98,6 @@ const WBViewWrapper = () => {
       handleSubmit(multiCommands)
     }
   }, [multiCommands])
-
-  // TODO [zalenski] remove if unsupported command should be saved in the db
-  const getUnsupportedCommandResponse = (command = '') => {
-    const [commandLine, countRepeat] = getCommandRepeat(command)
-    const { modules } = state.instance
-    const { unsupportedCommands, blockingCommands } = state
-
-    const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
-      || checkBlockingCommand(blockingCommands, commandLine)
-
-    if (!isRepeatCountCorrect(countRepeat)) {
-      return cliParseTextResponse(
-        cliTexts.REPEAT_COUNT_INVALID,
-        commandLine,
-        CommandExecutionStatus.Fail,
-      )
-    }
-
-    if (unsupportedCommand === CommandMonitor.toLowerCase()) {
-      dispatch(showMonitor())
-
-      return cliParseTextResponse(
-        cliTexts.MONITOR_COMMAND,
-        commandLine,
-        CommandExecutionStatus.Fail,
-      )
-    }
-
-    if (unsupportedCommand) {
-      return cliParseTextResponse(
-        cliTexts.WORKBENCH_UNSUPPORTED_COMMANDS(
-          commandLine.slice(0, unsupportedCommand.length),
-          [...blockingCommands, ...unsupportedCommands].join(', '),
-        ),
-        commandLine,
-        CommandExecutionStatus.Fail,
-      )
-    }
-    const unsupportedModule = checkUnsupportedModuleCommand(modules, commandLine)
-
-    if (unsupportedModule === RedisDefaultModules.Search) {
-      return <ModuleNotLoaded content={RSNotLoadedContent} />
-    }
-
-    return null
-  }
-
 
   const handleSubmit = (
     commandInit: string = script,

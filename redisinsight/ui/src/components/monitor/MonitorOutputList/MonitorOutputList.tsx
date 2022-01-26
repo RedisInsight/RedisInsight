@@ -1,14 +1,21 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { debounce } from 'lodash'
 import cx from 'classnames'
-import { CellMeasurer, List, AutoSizer, CellMeasurerCache } from 'react-virtualized'
+import { EuiTextColor } from '@elastic/eui'
+import { CellMeasurer, List, CellMeasurerCache, ListRowProps, OnScrollParams } from 'react-virtualized'
 
-import { EuiFlexGroup, EuiFlexItem, EuiTextColor } from '@elastic/eui'
 import { getFormatTime } from 'uiSrc/utils'
 import { DEFAULT_TEXT } from 'uiSrc/components/notifications'
 
 import styles from 'uiSrc/components/monitor/Monitor/styles.module.scss'
 import 'react-virtualized/styles.css'
+
+export interface Props {
+  compressed: boolean
+  items: any[]
+  width: number
+  height: number
+}
 
 const cache = new CellMeasurerCache({
   defaultHeight: 17,
@@ -16,20 +23,40 @@ const cache = new CellMeasurerCache({
   fixedHeight: false
 })
 
-const MonitorOutputList = ({ compressed, items }: { compressed: boolean, items: any[] }) => {
+const PROTRUDING_OFFSET = 2
+
+const MonitorOutputList = (props: Props) => {
+  const { compressed, items = [], width = 0, height = 0 } = props
+  const [autoScroll, setAutoScroll] = useState(true)
+  const [, forceRender] = useState({})
+
+  const handleWheel = ({ clientHeight, scrollTop, scrollHeight }: OnScrollParams) => {
+    setAutoScroll(clientHeight + scrollTop >= scrollHeight)
+  }
+
   const updateWidth = debounce(() => {
     cache.clearAll()
+    setTimeout(() => {
+      forceRender({})
+    }, 0)
   }, 50, { maxWait: 100 })
 
   useEffect(() => {
+    // function "handleWheel" after the first render rewrite initial state value "true"
+    setAutoScroll(true)
+
     globalThis.addEventListener('resize', updateWidth)
     return () => {
       globalThis.removeEventListener('resize', updateWidth)
     }
   }, [])
 
+  useEffect(() => {
+    updateWidth()
+  }, [width, compressed])
+
   const getArgs = (args: string[]): JSX.Element => (
-    <div className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: compressed })}>
+    <span className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: compressed })}>
       {args?.map((arg, i) => (
         <span key={`${arg + i}`}>
           {i === 0 && (
@@ -38,10 +65,10 @@ const MonitorOutputList = ({ compressed, items }: { compressed: boolean, items: 
           { i !== 0 && ` "${arg}"`}
         </span>
       ))}
-    </div>
+    </span>
   )
 
-  const rowRenderer = ({ parent, index, key, style }) => {
+  const rowRenderer = ({ parent, index, key, style }: ListRowProps) => {
     const { time = '', args = [], database = '', source = '', isError, message = '' } = items[index]
     return (
       <CellMeasurer
@@ -54,24 +81,14 @@ const MonitorOutputList = ({ compressed, items }: { compressed: boolean, items: 
         {({ registerChild }) => (
           <div className={styles.item} ref={registerChild} style={style}>
             {!isError && (
-              <EuiFlexGroup responsive={false}>
-                <EuiFlexItem grow={false} className={styles.itemTime}>
-                  {getFormatTime(time)}
-                </EuiFlexItem>
-                <EuiFlexItem grow={false} className={styles.itemSource} style={{ paddingRight: 10 }}>
-                  {`[${database} ${source}]`}
-                </EuiFlexItem>
-                <EuiFlexItem>
-                  {getArgs(args)}
-                </EuiFlexItem>
-              </EuiFlexGroup>
+              <>
+                <span>{getFormatTime(time)}</span>
+                <span>{`[${database} ${source}]`}</span>
+                <span>{getArgs(args)}</span>
+              </>
             )}
             {isError && (
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <EuiTextColor color="danger">{message ?? DEFAULT_TEXT}</EuiTextColor>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+              <EuiTextColor color="danger">{message ?? DEFAULT_TEXT}</EuiTextColor>
             )}
           </div>
         )}
@@ -79,24 +96,19 @@ const MonitorOutputList = ({ compressed, items }: { compressed: boolean, items: 
     )
   }
 
-  console.log(items.length)
-
   return (
-    <AutoSizer>
-      {({ width, height }) => (
-        <List
-          width={width}
-          height={height}
-          rowCount={items.length}
-          rowHeight={cache.rowHeight}
-          rowRenderer={rowRenderer}
-          overscanRowCount={30}
-          className={styles.listWrapper}
-          deferredMeasurementCache={cache}
-          scrollToIndex={items.length - 1}
-        />
-      )}
-    </AutoSizer>
+    <List
+      width={width - PROTRUDING_OFFSET}
+      height={height - PROTRUDING_OFFSET}
+      rowCount={items.length}
+      rowHeight={cache.rowHeight}
+      rowRenderer={rowRenderer}
+      overscanRowCount={30}
+      className={styles.listWrapper}
+      deferredMeasurementCache={cache}
+      scrollToIndex={autoScroll ? items.length - 1 : undefined}
+      onScroll={handleWheel}
+    />
   )
 }
 

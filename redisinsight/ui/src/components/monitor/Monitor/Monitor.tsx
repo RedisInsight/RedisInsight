@@ -1,4 +1,4 @@
-import React, { Ref, useEffect, useRef, useState } from 'react'
+import React from 'react'
 import {
   EuiButtonIcon,
   EuiFlexGroup,
@@ -7,9 +7,10 @@ import {
   EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
+import { AutoSizer } from 'react-virtualized'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
-import MonitorOutputList from 'uiSrc/components/monitor/MonitorOutputList/MonitorOutputList'
+import MonitorOutputList from '../MonitorOutputList'
 
 import styles from './styles.module.scss'
 
@@ -32,40 +33,6 @@ const Monitor = (props: Props) => {
     isShowCli = false,
     handleRunMonitor = () => {}
   } = props
-
-  const [autoScroll, setAutoScroll] = useState(true)
-
-  const monitorRef: Ref<HTMLDivElement> = useRef(null)
-
-  const onWheel = () => {
-    const { current } = monitorRef
-
-    if (current) {
-      const HORIZONTAL_SCROLL_WIDTH = 16
-      const horizontalScroll = current.scrollWidth - current.clientWidth
-      const currentScrollHeight = current.scrollHeight + (horizontalScroll && HORIZONTAL_SCROLL_WIDTH)
-
-      setAutoScroll(current.scrollTop + current.offsetHeight === currentScrollHeight)
-    }
-  }
-
-  const scrollToBottom = () => {
-    const { current } = monitorRef
-
-    if (current) {
-      current.scrollTop = current.scrollHeight
-    }
-  }
-
-  useEffect(() => {
-    if (items.length === 0) {
-      setAutoScroll(true)
-    }
-
-    if (autoScroll) {
-      scrollToBottom()
-    }
-  }, [items, monitorRef, isRunning, autoScroll])
 
   const MonitorNotStarted = () => (
     <div className={styles.startContainer} data-testid="monitor-not-started">
@@ -104,6 +71,8 @@ const Monitor = (props: Props) => {
     </div>
   )
 
+  const isMonitorStopped = !!items?.length && !isRunning
+
   return (
     <>
       <div className={styles.container} data-testid="monitor">
@@ -111,14 +80,24 @@ const Monitor = (props: Props) => {
         {!items?.length && isRunning && <div data-testid="monitor-started" style={{ paddingTop: 10 }}>Monitor is started.</div>}
 
         {isStarted && !!items?.length && (
-          <div className={styles.content} ref={monitorRef} onWheel={onWheel}>
-            <MonitorOutputList items={items} compressed={isShowCli || isShowHelper} />
-            {!!items?.length && !isRunning && (
-              <span data-testid="monitor-stopped">
-                <br />
-                Monitor is stopped.
-              </span>
-            )}
+          <div className={styles.content}>
+            <AutoSizer>
+              {({ width, height }) => (
+                <>
+                  <MonitorOutputList
+                    width={width}
+                    height={isMonitorStopped ? height - 30 : height}
+                    items={items}
+                    compressed={isShowCli || isShowHelper}
+                  />
+                  {isMonitorStopped && (
+                    <div data-testid="monitor-stopped" style={{ width: 140, paddingTop: 15 }}>
+                      Monitor is stopped.
+                    </div>
+                  )}
+                </>
+              )}
+            </AutoSizer>
           </div>
         )}
       </div>

@@ -49,6 +49,10 @@ const monitorSlice = createSlice({
       state.isRunning = !state.isRunning
     },
 
+    stopMonitor: (state) => {
+      state.isRunning = false
+    },
+
     concatMonitorItems: (state, { payload }: { payload: IMonitorDataPayload[] }) => {
       // small optimization to not unnecessary concat big arrays since we know max logs to show limitations
       if (payload.length >= MONITOR_ITEMS_MAX_COUNT) {
@@ -79,6 +83,7 @@ export const {
   toggleHideMonitor,
   setSocket,
   toggleRunMonitor,
+  stopMonitor,
   concatMonitorItems,
   resetMonitorItems,
 } = monitorSlice.actions

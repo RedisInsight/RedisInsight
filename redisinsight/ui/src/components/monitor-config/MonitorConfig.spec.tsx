@@ -3,9 +3,9 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
-import { monitorSelector, setSocket, toggleRunMonitor } from 'uiSrc/slices/cli/monitor'
+import { monitorSelector, setSocket, stopMonitor, toggleRunMonitor } from 'uiSrc/slices/cli/monitor'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { MonitorEvent } from 'uiSrc/constants'
+import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
 import MonitorConfig from './MonitorConfig'
 
 let store: typeof mockedStore
@@ -112,15 +112,34 @@ describe('MonitorConfig', () => {
     })
     monitorSelector.mockImplementation(monitorSelectorMock)
 
-    socket.on(MonitorEvent.ConnectionError, (error) => {
+    socket.on(SocketEvent.ConnectionError, (error) => {
       expect(error).toEqual({ message: 'test', name: 'error' })
     })
 
-    socket.socketClient.emit(MonitorEvent.ConnectionError, { message: 'test', name: 'error' })
+    socket.socketClient.emit(SocketEvent.ConnectionError, { message: 'test', name: 'error' })
 
     const afterRenderActions = [
       setSocket(socket),
       toggleRunMonitor()
+    ]
+    expect(store.getActions()).toEqual([...afterRenderActions])
+
+    unmount()
+  })
+
+  it('monitor should catch disconnect', () => {
+    const { unmount } = render(<MonitorConfig />)
+
+    const monitorSelectorMock = jest.fn().mockReturnValue({
+      isRunning: true,
+    })
+    monitorSelector.mockImplementation(monitorSelectorMock)
+
+    socket.socketClient.emit(SocketEvent.Disconnect)
+
+    const afterRenderActions = [
+      setSocket(socket),
+      stopMonitor()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

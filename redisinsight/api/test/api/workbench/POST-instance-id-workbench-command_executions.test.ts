@@ -691,8 +691,9 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
           {
             name: 'Should create index',
             data: {
-              command: `ft.create ${constants.TEST_SEARCH_JSON_INDEX_1} ON JSON NOOFFSETS
-              SCHEMA $.user.name AS name TEXT`,
+              command: `ft.create ${constants.TEST_SEARCH_JSON_INDEX_1} ON JSON
+              PREFIX 1 ${constants.TEST_SEARCH_JSON_KEY_PREFIX_1}
+              NOOFFSETS SCHEMA $.user.name AS name TEXT`,
             },
             responseSchema,
             checkFn: ({ body }) => {
@@ -726,7 +727,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
               expect(response[2]).to.eql('index_options');
               expect(response[3]).to.eql(['NOOFFSETS']);
               expect(response[4]).to.eql('index_definition');
-              expect(_.take(response[5], 4)).to.eql( ['key_type', 'JSON', 'prefixes', ['']]);
+              expect(_.take(response[5], 4)).to.eql( ['key_type', 'JSON', 'prefixes', [ constants.TEST_SEARCH_JSON_KEY_PREFIX_1 ]]);
             },
           },
           {
@@ -814,7 +815,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
           checkFn: ({ body }) => {
             expect(body.result.length).to.eql(1);
             expect(body.result[0].status).to.eql('success');
-            expect(body.result[0].response[0][0]).to.have.string('-0');
+            expect(body.result[0].response[0][0]).to.have.string('-');
             expect(body.result[0].response[0][1]).to.eql([
               constants.TEST_STREAM_DATA_1,
               constants.TEST_STREAM_DATA_2,

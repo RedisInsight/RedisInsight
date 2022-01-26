@@ -159,6 +159,24 @@ describe('POST /instance/:instanceId/list/get-elements/:index', () => {
         },
       },
     ].map(mainCheckFn);
+
+    describe('Search in huge number of elements', () => {
+      requirements('rte.bigData');
+      [
+        {
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID, constants.TEST_LIST_HUGE_INDEX),
+          name: 'Should get element from particular position',
+          data: {
+            keyName: constants.TEST_LIST_HUGE_KEY,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_HUGE_KEY,
+            value: constants.TEST_LIST_HUGE_ELEMENT,
+          },
+        },
+      ].map(mainCheckFn);
+    });
   });
 
   describe('ACL', () => {

@@ -11,11 +11,9 @@ import {
 } from 'uiSrc/utils/test-utils'
 
 import {
-  concatToOutput,
   processUnsupportedCommand,
   sendCliClusterCommandAction,
 } from 'uiSrc/slices/cli/cli-output'
-import { InitOutputText } from 'uiSrc/constants/cliOutput'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 
@@ -50,6 +48,7 @@ jest.mock('uiSrc/slices/cli/cli-output', () => ({
   sendCliClusterCommandAction: jest.fn(),
   processUnsupportedCommand: jest.fn(),
   updateCliCommandHistory: jest.fn,
+  concatToOutput: () => jest.fn(),
 }))
 
 jest.mock('uiSrc/utils/cliHelper', () => ({
@@ -84,25 +83,6 @@ describe('CliBodyWrapper', () => {
     const expectedActions = [processCliClient()]
 
     expect(render(<CliBodyWrapper />)).toBeTruthy()
-    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-      clearStoreActions(expectedActions)
-    )
-  })
-
-  it('should render connecting state', () => {
-    const state: any = store.getState()
-    // @ts-ignore
-    useSelector.mockImplementation((callback: (arg0: any) => any) => callback({
-      ...state,
-      cli: {
-        ...state.cli,
-        settings: { ...state.cli.settings, loading: true }
-      }
-    }))
-
-    render(<CliBodyWrapper />)
-
-    const expectedActions = [processCliClient(), concatToOutput(InitOutputText('', 0))]
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
       clearStoreActions(expectedActions)
     )

@@ -95,9 +95,10 @@ describe('OverviewService', () => {
           connectedClients: 1,
           totalKeys: 1,
           usedMemory: 1000000,
-          opsPerSecond: 0,
-          networkInKbps: 0,
-          networkOutKbps: 0,
+          cpuUsagePercentage: undefined,
+          opsPerSecond: undefined,
+          networkInKbps: undefined,
+          networkOutKbps: undefined,
         });
       });
       it('check for cpu on second attempt', async () => {
@@ -146,6 +147,25 @@ describe('OverviewService', () => {
         expect(await service.getOverview(databaseId, mockClient)).toEqual({
           ...mockDatabaseOverview,
           cpuUsagePercentage: 100,
+        });
+      });
+      it('should not return cpu (undefined) when used_cpu_sys = 0', async () => {
+        spyGetNodeInfo.mockResolvedValueOnce({
+          ...mockNodeInfo,
+          server: {
+            ...mockNodeInfo.server,
+            uptime_in_seconds: '2',
+          },
+          cpu: {
+            ...mockNodeInfo.cpu,
+            used_cpu_sys: '0',
+            used_cpu_user: '1.50002',
+          },
+        });
+
+        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+          ...mockDatabaseOverview,
+          cpuUsagePercentage: undefined,
         });
       });
     });

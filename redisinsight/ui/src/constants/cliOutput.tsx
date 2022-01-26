@@ -36,5 +36,14 @@ export const cliTexts = {
     commandLine + unsupportedCommandTextWorkbench + commands,
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
   CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.',
-  MONITOR_COMMAND: 'Use the "Monitor" tool to see all the requests processed by the server.'
+  MONITOR_COMMAND: 'Use the "Monitor" tool to see all the requests processed by the server.',
+  CLI_ERROR_MESSAGE: (message: string) => (
+    [
+      '\n',
+      <EuiTextColor color="warning" key={Date.now()}>
+        {message}
+      </EuiTextColor>,
+      '\n\n',
+    ]
+  )
 }

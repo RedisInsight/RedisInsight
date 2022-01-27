@@ -128,7 +128,7 @@ describe('MonitorConfig', () => {
   })
 
   it('monitor should catch disconnect', () => {
-    const { unmount } = render(<MonitorConfig />)
+    const { unmount } = render(<MonitorConfig retryDelay={0} />)
 
     const monitorSelectorMock = jest.fn().mockReturnValue({
       isRunning: true,

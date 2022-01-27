@@ -87,13 +87,13 @@ test.only('Verify that user can see saved scroll position in Enablement area whe
     //Go back to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
     //Check that scroll position is saved
-    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status', {timeout: 20000});
+    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status');
     //Go to list of DBs page
     await t.click(myRedisDatabasePage.myRedisDBButton);
     //Go back to active DB again
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Check that scroll position is saved
-    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct', {timeout: 20000});
+    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
 });
 test('Verify that user can see the siblings menu by clicking on page counter element between Back and Next buttons', async t => {
     const popoverButtons = [

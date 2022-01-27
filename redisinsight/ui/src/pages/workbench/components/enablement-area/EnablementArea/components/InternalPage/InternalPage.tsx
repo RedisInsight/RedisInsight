@@ -95,7 +95,7 @@ const InternalPage = (props: Props) => {
       if (scrollTop) {
         setTimeout(() => {
           containerRef.current?.scroll(0, scrollTop)
-        }, 0)
+        }, 10000)
       }
     }
   }, [isLoading, location])

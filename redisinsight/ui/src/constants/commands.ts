@@ -48,7 +48,7 @@ export enum CommandGroup {
   Scripting = 'scripting',
   Transactions = 'transactions',
   Server = 'server',
-  SortedSet = 'sorted_set',
+  SortedSet = 'sorted-set',
   HyperLogLog = 'hyperloglog',
   Hash = 'hash',
   Set = 'set',

@@ -172,7 +172,9 @@ export class OverviewService {
    */
   private calculateUsedMemory(nodes = []): number {
     try {
-      const masterNodes = filter(nodes, (node) => get(node, 'replication.role') === 'master');
+      const masterNodes = filter(nodes, (node) => ['master', undefined].includes(
+        get(node, 'replication.role'),
+      ));
 
       if (!this.isMetricsAvailable(masterNodes, 'memory.used_memory', [undefined])) {
         return undefined;
@@ -196,7 +198,10 @@ export class OverviewService {
     }
 
     try {
-      const masterNodes = filter(nodes, (node) => get(node, 'replication.role') === 'master');
+      const masterNodes = filter(nodes, (node) => ['master', undefined].includes(
+        get(node, 'replication.role'),
+      ));
+
       return sumBy(masterNodes, (node) => sum(
         map(
           get(node, 'keyspace', {}),

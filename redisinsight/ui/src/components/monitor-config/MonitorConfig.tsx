@@ -33,6 +33,7 @@ const MonitorConfig = () => {
     if (!isRunning || !instanceId || socket?.connected) {
       return
     }
+    let retryTimer: NodeJS.Timer
 
     // Create SocketIO connection to instance by instanceId
     const newSocket = io(`${getBaseApiUrl()}/monitor`, {
@@ -42,8 +43,7 @@ const MonitorConfig = () => {
     dispatch(setSocket(newSocket))
     const payloads: IMonitorDataPayload[] = []
 
-    // Trigger Monitor event
-    newSocket.emit(MonitorEvent.Monitor, () => {
+    const handleMonitorEvents = () => {
       newSocket.on(MonitorEvent.MonitorData, (payload:IOnDatePayload) => {
         payloads.push(payload)
 
@@ -54,6 +54,12 @@ const MonitorConfig = () => {
           setNewItems.cancel()
         })
       })
+    }
+
+    newSocket.on('connect', () => {
+      // Trigger Monitor event
+      clearTimeout(retryTimer)
+      newSocket.emit(MonitorEvent.Monitor, handleMonitorEvents)
     })
 
     // Catch exceptions
@@ -64,9 +70,12 @@ const MonitorConfig = () => {
     })
 
     // Catch disconnect
-    newSocket.on(SocketEvent.Disconnect, () => {
-      newSocket.removeAllListeners()
-      dispatch(stopMonitor())
+    newSocket.on(SocketEvent.Disconnect, (a) => {
+      console.log('Disconnect', JSON.stringify(a))
+      retryTimer = setTimeout(() => {
+        newSocket.removeAllListeners()
+        dispatch(stopMonitor())
+      }, 10000)
     })
 
     // Catch connect error

@@ -72,7 +72,8 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     //Check that user is on Workbench page and "Working with Hashes" page is displayed
     await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
 });
-test.only('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
+//skipped due the issue RI-2384
+test.skip('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
     //Open Working with Hashes section
     await t.click(workbenchPage.internalLinkWorkingWithHashes);
     //Evaluate the last button in Enablement Area

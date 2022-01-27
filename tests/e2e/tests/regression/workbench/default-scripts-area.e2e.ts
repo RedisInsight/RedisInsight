@@ -72,7 +72,7 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     //Check that user is on Workbench page and "Working with Hashes" page is displayed
     await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
 });
-test('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
+test.only('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
     //Open Working with Hashes section
     await t.click(workbenchPage.internalLinkWorkingWithHashes);
     //Evaluate the last button in Enablement Area
@@ -87,13 +87,13 @@ test('Verify that user can see saved scroll position in Enablement area when he 
     //Go back to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
     //Check that scroll position is saved
-    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status');
+    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status', {timeout: 20000});
     //Go to list of DBs page
     await t.click(myRedisDatabasePage.myRedisDBButton);
     //Go back to active DB again
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Check that scroll position is saved
-    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
+    await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct', {timeout: 20000});
 });
 test('Verify that user can see the siblings menu by clicking on page counter element between Back and Next buttons', async t => {
     const popoverButtons = [

@@ -65,6 +65,7 @@ const MonitorConfig = () => {
 
     // Catch disconnect
     newSocket.on(SocketEvent.Disconnect, () => {
+      newSocket.removeAllListeners()
       dispatch(stopMonitor())
     })
 
@@ -77,7 +78,10 @@ const MonitorConfig = () => {
   }, [instanceId, isRunning])
 
   useEffect(() => {
-    !isRunning && socket?.disconnect()
+    if (!isRunning) {
+      socket?.removeAllListeners()
+      socket?.disconnect()
+    }
   }, [socket, isRunning, isShowMonitor, isMinimizedMonitor])
 
   return null

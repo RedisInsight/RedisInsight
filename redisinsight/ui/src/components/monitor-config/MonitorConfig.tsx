@@ -16,7 +16,10 @@ import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { IOnDatePayload } from 'apiSrc/modules/monitor/helpers/client-monitor-observer'
 
-const MonitorConfig = () => {
+interface IProps {
+  retryDelay?: number;
+}
+const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { socket, isRunning, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
 
@@ -56,7 +59,12 @@ const MonitorConfig = () => {
       })
     }
 
-    newSocket.on('connect', () => {
+    const handleDisconnect = () => {
+      newSocket.removeAllListeners()
+      dispatch(stopMonitor())
+    }
+
+    newSocket.on(SocketEvent.Connect, () => {
       // Trigger Monitor event
       clearTimeout(retryTimer)
       newSocket.emit(MonitorEvent.Monitor, handleMonitorEvents)
@@ -70,12 +78,12 @@ const MonitorConfig = () => {
     })
 
     // Catch disconnect
-    newSocket.on(SocketEvent.Disconnect, (a) => {
-      console.log('Disconnect', JSON.stringify(a))
-      retryTimer = setTimeout(() => {
-        newSocket.removeAllListeners()
-        dispatch(stopMonitor())
-      }, 10000)
+    newSocket.on(SocketEvent.Disconnect, () => {
+      if (retryDelay) {
+        retryTimer = setTimeout(handleDisconnect, retryDelay)
+      } else {
+        handleDisconnect()
+      }
     })
 
     // Catch connect error

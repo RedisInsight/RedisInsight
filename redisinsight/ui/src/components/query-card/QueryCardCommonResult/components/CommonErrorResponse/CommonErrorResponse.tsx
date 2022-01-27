@@ -8,13 +8,12 @@ import {
   isRepeatCountCorrect
 } from 'uiSrc/utils'
 import { cliTexts, SelectCommand } from 'uiSrc/constants/cliOutput'
-import { RootState } from 'uiSrc/slices/store'
 import { CommandMonitor } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { RSNotLoadedContent } from 'uiSrc/pages/workbench/constants'
 
-import { cliSettingsSelector, cliUnsupportedCommandsSelector } from 'uiSrc/slices/cli/cli-settings'
+import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import ModuleNotLoaded from 'uiSrc/pages/workbench/components/module-not-loaded'
 

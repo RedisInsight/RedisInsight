@@ -201,7 +201,7 @@ describe('monitor slice', () => {
     })
 
     it('should properly set items no more than MONITOR_ITEMS_MAX_COUNT', () => {
-      const payload = new Array(2000)
+      const payload = new Array(MONITOR_ITEMS_MAX_COUNT + 10)
 
       // Arrange
       const state: typeof initialState = {

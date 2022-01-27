@@ -25,7 +25,9 @@ const MonitorConfig = () => {
   const setNewItems = debounce((items, onSuccess?) => {
     dispatch(concatMonitorItems(items))
     onSuccess?.()
-  }, 100)
+  }, 100, {
+    maxWait: 1000,
+  })
 
   useEffect(() => {
     if (!isRunning || !instanceId || socket?.connected) {
@@ -46,7 +48,11 @@ const MonitorConfig = () => {
         payloads.push(payload)
 
         // set batch of payloads and then clear batch
-        setNewItems(payloads, () => { payloads.length = 0 })
+        setNewItems(payloads, () => {
+          payloads.length = 0
+          // reset all timings after items were changed
+          setNewItems.cancel()
+        })
       })
     })
 

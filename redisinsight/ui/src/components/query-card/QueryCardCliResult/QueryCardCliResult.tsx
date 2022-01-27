@@ -20,7 +20,7 @@ const QueryCardCliResult = (props: Props) => {
     <div className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
         <div data-testid="query-cli-result">
-          {result.map(({ response, status }) =>
+          {result?.map(({ response, status }) =>
             cliParseTextResponse(response || '(nil)', query, status, CliPrefix.QueryCard))}
         </div>
       )}

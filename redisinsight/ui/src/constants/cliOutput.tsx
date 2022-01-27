@@ -36,6 +36,7 @@ export const cliTexts = {
     commandLine + unsupportedCommandTextWorkbench + commands,
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
   CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.',
+  UNABLE_TO_DECRYPT: 'Unable to decrypt. Check the system keychain or re-run the command.',
   CLI_ERROR_MESSAGE: (message: string) => (
     [
       '\n',

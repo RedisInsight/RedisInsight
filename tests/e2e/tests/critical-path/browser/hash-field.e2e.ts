@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
@@ -6,7 +6,7 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-const keyName = chance.string({ length: 10 });
+let keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const keyFieldValue = 'hashField11111';
 const keyValue = 'hashValue11111!';
@@ -23,6 +23,7 @@ fixture `Hash Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search by full field name in Hash', async t => {
+    keyName = chance.string({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);
@@ -33,6 +34,7 @@ test('Verify that user can search by full field name in Hash', async t => {
     await t.expect(result).eql(keyFieldValue, 'The hash field');
 });
 test('Verify that user can search by part field name in Hash with pattern * in Hash', async t => {
+    keyName = chance.string({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);

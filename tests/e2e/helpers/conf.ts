@@ -42,7 +42,7 @@ export const ossSentinelConfig = {
 export const redisEnterpriseClusterConfig = {
     host: process.env.RE_CLUSTER_HOST || 'redis-enterprise',
     port: process.env.RE_CLUSTER_PORT || '9443',
-    databaseName: process.env.RE_CLUSTER_DATABASE_NAME  + chance.string({ length: 10 }) || 'test-re-standalone'  + chance.string({ length: 10 }),
+    databaseName: process.env.RE_CLUSTER_DATABASE_NAME || 'test-re-standalone',
     databaseUsername: process.env.RE_CLUSTER_ADMIN_USER || 'demo@redislabs.com',
     databasePassword: process.env.RE_CLUSTER_ADMIN_PASSWORD || '123456'
 };

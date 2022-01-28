@@ -1,5 +1,5 @@
 import { Selector } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { keyTypes, getRandomKeyName } from '../../../helpers/keys';
 import { COMMANDS_TO_CREATE_KEY, keyLength } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';

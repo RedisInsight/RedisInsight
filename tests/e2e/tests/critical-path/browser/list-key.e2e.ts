@@ -12,7 +12,7 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
 
-const keyName = chance.string({ length: 10 });
+let keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const element = '1111listElement11111';
 const element2 = '2222listElement22222';
@@ -30,6 +30,7 @@ fixture `List Key verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search List element by index', async t => {
+    keyName = chance.string({ length: 10 });
     await browserPage.addListKey(keyName, keyTTL, element);
     //Add few elements to the List key
     await browserPage.addElementToList(element2);
@@ -45,7 +46,13 @@ test
         // add oss standalone v5
         await acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
     })
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneV5Config.databaseName);
+    })
     ('Verify that user can remove only one element for List for Redis v. <6.2', async t => {
+        keyName = chance.string({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Create new key

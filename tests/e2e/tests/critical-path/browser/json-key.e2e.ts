@@ -6,7 +6,7 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-const keyName = chance.string({ length: 10 });
+let keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const value = '{"name":"xyz"}';
 
@@ -22,6 +22,7 @@ fixture `JSON Key verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can not add invalid JSON structure inside of created JSON', async t => {
+    keyName = chance.string({ length: 10 });
     //Add Json key with json object
     await browserPage.addJsonKey(keyName, keyTTL, value);
     //Check the notification message

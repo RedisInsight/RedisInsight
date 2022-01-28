@@ -9,7 +9,7 @@ const cliPage = new CliPage();
 const common = new Common();
 const chance = new Chance();
 
-const keyName = chance.string({ length: 10 });
+let keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const keyMember = '1111ZsetMember11111';
 
@@ -25,6 +25,7 @@ fixture `ZSet Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })  
 test('Verify that user can search by member in Zset', async t => {
+    keyName = chance.string({ length: 10 });
     await browserPage.addZSetKey(keyName, '0', keyTTL, '12345qwerty');
     //Add member to the ZSet key
     await browserPage.addMemberToZSet(keyMember, '3');
@@ -35,6 +36,7 @@ test('Verify that user can search by member in Zset', async t => {
     await t.expect(result).eql(keyMember, 'The Zset member');
 });
 test('Verify that user can sort Zset members by score by DESC and ASC', async t => {
+    keyName = chance.string({ length: 10 });
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new key with a lot of members

@@ -10,7 +10,7 @@ const chance = new Chance();
 const cliPage = new CliPage();
 
 const indexName = chance.string({ length: 5 });
-const keyName = chance.string({ length: 10 });
+let keyName = chance.string({ length: 10 });
 
 fixture `Scripting area at Workbench`
     .meta({type: 'regression'})
@@ -47,6 +47,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
+        keyName = chance.string({ length: 10 });
         const commandsForSend = [
             `HMSET ${keyName} price 20`,
             'FT._LIST'
@@ -86,6 +87,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
+        keyName = chance.string({ length: 10 });
         const command = `HSET ${keyName} field value`;
         //Put a command in Editing Area
         await t.typeText(workbenchPage.queryInput, command);
@@ -98,8 +100,7 @@ test
         //Select "Run Commands" from menu
         await t.click(workbenchPage.monacoSuggestionOption);
         //Check the result with sent command
-        const commandTextInResult = await workbenchPage.queryCardCommand.withExactText(command);
-        await t.expect(commandTextInResult.exists).ok('The result of sent command');
+        await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command');
     });
 test('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
     const command = 'FT._LIST';

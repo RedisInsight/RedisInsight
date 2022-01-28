@@ -472,8 +472,6 @@ jobs:
           name: install dependencies
           command: |
             yarn install
-            yarn --cwd redisinsight/api/ install
-            yarn build:statics
           no_output_timeout: 15m
       - <<: *keychain
       - run:

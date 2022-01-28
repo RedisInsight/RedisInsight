@@ -27,6 +27,7 @@
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "hardenedRuntime": true,
+    "identity": "Redis Labs Inc. (UUK47G4BAZ)",
     "artifactName": "${productName}-${os}-mas.${ext}"
   },
   "dmg": {

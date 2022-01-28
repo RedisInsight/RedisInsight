@@ -87,8 +87,12 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     })
 
     // Catch connect error
-    newSocket.on(SocketEvent.ConnectionError, (error: Error) => {
-      payloads.push({ isError: true, time: `${Date.now()}`, message: `${error?.name}: ${error?.message}` })
+    newSocket.on(SocketEvent.ConnectionError, (error: { type: string; name: any; message: any }) => {
+      if (error?.type === 'TransportError') {
+        payloads.push({ isError: true, time: `${Date.now()}`, message: 'Error: Connection was lost' })
+      } else {
+        payloads.push({ isError: true, time: `${Date.now()}`, message: `${error?.name}: ${error?.message}` })
+      }
       setNewItems(payloads, () => { payloads.length = 0 })
       dispatch(toggleRunMonitor())
     })

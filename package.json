@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "cross-env NODE_ENV=development concurrently \"yarn build:main\" \"yarn build:renderer\"",
-    "build:stage": "cross-env NODE_ENV=staging concurrently \"yarn build:api:stage && yarn build:main:stage\" \"yarn build:renderer:stage\"",
+    "build:stage": "cross-env NODE_ENV=staging concurrently \"yarn build:main:stage\" \"yarn build:renderer:stage\"",
     "build:prod": "cross-env NODE_ENV=production concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:api": "yarn --cwd redisinsight/api/ build:prod",
     "build:api:stage": "yarn --cwd redisinsight/api/ build:stage",

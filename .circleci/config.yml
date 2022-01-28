@@ -764,8 +764,6 @@ workflows:
             - Setup sign certificates (dev)
       - macosx:
           name: Build app - MacOS (dev)
-          requires: *stageElectronBuildRequires
-          <<: *devFilter
 
       - store-build-artifacts:
           name: Store build artifacts (dev)
@@ -775,10 +773,6 @@ workflows:
       # build and release electron app (stage)
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
-          requires:
-            - UTest - UI
-            - UTest - API
-            - ITest - Final coverage
           <<: *stageFilter
       - setup-build:
           name: Setup build (stage)
@@ -821,10 +815,6 @@ workflows:
       # build and release electron app (prod)
       - setup-sign-certificates:
           name: Setup sign certificates (prod)
-          requires:
-            - UTest - UI
-            - UTest - API
-            - ITest - Final coverage
           <<: *prodFilter
       - setup-build:
           name: Setup build (prod)

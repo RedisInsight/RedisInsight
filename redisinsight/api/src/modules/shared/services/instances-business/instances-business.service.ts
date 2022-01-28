@@ -270,7 +270,7 @@ export class InstancesBusinessService {
       });
 
       if (storeClientInstance) {
-        this.redisService.setClientInstance(
+        await this.redisService.setClientInstance(
           {
             uuid: instance.id,
             instanceId: instance.id,

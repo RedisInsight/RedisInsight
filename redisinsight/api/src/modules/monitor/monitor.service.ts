@@ -60,7 +60,7 @@ export class MonitorService {
         || this.monitorObservers[instanceId].status !== MonitorObserverStatus.Ready
       ) {
         const redisClient = await this.getRedisClientForInstance(instanceId);
-        this.monitorObservers[instanceId] = new MonitorObserver(redisClient);
+        this.monitorObservers[instanceId] = new MonitorObserver(redisClient, this.redisService);
       }
       this.logger.log('Succeed to get monitor observer.');
       return this.monitorObservers[instanceId];

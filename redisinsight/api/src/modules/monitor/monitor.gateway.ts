@@ -9,6 +9,7 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { CommandsService } from 'src/modules/commands/commands.service';
 import { get } from 'lodash';
 import config from 'src/utils/config';
 import { MonitorService } from './monitor.service';
@@ -23,7 +24,10 @@ export class MonitorGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   private logger: Logger = new Logger('MonitorGateway');
 
-  constructor(private service: MonitorService) {}
+  constructor(
+    private service: MonitorService,
+    private commandsService: CommandsService,
+  ) {}
 
   afterInit(): void {
     this.logger.log('Initialized');
@@ -39,9 +43,10 @@ export class MonitorGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async monitor(socketClient: Socket): Promise<any> {
     try {
       const instanceId = get(socketClient, 'handshake.query.instanceId');
+      const commandsDoc = await this.commandsService.getAll();
       await this.service.addListenerForInstance(
         instanceId,
-        new ClientMonitorObserver(socketClient.id, socketClient),
+        new ClientMonitorObserver(socketClient.id, socketClient, commandsDoc),
       );
       return { status: 'ok' };
     } catch (error) {

@@ -33,6 +33,7 @@ export interface IRedisClientInstance {
   client: any;
   uuid: string;
   lastTimeUsed: number;
+  clientAddress?: string;
 }
 
 export interface IFindRedisClientInstanceByOptions {
@@ -237,7 +238,7 @@ export class RedisService {
     return removed.length;
   }
 
-  public setClientInstance(options: ISetClientInstanceOptions, client): 0 | 1 {
+  public async setClientInstance(options: ISetClientInstanceOptions, client): Promise<0 | 1> {
     const found = this.findClientInstance(options.instanceId, options.tool, options.uuid);
     if (found) {
       const index = findIndex(this.clients, { uuid: found.uuid });
@@ -252,6 +253,7 @@ export class RedisService {
     const clientInstance: IRedisClientInstance = {
       ...options,
       uuid: options.uuid || uuidv4(),
+      clientAddress: await RedisService.getClientAddress(client),
       lastTimeUsed: Date.now(),
       client,
     };
@@ -364,5 +366,19 @@ export class RedisService {
   ): IRedisClientInstance {
     const options = omitBy({ instanceId, uuid, tool }, isNil);
     return find<IRedisClientInstance>(this.clients, options);
+  }
+
+  public findClientInstanceByAddress(
+    clientAddress: string,
+  ): IRedisClientInstance {
+    return find<IRedisClientInstance>(this.clients, { clientAddress });
+  }
+
+  static async getClientAddress(redis: IORedis.Redis | IORedis.Cluster): Promise<string> {
+    try {
+      return (await redis.client('info')).split(' ')[1].split('=')[1];
+    } catch (error) {
+      return undefined;
+    }
   }
 }

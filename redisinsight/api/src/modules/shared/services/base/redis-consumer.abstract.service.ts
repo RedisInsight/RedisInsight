@@ -142,7 +142,7 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
         this.consumer,
         connectionName,
       );
-      this.redisService.setClientInstance(
+      await this.redisService.setClientInstance(
         {
           uuid,
           instanceId,

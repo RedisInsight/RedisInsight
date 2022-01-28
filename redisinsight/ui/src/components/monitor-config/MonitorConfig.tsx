@@ -40,6 +40,7 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
 
     // Create SocketIO connection to instance by instanceId
     const newSocket = io(`${getBaseApiUrl()}/monitor`, {
+      secure: true,
       forceNew: true,
       query: { instanceId },
     })
@@ -86,9 +87,13 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
       }
     })
 
-    // Catch connect error
-    newSocket.on(SocketEvent.ConnectionError, (error: Error) => {
-      payloads.push({ isError: true, time: `${Date.now()}`, message: `${error?.name}: ${error?.message}` })
+    newSocket.on(SocketEvent.ConnectionError, (error: { type: string; name: any; message: any }) => {
+      console.log(13123123, JSON.stringify(error))
+      if (error?.type === 'TransportError') {
+        payloads.push({ isError: true, time: `${Date.now()}`, message: 'Error: Something was wrong' })
+      } else {
+        payloads.push({ isError: true, time: `${Date.now()}`, message: `${error?.name}: ${error?.message}` })
+      }
       setNewItems(payloads, () => { payloads.length = 0 })
       dispatch(toggleRunMonitor())
     })

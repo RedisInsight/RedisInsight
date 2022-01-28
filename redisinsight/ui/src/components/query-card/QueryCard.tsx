@@ -118,7 +118,7 @@ const QueryCard = (props: Props) => {
     setSelectedViewValue(value)
   }
 
-  const commonError = CommonErrorResponse(command)
+  const commonError = CommonErrorResponse(command, result)
 
   return (
     <div className={cx(styles.containerWrapper, {
@@ -159,6 +159,7 @@ const QueryCard = (props: Props) => {
                           result={result}
                           query={command}
                           setSummaryText={setSummaryText}
+                          commandId={id}
                         />
                       ) : (
                         <div className={styles.loading}>

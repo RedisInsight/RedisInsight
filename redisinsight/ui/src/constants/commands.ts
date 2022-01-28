@@ -59,7 +59,10 @@ export enum CommandGroup {
   JSON = 'json',
   TimeSeries = 'timeseries',
   Graph = 'graph',
-  AI = 'ai'
+  AI = 'ai',
+  TDigest = 'tdigest',
+  CMS = 'cms',
+  TopK = 'topk',
 }
 
 export enum CommandPrefix {

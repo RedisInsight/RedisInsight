@@ -9,7 +9,12 @@ import { Theme } from 'uiSrc/constants'
 import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
 import { prepareIframeHtml } from 'uiSrc/plugins/pluginImport'
-import { appPluginsSelector, sendPluginCommandAction } from 'uiSrc/slices/app/plugins'
+import {
+  appPluginsSelector,
+  getPluginStateAction,
+  sendPluginCommandAction,
+  setPluginStateAction
+} from 'uiSrc/slices/app/plugins'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { appServerInfoSelector } from 'uiSrc/slices/app/info'
 
@@ -20,6 +25,7 @@ export interface Props {
   query: any
   id: string
   setSummaryText: (text: string) => void
+  commandId: string
 }
 
 enum StylesNamePostfix {
@@ -28,10 +34,15 @@ enum StylesNamePostfix {
   Global = '/global_styles.css'
 }
 
+enum ActionTypes {
+  Resolve = 'resolve',
+  Reject = 'reject'
+}
+
 const baseUrl = getBaseApiUrl()
 
 const QueryCardCliPlugin = (props: Props) => {
-  const { query, id, result, setSummaryText } = props
+  const { query, id, result, setSummaryText, commandId } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
   const serverInfo = useSelector(appServerInfoSelector)
@@ -64,14 +75,80 @@ const QueryCardCliPlugin = (props: Props) => {
   }
 
   const sendRedisCommand = ({ command = '', requestId = '' }: { command: string, requestId: string }) => {
+    const commonOptions = {
+      event: PluginEvents.executeRedisCommand,
+      requestId,
+    }
     dispatch(
       sendPluginCommandAction({
         command,
         onSuccessAction: (response) => {
           sendMessageToPlugin({
-            event: PluginEvents.executeRedisCommand,
-            requestId,
+            ...commonOptions,
+            actionType: ActionTypes.Resolve,
             data: response.result
+          })
+        },
+        onFailAction: (error: any) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Reject,
+            data: error
+          })
+        }
+      })
+    )
+  }
+
+  const getPluginState = ({ requestId }: { requestId: string }) => {
+    const commonOptions = {
+      event: PluginEvents.getState,
+      requestId,
+    }
+    dispatch(
+      getPluginStateAction({
+        visualizationId: id,
+        commandId,
+        onSuccessAction: (response) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Resolve,
+            data: response?.state ?? null
+          })
+        },
+        onFailAction: (error: any) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Reject,
+            data: error
+          })
+        }
+      })
+    )
+  }
+
+  const setPluginState = ({ requestId, state }: { requestId: string, state: any }) => {
+    const commonOptions = {
+      event: PluginEvents.setState,
+      requestId,
+    }
+    dispatch(
+      setPluginStateAction({
+        visualizationId: id,
+        commandId,
+        pluginState: state,
+        onSuccessAction: () => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Resolve,
+            data: state
+          })
+        },
+        onFailAction: (error: any) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Reject,
+            data: error
           })
         }
       })
@@ -102,11 +179,9 @@ const QueryCardCliPlugin = (props: Props) => {
       setSummaryText(text)
     })
 
-    pluginApi.onEvent(
-      generatedIframeNameRef.current,
-      PluginEvents.executeRedisCommand,
-      sendRedisCommand
-    )
+    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.executeRedisCommand, sendRedisCommand)
+    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.getState, getPluginState)
+    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.setState, setPluginState)
   }, [currentView])
 
   const renderPluginIframe = (config: any) => {

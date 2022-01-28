@@ -1,3 +1,40 @@
+.container {
+  @media only screen and (max-width: 1124px) {
+    .modules {
+      margin-left: 0;
+      border-left: 0;
+      padding-left: 12px;
+      padding-right: 8px;
+    }
+
+    .overview {
+      border-right: 0;
+    }
+  }
+}
+
+.itemContainer {
+  height: 58px;
+  background-color: var(--euiColorEmptyShade);
+  border: 1px solid var(--euiColorLightShade);
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+}
+
+.modules {
+  padding-left: 22px;
+  padding-right: 8px;
+
+  @media only screen and (max-width: 767px) {
+    padding-left: 10px;
+  }
+
+  &.noModules {
+    padding-left: 12px;
+  }
+}
+
 .overviewItem {
   padding: 8px 20px;
   min-width: 116px;
@@ -43,30 +80,7 @@
   .moreInfoOverviewTitle {
     margin-right: 6px;
     font-size: 12px;
+    font-weight: 200;
   }
 }
 
-.calculationWrapper {
-  display: flex;
-  align-items: center;
-  min-width: 134px;
-}
-
-.cpuWrapper {
-  min-width: 132px;
-
-  @media only screen and (max-width: 1024px) {
-    min-width: 114px;
-  }
-}
-
-.calculation {
-  font-size: 13px;
-  font-weight: 500;
-  margin-left: 8px;
-}
-
-.spinner {
-  width: 18px !important;
-  height: 18px !important;
-}

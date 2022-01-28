@@ -74,4 +74,4 @@ services:
       context: ./rte/oss-standalone-big
       dockerfile: Dockerfile
       args:
-        TEST_BIG_DB_DUMP: $TEST_BIG_DB_DUMP
+        TEST_DB_DUMP: $TEST_BIG_DB_DUMP

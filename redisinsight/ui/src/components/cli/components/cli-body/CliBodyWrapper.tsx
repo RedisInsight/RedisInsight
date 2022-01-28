@@ -1,5 +1,3 @@
-import { EuiTextColor } from '@elastic/eui'
-import { isEmpty } from 'lodash'
 import { decode } from 'html-entities'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
@@ -25,7 +23,6 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { InitOutputText, ConnectionSuccessOutputText } from 'uiSrc/constants/cliOutput'
 import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import CliBody from './CliBody'
@@ -45,20 +42,13 @@ const CliBodyWrapper = () => {
     isSearching,
     matchedCommand,
     cliClientUuid,
-    loading,
   } = useSelector(cliSettingsSelector)
-  const { host, port, connectionType, db } = useSelector(connectedInstanceSelector)
+  const { host, port, connectionType } = useSelector(connectedInstanceSelector)
   const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
-    !cliClientUuid && dispatch(createCliClientAction(onSuccess, onFail))
+    !cliClientUuid && dispatch(createCliClientAction())
   }, [])
-
-  useEffect(() => {
-    if (loading) {
-      dispatch(concatToOutput(InitOutputText(host, port, db)))
-    }
-  }, [loading])
 
   useEffect(() => {
     if (!isEnteringCommand) {
@@ -74,24 +64,6 @@ const CliBodyWrapper = () => {
   }
 
   const refHotkeys = useHotkeys<HTMLDivElement>('command+k,ctrl+l', handleClearOutput)
-
-  const onSuccess = () => {
-    if (isEmpty(data) || error) {
-      dispatch(concatToOutput(ConnectionSuccessOutputText))
-    }
-  }
-
-  const onFail = (message: string) => {
-    dispatch(
-      concatToOutput([
-        '\n',
-        <EuiTextColor color="warning" key={Date.now()}>
-          {message}
-        </EuiTextColor>,
-        '\n\n',
-      ])
-    )
-  }
 
   const handleSubmit = () => {
     const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())

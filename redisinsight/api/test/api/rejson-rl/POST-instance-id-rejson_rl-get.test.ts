@@ -130,8 +130,8 @@ describe('POST /instance/:instanceId/rejson-rl/get', () => {
   });
 
   describe('Large key value', () => {
-    // todo: do not forget to remove rte.name check after fixing MEMORY USAGE issue in RedisJSON v2.0.0
-    requirements('rte.acl', '!rte.name=MODS_PREVIEW');
+    // todo: do not forget to remove module version check after fixing MEMORY USAGE issue in RedisJSON v2.0.0
+    requirements('rte.modules.rejson.version<20000');
     [
       {
         name: 'Should get json with calculated cardinality',
@@ -180,8 +180,8 @@ describe('POST /instance/:instanceId/rejson-rl/get', () => {
   })
 
   describe('ACL', () => {
-    // todo: do not forget to remove rte.name check after fixing MEMORY USAGE issue in RedisJSON v2.0.0
-    requirements('rte.acl', '!rte.name=MODS_PREVIEW');
+    // todo: do not forget to remove rte.modules.rejson check after fixing MEMORY USAGE issue in RedisJSON v2.0.0
+    requirements('rte.acl', 'rte.modules.rejson.version<20000');
     before(async () => rte.data.setAclUserRules('~* +@all'));
 
     [

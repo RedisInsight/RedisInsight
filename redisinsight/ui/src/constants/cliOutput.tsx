@@ -35,5 +35,15 @@ export const cliTexts = {
   WORKBENCH_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
     commandLine + unsupportedCommandTextWorkbench + commands,
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
-  CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.'
+  CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.',
+  UNABLE_TO_DECRYPT: 'Unable to decrypt. Check the system keychain or re-run the command.',
+  CLI_ERROR_MESSAGE: (message: string) => (
+    [
+      '\n',
+      <EuiTextColor color="warning" key={Date.now()}>
+        {message}
+      </EuiTextColor>,
+      '\n\n',
+    ]
+  )
 }

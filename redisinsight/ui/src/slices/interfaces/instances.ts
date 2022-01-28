@@ -223,13 +223,13 @@ export interface RedisCloudSubscription {
 
 export interface DatabaseConfigInfo {
   version: string;
-  totalKeys: Nullable<number>;
-  usedMemory: Nullable<number>;
-  connectedClients: Nullable<number>;
-  opsPerSecond: Nullable<number>;
-  networkInKbps: Nullable<number>;
-  networkOutKbps: Nullable<number>;
-  cpuUsagePercentage: Nullable<number>;
+  totalKeys?: Nullable<number>;
+  usedMemory?: Nullable<number>;
+  connectedClients?: Nullable<number>;
+  opsPerSecond?: Nullable<number>;
+  networkInKbps?: Nullable<number>;
+  networkOutKbps?: Nullable<number>;
+  cpuUsagePercentage?: Nullable<number>;
 }
 
 export interface InitialStateInstances {

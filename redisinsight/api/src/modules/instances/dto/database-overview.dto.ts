@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class DatabaseOverview {
   @ApiProperty({
@@ -7,45 +7,45 @@ export class DatabaseOverview {
   })
   version: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Total number of bytes allocated by Redis primary shards',
     type: Number,
   })
-  usedMemory: number;
+  usedMemory?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Total number of keys inside Redis primary shards',
     type: Number,
   })
-  totalKeys: number;
+  totalKeys?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Median for connected clients in the all shards',
     type: Number,
   })
-  connectedClients: number;
+  connectedClients?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Sum of current commands per second in the all shards',
     type: Number,
   })
-  opsPerSecond: number;
+  opsPerSecond?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Sum of current network input in the all shards (kbps)',
     type: Number,
   })
-  networkInKbps: number;
+  networkInKbps?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Sum of current network out in the all shards (kbps)',
     type: Number,
   })
-  networkOutKbps: number;
+  networkOutKbps?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Sum of current cpu usage in the all shards (%)',
     type: Number,
   })
-  cpuUsagePercentage: number;
+  cpuUsagePercentage?: number;
 }

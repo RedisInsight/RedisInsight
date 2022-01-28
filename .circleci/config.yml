@@ -764,6 +764,8 @@ workflows:
             - Setup sign certificates (dev)
       - macosx:
           name: Build app - MacOS (dev)
+          requires:
+            - Setup build (dev)
 
       - store-build-artifacts:
           name: Store build artifacts (dev)

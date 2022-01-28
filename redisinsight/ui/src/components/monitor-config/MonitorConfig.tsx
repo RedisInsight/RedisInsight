@@ -28,8 +28,8 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
   const setNewItems = debounce((items, onSuccess?) => {
     dispatch(concatMonitorItems(items))
     onSuccess?.()
-  }, 100, {
-    maxWait: 1000,
+  }, 50, {
+    maxWait: 150,
   })
 
   useEffect(() => {
@@ -44,11 +44,11 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
       query: { instanceId },
     })
     dispatch(setSocket(newSocket))
-    const payloads: IMonitorDataPayload[] = []
+    let payloads: IMonitorDataPayload[] = []
 
     const handleMonitorEvents = () => {
-      newSocket.on(MonitorEvent.MonitorData, (payload:IOnDatePayload) => {
-        payloads.push(payload)
+      newSocket.on(MonitorEvent.MonitorData, (payload:IOnDatePayload[]) => {
+        payloads = payloads.concat(payload)
 
         // set batch of payloads and then clear batch
         setNewItems(payloads, () => {

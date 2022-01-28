@@ -452,6 +452,7 @@ jobs:
   macosx:
     macos:
       xcode: 13.2.1
+    resource_class: macos.x86.medium.gen2
     parameters:
       env:
         description: Build environment (stage || prod)
@@ -753,81 +754,23 @@ jobs:
 workflows:
   build:
     jobs:
-      # unit tests (on any commit)
-      - unit-tests-ui:
-          name: UTest - UI
-      - unit-tests-api:
-          name: UTest - API
-
-      # integration tests run in parallel (on any commit)
-      # target server runs locally to calculate code coverage
-      - integration-tests-run:
-          matrix:
-            alias: itest-code
-            parameters:
-              rte: *iTestsNames
-          name: ITest - << matrix.rte >> (code)
-      - integration-tests-coverage:
-          name: ITest - Final coverage
-          requires:
-            - itest-code
-        # e2e tests (doesn't affect pipeline even if fail)
-      - docker:
-          name: Build docker image
-          filters: &e2eFilter
-            branches:
-              only:
-                - /^release.*/
-                - /^e2e.*/
-                - /^feature/e2e.*/
-                - main
-                - latest
-      - e2e-tests:
-          name: E2ETest
-          build: docker
-          filters: *e2eFilter
-          requires:
-            - Build docker image
-
       # build and release electron app (dev)
-      - dev-build-approve:
-          name: Build dev app
-          type: approval
-          requires:
-            - UTest - UI
-            - UTest - API
-            - ITest - Final coverage
-          <<: *devFilter
       - setup-sign-certificates:
           name: Setup sign certificates (dev)
-          requires:
-            - Build dev app
-          <<: *devFilter
       - setup-build:
           name: Setup build (dev)
           env: dev
           requires:
             - Setup sign certificates (dev)
-          <<: *devFilter
-      - linux:
-          name: Build app - Linux (dev)
-          requires: &stageElectronBuildRequires
-            - Setup build (dev)
-          <<: *devFilter
       - macosx:
           name: Build app - MacOS (dev)
           requires: *stageElectronBuildRequires
           <<: *devFilter
-      - windows:
-          name: Build app - Windows (dev)
-          requires: *stageElectronBuildRequires
-          <<: *devFilter
+
       - store-build-artifacts:
           name: Store build artifacts (dev)
           requires:
-            - Build app - Linux (dev)
             - Build app - MacOS (dev)
-            - Build app - Windows (dev)
 
       # build and release electron app (stage)
       - setup-sign-certificates:

@@ -28,6 +28,15 @@
   }
 }
 
+.listWrapper {
+  @include euiScrollBar;
+
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: auto;
+}
+
 .content {
   @include euiScrollBar;
 
@@ -125,10 +134,6 @@
   color: #569cd6;
 }
 
-.itemSource {
-  white-space: nowrap;
-}
-
 .itemArgs {
   word-break: break-word;
   padding-right: 10px;
@@ -141,6 +146,10 @@
 
 .item {
   display: block;
+
+  & > span {
+    padding-right: 5px;
+  }
 }
 
 .itemTime {

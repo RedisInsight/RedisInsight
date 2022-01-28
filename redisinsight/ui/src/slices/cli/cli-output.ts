@@ -9,9 +9,10 @@ import {
 } from 'uiSrc/utils/cliHelper'
 import { getApiErrorMessage, getApiErrorName, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { cliUnsupportedCommandsSelector, updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
-
 import ApiErrors from 'uiSrc/constants/apiErrors'
+
 import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
+
 import { showMonitor } from './monitor'
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
@@ -117,7 +118,10 @@ export function sendCliCommandAction(
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
         dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
-        if (command.toLowerCase().startsWith(SelectCommand.toLowerCase())) {
+        if (
+          dataStatus === CommandExecutionStatus.Success
+          && command.toLowerCase().startsWith(SelectCommand.toLowerCase())
+        ) {
           try {
             const dbIndex = getDbIndexFromSelectQuery(command)
             dispatch(setCliDbIndex(dbIndex))
@@ -290,7 +294,7 @@ function handleRecreateClient(dispatch: AppDispatch, stateInit: () => RootState,
       cliClientUuid,
       () => dispatch(concatToOutput(ConnectionSuccessOutputText)),
       (message:string) => dispatch(concatToOutput(
-        cliParseTextResponseWithOffset(`\n${message}`, command, CommandExecutionStatus.Fail)
+        cliParseTextResponseWithOffset(`${message}`, command, CommandExecutionStatus.Fail)
       )),
     ))
   }

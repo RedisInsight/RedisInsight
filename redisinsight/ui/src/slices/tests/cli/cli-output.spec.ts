@@ -256,6 +256,27 @@ describe('cliOutput slice', () => {
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
 
+      it('should not call setCliDbIndex when response status is failed', async () => {
+        // Arrange
+        const dbIndex = 1
+        const command = `SELECT ${dbIndex}`
+        const data = { response: 'OK', status: CommandExecutionStatus.Fail }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(sendCliCommandAction(command))
+
+        // Assert
+        const expectedActions = [
+          sendCliCommand(),
+          sendCliCommandSuccess(),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
       it('call both sendCliStandaloneCommandAction and sendCliCommandSuccess when response status is fail', async () => {
         // Arrange
         const command = 'keys *'

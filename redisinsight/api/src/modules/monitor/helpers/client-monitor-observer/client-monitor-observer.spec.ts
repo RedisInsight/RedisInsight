@@ -19,7 +19,7 @@ describe('ClientMonitorObserver', () => {
 
     expect(client.id).toEqual(socketClient.id);
   });
-  it.only('should emit event on monitorData', () => {
+  it.only('should emit event on monitorData', async () => {
     const client = new ClientMonitorObserver(socketClient.id, socketClient);
     const monitorData = {
       // unix timestamp
@@ -32,7 +32,9 @@ describe('ClientMonitorObserver', () => {
 
     client.handleOnData(payload);
 
-    expect(socketClient.emit).toHaveBeenCalledWith(MonitorGatewayServerEvents.Data, monitorData);
+    await new Promise((r) => setTimeout(r, 500));
+
+    expect(socketClient.emit).toHaveBeenCalledWith(MonitorGatewayServerEvents.Data, [monitorData]);
   });
   it.only('should emit exception event', () => {
     const client = new ClientMonitorObserver(socketClient.id, socketClient);

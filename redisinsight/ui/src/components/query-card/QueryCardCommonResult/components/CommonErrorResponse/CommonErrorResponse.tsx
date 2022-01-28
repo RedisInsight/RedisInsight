@@ -8,17 +8,16 @@ import {
   isRepeatCountCorrect
 } from 'uiSrc/utils'
 import { cliTexts, SelectCommand } from 'uiSrc/constants/cliOutput'
-import { RootState } from 'uiSrc/slices/store'
 import { CommandMonitor } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { RSNotLoadedContent } from 'uiSrc/pages/workbench/constants'
 
-import { cliSettingsSelector, cliUnsupportedCommandsSelector } from 'uiSrc/slices/cli/cli-settings'
+import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import ModuleNotLoaded from 'uiSrc/pages/workbench/components/module-not-loaded'
 
-const CommonErrorResponse = (command = '') => {
+const CommonErrorResponse = (command = '', result?: any) => {
   const { unsupportedCommands: cliUnsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { modules } = useSelector(connectedInstanceSelector)
   const unsupportedCommands = [SelectCommand.toLowerCase(), ...cliUnsupportedCommands, ...blockingCommands]
@@ -34,6 +33,14 @@ const CommonErrorResponse = (command = '') => {
   }
 
   const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
+
+  if (result === null) {
+    return cliParseTextResponse(
+      cliTexts.UNABLE_TO_DECRYPT,
+      '',
+      CommandExecutionStatus.Fail,
+    )
+  }
 
   if (!isRepeatCountCorrect(countRepeat)) {
     return cliParseTextResponse(

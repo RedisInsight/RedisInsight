@@ -69,7 +69,7 @@ describe('PATCH /instance/:instanceId/keys/ttl', () => {
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.ttl(constants.TEST_STRING_KEY_2)).to.eql(300)
+          expect(await rte.client.ttl(constants.TEST_STRING_KEY_2)).to.gte(300 - 5)
         }
       },
       {

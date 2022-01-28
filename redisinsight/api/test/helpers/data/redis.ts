@@ -23,14 +23,32 @@ export const initDataHelper = (rte) => {
     return executeCommand(...command.split(' '));
   };
 
+  const flushTestRunData = async (node) => {
+    if (!constants.TEST_RTE_SHARED_DATA) {
+      return node.flushall();
+    }
+
+    // 5M count looks like "too much" but each test run should generate even less then 100 keys
+    // we want to not wait for a long time when run tests on huge databases (currently ~4M keys)
+    const count = constants.TEST_RTE_BIG_DATA ? 5_000_000 : 10_000;
+    let cursor = null;
+    let keys = [];
+    while (cursor !== '0') {
+      [cursor, keys] = await node.send_command('scan', [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`])
+      if (keys.length) {
+        await node.send_command('del', ...keys)
+      }
+    }
+  }
+
   const truncate = async () => {
     return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
         try {
-          return node.flushall();
+          return flushTestRunData(node);
         } catch (e) {
           return null;
         }
-    })) : client.flushall();
+    })) : flushTestRunData(client);
   };
 
   // keys
@@ -221,7 +239,7 @@ export const initDataHelper = (rte) => {
       const pipeline = [];
       const limit = inserted + batchSize;
       for (inserted; inserted < limit && inserted < number; inserted++) {
-        pipeline.push(['set', `k_${inserted}`, 'v']);
+        pipeline.push(['set', `${constants.TEST_RUN_ID}_${inserted}`, 'v']);
       }
 
       await insertKeysBasedOnEnv(pipeline);
@@ -230,36 +248,36 @@ export const initDataHelper = (rte) => {
 
   const generateNKeys = async (number: number = 15000, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['set', `str_key_${i}`, `str_val_${i}`]) }, // string
-      { create: n => _.map(new Array(n), (v,i) => ['lpush', `list_key_${i}`, `list_val_${i}`]) }, // list
-      { create: n => _.map(new Array(n), (v,i) => ['sadd', `set_key_${i}`, `set_val_${i}`]) }, // set
-      { create: n => _.map(new Array(n), (v,i) => ['zadd', `zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
-      { create: n => _.map(new Array(n), (v,i) => ['hset', `hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
+      { create: n => _.map(new Array(n), (v,i) => ['set', `${constants.TEST_RUN_ID}_str_key_${i}`, `str_val_${i}`]) }, // string
+      { create: n => _.map(new Array(n), (v,i) => ['lpush', `${constants.TEST_RUN_ID}_list_key_${i}`, `list_val_${i}`]) }, // list
+      { create: n => _.map(new Array(n), (v,i) => ['sadd', `${constants.TEST_RUN_ID}_set_key_${i}`, `set_val_${i}`]) }, // set
+      { create: n => _.map(new Array(n), (v,i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
+      { create: n => _.map(new Array(n), (v,i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
     ], number, clean);
   };
 
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
     const jsonValue = JSON.stringify(constants.TEST_REJSON_VALUE_1);
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['json.set', `rejson_key_${i}`, '.', jsonValue]) },
+      { create: n => _.map(new Array(n), (v,i) => ['json.set', `${constants.TEST_RUN_ID}_rejson_key_${i}`, '.', jsonValue]) },
     ], number, clean);
   };
 
   const generateNTimeSeries = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['ts.create', `ts_key_${i}`, `ts_val_${i}`]) },
+      { create: n => _.map(new Array(n), (v,i) => ['ts.create', `${constants.TEST_RUN_ID}_ts_key_${i}`, `ts_val_${i}`]) },
     ], number, clean);
   };
 
   const generateNStreams = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['xadd', `st_key_${i}`, `*`, `st_field_${i}`, `st_val_${i}`]) },
+      { create: n => _.map(new Array(n), (v,i) => ['xadd', `${constants.TEST_RUN_ID}_st_key_${i}`, `*`, `st_field_${i}`, `st_val_${i}`]) },
     ], number, clean);
   };
 
   const generateNGraphs = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['graph.query', `graph_key_${i}`, `CREATE (n_${i})`]) },
+      { create: n => _.map(new Array(n), (v,i) => ['graph.query', `${constants.TEST_RUN_ID}_graph_key_${i}`, `CREATE (n_${i})`]) },
     ], number, clean);
   };
 

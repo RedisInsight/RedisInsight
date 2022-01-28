@@ -27,14 +27,14 @@
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "hardenedRuntime": true,
-    "identity": "Developer ID Application: Redis Labs Inc. (UUK47G4BAZ)",
+    "identity": "Redis Labs Inc. (UUK47G4BAZ)",
     "artifactName": "${productName}-${os}-mas.${ext}"
   },
   "masDev": {
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "hardenedRuntime": true,
-    "identity": "Developer ID Application: Redis Labs Inc. (UUK47G4BAZ)",
+    "identity": "Redis Labs Inc. (UUK47G4BAZ)",
     "artifactName": "${productName}-${os}-mas.${ext}"
   },
   "dmg": {

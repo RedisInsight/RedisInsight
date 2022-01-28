@@ -6,10 +6,13 @@ export class WorkbenchPage {
   cssSelectorPaginationButtonNext: string
   cssReRunCommandButton: string
   cssDeleteCommandButton: string
-  cssQueryCardOutputResponceSuccess: string
+  cssQueryCardOutputResponseSuccess: string
   cssTableViewTypeOption: string
+  cssMonacoCommandPaletteLine: string
   cssQueryTextResult: string
   cssQueryTableResult: string
+  cssCustomPluginTableResult: string
+  cssCommandExecutionDateTime: string
   //------------------------------------------------------------------------------------------
   //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
   //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -45,6 +48,9 @@ export class WorkbenchPage {
   monacoCloseCommandDetails: Selector
   monacoSuggestion: Selector
   monacoCommandIndicator: Selector
+  monacoContextMenu: Selector
+  monacoShortcutInput: Selector
+  monacoSuggestionOption: Selector
   iframe: Selector
   internalLinkWorkingWithHashes: Selector
   preselectExactSearch: Selector
@@ -58,6 +64,12 @@ export class WorkbenchPage {
   noCommandHistoryTitle: Selector
   noCommandHistoryText: Selector
   scrolledEnablementArea: Selector
+  enablementAreaPagination: Selector
+  enablementAreaPaginationPopover: Selector
+  paginationPopoverButtons: Selector
+  enablementAreaTreeView: Selector
+  fullScreenButton: Selector
+  customPluginsViewType: Selector
 
   constructor() {
       //CSS selectors
@@ -65,10 +77,13 @@ export class WorkbenchPage {
       this.cssSelectorPaginationButtonNext = '[data-test-subj=pagination-button-next]';
       this.cssReRunCommandButton = '[data-testid=re-run-command]';
       this.cssDeleteCommandButton = '[data-testid=delete-command]';
-      this.cssQueryCardOutputResponceSuccess = '[data-testid=query-card-output-response-success]';
+      this.cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
       this.cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
+      this.cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
       this.cssQueryTextResult = '[data-testid=query-cli-result]';
       this.cssQueryTableResult = '[data-testid^=query-table-result-]';
+      this.cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
+      this.cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
       //-------------------------------------------------------------------------------------------
       //DECLARATION OF SELECTORS
       //*Declare all elements/components of the relevant page.
@@ -95,6 +110,9 @@ export class WorkbenchPage {
       this.reRunCommandButton = Selector('[data-testid=re-run-command]');
       this.preselectManual = Selector('[data-testid=preselect-Manual]');
       this.internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
+      this.enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
+      this.paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
+      this.fullScreenButton = Selector('[data-testid=toggle-full-screen]');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.queryInput = Selector('[data-testid=query-input-container]');
       this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -111,6 +129,9 @@ export class WorkbenchPage {
       this.monacoCommandDetails = Selector('div.suggest-details-container');
       this.monacoCloseCommandDetails = Selector('span.codicon-close');
       this.monacoSuggestion = Selector('span.monaco-icon-name-container');
+      this.monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
+      this.monacoShortcutInput = Selector('input.input');
+      this.monacoSuggestionOption = Selector('div.monaco-list-row');
       this.iframe = Selector('[data-testid=pluginIframe]', { timeout: 60000 });
       this.monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
       this.noCommandHistorySection = Selector('[data-testid=wb_no-results]');
@@ -120,7 +141,10 @@ export class WorkbenchPage {
       this.noCommandHistoryTitle = Selector ('[data-testid=wb_no-results__title]');
       this.noCommandHistoryText = Selector ('[data-testid=wb_no-results__summary]');
       this.monacoCommandIndicator = Selector('div.monaco-glyph-run-command');
-      this.scrolledEnablementArea = Selector('[data-testid=enablement-area__page]')
+      this.scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
+      this.enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
+      this.enablementAreaTreeView = Selector('[data-testid=enablementArea-treeView]');
+      this.customPluginsViewType = Selector('[data-test-subj*=clients-list]');
   }
 
   /**
@@ -139,17 +163,17 @@ export class WorkbenchPage {
 
   //Select Table view option in Workbench results
   async selectViewTypeTable(): Promise<void>{
-    await t.click(this.selectViewType);
-    await t.click(this.tableViewTypeOption);
-}
+      await t.click(this.selectViewType);
+      await t.click(this.tableViewTypeOption);
+  }
 
   /**
   * Send a command in Workbench
   * @param command The command
   * @param speed The speed in seconds. Default is 1
   */
-  async sendCommandInWorkbench(command: string, speed = 1): Promise<void>{
-      await t.typeText(this.queryInput, command, { replace: true, speed: speed});
+  async sendCommandInWorkbench(command: string, speed = 1, paste = false): Promise<void>{
+      await t.typeText(this.queryInput, command, { replace: true, speed, paste });
       await t.click(this.submitCommandButton);
   }
 
@@ -158,7 +182,7 @@ export class WorkbenchPage {
   * @param commands The array of commands to send
   */
   async sendCommandsArrayInWorkbench(commands: string[]): Promise<void> {
-      for(let command of commands) {
+      for(const command of commands) {
           await this.sendCommandInWorkbench(command);
       }
   }

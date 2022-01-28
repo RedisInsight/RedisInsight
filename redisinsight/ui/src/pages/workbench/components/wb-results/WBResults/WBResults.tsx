@@ -4,20 +4,21 @@ import { EuiIcon, EuiText } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
 import QueryCard from 'uiSrc/components/query-card'
-import { WBHistoryObject } from 'uiSrc/pages/workbench/interfaces'
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import MultiPlayIconDark from 'uiSrc/assets/img/multi_play_icon_dark.svg'
 import MultiPlayIconLight from 'uiSrc/assets/img/multi_play_icon_light.svg'
 import styles from './styles.module.scss'
 
 export interface Props {
-  historyItems: Array<WBHistoryObject>;
+  items: CommandExecutionUI[];
   scrollDivRef: React.Ref<HTMLDivElement>;
-  onQueryRun: (query: string, historyId?: number, type?: WBQueryType) => void;
-  onQueryDelete: (historyId: number) => void
+  onQueryReRun: (query: string, commandId?: string, type?: WBQueryType) => void;
+  onQueryDelete: (commandId: string) => void
+  onQueryOpen: (commandId: string) => void
 }
-const WBResults = ({ historyItems = [], onQueryRun, onQueryDelete, scrollDivRef }: Props) => {
+const WBResults = ({ items = [], onQueryReRun, onQueryDelete, onQueryOpen, scrollDivRef }: Props) => {
   const { theme } = useContext(ThemeContext)
 
   const NoResults = (
@@ -37,22 +38,21 @@ const WBResults = ({ historyItems = [], onQueryRun, onQueryDelete, scrollDivRef 
   return (
     <div className={cx(styles.container)}>
       <div ref={scrollDivRef} />
-      {historyItems.map(({ query, data, id, time, fromPersistentStore, loading, status }) => (
+      {items.map(({ command = '', isOpen = false, result = undefined, id = '', loading, createdAt }) => (
         <QueryCard
           id={id}
           key={id}
-          data={data}
-          status={status}
+          isOpen={isOpen}
+          result={result}
           loading={loading}
-          query={query}
-          time={time}
-          fromStore={!!fromPersistentStore}
-          onQueryRun={(queryType: WBQueryType) => onQueryRun(query, id, queryType)}
-          onQueryReRun={() => onQueryRun(query)}
+          command={command}
+          createdAt={createdAt}
+          onQueryOpen={() => onQueryOpen(id)}
+          onQueryReRun={() => onQueryReRun(command)}
           onQueryDelete={() => onQueryDelete(id)}
         />
       ))}
-      {!historyItems.length && NoResults}
+      {!items.length && NoResults}
     </div>
   )
 }

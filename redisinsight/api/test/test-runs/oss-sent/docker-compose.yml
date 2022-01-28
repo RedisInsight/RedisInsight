@@ -4,9 +4,6 @@ services:
   test:
     env_file:
       - ./oss-sent/.env
-    environment:
-      TEST_REDIS_HOST: redis
-      TEST_REDIS_PORT: 26379
   redis:
     build: ./oss-sent
     links:
@@ -18,9 +15,10 @@ services:
 
   p1:
     image: &r redis:5
+    command: redis-server --requirepass dbpass
   s1_1:
     image: *r
-    command: redis-server --slaveof p1 6379
+    command: redis-server --slaveof p1 6379 --masterauth dbpass
   s1_2:
     image: *r
-    command: redis-server --slaveof p1 6379
+    command: redis-server --slaveof p1 6379 --masterauth dbpass

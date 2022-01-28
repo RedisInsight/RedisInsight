@@ -63,7 +63,11 @@ const mainCheckFn = async (testCase) => {
       if (testCase.statusCode === 201) {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
         expect(await rte.client.zrange(testCase.data.keyName, 0, 10)).to.eql([testCase.data.members[0].name]);
-        expect(await rte.client.ttl(testCase.data.keyName)).to.eql(testCase.data.expire || -1);
+        if (testCase.data.expire) {
+          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
+        } else {
+          expect(await rte.client.ttl(testCase.data.keyName)).to.eql(-1);
+        }
       }
     }
   });

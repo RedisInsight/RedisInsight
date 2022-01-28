@@ -1,5 +1,6 @@
 import React from 'react'
 import { cloneDeep, first } from 'lodash'
+import { useSelector } from 'react-redux'
 import {
   cleanup,
   fireEvent,
@@ -10,15 +11,11 @@ import {
 } from 'uiSrc/utils/test-utils'
 
 import {
-  concatToOutput,
   processUnsupportedCommand,
   sendCliClusterCommandAction,
 } from 'uiSrc/slices/cli/cli-output'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { InitOutputText } from 'uiSrc/constants/cliOutput'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { sessionStorageService } from 'uiSrc/services'
 
 import CliBodyWrapper from './CliBodyWrapper'
 
@@ -42,6 +39,7 @@ jest.mock('uiSrc/slices/instances', () => ({
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: '123',
     connectionType: 'STANDALONE',
+    db: 0,
   }),
 }))
 
@@ -50,6 +48,7 @@ jest.mock('uiSrc/slices/cli/cli-output', () => ({
   sendCliClusterCommandAction: jest.fn(),
   processUnsupportedCommand: jest.fn(),
   updateCliCommandHistory: jest.fn,
+  concatToOutput: () => jest.fn(),
 }))
 
 jest.mock('uiSrc/utils/cliHelper', () => ({
@@ -63,39 +62,27 @@ jest.mock('uiSrc/utils/cliHelper', () => ({
 const unsupportedCommands = ['sync', 'subscription']
 const cliCommandTestId = 'cli-command'
 
-jest.mock('uiSrc/slices/cli/cli-settings', () => ({
-  ...jest.requireActual('uiSrc/slices/cli/cli-settings'),
-  cliSettingsSelector: jest.fn().mockReturnValue({
-    unsupportedCommands,
-    matchedCommand: 'get',
-    isEnteringCommand: true,
-    isShowHelper: true,
-  }),
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn()
 }))
 
 describe('CliBodyWrapper', () => {
-  it('should render', () => {
+  beforeEach(() => {
+    const state: any = store.getState();
+
+    (useSelector as jest.Mock).mockImplementation((callback: (arg0: any) => any) => callback({
+      ...state,
+      cli: {
+        ...state.cli,
+        settings: { ...state.cli.settings, loading: false }
+      }
+    }))
+  })
+  it('should render and call process cli client', () => {
+    const expectedActions = [processCliClient()]
+
     expect(render(<CliBodyWrapper />)).toBeTruthy()
-  })
-
-  it('should render with SessionStorage', () => {
-    render(<CliBodyWrapper />)
-
-    const expectedActions = [concatToOutput(InitOutputText('', 0)), processCliClient()]
-    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-      clearStoreActions(expectedActions)
-    )
-  })
-
-  it('"onSubmit" should be called after keyDown Enter', () => {
-    render(<CliBodyWrapper />)
-
-    fireEvent.keyDown(screen.getByTestId(cliCommandTestId), {
-      key: 'Enter',
-    })
-
-    const expectedActions = [concatToOutput(InitOutputText('', 0)), processCliClient()]
-
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
       clearStoreActions(expectedActions)
     )
@@ -105,9 +92,9 @@ describe('CliBodyWrapper', () => {
   // or any testing library that uses js - dom, because of a limitation on js - dom itself.
   // https://github.com/testing-library/dom-testing-library/pull/235
   it.skip('"onSubmit" should check unsupported commands', () => {
-    const processUnsupportedCommandMock = jest.fn()
+    const processUnsupportedCommandMock = jest.fn();
 
-    processUnsupportedCommand.mockImplementation(() => processUnsupportedCommandMock)
+    (processUnsupportedCommand as jest.Mock).mockImplementation(() => processUnsupportedCommandMock)
 
     render(<CliBodyWrapper />)
 
@@ -125,14 +112,15 @@ describe('CliBodyWrapper', () => {
   })
 
   it('"onSubmit" for Cluster connection should call "sendCliClusterCommandAction"', () => {
-    connectedInstanceSelector.mockImplementation(() => ({
+    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       id: '123',
       connectionType: 'CLUSTER',
+      db: 0,
     }))
 
-    const sendCliClusterActionMock = jest.fn()
+    const sendCliClusterActionMock = jest.fn();
 
-    sendCliClusterCommandAction.mockImplementation(() => sendCliClusterActionMock)
+    (sendCliClusterCommandAction as jest.Mock).mockImplementation(() => sendCliClusterActionMock)
 
     render(<CliBodyWrapper />)
 

@@ -13,8 +13,7 @@ import { TableInfoResult, TableResult } from './components'
 
 interface Props {
   command: string,
-  response: any,
-  status: string
+  result?: { response: any, status: string }[]
 }
 
 // This is problematic for some bundlers and/or deployments,
@@ -22,7 +21,7 @@ interface Props {
 appendIconComponentCache(cachedIcons)
 
 const App = (props: Props) => {
-  const { command = '', response = [], status = '' } = props
+  const { command = '', result: [{ response = '', status = '' } = {}] = [] } = props
 
   if (status === 'fail') {
     return <div className="responseFail">{response}</div>

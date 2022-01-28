@@ -10,7 +10,7 @@ export enum HelpLink {
 export const HELP_LINKS = {
   [HelpLink.CreateRedisCloud]: {
     label: 'Limited offer: Up to 6 months free with $200 credits.',
-    link: 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight',
+    link: 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_offer_jan',
     event: TelemetryEvent.CREATE_FREE_CLOUD_DATABASE_CLICKED,
     sources: {
       welcome: 'Welcome page',

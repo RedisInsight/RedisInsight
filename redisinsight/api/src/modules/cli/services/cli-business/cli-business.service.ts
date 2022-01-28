@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CliToolService } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import {
   ClusterNodeRole,
@@ -21,7 +20,6 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   checkHumanReadableCommands,
   checkRedirectionError,
-  getUnsupportedCommands,
   parseRedirectionError,
   splitCliCommandLine,
 } from 'src/utils/cli-helper';
@@ -34,6 +32,9 @@ import {
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exceptions';
 import { AppTool } from 'src/models';
+import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
+import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
@@ -46,7 +47,7 @@ export class CliBusinessService {
   private outputFormatterManager: OutputFormatterManager;
 
   constructor(
-    private cliTool: CliToolService,
+    private cliTool: RedisToolService,
     private cliAnalyticsService: CliAnalyticsService,
   ) {
     this.outputFormatterManager = new OutputFormatterManager();
@@ -149,8 +150,8 @@ export class CliBusinessService {
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
 
-      const reply = await this.cliTool.execCommand(clientOptions, command, args, replyEncoding);
       namespace = this.cliTool.getRedisClientNamespace(clientOptions);
+      const reply = await this.cliTool.execCommand(clientOptions, command, args, replyEncoding);
 
       this.logger.log('Succeed to execute redis CLI command.');
       this.cliAnalyticsService.sendCommandExecutedEvent(
@@ -178,7 +179,7 @@ export class CliBusinessService {
       }
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, namespace, error);
 
-      if (error instanceof EncryptionServiceErrorException) {
+      if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;
       }
 
@@ -225,6 +226,8 @@ export class CliBusinessService {
       const [command, ...args] = splitCliCommandLine(commandLine);
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
+      namespace = this.cliTool.getRedisClientNamespace(clientOptions);
+
       const result = await this.cliTool.execCommandForNodes(
         clientOptions,
         command,
@@ -233,7 +236,6 @@ export class CliBusinessService {
         replyEncoding,
       );
 
-      namespace = this.cliTool.getRedisClientNamespace(clientOptions);
       return result.map((nodeExecReply) => {
         this.cliAnalyticsService.sendClusterCommandExecutedEvent(
           clientOptions.instanceId,
@@ -262,7 +264,7 @@ export class CliBusinessService {
 
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, namespace, error);
 
-      if (error instanceof EncryptionServiceErrorException) {
+      if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;
       }
 
@@ -330,7 +332,7 @@ export class CliBusinessService {
 
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, 'cli', error);
 
-      if (error instanceof EncryptionServiceErrorException) {
+      if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;
       }
 

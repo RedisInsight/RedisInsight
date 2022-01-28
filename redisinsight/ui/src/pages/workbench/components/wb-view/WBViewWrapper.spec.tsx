@@ -12,8 +12,7 @@ import {
 } from 'uiSrc/utils/test-utils'
 import QueryWrapper, { Props as QueryProps } from 'uiSrc/components/query'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { processWBClient } from 'uiSrc/slices/workbench/wb-settings'
-import { sendWBCommandClusterAction } from 'uiSrc/slices/workbench/wb-results'
+import { sendWBCommandAction } from 'uiSrc/slices/workbench/wb-results'
 import { getWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
 
 import WBViewWrapper from './WBViewWrapper'
@@ -102,7 +101,7 @@ describe('WBViewWrapper', () => {
   it('should render with SessionStorage', () => {
     render(<WBViewWrapper />)
 
-    const expectedActions = [getWBEnablementArea(), processWBClient()]
+    const expectedActions = [getWBEnablementArea()]
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
       clearStoreActions(expectedActions)
     )
@@ -116,7 +115,7 @@ describe('WBViewWrapper', () => {
 
     const sendWBCommandClusterActionMock = jest.fn()
 
-    sendWBCommandClusterAction.mockImplementation(() => sendWBCommandClusterActionMock)
+    sendWBCommandAction.mockImplementation(() => sendWBCommandClusterActionMock)
 
     const { queryAllByTestId } = render(<WBViewWrapper />)
 

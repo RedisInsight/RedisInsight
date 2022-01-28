@@ -10,6 +10,7 @@ COPY configs ./configs
 COPY scripts ./scripts
 COPY redisinsight ./redisinsight
 RUN SKIP_POSTINSTALL=1 yarn install
+RUN yarn --cwd redisinsight/api
 ARG SERVER_TLS_CERT
 ARG SERVER_TLS_KEY
 ENV SERVER_TLS_CERT=${SERVER_TLS_CERT}

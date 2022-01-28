@@ -53,6 +53,8 @@
   width: 413px;
   height: 64px;
   padding-right: 40px;
+  background: url(../../../../assets/img/NYbg.jpg) center;
+  background-size: cover;
 
   &::before {
     content: '';
@@ -61,9 +63,7 @@
     right: 0px;
     bottom: 0px;
     left: 0px;
-    opacity: .9;
-    background: url(../../../../assets/img/NYbg.jpg) center;
-    background-size: cover;
+    background-color: var(--overlayPromoNYColor);
   }
 
   &:hover {
@@ -123,7 +123,7 @@
   }
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1200px) {
   .summary {
     display: block;
   }

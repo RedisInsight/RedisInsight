@@ -21,7 +21,7 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { sessionStorageService } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
+import { outputSelector, resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 
 import styles from './styles.module.scss'
 
@@ -31,7 +31,8 @@ const CliHeader = () => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { host, port } = useSelector(connectedInstanceSelector)
-  const endpoint = `${host}:${port}`
+  const { db } = useSelector(outputSelector)
+  const endpoint = db > 0 ? `${host}:${port}[${db}]` : `${host}:${port}`
 
   const removeCliClient = () => {
     const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''

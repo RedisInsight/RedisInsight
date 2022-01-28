@@ -1,13 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
+
+import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cli/dto/cli.dto'
+import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cli/dto/cli.dto'
+import { concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
+import { cliTexts, ConnectionSuccessOutputText, InitOutputText } from 'uiSrc/constants/cliOutput'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 
 import { AppDispatch, RootState } from '../store'
 import { StateCliSettings } from '../interfaces/cli'
 
 export const initialState: StateCliSettings = {
+  isMinimizedHelper: false,
   isShowHelper: false,
   isShowCli: false,
   loading: false,
@@ -35,10 +40,12 @@ const cliSettingsSlice = createSlice({
     },
     // collapse / uncollapse CLI Helper
     toggleCliHelper: (state) => {
-      const isShowHelper = !state.isShowHelper
-      state.isShowHelper = isShowHelper
-
-      localStorageService?.set(BrowserStorageItem.cliIsShowHelper, isShowHelper)
+      state.isShowHelper = !state.isShowHelper
+      state.isMinimizedHelper = !state.isMinimizedHelper
+    },
+    // hide / unhide CLI Helper
+    toggleHideCliHelper: (state) => {
+      state.isMinimizedHelper = !state.isMinimizedHelper
     },
 
     setMatchedCommand: (state, { payload }: { payload: string }) => {
@@ -121,6 +128,7 @@ const cliSettingsSlice = createSlice({
       state.isShowHelper = false
       state.isSearching = false
       state.isEnteringCommand = false
+      state.isMinimizedHelper = false
       state.matchedCommand = ''
       state.searchingCommand = ''
       state.searchedCommand = ''
@@ -134,6 +142,7 @@ export const {
   setCliSettingsInitialState,
   toggleCli,
   toggleCliHelper,
+  toggleHideCliHelper,
   setMatchedCommand,
   setSearchedCommand,
   setSearchingCommand,
@@ -163,10 +172,12 @@ export function createCliClientAction(
   onFailAction?: (message: string) => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const { host, port, db } = connectedInstanceSelector(state)
     dispatch(processCliClient())
+    dispatch(concatToOutput(InitOutputText(host, port, db)))
 
     try {
-      const state = stateInit()
       const { data, status } = await apiService.post<CreateCliClientResponse>(
         getUrl(state.connections.instances.connectedInstance?.id ?? '', ApiEndpoints.CLI)
       )
@@ -174,12 +185,15 @@ export function createCliClientAction(
       if (isStatusSuccessful(status)) {
         sessionStorageService.set(BrowserStorageItem.cliClientUuid, data?.uuid)
         dispatch(processCliClientSuccess(data?.uuid))
+        dispatch(concatToOutput(ConnectionSuccessOutputText))
+        dispatch(setCliDbIndex(state.connections?.instances?.connectedInstance?.db || 0))
 
         onSuccessAction?.()
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(processCliClientFailure(errorMessage))
+      dispatch(concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage)))
       onFailAction?.(errorMessage)
     }
   }
@@ -202,6 +216,7 @@ export function updateCliClientAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(processCliClientSuccess(data?.uuid))
+        dispatch(setCliDbIndex(state.connections?.instances?.connectedInstance?.db || 0))
         onSuccessAction?.()
       }
     } catch (error) {

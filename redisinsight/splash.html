@@ -74,17 +74,31 @@
         </svg>
       </div>
       <span id="text" class="text"></span>
-      <span class="copyright">RedisInsight 2.0.3-preview © 2021 Redis Ltd.</span>
+      <span id="copyright" class="copyright"></span>
     </div>
   </div>
 
 <script>
-  const darkTheme = 'DARK'
-  const theme = localStorage.getItem('theme') ?? darkTheme
-  const app = document.getElementById('app') || null
+  const { ipcRenderer } = require('electron');
 
-  if(app){
-    app.className = theme
+  const bootstrap = async () => {
+
+    const darkTheme = 'DARK'
+    const appVersion = await ipcRenderer.invoke('getAppVersion') || ''
+    const theme = localStorage.getItem('theme') ?? darkTheme
+    const appEl = document.getElementById('app') || null
+    const copyrightEl = document.getElementById('copyright') || null
+
+    if(appEl){
+      appEl.className = theme
+    }
+
+    if(copyrightEl) {
+      copyrightEl.innerHTML = `RedisInsight ${appVersion} © ${new Date().getFullYear() || '2022'} Redis Ltd.`
+    }
   }
+
+  bootstrap()
+
 </script>
 </html>

@@ -48,7 +48,7 @@ export enum CommandGroup {
   Scripting = 'scripting',
   Transactions = 'transactions',
   Server = 'server',
-  SortedSet = 'sorted_set',
+  SortedSet = 'sorted-set',
   HyperLogLog = 'hyperloglog',
   Hash = 'hash',
   Set = 'set',
@@ -59,7 +59,10 @@ export enum CommandGroup {
   JSON = 'json',
   TimeSeries = 'timeseries',
   Graph = 'graph',
-  AI = 'ai'
+  AI = 'ai',
+  TDigest = 'tdigest',
+  CMS = 'cms',
+  TopK = 'topk',
 }
 
 export enum CommandPrefix {
@@ -67,7 +70,12 @@ export enum CommandPrefix {
   Graph = 'GRAPH',
   TimeSeries = 'TS',
   Search = 'FT',
-  JSON = 'JSON'
+  JSON = 'JSON',
+  Gears = 'RG',
+  BloomFilter = 'BF',
+  CuckooFilter = 'CF',
+  CountMinSketchFilter = 'CMS',
+  TopK = 'TOPK',
 }
 
 export enum CommandRediSearch {

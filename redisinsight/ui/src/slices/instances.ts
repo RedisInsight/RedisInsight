@@ -35,13 +35,6 @@ export const initialState: InitialStateInstances = {
   },
   instanceOverview: {
     version: '',
-    totalKeys: 0,
-    usedMemory: 0,
-    connectedClients: 0,
-    opsPerSecond: 0,
-    networkInKbps: 0,
-    networkOutKbps: 0,
-    cpuUsagePercentage: null
   },
 }
 
@@ -122,7 +115,7 @@ const instancesSlice = createSlice({
     getDatabaseConfigInfoSuccess: (state, { payload }) => {
       state.loading = false
       state.instanceOverview = {
-        ...state.instanceOverview,
+        version: state.instanceOverview.version,
         ...payload
       }
     },

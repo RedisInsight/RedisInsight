@@ -1,16 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { CliOutputFormatterType, cliTexts } from 'uiSrc/constants/cliOutput'
+import { CliOutputFormatterType, cliTexts, ConnectionSuccessOutputText, SelectCommand } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import {
-  cliCommandOutput,
   cliParseTextResponseWithOffset,
-  cliParseTextResponseWithRedirect,
+  cliParseTextResponseWithRedirect, getDbIndexFromSelectQuery,
 } from 'uiSrc/utils/cliHelper'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getApiErrorName, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
 
+import { updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
+import ApiErrors from 'uiSrc/constants/apiErrors'
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
 
@@ -18,6 +19,7 @@ export const initialState: StateCliOutput = {
   data: [],
   loading: false,
   error: '',
+  db: 0,
   commandHistory: localStorageService?.get(BrowserStorageItem.cliInputHistory) ?? [],
 }
 
@@ -56,9 +58,12 @@ const outputSlice = createSlice({
       state.data = []
       state.loading = false
     },
-
     resetOutputLoading: (state) => {
       state.loading = false
+    },
+
+    setCliDbIndex: (state, { payload }) => {
+      state.db = payload
     },
   },
 })
@@ -73,6 +78,7 @@ export const {
   sendCliCommand,
   sendCliCommandSuccess,
   sendCliCommandFailure,
+  setCliDbIndex,
 } = outputSlice.actions
 
 // A selector
@@ -88,11 +94,12 @@ export function sendCliCommandAction(
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    let cliClientUuid
     try {
       const state = stateInit()
+      cliClientUuid = state?.cli?.settings?.cliClientUuid
       const { id = '' } = state.connections?.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -109,13 +116,30 @@ export function sendCliCommandAction(
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
         dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
+        if (
+          dataStatus === CommandExecutionStatus.Success
+          && command.toLowerCase().startsWith(SelectCommand.toLowerCase())
+        ) {
+          try {
+            const dbIndex = getDbIndexFromSelectQuery(command)
+            dispatch(setCliDbIndex(dbIndex))
+          } catch (e) {
+            // continue regardless of error
+          }
+        }
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      const errorName = getApiErrorName(error)
       dispatch(sendCliCommandFailure(errorMessage))
-      dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
-      )
+
+      if (errorName === ApiErrors.ClientNotFound && cliClientUuid) {
+        handleRecreateClient(dispatch, stateInit)
+      } else {
+        dispatch(
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
+        )
+      }
       onFailAction?.()
     }
   }
@@ -129,12 +153,13 @@ export function sendCliClusterCommandAction(
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    let cliClientUuid
     try {
       const outputFormat = CliOutputFormatterType.Raw
       const state = stateInit()
+      cliClientUuid = state?.cli?.settings?.cliClientUuid
       const { id = '' } = state.connections.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -174,10 +199,16 @@ export function sendCliClusterCommandAction(
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      const errorName = getApiErrorName(error)
       dispatch(sendCliCommandFailure(errorMessage))
-      dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
-      )
+
+      if (errorName === ApiErrors.ClientNotFound && cliClientUuid) {
+        handleRecreateClient(dispatch, stateInit)
+      } else {
+        dispatch(
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
+        )
+      }
       onFailAction?.()
     }
   }
@@ -191,8 +222,6 @@ export function processUnsupportedCommand(
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { unsupportedCommands } = state.cli.settings
-
-    dispatch(concatToOutput(cliCommandOutput(command)))
 
     dispatch(
       concatToOutput(
@@ -208,5 +237,41 @@ export function processUnsupportedCommand(
     )
 
     onSuccessAction?.()
+  }
+}
+
+export function processUnrepeatableNumber(
+  command: string = '',
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          cliTexts.REPEAT_COUNT_INVALID,
+          command,
+          CommandExecutionStatus.Fail
+        )
+      )
+    )
+
+    onSuccessAction?.()
+  }
+}
+
+function handleRecreateClient(dispatch: AppDispatch, stateInit: () => RootState, command = ''): void {
+  const state = stateInit()
+  const { cliClientUuid } = state.cli.settings
+  if (cliClientUuid) {
+    dispatch(concatToOutput(
+      cliParseTextResponseWithOffset(cliTexts.CONNECTION_CLOSED, command, CommandExecutionStatus.Fail)
+    ))
+    dispatch(updateCliClientAction(
+      cliClientUuid,
+      () => dispatch(concatToOutput(ConnectionSuccessOutputText)),
+      (message:string) => dispatch(concatToOutput(
+        cliParseTextResponseWithOffset(`${message}`, command, CommandExecutionStatus.Fail)
+      )),
+    ))
   }
 }

@@ -1,10 +1,12 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'List1testKeyForAddMember';
+let keyName = chance.word({ length: 10 });
 const keyTTL = '2147476121';
 const element = '1111listElement11111';
 const element2 = '2222listElement22222';
@@ -18,10 +20,11 @@ fixture `List Key verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add element to List', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addListKey(keyName, keyTTL);
     //Add element to the List key
     await browserPage.addElementToList(element);
@@ -29,6 +32,7 @@ test('Verify that user can add element to List', async t => {
     await t.expect(browserPage.listElementsList.withExactText(element).exists).ok('The existence of the list element', { timeout: 20000 });
 });
 test('Verify that user can select remove List element position: from tail', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addListKey(keyName, keyTTL);
     //Add few elements to the List key
     await browserPage.addElementToList(element);
@@ -43,6 +47,7 @@ test('Verify that user can select remove List element position: from tail', asyn
     await t.expect(browserPage.listElementsList.withExactText(element3).exists).notOk('The removing of the list element', { timeout: 20000 });
 });
 test('Verify that user can select remove List element position: from head', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addListKey(keyName, keyTTL, element);
     //Add few elements to the List key
     await browserPage.addElementToList(element2);

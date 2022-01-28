@@ -1,13 +1,16 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName1 = 'keyName1';
-const keyName2 = 'keyName2';
-const keyName3 = 'keyName3';
-const keyName4 = 'keyName4';
+let keyName = chance.word({ length: 10 });
+let keyName1 = chance.word({ length: 10 });
+let keyName2 = chance.word({ length: 10 });
+let keyName3 = chance.word({ length: 10 });
+let keyName4 = chance.word({ length: 10 });
 
 fixture `List of keys verifications`
     .meta({ type: 'smoke' })
@@ -17,29 +20,51 @@ fixture `List of keys verifications`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can see List of Keys in DB', async t => {
-    await browserPage.addStringKey(keyName1);
-    await browserPage.addHashKey(keyName2);
-    await browserPage.addListKey(keyName3);
-    await browserPage.addStringKey(keyName4);
-    await t.click(browserPage.refreshKeysButton);
-    await t.expect(browserPage.keyNameInTheList.exists).ok('The list of keys is displayed');
-});
-test('Verify that user can scroll List of Keys in DB', async t => {
-    await browserPage.addStringKey(keyName1);
-    await browserPage.addHashKey(keyName2);
-    await browserPage.addListKey(keyName3);
-    await browserPage.addStringKey(keyName4);
-    await t.click(browserPage.refreshKeysButton);
-    //Scroll to the key element
-    await t.hover(browserPage.keyNameInTheList);
-    await t.expect(browserPage.keyNameInTheList.exists).ok;
-});
+test
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName1);
+        await browserPage.deleteKeyByName(keyName2);
+        await browserPage.deleteKeyByName(keyName3);
+        await browserPage.deleteKeyByName(keyName4);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that user can see List of Keys in DB', async t => {
+        keyName1 = chance.word({ length: 10 });
+        keyName2 = chance.word({ length: 10 });
+        keyName3 = chance.word({ length: 10 });
+        keyName4 = chance.word({ length: 10 });
+        await browserPage.addStringKey(keyName1);
+        await browserPage.addHashKey(keyName2);
+        await browserPage.addListKey(keyName3);
+        await browserPage.addStringKey(keyName4);
+        await t.click(browserPage.refreshKeysButton);
+        await t.expect(browserPage.keyNameInTheList.exists).ok('The list of keys is displayed');
+    });
+test
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName1);
+        await browserPage.deleteKeyByName(keyName2);
+        await browserPage.deleteKeyByName(keyName3);
+        await browserPage.deleteKeyByName(keyName4);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that user can scroll List of Keys in DB', async t => {
+        await browserPage.addStringKey(keyName1);
+        await browserPage.addHashKey(keyName2);
+        await browserPage.addListKey(keyName3);
+        await browserPage.addStringKey(keyName4);
+        await t.click(browserPage.refreshKeysButton);
+        //Scroll to the key element
+        await t.hover(browserPage.keyNameInTheList);
+        await t.expect(browserPage.keyNameInTheList.exists).ok;
+    });
 test('Verify that user can refresh Keys', async t => {
-    const keyName = 'Hash1testKey';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
     const newKeyName = 'KeyNameAfterEdit!testKey';
 
@@ -62,7 +87,7 @@ test('Verify that user can refresh Keys', async t => {
     await t.expect(isKeyIsNotDisplayedInTheList).eql(false, 'The key is not in the list');
 });
 test('Verify that user can open key details', async t => {
-    const keyName = 'String1testKey';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
     const keyValue = 'StringValue!';
 

@@ -105,4 +105,16 @@ export class CliPage {
       await t.pressKey('enter');
       await t.click(this.cliCollapseButton);
   }
+
+  /**
+  * Send command in Cli
+  * @param command The command to send
+  */
+   async sendCommandInCli(command: string): Promise<void>{
+      //Open CLI
+      await t.click(this.cliExpandButton);
+      await t.typeText(this.cliCommandInput, command, { paste: true });
+      await t.pressKey('enter');
+      await t.click(this.cliCollapseButton);
+  }
 }

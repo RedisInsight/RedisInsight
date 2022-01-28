@@ -1,13 +1,15 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const common = new Common();
+const chance = new Chance();
 
-const keyName = 'ZSet1testKeyForAddMember';
+const keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const keyMember = '1111ZsetMember11111';
 
@@ -19,7 +21,7 @@ fixture `ZSet Key fields verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })  
 test('Verify that user can search by member in Zset', async t => {
@@ -33,7 +35,6 @@ test('Verify that user can search by member in Zset', async t => {
     await t.expect(result).eql(keyMember, 'The Zset member');
 });
 test('Verify that user can sort Zset members by score by DESC and ASC', async t => {
-    const keyName = 'ZSetKey-Lorem123!';
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new key with a lot of members

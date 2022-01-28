@@ -5,12 +5,14 @@ import {
     CliPage
 } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
+const chance = new Chance();
 
-const keyName = 'keyForContext!';
+let keyName = chance.string({ length: 10 });
 
 fixture `Browser Context`
     .meta({type: 'regression'})
@@ -20,7 +22,7 @@ fixture `Browser Context`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that if user has saved context on Browser page and go to Settings page, Browser and Workbench icons are displayed and user is able to open Browser with saved context', async t => {

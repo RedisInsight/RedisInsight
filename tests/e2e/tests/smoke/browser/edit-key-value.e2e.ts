@@ -1,8 +1,12 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
+
+let keyName = chance.string({ length: 10 });
 
 fixture `Edit Key values verification`
     .meta({ type: 'smoke' })
@@ -12,11 +16,11 @@ fixture `Edit Key values verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can edit String value', async t => {
-    const keyName = 'String1testKeyForEditValue';
+    keyName = chance.string({ length: 10 });
     const keyTTL = '2147476121';
     const keyValueBefore = 'StringValueBeforeEdit!';
     const keyValueAfter = 'StringValueBeforeEdit!';

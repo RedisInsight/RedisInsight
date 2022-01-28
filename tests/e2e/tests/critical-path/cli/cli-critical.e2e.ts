@@ -1,9 +1,8 @@
 import { Common } from '../../../helpers/common';
-import { CliPage } from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import { 
     acceptLicenseTermsAndAddDatabase, 
     acceptLicenseTermsAndAddOSSClusterDatabase, 
-    clearDatabaseInCli, 
     deleteDatabase 
 } from '../../../helpers/database';
 import {
@@ -11,12 +10,17 @@ import {
     ossClusterConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const cliPage = new CliPage();
 const common = new Common();
+const browserPage = new BrowserPage();
+const chance = new Chance();
 
 const pairsToSet = common.createArrayPairsWithKeyValue(4);
 const MAX_AUTOCOMPLETE_EXECUTIONS = 100;
+let keyName = chance.string({ length: 10 });
+let value = chance.natural({ length: 5 });
 
 fixture `CLI critical`
     .meta({ type: 'critical_path' })
@@ -25,8 +29,7 @@ fixture `CLI critical`
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
-        //Clear and delete database
-        await clearDatabaseInCli();
+        //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
@@ -35,15 +38,15 @@ test
     })
     .after(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })
     ('Verify that user is redirected to another node when he works in CLI with OSS Cluster', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Add key from CLI
-        for (const [key, value] of pairsToSet) {
-            await t.typeText(cliPage.cliCommandInput, `SET ${key} ${value}`);
+        for ([keyName, value] of pairsToSet) {
+            await t.typeText(cliPage.cliCommandInput, `SET ${keyName} ${value}`);
             await t.pressKey('enter');
         }
         //Check that user is redirected

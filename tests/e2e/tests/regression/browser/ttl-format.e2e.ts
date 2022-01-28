@@ -23,7 +23,9 @@ fixture `TTL values in Keys Table`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        for (let i = 0; i < keysData.length; i++) {
+            await browserPage.deleteKey();
+        }
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {

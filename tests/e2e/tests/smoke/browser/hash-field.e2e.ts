@@ -1,10 +1,12 @@
 import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'Hash1testKeyForAddField';
+let keyName = chance.word({ length: 10 });
 const keyTTL = '2147476121';
 const keyFieldValue = 'hashField11111';
 const keyValue = 'hashValue11111!';
@@ -17,10 +19,11 @@ fixture `Hash Key fields verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add field to Hash', async t => {
+    keyName = chance.string({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);
@@ -31,6 +34,7 @@ test('Verify that user can add field to Hash', async t => {
     await t.expect(browserPage.hashFieldsList.withExactText(keyFieldValue).exists).ok('The existence of the field', { timeout: 20000 });
 });
 test('Verify that user can remove field from Hash', async t => {
+    keyName = chance.string({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);

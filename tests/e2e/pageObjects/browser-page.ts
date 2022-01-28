@@ -384,6 +384,7 @@ export class BrowserPage {
 
   //Delete key from details
   async deleteKey(): Promise<void> {
+      await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);
       await t.click(this.confirmDeleteKeyButton);
   }

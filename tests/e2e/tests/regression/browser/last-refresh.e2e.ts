@@ -1,10 +1,12 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'KeyForSearch789';
+let keyName = chance.string({ length: 10 });
 
 fixture `Last refresh`
     .meta({ type: 'regression' })
@@ -14,15 +16,20 @@ fixture `Last refresh`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can see the date and time of the last update of my Keys in the tooltip', async t => {
-    //Hover on the refresh icon
-    await t.hover(browserPage.refreshKeysButton);
-    //Verify the last update info
-    await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
-});
+test
+    .after(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that user can see the date and time of the last update of my Keys in the tooltip', async t => {
+        //Hover on the refresh icon
+        await t.hover(browserPage.refreshKeysButton);
+        //Verify the last update info
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+    });
 test('Verify that user can see my timer updated when I refresh the list of Keys of the list of values', async t => {
     //Add key
     await browserPage.addStringKey(keyName);

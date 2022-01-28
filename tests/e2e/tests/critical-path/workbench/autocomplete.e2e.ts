@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
@@ -14,8 +14,7 @@ fixture `Autocomplete for entered commands`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async () => {
-        //Clear and delete database
-        await clearDatabaseInCli();
+        //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can select a command from the list with auto-suggestions when type in any character in the Editor', async t => {

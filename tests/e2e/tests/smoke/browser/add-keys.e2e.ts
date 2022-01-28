@@ -1,8 +1,12 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
+
+let keyName = chance.string({ length: 10 });
 
 fixture `Add keys`
     .meta({ type: 'smoke' })
@@ -12,11 +16,11 @@ fixture `Add keys`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add Hash Key', async t => {
-    const keyName = 'hashTestKey12345qwe';
+    keyName = chance.string({ length: 10 });
     //add Hash key
     await browserPage.addHashKey(keyName);
     //check the notification message
@@ -28,7 +32,7 @@ test('Verify that user can add Hash Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add Set Key', async t => {
-    const keyName = '1111111111111111111setTestKey1234';
+    keyName = chance.string({ length: 10 });
     //add Set key
     await browserPage.addSetKey(keyName);
     //check the notification message
@@ -40,7 +44,7 @@ test('Verify that user can add Set Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add List Key', async t => {
-    const keyName = '22listTestKey1';
+    keyName = chance.string({ length: 10 });
     //add List key
     await browserPage.addListKey(keyName);
     //check the notification message
@@ -52,7 +56,7 @@ test('Verify that user can add List Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add String Key', async t => {
-    const keyName = '1234567890testkestringytrtest1111';
+    keyName = chance.string({ length: 10 });
     //add String key
     await browserPage.addStringKey(keyName);
     //check the notification message
@@ -64,7 +68,7 @@ test('Verify that user can add String Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add ZSet Key', async t => {
-    const keyName = 'ZsetTestKey1234567';
+    keyName = chance.string({ length: 10 });
     //add ZSet key
     await browserPage.addZSetKey(keyName, '111');
     //check the notification message
@@ -76,7 +80,7 @@ test('Verify that user can add ZSet Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add JSON Key', async t => {
-    const keyName = 'JSON1234567891';
+    keyName = chance.string({ length: 10 });
     const keyTTL = '2147476121';
     const value = '{"name":"xyz"}';
     //add JSON key

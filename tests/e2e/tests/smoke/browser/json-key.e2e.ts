@@ -1,10 +1,12 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'JSON1testKey1234566767789890900s';
+let keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const value = '{"name":"xyz"}';
 const jsonObjectValue = '{name:"xyz"}';
@@ -17,10 +19,11 @@ fixture `JSON Key verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can create JSON object', async t => {
+    keyName = chance.string({ length: 10 });
     //Add Json key with json object
     await browserPage.addJsonKey(keyName, keyTTL, value);
     //Check the notification message
@@ -31,6 +34,7 @@ test('Verify that user can create JSON object', async t => {
     await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value');
 });
 test('Verify that user can add key with value to any level of JSON structure', async t => {
+    keyName = chance.string({ length: 10 });
     //Add Json key with json object
     await browserPage.addJsonKey(keyName, keyTTL, value);
     //Check the notification message

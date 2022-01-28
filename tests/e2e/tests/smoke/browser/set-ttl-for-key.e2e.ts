@@ -1,8 +1,12 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
 
 fixture `Set TTL for Key`
     .meta({ type: 'smoke' })
@@ -12,11 +16,11 @@ fixture `Set TTL for Key`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can specify TTL for Key', async t => {
-    const keyName = 'StringKey-Lorem ipsum dolor sit amet consectetur adipiscing elit';
+    keyName = chance.word({ length: 10 });
     const ttlValue = '2147476121';
     //Create new key without TTL
     await browserPage.addStringKey(keyName);

@@ -1,16 +1,18 @@
 import { toNumber } from 'lodash';
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig,
     ossStandaloneV5Config
 } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
+const chance = new Chance();
 
-const keyName = 'List1testKeyForAddMember';
+const keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const element = '1111listElement11111';
 const element2 = '2222listElement22222';
@@ -24,7 +26,7 @@ fixture `List Key verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search List element by index', async t => {
@@ -43,13 +45,7 @@ test
         // add oss standalone v5
         await acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
     })
-    .after(async () => {
-        //Clear and delete database
-        await clearDatabaseInCli();
-        await deleteDatabase(ossStandaloneV5Config.databaseName);
-    })
     ('Verify that user can remove only one element for List for Redis v. <6.2', async t => {
-        const keyName = 'ListKey-Lorem123123';
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Create new key

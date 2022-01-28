@@ -1,12 +1,14 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
+const chance = new Chance();
 
-const keyName = 'languages';
+let keyName = chance.string({ length: 10 });
 
 fixture `CLI`
     .meta({ type: 'smoke' })

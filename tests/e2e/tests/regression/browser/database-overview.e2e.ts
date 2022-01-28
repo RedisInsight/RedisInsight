@@ -1,14 +1,18 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     CliPage,
     WorkbenchPage
 } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
+const common = new Common();
+
+let keys: string[];
 
 fixture `Database overview`
     .meta({type: 'regression'})
@@ -18,12 +22,13 @@ fixture `Database overview`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
     //Create new keys
-    await cliPage.addKeysFromCli('MSET', 10);
+    keys = await common.createArrayWithKeyValue(10);
+    await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
     //Open Workbench
     await t.click(myRedisDatabasePage.workbenchButton);
     //Verify that user can see total memory and total number of keys

@@ -1,10 +1,13 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage} from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'Hash1testKeyForRefresh!12344';
+let keyName = chance.word({ length: 10 });
+let newKeyName = chance.word({ length: 10 });
 
 fixture `Keys refresh functionality`
     .meta({ type: 'smoke' })
@@ -14,12 +17,13 @@ fixture `Keys refresh functionality`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await browserPage.deleteKeyByName(newKeyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can refresh Keys', async t => {
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
-    const newKeyName = 'KeyNameAfterEdit!testKey123456765432';
+    newKeyName = chance.word({ length: 10 });
 
     //add hash key
     await browserPage.addHashKey(keyName, keyTTL);

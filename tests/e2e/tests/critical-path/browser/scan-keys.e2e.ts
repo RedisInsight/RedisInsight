@@ -10,12 +10,16 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const settingsPage = new SettingsPage();
 const cliPage = new CliPage();
 const common = new Common();
+const chance = new Chance();
+
+let keys = [];
 
 const explicitErrorHandler = (): void => {
     window.addEventListener('error', e => {
@@ -34,7 +38,7 @@ fixture `Browser - Specify Keys to Scan`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that the user can see this number of keys applied to new filter requests and to "scan more" functionality in Browser page', async t => {
@@ -51,8 +55,8 @@ test('Verify that the user can see this number of keys applied to new filter req
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new keys
-    const arr = await common.createArrayWithKeyValue(2500);
-    await t.typeText(cliPage.cliCommandInput, `MSET ${arr.join(' ')}`, {paste: true});
+    keys = await common.createArrayWithKeyValue(2500);
+    await t.typeText(cliPage.cliCommandInput, `MSET ${keys.join(' ')}`, {paste: true});
     await t.pressKey('enter');
     await t.click(cliPage.cliCollapseButton);
     //Search keys

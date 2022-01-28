@@ -1,11 +1,13 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
-const indexName = 'userIdx';
+const indexName = chance.string({ length: 5 });
 
 fixture `JSON verifications at Workbench`
     .meta({type: 'critical_path'})

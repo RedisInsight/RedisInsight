@@ -1,13 +1,18 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase, clearDatabaseInCli } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
-import { CliPage } from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const cliPage = new CliPage();
 const common = new Common();
+const chance = new Chance();
+const browserPage = new BrowserPage();
+
+let keyName = chance.string({ length: 20 });
 
 fixture `CLI`
     .meta({ type: 'regression' })
@@ -16,8 +21,7 @@ fixture `CLI`
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
-        //Clear and delete database
-        await clearDatabaseInCli();
+        //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see CLI is minimized when he clicks the "minimize" button', async t => {
@@ -45,12 +49,11 @@ test('Verify that user can see results history when he re-opens CLI after minimi
 test
     .after(async t => {
         //Clear database and delete
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
-        const command = 'SET a a';
+        const command = `SET ${keyName} a`;
         const repeats = 10;
         //Open CLI and run command with repeats
         await t.click(cliPage.cliExpandButton);

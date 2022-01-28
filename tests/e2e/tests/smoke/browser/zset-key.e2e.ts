@@ -1,10 +1,12 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'ZSet1testKeyForAddMember';
+let keyName = chance.word({ length: 10 });
 const keyTTL = '2147476121';
 const keyMember = '1111ZsetMember11111';
 const score = '0';
@@ -21,6 +23,7 @@ fixture `ZSet Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add members to Zset', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addZSetKey(keyName, '5', keyTTL);
     //Add member to the ZSet key
     await browserPage.addMemberToZSet(keyMember, score);
@@ -29,6 +32,7 @@ test('Verify that user can add members to Zset', async t => {
     await t.expect(browserPage.zsetScoresList.withExactText(score).exists).ok('The existence of the Zset score', { timeout: 20000 });
 });
 test('Verify that user can remove member from ZSet', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addZSetKey(keyName, '6', keyTTL);
     //Add member to the ZSet key
     await browserPage.addMemberToZSet(keyMember, score);

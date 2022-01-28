@@ -1,10 +1,12 @@
 import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'Hash1testKeyForAddField';
+const keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const keyFieldValue = 'hashField11111';
 const keyValue = 'hashValue11111!';
@@ -17,7 +19,7 @@ fixture `Hash Key fields verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search by full field name in Hash', async t => {

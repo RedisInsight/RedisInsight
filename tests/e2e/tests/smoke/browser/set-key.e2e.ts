@@ -1,13 +1,15 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
+import { Chance } from 'chance';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'Set1testKeyForAddMember';
+let keyName = chance.word({ length: 10 });
 const keyTTL = '2147476121';
 const keyMember = '1111setMember11111';
 
@@ -19,10 +21,11 @@ fixture `Set Key fields verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add member to Set', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addSetKey(keyName, keyTTL);
     //Add member to the Set key
     await browserPage.addMemberToSet(keyMember);
@@ -30,6 +33,7 @@ test('Verify that user can add member to Set', async t => {
     await t.expect(browserPage.setMembersList.withExactText(keyMember).exists).ok('The existence of the set member', { timeout: 20000 });
 });
 test('Verify that user can remove member from Set', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addSetKey(keyName, keyTTL);
     //Add member to the Set key
     await browserPage.addMemberToSet(keyMember);

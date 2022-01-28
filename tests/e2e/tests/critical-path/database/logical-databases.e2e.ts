@@ -12,7 +12,7 @@ fixture `Logical databases`
         await acceptLicenseTerms();
     })
     .afterEach(async () => {
-        //Clear and delete database
+        //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add DB with logical index via host and port from Add DB manually form', async t => {

@@ -1,12 +1,14 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
 const speed = 0.4;
-const indexName =  'products';
+const indexName = chance.string({ length: 5 });
 
 fixture `Workbench Context`
     .meta({type: 'critical_path'})

@@ -1,10 +1,12 @@
 import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
 
-const keyName = 'Set1testKeyForAddMember';
+const keyName = chance.string({ length: 10 });
 const keyTTL = '2147476121';
 const keyMember = '1111setMember11111';
 
@@ -16,7 +18,7 @@ fixture `Set Key fields verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search by part member name with pattern * in Set', async t => {

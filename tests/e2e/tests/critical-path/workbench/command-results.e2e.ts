@@ -1,13 +1,15 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
 const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
-const indexName = 'idx';
+const indexName = chance.string({ length: 5 });
 
 fixture `Command results at Workbench`
     .meta({type: 'critical_path'})

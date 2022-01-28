@@ -5,11 +5,13 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
-const indexName = 'idx';
+const indexName = chance.string({ length: 5 });
 const commandsForIndex = [
     `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE`,
     'HMSET product:1 price 20',

@@ -1,8 +1,12 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage} from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
 
 fixture `Key details verification`
     .meta({ type: 'smoke' })
@@ -12,11 +16,11 @@ fixture `Key details verification`
     })
     .afterEach(async () => {
         //Clear and delete database
-        await clearDatabaseInCli();
+        await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see Hash Key details', async t => {
-    const keyName = 'Hash1testKeyForEdit';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addHashKey(keyName, keyTTL);
@@ -32,7 +36,7 @@ test('Verify that user can see Hash Key details', async t => {
     await t.expect(keyBadge).contains('Hash', 'The Key Badge');
 });
 test('Verify that user can see List Key details', async t => {
-    const keyName = 'List1testKeyForEdit';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addListKey(keyName, keyTTL);
@@ -48,7 +52,7 @@ test('Verify that user can see List Key details', async t => {
     await t.expect(keyBadge).contains('List', 'The Key Badge');
 });
 test('Verify that user can see Set Key details', async t => {
-    const keyName = 'Set1testKeyForEdit';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addSetKey(keyName, keyTTL);
@@ -64,7 +68,7 @@ test('Verify that user can see Set Key details', async t => {
     await t.expect(keyBadge).contains('Set', 'The Key Badge');
 });
 test('Verify that user can see String Key details', async t => {
-    const keyName = 'String1testKeyForEdit';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
     const value = 'keyValue12334353434;'
 
@@ -81,7 +85,7 @@ test('Verify that user can see String Key details', async t => {
     await t.expect(keyBadge).contains('String', 'The Key Badge');
 });
 test('Verify that user can see ZSet Key details', async t => {
-    const keyName = 'ZSet1testKeyForEdit';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addZSetKey(keyName, '1', keyTTL);
@@ -97,7 +101,7 @@ test('Verify that user can see ZSet Key details', async t => {
     await t.expect(keyBadge).contains('Sorted Set', 'The Key Badge');
 });
 test('Verify that user can see JSON Key details', async t => {
-    const keyName = 'JSON1testKeyForEdit';
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
     const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
 

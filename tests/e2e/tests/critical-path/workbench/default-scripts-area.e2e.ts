@@ -2,11 +2,13 @@ import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpe
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
-const indexName =  'products';
+const indexName = chance.string({ length: 5 });
 
 fixture `Default scripts area at Workbench`
     .meta({type: 'critical_path'})

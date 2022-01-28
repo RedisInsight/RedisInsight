@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, clearDatabaseInCli, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
@@ -14,8 +14,7 @@ fixture `CLI Command helper`
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
-        //Clear and delete database
-        await clearDatabaseInCli();
+        //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can close Command helper', async t => {

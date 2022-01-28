@@ -15,7 +15,7 @@
   "artifactName": "${productName}.${ext}",
   "compression": "normal",
   "mac": {
-    "target": ["mas"],
+    "target": ["mas-dev"],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
@@ -24,6 +24,13 @@
     "gatekeeperAssess": false
   },
   "mas": {
+    "entitlements": "resources/entitlements.mac.plist",
+    "entitlementsInherit": "resources/entitlements.mac.plist",
+    "hardenedRuntime": true,
+    "identity": "Redis Labs Inc. (UUK47G4BAZ)",
+    "artifactName": "${productName}-${os}-mas.${ext}"
+  },
+  "masDev": {
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "hardenedRuntime": true,

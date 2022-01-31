@@ -50,7 +50,7 @@ const Monitor = (props: Props) => {
             data-testid="start-monitor"
           />
         </EuiToolTip>
-        <div className={styles.startTitle}>Start monitor</div>
+        <div className={styles.startTitle}>Start profiler</div>
         <EuiFlexGroup responsive={false}>
           <EuiFlexItem grow={false}>
             <EuiIcon
@@ -63,7 +63,7 @@ const Monitor = (props: Props) => {
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiTextColor color="danger" style={{ paddingLeft: 4 }}>
-              Running Monitor will decrease throughput, avoid running it in production databases
+              Running Profiler will decrease throughput, avoid running it in production databases
             </EuiTextColor>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -77,7 +77,7 @@ const Monitor = (props: Props) => {
     <>
       <div className={styles.container} data-testid="monitor">
         {(!isStarted || (!isRunning && !items?.length)) && <MonitorNotStarted />}
-        {!items?.length && isRunning && <div data-testid="monitor-started" style={{ paddingTop: 10 }}>Monitor is started.</div>}
+        {!items?.length && isRunning && <div data-testid="monitor-started" style={{ paddingTop: 10 }}>Profiler is started.</div>}
 
         {isStarted && !!items?.length && (
           <div className={styles.content}>
@@ -92,7 +92,7 @@ const Monitor = (props: Props) => {
                   />
                   {isMonitorStopped && (
                     <div data-testid="monitor-stopped" style={{ width: 140, paddingTop: 15 }}>
-                      Monitor is stopped.
+                      Profiler is stopped.
                     </div>
                   )}
                 </>

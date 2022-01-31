@@ -24,10 +24,9 @@
     "gatekeeperAssess": false
   },
   "mas": {
-    "entitlements": "resources/entitlements.mac.plist",
-    "entitlementsInherit": "resources/entitlements.mac.plist",
+    "entitlements": "resources/entitlements.mas.plist",
+    "entitlementsInherit": "resources/entitlements.mas.plist",
     "hardenedRuntime": true,
-    "identity": "Redis Labs Inc. (UUK47G4BAZ)",
     "artifactName": "${productName}-${os}-mas.${ext}"
   },
   "masDev": {

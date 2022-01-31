@@ -11,7 +11,7 @@ import {
   stopMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl } from 'uiSrc/utils'
-import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
+import { MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { IOnDatePayload } from 'apiSrc/modules/monitor/helpers/client-monitor-observer'
@@ -31,6 +31,13 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
   }, 50, {
     maxWait: 150,
   })
+
+  const getErrorMessage = (error: { type: string; name: any; message: any }): string => {
+    if (error?.type === SocketErrors.TransportError) {
+      return 'Error: Connection was lost'
+    }
+    return error?.name || error?.message
+  }
 
   useEffect(() => {
     if (!isRunning || !instanceId || socket?.connected) {
@@ -88,8 +95,8 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     })
 
     // Catch connect error
-    newSocket.on(SocketEvent.ConnectionError, (error: Error) => {
-      payloads.push({ isError: true, time: `${Date.now()}`, message: `${error?.name}: ${error?.message}` })
+    newSocket.on(SocketEvent.ConnectionError, (error) => {
+      payloads.push({ isError: true, time: `${Date.now()}`, message: getErrorMessage(error) })
       setNewItems(payloads, () => { payloads.length = 0 })
       dispatch(toggleRunMonitor())
     })

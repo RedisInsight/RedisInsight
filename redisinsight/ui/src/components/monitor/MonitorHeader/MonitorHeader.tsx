@@ -53,7 +53,7 @@ const MonitorHeader = () => {
       >
         <EuiFlexItem grow={false} className={styles.title}>
           <EuiIcon type="inspect" size="m" />
-          <EuiText>Monitor</EuiText>
+          <EuiText>Profiler</EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.actions}>
           <EuiToolTip
@@ -74,7 +74,7 @@ const MonitorHeader = () => {
             <EuiButtonIcon
               iconType="eraser"
               onClick={handleClearMonitor}
-              aria-label="clear monitor"
+              aria-label="clear profiler"
               data-testid="clear-monitor"
             />
           </EuiToolTip>

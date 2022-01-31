@@ -109,7 +109,7 @@ const BottomGroupMinimized = () => {
           )}
           >
             <EuiIcon type="inspect" size="m" />
-            <span>Monitor</span>
+            <span>Profiler</span>
           </EuiBadge>
         </EuiFlexItem>
       </EuiFlexGroup>

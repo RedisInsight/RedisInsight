@@ -23,7 +23,7 @@ fixture `Hash Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add field to Hash', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);
@@ -34,7 +34,7 @@ test('Verify that user can add field to Hash', async t => {
     await t.expect(browserPage.hashFieldsList.withExactText(keyFieldValue).exists).ok('The existence of the field', { timeout: 20000 });
 });
 test('Verify that user can remove field from Hash', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);

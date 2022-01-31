@@ -36,8 +36,8 @@ export class Common {
     async createArrayWithKeyValue(length: number): Promise<string[]> {
         const arr = [];
         for(let i = 1; i <= length * 2; i++) {
-            arr[i] = `${chance.string({ length: 10 })}key${i}`;
-            arr[i + 1] = `${chance.string({ length: 10 })}value${i}`;
+            arr[i] = `${chance.word({ length: 10 })}key${i}`;
+            arr[i + 1] = `${chance.word({ length: 10 })}value${i}`;
             i++;
         }
         return arr;

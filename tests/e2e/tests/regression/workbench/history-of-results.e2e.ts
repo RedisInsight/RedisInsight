@@ -9,9 +9,9 @@ const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 const cliPage = new CliPage();
 
-const keyName = chance.string({ length: 5 });
 const oneMinuteTimeout = 60000;
-const command = `set ${keyName} test`;
+let keyName = chance.word({ length: 10 });
+let command = `set ${keyName} test`;
 
 fixture `History of results at Workbench`
     .meta({type: 'regression'})
@@ -27,6 +27,7 @@ fixture `History of results at Workbench`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
+    keyName = chance.word({ length: 5 });
     //Send command and remember the time
     await workbenchPage.sendCommandInWorkbench(command);
     const dateTime = await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent;
@@ -54,6 +55,7 @@ test.skip
         await t.expect(workbenchPage.queryTextResult.textContent).eql('"Results have been deleted since they exceed 1 MB. Re-run the command to see new results."', 'The messageis displayed');
     });
 test('Verify that the first command in workbench history is deleted when user executes 31 command (new the following result replaces the first result)', async t => {
+    keyName = chance.word({ length: 10 });
     const numberOfCommands = 30;
     const firstCommand = 'FT._LIST';
     //Send command the first command

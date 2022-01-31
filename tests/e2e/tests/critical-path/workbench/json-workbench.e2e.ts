@@ -7,7 +7,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 
-const indexName = chance.string({ length: 5 });
+let indexName = chance.word({ length: 5 });
 
 fixture `JSON verifications at Workbench`
     .meta({type: 'critical_path'})
@@ -24,6 +24,7 @@ fixture `JSON verifications at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can see result in Table and Text view for JSON data types for FT.AGGREGATE command in Workbench', async t => {
+    indexName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,
         `JSON.SET myDoc1 $ '{"user":{"name":"John Smith","tag":"foo,bar","hp":1000, "dmg":150}}'`,

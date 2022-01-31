@@ -8,7 +8,7 @@ const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
 const chance = new Chance();
 
-const indexName = chance.string({ length: 5 });
+let indexName = chance.word({ length: 5 });
 
 fixture `Scripting area at Workbench`
     .meta({type: 'critical_path'})
@@ -41,6 +41,7 @@ test('Verify that user can resize scripting area in Workbench', async t => {
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
+    indexName = chance.word({ length: 5 });
     const commandsForSendInCli = [
         'HMSET product:1 name "Apple Juice"',
         'HMSET product:2 name "Apple Juice"',
@@ -80,6 +81,7 @@ test.skip('Verify that user when he have more than 10 results can request to vie
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
+    indexName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         'HMSET product:1 name "Apple Juice" ',
@@ -100,6 +102,7 @@ test.skip('Verify that user can see result in Table and Text views for Hash data
     await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
 });
 test('Verify that user can run one command in multiple lines in Workbench page', async t => {
+    indexName = chance.word({ length: 5 });
     const multipleLinesCommand = [
         `FT.CREATE ${indexName}`,
         'ON HASH PREFIX 1 product:',
@@ -114,6 +117,7 @@ test('Verify that user can run one command in multiple lines in Workbench page',
     }
 });
 test('Verify that user can use one indent to indicate command in several lines in Workbench page', async t => {
+    indexName = chance.word({ length: 5 });
     const multipleLinesCommand = [
         `FT.CREATE ${indexName}`,
         'ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE'

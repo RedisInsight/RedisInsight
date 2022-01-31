@@ -6,8 +6,8 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-let keyNameBefore = chance.string({ length: 10 });
-let keyNameAfter = chance.string({ length: 10 });
+let keyNameBefore = chance.word({ length: 10 });
+let keyNameAfter = chance.word({ length: 10 });
 
 fixture `Edit Key names verification`
     .meta({ type: 'smoke' })
@@ -21,8 +21,8 @@ fixture `Edit Key names verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can edit String Key name', async t => {
-    keyNameBefore = chance.string({ length: 10 });
-    keyNameAfter = chance.string({ length: 10 });
+    keyNameBefore = chance.word({ length: 10 });
+    keyNameAfter = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addStringKey(keyNameBefore, keyTTL);
@@ -33,8 +33,8 @@ test('Verify that user can edit String Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
 });
 test('Verify that user can edit Set Key name', async t => {
-    keyNameBefore = chance.string({ length: 10 });
-    keyNameAfter = chance.string({ length: 10 });
+    keyNameBefore = chance.word({ length: 10 });
+    keyNameAfter = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addSetKey(keyNameBefore, keyTTL);
@@ -45,8 +45,8 @@ test('Verify that user can edit Set Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
 });
 test('Verify that user can edit Zset Key name', async t => {
-    keyNameBefore = chance.string({ length: 10 });
-    keyNameAfter = chance.string({ length: 10 });
+    keyNameBefore = chance.word({ length: 10 });
+    keyNameAfter = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addZSetKey(keyNameBefore, keyTTL);
@@ -57,8 +57,8 @@ test('Verify that user can edit Zset Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
 });
 test('Verify that user can edit Hash Key name', async t => {
-    keyNameBefore = chance.string({ length: 10 });
-    keyNameAfter = chance.string({ length: 10 });
+    keyNameBefore = chance.word({ length: 10 });
+    keyNameAfter = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addHashKey(keyNameBefore, keyTTL);
@@ -69,8 +69,8 @@ test('Verify that user can edit Hash Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
 });
 test('Verify that user can edit List Key name', async t => {
-    keyNameBefore = chance.string({ length: 10 });
-    keyNameAfter = chance.string({ length: 10 });
+    keyNameBefore = chance.word({ length: 10 });
+    keyNameAfter = chance.word({ length: 10 });
     const keyTTL = '2147476121';
 
     await browserPage.addListKey(keyNameBefore, keyTTL);
@@ -81,8 +81,8 @@ test('Verify that user can edit List Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
 });
 test('Verify that user can edit JSON Key name', async t => {
-    keyNameBefore = chance.string({ length: 10 });
-    keyNameAfter = chance.string({ length: 10 });
+    keyNameBefore = chance.word({ length: 10 });
+    keyNameAfter = chance.word({ length: 10 });
     const keyTTL = '2147476121';
     const keyValue = '{"name":"xyz"}';
 

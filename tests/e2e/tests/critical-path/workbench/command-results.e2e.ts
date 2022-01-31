@@ -9,7 +9,7 @@ const chance = new Chance();
 
 const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
-const indexName = chance.string({ length: 5 });
+let indexName = chance.word({ length: 5 });
 
 fixture `Command results at Workbench`
     .meta({type: 'critical_path'})
@@ -72,6 +72,7 @@ test('Verify that user can see the results found in the table view by default fo
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
+    indexName = chance.word({ length: 5 });
     const commands = [
         'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
         `FT.CREATE ${indexName} ON HASH PREFIX 1 doc: SCHEMA title TEXT WEIGHT 5.0 body TEXT url TEXT author TEXT rate TEXT review TEXT comment TEXT`,

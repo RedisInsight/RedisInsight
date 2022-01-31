@@ -8,7 +8,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 
-const indexName = chance.string({ length: 5 });
+let indexName = chance.word({ length: 5 });
 
 fixture `Default scripts area at Workbench`
     .meta({type: 'critical_path'})
@@ -25,6 +25,7 @@ fixture `Default scripts area at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+    indexName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         'HMSET product:1 name "Apple Juice" ',
@@ -53,6 +54,7 @@ test.skip('Verify that user can edit and run automatically added "FT._LIST" and 
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
+    indexName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         'HMSET product:1 name "Apple Juice"',
@@ -76,6 +78,7 @@ test.skip('Verify that user can edit and run automatically added "Search" script
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
+    indexName = chance.word({ length: 5 });
     const aggregationResultField = 'max_price';
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE`,

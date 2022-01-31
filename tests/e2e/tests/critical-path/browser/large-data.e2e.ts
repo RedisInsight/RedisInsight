@@ -9,7 +9,7 @@ const cliPage = new CliPage();
 const common = new Common();
 const chance = new Chance();
 
-const keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Cases with large data`
     .meta({ type: 'critical_path' })
@@ -23,6 +23,7 @@ fixture `Cases with large data`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see relevant information about key size', async t => {
+    keyName = chance.word({ length: 10 });
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new key with a lot of members
@@ -39,6 +40,7 @@ test('Verify that user can see relevant information about key size', async t => 
     await t.expect(+keySize).gt(5, 'Key size value');
 });
 test('Verify that user can see relevant information about key length', async t => {
+    keyName = chance.word({ length: 10 });
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Create new key with a lot of members

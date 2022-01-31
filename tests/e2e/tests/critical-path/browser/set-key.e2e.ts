@@ -6,7 +6,7 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-const keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 const keyTTL = '2147476121';
 const keyMember = '1111setMember11111';
 
@@ -22,6 +22,7 @@ fixture `Set Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search by part member name with pattern * in Set', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addSetKey(keyName, keyTTL, '1111');
     //Add member to the Set key
     await browserPage.addMemberToSet(keyMember);
@@ -42,6 +43,7 @@ test('Verify that user can search by part member name with pattern * in Set', as
     await t.expect(result).eql(keyMember, 'The set member');
 });
 test('Verify that user can search by full member name in Set', async t => {
+    keyName = chance.word({ length: 10 });
     await browserPage.addSetKey(keyName, keyTTL, '1111');
     //Add member to the Set key
     await browserPage.addMemberToSet(keyMember);

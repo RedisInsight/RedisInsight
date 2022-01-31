@@ -7,7 +7,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 
-const indexName = chance.string({ length: 10 });
+let indexName = chance.word({ length: 10 });
 
 fixture `JSON verifications at Workbench`
     .meta({type: 'smoke'})
@@ -24,6 +24,7 @@ fixture `JSON verifications at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can execute redisearch command for JSON data type in Workbench', async t => {
+    indexName = chance.word({ length: 10 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON JSON SCHEMA $.title AS title TEXT`,
         `JSON.SET myDoc $ '{"title": "foo", "content": "bar"}'`

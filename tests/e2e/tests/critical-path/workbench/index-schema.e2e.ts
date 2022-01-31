@@ -7,7 +7,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 
-const indexName = chance.string({ length: 5 });
+let indexName = chance.word({ length: 5 });
 
 fixture `Index Schema at Workbench`
     .meta({type: 'critical_path'})
@@ -24,6 +24,7 @@ fixture `Index Schema at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
+    indexName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         `HMSET product:1 name "Apple Juice"`
@@ -44,6 +45,7 @@ test.skip('Verify that user can open results in Text and Table views for FT.INFO
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
+    indexName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,
         `JSON.SET myDoc1 $ '{"user":{"name":"John Smith","tag":"foo,bar","hp":1000, "dmg":150}}'`

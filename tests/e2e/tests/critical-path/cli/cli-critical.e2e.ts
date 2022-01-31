@@ -19,7 +19,7 @@ const chance = new Chance();
 
 const pairsToSet = common.createArrayPairsWithKeyValue(4);
 const MAX_AUTOCOMPLETE_EXECUTIONS = 100;
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 let value = chance.natural({ length: 5 });
 
 fixture `CLI critical`
@@ -42,6 +42,7 @@ test
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })
     ('Verify that user is redirected to another node when he works in CLI with OSS Cluster', async t => {
+        keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Add key from CLI

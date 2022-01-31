@@ -16,7 +16,7 @@ const common = new Common();
 const chance = new Chance();
 
 const speed = 0.4;
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 let keys: string[];
 
 fixture `Browser Context`
@@ -83,7 +83,7 @@ test('Verify that user can see saved executed commands in CLI on Browser page wh
     }
 });
 test('Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page', async t => {
-    const keyName = chance.string({ length: 10 });
+    const keyName = chance.word({ length: 10 });
     //Filter per key name and open Settings
     await browserPage.searchByKeyName(keyName);
     await t.click(myRedisDatabasePage.settingsButton);
@@ -99,7 +99,7 @@ test
     })
     ('Verify that user can see key details selected when he returns back to Browser page', async t => {
         //Add and open new key details and navigate to Settings
-        keyName = chance.string({ length: 10 });
+        keyName = chance.word({ length: 10 });
         await browserPage.addHashKey(keyName);
         await browserPage.openKeyDetails(keyName);
         await t.click(myRedisDatabasePage.settingsButton);

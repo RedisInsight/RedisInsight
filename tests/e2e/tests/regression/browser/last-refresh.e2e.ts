@@ -6,7 +6,7 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Last refresh`
     .meta({ type: 'regression' })
@@ -31,6 +31,7 @@ test
         await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
     });
 test('Verify that user can see my timer updated when I refresh the list of Keys of the list of values', async t => {
+    keyName = chance.word({ length: 10 });
     //Add key
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
@@ -45,6 +46,7 @@ test('Verify that user can see my timer updated when I refresh the list of Keys 
     await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
 });
 test('Verify that user can see the date and time of the last update of my Key values in the tooltip', async t => {
+    keyName = chance.word({ length: 10 });
     //Add key
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
@@ -54,6 +56,7 @@ test('Verify that user can see the date and time of the last update of my Key va
     await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
 });
 test('Verify that user can see my last refresh updated each time I hover over the Refresh icon', async t => {
+    keyName = chance.word({ length: 10 });
     //Add key
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);

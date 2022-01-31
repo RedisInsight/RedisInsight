@@ -9,8 +9,8 @@ const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 const cliPage = new CliPage();
 
-const indexName = chance.string({ length: 5 });
-let keyName = chance.string({ length: 10 });
+const indexName = chance.word({ length: 5 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Scripting area at Workbench`
     .meta({type: 'regression'})
@@ -47,7 +47,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
-        keyName = chance.string({ length: 10 });
+        keyName = chance.word({ length: 10 });
         const commandsForSend = [
             `HMSET ${keyName} price 20`,
             'FT._LIST'
@@ -87,7 +87,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
-        keyName = chance.string({ length: 10 });
+        keyName = chance.word({ length: 10 });
         const command = `HSET ${keyName} field value`;
         //Put a command in Editing Area
         await t.typeText(workbenchPage.queryInput, command);

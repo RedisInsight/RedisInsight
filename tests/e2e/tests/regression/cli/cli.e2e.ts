@@ -12,7 +12,7 @@ const common = new Common();
 const chance = new Chance();
 const browserPage = new BrowserPage();
 
-let keyName = chance.string({ length: 20 });
+let keyName = chance.word({ length: 20 });
 
 fixture `CLI`
     .meta({ type: 'regression' })
@@ -53,6 +53,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
+        chance.word({ length: 20 });
         const command = `SET ${keyName} a`;
         const repeats = 10;
         //Open CLI and run command with repeats

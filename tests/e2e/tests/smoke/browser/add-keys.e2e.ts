@@ -6,7 +6,7 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Add keys`
     .meta({ type: 'smoke' })
@@ -20,7 +20,7 @@ fixture `Add keys`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can add Hash Key', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     //add Hash key
     await browserPage.addHashKey(keyName);
     //check the notification message
@@ -32,7 +32,7 @@ test('Verify that user can add Hash Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add Set Key', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     //add Set key
     await browserPage.addSetKey(keyName);
     //check the notification message
@@ -44,7 +44,7 @@ test('Verify that user can add Set Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add List Key', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     //add List key
     await browserPage.addListKey(keyName);
     //check the notification message
@@ -56,7 +56,7 @@ test('Verify that user can add List Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add String Key', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     //add String key
     await browserPage.addStringKey(keyName);
     //check the notification message
@@ -68,7 +68,7 @@ test('Verify that user can add String Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add ZSet Key', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     //add ZSet key
     await browserPage.addZSetKey(keyName, '111');
     //check the notification message
@@ -80,7 +80,7 @@ test('Verify that user can add ZSet Key', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
 });
 test('Verify that user can add JSON Key', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
     const value = '{"name":"xyz"}';
     //add JSON key

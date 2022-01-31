@@ -6,8 +6,8 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 20 });
-let keyName2 = chance.string({ length: 20 });
+let keyName = chance.word({ length: 20 });
+let keyName2 = chance.word({ length: 20 });
 
 fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path'})
@@ -21,7 +21,7 @@ fixture `Filtering per key name in Browser page`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
-    keyName = chance.string({ length: 20 });
+    keyName = chance.word({ length: 20 });
     //Add new key
     await browserPage.addStringKey(keyName);
     //Search not existed key
@@ -34,7 +34,7 @@ test('Verify that when user searches not existed key, he can see the standard sc
     await t.expect(searchAdvices).eql('Check the spelling.Check upper and lower cases.Use an asterisk (*) in your request for more generic results.', 'The advices text');
 });
 test('Verify that user can filter per pattern with * (matches keys with any number of characters instead of *)', async t => {
-    keyName = `KeyForSearch*${chance.string({ length: 10 })}?[]789`;
+    keyName = `KeyForSearch*${chance.word({ length: 10 })}?[]789`;
     //Add new key
     await browserPage.addStringKey(keyName);
     //Filter per pattern with *
@@ -44,7 +44,7 @@ test('Verify that user can filter per pattern with * (matches keys with any numb
     await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
 });
 test('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
-    const randomValue = chance.string({ length: 10 });
+    const randomValue = chance.word({ length: 10 });
     keyName = `KeyForSearch*?[]789${randomValue}`;
     //Add new key
     await browserPage.addStringKey(keyName);
@@ -62,8 +62,8 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
-        keyName = `KeyForSearch${chance.string({ length: 10 })}`;
-        keyName2 = `KeyForFearch${chance.string({ length: 10 })}`;
+        keyName = `KeyForSearch${chance.word({ length: 10 })}`;
+        keyName2 = `KeyForFearch${chance.word({ length: 10 })}`;
         //Add keys
         await browserPage.addStringKey(keyName);
         await browserPage.addHashKey(keyName2);
@@ -82,7 +82,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can filter per pattern with [^x] (matches one symbol except x)', async t => {
-        const randomValue = chance.string({ length: 5 });
+        const randomValue = chance.word({ length: 5 });
         keyName = `KeyForSearch${randomValue}`;
         keyName2 = `KeyForFearch${randomValue}`;
         //Add keys
@@ -103,8 +103,8 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can filter per pattern with [a-z] (matches any symbol in range from A till Z)', async t => {
-        keyName = `KeyForSearch${chance.string({ length: 10 })}`;
-        keyName2 = `KeyForFearch${chance.string({ length: 10 })}`;
+        keyName = `KeyForSearch${chance.word({ length: 10 })}`;
+        keyName2 = `KeyForFearch${chance.word({ length: 10 })}`;
         //Add keys
         await browserPage.addStringKey(keyName);
         await browserPage.addHashKey(keyName2);

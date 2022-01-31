@@ -12,7 +12,7 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Browser Context`
     .meta({type: 'regression'})
@@ -26,6 +26,7 @@ fixture `Browser Context`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that if user has saved context on Browser page and go to Settings page, Browser and Workbench icons are displayed and user is able to open Browser with saved context', async t => {
+    keyName = chance.word({ length: 10 });
     const command = 'HSET';
     //Create context modificaions and navigate to Settings
     await browserPage.addStringKey(keyName);
@@ -45,6 +46,7 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     await t.click(cliPage.cliCollapseButton);
 });
 test('Verify that when user reload the window with saved context(on any page), context is not saved when he returns back to Browser page', async t => {
+    keyName = chance.word({ length: 10 });
     //Create context modificaions and navigate to Workbench
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);

@@ -15,7 +15,7 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path'})
@@ -30,7 +30,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can search a key with selected data type is filters', async t => {
-        keyName = chance.string({ length: 10 });
+        keyName = chance.word({ length: 10 });
         //Add new key
         await browserPage.addStringKey(keyName);
         //Search by key with full name & specified type
@@ -46,6 +46,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can filter keys per data type in Browser page', async t => {
+        keyName = chance.word({ length: 10 });
         //Create new keys
         await t.click(cliPage.cliExpandButton);
         for (const { textType, keyName } of keyTypes) {

@@ -6,7 +6,7 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 const keyTTL = '2147476121';
 const keyFieldValue = 'hashField11111';
 const keyValue = 'hashValue11111!';
@@ -23,7 +23,7 @@ fixture `Hash Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can search by full field name in Hash', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = keyName = chance.word({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);
@@ -34,7 +34,7 @@ test('Verify that user can search by full field name in Hash', async t => {
     await t.expect(result).eql(keyFieldValue, 'The hash field');
 });
 test('Verify that user can search by part field name in Hash with pattern * in Hash', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     await browserPage.addHashKey(keyName, keyTTL);
     //Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);

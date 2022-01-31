@@ -8,7 +8,7 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 
 fixture `CLI`
     .meta({ type: 'smoke' })
@@ -26,6 +26,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can add data via CLI', async t => {
+        keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Add key from CLI

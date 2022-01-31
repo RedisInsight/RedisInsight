@@ -6,7 +6,7 @@ import { Chance } from 'chance';
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-let keyName = chance.string({ length: 10 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Edit Key values verification`
     .meta({ type: 'smoke' })
@@ -20,7 +20,7 @@ fixture `Edit Key values verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can edit String value', async t => {
-    keyName = chance.string({ length: 10 });
+    keyName = chance.word({ length: 10 });
     const keyTTL = '2147476121';
     const keyValueBefore = 'StringValueBeforeEdit!';
     const keyValueAfter = 'StringValueBeforeEdit!';

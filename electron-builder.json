@@ -53,16 +53,12 @@
   "win": {
     "target": ["nsis", "appx"],
     "artifactName": "${productName}-${os}-installer.${ext}",
-    "icon": "resources/icon.ico",
-    "verifyUpdateCodeSignature": false,
-    "rfc3161TimeStampServer": "http://sha256timestamp.ws.symantec.com/sha256/timestamp",
-    "legalTrademarks": ""
+    "icon": "resources/icon.ico"
   },
   "msi": {
     "artifactName": "${productName}-${os}-${arch}.${ext}"
   },
   "appx": {
-    "displayName": "RedisInsight-preview",
     "publisher": "CN=Redis Labs Inc., O=Redis Labs Inc., L=Mountain View, S=California, C=US",
     "artifactName": "${productName}-${os}-${arch}.${ext}"
   },

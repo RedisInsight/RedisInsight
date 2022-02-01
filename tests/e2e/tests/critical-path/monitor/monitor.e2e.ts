@@ -49,14 +49,14 @@ test
         //Verify that user can open Monitor
         await t.click(monitorPage.expandMonitor);
         //Check that monitor is opened
-        await t.expect(monitorPage.monitorArea.exists).ok('Monitor area');
-        await t.expect(monitorPage.startMonitorButton.exists).ok('Start monitor button');
+        await t.expect(monitorPage.monitorArea.exists).ok('Profiler area');
+        await t.expect(monitorPage.startMonitorButton.exists).ok('Start profiler button');
         //Verify that user can see message inside Monitor "Running Monitor will decrease throughput, avoid running it in production databases." when opens it for the first time
-        await t.expect(monitorPage.monitorWarningMessage.exists).ok('Monitor warning message');
-        await monitorPage.monitorWarningMessage.withText('Running Monitor will decrease throughput, avoid running it in production databases');
+        await t.expect(monitorPage.monitorWarningMessage.exists).ok('Profiler warning message');
+        await monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases');
         //Verify that user can run Monitor by clicking "Run" command in the message inside Monitor
         await t.click(monitorPage.startMonitorButton);
-        await t.expect(monitorPage.monitorIsStartedText.exists).ok('"Monitor is started" text');
+        await t.expect(monitorPage.monitorIsStartedText.innerText).eql('Profiler is started.');
         //Verify that user can see run commands in monitor
         await cliPage.getSuccessCommandResultFromCli(`${command} ${keyName} ${keyValue}`);
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);

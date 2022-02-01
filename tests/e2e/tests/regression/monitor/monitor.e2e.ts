@@ -41,11 +41,11 @@ test('Verify that when user closes the Monitor by clicking on "Close Monitor" bu
     //Close Monitor
     await t.click(monitorPage.closeMonitor);
     //Verify that monitor is not displayed
-    await t.expect(monitorPage.monitorArea.visible).notOk('Monitor area');
+    await t.expect(monitorPage.monitorArea.visible).notOk('Profiler area');
     //Verify that user open monitor again
     await t.click(monitorPage.expandMonitor);
     //Verify that when user reopens Monitor history is not displayed
-    await t.expect(monitorPage.startMonitorButton.visible).ok('Start monitor button');
+    await t.expect(monitorPage.startMonitorButton.visible).ok('Start profiler button');
 });
 test('Verify that Monitor is stopped when user clicks on "Stop" button', async t => {
     //Run monitor
@@ -53,7 +53,7 @@ test('Verify that Monitor is stopped when user clicks on "Stop" button', async t
     //Click on Stop Monitor button
     await t.click(monitorPage.runMonitorToggle);
     //Check for "Monitor is stopped." text
-    await t.expect(monitorPage.monitorIsStoppedText.visible).ok('Monitor is stopped text');
+    await t.expect(monitorPage.monitorIsStoppedText.innerText).eql('Profiler is stopped.');
     //Check that no commands are displayed after "Monitor is stopped" text
     await t.expect(monitorPage.monitorIsStoppedText.nextSibling().exists).notOk('No commands in monitor');
 });

@@ -71,6 +71,6 @@ export class MonitorPage {
      */
     async stopMonitor(): Promise<void> {
         await t.click(this.runMonitorToggle);
-        await t.expect(this.monitorIsStoppedText.exists).ok('Monitor is stopped text');
+        await t.expect(this.monitorIsStoppedText.exists).ok('Profiler is stopped text');
     }
 }

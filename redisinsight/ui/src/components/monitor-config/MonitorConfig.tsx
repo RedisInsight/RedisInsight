@@ -49,6 +49,7 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     const newSocket = io(`${getBaseApiUrl()}/monitor`, {
       forceNew: true,
       query: { instanceId },
+      rejectUnauthorized: false,
     })
     dispatch(setSocket(newSocket))
     let payloads: IMonitorDataPayload[] = []

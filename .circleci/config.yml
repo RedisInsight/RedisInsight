@@ -532,6 +532,7 @@ jobs:
           root: .
           paths:
             - release/RedisInsight*.exe
+            - release/RedisInsight*.appx
             - release/RedisInsight*.exe.blockmap
             - release/*.yml
   virustotal:

@@ -1,12 +1,15 @@
+import { Chance } from 'chance';
 import { addNewStandaloneDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     UserAgreementPage,
     AddRedisDatabasePage,
-    MonitorPage
+    MonitorPage,
+    SettingsPage,
+    BrowserPage
 } from '../../../pageObjects';
 import {
-    commonUrl,
+    commonUrl, ossBigStandaloneConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
@@ -14,6 +17,9 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const monitorPage = new MonitorPage();
+const settingsPage = new SettingsPage();
+const browserPage = new BrowserPage();
+const chance = new Chance();
 
 fixture.only `Monitor`
     .meta({ type: 'regression' })
@@ -72,3 +78,35 @@ test('Verify that when user clicks on "Clear" button in Monitor, all commands hi
     //Check that monitor has start screen
     await t.expect(monitorPage.startMonitorButton.exists).ok('Start monitor button');
 });
+test
+    .before(async t => {
+        await t.maximizeWindow();
+        await userAgreementPage.acceptLicenseTerms();
+        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('Add Redis database view', { timeout: 20000 });
+        await addNewStandaloneDatabase(ossBigStandaloneConfig);
+        await t.click(myRedisDatabasePage.settingsButton);
+        await t.click(settingsPage.accordionAdvancedSettings);
+        await settingsPage.changeKeysToScanValue('20000000');
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await myRedisDatabasePage.clickOnDBByName(ossBigStandaloneConfig.databaseName);
+    })
+    .after(async t => {
+        await t.click(myRedisDatabasePage.settingsButton);
+        await t.click(settingsPage.accordionAdvancedSettings);
+        await settingsPage.changeKeysToScanValue('10000');
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await myRedisDatabasePage.deleteDatabaseByName(ossBigStandaloneConfig.databaseName);
+    })
+    ('Verify that user can see monitor results in high DB load', async t => {
+        //Run monitor
+        await monitorPage.startMonitor();
+        //Search by not existed key pattern
+        await browserPage.searchByKeyName(`${chance.string({ length:10 })}*`);
+        //Check that the last child is updated
+        for (let i = 0; i <= 10; i++) {
+            const previousTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;
+            await t.wait(5500);
+            const nextTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;
+            await t.expect(previousTimestamp).notEql(nextTimestamp);
+        }
+    });

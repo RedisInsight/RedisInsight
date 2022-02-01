@@ -18,6 +18,7 @@ export class MonitorPage {
     closeMonitor: Selector
     monitorWarningMessage: Selector
     monitorCommandLinePart: Selector
+    monitorCommandLineTimestamp: Selector
 
     constructor() {
         //-------------------------------------------------------------------------------------------
@@ -38,6 +39,7 @@ export class MonitorPage {
         this.closeMonitor = Selector('[data-testid=close-monitor]');
         this.monitorWarningMessage = Selector('[data-testid=monitor-warning-message]');
         this.monitorCommandLinePart = Selector('[data-testid=monitor] span');
+        this.monitorCommandLineTimestamp = Selector('[data-testid=monitor] span').withText(/[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}/);
     }
     /**
      * Check specific command in Monitor

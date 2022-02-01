@@ -60,7 +60,7 @@ test
         //Verify that user can see run commands in monitor
         await cliPage.getSuccessCommandResultFromCli(`${command} ${keyName} ${keyValue}`);
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
-});
+    });
 test('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
     //Define commands in different clients
     const cli_command = 'command';

@@ -21,7 +21,9 @@ fixture `Shortcuts`
         await userAgreementPage.acceptLicenseTerms();
     })
 
-test('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center', async t => {
+test
+.meta({ rte: 'none' })
+('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center', async t => {
     // Click on help center icon
     await t.click(myRedisDatabasePage.helpCenterButton);
     // Verify that Help Center panel is opened

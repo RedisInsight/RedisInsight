@@ -34,53 +34,61 @@ fixture `Last refresh`
         await t.typeText(cliPage.cliCommandInput, `DEL ${keyName}`);
         await t.pressKey('enter');
     });
-test('Verify that user can see the date and time of the last update of my Keys in the tooltip', async t => {
-    //Open database
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Hover on the refresh icon
-    await t.hover(browserPage.refreshKeysButton);
-    //Verify the last update info
-    await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
-});
-test('Verify that user can see my timer updated when I refresh the list of Keys of the list of values', async t => {
-    //Open database
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Add key
-    await browserPage.addStringKey(keyName);
-    await browserPage.openKeyDetails(keyName);
-    //Wait for 2 min
-    await t.wait(120000);
-    //Hover on the refresh icon
-    await t.hover(browserPage.refreshKeyButton);
-    await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\n2 minutes ago', 'tooltip text');
-    //Click on Refresh and check last refresh
-    await t.click(browserPage.refreshKeyButton);
-    await t.hover(browserPage.refreshKeyButton);
-    await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
-});
-test('Verify that user can see the date and time of the last update of my Key values in the tooltip', async t => {
-    //Open database
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Add key
-    await browserPage.addStringKey(keyName);
-    await browserPage.openKeyDetails(keyName);
-    //Hover on the refresh icon
-    await t.hover(browserPage.refreshKeyButton);
-    //Verify the last update info
-    await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
-});
-test('Verify that user can see my last refresh updated each time I hover over the Refresh icon', async t => {
-    //Open database
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Add key
-    await browserPage.addStringKey(keyName);
-    await browserPage.openKeyDetails(keyName);
-    //Hover on the keys refresh icon
-    await t.hover(browserPage.refreshKeysButton);
-    //Verify the last update info
-    await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
-    //Hover on the key in details refresh icon
-    await t.hover(browserPage.refreshKeyButton);
-    //Verify the last update info
-    await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see the date and time of the last update of my Keys in the tooltip', async t => {
+        //Open database
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Hover on the refresh icon
+        await t.hover(browserPage.refreshKeysButton);
+        //Verify the last update info
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see my timer updated when I refresh the list of Keys of the list of values', async t => {
+        //Open database
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Add key
+        await browserPage.addStringKey(keyName);
+        await browserPage.openKeyDetails(keyName);
+        //Wait for 2 min
+        await t.wait(120000);
+        //Hover on the refresh icon
+        await t.hover(browserPage.refreshKeyButton);
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\n2 minutes ago', 'tooltip text');
+        //Click on Refresh and check last refresh
+        await t.click(browserPage.refreshKeyButton);
+        await t.hover(browserPage.refreshKeyButton);
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see the date and time of the last update of my Key values in the tooltip', async t => {
+        //Open database
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Add key
+        await browserPage.addStringKey(keyName);
+        await browserPage.openKeyDetails(keyName);
+        //Hover on the refresh icon
+        await t.hover(browserPage.refreshKeyButton);
+        //Verify the last update info
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see my last refresh updated each time I hover over the Refresh icon', async t => {
+        //Open database
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Add key
+        await browserPage.addStringKey(keyName);
+        await browserPage.openKeyDetails(keyName);
+        //Hover on the keys refresh icon
+        await t.hover(browserPage.refreshKeysButton);
+        //Verify the last update info
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+        //Hover on the key in details refresh icon
+        await t.hover(browserPage.refreshKeyButton);
+        //Verify the last update info
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+    });

@@ -35,42 +35,46 @@ fixture `Index Schema at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
     })
 //skipped due the inaccessibility of the iframe
-test.skip('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
-    const commandsForSend = [
-        `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        `HMSET product:1 name "Apple Juice"`
-    ];
-    const searchCommand = `FT.INFO ${indexName}`;
-    //Send commands
-    await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
-    //Send search command
-    await workbenchPage.sendCommandInWorkbench(searchCommand);
-    //Check that result is displayed in Table view
-    await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
-    //Select Text view type
-    await t.switchToMainWindow();
-    await workbenchPage.selectViewTypeText();
-    //Check that result is displayed in Text view
-    await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
-});
+test.skip
+    .meta({ env: 'web', rte: 'standalone' })
+    ('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
+        const commandsForSend = [
+            `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
+            `HMSET product:1 name "Apple Juice"`
+        ];
+        const searchCommand = `FT.INFO ${indexName}`;
+        //Send commands
+        await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
+        //Send search command
+        await workbenchPage.sendCommandInWorkbench(searchCommand);
+        //Check that result is displayed in Table view
+        await t.switchToIframe(workbenchPage.iframe);
+        await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
+        //Select Text view type
+        await t.switchToMainWindow();
+        await workbenchPage.selectViewTypeText();
+        //Check that result is displayed in Text view
+        await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
+    });
 //skipped due the inaccessibility of the iframe
-test.skip('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
-    const commandsForSend = [
-        `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,
-        `JSON.SET myDoc1 $ '{"user":{"name":"John Smith","tag":"foo,bar","hp":1000, "dmg":150}}'`
-    ];
-    const searchCommand = `FT.INFO ${indexName}`;
-    //Send commands
-    await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
-    //Send search command
-    await workbenchPage.sendCommandInWorkbench(searchCommand);
-    //Check that result is displayed in Table view
-    await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
-    //Select Text view type
-    await t.switchToMainWindow();
-    await workbenchPage.selectViewTypeText();
-    //Check that result is displayed in Text view
-    await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
-});
+test.skip
+    .meta({ env: 'web',rte: 'standalone' })
+    ('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
+        const commandsForSend = [
+            `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,
+            `JSON.SET myDoc1 $ '{"user":{"name":"John Smith","tag":"foo,bar","hp":1000, "dmg":150}}'`
+        ];
+        const searchCommand = `FT.INFO ${indexName}`;
+        //Send commands
+        await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
+        //Send search command
+        await workbenchPage.sendCommandInWorkbench(searchCommand);
+        //Check that result is displayed in Table view
+        await t.switchToIframe(workbenchPage.iframe);
+        await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
+        //Select Text view type
+        await t.switchToMainWindow();
+        await workbenchPage.selectViewTypeText();
+        //Check that result is displayed in Text view
+        await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
+    });

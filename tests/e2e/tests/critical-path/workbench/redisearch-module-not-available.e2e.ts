@@ -30,9 +30,11 @@ fixture `Redisearch module not available`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-test('Verify that user can see the information message that the RediSearch module is not available when he runs any input with "FT." prefix in Workbench', async t => {
-    //Send command with 'FT.'
-    await workbenchPage.sendCommandInWorkbench(commandForSend);
-    //Verify the information message
-    await t.expect(await workbenchPage.queryCardNoModuleOutput.textContent).eql('RediSearch module is not loaded for this database', 'The information message');
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see the information message that the RediSearch module is not available when he runs any input with "FT." prefix in Workbench', async t => {
+        //Send command with 'FT.'
+        await workbenchPage.sendCommandInWorkbench(commandForSend);
+        //Verify the information message
+        await t.expect(await workbenchPage.queryCardNoModuleOutput.textContent).eql('RediSearch module is not loaded for this database', 'The information message');
+    });

@@ -36,19 +36,22 @@ fixture `List Key verification`
     const element = '1111listElement11111';
     const element2 = '2222listElement22222';
     const element3 = '33333listElement33333';
-test('Verify that user can search List element by index', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await browserPage.addListKey(keyName, keyTTL, element);
-    //Add few elements to the List key
-    await browserPage.addElementToList(element2);
-    await browserPage.addElementToList(element3);
-    //Search List element by index
-    await browserPage.searchByTheValueInKeyDetails('1');
-    //Check the search result
-    const result = await browserPage.listElementsList.nth(0).textContent;
-    await t.expect(result).eql(element2, 'The list elemnt with searched index');
-});
 test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can search List element by index', async t => {
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await browserPage.addListKey(keyName, keyTTL, element);
+        //Add few elements to the List key
+        await browserPage.addElementToList(element2);
+        await browserPage.addElementToList(element3);
+        //Search List element by index
+        await browserPage.searchByTheValueInKeyDetails('1');
+        //Check the search result
+        const result = await browserPage.listElementsList.nth(0).textContent;
+        await t.expect(result).eql(element2, 'The list elemnt with searched index');
+    });
+test
+    .meta({ rte: 'standalone' })
     .before(async(t) => {
         await t.maximizeWindow();
         await userAgreementPage.acceptLicenseTerms();

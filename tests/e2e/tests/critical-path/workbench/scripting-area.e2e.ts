@@ -32,65 +32,72 @@ fixture `Scripting area at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-test('Verify that user can run any script from CLI in Workbench and see the results', async t => {
-    const commandForSend = 'info';
-    //Send command
-    await workbenchPage.sendCommandInWorkbench(commandForSend);
-    // Check if results exist
-    await t.expect(await workbenchPage.queryCardContainer.exists).ok('Query card was added');
-    const sentCommandText = await workbenchPage.queryCardCommand.withExactText(commandForSend);
-    await t.expect(sentCommandText.exists).ok('Result of sent command exists');
-});
-test('Verify that user can resize scripting area in Workbench', async t => {
-    const offsetY = 200;
-    const inputHeightStart = await workbenchPage.queryInput.clientHeight;
-    await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
-    await t.expect(await workbenchPage.queryInput.clientHeight).eql(inputHeightStart + offsetY, 'Scripting area after resize has proper size');
-});
-//skipped due the inaccessibility of the iframe
-test.skip('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
-    const commandsForSendInCli = [
-        'HMSET product:1 name "Apple Juice"',
-        'HMSET product:2 name "Apple Juice"',
-        'HMSET product:3 name "Apple Juice"',
-        'HMSET product:4 name "Apple Juice"',
-        'HMSET product:5 name "Apple Juice"',
-        'HMSET product:6 name "Apple Juice"',
-        'HMSET product:7 name "Apple Juice"',
-        'HMSET product:8 name "Apple Juice"',
-        'HMSET product:9 name "Apple Juice"',
-        'HMSET product:10 name "Apple Juice"',
-        'HMSET product:11 name "Apple Juice"',
-        'HMSET product:12 name "Apple Juice"'
-    ];
-    const commandToCreateSchema = 'FT.CREATE products ON HASH PREFIX 1 product: SCHEMA name TEXT';
-    const searchCommand = 'FT.SEARCH products * LIMIT 0 20';
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
-    //Create new keys for search
-    for(const command of commandsForSendInCli) {
-        await t.typeText(cliPage.cliCommandInput, command, { replace: true });
-        await t.pressKey('enter');
-    }
-    await t.click(cliPage.cliCollapseButton);
-    //Send commands
-    await workbenchPage.sendCommandInWorkbench(commandToCreateSchema);
-    //Send search command
-    await workbenchPage.sendCommandInWorkbench(searchCommand);
-    //Get needed container
-    const containerOfCommand = await workbenchPage.getCardContainerByCommand(searchCommand);
-    //Verify that we have pagination buttons
-    await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonPrevious).exists)
-        .ok('Pagination previous button exists');
-    await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonNext).exists)
-        .ok('Pagination next button exists');
-    //Drop index and documents
-    await t.switchToMainWindow();
-    await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can run any script from CLI in Workbench and see the results', async t => {
+        const commandForSend = 'info';
+        //Send command
+        await workbenchPage.sendCommandInWorkbench(commandForSend);
+        // Check if results exist
+        await t.expect(await workbenchPage.queryCardContainer.exists).ok('Query card was added');
+        const sentCommandText = await workbenchPage.queryCardCommand.withExactText(commandForSend);
+        await t.expect(sentCommandText.exists).ok('Result of sent command exists');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can resize scripting area in Workbench', async t => {
+        const offsetY = 200;
+        const inputHeightStart = await workbenchPage.queryInput.clientHeight;
+        await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
+        await t.expect(await workbenchPage.queryInput.clientHeight).eql(inputHeightStart + offsetY, 'Scripting area after resize has proper size');
+    });
 //skipped due the inaccessibility of the iframe
 test.skip
+    .meta({ env: 'web', rte: 'standalone' })
+    ('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
+        const commandsForSendInCli = [
+            'HMSET product:1 name "Apple Juice"',
+            'HMSET product:2 name "Apple Juice"',
+            'HMSET product:3 name "Apple Juice"',
+            'HMSET product:4 name "Apple Juice"',
+            'HMSET product:5 name "Apple Juice"',
+            'HMSET product:6 name "Apple Juice"',
+            'HMSET product:7 name "Apple Juice"',
+            'HMSET product:8 name "Apple Juice"',
+            'HMSET product:9 name "Apple Juice"',
+            'HMSET product:10 name "Apple Juice"',
+            'HMSET product:11 name "Apple Juice"',
+            'HMSET product:12 name "Apple Juice"'
+        ];
+        const commandToCreateSchema = 'FT.CREATE products ON HASH PREFIX 1 product: SCHEMA name TEXT';
+        const searchCommand = 'FT.SEARCH products * LIMIT 0 20';
+        //Open CLI
+        await t.click(cliPage.cliExpandButton);
+        //Create new keys for search
+        for(const command of commandsForSendInCli) {
+            await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+            await t.pressKey('enter');
+        }
+        await t.click(cliPage.cliCollapseButton);
+        //Send commands
+        await workbenchPage.sendCommandInWorkbench(commandToCreateSchema);
+        //Send search command
+        await workbenchPage.sendCommandInWorkbench(searchCommand);
+        //Get needed container
+        const containerOfCommand = await workbenchPage.getCardContainerByCommand(searchCommand);
+        //Verify that we have pagination buttons
+        await t.switchToIframe(workbenchPage.iframe);
+        await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonPrevious).exists)
+            .ok('Pagination previous button exists');
+        await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonNext).exists)
+            .ok('Pagination next button exists');
+        //Drop index and documents
+        await t.switchToMainWindow();
+        await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
+    });
+//skipped due the inaccessibility of the iframe
+test.skip
+    .meta({ env: 'web', rte: 'standalone' })
     .after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
@@ -116,6 +123,7 @@ test.skip
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
     });
 test
+    .meta({ rte: 'standalone' })
     .after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
@@ -135,6 +143,7 @@ test
         }
     });
 test
+    .meta({ rte: 'standalone' })
     .after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);

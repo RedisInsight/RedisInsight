@@ -32,35 +32,39 @@ fixture `Hash Key fields verification`
     const keyFieldValue = 'hashField11111';
     const keyValue = 'hashValue11111!';
 
-test('Verify that user can search by full field name in Hash', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await browserPage.addHashKey(keyName, keyTTL);
-    //Add field to the hash key
-    await browserPage.addFieldToHash(keyFieldValue, keyValue);
-    //Search by full field name
-    await browserPage.searchByTheValueInKeyDetails(keyFieldValue);
-    //Check the search result
-    const result = await browserPage.hashFieldsList.nth(0).textContent;
-    await t.expect(result).eql(keyFieldValue, 'The hash field');
-});
-test('Verify that user can search by part field name in Hash with pattern * in Hash', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await browserPage.addHashKey(keyName, keyTTL);
-    //Add field to the hash key
-    await browserPage.addFieldToHash(keyFieldValue, keyValue);
-    //Search by part field name and the * in the end
-    await browserPage.searchByTheValueInKeyDetails('hashField*');
-    //Check the search result
-    let result = await browserPage.hashFieldsList.nth(0).textContent;
-    await t.expect(result).eql(keyFieldValue, 'The hash field');
-    //Search by part field name and the * in the beggining
-    await browserPage.searchByTheValueInKeyDetails('*11111');
-    //Check the search result
-    result = await browserPage.hashFieldsList.nth(0).textContent;
-    await t.expect(result).eql(keyFieldValue, 'The hash field');
-    //Search by part field name and the * in the middle
-    await browserPage.searchByTheValueInKeyDetails('hash*11111');
-    //Check the search result
-    result = await browserPage.hashFieldsList.nth(0).textContent;
-    await t.expect(result).eql(keyFieldValue, 'The hash field');
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can search by full field name in Hash', async t => {
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await browserPage.addHashKey(keyName, keyTTL);
+        //Add field to the hash key
+        await browserPage.addFieldToHash(keyFieldValue, keyValue);
+        //Search by full field name
+        await browserPage.searchByTheValueInKeyDetails(keyFieldValue);
+        //Check the search result
+        const result = await browserPage.hashFieldsList.nth(0).textContent;
+        await t.expect(result).eql(keyFieldValue, 'The hash field');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can search by part field name in Hash with pattern * in Hash', async t => {
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await browserPage.addHashKey(keyName, keyTTL);
+        //Add field to the hash key
+        await browserPage.addFieldToHash(keyFieldValue, keyValue);
+        //Search by part field name and the * in the end
+        await browserPage.searchByTheValueInKeyDetails('hashField*');
+        //Check the search result
+        let result = await browserPage.hashFieldsList.nth(0).textContent;
+        await t.expect(result).eql(keyFieldValue, 'The hash field');
+        //Search by part field name and the * in the beggining
+        await browserPage.searchByTheValueInKeyDetails('*11111');
+        //Check the search result
+        result = await browserPage.hashFieldsList.nth(0).textContent;
+        await t.expect(result).eql(keyFieldValue, 'The hash field');
+        //Search by part field name and the * in the middle
+        await browserPage.searchByTheValueInKeyDetails('hash*11111');
+        //Check the search result
+        result = await browserPage.hashFieldsList.nth(0).textContent;
+        await t.expect(result).eql(keyFieldValue, 'The hash field');
+    });

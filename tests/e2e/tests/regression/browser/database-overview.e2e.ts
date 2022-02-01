@@ -33,14 +33,16 @@ fixture `Database overview`
         await t.pressKey('enter');
         await t.click(cliPage.cliCollapseButton);
     })
-test('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Create new keys
-    await cliPage.addKeysFromCli('MSET', 10);
-    //Open Workbench
-    await t.click(myRedisDatabasePage.workbenchButton);
-    //Verify that user can see total memory and total number of keys
-    await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can see total keys');
-    await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can see total memory');
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
+        //Connect to DB
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Create new keys
+        await cliPage.addKeysFromCli('MSET', 10);
+        //Open Workbench
+        await t.click(myRedisDatabasePage.workbenchButton);
+        //Verify that user can see total memory and total number of keys
+        await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can see total keys');
+        await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can see total memory');
+    });

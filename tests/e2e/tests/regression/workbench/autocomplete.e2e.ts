@@ -28,7 +28,9 @@ fixture `Autocomplete for entered commands`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-test('Verify that user can open the "read more" about the command by clicking on the ">" icon or "ctrl+space"', async t => {
+test
+.meta({ rte: 'standalone' })
+('Verify that user can open the "read more" about the command by clicking on the ">" icon or "ctrl+space"', async t => {
     const command = 'HSET'
     const commandDetails = [
       'HSET key field_value [field_value ...]',
@@ -49,44 +51,50 @@ test('Verify that user can open the "read more" about the command by clicking on
     await t.pressKey('ctrl+space');
     await t.expect(await workbenchPage.monacoCommandDetails.exists).notOk('The "read more" about the command is closed');
 });
-test('Verify that user can see static list of arguments is displayed when he enters the command in Editor in Workbench', async t => {
-    const command = 'AI.SCRIPTEXECUTE'
-    //Type the command in Editing area
-    await t.typeText(workbenchPage.queryInput, command, { replace: true });
-    //Check that no hints are displayed
-    await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed yet')
-    //Add space after the printed command
-    await t.typeText(workbenchPage.queryInput, `${command} `, { replace: true })
-    //Check that hint with arguments are displayed
-    await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
-});
-test('Verify that user can close the static list of arguments by pressing “ESC”', async t => {
-    const command = 'TS.DELETERULE '
-    await t.typeText(workbenchPage.queryInput, command, { replace: true })
-    //Check that hint with arguments are displayed
-    await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
-    //Remove hints with arguments
-    await t.pressKey('esc');
-    //Check no hints are displayed
-    await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed')
-});
-test('Verify that user can see the static list of arguments when he uses “Ctrl+Shift+Space” combination for already entered command for Windows', async t => {
-    const command = 'JSON.ARRAPPEND'
-    await t.typeText(workbenchPage.queryInput, command, { replace: true });
-    //Verify that the list with auto-suggestions is displayed
-    await t.expect(await workbenchPage.monacoSuggestion.exists).ok('Auto-suggestions are displayed');
-    //Select the command from suggestion list
-    await t.pressKey('enter');
-    //Check that the command is displayed in Editing area after selecting
-    const script = await workbenchPage.queryInputScriptArea.textContent;
-    await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND key value ', 'Result of sent command exists');
-    //Check that hint with arguments are displayed
-    await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
-    //Remove hints with arguments
-    await t.pressKey('esc');
-    //Check no hints are displayed
-    await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed')
-    //Check that using shortcut “Ctrl+Shift+Space” hints are displayed
-    await t.pressKey('ctrl+shift+space');
-    await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see static list of arguments is displayed when he enters the command in Editor in Workbench', async t => {
+        const command = 'AI.SCRIPTEXECUTE'
+        //Type the command in Editing area
+        await t.typeText(workbenchPage.queryInput, command, { replace: true });
+        //Check that no hints are displayed
+        await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed yet')
+        //Add space after the printed command
+        await t.typeText(workbenchPage.queryInput, `${command} `, { replace: true })
+        //Check that hint with arguments are displayed
+        await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can close the static list of arguments by pressing “ESC”', async t => {
+        const command = 'TS.DELETERULE '
+        await t.typeText(workbenchPage.queryInput, command, { replace: true })
+        //Check that hint with arguments are displayed
+        await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
+        //Remove hints with arguments
+        await t.pressKey('esc');
+        //Check no hints are displayed
+        await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed')
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see the static list of arguments when he uses “Ctrl+Shift+Space” combination for already entered command for Windows', async t => {
+        const command = 'JSON.ARRAPPEND'
+        await t.typeText(workbenchPage.queryInput, command, { replace: true });
+        //Verify that the list with auto-suggestions is displayed
+        await t.expect(await workbenchPage.monacoSuggestion.exists).ok('Auto-suggestions are displayed');
+        //Select the command from suggestion list
+        await t.pressKey('enter');
+        //Check that the command is displayed in Editing area after selecting
+        const script = await workbenchPage.queryInputScriptArea.textContent;
+        await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND key value ', 'Result of sent command exists');
+        //Check that hint with arguments are displayed
+        await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
+        //Remove hints with arguments
+        await t.pressKey('esc');
+        //Check no hints are displayed
+        await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed')
+        //Check that using shortcut “Ctrl+Shift+Space” hints are displayed
+        await t.pressKey('ctrl+shift+space');
+        await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
+    });

@@ -31,12 +31,14 @@ fixture `Workbench Context`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-test('Verify that user can see saved input in Editor when navigates away to any other page', async t => {
-    const command = 'FT.CREATE products ON HASH PREFIX 1 product: SCHEMA name TEXT';
-    //Enter the command in the Workbench editor and navigate to Browser
-    await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: speed});
-    await t.click(myRedisDatabasePage.browserButton);
-    //Return back to Workbench and check input in editor
-    await t.click(myRedisDatabasePage.workbenchButton);
-    await t.expect((await workbenchPage.queryInputScriptArea.textContent).replace(/\s/g, ' ')).eql(command, 'Input in Editor is saved');
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see saved input in Editor when navigates away to any other page', async t => {
+        const command = 'FT.CREATE products ON HASH PREFIX 1 product: SCHEMA name TEXT';
+        //Enter the command in the Workbench editor and navigate to Browser
+        await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: speed});
+        await t.click(myRedisDatabasePage.browserButton);
+        //Return back to Workbench and check input in editor
+        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.expect((await workbenchPage.queryInputScriptArea.textContent).replace(/\s/g, ' ')).eql(command, 'Input in Editor is saved');
+    });

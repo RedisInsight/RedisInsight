@@ -51,8 +51,20 @@
     ]
   },
   "win": {
-    "target": ["nsis"],
-    "artifactName": "${productName}-${os}-installer.${ext}"
+    "target": ["appx"],
+    "artifactName": "${productName}-${os}-installer.${ext}",
+    "icon": "resources/icon.ico",
+    "verifyUpdateCodeSignature": false,
+    "rfc3161TimeStampServer": "http://timestamp.sectigo.com/?td=sha256",
+    "legalTrademarks": ""
+  },
+  "msi": {
+    "artifactName": "${productName}-${os}-${arch}.${ext}"
+  },
+  "appx": {
+    "backgroundColor": "#2f343d",
+    "displayName": "RedisInsight",
+    "artifactName": "${productName}-${os}-${arch}.${ext}"
   },
   "linux": {
     "icon": "./resources/icons",

@@ -764,6 +764,10 @@ workflows:
           name: Build app - MacOS (dev)
           requires:
             - Setup build (dev)
+      - windows:
+          name: Build app - Windows (dev)
+          requires:
+            - Setup build (dev)
 
       - store-build-artifacts:
           name: Store build artifacts (dev)

@@ -62,7 +62,6 @@
     "artifactName": "${productName}-${os}-${arch}.${ext}"
   },
   "appx": {
-    "backgroundColor": "#2f343d",
     "displayName": "RedisInsight-preview",
     "publisher": "CN=Redis Labs Inc., O=Redis Labs Inc., L=Mountain View, S=California, C=US",
     "artifactName": "${productName}-${os}-${arch}.${ext}"

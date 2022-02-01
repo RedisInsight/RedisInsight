@@ -1,6 +1,7 @@
-import { ServiceUnavailableException } from '@nestjs/common';
+import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
 import IORedis from 'ioredis';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { RedisErrorCodes } from 'src/constants';
 import { IMonitorObserver, MonitorObserverStatus } from './monitor-observer.interface';
 import { IShardObserver } from './shard-obsever.interface';
 import { IClientMonitorObserver } from '../client-monitor-observer';
@@ -71,11 +72,29 @@ export class MonitorObserver implements IMonitorObserver {
       this.status = MonitorObserverStatus.Ready;
     } catch (error) {
       this.status = MonitorObserverStatus.Error;
+
+      if (error?.message?.includes(RedisErrorCodes.NoPermission)) {
+        throw new ForbiddenException(error.message);
+      }
+
       throw new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB);
     }
   }
 
   private async createShardObserver(redis: IORedis.Redis): Promise<IShardObserver> {
-    return await redis.monitor() as IShardObserver;
+    // @ts-ignore
+    const c = redis.duplicate({
+      ...redis.options,
+      connectionName: 'redisinsight-monitor',
+      monitor: false,
+      lazyLoading: false,
+    });
+
+    await c.send_command('monitor');
+
+    // @ts-ignore
+    c.setStatus('monitoring');
+
+    return c as IShardObserver;
   }
 }

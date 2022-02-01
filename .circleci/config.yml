@@ -121,7 +121,7 @@ aliases:
     key: v1-ui-deps-{{ checksum "redisinsight/api/yarn.lock" }}
 
 orbs:
-  win: circleci/windows@2.4.0
+  win: circleci/windows@2.4.1
   node: circleci/node@4.4.0
   aws: circleci/aws-cli@2.0.3
 
@@ -496,6 +496,7 @@ jobs:
   windows:
     executor:
       name: win/default
+      size: "xlarge"
     parameters:
       env:
         description: Build environment (stage || prod)
@@ -515,8 +516,8 @@ jobs:
             choco install nodejs --version=15.14.0
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
-            yarn --cwd redisinsight/api/ install
-            yarn build:statics:win
+            # yarn --cwd redisinsight/api/ install
+            # yarn build:statics:win
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/win-unpacked

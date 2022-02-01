@@ -1,5 +1,8 @@
+import { ForbiddenException } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import { mockClientMonitorObserver, mockRedisMonitorObserver } from 'src/__mocks__/monitor';
+import { ReplyError } from 'src/models';
+import { mockRedisNoPermError } from 'src/__mocks__';
 import { MonitorObserverStatus } from './monitor-observer.interface';
 import { MonitorObserver } from './monitor-observer';
 
@@ -16,10 +19,16 @@ mockClusterNode2.options = { ...nodeClient.options, host: 'localhost', port: 500
 
 clusterClient.nodes = jest.fn().mockReturnValue([mockClusterNode1, mockClusterNode2]);
 
+const NO_PERM_ERROR: ReplyError = {
+  ...mockRedisNoPermError,
+  command: 'MONITOR',
+};
+
 describe('MonitorObserver', () => {
   describe('for redis standalone', () => {
     let monitorObserver;
     beforeEach(() => {
+      MonitorObserver.isMonitorAvailable = jest.fn().mockResolvedValue(true);
       monitorObserver = new MonitorObserver(nodeClient);
     });
 
@@ -58,10 +67,18 @@ describe('MonitorObserver', () => {
       expect(monitorObserver.getSize()).toEqual(0);
       expect(monitorObserver.shardsObservers.length).toEqual(0);
     });
+    it('should throw ForbiddenException if a user has no permissions', async () => {
+      MonitorObserver.isMonitorAvailable = jest.fn().mockRejectedValue(NO_PERM_ERROR);
+
+      await expect(
+        monitorObserver.subscribe({ ...mockClientMonitorObserver, id: '1' }),
+      ).rejects.toThrow(ForbiddenException);
+    });
   });
   describe('for redis cluster', () => {
     let monitorObserver;
     beforeEach(() => {
+      MonitorObserver.isMonitorAvailable = jest.fn().mockResolvedValue(true);
       monitorObserver = new MonitorObserver(clusterClient);
     });
 
@@ -84,6 +101,14 @@ describe('MonitorObserver', () => {
       expect(monitorObserver.status).toBe(MonitorObserverStatus.End);
       expect(monitorObserver.getSize()).toEqual(0);
       expect(monitorObserver.shardsObservers.length).toEqual(0);
+    });
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    it('should throw ForbiddenException if a user has no permissions', async () => {
+      MonitorObserver.isMonitorAvailable = jest.fn().mockRejectedValue(NO_PERM_ERROR);
+
+      await expect(
+        monitorObserver.subscribe({ ...mockClientMonitorObserver, id: '1' }),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

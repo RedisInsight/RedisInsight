@@ -82,19 +82,22 @@ export class MonitorObserver implements IMonitorObserver {
   }
 
   private async createShardObserver(redis: IORedis.Redis): Promise<IShardObserver> {
+    // HACK: ioredis impropriety throw error a user has no permissions to run the 'monitor' command
+    await MonitorObserver.isMonitorAvailable(redis);
+    return await redis.monitor() as IShardObserver;
+  }
+
+  static async isMonitorAvailable(redis: IORedis.Redis): Promise<boolean> {
     // @ts-ignore
-    const c = redis.duplicate({
+    const duplicate = redis.duplicate({
       ...redis.options,
-      connectionName: 'redisinsight-monitor',
       monitor: false,
       lazyLoading: false,
     });
 
-    await c.send_command('monitor');
+    await duplicate.send_command('monitor');
+    duplicate.disconnect();
 
-    // @ts-ignore
-    c.setStatus('monitoring');
-
-    return c as IShardObserver;
+    return true;
   }
 }

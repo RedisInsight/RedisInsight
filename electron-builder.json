@@ -51,11 +51,11 @@
     ]
   },
   "win": {
-    "target": ["appx"],
+    "target": ["nsis", "appx"],
     "artifactName": "${productName}-${os}-installer.${ext}",
     "icon": "resources/icon.ico",
     "verifyUpdateCodeSignature": false,
-    "rfc3161TimeStampServer": "http://timestamp.sectigo.com/?td=sha256",
+    "rfc3161TimeStampServer": "http://sha256timestamp.ws.symantec.com/sha256/timestamp",
     "legalTrademarks": ""
   },
   "msi": {
@@ -63,7 +63,8 @@
   },
   "appx": {
     "backgroundColor": "#2f343d",
-    "displayName": "RedisInsight",
+    "displayName": "RedisInsight-preview",
+    "publisher": "CN=Redis Labs Inc., O=Redis Labs Inc., L=Mountain View, S=California, C=US",
     "artifactName": "${productName}-${os}-${arch}.${ext}"
   },
   "linux": {

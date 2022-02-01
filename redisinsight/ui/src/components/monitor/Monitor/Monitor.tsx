@@ -50,7 +50,7 @@ const Monitor = (props: Props) => {
             data-testid="start-monitor"
           />
         </EuiToolTip>
-        <div className={styles.startTitle}>Start profiler</div>
+        <div className={styles.startTitle}>Start Profiler</div>
         <EuiFlexGroup responsive={false}>
           <EuiFlexItem grow={false}>
             <EuiIcon

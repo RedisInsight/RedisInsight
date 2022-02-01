@@ -146,6 +146,7 @@
 
 .item {
   display: block;
+  overflow: hidden;
 
   & > span {
     padding-right: 5px;

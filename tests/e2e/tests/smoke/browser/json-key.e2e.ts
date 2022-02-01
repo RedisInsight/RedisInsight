@@ -31,33 +31,37 @@ fixture `JSON Key verification`
     const keyTTL = '2147476121';
     const value = '{"name":"xyz"}';
     const jsonObjectValue = '{name:"xyz"}';
-test('Verify that user can create JSON object', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Add Json key with json object
-    await browserPage.addJsonKey(keyName, keyTTL, value);
-    //Check the notification message
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Key has been added', 'The notification');
-    //Check the added key contains json object
-    await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 20000 });
-    await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value');
-});
-test('Verify that user can add key with value to any level of JSON structure', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Add Json key with json object
-    await browserPage.addJsonKey(keyName, keyTTL, value);
-    //Check the notification message
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Key has been added', 'The notification');
-    //Add key with value on the same level
-    await browserPage.addJsonKeyOnTheSameLevel('"key1"', '"value1"');
-    //Check the added key contains json object with added key
-    await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 20000 });
-    await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"}', 'The json object value');
-    //Add key with value inside the json
-    await browserPage.addJsonKeyOnTheSameLevel('"key2"', '{}');
-    await browserPage.addJsonKeyInsideStructure('"key2222"', '12345');
-    //Check the added key contains json object with added key
-    await t.click(browserPage.expandJsonObject);
-    await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"key2:{key2222:12345}}', 'The json object value');
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can create JSON object', async t => {
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Add Json key with json object
+        await browserPage.addJsonKey(keyName, keyTTL, value);
+        //Check the notification message
+        const notofication = await browserPage.getMessageText();
+        await t.expect(notofication).contains('Key has been added', 'The notification');
+        //Check the added key contains json object
+        await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 20000 });
+        await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can add key with value to any level of JSON structure', async t => {
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Add Json key with json object
+        await browserPage.addJsonKey(keyName, keyTTL, value);
+        //Check the notification message
+        const notofication = await browserPage.getMessageText();
+        await t.expect(notofication).contains('Key has been added', 'The notification');
+        //Add key with value on the same level
+        await browserPage.addJsonKeyOnTheSameLevel('"key1"', '"value1"');
+        //Check the added key contains json object with added key
+        await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 20000 });
+        await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"}', 'The json object value');
+        //Add key with value inside the json
+        await browserPage.addJsonKeyOnTheSameLevel('"key2"', '{}');
+        await browserPage.addJsonKeyInsideStructure('"key2222"', '12345');
+        //Check the added key contains json object with added key
+        await t.click(browserPage.expandJsonObject);
+        await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"key2:{key2222:12345}}', 'The json object value');
+    });

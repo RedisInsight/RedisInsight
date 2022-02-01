@@ -21,22 +21,28 @@ fixture `Edit Databases`
     })
 //Returns the URL of the current web page
 const getPageUrl = ClientFunction(() => window.location.href);
-test('Verify that user can connect to the RE cluster database', async t => {
-      await addNewREClusterDatabase(redisEnterpriseClusterConfig);
-      await myRedisDatabasePage.clickOnDBByName(redisEnterpriseClusterConfig.databaseName);
-      await t.expect(getPageUrl()).contains('browser', 'The edit view is opened');
-});
-test('Verify that user open edit view of database', async t => {
-    await userAgreementPage.acceptLicenseTerms();
-    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-    await addNewStandaloneDatabase(ossStandaloneConfig);
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await t.expect(getPageUrl()).contains('browser');
-});
+test
+    .meta({ rte: 're-cluster' })
+    ('Verify that user can connect to the RE cluster database', async t => {
+        await addNewREClusterDatabase(redisEnterpriseClusterConfig);
+        await myRedisDatabasePage.clickOnDBByName(redisEnterpriseClusterConfig.databaseName);
+        await t.expect(getPageUrl()).contains('browser', 'The edit view is opened');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user open edit view of database', async t => {
+        await userAgreementPage.acceptLicenseTerms();
+        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
+        await addNewStandaloneDatabase(ossStandaloneConfig);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await t.expect(getPageUrl()).contains('browser');
+    });
 //skiped until the RE Cloud connection is implemented
-test.skip('Verify that user can connect to the RE Cloud database', async t => {
-  //TODO: add api keys from env
-  const databaseName = await addNewRECloudDatabase('', '');
-  await myRedisDatabasePage.clickOnDBByName(databaseName);
-  await t.expect(getPageUrl()).contains('browser', 'The edit view is opened');
-});
+test.skip
+    .meta({ rte: 're-cloud' })
+    ('Verify that user can connect to the RE Cloud database', async t => {
+    //TODO: add api keys from env
+    const databaseName = await addNewRECloudDatabase('', '');
+    await myRedisDatabasePage.clickOnDBByName(databaseName);
+    await t.expect(getPageUrl()).contains('browser', 'The edit view is opened');
+    });

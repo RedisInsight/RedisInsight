@@ -27,24 +27,26 @@ fixture `Set TTL for Key`
   .afterEach(async() => {
       await browserPage.deleteKey();
   })
-test('Verify that user can specify TTL for Key', async t => {
-    const keyName = 'StringKey-Lorem ipsum dolor sit amet consectetur adipiscing elit';
-    const ttlValue = '2147476121';
-    //Create new key without TTL
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await browserPage.addStringKey(keyName);
-    //Open Key details
-    await browserPage.openKeyDetails(keyName);
-    //Click on TTL button to edit TTL
-    await t.click(browserPage.editKeyTTLButton);
-    //Set TTL value
-    await t.typeText(browserPage.editKeyTTLInput, ttlValue);
-    //Save the TTL value
-    await t.click(browserPage.saveTTLValue);
-    //Refresh the page in several seconds
-    await t.wait(3000);
-    await t.click(browserPage.refreshKeyButton);
-    //Verify that TTL was updated
-    const newTtlValue = await browserPage.ttlText.innerText;
-    await t.expect(Number(ttlValue)).gt(Number(newTtlValue), 'ttlValue is greater than newTTLValue');
-  });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can specify TTL for Key', async t => {
+        const keyName = 'StringKey-Lorem ipsum dolor sit amet consectetur adipiscing elit';
+        const ttlValue = '2147476121';
+        //Create new key without TTL
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await browserPage.addStringKey(keyName);
+        //Open Key details
+        await browserPage.openKeyDetails(keyName);
+        //Click on TTL button to edit TTL
+        await t.click(browserPage.editKeyTTLButton);
+        //Set TTL value
+        await t.typeText(browserPage.editKeyTTLInput, ttlValue);
+        //Save the TTL value
+        await t.click(browserPage.saveTTLValue);
+        //Refresh the page in several seconds
+        await t.wait(3000);
+        await t.click(browserPage.refreshKeyButton);
+        //Verify that TTL was updated
+        const newTtlValue = await browserPage.ttlText.innerText;
+        await t.expect(Number(ttlValue)).gt(Number(newTtlValue), 'ttlValue is greater than newTTLValue');
+    });

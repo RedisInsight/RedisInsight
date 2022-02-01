@@ -27,6 +27,7 @@ fixture `Keys refresh functionality`
     })
 
 test
+    .meta({ rte: 'standalone' })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
     })('Verify that user can refresh Keys', async t => {

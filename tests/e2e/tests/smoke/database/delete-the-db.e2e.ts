@@ -12,10 +12,12 @@ const addRedisDatabasePage = new AddRedisDatabasePage();
 fixture `Delete database`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-test('Verify that user can delete databases', async t => {
-    await userAgreementPage.acceptLicenseTerms();
-    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-    await addNewStandaloneDatabase(ossStandaloneConfig);
-    await myRedisDatabasePage.deleteAllDatabases();
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).notOk('The database deletion', { timeout: 60000 });
-});
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can delete databases', async t => {
+        await userAgreementPage.acceptLicenseTerms();
+        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
+        await addNewStandaloneDatabase(ossStandaloneConfig);
+        await myRedisDatabasePage.deleteAllDatabases();
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).notOk('The database deletion', { timeout: 60000 });
+    });

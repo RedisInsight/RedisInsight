@@ -32,76 +32,87 @@ fixture `Browser Context`
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
         await addNewStandaloneDatabase(ossStandaloneConfig);
     })
-test('Verify that user can see saved CLI size on Browser page when he returns back to Browser page', async t => {
-    const offsetY = 200;
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
-    await t.click(cliPage.cliExpandButton);
-    const cliAreaHeight = await cliPage.cliArea.clientHeight;
-    const cliResizeButton = await cliPage.cliResizeButton;
-    // move resize 200px up
-    await t.drag(cliResizeButton, 0, -offsetY, { speed });
-    await t.click(myRedisDatabasePage.myRedisDBButton);
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
-    await t.expect(await cliPage.cliArea.clientHeight).eql(cliAreaHeight + offsetY, 'Saved context for resizable cli is proper');
-});
-test('Verify that user can see saved Key details and Keys tables size on Browser page when he returns back to Browser page', async t => {
-    const offsetX = 200;
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
-    const keyListWidth = await browserPage.keyListTable.clientWidth;
-    const cliResizeButton = await browserPage.resizeBtnKeyList;
-    // move resize 200px right
-    await t.drag(cliResizeButton, offsetX, 0, { speed });
-    await t.click(myRedisDatabasePage.myRedisDBButton);
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
-    await t.expect(await browserPage.keyListTable.clientWidth).eql(keyListWidth + offsetX, 'Saved browser resizable context is proper');
-});
-test('Verify that user can see saved filter per key type applied when he returns back to Browser page', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Filter per key type Strting and open Settings
-    await browserPage.selectFilterGroupType(KeyTypesTexts.String);
-    await t.click(myRedisDatabasePage.settingsButton);
-    //Return back to Browser and check filter applied
-    await t.click(myRedisDatabasePage.browserButton);
-    await t.expect(await browserPage.selectedFilterTypeString.visible).eql(true, 'Filter per key type is still applied');
-});
-test('Verify that user can see saved executed commands in CLI on Browser page when he returns back to Browser page', async t => {
-    const commands = [
-      'SET key 1',
-      'FLUSHDB'
-    ];
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Execute command in CLI and open Settings page
-    await t.click(cliPage.cliExpandButton);
-    for(const command of commands) {
-        await t.typeText(cliPage.cliCommandInput, command);
-        await t.pressKey('enter');
-    }
-    await t.click(myRedisDatabasePage.settingsButton);
-    //Return back to Browser and check executed command in CLI
-    await t.click(myRedisDatabasePage.browserButton);
-    for(const command of commands) {
-        await t.expect(await cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is saved`);
-    }
-});
-test('Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page', async t => {
-    const keyName = 'keyName123!.//';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Filter per key name and open Settings
-    await browserPage.searchByKeyName(keyName);
-    await t.click(myRedisDatabasePage.settingsButton);
-    //Return back to Browser and check filter applied
-    await t.click(myRedisDatabasePage.browserButton);
-    await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
-});
 test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see saved CLI size on Browser page when he returns back to Browser page', async t => {
+        const offsetY = 200;
+
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+
+        await t.click(cliPage.cliExpandButton);
+        const cliAreaHeight = await cliPage.cliArea.clientHeight;
+        const cliResizeButton = await cliPage.cliResizeButton;
+        // move resize 200px up
+        await t.drag(cliResizeButton, 0, -offsetY, { speed });
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+
+        await t.expect(await cliPage.cliArea.clientHeight).eql(cliAreaHeight + offsetY, 'Saved context for resizable cli is proper');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see saved Key details and Keys tables size on Browser page when he returns back to Browser page', async t => {
+        const offsetX = 200;
+
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+
+        const keyListWidth = await browserPage.keyListTable.clientWidth;
+        const cliResizeButton = await browserPage.resizeBtnKeyList;
+        // move resize 200px right
+        await t.drag(cliResizeButton, offsetX, 0, { speed });
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+
+        await t.expect(await browserPage.keyListTable.clientWidth).eql(keyListWidth + offsetX, 'Saved browser resizable context is proper');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see saved filter per key type applied when he returns back to Browser page', async t => {
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Filter per key type Strting and open Settings
+        await browserPage.selectFilterGroupType(KeyTypesTexts.String);
+        await t.click(myRedisDatabasePage.settingsButton);
+        //Return back to Browser and check filter applied
+        await t.click(myRedisDatabasePage.browserButton);
+        await t.expect(await browserPage.selectedFilterTypeString.visible).eql(true, 'Filter per key type is still applied');
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see saved executed commands in CLI on Browser page when he returns back to Browser page', async t => {
+        const commands = [
+        'SET key 1',
+        'FLUSHDB'
+        ];
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Execute command in CLI and open Settings page
+        await t.click(cliPage.cliExpandButton);
+        for(const command of commands) {
+            await t.typeText(cliPage.cliCommandInput, command);
+            await t.pressKey('enter');
+        }
+        await t.click(myRedisDatabasePage.settingsButton);
+        //Return back to Browser and check executed command in CLI
+        await t.click(myRedisDatabasePage.browserButton);
+        for(const command of commands) {
+            await t.expect(await cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is saved`);
+        }
+    });
+test
+    .meta({ rte: 'standalone' })
+    ('Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page', async t => {
+        const keyName = 'keyName123!.//';
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        //Filter per key name and open Settings
+        await browserPage.searchByKeyName(keyName);
+        await t.click(myRedisDatabasePage.settingsButton);
+        //Return back to Browser and check filter applied
+        await t.click(myRedisDatabasePage.browserButton);
+        await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
+    });
+test
+    .meta({ rte: 'standalone' })
     .after(async t => {
         //Clear database
         await t.click(cliPage.cliExpandButton);
@@ -121,6 +132,7 @@ test
         await t.expect(await browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is selected');
     });
 test
+    .meta({ rte: 'standalone' })    
     .after(async t => {
         //Clear database
         await t.click(cliPage.cliExpandButton);

@@ -25,6 +25,7 @@ fixture `Edit Key values verification`
       await addNewStandaloneDatabase(ossStandaloneConfig);
     })
 test
+    .meta({ rte: 'standalone' })
     .after(async() => {
         await browserPage.deleteKey();
     })('Verify that user can edit String value', async t => {

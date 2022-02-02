@@ -83,7 +83,7 @@ export class MyRedisDatabasePage {
       const count = await dbNames.count;
 
       for(let i = 0; i < count; i++) {
-          if((await dbNames.nth(1).innerText || '').includes(dbName)) {
+          if((await dbNames.nth(i).innerText || '').includes(dbName)) {
               await t.click(this.deleteDatabaseButton.nth(i));
               await t.click(this.confirmDeleteButton);
               break;

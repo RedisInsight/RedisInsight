@@ -97,9 +97,9 @@ export default {
           'reflect-metadata',
           'swagger-ui-express',
           'class-transformer/storage',
-          '@nestjs/websockets',
+          // '@nestjs/websockets',
           '@nestjs/microservices/microservices-module',
-          '@nestjs/websockets/socket-module',
+          // '@nestjs/websockets/socket-module',
         ];
         if (!lazyImports.includes(resource)) {
           return false;

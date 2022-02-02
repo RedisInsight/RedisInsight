@@ -24,7 +24,7 @@
     "gatekeeperAssess": false
   },
   "dmg": {
-    "artifactName": "${productName}-${os}-x64.${ext}",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "contents": [
       {
         "x": 130,

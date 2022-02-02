@@ -16,7 +16,7 @@ const COMMAND_GROUP_HyperLogLog = 'HyperLogLog';
 fixture `CLI Command helper`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
 

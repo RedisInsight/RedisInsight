@@ -11,6 +11,6 @@ axios.defaults.adapter = require('axios/lib/adapters/http')
 export default axios.create({
   baseURL:
     !isDevelopment && isWebApp
-      ? `${baseApiUrl}`
+      ? `${window.location.origin}/api/`
       : `${baseApiUrl}:${apiPort}/${apiPrefix}/`,
 })

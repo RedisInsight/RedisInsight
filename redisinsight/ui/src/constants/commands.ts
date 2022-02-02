@@ -78,6 +78,8 @@ export enum CommandPrefix {
   TopK = 'TOPK',
 }
 
+export const CommandMonitor = 'MONITOR'
+
 export enum CommandRediSearch {
   Search = 'FT.SEARCH',
   Aggregate = 'FT.AGGREGATE',

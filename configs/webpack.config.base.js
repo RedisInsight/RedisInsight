@@ -61,12 +61,12 @@ export default {
           // 'swagger-ui-express',
           // 'class-transformer',
           // 'class-transformer/storage',
-          '@nestjs/websockets',
+          // '@nestjs/websockets',
           // '@nestjs/core/adapters/http-adapter',
           // '@nestjs/core/helpers/router-method-factory',
           // '@nestjs/core/metadata-scanner',
           '@nestjs/microservices/microservices-module',
-          '@nestjs/websockets/socket-module',
+          // '@nestjs/websockets/socket-module',
         ];
         if (!lazyImports.includes(resource)) {
           return false;

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
 
-const TEST_RUN_ID = uuidv4();
+const TEST_RUN_ID = `=${uuidv4()}`;
 const KEY_TTL = 100;
 const CLUSTER_HASH_SLOT = '{slot1}';
 const APP_DEFAULT_SETTINGS = {
@@ -16,7 +16,8 @@ export const constants = {
   TEST_RUN_NAME: process.env.TEST_RUN_NAME || '',
   KEY_TTL,
   CLUSTER_HASH_SLOT,
-  getRandomString: () => TEST_RUN_ID + '_' + uuidv4(),
+  getRandomString: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
+  generateRandomKey: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   APP_DEFAULT_SETTINGS,
   TEST_KEYTAR_PASSWORD: process.env.SECRET_STORAGE_PASSWORD || 'somepassword',
   TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
@@ -51,6 +52,8 @@ export const constants = {
   TEST_USER_TLS_KEY: process.env.TEST_USER_TLS_KEY,
 
   TEST_RTE_ON_PREMISE: process.env.TEST_RTE_ON_PREMISE ? process.env.TEST_RTE_ON_PREMISE === 'true' : true,
+  TEST_RTE_SHARED_DATA: process.env.TEST_RTE_SHARED_DATA ? process.env.TEST_RTE_SHARED_DATA === 'true' : false,
+  TEST_RTE_BIG_DATA: process.env.TEST_RTE_BIG_DATA ? process.env.TEST_RTE_BIG_DATA === 'true' : false,
   TEST_RTE_TYPE: process.env.TEST_RTE_DISCOVERY_TYPE || 'STANDALONE',
   TEST_RTE_HOST: process.env.TEST_RTE_DISCOVERY_HOST,
   TEST_RTE_PORT: process.env.TEST_RTE_DISCOVERY_PORT,
@@ -113,6 +116,9 @@ export const constants = {
   TEST_LIST_ELEMENT_2: TEST_RUN_ID + '_list_el_2',
   TEST_LIST_EXPIRE_1: KEY_TTL,
   TEST_LIST_KEY_2: TEST_RUN_ID + '_list_2' + CLUSTER_HASH_SLOT,
+  TEST_LIST_HUGE_KEY: 'big list 1M',
+  TEST_LIST_HUGE_INDEX: 678900,
+  TEST_LIST_HUGE_ELEMENT: ' 321099',
 
   // Redis Set
   TEST_SET_TYPE: 'set',
@@ -121,6 +127,8 @@ export const constants = {
   TEST_SET_MEMBER_2: TEST_RUN_ID + '_set_mem_2',
   TEST_SET_EXPIRE_1: KEY_TTL,
   TEST_SET_KEY_2: TEST_RUN_ID + '_set_2' + CLUSTER_HASH_SLOT,
+  TEST_SET_HUGE_KEY: 'big set 1M',
+  TEST_SET_HUGE_ELEMENT: ' 356897',
 
   // Redis ZSet
   TEST_ZSET_TYPE: 'zset',
@@ -132,6 +140,9 @@ export const constants = {
   TEST_ZSET_EXPIRE_1: KEY_TTL,
   TEST_ZSET_KEY_2: TEST_RUN_ID + '_zset_2' + CLUSTER_HASH_SLOT,
   TEST_ZSET_KEY_3: TEST_RUN_ID + '_zset_3' + CLUSTER_HASH_SLOT,
+  TEST_ZSET_HUGE_KEY: 'big zset 1M',
+  TEST_ZSET_HUGE_MEMBER: ' 356897',
+  TEST_ZSET_HUGE_SCORE: '356897',
 
   // Redis Hash
   TEST_HASH_TYPE: 'hash',
@@ -142,6 +153,9 @@ export const constants = {
   TEST_HASH_FIELD_2_VALUE: TEST_RUN_ID + '_hash_f_2_val',
   TEST_HASH_EXPIRE_1: KEY_TTL,
   TEST_HASH_KEY_2: TEST_RUN_ID + '_hash_2' + CLUSTER_HASH_SLOT,
+  TEST_HASH_HUGE_KEY: 'big hash 1M',
+  TEST_HASH_HUGE_KEY_FIELD: 'key678900',
+  TEST_HASH_HUGE_KEY_VALUE: ' 678900',
 
   // Redis Stream
   TEST_STREAM_TYPE: 'stream',
@@ -180,6 +194,12 @@ export const constants = {
   TEST_SEARCH_HASH_KEY_PREFIX_1: TEST_RUN_ID + '_hash_search:',
   TEST_SEARCH_JSON_INDEX_1: TEST_RUN_ID + '_json_search_idx_1' + CLUSTER_HASH_SLOT,
   TEST_SEARCH_JSON_KEY_PREFIX_1: TEST_RUN_ID + '_json_search:',
+
+  // Command Executions
+  TEST_COMMAND_EXECUTION_ID_1: uuidv4(),
+
+  // Plugins
+  TEST_PLUGIN_VISUALIZATION_ID_1: uuidv4(),
 
   // etc...
 }

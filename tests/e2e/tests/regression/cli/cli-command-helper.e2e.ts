@@ -1,20 +1,14 @@
 import { ClientFunction } from 'testcafe';
-import { addNewStandaloneDatabase } from '../../../helpers/database'
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
+import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { Common } from '../../../helpers/common';
+import { CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const common = new Common();
 const COMMAND_GROUP_JSON = 'JSON';
 const COMMAND_GROUP_SEARCH = 'Search';
 const COMMAND_GROUP_HyperLogLog = 'HyperLogLog';
@@ -22,18 +16,14 @@ const COMMAND_GROUP_HyperLogLog = 'HyperLogLog';
 fixture `CLI Command helper`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async() => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
 
 const getPageUrl = ClientFunction(() => window.location.href);
 
 test('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
     const commandForCheck = 'JSON.SET';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Select one command from the list
@@ -50,7 +40,6 @@ test('Verify that user can see in Command helper and click on new group "JSON", 
 });
 test('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
     const commandForCheck = 'FT.EXPLAIN';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Select one command from the list
@@ -67,7 +56,6 @@ test('Verify that user can see in Command helper and click on new group "Search"
 });
 test('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
     const commandForCheck = 'PFCOUNT';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Select one command from the list
@@ -105,7 +93,6 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         '/#aiscriptexecute',
         '/#aitensorset'
     ];
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     let i = 0;
@@ -124,4 +111,53 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         await t.closeWindow();
         i++;
     }
+});
+test('Verify that user can open/close CLI separately from Command Helper', async t => {
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Verify that CLI is opened separately
+    await t.expect(cliPage.commandHelperArea.visible).notOk('Command Helper is closed');
+    await t.expect(cliPage.cliCollapseButton.visible).ok('CLI is opended');
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    //Verify that user can close CLI separately
+    await t.click(cliPage.cliCollapseButton);
+    await t.expect(cliPage.commandHelperArea.visible).ok('Command Helper is displayed');
+    await t.expect(cliPage.cliCollapseButton.visible).notOk('CLI is closed');
+});
+test('Verify that user can open/close Command Helper separately from CLI', async t => {
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    //Verify that Command Helper is opened separately
+    await t.expect(cliPage.commandHelperArea.visible).ok('Command Helper is opened');
+    await t.expect(cliPage.cliCollapseButton.visible).notOk('CLI is closed');
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Verify that Command Helper is closed separately
+    await t.click(cliPage.closeCommandHelperButton);
+    await t.expect(cliPage.commandHelperArea.visible).notOk('Command Helper is closed');
+    await t.expect(cliPage.cliCollapseButton.visible).ok('CLI is opended');
+});
+test('Verify that user can see that Command Helper is minimized when he clicks the "minimize" button', async t => {
+    const helperColourBefore = await common.getBackgroundColour(cliPage.commandHelperBadge);
+    //Open Command Helper and minimize
+    await t.click(cliPage.expandCommandHelperButton);
+    await t.click(cliPage.minimizeCommandHelperButton);
+    //Verify Command helper is minimized
+    const helperColourAfter = await common.getBackgroundColour(cliPage.commandHelperBadge);
+    await t.expect(helperColourAfter).notEql(helperColourBefore, 'Command helper badge colour is changed');
+    await t.expect(cliPage.minimizeCliButton.visible).eql(false, 'Command helper is mimized');
+});
+test('Verify that user can see that Command Helper displays the previous information when he re-opens it', async t => {
+    const commandForCheck = 'FT.EXPLAIN';
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    //Select one command from the list
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_SEARCH);
+    await t.click(cliPage.cliHelperOutputTitles.withExactText(commandForCheck));
+    //Minimize and re-open Command Helper
+    await t.click(cliPage.minimizeCommandHelperButton);
+    await t.click(cliPage.expandCommandHelperButton);
+    //Verify Command helper information
+    await t.expect(cliPage.cliHelperTitleArgs.textContent).contains(commandForCheck, 'Command Helper information persists after reopening');
 });

@@ -529,7 +529,7 @@ const AddStandaloneForm = (props: Props) => {
     <EuiToolTip
       anchorClassName="inputAppendIcon"
       position="right"
-      content="Select the Redis logical database to work with in Browser."
+      content="Select the Redis logical database to work with in Browser and Workbench."
     >
       <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
     </EuiToolTip>

@@ -39,6 +39,9 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [CommandGroup.Server]: 'Server',
   [CommandGroup.SortedSet]: 'Sorted Set',
   [CommandGroup.HyperLogLog]: 'HyperLogLog',
+  [CommandGroup.CMS]: 'CMS',
+  [CommandGroup.TDigest]: 'TDigest',
+  [CommandGroup.TopK]: 'TopK',
 })
 
 // Enums don't allow to use dynamic key

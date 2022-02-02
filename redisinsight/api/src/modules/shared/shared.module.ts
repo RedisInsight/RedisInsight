@@ -8,6 +8,7 @@ import {
 } from 'src/modules/shared/services/redis-sentinel-business/redis-sentinel-business.service';
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
 import { OverviewService } from 'src/modules/shared/services/instances-business/overview.service';
+import { RedisToolFactory } from 'src/modules/shared/services/base/redis-tool.factory';
 import { InstancesBusinessService } from './services/instances-business/instances-business.service';
 import { RedisEnterpriseBusinessService } from './services/redis-enterprise-business/redis-enterprise-business.service';
 import { RedisCloudBusinessService } from './services/redis-cloud-business/redis-cloud-business.service';
@@ -36,6 +37,7 @@ const SERVER_CONFIG = config.get('server');
     OverviewService,
     RedisSentinelBusinessService,
     AutodiscoveryAnalyticsService,
+    RedisToolFactory,
   ],
   exports: [
     InstancesBusinessService,
@@ -43,6 +45,7 @@ const SERVER_CONFIG = config.get('server');
     RedisCloudBusinessService,
     ConfigurationBusinessService,
     RedisSentinelBusinessService,
+    RedisToolFactory,
   ],
 })
 export class SharedModule {}

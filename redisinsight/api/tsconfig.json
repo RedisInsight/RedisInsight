@@ -11,6 +11,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "incremental": true,
     "paths": {
       "src/*": [

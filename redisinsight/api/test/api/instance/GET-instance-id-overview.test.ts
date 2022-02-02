@@ -1,4 +1,4 @@
-import { describe, it, deps, validateApiCall, before, expect } from '../deps';
+import { describe, it, deps, validateApiCall, before, expect, requirements } from '../deps';
 import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
@@ -7,13 +7,13 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 
 const responseSchema = Joi.object().keys({
   version: Joi.string().required(),
-  totalKeys: Joi.number().integer().allow(null).required(),
-  usedMemory: Joi.number().integer().allow(null).required(),
-  connectedClients: Joi.number().allow(null).required(),
-  opsPerSecond: Joi.number().allow(null).required(),
-  networkInKbps: Joi.number().allow(null).required(),
-  networkOutKbps: Joi.number().integer().allow(null).required(),
-  cpuUsagePercentage: Joi.number().allow(null).required(),
+  totalKeys: Joi.number().integer().allow(null),
+  usedMemory: Joi.number().integer().allow(null),
+  connectedClients: Joi.number().allow(null),
+  opsPerSecond: Joi.number().allow(null),
+  networkInKbps: Joi.number().allow(null),
+  networkOutKbps: Joi.number().integer().allow(null),
+  cpuUsagePercentage: Joi.number().allow(null),
 }).required();
 
 const mainCheckFn = async (testCase) => {
@@ -56,4 +56,25 @@ describe('GET /instance/:instanceId/overview', () => {
       },
     },
   ].map(mainCheckFn);
+
+  describe('Enterprise', () => {
+    requirements('rte.re');
+
+    [
+      {
+        name: 'Should get database overview except CPU',
+        responseSchema,
+        checkFn: ({body}) => {
+          expect(body.version).to.eql(rte.env.version);
+          expect(body.cpuUsagePercentage).to.eql(undefined)
+          expect(body.totalKeys).to.not.eql(undefined)
+          expect(body.connectedClients).to.not.eql(undefined)
+          expect(body.opsPerSecond).to.not.eql(undefined)
+          expect(body.networkInKbps).to.not.eql(undefined)
+          expect(body.networkOutKbps).to.not.eql(undefined)
+          expect(body.usedMemory).to.not.eql(undefined)
+        }
+      },
+    ].map(mainCheckFn);
+  })
 });

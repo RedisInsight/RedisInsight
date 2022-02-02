@@ -2,6 +2,9 @@ export default {
   server: {
     tls: process.env.SERVER_TLS ? process.env.SERVER_TLS === 'true' : false,
   },
+  sockets: {
+    cors: true,
+  },
   db: {
     synchronize: process.env.DB_SYNC ? process.env.DB_SYNC === 'true' : true,
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : false,

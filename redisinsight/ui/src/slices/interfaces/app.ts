@@ -85,7 +85,7 @@ export interface PluginsResponse {
 export interface IPlugin {
   name: string;
   main: string;
-  styles: string[];
+  styles: string | string[];
   baseUrl: string;
   visualizations: any[];
   internal?: boolean;

@@ -1,6 +1,13 @@
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
-import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, initialStateDefault, clearStoreActions } from 'uiSrc/utils/test-utils'
+import { concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
+import {
+  cliTexts,
+  ConnectionSuccessOutputText,
+  InitOutputText,
+  mockInitOutputText,
+} from 'uiSrc/constants/cliOutput'
 import reducer, {
   initialState,
   toggleCli,
@@ -26,6 +33,11 @@ import reducer, {
   resetCliHelperSettings,
 } from '../../cli/cli-settings'
 
+jest.mock('uiSrc/constants/cliOutput', () => ({
+  ...jest.requireActual('uiSrc/constants/cliOutput'),
+  InitOutputText: jest.fn().mockReturnValue([]),
+}))
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -48,6 +60,7 @@ describe('cliSettings slice', () => {
       const state: typeof initialState = {
         ...initialState,
         isShowHelper: false,
+        isMinimizedHelper: false,
       }
 
       expect(cliSettingsSelector(initialStateDefault)).toEqual(state)
@@ -58,6 +71,7 @@ describe('cliSettings slice', () => {
       const state: typeof initialState = {
         ...initialState,
         isShowHelper: true,
+        isMinimizedHelper: true,
       }
 
       // Act
@@ -79,6 +93,7 @@ describe('cliSettings slice', () => {
       const state: typeof initialState = {
         ...initialState,
         isShowCli: true,
+        isMinimizedHelper: false,
       }
 
       // Act
@@ -95,7 +110,7 @@ describe('cliSettings slice', () => {
   })
 
   describe('setMatchedCommand', () => {
-    it('should properly set !isShowCli', () => {
+    it('should properly set matchedCommand', () => {
       // Arrange
       const matchedCommand = 'get'
       const state: typeof initialState = {
@@ -117,7 +132,7 @@ describe('cliSettings slice', () => {
   })
 
   describe('setCliEnteringCommand', () => {
-    it('should properly set !isShowCli', () => {
+    it('should properly set isEnteringCommand = true', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
@@ -281,6 +296,7 @@ describe('cliSettings slice', () => {
         isShowHelper: true,
         isSearching: true,
         isEnteringCommand: true,
+        isMinimizedHelper: true,
         matchedCommand: '123',
         searchingCommand: '123',
         searchedCommand: '123',
@@ -292,6 +308,7 @@ describe('cliSettings slice', () => {
         isShowHelper: false,
         isSearching: false,
         isEnteringCommand: false,
+        isMinimizedHelper: false,
         matchedCommand: '',
         searchingCommand: '',
         searchedCommand: '',
@@ -437,7 +454,10 @@ describe('cliSettings slice', () => {
       // Assert
       const expectedActions = [
         processCliClient(),
+        concatToOutput(InitOutputText()),
         processCliClientSuccess(responsePayload.data?.uuid),
+        concatToOutput(ConnectionSuccessOutputText),
+        setCliDbIndex(0)
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })
@@ -460,9 +480,11 @@ describe('cliSettings slice', () => {
       // Assert
       const expectedActions = [
         processCliClient(),
+        concatToOutput(InitOutputText()),
         processCliClientFailure(responsePayload.response.data.message),
+        concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage))
       ]
-      expect(store.getActions()).toEqual(expectedActions)
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
 
     it('call both updateCliClientAction and processCliClientSuccess when fetch is successed', async () => {
@@ -480,6 +502,7 @@ describe('cliSettings slice', () => {
       const expectedActions = [
         processCliClient(),
         processCliClientSuccess(responsePayload.data?.uuid),
+        setCliDbIndex(0)
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

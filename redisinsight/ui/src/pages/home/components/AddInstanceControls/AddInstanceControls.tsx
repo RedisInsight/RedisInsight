@@ -66,6 +66,7 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
         HELP_LINKS.createRedisCloud.event,
         { source: HELP_LINKS.createRedisCloud.sources[welcomePage ? 'welcome' : 'databaseList'] }
       )}
+      data-testid="promo-btn"
     >
       <EuiText className={styles.createTitle}>
         {HELP_LINKS.createRedisCloud.label}

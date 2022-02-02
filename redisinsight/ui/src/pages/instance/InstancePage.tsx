@@ -8,17 +8,18 @@ import {
   fetchInstanceAction,
   getDatabaseConfigInfoAction,
 } from 'uiSrc/slices/instances'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/keys'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
+import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -29,6 +30,11 @@ export interface Props {
 
 export const firstPanelId = 'main-component'
 export const secondPanelId = 'cli'
+
+export interface ResizablePanelSize {
+  [firstPanelId]: number
+  [secondPanelId]: number
+}
 
 export const getDefaultSizes = () => {
   const storedSizes = localStorageService.get(BrowserStorageItem.cliResizableContainer)
@@ -42,14 +48,15 @@ export const getDefaultSizes = () => {
 }
 
 const InstancePage = ({ routes = [] }: Props) => {
-  const [sizes, setSizes] = useState(getDefaultSizes())
+  const [sizes, setSizes] = useState<ResizablePanelSize>(getDefaultSizes())
 
   const dispatch = useDispatch()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
+  const { isShowMonitor } = useSelector(monitorSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
 
-  const isShowBottomGroup = isShowCli || isShowHelper
+  const isShowBottomGroup = isShowCli || isShowHelper || isShowMonitor
 
   useEffect(() => {
     dispatch(fetchInstanceAction(connectionInstanceId))
@@ -63,7 +70,7 @@ const InstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   useEffect(() => () => {
-    setSizes((prevSizes: any) => {
+    setSizes((prevSizes: ResizablePanelSize) => {
       localStorageService.set(BrowserStorageItem.cliResizableContainer, {
         [firstPanelId]: prevSizes[firstPanelId],
         // partially fix elastic resizable issue with zooming
@@ -73,6 +80,7 @@ const InstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   const resetContext = () => {
+    dispatch(setMonitorInitialState())
     dispatch(setAppContextInitialState())
     dispatch(resetKeys())
     setTimeout(() => {

@@ -5,6 +5,8 @@ import { ClientCertificateEntity } from 'src/modules/core/models/client-certific
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { ServerEntity } from 'src/modules/core/models/server.entity';
 import { SettingsEntity } from 'src/modules/core/models/settings.entity';
+import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
+import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 
@@ -21,6 +23,8 @@ const ormConfig: TypeOrmModuleOptions = {
     DatabaseInstanceEntity,
     ServerEntity,
     SettingsEntity,
+    CommandExecutionEntity,
+    PluginStateEntity,
   ],
   migrations,
   cli: {

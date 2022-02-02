@@ -1,0 +1,24 @@
+.calculationWrapper {
+  display: flex;
+  align-items: center;
+  min-width: 134px;
+}
+
+.cpuWrapper {
+  min-width: 132px;
+
+  @media only screen and (max-width: 1024px) {
+    min-width: 114px;
+  }
+}
+
+.calculation {
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.spinner {
+  width: 18px !important;
+  height: 18px !important;
+}

@@ -10,6 +10,7 @@ export enum ClusterNodeRole {
 }
 
 export interface StateCliSettings {
+  isMinimizedHelper: boolean;
   isShowCli: boolean;
   isShowHelper: boolean;
   cliClientUuid: string;
@@ -30,4 +31,5 @@ export interface StateCliOutput {
   commandHistory: string[];
   loading: boolean;
   error: string;
+  db: number;
 }

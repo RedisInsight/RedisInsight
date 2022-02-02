@@ -21,14 +21,14 @@ import {
 } from 'src/modules/cli/dto/cli.dto';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { ReplyError } from 'src/models';
-import { CliToolUnsupportedCommands } from 'src/utils/cli-helper';
+import { CliToolUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
 import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
 import { ClusterNodeNotFoundError, WrongDatabaseTypeError } from 'src/modules/cli/constants/errors';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptions';
+import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';
-import { CliToolService } from '../cli-tool/cli-tool.service';
 import { CliBusinessService } from './cli-business.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
@@ -72,14 +72,14 @@ describe('CliBusinessService', () => {
           useFactory: mockCliAnalyticsService,
         },
         {
-          provide: CliToolService,
+          provide: RedisToolService,
           useFactory: mockRedisConsumer,
         },
       ],
     }).compile();
 
     service = module.get<CliBusinessService>(CliBusinessService);
-    cliTool = module.get<CliToolService>(CliToolService);
+    cliTool = module.get<RedisToolService>(RedisToolService);
     const outputFormatterManager: OutputFormatterManager = get(
       service,
       'outputFormatterManager',

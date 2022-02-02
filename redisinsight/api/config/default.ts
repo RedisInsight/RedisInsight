@@ -21,6 +21,8 @@ export default {
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),
+    enablementArea: join(homedir, 'enablement-area'),
+    defaultEnablementArea: join(defaultsDir, 'enablement-area'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },
@@ -31,6 +33,7 @@ export default {
     globalPrefix: 'api',
     customPluginsUri: '/plugins',
     staticUri: '/static',
+    enablementAreaUri: '/static/workbench',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
     secretStoragePassword: process.env.SECRET_STORAGE_PASSWORD,
@@ -41,6 +44,10 @@ export default {
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
     appVersion: process.env.APP_VERSION || '2.0.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
+  },
+  sockets: {
+    cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
+    serveClient: process.env.SOCKETS_SERVE_CLIENT ? process.env.SOCKETS_SERVE_CLIENT === 'true' : false,
   },
   db: {
     database: join(homedir, 'redisinsight.db'),
@@ -78,6 +85,20 @@ export default {
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,
     pipelineSummaryLimit: parseInt(process.env.LOGGER_PIPELINE_SUMMARY_LIMIT, 10) || 5,
   },
+  plugins: {
+    stateMaxSize: parseInt(process.env.PLUGIN_STATE_MAX_SIZE, 10) || 1024 * 1024,
+  },
+  enablementArea: {
+    updateUrl: process.env.ENABLEMENT_AREA_UPDATE_URL
+      || 'https://s3.amazonaws.com/redisinsight.download/public/guides',
+    zip: process.env.ENABLEMENT_AREA_ZIP || 'data.zip',
+    buildInfo: process.env.ENABLEMENT_AREA_CHECKSUM || 'build.json',
+  },
+  workbench: {
+    maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,
+    maxItemsPerDb: parseInt(process.env.COMMAND_EXECUTION_MAX_ITEMS_PER_DB, 10) || 30,
+    unsupportedCommands: JSON.parse(process.env.WORKBENCH_UNSUPPORTED_COMMANDS || '[]'),
+  },
   commands: [
     {
       name: 'main',
@@ -108,6 +129,16 @@ export default {
       name: 'redisgraph',
       url: process.env.COMMANDS_REDISGRAPH_URL
         || 'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',
+    },
+    {
+      name: 'redisgears',
+      url: process.env.COMMANDS_REDISGEARS_URL
+        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
+    },
+    {
+      name: 'redisbloom',
+      url: process.env.COMMANDS_REDISBLOOM_URL
+        || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
   ],
 };

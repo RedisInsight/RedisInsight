@@ -9,6 +9,7 @@ const cliPage = new CliPage();
 const chance = new Chance();
 
 let indexName = chance.word({ length: 5 });
+let keyName = chance.word({ length: 5 });
 
 fixture `Scripting area at Workbench`
     .meta({type: 'critical_path'})
@@ -42,19 +43,20 @@ test('Verify that user can resize scripting area in Workbench', async t => {
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
     indexName = chance.word({ length: 5 });
+    keyName = chance.word({ length: 5 });
     const commandsForSendInCli = [
-        'HMSET product:1 name "Apple Juice"',
-        'HMSET product:2 name "Apple Juice"',
-        'HMSET product:3 name "Apple Juice"',
-        'HMSET product:4 name "Apple Juice"',
-        'HMSET product:5 name "Apple Juice"',
-        'HMSET product:6 name "Apple Juice"',
-        'HMSET product:7 name "Apple Juice"',
-        'HMSET product:8 name "Apple Juice"',
-        'HMSET product:9 name "Apple Juice"',
-        'HMSET product:10 name "Apple Juice"',
-        'HMSET product:11 name "Apple Juice"',
-        'HMSET product:12 name "Apple Juice"'
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`,
+        `HMSET product:3 name "${keyName}"`,
+        `HMSET product:4 name "${keyName}"`,
+        `HMSET product:5 name "${keyName}"`,
+        `HMSET product:6 name "${keyName}"`,
+        `HMSET product:7 name "${keyName}"`,
+        `HMSET product:8 name "${keyName}"`,
+        `HMSET product:9 name "${keyName}"`,
+        `HMSET product:10 name "${keyName}"`,
+        `HMSET product:11 name "${keyName}"`,
+        `HMSET product:12 name "${keyName}"`,
     ];
     const commandToCreateSchema = `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`;
     const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
@@ -82,10 +84,11 @@ test.skip('Verify that user when he have more than 10 results can request to vie
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
     indexName = chance.word({ length: 5 });
+    keyName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        'HMSET product:1 name "Apple Juice" ',
-        'HMSET product:2 name "Apple Juice"'
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`
     ];
     const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
     //Send commands

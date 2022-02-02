@@ -9,6 +9,7 @@ const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 
 let indexName = chance.word({ length: 5 });
+let keyName = chance.word({ length: 5 });
 
 fixture `Default scripts area at Workbench`
     .meta({type: 'critical_path'})
@@ -26,10 +27,11 @@ fixture `Default scripts area at Workbench`
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
     indexName = chance.word({ length: 5 });
+    keyName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        'HMSET product:1 name "Apple Juice" ',
-        'HMSET product:2 name "Apple Juice"'
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`
     ];
     //Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
@@ -55,10 +57,11 @@ test.skip('Verify that user can edit and run automatically added "FT._LIST" and 
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
     indexName = chance.word({ length: 5 });
+    keyName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        'HMSET product:1 name "Apple Juice"',
-        'HMSET product:2 name "Apple Juice"'
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`
     ];
     const searchCommand = `FT.SEARCH "${indexName}" "Apple Juice"`;
     //Send commands

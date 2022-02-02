@@ -29,7 +29,6 @@ let keyName = chance.string({ length: 10 });
 let keys: string[];
 let keys1: string[];
 let keys2: string[];
-let keysForDelete = [];
 
 fixture `Database overview`
     .meta({type: 'critical_path'})
@@ -110,19 +109,13 @@ test
     ('Verify that user can see total number of keys rounded in format 100, 1K, 1M, 1B in DB header in Browser page', async t => {
         //Add 100 keys
         keys1 = await common.createArrayWithKeyValue(100);
-        await cliPage.sendCommandInCli(`MSET ${keys1.join(' ')}`);
-        //Wait 5 seconds
-        await t.wait(fiveSecondsTimeout);
+        let totalKeys = await cliPage.sendCliCommandAndWaitForTotalKeys(`MSET ${keys1.join(' ')}`);
         //Verify that the info on DB header is updated after adds
-        let totalKeys = await browserPage.overviewTotalKeys.innerText;
         await t.expect(totalKeys).eql('100', 'Info in DB header after ADD 100 keys');
         //Add 1000 keys
         keys2 = await common.createArrayWithKeyValue(1000);
-        await cliPage.sendCommandInCli(`MSET ${keys2.join(' ')}`);
-        //Wait 5 seconds
-        await t.wait(fiveSecondsTimeout);
+        totalKeys = await cliPage.sendCliCommandAndWaitForTotalKeys(`MSET ${keys2.join(' ')}`);;
         //Verify that the info on DB header is updated after adds
-        totalKeys = await browserPage.overviewTotalKeys.innerText;
         await t.expect(totalKeys).eql('1 K', 'Info in DB header after ADD 1000 keys');
         //Add database with more than 1M keys
         await t.click(myRedisDatabasePage.myRedisDBButton);

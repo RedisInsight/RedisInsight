@@ -7,10 +7,7 @@ const browserPage = new BrowserPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 10 });
-let keyName1 = chance.word({ length: 10 });
-let keyName2 = chance.word({ length: 10 });
-let keyName3 = chance.word({ length: 10 });
-let keyName4 = chance.word({ length: 10 });
+let keyNames = [];
 
 fixture `List of keys verifications`
     .meta({ type: 'smoke' })
@@ -26,38 +23,44 @@ fixture `List of keys verifications`
 test
     .after(async () => {
         //Clear and delete database
-        await browserPage.deleteKeyByName(keyName1);
-        await browserPage.deleteKeyByName(keyName2);
-        await browserPage.deleteKeyByName(keyName3);
-        await browserPage.deleteKeyByName(keyName4);
+        for(const name of keyNames) {
+            await browserPage.deleteKeyByName(name);
+        }
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can see List of Keys in DB', async t => {
-        keyName1 = chance.word({ length: 10 });
-        keyName2 = chance.word({ length: 10 });
-        keyName3 = chance.word({ length: 10 });
-        keyName4 = chance.word({ length: 10 });
-        await browserPage.addStringKey(keyName1);
-        await browserPage.addHashKey(keyName2);
-        await browserPage.addListKey(keyName3);
-        await browserPage.addStringKey(keyName4);
+        keyNames = [
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`
+        ];
+        await browserPage.addStringKey(keyNames[0]);
+        await browserPage.addHashKey(keyNames[1]);
+        await browserPage.addListKey(keyNames[2]);
+        await browserPage.addStringKey(keyNames[3]);
         await t.click(browserPage.refreshKeysButton);
         await t.expect(browserPage.keyNameInTheList.exists).ok('The list of keys is displayed');
     });
 test
     .after(async () => {
         //Clear and delete database
-        await browserPage.deleteKeyByName(keyName1);
-        await browserPage.deleteKeyByName(keyName2);
-        await browserPage.deleteKeyByName(keyName3);
-        await browserPage.deleteKeyByName(keyName4);
+        for(const name of keyNames) {
+            await browserPage.deleteKeyByName(name);
+        }
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can scroll List of Keys in DB', async t => {
-        await browserPage.addStringKey(keyName1);
-        await browserPage.addHashKey(keyName2);
-        await browserPage.addListKey(keyName3);
-        await browserPage.addStringKey(keyName4);
+        keyNames = [
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`
+        ];
+        await browserPage.addStringKey(keyNames[0]);
+        await browserPage.addHashKey(keyNames[1]);
+        await browserPage.addListKey(keyNames[2]);
+        await browserPage.addStringKey(keyNames[3]);
         await t.click(browserPage.refreshKeysButton);
         //Scroll to the key element
         await t.hover(browserPage.keyNameInTheList);

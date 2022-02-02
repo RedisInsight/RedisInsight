@@ -83,7 +83,7 @@ test('Verify that user can see saved executed commands in CLI on Browser page wh
     }
 });
 test('Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page', async t => {
-    const keyName = chance.word({ length: 10 });
+    keyName = chance.word({ length: 10 });
     //Filter per key name and open Settings
     await browserPage.searchByKeyName(keyName);
     await t.click(myRedisDatabasePage.settingsButton);

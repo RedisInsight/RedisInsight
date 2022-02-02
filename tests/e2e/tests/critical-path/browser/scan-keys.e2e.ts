@@ -10,14 +10,12 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const settingsPage = new SettingsPage();
 const cliPage = new CliPage();
 const common = new Common();
-const chance = new Chance();
 
 let keys = [];
 

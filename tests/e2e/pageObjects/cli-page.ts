@@ -1,7 +1,9 @@
 import { t, Selector } from 'testcafe';
 import { Common } from '../helpers/common';
+import { BrowserPage } from '../pageObjects';
 
 const common = new Common();
+const browserPage = new BrowserPage();
 
 export class CliPage {
 
@@ -131,5 +133,17 @@ export class CliPage {
       const commandResult = await this.cliOutputResponseSuccess.innerText;
       await t.click(this.cliCollapseButton);
       return commandResult;
+  }
+
+  /**
+   * Send command in Cli and wait for total keys after 5 seconds
+   * @param command The command to send
+   */
+  async sendCliCommandAndWaitForTotalKeys(command: string): Promise<string> {
+      await this.sendCommandInCli(command);
+      //Wait 5 seconds and return total keys
+      await t.wait(5000);
+      const totalKeys = await browserPage.overviewTotalKeys.innerText;
+      return totalKeys;
   }
 }

@@ -7,6 +7,8 @@ const browserPage = new BrowserPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 10 });
+const keyTTL = '2147476121';
+const expectedTTL = /214747612*/;
 
 fixture `Key details verification`
     .meta({ type: 'smoke' })
@@ -21,7 +23,6 @@ fixture `Key details verification`
     })
 test('Verify that user can see Hash Key details', async t => {
     keyName = chance.word({ length: 10 });
-    const keyTTL = '2147476121';
 
     await browserPage.addHashKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -32,12 +33,11 @@ test('Verify that user can see Hash Key details', async t => {
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
     await t.expect(keyDetails).contains('Hash', 'The Key Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
-    await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('Hash', 'The Key Badge');
 });
 test('Verify that user can see List Key details', async t => {
     keyName = chance.word({ length: 10 });
-    const keyTTL = '2147476121';
 
     await browserPage.addListKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -48,12 +48,11 @@ test('Verify that user can see List Key details', async t => {
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
     await t.expect(keyDetails).contains('List', 'The Key Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
-    await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('List', 'The Key Badge');
 });
 test('Verify that user can see Set Key details', async t => {
     keyName = chance.word({ length: 10 });
-    const keyTTL = '2147476121';
 
     await browserPage.addSetKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -64,12 +63,11 @@ test('Verify that user can see Set Key details', async t => {
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
     await t.expect(keyDetails).contains('Set', 'The Key Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
-    await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('Set', 'The Key Badge');
 });
 test('Verify that user can see String Key details', async t => {
     keyName = chance.word({ length: 10 });
-    const keyTTL = '2147476121';
     const value = 'keyValue12334353434;'
 
     await browserPage.addStringKey(keyName, value, keyTTL);
@@ -81,12 +79,11 @@ test('Verify that user can see String Key details', async t => {
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
     await t.expect(keyDetails).contains('String', 'The Key Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
-    await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('String', 'The Key Badge');
 });
 test('Verify that user can see ZSet Key details', async t => {
     keyName = chance.word({ length: 10 });
-    const keyTTL = '2147476121';
 
     await browserPage.addZSetKey(keyName, '1', keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -97,12 +94,12 @@ test('Verify that user can see ZSet Key details', async t => {
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
     await t.expect(keyDetails).contains('Sorted Set', 'The Key Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
-    await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('Sorted Set', 'The Key Badge');
 });
 test('Verify that user can see JSON Key details', async t => {
     keyName = chance.word({ length: 10 });
-    const keyTTL = '2147476121';
+
     const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
 
     await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
@@ -114,6 +111,6 @@ test('Verify that user can see JSON Key details', async t => {
     await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
     await t.expect(keyDetails).contains('JSON', 'The Key Type');
     await t.expect(keyDetails).contains('TTL', 'The TTL');
-    await t.expect(keyTTLValue).contains(keyTTL, 'The Key TTL');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
     await t.expect(keyBadge).contains('JSON', 'The Key Badge');
 });

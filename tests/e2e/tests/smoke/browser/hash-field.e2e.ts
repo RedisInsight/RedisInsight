@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -32,7 +33,7 @@ fixture `Hash Key fields verification`
     const keyFieldValue = 'hashField11111';
     const keyValue = 'hashValue11111!';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add field to Hash', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keyName, keyTTL);
@@ -45,7 +46,7 @@ test
         await t.expect(browserPage.hashFieldsList.withExactText(keyFieldValue).exists).ok('The existence of the field', { timeout: 20000 });
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can remove field from Hash', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keyName, keyTTL);

@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -31,7 +32,7 @@ fixture `Set Key fields verification`
     const keyTTL = '2147476121';
     const keyMember = '1111setMember11111';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add member to Set', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addSetKey(keyName, keyTTL);
@@ -41,7 +42,7 @@ test
         await t.expect(browserPage.setMembersList.withExactText(keyMember).exists).ok('The existence of the set member', { timeout: 20000 });
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can remove member from Set', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addSetKey(keyName, keyTTL);

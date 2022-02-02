@@ -7,6 +7,7 @@ import {
 import {
     commonUrl
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -22,7 +23,7 @@ fixture `Shortcuts`
     })
 
 test
-.meta({ rte: 'none' })
+.meta({ rte: rte.none })
 ('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center', async t => {
     // Click on help center icon
     await t.click(myRedisDatabasePage.helpCenterButton);

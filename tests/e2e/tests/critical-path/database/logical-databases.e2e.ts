@@ -7,6 +7,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -26,7 +27,7 @@ fixture `Logical databases`
         await myRedisDatabasePage.deleteAllDatabases();
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add DB with logical index via host and port from Add DB manually form', async t => {
         const index = '0';
         await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);
@@ -39,7 +40,7 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The existence of the database', { timeout: 60000 });
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that if user adds DB with logical DB >0, DB name contains postfix "space+[{database index}]"', async t => {
         const index = '10';
         await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);

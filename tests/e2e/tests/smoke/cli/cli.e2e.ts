@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -29,7 +30,7 @@ fixture `CLI`
         await addNewStandaloneDatabase(ossStandaloneConfig);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
     })
@@ -46,7 +47,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can expand CLI', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI
@@ -56,7 +57,7 @@ test
         await t.expect(cliPage.cliCommandInput.exists).ok('CLI input is displayed')
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can collapse CLI', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI
@@ -69,7 +70,7 @@ test
         await t.expect(cliPage.cliArea.visible).notOk('CLI area should not be displayed');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can use blocking command', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI
@@ -81,7 +82,7 @@ test
         await t.expect(cliPage.cliCommandInput.exists).notOk('Cli input is not shown');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can use unblocking command', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI

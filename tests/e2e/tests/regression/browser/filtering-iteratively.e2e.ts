@@ -11,7 +11,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { KeyTypesTexts } from '../../../helpers/constants';
+import { KeyTypesTexts, rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -37,7 +37,7 @@ fixture `Filtering iteratively in Browser page`
         await t.click(cliPage.cliCollapseButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see search results per 500 keys if number of results is 500', async t => {
         //Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -55,7 +55,7 @@ test
         await t.expect(keysNumberOfResults).contains('500', 'Number of results is 500');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search iteratively via Scan more for search pattern and selected data type', async t => {
         //Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

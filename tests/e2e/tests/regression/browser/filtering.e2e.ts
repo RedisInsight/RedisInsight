@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -35,7 +36,7 @@ fixture `Filtering per key name in Browser page`
         await t.click(cliPage.cliCollapseButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
         const keyName = 'KeyForSearch*?[]789';
         //Connect to DB
@@ -52,7 +53,7 @@ test
         await t.expect(searchAdvices).eql('Check the spelling.Check upper and lower cases.Use an asterisk (*) in your request for more generic results.', 'The advices text');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with * (matches keys with any number of characters instead of *)', async t => {
         const keyName = 'KeyForSearch*?[]789';
         //Connect to DB
@@ -66,7 +67,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
         const keyName = 'KeyForSearch*?[]789';
         //Connect to DB
@@ -80,7 +81,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
         const keyName = 'KeyForSearch';
         const keyName2 = 'KeyForFearch';
@@ -97,7 +98,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).ok('The key was found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with [^x] (matches one symbol except x)', async t => {
         const keyName = 'KeyForSearch';
         const keyName2 = 'KeyForFearch';
@@ -114,7 +115,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).notOk('The key wasn\'t found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with [a-z] (matches any symbol in range from A till Z)', async t => {
         const keyName = 'KeyForSearch';
         const keyName2 = 'KeyForFearch';

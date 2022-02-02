@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -29,7 +30,7 @@ fixture `Autocomplete for entered commands`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can select a command from the list with auto-suggestions when type in any character in the Editor', async t => {
         //Start type characters and select command
         await t.typeText(workbenchPage.queryInput, 'AC', { replace: true });
@@ -41,7 +42,7 @@ test
         await t.expect(script.replace(/\s/g, ' ')).eql('ACL ', 'Result of sent command exists');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user have selected a command (via “Enter” from the list of auto-suggested commands), user can see the required arguments inserted to the Editor', async t => {
         const command = 'LINDEX'
         const commandArguments = [
@@ -58,7 +59,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can change any required argument inserted', async t => {
         const command = 'HMGET'
         const commandArguments = [
@@ -85,7 +86,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that the list of optional arguments will not be inserted with autocomplete', async t => {
         const command = 'ZPOPMAX'
         const commandRequiredArgument = 'key';

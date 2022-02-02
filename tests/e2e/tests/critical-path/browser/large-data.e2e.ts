@@ -1,5 +1,6 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -32,7 +33,7 @@ fixture `Cases with large data`
         await browserPage.deleteKey();
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see relevant information about key size', async t => {
         const keyName = 'HashKey-Lorem123';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -52,7 +53,7 @@ test
         await t.expect(+keySize).gt(5, 'Key size value');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see relevant information about key length', async t => {
         const keyName = 'HashKey-Lorem123';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

@@ -6,6 +6,7 @@ import {
     ossClusterConfig,
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -19,23 +20,23 @@ fixture `Add database`
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add Standalone Database', async() => {
         await addNewStandaloneDatabase(ossStandaloneConfig);
     });
 test
-    .meta({ rte: 're-cluster' })
+    .meta({ rte: rte.reCluster })
     ('Verify that user can add database from RE Cluster via auto-discover flow', async() => {
         await addNewREClusterDatabase(redisEnterpriseClusterConfig);
     });
 test
-    .meta({ env: 'web', rte: 'oss-cluster'})
+    .meta({ env: 'web', rte: rte.ossCluster})
     ('Verify that user can add OSS Cluster DB', async() => {
         await addOSSClusterDatabase(ossClusterConfig);
     });
 //skiped until the RE Cloud connection is implemented
 test.skip
-    .meta({ rte: 're-cloud' })
+    .meta({ rte: rte.reCloud })
     ('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
         //TODO: add api keys from env
         await addNewRECloudDatabase('', '');

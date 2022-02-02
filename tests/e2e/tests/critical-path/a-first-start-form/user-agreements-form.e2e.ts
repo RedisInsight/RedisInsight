@@ -1,6 +1,7 @@
 import { commonUrl } from '../../../helpers/conf';
 import { UserAgreementPage, AddRedisDatabasePage, SettingsPage } from '../../../pageObjects';
 import { Common } from '../../../helpers/common';
+import { rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -15,7 +16,7 @@ fixture `Agreements Verification`
         await t.maximizeWindow();
     });
 test
-    .meta({ env: 'web', rte: 'none' })
+    .meta({ env: 'web', rte: rte.none })
     ('Verify that user should accept User Agreements to continue working with the application, the Welcome page is opened after user agrees, the encryption enabled by default and specific message', async t => {
         await t.expect(userAgreementPage.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
         //Verify that section with plugin warning is displayed

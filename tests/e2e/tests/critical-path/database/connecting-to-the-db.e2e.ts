@@ -8,6 +8,7 @@ import {
     commonUrl,
     invalidOssStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -24,7 +25,7 @@ fixture `Connecting to the databases verifications`
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
     })
 test
-    .meta({ rte: 'none' })
+    .meta({ rte: rte.none })
     ('Verify that user can see error message if he can not connect to added Database', async t => {
         //Fill the add database form
         await addRedisDatabasePage.addRedisDataBase(invalidOssStandaloneConfig);

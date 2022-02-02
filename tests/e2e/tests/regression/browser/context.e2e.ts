@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -37,7 +38,7 @@ fixture `Browser Context`
         await t.click(cliPage.cliCollapseButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that if user has saved context on Browser page and go to Settings page, Browser and Workbench icons are displayed and user is able to open Browser with saved context', async t => {
         const command = 'HSET';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -59,7 +60,7 @@ test
         await t.click(cliPage.cliCollapseButton);
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user reload the window with saved context(on any page), context is not saved when he returns back to Browser page', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Create context modificaions and navigate to Workbench

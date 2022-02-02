@@ -5,6 +5,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -16,7 +17,7 @@ fixture `CLI`
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see CLI is minimized when he clicks the "minimize" button', async t => {
         const cliColourBefore = await common.getBackgroundColour(cliPage.cliBadge);
         //Open CLI and minimize
@@ -28,7 +29,7 @@ test
         await t.expect(cliPage.minimizeCliButton.visible).eql(false, 'CLI is mimized');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see results history when he re-opens CLI after minimizing', async t => {
         const command = 'SET key';
         //Open CLI and run commands
@@ -42,7 +43,7 @@ test
         await t.expect(cliPage.cliCommandExecuted.textContent).eql(command, 'CLI results history persists after reopening');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .after(async t => {
         //Clear database
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');

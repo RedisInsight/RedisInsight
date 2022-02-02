@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -32,7 +33,7 @@ fixture `JSON Key verification`
     const value = '{"name":"xyz"}';
     const jsonObjectValue = '{name:"xyz"}';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can create JSON object', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Add Json key with json object
@@ -45,7 +46,7 @@ test
         await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add key with value to any level of JSON structure', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Add Json key with json object

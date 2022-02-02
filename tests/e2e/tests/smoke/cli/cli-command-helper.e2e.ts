@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
@@ -28,7 +29,7 @@ fixture `CLI Command helper`
         await addNewStandaloneDatabase(ossStandaloneConfig);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can close Command helper', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
@@ -39,7 +40,7 @@ test
         await t.expect(cliPage.cliHelperText.visible).eql(false, 'Command helper');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search per command in Command Helper and see relevant results', async t => {
         const commandForSearch = 'ADD';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -54,7 +55,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can select one of the commands from the list of commands described in the Groups table', async t => {
         const commandForCheck = 'SADD';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -67,7 +68,7 @@ test
         await t.expect(cliPage.cliHelperTitleArgs.textContent).eql('SADD key member [member ...]', 'Selected command information');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can click on any of searched commands in Command Helper and see details of the command', async t => {
         const commandForSearch = 'Ap';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -82,7 +83,7 @@ test
         await t.expect(cliPage.cliHelperSummary.innerText).contains('Append a value to a key Read more', 'Command summary');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user enters command, he can see Command Name, Complexity, Arguments, Summary, Group, Read more', async t => {
         const commandForSearch = 'pop';
         const commandForCheck = 'LPOP';
@@ -101,7 +102,7 @@ test
         await t.expect(cliPage.readMoreButton.exists).ok('Read more button');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see that command is autocompleted in CLI with required arguments', async t => {
         const command = 'HDEL';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

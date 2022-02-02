@@ -1,4 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     UserAgreementPage,
@@ -31,7 +32,7 @@ fixture `CLI Command helper`
         await addNewStandaloneDatabase(ossStandaloneConfig);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see relevant search results in Command Helper per every entered symbol', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
@@ -48,7 +49,7 @@ test
         await t.expect(countCommandsOfOneLetterSearch).gt(countCommandsOfTwoLettersSearch, 'Count of commands with 1 letter more than 2');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user clears the input in the Search of CLI Helper (via x icon), he can see the default screen with proper the text', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
@@ -65,7 +66,7 @@ test
         await t.expect(cliPage.cliHelperText.textContent).eql(defaultHelperText, 'Default text for CLI Helper is shown');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user enters command in CLI, Helper displays additional info about the command', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI and Helper
@@ -79,7 +80,7 @@ test
         await t.expect(cliPage.cliHelperSummary.innerText).contains('Append a value to a key', 'Command summary');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that Command helper cleared when user runs the command in CLI', async t => {
         const searchText = 'sa';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -97,7 +98,7 @@ test
         await t.expect(cliPage.cliHelperSearch.value).eql('', 'Search was cleared');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can unselect the command filtered to remove filters', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
@@ -113,7 +114,7 @@ test
         await t.expect(cliPage.cliHelperText.textContent).eql(defaultHelperText, 'Default text for CLI Helper is shown');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user has used search and apply filters, search results include only commands from the filter group applied', async t => {
         const searchText = 'sa';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -129,7 +130,7 @@ test
         await t.expect(cliPage.cliHelperOutputTitles.withText('SADD').exists).ok('Proper command was found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
         const commandForSearch = 'TS.';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -153,7 +154,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
         const commandForSearch = 'GRAPH.';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

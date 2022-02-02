@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -34,7 +35,7 @@ fixture `Database overview`
         await t.click(cliPage.cliCollapseButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
         //Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

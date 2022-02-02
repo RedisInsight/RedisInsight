@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -32,7 +33,7 @@ fixture `Workbench Context`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved input in Editor when navigates away to any other page', async t => {
         const command = 'FT.CREATE products ON HASH PREFIX 1 product: SCHEMA name TEXT';
         //Enter the command in the Workbench editor and navigate to Browser

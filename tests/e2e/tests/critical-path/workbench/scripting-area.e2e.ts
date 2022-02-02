@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -33,7 +34,7 @@ fixture `Scripting area at Workbench`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can run any script from CLI in Workbench and see the results', async t => {
         const commandForSend = 'info';
         //Send command
@@ -44,7 +45,7 @@ test
         await t.expect(sentCommandText.exists).ok('Result of sent command exists');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can resize scripting area in Workbench', async t => {
         const offsetY = 200;
         const inputHeightStart = await workbenchPage.queryInput.clientHeight;
@@ -53,7 +54,7 @@ test
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
         const commandsForSendInCli = [
             'HMSET product:1 name "Apple Juice"',
@@ -97,7 +98,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     .after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
@@ -123,7 +124,7 @@ test.skip
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
@@ -143,7 +144,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .after(async t => {
         //Drop index and documents
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);

@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -25,7 +26,7 @@ fixture `Edit Key values verification`
       await addNewStandaloneDatabase(ossStandaloneConfig);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKey();
     })('Verify that user can edit String value', async t => {

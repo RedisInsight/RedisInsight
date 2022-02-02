@@ -11,7 +11,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { KeyTypesTexts } from '../../../helpers/constants';
+import { KeyTypesTexts, rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -33,7 +33,7 @@ fixture `Browser Context`
         await addNewStandaloneDatabase(ossStandaloneConfig);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved CLI size on Browser page when he returns back to Browser page', async t => {
         const offsetY = 200;
 
@@ -51,7 +51,7 @@ test
         await t.expect(await cliPage.cliArea.clientHeight).eql(cliAreaHeight + offsetY, 'Saved context for resizable cli is proper');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved Key details and Keys tables size on Browser page when he returns back to Browser page', async t => {
         const offsetX = 200;
 
@@ -68,7 +68,7 @@ test
         await t.expect(await browserPage.keyListTable.clientWidth).eql(keyListWidth + offsetX, 'Saved browser resizable context is proper');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved filter per key type applied when he returns back to Browser page', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Filter per key type Strting and open Settings
@@ -79,7 +79,7 @@ test
         await t.expect(await browserPage.selectedFilterTypeString.visible).eql(true, 'Filter per key type is still applied');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved executed commands in CLI on Browser page when he returns back to Browser page', async t => {
         const commands = [
         'SET key 1',
@@ -100,7 +100,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page', async t => {
         const keyName = 'keyName123!.//';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -112,7 +112,7 @@ test
         await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .after(async t => {
         //Clear database
         await t.click(cliPage.cliExpandButton);
@@ -132,7 +132,7 @@ test
         await t.expect(await browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is selected');
     });
 test
-    .meta({ rte: 'standalone' })    
+    .meta({ rte: rte.standalone })    
     .after(async t => {
         //Clear database
         await t.click(cliPage.cliExpandButton);

@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneRedisearch
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -36,7 +37,7 @@ fixture `Index Schema at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
@@ -58,7 +59,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web',rte: 'standalone' })
+    .meta({ env: 'web',rte: rte.standalone })
     ('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,

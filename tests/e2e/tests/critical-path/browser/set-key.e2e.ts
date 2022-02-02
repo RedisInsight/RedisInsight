@@ -1,4 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -31,7 +32,7 @@ fixture `Set Key fields verification`
     const keyTTL = '2147476121';
     const keyMember = '1111setMember11111';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search by part member name with pattern * in Set', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addSetKey(keyName, keyTTL, '1111');
@@ -54,7 +55,7 @@ test
         await t.expect(result).eql(keyMember, 'The set member');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search by full member name in Set', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addSetKey(keyName, keyTTL, '1111');

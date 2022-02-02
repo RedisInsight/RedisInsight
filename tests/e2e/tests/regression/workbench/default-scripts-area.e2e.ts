@@ -4,6 +4,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -24,7 +25,7 @@ fixture `Default scripts area at Workbench`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can expand/collapse the enablement area', async t => {
         //Hover over Enablement area
         await t.hover(workbenchPage.preselectArea);
@@ -38,7 +39,7 @@ test
         await t.expect(workbenchPage.preselectArea.visible).ok('Enablement area is expanded');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the [Manual] option in the Enablement area', async t => {
         const optionsForCheck = [
             'Manual',
@@ -59,7 +60,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
         //Open Working with Hashes section
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
@@ -80,7 +81,7 @@ test
     });
 //skipped due the issue RI-2384
 test.skip
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
         //Open Working with Hashes section
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
@@ -105,7 +106,7 @@ test.skip
         await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the siblings menu by clicking on page counter element between Back and Next buttons', async t => {
         const popoverButtons = [
             'Introduction',
@@ -125,7 +126,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the quick navigation section to navigate between siblings under the scrolling content', async t => {
         //Open Working with Hashes section
         await t.click(workbenchPage.internalLinkWorkingWithHashes);

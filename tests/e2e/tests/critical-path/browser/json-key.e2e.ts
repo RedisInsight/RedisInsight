@@ -1,4 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -31,7 +32,7 @@ fixture `JSON Key verification`
     const keyTTL = '2147476121';
     const value = '{"name":"xyz"}';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can not add invalid JSON structure inside of created JSON', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Add Json key with json object

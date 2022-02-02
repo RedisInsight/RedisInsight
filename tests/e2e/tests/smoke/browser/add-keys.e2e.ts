@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -28,7 +29,7 @@ fixture `Add keys`
         await browserPage.deleteKey();
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add Hash Key', async t => {
         const keyName = 'hashTestKey12345qwe';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -43,7 +44,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add Set Key', async t => {
         const keyName = '1111111111111111111setTestKey1234';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -58,7 +59,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add List Key', async t => {
         const keyName = '22listTestKey1';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -73,7 +74,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add String Key', async t => {
         const keyName = '1234567890testkestringytrtest1111';
         await t.maximizeWindow();
@@ -89,7 +90,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add ZSet Key', async t => {
         const keyName = 'ZsetTestKey1234567';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -104,7 +105,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add JSON Key', async t => {
         const keyName = 'JSON1234567891';
         const keyTTL = '2147476121';

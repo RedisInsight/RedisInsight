@@ -5,6 +5,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -28,7 +29,7 @@ fixture `Scripting area at Workbench`
         await t.click(cliPage.cliCollapseButton);
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
         const commandsForSend = [
             'info',
@@ -45,7 +46,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
         const commandsForSend = [
             'HMSET product:1 price 20',
@@ -60,7 +61,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         //Open Working with Hashes page
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
@@ -74,7 +75,7 @@ test
         await t.expect(workbenchPage.monacoCommandIndicator.count).eql(numberOfCommands, 'Number of command indicator');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
         const command = 'HSET key field value';
         //Put a command in Editing Area
@@ -92,7 +93,7 @@ test
         await t.expect(commandTextInResult.exists).ok('The result of sent command');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
         const command = 'FT._LIST';
         const repeats = 5;

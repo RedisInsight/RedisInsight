@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -40,7 +41,7 @@ const keyName2 = 'keyName2';
 const keyName3 = 'keyName3';
 const keyName4 = 'keyName4';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see List of Keys in DB', async t => {
         await browserPage.addStringKey(keyName1);
         await browserPage.addHashKey(keyName2);
@@ -50,7 +51,7 @@ test
         await t.expect(browserPage.keyNameInTheList.exists).ok('The list of keys is displayed');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can scroll List of Keys in DB', async t => {
         await browserPage.addStringKey(keyName1);
         await browserPage.addHashKey(keyName2);
@@ -62,7 +63,7 @@ test
         await t.expect(browserPage.keyNameInTheList.exists).ok;
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can refresh Keys', async t => {
         const keyName = 'Hash1testKey';
         const keyTTL = '2147476121';
@@ -87,7 +88,7 @@ test
         await t.expect(isKeyIsNotDisplayedInTheList).eql(false, 'The key is not in the list');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can open key details', async t => {
         const keyName = 'String1testKey';
         const keyTTL = '2147476121';

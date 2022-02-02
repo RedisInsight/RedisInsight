@@ -1,6 +1,7 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
 import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { rte } from '../../../helpers/constants';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -32,7 +33,7 @@ fixture `Default scripts area at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: 'standalone'})
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
@@ -62,7 +63,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
@@ -87,7 +88,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
         const aggregationResultField = 'max_price';
         const commandsForSend = [
@@ -110,7 +111,7 @@ test.skip
         await t.switchToMainWindow();
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
         const information = [
             '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.',

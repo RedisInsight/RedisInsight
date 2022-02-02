@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -28,7 +29,7 @@ fixture `Set TTL for Key`
       await browserPage.deleteKey();
   })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can specify TTL for Key', async t => {
         const keyName = 'StringKey-Lorem ipsum dolor sit amet consectetur adipiscing elit';
         const ttlValue = '2147476121';

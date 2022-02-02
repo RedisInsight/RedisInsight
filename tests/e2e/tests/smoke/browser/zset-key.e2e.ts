@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -33,7 +34,7 @@ fixture `ZSet Key fields verification`
     const keyMember = '1111ZsetMember11111';
     const score = '0';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add members to Zset', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addZSetKey(keyName, '5', keyTTL);
@@ -44,7 +45,7 @@ test
         await t.expect(browserPage.zsetScoresList.withExactText(score).exists).ok('The existence of the Zset score', { timeout: 20000 });
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can remove member from ZSet', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addZSetKey(keyName, '6', keyTTL);

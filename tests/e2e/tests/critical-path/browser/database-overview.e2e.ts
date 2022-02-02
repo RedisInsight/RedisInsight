@@ -1,4 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import {
   MyRedisDatabasePage,
   BrowserPage,
@@ -41,7 +42,7 @@ fixture `Database overview`
         await myRedisDatabasePage.deleteAllDatabases();
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
         let firstDatabaseModules = [];
         let secondDatabaseModules = [];
@@ -75,7 +76,7 @@ test
         await t.expect(firstDatabaseModules).notEql(secondDatabaseModules, 'The list of Modules updated');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user adds or deletes a new key, info in DB header is updated in 5 seconds', async t => {
         const keyName = 'keyName123';
         //Connect to DB
@@ -98,7 +99,7 @@ test
         await t.expect(totalKeysAftreDelete).eql((Number(totalKeysAftreAdd) - 1).toString(), 'Info in DB header after DELETE');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see total number of keys rounded in format 100, 1K, 1M, 1B in DB header in Browser page', async t => {
         //Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -127,7 +128,7 @@ test
         await t.expect(totalKeys).eql('1 M', 'Info in DB header after ADD 1M keys');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see total memory rounded in format B, KB, MB, GB, TB in DB header in Browser page', async t => {
         //Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -138,7 +139,7 @@ test
         await t.expect(browserPage.overviewTotalMemory.textContent).contains('MB', 'Total memory value is MB');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
         //Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

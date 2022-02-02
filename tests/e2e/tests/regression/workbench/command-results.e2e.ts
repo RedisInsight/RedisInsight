@@ -5,6 +5,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -32,7 +33,7 @@ fixture.skip `Command results at Workbench`
         await myRedisDatabasePage.deleteAllDatabases();
     })
 test
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
         const infoCommand = `FT.INFO ${indexName}`;
         //Send FT.INFO and switch to Text view
@@ -44,7 +45,7 @@ test
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.INFO`);
     });
 test
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
         const searchCommand = `FT.SEARCH ${indexName} *`;
         //Send FT.SEARCH and switch to Text view
@@ -56,7 +57,7 @@ test
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.SEARCH`);
     });
 test
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
         const aggregateCommand = `FT.Aggregate ${indexName} * GROUPBY 0 REDUCE MAX 1 @price AS max_price`;
         //Send FT.AGGREGATE and switch to Text view
@@ -68,7 +69,7 @@ test
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.AGGREGATE`);
     });
 test
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default in full mode

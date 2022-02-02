@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -35,7 +36,7 @@ fixture `Last refresh`
         await t.pressKey('enter');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the date and time of the last update of my Keys in the tooltip', async t => {
         //Open database
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -45,7 +46,7 @@ test
         await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see my timer updated when I refresh the list of Keys of the list of values', async t => {
         //Open database
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -63,7 +64,7 @@ test
         await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the date and time of the last update of my Key values in the tooltip', async t => {
         //Open database
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -76,7 +77,7 @@ test
         await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see my last refresh updated each time I hover over the Refresh icon', async t => {
         //Open database
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

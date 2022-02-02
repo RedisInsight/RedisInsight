@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -34,7 +35,7 @@ fixture `Workbench Context`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved CLI state when navigates away to any other page', async t => {
         //Expand CLI and navigte to Browser
         await t.click(cliPage.cliExpandButton);
@@ -44,7 +45,7 @@ test
         await t.expect(await cliPage.cliCollapseButton.exists).ok('CLI is still expanded');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved CLI size when navigates away to any other page', async t => {
         const offsetY = 200;
 
@@ -59,7 +60,7 @@ test
         await t.expect(await cliPage.cliArea.clientHeight).eql(cliAreaHeight + offsetY, 'Saved context for resizable cli is proper');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see all the information removed when reloads the page', async t => {
         const command = 'FT._LIST';
         //Create context modificaions and navigate to Browser
@@ -76,7 +77,7 @@ test
         await t.expect(await workbenchPage.queryInputScriptArea.textContent).eql('', 'Input in Editor is removed');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see saved state of the Enablement area when navigates back to the Workbench from other page', async t => {
         //Collapse the Enablement area and open Settings
         await t.hover(workbenchPage.preselectArea);

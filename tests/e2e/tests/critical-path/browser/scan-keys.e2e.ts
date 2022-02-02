@@ -1,4 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -47,7 +48,7 @@ fixture `Browser - Specify Keys to Scan`
         await t.click(cliPage.cliCollapseButton);
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that the user can see this number of keys applied to new filter requests and to "scan more" functionality in Browser page', async t => {
         const searchPattern = 'key[12]*';
         //Go to Settings page

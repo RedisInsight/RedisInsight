@@ -2,6 +2,7 @@ import { MyRedisDatabasePage, UserAgreementPage, SettingsPage } from '../../../p
 import {
     commonUrl
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -24,7 +25,7 @@ fixture `Settings`
         await userAgreementPage.acceptLicenseTerms();
     })
 test
-    .meta({ rte: 'none' })
+    .meta({ rte: rte.none })
     ('Verify that user can customize a number of keys to scan in filters per key name or key type', async t => {
         //Go to Settings page
         await t.click(myRedisDatabasePage.settingsButton);
@@ -38,7 +39,7 @@ test
         await t.expect(settingsPage.keysToScanValue.textContent).eql('1500', 'Keys to Scan has proper value');
     });
 test
-    .meta({ rte: 'none' })
+    .meta({ rte: rte.none })
     ('Verify that user can turn on/off Analytics in Settings in the application', async t => {
         //Go to Settings page
         await t.click(myRedisDatabasePage.settingsButton);

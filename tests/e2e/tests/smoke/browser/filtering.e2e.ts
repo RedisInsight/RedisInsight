@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -37,7 +38,7 @@ fixture `Filtering per key name in Browser page`
         await t.click(cliPage.cliCollapseButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search per full key name', async t => {
         const keyName = 'KeyForSearch*?[]789';
         //Connect to DB
@@ -51,7 +52,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key was found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter per exact key without using any patterns', async t => {
         const keyName = 'KeyForSearch*?[]789';
         //Connect to DB
@@ -68,7 +69,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter per combined pattern with ?, *, [xy], [^x], [a-z] and escaped special symbols', async t => {
         const keyName = 'KeyForSearch';
         const keyName2 = 'KeyForSomething';

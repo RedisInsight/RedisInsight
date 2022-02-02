@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -27,7 +28,7 @@ fixture `Keys refresh functionality`
     })
 
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
     })('Verify that user can refresh Keys', async t => {

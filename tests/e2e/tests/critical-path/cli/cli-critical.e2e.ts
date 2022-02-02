@@ -1,5 +1,6 @@
 import { addOSSClusterDatabase, addNewStandaloneDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     UserAgreementPage,
@@ -31,7 +32,7 @@ fixture `CLI critical`
     })
 //skipped due the bug RI-2156
 test.skip
-    .meta({ rte: 'oss-cluster' })
+    .meta({ rte: rte.ossCluster })
     .after(async t => {
         //Clear database
         await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
@@ -52,7 +53,7 @@ test.skip
         await t.expect(redirectedText.exists).ok('User command was redirected to another node');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that Redis returns error if command is not correct when user works with CLI', async t => {
         await addNewStandaloneDatabase(ossStandaloneConfig);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -71,7 +72,9 @@ test
         const errWrongCmnd = cliPage.cliOutputResponseFail.withText('ERR unknown command')
         await t.expect(errWrongCmnd.exists).ok('Error unknown command was shown');
     });
-    test('Verify that user can scroll commands using "Tab" in CLI & execute it', async t => {
+test
+    .meta({ rte: rte.standalone })    
+    ('Verify that user can scroll commands using "Tab" in CLI & execute it', async t => {
         const commandToAutoComplete = 'INFO';
         const commandStartsWith = 'I';
         await addNewStandaloneDatabase(ossStandaloneConfig);
@@ -91,7 +94,7 @@ test
         await t.expect(cliPage.cliOutputResponseSuccess.exists).ok('Command from autocomplete was found & executed');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, FT.DROPINDEX/JSON.GET, JSON.DEL), he can see hints with arguments', async t => {
         const commandHints =[
             'index [ON HASH|JSON] [PREFIX count prefix [prefix ...]] [LANGUAGE default_lang] [LANGUAGE_FIELD lang_attribute] [SCORE default_score] [SCORE_FIELD score_attribute] [PAYLOAD_FIELD payload_attribute] [MAXTEXTFIELDS] [TEMPORARY seconds] [NOOFFSETS] [NOHL] [NOFIELDS] [NOFREQS] [count stopword [stopword ...]] SCHEMA field_name [AS alias] TEXT|TAG|NUMERIC|GEO [SORTABLE [UNF]] [NOINDEX]',
@@ -116,7 +119,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can type AI command in CLI and see agruments in hints from RedisAI commands.json', async t => {
         const commandHints = 'key [META] [BLOB]';
         const command = 'ai.modelget';

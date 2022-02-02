@@ -10,7 +10,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts } from '../../../helpers/constants';
+import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts, rte } from '../../../helpers/constants';
 import { keyTypes } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -36,7 +36,7 @@ fixture `Filtering per key name in Browser page`
         await t.click(cliPage.cliCollapseButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search a key with selected data type is filters', async t => {
         const keyName = 'KeyForSearch';
         //Connect to DB
@@ -51,7 +51,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key was found');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can filter keys per data type in Browser page', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 

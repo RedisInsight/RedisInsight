@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -29,7 +30,7 @@ fixture `Autocomplete for entered commands`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-.meta({ rte: 'standalone' })
+.meta({ rte: rte.standalone })
 ('Verify that user can open the "read more" about the command by clicking on the ">" icon or "ctrl+space"', async t => {
     const command = 'HSET'
     const commandDetails = [
@@ -52,7 +53,7 @@ test
     await t.expect(await workbenchPage.monacoCommandDetails.exists).notOk('The "read more" about the command is closed');
 });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see static list of arguments is displayed when he enters the command in Editor in Workbench', async t => {
         const command = 'AI.SCRIPTEXECUTE'
         //Type the command in Editing area
@@ -65,7 +66,7 @@ test
         await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are displayed')
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can close the static list of arguments by pressing “ESC”', async t => {
         const command = 'TS.DELETERULE '
         await t.typeText(workbenchPage.queryInput, command, { replace: true })
@@ -77,7 +78,7 @@ test
         await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are not displayed')
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the static list of arguments when he uses “Ctrl+Shift+Space” combination for already entered command for Windows', async t => {
         const command = 'JSON.ARRAPPEND'
         await t.typeText(workbenchPage.queryInput, command, { replace: true });

@@ -4,6 +4,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -18,7 +19,7 @@ fixture `Add database from welcome page`
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add first DB from Welcome page', async t => {
         //Delete all the databases to open Welcome page
         await myRedisDatabasePage.deleteAllDatabases();

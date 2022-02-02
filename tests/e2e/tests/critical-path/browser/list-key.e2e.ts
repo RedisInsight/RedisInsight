@@ -1,5 +1,6 @@
 import { toNumber } from 'lodash';
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -37,7 +38,7 @@ fixture `List Key verification`
     const element2 = '2222listElement22222';
     const element3 = '33333listElement33333';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search List element by index', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addListKey(keyName, keyTTL, element);
@@ -51,7 +52,7 @@ test
         await t.expect(result).eql(element2, 'The list elemnt with searched index');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     .before(async(t) => {
         await t.maximizeWindow();
         await userAgreementPage.acceptLicenseTerms();

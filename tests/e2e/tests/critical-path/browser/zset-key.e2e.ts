@@ -1,5 +1,6 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -35,7 +36,7 @@ fixture `ZSet Key fields verification`
     const keyTTL = '2147476121';
     const keyMember = '1111ZsetMember11111';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search by member in Zset', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addZSetKey(keyName, '0', keyTTL, '12345qwerty');
@@ -48,7 +49,7 @@ test
         await t.expect(result).eql(keyMember, 'The Zset member');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can sort Zset members by score by DESC and ASC', async t => {
         const keyName = 'ZSetKey-Lorem123!';
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

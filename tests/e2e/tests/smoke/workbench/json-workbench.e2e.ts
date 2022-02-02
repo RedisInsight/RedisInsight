@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneRedisearch
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -36,7 +37,7 @@ fixture `JSON verifications at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({env: 'web', rte: 'standalone' })
+    .meta({env: 'web', rte: rte.standalone })
     ('Verify that user can execute redisearch command for JSON data type in Workbench', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON JSON SCHEMA $.title AS title TEXT`,

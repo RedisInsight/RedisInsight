@@ -1,6 +1,7 @@
 import { discoverSentinelDatabase } from '../../../helpers/database';
 import { commonUrl, ossSentinelConfig } from '../../../helpers/conf';
 import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -16,7 +17,7 @@ fixture `Add DBs from Sentinel`
         await myRedisDatabasePage.deleteAllDatabases();
     })
 test
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can add Sentinel DB', async t => {
         await discoverSentinelDatabase(ossSentinelConfig);
         await t.expect(myRedisDatabasePage.hostPort.textContent).eql(`${ossSentinelConfig.sentinelHost}:${ossSentinelConfig.sentinelPort}`, 'The sentinel database is in the list');

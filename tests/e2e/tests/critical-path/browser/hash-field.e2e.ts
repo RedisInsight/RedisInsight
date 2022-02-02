@@ -1,4 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -33,7 +34,7 @@ fixture `Hash Key fields verification`
     const keyValue = 'hashValue11111!';
 
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search by full field name in Hash', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keyName, keyTTL);
@@ -46,7 +47,7 @@ test
         await t.expect(result).eql(keyFieldValue, 'The hash field');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can search by part field name in Hash with pattern * in Hash', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keyName, keyTTL);

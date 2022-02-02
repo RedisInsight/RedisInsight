@@ -5,6 +5,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -29,7 +30,7 @@ fixture `History of results at Workbench`
         await t.click(cliPage.cliCollapseButton);
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
         //Send command and remember the time
         await workbenchPage.sendCommandInWorkbench(command);
@@ -41,7 +42,7 @@ test
     });
 //skipped due the long time execution and hangs of test
 test.skip
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that if command result is more than 1 MB and user refreshes the page, the message "Results have been deleted since they exceed 1 MB. Re-run the command to see new results." is displayed', async t => {
         const commandToSend = 'set key';
         const commandToGet = 'get key';
@@ -55,7 +56,7 @@ test.skip
         await t.expect(workbenchPage.queryTextResult.textContent).eql('"Results have been deleted since they exceed 1 MB. Re-run the command to see new results."', 'The messageis displayed');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that the first command in workbench history is deleted when user executes 31 command (new the following result replaces the first result)', async t => {
         const numberOfCommands = 30;
         const firstCommand = 'FT._LIST';

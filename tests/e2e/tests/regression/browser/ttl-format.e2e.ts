@@ -13,6 +13,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -44,7 +45,7 @@ fixture `TTL values in Keys Table`
         await t.pressKey('enter');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {
         //Create new keys with TTL
         await t.click(cliPage.cliExpandButton);

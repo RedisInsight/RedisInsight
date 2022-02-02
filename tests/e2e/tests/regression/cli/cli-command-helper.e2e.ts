@@ -6,6 +6,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -23,7 +24,7 @@ fixture `CLI Command helper`
 const getPageUrl = ClientFunction(() => window.location.href);
 
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         const commandForCheck = 'JSON.SET';
         //Open Command Helper
@@ -41,7 +42,7 @@ test
         await t.expect(cliPage.cliReadMoreJSONCommandDocumentation().textContent).contains('JSON.SET');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         const commandForCheck = 'FT.EXPLAIN';
         //Open Command Helper
@@ -59,7 +60,7 @@ test
         await t.expect(cliPage.cliReadMoreRediSearchCommandDocumentation().textContent).contains('FT.EXPLAIN');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
         const commandForCheck = 'PFCOUNT';
         //Open Command Helper
@@ -75,7 +76,7 @@ test
         await t.expect(getPageUrl()).contains('/pfcount');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
         const AIGroups = [
             'Model',
@@ -121,7 +122,7 @@ test
         }
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can open/close CLI separately from Command Helper', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);
@@ -136,7 +137,7 @@ test
         await t.expect(cliPage.cliCollapseButton.visible).notOk('CLI is closed');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can open/close Command Helper separately from CLI', async t => {
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
@@ -151,7 +152,7 @@ test
         await t.expect(cliPage.cliCollapseButton.visible).ok('CLI is opended');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see that Command Helper is minimized when he clicks the "minimize" button', async t => {
         const helperColourBefore = await common.getBackgroundColour(cliPage.commandHelperBadge);
         //Open Command Helper and minimize
@@ -163,7 +164,7 @@ test
         await t.expect(cliPage.minimizeCliButton.visible).eql(false, 'Command helper is mimized');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see that Command Helper displays the previous information when he re-opens it', async t => {
         const commandForCheck = 'FT.EXPLAIN';
         //Open Command Helper

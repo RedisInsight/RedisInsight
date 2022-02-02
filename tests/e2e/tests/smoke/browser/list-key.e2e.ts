@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -33,7 +34,7 @@ fixture `List Key verification`
     const element2 = '2222listElement22222';
     const element3 = '33333listElement33333';
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can add element to List', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addListKey(keyName, keyTTL);
@@ -43,7 +44,7 @@ test
         await t.expect(browserPage.listElementsList.withExactText(element).exists).ok('The existence of the list element', { timeout: 20000 });
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can select remove List element position: from tail', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addListKey(keyName, keyTTL);
@@ -60,7 +61,7 @@ test
         await t.expect(browserPage.listElementsList.withExactText(element3).exists).notOk('The removing of the list element', { timeout: 20000 });
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can select remove List element position: from head', async t => {
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addListKey(keyName, keyTTL, element);

@@ -10,6 +10,7 @@ import {
     ossSentinelConfig
 } from '../../../helpers/conf';
 import { discoverSentinelDatabase, addOSSClusterDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -27,7 +28,7 @@ fixture `Connecting to the databases verifications`
         await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
     })
 test
-    .meta({ env: 'web', rte: 'sentinel' })
+    .meta({ env: 'web', rte: rte.sentinel })
     ('Verify that user can connect to Sentinel DB', async t => {
         //Add OSS Sentinel DB
         await discoverSentinelDatabase(ossSentinelConfig);
@@ -46,7 +47,7 @@ test
         }
     });
 test
-    .meta({ env: 'web', rte: 'oss-cluster' })
+    .meta({ env: 'web', rte: rte.ossCluster })
     ('Verify that user can connect to OSS Cluster DB', async t => {
         //Add OSS Cluster DB
         await addOSSClusterDatabase(ossClusterConfig);

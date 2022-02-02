@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneRedisearch
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -36,7 +37,7 @@ fixture `JSON verifications at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: 'standalone' })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can see result in Table and Text view for JSON data types for FT.AGGREGATE command in Workbench', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,

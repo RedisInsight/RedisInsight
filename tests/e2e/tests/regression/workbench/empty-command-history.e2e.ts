@@ -5,6 +5,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -25,7 +26,7 @@ fixture `Empty command history in Workbench`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see placeholder text in Workbench history if no commands have not been run yet', async t => {
         //Verify that all the elements from empty command history placeholder are displayed
         await t.expect(workbenchPage.noCommandHistorySection.visible).ok('No command history section is visible')

@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -29,7 +30,7 @@ fixture `Scripting area at Workbench`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can comment out any characters in scripting area and all these characters in this raw number are not send in the request', async t => {
         const command1 = 'info';
         const command2 = 'command';
@@ -55,7 +56,7 @@ test
         await t.expect(sentCommandText2.exists).ok('Result of sent command exists');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can run multiple commands in one query in Workbench', async t => {
         const commandForSend1 = 'info';
         const commandForSend2 = 'FT._LIST';

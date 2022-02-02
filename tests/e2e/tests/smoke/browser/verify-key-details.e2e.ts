@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -30,7 +31,7 @@ fixture `Key details verification`
         await browserPage.deleteKey();
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see Hash Key details', async t => {
         const keyName = 'Hash1testKeyForEdit';
 
@@ -49,7 +50,7 @@ test
         await t.expect(keyBadge).contains('Hash', 'The Key Badge');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see List Key details', async t => {
         const keyName = 'List1testKeyForEdit';
   
@@ -68,7 +69,7 @@ test
         await t.expect(keyBadge).contains('List', 'The Key Badge');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see Set Key details', async t => {
         const keyName = 'Set1testKeyForEdit';
   
@@ -87,7 +88,7 @@ test
         await t.expect(keyBadge).contains('Set', 'The Key Badge');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see String Key details', async t => {
         const keyName = 'String1testKeyForEdit';
         const value = 'keyValue12334353434;'
@@ -107,7 +108,7 @@ test
         await t.expect(keyBadge).contains('String', 'The Key Badge');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see ZSet Key details', async t => {
         const keyName = 'ZSet1testKeyForEdit';
 
@@ -126,7 +127,7 @@ test
         await t.expect(keyBadge).contains('Sorted Set', 'The Key Badge');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see JSON Key details', async t => {
         const keyName = 'JSON1testKeyForEdit';
         const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';

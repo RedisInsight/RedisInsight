@@ -9,6 +9,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -28,7 +29,7 @@ fixture `Edit Key names verification`
         await browserPage.deleteKey();
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can edit String Key name', async t => {
         const keyName = 'String1testKeyForEditName';
         const keyTTL = '2147476121';
@@ -43,7 +44,7 @@ test
         await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can edit Set Key name', async t => {
         const keyName = 'Set1testKeyForEditName';
         const keyTTL = '2147476121';
@@ -58,7 +59,7 @@ test
         await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can edit Zset Key name', async t => {
         const keyName = 'Zset1testKeyForEditName';
         const keyTTL = '2147476121';
@@ -73,7 +74,7 @@ test
         await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can edit Hash Key name', async t => {
         const keyName = 'Hash1testKeyForEditName';
         const keyTTL = '2147476121';
@@ -88,7 +89,7 @@ test
         await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can edit List Key name', async t => {
         const keyName = 'List1testKeyForEditName';
         const keyTTL = '2147476121';
@@ -103,7 +104,7 @@ test
         await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Key Name');
     });
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can edit JSON Key name', async t => {
         const keyName = 'JSON1testKeyForEditName';
         const keyTTL = '2147476121';

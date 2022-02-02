@@ -10,6 +10,7 @@ import {
     commonUrl,
     ossStandaloneV5Config
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -33,7 +34,7 @@ fixture `Redisearch module not available`
         await t.click(myRedisDatabasePage.workbenchButton);
     })
 test
-    .meta({ rte: 'standalone' })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the "Create your free Redis database with RediSearch on Redis Cloud" button and click on it in Workbench when module in not loaded', async t => {
         //Send command with 'FT.'
         await workbenchPage.sendCommandInWorkbench(commandForSend);

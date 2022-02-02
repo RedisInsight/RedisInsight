@@ -21,7 +21,7 @@ const settingsPage = new SettingsPage();
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-fixture.only `Monitor`
+fixture `Monitor`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {

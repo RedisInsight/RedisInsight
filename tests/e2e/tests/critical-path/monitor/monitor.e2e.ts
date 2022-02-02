@@ -24,7 +24,7 @@ const browserPage = new BrowserPage();
 const keyName = `${getRandomKeyName(10)}-key`;
 const keyValue = `${getRandomKeyName(10)}-value`;
 
-fixture.only `Monitor`
+fixture `Monitor`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async t => {

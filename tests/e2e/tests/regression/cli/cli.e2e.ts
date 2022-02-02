@@ -12,7 +12,7 @@ const common = new Common();
 fixture `CLI`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
 test

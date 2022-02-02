@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import { debounce } from 'lodash'
 import cx from 'classnames'
 import { EuiTextColor } from '@elastic/eui'
 import { CellMeasurer, List, CellMeasurerCache, ListRowProps } from 'react-virtualized'
@@ -17,47 +16,25 @@ export interface Props {
   height: number
 }
 
-const cache = new CellMeasurerCache({
-  defaultHeight: 17,
-  fixedWidth: true,
-  fixedHeight: false
-})
-
 const PROTRUDING_OFFSET = 2
 
 const MonitorOutputList = (props: Props) => {
   const { compressed, items = [], width = 0, height = 0 } = props
 
+  const cache = new CellMeasurerCache({
+    defaultHeight: 17,
+    fixedWidth: true,
+    fixedHeight: false
+  })
+
   const listRef = useRef<List>(null)
-  const timeoutRef = useRef<any>(null)
 
-  const clearCacheAndUpdate = (scrollToBottom = true) => {
-    cache.clearAll()
-    listRef?.current?.recomputeGridSize()
-
-    if (scrollToBottom) {
+  const clearCacheAndUpdate = () => {
+    listRef?.current?.scrollToRow(items.length - 1)
+    requestAnimationFrame(() => {
       listRef?.current?.scrollToRow(items.length - 1)
-      timeoutRef.current && clearTimeout(timeoutRef.current)
-
-      // double scrollToRow because of first call scrollToRow has bottom gap
-      timeoutRef.current = setTimeout(() => {
-        listRef?.current?.scrollToRow(items.length - 1)
-      }, 0)
-    }
+    })
   }
-
-  const debouncedClearCacheAndUpdate = debounce(() => clearCacheAndUpdate(false), 50, { maxWait: 100 })
-
-  useEffect(() => {
-    globalThis.addEventListener('resize', debouncedClearCacheAndUpdate)
-    return () => {
-      globalThis.removeEventListener('resize', debouncedClearCacheAndUpdate)
-    }
-  }, [])
-
-  useEffect(() => {
-    debouncedClearCacheAndUpdate()
-  }, [compressed])
 
   useEffect(() => {
     clearCacheAndUpdate()

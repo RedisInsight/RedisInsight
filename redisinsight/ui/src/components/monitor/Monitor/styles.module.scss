@@ -137,11 +137,13 @@
 .itemArgs {
   word-break: break-word;
   padding-right: 10px;
+  color: var(--euiTextSubduedColorHover);
 }
 
 .itemArgs__compressed {
   max-width: 330px;
   width: max-content;
+  color: var(--euiTextSubduedColorHover);
 }
 
 .item {

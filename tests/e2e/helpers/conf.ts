@@ -1,5 +1,6 @@
 import { Chance } from 'chance';
 const chance = new Chance();
+
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
 

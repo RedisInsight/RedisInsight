@@ -869,7 +869,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
           before: async function () {
             // unblock command after 1 sec
             setTimeout(async () => {
-              await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`);
+              await request(server).delete(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`);
             }, 1000)
           },
         },
@@ -880,6 +880,9 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
             outputFormat: 'TEXT',
           },
           responseSchema,
+          before: async () => {
+            await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`);
+          },
           after: async () => {
             expect(await rte.client.exists(constants.TEST_LIST_KEY_1)).to.eql(0);
           }

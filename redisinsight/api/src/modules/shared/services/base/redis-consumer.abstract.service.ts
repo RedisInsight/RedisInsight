@@ -43,9 +43,7 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
 
   abstract execPipeline(
     clientOptions: IFindRedisClientInstanceByOptions,
-    toolCommands: Array<
-    [toolCommand: any, ...args: Array<string | number | Buffer>]
-    >,
+    toolCommands: Array<[toolCommand: any, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]>;
 
   private prepareCommands(

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   BadRequestException,
   GatewayTimeoutException,
@@ -135,6 +136,7 @@ describe('InstancesBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         InstancesBusinessService,
+        EventEmitter2,
         {
           provide: RedisSentinelBusinessService,
           useFactory: () => ({}),

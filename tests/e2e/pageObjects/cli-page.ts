@@ -91,11 +91,11 @@ export class CliPage {
   }
 
   /**
-  * Add keys from CLI
-  * @param keyCommand The command from cli to add key
-  * @param amount The amount of the keys
-  * @param keyName The name of the keys. The default value is keyName
-  */
+   * Add keys from CLI
+   * @param keyCommand The command from cli to add key
+   * @param amount The amount of the keys
+   * @param keyName The name of the keys. The default value is keyName
+   */
   async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void>{
       //Open CLI
       await t.click(this.cliExpandButton);
@@ -107,14 +107,29 @@ export class CliPage {
   }
 
   /**
-  * Send command in Cli
-  * @param command The command to send
-  */
-   async sendCommandInCli(command: string): Promise<void>{
+   * Send command in Cli
+   * @param command The command to send
+   */
+  async sendCommandInCli(command: string): Promise<void>{
       //Open CLI
       await t.click(this.cliExpandButton);
       await t.typeText(this.cliCommandInput, command, { paste: true });
       await t.pressKey('enter');
       await t.click(this.cliCollapseButton);
+  }
+
+  /**
+   * Get command result execution
+   * @param command The command for send in CLI
+   */
+  async getSuccessCommandResultFromCli(command: string): Promise<string>{
+      //Open CLI
+      await t.click(this.cliExpandButton);
+      //Add keys
+      await t.typeText(this.cliCommandInput, command, { paste: true });
+      await t.pressKey('enter');
+      const commandResult = await this.cliOutputResponseSuccess.innerText;
+      await t.click(this.cliCollapseButton);
+      return commandResult;
   }
 }

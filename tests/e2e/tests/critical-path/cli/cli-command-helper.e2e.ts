@@ -107,7 +107,7 @@ test('Verify that user can type TS. in Command helper and see commands from Redi
     //Select group from list and remeber commands
     await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
     const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-    let timeSeriesCommands = [];
+    const timeSeriesCommands = [];
     for(let i = 0; i < commandsFilterCount; i++) {
         timeSeriesCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
     }
@@ -128,7 +128,7 @@ test('Verify that user can type GRAPH. in Command helper and see auto-suggestion
     //Select group from list and remeber commands
     await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
     const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-    let graphCommands = [];
+    const graphCommands = [];
     for(let i = 0; i < commandsFilterCount; i++) {
         graphCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
     }

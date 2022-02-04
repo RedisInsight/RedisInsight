@@ -20,6 +20,8 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
 }
 
+export const STEP_ZOOM_FACTOR = 0.2;
+
 export default class MenuBuilder {
   public mainWindow: BrowserWindow;
 
@@ -36,6 +38,12 @@ export default class MenuBuilder {
     Menu.setApplicationMenu(menu);
 
     return menu;
+  }
+
+  getZoomFactor(isZoomIn: boolean = false): number {
+    const correctZoomFactor = isZoomIn ? STEP_ZOOM_FACTOR : -STEP_ZOOM_FACTOR;
+    const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + correctZoomFactor * 100) / 100;
+    return zoomFactor;
   }
 
   setZoomFactor(zoomFactor: number): void {
@@ -127,7 +135,7 @@ export default class MenuBuilder {
           label: 'Zoom In',
           accelerator: 'CmdOrCtrl+=',
           click: () => {
-            const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + 0.2 * 100) / 100;
+            const zoomFactor = this.getZoomFactor(true);
             this.setZoomFactor(zoomFactor);
           },
         },
@@ -135,7 +143,7 @@ export default class MenuBuilder {
           label: 'Zoom Out',
           accelerator: 'CmdOrCtrl+-',
           click: () => {
-            const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 - 0.2 * 100) / 100;
+            const zoomFactor = this.getZoomFactor();
             this.setZoomFactor(zoomFactor);
           },
         },
@@ -281,7 +289,7 @@ export default class MenuBuilder {
             label: 'Zoom &In',
             accelerator: 'Ctrl+=',
             click: () => {
-              const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + 0.2 * 100) / 100;
+              const zoomFactor = this.getZoomFactor(true);
               this.setZoomFactor(zoomFactor);
             },
           },
@@ -289,7 +297,7 @@ export default class MenuBuilder {
             label: 'Zoom &Out',
             accelerator: 'Ctrl+-',
             click: () => {
-              const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 - 0.2 * 100) / 100;
+              const zoomFactor = this.getZoomFactor();
               this.setZoomFactor(zoomFactor);
             },
           },

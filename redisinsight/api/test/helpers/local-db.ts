@@ -52,7 +52,7 @@ export const encryptData = (data) => {
 
   if (constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR') {
     let cipherKey = createHash('sha256')
-      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8')
+      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8') // lgtm[js/insufficient-password-hash]
       .digest();
     const cipher = createCipheriv('aes-256-cbc', cipherKey, Buffer.alloc(16, 0));
     let encrypted = cipher.update(data, 'utf8', 'hex');
@@ -71,7 +71,7 @@ export const decryptData = (data) => {
 
   if (constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR') {
     let cipherKey = createHash('sha256')
-      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8')
+      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8') // lgtm[js/insufficient-password-hash]
       .digest();
 
     const decipher = createDecipheriv('aes-256-cbc', cipherKey, Buffer.alloc(16, 0));
@@ -311,6 +311,18 @@ export const applyEulaAgreement = async () => {
   await rep.save(agreements);
 }
 
+export const setAgreements = async (agreements = {}) => {
+  const defaultAgreements = {eula: true, encryption: true};
+
+  const rep = await getRepository(repositories.AGREEMENTS);
+  const entity: any = await rep.findOne();
+
+  entity.version = '1.0.0';
+  entity.data = JSON.stringify({ ...defaultAgreements, ...agreements });
+
+  await rep.save(entity);
+}
+
 const resetAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
   const agreements: any = await rep.findOne();
@@ -320,7 +332,7 @@ const resetAgreements = async () => {
   await rep.save(agreements);
 }
 
-const initAgreements = async () => {
+export const initAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
   const agreements: any = await rep.findOne();
   agreements.version = constants.TEST_AGREEMENTS_VERSION;

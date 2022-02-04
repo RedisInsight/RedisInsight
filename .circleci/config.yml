@@ -84,7 +84,8 @@ aliases:
     - oss-st-5            # OSS Standalone v5
     - oss-st-5-pass       # OSS Standalone v5 with admin pass required
     - oss-st-6            # OSS Standalone v6 and all modules
-    #- mods-preview        # OSS Standalone and all preview modules // todo: uncomment after broken image will be fixed
+    - oss-st-big          # OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)
+    - mods-preview        # OSS Standalone and all preview modules
     - oss-st-6-tls        # OSS Standalone v6 with TLS enabled
     - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
     - oss-clu             # OSS Cluster
@@ -92,6 +93,7 @@ aliases:
     - oss-sent            # OSS Sentinel
     - re-st               # Redis Enterprise with Standalone inside
     - re-clu              # Redis Enterprise with Cluster inside
+    - re-crdt             # Redis Enterprise with active-active database inside
   guides-filter: &guidesFilter
     filters:
       branches:
@@ -102,6 +104,7 @@ aliases:
       branches:
         only:
           - main
+          - /^build\/.*/
   stage-filter: &stageFilter
     filters:
       branches:
@@ -306,6 +309,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose -f tests/e2e/docker-compose.yml -f tests/e2e/docker.docker-compose.yml up --abort-on-container-exit
                 no_output_timeout: 5m
       - when:
@@ -315,6 +319,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose -f tests/e2e/docker-compose.yml up --abort-on-container-exit
                 no_output_timeout: 5m
       - when:
@@ -446,7 +451,7 @@ jobs:
             - release/*-linux.yml
   macosx:
     macos:
-      xcode: 11.3.0
+      xcode: 13.2.1
     parameters:
       env:
         description: Build environment (stage || prod)

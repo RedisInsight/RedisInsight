@@ -220,6 +220,43 @@ describe('POST /instance/:instanceId/set/get-members', () => {
       expect(members.length).to.be.gte(100);
       expect(cursor).to.eql(0);
     });
+
+    describe('Search in huge number of elements', () => {
+      const ELEMENTS_NUMBER = 1_000_000;
+
+      requirements('rte.bigData');
+      [
+        {
+          name: 'Should get element using exists without full scan',
+          data: {
+            keyName: constants.TEST_SET_HUGE_KEY,
+            cursor: 0,
+            match: constants.TEST_SET_HUGE_ELEMENT
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_SET_HUGE_KEY,
+            total: ELEMENTS_NUMBER,
+            members: [constants.TEST_SET_HUGE_ELEMENT],
+            nextCursor: 0,
+          },
+        },
+        {
+          name: 'Should get elements with possibility to continue iterating',
+          data: {
+            keyName: constants.TEST_SET_HUGE_KEY,
+            cursor: 0,
+          },
+          responseSchema,
+          checkFn: ({ body }) => {
+            expect(body.keyName).to.eql(constants.TEST_SET_HUGE_KEY);
+            expect(body.total).to.eql(ELEMENTS_NUMBER);
+            expect(body.nextCursor).to.not.eql(0);
+            expect(body.members.length).to.gte(200);
+          },
+        },
+      ].map(mainCheckFn);
+    });
   });
 
   describe('ACL', () => {

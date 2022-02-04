@@ -1,4 +1,4 @@
-import React, { Component, ChangeEvent, FormEvent } from 'react'
+import React, { Component, FormEvent } from 'react'
 import cx from 'classnames'
 import { connect } from 'react-redux'
 import {
@@ -41,8 +41,7 @@ import styles from '../styles.module.scss'
 interface UpdateValueBody {
 }
 
-interface changeEvent extends React.ChangeEvent<HTMLInputElement> {
-}
+interface ChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 
 export interface Props {
   keyName: string | number;
@@ -198,7 +197,7 @@ class JSONArrayComponent extends Component<Props, State> {
 
     const error: string = this.validateJSONValue(valueOfEntireObject)
 
-    if (error == '') {
+    if (error === '') {
       body.path = path
       body.value = valueOfEntireObject as JSONScalarValue
       body.operation = 'update'
@@ -394,6 +393,7 @@ class JSONArrayComponent extends Component<Props, State> {
       onJSONPropertyEdited,
       onJSONPropertyDeleted,
       onJSONPropertyAdded,
+      onClickFunc,
       handleFetchVisualisationResults,
       handleAppendReJSONArrayItemAction,
       handleSetReJSONDataAction,
@@ -411,7 +411,7 @@ class JSONArrayComponent extends Component<Props, State> {
             return (
               <JSONScalar
                 resultTableKeyMap={resultTableKeyMap}
-                shouldRejsonDataBeDownloaded={!downloaded}
+                shouldRejsonDataBeDownloaded={false}
                 dbNumber={dbNumber}
                 deleteMsg={deleteMsg}
                 onJSONPropertyDeleted={onJSONPropertyDeleted}
@@ -435,7 +435,7 @@ class JSONArrayComponent extends Component<Props, State> {
               return (
                 <JSONArrayComponent
                   resultTableKeyMap={resultTableKeyMap}
-                  shouldRejsonDataBeDownloaded={!downloaded}
+                  shouldRejsonDataBeDownloaded={false}
                   handleFetchVisualisationResults={
                     handleFetchVisualisationResults
                   }
@@ -449,14 +449,14 @@ class JSONArrayComponent extends Component<Props, State> {
                   onJSONPropertyEdited={onJSONPropertyEdited}
                   onJSONKeyExpandAndCollapse={onJSONKeyExpandAndCollapse}
                   onJSONPropertyAdded={onJSONPropertyAdded}
-                  dbNumber={this.props.dbNumber}
-                  instanceId={this.props.instanceId}
+                  dbNumber={dbNumber}
+                  instanceId={instanceId}
                   value={eachData}
                   cardinality={(eachData as []).length || 0}
                   handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
                   leftPadding={String(Number(leftPadding) + 1.5)}
                   selectedKey={selectedKey}
-                  onClickFunc={this.props.onClickFunc}
+                  onClickFunc={onClickFunc}
                   handleSubmitUpdateValue={handleSubmitUpdateValue}
                   handleSubmitRemoveKey={handleSubmitRemoveKey}
                 />
@@ -465,9 +465,9 @@ class JSONArrayComponent extends Component<Props, State> {
             return (
               <JSONObject
                 resultTableKeyMap={resultTableKeyMap}
-                shouldRejsonDataBeDownloaded={!downloaded}
-                dbNumber={this.props.dbNumber}
-                instanceId={this.props.instanceId}
+                shouldRejsonDataBeDownloaded={false}
+                dbNumber={dbNumber}
+                instanceId={instanceId}
                 key={generatePath(parentPath, i.toString())}
                 onJSONPropertyAdded={onJSONPropertyAdded}
                 selectedKey={selectedKey}
@@ -490,7 +490,7 @@ class JSONArrayComponent extends Component<Props, State> {
         }
       )
     }
-    if ((data as TJSONArray).length == 1) {
+    if ((data as TJSONArray).length === 1) {
       return (
         <JSONObject
           resultTableKeyMap={resultTableKeyMap}
@@ -582,8 +582,8 @@ class JSONArrayComponent extends Component<Props, State> {
             <JSONObject
               resultTableKeyMap={resultTableKeyMap}
               shouldRejsonDataBeDownloaded={!downloaded}
-              dbNumber={this.props.dbNumber}
-              instanceId={this.props.instanceId}
+              dbNumber={dbNumber}
+              instanceId={instanceId}
               onJSONKeyExpandAndCollapse={onJSONKeyExpandAndCollapse}
               onJSONPropertyAdded={onJSONPropertyAdded}
               key={generatePath(parentPath, key)}
@@ -603,7 +603,8 @@ class JSONArrayComponent extends Component<Props, State> {
               handleSubmitRemoveKey={handleSubmitRemoveKey}
             />
           )
-        } if (type === 'array') {
+        }
+        if (type === 'array') {
           return (
             <JSONArrayComponent
               resultTableKeyMap={resultTableKeyMap}
@@ -621,14 +622,14 @@ class JSONArrayComponent extends Component<Props, State> {
               keyName={key}
               onJSONPropertyDeleted={onJSONPropertyDeleted}
               onJSONKeyExpandAndCollapse={onJSONKeyExpandAndCollapse}
-              dbNumber={this.props.dbNumber}
-              instanceId={this.props.instanceId}
+              dbNumber={dbNumber}
+              instanceId={instanceId}
               handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
               value={[]}
               cardinality={document.cardinality}
               leftPadding={String(Number(leftPadding) + 1.5)}
               selectedKey={selectedKey}
-              onClickFunc={this.props.onClickFunc}
+              onClickFunc={onClickFunc}
               handleSubmitUpdateValue={handleSubmitUpdateValue}
               handleSubmitRemoveKey={handleSubmitRemoveKey}
             />
@@ -642,7 +643,7 @@ class JSONArrayComponent extends Component<Props, State> {
   }
 
   render() {
-    const { keyName, leftPadding, handleSubmitRemoveKey, selectedKey } = this.props
+    const { keyName, leftPadding, handleSubmitRemoveKey, selectedKey, cardinality } = this.props
     const {
       value,
       path,
@@ -678,6 +679,7 @@ class JSONArrayComponent extends Component<Props, State> {
               <span
                 className={cx(styles.quoted, styles.keyName)}
                 onClick={() => this.onClickFunc(path)}
+                role="presentation"
               >
                 {keyName}
               </span>
@@ -692,9 +694,10 @@ class JSONArrayComponent extends Component<Props, State> {
                     style={{ paddingLeft: '8px' }}
                     onClick={() => this.onClickFunc(path)}
                     data-testid="expand-array"
+                    role="presentation"
                   >
                     &#91;
-                    {this.props.cardinality ? '...' : ''}
+                    {cardinality ? '...' : ''}
                     &#93;
                   </div>
                 </div>
@@ -780,7 +783,7 @@ class JSONArrayComponent extends Component<Props, State> {
                               valueOfEntireObject ? valueOfEntireObject.toString() : ''
                             }
                             placeholder="Enter JSON value"
-                            onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
                               this.onChangeSetEntireObjectValue(event.target.value)}
                             data-testid="json-value"
                           />
@@ -863,7 +866,7 @@ class JSONArrayComponent extends Component<Props, State> {
                             name="newValue"
                             value={newValue as string}
                             placeholder="Enter JSON value"
-                            onChange={(event: changeEvent) =>
+                            onChange={(event: ChangeEvent) =>
                               this.onChangeSetNewValue(event.target.value)}
                             data-testid="json-value"
                           />

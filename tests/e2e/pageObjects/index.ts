@@ -9,6 +9,7 @@ import { WorkbenchPage } from './workbench-page';
 import { DatabaseOverviewPage } from './database-overview-page';
 import { HelpCenterPage } from './help-center-page';
 import { ShortcutsPage } from './shortcuts-page';
+import { MonitorPage } from './monitor-page';
 
 export {
     AddRedisDatabasePage,
@@ -21,5 +22,6 @@ export {
     WorkbenchPage,
     DatabaseOverviewPage,
     HelpCenterPage,
-    ShortcutsPage
+    ShortcutsPage,
+    MonitorPage
 }

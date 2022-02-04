@@ -11,6 +11,7 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { IPlugin, PluginsResponse, StateAppPlugins } from 'uiSrc/slices/interfaces'
 import { SendCommandResponse } from 'src/modules/cli/dto/cli.dto'
+import { PluginState } from 'src/modules/workbench/models/plugin-state'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -97,7 +98,7 @@ export function loadPluginsAction() {
 export function sendPluginCommandAction({ command = '', onSuccessAction, onFailAction }: {
   command: string;
   onSuccessAction?: (responseData: any) => void;
-  onFailAction?: () => void;
+  onFailAction?: (error: any) => void;
 }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
@@ -107,14 +108,11 @@ export function sendPluginCommandAction({ command = '', onSuccessAction, onFailA
       const { data, status } = await apiService.post<SendCommandResponse>(
         getUrl(
           id,
-          ApiEndpoints.CLI,
-          state.workbench.settings?.wbClientUuid,
-          ApiEndpoints.SEND_COMMAND
+          ApiEndpoints.PLUGINS,
+          ApiEndpoints.COMMAND_EXECUTIONS
         ),
         {
-          command: multilineCommandToOneLine(command),
-          outputFormat: 'RAW',
-          plugins: true
+          command: multilineCommandToOneLine(command)
         }
       )
 
@@ -122,7 +120,73 @@ export function sendPluginCommandAction({ command = '', onSuccessAction, onFailA
         onSuccessAction?.(data)
       }
     } catch (error) {
-      onFailAction?.()
+      onFailAction?.(error)
+    }
+  }
+}
+
+export function getPluginStateAction({ visualizationId = '', commandId = '', onSuccessAction, onFailAction }: {
+  visualizationId: string;
+  commandId: string;
+  onSuccessAction?: (responseData: any) => void;
+  onFailAction?: (error: any) => void;
+}) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { id = '' } = state.connections.instances.connectedInstance
+
+      const { data, status } = await apiService.get<PluginState>(
+        getUrl(
+          id,
+          ApiEndpoints.PLUGINS,
+          visualizationId,
+          ApiEndpoints.COMMAND_EXECUTIONS,
+          commandId,
+          ApiEndpoints.STATE
+        )
+      )
+
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.(data)
+      }
+    } catch (error) {
+      onFailAction?.(error)
+    }
+  }
+}
+
+export function setPluginStateAction({ visualizationId = '', commandId = '', pluginState, onSuccessAction, onFailAction }: {
+  visualizationId: string;
+  commandId: string;
+  pluginState: any;
+  onSuccessAction?: (responseData: any) => void;
+  onFailAction?: (error: any) => void;
+}) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { id = '' } = state.connections.instances.connectedInstance
+
+      const { data, status } = await apiService.post(
+        getUrl(
+          id,
+          ApiEndpoints.PLUGINS,
+          visualizationId,
+          ApiEndpoints.COMMAND_EXECUTIONS,
+          commandId,
+          ApiEndpoints.STATE
+        ),
+        {
+          state: pluginState
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.(data)
+      }
+    } catch (error) {
+      onFailAction?.(error)
     }
   }
 }

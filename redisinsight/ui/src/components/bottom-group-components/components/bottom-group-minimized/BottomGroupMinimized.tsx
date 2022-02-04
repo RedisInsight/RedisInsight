@@ -13,6 +13,7 @@ import {
   toggleHideCliHelper,
 } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { monitorSelector, toggleHideMonitor, toggleMonitor } from 'uiSrc/slices/cli/monitor'
 
 import styles from '../../styles.module.scss'
 
@@ -24,6 +25,10 @@ const BottomGroupMinimized = () => {
     isShowHelper,
     isMinimizedHelper,
   } = useSelector(cliSettingsSelector)
+  const {
+    isShowMonitor,
+    isMinimizedMonitor,
+  } = useSelector(monitorSelector)
   const dispatch = useDispatch()
 
   useEffect(() =>
@@ -51,6 +56,23 @@ const BottomGroupMinimized = () => {
     })
     isMinimizedHelper && dispatch(toggleHideCliHelper())
     dispatch(toggleCliHelper())
+  }
+
+  const handleExpandMonitor = () => {
+    if (!isShowMonitor) {
+      sendEventTelemetry({
+        event: TelemetryEvent.PROFILER_OPENED,
+        eventData: { databaseId: instanceId }
+      })
+    }
+    if (isMinimizedMonitor) {
+      dispatch(toggleHideMonitor())
+      sendEventTelemetry({
+        event: TelemetryEvent.PROFILER_MINIMIZED,
+        eventData: { databaseId: instanceId }
+      })
+    }
+    dispatch(toggleMonitor())
   }
 
   return (
@@ -85,6 +107,21 @@ const BottomGroupMinimized = () => {
           >
             <EuiIcon type="documents" size="m" />
             <span>Command Helper</span>
+          </EuiBadge>
+        </EuiFlexItem>
+        <EuiFlexItem
+          className={styles.componentBadgeItem}
+          grow={false}
+          onClick={handleExpandMonitor}
+          data-testid="expand-monitor"
+        >
+          <EuiBadge className={cx(
+            styles.componentBadge,
+            { [styles.active]: isShowMonitor || isMinimizedMonitor }
+          )}
+          >
+            <EuiIcon type="inspect" size="m" />
+            <span>Profiler</span>
           </EuiBadge>
         </EuiFlexItem>
       </EuiFlexGroup>

@@ -8,7 +8,7 @@ type DependencyProposals = {
 }
 
 const getCommandMarkdown = (commandName = '', command: ICommand): string => {
-  const docUrl = getDocUrlForCommand(commandName, command?.group)
+  const docUrl = getDocUrlForCommand(commandName)
   const linkMore = ` [Read more](${docUrl})`
   const lines: string[] = [command?.summary + linkMore]
   if (command?.arguments?.length) {
@@ -35,6 +35,7 @@ const createDependencyProposals = (commandsSpec: ICommands): DependencyProposals
     const argsNames = generateArgsNames(commandArgs, false, true)
     const insertText = `${command} ${
       !argsNames.length ? '' : argsNames.join(' ').split(' ')
+        // eslint-disable-next-line sonarjs/no-nested-template-literals
         .map((arg: string, i: number) => `\${${i + 1}:${arg}} `)
         .join('')}`
 

@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotIn } from 'class-validator';
 
 export class CreatePluginStateDto {
   @ApiProperty({
     type: String,
-    description: 'State',
+    example: 'any',
+    description: 'State can be anything except "undefined"',
   })
-  @IsNotEmpty()
+  @IsNotIn([undefined], {
+    message: 'state should be defined',
+  })
   state: any;
 }

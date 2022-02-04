@@ -1,5 +1,5 @@
-import { Joi, expect, describe, it, deps, requirements, validateApiCall } from '../deps';
-const { rte, request, server, constants } = deps;
+import { Joi, expect, describe, after, it, deps, requirements, validateApiCall } from '../deps';
+const { rte, request, server, constants, localDb } = deps;
 
 const endpoint = () => request(server).post('/instance/sentinel-masters');
 
@@ -12,6 +12,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
 
 describe('POST /instance/sentinel-masters', () => {
   requirements('rte.type=SENTINEL');
+  after(localDb.initAgreements);
 
   // todo: add validation tests
   describe('Validation', function () {});
@@ -36,11 +37,52 @@ describe('POST /instance/sentinel-masters', () => {
           }],
         },
         responseSchema,
-        checkFn: ({ body }) => {
+        checkFn: async ({ body }) => {
           expect(body.length).to.eql(1);
           expect(body[0].name).to.eql(constants.TEST_SENTINEL_MASTER_GROUP);
           expect(body[0].status).to.eql('success');
           expect(body[0].message).to.eql('Added');
+
+          const db: any = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOne(body[0].id);
+
+          expect(db.password).to.eql(localDb.encryptData(constants.TEST_REDIS_PASSWORD));
+          expect(db.sentinelMasterPassword).to.eql(localDb.encryptData(constants.TEST_SENTINEL_MASTER_PASS));
+        },
+      });
+    });
+    it('Create sentinel database with plain pass', async () => {
+      await localDb.setAgreements({
+        encryption: false,
+      });
+
+      const dbName = constants.getRandomString();
+
+      await validateApiCall({
+        endpoint,
+        statusCode: 201,
+        data: {
+          host: constants.TEST_REDIS_HOST,
+          port: constants.TEST_REDIS_PORT,
+          username: constants.TEST_REDIS_USER,
+          password: constants.TEST_REDIS_PASSWORD,
+          masters: [{
+            alias: dbName,
+            name: constants.TEST_SENTINEL_MASTER_GROUP,
+            username: constants.TEST_SENTINEL_MASTER_USER,
+            password: constants.TEST_SENTINEL_MASTER_PASS,
+          }],
+        },
+        responseSchema,
+        checkFn: async ({ body }) => {
+          expect(body.length).to.eql(1);
+          expect(body[0].name).to.eql(constants.TEST_SENTINEL_MASTER_GROUP);
+          expect(body[0].status).to.eql('success');
+          expect(body[0].message).to.eql('Added');
+
+          const db: any = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOne(body[0].id);
+
+          expect(db.password).to.eql(constants.TEST_REDIS_PASSWORD);
+          expect(db.sentinelMasterPassword).to.eql(constants.TEST_SENTINEL_MASTER_PASS);
         },
       });
     });
@@ -87,6 +129,12 @@ describe('POST /instance/sentinel-masters', () => {
         },
       });
 
+      // Create client for CLI
+      await validateApiCall({
+        endpoint: () => request(server).patch(`/instance/${addedId}/cli/${cliUuid}`),
+        statusCode: 200,
+      });
+
       // Create string using CLI API to 0 db index
       await validateApiCall({
         endpoint: () => request(server).post(`/instance/${addedId}/cli/${cliUuid}/send-command`),
@@ -98,12 +146,12 @@ describe('POST /instance/sentinel-masters', () => {
 
       // check data created by db index
       await rte.data.executeCommand('select', `${constants.TEST_REDIS_DB_INDEX}`);
-      expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
+      expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1)
       expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(1)
 
       // check data created by db index
       await rte.data.executeCommand('select', '0');
-      expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1)
+      expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
       expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(0)
     });
   });

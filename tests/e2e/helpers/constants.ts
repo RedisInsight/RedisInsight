@@ -22,3 +22,17 @@ export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.Graph]: (key: string) => `GRAPH.QUERY ${key} "CREATE ()"`,
     [KeyTypesTexts.TimeSeries]: (key: string) => `TS.CREATE ${key}`
 })
+
+export enum rte {
+    none = 'none',
+    standalone = 'standalone',
+    sentinel = 'sentinel',
+    ossCluster = 'oss-cluster',
+    reCluster = 're-cluster',
+    reCloud = 're-cloud'
+}
+
+export enum env {
+    web = 'web',
+    desktop = 'desktop'
+}

@@ -6,6 +6,7 @@ import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-output'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
+import { SelectCommand } from 'uiSrc/constants/cliOutput'
 import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
@@ -60,9 +61,9 @@ const cliParseTextResponse = (
   </span>
 )
 
-const cliCommandOutput = (command: string) => ['\n', bashTextValue(), cliCommandWrapper(command), '\n']
+const cliCommandOutput = (command: string, dbIndex = 0) => ['\n', bashTextValue(dbIndex), cliCommandWrapper(command), '\n']
 
-const bashTextValue = () => '> '
+const bashTextValue = (dbIndex = 0) => (dbIndex > 0 ? `[${dbIndex}] > ` : '> ')
 
 const cliCommandWrapper = (command: string) => (
   <span className="cli-command-wrapper" data-testid="cli-command-wrapper" key={Math.random()}>
@@ -99,7 +100,7 @@ const updateCliHistoryStorage = (
 
 const checkUnsupportedCommand = (unsupportedCommands: string[], commandLine: string) =>
   unsupportedCommands?.find((command) =>
-    commandLine?.trim().toLowerCase().startsWith(command))
+    commandLine?.trim().toLowerCase().startsWith(command?.toLowerCase()))
 
 const checkBlockingCommand = (blockingCommands: string[], commandLine: string) =>
   blockingCommands?.find((command) => commandLine?.trim().toLowerCase().startsWith(command))
@@ -121,6 +122,18 @@ const checkUnsupportedModuleCommand = (loadedModules: RedisModuleDto[], commandL
   return commandModule
 }
 
+const getDbIndexFromSelectQuery = (query: string): number => {
+  const [command, ...args] = query.trim().split(' ')
+  if (command.toLowerCase() !== SelectCommand.toLowerCase()) {
+    throw new Error('Invalid command')
+  }
+  try {
+    return parseInt(args[0].replace(/['"]/g, '').trim())
+  } catch (e) {
+    throw Error('Parsing error')
+  }
+}
+
 export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
@@ -133,4 +146,5 @@ export {
   checkUnsupportedCommand,
   checkBlockingCommand,
   checkUnsupportedModuleCommand,
+  getDbIndexFromSelectQuery,
 }

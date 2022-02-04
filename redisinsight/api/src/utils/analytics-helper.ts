@@ -1,6 +1,5 @@
 import * as jsonpath from 'jsonpath';
 import { isNil } from 'lodash';
-import { RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto';
 
 export const TOTAL_KEYS_BREAKPOINTS = [
   500000,

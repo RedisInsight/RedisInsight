@@ -176,3 +176,23 @@ export const generateInvalidDataTestCases = (
   });
 };
 
+export const getMainCheckFn = (endpoint) => async (testCase) => {
+  it(testCase.name, async () => {
+    // additional checks before test run
+    if (testCase.before) {
+      await testCase.before();
+    }
+
+    await validateApiCall({
+      endpoint,
+      ...testCase,
+    });
+
+    // additional checks after test pass
+    if (testCase.after) {
+      await testCase.after();
+    }
+  });
+};
+
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

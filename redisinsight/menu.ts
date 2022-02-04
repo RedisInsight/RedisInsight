@@ -38,6 +38,11 @@ export default class MenuBuilder {
     return menu;
   }
 
+  setZoomFactor(zoomFactor: number): void {
+    setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+    this.mainWindow.webContents.setZoomFactor(zoomFactor);
+  }
+
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuApp: DarwinMenuItemConstructorOptions = {
       label: app.name,
@@ -115,8 +120,7 @@ export default class MenuBuilder {
           accelerator: 'CmdOrCtrl+0',
           click: () => {
             const zoomFactor = 1;
-            setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
-            this.mainWindow.webContents.setZoomFactor(zoomFactor);
+            this.setZoomFactor(zoomFactor);
           },
         },
         {
@@ -124,8 +128,7 @@ export default class MenuBuilder {
           accelerator: 'CmdOrCtrl+=',
           click: () => {
             const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + 0.2 * 100) / 100;
-            setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
-            this.mainWindow.webContents.setZoomFactor(zoomFactor);
+            this.setZoomFactor(zoomFactor);
           },
         },
         {
@@ -133,8 +136,7 @@ export default class MenuBuilder {
           accelerator: 'CmdOrCtrl+-',
           click: () => {
             const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 - 0.2 * 100) / 100;
-            setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
-            this.mainWindow.webContents.setZoomFactor(zoomFactor);
+            this.setZoomFactor(zoomFactor);
           },
         },
       ],
@@ -272,8 +274,7 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+0',
             click: () => {
               const zoomFactor = 1;
-              setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
-              this.mainWindow.webContents.setZoomFactor(zoomFactor);
+              this.setZoomFactor(zoomFactor);
             },
           },
           {
@@ -281,8 +282,7 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+=',
             click: () => {
               const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + 0.2 * 100) / 100;
-              setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
-              this.mainWindow.webContents.setZoomFactor(zoomFactor);
+              this.setZoomFactor(zoomFactor);
             },
           },
           {
@@ -290,8 +290,7 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+-',
             click: () => {
               const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 - 0.2 * 100) / 100;
-              setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
-              this.mainWindow.webContents.setZoomFactor(zoomFactor);
+              this.setZoomFactor(zoomFactor);
             },
           },
         ],

@@ -1,58 +1,59 @@
-import { addOSSClusterDatabase, addNewStandaloneDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
+import { 
+    acceptLicenseTermsAndAddDatabase, 
+    acceptLicenseTermsAndAddOSSClusterDatabase, 
+    deleteDatabase 
+} from '../../../helpers/database';
 import {
     commonUrl,
     ossClusterConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const common = new Common();
+const browserPage = new BrowserPage();
+const chance = new Chance();
 
 const pairsToSet = common.createArrayPairsWithKeyValue(4);
 const MAX_AUTOCOMPLETE_EXECUTIONS = 100;
+let keyName = chance.word({ length: 10 });
+let value = chance.natural({ length: 5 });
 
 fixture `CLI critical`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-//skipped due the bug RI-2156
-test.skip
-    .after(async t => {
-        //Clear database
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+test
+    .before(async () => {
+        await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
+    })
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })
     ('Verify that user is redirected to another node when he works in CLI with OSS Cluster', async t => {
-        await addOSSClusterDatabase(ossClusterConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossClusterConfig.ossClusterDatabaseName);
+        keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Add key from CLI
-        for (const [key, value] of pairsToSet) {
-            await t.typeText(cliPage.cliCommandInput, `SET ${key} ${value}`);
+        for ([keyName, value] of pairsToSet) {
+            await t.typeText(cliPage.cliCommandInput, `SET ${keyName} ${value}`);
             await t.pressKey('enter');
         }
-        //Check that the key is added
-        const redirectedText = cliPage.cliOutputResponseSuccess.withText('Redirected to')
-        await t.expect(redirectedText.exists).ok('User command was redirected to another node');
+        //Check that user is redirected
+        await t.expect(await cliPage.cliArea.textContent).contains('Redirected to', 'User command was redirected to another node');
     });
 test('Verify that Redis returns error if command is not correct when user works with CLI', async t => {
-    await addNewStandaloneDatabase(ossStandaloneConfig);
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI
     await t.click(cliPage.cliExpandButton);
 
@@ -71,8 +72,6 @@ test('Verify that Redis returns error if command is not correct when user works 
 test('Verify that user can scroll commands using "Tab" in CLI & execute it', async t => {
     const commandToAutoComplete = 'INFO';
     const commandStartsWith = 'I';
-    await addNewStandaloneDatabase(ossStandaloneConfig);
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     await t.typeText(cliPage.cliCommandInput, commandStartsWith);
@@ -100,8 +99,6 @@ test('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, F
         'JSON.GET',
         'JSON.DEL'
     ];
-    await addNewStandaloneDatabase(ossStandaloneConfig);
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI
     await t.click(cliPage.cliExpandButton);
     //Enter commands and check hints with arguments
@@ -113,8 +110,6 @@ test('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, F
 test('Verify that user can type AI command in CLI and see agruments in hints from RedisAI commands.json', async t => {
     const commandHints = 'key [META] [BLOB]';
     const command = 'ai.modelget';
-    await addNewStandaloneDatabase(ossStandaloneConfig);
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI and type AI command
     await t.click(cliPage.cliExpandButton);
     await t.typeText(cliPage.cliCommandInput, command, { replace: true });

@@ -1,47 +1,38 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage,
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
 
 fixture `Edit Key values verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-      await t.maximizeWindow();
-      await userAgreementPage.acceptLicenseTerms();
-      await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-      await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-test
-    .after(async() => {
-        await browserPage.deleteKey();
-    })('Verify that user can edit String value', async t => {
-        const keyName = 'String1testKeyForEditValue';
-        const keyTTL = '2147476121';
-        const keyValueBefore = 'StringValueBeforeEdit!';
-        const keyValueAfter = 'StringValueBeforeEdit!';
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+test('Verify that user can edit String value', async t => {
+    keyName = chance.word({ length: 10 });
+    const keyTTL = '2147476121';
+    const keyValueBefore = 'StringValueBeforeEdit!';
+    const keyValueAfter = 'StringValueBeforeEdit!';
 
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-        //Add string key
-        await browserPage.addStringKey(keyName, keyValueBefore, keyTTL);
-        //Check the key value before edit
-        let keyValueFromDetails = await browserPage.getStringKeyValue();
-        await t.expect(keyValueFromDetails).contains(keyValueBefore, 'The value of the key');
-        //Edit String key value
-        await browserPage.editStringKeyValue(keyValueAfter);
-        //Check the key value after edit
-        keyValueFromDetails = await browserPage.getStringKeyValue();
-        await t.expect(keyValueFromDetails).contains(keyValueAfter, 'The value of the key');
-    });
+    //Add string key
+    await browserPage.addStringKey(keyName, keyValueBefore, keyTTL);
+    //Check the key value before edit
+    let keyValueFromDetails = await browserPage.getStringKeyValue();
+    await t.expect(keyValueFromDetails).contains(keyValueBefore, 'The value of the key');
+    //Edit String key value
+    await browserPage.editStringKeyValue(keyValueAfter);
+    //Check the key value after edit
+    keyValueFromDetails = await browserPage.getStringKeyValue();
+    await t.expect(keyValueFromDetails).contains(keyValueAfter, 'The value of the key');
+});

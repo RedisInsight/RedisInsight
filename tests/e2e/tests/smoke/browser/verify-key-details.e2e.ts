@@ -1,37 +1,28 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage} from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
 const keyTTL = '2147476121';
 const expectedTTL = /214747612*/;
 
 fixture `Key details verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see Hash Key details', async t => {
-    const keyName = 'Hash1testKeyForEdit';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
 
     await browserPage.addHashKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -46,8 +37,7 @@ test('Verify that user can see Hash Key details', async t => {
     await t.expect(keyBadge).contains('Hash', 'The Key Badge');
 });
 test('Verify that user can see List Key details', async t => {
-    const keyName = 'List1testKeyForEdit';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
 
     await browserPage.addListKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -62,8 +52,7 @@ test('Verify that user can see List Key details', async t => {
     await t.expect(keyBadge).contains('List', 'The Key Badge');
 });
 test('Verify that user can see Set Key details', async t => {
-    const keyName = 'Set1testKeyForEdit';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
 
     await browserPage.addSetKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -78,10 +67,8 @@ test('Verify that user can see Set Key details', async t => {
     await t.expect(keyBadge).contains('Set', 'The Key Badge');
 });
 test('Verify that user can see String Key details', async t => {
-    const keyName = 'String1testKeyForEdit';
+    keyName = chance.word({ length: 10 });
     const value = 'keyValue12334353434;'
-
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
     await browserPage.addStringKey(keyName, value, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -96,8 +83,7 @@ test('Verify that user can see String Key details', async t => {
     await t.expect(keyBadge).contains('String', 'The Key Badge');
 });
 test('Verify that user can see ZSet Key details', async t => {
-    const keyName = 'ZSet1testKeyForEdit';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
 
     await browserPage.addZSetKey(keyName, '1', keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -112,10 +98,9 @@ test('Verify that user can see ZSet Key details', async t => {
     await t.expect(keyBadge).contains('Sorted Set', 'The Key Badge');
 });
 test('Verify that user can see JSON Key details', async t => {
-    const keyName = 'JSON1testKeyForEdit';
-    const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
+    keyName = chance.word({ length: 10 });
 
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
 
     await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;

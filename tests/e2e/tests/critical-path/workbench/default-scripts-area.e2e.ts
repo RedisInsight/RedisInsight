@@ -1,41 +1,37 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { MyRedisDatabasePage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
-const indexName =  'products';
+let indexName = chance.word({ length: 5 });
+let keyName = chance.word({ length: 5 });
 
 fixture `Default scripts area at Workbench`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async t => {
-        //Drop index and documents
-        await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
+    .afterEach(async () => {
+        //Drop index, documents and database
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+    indexName = chance.word({ length: 5 });
+    keyName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        'HMSET product:1 name "Apple Juice" ',
-        'HMSET product:2 name "Apple Juice"'
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`
     ];
     //Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
@@ -60,10 +56,12 @@ test.skip('Verify that user can edit and run automatically added "FT._LIST" and 
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
+    indexName = chance.word({ length: 5 });
+    keyName = chance.word({ length: 5 });
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        'HMSET product:1 name "Apple Juice"',
-        'HMSET product:2 name "Apple Juice"'
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`
     ];
     const searchCommand = `FT.SEARCH "${indexName}" "Apple Juice"`;
     //Send commands
@@ -83,6 +81,7 @@ test.skip('Verify that user can edit and run automatically added "Search" script
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
+    indexName = chance.word({ length: 5 });
     const aggregationResultField = 'max_price';
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE`,

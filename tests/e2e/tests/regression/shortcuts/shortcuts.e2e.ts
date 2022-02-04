@@ -1,14 +1,7 @@
-import {
-    UserAgreementPage,
-    MyRedisDatabasePage,
-    HelpCenterPage,
-    ShortcutsPage
-} from '../../../pageObjects';
-import {
-    commonUrl
-} from '../../../helpers/conf';
+import { acceptLicenseTerms } from '../../../helpers/database';
+import { MyRedisDatabasePage, HelpCenterPage, ShortcutsPage } from '../../../pageObjects';
+import { commonUrl } from '../../../helpers/conf';
 
-const userAgreementPage = new UserAgreementPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const helpCenterPage = new HelpCenterPage();
 const shortcutsPage = new ShortcutsPage();
@@ -16,11 +9,9 @@ const shortcutsPage = new ShortcutsPage();
 fixture `Shortcuts`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
+    .beforeEach(async () => {
+        await acceptLicenseTerms();
     })
-
 test('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center', async t => {
     // Click on help center icon
     await t.click(myRedisDatabasePage.helpCenterButton);

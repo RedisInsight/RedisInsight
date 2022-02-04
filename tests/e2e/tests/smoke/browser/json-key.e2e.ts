@@ -1,38 +1,29 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
+const keyTTL = '2147476121';
+const value = '{"name":"xyz"}';
+const jsonObjectValue = '{name:"xyz"}';
 
 fixture `JSON Key verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    const keyName = 'JSON1testKey1234566767789890900s';
-    const keyTTL = '2147476121';
-    const value = '{"name":"xyz"}';
-    const jsonObjectValue = '{name:"xyz"}';
 test('Verify that user can create JSON object', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
     //Add Json key with json object
     await browserPage.addJsonKey(keyName, keyTTL, value);
     //Check the notification message
@@ -43,7 +34,7 @@ test('Verify that user can create JSON object', async t => {
     await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value');
 });
 test('Verify that user can add key with value to any level of JSON structure', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
     //Add Json key with json object
     await browserPage.addJsonKey(keyName, keyTTL, value);
     //Check the notification message

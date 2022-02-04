@@ -1,19 +1,8 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
@@ -21,14 +10,14 @@ const COMMAND_GROUP_SET = 'Set';
 fixture `CLI Command helper`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can close Command helper', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Close Command helper
@@ -38,7 +27,6 @@ test('Verify that user can close Command helper', async t => {
 });
 test('Verify that user can search per command in Command Helper and see relevant results', async t => {
     const commandForSearch = 'ADD';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Search per command
@@ -51,7 +39,6 @@ test('Verify that user can search per command in Command Helper and see relevant
 });
 test('Verify that user can select one of the commands from the list of commands described in the Groups table', async t => {
     const commandForCheck = 'SADD';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Select one command from list
@@ -62,7 +49,6 @@ test('Verify that user can select one of the commands from the list of commands 
 });
 test('Verify that user can click on any of searched commands in Command Helper and see details of the command', async t => {
     const commandForSearch = 'Ap';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Select one command from list of searched commands
@@ -76,7 +62,6 @@ test('Verify that user can click on any of searched commands in Command Helper a
 test('Verify that when user enters command, he can see Command Name, Complexity, Arguments, Summary, Group, Read more', async t => {
     const commandForSearch = 'pop';
     const commandForCheck = 'LPOP';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     //Select one command from list of searched commands
@@ -92,7 +77,6 @@ test('Verify that when user enters command, he can see Command Name, Complexity,
 });
 test('Verify that user can see that command is autocompleted in CLI with required arguments', async t => {
     const command = 'HDEL';
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     //Open CLI and Helper
     await t.click(cliPage.cliExpandButton);
     await t.click(cliPage.expandCommandHelperButton);

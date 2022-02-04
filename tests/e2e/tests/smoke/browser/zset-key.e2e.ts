@@ -1,39 +1,29 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import { Common } from '../../../helpers/common';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
+const keyTTL = '2147476121';
+const keyMember = '1111ZsetMember11111';
+const score = '0';
 
 fixture `ZSet Key fields verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    const keyName = 'ZSet1testKeyForAddMember';
-    const keyTTL = '2147476121';
-    const keyMember = '1111ZsetMember11111';
-    const score = '0';
 test('Verify that user can add members to Zset', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
     await browserPage.addZSetKey(keyName, '5', keyTTL);
     //Add member to the ZSet key
     await browserPage.addMemberToZSet(keyMember, score);
@@ -42,7 +32,7 @@ test('Verify that user can add members to Zset', async t => {
     await t.expect(browserPage.zsetScoresList.withExactText(score).exists).ok('The existence of the Zset score', { timeout: 20000 });
 });
 test('Verify that user can remove member from ZSet', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
     await browserPage.addZSetKey(keyName, '6', keyTTL);
     //Add member to the ZSet key
     await browserPage.addMemberToZSet(keyMember, score);

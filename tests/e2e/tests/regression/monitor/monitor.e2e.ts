@@ -1,21 +1,18 @@
 import { Chance } from 'chance';
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    UserAgreementPage,
-    AddRedisDatabasePage,
     MonitorPage,
     SettingsPage,
     BrowserPage
 } from '../../../pageObjects';
 import {
-    commonUrl, ossBigStandaloneConfig,
+    commonUrl, 
+    ossStandaloneBigConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const monitorPage = new MonitorPage();
 const settingsPage = new SettingsPage();
 const browserPage = new BrowserPage();
@@ -24,16 +21,12 @@ const chance = new Chance();
 fixture `Monitor`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.deleteDatabaseByName(ossStandaloneConfig.databaseName);
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that when user closes the Monitor by clicking on "Close Monitor" button Monitor stopped', async t => {
     //Run monitor
@@ -61,7 +54,7 @@ test('Verify that when user refreshes the page the list of results in Monitor is
     //Run monitor
     await monitorPage.startMonitor();
     //Refresh the page
-    await t.eval(() => location.reload(true));
+    await t.eval(() => location.reload());
     //Check that monitor is closed
     await t.expect(monitorPage.monitorArea.exists).notOk('Monitor area');
     //Check that monitor area doesn't have any saved results
@@ -80,22 +73,19 @@ test('Verify that when user clicks on "Clear" button in Monitor, all commands hi
 });
 test
     .before(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('Add Redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossBigStandaloneConfig);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         await t.click(myRedisDatabasePage.settingsButton);
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('20000000');
         await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.clickOnDBByName(ossBigStandaloneConfig.databaseName);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneBigConfig.databaseName);
     })
     .after(async t => {
         await t.click(myRedisDatabasePage.settingsButton);
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('10000');
-        await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.deleteDatabaseByName(ossBigStandaloneConfig.databaseName);
+        //Delete database
+        await deleteDatabase(ossStandaloneBigConfig.databaseName);
     })
     ('Verify that user can see monitor results in high DB load', async t => {
         //Run monitor

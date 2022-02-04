@@ -1,43 +1,36 @@
 import { toNumber } from 'lodash';
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig,
     ossStandaloneV5Config
 } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
+const keyTTL = '2147476121';
+const element = '1111listElement11111';
+const element2 = '2222listElement22222';
+const element3 = '33333listElement33333';
 
 fixture `List Key verification`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    const keyName = 'List1testKeyForAddMember';
-    const keyTTL = '2147476121';
-    const element = '1111listElement11111';
-    const element2 = '2222listElement22222';
-    const element3 = '33333listElement33333';
 test('Verify that user can search List element by index', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    keyName = chance.word({ length: 10 });
     await browserPage.addListKey(keyName, keyTTL, element);
     //Add few elements to the List key
     await browserPage.addElementToList(element2);
@@ -49,16 +42,17 @@ test('Verify that user can search List element by index', async t => {
     await t.expect(result).eql(element2, 'The list elemnt with searched index');
 });
 test
-    .before(async(t) => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
+    .before(async () => {
         // add oss standalone v5
-        await addNewStandaloneDatabase(ossStandaloneV5Config);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+    })
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneV5Config.databaseName);
     })
     ('Verify that user can remove only one element for List for Redis v. <6.2', async t => {
-        const keyName = 'ListKey-Lorem123123';
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
+        keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Create new key
@@ -67,10 +61,10 @@ test
         await t.click(cliPage.cliCollapseButton);
         //Remove element from the key
         await browserPage.openKeyDetails(keyName);
-        const lengthBeforeRemove = await (await browserPage.keyLengthDetails.textContent).split('(')[1].split(')')[0];
+        const lengthBeforeRemove = (await browserPage.keyLengthDetails.textContent).split('(')[1].split(')')[0];
         await browserPage.removeListElementFromHeadOld();
         //Check that only one element is removed
-        const lengthAfterRemove = await (await browserPage.keyLengthDetails.textContent).split('(')[1].split(')')[0];
+        const lengthAfterRemove = (await browserPage.keyLengthDetails.textContent).split('(')[1].split(')')[0];
         const removedElements = toNumber(lengthBeforeRemove) - toNumber(lengthAfterRemove);
         await t.expect(removedElements).eql(1, 'only one element is removed');
     });

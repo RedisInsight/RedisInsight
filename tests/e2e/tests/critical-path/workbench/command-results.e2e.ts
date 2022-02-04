@@ -1,36 +1,29 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, UserAgreementPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
 const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
-const indexName = 'idx';
+let indexName = chance.word({ length: 5 });
 
 fixture `Command results at Workbench`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async t => {
-        //Drop index and documents
+        //Drop index, documents and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test('Verify that user can see re-run icon near the already executed command and re-execute the command by clicking on the icon in Workbench page', async t => {
     //Send commands
@@ -79,6 +72,7 @@ test('Verify that user can see the results found in the table view by default fo
 });
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
+    indexName = chance.word({ length: 5 });
     const commands = [
         'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
         `FT.CREATE ${indexName} ON HASH PREFIX 1 doc: SCHEMA title TEXT WEIGHT 5.0 body TEXT url TEXT author TEXT rate TEXT review TEXT comment TEXT`,

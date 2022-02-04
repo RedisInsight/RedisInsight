@@ -217,7 +217,7 @@ const VirtualTable = (props: IProps) => {
     if (forceScrollTop !== undefined) return
 
     if (!loading) {
-      loadMoreItems({ keyName, startIndex, stopIndex })
+      loadMoreItems?.({ keyName, startIndex, stopIndex })
     }
   }
 

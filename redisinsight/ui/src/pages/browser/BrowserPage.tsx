@@ -29,14 +29,16 @@ import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import InstanceHeader from 'uiSrc/components/instance-header'
 
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import AddKey from './components/add-key/AddKey'
 import KeyList from './components/key-list/KeyList'
+import KeyTree from './components/key-tree'
 import KeyDetailsWrapper from './components/key-details/KeyDetailsWrapper'
 
 import styles from './styles.module.scss'
 
 const widthResponsiveSize = 1124
-export const firstPanelId = 'keyList'
+export const firstPanelId = 'keys'
 export const secondPanelId = 'keyDetails'
 
 const BrowserPage = () => {
@@ -48,7 +50,7 @@ const BrowserPage = () => {
     panelSizes
   } = useSelector(appContextBrowser)
   const keysState = useSelector(keysDataSelector)
-  const { loading } = useSelector(keysSelector)
+  const { loading, viewType } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '' }
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
@@ -175,13 +177,26 @@ const BrowserPage = () => {
                     }),
                   }}
                 >
-                  <KeyList
-                    keysState={keysState}
-                    loading={loading}
-                    loadMoreItems={loadMoreItems}
-                    selectKey={selectKey}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                  />
+                  <>
+                    {viewType === KeyViewType.List && (
+                      <KeyList
+                        keysState={keysState}
+                        loading={loading}
+                        loadMoreItems={loadMoreItems}
+                        selectKey={selectKey}
+                        handleAddKeyPanel={handleAddKeyPanel}
+                      />
+                    )}
+                    {viewType === KeyViewType.Tree && (
+                      <KeyTree
+                        keysState={keysState}
+                        loading={loading}
+                        loadMoreItems={loadMoreItems}
+                        selectKey={selectKey}
+                        handleAddKeyPanel={handleAddKeyPanel}
+                      />
+                    )}
+                  </>
                 </EuiResizablePanel>
 
                 <EuiResizableButton

@@ -1,0 +1,21 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.customScroll {
+  @include euiScrollBar;
+
+  height: 100%;
+  position: relative;
+}
+
+.nodeContainer {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &Open {
+    background-color:  var(--euiColorLightestShade);
+  }
+}
+

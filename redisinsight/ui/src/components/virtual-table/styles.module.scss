@@ -24,6 +24,10 @@ $footerHeight: 38px;
   padding-bottom: $footerHeight;
 }
 
+:global(.keys-tree__count) {
+  padding-left: 10px;
+}
+
 .table {
   :global {
     .ReactVirtualized__Table__headerRow {

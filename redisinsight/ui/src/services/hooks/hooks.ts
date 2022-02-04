@@ -5,7 +5,7 @@ export const useResizableFormField = (
   width: number
 ) => {
   const flexFormWidth = 700
-  const flexGroupResposiveForm = 'flexGroupResposiveForm'
+  const flexGroupResponsiveForm = 'flexGroupResponsiveForm'
   const flexItemResponsiveForm = 'flexItemResponsiveForm'
 
   const [flexGroupClassName, setFlexGroupClassName] = useState('')
@@ -19,7 +19,7 @@ export const useResizableFormField = (
         offsetWidth < flexFormWidth ? flexItemResponsiveForm : ''
       )
       setFlexGroupClassName(
-        offsetWidth < flexFormWidth ? flexGroupResposiveForm : ''
+        offsetWidth < flexFormWidth ? flexGroupResponsiveForm : ''
       )
     }
   }, [width])

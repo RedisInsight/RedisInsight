@@ -45,7 +45,7 @@ export interface IProps {
   loading: boolean;
   scanned?: number;
   columns: ITableColumn[];
-  loadMoreItems: (config: any) => void;
+  loadMoreItems?: (config: any) => void;
   rowHeight?: number;
   footerHeight?: number;
   isRowSelectable?: boolean;

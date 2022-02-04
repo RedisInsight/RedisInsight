@@ -41,36 +41,41 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { GroupBadge } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
-import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
+import { IKeyListPropTypes, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 
+import VirtualTree from 'uiSrc/components/virtual-tree'
+import { constructKeysToTree } from 'uiSrc/helpers'
 import FilterKeyType from '../filter-key-type'
 import SearchKeyList from '../search-key-list'
 
 import styles from './styles.module.scss'
+import KeyList from '../key-list/KeyList'
 
 export interface Props {
-  withoutHeader?: boolean;
   keysState: IKeyListPropTypes;
   loading: boolean;
   selectKey: ({ rowData }: { rowData: any }) => void;
-  loadMoreItems?: ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => void;
+  loadMoreItems: ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => void;
   handleAddKeyPanel: (value: boolean) => void;
 }
 
-const KeyList = (props: Props) => {
+const KeyTree = (props: Props) => {
   let wheelTimer = 0
-  const { selectKey, loadMoreItems, loading, keysState, handleAddKeyPanel, withoutHeader } = props
+  const { selectKey, loadMoreItems, loading, keysState, handleAddKeyPanel } = props
 
   const [lastRefreshMessage, setLastRefreshMessage] = useState('')
+  const [constructingTree, setConstructingTree] = useState(true)
 
   const { data: selectedKey } = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount, lastRefreshTime } = useSelector(keysDataSelector)
   const { isSearched, isFiltered } = useSelector(keysSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
+
+  const [keyListState, setKeyListState] = useState<IKeyListPropTypes>(keysState)
+
   const dispatch = useDispatch()
 
   const handleRefreshKeys = () => {
@@ -80,6 +85,8 @@ const KeyList = (props: Props) => {
         databaseId: instanceId
       }
     })
+    setConstructingTree(true)
+
     dispatch(fetchKeys(
       '0',
       SCAN_COUNT_DEFAULT,
@@ -108,6 +115,14 @@ const KeyList = (props: Props) => {
     return total ? NoResultsFoundText : NoKeysToDisplayText
   }
 
+  const updateKeysList = (items:any) => {
+    const newState:IKeyListPropTypes = {
+      ...keyListState,
+      keys: Object.values(items)
+    }
+    setKeyListState(newState)
+  }
+
   const updateLastRefresh = () => {
     setLastRefreshMessage(
       lastRefreshTime
@@ -127,7 +142,7 @@ const KeyList = (props: Props) => {
     ) {
       clearTimeout(wheelTimer)
       wheelTimer = window.setTimeout(() => {
-        loadMoreItems?.({ stopIndex: SCAN_COUNT_DEFAULT, startIndex: 1 })
+        loadMoreItems({ stopIndex: SCAN_COUNT_DEFAULT, startIndex: 1 })
       }, 100)
     }
   }
@@ -279,53 +294,82 @@ const KeyList = (props: Props) => {
     },
   ]
 
+  const loadMoreRows = async (params: IndexRange): Promise<any> => {
+    const { startIndex, stopIndex } = params
+
+    // We do not load more results for first load
+    // if (forceScrollTop !== undefined) return
+
+    if (!loading) {
+      loadMoreItems({ startIndex, stopIndex })
+    }
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        {!withoutHeader && (
-          <div className={styles.header}>
-            <FilterKeyType />
-            <SearchKeyList />
-            <div className={styles.refresh}>
-              <EuiToolTip
-                title="Last Refresh"
-                className={styles.tooltip}
-                position="top"
-                content={lastRefreshMessage}
-              >
-                <EuiButtonIcon
-                  iconType="refresh"
-                  color="primary"
-                  disabled={loading}
-                  onClick={handleRefreshKeys}
-                  onMouseEnter={updateLastRefresh}
-                  className={styles.btnRefresh}
-                  aria-labelledby="Refresh keys"
-                  data-testid="refresh-keys-btn"
-                />
-              </EuiToolTip>
-            </div>
-          </div>
-        )}
+        <div className={styles.header}>
+          <FilterKeyType />
+          <SearchKeyList />
+          <div>
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              style={{ marginLeft: 25, height: 26 }}
+              disabled={loading || constructingTree}
+              onClick={() => {
+                setConstructingTree(true)
 
-        <div className={styles.table}>
-          <div className="key-list-table" data-testid="keyList-table">
-            <VirtualTable
-              onRowClick={selectKey}
-              headerHeight={withoutHeader ? 0 : 60}
-              rowHeight={43}
-              columns={columns}
-              isRowSelectable
-              loadMoreItems={loadMoreItems}
-              onWheel={onWheelSearched}
-              loading={loading}
+                loadMoreRows({
+                  stopIndex: SCAN_COUNT_DEFAULT - 1,
+                  startIndex: 0,
+                })
+              }}
+              data-testid="scan-more"
+            >
+              Scan more
+            </EuiButton>
+          </div>
+          <div className={styles.refresh}>
+            <EuiToolTip
+              title="Last Refresh"
+              className={styles.tooltip}
+              position="top"
+              content={lastRefreshMessage}
+            >
+              <EuiButtonIcon
+                iconType="refresh"
+                color="primary"
+                disabled={loading || constructingTree}
+                onClick={handleRefreshKeys}
+                onMouseEnter={updateLastRefresh}
+                className={styles.btnRefresh}
+                aria-labelledby="Refresh keys"
+                data-testid="refresh-keys-btn"
+              />
+            </EuiToolTip>
+          </div>
+        </div>
+
+        <div className={styles.body}>
+          <div className={styles.tree}>
+            {/* <div className="key-list-table" data-testid="keys-tree"> */}
+            <VirtualTree
               items={keysState.keys}
-              totalItemsCount={keysState.total}
-              scanned={isSearched || isFiltered ? keysState.scanned : 0}
-              noItemsMessage={getNoItemsMessage()}
-              selectedKey={selectedKey}
-              scrollTopProp={scrollTopPosition}
-              setScrollTopPosition={setScrollTopPosition}
+              webworkerFn={constructKeysToTree}
+              onSelectLeaf={updateKeysList}
+              // webworkerFn={constructKeysToTreeSingle}
+              setConstructingTree={setConstructingTree}
+            />
+          </div>
+          <div className={styles.list}>
+            <KeyList
+              withoutHeader
+              keysState={keyListState}
+              loading={loading}
+              selectKey={selectKey}
+              handleAddKeyPanel={handleAddKeyPanel}
             />
           </div>
         </div>
@@ -334,4 +378,4 @@ const KeyList = (props: Props) => {
   )
 }
 
-export default KeyList
+export default KeyTree

@@ -516,8 +516,8 @@ jobs:
             choco install nodejs --version=15.14.0
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
-            yarn --cwd redisinsight/api/ install
-            yarn build:statics:win
+            # yarn --cwd redisinsight/api/ install
+            # yarn build:statics:win
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/win-unpacked

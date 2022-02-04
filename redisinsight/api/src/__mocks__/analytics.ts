@@ -34,6 +34,10 @@ export const mockCliAnalyticsService = () => ({
   sendConnectionErrorEvent: jest.fn(),
 });
 
+export const mockWorkbenchAnalyticsService = () => ({
+  sendCommandExecutedEvent: jest.fn(),
+});
+
 export const mockSettingsAnalyticsService = () => ({
   sendAnalyticsAgreementChange: jest.fn(),
   sendSettingsUpdatedEvent: jest.fn(),

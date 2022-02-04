@@ -1,5 +1,5 @@
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { CliParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
+import { CommandParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
 import {
   mockRedisAskError,
   mockRedisMovedError,
@@ -82,7 +82,7 @@ describe('Cli helper', () => {
         splitCliCommandLine(input);
         fail();
       } catch (err) {
-        expect(err).toBeInstanceOf(CliParsingError);
+        expect(err).toBeInstanceOf(CommandParsingError);
         expect(err.message).toEqual(
           ERROR_MESSAGES.CLI_INVALID_QUOTES_CLOSING(),
         );
@@ -95,7 +95,7 @@ describe('Cli helper', () => {
         splitCliCommandLine(input);
         fail();
       } catch (err) {
-        expect(err).toBeInstanceOf(CliParsingError);
+        expect(err).toBeInstanceOf(CommandParsingError);
         expect(err.message).toEqual(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
       }
     });
@@ -106,7 +106,7 @@ describe('Cli helper', () => {
         splitCliCommandLine(input);
         fail();
       } catch (err) {
-        expect(err).toBeInstanceOf(CliParsingError);
+        expect(err).toBeInstanceOf(CommandParsingError);
         expect(err.message).toEqual(
           ERROR_MESSAGES.CLI_INVALID_QUOTES_CLOSING(),
         );
@@ -119,7 +119,7 @@ describe('Cli helper', () => {
         splitCliCommandLine(input);
         fail();
       } catch (err) {
-        expect(err).toBeInstanceOf(CliParsingError);
+        expect(err).toBeInstanceOf(CommandParsingError);
         expect(err.message).toEqual(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
       }
     });

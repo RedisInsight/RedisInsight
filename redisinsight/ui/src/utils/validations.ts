@@ -71,4 +71,4 @@ export const validateNumber = (initValue: string, maxNumber: number = MAX_PORT_N
 }
 
 export const validateCertName = (initValue: string) =>
-  initValue.replace(/[^ a-zA-Z0-9!@#$%^&*-_\\(\\)\\[\\] ]+/gi, '').toString()
+  initValue.replace(/[^ a-zA-Z0-9!@#$%^&*-_()[\]]+/gi, '').toString()

@@ -11,7 +11,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { getRandomKeyName } from '../../../helpers/keys';
-import { rte } from '../../../helpers/constants';
+import { rte, env } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
@@ -31,7 +31,7 @@ fixture `Monitor`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     .after(async () => {
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -54,7 +54,7 @@ test
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
         //Define commands in different clients
         const cli_command = 'command';

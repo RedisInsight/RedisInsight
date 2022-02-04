@@ -31,3 +31,8 @@ export enum rte {
     reCluster = 're-cluster',
     reCloud = 're-cloud'
 }
+
+export enum env {
+    web = 'web',
+    desktop = 'desktop'
+}

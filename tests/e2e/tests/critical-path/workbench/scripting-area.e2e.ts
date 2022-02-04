@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import { rte, env } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -47,7 +47,7 @@ test
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
@@ -90,7 +90,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });

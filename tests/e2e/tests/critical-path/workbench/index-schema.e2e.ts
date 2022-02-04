@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import { rte, env } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
@@ -25,7 +25,7 @@ fixture `Index Schema at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -48,7 +48,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const commandsForSend = [

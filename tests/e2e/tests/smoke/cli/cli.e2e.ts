@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -72,7 +72,7 @@ test
         await t.expect(cliPage.cliCommandInput.exists).notOk('Cli input is not shown');
     });
 test
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can use unblocking command', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);

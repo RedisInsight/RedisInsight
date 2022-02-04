@@ -6,7 +6,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -27,7 +27,7 @@ fixture `CLI Command helper`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         const commandForCheck = 'JSON.SET';
         //Open Command Helper
@@ -46,7 +46,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         const commandForCheck = 'FT.EXPLAIN';
         //Open Command Helper
@@ -62,9 +62,10 @@ test
         await t.expect(getPageUrl()).contains('/#ftexplain');
         //Check that command info is displayed on the page
         await t.expect(cliPage.cliReadMoreRediSearchCommandDocumentation().textContent).contains('FT.EXPLAIN');
+        await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
         const commandForCheck = 'PFCOUNT';
         //Open Command Helper
@@ -78,9 +79,10 @@ test
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
         await t.expect(getPageUrl()).contains('/pfcount');
+        await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
         const AIGroups = [
             'Model',

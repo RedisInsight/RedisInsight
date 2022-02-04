@@ -6,7 +6,7 @@ import {
     ossClusterConfig,
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 
 fixture `Add database`
     .meta({ type: 'smoke' })
@@ -31,7 +31,7 @@ test
         await addNewREClusterDatabase(redisEnterpriseClusterConfig);
     });
 test
-    .meta({ env: 'web', rte: rte.ossCluster})
+    .meta({ env: env.web, rte: rte.ossCluster})
     .after(async () => {
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })

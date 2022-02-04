@@ -1,6 +1,6 @@
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { rte } from '../../../helpers/constants';
+import { rte, env } from '../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
@@ -27,7 +27,7 @@ fixture `Default scripts area at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
@@ -59,7 +59,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
@@ -86,7 +86,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         const aggregationResultField = 'max_price';

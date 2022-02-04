@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneV5Config } from '../../../helpers/conf';
@@ -23,7 +23,7 @@ fixture `Redisearch module not available`
         await deleteDatabase(ossStandaloneV5Config.databaseName);
     })
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see the "Create your free Redis database with RediSearch on Redis Cloud" button and click on it in Workbench when module in not loaded', async t => {
         //Send command with 'FT.'
         await workbenchPage.sendCommandInWorkbench(commandForSend);

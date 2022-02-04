@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
@@ -25,7 +25,7 @@ fixture `JSON verifications at Workbench`
     })
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({env: 'web', rte: rte.standalone })
+    .meta({env: env.web, rte: rte.standalone })
     ('Verify that user can execute redisearch command for JSON data type in Workbench', async t => {
         indexName = chance.word({ length: 10 });
         const commandsForSend = [

@@ -5,7 +5,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -35,7 +35,7 @@ fixture.skip `Command results at Workbench`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
         indexName = chance.word({ length: 5 });
         const infoCommand = `FT.INFO ${indexName}`;
@@ -48,7 +48,7 @@ test
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.INFO`);
     });
 test
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
         indexName = chance.word({ length: 5 });
         const searchCommand = `FT.SEARCH ${indexName} *`;
@@ -61,7 +61,7 @@ test
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.SEARCH`);
     });
 test
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
         indexName = chance.word({ length: 5 });
         const aggregateCommand = `FT.Aggregate ${indexName} * GROUPBY 0 REDUCE MAX 1 @price AS max_price`;
@@ -74,7 +74,7 @@ test
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.AGGREGATE`);
     });
 test
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const command = 'CLIENT LIST';

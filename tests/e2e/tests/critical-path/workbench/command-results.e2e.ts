@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -81,7 +81,7 @@ test
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
         indexName = chance.word({ length: 5 });
         const commands = [
@@ -103,7 +103,7 @@ test.skip
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: 'web', rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default

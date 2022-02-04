@@ -207,6 +207,11 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
       throw new Error('"newWindow" is not defined');
     }
 
+    const zoomFactor = store?.get(ElectronStorageItem.zoomFactor) as number ?? null;
+    if (zoomFactor) {
+      newWindow?.webContents.setZoomFactor(zoomFactor);
+    }
+
     if (!trayInstance?.isDestroyed()) {
       tray?.updateTooltip(newWindow.webContents.getTitle());
     }
@@ -294,6 +299,10 @@ export const updateDisplayAppInTray = (value: boolean) => {
 
 export const setToQuiting = () => {
   isQuiting = true;
+};
+
+export const setValueToStore = (key: ElectronStorageItem, value: any) => {
+  store?.set(key, value);
 };
 
 /**

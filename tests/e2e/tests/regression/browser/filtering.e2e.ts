@@ -1,3 +1,4 @@
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -20,41 +21,48 @@ fixture `Filtering per key name in Browser page`
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
-    keyName = chance.word({ length: 20 });
-    //Add new key
-    await browserPage.addStringKey(keyName);
-    //Search not existed key
-    const searchedKeyName = 'key00000qwertyuiop[asdfghjkl';
-    await browserPage.searchByKeyName(searchedKeyName);
-    //Verify the standard screen when there are no keys found
-    const noResultsFound = await browserPage.noResultsFound.textContent;
-    const searchAdvices = await browserPage.searchAdvices.textContent;
-    await t.expect(noResultsFound).eql('No results found.', 'The no results text');
-    await t.expect(searchAdvices).eql('Check the spelling.Check upper and lower cases.Use an asterisk (*) in your request for more generic results.', 'The advices text');
-});
-test('Verify that user can filter per pattern with * (matches keys with any number of characters instead of *)', async t => {
-    keyName = `KeyForSearch*${chance.word({ length: 10 })}?[]789`;
-    //Add new key
-    await browserPage.addStringKey(keyName);
-    //Filter per pattern with *
-    const searchedValue = 'KeyForSear*';
-    await browserPage.searchByKeyName(searchedValue);
-    //Verify that key was found
-    await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
-});
-test('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
-    const randomValue = chance.word({ length: 10 });
-    keyName = `KeyForSearch*?[]789${randomValue}`;
-    //Add new key
-    await browserPage.addStringKey(keyName);
-    //Filter per pattern with ?
-    const searchedValue = `?eyForSearch\\*\\?\\[]789${randomValue}`;
-    await browserPage.searchByKeyName(searchedValue);
-    //Verify that key was found
-    await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
-});
 test
+    .meta({ rte: rte.standalone })
+    ('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
+        keyName = chance.word({ length: 20 });
+        //Add new key
+        await browserPage.addStringKey(keyName);
+        //Search not existed key
+        const searchedKeyName = 'key00000qwertyuiop[asdfghjkl';
+        await browserPage.searchByKeyName(searchedKeyName);
+        //Verify the standard screen when there are no keys found
+        const noResultsFound = await browserPage.noResultsFound.textContent;
+        const searchAdvices = await browserPage.searchAdvices.textContent;
+        await t.expect(noResultsFound).eql('No results found.', 'The no results text');
+        await t.expect(searchAdvices).eql('Check the spelling.Check upper and lower cases.Use an asterisk (*) in your request for more generic results.', 'The advices text');
+    });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can filter per pattern with * (matches keys with any number of characters instead of *)', async t => {
+        keyName = `KeyForSearch*${chance.word({ length: 10 })}?[]789`;
+        //Add new key
+        await browserPage.addStringKey(keyName);
+        //Filter per pattern with *
+        const searchedValue = 'KeyForSear*';
+        await browserPage.searchByKeyName(searchedValue);
+        //Verify that key was found
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
+    });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
+        const randomValue = chance.word({ length: 10 });
+        keyName = `KeyForSearch*?[]789${randomValue}`;
+        //Add new key
+        await browserPage.addStringKey(keyName);
+        //Filter per pattern with ?
+        const searchedValue = `?eyForSearch\\*\\?\\[]789${randomValue}`;
+        await browserPage.searchByKeyName(searchedValue);
+        //Verify that key was found
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
+    });
+test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
@@ -75,6 +83,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).ok('The key was found');
     });
 test
+    .meta({ rte: rte.standalone })    
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
@@ -96,6 +105,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).notOk('The key wasn\'t found');
     });
 test
+    .meta({ rte: rte.standalone })    
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);

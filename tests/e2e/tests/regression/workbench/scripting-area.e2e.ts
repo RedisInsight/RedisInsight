@@ -1,4 +1,5 @@
 import { Selector } from 'testcafe';
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage,CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -25,22 +26,25 @@ fixture `Scripting area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
-    const commandsForSend = [
-        'info',
-        `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        'HMSET product:1 price 20',
-        'FT._LIST'
-    ]
-    //Send commands in multiple lines
-    await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
-    //Check the result
-    for(let i = 1; i < commandsForSend.length + 1; i++) {
-        const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
-        await t.expect(resultCommand).eql(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in the result`);
-    }
-});
 test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
+        const commandsForSend = [
+            'info',
+            `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
+            'HMSET product:1 price 20',
+            'FT._LIST'
+        ]
+        //Send commands in multiple lines
+        await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
+        //Check the result
+        for(let i = 1; i < commandsForSend.length + 1; i++) {
+            const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
+            await t.expect(resultCommand).eql(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in the result`);
+        }
+    });
+test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
@@ -61,6 +65,7 @@ test
         }
     });
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         for(let i = 1; i < 4; i++) {
@@ -81,6 +86,7 @@ test
         await t.expect(workbenchPage.monacoCommandIndicator.count).eql(numberOfCommands, 'Number of command indicator');
     });
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
@@ -102,13 +108,15 @@ test
         //Check the result with sent command
         await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command');
     });
-test('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
-    const command = 'FT._LIST';
-    const repeats = 5;
-    //Rum command in Workbench with repeats
-    await workbenchPage.sendCommandInWorkbench(`${repeats} ${command}`);
-    //Verify result
-    for (let i = 0; i < repeats; i++) {
-        await t.expect(workbenchPage.queryCardContainer.nth(i).textContent).contains(command, `Workbench contains separate results`);
-    }
-});
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
+        const command = 'FT._LIST';
+        const repeats = 5;
+        //Rum command in Workbench with repeats
+        await workbenchPage.sendCommandInWorkbench(`${repeats} ${command}`);
+        //Verify result
+        for (let i = 0; i < repeats; i++) {
+            await t.expect(workbenchPage.queryCardContainer.nth(i).textContent).contains(command, `Workbench contains separate results`);
+        }
+    });

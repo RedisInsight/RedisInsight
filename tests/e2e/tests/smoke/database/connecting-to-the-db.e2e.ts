@@ -7,6 +7,7 @@ import {
     ossSentinelConfig
 } from '../../../helpers/conf';
 import { discoverSentinelDatabase, addOSSClusterDatabase } from '../../../helpers/database';
+import { env, rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
@@ -19,6 +20,7 @@ fixture `Connecting to the databases verifications`
         await acceptLicenseTerms();
     })
 test
+    .meta({ env: env.web, rte: rte.sentinel })
     .after(async () => {
         //Delete database
         await myRedisDatabasePage.deleteDatabaseByName('primary-group-1');
@@ -42,6 +44,7 @@ test
         }
     });
 test
+    .meta({ env: env.web, rte: rte.ossCluster })
     .after(async () => {
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })

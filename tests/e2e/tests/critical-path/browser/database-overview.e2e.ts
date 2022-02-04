@@ -1,4 +1,5 @@
 import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { rte } from '../../../helpers/constants';
 import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
@@ -41,6 +42,7 @@ fixture `Database overview`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete databases
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -77,26 +79,29 @@ test
         }
         await t.expect(firstDatabaseModules).notEql(secondDatabaseModules, 'The list of Modules updated');
     });
-test('Verify that when user adds or deletes a new key, info in DB header is updated in 5 seconds', async t => {
-    keyName = chance.string({ length: 10 });
-    //Remember the total keys number
-    const totalKeysBeforeAdd = await browserPage.overviewTotalKeys.innerText;
-    //Add new key
-    await browserPage.addHashKey(keyName);
-    //Wait 5 seconds
-    await t.wait(fiveSecondsTimeout);
-    //Verify that the info on DB header is updated after adds
-    const totalKeysAftreAdd = await browserPage.overviewTotalKeys.innerText;
-    await t.expect(totalKeysAftreAdd).eql((Number(totalKeysBeforeAdd) + 1).toString(), 'Info in DB header after ADD');
-    //Delete key
-    await browserPage.deleteKeyByName(keyName);
-    //Wait 5 seconds
-    await t.wait(fiveSecondsTimeout);
-    //Verify that the info on DB header is updated after deletion
-    const totalKeysAftreDelete = await browserPage.overviewTotalKeys.innerText;
-    await t.expect(totalKeysAftreDelete).eql((Number(totalKeysAftreAdd) - 1).toString(), 'Info in DB header after DELETE');
-});
 test
+    .meta({ rte: rte.standalone })
+    ('Verify that when user adds or deletes a new key, info in DB header is updated in 5 seconds', async t => {
+        keyName = chance.string({ length: 10 });
+        //Remember the total keys number
+        const totalKeysBeforeAdd = await browserPage.overviewTotalKeys.innerText;
+        //Add new key
+        await browserPage.addHashKey(keyName);
+        //Wait 5 seconds
+        await t.wait(fiveSecondsTimeout);
+        //Verify that the info on DB header is updated after adds
+        const totalKeysAftreAdd = await browserPage.overviewTotalKeys.innerText;
+        await t.expect(totalKeysAftreAdd).eql((Number(totalKeysBeforeAdd) + 1).toString(), 'Info in DB header after ADD');
+        //Delete key
+        await browserPage.deleteKeyByName(keyName);
+        //Wait 5 seconds
+        await t.wait(fiveSecondsTimeout);
+        //Verify that the info on DB header is updated after deletion
+        const totalKeysAftreDelete = await browserPage.overviewTotalKeys.innerText;
+        await t.expect(totalKeysAftreDelete).eql((Number(totalKeysAftreAdd) - 1).toString(), 'Info in DB header after DELETE');
+    });
+test
+    .meta({ rte: rte.standalone })
     .after(async t => {
         //Clear and delete database
         await t.click(myRedisDatabasePage.myRedisDBButton);
@@ -128,6 +133,7 @@ test
         await t.expect(totalKeys).eql('18 M', 'Info in DB header is 18 M keys');
     });
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
@@ -142,6 +148,7 @@ test
         await t.expect(browserPage.overviewTotalMemory.textContent).contains('MB', 'Total memory value is MB');
     });
 test
+    .meta({ rte: rte.standalone })
     .before(async t => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         //Go to Workbench page

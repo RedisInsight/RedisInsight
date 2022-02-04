@@ -4,6 +4,7 @@ import {
     CliPage,
     WorkbenchPage
 } from '../../../pageObjects';
+import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
@@ -25,13 +26,15 @@ fixture `Database overview`
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
-    //Create new keys
-    keys = await common.createArrayWithKeyValue(10);
-    await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
-    //Open Workbench
-    await t.click(myRedisDatabasePage.workbenchButton);
-    //Verify that user can see total memory and total number of keys
-    await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can see total keys');
-    await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can see total memory');
-});
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
+        //Create new keys
+        keys = await common.createArrayWithKeyValue(10);
+        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+        //Open Workbench
+        await t.click(myRedisDatabasePage.workbenchButton);
+        //Verify that user can see total memory and total number of keys
+        await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can see total keys');
+        await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can see total memory');
+    });

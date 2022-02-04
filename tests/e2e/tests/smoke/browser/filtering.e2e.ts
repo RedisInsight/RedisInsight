@@ -1,3 +1,4 @@
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -25,32 +26,37 @@ fixture `Filtering per key name in Browser page`
         await browserPage.deleteKeyByName(`${searchedKeyName}${randomValue}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can search per full key name', async t => {
-    randomValue = chance.word({ length: 10 });
-    keyName = `KeyForSearch*?[]789${randomValue}`;
-    //Add new key
-    await browserPage.addStringKey(keyName);
-    //Search by key with full name
-    await browserPage.searchByKeyName(`${searchedKeyName}${randomValue}`);
-    //Verify that key was found
-    const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-    await t.expect(isKeyIsDisplayedInTheList).ok('The key was found');
-});
-test('Verify that user can filter per exact key without using any patterns', async t => {
-    randomValue = chance.word({ length: 10 });
-    keyName = `KeyForSearch*?[]789${randomValue}`;
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
-    //Create new key for search
-    await t.typeText(cliPage.cliCommandInput, `APPEND ${keyName} 1`);
-    await t.pressKey('enter');
-    await t.click(cliPage.cliCollapseButton);
-    //Filter per exact key without using any patterns
-    await browserPage.searchByKeyName(`${searchedKeyName}${randomValue}`);
-    //Verify that key was found
-    await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
-});
 test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can search per full key name', async t => {
+        randomValue = chance.word({ length: 10 });
+        keyName = `KeyForSearch*?[]789${randomValue}`;
+        //Add new key
+        await browserPage.addStringKey(keyName);
+        //Search by key with full name
+        await browserPage.searchByKeyName(`${searchedKeyName}${randomValue}`);
+        //Verify that key was found
+        const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
+        await t.expect(isKeyIsDisplayedInTheList).ok('The key was found');
+    });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can filter per exact key without using any patterns', async t => {
+        randomValue = chance.word({ length: 10 });
+        keyName = `KeyForSearch*?[]789${randomValue}`;
+        //Open CLI
+        await t.click(cliPage.cliExpandButton);
+        //Create new key for search
+        await t.typeText(cliPage.cliCommandInput, `APPEND ${keyName} 1`);
+        await t.pressKey('enter');
+        await t.click(cliPage.cliCollapseButton);
+        //Filter per exact key without using any patterns
+        await browserPage.searchByKeyName(`${searchedKeyName}${randomValue}`);
+        //Verify that key was found
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
+    });
+test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);

@@ -1,6 +1,7 @@
 import { getRandomParagraph } from '../../../helpers/keys';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
+import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
 
@@ -26,18 +27,21 @@ fixture `History of results at Workbench`
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
-    keyName = chance.word({ length: 5 });
-    //Send command and remember the time
-    await workbenchPage.sendCommandInWorkbench(command);
-    const dateTime = await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent;
-    //Wait fo 1 minute, refresh page and check results
-    await t.wait(oneMinuteTimeout);
-    await t.eval(() => location.reload());
-    await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent).eql(dateTime, 'The original date and time of command execution is saved after the page update');
-});
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
+        keyName = chance.word({ length: 5 });
+        //Send command and remember the time
+        await workbenchPage.sendCommandInWorkbench(command);
+        const dateTime = await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent;
+        //Wait fo 1 minute, refresh page and check results
+        await t.wait(oneMinuteTimeout);
+        await t.eval(() => location.reload());
+        await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent).eql(dateTime, 'The original date and time of command execution is saved after the page update');
+    });
 //skipped due the long time execution and hangs of test
 test.skip
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -54,18 +58,20 @@ test.skip
         await t.click(workbenchPage.queryCardContainer.withText(commandToGet));
         await t.expect(workbenchPage.queryTextResult.textContent).eql('"Results have been deleted since they exceed 1 MB. Re-run the command to see new results."', 'The messageis displayed');
     });
-test('Verify that the first command in workbench history is deleted when user executes 31 command (new the following result replaces the first result)', async t => {
-    keyName = chance.word({ length: 10 });
-    const numberOfCommands = 30;
-    const firstCommand = 'FT._LIST';
-    //Send command the first command
-    await workbenchPage.sendCommandInWorkbench(firstCommand);
-    await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(firstCommand, 'The first executed command is in the workbench history');
-    //Send 30 commands and check the results
-    await workbenchPage.sendCommandInWorkbench(`${numberOfCommands} ${command}`);
-    for( let i = 0; i < numberOfCommands; i++) {
-        await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(command, 'The command executed after the first command is displayed');
-        await t.click(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssDeleteCommandButton));
-    }
-    await t.expect(workbenchPage.noCommandHistoryTitle.visible).ok('The first command is deleted when user executes 31 command');
-});
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that the first command in workbench history is deleted when user executes 31 command (new the following result replaces the first result)', async t => {
+        keyName = chance.word({ length: 10 });
+        const numberOfCommands = 30;
+        const firstCommand = 'FT._LIST';
+        //Send command the first command
+        await workbenchPage.sendCommandInWorkbench(firstCommand);
+        await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(firstCommand, 'The first executed command is in the workbench history');
+        //Send 30 commands and check the results
+        await workbenchPage.sendCommandInWorkbench(`${numberOfCommands} ${command}`);
+        for( let i = 0; i < numberOfCommands; i++) {
+            await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(command, 'The command executed after the first command is displayed');
+            await t.click(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssDeleteCommandButton));
+        }
+        await t.expect(workbenchPage.noCommandHistoryTitle.visible).ok('The first command is deleted when user executes 31 command');
+    });

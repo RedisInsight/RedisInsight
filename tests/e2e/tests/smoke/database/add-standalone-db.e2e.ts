@@ -6,6 +6,7 @@ import {
     ossClusterConfig,
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
+import { env, rte } from '../../../helpers/constants';
 
 fixture `Add database`
     .meta({ type: 'smoke' })
@@ -14,6 +15,7 @@ fixture `Add database`
         await acceptLicenseTerms();
     })
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
@@ -21,6 +23,7 @@ test
         await addNewStandaloneDatabase(ossStandaloneConfig);
     });
 test
+    .meta({ rte: rte.reCluster })
     .after(async () => {
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })
@@ -28,6 +31,7 @@ test
         await addNewREClusterDatabase(redisEnterpriseClusterConfig);
     });
 test
+    .meta({ env: env.web, rte: rte.ossCluster})
     .after(async () => {
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })
@@ -35,7 +39,9 @@ test
         await addOSSClusterDatabase(ossClusterConfig);
     });
 //skiped until the RE Cloud connection is implemented
-test.skip('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
-    //TODO: add api keys from env
-    await addNewRECloudDatabase('', '');
-});
+test.skip
+    .meta({ rte: rte.reCloud })
+    ('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
+        //TODO: add api keys from env
+        await addNewRECloudDatabase('', '');
+    });

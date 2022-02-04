@@ -6,8 +6,14 @@ import {
   MenuItemConstructorOptions,
   MenuItem,
 } from 'electron';
+import { ElectronStorageItem } from './ui/src/electron/constants';
 // eslint-disable-next-line import/no-cycle
-import { createWindow, getDisplayAppInTrayValue, updateDisplayAppInTray } from './main.dev';
+import {
+  createWindow,
+  getDisplayAppInTrayValue,
+  setValueToStore,
+  updateDisplayAppInTray,
+} from './main.dev';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -104,13 +110,33 @@ export default class MenuBuilder {
           },
         },
         { type: 'separator' },
-        { role: 'resetZoom', label: 'Reset Zoom' },
-        { role: 'zoomIn', visible: false },
         {
-          role: 'zoomIn',
-          accelerator: 'CmdOrCtrl+=',
+          label: 'Reset Zoom',
+          accelerator: 'CmdOrCtrl+0',
+          click: () => {
+            const zoomFactor = 1;
+            setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+            this.mainWindow.webContents.setZoomFactor(zoomFactor);
+          },
         },
-        { role: 'zoomOut' },
+        {
+          label: 'Zoom In',
+          accelerator: 'CmdOrCtrl+=',
+          click: () => {
+            const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + 0.2 * 100) / 100;
+            setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+            this.mainWindow.webContents.setZoomFactor(zoomFactor);
+          },
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'CmdOrCtrl+-',
+          click: () => {
+            const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 - 0.2 * 100) / 100;
+            setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+            this.mainWindow.webContents.setZoomFactor(zoomFactor);
+          },
+        },
       ],
     };
     const subMenuWindow: DarwinMenuItemConstructorOptions = {
@@ -241,13 +267,33 @@ export default class MenuBuilder {
             },
           },
           { type: 'separator' },
-          { role: 'resetZoom', label: 'Reset Zoom' },
-          { role: 'zoomIn', visible: false },
           {
-            role: 'zoomIn',
-            accelerator: 'CmdOrCtrl+=',
+            label: 'Reset &Zoom',
+            accelerator: 'Ctrl+0',
+            click: () => {
+              const zoomFactor = 1;
+              setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+              this.mainWindow.webContents.setZoomFactor(zoomFactor);
+            },
           },
-          { role: 'zoomOut' },
+          {
+            label: 'Zoom &In',
+            accelerator: 'Ctrl+=',
+            click: () => {
+              const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + 0.2 * 100) / 100;
+              setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+              this.mainWindow.webContents.setZoomFactor(zoomFactor);
+            },
+          },
+          {
+            label: 'Zoom &Out',
+            accelerator: 'Ctrl+-',
+            click: () => {
+              const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 - 0.2 * 100) / 100;
+              setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+              this.mainWindow.webContents.setZoomFactor(zoomFactor);
+            },
+          },
         ],
       },
       {

@@ -77,7 +77,7 @@ export default {
     unsupportedCommands: JSON.parse(process.env.CLI_UNSUPPORTED_COMMANDS || '[]'),
   },
   analytics: {
-    writeKey: "CnOnUqqeXkVyfwDiNFkQsrGvUodNXtN4",
+    writeKey: process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
   },
   logger: {
     stdout: process.env.STDOUT_LOGGER ? process.env.STDOUT_LOGGER === 'true' : false, // disabled by default

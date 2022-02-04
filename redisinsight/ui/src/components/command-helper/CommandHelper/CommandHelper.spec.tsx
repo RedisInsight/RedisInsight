@@ -131,6 +131,7 @@ describe('CliHelper', () => {
   })
 
   it('Arguments component should be in the Document when Command is matched and argList exists', () => {
+    // eslint-disable-next-line react/no-array-index-key
     const argList = ['key', 'field'].map((field, i) => <div key={i}>{field}</div>)
     const { queryByTestId } = render(
       <CommandHelper {...instance(mockedProps)} commandLine={commandLine} argList={argList} />

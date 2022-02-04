@@ -3,10 +3,9 @@
   line-height: 34px;
   width: 100%;
   overflow: hidden;
-  background-color: var(--browserTableRowEven);
+  background-color: var(--euiPageBackgroundColor);
 
-  padding-left: 18px;
-  padding-right: 18px;
+  padding: 0 10px 0 16px;
   z-index: 10;
 }
 

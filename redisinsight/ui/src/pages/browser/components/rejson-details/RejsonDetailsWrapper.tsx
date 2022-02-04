@@ -11,20 +11,15 @@ import RejsonDetails from './RejsonDetails/RejsonDetails'
 
 import styles from './styles.module.scss'
 
-interface changeEvent extends React.ChangeEvent<HTMLInputElement> {}
-
-// This interface has been kept empty for now. If any changes is to be made to the body format for updating purpose , the necessary properties will be added here.
-interface UpdateValueBody {}
-
 const RejsonDetailsWrapper = () => {
   const { loading } = useSelector(rejsonSelector)
   const { data, downloaded, type } = useSelector(rejsonDataSelector)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) || {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
 
-  const handleSubmitJsonUpdateValue = async (body: UpdateValueBody) => {}
+  const handleSubmitJsonUpdateValue = async () => {}
 
-  const handleEditValueUpdate = (event: changeEvent) => {}
+  const handleEditValueUpdate = () => {}
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({

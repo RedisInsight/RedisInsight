@@ -48,7 +48,7 @@ export const MOCK_ENABLEMENT_AREA_ITEMS: Record<string, IEnablementAreaItem> = {
       path: 'static/workbench/quick-guides/document-capabilities.html'
     },
   },
-  'manual': {
+  manual: {
     type: EnablementAreaComponent.CodeButton,
     id: 'manual',
     label: 'Manual',

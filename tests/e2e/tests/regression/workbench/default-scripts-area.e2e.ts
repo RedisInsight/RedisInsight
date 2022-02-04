@@ -110,8 +110,8 @@ test('Verify that user can see the siblings menu by clicking on page counter ele
     await t.expect(workbenchPage.enablementAreaPaginationPopover.visible).ok('The siblings menu is displayed');
     const countOfButtons = await workbenchPage.paginationPopoverButtons.count;
     for (let i = 0; i < countOfButtons; i++) {
-        let popoverButton = workbenchPage.paginationPopoverButtons.nth(i);
-        await t.expect(popoverButton.textContent).eql(popoverButtons[i], `The siblings menu button ${popoverButtons[i]} is displayed`);    
+        const popoverButton = workbenchPage.paginationPopoverButtons.nth(i);
+        await t.expect(popoverButton.textContent).eql(popoverButtons[i], `The siblings menu button ${popoverButtons[i]} is displayed`);
     }
 });
 test('Verify that user can see the quick navigation section to navigate between siblings under the scrolling content', async t => {

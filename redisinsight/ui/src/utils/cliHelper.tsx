@@ -100,7 +100,7 @@ const updateCliHistoryStorage = (
 
 const checkUnsupportedCommand = (unsupportedCommands: string[], commandLine: string) =>
   unsupportedCommands?.find((command) =>
-    commandLine?.trim().toLowerCase().startsWith(command))
+    commandLine?.trim().toLowerCase().startsWith(command?.toLowerCase()))
 
 const checkBlockingCommand = (blockingCommands: string[], commandLine: string) =>
   blockingCommands?.find((command) => commandLine?.trim().toLowerCase().startsWith(command))

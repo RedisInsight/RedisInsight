@@ -1,4 +1,4 @@
 import ElectronStorageItem from './storageElectron'
-import ipcEvent from './ipcEvent'
+import IpcEvent from './ipcEvent'
 
-export { ElectronStorageItem, ipcEvent }
+export { ElectronStorageItem, IpcEvent }

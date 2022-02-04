@@ -3,6 +3,8 @@
  * Copied the following code from snippet from official Segment docs:
  * https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/quickstart/#quickstart-analytics-js
  */
+
+/* eslint-disable */
 const loadSegmentAnalytics = (writeKey: string) => {
   // Create a queue, but don't obliterate an existing one!
   window.analytics = window.analytics || []

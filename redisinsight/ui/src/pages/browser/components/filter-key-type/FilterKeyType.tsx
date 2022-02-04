@@ -108,6 +108,7 @@ const FilterKeyType = () => {
           <div
             className={styles.allTypes}
             onClick={() => isVersionSupported && setIsSelectOpen(!isSelectOpen)}
+            role="presentation"
           >
             <EuiIcon
               type="controlsVertical"

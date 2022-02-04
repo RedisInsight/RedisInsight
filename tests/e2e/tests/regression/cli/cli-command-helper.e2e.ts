@@ -12,16 +12,19 @@ const common = new Common();
 const COMMAND_GROUP_JSON = 'JSON';
 const COMMAND_GROUP_SEARCH = 'Search';
 const COMMAND_GROUP_HyperLogLog = 'HyperLogLog';
+const COMMAND_GROUP_Gears = 'Gears';
+const COMMAND_GROUPS_AI = ['Model', 'Script', 'Inference', 'Tensor'];
+const COMMAND_GROUPS_Bloom = ['Bloom', 'CMS', 'TDigest', 'TopK', 'Cuckoo'];
 
 const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `CLI Command helper`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
@@ -75,12 +78,6 @@ test('Verify that user can see HyperLogLog title in Command Helper for this comm
     await t.switchToParentWindow();
 });
 test('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
-    const AIGroups = [
-        'Model',
-        'Script',
-        'Inference',
-        'Tensor'
-    ];
     const commandsForCheck = [
         'AI.MODELDEL',
         'AI.SCRIPTSTORE',
@@ -93,7 +90,7 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         'AI.SCRIPTEXECUTE key function [KEYS key_count key [key ...]] [INPUTS input_count input [input ...]] [ARGS arg_count arg [arg ...]] [OUTPUTS output_count output [output ...]] [TIMEOUT timeout]',
         'AI.TENSORSET key FLOAT|DOUBLE|INT8|INT16|INT32|INT64|UINT8|UINT16|STRING|BOOL shape [shape ...] [BLOB blob] [VALUES value [VALUES value ...]]'
     ];
-    const ExternalPage = [
+    const externalPage = [
         '/#aimodeldel',
         '/#aiscriptstore',
         '/#aiscriptexecute',
@@ -102,9 +99,9 @@ test('Verify that user can see all separated groups for AI json file (model, ten
     //Open Command Helper
     await t.click(cliPage.expandCommandHelperButton);
     let i = 0;
-    while (i <= 3) {
+    while (i < COMMAND_GROUPS_AI.length) {
         //Select one group from the list
-        await cliPage.selectFilterGroupType(AIGroups[i]);
+        await cliPage.selectFilterGroupType(COMMAND_GROUPS_AI[i]);
         //Click on the group
         await t.click(cliPage.cliHelperOutputTitles.withExactText(commandsForCheck[i]));
         //Verify results of opened command
@@ -112,7 +109,7 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).contains(ExternalPage[i]);
+        await t.expect(getPageUrl()).contains(externalPage[i]);
         //Close the window with external link to switch to the application window
         await t.closeWindow();
         i++;
@@ -166,4 +163,64 @@ test('Verify that user can see that Command Helper displays the previous informa
     await t.click(cliPage.expandCommandHelperButton);
     //Verify Command helper information
     await t.expect(cliPage.cliHelperTitleArgs.textContent).contains(commandForCheck, 'Command Helper information persists after reopening');
+});
+test.only('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
+    const commandForCheck = 'RG.GETEXECUTION';
+    const commandArgumentsCheck = 'RG.GETEXECUTION id [SHARD|CLUSTER]';
+    const readMoreLink = '#rggetexecution';
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    //Verify that user can see Gears group in Command Helper (RedisGears module)
+    await cliPage.selectFilterGroupType(COMMAND_GROUP_Gears);
+    //Select one command from the Gears list
+    await t.click(cliPage.cliHelperOutputTitles.withExactText(commandForCheck));
+    //Verify results of opened command
+    await t.expect(cliPage.cliHelperTitleArgs.textContent).eql(commandArgumentsCheck, 'Selected command title');
+    //Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
+    await t.click(cliPage.readMoreButton);
+    //Check new opened window page with the correct URL
+    await t.expect(getPageUrl()).contains(readMoreLink);
+    //Close the window with external link to switch to the application window
+    await t.closeWindow();
+});
+test('Verify that user can work with Bloom groups in Command Helper (RedisBloom module)', async t => {
+    const commandsForCheck = [
+        'BF.MEXISTS',
+        'CMS.QUERY',
+        'TDIGEST.RESET',
+        'TOPK.LIST',
+        'CF.ADD'
+    ];
+    const commandArgumentsCheck = [
+        'BF.MEXISTS key item [item ...]',
+        'CMS.QUERY key item [item ...]',
+        'TDIGEST.RESET key',
+        'TOPK.LIST key numKeys WITHCOUNT',
+        'CF.ADD key item'
+    ];
+    const externalPage = [
+        '/#bfmexists',
+        '/#cmsquery',
+        'tdigest.reset',
+        '/#topklist',
+        '/#cfadd'
+    ];
+    //Open Command Helper
+    await t.click(cliPage.expandCommandHelperButton);
+    let i = 0;
+    while (i < COMMAND_GROUPS_Bloom.length) {
+        //Verify that user can see Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module)
+        await cliPage.selectFilterGroupType(COMMAND_GROUPS_Bloom[i]);
+        //Click on the command
+        await t.click(cliPage.cliHelperOutputTitles.withExactText(commandsForCheck[i]));
+        //Verify results of opened command
+        await t.expect(cliPage.cliHelperTitleArgs.textContent).eql(commandArgumentsCheck[i], 'Selected command title');
+        //Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
+        await t.click(cliPage.readMoreButton);
+        //Check new opened window page with the correct URL
+        await t.expect(getPageUrl()).contains(externalPage[i]);
+        //Close the window with external link to switch to the application window
+        await t.closeWindow();
+        i++;
+    }
 });

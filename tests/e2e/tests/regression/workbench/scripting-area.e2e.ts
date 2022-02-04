@@ -1,17 +1,17 @@
 import { Selector } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage,CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 const cliPage = new CliPage();
 
-const indexName =  'products';
+const indexName = chance.word({ length: 5 });
+let keyName = chance.word({ length: 10 });
 
 fixture `Scripting area at Workbench`
     .meta({type: 'regression'})
@@ -21,13 +21,11 @@ fixture `Scripting area at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async(t) => {
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
-    });
+    .afterEach(async () => {
+        //Clear and delete database
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
@@ -47,9 +45,15 @@ test
     });
 test
     .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Clear and delete database
+        await cliPage.sendCommandInCli(`DEL ${keyName}`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
+        keyName = chance.word({ length: 10 });
         const commandsForSend = [
-            'HMSET product:1 price 20',
+            `HMSET ${keyName} price 20`,
             'FT._LIST'
         ];
         //Send commands in multiple lines with double slashes (//) wrapped in double quotes
@@ -62,6 +66,13 @@ test
     });
 test
     .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Clear and delete database
+        for(let i = 1; i < 4; i++) {
+            await cliPage.sendCommandInCli(`DEL permit:${i}`);
+        }
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         //Open Working with Hashes page
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
@@ -76,8 +87,14 @@ test
     });
 test
     .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Clear and delete database
+        await cliPage.sendCommandInCli(`DEL ${keyName}`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
-        const command = 'HSET key field value';
+        keyName = chance.word({ length: 10 });
+        const command = `HSET ${keyName} field value`;
         //Put a command in Editing Area
         await t.typeText(workbenchPage.queryInput, command);
         //Right click to get context menu
@@ -89,8 +106,7 @@ test
         //Select "Run Commands" from menu
         await t.click(workbenchPage.monacoSuggestionOption);
         //Check the result with sent command
-        const commandTextInResult = await workbenchPage.queryCardCommand.withExactText(command);
-        await t.expect(commandTextInResult.exists).ok('The result of sent command');
+        await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command');
     });
 test
     .meta({ rte: rte.standalone })

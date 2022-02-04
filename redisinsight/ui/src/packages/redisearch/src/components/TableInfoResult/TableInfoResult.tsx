@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { ReactElement, useEffect, useState } from 'react'
 import cx from 'classnames'
 import { toUpper, flatten, isArray, isEmpty, map, uniq } from 'lodash'

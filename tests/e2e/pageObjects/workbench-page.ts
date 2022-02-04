@@ -70,6 +70,7 @@ export class WorkbenchPage {
   enablementAreaTreeView: Selector
   fullScreenButton: Selector
   customPluginsViewType: Selector
+  preselectCreateHashIndex: Selector
 
   constructor() {
       //CSS selectors
@@ -105,6 +106,7 @@ export class WorkbenchPage {
       this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
       this.preselectSearch = Selector('[data-testid=preselect-Search]');
       this.preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
+      this.preselectCreateHashIndex = Selector('[data-testid="preselect-Create hash index"]');
       this.preselectGroupBy = Selector('[data-testid*=preselect-Group]');
       this.preselectButtons = Selector('[data-testid^=preselect-]');
       this.reRunCommandButton = Selector('[data-testid=re-run-command]');

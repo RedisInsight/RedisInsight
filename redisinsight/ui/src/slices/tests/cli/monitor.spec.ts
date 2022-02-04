@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { cloneDeep } from 'lodash'
 import MockedSocket from 'socket.io-mock'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'

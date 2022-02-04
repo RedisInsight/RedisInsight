@@ -1,44 +1,34 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { rte } from '../../../helpers/constants';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { BrowserPage, CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
 const common = new Common();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
+const keyTTL = '2147476121';
+const keyMember = '1111ZsetMember11111';
 
 fixture `ZSet Key fields verification`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    const keyName = 'ZSet1testKeyForAddMember';
-    const keyTTL = '2147476121';
-    const keyMember = '1111ZsetMember11111';
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })  
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can search by member in Zset', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         await browserPage.addZSetKey(keyName, '0', keyTTL, '12345qwerty');
         //Add member to the ZSet key
         await browserPage.addMemberToZSet(keyMember, '3');
@@ -51,8 +41,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can sort Zset members by score by DESC and ASC', async t => {
-        const keyName = 'ZSetKey-Lorem123!';
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Create new key with a lot of members

@@ -4,7 +4,8 @@ enum ElectronStorageItem {
   updateDownloadedVersion = 'updateDownloadedVersion',
   isUpdateAvailable = 'isUpdateAvailable',
   isDisplayAppInTray = 'isDisplayAppInTray',
-  updatePreviousVersion = 'updatePreviousVersion'
+  updatePreviousVersion = 'updatePreviousVersion',
+  zoomFactor = 'zoomFactor',
 }
 
 export default ElectronStorageItem

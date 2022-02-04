@@ -1,41 +1,34 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, BrowserPage, CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
 
-const keyName = 'languages';
+let keyName = chance.word({ length: 10 });
 
 fixture `CLI`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
     .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can add data via CLI', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Add key from CLI
@@ -49,7 +42,6 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can expand CLI', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Check that CLI is opened
@@ -59,7 +51,6 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can collapse CLI', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Check that CLI is opened
@@ -72,7 +63,6 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can use blocking command', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Type blocking command
@@ -82,9 +72,8 @@ test
         await t.expect(cliPage.cliCommandInput.exists).notOk('Cli input is not shown');
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can use unblocking command', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Get clientId

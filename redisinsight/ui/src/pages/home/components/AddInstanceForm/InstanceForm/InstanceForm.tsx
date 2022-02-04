@@ -150,7 +150,7 @@ const AddStandaloneForm = (props: Props) => {
       nameFromProvider,
       sentinelMaster,
       connectionType,
-      endpoints,
+      endpoints = null,
       tlsClientAuthRequired,
       certificates,
       selectedTlsClientCertId = '',
@@ -166,6 +166,7 @@ const AddStandaloneForm = (props: Props) => {
     width,
     onClose,
     onSubmit,
+    onHostNamePaste,
     submitButtonText,
     instanceType,
     loading,
@@ -585,7 +586,7 @@ const AddStandaloneForm = (props: Props) => {
                   )
                 }}
                 onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                  handlePasteHostName(props.onHostNamePaste, event)}
+                  handlePasteHostName(onHostNamePaste, event)}
                 append={<AppendHostName />}
               />
             </EuiFormRow>

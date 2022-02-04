@@ -1,16 +1,8 @@
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTerms, deleteDatabase } from '../../../helpers/database';
+import { MyRedisDatabasePage, CliPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const userAgreementPage = new UserAgreementPage();
 const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -19,10 +11,11 @@ fixture `Logical databases`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await myRedisDatabasePage.deleteAllDatabases();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
+        await acceptLicenseTerms();
+    })
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
     .meta({ rte: rte.standalone })

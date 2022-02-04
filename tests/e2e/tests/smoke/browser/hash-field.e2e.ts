@@ -1,41 +1,32 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
+const keyTTL = '2147476121';
+const keyFieldValue = 'hashField11111';
+const keyValue = 'hashValue11111!';
 
 fixture `Hash Key fields verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    const keyName = 'Hash1testKeyForAddField';
-    const keyTTL = '2147476121';
-    const keyFieldValue = 'hashField11111';
-    const keyValue = 'hashValue11111!';
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can add field to Hash', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         await browserPage.addHashKey(keyName, keyTTL);
         //Add field to the hash key
         await browserPage.addFieldToHash(keyFieldValue, keyValue);
@@ -48,7 +39,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can remove field from Hash', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         await browserPage.addHashKey(keyName, keyTTL);
         //Add field to the hash key
         await browserPage.addFieldToHash(keyFieldValue, keyValue);

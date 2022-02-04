@@ -1,46 +1,37 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    UserAgreementPage,
     CliPage,
-    AddRedisDatabasePage,
     WorkbenchPage
 } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
+const common = new Common();
+
+let keys: string[];
 
 fixture `Database overview`
     .meta({type: 'regression'})
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async(t) => {
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+    .afterEach(async () => {
+        //Clear and delete database
+        await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Create new keys
-        await cliPage.addKeysFromCli('MSET', 10);
+        keys = await common.createArrayWithKeyValue(10);
+        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
         //Open Workbench
         await t.click(myRedisDatabasePage.workbenchButton);
         //Verify that user can see total memory and total number of keys

@@ -1,5 +1,5 @@
 import { addNewStandaloneDatabase, addNewREClusterDatabase, addNewRECloudDatabase, addOSSClusterDatabase } from '../../../helpers/database';
-import { UserAgreementPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { acceptLicenseTerms, deleteDatabase } from '../../../helpers/database';
 import {
     commonUrl,
     ossStandaloneConfig,
@@ -8,29 +8,33 @@ import {
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
-
 fixture `Add database`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
+    .beforeEach(async () => {
+        await acceptLicenseTerms();
     })
 test
     .meta({ rte: rte.standalone })
+    .after(async () => {
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can add Standalone Database', async() => {
         await addNewStandaloneDatabase(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.reCluster })
+    .after(async () => {
+        await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
+    })
     ('Verify that user can add database from RE Cluster via auto-discover flow', async() => {
         await addNewREClusterDatabase(redisEnterpriseClusterConfig);
     });
 test
     .meta({ env: 'web', rte: rte.ossCluster})
+    .after(async () => {
+        await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
+    })
     ('Verify that user can add OSS Cluster DB', async() => {
         await addOSSClusterDatabase(ossClusterConfig);
     });

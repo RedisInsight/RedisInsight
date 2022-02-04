@@ -8,7 +8,7 @@ const { callbacks = { counter: 0 }, pluginState = {}, config } = window.state
  *
  * @param {string} text
  */
-export const setTextToHeader = (text = '') => {}
+export const setTextToHeader = () => {}
 
 /**
  * Execute Read-only Redis Command

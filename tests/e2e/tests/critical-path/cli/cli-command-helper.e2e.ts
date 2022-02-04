@@ -1,20 +1,9 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
-import {
-    MyRedisDatabasePage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 const defaultHelperText = 'Enter any command in CLI or use search to see detailed information.';
 const COMMAND_APPEND = 'APPEND';
@@ -25,16 +14,16 @@ const COMMAND_GROUP_GRAPH = 'Graph';
 fixture `CLI Command helper`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see relevant search results in Command Helper per every entered symbol', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Start search from 1 symbol
@@ -51,7 +40,6 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that when user clears the input in the Search of CLI Helper (via x icon), he can see the default screen with proper the text', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Verify default text
@@ -68,7 +56,6 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that when user enters command in CLI, Helper displays additional info about the command', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI and Helper
         await t.click(cliPage.cliExpandButton);
         await t.click(cliPage.expandCommandHelperButton);
@@ -83,7 +70,6 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that Command helper cleared when user runs the command in CLI', async t => {
         const searchText = 'sa';
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open CLI and Helper
         await t.click(cliPage.cliExpandButton);
         await t.click(cliPage.expandCommandHelperButton);
@@ -100,7 +86,6 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can unselect the command filtered to remove filters', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select one command from list
@@ -117,7 +102,6 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that when user has used search and apply filters, search results include only commands from the filter group applied', async t => {
         const searchText = 'sa';
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select group from list
@@ -133,13 +117,12 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
         const commandForSearch = 'TS.';
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select group from list and remeber commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-        let timeSeriesCommands = [];
+        const timeSeriesCommands = [];
         for(let i = 0; i < commandsFilterCount; i++) {
             timeSeriesCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
         }
@@ -157,13 +140,12 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
         const commandForSearch = 'GRAPH.';
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select group from list and remeber commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-        let graphCommands = [];
+        const graphCommands = [];
         for(let i = 0; i < commandsFilterCount; i++) {
             graphCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
         }

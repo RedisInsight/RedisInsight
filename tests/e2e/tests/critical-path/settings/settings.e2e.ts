@@ -1,11 +1,9 @@
 import { MyRedisDatabasePage, UserAgreementPage, SettingsPage } from '../../../pageObjects';
-import {
-    commonUrl
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTerms } from '../../../helpers/database';
+import { commonUrl } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
 const settingsPage = new SettingsPage();
 
 const explicitErrorHandler = (): void => {
@@ -21,8 +19,7 @@ fixture `Settings`
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
+        await acceptLicenseTerms();
     })
 test
     .meta({ rte: rte.none })

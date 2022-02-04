@@ -1,45 +1,31 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
-const cliPage = new CliPage();
+const chance = new Chance();
 
-const keyName = 'KeyForSearch789';
+let keyName = chance.word({ length: 10 });
 
 fixture `Last refresh`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        //Remove key
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, `DEL ${keyName}`);
-        await t.pressKey('enter');
-    });
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test
-    .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can see the date and time of the last update of my Keys in the tooltip', async t => {
-        //Open database
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Hover on the refresh icon
         await t.hover(browserPage.refreshKeysButton);
         //Verify the last update info
@@ -48,8 +34,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see my timer updated when I refresh the list of Keys of the list of values', async t => {
-        //Open database
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         //Add key
         await browserPage.addStringKey(keyName);
         await browserPage.openKeyDetails(keyName);
@@ -66,8 +51,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see the date and time of the last update of my Key values in the tooltip', async t => {
-        //Open database
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         //Add key
         await browserPage.addStringKey(keyName);
         await browserPage.openKeyDetails(keyName);
@@ -79,8 +63,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see my last refresh updated each time I hover over the Refresh icon', async t => {
-        //Open database
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         //Add key
         await browserPage.addStringKey(keyName);
         await browserPage.openKeyDetails(keyName);

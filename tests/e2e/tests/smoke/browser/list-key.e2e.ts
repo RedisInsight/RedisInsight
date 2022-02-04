@@ -1,42 +1,33 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
+const keyTTL = '2147476121';
+const element = '1111listElement11111';
+const element2 = '2222listElement22222';
+const element3 = '33333listElement33333';
 
 fixture `List Key verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
-        await browserPage.deleteKey();
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    const keyName = 'List1testKeyForAddMember';
-    const keyTTL = '2147476121';
-    const element = '1111listElement11111';
-    const element2 = '2222listElement22222';
-    const element3 = '33333listElement33333';
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can add element to List', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         await browserPage.addListKey(keyName, keyTTL);
         //Add element to the List key
         await browserPage.addElementToList(element);
@@ -46,7 +37,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can select remove List element position: from tail', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         await browserPage.addListKey(keyName, keyTTL);
         //Add few elements to the List key
         await browserPage.addElementToList(element);
@@ -63,7 +54,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can select remove List element position: from head', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         await browserPage.addListKey(keyName, keyTTL, element);
         //Add few elements to the List key
         await browserPage.addElementToList(element2);

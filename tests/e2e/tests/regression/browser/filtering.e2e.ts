@@ -1,46 +1,30 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
-const cliPage = new CliPage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 20 });
+let keyName2 = chance.word({ length: 20 });
 
 fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        //await browserPage.deleteKeyByName(searchedKeyName);
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
     .meta({ rte: rte.standalone })
     ('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
-        const keyName = 'KeyForSearch*?[]789';
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 20 });
         //Add new key
         await browserPage.addStringKey(keyName);
         //Search not existed key
@@ -55,9 +39,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with * (matches keys with any number of characters instead of *)', async t => {
-        const keyName = 'KeyForSearch*?[]789';
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = `KeyForSearch*${chance.word({ length: 10 })}?[]789`;
         //Add new key
         await browserPage.addStringKey(keyName);
         //Filter per pattern with *
@@ -69,24 +51,27 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
-        const keyName = 'KeyForSearch*?[]789';
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        const randomValue = chance.word({ length: 10 });
+        keyName = `KeyForSearch*?[]789${randomValue}`;
         //Add new key
         await browserPage.addStringKey(keyName);
         //Filter per pattern with ?
-        const searchedValue = '?eyForSearch\\*\\?\\[]789';
+        const searchedValue = `?eyForSearch\\*\\?\\[]789${randomValue}`;
         await browserPage.searchByKeyName(searchedValue);
         //Verify that key was found
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
     });
 test
     .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await browserPage.deleteKeyByName(keyName2);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
-        const keyName = 'KeyForSearch';
-        const keyName2 = 'KeyForFearch';
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = `KeyForSearch${chance.word({ length: 10 })}`;
+        keyName2 = `KeyForFearch${chance.word({ length: 10 })}`;
         //Add keys
         await browserPage.addStringKey(keyName);
         await browserPage.addHashKey(keyName2);
@@ -98,12 +83,17 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).ok('The key was found');
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ rte: rte.standalone })    
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await browserPage.deleteKeyByName(keyName2);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can filter per pattern with [^x] (matches one symbol except x)', async t => {
-        const keyName = 'KeyForSearch';
-        const keyName2 = 'KeyForFearch';
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        const randomValue = chance.word({ length: 5 });
+        keyName = `KeyForSearch${randomValue}`;
+        keyName2 = `KeyForFearch${randomValue}`;
         //Add keys
         await browserPage.addStringKey(keyName);
         await browserPage.addHashKey(keyName2);
@@ -115,12 +105,16 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).notOk('The key wasn\'t found');
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ rte: rte.standalone })    
+    .after(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await browserPage.deleteKeyByName(keyName2);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can filter per pattern with [a-z] (matches any symbol in range from A till Z)', async t => {
-        const keyName = 'KeyForSearch';
-        const keyName2 = 'KeyForFearch';
-        //Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = `KeyForSearch${chance.word({ length: 10 })}`;
+        keyName2 = `KeyForFearch${chance.word({ length: 10 })}`;
         //Add keys
         await browserPage.addStringKey(keyName);
         await browserPage.addHashKey(keyName2);

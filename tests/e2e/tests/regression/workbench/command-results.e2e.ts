@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
@@ -6,12 +6,14 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const chance = new Chance();
 
-const indexName = 'idx';
-const commandsForIndex = [
+let indexName = chance.word({ length: 5 });
+let commandsForIndex = [
     `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE`,
     'HMSET product:1 price 20',
     'HMSET product:2 price 100'
@@ -28,13 +30,14 @@ fixture.skip `Command results at Workbench`
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
     })
     .afterEach(async() => {
-        //Drop index and dbs
-        await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX products DD');
-        await myRedisDatabasePage.deleteAllDatabases();
+        //Drop index and database
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
     .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
+        indexName = chance.word({ length: 5 });
         const infoCommand = `FT.INFO ${indexName}`;
         //Send FT.INFO and switch to Text view
         await workbenchPage.sendCommandInWorkbench(infoCommand);
@@ -47,6 +50,7 @@ test
 test
     .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
+        indexName = chance.word({ length: 5 });
         const searchCommand = `FT.SEARCH ${indexName} *`;
         //Send FT.SEARCH and switch to Text view
         await workbenchPage.sendCommandInWorkbench(searchCommand);
@@ -59,6 +63,7 @@ test
 test
     .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
+        indexName = chance.word({ length: 5 });
         const aggregateCommand = `FT.Aggregate ${indexName} * GROUPBY 0 REDUCE MAX 1 @price AS max_price`;
         //Send FT.AGGREGATE and switch to Text view
         await workbenchPage.sendCommandInWorkbench(aggregateCommand);
@@ -71,6 +76,7 @@ test
 test
     .meta({ env: 'web', rte: rte.standalone })
     ('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
+        indexName = chance.word({ length: 5 });
         const command = 'CLIENT LIST';
         //Send command and check table view is default in full mode
         await workbenchPage.sendCommandInWorkbench(command);

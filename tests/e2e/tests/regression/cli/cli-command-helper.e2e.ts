@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { CliPage } from '../../../pageObjects';
 import {
@@ -14,15 +14,18 @@ const COMMAND_GROUP_JSON = 'JSON';
 const COMMAND_GROUP_SEARCH = 'Search';
 const COMMAND_GROUP_HyperLogLog = 'HyperLogLog';
 
+const getPageUrl = ClientFunction(() => window.location.href);
+
 fixture `CLI Command helper`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-
-const getPageUrl = ClientFunction(() => window.location.href);
-
+    .afterEach(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
@@ -40,6 +43,7 @@ test
         await t.expect(getPageUrl()).contains('/#jsonset');
         //Check that command info is displayed on the page
         await t.expect(cliPage.cliReadMoreJSONCommandDocumentation().textContent).contains('JSON.SET');
+        await t.switchToParentWindow();
     });
 test
     .meta({ rte: rte.standalone })

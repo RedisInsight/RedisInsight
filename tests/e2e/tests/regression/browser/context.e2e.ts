@@ -1,47 +1,36 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
+    CliPage
 } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
+const chance = new Chance();
 
-const keyName = 'keyForContext!';
+let keyName = chance.word({ length: 10 });
 
 fixture `Browser Context`
     .meta({type: 'regression'})
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await myRedisDatabasePage.deleteAllDatabases();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
     .meta({ rte: rte.standalone })
     ('Verify that if user has saved context on Browser page and go to Settings page, Browser and Workbench icons are displayed and user is able to open Browser with saved context', async t => {
+        keyName = chance.word({ length: 10 });
         const command = 'HSET';
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Create context modificaions and navigate to Settings
         await browserPage.addStringKey(keyName);
         await browserPage.openKeyDetails(keyName);
@@ -62,7 +51,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that when user reload the window with saved context(on any page), context is not saved when he returns back to Browser page', async t => {
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        keyName = chance.word({ length: 10 });
         //Create context modificaions and navigate to Workbench
         await browserPage.addStringKey(keyName);
         await browserPage.openKeyDetails(keyName);

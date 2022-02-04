@@ -1,40 +1,31 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
 
 fixture `Set TTL for Key`
-  .meta({ type: 'smoke' })
-  .page(commonUrl)
-  .beforeEach(async t => {
-      await t.maximizeWindow();
-      await userAgreementPage.acceptLicenseTerms();
-      await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-      await addNewStandaloneDatabase(ossStandaloneConfig);
-  })
-  .afterEach(async() => {
-      await browserPage.deleteKey();
-  })
+    .meta({ type: 'smoke' })
+    .page(commonUrl)
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    });
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can specify TTL for Key', async t => {
-        const keyName = 'StringKey-Lorem ipsum dolor sit amet consectetur adipiscing elit';
+        keyName = chance.word({ length: 10 });
         const ttlValue = '2147476121';
         //Create new key without TTL
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.addStringKey(keyName);
         //Open Key details
         await browserPage.openKeyDetails(keyName);

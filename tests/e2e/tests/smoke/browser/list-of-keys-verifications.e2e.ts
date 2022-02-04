@@ -1,62 +1,69 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
-const cliPage = new CliPage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
+let keyNames = [];
 
 fixture `List of keys verifications`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
-        //Clear database
-        await t.wait(10000);
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-const keyName1 = 'keyName1';
-const keyName2 = 'keyName2';
-const keyName3 = 'keyName3';
-const keyName4 = 'keyName4';
 test
     .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Clear and delete database
+        for(const name of keyNames) {
+            await browserPage.deleteKeyByName(name);
+        }
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can see List of Keys in DB', async t => {
-        await browserPage.addStringKey(keyName1);
-        await browserPage.addHashKey(keyName2);
-        await browserPage.addListKey(keyName3);
-        await browserPage.addStringKey(keyName4);
+        keyNames = [
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`
+        ];
+        await browserPage.addStringKey(keyNames[0]);
+        await browserPage.addHashKey(keyNames[1]);
+        await browserPage.addListKey(keyNames[2]);
+        await browserPage.addStringKey(keyNames[3]);
         await t.click(browserPage.refreshKeysButton);
         await t.expect(browserPage.keyNameInTheList.exists).ok('The list of keys is displayed');
     });
 test
     .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Clear and delete database
+        for(const name of keyNames) {
+            await browserPage.deleteKeyByName(name);
+        }
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can scroll List of Keys in DB', async t => {
-        await browserPage.addStringKey(keyName1);
-        await browserPage.addHashKey(keyName2);
-        await browserPage.addListKey(keyName3);
-        await browserPage.addStringKey(keyName4);
+        keyNames = [
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`,
+            `key-${chance.word({ length: 10 })}`
+        ];
+        await browserPage.addStringKey(keyNames[0]);
+        await browserPage.addHashKey(keyNames[1]);
+        await browserPage.addListKey(keyNames[2]);
+        await browserPage.addStringKey(keyNames[3]);
         await t.click(browserPage.refreshKeysButton);
         //Scroll to the key element
         await t.hover(browserPage.keyNameInTheList);
@@ -65,7 +72,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can refresh Keys', async t => {
-        const keyName = 'Hash1testKey';
+        keyName = chance.word({ length: 10 });
         const keyTTL = '2147476121';
         const newKeyName = 'KeyNameAfterEdit!testKey';
 
@@ -90,7 +97,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can open key details', async t => {
-        const keyName = 'String1testKey';
+        keyName = chance.word({ length: 10 });
         const keyTTL = '2147476121';
         const keyValue = 'StringValue!';
 

@@ -35,7 +35,7 @@ import AboutPanelOptions from './about-panel';
 // eslint-disable-next-line import/no-cycle
 import TrayBuilder from './tray';
 import server from './api/dist/src/main';
-import { ElectronStorageItem, ipcEvent } from './ui/src/electron/constants';
+import { ElectronStorageItem, IpcEvent } from './ui/src/electron/constants';
 
 if (process.env.NODE_ENV !== 'production') {
   log.transports.file.getFile().clear();
@@ -381,11 +381,11 @@ app.on('certificate-error', (event, _webContents, _url, _error, _certificate, ca
 });
 
 // ipc events
-ipcMain.handle(ipcEvent.getAppVersion, () => app?.getVersion());
+ipcMain.handle(IpcEvent.getAppVersion, () => app?.getVersion());
 
-ipcMain.handle(ipcEvent.getStoreValue, (_event, key) => store?.get(key));
+ipcMain.handle(IpcEvent.getStoreValue, (_event, key) => store?.get(key));
 
-ipcMain.handle(ipcEvent.deleteStoreValue, (_event, key) => store?.delete(key));
+ipcMain.handle(IpcEvent.deleteStoreValue, (_event, key) => store?.delete(key));
 
 dialog.showErrorBox = (title: string, content: string) => {
   log.error('Dialog shows error:', `\n${title}\n${content}`);

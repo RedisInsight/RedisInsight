@@ -78,6 +78,7 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
           <div
             className={styles.allTypes}
             onClick={() => !isLoading && setIsSelectOpen(!isSelectOpen)}
+            role="presentation"
           >
             <EuiIcon
               type="controlsVertical"

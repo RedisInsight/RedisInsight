@@ -12,7 +12,7 @@ class StorageService {
     try {
       item = this.storage.getItem(itemName)
     } catch (error) {
-      console.log(`getItem from storage error: ${error}`)
+      console.error(`getItem from storage error: ${error}`)
     }
     const numPatt = new RegExp(/^\d+$/)
     const jsonPatt = new RegExp(/[[{].*[}\]]/)
@@ -37,7 +37,7 @@ class StorageService {
         this.storage.setItem(itemName, item)
       }
     } catch (error) {
-      console.log(`setItem to storage error: ${error}`)
+      console.error(`setItem to storage error: ${error}`)
     }
   }
 

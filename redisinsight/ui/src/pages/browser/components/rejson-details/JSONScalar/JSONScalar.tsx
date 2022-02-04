@@ -190,6 +190,7 @@ const JSONScalar = (props: Props) => {
                   onClick={() => setEditing(true)}
                   style={{ flexGrow: 1 }}
                   data-testid="json-scalar-value"
+                  role="presentation"
                 >
                   {String(changedValue)}
                 </span>

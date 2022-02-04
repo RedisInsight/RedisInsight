@@ -15,7 +15,7 @@
   "artifactName": "${productName}.${ext}",
   "compression": "normal",
   "mac": {
-    "target": ["mas-dev"],
+    "target": ["mas-dev", "mas"],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
@@ -30,8 +30,8 @@
     "artifactName": "${productName}-${os}-mas.${ext}"
   },
   "masDev": {
-    "entitlements": "resources/entitlements.mac.plist",
-    "entitlementsInherit": "resources/entitlements.mac.plist",
+    "entitlements": "resources/entitlements.mas.plist",
+    "entitlementsInherit": "resources/entitlements.mas.plist",
     "hardenedRuntime": true,
     "artifactName": "${productName}-${os}-mas.${ext}"
   },
@@ -54,9 +54,6 @@
     "target": ["nsis", "appx"],
     "artifactName": "${productName}-${os}-installer.${ext}",
     "icon": "resources/icon.ico"
-  },
-  "msi": {
-    "artifactName": "${productName}-${os}-${arch}.${ext}"
   },
   "appx": {
     "publisher": "CN=Redis Labs Inc., O=Redis Labs Inc., L=Mountain View, S=California, C=US",

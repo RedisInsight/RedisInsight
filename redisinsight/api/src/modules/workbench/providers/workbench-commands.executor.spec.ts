@@ -60,7 +60,6 @@ const mockCommandExecutionResult: CommandExecutionResult = {
 
 describe('WorkbenchCommandsExecutor', () => {
   let service: WorkbenchCommandsExecutor;
-  let analytisService: WorkbenchAnalyticsService;
   let cliTool;
 
   beforeEach(async () => {
@@ -79,7 +78,6 @@ describe('WorkbenchCommandsExecutor', () => {
     }).compile();
 
     service = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
-    analytisService = module.get<WorkbenchAnalyticsService>(WorkbenchAnalyticsService);
     cliTool = module.get<RedisToolService>(RedisToolService);
   });
 

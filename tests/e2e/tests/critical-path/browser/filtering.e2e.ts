@@ -7,7 +7,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts } from '../../../helpers/constants';
+import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts, rte } from '../../../helpers/constants';
 import { keyTypes } from '../../../helpers/keys';
 import { Chance } from 'chance';
 
@@ -24,6 +24,7 @@ fixture `Filtering per key name in Browser page`
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
@@ -41,6 +42,7 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key was found');
     });
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);

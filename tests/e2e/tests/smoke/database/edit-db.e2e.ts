@@ -7,6 +7,7 @@ import {
     ossStandaloneConfig,
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const userAgreementPage = new UserAgreementPage();
@@ -21,6 +22,7 @@ fixture `Edit Databases`
 //Returns the URL of the current web page
 const getPageUrl = ClientFunction(() => window.location.href);
 test
+    .meta({ rte: rte.reCluster })
     .after(async () => {
         //Delete database
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
@@ -31,6 +33,7 @@ test
         await t.expect(getPageUrl()).contains('browser', 'The edit view is opened');
     });
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -43,9 +46,11 @@ test
         await t.expect(getPageUrl()).contains('browser');
     });
 //skiped until the RE Cloud connection is implemented
-test.skip('Verify that user can connect to the RE Cloud database', async t => {
-  //TODO: add api keys from env
-  const databaseName = await addNewRECloudDatabase('', '');
-  await myRedisDatabasePage.clickOnDBByName(databaseName);
-  await t.expect(getPageUrl()).contains('browser', 'The edit view is opened');
-});
+test.skip
+    .meta({ rte: rte.reCloud })
+    ('Verify that user can connect to the RE Cloud database', async t => {
+    //TODO: add api keys from env
+    const databaseName = await addNewRECloudDatabase('', '');
+    await myRedisDatabasePage.clickOnDBByName(databaseName);
+    await t.expect(getPageUrl()).contains('browser', 'The edit view is opened');
+    });

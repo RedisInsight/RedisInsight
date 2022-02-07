@@ -37,6 +37,16 @@ export class WorkbenchAnalyticsService extends TelemetryBaseService {
     }
   }
 
+  sendCommandDeletedEvent(databaseId: string, additionalData: object = {}): void {
+    this.sendEvent(
+      TelemetryEvents.WorkbenchCommandDeleted,
+      {
+        databaseId,
+        ...additionalData,
+      },
+    );
+  }
+
   private sendCommandErrorEvent(databaseId: string, error: any, additionalData: object = {}): void {
     try {
       if (error instanceof HttpException) {

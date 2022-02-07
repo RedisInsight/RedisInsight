@@ -51,4 +51,5 @@ export enum TelemetryEvents {
   // Events for workbench tool
   WorkbenchCommandExecuted = 'WORKBENCH_COMMAND_EXECUTED',
   WorkbenchCommandErrorReceived = 'WORKBENCH_COMMAND_ERROR_RECEIVED',
+  WorkbenchCommandDeleted = 'WORKBENCH_COMMAND_DELETE_COMMAND',
 }

@@ -129,4 +129,33 @@ describe('WorkbenchAnalyticsService', () => {
       );
     });
   });
+
+  describe('sendCommandDeletedEvent', () => {
+    it('should emit WorkbenchCommandDeleted event', () => {
+      service.sendCommandDeletedEvent(
+        instanceId,
+        { command: 'info' },
+      );
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.WorkbenchCommandDeleted,
+        {
+          databaseId: instanceId,
+          command: 'info',
+        },
+      );
+    });
+    it('should emit WorkbenchCommandDeleted event without additional data', () => {
+      service.sendCommandDeletedEvent(
+        instanceId,
+      );
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.WorkbenchCommandDeleted,
+        {
+          databaseId: instanceId,
+        },
+      );
+    });
+  });
 });

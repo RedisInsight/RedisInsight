@@ -1,4 +1,5 @@
-import { getDbIndexFromSelectQuery } from 'uiSrc/utils'
+import { getDbIndexFromSelectQuery, getCommandNameFromQuery } from 'uiSrc/utils'
+import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 
 const getDbIndexFromSelectQueryTests = [
   { input: 'select 0', expected: 0 },
@@ -25,5 +26,22 @@ describe('getDbIndexFromSelectQuery', () => {
     } else {
       expect(getDbIndexFromSelectQuery(input)).toEqual(expected)
     }
+  })
+})
+
+const getCommandNameFromQueryTests = [
+  { input: ['set foo bar', MOCK_COMMANDS_SPEC], expected: 'set' },
+  { input: ['  SET       foo bar', MOCK_COMMANDS_SPEC], expected: 'SET' },
+  { input: ['client kill 1', MOCK_COMMANDS_SPEC], expected: 'client kill' },
+  { input: ['client kill 1', {}], expected: 'client' },
+  { input: ['custom.command foo bar', MOCK_COMMANDS_SPEC], expected: 'custom.command' },
+  { input: ['FT._LIST', MOCK_COMMANDS_SPEC], expected: 'FT._LIST' },
+  { input: [`${' '.repeat(20)} CLIENT ${' '.repeat(100)} KILL`, MOCK_COMMANDS_SPEC], expected: 'CLIENT' },
+]
+
+describe('getCommandNameFromQuery', () => {
+  test.each(getCommandNameFromQueryTests)('%j', ({ input, expected }) => {
+    // @ts-ignore
+    expect(getCommandNameFromQuery(...input)).toEqual(expected)
   })
 })

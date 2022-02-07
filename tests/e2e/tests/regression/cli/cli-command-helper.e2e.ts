@@ -6,7 +6,7 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -90,7 +90,7 @@ test
         await t.expect(cliPage.cliHelperTitleArgs.textContent).contains(commandToCheck, 'Command Helper information persists after reopening');
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'JSON';
         commandToCheck = 'JSON.SET';
@@ -112,7 +112,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'Search';
         commandToCheck = 'FT.EXPLAIN';
@@ -134,7 +134,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
         filteringGroup = 'HyperLogLog';
         commandToCheck = 'PFCOUNT';
@@ -154,7 +154,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
         filteringGroups = ['Model', 'Script', 'Inference', 'Tensor'];
         commandsToCheck = [
@@ -195,7 +195,7 @@ test
         }
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
         filteringGroup = 'Gears';
         commandToCheck = 'RG.GETEXECUTION';
@@ -217,7 +217,7 @@ test
         await t.closeWindow();
     });
 test
-    .meta({ rte: rte.standalone })
+    .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can work with Bloom groups in Command Helper (RedisBloom module)', async t => {
         filteringGroups = ['Bloom', 'CMS', 'TDigest', 'TopK', 'Cuckoo'];
         commandsToCheck = [

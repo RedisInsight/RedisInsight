@@ -14,10 +14,13 @@ export enum WBQueryType {
 
 export const VIEW_TYPE_OPTIONS = [
   {
+    id: 'default__Text',
     text: 'Text',
+    name: 'default__Text',
     value: WBQueryType.Text,
     iconDark: TextViewIconDark,
     iconLight: TextViewIconLight,
+    internal: true,
   },
 ]
 

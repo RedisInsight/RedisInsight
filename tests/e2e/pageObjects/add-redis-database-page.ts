@@ -82,6 +82,32 @@ export class AddRedisDatabasePage {
   }
 
   /**
+   * Adding a new redis database with index
+   * @param parameters the parameters of the database
+   * @param index the logical index of database
+   */
+   async addLogicalRedisDatabase(parameters: AddNewDatabaseParameters, index: string): Promise<void> {
+    await t
+        .click(this.addDatabaseButton)
+        .click(this.addDatabaseManually)
+    await t
+        .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
+        .typeText(this.portInput, parameters.port, { replace: true, paste: true })
+        .typeText(this.databaseAliasInput, parameters.databaseName, { replace: true, paste: true })
+    if (!!parameters.databaseUsername) {
+        await t.typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true })
+    }
+    if (!!parameters.databasePassword) {
+        await t.typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true })
+    }
+    //Enter logical index
+    await t.click(this.databaseIndexCheckbox);
+    await t.typeText(this.databaseIndexInput, index, { paste: true });
+    //Click for saving
+    await t.click(this.addRedisDatabaseButton);
+}
+
+  /**
    * Auto-discover Master Groups from Sentinel
    * @param parameters - Parameters of Sentinel: host, port and Sentinel password
    */

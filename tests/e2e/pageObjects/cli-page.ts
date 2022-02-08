@@ -42,6 +42,8 @@ export class CliPage {
   minimizeCommandHelperButton: Selector
   cliBadge: Selector
   commandHelperBadge: Selector
+  cliEndpoint: Selector
+  cliDbIndex: Selector
 
   constructor() {
       //-------------------------------------------------------------------------------------------
@@ -82,6 +84,8 @@ export class CliPage {
       this.cliReadMoreJSONCommandDocumentation = Selector('[id=jsonset]');
       this.cliReadMoreRediSearchCommandDocumentation = Selector('[id=ftexplain]');
       this.commandHelperArea = Selector('[data-testid=command-helper]');
+      this.cliEndpoint = Selector('[data-testid^=cli-endpoint]');
+      this.cliDbIndex = Selector('[data-testid=cli-db-index]');
   }
   /**
   * Select filter group type

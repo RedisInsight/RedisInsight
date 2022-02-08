@@ -1,12 +1,13 @@
 import React from 'react'
 import { render } from 'uiSrc/utils/test-utils'
 
-import { getOverviewItems } from './components/OverviewItems'
+import { getOverviewMetrics } from './components/OverviewMetrics'
 import DatabaseOverview from './DatabaseOverview'
 
-const overviewItemsMock = getOverviewItems({
+const overviewMetrics = getOverviewMetrics({
   theme: 'DARK',
   items: {
+    version: '6.0.0',
     usedMemory: 100,
     totalKeys: 5000,
     connectedClients: 1,
@@ -20,10 +21,7 @@ const overviewItemsMock = getOverviewItems({
 describe('DatabaseOverview', () => {
   it('should render', () => {
     expect(render(
-      <DatabaseOverview
-        maxLength={5}
-        items={overviewItemsMock}
-      />
+      <DatabaseOverview metrics={overviewMetrics} modules={[]} windowDimensions={1500} />
     )).toBeTruthy()
   })
 })

@@ -31,4 +31,5 @@ export interface StateCliOutput {
   commandHistory: string[];
   loading: boolean;
   error: string;
+  db: number;
 }

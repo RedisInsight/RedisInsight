@@ -1,4 +1,4 @@
-import { flatten, isArray, isEmpty, reject } from 'lodash'
+import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
 import {
   CommandArgsType,
   CommandGroup,
@@ -65,7 +65,6 @@ const getExternalCommandFormat = (commandName = '') =>
 
 export const getDocUrlForCommand = (
   commandName: string,
-  commandGroup: CommandGroup | string = CommandGroup.Generic
 ): string => {
   let command = getExternalCommandFormat(commandName)
   const commandStartsWith = commandName.split('.')[0]
@@ -81,8 +80,32 @@ export const getDocUrlForCommand = (
       return `https://oss.redis.com/redisgraph/commands/#${command}`
     case CommandPrefix.AI:
       return `https://oss.redis.com/redisai/commands/#${command}`
+    case CommandPrefix.Gears:
+      return `https://oss.redis.com/redisgears/commands.html#${command}`
+    case CommandPrefix.BloomFilter:
+      return `https://oss.redis.com/redisbloom/Bloom_Commands/#${command}`
+    case CommandPrefix.CuckooFilter:
+      return `https://oss.redis.com/redisbloom/Cuckoo_Commands/#${command}`
+    case CommandPrefix.CountMinSketchFilter:
+      return `https://oss.redis.com/redisbloom/CountMinSketch_Commands/#${command}`
+    case CommandPrefix.TopK:
+      return `https://oss.redis.com/redisbloom/TopK_Commands/#${command}`
     default:
       command = commandName.replace(/\s+/g, '-').toLowerCase()
       return `https://redis.io/commands/${command}`
   }
 }
+
+export const getCommandRepeat = (command = ''): [string, number] => {
+  const [countRepeatStr, ...restCommand] = command.split(' ')
+  let countRepeat = toNumber(countRepeatStr)
+  let commandLine = restCommand.join(' ')
+  if (!isNumber(countRepeat) || isNaN(countRepeat) || !command) {
+    countRepeat = 1
+    commandLine = command
+  }
+
+  return [commandLine, countRepeat]
+}
+
+export const isRepeatCountCorrect = (number: number): boolean => number >= 1 && isInteger(number)

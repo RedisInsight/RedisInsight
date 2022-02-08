@@ -9,6 +9,7 @@ export enum KeyTypesTexts {
     Graph = 'GRAPH',
     TimeSeries = 'TS',
 }
+export const keyLength = 50;
 
 export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.Hash]: (key: string, field: string | number = 1, value: string | number = 1) => `HSET ${key} ${field} ${value}`,

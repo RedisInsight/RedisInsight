@@ -50,7 +50,8 @@ describe('GET /instance/:instanceId/keys', () => {
   // todo: add query validation
   xdescribe('Validation', () => {});
 
-  describe('Common', () => {
+  describe('Sandbox rte', () => {
+    requirements('!rte.sharedData')
     const KEYS_NUMBER = 1500; // 300 per each base type
     before(async () => await rte.data.generateNKeys(KEYS_NUMBER, true));
 
@@ -60,7 +61,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should find key by exact name',
           query: {
             cursor: '0',
-            match: 'str_key_1'
+            match: `${constants.TEST_RUN_ID}_str_key_1`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -80,7 +81,7 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.eq(1);
-            expect(result.keys[0].name).to.eq('str_key_1');
+            expect(result.keys[0].name).to.eq(`${constants.TEST_RUN_ID}_str_key_1`);
           }
         },
         {
@@ -142,7 +143,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should search by with * in the end',
           query: {
             cursor: '0',
-            match: 'str_key_11*'
+            match: `${constants.TEST_RUN_ID}_str_key_11*`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -163,7 +164,7 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(11);
             result.keys.map(({ name }) => {
-              expect(name.indexOf('str_key_11')).to.eql(0);
+              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_11`)).to.eql(0);
             })
           }
         },
@@ -200,7 +201,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should search by with * in the middle',
           query: {
             cursor: '0',
-            match: 'str_*_111'
+            match: `${constants.TEST_RUN_ID}_str_*_111`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -220,14 +221,14 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.eq(1);
-            expect(result.keys[0].name).to.eq('str_key_111');
+            expect(result.keys[0].name).to.eq(`${constants.TEST_RUN_ID}_str_key_111`);
           }
         },
         {
           name: 'Should search by with ? in the end',
           query: {
             cursor: '0',
-            match: 'str_key_10?'
+            match: `${constants.TEST_RUN_ID}_str_key_10?`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -248,7 +249,7 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(10);
             result.keys.map(({ name }) => {
-              expect(name.indexOf('str_key_10')).to.eql(0);
+              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
             })
           }
         },
@@ -256,7 +257,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should search by with [a-b] glob pattern',
           query: {
             cursor: '0',
-            match: 'str_key_10[0-5]'
+            match: `${constants.TEST_RUN_ID}_str_key_10[0-5]`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -277,7 +278,7 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(1).lte(6);
             result.keys.map(({ name }) => {
-              expect(name.indexOf('str_key_10')).to.eql(0);
+              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
             })
           }
         },
@@ -285,7 +286,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should search by with [a,b,c] glob pattern',
           query: {
             cursor: '0',
-            match: 'str_key_10[0,1,2]'
+            match: `${constants.TEST_RUN_ID}_str_key_10[0,1,2]`
           },
           responseSchema,
           checkFn: ({body}) => {
@@ -306,7 +307,7 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(1).lte(3);
             result.keys.map(({name}) => {
-              expect(name.indexOf('str_key_10')).to.eql(0);
+              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
             })
           }
         },
@@ -314,7 +315,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should search by with [abc] glob pattern',
           query: {
             cursor: '0',
-            match: 'str_key_10[012]'
+            match: `${constants.TEST_RUN_ID}_str_key_10[012]`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -335,7 +336,7 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(1).lte(3);
             result.keys.map(({ name }) => {
-              expect(name.indexOf('str_key_10')).to.eql(0);
+              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
             })
           }
         },
@@ -343,7 +344,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should search by with [^a] glob pattern',
           query: {
             cursor: '0',
-            match: 'str_key_10[^0]'
+            match: `${constants.TEST_RUN_ID}_str_key_10[^0]`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -364,7 +365,7 @@ describe('GET /instance/:instanceId/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(9);
             result.keys.map(({ name }) => {
-              expect(name.indexOf('str_key_10')).to.eql(0);
+              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
             })
           }
         },
@@ -372,7 +373,7 @@ describe('GET /instance/:instanceId/keys', () => {
           name: 'Should search by with combined glob patterns',
           query: {
             cursor: '0',
-            match: 's?r_*_[1][0-5][^0]'
+            match: `${constants.TEST_RUN_ID}_s?r_*_[1][0-5][^0]`
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -680,32 +681,6 @@ describe('GET /instance/:instanceId/keys', () => {
           ].map(mainCheckFn);
         });
       });
-
-      describe('Exact search on huge keys number', () => {
-        requirements('rte.onPremise');
-        // Number of keys to generate. Could be 10M or even more but consume much more time
-        // We decide to generate 500K which should take ~10s
-        const NUMBER_OF_KEYS = 500 * 1000;
-        before(async () => await rte.data.generateHugeNumberOfTinyStringKeys(NUMBER_OF_KEYS, true));
-
-        [
-          {
-            name: 'Should scan all types',
-            query: {
-              cursor: '0',
-              match: 'k_488500'
-            },
-            responseSchema,
-            checkFn: ({ body }) => {
-              expect(body[0].total).to.eql(NUMBER_OF_KEYS);
-              expect(body[0].scanned).to.eql(NUMBER_OF_KEYS);
-              expect(body[0].cursor).to.eql(0);
-              expect(body[0].keys.length).to.eql(1);
-              expect(body[0].keys[0].name).to.eql('k_488500');
-            }
-          },
-        ].map(mainCheckFn);
-      });
     });
     describe('Cluster', () => {
       requirements('rte.type=CLUSTER');
@@ -832,7 +807,33 @@ describe('GET /instance/:instanceId/keys', () => {
       });
     });
   });
+  describe('Big data', () => {
+    describe('Exact search on huge keys number', () => {
+      requirements('rte.bigData');
+      // keys inside existing data (~3.6M) but we will check for at least 10M to have a possibility to change
+      // keys number at some point
+      const NUMBER_OF_KEYS = 3_000_000;
+      const key = 'user:15001:string';
 
+      [
+        {
+          name: 'Should scan all types',
+          query: {
+            cursor: '0',
+            match: key
+          },
+          responseSchema,
+          checkFn: ({ body }) => {
+            expect(body[0].total).to.gte(NUMBER_OF_KEYS);
+            expect(body[0].scanned).to.gte(NUMBER_OF_KEYS);
+            expect(body[0].cursor).to.eql(0);
+            expect(body[0].keys.length).to.eql(1);
+            expect(body[0].keys[0].name).to.eql(key);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+  });
   describe('ACL', () => {
     requirements('rte.acl');
     before(async () => await rte.data.generateKeys(true));

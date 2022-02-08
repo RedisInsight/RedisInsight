@@ -5,8 +5,8 @@ import { mockRedisWrongTypeError, mockStandaloneDatabaseEntity } from 'src/__moc
 import { TelemetryEvents } from 'src/constants';
 import { AppTool, ReplyError } from 'src/models';
 import { CliParsingError } from 'src/modules/cli/constants/errors';
-import { ICliExecResultFromNode } from 'src/modules/cli/services/cli-tool/cli-tool.service';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
+import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
 import { CliAnalyticsService } from './cli-analytics.service';
 
 const redisReplyError: ReplyError = {

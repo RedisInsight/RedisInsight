@@ -28,9 +28,9 @@ import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/r
 import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
+import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
 import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user-settings'
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
-import { initialState as initialStateWBSettings } from 'uiSrc/slices/workbench/wb-settings'
 import { initialState as initialStateWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
 
 interface Options {
@@ -69,13 +69,13 @@ const initialStateDefault: RootState = {
   cli: {
     settings: cloneDeep(initialStateCliSettings),
     output: cloneDeep(initialStateCliOutput),
+    monitor: cloneDeep(initialStateMonitor),
   },
   user: {
     settings: cloneDeep(initialStateUserSettings),
   },
   workbench: {
     results: cloneDeep(initialStateWBResults),
-    settings: cloneDeep(initialStateWBSettings),
     enablementArea: cloneDeep(initialStateWBEnablementArea),
   },
 }

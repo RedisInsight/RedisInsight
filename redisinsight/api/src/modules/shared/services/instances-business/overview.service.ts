@@ -109,6 +109,10 @@ export class OverviewService {
    * @private
    */
   private calculateOpsPerSec(nodes = []): number {
+    if (!this.isMetricsAvailable(nodes, 'stats.instantaneous_ops_per_sec', [undefined])) {
+      return undefined;
+    }
+
     return sumBy(nodes, (node) => parseInt(
       get(node, 'stats.instantaneous_ops_per_sec', 0),
       10,
@@ -121,6 +125,10 @@ export class OverviewService {
    * @private
    */
   private calculateNetworkIn(nodes = []): number {
+    if (!this.isMetricsAvailable(nodes, 'stats.instantaneous_input_kbps', [undefined])) {
+      return undefined;
+    }
+
     return sumBy(nodes, (node) => parseInt(
       get(node, 'stats.instantaneous_input_kbps', 0),
       10,
@@ -133,6 +141,10 @@ export class OverviewService {
    * @private
    */
   private calculateNetworkOut(nodes = []): number {
+    if (!this.isMetricsAvailable(nodes, 'stats.instantaneous_output_kbps', [undefined])) {
+      return undefined;
+    }
+
     return sumBy(nodes, (node) => parseInt(
       get(node, 'stats.instantaneous_output_kbps', 0),
       10,
@@ -145,6 +157,10 @@ export class OverviewService {
    * @private
    */
   private calculateConnectedClients(nodes = []): number {
+    if (!this.isMetricsAvailable(nodes, 'clients.connected_clients', [undefined])) {
+      return undefined;
+    }
+
     const clientsPerNode = map(nodes, (node) => parseInt(get(node, 'clients.connected_clients', 0), 10));
     return this.getMedianValue(clientsPerNode);
   }
@@ -156,7 +172,13 @@ export class OverviewService {
    */
   private calculateUsedMemory(nodes = []): number {
     try {
-      const masterNodes = filter(nodes, (node) => get(node, 'replication.role') === 'master');
+      const masterNodes = filter(nodes, (node) => ['master', undefined].includes(
+        get(node, 'replication.role'),
+      ));
+
+      if (!this.isMetricsAvailable(masterNodes, 'memory.used_memory', [undefined])) {
+        return undefined;
+      }
 
       return sumBy(masterNodes, (node) => parseInt(get(node, 'memory.used_memory', 0), 10));
     } catch (e) {
@@ -171,8 +193,15 @@ export class OverviewService {
    * @private
    */
   private calculateTotalKeys(nodes = []): number {
+    if (!this.isMetricsAvailable(nodes, 'keyspace', [undefined])) {
+      return undefined;
+    }
+
     try {
-      const masterNodes = filter(nodes, (node) => get(node, 'replication.role') === 'master');
+      const masterNodes = filter(nodes, (node) => ['master', undefined].includes(
+        get(node, 'replication.role'),
+      ));
+
       return sumBy(masterNodes, (node) => sum(
         map(
           get(node, 'keyspace', {}),
@@ -201,6 +230,10 @@ export class OverviewService {
    * @private
    */
   private calculateCpuUsage(id: string, nodes = []): number {
+    if (!this.isMetricsAvailable(nodes, 'cpu.used_cpu_sys', [0, '0', '0.0', '0.00', undefined])) {
+      return undefined;
+    }
+
     const previousCpuStats = this.previousCpuStats.get(id);
 
     const currentCpuStats = keyBy(map(nodes, (node) => ({
@@ -240,5 +273,25 @@ export class OverviewService {
       // it could happen because we are getting database up time in seconds when CPU usage time in milliseconds
       return usage > 100 ? 100 : usage;
     }));
+  }
+
+  /**
+   * Check that metric has expected value or provided
+   *
+   * @param nodes
+   * @param path
+   * @param values
+   * @private
+   */
+  private isMetricsAvailable(nodes = [], path: string[] | string, values: any[]): boolean {
+    for (let i = 0; i < nodes.length; i += 1) {
+      const node = nodes[i];
+
+      if (values.includes(get(node, path))) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

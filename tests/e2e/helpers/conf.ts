@@ -1,3 +1,6 @@
+import { Chance } from 'chance';
+const chance = new Chance();
+
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
 
@@ -51,4 +54,11 @@ export const invalidOssStandaloneConfig = {
     databaseName: process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone-invalid',
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+export const ossBigStandaloneConfig = {
+    host: process.env.OSS_STANDALONE_BIG_HOST || 'oss-standalone-big',
+    port: process.env.OSS_STANDALONE_BIG_PORT || '6379',
+    databaseName: process.env.OSS_STANDALONE_BIG_DATABASE_NAME || chance.string({ length: 20 }),
+    databaseUsername: process.env.OSS_STANDALONE_BIG_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_BIG_PASSWORD
 };

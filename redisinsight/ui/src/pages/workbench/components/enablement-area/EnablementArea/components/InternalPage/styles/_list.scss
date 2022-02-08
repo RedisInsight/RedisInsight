@@ -1,0 +1,57 @@
+@import './variables';
+
+b + ul, strong + ul, b + ol, strong + ol {
+  margin-top: 10px;
+}
+
+ul, ol {
+  &:not(.euiPagination__list) {
+    margin-bottom: ($margin-size-pace * 6 + px);
+    margin-left: 16px;
+    li {
+      line-height: 24px;
+      &:not(:last-of-type) {
+      margin-bottom: 12px;
+      }
+    }
+    @media only screen and (max-width: ($l-breakpoint + px)) {
+      li {
+        line-height: 18px;
+        &:not(:last-of-type) {
+          margin-bottom: 6px;
+        }
+      }
+    }
+  }
+  + p {
+    margin-top: ($margin-size-pace * 3 + px);
+  }
+  li p {
+    margin-bottom: 0;
+  }
+}
+
+ul:not(.euiPagination__list) {
+  list-style-type: disc;
+  list-style-position: outside;
+  ul, ol {
+    list-style-type: circle;
+    list-style-position: outside;
+    margin-left: 16px;
+  }
+}
+
+ol {
+  list-style-type: decimal;
+  list-style-position: outside;
+  ol, ul {
+    list-style-type: circle;
+    list-style-position: outside;
+    margin-left: 16px;
+  }
+}
+
+ul.contains-task-list {
+  list-style-type: none;
+  margin-left: 0;
+}

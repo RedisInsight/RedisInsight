@@ -134,9 +134,13 @@ const getDbIndexFromSelectQuery = (query: string): number => {
   }
 }
 
-const getCommandNameFromQuery = (query: string, commandsSpec: ICommands = {}): string | undefined => {
+const getCommandNameFromQuery = (
+  query: string,
+  commandsSpec: ICommands = {},
+  queryLimit: number = 50
+): string | undefined => {
   try {
-    const [command, firstArg] = query.slice(0, 50).trim().split(/\s+/)
+    const [command, firstArg] = query.slice(0, queryLimit).trim().split(/\s+/)
     if (commandsSpec[`${command} ${firstArg}`.toUpperCase()]) return `${command} ${firstArg}`
     return command
   } catch (error) {

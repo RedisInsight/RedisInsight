@@ -37,6 +37,10 @@ const getCommandNameFromQueryTests = [
   { input: ['custom.command foo bar', MOCK_COMMANDS_SPEC], expected: 'custom.command' },
   { input: ['FT._LIST', MOCK_COMMANDS_SPEC], expected: 'FT._LIST' },
   { input: [`${' '.repeat(20)} CLIENT ${' '.repeat(100)} KILL`, MOCK_COMMANDS_SPEC], expected: 'CLIENT' },
+  {
+    input: [`${' '.repeat(20)} CLIENT ${' '.repeat(100)} KILL`, MOCK_COMMANDS_SPEC, 500],
+    expected: 'CLIENT KILL'
+  },
 ]
 
 describe('getCommandNameFromQuery', () => {

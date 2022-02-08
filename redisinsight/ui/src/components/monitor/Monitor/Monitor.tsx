@@ -1,4 +1,5 @@
 import React from 'react'
+import cx from 'classnames'
 import {
   EuiButtonIcon,
   EuiFlexGroup,
@@ -10,12 +11,15 @@ import {
 import { AutoSizer } from 'react-virtualized'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
+import { ReactComponent as NoPermissionsIcon } from 'uiSrc/assets/img/monitor/no_permissions.svg'
+
 import MonitorOutputList from '../MonitorOutputList'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   items: IMonitorDataPayload[]
+  error: string
   isStarted: boolean
   isRunning: boolean
   isShowHelper: boolean
@@ -27,6 +31,7 @@ export interface Props {
 const Monitor = (props: Props) => {
   const {
     items = [],
+    error = '',
     isRunning = false,
     isStarted = false,
     isShowHelper = false,
@@ -50,20 +55,43 @@ const Monitor = (props: Props) => {
             data-testid="start-monitor"
           />
         </EuiToolTip>
-        <div className={styles.startTitle}>Start monitor</div>
+        <div className={styles.startTitle}>Start Profiler</div>
         <EuiFlexGroup responsive={false}>
           <EuiFlexItem grow={false}>
             <EuiIcon
+              className={cx(styles.iconWarning, 'warning--light')}
               type="alert"
               size="m"
-              color="danger"
+              color="warning"
               aria-label="alert icon"
               style={{ paddingTop: 2 }}
             />
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiTextColor color="danger" style={{ paddingLeft: 4 }}>
-              Running Monitor will decrease throughput, avoid running it in production databases
+            <EuiTextColor color="warning" className="warning--light" style={{ paddingLeft: 4 }} data-testid="monitor-warning-message">
+              Running Profiler will decrease throughput, avoid running it in production databases
+            </EuiTextColor>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    </div>
+  )
+
+  const MonitorError = () => (
+    <div className={styles.startContainer} data-testid="monitor-error">
+      <div className={cx(styles.startContent, styles.startContentError)}>
+        <EuiFlexGroup responsive={false}>
+          <EuiFlexItem grow={false}>
+            <EuiIcon
+              type={NoPermissionsIcon}
+              size="m"
+              color="danger"
+              aria-label="no permissions icon"
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiTextColor color="danger" style={{ paddingLeft: 4 }} data-testid="monitor-error-message">
+              { error }
             </EuiTextColor>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -76,9 +104,16 @@ const Monitor = (props: Props) => {
   return (
     <>
       <div className={styles.container} data-testid="monitor">
-        {(!isStarted || (!isRunning && !items?.length)) && <MonitorNotStarted />}
-        {!items?.length && isRunning && <div data-testid="monitor-started" style={{ paddingTop: 10 }}>Monitor is started.</div>}
-
+        {(error && !isRunning)
+          ? (<MonitorError />)
+          : (
+            <>
+              {(!isStarted || (!isRunning && !items?.length)) && <MonitorNotStarted />}
+              {!items?.length && isRunning && (
+                <div data-testid="monitor-started" style={{ paddingTop: 10 }}>Profiler is started.</div>
+              )}
+            </>
+          )}
         {isStarted && !!items?.length && (
           <div className={styles.content}>
             <AutoSizer>
@@ -92,7 +127,7 @@ const Monitor = (props: Props) => {
                   />
                   {isMonitorStopped && (
                     <div data-testid="monitor-stopped" style={{ width: 140, paddingTop: 15 }}>
-                      Monitor is stopped.
+                      Profiler is stopped.
                     </div>
                   )}
                 </>

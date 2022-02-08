@@ -36,16 +36,9 @@ export default {
           },
         },
       },
-      // SVG Font
       {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml',
-          },
-        },
+        test: /\.svg$/,
+        use: ['@svgr/webpack', 'url-loader'],
       },
       // Common Image Formats
       {

@@ -18,10 +18,13 @@ import {
   toggleMonitor,
   toggleRunMonitor
 } from 'uiSrc/slices/cli/monitor'
+import { ReactComponent as NoPermissionsIcon } from 'uiSrc/assets/img/monitor/no_permissions.svg'
+
 import styles from './styles.module.scss'
 
 const MonitorHeader = () => {
-  const { isRunning, isStarted, items } = useSelector(monitorSelector)
+  const { isRunning, isStarted, items, error } = useSelector(monitorSelector)
+  const isErrorShown = !!error && !isRunning
 
   const dispatch = useDispatch()
 
@@ -57,14 +60,15 @@ const MonitorHeader = () => {
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.actions}>
           <EuiToolTip
-            content={isRunning ? 'Stop' : 'Start'}
+            content={isErrorShown ? '' : (isRunning ? 'Stop' : 'Start')}
             anchorClassName="inline-flex"
           >
             <EuiButtonIcon
-              iconType={isRunning ? 'pause' : 'play'}
+              iconType={isErrorShown ? NoPermissionsIcon : (isRunning ? 'pause' : 'play')}
               onClick={handleRunMonitor}
               aria-label="start/stop monitor"
               data-testid="toggle-run-monitor"
+              disabled={isErrorShown}
             />
           </EuiToolTip>
           <EuiToolTip

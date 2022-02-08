@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { CliCommandNotSupportedError } from 'src/modules/cli/constants/errors';
+import { CommandNotSupportedError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
 import { plainToClass } from 'class-transformer';
@@ -45,7 +45,7 @@ export class PluginsService {
         result,
       });
     } catch (error) {
-      if (error instanceof CliCommandNotSupportedError) {
+      if (error instanceof CommandNotSupportedError) {
         return new PluginCommandExecution({
           ...dto,
           databaseId: clientOptions.instanceId,
@@ -109,7 +109,7 @@ export class PluginsService {
     const whitelist = await this.getWhitelistCommands(databaseId);
 
     if (!whitelist.find((command) => targetCommand.startsWith(command))) {
-      throw new CliCommandNotSupportedError(
+      throw new CommandNotSupportedError(
         ERROR_MESSAGES.PLUGIN_COMMAND_NOT_SUPPORTED(
           (targetCommand.split(' '))[0].toUpperCase(),
         ),

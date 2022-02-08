@@ -4,7 +4,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { mockRedisWrongTypeError, mockStandaloneDatabaseEntity } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
 import { AppTool, ReplyError } from 'src/models';
-import { CliParsingError } from 'src/modules/cli/constants/errors';
+import { CommandParsingError } from 'src/modules/cli/constants/errors';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
 import { CliAnalyticsService } from './cli-analytics.service';
@@ -233,14 +233,14 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit event for custom error', () => {
-      const error: any = CliParsingError;
+      const error: any = CommandParsingError;
       service.sendCommandErrorEvent(instanceId, AppTool.CLI, error);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         `CLI_${TelemetryEvents.CommandErrorReceived}`,
         {
           databaseId: instanceId,
-          error: CliParsingError.name,
+          error: CommandParsingError.name,
         },
       );
     });
@@ -316,7 +316,7 @@ describe('CliAnalyticsService', () => {
         response: redisReplyError.message,
         host: '127.0.0.1',
         port: 7002,
-        error: CliParsingError,
+        error: CommandParsingError,
         status: CommandExecutionStatus.Fail,
       };
 
@@ -326,7 +326,7 @@ describe('CliAnalyticsService', () => {
         `CLI_${TelemetryEvents.CommandErrorReceived}`,
         {
           databaseId: instanceId,
-          error: CliParsingError.name,
+          error: CommandParsingError.name,
         },
       );
     });

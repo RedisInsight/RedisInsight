@@ -19,7 +19,7 @@ const speed = 0.4;
 let keyName = chance.word({ length: 10 });
 let keys: string[];
 
-fixture `Browser Context`
+fixture.only `Browser Context`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async () => {

@@ -16,6 +16,7 @@
     "test:chrome:ci": "testcafe --concurrency 1 chromium:headless tests/ -r spec,json:results/e2e.results.json -e -q attemptLimit=3,successThreshold=1",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
+    "test:desktop:ci": "testcafe electron tests/ --browser-init-timeout 60000 -e -r xunit:./results/results.xml,json:results/e2e.results.json,spec -q attemptLimit=3,successThreshold=1",
     "test:desktop": "testcafe electron tests/ --browser-init-timeout 180000 -e -r html:./report/desktop-report.html,spec -q attemptLimit=3,successThreshold=1"
   },
   "keywords": [],

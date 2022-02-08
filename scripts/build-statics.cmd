@@ -1,8 +1,8 @@
 @echo off
 
 :: =============== Plugins ===============
-set PLUGINS_DIR=".\redisinsight\api\src\static\plugins"
-set PLUGINS_VENDOR_DIR=".\redisinsight\api\src\static\resources\plugins"
+set PLUGINS_DIR=".\redisinsight\api\static\plugins"
+set PLUGINS_VENDOR_DIR=".\redisinsight\api\static\resources\plugins"
 
 :: Default plugins assets
 call node-sass ".\redisinsight\ui\src\styles\main_plugin.scss" ".\vendor\global_styles.css" --output-style compressed
@@ -20,6 +20,3 @@ if not exist "%PLUGINS_DIR%\redisearch" mkdir "%PLUGINS_DIR%\redisearch"
 if not exist "%PLUGINS_DIR%\redisearch\dist" mkdir "%PLUGINS_DIR%\redisearch\dist"
 xcopy "%REDISEARCH_DIR%\dist" "%PLUGINS_DIR%\redisearch\dist\" /s /e /y
 copy "%REDISEARCH_DIR%\package.json" "%PLUGINS_DIR%\redisearch\"
-
-:: =============== Enablement area ===============
-xcopy ".\redisinsight\ui\src\packages\enablement-area" ".\redisinsight\api\src\static\workbench\" /s /e /y

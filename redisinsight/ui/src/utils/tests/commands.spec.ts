@@ -1,4 +1,4 @@
-import { CommandGroup, ICommandArgGenerated, ICommands, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
+import { ICommandArgGenerated, ICommands, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { generateArgs, generateArgsNames, getComplexityShortNotation, getDocUrlForCommand } from '../commands'
 import { cleanup } from '../test-utils'
 
@@ -13,8 +13,8 @@ interface IMockedCommands {
 }
 
 beforeEach(() => {
-  cleanup();
-});
+  cleanup()
+})
 
 const mockedCommands: IMockedCommands[] = [
   {
@@ -133,78 +133,91 @@ const mockedCommands: IMockedCommands[] = [
     ],
     complexityShortMock: 'O(log(N))',
   },
-];
+]
 
 describe('getComplexityShortNotation', () => {
   it('Complexity short should return text according mocked data', () => {
     mockedCommands.forEach(({ matchedCommand = '', complexityShortMock }) => {
-      const complexity = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.complexity ?? '';
-      const complexityShort = getComplexityShortNotation(complexity);
+      const complexity = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.complexity ?? ''
+      const complexityShort = getComplexityShortNotation(complexity)
 
       if (complexityShort) {
-        expect(complexityShort).toEqual(complexityShortMock);
+        expect(complexityShort).toEqual(complexityShortMock)
       } else {
-        expect(complexityShort).toEqual('');
+        expect(complexityShort).toEqual('')
       }
-    });
-  });
-});
+    })
+  })
+  it('handle case when complexity is array of strings', () => {
+    const result = getComplexityShortNotation([
+      'O(1) for each field/value pair added',
+      'O(N) to add N field/value pairs when the command is called with multiple field/value pairs.'
+    ])
+
+    expect(result).toEqual('')
+  })
+})
 
 describe('generateArgs', () => {
   it('generateArgs short should return argument with GeneratedName (with Enums names)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesMock = [] }) => {
-      const argsInit = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? [];
+      const argsInit = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
       const argsMocked: ICommandArgGenerated[] = argsInit.map((arg, i) => ({
         ...arg,
         generatedName: argsNamesMock[i] ?? '',
-      }));
+      }))
 
-      const args = generateArgs(argsInit);
+      const args = generateArgs(argsInit)
 
-      expect(args).toEqual(argsMocked);
-    });
-  });
-});
+      expect(args).toEqual(argsMocked)
+    })
+  })
+})
 
 describe('generateArgName', () => {
   it('Arguments names should return text according mocked data (with Enums values)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesWithEnumsMock }) => {
-      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? [];
+      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args);
-      expect(generatedArgNames).toEqual(argsNamesWithEnumsMock);
-    });
-  });
+      const generatedArgNames = generateArgsNames(args)
+      expect(generatedArgNames).toEqual(argsNamesWithEnumsMock)
+    })
+  })
   it('Arguments names should return text according mocked data (with Enums names)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesMock }) => {
-      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? [];
+      const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args, true);
-      expect(generatedArgNames).toEqual(argsNamesMock);
-    });
-  });
-});
+      const generatedArgNames = generateArgsNames(args, true)
+      expect(generatedArgNames).toEqual(argsNamesMock)
+    })
+  })
+})
 
 const getDocUrlForCommandTests: any[] = [
-  ['SET', CommandGroup.String, 'https://redis.io/commands/set'],
-  ['ACL SETUSER', CommandGroup.Server, 'https://redis.io/commands/acl-setuser'],
-  ['JSON.GET', CommandGroup.JSON, 'https://oss.redis.com/redisjson/commands/#jsonget'],
-  ['FT.CREATE', CommandGroup.Search, 'https://oss.redis.com/redisearch/Commands/#ftcreate'],
-  ['FT.ALTER SCHEMA ADD', CommandGroup.Search, 'https://oss.redis.com/redisearch/Commands/#ftalter_schema_add'],
-  ['TS.ADD', CommandGroup.TimeSeries, 'https://oss.redis.com/redistimeseries/commands/#tsadd'],
-  ['TS.CREATE', CommandGroup.TimeSeries, 'https://oss.redis.com/redistimeseries/commands/#tscreate'],
-  ['GRAPH.EXPLAIN', CommandGroup.Graph, 'https://oss.redis.com/redisgraph/commands/#graphexplain'],
-  ['GRAPH.QUERY', CommandGroup.Graph, 'https://oss.redis.com/redisgraph/commands/#graphquery'],
-  ['AI.MODELRUN', CommandGroup.AI, 'https://oss.redis.com/redisai/commands/#aimodelrun'],
-  ['AI.SCRIPTDEL', CommandGroup.AI, 'https://oss.redis.com/redisai/commands/#aiscriptdel'],
-  ['NON EXIST COMMAND', 'non-exist', 'https://redis.io/commands/non-exist-command'],
+  ['SET', 'https://redis.io/commands/set'],
+  ['ACL SETUSER', 'https://redis.io/commands/acl-setuser'],
+  ['JSON.GET', 'https://oss.redis.com/redisjson/commands/#jsonget'],
+  ['FT.CREATE', 'https://oss.redis.com/redisearch/Commands/#ftcreate'],
+  ['FT.ALTER SCHEMA ADD', 'https://oss.redis.com/redisearch/Commands/#ftalter_schema_add'],
+  ['TS.ADD', 'https://oss.redis.com/redistimeseries/commands/#tsadd'],
+  ['TS.CREATE', 'https://oss.redis.com/redistimeseries/commands/#tscreate'],
+  ['GRAPH.EXPLAIN', 'https://oss.redis.com/redisgraph/commands/#graphexplain'],
+  ['GRAPH.QUERY', 'https://oss.redis.com/redisgraph/commands/#graphquery'],
+  ['AI.MODELRUN', 'https://oss.redis.com/redisai/commands/#aimodelrun'],
+  ['BF.INFO', 'https://oss.redis.com/redisbloom/Bloom_Commands/#bfinfo'],
+  ['CMS.INITBYDIM', 'https://oss.redis.com/redisbloom/CountMinSketch_Commands/#cmsinitbydim'],
+  ['CF.INSERT', 'https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinsert'],
+  ['RG.CONFIGSET', 'https://oss.redis.com/redisgears/commands.html#rgconfigset'],
+  ['TOPK.INFO', 'https://oss.redis.com/redisbloom/TopK_Commands/#topkinfo'],
+  ['AI.SCRIPTDEL', 'https://oss.redis.com/redisai/commands/#aiscriptdel'],
+  ['NON EXIST COMMAND', 'https://redis.io/commands/non-exist-command'],
 ]
 
 describe('getDocUrlForCommand', () => {
-  it.each(getDocUrlForCommandTests)('for input: %s (command), %s (group), should be output: %s',
-    (command, group, expected) => {
-      const result = getDocUrlForCommand(command, group)
+  it.each(getDocUrlForCommandTests)('for input: %s (command), should be output: %s',
+    (command, expected) => {
+      const result = getDocUrlForCommand(command)
       expect(result).toBe(expected)
     })
 })

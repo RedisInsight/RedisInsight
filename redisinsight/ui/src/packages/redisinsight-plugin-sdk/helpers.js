@@ -4,5 +4,13 @@
  * @param data
  */
 export const sendMessageToMain = (data = {}) => {
-  window.top.postMessage(data, '*')
+  const event = document.createEvent('Event')
+  event.initEvent('message', true, true)
+  event.data = data
+  event.origin = '*'
+  // eslint-disable-next-line no-restricted-globals
+  parent.dispatchEvent(event)
 }
+// export const sendMessageToMain = (data = {}) => {
+//   window.top.postMessage(data, '*')
+// }

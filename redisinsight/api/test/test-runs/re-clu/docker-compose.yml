@@ -9,9 +9,5 @@ services:
     build: ./re-clu
     cap_add:
       - sys_resource
-    environment:
-      - CREATE_CLUSTER_DB=1
-#    ports:
-#      - 12010:12010
-#      - 8443:8443
-#      - 9443:9443
+    env_file:
+      - ./re-clu/.env

@@ -1,7 +1,7 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep, uniqBy } from 'lodash'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
-import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
+import { ICommand, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import reducer, {
   initialState,
   getRedisCommands,
@@ -60,7 +60,9 @@ describe('slices', () => {
       const state = {
         ...initialState,
         spec: data,
-        commandsArray: Object.keys(data).sort()
+        commandsArray: Object.keys(data).sort(),
+        commandGroups: uniqBy(Object.values(data), 'group')
+          .map((item: ICommand) => item.group)
       }
 
       // Act

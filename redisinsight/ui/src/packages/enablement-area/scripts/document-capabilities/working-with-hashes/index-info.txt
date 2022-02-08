@@ -1,4 +1,0 @@
-// Command to display information about a particular index.
-// In this case display the information about the newly created "permits" index
-
-FT.INFO "permits"

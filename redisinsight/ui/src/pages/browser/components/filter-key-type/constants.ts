@@ -11,7 +11,7 @@ export const FILTER_KEY_TYPE_OPTIONS = [
     color: GROUP_TYPES_COLORS[KeyTypes.Hash],
   },
   {
-    text: 'Zset',
+    text: 'Sorted Set',
     value: KeyTypes.ZSet,
     color: GROUP_TYPES_COLORS[KeyTypes.ZSet],
   },

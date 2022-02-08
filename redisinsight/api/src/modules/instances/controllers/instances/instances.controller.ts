@@ -240,25 +240,6 @@ export class InstancesController {
     return this.instancesBusinessService.getOverview(id);
   }
 
-  @Get(':id/plugin-commands')
-  @UseInterceptors(new TimeoutInterceptor())
-  @ApiEndpoint({
-    description: 'Get Redis Commands available for plugins',
-    statusCode: 200,
-    responses: [
-      {
-        status: 200,
-        description: 'List of available commands',
-        type: [String],
-      },
-    ],
-  })
-  async getPluginCommands(
-    @Param('id') id: string,
-  ): Promise<string[]> {
-    return this.instancesBusinessService.getPluginCommands(id);
-  }
-
   @Post('redis-enterprise-dbs')
   @ApiEndpoint({
     description: 'Add databases from Redis Enterprise cluster',

@@ -3,7 +3,14 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "static/**/*"
+      {
+        "include": "../static/**/*",
+        "outDir": "dist/static"
+      },
+      {
+        "include": "../defaults/**/*",
+        "outDir": "dist/defaults"
+      }
     ]
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { ReactElement, useEffect, useState } from 'react'
 import cx from 'classnames'
 import { toUpper, flatten, isArray, isEmpty, map, uniq } from 'lodash'
@@ -112,7 +113,6 @@ const TableInfoResult = React.memo((props: Props) => {
         <div className="content">
           {Header()}
           <EuiInMemoryTable
-            pagination
             items={items ?? []}
             loading={!result}
             message={loadingMessage}

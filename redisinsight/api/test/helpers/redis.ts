@@ -183,6 +183,8 @@ export const initRTE = async () => {
     modules: await determineModulesInstalled(rte.client),
     re: !!constants.TEST_RE_USER,
     cloud: !!constants.TEST_CLOUD_RTE,
+    sharedData: constants.TEST_RTE_SHARED_DATA,
+    bigData: constants.TEST_RTE_BIG_DATA,
     nodes: [],
   };
 

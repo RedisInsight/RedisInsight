@@ -1,6 +1,6 @@
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
-import { ITelemetryService, ITelemetryEvent } from './interfaces'
+import { ITelemetryService, ITelemetryEvent, ITelemetryIdentify } from './interfaces'
 import loadSegmentAnalytics from './loadSegmentAnalytics'
 
 export const NON_TRACKING_ANONYMOUS_ID = 'UNSET'
@@ -19,6 +19,14 @@ interface IContextPageInfo {
 export class SegmentTelemetryService implements ITelemetryService {
   private _anonymousId: string = ''
 
+  private _sessionId: number = -1
+
+  private readonly _sourceWriteKey: string
+
+  constructor(sourceWriteKey: string) {
+    this._sourceWriteKey = sourceWriteKey
+  }
+
   private _getPageInfo = (): IContextPage => {
     const pageObject: IContextPage = {}
 
@@ -29,10 +37,6 @@ export class SegmentTelemetryService implements ITelemetryService {
     }
 
     return pageObject
-  }
-
-  constructor(private _sourceWriteKey: string) {
-    this._sourceWriteKey = _sourceWriteKey
   }
 
   async initialize(): Promise<void> {
@@ -52,7 +56,12 @@ export class SegmentTelemetryService implements ITelemetryService {
           context: {
             ip: '0.0.0.0',
             ...pageInfo
-          }
+          },
+          integrations: {
+            Amplitude: {
+              session_id: this._sessionId,
+            }
+          },
         }, resolve)
       } catch (e) {
         reject(e)
@@ -60,7 +69,8 @@ export class SegmentTelemetryService implements ITelemetryService {
     })
   }
 
-  async identify({ installationId }: { installationId: string }): Promise<void> {
+  async identify({ installationId, sessionId }: ITelemetryIdentify): Promise<void> {
+    this._sessionId = sessionId || -1
     if (this._anonymousId) {
       return Promise.resolve()
     }
@@ -94,7 +104,14 @@ export class SegmentTelemetryService implements ITelemetryService {
   async event({ event, properties }: ITelemetryEvent): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        window.analytics.track(event, properties, { context: { ip: '0.0.0.0', ...this._getPageInfo() } }, resolve)
+        window.analytics.track(event, properties, {
+          context: { ip: '0.0.0.0', ...this._getPageInfo() },
+          integrations: {
+            Amplitude: {
+              session_id: this._sessionId,
+            }
+          },
+        }, resolve)
       } catch (e) {
         reject(e)
       }

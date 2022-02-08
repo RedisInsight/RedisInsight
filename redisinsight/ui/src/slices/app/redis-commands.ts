@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { isString, uniqBy } from 'lodash'
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, ICommand, ICommands } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 
@@ -11,7 +12,8 @@ export const initialState: StateAppRedisCommands = {
   loading: false,
   error: '',
   spec: {},
-  commandsArray: []
+  commandsArray: [],
+  commandGroups: [],
 }
 
 // A slice for recipes
@@ -22,10 +24,13 @@ const appRedisCommandsSlice = createSlice({
     getRedisCommands: (state) => {
       state.loading = true
     },
-    getRedisCommandsSuccess: (state, { payload }) => {
+    getRedisCommandsSuccess: (state, { payload }: { payload: ICommands }) => {
       state.loading = false
       state.spec = payload
       state.commandsArray = Object.keys(state.spec).sort()
+      state.commandGroups = uniqBy(Object.values(payload), 'group')
+        .map((item: ICommand) => item.group)
+        .filter((group: string) => isString(group))
     },
     getRedisCommandsFailure: (state, { payload }) => {
       state.loading = false

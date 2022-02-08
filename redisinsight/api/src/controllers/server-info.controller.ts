@@ -7,10 +7,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import {
-  getBlockingCommands,
-  getUnsupportedCommands,
-} from 'src/utils/cli-helper';
+import { getBlockingCommands } from 'src/utils/cli-helper';
+import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
 import { IServerProvider } from 'src/modules/core/models/server-provider.interface';
 import { GetServerInfoResponse } from 'src/dto/server.dto';
 

@@ -24,9 +24,10 @@ export enum Direction {
 interface Props {
   onAddInstance: () => void;
   direction: Direction;
+  welcomePage?: boolean;
 }
 
-const AddInstanceControls = ({ onAddInstance, direction }: Props) => {
+const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: Props) => {
   const handleOnAddDatabase = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_CLICKED,
@@ -34,9 +35,12 @@ const AddInstanceControls = ({ onAddInstance, direction }: Props) => {
     onAddInstance()
   }
 
-  const handleClickLink = (event: TelemetryEvent) => {
+  const handleClickLink = (event: TelemetryEvent, eventData: any = {}) => {
     sendEventTelemetry({
       event,
+      eventData: {
+        ...eventData
+      }
     })
   }
 
@@ -58,13 +62,17 @@ const AddInstanceControls = ({ onAddInstance, direction }: Props) => {
       href={HELP_LINKS.createRedisCloud.link}
       target="_blank"
       rel="noreferrer"
-      onClick={() => handleClickLink(HELP_LINKS.createRedisCloud.event)}
+      onClick={() => handleClickLink(
+        HELP_LINKS.createRedisCloud.event,
+        { source: HELP_LINKS.createRedisCloud.sources[welcomePage ? 'welcome' : 'databaseList'] }
+      )}
+      data-testid="promo-btn"
     >
       <EuiText className={styles.createTitle}>
         {HELP_LINKS.createRedisCloud.label}
       </EuiText>
       <EuiText className={styles.createText}>
-        Free managed database up to 30MB, with modules support.
+        Try Redis Cloud with enhanced database capabilities.
       </EuiText>
       <EuiIcon type="arrowRight" size="m" className={styles.arrowRight} />
     </a>

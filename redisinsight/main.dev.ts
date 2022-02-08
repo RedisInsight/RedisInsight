@@ -35,7 +35,7 @@ import AboutPanelOptions from './about-panel';
 // eslint-disable-next-line import/no-cycle
 import TrayBuilder from './tray';
 import server from './api/dist/src/main';
-import { ElectronStorageItem, ipcEvent } from './ui/src/electron/constants';
+import { ElectronStorageItem, IpcEvent } from './ui/src/electron/constants';
 
 if (process.env.NODE_ENV !== 'production') {
   log.transports.file.getFile().clear();
@@ -44,14 +44,18 @@ if (process.env.NODE_ENV !== 'production') {
 log.info('App starting.....');
 
 export default class AppUpdater {
-  constructor() {
+  constructor(url: string = '') {
     log.info('AppUpdater initialization');
     log.transports.file.level = 'info';
 
-    autoUpdater.setFeedURL({
-      provider: 'generic',
-      url: process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
-    });
+    try {
+      autoUpdater.setFeedURL({
+        provider: 'generic',
+        url,
+      });
+    } catch (error) {
+      log.error(error);
+    }
 
     autoUpdater.checkForUpdatesAndNotify();
     autoUpdater.autoDownload = true;
@@ -115,8 +119,10 @@ const bootstrap = async () => {
     trayInstance = tray.buildTray();
   }
 
-  if (process.env.NODE_ENV === 'production') {
-    new AppUpdater();
+  const upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK;
+
+  if (upgradeUrl) {
+    new AppUpdater(upgradeUrl);
   }
 
   app.setName('RedisInsight');
@@ -132,7 +138,15 @@ const bootstrap = async () => {
 
 export const windows = new Set<BrowserWindow>();
 
-const titleSplash = 'splash';
+const getAssetPath = (...paths: string[]): string => {
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'resources')
+    : path.join(__dirname, '../resources');
+
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
+const titleSplash = 'RedisInsight';
 export const createSplashScreen = async () => {
   const splash = new BrowserWindow({
     width: 500,
@@ -142,6 +156,11 @@ export const createSplashScreen = async () => {
     resizable: false,
     alwaysOnTop: true,
     title: titleSplash,
+    icon: getAssetPath('icon.png'),
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
 
   splash.loadURL(`file://${__dirname}/splash.html`);
@@ -149,13 +168,7 @@ export const createSplashScreen = async () => {
   return splash;
 };
 
-export const createWindow = async (splash: BrowserWindow | null) => {
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'resources')
-    : path.join(__dirname, '../resources');
-
-  const getAssetPath = (...paths: string[]): string => path.join(RESOURCES_PATH, ...paths);
-
+export const createWindow = async (splash: BrowserWindow | null = null) => {
   let x;
   let y;
   const currentWindow = BrowserWindow.getFocusedWindow();
@@ -179,11 +192,10 @@ export const createWindow = async (splash: BrowserWindow | null) => {
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
-      webSecurity: false,
+      webSecurity: true,
       contextIsolation: false,
       spellcheck: true,
-      allowRunningInsecureContent: true,
-      enableRemoteModule: true,
+      allowRunningInsecureContent: false,
       scrollBounce: true,
     },
   });
@@ -193,6 +205,11 @@ export const createWindow = async (splash: BrowserWindow | null) => {
   newWindow.webContents.on('did-finish-load', () => {
     if (!newWindow) {
       throw new Error('"newWindow" is not defined');
+    }
+
+    const zoomFactor = store?.get(ElectronStorageItem.zoomFactor) as number ?? null;
+    if (zoomFactor) {
+      newWindow?.webContents.setZoomFactor(zoomFactor);
     }
 
     if (!trayInstance?.isDestroyed()) {
@@ -284,6 +301,10 @@ export const setToQuiting = () => {
   isQuiting = true;
 };
 
+export const setValueToStore = (key: ElectronStorageItem, value: any) => {
+  store?.set(key, value);
+};
+
 /**
  * Add event listeners...
  */
@@ -369,9 +390,11 @@ app.on('certificate-error', (event, _webContents, _url, _error, _certificate, ca
 });
 
 // ipc events
-ipcMain.handle(ipcEvent.getStoreValue, (_event, key) => store?.get(key));
+ipcMain.handle(IpcEvent.getAppVersion, () => app?.getVersion());
 
-ipcMain.handle(ipcEvent.deleteStoreValue, (_event, key) => store?.delete(key));
+ipcMain.handle(IpcEvent.getStoreValue, (_event, key) => store?.get(key));
+
+ipcMain.handle(IpcEvent.deleteStoreValue, (_event, key) => store?.delete(key));
 
 dialog.showErrorBox = (title: string, content: string) => {
   log.error('Dialog shows error:', `\n${title}\n${content}`);

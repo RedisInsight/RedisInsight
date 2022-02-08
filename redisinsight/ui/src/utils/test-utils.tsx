@@ -25,11 +25,13 @@ import { initialState as initialStateNotifications } from 'uiSrc/slices/app/noti
 import { initialState as initialStateAppInfo } from 'uiSrc/slices/app/info'
 import { initialState as initialStateAppContext } from 'uiSrc/slices/app/context'
 import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/redis-commands'
+import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
+import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
 import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user-settings'
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
-import { initialState as initialStateWBSettings } from 'uiSrc/slices/workbench/wb-settings'
+import { initialState as initialStateWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
 
 interface Options {
   initialState?: RootState;
@@ -44,7 +46,8 @@ const initialStateDefault: RootState = {
     info: cloneDeep(initialStateAppInfo),
     notifications: cloneDeep(initialStateNotifications),
     context: cloneDeep(initialStateAppContext),
-    redisCommands: cloneDeep(initialStateAppRedisCommands)
+    redisCommands: cloneDeep(initialStateAppRedisCommands),
+    plugins: cloneDeep(initialStateAppPluginsReducer)
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -66,13 +69,14 @@ const initialStateDefault: RootState = {
   cli: {
     settings: cloneDeep(initialStateCliSettings),
     output: cloneDeep(initialStateCliOutput),
+    monitor: cloneDeep(initialStateMonitor),
   },
   user: {
     settings: cloneDeep(initialStateUserSettings),
   },
   workbench: {
     results: cloneDeep(initialStateWBResults),
-    settings: cloneDeep(initialStateWBSettings),
+    enablementArea: cloneDeep(initialStateWBEnablementArea),
   },
 }
 

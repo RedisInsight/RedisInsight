@@ -37,6 +37,7 @@ export default {
           </span>
           <ul style={{ marginBottom: 0 }}>
             {instanceNames.slice(0, limitShowRemovedInstances).map((el, i) => (
+              // eslint-disable-next-line react/no-array-index-key
               <li className={styles.list} key={i}>
                 {formatNameShort(el)}
               </li>
@@ -96,6 +97,7 @@ export default {
           </span>
           <ul style={{ marginBottom: 0 }}>
             {listOfElements.slice(0, limitShowRemovedElements).map((el, i) => (
+              // eslint-disable-next-line react/no-array-index-key
               <li className={styles.list} key={i}>
                 {formatNameShort(el)}
               </li>

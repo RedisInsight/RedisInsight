@@ -16,8 +16,11 @@ export const initialState: StateAppContext = {
   },
   workbench: {
     script: '',
+    enablementArea: {
+      guidePath: '',
+      guideScrollTop: 0,
+    },
     panelSizes: {
-      horizontal: {},
       vertical: {}
     }
   }
@@ -48,14 +51,25 @@ const appContextSlice = createSlice({
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
     },
-    setWorkbenchHorizontalPanelSizes: (state, { payload }: { payload: any }) => {
-      state.workbench.panelSizes.horizontal = payload
-    },
     setWorkbenchVerticalPanelSizes: (state, { payload }: { payload: any }) => {
       state.workbench.panelSizes.vertical = payload
     },
     setLastPageContext: (state, { payload }: { payload: string }) => {
       state.lastPage = payload
+    },
+    setWorkbenchEAGuide: (state, { payload }: { payload: any }) => {
+      const prevValue = state.workbench.enablementArea.guidePath
+      state.workbench.enablementArea.guidePath = payload
+      if (prevValue !== payload) {
+        state.workbench.enablementArea.guideScrollTop = 0
+      }
+    },
+    setWorkbenchEAGuideScrollTop: (state, { payload }: { payload: any }) => {
+      state.workbench.enablementArea.guideScrollTop = payload || 0
+    },
+    resetWorkbenchEAGuide: (state) => {
+      state.workbench.enablementArea.guidePath = ''
+      state.workbench.enablementArea.guideScrollTop = 0
     },
   },
 })
@@ -69,9 +83,11 @@ export const {
   setBrowserKeyListScrollPosition,
   setBrowserPanelSizes,
   setWorkbenchScript,
-  setWorkbenchHorizontalPanelSizes,
   setWorkbenchVerticalPanelSizes,
-  setLastPageContext
+  setLastPageContext,
+  setWorkbenchEAGuide,
+  resetWorkbenchEAGuide,
+  setWorkbenchEAGuideScrollTop,
 } = appContextSlice.actions
 
 // Selectors
@@ -83,6 +99,8 @@ export const appContextWorkbench = (state: RootState) =>
   state.app.context.workbench
 export const appContextSelectedKey = (state: RootState) =>
   state.app.context.browser.keyList.selectedKey
+export const appContextWorkbenchEA = (state: RootState) =>
+  state.app.context.workbench.enablementArea
 
 // The reducer
 export default appContextSlice.reducer

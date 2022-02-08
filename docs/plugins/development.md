@@ -103,7 +103,11 @@ The following function receives props of the executed commands:
 ```typescript
 interface Props {
   command: string; // executed command
-  data: string; // result of the executed command
+  data: Result[]; // array of results (one item for Standalone)
+}
+
+interface Result {
+  response: any; // response of the executed command
   status: 'success' | 'fail'; // response status of the executed command
 }
 
@@ -131,10 +135,11 @@ inside of the plugin script.
 
 ```javascript
 const { config, modules } = window.state
-const { baseUrl } = config
+const { baseUrl, appVersion } = config
 
 // modules - the list of modules of the current database
 // baseUrl - url for your plugin folder - can be used to include your assets
+// appVersion - version of the RedisInsight application
 ```
 
 ### Plugin rendering
@@ -146,13 +151,16 @@ Rendered iframe also includes `theme_DARK` or `theme_LIGHT` className on `body` 
 _Javascript Example:_
 ```javascript
 const renderVisualization = (props) => {
-    const { command, data } = props;
+    const { command, data = [] } = props;
+    const [{ result, status }] = data
     document.getElementById('app')
       .innerHTML = `
         <h3>Executed command:<h3>
         <p>${command}</p>
         <h4>Result of the command</h4>
-        <p>${data}</p>
+        <p>${result}</p>
+        <h4>Status of the command</h4>
+        <p>${status}</p>
       `
 }
 
@@ -165,9 +173,10 @@ import { render } from 'react-dom'
 import App from './App'
 
 const renderVisualization = (props) => {
-  const { command, status, data = '' } = props
+  const { command, data = [] } = props
+  const [{ result, status }] = data
   render(
-    <App command={command} response={data} status={status} />,
+    <App command={command} response={result} status={status} />,
     document.getElementById('app')
   )
 }

@@ -6,13 +6,21 @@ import {
   MenuItemConstructorOptions,
   MenuItem,
 } from 'electron';
+import { ElectronStorageItem } from './ui/src/electron/constants';
 // eslint-disable-next-line import/no-cycle
-import { createWindow, getDisplayAppInTrayValue, updateDisplayAppInTray } from './main.dev';
+import {
+  createWindow,
+  getDisplayAppInTrayValue,
+  setValueToStore,
+  updateDisplayAppInTray,
+} from './main.dev';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
 }
+
+export const STEP_ZOOM_FACTOR = 0.2;
 
 export default class MenuBuilder {
   public mainWindow: BrowserWindow;
@@ -30,6 +38,17 @@ export default class MenuBuilder {
     Menu.setApplicationMenu(menu);
 
     return menu;
+  }
+
+  getZoomFactor(isZoomIn: boolean = false): number {
+    const correctZoomFactor = isZoomIn ? STEP_ZOOM_FACTOR : -STEP_ZOOM_FACTOR;
+    const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + correctZoomFactor * 100) / 100;
+    return zoomFactor;
+  }
+
+  setZoomFactor(zoomFactor: number): void {
+    setValueToStore(ElectronStorageItem.zoomFactor, zoomFactor);
+    this.mainWindow.webContents.setZoomFactor(zoomFactor);
   }
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
@@ -104,13 +123,30 @@ export default class MenuBuilder {
           },
         },
         { type: 'separator' },
-        { role: 'resetZoom', label: 'Reset Zoom' },
-        { role: 'zoomIn', visible: false },
         {
-          role: 'zoomIn',
-          accelerator: 'CmdOrCtrl+=',
+          label: 'Reset Zoom',
+          accelerator: 'CmdOrCtrl+0',
+          click: () => {
+            const zoomFactor = 1;
+            this.setZoomFactor(zoomFactor);
+          },
         },
-        { role: 'zoomOut' },
+        {
+          label: 'Zoom In',
+          accelerator: 'CmdOrCtrl+=',
+          click: () => {
+            const zoomFactor = this.getZoomFactor(true);
+            this.setZoomFactor(zoomFactor);
+          },
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'CmdOrCtrl+-',
+          click: () => {
+            const zoomFactor = this.getZoomFactor();
+            this.setZoomFactor(zoomFactor);
+          },
+        },
       ],
     };
     const subMenuWindow: DarwinMenuItemConstructorOptions = {
@@ -156,7 +192,7 @@ export default class MenuBuilder {
         {
           label: 'License Terms',
           click() {
-            shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/master/LICENSE');
+            shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE');
           },
         },
         {
@@ -241,13 +277,30 @@ export default class MenuBuilder {
             },
           },
           { type: 'separator' },
-          { role: 'resetZoom', label: 'Reset Zoom' },
-          { role: 'zoomIn', visible: false },
           {
-            role: 'zoomIn',
-            accelerator: 'CmdOrCtrl+=',
+            label: 'Reset &Zoom',
+            accelerator: 'Ctrl+0',
+            click: () => {
+              const zoomFactor = 1;
+              this.setZoomFactor(zoomFactor);
+            },
           },
-          { role: 'zoomOut' },
+          {
+            label: 'Zoom &In',
+            accelerator: 'Ctrl+=',
+            click: () => {
+              const zoomFactor = this.getZoomFactor(true);
+              this.setZoomFactor(zoomFactor);
+            },
+          },
+          {
+            label: 'Zoom &Out',
+            accelerator: 'Ctrl+-',
+            click: () => {
+              const zoomFactor = this.getZoomFactor();
+              this.setZoomFactor(zoomFactor);
+            },
+          },
         ],
       },
       {
@@ -256,7 +309,7 @@ export default class MenuBuilder {
           {
             label: 'License Terms',
             click() {
-              shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/master/LICENSE');
+              shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE');
             },
           },
           {

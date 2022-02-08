@@ -200,28 +200,26 @@ describe('POST /instance/:instanceId/hash/get-fields', () => {
     ].map(mainCheckFn);
 
     describe('Search in huge number of fields', () => {
-      requirements('rte.onPremise');
-      // Number of fields to generate. Could be 10M or even more but consume much more time
-      // We decide to generate 500K which should take ~10s
-      const NUMBER_OF_FIELDS = 500 * 1000;
-      before(async () => await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBER_OF_FIELDS, true));
+      requirements('rte.bigData');
+      // number of hash fields inside existing data (1M fields)
+      const NUMBER_OF_FIELDS = 1_000_000;
 
       [
         {
           name: 'Should find exact one key',
           data: {
-            keyName: constants.TEST_HASH_KEY_1,
+            keyName: constants.TEST_HASH_HUGE_KEY,
             cursor: 0,
             count: 15,
-            match: 'f_48900'
+            match: constants.TEST_HASH_HUGE_KEY_FIELD
           },
           responseSchema,
           checkFn: ({ body }) => {
-            expect(body.keyName).to.eql(constants.TEST_HASH_KEY_1);
+            expect(body.keyName).to.eql(constants.TEST_HASH_HUGE_KEY);
             expect(body.total).to.eql(NUMBER_OF_FIELDS);
             expect(body.fields.length).to.eq(1);
-            expect(body.fields[0].field).to.eql('f_48900');
-            expect(body.fields[0].value).to.eql('v');
+            expect(body.fields[0].field).to.eql(constants.TEST_HASH_HUGE_KEY_FIELD);
+            expect(body.fields[0].value).to.eql(constants.TEST_HASH_HUGE_KEY_VALUE);
           }
         },
       ].map(mainCheckFn);

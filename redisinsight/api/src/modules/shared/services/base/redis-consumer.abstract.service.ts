@@ -1,12 +1,18 @@
 import IORedis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { AppTool, ReplyError, IRedisConsumer } from 'src/models';
-import { catchRedisConnectionError, generateRedisConnectionName } from 'src/utils';
+import {
+  catchRedisConnectionError,
+  generateRedisConnectionName,
+  getConnectionNamespace,
+} from 'src/utils';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
+import { IRedisToolOptions, DEFAULT_REDIS_TOOL_OPTIONS } from 'src/modules/shared/services/base/redis-tool-options';
 
 export abstract class RedisConsumerAbstractService implements IRedisConsumer {
   protected redisService: RedisService;
@@ -15,12 +21,16 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
 
   protected consumer: AppTool;
 
+  private readonly options: IRedisToolOptions = DEFAULT_REDIS_TOOL_OPTIONS;
+
   protected constructor(
     consumer: AppTool,
     redisService: RedisService,
     instancesBusinessService: InstancesBusinessService,
+    options: IRedisToolOptions = {},
   ) {
     this.consumer = consumer;
+    this.options = { ...this.options, ...options };
     this.redisService = redisService;
     this.instancesBusinessService = instancesBusinessService;
   }
@@ -33,9 +43,7 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
 
   abstract execPipeline(
     clientOptions: IFindRedisClientInstanceByOptions,
-    toolCommands: Array<
-    [toolCommand: any, ...args: Array<string | number | Buffer>]
-    >,
+    toolCommands: Array<[toolCommand: any, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]>;
 
   private prepareCommands(
@@ -93,20 +101,13 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
       ...options,
       tool: this.consumer,
     });
-    if (!redisClientInstance) {
-      return await this.createNewClient(
-        options.instanceId,
-        options.uuid,
-      );
-    }
-    const isConnected: boolean = this.redisService.isClientConnected(
-      redisClientInstance.client,
-    );
-    if (!isConnected) {
+    if (!redisClientInstance || !this.redisService.isClientConnected(redisClientInstance.client)) {
       this.redisService.removeClientInstance({
-        instanceId: redisClientInstance.instanceId,
+        instanceId: redisClientInstance?.instanceId,
         tool: this.consumer,
       });
+      if (!this.options.enableAutoConnection) throw new ClientNotFoundErrorException();
+
       return await this.createNewClient(
         options.instanceId,
         options.uuid,
@@ -114,6 +115,18 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     }
 
     return redisClientInstance.client;
+  }
+
+  getRedisClientNamespace(options: IFindRedisClientInstanceByOptions): string {
+    try {
+      const clientInstance = this.redisService.getClientInstance({
+        ...options,
+        tool: this.consumer,
+      });
+      return clientInstance?.client ? getConnectionNamespace(clientInstance.client) : '';
+    } catch (e) {
+      return '';
+    }
   }
 
   protected async createNewClient(

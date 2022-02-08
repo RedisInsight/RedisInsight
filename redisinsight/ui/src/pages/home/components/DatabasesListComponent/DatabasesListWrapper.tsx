@@ -14,22 +14,23 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 
-import { PageNames, Pages } from 'uiSrc/constants'
 import {
   checkConnectToInstanceAction,
   deleteInstancesAction,
   instancesSelector,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances'
-import { resetKeys } from 'uiSrc/slices/keys'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import {
   CONNECTION_TYPE_DISPLAY,
   ConnectionType,
   Instance,
 } from 'uiSrc/slices/interfaces'
-import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
+import { resetKeys } from 'uiSrc/slices/keys'
+import { PageNames, Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
+import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import DatabasesList from './DatabasesList/DatabasesList'
 
 import styles from './styles.module.scss'
@@ -39,12 +40,14 @@ export interface Props {
   dialogIsOpen: boolean;
   editedInstance: Nullable<Instance>;
   onEditInstance: (instance: Instance) => void;
+  onDeleteInstances: (instances: Instance[]) => void;
 }
 const DatabasesListWrapper = ({
   width,
   dialogIsOpen,
   onEditInstance,
   editedInstance,
+  onDeleteInstances
 }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
@@ -103,6 +106,8 @@ const DatabasesListWrapper = ({
   const connectToInstance = (id = '') => {
     if (contextInstanceId && contextInstanceId !== id) {
       dispatch(resetKeys())
+      dispatch(resetCliSettingsAction())
+      dispatch(resetCliHelperSettings())
       dispatch(setAppContextInitialState())
     }
     dispatch(setConnectedInstanceId(id))
@@ -145,11 +150,11 @@ const DatabasesListWrapper = ({
   }
 
   const handleDeleteInstance = (instance: Instance) => {
-    dispatch(deleteInstancesAction([instance]))
+    dispatch(deleteInstancesAction([instance], () => onDeleteInstances([instance])))
   }
 
   const handleDeleteInstances = (instances: Instance[]) => {
-    dispatch(deleteInstancesAction(instances))
+    dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
   const PopoverDelete = ({ id, ...instance }: Instance) => (

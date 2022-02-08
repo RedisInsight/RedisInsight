@@ -25,6 +25,8 @@ export class AddRedisDatabasePage {
   showDatabasesButton: Selector
   selectAllCheckbox: Selector
   welcomePageTitle: Selector
+  databaseIndexCheckbox: Selector
+  databaseIndexInput: Selector
   secretKeyInput: Selector;
 
   constructor() {
@@ -45,6 +47,7 @@ export class AddRedisDatabasePage {
       this.showDatabasesButton = Selector('[data-testid=btn-show-databases]');
       this.databaseName = Selector('.euiTableCellContent.column_name');
       this.selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
+      this.databaseIndexCheckbox = Selector('[data-testid=showDb]~div');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.hostInput = Selector('[data-testid=host]');
       this.portInput = Selector('[data-testid=port]');
@@ -55,6 +58,7 @@ export class AddRedisDatabasePage {
       this.accessKeyInput = Selector('[data-testid=access-key]');
       this.secretKeyInput = Selector('[data-testid=secret-key]');
       this.welcomePageTitle = Selector('[data-testid=welcome-page-title]');
+      this.databaseIndexInput = Selector('[data-testid=db]');
   }
 
   /**

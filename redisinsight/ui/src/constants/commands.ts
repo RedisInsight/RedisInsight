@@ -3,6 +3,7 @@ export interface ICommands {
 }
 
 export interface ICommand {
+  name?: string;
   summary: string;
   complexity?: string;
   arguments?: ICommandArg[];
@@ -47,7 +48,7 @@ export enum CommandGroup {
   Scripting = 'scripting',
   Transactions = 'transactions',
   Server = 'server',
-  SortedSet = 'sorted_set',
+  SortedSet = 'sorted-set',
   HyperLogLog = 'hyperloglog',
   Hash = 'hash',
   Set = 'set',
@@ -58,8 +59,26 @@ export enum CommandGroup {
   JSON = 'json',
   TimeSeries = 'timeseries',
   Graph = 'graph',
-  AI = 'ai'
+  AI = 'ai',
+  TDigest = 'tdigest',
+  CMS = 'cms',
+  TopK = 'topk',
 }
+
+export enum CommandPrefix {
+  AI = 'AI',
+  Graph = 'GRAPH',
+  TimeSeries = 'TS',
+  Search = 'FT',
+  JSON = 'JSON',
+  Gears = 'RG',
+  BloomFilter = 'BF',
+  CuckooFilter = 'CF',
+  CountMinSketchFilter = 'CMS',
+  TopK = 'TOPK',
+}
+
+export const CommandMonitor = 'MONITOR'
 
 export enum CommandRediSearch {
   Search = 'FT.SEARCH',

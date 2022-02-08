@@ -1,8 +1,15 @@
-import { flatten, isArray, isEmpty, reject } from 'lodash'
-import { CommandArgsType, CommandGroup, ICommandArg, ICommandArgGenerated } from 'uiSrc/constants'
+import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
+import {
+  CommandArgsType,
+  CommandPrefix,
+  ICommandArg,
+  ICommandArgGenerated
+} from 'uiSrc/constants'
 
-export const getComplexityShortNotation = (text: string) =>
-  (text.endsWith(')') && text.startsWith('O') ? text : '')
+export const getComplexityShortNotation = (complexity: string[] | string): string => {
+  const value = isArray(complexity) ? complexity.join(' ') : complexity
+  return value.endsWith(')') && value.startsWith('O') ? value : ''
+}
 
 const generateArgName = (
   arg: ICommandArg,
@@ -22,7 +29,7 @@ const generateArgName = (
   const multipleName = optional ? `[${multipleNameTemp.join(' ')}]` : multipleNameTemp
 
   if (type === CommandArgsType.Block && isArray(block)) {
-    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName)))
+    const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName, onlyMandatory)))
     return optional ? `[${blocks?.join?.(' ')}]` : blocks
   }
 
@@ -57,22 +64,47 @@ const getExternalCommandFormat = (commandName = '') =>
 
 export const getDocUrlForCommand = (
   commandName: string,
-  commandGroup: CommandGroup | string = CommandGroup.Generic
 ): string => {
   let command = getExternalCommandFormat(commandName)
-  switch (commandGroup) {
-    case CommandGroup.Search:
+  const commandStartsWith = commandName.split('.')[0]
+
+  switch (commandStartsWith) {
+    case CommandPrefix.Search:
       return `https://oss.redis.com/redisearch/Commands/#${command}`
-    case CommandGroup.JSON:
+    case CommandPrefix.JSON:
       return `https://oss.redis.com/redisjson/commands/#${command}`
-    case CommandGroup.TimeSeries:
+    case CommandPrefix.TimeSeries:
       return `https://oss.redis.com/redistimeseries/commands/#${command}`
-    case CommandGroup.Graph:
+    case CommandPrefix.Graph:
       return `https://oss.redis.com/redisgraph/commands/#${command}`
-    case CommandGroup.AI:
+    case CommandPrefix.AI:
       return `https://oss.redis.com/redisai/commands/#${command}`
+    case CommandPrefix.Gears:
+      return `https://oss.redis.com/redisgears/commands.html#${command}`
+    case CommandPrefix.BloomFilter:
+      return `https://oss.redis.com/redisbloom/Bloom_Commands/#${command}`
+    case CommandPrefix.CuckooFilter:
+      return `https://oss.redis.com/redisbloom/Cuckoo_Commands/#${command}`
+    case CommandPrefix.CountMinSketchFilter:
+      return `https://oss.redis.com/redisbloom/CountMinSketch_Commands/#${command}`
+    case CommandPrefix.TopK:
+      return `https://oss.redis.com/redisbloom/TopK_Commands/#${command}`
     default:
       command = commandName.replace(/\s+/g, '-').toLowerCase()
       return `https://redis.io/commands/${command}`
   }
 }
+
+export const getCommandRepeat = (command = ''): [string, number] => {
+  const [countRepeatStr, ...restCommand] = command.split(' ')
+  let countRepeat = toNumber(countRepeatStr)
+  let commandLine = restCommand.join(' ')
+  if (!isNumber(countRepeat) || isNaN(countRepeat) || !command) {
+    countRepeat = 1
+    commandLine = command
+  }
+
+  return [commandLine, countRepeat]
+}
+
+export const isRepeatCountCorrect = (number: number): boolean => number >= 1 && isInteger(number)

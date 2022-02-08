@@ -1,15 +1,20 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { SettingsEntity } from 'src/modules/core/models/settings.entity';
 import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
+import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
+import { PluginStateEntity } from "src/modules/workbench/entities/plugin-state.entity";
 import { constants } from './constants';
-import { createCipheriv, createHash } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
-const repositories = {
+export const repositories = {
   INSTANCE: 'DatabaseInstanceEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
   AGREEMENTS: 'AgreementsEntity',
+  COMMAND_EXECUTION: 'CommandExecutionEntity',
+  PLUGIN_STATE: 'PluginStateEntity',
   SETTINGS: 'SettingsEntity'
 }
 
@@ -36,18 +41,18 @@ const getDBConnection = async (): Promise<Connection> => {
   return localDbConnection;
 }
 
-const getRepository = async (repository: string) => {
+export const getRepository = async (repository: string) => {
   return (await getDBConnection()).getRepository(repository);
 };
 
-const encryptData = (data) => {
+export const encryptData = (data) => {
   if (!data) {
     return null;
   }
 
   if (constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR') {
     let cipherKey = createHash('sha256')
-      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8')
+      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8') // lgtm[js/insufficient-password-hash]
       .digest();
     const cipher = createCipheriv('aes-256-cbc', cipherKey, Buffer.alloc(16, 0));
     let encrypted = cipher.update(data, 'utf8', 'hex');
@@ -57,6 +62,85 @@ const encryptData = (data) => {
   }
 
   return data;
+}
+
+export const decryptData = (data) => {
+  if (!data) {
+    return null;
+  }
+
+  if (constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR') {
+    let cipherKey = createHash('sha256')
+      .update(constants.TEST_KEYTAR_PASSWORD, 'utf8') // lgtm[js/insufficient-password-hash]
+      .digest();
+
+    const decipher = createDecipheriv('aes-256-cbc', cipherKey, Buffer.alloc(16, 0));
+    let decrypted = decipher.update(data, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+
+    return decrypted;
+  }
+
+  return data;
+}
+
+export const generateNCommandExecutions = async (
+  partial: Record<string, any>,
+  number: number,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.COMMAND_EXECUTION);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  for (let i = 0; i < number; i++) {
+    result.push(await rep.save({
+      id: uuidv4(),
+      command: encryptData('set foo bar'),
+      result: encryptData(JSON.stringify([{
+        status: 'success',
+        response: `"OK_${i}"`,
+        node: {
+          host: 'localhost',
+          port: 6479,
+          slot: 12499
+        }
+      }])),
+      nodeOptions: JSON.stringify({
+        host: 'localhost',
+        port: 6479,
+        enableRedirection: true,
+      }),
+      role: 'ALL',
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      createdAt: new Date(),
+      ...partial,
+    }));
+  }
+
+  return result;
+}
+
+export const generatePluginState = async (
+  partial: Record<string, any>,
+  truncate: boolean = false,
+) => {
+  const rep = await getRepository(repositories.PLUGIN_STATE);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  return rep.save({
+    id: uuidv4(),
+    state: encryptData(JSON.stringify('some state')),
+    encryption: constants.TEST_ENCRYPTION_STRATEGY,
+    createdAt: new Date(),
+    ...partial,
+  })
 }
 
 const createCACertificate = async (certificate) => {
@@ -227,6 +311,18 @@ export const applyEulaAgreement = async () => {
   await rep.save(agreements);
 }
 
+export const setAgreements = async (agreements = {}) => {
+  const defaultAgreements = {eula: true, encryption: true};
+
+  const rep = await getRepository(repositories.AGREEMENTS);
+  const entity: any = await rep.findOne();
+
+  entity.version = '1.0.0';
+  entity.data = JSON.stringify({ ...defaultAgreements, ...agreements });
+
+  await rep.save(entity);
+}
+
 const resetAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
   const agreements: any = await rep.findOne();
@@ -236,7 +332,7 @@ const resetAgreements = async () => {
   await rep.save(agreements);
 }
 
-const initAgreements = async () => {
+export const initAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
   const agreements: any = await rep.findOne();
   agreements.version = constants.TEST_AGREEMENTS_VERSION;

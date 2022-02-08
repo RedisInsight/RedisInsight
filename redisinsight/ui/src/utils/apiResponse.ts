@@ -4,7 +4,7 @@ import { AddRedisDatabaseStatus, IBulkOperationResult } from 'uiSrc/slices/inter
 
 export function getApiErrorMessage(error: AxiosError): string {
   const errorMessage = error?.response?.data?.message
-  if (!error) {
+  if (!error || !error.response) {
     return 'Something was wrong!'
   }
   if (isArray(errorMessage)) {

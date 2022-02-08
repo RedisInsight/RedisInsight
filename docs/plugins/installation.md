@@ -9,9 +9,9 @@ authors to avoid automatic execution of malicious code.
 
 1. Download the plugin for the Workbench.
 2. Open the `plugins` folder with the following path
-   * For MacOs: `<usersHomeDir>/.redisinsight-v2.0/plugins`
-   * For Windows: `C:\Users\{Username}\.redisinsight-v2.0\plugins`
-   * For Linux: `<usersHomeDir>/.redisinsight-v2.0/plugins`
+   * For MacOs: `<usersHomeDir>/.redisinsight-preview/plugins`
+   * For Windows: `C:/Users/{Username}/.redisinsight-preview/plugins`
+   * For Linux: `<usersHomeDir>/.redisinsight-preview/plugins`
 3. Add the folder with plugin to the `plugins` folder
 
 To see the uploaded plugin visualizations in the command results, reload the Workbench 

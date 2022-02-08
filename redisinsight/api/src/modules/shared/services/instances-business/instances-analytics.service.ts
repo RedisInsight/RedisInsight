@@ -5,6 +5,7 @@ import { getRangeForNumber, TOTAL_KEYS_BREAKPOINTS } from 'src/utils';
 import { DatabaseInstanceResponse } from 'src/modules/instances/dto/database-instance.dto';
 import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
 import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
+import { getRedisModulesSummary } from 'src/utils/redis-modules-summary';
 
 @Injectable()
 export class InstancesAnalyticsService extends TelemetryBaseService {
@@ -12,11 +13,29 @@ export class InstancesAnalyticsService extends TelemetryBaseService {
     super(eventEmitter);
   }
 
+  sendInstanceListReceivedEvent(
+    instances: DatabaseInstanceResponse[],
+    additionalData: object = {},
+  ): void {
+    try {
+      this.sendEvent(
+        TelemetryEvents.RedisInstanceListReceived,
+        {
+          numberOfDatabases: instances.length,
+          ...additionalData,
+        },
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
   sendInstanceAddedEvent(
     instance: DatabaseInstanceResponse,
     additionalInfo: RedisDatabaseInfoResponse,
   ): void {
     try {
+      const modulesSummary = getRedisModulesSummary(instance.modules);
       this.sendEvent(
         TelemetryEvents.RedisInstanceAdded,
         {
@@ -35,6 +54,8 @@ export class InstancesAnalyticsService extends TelemetryBaseService {
           numberOfKeysRange: getRangeForNumber(additionalInfo.totalKeys, TOTAL_KEYS_BREAKPOINTS),
           totalMemory: additionalInfo.usedMemory,
           numberedDatabases: additionalInfo.databases,
+          numberOfModules: instance.modules.length,
+          ...modulesSummary,
         },
       );
     } catch (e) {

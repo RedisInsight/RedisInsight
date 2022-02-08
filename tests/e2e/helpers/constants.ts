@@ -2,13 +2,14 @@ export enum KeyTypesTexts {
     Hash = 'Hash',
     List = 'List',
     Set = 'Set',
-    ZSet = 'Zset',
+    ZSet = 'Sorted Set',
     String = 'String',
     ReJSON = 'JSON',
     Stream = 'STREAM',
     Graph = 'GRAPH',
     TimeSeries = 'TS',
 }
+export const keyLength = 50;
 
 export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.Hash]: (key: string, field: string | number = 1, value: string | number = 1) => `HSET ${key} ${field} ${value}`,
@@ -21,3 +22,17 @@ export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.Graph]: (key: string) => `GRAPH.QUERY ${key} "CREATE ()"`,
     [KeyTypesTexts.TimeSeries]: (key: string) => `TS.CREATE ${key}`
 })
+
+export enum rte {
+    none = 'none',
+    standalone = 'standalone',
+    sentinel = 'sentinel',
+    ossCluster = 'oss-cluster',
+    reCluster = 're-cluster',
+    reCloud = 're-cloud'
+}
+
+export enum env {
+    web = 'web',
+    desktop = 'desktop'
+}

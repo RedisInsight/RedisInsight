@@ -1,6 +1,22 @@
-import { t } from 'testcafe';
+import {RequestMock, t} from 'testcafe';
+import {commonUrl} from "./conf";
+import { Chance } from 'chance';
+
+const settingsApiUrl = `${commonUrl}/api/settings`;
+const chance = new Chance();
+
+const mockedSettingsResponse = {
+    agreements: {
+        version: '0',
+        eula: false,
+        analytics: false
+    }}
 
 export class Common {
+    mock = RequestMock()
+            .onRequestTo(settingsApiUrl)
+            .respond(mockedSettingsResponse, 200);
+
     async waitForElementNotVisible(elm): Promise<void> {
         await t.expect(elm.exists).notOk({ timeout: 20000 });
     }
@@ -20,8 +36,8 @@ export class Common {
     async createArrayWithKeyValue(length: number): Promise<string[]> {
         const arr = [];
         for(let i = 1; i <= length * 2; i++) {
-            arr[i] = `key${i}`;
-            arr[i + 1] = `value${i}`;
+            arr[i] = `${chance.word({ length: 10 })}-key${i}`;
+            arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
             i++;
         }
         return arr;
@@ -60,5 +76,13 @@ export class Common {
             arr[i] = `${i}`;
         }
         return arr;
+    }
+
+    /**
+    * Get background colour of element
+    * @param element The selector of the element
+    */
+     async getBackgroundColour(element: Selector): Promise<string> {
+        return element.getStyleProperty('background-color');
     }
 }

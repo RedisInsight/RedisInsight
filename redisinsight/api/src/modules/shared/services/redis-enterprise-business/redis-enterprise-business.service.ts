@@ -29,9 +29,10 @@ export class RedisEnterpriseBusinessService {
 
   constructor(private autodiscoveryAnalyticsService: AutodiscoveryAnalyticsService) {}
 
+  // TODO: maybe find a workaround without Disabling certificate validation.
   private api = axios.create({
     httpsAgent: new https.Agent({
-      rejectUnauthorized: false,
+      rejectUnauthorized: false, // lgtm[js/disabling-certificate-validation]
     }),
   });
 

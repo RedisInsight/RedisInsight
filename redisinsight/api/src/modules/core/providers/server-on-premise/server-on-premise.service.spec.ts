@@ -39,6 +39,7 @@ describe('ServerOnPremiseService', () => {
   let serverRepository: MockType<Repository<ServerEntity>>;
   let eventEmitter: EventEmitter2;
   let encryptionService: MockType<EncryptionService>;
+  const sessionId = new Date().getTime();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -88,12 +89,12 @@ describe('ServerOnPremiseService', () => {
       serverRepository.findOne.mockResolvedValue(null);
       serverRepository.create.mockReturnValue(mockServerEntity);
 
-      await service.onApplicationBootstrap();
+      await service.onApplicationBootstrap(sessionId);
 
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         1,
         AppAnalyticsEvents.Initialize,
-        mockServerEntity.id,
+        { anonymousId: mockServerEntity.id, sessionId },
       );
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         2,
@@ -107,12 +108,12 @@ describe('ServerOnPremiseService', () => {
     it('should emit APPLICATION_STARTED on second application launch', async () => {
       serverRepository.findOne.mockResolvedValue(mockServerEntity);
 
-      await service.onApplicationBootstrap();
+      await service.onApplicationBootstrap(sessionId);
 
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         1,
         AppAnalyticsEvents.Initialize,
-        mockServerEntity.id,
+        { anonymousId: mockServerEntity.id, sessionId },
       );
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         2,

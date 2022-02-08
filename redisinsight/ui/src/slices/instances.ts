@@ -2,9 +2,10 @@ import { first, map } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
-import { apiService, localStorageService } from 'uiSrc/services'
 import ApiErrors from 'uiSrc/constants/apiErrors'
+import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
+import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
@@ -34,13 +35,6 @@ export const initialState: InitialStateInstances = {
   },
   instanceOverview: {
     version: '',
-    totalKeys: 0,
-    usedMemory: 0,
-    connectedClients: 0,
-    opsPerSecond: 0,
-    networkInKbps: 0,
-    networkOutKbps: 0,
-    cpuUsagePercentage: null
   },
 }
 
@@ -121,7 +115,7 @@ const instancesSlice = createSlice({
     getDatabaseConfigInfoSuccess: (state, { payload }) => {
       state.loading = false
       state.instanceOverview = {
-        ...state.instanceOverview,
+        version: state.instanceOverview.version,
         ...payload
       }
     },
@@ -269,18 +263,26 @@ export function updateInstanceAction({ id, ...payload }: Instance) {
 }
 
 // Asynchronous thunk action
-export function deleteInstancesAction(instances: Instance[]) {
-  return async (dispatch: AppDispatch) => {
+export function deleteInstancesAction(instances: Instance[], onSuccess?: () => void) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(setDefaultInstance())
 
     try {
+      const state = stateInit()
+      const instancesIds = map(instances, 'id')
       const { status } = await apiService.delete(ApiEndpoints.INSTANCE, {
-        data: { ids: map(instances, 'id') },
+        data: { ids: instancesIds },
       })
 
       if (isStatusSuccessful(status)) {
         dispatch(setDefaultInstanceSuccess())
         dispatch<any>(fetchInstancesAction())
+
+        if (instancesIds.includes(state.app.context.contextInstanceId)) {
+          dispatch(resetConnectedInstance())
+          dispatch(setAppContextInitialState())
+        }
+        onSuccess?.()
 
         if (instances.length === 1) {
           dispatch(

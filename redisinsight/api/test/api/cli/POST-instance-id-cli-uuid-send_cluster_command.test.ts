@@ -37,6 +37,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   node: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().integer().required(),
+    slot: Joi.number().integer(),
   })
 }).required());
 
@@ -46,6 +47,7 @@ const responseRawSchema = Joi.array().items(Joi.object().keys({
   node: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().integer().required(),
+    slot: Joi.number().integer(),
   })
 }).required());
 
@@ -72,6 +74,8 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
   requirements('rte.type=CLUSTER');
 
   before(rte.data.truncate);
+  // Create Redis client for CLI
+  before(async () => await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`))
 
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
@@ -85,6 +89,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
         name: 'Should create string',
         data: {
           command: `set ${constants.TEST_STRING_KEY_1} ${constants.TEST_STRING_VALUE_1}`,
+          outputFormat: 'TEXT',
           role: 'ALL',
         },
         responseSchema,
@@ -99,6 +104,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
         name: 'Should get string',
         data: {
           command: `get ${constants.TEST_STRING_KEY_1}`,
+          outputFormat: 'TEXT',
           role: 'ALL',
         },
         responseSchema,
@@ -111,6 +117,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
         name: 'Should remove string',
         data: {
           command: `del ${constants.TEST_STRING_KEY_1}`,
+          outputFormat: 'TEXT',
           role: 'ALL',
         },
         responseSchema,
@@ -134,6 +141,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
           name: 'Should create string',
           data: {
             command: `set ${constants.TEST_STRING_KEY_1} ${constants.TEST_STRING_VALUE_1}`,
+            outputFormat: 'TEXT',
             role: 'ALL',
             nodeOptions
           },
@@ -152,6 +160,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
           name: 'Should get string',
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
+            outputFormat: 'TEXT',
             role: 'ALL',
             nodeOptions
           },
@@ -165,6 +174,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
           name: 'Should remove string',
           data: {
             command: `del ${constants.TEST_STRING_KEY_1}`,
+            outputFormat: 'TEXT',
             role: 'ALL',
             nodeOptions
           },
@@ -259,6 +269,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
       name: `Should create string with redirection if needed (${node.host}:${node.port})`,
       data: {
         command: `set ${constants.TEST_STRING_KEY_1} ${node.host}`,
+        outputFormat: 'TEXT',
         role: 'ALL',
         nodeOptions: {
           host: node.host,
@@ -274,5 +285,30 @@ describe('POST /instance/:instanceId/cli/:uuid/send-cluster-command', () => {
         expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(node.host);
       }
     })).map(mainCheckFn);
+  })
+
+  describe('Client', () => {
+    [
+      {
+        name: 'Should throw ClientNotFoundError',
+        data: {
+          command: 'info',
+          role: 'ALL',
+          outputFormat: 'TEXT',
+        },
+        statusCode: 404,
+        responseBody: {
+          statusCode: 404,
+          message: 'Client not found or it has been disconnected.',
+          name: 'ClientNotFoundError',
+        },
+        before: async function () {
+          await request(server).delete(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`)
+        },
+        after: async function () {
+          await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`)
+        },
+      },
+    ].map(mainCheckFn);
   })
 });

@@ -69,6 +69,7 @@ const Welcome = ({ onAddInstance }: Props) => {
 
         <div className={styles.controls}>
           <AddInstanceControls
+            welcomePage
             onAddInstance={onAddInstance}
             direction={Direction.column}
           />

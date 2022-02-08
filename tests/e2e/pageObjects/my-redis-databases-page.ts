@@ -10,6 +10,7 @@ export class MyRedisDatabasePage {
   dbNameList: Selector
   settingsButton: Selector
   workbenchButton: Selector
+  helpCenterButton: Selector
   myRedisDBButton: Selector
   toastCloseButton: Selector
   deleteDatabaseButton: Selector
@@ -32,6 +33,7 @@ export class MyRedisDatabasePage {
       //BUTTONS
       this.settingsButton = Selector('[data-testid=settings-page-btn]');
       this.workbenchButton = Selector('[data-testid=workbench-page-btn]');
+      this.helpCenterButton = Selector('[data-testid=help-menu-button]');
       this.browserButton = Selector('[data-testid=browser-page-btn]');
       this.myRedisDBButton = Selector('[data-test-subj=home-page-btn]');
       this.deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
@@ -58,6 +60,7 @@ export class MyRedisDatabasePage {
 
   //Delete all the databases from the list
   async deleteAllDatabases(): Promise<void> {
+      await t.click(this.myRedisDBButton);
       const dbNames = this.tableRowContent;
       const count = await dbNames.count;
       if(count > 1) {
@@ -70,7 +73,7 @@ export class MyRedisDatabasePage {
           await t.click(this.confirmDeleteButton);
       }
       if (await this.toastCloseButton.exists) {
-        await t.click(this.toastCloseButton);
+          await t.click(this.toastCloseButton);
       }
   }
 
@@ -80,7 +83,7 @@ export class MyRedisDatabasePage {
       const count = await dbNames.count;
 
       for(let i = 0; i < count; i++) {
-          if((await dbNames.nth(1).innerText || '').includes(dbName)) {
+          if((await dbNames.nth(i).innerText || '').includes(dbName)) {
               await t.click(this.deleteDatabaseButton.nth(i));
               await t.click(this.confirmDeleteButton);
               break;

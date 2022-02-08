@@ -33,6 +33,7 @@ const mockSettingsWithoutPermission = {
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
   let settingsService: ISettingsProvider;
+  const sessionId = new Date().getTime();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -58,7 +59,7 @@ describe('AnalyticsService', () => {
 
   describe('initialize', () => {
     it('should set anonymousId', () => {
-      service.initialize(mockAnonymousId);
+      service.initialize({ anonymousId: mockAnonymousId, sessionId });
 
       const anonymousId = service.getAnonymousId();
 
@@ -69,7 +70,7 @@ describe('AnalyticsService', () => {
   describe('sendEvent', () => {
     beforeEach(() => {
       mockAnalyticsTrack = jest.fn();
-      service.initialize(mockAnonymousId);
+      service.initialize({ anonymousId: mockAnonymousId, sessionId });
     });
     it('should send event with anonymousId if permission are granted', async () => {
       settingsService.getSettings = jest
@@ -84,6 +85,7 @@ describe('AnalyticsService', () => {
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: mockAnonymousId,
+        integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
         properties: {},
       });
@@ -114,6 +116,7 @@ describe('AnalyticsService', () => {
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: NON_TRACKING_ANONYMOUS_ID,
+        integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
         properties: {},
       });

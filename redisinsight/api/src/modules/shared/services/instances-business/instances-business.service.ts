@@ -7,10 +7,11 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Repository } from 'typeorm';
 import IORedis from 'ioredis';
 import { find, omit } from 'lodash';
-import { RedisErrorCodes } from 'src/constants';
+import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   catchRedisConnectionError,
@@ -83,6 +84,7 @@ export class InstancesBusinessService {
     private redisConfBusinessService: ConfigurationBusinessService,
     private overviewService: OverviewService,
     private instancesAnalyticsService: InstancesAnalyticsService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async exists(id: string) {
@@ -92,7 +94,9 @@ export class InstancesBusinessService {
 
   async getAll(): Promise<DatabaseInstanceResponse[]> {
     try {
-      return (await this.databasesProvider.getAll()).map(convertEntityToDto);
+      const result = (await this.databasesProvider.getAll()).map(convertEntityToDto);
+      this.instancesAnalyticsService.sendInstanceListReceivedEvent(result);
+      return result;
     } catch (error) {
       this.logger.error('Failed to get database instance list.', error);
       throw new InternalServerErrorException();
@@ -206,11 +210,13 @@ export class InstancesBusinessService {
     const instance = await this.databasesProvider.getOneById(id, true);
     try {
       await this.instanceRepository.delete(id);
+      this.redisService.removeClientInstance({ instanceId: id });
+      this.logger.log('Succeed to delete database instance.');
+
       this.instancesAnalyticsService.sendInstanceDeletedEvent(
         convertEntityToDto(instance),
       );
-      this.logger.log('Succeed to delete database instance.');
-      this.redisService.removeClientInstance({ instanceId: id });
+      this.eventEmitter.emit(AppRedisInstanceEvents.Deleted, id);
       return;
     } catch (error) {
       this.logger.error(`Failed to delete database instance ${id}`, error);
@@ -227,11 +233,10 @@ export class InstancesBusinessService {
         this.instancesAnalyticsService.sendInstanceDeletedEvent(
           convertEntityToDto(item),
         );
+        this.eventEmitter.emit(AppRedisInstanceEvents.Deleted, item.id);
       });
       const res = await this.instanceRepository.remove(instances);
-      this.logger.log(
-        `Succeed to delete many database instances. Affected: ${res.length}`,
-      );
+      this.logger.log(`Succeed to delete many database instances. Affected: ${res.length}`);
       return { affected: res.length };
     } catch (error) {
       this.logger.error('Failed to delete many database instances', error);
@@ -274,6 +279,7 @@ export class InstancesBusinessService {
           client,
         );
       }
+      this.logger.log(`Succeed connection to database instance. id: ${id}`);
       return client;
     } catch (error) {
       this.logger.error(`Failed connection to database instance ${id}`, error);
@@ -667,20 +673,5 @@ export class InstancesBusinessService {
       this.logger.error('Failed to add oss sentinel.', error);
       throw catchRedisConnectionError(error, databaseDto);
     }
-  }
-
-  /**
-   * Get whitelisted commands available for plugins for particular database
-   */
-  async getPluginCommands(
-    instanceId: string,
-    tool = AppTool.Browser,
-  ): Promise<string[]> {
-    let client = this.redisService.getClientInstance({ instanceId, tool })?.client;
-    if (!client || !this.redisService.isClientConnected(client)) {
-      client = await this.connectToInstance(instanceId, tool, true);
-    }
-
-    return await this.redisConfBusinessService.getPluginWhiteListCommands(client);
   }
 }

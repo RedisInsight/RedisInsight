@@ -42,6 +42,7 @@ export class BrowserPage {
   addKeyNameInput: Selector
   keyNameInput: Selector
   keyTTLInput: Selector
+  ttlValueInKeysTable: Selector
   listKeyElementInput: Selector
   jsonKeyValueInput: Selector
   setMemberInput: Selector
@@ -105,7 +106,10 @@ export class BrowserPage {
   keysTotalNumber: Selector
   overviewTotalKeys: Selector
   overviewTotalMemory: Selector
+  overviewConnectedClients: Selector
   selectedFilterTypeString: Selector
+  overviewCommandsSec: Selector
+  overviewCpu: Selector
   modulesButton: Selector
 
   constructor() {
@@ -129,6 +133,7 @@ export class BrowserPage {
       this.editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
       this.closeEditTTL = Selector('[data-testid=cancel-btn]');
       this.saveTTLValue = Selector('[data-testid=apply-btn]');
+      this.ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
       this.refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
       this.refreshKeyButton = Selector('[data-testid=refresh-key-btn]')
       this.applyButton = Selector('[data-testid=apply-btn]');
@@ -214,6 +219,9 @@ export class BrowserPage {
       this.keysTotalNumber = Selector('[data-testid=keys-total]');
       this.overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
       this.overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
+      this.overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
+      this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
+      this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
   }
 
@@ -376,6 +384,7 @@ export class BrowserPage {
 
   //Delete key from details
   async deleteKey(): Promise<void> {
+      await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);
       await t.click(this.confirmDeleteKeyButton);
   }
@@ -584,13 +593,13 @@ export class BrowserPage {
   * Add json structure
   * @param jsonStructure The structure of the json key
   */
-   async addJsonSctucture(jsonStructure: string): Promise<void>{
+  async addJsonSctucture(jsonStructure: string): Promise<void>{
       await t.click(this.expandJsonObject);
       await t.click(this.editJsonObjectButton);
       await t.pressKey('ctrl+a delete');
       await t.typeText(this.jsonValueInput, jsonStructure);
       await t.click(this.applyEditButton);
-}
+  }
 
   /**
   * Get Values list of the key

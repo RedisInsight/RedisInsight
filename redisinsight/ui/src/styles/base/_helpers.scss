@@ -43,6 +43,14 @@
   }
 }
 
+.transparent {
+  opacity: 0;
+}
+
+.inline-flex {
+  display: inline-flex !important;
+}
+
 .copy-btn,
 .copy-near-btn {
   display: flex;

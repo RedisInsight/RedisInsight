@@ -25,40 +25,37 @@ jest.mock('uiSrc/services', () => ({
 
 describe('QueryCardCliResult', () => {
   it('should render', () => {
-    // connectedInstanceSelector.mockImplementation(() => ({
-    //   id: '123',
-    //   connectionType: 'CLUSTER',
-    // }));
-
-    // const sendCliClusterActionMock = jest.fn();
-
-    // sendCliClusterCommandAction.mockImplementation(() => sendCliClusterActionMock);
-
     expect(render(<QueryCardCliResult {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('Result element should render with result prop', () => {
-    const result = '123'
+    const mockResult = [{
+      response: 'response',
+      status: 'success'
+    }]
 
     const { queryByTestId } = render(
-      <QueryCardCliResult {...instance(mockedProps)} result={result} />
+      <QueryCardCliResult {...instance(mockedProps)} result={mockResult} />
     )
 
     const resultEl = queryByTestId(resultTestId)
 
     expect(resultEl).toBeInTheDocument()
-    expect(resultEl).toHaveTextContent(result)
+    expect(resultEl).toHaveTextContent(mockResult?.[0]?.response)
   })
 
-  it('Result element should not render without result prop', () => {
-    const result = ''
+  it('Result element should render (nil) result', () => {
+    const mockResult = [{
+      response: '',
+      status: 'success'
+    }]
 
     const { queryByTestId } = render(
-      <QueryCardCliResult {...instance(mockedProps)} result={result} />
+      <QueryCardCliResult {...instance(mockedProps)} result={mockResult} />
     )
 
     const resultEl = queryByTestId(resultTestId)
 
-    expect(resultEl).not.toBeInTheDocument()
+    expect(resultEl).toHaveTextContent('(nil)')
   })
 })

@@ -33,7 +33,7 @@ const HelpLinksMenu = ({ onLinkClick }: IProps) => {
         onClick={() => handleLinkClick(item)}
       >
         <EuiText
-          style={item === 'CreateRedisCloud' ? { fontWeight: 'bold' } : {}}
+          style={item === 'CreateRedisCloud' ? { fontWeight: '500' } : {}}
         >
           {HELP_LINKS[HelpLink[item]].label}
         </EuiText>
@@ -54,7 +54,7 @@ const HelpLinksMenu = ({ onLinkClick }: IProps) => {
 
   return (
     <EuiInputPopover
-      style={{ minWidth: '244px' }}
+      style={{ width: '245px' }}
       display="block"
       id="databasesMenu"
       input={button}

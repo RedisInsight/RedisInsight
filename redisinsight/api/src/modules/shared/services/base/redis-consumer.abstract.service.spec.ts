@@ -13,6 +13,9 @@ import {
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
+import { RedisConsumerAbstractService } from 'src/modules/shared/services/base/redis-consumer.abstract.service';
+import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -129,6 +132,18 @@ describe('RedisConsumerAbstractService', () => {
         }),
       ).rejects.toThrow(error);
     });
+    it('should throw error if autoConnection disabled', async () => {
+      redisService.getClientInstance.mockReturnValue(null);
+      // @ts-ignore
+      class Tool extends RedisConsumerAbstractService {
+        constructor() {
+          super(AppTool.CLI, redisService, instancesBusinessService, { enableAutoConnection: false });
+        }
+      }
+
+      await expect(new Tool().getRedisClient(mockClientOptions))
+        .rejects.toThrow(new ClientNotFoundErrorException());
+    });
   });
 
   describe('createNewClient', () => {
@@ -201,6 +216,35 @@ describe('RedisConsumerAbstractService', () => {
         ['module', 'list'],
         ['keys', '*'],
       ]);
+    });
+  });
+
+  describe('getRedisClientNamespace', () => {
+    const mockClient = Object.create(Redis.prototype);
+    mockClient.options = {
+      ...mockClient.options,
+      connectionName: `${CONNECTION_NAME_GLOBAL_PREFIX}-common-235e72f4`,
+    };
+
+    it('succeed to get client namespace', async () => {
+      redisService.getClientInstance.mockReturnValue({ ...mockRedisClientInstance, client: mockClient });
+
+      const namespace = consumerInstance.getRedisClientNamespace({
+        uuid: mockClient.uuid,
+        instanceId: mockClient.instanceId,
+      });
+
+      expect(namespace).toEqual('common');
+    });
+    it('failed to get client namespace', () => {
+      redisService.getClientInstance.mockReturnValue(undefined);
+
+      const namespace = consumerInstance.getRedisClientNamespace({
+        uuid: mockClient.uuid,
+        instanceId: mockClient.instanceId,
+      });
+
+      expect(namespace).toEqual('');
     });
   });
 });

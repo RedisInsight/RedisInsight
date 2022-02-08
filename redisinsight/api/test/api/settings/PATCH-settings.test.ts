@@ -60,7 +60,8 @@ const mainCheckFn = async (testCase) => {
 };
 
 describe('PATCH /settings', () => {
-  after(resetSettings)
+  after(initSettings);
+
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
@@ -69,7 +70,6 @@ describe('PATCH /settings', () => {
 
   describe('settings', () => {
     before(resetSettings);
-    after(initSettings);
 
     return ([
       {
@@ -112,7 +112,6 @@ describe('PATCH /settings', () => {
 
   describe('agreements', () => {
     before(resetSettings);
-    after(initSettings);
 
     const allAcceptedAgreements = {}
     Object.keys(AGREEMENTS_SPEC.agreements).forEach(agreement => allAcceptedAgreements[agreement] = true);

@@ -43,8 +43,55 @@
 }
 
 .createCloudBtn {
-  margin: 16px 0;
-  max-width: 420px !important;
+  border: 2px solid var(--euiColorSecondary);
+  padding: 9px 24px;
+  margin: 20px 0;
+  letter-spacing: normal;
+  border-radius: 4px;
+  text-align: left;
+  position: relative;
+  width: 413px;
+  height: 64px;
+  padding-right: 40px;
+  background-size: cover;
+
+  // For future promo implementations
+  //background: url(../../../../assets/img/NYbg.jpg) center;
+  //&::before {
+  //  content: '';
+  //  position: absolute;
+  //  top: 0px;
+  //  right: 0px;
+  //  bottom: 0px;
+  //  left: 0px;
+  //  background-color: var(--overlayPromoNYColor);
+  //}
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  .createTitle {
+    padding-top: 3px;
+    line-height: 16px;
+    position: relative;
+    font-weight: 500 !important;
+  }
+
+  .createText {
+    font-size: 12px !important;
+    position: relative;
+  }
+
+  .arrowRight {
+    display: block;
+    position: absolute;
+    right: 14px;
+    top: calc(50% - 11px);
+    color: #ffffff;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 
@@ -75,7 +122,7 @@
   }
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1200px) {
   .summary {
     display: block;
   }

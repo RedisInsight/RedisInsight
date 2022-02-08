@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { mockCaCertEntity, mockClientCertEntity, mockStandaloneDatabaseEntity } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
+import { DEFAULT_SUMMARY as DEFAULT_REDIS_MODULES_SUMMARY } from 'src/utils/redis-modules-summary';
 import { DatabaseInstanceResponse } from 'src/modules/instances/dto/database-instance.dto';
 import { HostingProvider } from 'src/modules/core/models/database-instance.entity';
 import {
@@ -53,6 +54,51 @@ describe('InstancesAnalytics', () => {
     );
   });
 
+  describe('sendInstanceListReceivedEvent', () => {
+    const instance = mockDatabaseInstanceDto;
+    it('should emit event with one db in the list', () => {
+      service.sendInstanceListReceivedEvent([instance]);
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.RedisInstanceListReceived,
+        {
+          numberOfDatabases: 1,
+        },
+      );
+    });
+    it('should emit event with several dbs in the list', () => {
+      service.sendInstanceListReceivedEvent([instance, instance, instance]);
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.RedisInstanceListReceived,
+        {
+          numberOfDatabases: 3,
+        },
+      );
+    });
+    it('should emit event with several empty in the list', () => {
+      service.sendInstanceListReceivedEvent([]);
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.RedisInstanceListReceived,
+        {
+          numberOfDatabases: 0,
+        },
+      );
+    });
+    it('should emit event with additional data', () => {
+      service.sendInstanceListReceivedEvent([], { data: 'data' });
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.RedisInstanceListReceived,
+        {
+          numberOfDatabases: 0,
+          data: 'data',
+        },
+      );
+    });
+  });
+
   describe('sendInstanceAddedEvent', () => {
     it('should emit event with enabled tls', () => {
       const instance = mockDatabaseInstanceDto;
@@ -72,6 +118,8 @@ describe('InstancesAnalytics', () => {
           numberOfKeysRange: '0 - 500 000',
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
+          numberOfModules: 0,
+          ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
     });
@@ -96,11 +144,16 @@ describe('InstancesAnalytics', () => {
           numberOfKeysRange: '0 - 500 000',
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
+          numberOfModules: 0,
+          ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
     });
     it('should emit event without additional info', () => {
-      const instance = mockDatabaseInstanceDto;
+      const instance = {
+        ...mockDatabaseInstanceDto,
+        modules: [{ name: 'search', version: 20000 }, { name: 'rediSQL', version: 1 }],
+      };
       service.sendInstanceAddedEvent(instance, {
         version: mockRedisGeneralInfo.version,
       });
@@ -119,6 +172,13 @@ describe('InstancesAnalytics', () => {
           numberOfKeysRange: undefined,
           totalMemory: undefined,
           numberedDatabases: undefined,
+          numberOfModules: 2,
+          ...DEFAULT_REDIS_MODULES_SUMMARY,
+          RediSearch: {
+            loaded: true,
+            version: 20000,
+          },
+          customModules: [{ name: 'rediSQL', version: 1 }],
         },
       );
     });

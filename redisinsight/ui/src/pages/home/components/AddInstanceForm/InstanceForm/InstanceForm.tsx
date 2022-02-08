@@ -150,7 +150,7 @@ const AddStandaloneForm = (props: Props) => {
       nameFromProvider,
       sentinelMaster,
       connectionType,
-      endpoints,
+      endpoints = null,
       tlsClientAuthRequired,
       certificates,
       selectedTlsClientCertId = '',
@@ -166,6 +166,7 @@ const AddStandaloneForm = (props: Props) => {
     width,
     onClose,
     onSubmit,
+    onHostNamePaste,
     submitButtonText,
     instanceType,
     loading,
@@ -255,14 +256,6 @@ const AddStandaloneForm = (props: Props) => {
       errs.newCaCert = fieldDisplayNames.newCaCert
     }
 
-    if (
-      values.tls
-      && values.tlsClientAuthRequired
-      && values.selectedTlsClientCertId === ''
-    ) {
-      errs.selectedTlsClientCertId
-        === fieldDisplayNames.selectedTlsClientCertId
-    }
     if (
       values.tls
       && values.tlsClientAuthRequired
@@ -537,7 +530,7 @@ const AddStandaloneForm = (props: Props) => {
     <EuiToolTip
       anchorClassName="inputAppendIcon"
       position="right"
-      content="Select the Redis logical database to work with in Browser."
+      content="Select the Redis logical database to work with in Browser and Workbench."
     >
       <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
     </EuiToolTip>
@@ -593,7 +586,7 @@ const AddStandaloneForm = (props: Props) => {
                   )
                 }}
                 onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                  handlePasteHostName(props.onHostNamePaste, event)}
+                  handlePasteHostName(onHostNamePaste, event)}
                 append={<AppendHostName />}
               />
             </EuiFormRow>

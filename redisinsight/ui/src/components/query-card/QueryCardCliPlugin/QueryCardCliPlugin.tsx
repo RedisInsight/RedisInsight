@@ -4,23 +4,28 @@ import cx from 'classnames'
 import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { getBaseApiUrl, Nullable, Maybe } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
-import { IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
 import { prepareIframeHtml } from 'uiSrc/plugins/pluginImport'
-import { appPluginsSelector, sendPluginCommandAction } from 'uiSrc/slices/app/plugins'
+import {
+  appPluginsSelector,
+  getPluginStateAction,
+  sendPluginCommandAction,
+  setPluginStateAction
+} from 'uiSrc/slices/app/plugins'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { appServerInfoSelector } from 'uiSrc/slices/app/info'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  result: any
+  result: CommandExecutionResult[]
   query: any
   id: string
-  status: Maybe<CommandExecutionStatus>
   setSummaryText: (text: string) => void
+  commandId: string
 }
 
 enum StylesNamePostfix {
@@ -29,12 +34,18 @@ enum StylesNamePostfix {
   Global = '/global_styles.css'
 }
 
+enum ActionTypes {
+  Resolve = 'resolve',
+  Reject = 'reject'
+}
+
 const baseUrl = getBaseApiUrl()
 
 const QueryCardCliPlugin = (props: Props) => {
-  const { result, query, id, status, setSummaryText } = props
+  const { query, id, result, setSummaryText, commandId } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
+  const serverInfo = useSelector(appServerInfoSelector)
 
   const [currentView, setCurrentView] = useState<Nullable<any>>(null)
   const [currentPlugin, setCurrentPlugin] = useState<Nullable<string>>(null)
@@ -47,24 +58,98 @@ const QueryCardCliPlugin = (props: Props) => {
 
   const dispatch = useDispatch()
 
-  const executeCommand = () => {
-    pluginIframeRef?.current?.contentWindow?.postMessage({
-      event: 'executeCommand',
-      method: currentView.activationMethod,
-      data: { command: query, data: result, status }
-    }, '*')
+  const sendMessageToPlugin = (data = {}) => {
+    const event: any = document.createEvent('Event')
+    event.initEvent('message', false, false)
+    event.data = data
+    event.origin = '*'
+    pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
   }
 
-  const sendRedisCommand = (command: string, requestId: string) => {
+  const executeCommand = () => {
+    sendMessageToPlugin({
+      event: 'executeCommand',
+      method: currentView.activationMethod,
+      data: { command: query, data: result }
+    })
+  }
+
+  const sendRedisCommand = ({ command = '', requestId = '' }: { command: string, requestId: string }) => {
+    const commonOptions = {
+      event: PluginEvents.executeRedisCommand,
+      requestId,
+    }
     dispatch(
       sendPluginCommandAction({
         command,
         onSuccessAction: (response) => {
-          pluginIframeRef?.current?.contentWindow?.postMessage({
-            event: 'executeRedisCommand',
-            requestId,
-            data: response
-          }, '*')
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Resolve,
+            data: response.result
+          })
+        },
+        onFailAction: (error: any) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Reject,
+            data: error
+          })
+        }
+      })
+    )
+  }
+
+  const getPluginState = ({ requestId }: { requestId: string }) => {
+    const commonOptions = {
+      event: PluginEvents.getState,
+      requestId,
+    }
+    dispatch(
+      getPluginStateAction({
+        visualizationId: id,
+        commandId,
+        onSuccessAction: (response) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Resolve,
+            data: response?.state ?? null
+          })
+        },
+        onFailAction: (error: any) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Reject,
+            data: error
+          })
+        }
+      })
+    )
+  }
+
+  const setPluginState = ({ requestId, state }: { requestId: string, state: any }) => {
+    const commonOptions = {
+      event: PluginEvents.setState,
+      requestId,
+    }
+    dispatch(
+      setPluginStateAction({
+        visualizationId: id,
+        commandId,
+        pluginState: state,
+        onSuccessAction: () => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Resolve,
+            data: state
+          })
+        },
+        onFailAction: (error: any) => {
+          sendMessageToPlugin({
+            ...commonOptions,
+            actionType: ActionTypes.Reject,
+            data: error
+          })
         }
       })
     )
@@ -94,11 +179,9 @@ const QueryCardCliPlugin = (props: Props) => {
       setSummaryText(text)
     })
 
-    // pluginApi.onEvent(
-    //   generatedIframeNameRef.current,
-    //   'executeRedisCommand',
-    //   sendRedisCommand
-    // )
+    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.executeRedisCommand, sendRedisCommand)
+    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.getState, getPluginState)
+    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.setState, setPluginState)
   }, [currentView])
 
   const renderPluginIframe = (config: any) => {
@@ -108,7 +191,7 @@ const QueryCardCliPlugin = (props: Props) => {
       modules
     })
     // @ts-ignore
-    pluginIframeRef.current.src = `data:text/html;charset=utf-8,${encodeURI(html)}`
+    pluginIframeRef.current.srcdoc = html
   }
 
   const getGlobalStylesSrc = (): string =>
@@ -138,6 +221,7 @@ const QueryCardCliPlugin = (props: Props) => {
           scriptSrc: `${baseUrl}${plugin.scriptSrc}`,
           stylesSrc: generateStylesSrc(plugin.stylesSrc),
           iframeId: generatedIframeNameRef.current,
+          appVersion: serverInfo?.appVersion,
         })
         setCurrentPlugin(plugin?.name || null)
         return
@@ -156,6 +240,7 @@ const QueryCardCliPlugin = (props: Props) => {
           ref={pluginIframeRef}
           referrerPolicy="no-referrer"
           sandbox="allow-same-origin allow-scripts"
+          data-testid="pluginIframe"
         />
         {!!error && (
           <div className={styles.container}>

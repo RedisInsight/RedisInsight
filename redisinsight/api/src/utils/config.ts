@@ -2,6 +2,7 @@ import { merge, cloneDeep } from 'lodash';
 import defaultConfig from '../../config/default';
 import development from '../../config/development';
 import staging from '../../config/staging';
+import test from '../../config/test';
 import production from '../../config/production';
 
 const config = cloneDeep(defaultConfig);
@@ -13,6 +14,9 @@ switch (process.env.NODE_ENV) {
     break;
   case 'production':
     envConfig = production;
+    break;
+  case 'test':
+    envConfig = test;
     break;
   default:
     envConfig = development;

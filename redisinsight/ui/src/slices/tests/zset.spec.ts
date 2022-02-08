@@ -1,23 +1,23 @@
-import { cloneDeep } from 'lodash';
-import { SortOrder } from 'uiSrc/constants';
-import { apiService } from 'uiSrc/services';
-import { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash'
+import { SortOrder } from 'uiSrc/constants'
+import { apiService } from 'uiSrc/services'
+import { AxiosError } from 'axios'
 import {
   cleanup,
   initialStateDefault,
   mockedStore,
   mockStore,
-} from 'uiSrc/utils/test-utils';
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications';
-import successMessages from 'uiSrc/components/notifications/success-messages';
-import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto';
+} from 'uiSrc/utils/test-utils'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
   deleteKeyFromList,
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
-} from '../keys';
+} from '../keys'
 import reducer, {
   initialState,
   setZsetInitialState,
@@ -51,49 +51,49 @@ import reducer, {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
   refreshZsetMembersAction,
-} from '../zset';
+} from '../zset'
 
-jest.mock('uiSrc/services');
+jest.mock('uiSrc/services')
 
-let store: typeof mockedStore;
-let dateNow: jest.SpyInstance<number>;
-const errorMessage = 'some error';
+let store: typeof mockedStore
+let dateNow: jest.SpyInstance<number>
+const errorMessage = 'some error'
 
 beforeEach(() => {
-  cleanup();
-  store = cloneDeep(mockedStore);
-  store.clearActions();
-});
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('zset slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027);
-  });
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+  })
 
   afterAll(() => {
-    dateNow.mockRestore();
-  });
+    dateNow.mockRestore()
+  })
 
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
-      const nextState = initialState;
+      const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {});
+      const result = reducer(undefined, {})
 
       // Assert
-      expect(result).toEqual(nextState);
-    });
-  });
+      expect(result).toEqual(nextState)
+    })
+  })
 
   describe('setZsetInitialState', () => {
     it('should properly set initial state', () => {
-      const nextState = reducer(initialState, setZsetInitialState());
+      const nextState = reducer(initialState, setZsetInitialState())
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(initialState);
+      })
+      expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
 
@@ -103,18 +103,18 @@ describe('zset slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadZSetMembers(initialState.data.sortOrder));
+      const nextState = reducer(initialState, loadZSetMembers(initialState.data.sortOrder))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadZSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -126,7 +126,7 @@ describe('zset slice', () => {
         total: 1,
         size: 67,
         members: [{ name: '1', score: '1' }],
-      };
+      }
 
       const state = {
         ...initialState,
@@ -137,17 +137,17 @@ describe('zset slice', () => {
           members: data.members,
           total: data.total
         }
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadZSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
@@ -155,7 +155,7 @@ describe('zset slice', () => {
         keyName: '',
         members: [],
         total: 0
-      };
+      }
 
       const state = {
         ...initialState,
@@ -164,18 +164,18 @@ describe('zset slice', () => {
           ...initialState.data,
           ...data
         }
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadZSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadZSetMembersFailure', () => {
     it('should properly set the error', () => {
@@ -189,18 +189,18 @@ describe('zset slice', () => {
           loading: false,
           error: '',
         }
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadZSetMembersFailure(errorMessage));
+      const nextState = reducer(initialState, loadZSetMembersFailure(errorMessage))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('searchZSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
@@ -213,14 +213,14 @@ describe('zset slice', () => {
           ...initialState.data,
           match: '*'
         }
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, searchZSetMembers('*'));
+      const nextState = reducer(initialState, searchZSetMembers('*'))
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(state);
+      expect(zsetSelector(rootState)).toEqual(state)
     })
   })
 
@@ -246,13 +246,13 @@ describe('zset slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, searchZSetMembersSuccess(data));
+      const nextState = reducer(initialState, searchZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
     })
 
     it('should properly set the state with empty members', () => {
@@ -276,13 +276,13 @@ describe('zset slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, searchZSetMembersSuccess(data));
+      const nextState = reducer(initialState, searchZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
     })
   })
 
@@ -292,22 +292,22 @@ describe('zset slice', () => {
         ...initialState,
         loading: false,
         error: errorMessage,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, searchZSetMembersFailure(errorMessage));
+      const nextState = reducer(initialState, searchZSetMembersFailure(errorMessage))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(state);
+      expect(zsetSelector(rootState)).toEqual(state)
     })
   })
 
   describe('searchMoreZSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
-      const data = '*';
+      const data = '*'
       const state = {
         ...initialState,
         loading: true,
@@ -319,13 +319,13 @@ describe('zset slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, searchMoreZSetMembers(data));
+      const nextState = reducer(initialState, searchMoreZSetMembers(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(state);
+      expect(zsetSelector(rootState)).toEqual(state)
     })
   })
 
@@ -335,7 +335,7 @@ describe('zset slice', () => {
         nextCursor: 0,
         members: [{ name: 'member name', score: 10 }],
         total: 1
-      };
+      }
       const state = {
         ...initialState,
         loading: false,
@@ -346,13 +346,13 @@ describe('zset slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, searchMoreZSetMembersSuccess(data));
+      const nextState = reducer(initialState, searchMoreZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(state);
+      expect(zsetSelector(rootState)).toEqual(state)
     })
 
     it('should properly set the state with empty data', () => {
@@ -361,16 +361,16 @@ describe('zset slice', () => {
         nextCursor: 0,
         members: [],
         total: 0
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, searchMoreZSetMembersSuccess(data));
+      const nextState = reducer(initialState, searchMoreZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(initialState);
+      expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
 
@@ -380,16 +380,16 @@ describe('zset slice', () => {
         ...initialState,
         loading: false,
         error: errorMessage,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, searchMoreZSetMembersFailure(errorMessage));
+      const nextState = reducer(initialState, searchMoreZSetMembersFailure(errorMessage))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(state);
+      expect(zsetSelector(rootState)).toEqual(state)
     })
   })
 
@@ -399,18 +399,18 @@ describe('zset slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreZSetMembers());
+      const nextState = reducer(initialState, loadMoreZSetMembers())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadMoreZSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -427,7 +427,7 @@ describe('zset slice', () => {
           { name: '12', score: '12' },
           { name: '2', score: '2' },
         ],
-      };
+      }
 
       const state = {
         ...initialState,
@@ -436,17 +436,17 @@ describe('zset slice', () => {
           ...initialState.data,
           ...data
         }
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreZSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadMoreZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
@@ -456,18 +456,18 @@ describe('zset slice', () => {
         total: 10,
         size: 67,
         members: [],
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreZSetMembersSuccess(data));
+      const nextState = reducer(initialState, loadMoreZSetMembersSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(initialState);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(initialState)
+    })
+  })
 
   describe('loadMoreZSetMembersFailure', () => {
     it('should properly set the error', () => {
@@ -476,76 +476,76 @@ describe('zset slice', () => {
         ...initialState,
         loading: false,
         error: errorMessage,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadMoreZSetMembersFailure(errorMessage));
+      const nextState = reducer(initialState, loadMoreZSetMembersFailure(errorMessage))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('removeZsetMembers', () => {
-    it('should properly set the state before the fetch data',() => {
+    it('should properly set the state before the fetch data', () => {
       // Arrange
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, removeZsetMembers());
+      const nextState = reducer(initialState, removeZsetMembers())
 
       // Assert
       const rootSate = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootSate)).toEqual(state);
-    });
-  });
+      expect(zsetSelector(rootSate)).toEqual(state)
+    })
+  })
 
   describe('removeZsetMembersSuccess', () => {
-    it('should properly set the state with fetched data',() => {
+    it('should properly set the state with fetched data', () => {
       const initialStateRemove = {
         ...initialState,
         data: {
           ...initialState.data,
           members: [{ name: 'member name', score: 10 }],
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialStateRemove, removeZsetMembersSuccess());
+      const nextState = reducer(initialStateRemove, removeZsetMembersSuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(initialStateRemove);
-    });
+      expect(zsetSelector(rootState)).toEqual(initialStateRemove)
+    })
   })
 
   describe('removeZsetMembersFailure', () => {
-    it('should properly set the error',() => {
+    it('should properly set the error', () => {
       const state = {
         ...initialState,
         loading: false,
         error: errorMessage,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, removeZsetMembersFailure(errorMessage));
+      const nextState = reducer(initialState, removeZsetMembersFailure(errorMessage))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState }
       })
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
   })
 
   describe('removeMembersFromList', () => {
@@ -561,29 +561,29 @@ describe('zset slice', () => {
             { name: 'member name2', score: 3 },
           ],
         },
-      };
+      }
 
-      const data = ['member name', 'member name1'];
+      const data = ['member name', 'member name1']
 
       const state = {
         ...initialStateRemove,
         data: {
           ...initialStateRemove.data,
           total: initialStateRemove.data.total - 1,
-          members: [{ name: 'member name2', score: 3}],
+          members: [{ name: 'member name2', score: 3 }],
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialStateRemove, removeMembersFromList(data));
+      const nextState = reducer(initialStateRemove, removeMembersFromList(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('updateScore', () => {
     it('should properly set the state while updating a zset score', () => {
@@ -595,22 +595,21 @@ describe('zset slice', () => {
           loading: true,
           error: '',
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, updateScore());
+      const nextState = reducer(initialState, updateScore())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('updateScoreSuccess', () => {
     it('should properly set the state after successfully updated zset score', () => {
-
       // Arrange
       const state = {
         ...initialState,
@@ -618,22 +617,21 @@ describe('zset slice', () => {
           ...initialState.updateScore,
           loading: false,
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, updateScoreSuccess());
+      const nextState = reducer(initialState, updateScoreSuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('updateScoreFailure', () => {
     it('should properly set the state on update zset score failure', () => {
-
       // Arrange
       const state = {
         ...initialState,
@@ -642,18 +640,18 @@ describe('zset slice', () => {
           loading: false,
           error: errorMessage,
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, updateScoreFailure(errorMessage));
+      const nextState = reducer(initialState, updateScoreFailure(errorMessage))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('resetUpdateScore', () => {
     it('should properly reset the state', () => {
@@ -665,22 +663,21 @@ describe('zset slice', () => {
           loading: false,
           error: '',
         },
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, resetUpdateScore());
+      const nextState = reducer(initialState, resetUpdateScore())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('updateMembersInList', () => {
     it('should properly update members in list', () => {
-
       // Arrange
       const initialStateToUpdate = {
         ...initialState,
@@ -724,8 +721,8 @@ describe('zset slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         browser: { zset: nextState },
-      });
-      expect(zsetSelector(rootState)).toEqual(state);
+      })
+      expect(zsetSelector(rootState)).toEqual(state)
     })
   })
 
@@ -739,52 +736,52 @@ describe('zset slice', () => {
           total: 1,
           size: 67,
           members: [{ name: '1', score: '1' }],
-        };
-        const responsePayload = { data, status: 200 };
+        }
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchZSetMembers(data.keyName, 0, 20, SortOrder.ASC)
-        );
+        )
 
         // Assert
         const expectedActions = [
           loadZSetMembers(SortOrder.ASC),
           loadZSetMembersSuccess(responsePayload.data),
           updateSelectedKeyRefreshTime(Date.now()),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch zset members', async () => {
         // Arrange
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.post = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchZSetMembers('', 0, 20, SortOrder.ASC)
-        );
+        )
 
         // Assert
         const expectedActions = [
           loadZSetMembers(SortOrder.ASC),
           addErrorNotification(responsePayload as AxiosError),
           loadZSetMembersFailure(errorMessage),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('fetchMoreZSetMembers', () => {
       it('succeed to fetch more zset members', async () => {
@@ -795,40 +792,40 @@ describe('zset slice', () => {
           total: 1,
           size: 67,
           members: [{ name: '1', score: '1' }],
-        };
-        const responsePayload = { data, status: 200 };
+        }
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchMoreZSetMembers(data.keyName, 0, 20, SortOrder.ASC)
-        );
+        )
 
         // Assert
         const expectedActions = [
           loadMoreZSetMembers(),
           loadMoreZSetMembersSuccess(responsePayload.data),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch more zset members', async () => {
         // Arrange
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.post = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchMoreZSetMembers('', 0, 20, SortOrder.ASC)
-        );
+        )
 
         // Assert
         const expectedActions = [
@@ -837,9 +834,9 @@ describe('zset slice', () => {
           loadMoreZSetMembersFailure(errorMessage),
         ]
 
-        expect(store.getActions()).toEqual(expectedActions);
+        expect(store.getActions()).toEqual(expectedActions)
       })
-    });
+    })
 
     describe('fetchAddZSetMembers', () => {
       it('succeed to fetch add zset members', async () => {
@@ -847,60 +844,60 @@ describe('zset slice', () => {
         const data: AddMembersToZSetDto = {
           keyName: 'small zset',
           members: [{ name: '1', score: 1 }],
-        };
-        const responsePayload = { status: 200 };
+        }
+        const responsePayload = { status: 200 }
 
-        apiService.put = jest.fn().mockResolvedValue(responsePayload);
+        apiService.put = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchAddZSetMembers(data, jest.fn()));
+        await store.dispatch<any>(fetchAddZSetMembers(data, jest.fn()))
 
         // Assert
         const expectedActions = [
           updateScore(),
           updateScoreSuccess(),
           defaultSelectedKeyAction(),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch add zset members', async () => {
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.put = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.put = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchAddZSetMembers(
           { keyName: '', members: [] },
           jest.fn(),
           jest.fn()
-        ));
+        ))
 
         // Assert
         const expectedActions = [
           updateScore(),
           addErrorNotification(responsePayload as AxiosError),
           updateScoreFailure(errorMessage),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
     })
 
     describe('deleteZSetMembers', () => {
       it('succeed to fetch delete zset members', async () => {
         // Arrange
         const key = 'zset key'
-        const members = ['member#1', 'member#2'];
-        const responsePayload = { status: 200, data: { affected: 2 } };
+        const members = ['member#1', 'member#2']
+        const responsePayload = { status: 200, data: { affected: 2 } }
 
-        apiService.delete = jest.fn().mockResolvedValue(responsePayload);
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
         const nextState = Object.assign(initialStateDefault, {
           browser: {
             zset: {
@@ -911,12 +908,12 @@ describe('zset slice', () => {
               }
             }
           },
-        });
+        })
 
-        const mockedStore = mockStore(nextState);
+        const mockedStore = mockStore(nextState)
 
         // Act
-        await mockedStore.dispatch<any>(deleteZSetMembers(key, members));
+        await mockedStore.dispatch<any>(deleteZSetMembers(key, members))
 
         // Assert
         const expectedActions = [
@@ -931,18 +928,18 @@ describe('zset slice', () => {
               'Member'
             )
           )
-        ];
+        ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions);
-      });
+        expect(mockedStore.getActions()).toEqual(expectedActions)
+      })
 
       it('succeed to fetch delete all zset members', async () => {
         // Arrange
         const key = 'zset key'
-        const members = ['member#1', 'member#2'];
-        const responsePayload = { status: 200, data: { affected: 2 } };
+        const members = ['member#1', 'member#2']
+        const responsePayload = { status: 200, data: { affected: 2 } }
 
-        apiService.delete = jest.fn().mockResolvedValue(responsePayload);
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
         const nextState = Object.assign(initialStateDefault, {
           browser: {
             zset: {
@@ -953,12 +950,12 @@ describe('zset slice', () => {
               }
             }
           },
-        });
+        })
 
-        const mockedStore = mockStore(nextState);
+        const mockedStore = mockStore(nextState)
 
         // Act
-        await mockedStore.dispatch<any>(deleteZSetMembers(key, members));
+        await mockedStore.dispatch<any>(deleteZSetMembers(key, members))
 
         // Assert
         const expectedActions = [
@@ -968,34 +965,34 @@ describe('zset slice', () => {
           deleteKeySuccess(),
           deleteKeyFromList(key),
           addMessageNotification(successMessages.DELETED_KEY(key))
-        ];
+        ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions);
-      });
+        expect(mockedStore.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch delete zset members', async () => {
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.delete = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteZSetMembers('key', []));
+        await store.dispatch<any>(deleteZSetMembers('key', []))
 
         // Assert
         const expectedActions = [
           removeZsetMembers(),
           addErrorNotification(responsePayload as AxiosError),
           removeZsetMembersFailure(errorMessage)
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('updateZSetMembers', () => {
       it('succeed to fetch update zset members', async () => {
@@ -1003,13 +1000,13 @@ describe('zset slice', () => {
         const data: AddMembersToZSetDto = {
           keyName: 'small zset',
           members: [{ name: '1', score: 1 }],
-        };
-        const responsePayload = { status: 200 };
+        }
+        const responsePayload = { status: 200 }
 
-        apiService.put = jest.fn().mockResolvedValue(responsePayload);
+        apiService.put = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(updateZSetMembers(data, jest.fn()));
+        await store.dispatch<any>(updateZSetMembers(data, jest.fn()))
 
         // Assert
         const expectedActions = [
@@ -1017,135 +1014,135 @@ describe('zset slice', () => {
           updateScoreSuccess(),
           updateMembersInList(data.members),
           refreshKeyInfo(),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch update zset members', async () => {
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.put = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.put = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(updateZSetMembers(
           { keyName: '', members: [] },
           jest.fn(),
           jest.fn()
-          ));
+        ))
 
         // Assert
         const expectedActions = [
           updateScore(),
           addErrorNotification(responsePayload as AxiosError),
           updateScoreFailure(errorMessage)
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('fetchSearchZSetMembers', () => {
       it('succeed to fetch search zset members', async () => {
         // Arrange
         const data = { members: [] }
-        const responsePayload = { status: 200, data };
+        const responsePayload = { status: 200, data }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchSearchZSetMembers('key', 0, 20, 'zz')
-        );
+        )
 
         // Assert
         const expectedActions = [
           searchZSetMembers('zz'),
           searchZSetMembersSuccess(data),
           updateSelectedKeyRefreshTime(Date.now()),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch search zset members', async () => {
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.post = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchSearchZSetMembers('key', 0, 20, 'zz')
-        );
+        )
 
         // Assert
         const expectedActions = [
           searchZSetMembers('zz'),
           addErrorNotification(responsePayload as AxiosError),
           searchZSetMembersFailure(errorMessage)
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('fetchSearchMoreZSetMembers', () => {
       it('succeed to fetch search more zset members', async () => {
         // Arrange
         const responseData = { members: [] }
-        const responsePayload = { status: 200, data: responseData };
+        const responsePayload = { status: 200, data: responseData }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchSearchMoreZSetMembers('key', 0, 20, 'zz')
-        );
+        )
 
         // Assert
         const expectedActions = [
           searchMoreZSetMembers('zz'),
           searchMoreZSetMembersSuccess(responseData),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch search more zset members', async () => {
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.post = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           fetchSearchMoreZSetMembers('key', 0, 20, 'zz')
-        );
+        )
 
         // Assert
         const expectedActions = [
           searchMoreZSetMembers('zz'),
           addErrorNotification(responsePayload as AxiosError),
           searchMoreZSetMembersFailure(errorMessage)
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('refreshStringMembersAction', () => {
       it('succeed to fetch zset members after refresh', async () => {
@@ -1156,55 +1153,55 @@ describe('zset slice', () => {
           total: 1,
           size: 67,
           members: [{ name: '1', score: '1' }],
-        };
-        const responsePayload = { data, status: 200 };
+        }
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           refreshZsetMembersAction(data.keyName)
-        );
+        )
 
         // Assert
         const expectedActions = [
           loadZSetMembers(SortOrder.ASC),
           loadZSetMembersSuccess(responsePayload.data),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to fetch zset members after refresh', async () => {
         // Arrange
-        const errorMessage = 'Something was wrong!';
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
-        apiService.post = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           refreshZsetMembersAction()
-        );
+        )
 
         // Assert
         const expectedActions = [
           loadZSetMembers(SortOrder.ASC),
           addErrorNotification(responsePayload as AxiosError),
           loadZSetMembersFailure(errorMessage),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('succeed to search zset members after refresh', async () => {
         // Arrange
         const data = { members: [] }
-        const responsePayload = { status: 200, data };
+        const responsePayload = { status: 200, data }
         // Act
         const nextState = Object.assign(initialStateDefault, {
           browser: {
@@ -1213,24 +1210,23 @@ describe('zset slice', () => {
               searching: true
             }
           },
-        });
-        const mockedStore = mockStore(nextState);
+        })
+        const mockedStore = mockStore(nextState)
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         await mockedStore.dispatch<any>(
           refreshZsetMembersAction()
-        );
+        )
 
         // Assert
         const expectedActions = [
           searchZSetMembers(''),
           searchZSetMembersSuccess(data),
-        ];
+        ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions);
-      });
-    });
-
-  });
-});
+        expect(mockedStore.getActions()).toEqual(expectedActions)
+      })
+    })
+  })
+})

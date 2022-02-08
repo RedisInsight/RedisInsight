@@ -19,7 +19,7 @@ describe('truncateNumberToRange', () => {
     expect(truncateNumberToRange(number3)).toEqual(expectedResponse3)
     expect(truncateNumberToRange(number4)).toEqual(expectedResponse4)
     expect(truncateNumberToRange(number5)).toEqual(expectedResponse5)
-  });
+  })
 
   it('truncateNumberToRange should return value between 1 K and 99 K', () => {
     const number1 = 10_000
@@ -39,7 +39,7 @@ describe('truncateNumberToRange', () => {
     expect(truncateNumberToRange(number3)).toEqual(expectedResponse3)
     expect(truncateNumberToRange(number4)).toEqual(expectedResponse4)
     expect(truncateNumberToRange(number5)).toEqual(expectedResponse5)
-  });
+  })
 
   it('truncateNumberToRange should return value between 1 M and 999 M', () => {
     const number1 = 10_000_000
@@ -59,7 +59,7 @@ describe('truncateNumberToRange', () => {
     expect(truncateNumberToRange(number3)).toEqual(expectedResponse3)
     expect(truncateNumberToRange(number4)).toEqual(expectedResponse4)
     expect(truncateNumberToRange(number5)).toEqual(expectedResponse5)
-  });
+  })
 
   it('truncateNumberToRange should return value between 1 B and 2 B', () => {
     const number1 = 1_000_000_001

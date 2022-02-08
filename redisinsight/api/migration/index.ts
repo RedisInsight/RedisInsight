@@ -10,6 +10,8 @@ import { settings1627556171227 } from './1627556171227-settings';
 import { databaseModules1629729923740 } from './1629729923740-database-modules';
 import { databaseDbIndex1634219846022 } from './1634219846022-database-db-index';
 import { encryption1634557312500 } from './1634557312500-encryption';
+import { commandExecution1641795882696 } from './1641795882696-command-execution';
+import { pluginState1641805606399 } from './1641805606399-plugin-state';
 
 export default [
   initialMigration1614164490968,
@@ -24,4 +26,6 @@ export default [
   databaseModules1629729923740,
   databaseDbIndex1634219846022,
   encryption1634557312500,
+  commandExecution1641795882696,
+  pluginState1641805606399,
 ];

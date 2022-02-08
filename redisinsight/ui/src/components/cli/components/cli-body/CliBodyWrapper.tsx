@@ -1,5 +1,3 @@
-import { EuiTextColor } from '@elastic/eui'
-import { isEmpty } from 'lodash'
 import { decode } from 'html-entities'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
@@ -9,7 +7,6 @@ import { useParams } from 'react-router-dom'
 import {
   cliSettingsSelector,
   createCliClientAction,
-  updateCliClientAction,
   setCliEnteringCommand,
   clearSearchingCommand,
 } from 'uiSrc/slices/cli/cli-settings'
@@ -19,24 +16,23 @@ import {
   sendCliCommandAction,
   sendCliClusterCommandAction,
   processUnsupportedCommand,
+  processUnrepeatableNumber,
+  processMonitorCommand,
 } from 'uiSrc/slices/cli/cli-output'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { CommandMonitor } from 'uiSrc/constants'
+import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { sessionStorageService } from 'uiSrc/services'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { checkUnsupportedCommand, clearOutput } from 'uiSrc/utils/cli'
-import { InitOutputText, ConnectionSuccessOutputText } from 'uiSrc/constants/cliOutput'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import CliBody from './CliBody'
+
 import styles from './CliBody/styles.module.scss'
-import CliHelperWrapper from '../cli-helper'
 
 const CliBodyWrapper = () => {
-  const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
-
   const [command, setCommand] = useState('')
 
   const dispatch = useDispatch()
@@ -45,24 +41,16 @@ const CliBodyWrapper = () => {
   const {
     errorClient: error,
     unsupportedCommands,
-    isShowHelper,
     isEnteringCommand,
     isSearching,
-    matchedCommand
+    matchedCommand,
+    cliClientUuid,
   } = useSelector(cliSettingsSelector)
   const { host, port, connectionType } = useSelector(connectedInstanceSelector)
+  const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
-    if (isEmpty(data) || error) {
-      dispatch(concatToOutput(InitOutputText(host, port)))
-    }
-
-    if (cliClientUuid) {
-      dispatch(updateCliClientAction(cliClientUuid, onSuccess, onFail))
-      return
-    }
-
-    dispatch(createCliClientAction(onSuccess, onFail))
+    !cliClientUuid && dispatch(createCliClientAction())
   }, [])
 
   useEffect(() => {
@@ -80,34 +68,30 @@ const CliBodyWrapper = () => {
 
   const refHotkeys = useHotkeys<HTMLDivElement>('command+k,ctrl+l', handleClearOutput)
 
-  const onSuccess = () => {
-    if (isEmpty(data) || error) {
-      dispatch(concatToOutput(ConnectionSuccessOutputText))
-    }
-  }
-
-  const onFail = (message: string) => {
-    dispatch(
-      concatToOutput([
-        '\n',
-        <EuiTextColor color="warning" key={Date.now()}>
-          {message}
-        </EuiTextColor>,
-        '\n\n',
-      ])
-    )
-  }
-
   const handleSubmit = () => {
-    const commandLine = decode(command).trim()
+    const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
+    dispatch(concatToOutput(cliCommandOutput(command, currentDbIndex)))
+
+    if (!isRepeatCountCorrect(countRepeat)) {
+      dispatch(processUnrepeatableNumber(commandLine, resetCommand))
+      return
+    }
+
+    // Flow if monitor command was executed
+    if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
+      dispatch(processMonitorCommand(commandLine, resetCommand))
+      return
+    }
 
     if (unsupportedCommand) {
       dispatch(processUnsupportedCommand(commandLine, unsupportedCommand, resetCommand))
       return
     }
 
-    sendCommand(commandLine)
+    for (let i = 0; i < countRepeat; i++) {
+      sendCommand(commandLine)
+    }
   }
 
   const sendCommand = (command: string) => {
@@ -147,7 +131,6 @@ const CliBodyWrapper = () => {
         setCommand={setCommand}
         onSubmit={handleSubmit}
       />
-      {isShowHelper && <CliHelperWrapper />}
     </section>
   )
 }

@@ -204,6 +204,48 @@ describe('POST /instance/:instanceId/zSet/search', () => {
         },
       },
     ].map(mainCheckFn);
+
+
+    describe('Search in huge number of elements', () => {
+      const ELEMENTS_NUMBER = 1_000_000;
+
+      requirements('rte.bigData');
+      [
+        {
+          name: 'Should get member using "exists" cmd without full scan',
+          data: {
+            keyName: constants.TEST_ZSET_HUGE_KEY,
+            cursor: 0,
+            match: constants.TEST_ZSET_HUGE_MEMBER
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_ZSET_HUGE_KEY,
+            total: ELEMENTS_NUMBER,
+            members: [{
+              name: constants.TEST_ZSET_HUGE_MEMBER,
+              score: constants.TEST_ZSET_HUGE_SCORE,
+            }],
+            nextCursor: 0,
+          },
+        },
+        {
+          name: 'Should get elements with possibility to continue iterating',
+          data: {
+            keyName: constants.TEST_ZSET_HUGE_KEY,
+            cursor: 0,
+            match: '*',
+          },
+          responseSchema,
+          checkFn: ({ body }) => {
+            expect(body.keyName).to.eql(constants.TEST_ZSET_HUGE_KEY);
+            expect(body.total).to.eql(ELEMENTS_NUMBER);
+            expect(body.nextCursor).to.not.eql(0);
+            expect(body.members.length).to.gte(200);
+          },
+        },
+      ].map(mainCheckFn);
+    });
   });
 
   describe('ACL', () => {

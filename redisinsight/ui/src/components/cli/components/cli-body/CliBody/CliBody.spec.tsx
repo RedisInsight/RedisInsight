@@ -3,8 +3,7 @@ import React from 'react'
 import { keys } from '@elastic/eui'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { clearOutput, updateCliHistoryStorage } from 'uiSrc/utils/cli'
-import CLI from 'uiSrc/components/cli/Cli'
+import { clearOutput, updateCliHistoryStorage } from 'uiSrc/utils/cliHelper'
 import { MOCK_COMMANDS_ARRAY } from 'uiSrc/constants'
 import CliBody, { Props } from './CliBody'
 
@@ -48,8 +47,8 @@ jest.mock(redisCommandsPath, () => {
   }
 })
 
-jest.mock('uiSrc/utils/cli', () => ({
-  ...jest.requireActual('uiSrc/utils/cli'),
+jest.mock('uiSrc/utils/cliHelper', () => ({
+  ...jest.requireActual('uiSrc/utils/cliHelper'),
   updateCliHistoryStorage: jest.fn(),
   clearOutput: jest.fn(),
 }))
@@ -235,16 +234,6 @@ describe('CliBody', () => {
       expect(setCommandMock).toBeCalledTimes(6)
 
       expect(onSubmitMock).not.toBeCalled()
-    })
-
-    it('"Esc" key should focus ', () => {
-      render(<CLI />)
-
-      fireEvent.keyDown(screen.getByTestId(cliCommand), {
-        key: keys.ESCAPE,
-      })
-
-      expect(screen.getByTestId('collapse-cli')).toHaveFocus()
     })
 
     it('"Tab" with command="" should setCommand first command from constants/commands ', () => {

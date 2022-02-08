@@ -22,7 +22,7 @@ import errorMessages from './error-messages'
 
 import styles from './styles.module.scss'
 
-const DEFAULT_TEXT = 'Something went wrong.'
+export const DEFAULT_TEXT = 'Something went wrong.'
 
 const Notifications = () => {
   const messagesData = useSelector(messagesSelector)

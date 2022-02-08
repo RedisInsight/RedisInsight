@@ -159,6 +159,13 @@ const HomePage = () => {
     setAddDialogIsOpen(false)
   }
 
+  const handleDeleteInstances = (instances: Instance[]) => {
+    if (instances.find((instance) => instance.id === editedInstance?.id)) {
+      setEditedInstance(null)
+      setEditDialogIsOpen(false)
+    }
+  }
+
   const onResize = ({ width: innerWidth }: { width: number }) => {
     setWidth(innerWidth)
   }
@@ -181,7 +188,12 @@ const HomePage = () => {
         {(resizeRef) => (
           <EuiPage>
             <EuiPageBody component="div">
-              <AddInstanceControls key="instance-controls" onAddInstance={handleAddInstance} direction={Direction.row} />
+              <AddInstanceControls
+                key="instance-controls"
+                onAddInstance={handleAddInstance}
+                direction={Direction.row}
+                welcomePage={!instances.length}
+              />
               {dialogIsOpen ? (
                 <div key="homePage" className="homePage">
                   <EuiResizableContainer style={{ height: '100%' }}>
@@ -200,6 +212,7 @@ const HomePage = () => {
                               dialogIsOpen={dialogIsOpen}
                               editedInstance={editedInstance}
                               onEditInstance={handleEditInstance}
+                              onDeleteInstances={handleDeleteInstances}
                             />
                           </div>
                         </EuiResizablePanel>
@@ -253,6 +266,7 @@ const HomePage = () => {
                       editedInstance={editedInstance}
                       dialogIsOpen={dialogIsOpen}
                       onEditInstance={handleEditInstance}
+                      onDeleteInstances={handleDeleteInstances}
                     />
                   ) : (
                     <>

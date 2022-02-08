@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import IORedis from 'ioredis';
-import {
-  filter,
-  get,
-  isNil,
-  map,
-} from 'lodash';
+import { get, isNil } from 'lodash';
 import {
   convertBulkStringsToObject,
   convertRedisInfoReplyToObject,
@@ -15,8 +10,6 @@ import {
 } from 'src/utils';
 import { IRedisModule, IRedisClusterInfo, IRedisClusterNode } from 'src/models';
 import {
-  pluginUnsupportedCommands,
-  pluginBlockingCommands,
   REDIS_MODULES_COMMANDS,
   SUPPORTED_REDIS_MODULES,
 } from 'src/constants';
@@ -177,40 +170,5 @@ export class ConfigurationBusinessService {
       }
     }));
     return modules;
-  }
-
-  /**
-   * Get whitelisted commands available for plugins for particular database
-   */
-  async getPluginWhiteListCommands(client: any): Promise<string[]> {
-    let pluginWhiteListCommands = [];
-    try {
-      const availableCommands = await client.send_command('command');
-      const readOnlyCommands = map(filter(availableCommands, (
-        command,
-      ) => get(command, [2], [])
-        .includes('readonly')), (command) => command[0]);
-
-      const blackListCommands = [...pluginUnsupportedCommands, ...pluginBlockingCommands];
-      try {
-        const dangerousCommands = await client.send_command('acl', ['cat', 'dangerous']);
-        blackListCommands.push(...dangerousCommands);
-      } catch (e) {
-        // ignore error as acl cat available since Redis 6.0
-      }
-
-      try {
-        const blockingCommands = await client.send_command('acl', ['cat', 'blocking']);
-        blackListCommands.push(...blockingCommands);
-      } catch (e) {
-        // ignore error as acl cat available since Redis 6.0
-      }
-
-      pluginWhiteListCommands = filter(readOnlyCommands, (command) => !blackListCommands.includes(command));
-    } catch (e) {
-      // ignore any error to not block main process of client creation
-    }
-
-    return pluginWhiteListCommands;
   }
 }

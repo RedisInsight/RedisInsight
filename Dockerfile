@@ -10,6 +10,7 @@ COPY configs ./configs
 COPY scripts ./scripts
 COPY redisinsight ./redisinsight
 RUN SKIP_POSTINSTALL=1 yarn install
+RUN yarn --cwd redisinsight/api
 RUN yarn build:web
 RUN yarn build:statics
 
@@ -18,7 +19,8 @@ WORKDIR /usr/src/app
 COPY redisinsight/api/package.json redisinsight/api/yarn.lock ./
 RUN yarn install
 COPY redisinsight/api ./
-COPY --from=front /usr/src/app/redisinsight/api/src/static ./src/static
+COPY --from=front /usr/src/app/redisinsight/api/static ./static
+COPY --from=front /usr/src/app/redisinsight/api/defaults ./defaults
 RUN yarn run build:prod
 
 FROM node:14.17-slim

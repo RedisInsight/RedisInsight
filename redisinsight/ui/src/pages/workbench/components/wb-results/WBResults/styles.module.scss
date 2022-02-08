@@ -13,3 +13,32 @@
   border: 1px solid var(--euiColorLightShade);
   overflow: auto;
 }
+
+.noResults {
+  width: 326px;
+  height: 100%;
+  min-height: 140px;
+  display: flex;
+  margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.noResultsTitle {
+  padding-top: 18px;
+  font: normal normal 500 15px/24px 'Graphik', sans-serif !important;
+}
+
+.noResultsText {
+  font: normal normal normal 13px/18px 'Graphik', sans-serif !important;
+  letter-spacing: -0.13px;
+  padding-top: 12px;
+}
+
+.playIcon {
+  width: 42px !important;
+  height: 42px !important;
+}

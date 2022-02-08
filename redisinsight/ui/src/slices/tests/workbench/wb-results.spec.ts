@@ -1,194 +1,298 @@
-import { cloneDeep, first } from 'lodash';
-import { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
 
 import {
   cleanup,
   mockedStore,
   initialStateDefault,
   clearStoreActions,
-  mockStore,
-} from 'uiSrc/utils/test-utils';
-import { apiService } from 'uiSrc/services';
+} from 'uiSrc/utils/test-utils'
+import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli';
-import { SendClusterCommandDto, SendClusterCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto';
+import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
   initialState,
   sendWBCommand,
   sendWBCommandSuccess,
-  sendWBCommandFailure,
-  updateWBCommandHistory,
+  processWBCommandFailure,
   workbenchResultsSelector,
   sendWBCommandAction,
   sendWBCommandClusterAction,
-} from '../../workbench/wb-results';
+  fetchWBCommandAction,
+  deleteWBCommandAction,
+  loadWBHistory,
+  loadWBHistorySuccess,
+  loadWBHistoryFailure,
+  processWBCommand,
+  fetchWBCommandSuccess,
+  toggleOpenWBResult,
+  deleteWBCommandSuccess,
+  resetWBHistoryItems,
+  fetchWBHistoryAction,
+} from '../../workbench/wb-results'
 
-jest.mock('uiSrc/services');
+jest.mock('uiSrc/services')
 
-let store: typeof mockedStore;
+let store: typeof mockedStore
 beforeEach(() => {
-  cleanup();
-  store = cloneDeep(mockedStore);
-  store.clearActions();
-});
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
+
+const mockItemId = '123'
+const initialStateWithItems = {
+  ...initialState,
+  items: [{
+    id: mockItemId
+  }]
+}
 
 describe('workbench results slice', () => {
-  describe('updateWBCommandHistory', () => {
-    it('should properly updated cli history output', () => {
-      const data = ['lalal', 'tatata'];
-      // Arrange
-      const state: typeof initialState = {
-        ...initialState,
-        commandHistory: data,
-      };
-
-      // Act
-      const nextState = reducer(initialState, updateWBCommandHistory(data));
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        workbench: {
-          results: nextState,
-        },
-      });
-      expect(workbenchResultsSelector(rootState)).toEqual(state);
-    });
-  });
-
   describe('sendWBCommand', () => {
-    it('should properly set loading = true', () => {
+    it('should properly set loading = true, isOpen = true, error = ""', () => {
       // Arrange
+      const mockPayload = {
+        command: 'command',
+        commandId: '123'
+      }
       const state = {
         ...initialState,
-        loading: true,
-      };
+        items: [
+          {
+            command: mockPayload.command,
+            id: mockPayload.commandId,
+            loading: true,
+            isOpen: true,
+            error: ''
+          }
+        ]
+      }
 
       // Act
-      const nextState = reducer(initialState, sendWBCommand());
+      const nextState = reducer(initialState, sendWBCommand(mockPayload))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         workbench: {
           results: nextState,
         },
-      });
-      expect(workbenchResultsSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('toggleOpenWBResult', () => {
+    it('should properly set isOpen = true', () => {
+      // Arrange
+
+      const state = {
+        ...initialStateWithItems,
+        items: [
+          {
+            ...initialStateWithItems.items[0],
+            isOpen: true
+          }
+        ]
+      }
+
+      // Act
+      const nextState = reducer(initialStateWithItems, toggleOpenWBResult(mockItemId))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          results: nextState,
+        },
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
+  describe('resetWBHistoryItems', () => {
+    it('should properly remove all items', () => {
+      // Arrange
+
+      const state = {
+        ...initialStateWithItems,
+        items: []
+      }
+
+      // Act
+      const nextState = reducer(initialStateWithItems, resetWBHistoryItems())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          results: nextState,
+        },
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('sendWBCommandSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
 
+      const mockedId = '123'
+
+      const mockCommandExecution = {
+        commandId: '123',
+        data: {
+          command: 'command',
+          databaseId: '123',
+          id: mockedId,
+          createdAt: new Date(),
+          isOpen: true,
+          error: '',
+          loading: false,
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Success
+          }]
+        }
+      }
+
       const state = {
         ...initialState,
-        loading: false,
-      };
+        items: [{ ...mockCommandExecution.data }]
+      }
 
       // Act
-      const nextState = reducer(initialState, sendWBCommandSuccess());
+      const nextState = reducer(initialStateWithItems, sendWBCommandSuccess(mockCommandExecution))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         workbench: {
           results: nextState,
         },
-      });
-      expect(workbenchResultsSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
 
-  describe('sendWBCommandFailure', () => {
+  describe('processWBCommandFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
-      const state = {
-        ...initialState,
-        loading: false,
+      const data = 'error'
+      const mockCommandExecution = {
+        id: mockItemId,
         error: data,
-      };
+        loading: false,
+      }
+      const state = {
+        ...initialStateWithItems,
+        items: [
+          {
+            ...mockCommandExecution
+          }
+        ]
+      }
 
       // Act
-      const nextState = reducer(initialState, sendWBCommandFailure(data));
+      const nextState = reducer(initialStateWithItems, processWBCommandFailure(mockCommandExecution))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         workbench: {
           results: nextState,
         },
-      });
-      expect(workbenchResultsSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('thunks', () => {
     describe('Standalone Cli command', () => {
-      it('call both sendCliStandaloneCommandAction and sendWBCommandSuccess when response status is successed', async () => {
+      it('call both sendWBCommandAction and sendWBCommandSuccess when response status is successed', async () => {
         // Arrange
-        const command = 'keys *';
+        const command = 'keys *'
+        const commandId = `${Date.now()}`
         const data = {
-          response: 'tatata',
-          status: CommandExecutionStatus.Success,
-        };
-        const responsePayload = { data, status: 200 };
+          command: 'command',
+          databaseId: '123',
+          id: commandId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Success
+          }]
+        }
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandAction(command, Date.now()));
+        await store.dispatch<any>(sendWBCommandAction({ command, commandId }))
 
         // Assert
-        const expectedActions = [sendWBCommand(), sendWBCommandSuccess()];
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions));
-      });
+        const expectedActions = [
+          sendWBCommand({ command, commandId }),
+          sendWBCommandSuccess({ data, commandId })
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
 
-      it('call both sendCliStandaloneCommandAction and sendWBCommandSuccess when response status is fail', async () => {
+      it('call both sendWBCommandAction and sendWBCommandSuccess when response status is fail', async () => {
         // Arrange
-        const command = 'keys *';
+        const command = 'keys *'
+        const commandId = `${Date.now()}`
         const data = {
-          response: '(err) tatata',
-          status: CommandExecutionStatus.Fail,
-        };
-        const responsePayload = { data, status: 200 };
+          command: 'command',
+          databaseId: '123',
+          id: commandId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Fail
+          }]
+        }
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandAction(command, Date.now()));
+        await store.dispatch<any>(sendWBCommandAction({ command, commandId }))
 
         // Assert
-        const expectedActions = [sendWBCommand(), sendWBCommandSuccess()];
+        const expectedActions = [
+          sendWBCommand({ command, commandId }),
+          sendWBCommandSuccess({ data, commandId })
+        ]
 
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions));
-      });
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
 
-      it('call both sendCliStandaloneCommandAction and sendWBCommandFailure when fetch is fail', async () => {
+      it('call both sendWBCommandAction and processWBCommandFailure when fetch is fail', async () => {
         // Arrange
-        const command = 'keys *';
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.';
+        const command = 'keys *'
+        const commandId = `${Date.now()}`
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandAction(command, Date.now()));
+        await store.dispatch<any>(sendWBCommandAction({ command, commandId }))
 
         // Assert
         const expectedActions = [
-          sendWBCommand(),
+          sendWBCommand({ command, commandId }),
           addErrorNotification(responsePayload as AxiosError),
-          sendWBCommandFailure(responsePayload.response.data.message),
-        ];
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions));
-      });
-    });
+          processWBCommandFailure({ command, error: responsePayload.response.data.message }),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
 
     describe('Single Node Cluster Cli command', () => {
+      const commandId = `${Date.now()}`
       const options: SendClusterCommandDto = {
         command: 'keys *',
         nodeOptions: {
@@ -197,76 +301,313 @@ describe('workbench results slice', () => {
           enableRedirection: true,
         },
         role: ClusterNodeRole.All,
-      };
+      }
 
       it('call both sendWBCommandClusterAction and sendWBCommandSuccess when response status is successed', async () => {
         // Arrange
-        const command = 'keys *';
-        const data: SendClusterCommandResponse[] = [
-          {
-            response: '-> Redirected to slot [6918] located at 127.0.0.1:7002\n(nil)',
-            status: 'success',
-            node: { host: '127.0.0.1', port: 7002 },
-          },
-        ];
-        const responsePayload = { data, status: 200 };
+        const command = 'keys *'
+        const data = {
+          command: 'command',
+          databaseId: '123',
+          id: commandId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Success
+          }]
+        }
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandClusterAction(command, Date.now(), options));
+        await store.dispatch<any>(sendWBCommandClusterAction({ command, commandId, options }))
 
         // Assert
-        const expectedActions = [sendWBCommand(), sendWBCommandSuccess()];
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions));
-      });
+        const expectedActions = [
+          sendWBCommand({ command, commandId }),
+          sendWBCommandSuccess({ data, commandId })
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
 
       it('call both sendWBCommandClusterAction and sendWBCommandSuccess when response status is fail', async () => {
         // Arrange
-        const command = 'keys *';
-        const data: SendClusterCommandResponse[] = [
-          {
-            response: '-> Redirected to slot [6918] located at 127.0.0.1:7002\n(nil)',
-            status: 'success',
-            node: { host: '127.0.0.1', port: 7002 },
-          },
-        ];
-        const responsePayload = { data, status: 200 };
+        const command = 'keys *'
+        const data = {
+          command: 'command',
+          databaseId: '123',
+          id: commandId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Fail
+          }]
+        }
+        const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandClusterAction(command, Date.now(), options));
+        await store.dispatch<any>(sendWBCommandClusterAction({ command, options, commandId }))
 
         // Assert
-        const expectedActions = [sendWBCommand(), sendWBCommandSuccess()];
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions));
-      });
+        const expectedActions = [
+          sendWBCommand({ command, commandId }),
+          sendWBCommandSuccess({ data, commandId })
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
 
-      it('call both sendWBCommandClusterAction and sendWBCommandFailure when fetch is fail', async () => {
+      it.only('call both sendWBCommandClusterAction and processWBCommandFailure when fetch is fail', async () => {
         // Arrange
-        const command = 'keys *';
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.';
+        const command = 'keys *'
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandClusterAction(command, Date.now(), options));
+        await store.dispatch<any>(sendWBCommandAction({ command, options, commandId }))
 
         // Assert
         const expectedActions = [
-          sendWBCommand(),
+          sendWBCommand({ command, commandId }),
           addErrorNotification(responsePayload as AxiosError),
-          sendWBCommandFailure(responsePayload.response.data.message),
-        ];
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions));
-      });
-    });
-  });
-});
+          processWBCommandFailure({ command, error: responsePayload.response.data.message }),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
+
+    describe('Fetch result for command', () => {
+      it('call both fetchWBCommandAction and fetchWBCommandSuccess when response status is successed', async () => {
+        // Arrange
+        const data = {
+          command: 'command',
+          databaseId: '123',
+          id: mockItemId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Success
+          }]
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchWBCommandAction(mockItemId))
+
+        // Assert
+        const expectedActions = [
+          processWBCommand(mockItemId),
+          fetchWBCommandSuccess(data)
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('call both fetchWBCommandAction and fetchWBCommandSuccess when response status is fail', async () => {
+        // Arrange
+        const commandId = `${Date.now()}`
+        const data = {
+          command: 'command',
+          databaseId: '123',
+          id: commandId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Fail
+          }]
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchWBCommandAction(commandId))
+
+        // Assert
+        const expectedActions = [
+          processWBCommand(commandId),
+          fetchWBCommandSuccess(data)
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('call both fetchWBCommandAction and processWBCommandFailure when fetch is fail', async () => {
+        // Arrange
+        const command = 'keys *'
+        const commandId = `${Date.now()}`
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchWBCommandAction(commandId))
+
+        // Assert
+        const expectedActions = [
+          processWBCommand(commandId),
+          addErrorNotification(responsePayload as AxiosError),
+          processWBCommandFailure({ command, error: responsePayload.response.data.message }),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
+
+    describe('Delete command from the list', () => {
+      it('call both deleteWBCommandAction and fetchWBCommandSuccess when response status is successed', async () => {
+        // Arrange
+        const data = {
+          command: 'command',
+          databaseId: '123',
+          id: mockItemId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Success
+          }]
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteWBCommandAction(mockItemId))
+
+        // Assert
+        const expectedActions = [
+          processWBCommand(mockItemId),
+          deleteWBCommandSuccess(mockItemId)
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('call both deleteWBCommandAction and fetchWBCommandSuccess when response status is fail', async () => {
+        // Arrange
+        const commandId = `${Date.now()}`
+        const data = {
+          command: 'command',
+          databaseId: '123',
+          id: commandId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Fail
+          }]
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteWBCommandAction(commandId))
+
+        // Assert
+        const expectedActions = [
+          processWBCommand(commandId),
+          deleteWBCommandSuccess(commandId),
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('call both deleteWBCommandAction and processWBCommandFailure when fetch is fail', async () => {
+        // Arrange
+        const command = 'keys *'
+        const commandId = `${Date.now()}`
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteWBCommandAction(commandId))
+
+        // Assert
+        const expectedActions = [
+          processWBCommand(commandId),
+          addErrorNotification(responsePayload as AxiosError),
+          processWBCommandFailure({ command, error: responsePayload.response.data.message }),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
+
+    describe('Fetch list of commands', () => {
+      it('call both fetchWBHistoryAction and fetchWBCommandSuccess when response status is successed', async () => {
+        // Arrange
+        const data = [{
+          command: 'command1',
+          id: '1',
+          databaseId: '1',
+          createdAt: new Date(),
+          result: [],
+        }, {
+          id: '2',
+          command: 'command2',
+          databaseId: '1',
+          createdAt: new Date(),
+          result: [],
+        }]
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchWBHistoryAction(mockItemId))
+
+        // Assert
+        const expectedActions = [
+          loadWBHistory(),
+          loadWBHistorySuccess(data)
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('call both fetchWBHistoryAction and processWBCommandFailure when fetch is fail', async () => {
+        // Arrange
+        const commandId = `${Date.now()}`
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchWBHistoryAction(commandId))
+
+        // Assert
+        const expectedActions = [
+          loadWBHistory(),
+          addErrorNotification(responsePayload as AxiosError),
+          loadWBHistoryFailure(responsePayload.response.data.message),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
+  })
+})

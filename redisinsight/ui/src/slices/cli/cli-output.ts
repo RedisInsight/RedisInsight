@@ -1,17 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { first } from 'lodash'
 
-import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { CliOutputFormatterType, cliTexts, ConnectionSuccessOutputText, SelectCommand } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { cliCommandOutput, cliParseTextResponseWithOffset } from 'uiSrc/utils/cli'
-import { getUrl, getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { ApiEndpoints, BrowserStorageItem, CommandMonitor } from 'uiSrc/constants'
 import {
-  SendClusterCommandDto,
-  SendClusterCommandResponse,
-  SendCommandResponse,
-} from 'apiSrc/modules/cli/dto/cli.dto'
+  cliParseTextResponseWithOffset,
+  cliParseTextResponseWithRedirect, getDbIndexFromSelectQuery,
+} from 'uiSrc/utils/cliHelper'
+import { getApiErrorMessage, getApiErrorName, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { cliUnsupportedCommandsSelector, updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
+import ApiErrors from 'uiSrc/constants/apiErrors'
 
+import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
+
+import { showMonitor } from './monitor'
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
 
@@ -19,6 +21,7 @@ export const initialState: StateCliOutput = {
   data: [],
   loading: false,
   error: '',
+  db: 0,
   commandHistory: localStorageService?.get(BrowserStorageItem.cliInputHistory) ?? [],
 }
 
@@ -55,6 +58,14 @@ const outputSlice = createSlice({
     },
     resetOutput: (state) => {
       state.data = []
+      state.loading = false
+    },
+    resetOutputLoading: (state) => {
+      state.loading = false
+    },
+
+    setCliDbIndex: (state, { payload }) => {
+      state.db = payload
     },
   },
 })
@@ -64,10 +75,12 @@ export const {
   concatToOutput,
   setOutputInitialState,
   resetOutput,
+  resetOutputLoading,
   updateCliCommandHistory,
   sendCliCommand,
   sendCliCommandSuccess,
   sendCliCommandFailure,
+  setCliDbIndex,
 } = outputSlice.actions
 
 // A selector
@@ -83,11 +96,12 @@ export function sendCliCommandAction(
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    let cliClientUuid
     try {
       const state = stateInit()
+      cliClientUuid = state?.cli?.settings?.cliClientUuid
       const { id = '' } = state.connections?.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -95,22 +109,39 @@ export function sendCliCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data, status } = await apiService.post<SendCommandResponse>(
+      const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
         getUrl(id, ApiEndpoints.CLI, state.cli.settings?.cliClientUuid, ApiEndpoints.SEND_COMMAND),
-        { command }
+        { command, outputFormat: CliOutputFormatterType.Raw },
       )
 
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
-        dispatch(concatToOutput(cliParseTextResponseWithOffset(data.response, data.status)))
+        dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
+        if (
+          dataStatus === CommandExecutionStatus.Success
+          && command.toLowerCase().startsWith(SelectCommand.toLowerCase())
+        ) {
+          try {
+            const dbIndex = getDbIndexFromSelectQuery(command)
+            dispatch(setCliDbIndex(dbIndex))
+          } catch (e) {
+            // continue regardless of error
+          }
+        }
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      const errorName = getApiErrorName(error)
       dispatch(sendCliCommandFailure(errorMessage))
-      dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail))
-      )
+
+      if (errorName === ApiErrors.ClientNotFound && cliClientUuid) {
+        handleRecreateClient(dispatch, stateInit)
+      } else {
+        dispatch(
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
+        )
+      }
       onFailAction?.()
     }
   }
@@ -124,11 +155,13 @@ export function sendCliClusterCommandAction(
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    let cliClientUuid
     try {
+      const outputFormat = CliOutputFormatterType.Raw
       const state = stateInit()
+      cliClientUuid = state?.cli?.settings?.cliClientUuid
       const { id = '' } = state.connections.instances?.connectedInstance
 
-      dispatch(concatToOutput(cliCommandOutput(command)))
       if (command === '') {
         onSuccessAction?.()
         return
@@ -136,29 +169,48 @@ export function sendCliClusterCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data, status } = await apiService.post<SendClusterCommandResponse[]>(
+      const {
+        data: [
+          { response, status: dataStatus, node: nodeOptionsResponse }
+        ] = [],
+        status
+      } = await apiService.post<SendClusterCommandResponse[]>(
         getUrl(
           id,
           ApiEndpoints.CLI,
           state.cli.settings?.cliClientUuid,
           ApiEndpoints.SEND_CLUSTER_COMMAND
         ),
-        { ...options, command }
+        { ...options, command, outputFormat },
       )
 
       if (isStatusSuccessful(status)) {
+        let isRedirected = false
+        if (options.nodeOptions && nodeOptionsResponse) {
+          const requestNodeAddress = `${options.nodeOptions.host}:${options.nodeOptions.port}`
+          const responseNodeAddress = `${nodeOptionsResponse.host}:${nodeOptionsResponse.port}`
+          isRedirected = requestNodeAddress !== responseNodeAddress
+        }
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
-        dispatch(
-          concatToOutput(cliParseTextResponseWithOffset(first(data)?.response, first(data)?.status))
-        )
+        const result = outputFormat === CliOutputFormatterType.Raw && isRedirected
+          ? cliParseTextResponseWithRedirect(response, command, dataStatus, nodeOptionsResponse)
+          : cliParseTextResponseWithOffset(response, command, dataStatus)
+
+        dispatch(concatToOutput(result))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      const errorName = getApiErrorName(error)
       dispatch(sendCliCommandFailure(errorMessage))
-      dispatch(
-        concatToOutput(cliParseTextResponseWithOffset(errorMessage, CommandExecutionStatus.Fail))
-      )
+
+      if (errorName === ApiErrors.ClientNotFound && cliClientUuid) {
+        handleRecreateClient(dispatch, stateInit)
+      } else {
+        dispatch(
+          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
+        )
+      }
       onFailAction?.()
     }
   }
@@ -171,10 +223,9 @@ export function processUnsupportedCommand(
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
-    const { unsupportedCommands } = state.cli.settings
-
-    dispatch(concatToOutput(cliCommandOutput(command)))
-
+    // Due to requirements, the monitor command should not appear in the list of supported commands
+    // That is why we exclude it here
+    const unsupportedCommands = cliUnsupportedCommandsSelector(state, [CommandMonitor.toLowerCase()])
     dispatch(
       concatToOutput(
         cliParseTextResponseWithOffset(
@@ -182,11 +233,69 @@ export function processUnsupportedCommand(
             command.slice(0, unsupportedCommand.length),
             unsupportedCommands.join(', ')
           ),
+          command,
           CommandExecutionStatus.Fail
         )
       )
     )
 
     onSuccessAction?.()
+  }
+}
+
+export function processUnrepeatableNumber(
+  command: string = '',
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          cliTexts.REPEAT_COUNT_INVALID,
+          command,
+          CommandExecutionStatus.Fail
+        )
+      )
+    )
+
+    onSuccessAction?.()
+  }
+}
+
+export function processMonitorCommand(
+  command: string = '',
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(showMonitor())
+
+    dispatch(
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          cliTexts.MONITOR_COMMAND,
+          command,
+          CommandExecutionStatus.Fail
+        )
+      )
+    )
+
+    onSuccessAction?.()
+  }
+}
+
+function handleRecreateClient(dispatch: AppDispatch, stateInit: () => RootState, command = ''): void {
+  const state = stateInit()
+  const { cliClientUuid } = state.cli.settings
+  if (cliClientUuid) {
+    dispatch(concatToOutput(
+      cliParseTextResponseWithOffset(cliTexts.CONNECTION_CLOSED, command, CommandExecutionStatus.Fail)
+    ))
+    dispatch(updateCliClientAction(
+      cliClientUuid,
+      () => dispatch(concatToOutput(ConnectionSuccessOutputText)),
+      (message:string) => dispatch(concatToOutput(
+        cliParseTextResponseWithOffset(`${message}`, command, CommandExecutionStatus.Fail)
+      )),
+    ))
   }
 }

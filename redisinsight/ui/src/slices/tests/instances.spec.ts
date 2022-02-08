@@ -1,14 +1,14 @@
-import { AxiosError } from 'axios';
-import { cloneDeep, map } from 'lodash';
+import { AxiosError } from 'axios'
+import { cloneDeep, map } from 'lodash'
 
 import {
   cleanup,
   initialStateDefault,
   mockedStore,
-} from 'uiSrc/utils/test-utils';
-import { apiErrors } from 'uiSrc/constants';
-import { apiService } from 'uiSrc/services';
-import successMessages from 'uiSrc/components/notifications/success-messages';
+} from 'uiSrc/utils/test-utils'
+import { apiErrors } from 'uiSrc/constants'
+import { apiService } from 'uiSrc/services'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 
 import reducer, {
   initialState,
@@ -35,21 +35,21 @@ import reducer, {
   changeInstanceAliasFailure,
   changeInstanceAliasSuccess,
   changeInstanceAliasAction,
-} from '../instances';
-import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../app/notifications';
-import { ConnectionType, InitialStateInstances, Instance } from '../interfaces';
-import { loadMastersSentinel } from '../sentinel';
+} from '../instances'
+import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../app/notifications'
+import { ConnectionType, InitialStateInstances, Instance } from '../interfaces'
+import { loadMastersSentinel } from '../sentinel'
 
-jest.mock('uiSrc/services');
-jest.mock('uiSrc/constants');
+jest.mock('uiSrc/services')
+jest.mock('uiSrc/constants')
 
-let store: typeof mockedStore;
-let instances: Instance[];
+let store: typeof mockedStore
+let instances: Instance[]
 
 beforeEach(() => {
-  cleanup();
-  store = cloneDeep(mockedStore);
-  store.clearActions();
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
 
   instances = [
     {
@@ -102,22 +102,22 @@ beforeEach(() => {
         name: 'mymaster',
       },
     },
-  ];
-});
+  ]
+})
 
 describe('instances slice', () => {
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
-      const nextState = initialState;
+      const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {});
+      const result = reducer(undefined, {})
 
       // Assert
-      expect(result).toEqual(nextState);
-    });
-  });
+      expect(result).toEqual(nextState)
+    })
+  })
 
   describe('loadInstances', () => {
     it('should properly set loading = true', () => {
@@ -125,20 +125,20 @@ describe('instances slice', () => {
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadInstances());
+      const nextState = reducer(initialState, loadInstances())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('defaultInstanceChanging', () => {
     it('should properly set loading = true', () => {
@@ -147,20 +147,20 @@ describe('instances slice', () => {
       const state = {
         ...initialState,
         loadingChanging: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, defaultInstanceChanging());
+      const nextState = reducer(initialState, defaultInstanceChanging())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('changeInstanceAlias', () => {
     it('should properly set loading = true', () => {
@@ -170,69 +170,69 @@ describe('instances slice', () => {
         ...initialState,
         loadingChanging: true,
         errorChanging: '',
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, changeInstanceAlias());
+      const nextState = reducer(initialState, changeInstanceAlias())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('changeInstanceAliasSuccess', () => {
     it('should properly set the state', () => {
       // Arrange
       const prevState: InitialStateInstances = {
-       ...initialState,
+        ...initialState,
         data: [instances[0], instances[1]],
-      };
+      }
       const state = {
         ...initialState,
         loadingChanging: false,
-        data: [{...instances[0], name: 'newAlias'}, instances[1]],
-      };
+        data: [{ ...instances[0], name: 'newAlias' }, instances[1]],
+      }
 
       // Act
-      const nextState = reducer(prevState, changeInstanceAliasSuccess({id: instances[0].id, newName: 'newAlias'}));
+      const nextState = reducer(prevState, changeInstanceAliasSuccess({ id: instances[0].id, newName: 'newAlias' }))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
     })
-  });
+  })
 
   describe('changeInstanceAliasFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         ...initialState,
         loadingChanging: false,
         errorChanging: data,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, changeInstanceAliasFailure(data));
+      const nextState = reducer(initialState, changeInstanceAliasFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadInstancesSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -242,93 +242,90 @@ describe('instances slice', () => {
         ...initialState,
         loading: false,
         data: instances,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadInstancesSuccess(instances));
+      const nextState = reducer(initialState, loadInstancesSuccess(instances))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
 
     it('should properly set the state with empty data', () => {
       // Arrange
-      const data: any = [];
+      const data: any = []
 
       const state = {
         ...initialState,
         loading: false,
         data,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadInstancesSuccess(data));
+      const nextState = reducer(initialState, loadInstancesSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('loadInstancesFailure', () => {
     it('should properly set the error', () => {
       // Arrange
-      const data = 'some error';
+      const data = 'some error'
       const state = {
         ...initialState,
         loading: false,
         error: data,
         data: [],
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, loadInstancesFailure(data));
+      const nextState = reducer(initialState, loadInstancesFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
-
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('getDatabaseConfigInfo', () => {
     it('should properly set state before fetch data', () => {
-
       // Arrange
       const state = {
         ...initialState,
         loading: true,
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, getDatabaseConfigInfo());
+      const nextState = reducer(initialState, getDatabaseConfigInfo())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('getDatabaseConfigInfoSuccess', () => {
     it('should properly set state after fetch data', () => {
-
       // Arrange
       const data = {
         version: '6.2',
@@ -344,89 +341,87 @@ describe('instances slice', () => {
         ...initialState,
         loading: false,
         instanceOverview: data
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, getDatabaseConfigInfoSuccess(data));
+      const nextState = reducer(initialState, getDatabaseConfigInfoSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('getDatabaseConfigInfoFailure', () => {
     it('should properly set error', () => {
-
       // Arrange
-      const error = 'some error';
+      const error = 'some error'
       const state = {
         ...initialState,
         loading: false,
         error
-      };
+      }
 
       // Act
-      const nextState = reducer(initialState, getDatabaseConfigInfoFailure(error));
+      const nextState = reducer(initialState, getDatabaseConfigInfoFailure(error))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         connections: {
           instances: nextState,
         },
-      });
-      expect(instancesSelector(rootState)).toEqual(state);
-    });
-  });
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
 
   describe('thunks', () => {
     describe('fetchInstances', () => {
       it('call both fetchInstances and loadInstancesSuccess when fetch is successed', async () => {
         // Arrange
-        const responsePayload = { data: instances, status: 200 };
+        const responsePayload = { data: instances, status: 200 }
 
-        apiService.get = jest.fn().mockResolvedValue(responsePayload);
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchInstancesAction());
+        await store.dispatch<any>(fetchInstancesAction())
 
         // Assert
         const expectedActions = [
           loadInstances(),
           loadInstancesSuccess(responsePayload.data),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('call both fetchInstances and loadInstancesFailure when fetch is fail', async () => {
         // Arrange
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchInstancesAction());
+        await store.dispatch<any>(fetchInstancesAction())
 
         // Assert
         const expectedActions = [
           loadInstances(),
           loadInstancesFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('createInstanceStandaloneAction', () => {
       it('call both createInstanceStandaloneAction and defaultInstanceChangingSuccess when fetch is successed', async () => {
@@ -435,14 +430,14 @@ describe('instances slice', () => {
           name: 'db',
           host: 'localhost',
           port: 6379,
-        };
+        }
 
-        const responsePayload = { status: 201 };
+        const responsePayload = { status: 201 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload);
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(createInstanceStandaloneAction(requestData, jest.fn()));
+        await store.dispatch<any>(createInstanceStandaloneAction(requestData, jest.fn()))
 
         // Assert
         const expectedActions = [
@@ -450,10 +445,10 @@ describe('instances slice', () => {
           defaultInstanceChangingSuccess(),
           loadInstances(),
           addMessageNotification(successMessages.ADDED_NEW_INSTANCE(requestData.name))
-        ];
+        ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions);
-      });
+        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+      })
 
       it('call both createInstanceStandaloneAction and defaultInstanceChangingFailure when fetch is fail', async () => {
         // Arrange
@@ -461,32 +456,31 @@ describe('instances slice', () => {
           name: 'db',
           host: 'localhost',
           port: 6379,
-        };
+        }
 
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(
           createInstanceStandaloneAction(requestData, () => ({}))
-        );
+        )
 
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('redirect to sentinel flow when user try connect to Sentinel like Stanalone createInstanceStandaloneAction', async () => {
         // Arrange
@@ -494,10 +488,9 @@ describe('instances slice', () => {
           name: 'db',
           host: 'localhost',
           port: 6379,
-        };
+        }
 
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 400,
@@ -506,37 +499,37 @@ describe('instances slice', () => {
               error: apiErrors.SentinelParamsRequired,
             },
           },
-        };
+        }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(
           createInstanceStandaloneAction(requestData, () => ({}))
-        );
+        )
 
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingFailure(responsePayload.response.data.message),
           loadMastersSentinel(),
-        ];
+        ]
 
-        expect(store.getActions().splice(0, 3)).toEqual(expectedActions);
-      });
-    });
+        expect(store.getActions().splice(0, 3)).toEqual(expectedActions)
+      })
+    })
 
     describe('deleteInstances', () => {
       it('call both deleteInstances and setDefaultInstanceSuccess when fetch is successed for only one instance', async () => {
         // Arrange
-        const requestData = [instances[0]];
+        const requestData = [instances[0]]
 
-        const responsePayload = { status: 200 };
+        const responsePayload = { status: 200 }
 
-        apiService.delete = jest.fn().mockResolvedValue(responsePayload);
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteInstancesAction(requestData));
+        await store.dispatch<any>(deleteInstancesAction(requestData))
 
         // Assert
         const expectedActions = [
@@ -544,21 +537,21 @@ describe('instances slice', () => {
           setDefaultInstanceSuccess(),
           loadInstances(),
           addMessageNotification(successMessages.DELETE_INSTANCE(requestData[0].name ?? ''))
-        ];
+        ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions);
-      });
+        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+      })
 
       it('call both deleteInstances and setDefaultInstanceSuccess when fetch is successed for several instances', async () => {
         // Arrange
-        const requestData = instances.slice(0,3);
+        const requestData = instances.slice(0, 3)
 
-        const responsePayload = { status: 200 };
+        const responsePayload = { status: 200 }
 
-        apiService.delete = jest.fn().mockResolvedValue(responsePayload);
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteInstancesAction(requestData));
+        await store.dispatch<any>(deleteInstancesAction(requestData))
 
         // Assert
         const expectedActions = [
@@ -566,38 +559,37 @@ describe('instances slice', () => {
           setDefaultInstanceSuccess(),
           loadInstances(),
           addMessageNotification(successMessages.DELETE_INSTANCES(map(requestData, 'name')))
-        ];
+        ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions);
-      });
+        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+      })
 
       it('call both deleteInstances and setDefaultInstanceFailure when fetch is fail', async () => {
         // Arrange
-        const requestData = instances.slice(0, 3);
+        const requestData = instances.slice(0, 3)
 
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.delete = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.delete = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteInstancesAction(requestData));
+        await store.dispatch<any>(deleteInstancesAction(requestData))
 
         // Assert
         const expectedActions = [
           setDefaultInstance(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('updateInstance', () => {
       it('call both updateInstance and defaultInstanceChangingSuccess when fetch is successed', async () => {
@@ -607,23 +599,23 @@ describe('instances slice', () => {
           name: 'db',
           host: 'localhost',
           port: 6379,
-        };
+        }
 
-        const responsePayload = { status: 201 };
+        const responsePayload = { status: 201 }
 
-        apiService.put = jest.fn().mockResolvedValue(responsePayload);
+        apiService.put = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(updateInstanceAction(requestData));
+        await store.dispatch<any>(updateInstanceAction(requestData))
 
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingSuccess(),
-        ];
+        ]
 
-        expect(store.getActions().splice(0, 2)).toEqual(expectedActions);
-      });
+        expect(store.getActions().splice(0, 2)).toEqual(expectedActions)
+      })
 
       it('call both updateInstance and defaultInstanceChangingFailure when fetch is fail', async () => {
         // Arrange
@@ -632,198 +624,196 @@ describe('instances slice', () => {
           name: 'db',
           host: 'localhost',
           port: 6379,
-        };
+        }
 
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.put = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.put = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(updateInstanceAction(requestData));
+        await store.dispatch<any>(updateInstanceAction(requestData))
 
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('checkConnectToInstance', () => {
       it('call both checkConnectToInstance and setDefaultInstanceSuccess when connection is successed', async () => {
         // Arrange
-        const requestId = '123';
+        const requestId = '123'
 
-        const onSuccessAction = jest.fn();
-        const onFailAction = jest.fn();
+        const onSuccessAction = jest.fn()
+        const onFailAction = jest.fn()
 
-        const responsePayload = { status: 201 };
+        const responsePayload = { status: 201 }
 
-        apiService.get = jest.fn().mockResolvedValue(responsePayload);
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           checkConnectToInstanceAction(requestId, onSuccessAction, onFailAction)
-        );
+        )
 
         // Assert
         const expectedActions = [
           setDefaultInstance(),
           setDefaultInstanceSuccess(),
-        ];
+        ]
 
-        expect(store.getActions().splice(0, 2)).toEqual(expectedActions);
-      });
+        expect(store.getActions().splice(0, 2)).toEqual(expectedActions)
+      })
 
       it('call both checkConnectToInstance and setDefaultInstanceFailure when fetch is fail', async () => {
         // Arrange
-        const requestId = '123';
+        const requestId = '123'
 
-        const onSuccessAction = jest.fn();
-        const onFailAction = jest.fn();
+        const onSuccessAction = jest.fn()
+        const onFailAction = jest.fn()
 
-        const errorMessage =
-          'Could not connect to aoeu:123, please check the connection details.';
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           instanceId: requestId,
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload);
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(
           checkConnectToInstanceAction(requestId, onSuccessAction, onFailAction)
-        );
+        )
 
         // Assert
         const expectedActions = [
           setDefaultInstance(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as IAddInstanceErrorPayload),
-        ];
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
 
     describe('getDatabaseConfigInfoAction', () => {
       it('succeed to get database config info', async () => {
         // Arrange
-        const requestId = '123';
+        const requestId = '123'
         const data = {
           databases: 1,
           server: {},
           modules: [],
           version: '6.52'
-        };
-        const responsePayload = { status: 200, data };
+        }
+        const responsePayload = { status: 200, data }
 
-        apiService.get = jest.fn().mockResolvedValue(responsePayload);
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           getDatabaseConfigInfoAction(requestId, jest.fn())
-        );
+        )
 
         // Assert
         const expectedActions = [
           getDatabaseConfigInfo(),
           getDatabaseConfigInfoSuccess(data),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
 
       it('failed to get database config info', async () => {
         // Arrange
-        const requestId = '123';
-        const errorMessage = 'Something was wrong!';
+        const requestId = '123'
+        const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
             status: 500,
             data: { message: errorMessage },
           },
-        };
+        }
 
-        apiService.get = jest.fn().mockRejectedValue(responsePayload);
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           getDatabaseConfigInfoAction(requestId, jest.fn(), jest.fn())
-        );
+        )
 
         // Assert
         const expectedActions = [
           getDatabaseConfigInfo(),
           addErrorNotification(responsePayload as AxiosError),
           getDatabaseConfigInfoFailure(errorMessage),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
     })
 
     describe('changeInstanceAliasAction', () => {
-      const requestPayload = {id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', newName: 'newAlias'}
+      const requestPayload = { id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', newName: 'newAlias' }
       it('succeed to change database alias', async () => {
         // Arrange
         const data = {
           oldName: 'databaseAlias',
           newName: 'newAlias',
-        };
-        const responsePayload = { status: 200, data };
-        apiService.patch = jest.fn().mockResolvedValue(responsePayload);
+        }
+        const responsePayload = { status: 200, data }
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           changeInstanceAliasAction(requestPayload.id, requestPayload.newName)
-        );
+        )
 
         // Assert
         const expectedActions = [
           changeInstanceAlias(),
           changeInstanceAliasSuccess(requestPayload),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+        expect(store.getActions()).toEqual(expectedActions)
+      })
       it('failed to change database alias', async () => {
         // Arrange
-        const errorMessage = 'Not Found!';
+        const errorMessage = 'Not Found!'
         const responsePayload = {
           response: {
             status: 404,
             data: { message: errorMessage },
           },
-        };
-        apiService.patch = jest.fn().mockRejectedValue(responsePayload);
+        }
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
           changeInstanceAliasAction(requestPayload.id, requestPayload.newName)
-        );
+        )
 
         // Assert
         const expectedActions = [
           changeInstanceAlias(),
           changeInstanceAliasFailure(errorMessage),
           addErrorNotification(responsePayload as AxiosError),
-        ];
+        ]
 
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
-  });
-});
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+  })
+})

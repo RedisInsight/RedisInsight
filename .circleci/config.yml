@@ -992,14 +992,6 @@ workflows:
 
   # Nightly tests
   nightly:
-    triggers:
-      - schedule:
-          cron: '0 0 * * *'
-          filters:
-            branches:
-              only:
-                - main
-                - latest
     jobs:
       # build docker image
       - docker:

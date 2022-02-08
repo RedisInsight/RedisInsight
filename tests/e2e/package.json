@@ -29,15 +29,16 @@
     "@typescript-eslint/parser": "^2.25.0",
     "chance": "1.1.8",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^5.0.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
     "eslint-plugin-import": "2.20.2",
     "testcafe": "1.14.2",
+    "testcafe-browser-provider-electron": "^0.0.17",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "^2.2.0",
     "testcafe-reporter-spec": "2.1.1",
-    "typescript": "4.1.5",
-    "testcafe-browser-provider-electron": "^0.0.17"
+    "typescript": "4.1.5"
   }
 }

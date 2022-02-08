@@ -1,9 +1,9 @@
+import { Chance } from 'chance';
 import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage,CliPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -21,7 +21,7 @@ fixture `Scripting area at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -45,7 +45,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -66,7 +66,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         //Clear and delete database
         for(let i = 1; i < 4; i++) {
             await cliPage.sendCommandInCli(`DEL permit:${i}`);
@@ -87,7 +87,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -117,6 +117,20 @@ test
         await workbenchPage.sendCommandInWorkbench(`${repeats} ${command}`);
         //Verify result
         for (let i = 0; i < repeats; i++) {
-            await t.expect(workbenchPage.queryCardContainer.nth(i).textContent).contains(command, `Workbench contains separate results`);
+            await t.expect(workbenchPage.queryCardContainer.nth(i).textContent).contains(command, 'Workbench contains separate results');
         }
+    });
+test
+    .meta({ rte: rte.standalone })
+    .after(async() => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that user can not run "Select" command in Workbench', async() => {
+        const command = 'select 13';
+        const result = '"select is not supported by the Workbench. The list of all unsupported commands: blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup, select, monitor, subscribe, psubscribe, sync, psync, script debug, blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup"';
+        //Run Select command in Workbench
+        await workbenchPage.sendCommandInWorkbench(command);
+        //Check the command result
+        await workbenchPage.checkWorkbenchCommandResult(command, result);
     });

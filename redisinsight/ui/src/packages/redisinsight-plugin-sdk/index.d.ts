@@ -6,21 +6,18 @@ export function setHeaderText(text?: string): void
 
 /**
  * Execute Read-only Redis Command
- * note: For future implementation
  *
  */
-export function executeRedisCommand(command?: string, callback?: Function): void
+export function executeRedisCommand(command?: string): Promise<[{ response: any, status: string }]>
 
 /**
  * Set state for the plugin
- * note: For future implementation
  *
  */
-export function setState<State>(propState?: State): void
+export function setState<State>(state?: State): Promise<State>
 
 /**
  * Returns the current state
- * note: For future implementation
  *
  */
-export function getState(): any
+export function getState(): Promise<any>

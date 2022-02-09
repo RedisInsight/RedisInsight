@@ -1,7 +1,8 @@
 import { sendMessageToMain } from './helpers'
 import { POST_MESSAGE_EVENTS } from './events'
 
-const { config } = window.state
+const { config, callbacks = { counter: 0 } } = window.state
+const { iframeId } = config
 
 /**
  * Set text to the header result
@@ -11,32 +12,59 @@ const { config } = window.state
 export const setHeaderText = (text = '') => {
   sendMessageToMain({
     event: POST_MESSAGE_EVENTS.setHeaderText,
-    iframeId: config.iframeId,
+    iframeId,
     text
   })
 }
 
 /**
  * Execute Read-only Redis Command
- * note: For future implementation
  *
+ * @async
  * @param {String} command
- * @param {Function} callback
+ * @returns {Promise.<[{ response, status }]>}
+ * @throws {Error}
  */
-export const executeRedisCommand = (command = '', callback = () => {}) => {}
-
-/**
- * Set state for the plugin
- * note: For future implementation
- *
- * @param propState
- */
-export const setState = (propState = null) => {}
+export const executeRedisCommand = (command = '') => new Promise((resolve, reject) => {
+  callbacks[callbacks.counter] = { resolve, reject }
+  sendMessageToMain({
+    event: POST_MESSAGE_EVENTS.executeRedisCommand,
+    iframeId,
+    command,
+    requestId: callbacks.counter++
+  })
+})
 
 /**
  * Returns the current state
- * note: For future implementation
  *
- * @returns State
+ * @async
+ * @returns {Promise.<any>} state
+ * @throws {Error}
  */
-export const getState = () => {}
+export const getState = () => new Promise((resolve, reject) => {
+  callbacks[callbacks.counter] = { resolve, reject }
+  sendMessageToMain({
+    event: POST_MESSAGE_EVENTS.getState,
+    iframeId,
+    requestId: callbacks.counter++
+  })
+})
+
+/**
+ * Set state for the plugin
+ *
+ * @async
+ * @param {any} state
+ * @returns {Promise.<any>} state
+ * @throws {Error}
+ */
+export const setState = (state) => new Promise((resolve, reject) => {
+  callbacks[callbacks.counter] = { resolve, reject }
+  sendMessageToMain({
+    event: POST_MESSAGE_EVENTS.setState,
+    iframeId,
+    state,
+    requestId: callbacks.counter++
+  })
+})

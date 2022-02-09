@@ -194,3 +194,5 @@ export const getMainCheckFn = (endpoint) => async (testCase) => {
     }
   });
 };
+
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

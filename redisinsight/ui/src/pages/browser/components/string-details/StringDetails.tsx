@@ -64,8 +64,14 @@ const StringDetails = (props: Props) => {
     const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
     const calculatedRows = Math.round(value.length / OneRowLength + calculatedBreaks)
 
-    if (calculatedRows > MAX_ROWS) { return setRows(MAX_ROWS) }
-    if (calculatedRows < MIN_ROWS) { return setRows(MIN_ROWS) }
+    if (calculatedRows > MAX_ROWS) {
+      setRows(MAX_ROWS)
+      return
+    }
+    if (calculatedRows < MIN_ROWS) {
+      setRows(MIN_ROWS)
+      return
+    }
     setRows(calculatedRows)
   }, [isEditItem])
 

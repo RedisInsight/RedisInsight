@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { debounce } from 'lodash'
+import React, { useEffect, useRef } from 'react'
 import cx from 'classnames'
 import { EuiTextColor } from '@elastic/eui'
-import { CellMeasurer, List, CellMeasurerCache, ListRowProps, OnScrollParams } from 'react-virtualized'
+import { CellMeasurer, List, CellMeasurerCache, ListRowProps } from 'react-virtualized'
 
 import { getFormatTime } from 'uiSrc/utils'
 import { DEFAULT_TEXT } from 'uiSrc/components/notifications'
@@ -17,43 +16,29 @@ export interface Props {
   height: number
 }
 
-const cache = new CellMeasurerCache({
-  defaultHeight: 17,
-  fixedWidth: true,
-  fixedHeight: false
-})
-
 const PROTRUDING_OFFSET = 2
 
 const MonitorOutputList = (props: Props) => {
   const { compressed, items = [], width = 0, height = 0 } = props
-  const [autoScroll, setAutoScroll] = useState(true)
-  const [, forceRender] = useState({})
 
-  const handleWheel = ({ clientHeight, scrollTop, scrollHeight }: OnScrollParams) => {
-    setAutoScroll(clientHeight + scrollTop >= scrollHeight)
+  const cache = new CellMeasurerCache({
+    defaultHeight: 17,
+    fixedWidth: true,
+    fixedHeight: false
+  })
+
+  const listRef = useRef<List>(null)
+
+  const clearCacheAndUpdate = () => {
+    listRef?.current?.scrollToRow(items.length - 1)
+    requestAnimationFrame(() => {
+      listRef?.current?.scrollToRow(items.length - 1)
+    })
   }
 
-  const updateWidth = debounce(() => {
-    cache.clearAll()
-    setTimeout(() => {
-      forceRender({})
-    }, 0)
-  }, 50, { maxWait: 100 })
-
   useEffect(() => {
-    // function "handleWheel" after the first render rewrite initial state value "true"
-    setAutoScroll(true)
-
-    globalThis.addEventListener('resize', updateWidth)
-    return () => {
-      globalThis.removeEventListener('resize', updateWidth)
-    }
-  }, [])
-
-  useEffect(() => {
-    updateWidth()
-  }, [width, compressed])
+    clearCacheAndUpdate()
+  }, [items])
 
   const getArgs = (args: string[]): JSX.Element => (
     <span className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: compressed })}>
@@ -78,8 +63,8 @@ const MonitorOutputList = (props: Props) => {
         parent={parent}
         rowIndex={index}
       >
-        {({ registerChild }) => (
-          <div className={styles.item} ref={registerChild} style={style}>
+        {({ registerChild, measure }) => (
+          <div onLoad={measure} className={styles.item} ref={registerChild} style={style}>
             {!isError && (
               <>
                 <span>{getFormatTime(time)}</span>
@@ -98,6 +83,7 @@ const MonitorOutputList = (props: Props) => {
 
   return (
     <List
+      ref={listRef}
       width={width - PROTRUDING_OFFSET}
       height={height - PROTRUDING_OFFSET}
       rowCount={items.length}
@@ -106,8 +92,6 @@ const MonitorOutputList = (props: Props) => {
       overscanRowCount={30}
       className={styles.listWrapper}
       deferredMeasurementCache={cache}
-      scrollToIndex={autoScroll ? items.length - 1 : undefined}
-      onScroll={handleWheel}
     />
   )
 }

@@ -8,20 +8,24 @@ import {
 } from 'src/modules/cli/dto/cli.dto';
 import { checkRedirectionError, parseRedirectionError, splitCliCommandLine } from 'src/utils/cli-helper';
 import {
-  CliCommandNotSupportedError,
-  CliParsingError,
+  CommandNotSupportedError,
+  CommandParsingError,
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {
   private logger = new Logger('WorkbenchCommandsExecutor');
 
-  constructor(private redisTool: RedisToolService) {}
+  constructor(
+    private redisTool: RedisToolService,
+    private analyticsService: WorkbenchAnalyticsService,
+  ) {}
 
   public async sendCommand(
     clientOptions: IFindRedisClientInstanceByOptions,
@@ -58,21 +62,23 @@ export class WorkbenchCommandsExecutor {
       const [command, ...args] = splitCliCommandLine(commandLine);
       const response = await this.redisTool.execCommand(clientOptions, command, args, 'utf-8');
       this.logger.log('Succeed to execute workbench command.');
-      return {
-        response,
-        status: CommandExecutionStatus.Success,
-      };
+
+      const result = { response, status: CommandExecutionStatus.Success };
+      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
+      return result;
     } catch (error) {
       this.logger.error('Failed to execute workbench command.', error);
-
+      const result = { response: error.message, status: CommandExecutionStatus.Fail };
       if (
-        error instanceof CliParsingError
-        || error instanceof CliCommandNotSupportedError
+        error instanceof CommandParsingError
+        || error instanceof CommandNotSupportedError
         || error.name === 'ReplyError'
       ) {
-        return { response: error.message, status: CommandExecutionStatus.Fail };
+        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+        return result;
       }
 
+      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -109,16 +115,20 @@ export class WorkbenchCommandsExecutor {
         result.slot = parseInt(slot, 10);
       }
 
+      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
       const {
         host, port, error, slot, ...rest
       } = result;
       return { ...rest, node: { host, port, slot } };
     } catch (error) {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
+      const result = { response: error.message, status: CommandExecutionStatus.Fail };
 
-      if (error instanceof CliParsingError || error instanceof CliCommandNotSupportedError) {
-        return { response: error.message, status: CommandExecutionStatus.Fail };
+      if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
+        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+        return result;
       }
+      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
 
       if (error instanceof WrongDatabaseTypeError || error instanceof ClusterNodeNotFoundError) {
         throw new BadRequestException(error.message);
@@ -137,33 +147,26 @@ export class WorkbenchCommandsExecutor {
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
 
-      const result = await this.redisTool.execCommandForNodes(
-        clientOptions,
-        command,
-        args,
-        role,
-        'utf-8',
-      );
-
-      return result.map((nodeExecReply) => {
+      return (
+        await this.redisTool.execCommandForNodes(clientOptions, command, args, role, 'utf-8')
+      ).map((nodeExecReply) => {
         const {
           response, status, host, port,
         } = nodeExecReply;
-        return {
-          response,
-          status,
-          node: { host, port },
-        };
+        const result = { response, status, node: { host, port } };
+        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
+        return result;
       });
     } catch (error) {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
+      const result = { response: error.message, status: CommandExecutionStatus.Fail };
 
-      if (error instanceof CliParsingError || error instanceof CliCommandNotSupportedError) {
-        return [
-          { response: error.message, status: CommandExecutionStatus.Fail },
-        ];
+      if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
+        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+        return [result];
       }
 
+      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
       if (error instanceof WrongDatabaseTypeError) {
         throw new BadRequestException(error.message);
       }

@@ -1,6 +1,8 @@
 import { parseKeysListResponse } from 'uiSrc/utils'
 import { omit } from 'lodash'
 
+const nextCursor = '127.0.0.1:7000@100||127.0.0.1:7002@9'
+
 describe('parseKeysListResponse', () => {
   it('should handle empty array in response', () => {
     const currentState = {
@@ -73,7 +75,7 @@ describe('parseKeysListResponse', () => {
   })
   it('should summarize data  with initial state (cluster)', () => {
     const currentState = {
-      nextCursor: '127.0.0.1:7000@100||127.0.0.1:7002@9',
+      nextCursor,
       total: 200 + 50 + 400,
       scanned: 150 + 50 + 150,
       shardsMeta: {},
@@ -106,7 +108,7 @@ describe('parseKeysListResponse', () => {
     ]
     const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
-      nextCursor: '127.0.0.1:7000@100||127.0.0.1:7002@9',
+      nextCursor,
       total: 200 + 50 + 400,
       scanned: 150 + 50 + 150,
       keys: ['shard1_key', 'shard3_key'],

@@ -1,4 +1,4 @@
-import { parseSearchRawResponse, parseInfoRawResponse, parseAggregateRawResponse } from '..'
+import { parseSearchRawResponse, parseAggregateRawResponse } from '..'
 
 const resultFTSearch: any[] = [
   'red:2',
@@ -90,7 +90,6 @@ describe('parseSearchRawResponse', () => {
 
 describe('parseAggregateRawResponse', () => {
   it('command "ft.aggregate" should return array of array with objects count of docs ', () => {
-    const command = 'ft.aggregate'
     const resultFTAggregate = [[], [], [], [], []]
 
     expect(parseAggregateRawResponse(resultFTAggregate)).toEqual(resultFTAggregate)

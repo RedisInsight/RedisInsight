@@ -11,9 +11,9 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { IPlugin, PluginsResponse, StateAppPlugins } from 'uiSrc/slices/interfaces'
 import { SendCommandResponse } from 'src/modules/cli/dto/cli.dto'
+import { PluginState } from 'src/modules/workbench/models/plugin-state'
 
 import { AppDispatch, RootState } from '../store'
-import { PluginState } from 'src/modules/workbench/models/plugin-state';
 
 export const initialState: StateAppPlugins = {
   loading: false,

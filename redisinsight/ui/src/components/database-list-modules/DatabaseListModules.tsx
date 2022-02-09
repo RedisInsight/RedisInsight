@@ -122,6 +122,7 @@ const DatabaseListModules = React.memo(({ modules, inCircle }: Props) => {
     const { abbreviation = '', name = moduleName } = getModule(moduleName)
 
     const moduleAlias = truncateText(name, 50)
+    // eslint-disable-next-line sonarjs/no-nested-template-literals
     const content = `${moduleAlias}${semanticVersion || version ? ` v. ${semanticVersion || version}` : ''}`
     let icon = modulesDefaultInit[propName]?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
 

@@ -1,7 +1,7 @@
 import { take, isEmpty } from 'lodash';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { CliParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
+import { CommandParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
 import { ReplyError } from 'src/models';
 import { IRedirectionInfo } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
 
@@ -82,7 +82,7 @@ export const splitCliCommandLine = (line: string): string[] => {
         // Handle double quotes
         if (i >= line.length) {
           // unterminated quotes
-          throw new CliParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
+          throw new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
         } else if (
           line[i] === '\\'
           && line[i + 1] === 'x'
@@ -105,7 +105,7 @@ export const splitCliCommandLine = (line: string): string[] => {
         } else if (line[i] === '"') {
           // closing quote must be followed by a space or nothing at all.
           if (i + 1 < line.length && line[i + 1] !== ' ') {
-            throw new CliParsingError(
+            throw new CommandParsingError(
               ERROR_MESSAGES.CLI_INVALID_QUOTES_CLOSING(),
             );
           }
@@ -120,14 +120,14 @@ export const splitCliCommandLine = (line: string): string[] => {
         // Handle single quotes
         if (i >= line.length) {
           // unterminated quotes
-          throw new CliParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
+          throw new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
         } else if (line[i] === '\\' && line[i + 1] === "'") {
           i += 1;
           currentArg += "'";
         } else if (line[i] === "'") {
           // closing quote must be followed by a space or nothing at all.
           if (i + 1 < line.length && line[i + 1] !== ' ') {
-            throw new CliParsingError(
+            throw new CommandParsingError(
               ERROR_MESSAGES.CLI_INVALID_QUOTES_CLOSING(),
             );
           }

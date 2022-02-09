@@ -35,6 +35,7 @@ const createDependencyProposals = (commandsSpec: ICommands): DependencyProposals
     const argsNames = generateArgsNames(commandArgs, false, true)
     const insertText = `${command} ${
       !argsNames.length ? '' : argsNames.join(' ').split(' ')
+        // eslint-disable-next-line sonarjs/no-nested-template-literals
         .map((arg: string, i: number) => `\${${i + 1}:${arg}} `)
         .join('')}`
 

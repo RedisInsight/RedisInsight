@@ -994,10 +994,18 @@ workflows:
 
   # Nightly tests
   nightly:
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only:
+                - main
+                - latest
     jobs:
       # build docker image
-#      - docker:
-#          name: Build docker image
+      - docker:
+          name: Build docker image
       # build desktop app
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
@@ -1010,27 +1018,27 @@ workflows:
           requires:
             - Setup build (stage)
       # integration tests on docker image build
-#      - integration-tests-run:
-#          matrix:
-#            alias: itest-docker
-#            parameters:
-#              rte: *iTestsNames
-#              build: ['docker']
-#              report: [true]
-#          name: ITest - << matrix.rte >> (docker)
-#          requires:
-#            - Build docker image
+      - integration-tests-run:
+          matrix:
+            alias: itest-docker
+            parameters:
+              rte: *iTestsNames
+              build: ['docker']
+              report: [true]
+          name: ITest - << matrix.rte >> (docker)
+          requires:
+            - Build docker image
       # e2e web tests on docker image build
-#      - e2e-tests:
-#          name: E2ETest - Nightly
-#          build: docker
-#          report: true
-#          requires:
-#            - Build docker image
+      - e2e-tests:
+          name: E2ETest - Nightly
+          build: docker
+          report: true
+          requires:
+            - Build docker image
       # e2e desktop tests on AppImage build
       - e2e-app-image:
           name: E2ETest (AppImage) - Nightly
-          # report: true
+          report: true
           requires:
             - Build app - Linux (stage)
   guides:

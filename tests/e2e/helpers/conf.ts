@@ -51,8 +51,8 @@ export const redisEnterpriseClusterConfig = {
 };
 
 export const invalidOssStandaloneConfig = {
-    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-invalid',
-    port: process.env.OSS_STANDALONE_PORT || '1010',
+    host: 'oss-standalone-invalid',
+    port: '1010',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone-invalid'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD

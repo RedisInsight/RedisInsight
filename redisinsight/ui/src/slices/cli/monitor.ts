@@ -48,7 +48,6 @@ const monitorSlice = createSlice({
 
     toggleRunMonitor: (state) => {
       state.isRunning = !state.isRunning
-      state.error = ''
     },
 
     stopMonitor: (state) => {
@@ -74,9 +73,6 @@ const monitorSlice = createSlice({
     resetMonitorItems: (state) => {
       state.items = []
     },
-    setError: (state, { payload }) => {
-      state.error = payload
-    }
   },
 })
 
@@ -91,7 +87,6 @@ export const {
   stopMonitor,
   concatMonitorItems,
   resetMonitorItems,
-  setError
 } = monitorSlice.actions
 
 // A selector

@@ -19,7 +19,6 @@ import {
   toggleMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
 
 import styles from './styles.module.scss'
 
@@ -29,8 +28,7 @@ export interface Props {
 
 const MonitorHeader = ({ handleRunMonitor }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { isRunning, isStarted, items, error } = useSelector(monitorSelector)
-  const isErrorShown = !!error && !isRunning
+  const { isRunning, isStarted, items } = useSelector(monitorSelector)
   const dispatch = useDispatch()
 
   const handleCloseMonitor = () => {
@@ -81,15 +79,14 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.actions}>
           <EuiToolTip
-            content={isErrorShown ? '' : (isRunning ? 'Stop' : 'Start')}
+            content={isRunning ? 'Stop' : 'Start'}
             anchorClassName="inline-flex"
           >
             <EuiButtonIcon
-              iconType={isErrorShown ? BanIcon : (isRunning ? 'pause' : 'play')}
+              iconType={isRunning ? 'pause' : 'play'}
               onClick={handleRunMonitor}
               aria-label="start/stop monitor"
               data-testid="toggle-run-monitor"
-              disabled={isErrorShown}
             />
           </EuiToolTip>
           <EuiToolTip

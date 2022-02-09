@@ -116,7 +116,7 @@ test
         const countOfButtons = await workbenchPage.paginationPopoverButtons.count;
         for (let i = 0; i < countOfButtons; i++) {
             let popoverButton = workbenchPage.paginationPopoverButtons.nth(i);
-            await t.expect(popoverButton.textContent).eql(popoverButtons[i], `The siblings menu button ${popoverButtons[i]} is displayed`);    
+            await t.expect(popoverButton.textContent).eql(popoverButtons[i], `The siblings menu button ${popoverButtons[i]} is displayed`);
         }
     });
 test

@@ -304,6 +304,8 @@ jobs:
                 command: |
                   APP_BUILD_TYPE="Electron (Linux)" node ./.circleci/e2e-results.js
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+      - store_test_results:
+          path: ./tests/e2e/results
 
   e2e-tests:
     executor: linux-executor

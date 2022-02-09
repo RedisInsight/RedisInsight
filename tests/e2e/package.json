@@ -16,6 +16,7 @@
     "test:chrome:ci": "testcafe --concurrency 1 chromium:headless tests/ -r spec,json:results/e2e.results.json -e -q attemptLimit=3,successThreshold=1",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
+    "test:desktop:ci": "ts-node ./test.runner.ts",
     "test:desktop": "testcafe electron tests/ --browser-init-timeout 180000 -e -r html:./report/desktop-report.html,spec -q attemptLimit=3,successThreshold=1"
   },
   "keywords": [],
@@ -39,6 +40,7 @@
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "^2.2.0",
     "testcafe-reporter-spec": "2.1.1",
+    "ts-node": "^10.5.0",
     "typescript": "4.1.5"
   }
 }

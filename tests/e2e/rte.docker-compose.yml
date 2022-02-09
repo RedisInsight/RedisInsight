@@ -26,7 +26,7 @@ services:
       args:
         TEST_DB_DUMP: $TEST_BIG_DB_DUMP
     ports:
-      - 8103:12000
+      - 8103:6379
 
   # oss sentinel
   oss-sentinel:
@@ -57,4 +57,5 @@ services:
     cap_add:
       - sys_resource
     ports:
-      - 8300:12000
+      - 19443:9443
+      - 12000:12000

@@ -11,7 +11,7 @@ import reducer, {
   toggleRunMonitor,
   setSocket,
   concatMonitorItems,
-  MONITOR_ITEMS_MAX_COUNT, stopMonitor, setError,
+  MONITOR_ITEMS_MAX_COUNT, stopMonitor,
 } from '../../cli/monitor'
 
 let store: typeof mockedStore
@@ -231,28 +231,6 @@ describe('monitor slice', () => {
 
       // Act
       const nextState = reducer(initialState, resetMonitorItems())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        cli: {
-          monitor: nextState,
-        },
-      })
-      expect(monitorSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setError', () => {
-    it('should properly set an Error', () => {
-      // Arrange
-      const error = 'Some error'
-      const state: typeof initialState = {
-        ...initialState,
-        error,
-      }
-
-      // Act
-      const nextState = reducer(initialState, setError(error))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

@@ -9,16 +9,12 @@ import {
   toggleRunMonitor,
   concatMonitorItems,
   stopMonitor,
-  setError,
-  resetMonitorItems
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl } from 'uiSrc/utils'
-import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
+import { MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { IOnDatePayload } from 'apiSrc/modules/monitor/helpers/client-monitor-observer'
-
-import ApiStatusCode from '../../constants/apiStatusCode'
 
 interface IProps {
   retryDelay?: number;
@@ -38,7 +34,7 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
 
   const getErrorMessage = (error: { type: string; name: any; message: any }): string => {
     if (error?.type === SocketErrors.TransportError) {
-      return MonitorErrorMessages.LostConnection
+      return 'Error: Connection was lost'
     }
     return error?.name || error?.message
   }
@@ -84,13 +80,6 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
 
     // Catch exceptions
     newSocket.on(MonitorEvent.Exception, (payload) => {
-      if (payload.status === ApiStatusCode.Forbidden) {
-        handleDisconnect()
-        dispatch(setError(MonitorErrorMessages.NoPerm))
-        dispatch(resetMonitorItems())
-        return
-      }
-
       payloads.push({ isError: true, time: `${Date.now()}`, ...payload })
       setNewItems(payloads, () => { payloads.length = 0 })
       dispatch(toggleRunMonitor())

@@ -158,6 +158,33 @@ const Query = (props: Props) => {
     editor.addAction(
       getMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco)
     )
+    editor.addAction({
+      // An unique identifier of the contributed action.
+      id: 'my-unique-id',
+
+      // A label of the action that will be presented to the user.
+      label: 'My Label!!!',
+
+      // An optional array of keybindings for the action.
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.F10,
+        // chord
+        monaco.KeyMod.chord(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_0,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_1
+        )
+      ],
+
+      contextMenuGroupId: 'navigation',
+
+      contextMenuOrder: 1.5,
+
+      // Method that will be executed when the action is triggered.
+      // @param editor The editor instance is passed in as a convenience
+      run(ed) {
+        alert(`i'm running => ${ed.getPosition()}`)
+      }
+    })
   }
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
@@ -181,6 +208,30 @@ const Query = (props: Props) => {
       MonacoLanguage.Redis,
       getRedisMonarchTokensProvider(REDIS_COMMANDS_ARRAY)
     )
+    monaco.languages.registerCodeActionProvider(MonacoLanguage.Redis, {
+      provideCodeActions(
+        model: monaco.editor.ITextModel,
+        _range: any,
+        context: monaco.languages.CodeActionContext,
+      ): monaco.languages.ProviderResult<monaco.languages.CodeActionList> {
+        // console.log(22, context.markers)
+        const actions = context.markers.map((error): monaco.languages.CodeAction => ({
+          title: 'Cypher',
+          command: {
+            id: MonacoAction.Submit,
+            title: 'User Cypher',
+            tooltip: 'Use cypher tooltip'
+          },
+          diagnostics: [error],
+          kind: 'action',
+          isPreferred: true
+        }))
+        return {
+          actions,
+          dispose: () => {}
+        }
+      }
+    })
   }
 
   const options: monacoEditor.editor.IStandaloneEditorConstructionOptions = {

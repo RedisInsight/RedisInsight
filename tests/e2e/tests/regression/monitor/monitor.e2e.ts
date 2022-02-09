@@ -1,13 +1,14 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import {acceptLicenseTermsAndAddDatabase, addNewStandaloneDatabase, deleteDatabase} from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     MonitorPage,
     SettingsPage,
-    BrowserPage
+    BrowserPage,
+    CliPage
 } from '../../../pageObjects';
 import {
-    commonUrl, 
+    commonUrl,
     ossStandaloneBigConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
@@ -17,15 +18,16 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const monitorPage = new MonitorPage();
 const settingsPage = new SettingsPage();
 const browserPage = new BrowserPage();
+const cliPage = new CliPage();
 const chance = new Chance();
 
 fixture `Monitor`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
@@ -109,4 +111,33 @@ test
             const nextTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;
             await t.expect(previousTimestamp).notEql(nextTimestamp);
         }
+    });
+test
+    .meta({ env: env.web, rte: rte.standalone })
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await cliPage.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor');
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+        ossStandaloneConfig.databaseUsername = 'noperm';
+        ossStandaloneConfig.databaseName = `${ossStandaloneConfig.databaseName}_nopermittions_user`;
+        await addNewStandaloneDatabase(ossStandaloneConfig);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+    })
+    .after(async() => {
+        //Delete created user
+        await cliPage.sendCommandInCli('acl DELUSER noperm');
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
+        //Expand the Profiler
+        await t.click(monitorPage.expandMonitor);
+        //Click on run monitor button
+        await t.click(monitorPage.startMonitorButton);
+        //Check that error message is displayed
+        await t.expect(monitorPage.monitorNoPermissionsMessage.visible).ok('Error message');
+        //Check the error message text
+        await t.expect(monitorPage.monitorNoPermissionsMessage.innerText).eql('The Profiler cannot be started. This user has no permissions to run the \'monitor\' command');
+        //Verify that if user doesn't have permissions to run monitor, run monitor button is not available
+        await t.expect(monitorPage.runMonitorToggle.withAttribute('disabled').exists).ok('No permissions run icon');
     });

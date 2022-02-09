@@ -18,7 +18,7 @@ import {
   toggleMonitor,
   toggleRunMonitor
 } from 'uiSrc/slices/cli/monitor'
-import { ReactComponent as NoPermissionsIcon } from 'uiSrc/assets/img/monitor/no_permissions.svg'
+import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
 
 import styles from './styles.module.scss'
 
@@ -64,7 +64,7 @@ const MonitorHeader = () => {
             anchorClassName="inline-flex"
           >
             <EuiButtonIcon
-              iconType={isErrorShown ? NoPermissionsIcon : (isRunning ? 'pause' : 'play')}
+              iconType={isErrorShown ? BanIcon : (isRunning ? 'pause' : 'play')}
               onClick={handleRunMonitor}
               aria-label="start/stop monitor"
               data-testid="toggle-run-monitor"

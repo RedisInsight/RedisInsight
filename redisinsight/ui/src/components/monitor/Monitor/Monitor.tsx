@@ -11,7 +11,7 @@ import {
 import { AutoSizer } from 'react-virtualized'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
-import { ReactComponent as NoPermissionsIcon } from 'uiSrc/assets/img/monitor/no_permissions.svg'
+import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
 
 import MonitorOutputList from '../MonitorOutputList'
 
@@ -83,7 +83,7 @@ const Monitor = (props: Props) => {
         <EuiFlexGroup responsive={false}>
           <EuiFlexItem grow={false}>
             <EuiIcon
-              type={NoPermissionsIcon}
+              type={BanIcon}
               size="m"
               color="danger"
               aria-label="no permissions icon"

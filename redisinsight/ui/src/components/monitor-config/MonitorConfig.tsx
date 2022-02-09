@@ -83,7 +83,7 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
 
     // Catch exceptions
     newSocket.on(MonitorEvent.Exception, (payload) => {
-      if (payload.status === ApiStatusCode.NoPermission) {
+      if (payload.status === ApiStatusCode.Forbidden) {
         handleDisconnect()
         dispatch(setError(MonitorErrorMessages.NoPerm))
         dispatch(resetMonitorItems())

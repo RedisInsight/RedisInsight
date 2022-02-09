@@ -16,6 +16,7 @@
     "test:chrome:ci": "testcafe --concurrency 1 chromium:headless tests/ -r spec,json:results/e2e.results.json -e -q attemptLimit=3,successThreshold=1",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
+    "test:desktop:ci": "ts-node ./test.runner.ts",
     "test:desktop": "testcafe electron tests/ --browser-init-timeout 180000 -e -r html:./report/desktop-report.html,spec -q attemptLimit=3,successThreshold=1"
   },
   "keywords": [],
@@ -29,15 +30,17 @@
     "@typescript-eslint/parser": "^2.25.0",
     "chance": "1.1.8",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^5.0.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
     "eslint-plugin-import": "2.20.2",
     "testcafe": "1.14.2",
+    "testcafe-browser-provider-electron": "^0.0.17",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "^2.2.0",
     "testcafe-reporter-spec": "2.1.1",
-    "typescript": "4.1.5",
-    "testcafe-browser-provider-electron": "^0.0.17"
+    "ts-node": "^10.5.0",
+    "typescript": "4.1.5"
   }
 }

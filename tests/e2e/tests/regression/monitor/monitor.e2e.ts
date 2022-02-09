@@ -7,7 +7,7 @@ import {
     BrowserPage
 } from '../../../pageObjects';
 import {
-    commonUrl, 
+    commonUrl,
     ossStandaloneBigConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
@@ -30,7 +30,7 @@ fixture `Monitor`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     ('Verify that when user closes the Monitor by clicking on "Close Monitor" button Monitor stopped', async t => {
         //Run monitor
         await monitorPage.startMonitor();
@@ -44,7 +44,7 @@ test
         await t.expect(monitorPage.startMonitorButton.visible).ok('Start profiler button');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     ('Verify that Monitor is stopped when user clicks on "Stop" button', async t => {
         //Run monitor
         await monitorPage.startMonitor();
@@ -56,7 +56,7 @@ test
         await t.expect(monitorPage.monitorIsStoppedText.nextSibling().exists).notOk('No commands in monitor');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     ('Verify that when user refreshes the page the list of results in Monitor is not saved', async t => {
         //Run monitor
         await monitorPage.startMonitor();
@@ -69,7 +69,7 @@ test
         await t.expect(monitorPage.monitorWarningMessage.exists).ok('Warning message in monitor');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     ('Verify that when user clicks on "Clear" button in Monitor, all commands history is removed', async t => {
         //Run monitor
         await monitorPage.startMonitor();
@@ -81,7 +81,7 @@ test
         await t.expect(monitorPage.startMonitorButton.exists).ok('Start monitor button');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     .before(async t => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         await t.click(myRedisDatabasePage.settingsButton);

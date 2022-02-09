@@ -58,7 +58,7 @@ test
 
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
-        await t.expect(await browserPage.keyListTable.clientWidth).eql(keyListWidth + offsetX, 'Saved browser resizable context is proper');
+        await t.expect(await browserPage.keyListTable.clientWidth).gt(keyListWidth, 'Saved browser resizable context is proper');
     });
 test
     .meta({ rte: rte.standalone })

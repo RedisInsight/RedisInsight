@@ -71,6 +71,7 @@ test
         await workbenchPage.sendCommandInWorkbench(`${numberOfCommands} ${command}`);
         for( let i = 0; i < numberOfCommands; i++) {
             await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(command, 'The command executed after the first command is displayed');
+            await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The command executed after the first command is displayed', { timeout: 30000 });
             await t.click(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssDeleteCommandButton));
         }
         await t.expect(workbenchPage.noCommandHistoryTitle.visible).ok('The first command is deleted when user executes 31 command');

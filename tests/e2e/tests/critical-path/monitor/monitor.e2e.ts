@@ -31,7 +31,7 @@ fixture `Monitor`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     .after(async () => {
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -54,7 +54,7 @@ test
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     ('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
         //Define commands in different clients
         const cli_command = 'command';

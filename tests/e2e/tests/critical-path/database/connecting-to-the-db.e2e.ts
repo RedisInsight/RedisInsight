@@ -20,5 +20,6 @@ test
         //Click for saving
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         //Verify that the database is not in the list
-        await t.expect(browserPage.notificationMessage.textContent).eql('Error', 'Error message displaying', { timeout: 60000 });
+        await t.expect(addRedisDatabasePage.errorMessage.textContent).contains('Error', 'Error message displaying', { timeout: 60000 });
+        await t.expect(addRedisDatabasePage.errorMessage.textContent).contains(`Could not connect to ${invalidOssStandaloneConfig.host}:${invalidOssStandaloneConfig.port}, please check the connection details.`, 'Error message displaying', { timeout: 60000 });
     });

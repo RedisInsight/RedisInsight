@@ -230,6 +230,7 @@
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "36.0.0",
     "@reduxjs/toolkit": "^1.6.2",
+    "@svgr/webpack": "^6.2.1",
     "axios": "^0.25.0",
     "classnames": "^2.3.1",
     "connection-string": "^4.3.2",

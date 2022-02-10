@@ -130,6 +130,7 @@
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+    "@svgr/webpack": "^6.2.1",
     "@teamsupercell/typings-for-css-modules-loader": "^2.4.0",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",

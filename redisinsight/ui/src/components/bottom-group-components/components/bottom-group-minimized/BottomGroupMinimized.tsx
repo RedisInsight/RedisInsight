@@ -59,17 +59,10 @@ const BottomGroupMinimized = () => {
   }
 
   const handleExpandMonitor = () => {
-    if (isShowMonitor) {
-      sendEventTelemetry({
-        event: isMinimizedMonitor ? TelemetryEvent.PROFILER_MINIMIZED : TelemetryEvent.PROFILER_CLOSED,
-        eventData: { databaseId: instanceId }
-      })
-    } else {
-      sendEventTelemetry({
-        event: TelemetryEvent.PROFILER_OPENED,
-        eventData: { databaseId: instanceId }
-      })
-    }
+    sendEventTelemetry({
+      event: isShowMonitor ? TelemetryEvent.PROFILER_MINIMIZED : TelemetryEvent.PROFILER_OPENED,
+      eventData: { databaseId: instanceId }
+    })
     isMinimizedMonitor && dispatch(toggleHideMonitor())
     dispatch(toggleMonitor())
   }

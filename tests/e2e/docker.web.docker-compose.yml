@@ -17,17 +17,17 @@ services:
     environment:
       TEST_FILES: $TEST_FILES
     command: [
-#        './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
-#        '--',
+        './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
+        '--',
         'npx', 'yarn', 'test:chrome:ci'
     ]
-#
-#  # Built image
-#  app:
-#    cap_add:
-#      - ipc_lock
-#    image: riv2:latest
-#    env_file:
-#      - ./.env
-#    volumes:
-#      - ./plugins:/root/.redisinsight-preview/plugins
+
+  # Built image
+  app:
+    cap_add:
+      - ipc_lock
+    image: riv2:latest
+    env_file:
+      - ./.env
+    volumes:
+      - ./plugins:/root/.redisinsight-preview/plugins

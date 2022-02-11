@@ -1,7 +1,6 @@
 import testcafe from 'testcafe';
 
 (async(): Promise<void> => {
-    console.log('___tests', (process.env.TEST_FILES || 'tests/**/*.e2e.ts').split('\n'))
     await testcafe('localhost')
         .then(t => {
             return t

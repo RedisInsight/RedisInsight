@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import { EuiLoadingSpinner } from '@elastic/eui'
+import { isArray } from 'lodash'
 
 import { formatBytes, Nullable, truncateNumberToRange, truncatePercentage } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
@@ -78,7 +79,14 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     tooltip: {
       title: 'CPU',
       icon: theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon,
-      content: cpuUsagePercentage === null ? 'Calculating in progress' : `${truncatePercentage(cpuUsagePercentage, 4)} %`,
+      content: cpuUsagePercentage === null
+        ? 'Calculating in progress'
+        : (
+          <>
+            <b>{truncatePercentage(cpuUsagePercentage, 4)}</b>
+            &nbsp;%
+          </>
+        ),
     },
     className: styles.cpuWrapper,
     icon: cpuUsagePercentage !== null ? theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon : null,
@@ -98,8 +106,8 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
     content: opsPerSecond,
     value: opsPerSecond,
-    unavailableText: 'Commands/Sec are not available',
-    title: 'Commands/Sec',
+    unavailableText: 'Commands/s are not available',
+    title: 'Commands/s',
     tooltip: {
       icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
       content: opsPerSecond
@@ -112,12 +120,12 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     title: 'Network Input',
     icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
     value: networkInKbps,
-    content: `${networkInKbps} kbps`,
+    content: `${networkInKbps} kb/s`,
     unavailableText: 'Network Input is not available',
     tooltip: {
       title: 'Network Input',
       icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
-      content: `${networkInKbps} kbps`,
+      content: `${networkInKbps} kb/s`,
     },
   }
 
@@ -127,12 +135,12 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     title: 'Network Output',
     icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
     value: networkOutKbps,
-    content: `${networkOutKbps} kbps`,
+    content: `${networkOutKbps} kb/s`,
     unavailableText: 'Network Output is not available',
     tooltip: {
       title: 'Network Output',
       icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
-      content: `${networkOutKbps} kbps`,
+      content: `${networkOutKbps} kb/s`,
     },
   }
 
@@ -140,11 +148,11 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     opsPerSecItem.children = [
       {
         id: 'commands-per-sec-tip',
-        title: 'Commands/Sec',
+        title: 'Commands/s',
         icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
         value: opsPerSecond,
         content: opsPerSecond,
-        unavailableText: 'Commands/Sec are not available',
+        unavailableText: 'Commands/s are not available',
       },
       networkInKbpsItem,
       networkOutKbpsItem
@@ -156,6 +164,7 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
   availableItems.push(networkOutKbpsItem)
 
   // Used memory
+  const formattedUsedMemoryTooltip = formatBytes(usedMemory || 0, 3, true)
   availableItems.push({
     id: 'overview-total-memory',
     value: usedMemory,
@@ -164,7 +173,15 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     tooltip: {
       title: 'Total Memory',
       icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
-      content: formatBytes(usedMemory || 0, 3)
+      content: isArray(formattedUsedMemoryTooltip)
+        ? (
+          <>
+            <b>{formattedUsedMemoryTooltip[0]}</b>
+            &nbsp;
+            {formattedUsedMemoryTooltip[1]}
+          </>
+        )
+        : formattedUsedMemoryTooltip
     },
     icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
     content: formatBytes(usedMemory || 0, 0),
@@ -178,7 +195,7 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     title: 'Total Keys',
     tooltip: {
       title: 'Total Keys',
-      content: numberWithSpaces(totalKeys || 0),
+      content: (<b>{numberWithSpaces(totalKeys || 0)}</b>),
       icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
     },
     icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
@@ -196,7 +213,7 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     title: 'Connected Clients',
     tooltip: {
       title: 'Connected Clients',
-      content: getConnectedClient(connectedClients ?? 0),
+      content: (<b>{getConnectedClient(connectedClients ?? 0)}</b>),
       icon: theme === Theme.Dark ? UserDarkIcon : UserLightIcon,
     },
     icon: theme === Theme.Dark ? UserDarkIcon : UserLightIcon,

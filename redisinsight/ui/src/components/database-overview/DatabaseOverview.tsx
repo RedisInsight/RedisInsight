@@ -53,7 +53,13 @@ const DatabaseOverview = (props: Props) => {
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
-      return metric.tooltip.content
+      return (
+        <>
+          <span>{metric.tooltip.content}</span>
+          &nbsp;
+          <span>{metric.tooltip.title}</span>
+        </>
+      )
     }
     return metric.children
       .filter((item) => item.value !== undefined)
@@ -101,7 +107,6 @@ const DatabaseOverview = (props: Props) => {
                     <EuiToolTip
                       position="bottom"
                       className={styles.tooltip}
-                      title={overviewItem.tooltip.title ?? ''}
                       content={getTooltipContent(overviewItem)}
                     >
                       <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">

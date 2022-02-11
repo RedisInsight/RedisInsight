@@ -2,7 +2,11 @@
   margin-bottom: 4px;
 }
 
+.rowTooltipItem {
+  flex-direction: row !important;
+  margin-right: 12px;
+}
+
 .tooltipItemValue {
   margin-left: 4px;
-  font-weight: 300;
 }

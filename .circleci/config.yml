@@ -290,6 +290,11 @@ jobs:
         description: Send report for test run to slack
         type: boolean
         default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: number
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - attach_workspace:
@@ -1042,8 +1047,8 @@ workflows:
 #            - Build docker image
       # e2e desktop tests on AppImage build
       - e2e-app-image:
-          parallelism: 2
           name: E2ETest (AppImage) - Nightly
+          parallelism: 2
           report: true
 #          requires:
 #            - Build app - Linux (stage)

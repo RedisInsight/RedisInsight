@@ -339,12 +339,12 @@ jobs:
           condition:
             equal: [ 'docker', << parameters.build >> ]
           steps:
-            - attach_workspace:
-                at: /tmp
-            - run:
-                name: Load built docker image from workspace
-                command: |
-                  docker image load -i /tmp/docker-release/docker.tar
+#            - attach_workspace:
+#                at: /tmp
+#            - run:
+#                name: Load built docker image from workspace
+#                command: |
+#                  docker image load -i /tmp/docker-release/docker.tar
             - run:
                 name: Run tests
                 command: |

@@ -111,6 +111,9 @@ export class BrowserPage {
   overviewCommandsSec: Selector
   overviewCpu: Selector
   modulesButton: Selector
+  overviewMoreInfo: Selector
+  overviewTooltip: Selector
+  overviewTooltipStatTitle: Selector
 
   constructor() {
       //CSS Selectors
@@ -170,6 +173,9 @@ export class BrowserPage {
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
       this.modulesButton = Selector('[data-testid$=_module]');
+      this.overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
+      this.overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
+      this.overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
       this.keyLengthDetails = Selector('[data-testid=key-length-text]');

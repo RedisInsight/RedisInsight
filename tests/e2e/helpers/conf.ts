@@ -65,3 +65,11 @@ export const ossStandaloneBigConfig = {
     databaseUsername: process.env.OSS_STANDALONE_BIG_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_BIG_PASSWORD
 };
+
+export const cloudDatabaseConfig = {
+    host: process.env.CLOUD_DATABASE_HOST,
+    port: process.env.CLOUD_DATABASE_PORT,
+    databaseName: `${process.env.CLOUD_DATABASE_NAME || 'cloud-database'}-${uniqueId}`,
+    databaseUsername: process.env.CLOUD_DATABASE_USERNAME,
+    databasePassword: process.env.CLOUD_DATABASE_PASSWORD
+};

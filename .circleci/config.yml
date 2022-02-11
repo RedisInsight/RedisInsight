@@ -289,11 +289,20 @@ jobs:
         description: Send report for test run to slack
         type: boolean
         default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - attach_workspace:
           at: .
-      - run: .circleci/scripts/e2e/app-image.e2e.sh
+      - run:
+          name: .AppImage tests
+          command: |
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
+            .circleci/scripts/e2e/app-image.e2e.sh
       - when:
           condition:
             equal: [ true, << parameters.report >> ]
@@ -319,6 +328,11 @@ jobs:
         description: Send report for test run to slack
         type: boolean
         default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - when:
@@ -334,6 +348,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
@@ -347,6 +362,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
@@ -363,6 +379,8 @@ jobs:
                 command: |
                   node ./.circleci/e2e-results.js
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+      - store_test_results:
+          path: ./tests/e2e/results
 
   # Build jobs
   setup-sign-certificates:
@@ -1031,6 +1049,7 @@ workflows:
       # e2e web tests on docker image build
       - e2e-tests:
           name: E2ETest - Nightly
+          parallelism: 4
           build: docker
           report: true
           requires:
@@ -1038,6 +1057,7 @@ workflows:
       # e2e desktop tests on AppImage build
       - e2e-app-image:
           name: E2ETest (AppImage) - Nightly
+          parallelism: 4
           report: true
           requires:
             - Build app - Linux (stage)

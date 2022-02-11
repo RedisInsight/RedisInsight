@@ -46,6 +46,6 @@ if (results.passed === false) {
 }
 
 fs.writeFileSync('e2e.report.json', JSON.stringify({
-  channel: process.env.SLACK_TEST_REPORT_CHANNEL,
+  channel: process.env.SLACK_AUDIT_REPORT_CHANNEL,
   ...results.message,
 }));

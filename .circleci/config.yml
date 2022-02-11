@@ -379,6 +379,8 @@ jobs:
                 command: |
                   node ./.circleci/e2e-results.js
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+      - store_test_results:
+          path: ./tests/e2e/results
 
   # Build jobs
   setup-sign-certificates:

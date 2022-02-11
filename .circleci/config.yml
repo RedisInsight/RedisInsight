@@ -312,7 +312,7 @@ jobs:
                 when: always
                 command: |
                   APP_BUILD_TYPE="Electron (Linux)" node ./.circleci/e2e-results.js
-                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
 
@@ -378,7 +378,7 @@ jobs:
                 when: always
                 command: |
                   node ./.circleci/e2e-results.js
-                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
 
@@ -1012,14 +1012,14 @@ workflows:
 
   # Nightly tests
   nightly:
-#    triggers:
-#      - schedule:
-#          cron: '0 0 * * *'
-#          filters:
-#            branches:
-#              only:
-#                - main
-#                - latest
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only:
+                - main
+                - latest
     jobs:
       # build docker image
       - docker:
@@ -1036,16 +1036,16 @@ workflows:
           requires:
             - Setup build (stage)
       # integration tests on docker image build
-#      - integration-tests-run:
-#          matrix:
-#            alias: itest-docker
-#            parameters:
-#              rte: *iTestsNames
-#              build: ['docker']
-#              report: [true]
-#          name: ITest - << matrix.rte >> (docker)
-#          requires:
-#            - Build docker image
+      - integration-tests-run:
+          matrix:
+            alias: itest-docker
+            parameters:
+              rte: *iTestsNames
+              build: ['docker']
+              report: [true]
+          name: ITest - << matrix.rte >> (docker)
+          requires:
+            - Build docker image
       # e2e web tests on docker image build
       - e2e-tests:
           name: E2ETest - Nightly

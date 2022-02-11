@@ -13,7 +13,7 @@
     "redis:last": "docker run --name redis-last-version -p 7777:6379 -d redislabs/redismod",
     "start:app": "cross-env SERVER_STATIC_CONTENT=true yarn start:api",
     "test:chrome": "testcafe --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e",
-    "test:chrome:ci": "testcafe --concurrency 1 chromium:headless tests/ -r spec,json:results/e2e.results.json -e -q attemptLimit=3,successThreshold=1",
+    "test:chrome:ci": "testcafe chromium:headless ${TEST_FILES:-tests/**/*.e2e.ts} -r spec,json:results/e2e.results.json,xunit:results/results.xml -e -q attemptLimit=3,successThreshold=1",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
     "test:desktop:ci": "ts-node ./desktop.runner.ts",

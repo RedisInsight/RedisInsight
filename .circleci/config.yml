@@ -328,6 +328,11 @@ jobs:
         description: Send report for test run to slack
         type: boolean
         default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - when:
@@ -343,6 +348,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
@@ -356,6 +362,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
@@ -1038,17 +1045,18 @@ workflows:
 #          requires:
 #            - Build docker image
       # e2e web tests on docker image build
-#      - e2e-tests:
-#          name: E2ETest - Nightly
-#          build: docker
-#          report: true
+      - e2e-tests:
+          name: E2ETest - Nightly
+          parallelism: 2
+          build: docker
+          report: true
 #          requires:
 #            - Build docker image
       # e2e desktop tests on AppImage build
-      - e2e-app-image:
-          name: E2ETest (AppImage) - Nightly
-          parallelism: 2
-          report: true
+#      - e2e-app-image:
+#          name: E2ETest (AppImage) - Nightly
+#          parallelism: 2
+#          report: true
 #          requires:
 #            - Build app - Linux (stage)
   guides:

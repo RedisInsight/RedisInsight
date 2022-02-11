@@ -284,7 +284,6 @@ jobs:
             cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
   e2e-app-image:
     executor: linux-executor
-#    parallelism: 4
     parameters:
       report:
         description: Send report for test run to slack
@@ -292,7 +291,7 @@ jobs:
         default: false
       parallelism:
         description: Number of threads to run tests
-        type: number
+        type: integer
         default: 1
     parallelism: << parameters.parallelism >>
     steps:

@@ -13,6 +13,8 @@ fixture `Overview`
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTerms();
+        console.log(`cloudDatabaseConfig.HOST: ${cloudDatabaseConfig.host}`);
+        console.log(`cloudDatabaseConfig.PORT: ${cloudDatabaseConfig.port}`);
         await addRedisDatabasePage.addRedisDataBase(cloudDatabaseConfig);
         //Click for saving
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);

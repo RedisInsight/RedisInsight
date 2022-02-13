@@ -28,7 +28,7 @@ fixture `Overview`
         //Delete database
         await deleteDatabase(cloudDatabaseConfig.databaseName);
     })
-test.skip
+test
     .meta({ rte: rte.standalone })
     ('Verify that user can see not available metrics from Overview in tooltip with the text "<Metric_name> is/are not available"', async t => {
         //Verify that CPU parameter is not displayed in Overview

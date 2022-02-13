@@ -67,9 +67,9 @@ export const ossStandaloneBigConfig = {
 };
 
 export const cloudDatabaseConfig = {
-    host: process.env.CLOUD_DATABASE_HOST || '',
-    port: process.env.CLOUD_DATABASE_PORT || '',
-    databaseName: `${process.env.CLOUD_DATABASE_NAME || 'cloud-database'}-${uniqueId}`,
-    databaseUsername: process.env.CLOUD_DATABASE_USERNAME,
-    databasePassword: process.env.CLOUD_DATABASE_PASSWORD
+    host: process.env.E2E_CLOUD_DATABASE_HOST || '',
+    port: process.env.E2E_CLOUD_DATABASE_PORT || '',
+    databaseName: `${process.env.E2E_CLOUD_DATABASE_NAME || 'cloud-database'}-${uniqueId}`,
+    databaseUsername: process.env.E2E_CLOUD_DATABASE_USERNAME,
+    databasePassword: process.env.E2E_CLOUD_DATABASE_PASSWORD
 };

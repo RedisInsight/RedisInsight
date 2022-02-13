@@ -73,3 +73,11 @@ export const cloudDatabaseConfig = {
     databaseUsername: process.env.E2E_CLOUD_DATABASE_USERNAME,
     databasePassword: process.env.E2E_CLOUD_DATABASE_PASSWORD
 };
+
+export const ossStandaloneNoPermissionsConfig = {
+    host: process.env.OSS_STANDALONE_BIG_HOST || 'oss-standalone',
+    port: process.env.OSS_STANDALONE_BIG_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_BIG_DATABASE_NAME || 'oss-standalone-no-permissions'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_BIG_USERNAME || 'noperm',
+    databasePassword: process.env.OSS_STANDALONE_BIG_PASSWORD
+};

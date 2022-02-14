@@ -27,15 +27,16 @@
   }
 
   .moreInfoOverviewContent {
+    flex-direction: row;
     margin-right: 6px;
-    font-weight: 500;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .moreInfoOverviewTitle {
     margin-right: 6px;
     font-size: 12px;
     font-weight: 200;
+    line-height: 19.5px;
   }
 }
 

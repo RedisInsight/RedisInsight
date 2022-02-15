@@ -10,9 +10,10 @@ import {
 import {
     commonUrl,
     ossStandaloneBigConfig,
-    ossStandaloneConfig
+    ossStandaloneConfig,
+    ossStandaloneNoPermissionsConfig
 } from '../../../helpers/conf';
-import { rte, env } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const monitorPage = new MonitorPage();
@@ -113,21 +114,19 @@ test
         }
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
+    .meta({ rte: rte.standalone })
     .before(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await cliPage.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor');
         await deleteDatabase(ossStandaloneConfig.databaseName);
-        ossStandaloneConfig.databaseUsername = 'noperm';
-        ossStandaloneConfig.databaseName = `${ossStandaloneConfig.databaseName}_nopermittions_user`;
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await addNewStandaloneDatabase(ossStandaloneNoPermissionsConfig);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
     .after(async() => {
         //Delete created user
         await cliPage.sendCommandInCli('acl DELUSER noperm');
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteDatabase(ossStandaloneNoPermissionsConfig.databaseName);
     })
     ('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
         //Expand the Profiler

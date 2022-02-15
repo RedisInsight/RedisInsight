@@ -43,4 +43,8 @@ describe('formatBytes', () => {
       const result = formatBytes(bytes, decimals)
       expect(result).toBe(expected)
     })
+  it('should return proper array with splitResults', () => {
+    expect(formatBytes(1572864, 0, true)).toEqual([2, 'MB'])
+    expect(formatBytes(1347545989, 3, true)).toEqual([1.255, 'GB'])
+  })
 })

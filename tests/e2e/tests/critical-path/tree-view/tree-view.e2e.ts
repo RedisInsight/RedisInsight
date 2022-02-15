@@ -74,10 +74,6 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
-        //Delete database
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
-    })
     ('Verify that when user switched from Tree View to Browser and goes back state of filer by key name/key type is saved', async t => {
         const keyName = 'keyName';
         await t.click(browserPage.treeViewButton);

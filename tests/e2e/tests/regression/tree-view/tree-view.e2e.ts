@@ -65,4 +65,3 @@ test
         await t.expect(browserPage.treeViewKeysNumber.textContent).notEql(numberOfKeys, 'The number of keys is recalculated');
         await t.expect(browserPage.treeViewPercentage.textContent).notEql(percentage, 'The percentage is recalculated');
     });
-    

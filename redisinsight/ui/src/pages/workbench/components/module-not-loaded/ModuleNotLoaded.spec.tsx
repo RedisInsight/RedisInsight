@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { ThemeContext, defaultState } from 'uiSrc/contexts/themeContext'
 import ModuleNotLoaded from './ModuleNotLoaded'
 import { RSNotLoadedContent } from '../../constants'
 
@@ -18,6 +19,16 @@ jest.mock('uiSrc/services', () => ({
     set: jest.fn(),
     get: jest.fn(),
   },
+}))
+
+jest.mock('uiSrc/slices/content/content-create-database', () => ({
+  ...jest.requireActual('uiSrc/slices/content/content-create-database'),
+  contentSelector: jest.fn().mockReturnValue({
+    loading: false,
+    data: {
+      cloud: { title: 'Limited offer', description: 'Try Redis cloud' }
+    }
+  }),
 }))
 
 describe('ModuleNotLoaded', () => {
@@ -38,8 +49,11 @@ describe('ModuleNotLoaded', () => {
     expect(tableEl).toBeInTheDocument()
   })
   it('"createCloudBtn" prop should render', () => {
-    const { queryByTestId } = render(<ModuleNotLoaded content={RSNotLoadedContent} />)
-
+    const { queryByTestId } = render(
+      <ThemeContext.Provider value={{ ...defaultState }}>
+        <ModuleNotLoaded content={RSNotLoadedContent} />
+      </ThemeContext.Provider>
+    )
     const btnEl = queryByTestId('query-card-no-module-button')
     expect(btnEl).toBeInTheDocument()
   })

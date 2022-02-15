@@ -1,33 +1,53 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiIcon,
   EuiSpacer,
   EuiText,
 } from '@elastic/eui'
-import cx from 'classnames'
+import { isEmpty } from 'lodash'
+import { useSelector } from 'react-redux'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/HelpLinksMenu'
-import { HELP_LINKS } from 'uiSrc/pages/home/constants/help-links'
+import PromoLink from 'uiSrc/components/promo-link/PromoLink'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { contentSelector } from 'uiSrc/slices/content/content-create-database'
+import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
+import { getPathToResource } from 'uiSrc/services/resourcesService'
+import { ContentCreateDBItem } from 'uiSrc/slices/interfaces/content'
 
 import styles from './styles.module.scss'
 
-const SHOW_FOR_XL = 'eui-showFor--xl'
-
-export enum Direction {
-  column = 'column',
-  row = 'row',
-}
-
-interface Props {
+export interface Props {
   onAddInstance: () => void;
-  direction: Direction;
+  direction: 'column' | 'row';
   welcomePage?: boolean;
 }
 
 const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: Props) => {
+  const [promoData, setPromoData] = useState<ContentCreateDBItem>()
+  const [guides, setGuides] = useState<IHelpGuide[]>([])
+  const { loading, data } = useSelector(contentSelector)
+  const { theme } = useContext(ThemeContext)
+
+  useEffect(() => {
+    if (!loading && !isEmpty(data)) {
+      if (data.cloud && !isEmpty(data.cloud)) {
+        setPromoData(data.cloud)
+      }
+      const items = Object.entries(data).map(([key, { title, links, description }]) => ({
+        id: key,
+        title,
+        description,
+        event: HELP_LINKS[key as keyof typeof HELP_LINKS]?.event,
+        url: links?.main?.url,
+        primary: key.toLowerCase() === 'cloud',
+      }))
+      setGuides(items)
+    }
+  }, [loading, data])
+
   const handleOnAddDatabase = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_CLICKED,
@@ -36,12 +56,14 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
   }
 
   const handleClickLink = (event: TelemetryEvent, eventData: any = {}) => {
-    sendEventTelemetry({
-      event,
-      eventData: {
-        ...eventData
-      }
-    })
+    if (event) {
+      sendEventTelemetry({
+        event,
+        eventData: {
+          ...eventData
+        }
+      })
+    }
   }
 
   const AddInstanceBtn = () => (
@@ -56,145 +78,121 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
     </EuiButton>
   )
 
-  const CreateBtn = () => (
-    <a
-      className={styles.createBtn}
-      href={HELP_LINKS.createRedisCloud.link}
-      target="_blank"
-      rel="noreferrer"
-      onClick={() => handleClickLink(
-        HELP_LINKS.createRedisCloud.event,
-        { source: HELP_LINKS.createRedisCloud.sources[welcomePage ? 'welcome' : 'databaseList'] }
-      )}
-      data-testid="promo-btn"
-    >
-      <EuiText className={styles.createTitle}>
-        {HELP_LINKS.createRedisCloud.label}
-      </EuiText>
-      <EuiText className={styles.createText}>
-        Try Redis Cloud with enhanced database capabilities.
-      </EuiText>
-      <EuiIcon type="arrowRight" size="m" className={styles.arrowRight} />
-    </a>
-  )
-
-  const Separator = () => <div className={styles.separator} />
-
-  const FollowText = () => (
-    <EuiText className={styles.followText}>Or follow the guides:</EuiText>
-  )
-
-  const LinkSourceText = () => (
-    <div className={styles.sourceText}>
-      <a
-        href={HELP_LINKS.buildRedisFromSource.link}
-        onClick={() => handleClickLink(HELP_LINKS.buildRedisFromSource.event)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {HELP_LINKS.buildRedisFromSource.label}
-      </a>
-    </div>
-  )
-
-  const LinkDockerText = () => (
-    <div className={styles.dockerText}>
-      <a
-        href={HELP_LINKS.createOnDocker.link}
-        onClick={() => handleClickLink(HELP_LINKS.createOnDocker.event)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {HELP_LINKS.createOnDocker.label}
-      </a>
-    </div>
-  )
-
-  const LinkHomebrewText = () => (
-    <div className={styles.homebrewText}>
-      <a
-        href={HELP_LINKS.createOnMac.link}
-        onClick={() => handleClickLink(HELP_LINKS.createOnMac.event)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {HELP_LINKS.createOnMac.label}
-      </a>
-    </div>
-  )
-
-  const WelcomeControls = () => (
-    <div className={styles.containerWelc}>
+  const Guides = () => (
+    <div className={styles.links}>
       <EuiFlexGroup>
-        <EuiFlexItem>
-          <AddInstanceBtn />
+        <EuiFlexItem grow={false} className={styles.clearMarginFlexItem}>
+          <EuiText className={styles.followText}>
+            {promoData ? 'Or follow the guides:' : 'Follow the guides:'}
+          </EuiText>
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiFlexGroup>
-        <EuiFlexItem>
-          <Separator />
-        </EuiFlexItem>
+      <EuiFlexGroup className={styles.otherGuides}>
+        {guides
+          .filter(({ id }) => id?.toLowerCase() !== 'cloud')
+          .map(({ id, url, title, event }) => (
+            <EuiFlexItem key={id} grow={direction === 'column'}>
+              <a
+                href={url}
+                onClick={() => handleClickLink(event as TelemetryEvent)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {title}
+              </a>
+            </EuiFlexItem>
+          ))}
       </EuiFlexGroup>
-      <EuiFlexGroup>
-        <EuiFlexItem>
-          <CreateBtn />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup>
-        <EuiFlexItem className={styles.clearMarginFlexItem}>
-          <FollowText />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup className={styles.links}>
-        <EuiFlexItem>
-          <LinkSourceText />
-          <LinkDockerText />
-          <LinkHomebrewText />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer />
     </div>
   )
 
-  const DatalistControls = () => (
-    <div className={styles.containerDl}>
-      <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false}>
-        <EuiFlexItem grow={false}>
-          <AddInstanceBtn />
-        </EuiFlexItem>
-        <EuiFlexItem className="eui-hideFor--xs" grow={false}>
-          <Separator />
-        </EuiFlexItem>
-        <EuiFlexItem grow className="eui-hideFor--xs eui-hideFor--s eui-hideFor--m eui-hideFor--l">
-          <EuiFlexGroup alignItems="center">
-            <EuiFlexItem grow={false}>
-              <CreateBtn />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={cx(styles.links, SHOW_FOR_XL)}>
-              <FollowText />
-              <LinkSourceText />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={cx(styles.links, SHOW_FOR_XL)}>
-              <LinkDockerText />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={cx(styles.links, SHOW_FOR_XL)}>
-              <LinkHomebrewText />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} className="eui-showFor--xs eui-showFor--s eui-showFor--m eui-showFor--l">
-          <HelpLinksMenu onLinkClick={(link) => handleClickLink(HELP_LINKS[link].event)} />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer className={styles.spacerDl} />
-    </div>
-  )
+  const CreateBtn = ({ content }: { content:ContentCreateDBItem }) => {
+    const { title, description, styles, links } = content
+    // @ts-ignore
+    const linkStyles = styles ? styles[theme] : {}
+    return (
+      <PromoLink
+        title={title}
+        description={description}
+        url={links?.main?.url}
+        testId="promo-btn"
+        icon="arrowRight"
+        styles={{
+          ...linkStyles,
+          backgroundImage: linkStyles?.backgroundImage
+            ? `url(${getPathToResource(linkStyles.backgroundImage)})`
+            : undefined
+        }}
+        onClick={() => handleClickLink(
+          HELP_LINKS.cloud.event,
+          { source: welcomePage ? 'Welcome page' : 'My Redis databases' }
+        )}
+      />
+    )
+  }
 
-  return direction === Direction.column ? (
-    <WelcomeControls />
-  ) : (
-    <DatalistControls />
-  )
+  return direction === 'column'
+    ? (
+      <div className={styles.containerWelc}>
+        <EuiFlexGroup alignItems="center" responsive={false}>
+          <EuiFlexItem>
+            <AddInstanceBtn />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiFlexGroup>
+          <EuiFlexItem>
+            <div className={styles.separator} />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        { !loading && !isEmpty(data) && (
+          <>
+            {promoData && (
+              <EuiFlexGroup>
+                <EuiFlexItem>
+                  <CreateBtn content={promoData} />
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            )}
+            <Guides />
+          </>
+        )}
+        <EuiSpacer />
+      </div>
+    ) : (
+      <div className={styles.containerDl}>
+        <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false}>
+          <EuiFlexItem grow={false}>
+            <AddInstanceBtn />
+          </EuiFlexItem>
+          <EuiFlexItem className="eui-hideFor--xs" grow={false}>
+            <div className={styles.separator} />
+          </EuiFlexItem>
+          { !loading && !isEmpty(data) && (
+            <>
+              <EuiFlexItem grow className="eui-showFor--xl">
+                <EuiFlexGroup alignItems="center">
+                  {promoData && (
+                    <EuiFlexItem grow={false}>
+                      <CreateBtn content={promoData} />
+                    </EuiFlexItem>
+                  )}
+                  <EuiFlexItem>
+                    <Guides />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false} className="eui-showFor--xs eui-showFor--s eui-showFor--m eui-showFor--l">
+                <HelpLinksMenu
+                  items={guides}
+                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+                />
+              </EuiFlexItem>
+            </>
+          )}
+        </EuiFlexGroup>
+        <EuiSpacer className={styles.spacerDl} />
+      </div>
+    )
 }
 
 export default AddInstanceControls

@@ -25,6 +25,7 @@ import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchEnablementAreaReducer from './workbench/wb-enablement-area'
+import contentCreateDatabaseReducer from './content/content-create-database'
 
 export const history = createBrowserHistory()
 
@@ -64,6 +65,9 @@ export const rootReducer = combineReducers({
   workbench: combineReducers({
     results: workbenchResultsReducer,
     enablementArea: workbenchEnablementAreaReducer,
+  }),
+  content: combineReducers({
+    createDatabase: contentCreateDatabaseReducer,
   }),
 })
 

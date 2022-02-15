@@ -10,6 +10,7 @@ import {
 import { getServerInfo } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
+import { getContent as getCreateDbContent } from 'uiSrc/slices/content/content-create-database'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -38,12 +39,13 @@ describe('Config', () => {
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
+      getCreateDbContent(),
       getUserConfigSettings()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
   })
 
-  it('should call setSettingsPopupState with difference of agreements', () => {
+  it('should call the list of actions', () => {
     const userSettingsSelectorMock = jest.fn().mockReturnValue({
       config: {
         agreements: {},
@@ -67,6 +69,7 @@ describe('Config', () => {
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
+      getCreateDbContent(),
       getUserConfigSettings(),
       setSettingsPopupState(true),
     ]

@@ -111,6 +111,17 @@ export class BrowserPage {
   overviewCommandsSec: Selector
   overviewCpu: Selector
   modulesButton: Selector
+  treeViewButton: Selector
+  treeViewArea: Selector
+  browserViewButton: Selector
+  treeViewScannedValue: Selector
+  treeViewSeparator: Selector
+  treeViewKeysNumber: Selector
+  treeViewPercentage: Selector
+  treeViewFolders: Selector
+  treeViewMessage: Selector
+  totalKeysNumber: Selector
+  keysScanned: Selector
 
   constructor() {
       //CSS Selectors
@@ -170,6 +181,9 @@ export class BrowserPage {
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
       this.modulesButton = Selector('[data-testid$=_module]');
+      this.treeViewButton = Selector('');
+      this.browserViewButton = Selector('');
+      this.treeViewSeparator = Selector('');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
       this.keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -223,6 +237,14 @@ export class BrowserPage {
       this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
       this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
+      this.treeViewArea = Selector('');
+      this.treeViewScannedValue = Selector('');
+      this.treeViewKeysNumber = Selector('');
+      this.treeViewPercentage = Selector('');
+      this.treeViewFolders = Selector('');
+      this.treeViewMessage = Selector('');
+      this.totalKeysNumber = Selector('');
+      this.keysScanned = Selector('');
   }
 
   /**
@@ -593,7 +615,7 @@ export class BrowserPage {
   * Add json structure
   * @param jsonStructure The structure of the json key
   */
-  async addJsonSctucture(jsonStructure: string): Promise<void>{
+  async addJsonStructure(jsonStructure: string): Promise<void>{
       await t.click(this.expandJsonObject);
       await t.click(this.editJsonObjectButton);
       await t.pressKey('ctrl+a delete');

@@ -56,7 +56,7 @@
     "ioredis": "^4.27.1",
     "is-glob": "^4.0.1",
     "jsonpath": "^1.1.1",
-    "keytar": "7.3",
+    "keytar": "7.4",
     "lodash": "^4.17.20",
     "nest-router": "^1.0.9",
     "nest-winston": "^1.4.0",

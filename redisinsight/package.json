@@ -13,7 +13,7 @@
   "scripts": {},
   "dependencies": {
     "jsonpath": "^1.1.1",
-    "keytar": "7.4",
+    "keytar": "7.3",
     "sqlite3": "^5.0.2"
   }
 }

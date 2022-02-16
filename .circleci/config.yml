@@ -482,10 +482,10 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - release/redisstack
             - release/RedisInsight*.deb
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
+            - release/redisstack
   macosx:
     macos:
       xcode: 13.2.1
@@ -524,6 +524,11 @@ jobs:
             UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
             rm -rf release/mac
           no_output_timeout: 15m
+      - run:
+          name: Build archive for the RedisStack
+          command: |
+            PLATFORM=Mac \
+            .circleci/redisstack/build.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -531,6 +536,7 @@ jobs:
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
             - release/*-mac.yml
+            - release/redisstack
   windows:
     executor:
       name: win/default
@@ -1080,4 +1086,5 @@ workflows:
           name: Store build artifacts (dev)
           requires:
             - Build app - Linux (dev)
-#            - Build app - MacOS (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)

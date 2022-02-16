@@ -1,11 +1,12 @@
 {
   "name": "redisinsight-plugin-sdk",
   "description": "Redis API for creating packages for Redis v.2 application",
+  "license": "MIT",
   "keywords": [
     "redis",
     "redis-gui"
   ],
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": {
     "name": "Redis",
     "email": "redisinsight@redis.com"

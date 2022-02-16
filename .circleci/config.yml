@@ -460,31 +460,25 @@ jobs:
       - run:
           command: |
             cp ./electron/package.json ./redisinsight/
-#      - run:
-#          name: install dependencies
-#          command: |
-#            yarn --cwd redisinsight/api/ install
-#            yarn install
-#            yarn build:statics
-#          no_output_timeout: 15m
-#      - run:
-#          name: Build linux AppImage and deb
-#          command: |
-#            if [ << parameters.env >> == 'prod' ]; then
-#              yarn package:prod
-#              exit 0;
-#            fi
-#
-#            UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
+      - run:
+          name: install dependencies
+          command: |
+            yarn --cwd redisinsight/api/ install
+            yarn install
+            yarn build:statics
+          no_output_timeout: 15m
+      - run:
+          name: Build linux AppImage and deb
+          command: |
+            if [ << parameters.env >> == 'prod' ]; then
+              yarn package:prod
+              exit 0;
+            fi
+
+            UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
       - run:
           name: Build archive for the RedisStack
-          command: |
-            VERSION=$(cat electron/version)
-            echo "VERSION: $VERSION"
-            FILENAME="RedisInsight-Linux.$VERSION.zip"
-            echo="FILENAME: $FILENAME"
-#            mkdir -p redisstack
-#            mkdir -p release/redisstack
+          command: .circleci/redisstack/build.sh
       - persist_to_workspace:
           root: .
           paths:

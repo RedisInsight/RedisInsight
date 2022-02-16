@@ -500,10 +500,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-keytar@^7.7.0:
-  version "7.7.0"
-  resolved "https://registry.yarnpkg.com/keytar/-/keytar-7.7.0.tgz#3002b106c01631aa79b1aa9ee0493b94179bbbd2"
-  integrity sha512-YEY9HWqThQc5q5xbXbRwsZTh2PJ36OSYRjSv3NN2xf5s5dpLTjEZnC2YikR29OaVybf9nQ0dJ/80i40RS97t/A==
+keytar@7.4:
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/keytar/-/keytar-7.4.0.tgz#0a508d64850ca05aa3ba4127818037d13ca3219f"
+  integrity sha512-nELmc35YjSE4ZNSFaID/743CgDt/MdV4JLX7rRewAh9mKvU72RtF3uJMY0MdMpwdDYZhmD8FSdRCD1J97lEyVg==
   dependencies:
     node-addon-api "^3.0.0"
     prebuild-install "^6.0.0"

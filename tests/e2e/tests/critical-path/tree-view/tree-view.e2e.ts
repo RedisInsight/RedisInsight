@@ -24,7 +24,7 @@ test
     ('Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)', async t => {
         //Verify that Browser view is selected by default and Tree view is disabled
         await t.expect(browserPage.browserViewButton.withAttribute('active', 'true')).ok('The Browser is selected by default');
-        await t.expect(browserPage.treeViewArea.visible).notOk('The tree view is not displayed');
+        await t.expect(browserPage.treeViewArea.visible).notOk('The tree view is not displayed', { timeout: 20000 });
     });
 test
     .meta({ rte: rte.standalone })

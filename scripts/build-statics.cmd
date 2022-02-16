@@ -20,3 +20,6 @@ if not exist "%PLUGINS_DIR%\redisearch" mkdir "%PLUGINS_DIR%\redisearch"
 if not exist "%PLUGINS_DIR%\redisearch\dist" mkdir "%PLUGINS_DIR%\redisearch\dist"
 xcopy "%REDISEARCH_DIR%\dist" "%PLUGINS_DIR%\redisearch\dist\" /s /e /y
 copy "%REDISEARCH_DIR%\package.json" "%PLUGINS_DIR%\redisearch\"
+
+:: =============== Static content ===============
+xcopy ".\redisinsight\ui\src\packages\content" ".\redisinsight\api\static\content\" /s /e /y

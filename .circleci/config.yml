@@ -1067,8 +1067,6 @@ workflows:
     jobs:
       - setup-sign-certificates:
           name: Setup sign certificates (dev)
-          requires:
-            - Build dev app
       - setup-build:
           name: Setup build (dev)
           env: dev

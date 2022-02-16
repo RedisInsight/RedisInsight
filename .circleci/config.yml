@@ -459,6 +459,7 @@ jobs:
           at: .
       - run:
           command: |
+            sudo apt install libsecret-1-0
             cp ./electron/package.json ./redisinsight/
       - run:
           name: install dependencies

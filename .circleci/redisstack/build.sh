@@ -12,6 +12,9 @@ yarn --cwd ./redisinsight/api install --production
 cp redisinsight/api/.yarnclean.prod ./redisinsight/api/.yarnclean
 yarn --cwd ./redisinsight/api autoclean --force
 
+# build web
+yarn build:web
+
 cd redisinsight && zip -r build.zip \
 api/node_modules \
 api/dist \

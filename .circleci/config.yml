@@ -1070,9 +1070,12 @@ workflows:
           name: Build app - Linux (dev)
           requires: &stageElectronBuildRequires
             - Setup build (dev)
-#      - macosx:
-#          name: Build app - MacOS (dev)
-#          requires: *stageElectronBuildRequires
+      - macosx:
+          name: Build app - MacOS (dev)
+          requires: *stageElectronBuildRequires
+      - windows:
+          name: Build app - Windows (dev)
+          requires: *stageElectronBuildRequires
       - store-build-artifacts:
           name: Store build artifacts (dev)
           requires:

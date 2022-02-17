@@ -48,7 +48,7 @@ export class EnablementAreaProvider implements OnModuleInit {
    */
   async autoUpdate() {
     this.logger.log('Checking for updates...');
-    if (await this.isUpdatesAvailable()) {
+    if (!ENABLEMENT_AREA_CONFIG.devMode && await this.isUpdatesAvailable()) {
       this.logger.log('Updates available! Updating...');
 
       try {

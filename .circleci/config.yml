@@ -788,17 +788,6 @@ jobs:
 
             done
 
-  release-guides:
-    executor: linux-executor
-    steps:
-      - checkout
-      - run:
-          name: Release guides
-          command: |
-            cd ./redisinsight/ui/src/packages/enablement-area && zip -r data.zip .
-            mkdir -p _build && mv data.zip ./_build
-            echo "{\"timestamp\":$(date +%s)}" > ./_build/build.json
-            aws s3 cp _build/ s3://${AWS_BUCKET_NAME}/public/guides --recursive
 workflows:
   build:
     jobs:
@@ -1062,13 +1051,3 @@ workflows:
           report: true
           requires:
             - Build app - Linux (stage)
-  guides:
-    jobs:
-      - guides-approve:
-          type: approval
-          name: Approve guides release
-          <<: *guidesFilter
-      - release-guides:
-          name: Build & release
-          requires:
-            - Approve guides release

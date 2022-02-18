@@ -122,6 +122,8 @@ export class BrowserPage {
   treeViewMessage: Selector
   totalKeysNumber: Selector
   keysScanned: Selector
+  databaseInfoIcon: Selector
+  databaseInfoToolTip: Selector
 
   constructor() {
       //CSS Selectors
@@ -181,6 +183,7 @@ export class BrowserPage {
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
       this.modulesButton = Selector('[data-testid$=_module]');
+      this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
       this.treeViewButton = Selector('');
       this.browserViewButton = Selector('');
       this.treeViewSeparator = Selector('');
@@ -245,6 +248,7 @@ export class BrowserPage {
       this.treeViewMessage = Selector('');
       this.totalKeysNumber = Selector('');
       this.keysScanned = Selector('');
+      this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
   }
 
   /**

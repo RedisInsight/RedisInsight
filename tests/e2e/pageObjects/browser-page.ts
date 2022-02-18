@@ -71,7 +71,6 @@ export class BrowserPage {
   zsetScoresList: Selector
   searchInput: Selector
   searchButton: Selector
-  removeButton: Selector
   confirmRemoveSetMemberButton: Selector
   confirmRemoveHashFieldButton: Selector
   confirmRemovZSetMemberButton: Selector
@@ -124,6 +123,9 @@ export class BrowserPage {
   keysScanned: Selector
   databaseInfoIcon: Selector
   databaseInfoToolTip: Selector
+  removeHashFieldButton: Selector
+  removeSetMemberButton: Selector
+  removeZserMemberButton: Selector
 
   constructor() {
       //CSS Selectors
@@ -163,7 +165,9 @@ export class BrowserPage {
       this.keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
       this.progressLine = Selector('div.euiProgress');
       this.confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
-      this.removeButton = Selector('[data-testid^=remove]');
+      this.removeSetMemberButton = Selector('[data-testid^=set-remove-btn]');
+      this.removeHashFieldButton = Selector('[data-testid^=remove-hash-button]');
+      this.removeZserMemberButton = Selector('[data-testid^=zset-remove-button]');
       this.confirmRemoveSetMemberButton = Selector('[data-testid^=set-remove-btn-] span');
       this.confirmRemovZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
       this.saveElementButton = Selector('[data-testid=save-elements-btn]');

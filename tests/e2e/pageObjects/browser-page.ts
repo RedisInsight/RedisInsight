@@ -163,7 +163,7 @@ export class BrowserPage {
       this.keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
       this.progressLine = Selector('div.euiProgress');
       this.confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
-      this.removeButton = Selector('[data-testid*=-icon]');
+      this.removeButton = Selector('[data-testid^=remove]');
       this.confirmRemoveSetMemberButton = Selector('[data-testid^=set-remove-btn-] span');
       this.confirmRemovZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
       this.saveElementButton = Selector('[data-testid=save-elements-btn]');

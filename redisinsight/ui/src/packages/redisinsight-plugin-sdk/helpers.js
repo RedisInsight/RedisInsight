@@ -11,6 +11,3 @@ export const sendMessageToMain = (data = {}) => {
   // eslint-disable-next-line no-restricted-globals
   parent.dispatchEvent(event)
 }
-// export const sendMessageToMain = (data = {}) => {
-//   window.top.postMessage(data, '*')
-// }

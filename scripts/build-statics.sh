@@ -23,6 +23,6 @@ cp -R "${REDISEARCH_DIR}/dist" "${REDISEARCH_DIR}/package.json" "${PLUGINS_DIR}/
 REDISTIMESERIES_DIR="./redisinsight/ui/src/packages/redistimeseries-app"
 yarn --cwd "${REDISTIMESERIES_DIR}"
 yarn --cwd "${REDISTIMESERIES_DIR}" build
-mkdir -p "${REDISTIMESERIES_DIR}/redistimeseries-app"
+mkdir -p "${PLUGINS_DIR}/redistimeseries-app"
 cp -R "${REDISTIMESERIES_DIR}/dist" "${REDISTIMESERIES_DIR}/package.json" "${PLUGINS_DIR}/redistimeseries-app"
 

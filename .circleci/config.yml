@@ -1077,5 +1077,5 @@ workflows:
   redisstack:
     jobs:
       - build-rs-mac
-      - build-linux
-      - build-linux-arm
+      - build-rs-linux
+      - build-rs-linux-arm

@@ -24,10 +24,10 @@ fixture `Database info tooltips`
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see an (i) icon next to the database name on Browser and Workbench pages', async t => {
-        await t.expect(browserPage.databaseInfoIcon.visible).ok('User can see (i) icon on Browser page');
+        await t.expect(browserPage.databaseInfoIcon.visible).ok('User can see (i) icon on Browser page', { timeout: 20000 });
         //Move to the Workbench page and check icon
         await t.click(myRedisDatabasePage.workbenchButton);
-        await t.expect(workbenchPage.overviewTotalMemory.visible).ok('User can see (i) icon on Workbench page');
+        await t.expect(workbenchPage.overviewTotalMemory.visible).ok('User can see (i) icon on Workbench page', { timeout: 20000 });
     });
 test
     .meta({ rte: rte.standalone })

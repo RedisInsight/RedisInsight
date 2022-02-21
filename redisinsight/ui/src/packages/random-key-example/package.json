@@ -56,6 +56,7 @@
     "@elastic/eui": "^36.0.0",
     "classnames": "^2.3.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "redisinsight-plugin-sdk": "^1.0.0"
   }
 }

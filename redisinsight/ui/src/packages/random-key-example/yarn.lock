@@ -4657,6 +4657,11 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
+redisinsight-plugin-sdk@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/redisinsight-plugin-sdk/-/redisinsight-plugin-sdk-1.0.0.tgz#1519cfcf41a0ede8b0f3e491bc5560e33e2df040"
+  integrity sha512-myF7hrUPx31kWdr8EcXCTR5925ZC68Sfu5WSEqFWXH8CoDqgILkx8AQVg8P5Q0WGfRllgSY0SH2zhC4TD9me4w==
+
 redux@^4.0.0, redux@^4.0.4:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.1.2.tgz#140f35426d99bb4729af760afcf79eaaac407104"

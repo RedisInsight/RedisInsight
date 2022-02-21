@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { useEffect, useState } from 'react'
 import { EuiText, EuiButton, EuiSpacer, EuiTextColor } from '@elastic/eui'
+import { getState, setState, executeRedisCommand } from 'redisinsight-plugin-sdk'
 
 interface Props {
   result?: { response: any, status: string }[]
@@ -16,7 +17,7 @@ const App = (props: Props) => {
 
   const getLastRandomKey = async () => {
     try {
-      const result = await globalThis.PluginSDK?.getState()
+      const result = await getState()
       setLastRandomKey(result)
     } catch (e) {
       console.error(e)
@@ -25,7 +26,7 @@ const App = (props: Props) => {
 
   const updateLastRandomKey = async (key: string) => {
     try {
-      const result = await globalThis.PluginSDK?.setState(key)
+      const result = await setState(key)
       setLastRandomKey(result)
     } catch (error) {
       console.error(error)
@@ -34,7 +35,7 @@ const App = (props: Props) => {
 
   const randomizeKey = async () => {
     try {
-      const result = await globalThis.PluginSDK?.executeRedisCommand('RANDOMKEY')
+      const result = await executeRedisCommand('RANDOMKEY')
       const [{ response = '', status }] = result
       if (status === 'success') {
         updateLastRandomKey(response)

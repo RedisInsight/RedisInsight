@@ -94,7 +94,7 @@ const DatabaseOverview = (props: Props) => {
     <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
       {metrics.visible?.length > 0 && (
         <EuiFlexItem key="overview">
-          <div className={cx('flex-row', styles.itemContainer, styles.overview)}>
+          <div className={cx('flex-row', styles.itemContainer, styles.overview, { [styles.noModules]: !modules.visible?.length })}>
             <EuiFlexGroup gutterSize="none" responsive={false}>
               {
                 metrics.visible.map((overviewItem) => (
@@ -119,7 +119,7 @@ const DatabaseOverview = (props: Props) => {
                             />
                           </EuiFlexItem>
                         )}
-                        <EuiFlexItem grow={false}>
+                        <EuiFlexItem grow={false} className={styles.overviewItemContent}>
                           {overviewItem.content}
                         </EuiFlexItem>
                       </EuiFlexGroup>

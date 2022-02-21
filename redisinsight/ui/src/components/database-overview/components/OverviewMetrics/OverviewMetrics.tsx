@@ -120,12 +120,22 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     title: 'Network Input',
     icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
     value: networkInKbps,
-    content: `${networkInKbps} kb/s`,
+    content: (
+      <>
+        <b>{networkInKbps}</b>
+        &nbsp;kb/s
+      </>
+    ),
     unavailableText: 'Network Input is not available',
     tooltip: {
       title: 'Network Input',
       icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
-      content: `${networkInKbps} kb/s`,
+      content: (
+        <>
+          <b>{networkInKbps}</b>
+          &nbsp;kb/s
+        </>
+      ),
     },
   }
 
@@ -135,12 +145,22 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     title: 'Network Output',
     icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
     value: networkOutKbps,
-    content: `${networkOutKbps} kb/s`,
+    content: (
+      <>
+        <b>{networkOutKbps}</b>
+        &nbsp;kb/s
+      </>
+    ),
     unavailableText: 'Network Output is not available',
     tooltip: {
       title: 'Network Output',
       icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
-      content: `${networkOutKbps} kb/s`,
+      content: (
+        <>
+          <b>{networkOutKbps}</b>
+          &nbsp;kb/s
+        </>
+      ),
     },
   }
 

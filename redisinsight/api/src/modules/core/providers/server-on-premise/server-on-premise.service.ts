@@ -90,6 +90,7 @@ implements OnApplicationBootstrap, IServerProvider {
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,
         encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
+        fixedDatabaseId: SERVER_CONFIG.fixedDatabase ? JSON.parse(SERVER_CONFIG.fixedDatabase).id : undefined,
       };
       this.logger.log('Succeed to get server info.');
       return result;

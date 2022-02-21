@@ -3,16 +3,20 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { Repository } from 'typeorm';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import config from 'src/utils/config';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+
+const SERVER_CONFIG = config.get('server');
 
 @Injectable()
-export class DatabasesProvider {
+export class DatabasesProvider implements OnApplicationBootstrap {
   private logger = new Logger('DatabaseProvider');
 
   constructor(
@@ -20,6 +24,12 @@ export class DatabasesProvider {
     private readonly databasesRepository: Repository<DatabaseInstanceEntity>,
     private readonly encryptionService: EncryptionService,
   ) {}
+
+  async onApplicationBootstrap() {
+    if (SERVER_CONFIG.fixedDatabase) {
+      await this.setPredefinedDatabase();
+    }
+  }
 
   /**
    * Fast check if database exists.
@@ -192,5 +202,32 @@ export class DatabasesProvider {
       password,
       sentinelMasterPassword,
     };
+  }
+
+  private async setPredefinedDatabase(): Promise<void> {
+    try {
+      const databaseConfig = JSON.parse(SERVER_CONFIG.fixedDatabase);
+      const isExist = await this.exists(databaseConfig?.id);
+      if (!isExist) {
+        const {
+          host, port, name, id,
+        } = databaseConfig;
+        const database: any = this.databasesRepository.create({
+          id,
+          host: host || 'localhost',
+          port,
+          name,
+          username: null,
+          password: null,
+          tls: false,
+          verifyServerCert: false,
+          db: 0,
+        });
+        await this.save(database);
+      }
+      this.logger.log(`Succeed to set predefined database ${databaseConfig?.id}`);
+    } catch (error) {
+      this.logger.error('Failed to set predefined database', error);
+    }
   }
 }

@@ -9,8 +9,12 @@ import {
   EuiFlexItem,
   EuiTitle,
 } from '@elastic/eui'
+import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 
-import { Theme } from 'uiSrc/constants'
+import { BuildType } from 'uiSrc/constants/env'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { Pages, Theme } from 'uiSrc/constants'
 import { ConsentsSettings } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -21,7 +25,15 @@ import lightLogo from 'uiSrc/assets/img/light_logo.svg'
 import styles from '../styles.module.scss'
 
 const ConsentsSettingsPopup = () => {
+  const history = useHistory()
+  const { server } = useSelector(appInfoSelector)
   const { theme } = useContext(ThemeContext)
+
+  const handleSubmitted = () => {
+    if (server && server.buildType === BuildType.RedisStack && server?.fixedDatabaseId) {
+      history.push(Pages.browser(server?.fixedDatabaseId))
+    }
+  }
 
   useEffect(() => {
     sendEventTelemetry({
@@ -49,7 +61,7 @@ const ConsentsSettingsPopup = () => {
           </EuiFlexGroup>
         </EuiModalHeader>
         <EuiModalBody>
-          <ConsentsSettings />
+          <ConsentsSettings onSubmitted={handleSubmitted} />
         </EuiModalBody>
       </EuiModal>
     </EuiOverlayMask>

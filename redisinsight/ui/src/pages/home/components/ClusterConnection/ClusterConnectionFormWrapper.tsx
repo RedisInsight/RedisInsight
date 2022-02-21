@@ -17,7 +17,7 @@ import ClusterConnectionForm from './ClusterConnectionForm/ClusterConnectionForm
 
 export interface Props {
   width: number;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
@@ -70,10 +70,6 @@ const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
     history.push(Pages.redisEnterpriseAutodiscovery)
   }
 
-  const handleClose = () => {
-    onClose()
-  }
-
   const autoFillFormDetails = (content: string): boolean => {
     try {
       const details = new ConnectionString(content)
@@ -124,7 +120,7 @@ const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
         onHostNamePaste={autoFillFormDetails}
         flexGroupClassName={flexGroupClassName}
         flexItemClassName={flexItemClassName}
-        onClose={handleClose}
+        onClose={onClose}
         onSubmit={formSubmit}
         loading={loading}
       />

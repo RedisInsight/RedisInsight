@@ -8,13 +8,12 @@ import {
   resetInstancesRedisCluster,
 } from 'uiSrc/slices/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
-import { PageHeader, ConsentsSettingsPopup } from 'uiSrc/components'
+import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/cloud'
 import { fetchInstancesAction, instancesSelector } from 'uiSrc/slices/instances'
 import { localStorageService } from 'uiSrc/services'
-import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/sentinel'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
@@ -53,7 +52,6 @@ const HomePage = () => {
     deletedSuccessfully: isDeletedInstance,
   } = useSelector(instancesSelector)
 
-  const { isShowConceptsPopup: isShowConsents } = useSelector(userSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   !welcomeIsShow && setTitle('My Redis databases')
@@ -172,16 +170,12 @@ const HomePage = () => {
 
   if (welcomeIsShow) {
     return (
-      <>
-        {isShowConsents && (<ConsentsSettingsPopup />)}
-        <WelcomeComponent onAddInstance={handleAddInstance} />
-      </>
+      <WelcomeComponent onAddInstance={handleAddInstance} />
     )
   }
 
   return (
     <>
-      {isShowConsents && <ConsentsSettingsPopup />}
       <PageHeader title="My Redis databases" />
       <div />
       <EuiResizeObserver onResize={onResize}>

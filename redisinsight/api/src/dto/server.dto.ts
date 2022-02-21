@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class GetServerInfoResponse {
   @ApiProperty({
@@ -35,6 +35,12 @@ export class GetServerInfoResponse {
     example: 'ELECTRON',
   })
   buildType: string;
+
+  @ApiPropertyOptional({
+    description: 'Fixed Redis database id.',
+    type: String,
+  })
+  fixedDatabaseId?: string;
 
   @ApiProperty({
     description: 'List of available encryption strategies',

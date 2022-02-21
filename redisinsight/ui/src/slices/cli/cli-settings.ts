@@ -266,7 +266,7 @@ export function resetCliSettingsAction(
     const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
 
     dispatch(resetCliSettings())
-    dispatch(deleteCliClientAction(contextInstanceId, cliClientUuid, onSuccessAction))
+    cliClientUuid && dispatch(deleteCliClientAction(contextInstanceId, cliClientUuid, onSuccessAction))
   }
 }
 

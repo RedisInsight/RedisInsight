@@ -43,7 +43,7 @@ test
         //Add member to the Set key
         await browserPage.addMemberToSet(keyMember);
         //Remove member from the key
-        await t.click(browserPage.removeButton);
+        await t.click(browserPage.removeSetMemberButton);
         await t.click(browserPage.confirmRemoveSetMemberButton);
         //Check the notification message
         const notofication = await browserPage.getMessageText();

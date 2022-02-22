@@ -9,6 +9,9 @@ aliases:
         security default-keychain -s $KEYCHAIN
         security unlock-keychain -p mysecretpassword $KEYCHAIN
         security import certs/cert.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
+        security import certs/mas-dev.p12 -k $KEYCHAIN -P "$CSC_MAS_DEV_PASSWORD" -T /usr/bin/codesign
+        security import certs/mas.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign
+        security import certs/masi.p12 -k $KEYCHAIN -P "$CSC_MASI_PASSWORD" -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
       environment:
         KEYCHAIN: redisinsight.keychain
@@ -121,7 +124,7 @@ aliases:
     key: v1-ui-deps-{{ checksum "redisinsight/api/yarn.lock" }}
 
 orbs:
-  win: circleci/windows@2.4.0
+  win: circleci/windows@2.4.1
   node: circleci/node@4.4.0
   aws: circleci/aws-cli@2.0.3
 
@@ -342,6 +345,9 @@ jobs:
           command: |
             mkdir -p certs
             echo "$CSC_P12_HEX" | xxd -r -p > certs/cert.p12
+            echo "$CSC_MAS_DEV_P12_BASE64" | base64 -id > certs/mas-dev.p12
+            echo "$CSC_MAS_P12_BASE64" | base64 -id > certs/mas.p12
+            echo "$CSC_MASI_P12_BASE64" | base64 -id > certs/masi.p12
             echo "$WIN_CSC_PFX_HEX" | xxd -r -p > certs/redislabs_win.pfx
       - persist_to_workspace:
           root: .
@@ -478,6 +484,10 @@ jobs:
       - run:
           name: Build macos dmg
           command: |
+            unset CSC_LINK
+            export CSC_IDENTITY_AUTO_DISCOVERY=true
+            export CSC_KEYCHAIN=redisinsight.keychain
+
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/mac
@@ -486,13 +496,15 @@ jobs:
 
             UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
             rm -rf release/mac
-          no_output_timeout: 15m
+          no_output_timeout: 60m
       - persist_to_workspace:
           root: .
           paths:
             - release/RedisInsight*.zip
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
+            - release/mas-dev
+            - release/mas
             - release/*-mac.yml
   windows:
     executor:
@@ -532,6 +544,7 @@ jobs:
           root: .
           paths:
             - release/RedisInsight*.exe
+            - release/RedisInsight*.appx
             - release/RedisInsight*.exe.blockmap
             - release/*.yml
   virustotal:

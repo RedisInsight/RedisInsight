@@ -23,6 +23,8 @@ export default {
     defaultCommandsDir: join(defaultsDir, 'commands'),
     enablementArea: process.env.GUIDES_DEV_PATH || join(homedir, 'enablement-area'),
     defaultEnablementArea: join(defaultsDir, 'enablement-area'),
+    content: process.env.CONTENT_DEV_PATH || join(homedir, 'content'),
+    defaultContent: join(defaultsDir, 'content'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },
@@ -34,6 +36,7 @@ export default {
     customPluginsUri: '/plugins',
     staticUri: '/static',
     enablementAreaUri: '/static/workbench',
+    contentUri: '/static/content',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
     secretStoragePassword: process.env.SECRET_STORAGE_PASSWORD,
@@ -94,6 +97,13 @@ export default {
     zip: process.env.ENABLEMENT_AREA_ZIP || 'data.zip',
     buildInfo: process.env.ENABLEMENT_AREA_CHECKSUM || 'build.json',
     devMode: !!process.env.GUIDES_DEV_PATH,
+  },
+  content: {
+    updateUrl: process.env.CONTENT_UPDATE_URL
+      || 'https://github.com/RedisInsight/Statics/releases/download/latest',
+    zip: process.env.CONTENT_ZIP || 'data.zip',
+    buildInfo: process.env.CONTENT_CHECKSUM || 'build.json',
+    devMode: !!process.env.CONTENT_DEV_PATH,
   },
   workbench: {
     maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,

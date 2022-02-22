@@ -9,7 +9,6 @@ import config from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
 import { CommandsModule } from 'src/modules/commands/commands.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
-import { EnablementAreaModule } from 'src/modules/enablement-area/enablement-area.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -17,6 +16,7 @@ import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterpri
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
 import { CliModule } from './modules/cli/cli.module';
+import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
 import { SettingsController } from './controllers/settings.controller';
 import { ServerInfoController } from './controllers/server-info.controller';
 import { routes } from './app.routes';
@@ -64,7 +64,7 @@ const PATH_CONFIG = config.get('dir_path');
         fallthrough: false,
       },
     }),
-    EnablementAreaModule,
+    StaticsManagementModule,
   ],
   controllers: [SettingsController, ServerInfoController],
   providers: [],

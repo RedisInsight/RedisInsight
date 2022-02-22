@@ -428,8 +428,8 @@ jobs:
           paths:
             - electron
   linux:
-    docker:
-      - image: circleci/node:15.14.0
+    machine:
+      image: ubuntu-2004:202101-01
     resource_class: large
     parameters:
       env:
@@ -437,8 +437,14 @@ jobs:
         type: enum
         default: stage
         enum: ['stage', 'prod', 'dev']
+      redisstack:
+        description: Build RedisStack archives
+        type: boolean
+        default: true
     steps:
       - checkout
+      - node/install:
+          node-version: '14.17'
       - attach_workspace:
           at: .
       - run:
@@ -465,6 +471,20 @@ jobs:
             fi
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
+      - when:
+          condition:
+            equal: [ true, << parameters.redisstack >> ]
+          steps:
+            - run:
+                name: Build sources
+                command: ./.circleci/redisstack/build.sh
+            - run:
+                name: Build modules
+                command: |
+                  PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
+#                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -1076,6 +1096,19 @@ workflows:
             - Approve guides release
   redisstack:
     jobs:
-      - build-rs-mac
-      - build-rs-linux
-      - build-rs-linux-arm
+      - setup-sign-certificates:
+          name: Setup sign certificates (dev)
+      - setup-build:
+          name: Setup build (dev)
+          env: dev
+          requires:
+            - Setup sign certificates (dev)
+      - linux:
+          name: Build app - Linux (dev)
+          env: dev
+          requires: &stageElectronBuildRequires
+            - Setup build (dev)
+      - store-build-artifacts:
+          name: Store build artifacts (dev)
+          requires:
+            - Build app - Linux (dev)

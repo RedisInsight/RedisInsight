@@ -1,6 +1,10 @@
 const SIZES = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 
-export const formatBytes = (input: number, decimals: number = 3): string => {
+export const formatBytes = (
+  input: number,
+  decimals: number = 3,
+  splitResult: boolean = false
+): string | [number, string] => {
   try {
     const bytes = parseFloat(String(input))
     const k = 1024
@@ -11,7 +15,10 @@ export const formatBytes = (input: number, decimals: number = 3): string => {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     const sizeIndex = Math.min(i, SIZES.length - 1)
 
-    return `${parseFloat((bytes / k ** sizeIndex).toFixed(dm))} ${SIZES[sizeIndex]}`
+    const value = parseFloat((bytes / k ** sizeIndex).toFixed(dm))
+    const size = SIZES[sizeIndex]
+
+    return splitResult ? [value, size] : `${value} ${size}`
   } catch (e) {
     return '-'
   }

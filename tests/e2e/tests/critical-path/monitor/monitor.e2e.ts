@@ -1,8 +1,6 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    UserAgreementPage,
-    AddRedisDatabasePage,
     CliPage,
     MonitorPage,
     WorkbenchPage,
@@ -13,10 +11,9 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { getRandomKeyName } from '../../../helpers/keys';
+import { rte, env } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
 const monitorPage = new MonitorPage();
 const workbenchPage = new WorkbenchPage();
@@ -28,21 +25,16 @@ fixture `Monitor`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async t => {
-        await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.deleteDatabaseByName(ossStandaloneConfig.databaseName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .after(async t => {
+    .meta({ rte: rte.standalone })
+    .after(async () => {
         await browserPage.deleteKeyByName(keyName);
-        await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.deleteDatabaseByName(ossStandaloneConfig.databaseName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can work with Monitor', async t => {
         const command = 'set';
@@ -61,30 +53,32 @@ test
         await cliPage.getSuccessCommandResultFromCli(`${command} ${keyName} ${keyValue}`);
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
-test('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
-    //Define commands in different clients
-    const cli_command = 'command';
-    const workbench_command = 'hello';
-    const common_command = 'info';
-    const browser_command = 'dbsize';
-    //Expand Monitor panel
-    await t.click(monitorPage.expandMonitor);
-    //Start monitor (using run button in header)
-    await t.click(monitorPage.runMonitorToggle);
-    //Send command in CLI
-    await cliPage.getSuccessCommandResultFromCli(cli_command);
-    //Check that command from CLI is displayed in monitor
-    await monitorPage.checkCommandInMonitorResults(cli_command);
-    //Refresh the page to send command from Browser client
-    await t.click(browserPage.refreshKeysButton);
-    //Check the command from browser client
-    await monitorPage.checkCommandInMonitorResults(browser_command);
-    //Open Workbench page to create new client
-    await t.click(myRedisDatabasePage.workbenchButton);
-    //Send command in Workbench
-    await workbenchPage.sendCommandInWorkbench(workbench_command);
-    //Check that command from Workbench is displayed in monitor
-    await monitorPage.checkCommandInMonitorResults(workbench_command);
-    //Check the command from common client
-    await monitorPage.checkCommandInMonitorResults(common_command);
-});
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
+        //Define commands in different clients
+        const cli_command = 'command';
+        const workbench_command = 'hello';
+        const common_command = 'info';
+        const browser_command = 'dbsize';
+        //Expand Monitor panel
+        await t.click(monitorPage.expandMonitor);
+        //Start monitor (using run button in header)
+        await t.click(monitorPage.runMonitorToggle);
+        //Send command in CLI
+        await cliPage.getSuccessCommandResultFromCli(cli_command);
+        //Check that command from CLI is displayed in monitor
+        await monitorPage.checkCommandInMonitorResults(cli_command);
+        //Refresh the page to send command from Browser client
+        await t.click(browserPage.refreshKeysButton);
+        //Check the command from browser client
+        await monitorPage.checkCommandInMonitorResults(browser_command);
+        //Open Workbench page to create new client
+        await t.click(myRedisDatabasePage.workbenchButton);
+        //Send command in Workbench
+        await workbenchPage.sendCommandInWorkbench(workbench_command);
+        //Check that command from Workbench is displayed in monitor
+        await monitorPage.checkCommandInMonitorResults(workbench_command);
+        //Check the command from common client
+        await monitorPage.checkCommandInMonitorResults(common_command);
+    });

@@ -1,3 +1,4 @@
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -21,35 +22,39 @@ fixture `Set Key fields verification`
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can search by part member name with pattern * in Set', async t => {
-    keyName = chance.word({ length: 10 });
-    await browserPage.addSetKey(keyName, keyTTL, '1111');
-    //Add member to the Set key
-    await browserPage.addMemberToSet(keyMember);
-    //Search by part member name in the end
-    await browserPage.searchByTheValueInSetKey('1111set*');
-    //Check the search result
-    let result = await browserPage.setMembersList.nth(0).textContent;
-    await t.expect(result).eql(keyMember, 'The set member');
-    //Search by part member name in the beggining
-    await browserPage.searchByTheValueInSetKey('*Member11111');
-    //Check the search result
-    result = await browserPage.setMembersList.nth(0).textContent;
-    await t.expect(result).eql(keyMember, 'The set member');
-    //Search by part member name in the middle
-    await browserPage.searchByTheValueInSetKey('1111*11111');
-    //Check the search result
-    result = await browserPage.setMembersList.nth(0).textContent;
-    await t.expect(result).eql(keyMember, 'The set member');
-});
-test('Verify that user can search by full member name in Set', async t => {
-    keyName = chance.word({ length: 10 });
-    await browserPage.addSetKey(keyName, keyTTL, '1111');
-    //Add member to the Set key
-    await browserPage.addMemberToSet(keyMember);
-    //Search by full member name
-    await browserPage.searchByTheValueInSetKey(keyMember);
-    //Check the search result
-    const result = await browserPage.setMembersList.nth(0).textContent;
-    await t.expect(result).eql(keyMember, 'The set member');
-});
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can search by part member name with pattern * in Set', async t => {
+        keyName = chance.word({ length: 10 });
+        await browserPage.addSetKey(keyName, keyTTL, '1111');
+        //Add member to the Set key
+        await browserPage.addMemberToSet(keyMember);
+        //Search by part member name in the end
+        await browserPage.searchByTheValueInSetKey('1111set*');
+        //Check the search result
+        let result = await browserPage.setMembersList.nth(0).textContent;
+        await t.expect(result).eql(keyMember, 'The set member');
+        //Search by part member name in the beggining
+        await browserPage.searchByTheValueInSetKey('*Member11111');
+        //Check the search result
+        result = await browserPage.setMembersList.nth(0).textContent;
+        await t.expect(result).eql(keyMember, 'The set member');
+        //Search by part member name in the middle
+        await browserPage.searchByTheValueInSetKey('1111*11111');
+        //Check the search result
+        result = await browserPage.setMembersList.nth(0).textContent;
+        await t.expect(result).eql(keyMember, 'The set member');
+    });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can search by full member name in Set', async t => {
+        keyName = chance.word({ length: 10 });
+        await browserPage.addSetKey(keyName, keyTTL, '1111');
+        //Add member to the Set key
+        await browserPage.addMemberToSet(keyMember);
+        //Search by full member name
+        await browserPage.searchByTheValueInSetKey(keyMember);
+        //Check the search result
+        const result = await browserPage.setMembersList.nth(0).textContent;
+        await t.expect(result).eql(keyMember, 'The set member');
+    });

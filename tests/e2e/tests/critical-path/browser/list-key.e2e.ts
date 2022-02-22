@@ -1,4 +1,5 @@
 import { toNumber } from 'lodash';
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
@@ -29,19 +30,22 @@ fixture `List Key verification`
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can search List element by index', async t => {
-    keyName = chance.word({ length: 10 });
-    await browserPage.addListKey(keyName, keyTTL, element);
-    //Add few elements to the List key
-    await browserPage.addElementToList(element2);
-    await browserPage.addElementToList(element3);
-    //Search List element by index
-    await browserPage.searchByTheValueInKeyDetails('1');
-    //Check the search result
-    const result = await browserPage.listElementsList.nth(0).textContent;
-    await t.expect(result).eql(element2, 'The list elemnt with searched index');
-});
 test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can search List element by index', async t => {
+        keyName = chance.word({ length: 10 });
+        await browserPage.addListKey(keyName, keyTTL, element);
+        //Add few elements to the List key
+        await browserPage.addElementToList(element2);
+        await browserPage.addElementToList(element3);
+        //Search List element by index
+        await browserPage.searchByTheValueInKeyDetails('1');
+        //Check the search result
+        const result = await browserPage.listElementsList.nth(0).textContent;
+        await t.expect(result).eql(element2, 'The list elemnt with searched index');
+    });
+test
+    .meta({ rte: rte.standalone })
     .before(async () => {
         // add oss standalone v5
         await acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);

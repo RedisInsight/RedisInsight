@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockRedisMovedError, mockStandaloneDatabaseEntity } from 'src/__mocks__';
+import {
+  mockRedisMovedError,
+  mockStandaloneDatabaseEntity,
+  mockWorkbenchAnalyticsService,
+} from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
@@ -7,11 +11,12 @@ import { CommandExecutionResult } from 'src/modules/workbench/models/command-exe
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
 import {
-  CliCommandNotSupportedError,
+  CommandNotSupportedError,
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
@@ -65,6 +70,10 @@ describe('WorkbenchCommandsExecutor', () => {
           provide: RedisToolService,
           useFactory: mockCliTool,
         },
+        {
+          provide: WorkbenchAnalyticsService,
+          useFactory: mockWorkbenchAnalyticsService,
+        },
       ],
     }).compile();
 
@@ -87,7 +96,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
       });
       it('should return fail status in case of unsupported command error', async () => {
-        cliTool.execCommand.mockRejectedValueOnce(new CliCommandNotSupportedError(MOCK_ERROR_MESSAGE));
+        cliTool.execCommand.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
@@ -175,7 +184,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
       });
       it('should return fail status when command is not supported', async () => {
-        cliTool.execCommandForNode.mockRejectedValueOnce(new CliCommandNotSupportedError(MOCK_ERROR_MESSAGE));
+        cliTool.execCommandForNode.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
 
         const result = await service.sendCommand(mockClientOptions, mockCreateCommandExecutionDto);
 
@@ -231,7 +240,7 @@ describe('WorkbenchCommandsExecutor', () => {
         ]);
       });
       it('should return fail status when command is not supported', async () => {
-        cliTool.execCommandForNodes.mockRejectedValueOnce(new CliCommandNotSupportedError(MOCK_ERROR_MESSAGE));
+        cliTool.execCommandForNodes.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,

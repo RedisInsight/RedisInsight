@@ -17,6 +17,7 @@ import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers
 import { PluginsController } from 'src/modules/workbench/plugins.controller';
 import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
+import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.e
     PluginsService,
     PluginCommandsWhitelistProvider,
     PluginStateProvider,
+    WorkbenchAnalyticsService,
   ],
 })
 export class WorkbenchModule implements NestModule {

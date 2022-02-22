@@ -9,12 +9,14 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
+import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchService {
   constructor(
     private commandsExecutor: WorkbenchCommandsExecutor,
     private commandExecutionProvider: CommandExecutionProvider,
+    private analyticsService: WorkbenchAnalyticsService,
   ) {}
 
   /**
@@ -75,6 +77,7 @@ export class WorkbenchService {
    */
   async deleteCommandExecution(databaseId: string, id: string): Promise<void> {
     await this.commandExecutionProvider.delete(databaseId, id);
+    this.analyticsService.sendCommandDeletedEvent(databaseId);
   }
 
   /**

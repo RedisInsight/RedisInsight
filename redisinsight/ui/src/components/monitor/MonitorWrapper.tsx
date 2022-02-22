@@ -12,7 +12,7 @@ import styles from './Monitor/styles.module.scss'
 
 const MonitorWrapper = () => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { items, isStarted, isRunning } = useSelector(monitorSelector)
+  const { items, isStarted, isRunning, error } = useSelector(monitorSelector)
   const { isShowCli, isShowHelper, } = useSelector(cliSettingsSelector)
 
   const dispatch = useDispatch()
@@ -31,6 +31,7 @@ const MonitorWrapper = () => {
       <Monitor
         scrollViewOnAppear
         items={items}
+        error={error}
         isStarted={isStarted}
         isRunning={isRunning}
         isShowCli={isShowCli}

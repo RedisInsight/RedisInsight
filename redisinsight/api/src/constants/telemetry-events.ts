@@ -47,4 +47,9 @@ export enum TelemetryEvents {
   CommandExecuted = 'COMMAND_EXECUTED',
   ClusterNodeCommandExecuted = 'CLUSTER_COMMAND_EXECUTED',
   CommandErrorReceived = 'COMMAND_ERROR_RECEIVED',
+
+  // Events for workbench tool
+  WorkbenchCommandExecuted = 'WORKBENCH_COMMAND_EXECUTED',
+  WorkbenchCommandErrorReceived = 'WORKBENCH_COMMAND_ERROR_RECEIVED',
+  WorkbenchCommandDeleted = 'WORKBENCH_COMMAND_DELETE_COMMAND',
 }

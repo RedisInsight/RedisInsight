@@ -449,7 +449,7 @@ describe('RedisCloudBusinessService', () => {
       response: {
         statusText: mockUnauthenticatedErrorMessage,
         data: null,
-        headers: [],
+        headers: {},
         config: null,
         status: 401,
       },

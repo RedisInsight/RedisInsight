@@ -112,7 +112,7 @@ export async function acceptLicenseTermsAndAddDatabase(databaseParameters: AddNe
     await addNewStandaloneDatabase(databaseParameters);
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);
-} 
+}
 
 /**
  * Accept License terms and add OSS cluster database
@@ -124,14 +124,14 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
     await addOSSClusterDatabase(databaseParameters);
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);
-} 
+}
 
 //Accept License terms
 export async function acceptLicenseTerms(): Promise<void> {
     await t.maximizeWindow();
     await userAgreementPage.acceptLicenseTerms();
     await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-} 
+}
 
 //Clear database data
 export async function clearDatabaseInCli(): Promise<void> {
@@ -140,7 +140,7 @@ export async function clearDatabaseInCli(): Promise<void> {
     }
     await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
     await t.pressKey('enter');
-} 
+}
 
 /**
  * Delete database
@@ -149,4 +149,4 @@ export async function clearDatabaseInCli(): Promise<void> {
 export async function deleteDatabase(databaseName: string): Promise<void> {
     await t.click(myRedisDatabasePage.myRedisDBButton);
     await myRedisDatabasePage.deleteDatabaseByName(databaseName);
-} 
+}

@@ -491,31 +491,6 @@ jobs:
             - release/RedisInsight*.deb
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
-  build-rs-mac:
-    macos:
-      xcode: 13.2.1
-    steps:
-      - checkout
-      - node/install:
-          node-version: '14.17'
-  build-rs-linux-arm:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
-    steps:
-      - checkout
-      - node/install:
-          node-version: '14.17'
-
-  build-rs-linux:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: large
-    steps:
-      - checkout
-      - node/install:
-          node-version: '14.17'
-
   macosx:
     macos:
       xcode: 13.2.1

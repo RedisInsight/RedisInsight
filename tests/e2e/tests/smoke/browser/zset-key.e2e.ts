@@ -42,7 +42,7 @@ test
         //Add member to the ZSet key
         await browserPage.addMemberToZSet(keyMember, score);
         //Remove member from the key
-        await t.click(browserPage.removeButton);
+        await t.click(browserPage.removeZserMemberButton);
         await t.click(browserPage.confirmRemovZSetMemberButton);
         //Check the notification message
         const notofication = await browserPage.getMessageText();

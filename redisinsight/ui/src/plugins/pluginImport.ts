@@ -33,9 +33,18 @@ export const importPluginScript = () => (config) => {
     parent.dispatchEvent(event)
   }
 
+  const deprecatedMethodWarning = (methodName: string) => {
+    console.warn(
+      // eslint-disable-next-line max-len
+      `Calling ${methodName} via window.PluginSDK has been deprecated and will be removed in v. 2.0.6.`
+      + '\nUse https://www.npmjs.com/package/redisinsight-plugin-sdk instead.'
+    )
+  }
+
   const providePluginSDK = () => {
     globalThis.PluginSDK = {
       setHeaderText: (text) => {
+        deprecatedMethodWarning('setHeaderText')
         sendMessageToMain({
           event: events.SET_HEADER_TEXT,
           iframeId,
@@ -56,6 +65,7 @@ export const importPluginScript = () => (config) => {
         })
       },
       executeRedisCommand: (command = '') => new Promise((resolve, reject) => {
+        deprecatedMethodWarning('executeRedisCommand')
         const { callbacks } = globalThis.state
         callbacks[callbacks.counter] = { resolve, reject }
         sendMessageToMain({
@@ -66,6 +76,7 @@ export const importPluginScript = () => (config) => {
         })
       }),
       getState: () => new Promise((resolve, reject) => {
+        deprecatedMethodWarning('getState')
         const { callbacks } = globalThis.state
         callbacks[callbacks.counter] = { resolve, reject }
         sendMessageToMain({
@@ -75,6 +86,7 @@ export const importPluginScript = () => (config) => {
         })
       }),
       setState: (state: any) => new Promise((resolve, reject) => {
+        deprecatedMethodWarning('setState')
         const { callbacks } = globalThis.state
         callbacks[callbacks.counter] = { resolve, reject }
         sendMessageToMain({

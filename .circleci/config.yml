@@ -420,39 +420,7 @@ jobs:
               exit 0
             fi
 
-            if [ << parameters.env >> == "dev" ]; then
-              VERSION=$CURRENT_VERSION-dev-$CIRCLE_BUILD_NUM
-              echo "Build version: $VERSION"
-              echo $(jq ".version=\"$VERSION\"" redisinsight/package.json) > electron/package.json
-              exit 0
-            fi
-
-            CURRENT_RC_TAG=$(git tag --points-at $CIRCLE_SHA1 --sort=-v:refname -l "$CURRENT_VERSION"-rc* | head -1)
-            echo "Current RC tag: $CURRENT_RC_TAG"
-
-            VERSION="$CURRENT_VERSION"-rc1
-            if [[ "$CURRENT_RC_TAG" == "" ]]
-            then
-              LATEST_RC_TAG=$(git tag --sort=-refname -l "$CURRENT_VERSION"-rc* | head -1)
-              echo "Latest RC tag: $LATEST_RC_TAG"
-
-              if [[ "$LATEST_RC_TAG" == "" ]]
-              then
-                echo "new version: $VERSION"
-                # ghr -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${VERSION}
-              else
-                echo "Trying to get RC number from LATEST_RC_TAG: $LATEST_RC_TAG"
-                RC_NUMBER=$(echo "$LATEST_RC_TAG" | sed -r 's/.*[^0-9]+([0-9]*)$/\1/')
-                NEW_RC_NUMBER=$(("$RC_NUMBER" + 1))
-                echo "Trying increase RC number: $RC_NUMBER -> $NEW_RC_NUMBER"
-                VERSION=$(echo "$LATEST_RC_TAG" | sed -e "s/$RC_NUMBER$/$NEW_RC_NUMBER/g")
-                # ghr -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${VERSION}
-              fi
-            else
-              echo "rc4 CURRENT! $CURRENT_RC_TAG"
-              VERSION=$CURRENT_RC_TAG
-            fi
-
+            VERSION=$CURRENT_VERSION-<< parameters.env >>-$CIRCLE_BUILD_NUM
             echo "Build version: $VERSION"
             echo $(jq ".version=\"$VERSION\"" redisinsight/package.json) > electron/package.json
       - persist_to_workspace:
@@ -468,7 +436,7 @@ jobs:
         description: Build environment (stage || prod)
         type: enum
         default: stage
-        enum: ['stage', 'prod']
+        enum: ['stage', 'prod', 'dev']
     steps:
       - checkout
       - attach_workspace:
@@ -491,7 +459,12 @@ jobs:
               exit 0;
             fi
 
-            UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
+            if [ << parameters.env >> == 'stage' ]; then
+              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+              exit 0;
+            fi
+
+            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
       - persist_to_workspace:
           root: .
           paths:
@@ -506,7 +479,7 @@ jobs:
         description: Build environment (stage || prod)
         type: enum
         default: stage
-        enum: ['stage', 'prod']
+        enum: ['stage', 'prod', 'dev']
     steps:
       - checkout
       - node/install:
@@ -533,7 +506,13 @@ jobs:
               exit 0;
             fi
 
-            UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
+            if [ << parameters.env >> == 'stage' ]; then
+              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+              rm -rf release/mac
+              exit 0;
+            fi
+
+            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             rm -rf release/mac
           no_output_timeout: 15m
       - persist_to_workspace:
@@ -551,7 +530,7 @@ jobs:
         description: Build environment (stage || prod)
         type: enum
         default: stage
-        enum: ['stage', 'prod']
+        enum: ['stage', 'prod', 'dev']
     steps:
       - checkout
       - attach_workspace:
@@ -573,7 +552,13 @@ jobs:
               exit 0;
             fi
 
-            UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
+            if [ << parameters.env >> == 'stage' ]; then
+              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+              rm -rf release/win-unpacked
+              exit 0;
+            fi
+
+            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             rm -rf release/win-unpacked
           shell: bash.exe
           no_output_timeout: 20m
@@ -850,15 +835,18 @@ workflows:
           <<: *devFilter
       - linux:
           name: Build app - Linux (dev)
+          env: dev
           requires: &stageElectronBuildRequires
             - Setup build (dev)
           <<: *devFilter
       - macosx:
           name: Build app - MacOS (dev)
+          env: dev
           requires: *stageElectronBuildRequires
           <<: *devFilter
       - windows:
           name: Build app - Windows (dev)
+          env: dev
           requires: *stageElectronBuildRequires
           <<: *devFilter
       - store-build-artifacts:
@@ -894,25 +882,14 @@ workflows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
           <<: *stageFilter
-      - release-github:
-          name: Release Github (stage)
-          requires:
-            - Build app - Linux (stage)
-            - Build app - MacOS (stage)
-            - Build app - Windows (stage)
-      #      # integration tests over built docker image (TBD)
-      #      - integration-tests-run:
-      #          matrix:
-      #            alias: itest-code
-      #            parameters:
-      #              rte: *iTestsNames
-      #          name: Itest - << matrix.rte >> (code)
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team
           type: approval
           requires:
-            - Release Github (stage)
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
 
       # build and release electron app (prod)
       - setup-sign-certificates:

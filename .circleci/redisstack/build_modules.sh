@@ -23,8 +23,8 @@ yarn --cwd ./redisinsight/api autoclean --force
 rm -rf redisinsight/build.zip
 cd redisinsight && zip -r build.zip \
 api/node_modules \
-aapi/dist \
-uui/dist \
+api/dist \
+ui/dist \
 && cd ..
 
 mkdir -p release/redisstack

@@ -417,11 +417,13 @@ jobs:
             if [ << parameters.env >> == "prod" ]; then
               echo "Build version: $CURRENT_VERSION"
               cp ./redisinsight/package.json ./electron/package.json
+              echo "$VERSION" > electron/version
               exit 0
             fi
 
             VERSION=$CURRENT_VERSION-<< parameters.env >>-$CIRCLE_BUILD_NUM
             echo "Build version: $VERSION"
+            echo "$VERSION" > electron/version
             echo $(jq ".version=\"$VERSION\"" redisinsight/package.json) > electron/package.json
       - persist_to_workspace:
           root: /root/project
@@ -491,6 +493,7 @@ jobs:
             - release/RedisInsight*.deb
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
+            - release/redisstack
   macosx:
     macos:
       xcode: 13.2.1

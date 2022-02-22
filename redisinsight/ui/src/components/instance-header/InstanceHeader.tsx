@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -13,7 +13,14 @@ import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/Database
 import styles from './styles.module.scss'
 
 const InstanceHeader = () => {
-  const { name = '', username, connectionType = ConnectionType.Standalone, db = 0 } = useSelector(connectedInstanceSelector)
+  const {
+    name = '',
+    host = '',
+    port = '',
+    username,
+    connectionType = ConnectionType.Standalone,
+    db = 0
+  } = useSelector(connectedInstanceSelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const history = useHistory()
   const [windowDimensions, setWindowDimensions] = useState(0)
@@ -56,20 +63,31 @@ const InstanceHeader = () => {
             </div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <EuiToolTip
-                position="bottom"
+                position="right"
                 anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
                 content={(
                   <ShortInstanceInfo
-                    name={name}
-                    user={username}
-                    connectionType={connectionType}
-                    version={version}
-                    dbIndex={db}
+                    info={{
+                      name, host, port, user: username, connectionType, version, dbIndex: db
+                    }}
                   />
                 )}
               >
-                <b className={styles.dbName}>{db > 0 ? `${name} [${db}]` : name}</b>
+                <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+                  <EuiFlexItem style={{ overflow: 'hidden' }}>
+                    <b className={styles.dbName}>{db > 0 ? `${name} [${db}]` : name}</b>
+                  </EuiFlexItem>
+                  <EuiFlexItem style={{ paddingLeft: 12 }} grow={false}>
+                    <EuiIcon
+                      className={styles.infoIcon}
+                      type="iInCircle"
+                      size="l"
+                      style={{ cursor: 'pointer' }}
+                      data-testid=""
+                    />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
               </EuiToolTip>
             </div>
           </div>

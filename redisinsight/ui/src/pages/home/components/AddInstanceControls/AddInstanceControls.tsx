@@ -32,10 +32,10 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
   const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
-    if (loading && isEmpty(data)) {
+    if (loading || !data || isEmpty(data)) {
       return
     }
-    if (data.cloud && !isEmpty(data.cloud)) {
+    if (data?.cloud && !isEmpty(data.cloud)) {
       setPromoData(data.cloud)
     }
     const items = Object.entries(data).map(([key, { title, links, description }]) => ({

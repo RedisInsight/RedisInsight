@@ -21,7 +21,7 @@ export default {
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),
-    enablementArea: join(homedir, 'enablement-area'),
+    enablementArea: process.env.GUIDES_DEV_PATH || join(homedir, 'enablement-area'),
     defaultEnablementArea: join(defaultsDir, 'enablement-area'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
@@ -90,9 +90,10 @@ export default {
   },
   enablementArea: {
     updateUrl: process.env.ENABLEMENT_AREA_UPDATE_URL
-      || 'https://s3.amazonaws.com/redisinsight.download/public/guides',
+      || 'https://github.com/RedisInsight/Guides/releases/download/latest',
     zip: process.env.ENABLEMENT_AREA_ZIP || 'data.zip',
     buildInfo: process.env.ENABLEMENT_AREA_CHECKSUM || 'build.json',
+    devMode: !!process.env.GUIDES_DEV_PATH,
   },
   workbench: {
     maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,

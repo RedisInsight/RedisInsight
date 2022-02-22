@@ -486,7 +486,7 @@ jobs:
                   PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
                   PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
                   PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
-#                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -1072,21 +1072,3 @@ workflows:
           name: Build & release
           requires:
             - Approve guides release
-  redisstack:
-    jobs:
-      - setup-sign-certificates:
-          name: Setup sign certificates (dev)
-      - setup-build:
-          name: Setup build (dev)
-          env: dev
-          requires:
-            - Setup sign certificates (dev)
-      - linux:
-          name: Build app - Linux (dev)
-          env: dev
-          requires: &stageElectronBuildRequires
-            - Setup build (dev)
-      - store-build-artifacts:
-          name: Store build artifacts (dev)
-          requires:
-            - Build app - Linux (dev)

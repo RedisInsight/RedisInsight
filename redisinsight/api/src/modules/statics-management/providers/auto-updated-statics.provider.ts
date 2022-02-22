@@ -1,18 +1,23 @@
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import axios from 'axios';
 import * as fs from 'fs-extra';
 import * as AdmZip from 'adm-zip';
 import { URL } from 'url';
 import { join } from 'path';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import config from 'src/utils/config';
 import { get } from 'lodash';
 
-const ENABLEMENT_AREA_CONFIG = config.get('enablementArea');
-const PATH_CONFIG = config.get('dir_path');
+import { IStaticsProviderOptions } from './auto-updated-statics.interface';
 
 @Injectable()
-export class EnablementAreaProvider implements OnModuleInit {
-  private readonly logger = new Logger('EnablementAreaProvider');
+export class AutoUpdatedStaticsProvider implements OnModuleInit {
+  private readonly logger: Logger;
+
+  private readonly options: IStaticsProviderOptions;
+
+  constructor(options: IStaticsProviderOptions) {
+    this.logger = new Logger(options.name);
+    this.options = options;
+  }
 
   /**
    * Updates latest json on startup
@@ -31,30 +36,30 @@ export class EnablementAreaProvider implements OnModuleInit {
   async initDefaults() {
     try {
       if (!await fs.pathExists(
-        join(PATH_CONFIG.enablementArea, ENABLEMENT_AREA_CONFIG.buildInfo),
+        join(this.options.destinationPath, this.options.buildInfo),
       )) {
-        await fs.ensureDir(PATH_CONFIG.enablementArea);
-        await fs.copy(PATH_CONFIG.defaultEnablementArea, PATH_CONFIG.enablementArea, {
+        await fs.ensureDir(this.options.destinationPath);
+        await fs.copy(this.options.defaultSourcePath, this.options.destinationPath, {
           overwrite: true,
         });
       }
     } catch (e) {
-      this.logger.error('Unable to create enablement area files from default', e);
+      this.logger.error('Unable to create static files from default', e);
     }
   }
 
   /**
-   * Update enablement area if needed
+   * Update static files if needed
    */
   async autoUpdate() {
     this.logger.log('Checking for updates...');
-    if (!ENABLEMENT_AREA_CONFIG.devMode && await this.isUpdatesAvailable()) {
+    if (!this.options.devMode && await this.isUpdatesAvailable()) {
       this.logger.log('Updates available! Updating...');
 
       try {
         await this.updateStaticFiles();
       } catch (e) {
-        this.logger.error('Unable to update auto enablement area', e);
+        this.logger.error('Unable to update auto static files', e);
       }
     }
   }
@@ -64,10 +69,10 @@ export class EnablementAreaProvider implements OnModuleInit {
 
     if (latestArchive) {
       const zip = new AdmZip(latestArchive);
-      await fs.remove(PATH_CONFIG.enablementArea);
-      await zip.extractAllTo(PATH_CONFIG.enablementArea, true);
+      await fs.remove(this.options.destinationPath);
+      await zip.extractAllTo(this.options.destinationPath, true);
       await fs.writeFile(
-        join(PATH_CONFIG.enablementArea, ENABLEMENT_AREA_CONFIG.buildInfo),
+        join(this.options.destinationPath, this.options.buildInfo),
         JSON.stringify(await this.getRemoteBuildInfo()),
       );
     }
@@ -79,7 +84,7 @@ export class EnablementAreaProvider implements OnModuleInit {
   async getLatestArchive() {
     try {
       const { data } = await axios.get(
-        new URL(join(ENABLEMENT_AREA_CONFIG.updateUrl, ENABLEMENT_AREA_CONFIG.zip)).toString(),
+        new URL(join(this.options.updateUrl, this.options.zip)).toString(),
         {
           responseType: 'arraybuffer',
         },
@@ -110,7 +115,7 @@ export class EnablementAreaProvider implements OnModuleInit {
   async getRemoteBuildInfo(): Promise<Record<string, any>> {
     try {
       const { data } = await axios.get(
-        new URL(join(ENABLEMENT_AREA_CONFIG.updateUrl, ENABLEMENT_AREA_CONFIG.buildInfo)).toString(),
+        new URL(join(this.options.updateUrl, this.options.buildInfo)).toString(),
       );
 
       return data;
@@ -121,12 +126,12 @@ export class EnablementAreaProvider implements OnModuleInit {
   }
 
   /**
-   * Get checksum for the current version of enablement area
+   * Get checksum for the current version of statics
    */
   async getCurrentBuildInfo(): Promise<Record<string, any>> {
     try {
       return JSON.parse(await fs.readFile(
-        join(PATH_CONFIG.enablementArea, ENABLEMENT_AREA_CONFIG.buildInfo),
+        join(this.options.destinationPath, this.options.buildInfo),
         'utf8',
       ));
     } catch (e) {

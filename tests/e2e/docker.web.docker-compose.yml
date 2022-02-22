@@ -14,6 +14,12 @@ services:
     entrypoint: [
         './upload-custom-plugins.sh',
     ]
+    environment:
+      E2E_CLOUD_DATABASE_HOST: $E2E_CLOUD_DATABASE_HOST
+      E2E_CLOUD_DATABASE_PORT: $E2E_CLOUD_DATABASE_PORT
+      E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
+      E2E_CLOUD_DATABASE_USERNAME: $E2E_CLOUD_DATABASE_USERNAME
+      E2E_CLOUD_DATABASE_NAME: $E2E_CLOUD_DATABASE_NAME
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',

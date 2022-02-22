@@ -20,9 +20,9 @@ import { ContentCreateDBItem } from 'uiSrc/slices/interfaces/content'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onAddInstance: () => void;
-  direction: 'column' | 'row';
-  welcomePage?: boolean;
+  onAddInstance: () => void
+  direction: 'column' | 'row'
+  welcomePage?: boolean
 }
 
 const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: Props) => {
@@ -32,20 +32,21 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
   const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
-    if (!loading && !isEmpty(data)) {
-      if (data.cloud && !isEmpty(data.cloud)) {
-        setPromoData(data.cloud)
-      }
-      const items = Object.entries(data).map(([key, { title, links, description }]) => ({
-        id: key,
-        title,
-        description,
-        event: HELP_LINKS[key as keyof typeof HELP_LINKS]?.event,
-        url: links?.main?.url,
-        primary: key.toLowerCase() === 'cloud',
-      }))
-      setGuides(items)
+    if (loading && isEmpty(data)) {
+      return
     }
+    if (data.cloud && !isEmpty(data.cloud)) {
+      setPromoData(data.cloud)
+    }
+    const items = Object.entries(data).map(([key, { title, links, description }]) => ({
+      id: key,
+      title,
+      description,
+      event: HELP_LINKS[key as keyof typeof HELP_LINKS]?.event,
+      url: links?.main?.url,
+      primary: key.toLowerCase() === 'cloud',
+    }))
+    setGuides(items)
   }, [loading, data])
 
   const handleOnAddDatabase = () => {

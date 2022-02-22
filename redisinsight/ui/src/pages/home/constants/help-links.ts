@@ -1,12 +1,12 @@
 import { TelemetryEvent } from 'uiSrc/telemetry'
 
 export interface IHelpGuide {
-  id: string;
-  title: string;
-  url: string;
-  description?: string;
-  event?: string;
-  primary?: boolean;
+  id: string
+  title: string
+  url: string
+  description?: string
+  event?: string
+  primary?: boolean
 }
 
 export const HELP_LINKS = {

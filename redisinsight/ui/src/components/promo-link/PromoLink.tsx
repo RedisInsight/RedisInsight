@@ -6,13 +6,13 @@ import { Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
-  title: string;
-  url: string;
-  description?: string;
-  onClick?: () => void;
-  testId?: string;
-  icon?: Nullable<string>;
-  styles?: any;
+  title: string
+  url: string
+  description?: string
+  onClick?: () => void
+  testId?: string
+  icon?: Nullable<string>
+  styles?: any
 }
 
 const PromoLink = (props: Props) => {

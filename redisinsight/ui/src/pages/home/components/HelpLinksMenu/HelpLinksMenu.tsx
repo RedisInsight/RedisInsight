@@ -6,8 +6,8 @@ import { IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import styles from './styles.module.scss'
 
 interface IProps {
-  onLinkClick?: (link: string) => void;
-  items: Array<IHelpGuide>
+  onLinkClick?: (link: string) => void
+  items: IHelpGuide[]
 }
 
 const HelpLinksMenu = ({ onLinkClick, items }: IProps) => {

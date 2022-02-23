@@ -25,7 +25,7 @@ interface IProps {
 const ShortInstanceInfo = ({ info }: IProps) => {
   const { name, host, port, connectionType, version, user, dbIndex } = info
   return ((
-    <div>
+    <div data-testid="db-info-tooltip">
       <div className={styles.tooltipItem}>
         <b style={{ fontSize: 13 }}>{dbIndex > 0 ? `${name} [${dbIndex}]` : name }</b>
       </div>

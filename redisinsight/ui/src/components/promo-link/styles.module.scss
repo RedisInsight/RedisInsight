@@ -1,0 +1,57 @@
+.icon {
+  display: block !important;
+  position: absolute;
+  right: 14px;
+  top: calc(50% - 11px);
+  color: var(--euiTextColor);
+  width: 20px;
+  height: 20px;
+}
+
+.link {
+  border: 2px solid var(--euiColorSecondary);
+  padding: 9px 24px;
+  letter-spacing: normal;
+  border-radius: 4px;
+  text-align: left;
+  position: relative;
+  width: 413px;
+  height: 64px;
+  padding-right: 40px;
+  background-size: cover;
+  background-position: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  .title {
+    padding-top: 3px;
+    line-height: 16px;
+    position: relative;
+    font-weight: 500;
+  }
+
+  .description {
+    font-size: 12px !important;
+    position: relative;
+  }
+
+  .icon {
+    position: absolute;
+    right: 14px;
+    top: calc(50% - 11px);
+    color: var(--euiTextColor);
+    width: 20px;
+    height: 20px;
+  }
+}

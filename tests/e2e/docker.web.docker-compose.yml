@@ -14,6 +14,8 @@ services:
     entrypoint: [
         './upload-custom-plugins.sh',
     ]
+    environment:
+      TEST_FILES: $TEST_FILES
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',

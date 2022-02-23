@@ -35,17 +35,17 @@ test
         //Add key with value on the same level
         await browserPage.addJsonKeyOnTheSameLevel('"key1"', '{}');
         //Add invalid JSON structure
-        await browserPage.addJsonSctucture('{"name": "Joe", "age": null, }');
+        await browserPage.addJsonStructure('{"name": "Joe", "age": null, }');
         //Check the added key contains json object with added key
         await t.expect(browserPage.jsonError.textContent).eql('Value should have JSON format.', 'The json object error');
         //Add another invalid JSON structure
         await t.click(browserPage.refreshKeyButton);
-        await browserPage.addJsonSctucture('{"name": "Joe", "age": null]');
+        await browserPage.addJsonStructure('{"name": "Joe", "age": null]');
         //Check the added key contains json object with added key
         await t.expect(browserPage.jsonError.textContent).eql('Value should have JSON format.', 'The json object error');
         //Add another invalid JSON structure
         await t.click(browserPage.refreshKeyButton);
-        await browserPage.addJsonSctucture('{"name": "Joe", "age": null, }');
+        await browserPage.addJsonStructure('{"name": "Joe", "age": null, }');
         //Check the added key contains json object with added key
         await t.expect(browserPage.jsonError.textContent).eql('Value should have JSON format.', 'The json object error');
     });

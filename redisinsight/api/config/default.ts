@@ -153,7 +153,7 @@ export default {
     },
   ],
   redisStack: {
-    id: process.env.REDIS_STACK_DATABASE_ID,
+    id: process.env.BUILD_TYPE === 'REDIS_STACK' ? process.env.REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
     name: process.env.REDIS_STACK_DATABASE_NAME,
     host: process.env.REDIS_STACK_DATABASE_HOST,
     port: process.env.REDIS_STACK_DATABASE_PORT,

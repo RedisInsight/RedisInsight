@@ -9,6 +9,7 @@ export default {
     customPlugins: join(homedir, 'plugins'),
     commands: join(homedir, 'commands'),
     enablementArea: process.env.GUIDES_DEV_PATH || join(homedir, 'enablement-area'),
+    content: process.env.CONTENT_DEV_PATH || join(homedir, 'content'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },

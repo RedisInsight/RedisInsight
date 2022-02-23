@@ -122,6 +122,7 @@ export class BrowserPage {
   treeViewMessage: Selector
   totalKeysNumber: Selector
   keysScanned: Selector
+  breadcrumbsContainer: Selector
 
   constructor() {
       //CSS Selectors
@@ -237,6 +238,7 @@ export class BrowserPage {
       this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
       this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
+      this.breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
       this.treeViewArea = Selector('');
       this.treeViewScannedValue = Selector('');
       this.treeViewKeysNumber = Selector('');

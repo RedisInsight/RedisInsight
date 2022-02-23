@@ -16,24 +16,22 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
   protected logger = new Logger('StackDatabasesProvider');
 
   async onApplicationBootstrap() {
-    if (REDIS_STACK_CONFIG?.id) {
-      await this.setPredefinedDatabase(merge({
-        name: 'Redis Stack',
-        host: 'localhost',
-        port: '6379',
-      }, REDIS_STACK_CONFIG));
-    }
+    await this.setPredefinedDatabase(merge({
+      name: 'Redis Stack',
+      host: 'localhost',
+      port: '6379',
+    }, REDIS_STACK_CONFIG));
   }
 
   /**
-   * @inheritDoc
+   * Check if database for Stack exists.
    */
   async exists(): Promise<boolean> {
     return super.exists(REDIS_STACK_CONFIG.id);
   }
 
   /**
-   * @inheritDoc
+   * Get list of databases from the local db
    */
   async getAll(): Promise<DatabaseInstanceEntity[]> {
     this.logger.log('Getting databases list');
@@ -41,7 +39,8 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
   }
 
   /**
-   * @inheritDoc
+   * Get single database by id from the local db
+   * @throws NotFoundException in case when no database found
    */
   async getOneById(
     id: string,
@@ -51,7 +50,8 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
   }
 
   /**
-   * @inheritDoc
+   * Save entire entity
+   * @param database
    */
   async save(database: DatabaseInstanceEntity): Promise<DatabaseInstanceEntity> {
     return super.save(new DatabaseInstanceEntity({
@@ -61,7 +61,10 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
   }
 
   /**
-   * @inheritDoc
+   * Update database field(s) without encryption logic
+   * @param id
+   * @param data
+   * @throws BadRequestException error when try to update password or sentinelMasterPassword fields
    */
   async patch(id: string, data: QueryDeepPartialEntity<DatabaseInstanceEntity>) {
     return super.patch(REDIS_STACK_CONFIG.id, {
@@ -71,7 +74,10 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
   }
 
   /**
-   * @inheritDoc
+   * Update entire database entity with fields encryption logic
+   *
+   * @param id
+   * @param data
    */
   async update(id: string, data: DatabaseInstanceEntity) {
     return super.update(REDIS_STACK_CONFIG.id, new DatabaseInstanceEntity({
@@ -80,6 +86,11 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
     }));
   }
 
+  /**
+   * Save database entity for Stack
+   *
+   * @param options
+   */
   private async setPredefinedDatabase(
     options: { id: string; name: string; host: string; port: string; },
   ): Promise<void> {
@@ -94,11 +105,8 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
           host,
           port: parseInt(port, 10),
           name,
-          username: null,
-          password: null,
           tls: false,
           verifyServerCert: false,
-          db: 0,
         });
         await this.save(database);
       }

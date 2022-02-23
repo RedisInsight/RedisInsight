@@ -3,37 +3,23 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { merge } from 'lodash';
 import { Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import config from 'src/utils/config';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 
 @Injectable()
-export class DatabasesProvider implements OnApplicationBootstrap {
-  private logger = new Logger('DatabaseProvider');
+export class DatabasesProvider {
+  protected logger = new Logger('DatabaseProvider');
 
   constructor(
     @InjectRepository(DatabaseInstanceEntity)
-    private readonly databasesRepository: Repository<DatabaseInstanceEntity>,
-    private readonly encryptionService: EncryptionService,
+    protected readonly databasesRepository: Repository<DatabaseInstanceEntity>,
+    protected readonly encryptionService: EncryptionService,
   ) {}
-
-  async onApplicationBootstrap() {
-    const REDIS_STACK_CONFIG = config.get('redisStack');
-    if (REDIS_STACK_CONFIG?.id) {
-      await this.setPredefinedDatabase(merge({
-        name: 'Redis Stack',
-        host: 'localhost',
-        port: '6379',
-      }, REDIS_STACK_CONFIG));
-    }
-  }
 
   /**
    * Fast check if database exists.
@@ -206,33 +192,5 @@ export class DatabasesProvider implements OnApplicationBootstrap {
       password,
       sentinelMasterPassword,
     };
-  }
-
-  private async setPredefinedDatabase(
-    options: { id: string; name: string; host: string; port: string; },
-  ): Promise<void> {
-    try {
-      const {
-        id, name, host, port,
-      } = options;
-      const isExist = await this.exists(id);
-      if (!isExist) {
-        const database: any = this.databasesRepository.create({
-          id,
-          host,
-          port: parseInt(port, 10),
-          name,
-          username: null,
-          password: null,
-          tls: false,
-          verifyServerCert: false,
-          db: 0,
-        });
-        await this.save(database);
-      }
-      this.logger.log(`Succeed to set predefined database ${id}`);
-    } catch (error) {
-      this.logger.error('Failed to set predefined database', error);
-    }
   }
 }

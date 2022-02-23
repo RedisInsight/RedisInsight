@@ -417,19 +417,21 @@ jobs:
             if [ << parameters.env >> == "prod" ]; then
               echo "Build version: $CURRENT_VERSION"
               cp ./redisinsight/package.json ./electron/package.json
+              echo "$VERSION" > electron/version
               exit 0
             fi
 
             VERSION=$CURRENT_VERSION-<< parameters.env >>-$CIRCLE_BUILD_NUM
             echo "Build version: $VERSION"
+            echo "$VERSION" > electron/version
             echo $(jq ".version=\"$VERSION\"" redisinsight/package.json) > electron/package.json
       - persist_to_workspace:
           root: /root/project
           paths:
             - electron
   linux:
-    docker:
-      - image: circleci/node:15.14.0
+    machine:
+      image: ubuntu-2004:202101-01
     resource_class: large
     parameters:
       env:
@@ -437,8 +439,14 @@ jobs:
         type: enum
         default: stage
         enum: ['stage', 'prod', 'dev']
+      redisstack:
+        description: Build RedisStack archives
+        type: boolean
+        default: true
     steps:
       - checkout
+      - node/install:
+          node-version: '14.17'
       - attach_workspace:
           at: .
       - run:
@@ -465,12 +473,27 @@ jobs:
             fi
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
+      - when:
+          condition:
+            equal: [ true, << parameters.redisstack >> ]
+          steps:
+            - run:
+                name: Build sources
+                command: ./.circleci/redisstack/build.sh
+            - run:
+                name: Build modules
+                command: |
+                  PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
       - persist_to_workspace:
           root: .
           paths:
             - release/RedisInsight*.deb
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
+            - release/redisstack
   macosx:
     macos:
       xcode: 13.2.1

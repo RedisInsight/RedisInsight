@@ -75,7 +75,7 @@ test
     })
     ('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         //Open Working with Hashes page
-        await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 60000 });
+        await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         //Put Create Hash commands into Editing area
         await t.click(workbenchPage.preselectHashCreate);

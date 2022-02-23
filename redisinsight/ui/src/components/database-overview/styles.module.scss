@@ -4,7 +4,6 @@
       margin-left: 0;
       border-left: 0;
       padding-left: 12px;
-      padding-right: 8px;
     }
 
     .overview {
@@ -32,7 +31,7 @@
 
 .modules {
   padding-left: 0;
-  padding-right: 8px;
+  padding-right: 0;
 }
 
 .noModules {
@@ -42,6 +41,7 @@
 .overviewItem {
   padding: 6px 20px;
   min-width: 116px;
+  color: var(--euiTextSubduedColor);
 
   @media only screen and (max-width: 1024px) {
     padding: 6px 10px;

@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
 import WelcomeComponent, { Props } from './WelcomeComponent'
 
-jest.mock('uiSrc/slices/content/content-create-database', () => ({
+jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
   contentSelector: () => jest.fn().mockReturnValue({ data: {}, loading: false }),
 }))
 

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {
-  ContentCreateDBItem as IContentItem,
-  StateContentCreateDatabase as IState
+  ContentCreateRedis as IContentItem,
+  StateContentCreateRedis as IState
 } from 'uiSrc/slices/interfaces/content'
 import { resourcesService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -16,8 +16,8 @@ export const initialState: IState = {
 }
 
 // A slice for recipes
-const createDatabaseSlice = createSlice({
-  name: 'createDatabase',
+const createRedisButtonsSlice = createSlice({
+  name: 'createRedisButtons',
   initialState,
   reducers: {
     getContent: (state) => {
@@ -39,13 +39,13 @@ export const {
   getContent,
   getContentFailure,
   getContentSuccess
-} = createDatabaseSlice.actions
+} = createRedisButtonsSlice.actions
 
 // A selector
-export const contentSelector = (state: RootState) => state.content.createDatabase
+export const contentSelector = (state: RootState) => state.content.createRedisButtons
 
 // The reducer
-export default createDatabaseSlice.reducer
+export default createRedisButtonsSlice.reducer
 
 // Asynchronous thunk action
 export function fetchContentAction() {

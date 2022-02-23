@@ -12,10 +12,10 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/HelpLinksMenu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { contentSelector } from 'uiSrc/slices/content/content-create-database'
+import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
-import { ContentCreateDBItem } from 'uiSrc/slices/interfaces/content'
+import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 
 import styles from './styles.module.scss'
 
@@ -26,7 +26,7 @@ export interface Props {
 }
 
 const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: Props) => {
-  const [promoData, setPromoData] = useState<ContentCreateDBItem>()
+  const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
   const { loading, data } = useSelector(contentSelector)
   const { theme } = useContext(ThemeContext)
@@ -107,7 +107,7 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
     </div>
   )
 
-  const CreateBtn = ({ content }: { content:ContentCreateDBItem }) => {
+  const CreateBtn = ({ content }: { content: ContentCreateRedis }) => {
     const { title, description, styles, links } = content
     // @ts-ignore
     const linkStyles = styles ? styles[theme] : {}

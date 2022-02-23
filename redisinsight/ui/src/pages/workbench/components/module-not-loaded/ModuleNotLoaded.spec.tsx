@@ -21,8 +21,8 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-jest.mock('uiSrc/slices/content/content-create-database', () => ({
-  ...jest.requireActual('uiSrc/slices/content/content-create-database'),
+jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
+  ...jest.requireActual('uiSrc/slices/content/create-redis-buttons'),
   contentSelector: jest.fn().mockReturnValue({
     loading: false,
     data: {

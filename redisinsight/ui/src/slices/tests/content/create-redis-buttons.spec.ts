@@ -8,7 +8,7 @@ import reducer, {
   getContentFailure,
   contentSelector,
   fetchContentAction
-} from '../../content/content-create-database'
+} from '../../content/create-redis-buttons'
 
 const MOCK_CONTENT = {
   cloud: {
@@ -57,7 +57,7 @@ describe('slices', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        content: { createDatabase: nextState },
+        content: { createRedisButtons: nextState },
       })
 
       expect(contentSelector(rootState)).toEqual(state)
@@ -79,7 +79,7 @@ describe('slices', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        content: { createDatabase: nextState },
+        content: { createRedisButtons: nextState },
       })
 
       expect(contentSelector(rootState)).toEqual(state)
@@ -101,7 +101,7 @@ describe('slices', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        content: { createDatabase: nextState },
+        content: { createRedisButtons: nextState },
       })
 
       expect(contentSelector(rootState)).toEqual(state)

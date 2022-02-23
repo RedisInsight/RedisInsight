@@ -5,8 +5,8 @@ import AddInstanceControls, { Props } from './AddInstanceControls'
 
 const mockedProps = mock<Props>()
 
-jest.mock('uiSrc/slices/content/content-create-database', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/content/content-create-database').initialState
+jest.mock('uiSrc/slices/content/create-redis-buttons', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/content/create-redis-buttons').initialState
   return {
     contentSelector: () => jest.fn().mockReturnValue({
       ...defaultState,

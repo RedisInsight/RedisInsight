@@ -1,12 +1,12 @@
 import { Theme } from 'uiSrc/constants'
 
-export interface StateContentCreateDatabase {
-  data: Record<string, ContentCreateDBItem>
+export interface StateContentCreateRedis {
+  data: Record<string, ContentCreateRedis>
   loading: boolean
   error: string
 }
 
-export interface ContentCreateDBItem {
+export interface ContentCreateRedis {
   title: string
   description?: string
   links: Record<string, {

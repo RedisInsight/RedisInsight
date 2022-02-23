@@ -12,12 +12,12 @@ import {
 import parse from 'html-react-parser'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { contentSelector } from 'uiSrc/slices/content/content-create-database'
+import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { Theme } from 'uiSrc/constants'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
-import { ContentCreateDBItem } from 'uiSrc/slices/interfaces/content'
+import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 
 import styles from './styles.module.scss'
 
@@ -72,7 +72,7 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
       }
     })
   }
-  const CreateCloudBtn = ({ content }: { content:ContentCreateDBItem }) => {
+  const CreateCloudBtn = ({ content }: { content: ContentCreateRedis }) => {
     const { title, description, styles, links } = content
     // @ts-ignore
     const linkStyles = styles ? styles[theme] : {}

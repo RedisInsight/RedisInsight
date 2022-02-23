@@ -21,9 +21,7 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import AddDatabaseContainer from './components/AddDatabases/AddDatabasesContainer'
 import DatabasesList from './components/DatabasesListComponent/DatabasesListWrapper'
 import WelcomeComponent from './components/WelcomeComponent/WelcomeComponent'
-import AddInstanceControls, {
-  Direction,
-} from './components/AddInstanceControls/AddInstanceControls'
+import AddInstanceControls from './components/AddInstanceControls/AddInstanceControls'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -191,7 +189,7 @@ const HomePage = () => {
               <AddInstanceControls
                 key="instance-controls"
                 onAddInstance={handleAddInstance}
-                direction={Direction.row}
+                direction="row"
                 welcomePage={!instances.length}
               />
               {dialogIsOpen ? (

@@ -46,7 +46,7 @@ test
         //Search the added field
         await browserPage.searchByTheValueInKeyDetails(keyFieldValue);
         //Remove field from Hash
-        await t.click(browserPage.removeButton);
+        await t.click(browserPage.removeHashFieldButton);
         await t.click(browserPage.confirmRemoveHashFieldButton);
         //Check the notification message
         const notofication = await browserPage.getMessageText();

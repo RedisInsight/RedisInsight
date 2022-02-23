@@ -85,7 +85,7 @@ const InstanceHeader = () => {
                       type="iInCircle"
                       size="l"
                       style={{ cursor: 'pointer' }}
-                      data-testid=""
+                      data-testid="db-info-icon"
                     />
                   </EuiFlexItem>
                 </EuiFlexGroup>

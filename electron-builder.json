@@ -18,15 +18,15 @@
     "target": [
       {
         "target": "dmg",
-        "arch": ["x64", "arm64"]
+        "arch": ["x64"]
       },
       {
         "target": "mas",
-        "arch": ["x64", "arm64"]
+        "arch": ["x64"]
       },
       {
         "target": "mas-dev",
-        "arch": ["x64", "arm64"]
+        "arch": ["x64"]
       }
     ],
     "type": "distribution",

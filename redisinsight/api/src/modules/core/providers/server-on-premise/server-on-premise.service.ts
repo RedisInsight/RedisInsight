@@ -15,7 +15,7 @@ import { ServerInfoNotFoundException } from 'src/constants/exceptions';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 
 const SERVER_CONFIG = config.get('server');
-const FIXED_DATABASE_CONFIG = config.get('fixedDatabase');
+const REDIS_STACK_CONFIG = config.get('redisStack');
 
 @Injectable()
 export class ServerOnPremiseService
@@ -91,7 +91,7 @@ implements OnApplicationBootstrap, IServerProvider {
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,
         encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
-        fixedDatabaseId: FIXED_DATABASE_CONFIG?.id,
+        fixedDatabaseId: REDIS_STACK_CONFIG?.id,
       };
       this.logger.log('Succeed to get server info.');
       return result;

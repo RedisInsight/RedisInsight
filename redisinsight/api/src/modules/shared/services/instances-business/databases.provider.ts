@@ -6,14 +6,13 @@ import {
   OnApplicationBootstrap,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { merge } from 'lodash';
 import { Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
-
-const FIXED_DATABASE_CONFIG = config.get('fixedDatabase');
 
 @Injectable()
 export class DatabasesProvider implements OnApplicationBootstrap {
@@ -26,8 +25,13 @@ export class DatabasesProvider implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    if (FIXED_DATABASE_CONFIG?.id) {
-      await this.setPredefinedDatabase(FIXED_DATABASE_CONFIG);
+    const REDIS_STACK_CONFIG = config.get('redisStack');
+    if (REDIS_STACK_CONFIG?.id) {
+      await this.setPredefinedDatabase(merge({
+        name: 'Redis Stack',
+        host: 'localhost',
+        port: '6379',
+      }, REDIS_STACK_CONFIG));
     }
   }
 
@@ -205,7 +209,7 @@ export class DatabasesProvider implements OnApplicationBootstrap {
   }
 
   private async setPredefinedDatabase(
-    options: { id: string; name: string; host?: string; port?: string },
+    options: { id: string; name: string; host: string; port: string; },
   ): Promise<void> {
     try {
       const {
@@ -215,8 +219,8 @@ export class DatabasesProvider implements OnApplicationBootstrap {
       if (!isExist) {
         const database: any = this.databasesRepository.create({
           id,
-          host: host || 'localhost',
-          port: port ? parseInt(port, 10) : 6379,
+          host,
+          port: parseInt(port, 10),
           name,
           username: null,
           password: null,

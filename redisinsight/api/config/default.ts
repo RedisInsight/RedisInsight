@@ -152,10 +152,10 @@ export default {
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
   ],
-  fixedDatabase: {
-    id: process.env.FIXED_DATABASE_ID,
-    name: process.env.FIXED_DATABASE_NAME,
-    host: process.env.FIXED_DATABASE_HOST,
-    port: process.env.FIXED_DATABASE_PORT,
+  redisStack: {
+    id: process.env.REDIS_STACK_DATABASE_ID,
+    name: process.env.REDIS_STACK_DATABASE_NAME,
+    host: process.env.REDIS_STACK_DATABASE_HOST,
+    port: process.env.REDIS_STACK_DATABASE_PORT,
   },
 };

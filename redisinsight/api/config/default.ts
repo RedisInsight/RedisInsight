@@ -47,7 +47,6 @@ export default {
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
     appVersion: process.env.APP_VERSION || '2.0.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
-    fixedDatabase: process.env.SERVER_FIXED_DATABASE,
   },
   sockets: {
     cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
@@ -153,4 +152,10 @@ export default {
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
   ],
+  fixedDatabase: {
+    id: process.env.FIXED_DATABASE_ID,
+    name: process.env.FIXED_DATABASE_NAME,
+    host: process.env.FIXED_DATABASE_HOST,
+    port: process.env.FIXED_DATABASE_PORT,
+  },
 };

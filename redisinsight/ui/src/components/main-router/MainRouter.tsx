@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { BuildType } from 'uiSrc/constants/env'
 import RedisStackRoutes from './components/RedisStackRoutes'
-import COMMON_ROUTES from './constants/commontRoutes'
+import COMMON_ROUTES from './constants/commonRoutes'
 import DEFAULT_ROUTES from './constants/defaultRoutes'
 
 const MainRouter = () => {

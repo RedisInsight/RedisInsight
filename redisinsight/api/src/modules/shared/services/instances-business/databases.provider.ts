@@ -13,7 +13,7 @@ import config from 'src/utils/config';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 
-const SERVER_CONFIG = config.get('server');
+const FIXED_DATABASE_CONFIG = config.get('fixedDatabase');
 
 @Injectable()
 export class DatabasesProvider implements OnApplicationBootstrap {
@@ -26,8 +26,8 @@ export class DatabasesProvider implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    if (SERVER_CONFIG.fixedDatabase) {
-      await this.setPredefinedDatabase();
+    if (FIXED_DATABASE_CONFIG?.id) {
+      await this.setPredefinedDatabase(FIXED_DATABASE_CONFIG);
     }
   }
 
@@ -204,18 +204,19 @@ export class DatabasesProvider implements OnApplicationBootstrap {
     };
   }
 
-  private async setPredefinedDatabase(): Promise<void> {
+  private async setPredefinedDatabase(
+    options: { id: string; name: string; host?: string; port?: string },
+  ): Promise<void> {
     try {
-      const databaseConfig = JSON.parse(SERVER_CONFIG.fixedDatabase);
-      const isExist = await this.exists(databaseConfig?.id);
+      const {
+        id, name, host, port,
+      } = options;
+      const isExist = await this.exists(id);
       if (!isExist) {
-        const {
-          host, port, name, id,
-        } = databaseConfig;
         const database: any = this.databasesRepository.create({
           id,
           host: host || 'localhost',
-          port,
+          port: port ? parseInt(port, 10) : 6379,
           name,
           username: null,
           password: null,
@@ -225,7 +226,7 @@ export class DatabasesProvider implements OnApplicationBootstrap {
         });
         await this.save(database);
       }
-      this.logger.log(`Succeed to set predefined database ${databaseConfig?.id}`);
+      this.logger.log(`Succeed to set predefined database ${id}`);
     } catch (error) {
       this.logger.error('Failed to set predefined database', error);
     }

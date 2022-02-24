@@ -47,6 +47,7 @@ export default {
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
     appVersion: process.env.APP_VERSION || '2.0.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
+    excludeRoutes: [],
   },
   sockets: {
     cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
@@ -152,4 +153,10 @@ export default {
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
   ],
+  redisStack: {
+    id: process.env.BUILD_TYPE === 'REDIS_STACK' ? process.env.REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
+    name: process.env.REDIS_STACK_DATABASE_NAME,
+    host: process.env.REDIS_STACK_DATABASE_HOST,
+    port: process.env.REDIS_STACK_DATABASE_PORT,
+  },
 };

@@ -1,4 +1,5 @@
 import { KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
+import { BuildType } from 'uiSrc/constants/env'
 
 export interface Shortcut {
   label?: string
@@ -9,6 +10,7 @@ export interface Shortcut {
 export interface ShortcutGroup {
   name: string
   items: Shortcut[]
+  excludeFor?: BuildType[]
 }
 
 export const separator = KEYBOARD_SHORTCUTS._separator
@@ -16,6 +18,7 @@ export const separator = KEYBOARD_SHORTCUTS._separator
 export const SHORTCUTS: ShortcutGroup[] = [
   {
     name: 'Desktop application',
+    excludeFor: [BuildType.RedisStack, BuildType.DockerOnPremise],
     items: [
       KEYBOARD_SHORTCUTS.desktop.newWindow,
       KEYBOARD_SHORTCUTS.desktop.reloadPage,

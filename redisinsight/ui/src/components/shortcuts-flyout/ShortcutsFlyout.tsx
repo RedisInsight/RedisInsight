@@ -11,12 +11,13 @@ import {
 } from '@elastic/eui'
 import { appInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import { KeyboardShortcut } from 'uiSrc/components'
+import { BuildType } from 'uiSrc/constants/env'
 import { SHORTCUTS, ShortcutGroup, separator } from './schema'
 
 import styles from './styles.module.scss'
 
 const ShortcutsFlyout = () => {
-  const { isShortcutsFlyoutOpen } = useSelector(appInfoSelector)
+  const { isShortcutsFlyoutOpen, server } = useSelector(appInfoSelector)
 
   const dispatch = useDispatch()
 
@@ -62,7 +63,9 @@ const ShortcutsFlyout = () => {
           <h4>Shortcuts</h4>
         </EuiTitle>
         <EuiSpacer size="m" />
-        {SHORTCUTS.map(ShortcutsTable)}
+        {SHORTCUTS
+          .filter(({ excludeFor }) => !excludeFor || !excludeFor.includes(server?.buildType as BuildType))
+          .map(ShortcutsTable)}
       </EuiFlyoutBody>
     </EuiFlyout>
   ) : null

@@ -28,7 +28,7 @@ export interface Props {
   secretKey: string;
   flexGroupClassName: string;
   flexItemClassName: string;
-  onClose: () => void;
+  onClose?: () => void;
   onSubmit: ({ accessKey, secretKey }: ICloudConnectionSubmit) => void;
   loading: boolean;
 }
@@ -169,7 +169,7 @@ const CloudConnectionForm = (props: Props) => {
     if (footerEl) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <CancelButton onClick={onClose} />
+          {onClose && <CancelButton onClick={onClose} />}
           <SubmitButton onClick={formik.submitForm} submitIsDisabled={!submitIsEnable()} />
         </div>,
         footerEl

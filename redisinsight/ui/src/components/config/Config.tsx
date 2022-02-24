@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
@@ -21,12 +21,14 @@ import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
 import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
 import favicon from 'uiSrc/assets/favicon.ico'
+import { ConsentsSettingsPopup } from 'uiSrc/components'
 
 const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
   const serverInfo = useSelector(appServerInfoSelector)
   const { config, spec } = useSelector(userSettingsSelector)
   const { segmentWriteKey } = useSelector(appAnalyticsInfoSelector)
+  const { isShowConceptsPopup: isShowConsents } = useSelector(userSettingsSelector)
 
   const { pathname } = useLocation()
 
@@ -71,7 +73,11 @@ const Config = () => {
     }
   }
 
-  return null
+  return (
+    <>
+      {isShowConsents && <ConsentsSettingsPopup />}
+    </>
+  )
 }
 
 export default Config

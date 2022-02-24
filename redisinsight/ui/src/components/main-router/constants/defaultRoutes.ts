@@ -55,7 +55,7 @@ export default [
     ],
   },
   {
-    path: 'instance/:instanceId',
+    path: '/:instanceId',
     component: InstancePage,
     routes: INSTANCE_ROUTES,
   },

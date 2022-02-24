@@ -18,26 +18,28 @@ const MainRouter = () => {
   const { server } = useSelector(appInfoSelector)
   const { isShowConceptsPopup: isShowConsents } = useSelector(userSettingsSelector)
   return (
-    <Switch>
+    <>
       {isShowConsents && (<ConsentsSettingsPopup />)}
-      {COMMON_ROUTES.map((route, i) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <RouteWithSubRoutes key={i} {...route} />
-      ))}
-      {
-        server?.buildType === BuildType.RedisStack
-          ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
-          : (
-            <>
-              {DEFAULT_ROUTES.map((route, i) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <RouteWithSubRoutes key={i} {...route} />
-              ))}
-              <Redirect to="/" />
-            </>
-          )
-      }
-    </Switch>
+      <Switch>
+        {COMMON_ROUTES.map((route, i) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <RouteWithSubRoutes key={i} {...route} />
+        ))}
+        {
+          server?.buildType === BuildType.RedisStack
+            ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
+            : (
+              <>
+                {DEFAULT_ROUTES.map((route, i) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <RouteWithSubRoutes key={i} {...route} />
+                ))}
+                <Redirect to="/" />
+              </>
+            )
+        }
+      </Switch>
+    </>
   )
 }
 

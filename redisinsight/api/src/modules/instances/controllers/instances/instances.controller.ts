@@ -326,6 +326,7 @@ export class InstancesController {
   @ApiEndpoint({
     statusCode: 201,
     description: 'Add masters from Redis Sentinel',
+    excludeFor: [BuildType.RedisStack],
     responses: [
       {
         status: 201,

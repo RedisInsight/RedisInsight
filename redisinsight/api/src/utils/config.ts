@@ -4,6 +4,7 @@ import development from '../../config/development';
 import staging from '../../config/staging';
 import test from '../../config/test';
 import production from '../../config/production';
+import stack from '../../config/stack';
 
 const config = cloneDeep(defaultConfig);
 
@@ -23,7 +24,18 @@ switch (process.env.NODE_ENV) {
     break;
 }
 
-merge(config, envConfig);
+let buildTypeConfig;
+// eslint-disable-next-line sonarjs/no-small-switch
+switch (process.env.BUILD_TYPE) {
+  case 'REDIS_STACK':
+    buildTypeConfig = stack;
+    break;
+  default:
+    buildTypeConfig = {};
+    break;
+}
+
+merge(config, envConfig, buildTypeConfig);
 
 export const get = (key: string) => config[key];
 

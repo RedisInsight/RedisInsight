@@ -13,22 +13,14 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
-import {
-  AddSentinelMasterResponse,
-  AddSentinelMastersDto,
-} from 'src/modules/instances/dto/redis-sentinel.dto';
+import { AddSentinelMasterResponse, AddSentinelMastersDto } from 'src/modules/instances/dto/redis-sentinel.dto';
+import { BuildType } from 'src/modules/core/models/server-provider.interface';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
 import {
@@ -95,11 +87,17 @@ export class InstancesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Post('')
-  @ApiOperation({ description: 'Add database instance' })
-  @ApiBody({ type: AddDatabaseInstanceDto })
-  @ApiOkResponse({
-    description: 'Created database instance',
-    type: DatabaseInstanceResponse,
+  @ApiEndpoint({
+    description: 'Add database instance',
+    statusCode: 201,
+    excludeFor: [BuildType.RedisStack],
+    responses: [
+      {
+        status: 201,
+        description: 'Created database instance',
+        type: DatabaseInstanceResponse,
+      },
+    ],
   })
   @UsePipes(
     new ValidationPipe({
@@ -117,12 +115,16 @@ export class InstancesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Put(':id')
-  @ApiOperation({ description: 'Update database instance by id' })
-  @ApiBody({ type: AddDatabaseInstanceDto })
-  @ApiParam({ name: 'id', type: String })
-  @ApiOkResponse({
-    description: 'Updated database instance',
-    type: DatabaseInstanceResponse,
+  @ApiEndpoint({
+    description: 'Update database instance by id',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Updated database instance\' response',
+        type: DatabaseInstanceResponse,
+      },
+    ],
   })
   @UsePipes(
     new ValidationPipe({
@@ -159,15 +161,28 @@ export class InstancesController {
   }
 
   @Delete('/:id')
-  @ApiOperation({ description: 'Delete database instance by id' })
-  @ApiParam({ name: 'id', type: String })
+  @ApiEndpoint({
+    statusCode: 200,
+    description: 'Delete database instance by id',
+    excludeFor: [BuildType.RedisStack],
+  })
   async deleteDatabaseInstance(@Param('id') id: string): Promise<void> {
     await this.instancesBusinessService.delete(id);
   }
 
   @Delete('')
-  @ApiOperation({ description: 'Delete many database instances by ids' })
-  @ApiBody({ type: DeleteDatabaseInstanceDto })
+  @ApiEndpoint({
+    statusCode: 200,
+    description: 'Delete many databases by ids',
+    excludeFor: [BuildType.RedisStack],
+    responses: [
+      {
+        status: 200,
+        description: 'Delete many databases by ids response',
+        type: DeleteDatabaseInstanceDto,
+      },
+    ],
+  })
   @UsePipes(new ValidationPipe({ transform: true }))
   async bulkDeleteDatabaseInstance(
     @Body() dto: DeleteDatabaseInstanceDto,
@@ -244,6 +259,7 @@ export class InstancesController {
   @ApiEndpoint({
     description: 'Add databases from Redis Enterprise cluster',
     statusCode: 201,
+    excludeFor: [BuildType.RedisStack],
     responses: [
       {
         status: 201,
@@ -276,6 +292,7 @@ export class InstancesController {
   @ApiEndpoint({
     description: 'Add databases from Redis Enterprise Cloud Pro account.',
     statusCode: 201,
+    excludeFor: [BuildType.RedisStack],
     responses: [
       {
         status: 201,

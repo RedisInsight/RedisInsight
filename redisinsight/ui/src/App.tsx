@@ -4,6 +4,7 @@ import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
 
 import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { BuildType } from 'uiSrc/constants/env'
 import { PagePlaceholder } from 'uiSrc/components'
 import Router from './Router'
 import store from './slices/store'
@@ -17,7 +18,6 @@ import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
 import themeLight from './styles/themes/light_theme/_light_theme.lazy.scss'
 
 import './App.scss'
-import { BuildType } from "uiSrc/constants/env";
 
 themeService.registerTheme(Theme.Dark, [themeDark])
 themeService.registerTheme(Theme.Light, [themeLight])

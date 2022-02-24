@@ -1,11 +1,13 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { Redirect, Switch } from 'react-router-dom'
+
 import extractRouter from 'uiSrc/hoc/extractRouter.hoc'
 import { registerRouter } from 'uiSrc/services/routing'
 import RouteWithSubRoutes from 'uiSrc/utils/routerWithSubRoutes'
-import { useSelector } from 'react-redux'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { BuildType } from 'uiSrc/constants/env'
+
 import RedisStackRoutes from './components/RedisStackRoutes'
 import COMMON_ROUTES from './constants/commonRoutes'
 import DEFAULT_ROUTES from './constants/defaultRoutes'

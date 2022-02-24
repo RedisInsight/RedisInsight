@@ -31,7 +31,7 @@ const ConsentsSettingsPopup = () => {
 
   const handleSubmitted = () => {
     if (server && server.buildType === BuildType.RedisStack && server?.fixedDatabaseId) {
-      history.push(Pages.browser(server?.fixedDatabaseId))
+      history.push(Pages.browser(server.fixedDatabaseId))
     }
   }
 

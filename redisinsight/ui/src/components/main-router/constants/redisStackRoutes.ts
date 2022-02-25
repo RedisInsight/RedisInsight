@@ -4,6 +4,7 @@ import {
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import EditConnection from 'uiSrc/pages/redisStack/components/edit-connection'
+import COMMON_ROUTES from './commonRoutes'
 
 const INSTANCE_ROUTES: IRoute[] = [
   {
@@ -20,12 +21,13 @@ const INSTANCE_ROUTES: IRoute[] = [
   },
 ]
 
-export default [
+const ROUTES: IRoute[] = [
   {
     path: Pages.home,
     exact: true,
     component: EditConnection,
   },
+  ...COMMON_ROUTES,
   {
     path: Pages.settings,
     component: SettingsPage,
@@ -37,3 +39,5 @@ export default [
     routes: INSTANCE_ROUTES,
   },
 ]
+
+export default ROUTES

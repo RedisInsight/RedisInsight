@@ -1,10 +1,10 @@
-import { Pages } from 'uiSrc/constants'
+import { IRoute, Pages } from 'uiSrc/constants'
 import { SettingsPage } from 'uiSrc/pages'
 import SentinelPage from 'uiSrc/pages/sentinel'
 import SentinelDatabasesPage from 'uiSrc/pages/sentinelDatabases'
 import SentinelDatabasesResultPage from 'uiSrc/pages/sentinelDatabasesResult'
 
-export default [
+const ROUTES: IRoute[] = [
   {
     path: Pages.settings,
     component: SettingsPage,
@@ -24,3 +24,5 @@ export default [
     ],
   },
 ]
+
+export default ROUTES

@@ -1,4 +1,4 @@
-import { PageNames, Pages } from 'uiSrc/constants'
+import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import {
   BrowserPage,
   HomePage,
@@ -9,8 +9,9 @@ import {
   RedisCloudSubscriptionsPage,
   RedisClusterDatabasesPage,
 } from 'uiSrc/pages'
-import { IRoute } from 'uiSrc/constants/routes'
 import WorkbenchPage from 'uiSrc/pages/workbench'
+
+import COMMON_ROUTES from './commonRoutes'
 
 const INSTANCE_ROUTES: IRoute[] = [
   {
@@ -25,13 +26,14 @@ const INSTANCE_ROUTES: IRoute[] = [
   },
 ]
 
-export default [
+const ROUTES: IRoute[] = [
   {
     path: Pages.home,
     exact: true,
     component: HomePage,
     isAvailableWithoutAgreements: true,
   },
+  ...COMMON_ROUTES,
   {
     path: Pages.redisEnterpriseAutodiscovery,
     component: RedisClusterDatabasesPage,
@@ -60,3 +62,5 @@ export default [
     routes: INSTANCE_ROUTES,
   },
 ]
+
+export default ROUTES

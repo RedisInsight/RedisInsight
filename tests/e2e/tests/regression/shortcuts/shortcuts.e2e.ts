@@ -34,7 +34,7 @@ test
         // Verify that Shortcuts panel is not displayed
         await t.expect(shortcutsPage.shortcutsPanel.exists).notOk('Shortcuts panel is not displayed');
     })
-test.only
+test
     .meta({ env: env.desktop, rte: rte.none })
     ('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center for desktop', async t => {
         // Click on help center icon

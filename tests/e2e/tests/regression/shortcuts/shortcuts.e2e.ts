@@ -10,7 +10,7 @@ const shortcutsPage = new ShortcutsPage();
 fixture `Shortcuts`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTerms();
     })
 test

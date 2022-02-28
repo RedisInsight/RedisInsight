@@ -53,6 +53,10 @@ const COMMON_SHORTCUTS = {
     triggerHints: {
       description: 'Trigger Command Hints',
       keys: ['Ctrl', 'Shift', 'Space']
+    },
+    quickHistoryAccess: {
+      description: 'Quick-access to command history',
+      keys: ['Up Arrow']
     }
   }
 }
@@ -108,6 +112,10 @@ const MAC_SHORTCUTS = {
     triggerHints: {
       description: 'Trigger Command Hints',
       keys: [(<span className="cmdSymbol">⌘</span>), (<span className="shiftSymbol">⇧</span>), 'Space']
+    },
+    quickHistoryAccess: {
+      description: 'Quick-access to command history',
+      keys: ['Up Arrow']
     }
   }
 }

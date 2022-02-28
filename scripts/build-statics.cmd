@@ -20,3 +20,12 @@ if not exist "%PLUGINS_DIR%\redisearch" mkdir "%PLUGINS_DIR%\redisearch"
 if not exist "%PLUGINS_DIR%\redisearch\dist" mkdir "%PLUGINS_DIR%\redisearch\dist"
 xcopy "%REDISEARCH_DIR%\dist" "%PLUGINS_DIR%\redisearch\dist\" /s /e /y
 copy "%REDISEARCH_DIR%\package.json" "%PLUGINS_DIR%\redisearch\"
+
+:: Build redistimeseries plugin
+set REDISTIMESERSIES_DIR=".\redisinsight\ui\src\packages\redistimeseries-app"
+call yarn --cwd "%REDISTIMESERSIES_DIR%"
+call yarn --cwd "%REDISTIMESERSIES_DIR%" build
+if not exist "%PLUGINS_DIR%\redistimeseries-app" mkdir "%PLUGINS_DIR%\redistimeseries-app"
+if not exist "%PLUGINS_DIR%\redistimeseries-app\dist" mkdir "%PLUGINS_DIR%\redistimeseries-app\dist"
+xcopy "%REDISTIMESERSIES_DIR%\dist" "%PLUGINS_DIR%\redistimeseries-app\dist\" /s /e /y
+copy "%REDISTIMESERSIES_DIR%\package.json" "%PLUGINS_DIR%\redistimeseries-app\"

@@ -1,9 +1,9 @@
 import React from 'react'
-
-import ChartConfigForm from './ChartConfigForm'
-import { TimeSeries, YAxisConfig, ChartConfig, AxisScale, GraphMode } from './interfaces'
-import Chart from './Chart'
 import { EuiSpacer } from '@elastic/eui'
+
+import { TimeSeries, YAxisConfig, ChartConfig, AxisScale, GraphMode } from './interfaces'
+import ChartConfigForm from './ChartConfigForm'
+import Chart from './Chart'
 
 enum LAYOUT_STATE {
   INITIAL_STATE,

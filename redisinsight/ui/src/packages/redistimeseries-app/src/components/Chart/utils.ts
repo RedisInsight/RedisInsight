@@ -23,8 +23,8 @@ interface IImageDimension {
 }
 
 function calculateAspectRatioFit(srcWidth: number, srcHeight: number, maxWidth: number, maxHeight: number) {
-  var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
-  return { width: srcWidth * ratio, height: srcHeight * ratio };
+  var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight)
+  return { width: srcWidth * ratio, height: srcHeight * ratio }
 }
 
 export function addWatermarkToImageDataURI(image: DataURI, watermarkOpts = WATERMARK_OPTIONS): Promise<DataURI> {
@@ -242,11 +242,11 @@ export class ColorPicker<T extends IColor> {
     const goodColor = this.currentColorStore[charCodeSum(label) % this.currentColorStore.length]
 
     // since the color has been taken by `label`, remove it from the current color store.
-    this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor);
+    this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor)
 
     // cache the label and color key value pair.
     this.labelStore[label] = goodColor
-    return goodColor;
+    return goodColor
   }
 }
 
@@ -255,7 +255,7 @@ export class ColorPicker<T extends IColor> {
  */
 export class GoodColorPicker extends ColorPicker<IGoodColor> {
   constructor() {
-    super(COLORS);
+    super(COLORS)
   }
 }
 

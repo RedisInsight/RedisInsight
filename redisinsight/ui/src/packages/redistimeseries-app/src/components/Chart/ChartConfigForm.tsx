@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { CSSProperties } from 'react'
 
 import {
   EuiFieldText,
@@ -9,7 +9,7 @@ import {
   EuiSpacer,
   EuiFormRow,
   EuiTitle,
-} from '@elastic/eui';
+} from '@elastic/eui'
 
 import { ChartConfig, AxisScale, GraphMode } from './interfaces'
 import { X_LABEL_MAX_LENGTH, Y_LABEL_MAX_LENGTH, TITLE_MAX_LENGTH } from './constants'
@@ -64,12 +64,8 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
           <EuiFormFieldset>
             <EnumSelect
               inputLabel="mode"
-              {
-                ...{
-                  onChange: (e: React.ChangeEvent<{ value: unknown }>) => onChange('mode', e.target.value),
-                  value: value.mode
-                }
-              }
+              onChange={(e: React.ChangeEvent<{value: unknown}>) => onChange('mode', e.target.value)}
+              value={value.mode}
               enumType={GraphMode}
               />
           </EuiFormFieldset>
@@ -120,7 +116,7 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
           />
         </section>
         <section style={styles.formSection}>
-          <div style={styles.rightYAxis}>
+          <div style={styles.rightYAxis as CSSProperties}>
             <div><EuiTitle size="xs"><h4>Right Y Axis</h4></EuiTitle></div>
             <EuiSpacer size="m" />
             <EuiFormFieldset>
@@ -177,12 +173,8 @@ const YAxisConfigForm = ({ value, onChange }: any) => (
     <EuiSpacer size="m" />
     <EnumSelect
       inputLabel="Scale"
-      {
-        ...{
-          onChange: (e: any) => onChange({ ...value, scale: e.target.value as string }),
-          value: value.scale
-        }
-      }
+      onChange={e => onChange({ ...value, scale: e.target.value as string })}
+      value={value.scale}
       enumType={AxisScale}
     />
   </React.Fragment>
@@ -198,8 +190,8 @@ const EnumSelect = ({ enumType, inputLabel, ...props }: EnumSelectProps) => (
     <EuiFormFieldset legend={{ children: inputLabel, compressed: true }}>
       <EuiSelect
         hasNoInitialSelection
-        {...props}
         options={Object.values(enumType).map((v: string) => ({value: v, text: v}))}
+        {...props}
       />
     </EuiFormFieldset>
   </EuiForm>

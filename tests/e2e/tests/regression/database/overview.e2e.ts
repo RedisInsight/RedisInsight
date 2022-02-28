@@ -13,12 +13,10 @@ fixture `Overview`
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTerms();
-        console.log(`cloudDatabaseConfig.HOST: ${cloudDatabaseConfig.host}`);
-        console.log(`cloudDatabaseConfig.PORT: ${cloudDatabaseConfig.port}`);
         await addRedisDatabasePage.addRedisDataBase(cloudDatabaseConfig);
         //Click for saving
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-        //Increase timeout to add Cloud DB
+        //Increase timeout to add Cloud DB (due to RI-1993 issue)
         await t.wait(5000);
         //Refresh the page
         await t.eval(() => location.reload(true));

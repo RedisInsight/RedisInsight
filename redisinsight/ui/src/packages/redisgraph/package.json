@@ -1,0 +1,77 @@
+{
+  "author": {
+    "name": "Redis Ltd.",
+    "email": "support@redis.com",
+    "url": "https://redis.com/redis-enterprise/redis-insight"
+  },
+  "bugs": {
+    "url": "https://github.com/"
+  },
+  "description": "Show graph Visualization/table",
+  "source": "./src/main.tsx",
+  "styles": "./dist/styles.css",
+  "main": "./dist/index.js",
+  "name": "graph-plugin",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development parcel serve src/index.html",
+    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\"",
+    "build-lite": "rm dist/*.js && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\"",
+    "build:js": "parcel build src/main.tsx --dist-dir dist",
+    "build:css": "parcel build src/styles/styles.less --dist-dir dist",
+    "minify:js": "terser -- dist/main.js > dist/index.js && rimraf dist/main.js"
+  },
+  "targets": {
+    "main": false,
+    "module": {
+      "includeNodeModules": true
+    }
+  },
+  "visualizations": [
+    {
+      "id": "graph-table",
+      "name": "Table",
+      "activationMethod": "renderGraphTable",
+      "matchCommands": [
+        "GRAPH.RO_QUERY",
+        "GRAPH.QUERY"
+      ],
+      "description": "Example of graph table plugin",
+      "default": false
+    },
+    {
+      "id": "graph-viz",
+      "name": "Graph",
+      "activationMethod": "renderGraph",
+      "matchCommands": [
+        "GRAPH.RO_QUERY",
+        "GRAPH.QUERY"
+      ],
+      "description": "Example of graph plugin",
+      "default": true
+    }
+  ],
+  "devDependencies": {
+    "@parcel/compressor-brotli": "^2.0.0",
+    "@parcel/compressor-gzip": "^2.0.0",
+    "@parcel/transformer-less": "^2.3.2",
+    "@types/d3": "^7.1.0",
+    "@types/react-json-tree": "^0.13.0",
+    "concurrently": "^6.3.0",
+    "cross-env": "^7.0.3",
+    "parcel": "^2.0.0",
+    "rimraf": "^3.0.2",
+    "terser": "^5.9.0"
+  },
+  "dependencies": {
+    "@elastic/eui": "34.6.0",
+    "@emotion/react": "^11.7.1",
+    "classnames": "^2.3.1",
+    "d3": "^7.3.0",
+    "moment": "^2.29.1",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-json-tree": "^0.16.1"
+  }
+}

@@ -1,4 +1,4 @@
-# Example of the plugin for the “Client List” command
+# RedisGraph Plugin for RedisInsight v2
 
 The example has been created using React, TypeScript, and [Elastic UI](https://elastic.github.io/eui/#/). 
 [Parcel](https://parceljs.org/) is used to build the plugin.

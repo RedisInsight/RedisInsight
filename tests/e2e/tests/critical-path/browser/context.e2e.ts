@@ -63,7 +63,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved filter per key type applied when he returns back to Browser page', async t => {
-        //Filter per key type Strting and open Settings
+        //Filter per key type String and open Settings
         await browserPage.selectFilterGroupType(KeyTypesTexts.String);
         await t.click(myRedisDatabasePage.settingsButton);
         //Return back to Browser and check filter applied

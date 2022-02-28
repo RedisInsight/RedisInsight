@@ -10,9 +10,7 @@ import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
-import AddInstanceControls, {
-  Direction,
-} from '../AddInstanceControls/AddInstanceControls'
+import AddInstanceControls from '../AddInstanceControls/AddInstanceControls'
 
 import styles from './styles.module.scss'
 
@@ -71,7 +69,7 @@ const Welcome = ({ onAddInstance }: Props) => {
           <AddInstanceControls
             welcomePage
             onAddInstance={onAddInstance}
-            direction={Direction.column}
+            direction="column"
           />
         </div>
       </div>

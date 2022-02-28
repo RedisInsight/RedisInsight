@@ -53,7 +53,13 @@ const DatabaseOverview = (props: Props) => {
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
-      return metric.tooltip.content
+      return (
+        <>
+          <span>{metric.tooltip.content}</span>
+          &nbsp;
+          <span>{metric.tooltip.title}</span>
+        </>
+      )
     }
     return metric.children
       .filter((item) => item.value !== undefined)
@@ -88,7 +94,7 @@ const DatabaseOverview = (props: Props) => {
     <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
       {metrics.visible?.length > 0 && (
         <EuiFlexItem key="overview">
-          <div className={cx('flex-row', styles.itemContainer, styles.overview)}>
+          <div className={cx('flex-row', styles.itemContainer, styles.overview, { [styles.noModules]: !modules.visible?.length })}>
             <EuiFlexGroup gutterSize="none" responsive={false}>
               {
                 metrics.visible.map((overviewItem) => (
@@ -101,7 +107,6 @@ const DatabaseOverview = (props: Props) => {
                     <EuiToolTip
                       position="bottom"
                       className={styles.tooltip}
-                      title={overviewItem.tooltip.title ?? ''}
                       content={getTooltipContent(overviewItem)}
                     >
                       <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">
@@ -114,7 +119,7 @@ const DatabaseOverview = (props: Props) => {
                             />
                           </EuiFlexItem>
                         )}
-                        <EuiFlexItem grow={false}>
+                        <EuiFlexItem grow={false} className={styles.overviewItemContent}>
                           {overviewItem.content}
                         </EuiFlexItem>
                       </EuiFlexGroup>

@@ -21,67 +21,6 @@
     font-weight: 500 !important;
   }
 }
-
-.arrowRight {
-  display: block !important;
-  position: absolute;
-  right: 14px;
-  top: calc(50% - 11px);
-  color: #ffffff;
-  width: 20px;
-  height: 20px;
-}
-
-.createBtn {
-  border: 2px solid var(--euiColorSecondary);
-  padding: 9px 24px;
-  letter-spacing: normal;
-  border-radius: 4px;
-  text-align: left;
-  position: relative;
-  width: 413px;
-  height: 64px;
-  padding-right: 40px;
-  background-size: cover;
-
-  // For future promo implementations
-  //background: url(../../../../assets/img/NYbg.jpg) center;
-  //&::before {
-  //  content: '';
-  //  position: absolute;
-  //  top: 0px;
-  //  right: 0px;
-  //  bottom: 0px;
-  //  left: 0px;
-  //  background-color: var(--overlayPromoNYColor);
-  //}
-
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  .createTitle {
-    padding-top: 3px;
-    line-height: 16px;
-    position: relative;
-    font-weight: 500 !important;
-  }
-
-  .createText {
-    font-size: 12px !important;
-    position: relative;
-  }
-
-  .arrowRight {
-    position: absolute;
-    right: 14px;
-    top: calc(50% - 11px);
-    color: #ffffff;
-    width: 20px;
-    height: 20px;
-  }
-}
-
 .followText {
   padding-top: 7px;
   font-size: 12px !important;
@@ -91,68 +30,25 @@
 }
 
 .clearMarginFlexItem {
-  margin-bottom: 0px !important;
+  margin-bottom: 0 !important;
 }
 
 .links {
   font-size: 14px;
-  text-align: left;
-  div {
-    display: inline-block;
+  a {
+    color: var(--euiTextColor);
+    text-decoration: underline;
 
-    a {
-      color: var(--euiTextColor);
-      text-decoration: underline;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-
-    &.dockerText {
-      padding-left: 60px;
-    }
-
-    &.homebrewText {
-      text-align: right;
+    &:hover {
+      text-decoration: none;
     }
   }
 }
 
 .containerDl {
   .links {
-    max-width: 330px;
-    display: none;
-
-    .followText {
-      position: absolute;
-      padding-top: 0 !important;
-      margin-top: -11px !important;
-    }
-
-    div {
-      margin: 0 !important;
-      padding-top: 12px;
-      text-decoration: none;
-
-      a {
-        color: var(--euiTextColor);
-        text-decoration: underline;
-        font-weight: 400;
-
-        &:hover {
-          text-decoration: none;
-        }
-      }
-
-      &.dockerText {
-        padding-left: 0;
-      }
-
-      &.homebrewText {
-        text-align: center;
-      }
-    }
+    position: relative;
+    top: -8px;
   }
 }
 
@@ -169,14 +65,26 @@
 }
 
 .containerWelc {
-  .links div {
-    width: 33%;
-  }
-
   .separator {
     width: 150px;
     height: 0;
     border-top-width: 1px;
     margin: 25px auto 20px;
+  }
+  .otherGuides {
+    flex-wrap: wrap;
+    & > div {
+      min-width: 20%;
+      &:nth-of-type(3n+1) {
+        a {
+          text-align: left;
+        }
+      }
+      &:nth-of-type(3n+3) {
+        a {
+          text-align: right;
+        }
+      }
+    }
   }
 }

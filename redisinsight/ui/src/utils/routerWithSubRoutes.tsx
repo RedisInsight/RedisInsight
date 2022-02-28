@@ -2,7 +2,7 @@ import React from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
-import { IRoute } from 'uiSrc/constants/routes'
+import { IRoute } from 'uiSrc/constants'
 
 const PrivateRoute = (route: IRoute) => {
   const { path, exact, routes } = route

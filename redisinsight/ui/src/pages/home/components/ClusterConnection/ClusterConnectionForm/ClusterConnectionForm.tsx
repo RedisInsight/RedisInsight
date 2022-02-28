@@ -40,7 +40,7 @@ export interface Props {
   onHostNamePaste: (text: string) => boolean;
   flexGroupClassName: string;
   flexItemClassName: string;
-  onClose: () => void;
+  onClose?: () => void;
   initialValues: Values;
   onSubmit: (values: ICredentialsRedisCluster) => void;
   loading: boolean;
@@ -268,7 +268,7 @@ const ClusterConnectionForm = (props: Props) => {
     if (footerEl) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <CancelButton onClick={onClose} />
+          {onClose && <CancelButton onClick={onClose} />}
           <SubmitButton
             onClick={formik.submitForm}
             submitIsDisabled={!submitIsEnable()}

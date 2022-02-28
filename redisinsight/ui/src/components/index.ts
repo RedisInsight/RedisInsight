@@ -16,6 +16,7 @@ import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
 import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
 import MonitorConfig from './monitor-config'
 import MonitorWrapper from './monitor'
+import PagePlaceholder from './page-placeholder'
 
 export {
   NavigationMenu,
@@ -37,4 +38,5 @@ export {
   MonitorConfig,
   MonitorWrapper,
   ShortcutsFlyout,
+  PagePlaceholder,
 }

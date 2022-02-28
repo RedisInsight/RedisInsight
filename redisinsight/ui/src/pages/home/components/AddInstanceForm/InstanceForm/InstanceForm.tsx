@@ -104,9 +104,10 @@ export interface Props {
     value: DbConnectionInfo[K]
   ) => void;
   onSubmit: (values: DbConnectionInfo) => void;
-  onClose: () => void;
   updateEditingName: (name: string) => void;
   onHostNamePaste: (content: string) => boolean;
+  onClose?: () => void;
+  onAliasEdited?: (value: string) => void;
   setErrorMsgRef?: (instance: HTMLDivElement | null) => void;
 }
 
@@ -171,6 +172,7 @@ const AddStandaloneForm = (props: Props) => {
     instanceType,
     loading,
     isEditMode,
+    onAliasEdited,
   } = props
 
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
@@ -357,7 +359,15 @@ const AddStandaloneForm = (props: Props) => {
     onSuccess?: () => void,
     onFail?: () => void
   ) => {
-    dispatch(changeInstanceAliasAction(id, value, onSuccess, onFail))
+    dispatch(changeInstanceAliasAction(
+      id,
+      value,
+      () => {
+        onAliasEdited?.(value)
+        onSuccess?.()
+      },
+      onFail
+    ))
   }
 
   const handleChangeDbIndexCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -1039,24 +1049,22 @@ const AddStandaloneForm = (props: Props) => {
     </EuiToolTip>
   )
 
-  const handleClose = () => {
-    onClose()
-  }
-
   const Footer = () => {
     const footerEl = document.getElementById('footerDatabaseForm')
 
     if (footerEl) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <EuiButton
-            onClick={handleClose}
-            color="secondary"
-            className="btn-cancel"
-            data-testid="btn-cancel"
-          >
-            Cancel
-          </EuiButton>
+          {onClose && (
+            <EuiButton
+              onClick={onClose}
+              color="secondary"
+              className="btn-cancel"
+              data-testid="btn-cancel"
+            >
+              Cancel
+            </EuiButton>
+          )}
           <SubmitButton
             onClick={formik.submitForm}
             text={submitButtonText}

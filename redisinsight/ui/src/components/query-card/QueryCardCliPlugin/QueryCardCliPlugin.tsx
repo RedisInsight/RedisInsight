@@ -228,7 +228,7 @@ const QueryCardCliPlugin = (props: Props) => {
       }
       executeCommand()
     }
-  }, [result])
+  }, [result, id])
 
   return (
     <div className={cx('queryResultsContainer', 'pluginStyles', styles.pluginWrapperResult)}>

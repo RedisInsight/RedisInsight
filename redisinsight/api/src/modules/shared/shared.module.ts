@@ -9,6 +9,7 @@ import {
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
 import { OverviewService } from 'src/modules/shared/services/instances-business/overview.service';
 import { RedisToolFactory } from 'src/modules/shared/services/base/redis-tool.factory';
+import { StackDatabasesProvider } from 'src/modules/shared/services/instances-business/stack.databases.provider';
 import { InstancesBusinessService } from './services/instances-business/instances-business.service';
 import { RedisEnterpriseBusinessService } from './services/redis-enterprise-business/redis-enterprise-business.service';
 import { RedisCloudBusinessService } from './services/redis-cloud-business/redis-cloud-business.service';
@@ -28,7 +29,10 @@ const SERVER_CONFIG = config.get('server');
     TypeOrmModule.forFeature([DatabaseInstanceEntity]),
   ],
   providers: [
-    DatabasesProvider,
+    {
+      provide: DatabasesProvider,
+      useClass: SERVER_CONFIG.buildType === 'REDIS_STACK' ? StackDatabasesProvider : DatabasesProvider,
+    },
     InstancesBusinessService,
     InstancesAnalyticsService,
     RedisEnterpriseBusinessService,

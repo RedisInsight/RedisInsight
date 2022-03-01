@@ -15,7 +15,7 @@
   border-radius: 4px;
   text-align: left;
   position: relative;
-  width: 413px;
+  width: 420px;
   height: 64px;
   padding-right: 40px;
   background-size: cover;
@@ -39,11 +39,17 @@
     line-height: 16px;
     position: relative;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .description {
     font-size: 12px !important;
     position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .icon {

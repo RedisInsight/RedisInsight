@@ -11,12 +11,12 @@ import Query from './Query'
 import styles from './Query/styles.module.scss'
 
 export interface Props {
-  query: string;
-  loading: boolean;
-  setQuery: (script: string) => void;
-  setQueryEl: Function;
-  onKeyDown?: (e: React.KeyboardEvent, script: string) => void;
-  onSubmit: (value?: string) => void;
+  query: string
+  loading: boolean
+  setQuery: (script: string) => void
+  setQueryEl: Function
+  onKeyDown?: (e: React.KeyboardEvent, script: string) => void
+  onSubmit: (value?: string) => void
 }
 const QueryWrapper = (props: Props) => {
   const { query = '', loading, setQuery, setQueryEl, onKeyDown, onSubmit } = props

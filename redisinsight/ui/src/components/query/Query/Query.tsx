@@ -27,30 +27,33 @@ import { KeyboardShortcut } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
+import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 
+import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import styles from './styles.module.scss'
 
 export interface Props {
-  query: string;
-  loading: boolean;
-  setQueryEl: Function;
-  setQuery: (script: string) => void;
-  onSubmit: (query?: string) => void;
-  onKeyDown?: (e: React.KeyboardEvent, script: string) => void;
+  query: string
+  loading: boolean
+  setQueryEl: Function
+  setQuery: (script: string) => void
+  onSubmit: (query?: string) => void
+  onKeyDown?: (e: React.KeyboardEvent, script: string) => void
 }
 
 let decorations: string[] = []
+let execHistoryPos: number = 0
+let execHistory: CommandExecutionUI[] = []
 
 const Query = (props: Props) => {
   const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl } = props
   let contribution: Nullable<ISnippetController> = null
 
-  const {
-    commandsArray: REDIS_COMMANDS_ARRAY,
-    spec: REDIS_COMMANDS_SPEC
-  } = useSelector(appRedisCommandsSelector)
+  const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
+  const { items: execHistoryItems } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
 
@@ -62,6 +65,12 @@ const Query = (props: Props) => {
       disposeSignatureHelpProvider()
     },
   [])
+
+  useEffect(() => {
+    // HACK: The Monaco editor memoize the state and ignores updates to it
+    execHistory = execHistoryItems
+    execHistoryPos = 0
+  }, [execHistoryItems])
 
   useEffect(() => {
     if (!monacoObjects.current) return
@@ -93,6 +102,7 @@ const Query = (props: Props) => {
   }
 
   const handleSubmit = (value?: string) => {
+    execHistoryPos = 0
     onSubmit(value)
   }
 
@@ -112,6 +122,20 @@ const Query = (props: Props) => {
     }
   }
 
+  const onQuickHistoryAccess = () => {
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    const position = editor.getPosition()
+    if (position?.lineNumber !== 1) return
+
+    if (execHistory[execHistoryPos]) {
+      const command = execHistory[execHistoryPos].command || ''
+      editor.setValue(command)
+      execHistoryPos++
+    }
+  }
+
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
     // trigger parameter hints
     if (
@@ -121,6 +145,12 @@ const Query = (props: Props) => {
       || (e.keyCode === monaco.KeyCode.Space && !e.ctrlKey && !e.shiftKey)
     ) {
       onTriggerParameterHints()
+    }
+
+    if (
+      e.keyCode === monaco.KeyCode.UpArrow
+    ) {
+      onQuickHistoryAccess()
     }
 
     if (e.keyCode === monaco.KeyCode.Enter || e.keyCode === monaco.KeyCode.Space) {

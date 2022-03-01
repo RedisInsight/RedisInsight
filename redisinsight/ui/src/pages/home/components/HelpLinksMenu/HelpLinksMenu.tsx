@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { EuiContextMenuItem, EuiContextMenuPanel, EuiIcon, EuiInputPopover, EuiLink, EuiText, } from '@elastic/eui'
-import { HELP_LINKS, HelpLink } from 'uiSrc/pages/home/constants/help-links'
+
+import { IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 
 import styles from './styles.module.scss'
 
 interface IProps {
-  onLinkClick: (link: HelpLink) => void;
+  onLinkClick?: (link: string) => void
+  items: IHelpGuide[]
 }
 
-const HelpLinksMenu = ({ onLinkClick }: IProps) => {
+const HelpLinksMenu = ({ onLinkClick, items }: IProps) => {
   const [isPopoverOpen, setPopover] = useState(false)
 
   const onButtonClick = () => {
@@ -19,23 +21,23 @@ const HelpLinksMenu = ({ onLinkClick }: IProps) => {
     setPopover(false)
   }
 
-  const handleLinkClick = (link: keyof typeof HelpLink) => {
+  const handleLinkClick = (link: string) => {
     closePopover()
-    onLinkClick(HelpLink[link])
+    if (onLinkClick) {
+      onLinkClick(link)
+    }
   }
 
-  const items = (Object.keys(HelpLink) as Array<keyof typeof HelpLink>).map((item) => (
-    <EuiContextMenuItem className={styles.item} key={item}>
+  const menuItems = items.map(({ id, url, title, primary }) => (
+    <EuiContextMenuItem className={styles.item} key={id}>
       <EuiLink
         external={false}
-        href={HELP_LINKS[HelpLink[item]].link}
+        href={url}
         target="_blank"
-        onClick={() => handleLinkClick(item)}
+        onClick={() => handleLinkClick(id)}
       >
-        <EuiText
-          style={item === 'CreateRedisCloud' ? { fontWeight: '500' } : {}}
-        >
-          {HELP_LINKS[HelpLink[item]].label}
+        <EuiText style={{ fontWeight: primary ? 500 : 400 }}>
+          {title}
         </EuiText>
       </EuiLink>
     </EuiContextMenuItem>
@@ -63,7 +65,7 @@ const HelpLinksMenu = ({ onLinkClick }: IProps) => {
       panelPaddingSize="none"
       panelClassName={styles.popover}
     >
-      <EuiContextMenuPanel size="s" items={items} />
+      <EuiContextMenuPanel size="s" items={menuItems} />
     </EuiInputPopover>
   )
 }

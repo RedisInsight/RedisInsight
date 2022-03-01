@@ -10,7 +10,7 @@ import { StateAppInfo } from '../interfaces'
 const segmentWriteKey = process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY'
 
 export const initialState: StateAppInfo = {
-  loading: false,
+  loading: true,
   error: '',
   server: null,
   analytics: {

@@ -30,8 +30,10 @@ export interface Props {
   isResizablePanel?: boolean;
   editMode: boolean;
   editedInstance: Nullable<Instance>;
-  onClose: () => void;
+  onClose?: () => void;
   onDbAdded: () => void;
+  onDbEdited?: () => void;
+  onAliasEdited?: (value: string) => void;
   isFullWidth?: boolean;
 }
 
@@ -193,7 +195,7 @@ const AddDatabasesContainer = React.memo((props: Props) => {
 
   return (
     <div className={cx('container relative', { addDbWrapper: !editMode })}>
-      {!isFullWidth && (
+      {!isFullWidth && onClose && (
         <EuiToolTip
           content="Close"
           position="left"

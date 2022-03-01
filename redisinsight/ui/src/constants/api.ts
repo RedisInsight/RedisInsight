@@ -48,6 +48,7 @@ enum ApiEndpoints {
   ENABLEMENT_AREA = 'static/workbench/enablement-area.json',
   PLUGINS = 'plugins',
   STATE = 'state',
+  CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

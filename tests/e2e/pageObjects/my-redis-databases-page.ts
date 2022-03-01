@@ -59,6 +59,10 @@ export class MyRedisDatabasePage {
       this.aliasInput = Selector('[data-testid=alias-input]');
   }
 
+  /**
+   * Click on the database by name
+   * @param dbName The name of the database to be opened
+   */
   async clickOnDBByName(dbName: string): Promise<void>{
       if (await this.toastCloseButton.exists) {
           await t.click(this.toastCloseButton);
@@ -101,6 +105,10 @@ export class MyRedisDatabasePage {
       }
   }
 
+  /**
+   * Click on the edit database button by name
+   * @param databaseName The name of the database to be edited
+   */
   async clickOnEditDBByName(databaseName: string): Promise<void>{
       const dbNames = this.tableRowContent;
       const count = await dbNames.count;

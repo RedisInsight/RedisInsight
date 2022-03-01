@@ -46,7 +46,9 @@ test
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    ('Verify that user can connect to DB and see breadcrumbs at the top of the application in Browser page', async t => {
-        //Verify that user can see breadcrumbs
+    ('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
+        //Verify that user can see breadcrumbs in Browser and Workbench views
         await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Browser page', { timeout: 20000 });
+        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Workbench page', { timeout: 20000 });
     });

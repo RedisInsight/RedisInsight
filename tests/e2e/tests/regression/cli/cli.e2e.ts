@@ -87,7 +87,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
-        chance.word({ length: 20 });
+        keyName = chance.word({ length: 20 });
         const command = `SET ${keyName} a`;
         const repeats = 10;
         //Open CLI and run command with repeats
@@ -105,6 +105,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can run command json.get and see JSON object with escaped quotes (\" instead of ")', async t => {
+        keyName = chance.word({ length: 20 });
         //Add Json key with json object
         await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
         const command = `JSON.GET ${keyName}`;
@@ -113,7 +114,8 @@ test
         await t.typeText(cliPage.cliCommandInput, command);
         await t.pressKey('enter');
         //Verify result
-        await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(`"${jsonValue.replace(/"/g, '\\"')}"`, 'The user can see JSON object with escaped quotes');
+        const commandResult = jsonValue.replace(/"/g, '\\"');
+        await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(`"${commandResult}"`, 'The user can see JSON object with escaped quotes');
 });
 test
     .meta({ rte: rte.standalone })

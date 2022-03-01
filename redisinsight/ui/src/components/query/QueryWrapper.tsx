@@ -78,4 +78,4 @@ const QueryWrapper = (props: Props) => {
   )
 }
 
-export default QueryWrapper
+export default React.memo(QueryWrapper)

@@ -11,10 +11,14 @@ import {
   MonacoLanguage,
   redisLanguageConfig,
   KEYBOARD_SHORTCUTS,
+  DSLNaming,
 } from 'uiSrc/constants'
 import {
   actionTriggerParameterHints,
+  createSyntaxWidget,
   decoration,
+  findArgIndexByCursor,
+  findCompleteQuery,
   getMonacoAction,
   getRedisCompletionProvider,
   getRedisMonarchTokensProvider,
@@ -39,11 +43,16 @@ export interface Props {
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void;
 }
 
+const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
 let decorations: string[] = []
 
 const Query = (props: Props) => {
   const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl } = props
   let contribution: Nullable<ISnippetController> = null
+  const isWidgetOpen = useRef(false)
+  const isWidgetEscaped = useRef(false)
+  const selectedArg = useRef('')
+  let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const {
     commandsArray: REDIS_COMMANDS_ARRAY,
@@ -107,10 +116,21 @@ const Query = (props: Props) => {
     // trigger parameter hints only ones between command and arguments in the same line
     const isTriggerHints = lineContent.split(' ').length < (2 + matchedCommand.split(' ').length)
 
-    if (isTriggerHints) {
+    if (isTriggerHints && !isWidgetOpen.current) {
       actionTriggerParameterHints(editor)
     }
   }
+
+  const onTriggerContentWidget = (position: Nullable<monacoEditor.Position>, language: string = ''): monaco.editor.IContentWidget => ({
+    getId: () => 'syntax.content.widget',
+    getDomNode: () => createSyntaxWidget(`Use ${language} Syntax`, 'Shift+Space'),
+    getPosition: () => ({
+      position,
+      preference: [
+        monaco.editor.ContentWidgetPositionPreference.BELOW
+      ]
+    })
+  })
 
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
     // trigger parameter hints
@@ -128,6 +148,46 @@ const Query = (props: Props) => {
     }
   }
 
+  const onKeyChangeCursorMonaco = (e: monaco.editor.ICursorPositionChangedEvent) => {
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+    const model = editor.getModel()
+
+    isWidgetOpen.current && hideSyntaxWidget(editor)
+
+    if (!model) {
+      return
+    }
+
+    const command = findCompleteQuery(model, e.position, REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY)
+    if (!command) {
+      isWidgetEscaped.current = false
+      return
+    }
+
+    const queryArgIndex = command.info?.arguments?.findIndex((arg) => arg.dsl) || -1
+    const cursorPosition = command.commandCursorPosition || 0
+    if (!command.args?.length || queryArgIndex < 0) {
+      isWidgetEscaped.current = false
+      return
+    }
+
+    const argIndex = findArgIndexByCursor(command.args, command.fullQuery, cursorPosition)
+    if (argIndex === null) {
+      isWidgetEscaped.current = false
+      return
+    }
+    const queryArg = command.args[argIndex]
+    if (queryArgIndex === argIndex && /^['"].*['"]$/.test(queryArg)) {
+      if (isWidgetEscaped.current) return
+
+      const arg = command.info?.arguments?.[argIndex]?.dsl || ''
+      const lang = arg in DSLNaming ? DSLNaming[arg] : null
+      lang && showSyntaxWidget(editor, e.position, lang)
+      selectedArg.current = queryArg
+    }
+  }
+
   const onExitSnippetMode = () => {
     if (!monacoObjects.current) return
     const { editor } = monacoObjects?.current
@@ -137,6 +197,22 @@ const Query = (props: Props) => {
       editor.setSelection(new monaco.Selection(lineNumber, column, lineNumber, column))
       contribution?.cancel?.()
     }
+  }
+
+  const hideSyntaxWidget = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+    editor.removeContentWidget(onTriggerContentWidget(null))
+    syntaxWidgetContext?.set(false)
+    isWidgetOpen.current = false
+  }
+
+  const showSyntaxWidget = (
+    editor: monacoEditor.editor.IStandaloneCodeEditor,
+    position: monacoEditor.Position,
+    language: string
+  ) => {
+    editor.addContentWidget(onTriggerContentWidget(position, language))
+    isWidgetOpen.current = true
+    syntaxWidgetContext?.set(true)
   }
 
   const editorDidMount = (
@@ -149,15 +225,26 @@ const Query = (props: Props) => {
     // https://github.com/microsoft/monaco-editor/issues/2756
     contribution = editor.getContribution<ISnippetController>('snippetController2')
 
+    syntaxWidgetContext = editor.createContextKey(SYNTAX_CONTEXT_ID, false)
     editor.focus()
     setQueryEl(editor)
 
     editor.onKeyDown(onKeyDownMonaco)
+    editor.onDidChangeCursorPosition(onKeyChangeCursorMonaco)
 
     setupMonacoRedisLang(monaco)
     editor.addAction(
       getMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco)
     )
+
+    editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {
+      alert(selectedArg.current.replace(/(^["']|["']$)/g, ''))
+    }, SYNTAX_CONTEXT_ID)
+
+    editor.addCommand(monaco.KeyCode.Escape, () => {
+      hideSyntaxWidget(editor)
+      isWidgetEscaped.current = true
+    }, SYNTAX_CONTEXT_ID)
   }
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
@@ -173,7 +260,7 @@ const Query = (props: Props) => {
 
     disposeSignatureHelpProvider = monaco.languages.registerSignatureHelpProvider(
       MonacoLanguage.Redis,
-      getRedisSignatureHelpProvider(REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY)
+      getRedisSignatureHelpProvider(REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY, isWidgetOpen)
     ).dispose
 
     monaco.languages.setLanguageConfiguration(MonacoLanguage.Redis, redisLanguageConfig)
@@ -239,4 +326,4 @@ const Query = (props: Props) => {
   )
 }
 
-export default Query
+export default React.memo(Query)

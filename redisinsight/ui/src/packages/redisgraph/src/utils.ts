@@ -77,29 +77,6 @@ export const unitaryVector = (source, target, newLength) => {
 
 export const darkenColor = (color) => d3.rgb(color).darker(1);
 
-export const invertColor = (hexColor) => {
-  let color = hexColor;
-
-  if (hexColor.indexOf('#') === 0) {
-    color = hexColor.slice(1);
-  }
-
-  if (color.length === 3) {
-    color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
-  }
-
-  if (color.length !== 6) {
-    throw new Error('Invalid HEX color');
-  }
-
-  const r = parseInt(color.slice(0, 2), 16);
-  const g = parseInt(color.slice(2, 4), 16);
-  const b = parseInt(color.slice(4, 6), 16);
-
-  return (r * 0.299 + g * 0.587 + b * 0.114) > 186
-    ? '#000000'
-    : '#FFFFFF';
-};
 
 function charCodeSum(str: string) {
   let sum = 0
@@ -109,61 +86,87 @@ function charCodeSum(str: string) {
   return sum
 }
 
+export function invertColor(hex: string) {
+    if (hex.indexOf('#') === 0) {
+        hex = hex.slice(1);
+    }
+    // convert 3-digit hex to 6-digits.
+    if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    if (hex.length !== 6) {
+        throw new Error('Invalid HEX color.');
+    }
+    // invert color components
+    var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
+        g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
+        b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
+    // pad each with zeros and return
+    return '#' + padZero(r) + padZero(g) + padZero(b);
+}
+
+function padZero(str) {
+    let len = str.length || 2;
+    var zeros = new Array(len).join('0');
+    return (zeros + str).slice(-len);
+}
 
 export const NODE_COLORS = [
-  { color: '#C5AFE7', borderColor: '#C5AFE7', textColor: 'black' },
-  { color: '#CCDCF6', borderColor: '#CCDCF6', textColor: 'black' },
-  { color: '#A4D3C2', borderColor: '#A4D3C2', textColor: 'black' },
-  { color: '#B7C4D9', borderColor: '#B7C4D9', textColor: 'black' },
-  { color: '#D3B9A7', borderColor: '#D3B9A7', textColor: 'black' },
-  { color: '#D79FC3', borderColor: '#D79FC3', textColor: 'black' },
-  { color: '#C6CDA9', borderColor: '#C6CDA9', textColor: 'black' },
-  { color: '#ABCBD5', borderColor: '#ABCBD5', textColor: 'black' },
-  { color: '#E2A9A9', borderColor: '#E2A9A9', textColor: 'black' },
-  { color: '#C6C6C6', borderColor: '#C6C6C6', textColor: 'black' },
+    { color: '#C7B0EA', borderColor: '#C7B0EA', textColor: '#000000' },
+    { color: '#CDDDF8', borderColor: '#CDDDF8', textColor: '#000000' },
+    { color: '#A5D4C3', borderColor: '#A5D4C3', textColor: '#000000' },
+    { color: '#B8C5DB', borderColor: '#B8C5DB', textColor: '#000000' },
+    { color: '#D4BAA7', borderColor: '#D4BAA7', textColor: '#000000' },
+    { color: '#D9A0C6', borderColor: '#D9A0C6', textColor: '#000000' },
+    { color: '#C7CEA8', borderColor: '#C7CEA8', textColor: '#000000' },
+    { color: '#ACCCD7', borderColor: '#ACCCD7', textColor: '#000000' },
+    { color: '#E3AAAA', borderColor: '#E3AAAA', textColor: '#000000' },
+    { color: '#C7C7C7', borderColor: '#C7C7C7', textColor: '#000000' },
 ]
 
 export const EDGE_COLORS = [
-  { color: '#6E6E6E', borderColor: '#6E6E6E', textColor: '#6E6E6E' },
-  { color: '#A85050', borderColor: '#A85050', textColor: '#A85050' },
-  { color: '#1D6F8A', borderColor: '#1D6F8A', textColor: '#1D6F8A' },
-  { color: '#6F7B23', borderColor: '#6F7B23', textColor: '#6F7B23' },
-  { color: '#9E1669', borderColor: '#9E1669', textColor: '#9E1669' },
-  { color: '#9A5D34', borderColor: '#9A5D34', textColor: '#9A5D34' },
-  { color: '#363F4F', borderColor: '#363F4F', textColor: '#363F4F' },
-  { color: '#0F8459', borderColor: '#0F8459', textColor: '#0F8459' },
-  { color: '#384EF9', borderColor: '#384EF9', textColor: '#384EF9' },
-  { color: '#6924BD', borderColor: '#6924BD', textColor: '#6924BD' },
+    { color: '#6E6E6E', borderColor: '#6E6E6E', textColor: '#000000' },
+    { color: '#A85050', borderColor: '#A85050', textColor: '#000000' },
+    { color: '#1D6F8A', borderColor: '#1D6F8A', textColor: '#000000' },
+    { color: '#6F7B23', borderColor: '#6F7B23', textColor: '#000000' },
+    { color: '#9E1669', borderColor: '#9E1669', textColor: '#000000' },
+    { color: '#9A5D34', borderColor: '#9A5D34', textColor: '#000000' },
+    { color: '#363F4F', borderColor: '#363F4F', textColor: '#000000' },
+    { color: '#0F8459', borderColor: '#0F8459', textColor: '#000000' },
+    { color: '#384EF9', borderColor: '#384EF9', textColor: '#000000' },
+    { color: '#6924BD', borderColor: '#6924BD', textColor: '#000000' },
 ]
-
 
 interface IColor {
     color: string
+    textColor: string
+    borderColor: string
 }
 
-export interface IGoodColor extends IColor {
-    borderColor: string
-    textColor: string
-}
+export interface IGoodColor extends IColor {}
 
 /*
  * ColorPicker: Get colors based on `label`.
  */
 export class ColorPicker<T extends IColor> {
 
-    // All the default colors are stored here.
-    private readonly colors: T[]
+  // All the default colors are stored here.
+  private readonly colors: T[]
 
-    // store all the colors that are not taken by any label at a certain window.
-    private currentColorStore: T[]
+  // store all the colors that are not taken by any label at a certain window.
+  private currentColorStore: T[]
 
-    // cache for label and its chosen color.
-    private labelStore: { [keyName: string]: T }
+  // cache for label and its chosen color.
+  private labelStore: { [keyName: string]: T }
 
-  constructor(colors: T[]) {
+  private darkTheme: boolean
+
+
+  constructor(colors: T[], darkTheme: boolean = false) {
     this.colors = [...colors]
     this.currentColorStore = [...colors]
     this.labelStore = {}
+    this.darkTheme = darkTheme
   }
 
   /*
@@ -186,6 +189,10 @@ export class ColorPicker<T extends IColor> {
     // since the color has been taken by `label`, remove it from the current color store.
     this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor);
 
+    goodColor.color = this.darkTheme ? invertColor(goodColor.color) : goodColor.color
+    goodColor.textColor = this.darkTheme ? invertColor(goodColor.textColor) : goodColor.textColor
+    goodColor.borderColor = this.darkTheme ? invertColor(goodColor.borderColor) : goodColor.borderColor
+
     // cache the label and color key value pair.
     this.labelStore[label] = goodColor
     return goodColor;
@@ -196,7 +203,7 @@ export class ColorPicker<T extends IColor> {
  * GoodColorPicker: ColorPicker but only good colors.
  */
 export class GoodColorPicker extends ColorPicker<IGoodColor> {
-  constructor(COLORS: IGoodColor[]) {
-    super(COLORS);
+  constructor(COLORS: IGoodColor[], darkTheme: boolean = false) {
+    super(COLORS, darkTheme);
   }
 }

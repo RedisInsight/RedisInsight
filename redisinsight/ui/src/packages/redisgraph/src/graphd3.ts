@@ -128,8 +128,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
       zoomOut: () => mainSvg.transition().call(zoom.scaleBy, ZOOM_PROPS.ZOOM_OUT),
       resetZoom: () => mainSvg.transition().call(zoom.scaleTo, ZOOM_PROPS.ZOOM_RESET),
       center: () => mainSvg.transition().call(zoom.translateTo, ...ZOOM_PROPS.CAMERA_CENTER(mainSvg.node().getBoundingClientRect().width, mainSvg.node().getBoundingClientRect().height)),
-      panLeft: () => mainSvg.transition().call(zoom.translateBy, ZOOM_PROPS.CAMERA_LEFT, 0),
-      panRight: () => mainSvg.transition().call(zoom.translateBy, ZOOM_PROPS.CAMERA_RIGHT, 0)
     }
 
     svgRelationships = svg.append('g')
@@ -400,7 +398,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
   function appendTextToRelationship(r) {
     return r.append('text')
       .attr('class', 'text')
-      .attr('fill', d => edgeColors(d.type).textColor)
+      .attr('fill', d => edgeColors(d.type).color)
       .attr('font-size', '12px')
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')

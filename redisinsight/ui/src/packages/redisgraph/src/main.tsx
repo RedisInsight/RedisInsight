@@ -80,6 +80,7 @@ const renderGraphTable = (props: Props) => {
                   style: { ...style, backgroundColor: undefined }, // removing default background color from styles
                 }),
               }}
+              labelRenderer={key => key ? key : null}
               hideRoot
               data={d}
             />

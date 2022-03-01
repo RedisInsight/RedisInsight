@@ -9,42 +9,54 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 
+enum EntityType {
+  Node = 'Node',
+  Edge = 'Edge'
+}
+
 interface ISelectedEntityProps {
   property: string
   color: string
   backgroundColor: string
   props: { [key: string]: string | number | object }
+  type: EntityType
 }
 
-export default function Graph2(props: { graphKey: string, data: any[] }) {
+const isDarkTheme = document.body.classList.contains('theme_DARK')
+
+const colorPicker =  (COLORS: Utils.IGoodColor[], isDarkTheme: boolean) => {
+  const color = new Utils.GoodColorPicker(COLORS, isDarkTheme)
+  return (label: string) => color.getColor(label)
+}
+
+const labelColors = colorPicker(Utils.NODE_COLORS, isDarkTheme)
+const edgeColors = colorPicker(Utils.EDGE_COLORS, isDarkTheme)
+
+export default function Graph(props: { graphKey: string, data: any[] }) {
 
   const d3Container = useRef<HTMLDivElement>()
   const [container, setContainer] = useState(null)
   const [selectedEntity, setSelectedEntity] = useState<ISelectedEntityProps | null>(null)
   const [start, setStart] = useState(false)
 
-  const colorPicker =  (COLORS: Utils.IGoodColor[]) => {
-    const color = new Utils.GoodColorPicker(COLORS)
-    return (label: string) => color.getColor(label)
-  }
-
-  const labelColors = colorPicker(Utils.NODE_COLORS)
-  const edgeColors = colorPicker(Utils.EDGE_COLORS)
-
   const parsedResponse = responseParser(props.data)
-  let nodeIds = parsedResponse.nodes.map(n => n.id)
+  let nodeIds = new Set(parsedResponse.nodes.map(n => n.id))
+  let edgeIds = new Set(parsedResponse.edges.map(e => e.id))
   let data = {
     results: [{
       columns: parsedResponse.headers,
       data: [{
         graph: {
           nodes: parsedResponse.nodes,
-          relationships: parsedResponse.edges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+          relationships: parsedResponse.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
         }
       }]
     }],
     errors: [],
   }
+
+  let nodeLabels = new Set(parsedResponse.labels)
+  let edgeTypes = new Set(parsedResponse.types)
 
   const [graphData, setGraphData] = useState(data)
 
@@ -53,14 +65,56 @@ export default function Graph2(props: { graphKey: string, data: any[] }) {
     let newGraphData = graphData
 
     if (parsedResponse.nodeIds.length > 0) {
-      /* Fetch named path nodes */
-      const resp = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n) WHERE id(n) IN [${parsedResponse.nodeIds}] RETURN n"`);
+      try {
+        /* Fetch named path nodes */
+        const resp = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n) WHERE id(n) IN [${[...parsedResponse.nodeIds]}] RETURN n"`);
+
+        if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
+          const parsedData = responseParser(resp[0].response)
+          parsedData.nodes.forEach(n => {
+            nodeIds.add(n.id)
+            n.labels.forEach(nodeLabels.add, nodeLabels)
+          })
+
+          parsedData.edges.forEach(e => {
+            edgeTypes.add(e.type)
+          })
+
+          newGraphData = {
+            ...newGraphData,
+            results: [
+              ...newGraphData.results,
+              {
+                columns: parsedData.headers,
+                data: [{
+                  graph: {
+                    nodes: parsedData.nodes,
+                    relationships: parsedData.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+                  }
+                }]
+              }
+            ]
+          }
+        }
+      } catch {}
+    }
+
+    try {
+      /* Fetch neighbours automatically */
+      const resp = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]->(m) WHERE ID(n) IN [${[...nodeIds]}] OR ID(m) IN [${[...nodeIds]}] RETURN DISTINCT t"`);
 
       if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
         const parsedData = responseParser(resp[0].response)
-        nodeIds = [...new Set(nodeIds.concat(parsedData.nodes.map(n => n.id)))]
+        parsedData.nodes.forEach(n => {
+          nodeIds.add(n.id)
+          n.labels.forEach(nodeLabels.add, nodeLabels)
+        })
 
-        newGraphData = {
+        parsedData.edges.forEach(e => {
+          edgeTypes.add(e.type)
+        })
+
+        setGraphData({
           ...newGraphData,
           results: [
             ...newGraphData.results,
@@ -69,42 +123,20 @@ export default function Graph2(props: { graphKey: string, data: any[] }) {
               data: [{
                 graph: {
                   nodes: parsedData.nodes,
-                  relationships: parsedData.edges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+                  /* TODO:
+                   * track newly added edges
+                   */
+                  relationships: parsedData.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
                 }
               }]
             }
           ]
-        }
+        })
       }
-    }
-
-    /* Fetch neighbours automatically */
-    const resp = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]->(m) WHERE ID(n) IN [${nodeIds}] OR ID(m) IN [${nodeIds}] RETURN DISTINCT t"`);
-
-    if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
-      const parsedData = responseParser(resp[0].response)
-      nodeIds = [...new Set(nodeIds.concat(parsedData.nodes.map(n => n.id)))]
-
-      setGraphData({
-        ...newGraphData,
-        results: [
-          ...newGraphData.results,
-          {
-            columns: parsedData.headers,
-            data: [{
-              graph: {
-                nodes: parsedData.nodes,
-                relationships: parsedData.edges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
-              }
-            }]
-          }
-        ]
-      })
-    }
+    } catch {}
 
     setStart(true)
   }, [])
-
 
   const zoom = d3.zoom().scaleExtent([0, 3])  /* min, mac of zoom */
   useEffect(() => {
@@ -143,7 +175,7 @@ export default function Graph2(props: { graphKey: string, data: any[] }) {
             data: [{
               graph: {
                 nodes: parsedData.nodes,
-                relationships: parsedData.edges.map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+                relationships: parsedData.edges.filter(e => !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
               }
             }]
           }],
@@ -152,23 +184,27 @@ export default function Graph2(props: { graphKey: string, data: any[] }) {
       },
       onRelationshipDoubleClick(relationship) {
       },
-      onDisplayInfo: (infoSvg, node) => {
-        let property;
-        let color;
+      onDisplayInfo: (infoSvg, entity) => {
+        let property: string;
+        let entityColor: Utils.IGoodColor;
+        let t: EntityType;
 
-        if (node.labels) {
-          [property] = node.labels;
-          color = labelColors(property).color
+        if (entity.labels) {
+          [property] = entity.labels;
+          entityColor = labelColors(property)
+          t = EntityType.Node
         } else {
-          property = node.type;
-          color = edgeColors(property).color
+          property = entity.type;
+          entityColor = edgeColors(property)
+          t = EntityType.Edge
         }
 
         setSelectedEntity({
           property,
-          backgroundColor: color,
-          props: { '<id>': node.id, ...node.properties },
-          color: graphd3.invertColor(color)
+          type: t,
+          backgroundColor: entityColor.color,
+          props: { '<id>': entity.id, ...entity.properties },
+          color: entityColor.textColor
         })
       },
       zoomFit: false,
@@ -180,55 +216,62 @@ export default function Graph2(props: { graphKey: string, data: any[] }) {
   return (
     <div className="core-container">
       <div className="d3-info">
-        {
-          parsedResponse.nodes.length > 0 && (
-            <div className="d3-info-labels">
+        <div className="graph-legends">
+          {
+            parsedResponse.nodes.length > 0 && (
+              <div className="d3-info-labels">
                 {
-                  parsedResponse.labels.map((item, i) => (
-                    <div className="d3-info-item" key={item + i}>
-                      <div className="node-label" style={{ background: labelColors(item).color }}></div>
-                      <div className='label-name' style={{ color: labelColors(item).color }}><code>{item}</code></div>
+                  [...nodeLabels].map((item, i) => (
+                    <div
+                      className="box-node-label"
+                      style={{backgroundColor: labelColors(item).color, color: labelColors(item).textColor}}
+                      key={item + i}
+                    >
+                      {item}
                     </div>
                   ))
                 }
             </div>
-          )
-        }
-        {
-          parsedResponse.edges.length > 0 && (
-            <div className="d3-info-labels">
-              {
-                [...(new Set(parsedResponse.edges.map(e => e.type)))].map((item, i) => {
-                  return (
-                    <div key={item + i.toString()} className="d3-info-item">
-                      <div className="edge-label-line" style={{ borderColor: edgeColors(item).color }}></div>
-                      <div className="edge-label-arrow" style={{ borderLeftColor: edgeColors(item).color }}></div>
-                      <div className="label-name" style={{ color: edgeColors(item).color }}>{item}</div>
+            )
+          }
+          {
+            parsedResponse.edges.length > 0 && (
+              <div className="d3-info-labels">
+                {
+                  [...edgeTypes].map((item, i) => (
+                    <div
+                      key={item + i.toString()}
+                      className="box-edge-type"
+                      style={{ borderColor: edgeColors(item).color, color: edgeColors(item).color }}
+                    >
+                      {item}
                     </div>
-                  )
-                })
-              }
-            </div>
-          )
-        }
+                  ))
+                }
+              </div>
+            )
+          }
+        </div>
         {
           selectedEntity &&
           <div className="info-component">
             <div className="info-header">
-              <div className="info-header-type" style={{ backgroundColor: selectedEntity.backgroundColor, color: selectedEntity.color }}>{selectedEntity.property}</div>
-              <EuiButtonIcon onClick={() => setSelectedEntity(null)} display="empty" iconType="cross" aria-label="Close" />
+              {
+                selectedEntity.type === EntityType.Node ?
+                <div className="box-node-label" style={{ backgroundColor: selectedEntity.backgroundColor, color: selectedEntity.color }}>{selectedEntity.property}</div>
+                :
+                <div className='box-edge-type' style={{borderColor: selectedEntity.backgroundColor, color: selectedEntity.backgroundColor }}>{selectedEntity.property}</div>
+              }
+              <EuiButtonIcon color="text" onClick={() => setSelectedEntity(null)} display="empty" iconType="cross" aria-label="Close" />
             </div>
             <div className="info-props">
-              <table>
-                {
-                  Object.keys(selectedEntity.props).map(k =>
-                    <tr>
-                      <td>{k}</td>
-                      <td>{selectedEntity.props[k]}</td>
-                    </tr>
-                  )
-                }
-              </table>
+              {
+                Object.keys(selectedEntity.props).map(k => [k, selectedEntity.props[k]]).reduce(
+                  (a, b) => a.concat(b), []
+                ).map(k =>
+                    <div>{k}</div>
+                )
+              }
             </div>
           </div>
         }
@@ -262,16 +305,6 @@ export default function Graph2(props: { graphKey: string, data: any[] }) {
               icon: 'bullseye'
             },
             {
-              name: 'Pan Left',
-              onClick: () => container.zoomFuncs.panLeft(),
-              icon: 'editorItemAlignLeft'
-            },
-            {
-              name: 'Pan Right',
-              onClick: () => container.zoomFuncs.panRight(),
-              icon: 'editorItemAlignRight'
-            },
-            {
               name: 'Center',
               onClick: () => container.zoomFuncs.center(),
               icon: 'editorItemAlignCenter'
@@ -279,6 +312,7 @@ export default function Graph2(props: { graphKey: string, data: any[] }) {
           ].map(item => (
             <EuiToolTip position="left" content={item.name}>
               <EuiButtonIcon
+                color='text'
                 onClick={item.onClick}
                 iconType={item.icon}
                 aria-label={item.name}

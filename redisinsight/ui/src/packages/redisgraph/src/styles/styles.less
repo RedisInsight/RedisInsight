@@ -1,6 +1,28 @@
 @import "_dark_theme.less";
 @import "_light_theme.less";
 
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.theme_DARK {
+    --info-background: #20222B;
+    --info-color: white;
+    --svg-background: #010101;
+}
+
+.theme_LIGHT {
+    --info-background: white;
+    --info-color: black;
+    --svg-background: #FFFFFF;
+}
+
+
+* div,
+* span {
+  font-family: 'Graphik', sans-serif !important;
+}
 
 .euiPagination__list {
     list-style: none;
@@ -23,26 +45,6 @@
 }
 
 
-* {
-    margin: 0px;
-    padding: 0px;
-}
-
-.theme_DARK {
-    --info-background: #20222B;
-    --info-color: white;
-}
-
-.theme_LIGHT {
-    --info-background: white;
-    --info-color: black;
-}
-
-body {
-    font: 13px sans-serif;
-    font-size: 20px;
-}
-
 .neo4jd3-graph {
 }
 
@@ -50,53 +52,37 @@ body {
 }
 
 .d3-info {
-    margin-top: 10px !important;
-    margin-left: 10px !important;
+    margin-top: 12px !important;
+    margin-left: 24px !important;
 
-    font-size: 16px;
+    font-size: 12px;
+    line-height: 18px;
     padding: 10px;
     position: absolute;
 
     .info-component {
-        min-width: 200px;
-        padding: 10px;
-        margin: 10px;
-        box-shadow: 0px 0px 8px -1px;
-        border-radius: 3px;
+        display: inline-block;
+        margin-top: 12px;
+        margin-left: -12px;
+        box-shadow: 0px 3px 12px #17336952;
+        border-radius: 4px;
+        opacity: 1;
         background: var(--info-background);
         color: var(--info-color);
 
         .info-header {
             display: flex;
             justify-content: space-between;
-
-            .info-header-type {
-                padding: 5px;
-                border-radius: 5px;
-            }
-
+            padding-top: 12px;
+            padding-left: 12px;
         }
 
         .info-props {
-            padding-top: 10px;
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 5px 18px;
+            padding: 12px 18px 18px 18px
         }
-
-        table {
-            table-layout: auto;
-            min-width: 250px;
-            width: 100%;
-
-            td:nth-child(1) {
-                width: 30%;
-            }
-
-            td:nth-child(2) {
-                width: 70%;
-                font-weight: bold;
-            }
-
-        }
-
     }
 
     span {
@@ -125,56 +111,16 @@ body {
         opacity: 1;
     }
 
-    // span.info {
-    //     background-color: rgb(165, 171, 182);
-    //     border: 1px solid rgb(154, 161, 172);
-    //     color: white;
-    // }
     span.info {
         box-shadow: 0px 0px 28px 0px;
     }
 
-
     .d3-info-labels {
         display: flex;
-        margin-bottom: 5px;
-        .d3-info-item {
-            display: flex;
-            padding-left: 10px;
+    }
 
-            // Circle
-            .node-label {
-                height: 10px;
-                width: 10px;
-                border-radius: 50%;
-                align-self: center;
-                margin-right: 5px;
-            }
-
-            .edge-label-line {
-                border: 2px solid;
-                transform: rotate(90deg);
-                -web-transform: rotate(90deg);
-                border-left: 0px;
-                height: 8px;
-                align-self: center;
-                margin-left: 3px;
-            }
-
-            .edge-label-arrow {
-                border-top: 5px solid transparent;
-                border-bottom: 5px solid transparent;
-                border-left: 5px solid;
-                align-self: center;
-                margin-right: 5px;
-            }
-
-
-            .label-name {
-                font-weight: bold;
-                font-family: monospace;
-            }
-        }
+    .graph-legends {
+        display: flex;
     }
 
 }
@@ -253,6 +199,30 @@ body {
     opacity: .3;
 }
 
-svg {
+.graphd3-graph {
     cursor: move;
+    background-color: var(--svg-background);
 }
+
+
+.box-node-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 46px;
+    height: 18px;
+    border-radius: 4px;
+    opacity: 1;
+    margin-right: 12px !important;
+}
+
+.box-edge-type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+    margin-right: 12px !important;
+}
+

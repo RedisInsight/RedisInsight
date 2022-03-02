@@ -110,6 +110,9 @@ export class BrowserPage {
   overviewCommandsSec: Selector
   overviewCpu: Selector
   modulesButton: Selector
+  overviewMoreInfo: Selector
+  overviewTooltip: Selector
+  overviewTooltipStatTitle: Selector
   treeViewButton: Selector
   treeViewArea: Selector
   browserViewButton: Selector
@@ -187,6 +190,9 @@ export class BrowserPage {
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
       this.modulesButton = Selector('[data-testid$=_module]');
+      this.overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
+      this.overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
+      this.overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
       this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
       this.treeViewButton = Selector('');
       this.browserViewButton = Selector('');

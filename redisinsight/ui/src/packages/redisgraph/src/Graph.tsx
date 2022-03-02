@@ -24,13 +24,13 @@ interface ISelectedEntityProps {
 
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
-const colorPicker =  (COLORS: Utils.IGoodColor[], isDarkTheme: boolean) => {
-  const color = new Utils.GoodColorPicker(COLORS, isDarkTheme)
+const colorPicker =  (COLORS: Utils.IGoodColor[]) => {
+  const color = new Utils.GoodColorPicker(COLORS)
   return (label: string) => color.getColor(label)
 }
 
-const labelColors = colorPicker(Utils.NODE_COLORS, isDarkTheme)
-const edgeColors = colorPicker(Utils.EDGE_COLORS, isDarkTheme)
+const labelColors = colorPicker(isDarkTheme ? Utils.NODE_COLORS_DARK : Utils.NODE_COLORS)
+const edgeColors = colorPicker(isDarkTheme ? Utils.EDGE_COLORS_DARK : Utils.EDGE_COLORS)
 
 export default function Graph(props: { graphKey: string, data: any[] }) {
 
@@ -55,14 +55,16 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
     errors: [],
   }
 
-  let nodeLabels = new Set(parsedResponse.labels)
-  let edgeTypes = new Set(parsedResponse.types)
+  const [nodeLabels, setNodeLabels] = useState(parsedResponse.labels)
+  const [edgeTypes, setEdgeTypes] = useState(parsedResponse.types)
 
   const [graphData, setGraphData] = useState(data)
 
   useMemo(async () => {
 
     let newGraphData = graphData
+    let newNodeLabels: {[key: string]: number} = nodeLabels
+    let newEdgeTypes: {[key: string]: number} = edgeTypes
 
     if (parsedResponse.nodeIds.length > 0) {
       try {
@@ -73,12 +75,9 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
           const parsedData = responseParser(resp[0].response)
           parsedData.nodes.forEach(n => {
             nodeIds.add(n.id)
-            n.labels.forEach(nodeLabels.add, nodeLabels)
+            n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
           })
-
-          parsedData.edges.forEach(e => {
-            edgeTypes.add(e.type)
-          })
+          parsedData.edges.forEach(e => newEdgeTypes[e.type] = (newEdgeTypes[e.type] + 1) || 1)
 
           newGraphData = {
             ...newGraphData,
@@ -107,12 +106,10 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
         const parsedData = responseParser(resp[0].response)
         parsedData.nodes.forEach(n => {
           nodeIds.add(n.id)
-          n.labels.forEach(nodeLabels.add, nodeLabels)
+          n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
         })
-
-        parsedData.edges.forEach(e => {
-          edgeTypes.add(e.type)
-        })
+        const filteredEdges = parsedData.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+        filteredEdges.forEach(e => newEdgeTypes[e.type] = (newEdgeTypes[e.type] + 1) || 1)
 
         setGraphData({
           ...newGraphData,
@@ -123,10 +120,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
               data: [{
                 graph: {
                   nodes: parsedData.nodes,
-                  /* TODO:
-                   * track newly added edges
-                   */
-                  relationships: parsedData.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+                  relationships: filteredEdges,
                 }
               }]
             }
@@ -134,6 +128,9 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
         })
       }
     } catch {}
+
+    setNodeLabels(newNodeLabels)
+    setEdgeTypes(newEdgeTypes)
 
     setStart(true)
   }, [])
@@ -167,20 +164,34 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
         const data = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]-(m) WHERE id(n)=${node.id} RETURN t, m"`)
         if (!Array.isArray(data)) return;
         if (data.length < 1 || data[0].status !== 'success') return;
-
         const parsedData = responseParser(data[0].response)
+
+        let newNodeLabels = nodeLabels
+        let newEdgeTypes = edgeTypes
+
+        parsedData.nodes.forEach(n => {
+          nodeIds.add(n.id)
+          n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
+        })
+        const filteredEdges = parsedData.edges.filter(e => !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+        filteredEdges.forEach(e => newEdgeTypes[e.type] = (newEdgeTypes[e.type] + 1) || 1)
+
         graphd3.updateWithGraphData({
           results: [{
             columns: parsedData.headers,
             data: [{
               graph: {
                 nodes: parsedData.nodes,
-                relationships: parsedData.edges.filter(e => !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+                relationships: filteredEdges,
               }
             }]
           }],
           errors: [],
-        });
+        })
+
+        setNodeLabels(newNodeLabels)
+        setEdgeTypes(newEdgeTypes)
+
       },
       onRelationshipDoubleClick(relationship) {
       },
@@ -218,10 +229,10 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       <div className="d3-info">
         <div className="graph-legends">
           {
-            parsedResponse.nodes.length > 0 && (
+            Object.keys(nodeLabels).length > 0 && (
               <div className="d3-info-labels">
                 {
-                  [...nodeLabels].map((item, i) => (
+                  Object.keys(nodeLabels).map((item, i) => (
                     <div
                       className="box-node-label"
                       style={{backgroundColor: labelColors(item).color, color: labelColors(item).textColor}}
@@ -235,10 +246,10 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
             )
           }
           {
-            parsedResponse.edges.length > 0 && (
+            Object.keys(edgeTypes).length > 0 && (
               <div className="d3-info-labels">
                 {
-                  [...edgeTypes].map((item, i) => (
+                  Object.keys(edgeTypes).map((item, i) => (
                     <div
                       key={item + i.toString()}
                       className="box-edge-type"

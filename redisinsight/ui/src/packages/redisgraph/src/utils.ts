@@ -111,6 +111,33 @@ function padZero(str) {
     return (zeros + str).slice(-len);
 }
 
+export const NODE_COLORS_DARK = [
+    { color: '#6A1DC3', borderColor: '#6A1DC3', textColor: '#FFFFFF' },
+    { color: '#364CFF', borderColor: '#364CFF', textColor: '#FFFFFF' },
+    { color: '#008556', borderColor: '#008556', textColor: '#FFFFFF' },
+    { color: '#333D4F', borderColor: '#333D4F', textColor: '#FFFFFF' },
+    { color: '#9C5C2B', borderColor: '#9C5C2B', textColor: '#FFFFFF' },
+    { color: '#A00A6B', borderColor: '#A00A6B', textColor: '#FFFFFF' },
+    { color: '#6F7C07', borderColor: '#6F7C07', textColor: '#FFFFFF' },
+    { color: '#14708D', borderColor: '#14708D', textColor: '#FFFFFF' },
+    { color: '#AA4E4E', borderColor: '#AA4E4E', textColor: '#FFFFFF' },
+    { color: '#6E6E6E', borderColor: '#6E6E6E', textColor: '#FFFFFF' },
+]
+
+export const EDGE_COLORS_DARK = [
+    { color: '#C7C7C7', borderColor: '#C7C7C7', textColor: '#FFFFFF' },
+    { color: '#E3AAAA', borderColor: '#E3AAAA', textColor: '#FFFFFF' },
+    { color: '#ACCCD7', borderColor: '#ACCCD7', textColor: '#FFFFFF' },
+    { color: '#C7CEA8', borderColor: '#C7CEA8', textColor: '#FFFFFF' },
+    { color: '#D9A0C6', borderColor: '#D9A0C6', textColor: '#FFFFFF' },
+    { color: '#D4BAA7', borderColor: '#D4BAA7', textColor: '#FFFFFF' },
+    { color: '#B8C5DB', borderColor: '#B8C5DB', textColor: '#FFFFFF' },
+    { color: '#A5D4C3', borderColor: '#A5D4C3', textColor: '#FFFFFF' },
+    { color: '#CDDDF8', borderColor: '#CDDDF8', textColor: '#FFFFFF' },
+    { color: '#C7B0EA', borderColor: '#C7B0EA', textColor: '#FFFFFF' },
+]
+
+
 export const NODE_COLORS = [
     { color: '#C7B0EA', borderColor: '#C7B0EA', textColor: '#000000' },
     { color: '#CDDDF8', borderColor: '#CDDDF8', textColor: '#000000' },
@@ -159,14 +186,11 @@ export class ColorPicker<T extends IColor> {
   // cache for label and its chosen color.
   private labelStore: { [keyName: string]: T }
 
-  private darkTheme: boolean
 
-
-  constructor(colors: T[], darkTheme: boolean = false) {
+  constructor(colors: T[]) {
     this.colors = [...colors]
     this.currentColorStore = [...colors]
     this.labelStore = {}
-    this.darkTheme = darkTheme
   }
 
   /*
@@ -189,10 +213,6 @@ export class ColorPicker<T extends IColor> {
     // since the color has been taken by `label`, remove it from the current color store.
     this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor);
 
-    goodColor.color = this.darkTheme ? invertColor(goodColor.color) : goodColor.color
-    goodColor.textColor = this.darkTheme ? invertColor(goodColor.textColor) : goodColor.textColor
-    goodColor.borderColor = this.darkTheme ? invertColor(goodColor.borderColor) : goodColor.borderColor
-
     // cache the label and color key value pair.
     this.labelStore[label] = goodColor
     return goodColor;
@@ -203,7 +223,7 @@ export class ColorPicker<T extends IColor> {
  * GoodColorPicker: ColorPicker but only good colors.
  */
 export class GoodColorPicker extends ColorPicker<IGoodColor> {
-  constructor(COLORS: IGoodColor[], darkTheme: boolean = false) {
-    super(COLORS, darkTheme);
+  constructor(COLORS: IGoodColor[]) {
+    super(COLORS);
   }
 }

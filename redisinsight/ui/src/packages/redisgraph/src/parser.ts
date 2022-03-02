@@ -40,8 +40,8 @@ function responseParser(data: any) {
   let nodeIds: string[] = []
   let edgeIds: string[] = []
   let edges: IEdge[] = []
-  let types: string[] = []
-  let labels: string[] = []
+  let types: {[key: string]: number} = {}
+  let labels: {[key: string]: number} = {}
   if (data.length === 0) return {
     nodes, edges, types, labels
   }
@@ -56,7 +56,7 @@ function responseParser(data: any) {
             labels: item[1][1],
             properties: {}
           }
-          labels = [...item[1][1], ...labels]
+          labels[item[1][1]] = (labels[item[1][1]] + 1) || 1
           const propValues = item[2][1]
           propValues.map((x: any) => {
             const v = resolveProps(x)
@@ -73,7 +73,7 @@ function responseParser(data: any) {
             target: item[3][1].toString(),
             properties: {}
           }
-          types.push(item[1][1])
+          types[item[1][1]] = (types[item[1][1]] + 1) || 1
           const propValues = item[4][1]
           propValues.map((x: any) => {
             const v = resolveProps(x)
@@ -95,9 +95,6 @@ function responseParser(data: any) {
       }
     })
   })
-
-  types = Array.from(new Set(types))
-  labels = Array.from(new Set(labels))
 
   return {
     headers,

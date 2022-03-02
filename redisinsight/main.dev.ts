@@ -221,7 +221,7 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
     } else {
       newWindow?.show();
       newWindow?.focus();
-      splash?.close();
+      splash?.destroy();
     }
   });
 

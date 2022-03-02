@@ -10,24 +10,26 @@ import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { getRandomKeyName } from '../../../helpers/keys';
-import { rte, env } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
+import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
 const monitorPage = new MonitorPage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const keyName = `${getRandomKeyName(10)}-key`;
-const keyValue = `${getRandomKeyName(10)}-value`;
+const chance = new Chance();
+
+const keyName = `${chance.word({ length: 20 })}-key`;
+const keyValue = `${chance.word({ length: 10 })}-value`;
 
 fixture `Monitor`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
+    .afterEach(async() => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
@@ -45,7 +47,7 @@ test
         await t.expect(monitorPage.startMonitorButton.exists).ok('Start profiler button');
         //Verify that user can see message inside Monitor "Running Monitor will decrease throughput, avoid running it in production databases." when opens it for the first time
         await t.expect(monitorPage.monitorWarningMessage.exists).ok('Profiler warning message');
-        await monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases');
+        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases').exists).ok('Profiler warning message is correct');
         //Verify that user can run Monitor by clicking "Run" command in the message inside Monitor
         await t.click(monitorPage.startMonitorButton);
         await t.expect(monitorPage.monitorIsStartedText.innerText).eql('Profiler is started.');

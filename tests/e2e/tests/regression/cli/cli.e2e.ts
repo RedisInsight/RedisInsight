@@ -106,6 +106,7 @@ test
     })
     ('Verify that user can run command json.get and see JSON object with escaped quotes (\" instead of ")', async t => {
         keyName = chance.word({ length: 20 });
+        const jsonValueCli = '"{\\"name\\":\\"xyz\\"}"';
         //Add Json key with json object
         await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
         const command = `JSON.GET ${keyName}`;
@@ -114,8 +115,8 @@ test
         await t.typeText(cliPage.cliCommandInput, command);
         await t.pressKey('enter');
         //Verify result
-        const commandResult = jsonValue.replace(/"/g, '\\"');
-        await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(`"${commandResult}"`, 'The user can see JSON object with escaped quotes');
+        //const commandResult = jsonValue.replace(/"/g, '\\"');
+        await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(jsonValueCli, 'The user can see JSON object with escaped quotes');
 });
 test
     .meta({ rte: rte.standalone })

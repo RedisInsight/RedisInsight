@@ -478,6 +478,10 @@ jobs:
             equal: [ true, << parameters.redisstack >> ]
           steps:
             - run:
+                name: Repack AppImage to tar
+                command: |
+                  ARCH=x64 ./.circleci/redisstack/app-image.repack.sh
+            - run:
                 name: Build sources
                 command: ./.circleci/redisstack/build.sh
             - run:
@@ -485,8 +489,8 @@ jobs:
                 command: |
                   PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
                   PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
+#                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
+#                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -538,6 +542,11 @@ jobs:
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             rm -rf release/mac
           no_output_timeout: 15m
+
+      - run:
+          name: Repack dmg to tar
+          command: |
+            ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -545,6 +554,7 @@ jobs:
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
             - release/*-mac.yml
+            - release/redisstack
   windows:
     executor:
       name: win/default

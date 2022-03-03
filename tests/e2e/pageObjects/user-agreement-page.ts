@@ -21,7 +21,7 @@ export class UserAgreementPage {
       //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
       //-------------------------------------------------------------------------------------------
       // COMPONENTS
-      this.userAgreementsPopup = Selector('[data-testid=consents-settings-popup]');
+      this.userAgreementsPopup = Selector('[data-testid=consents-settings-popup]', {timeout: 1000});
       //BUTTONS
       this.submitButton = Selector('[data-testid=btn-submit]');
       this.switchOptionEula = Selector('[data-testid=switch-option-eula]');

@@ -1,12 +1,13 @@
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase, acceptLicenseAndConnectToRedisStack } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage, AddRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
+const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let indexName = chance.word({ length: 10 });
 
@@ -14,7 +15,11 @@ fixture `JSON verifications at Workbench`
     .meta({type: 'smoke'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        if(await addRedisDatabasePage.addDatabaseButton.visible) {
+            await acceptLicenseTermsAndAddDatabase(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        } else {
+            await acceptLicenseAndConnectToRedisStack();
+        }
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })

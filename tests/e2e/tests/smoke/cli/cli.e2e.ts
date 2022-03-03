@@ -1,6 +1,6 @@
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, BrowserPage, CliPage } from '../../../pageObjects';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase, acceptLicenseAndConnectToRedisStack } from '../../../helpers/database';
+import { MyRedisDatabasePage, BrowserPage, CliPage, AddRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
 
@@ -8,6 +8,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
+const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let keyName = chance.word({ length: 10 });
 
@@ -15,7 +16,11 @@ fixture `CLI`
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        if(await addRedisDatabasePage.addDatabaseButton.visible) {
+            await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        } else {
+            await acceptLicenseAndConnectToRedisStack();
+        }
     })
     .afterEach(async () => {
         //Delete database

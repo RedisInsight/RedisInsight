@@ -1,7 +1,8 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase, acceptLicenseAndConnectToRedisStack } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    WorkbenchPage
+    WorkbenchPage,
+    AddRedisDatabasePage
 } from '../../../pageObjects';
 import {
     commonUrl,
@@ -11,12 +12,17 @@ import { rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const addRedisDatabasePage = new AddRedisDatabasePage();
 
 fixture `Scripting area at Workbench`
     .meta({type: 'smoke'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        if(await addRedisDatabasePage.addDatabaseButton.visible) {
+            await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        } else {
+            await acceptLicenseAndConnectToRedisStack();
+        }
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })

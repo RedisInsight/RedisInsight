@@ -28,7 +28,8 @@ export class AddRedisDatabasePage {
   databaseIndexCheckbox: Selector
   databaseIndexInput: Selector
   errorMessage: Selector
-  secretKeyInput: Selector;
+  secretKeyInput: Selector
+  connectToDatabaseButton: Selector
 
   constructor() {
       //-------------------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ export class AddRedisDatabasePage {
       //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
       //-------------------------------------------------------------------------------------------
       //BUTTONS
-      this.addDatabaseButton = Selector('[data-testid=add-redis-database]');
+      this.addDatabaseButton = Selector('[data-testid=add-redis-database]', {timeout: 1000});
       this.addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
       this.addDatabaseManually = Selector('[data-testid=add-manual]');
       this.addAutoDiscoverDatabase = Selector('[data-testid=add-auto]');
@@ -49,6 +50,7 @@ export class AddRedisDatabasePage {
       this.databaseName = Selector('.euiTableCellContent.column_name');
       this.selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
       this.databaseIndexCheckbox = Selector('[data-testid=showDb]~div');
+      this.connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.hostInput = Selector('[data-testid=host]');
       this.portInput = Selector('[data-testid=port]');

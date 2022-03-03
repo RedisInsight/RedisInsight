@@ -130,7 +130,14 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
 export async function acceptLicenseTerms(): Promise<void> {
     await t.maximizeWindow();
     await userAgreementPage.acceptLicenseTerms();
-    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
+    await t.expect(userAgreementPage.userAgreementsPopup.visible).notOk('The user agreements popup is not shown', {timeout: 5000});
+}
+//Accept License terms and connect to the RedisStack database
+export async function acceptLicenseAndConnectToRedisStack(): Promise<void> {
+    await acceptLicenseTerms();
+    //Connect to DB
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(addRedisDatabasePage.connectToDatabaseButton);
 }
 
 //Clear database data
@@ -148,5 +155,7 @@ export async function clearDatabaseInCli(): Promise<void> {
 */
 export async function deleteDatabase(databaseName: string): Promise<void> {
     await t.click(myRedisDatabasePage.myRedisDBButton);
-    await myRedisDatabasePage.deleteDatabaseByName(databaseName);
+    if(await addRedisDatabasePage.addDatabaseButton.visible) {
+        await myRedisDatabasePage.deleteDatabaseByName(databaseName);
+    }
 }

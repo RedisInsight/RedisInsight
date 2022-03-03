@@ -55,20 +55,20 @@
     "target": [
       {
         "target": "zip",
-        "arch": ["x64", "arm64"]
+        "arch": ["x64"]
       },
       {
         "target": "deb",
-        "arch": ["x64", "arm64"]
+        "arch": ["x64"]
       },
       {
         "target": "AppImage",
-        "arch": ["x64", "arm64"]
+        "arch": ["x64"]
       }
     ],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
+    "artifactName": "${productName}-${os}.${ext}",
     "desktop": {
       "Name": "RedisInsight",
       "Type": "Application",

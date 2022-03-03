@@ -473,6 +473,8 @@ jobs:
             fi
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
+
+            mv ./release/RedisInsight-preview-linux-amd64.AppImage ./release/RedisInsight-preview-linux.AppImage
       - when:
           condition:
             equal: [ true, << parameters.redisstack >> ]
@@ -481,7 +483,7 @@ jobs:
                 name: Repack AppImage to tar
                 command: |
                   ARCH=x64 ./.circleci/redisstack/app-image.repack.sh
-                  ARCH=arm64 ./.circleci/redisstack/app-image.repack.sh
+                  SOURCE_APP=RedisInsight-preview-linux-arm64.AppImage ARCH=arm64 ./.circleci/redisstack/app-image.repack.sh
             - run:
                 name: Build sources
                 command: ./.circleci/redisstack/build.sh

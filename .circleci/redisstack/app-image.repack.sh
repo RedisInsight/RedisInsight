@@ -2,7 +2,7 @@
 
 ARCH=${ARCH:-x64}
 WORKING_DIRECTORY=$(pwd)
-SOURCE_APP=${SOURCE_APP:-"RedisInsight-preview-linux.AppImage"}
+SOURCE_APP="RedisInsight-preview-linux-$ARCH.AppImage"
 TAR_NAME="RedisInsight-preview-app-linux.$ARCH.tar.gz"
 TMP_FOLDER="/tmp/RedisInsight-app-$ARCH"
 

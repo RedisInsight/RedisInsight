@@ -481,6 +481,7 @@ jobs:
                 name: Repack AppImage to tar
                 command: |
                   ARCH=x64 ./.circleci/redisstack/app-image.repack.sh
+                  ARCH=arm64 ./.circleci/redisstack/app-image.repack.sh
             - run:
                 name: Build sources
                 command: ./.circleci/redisstack/build.sh
@@ -547,6 +548,7 @@ jobs:
           name: Repack dmg to tar
           command: |
             ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
+            ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
       - persist_to_workspace:
           root: .
           paths:

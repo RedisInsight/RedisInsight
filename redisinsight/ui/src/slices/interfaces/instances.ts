@@ -36,6 +36,7 @@ export interface Instance extends DatabaseInstanceResponse {
   isDeleting?: boolean;
   sentinelMaster?: SentinelMasterDto;
   modules: RedisModuleDto[];
+  isRediStack: boolean;
 }
 
 export enum ConnectionType {

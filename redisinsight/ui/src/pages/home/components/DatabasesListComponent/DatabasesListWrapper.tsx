@@ -27,13 +27,14 @@ import {
   Instance,
 } from 'uiSrc/slices/interfaces'
 import { resetKeys } from 'uiSrc/slices/keys'
-import { PageNames, Pages, Theme } from 'uiSrc/constants'
+import { PageNames, Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { formatLongName, getDbIndex, getModule, Nullable, replaceSpaces, truncateText } from 'uiSrc/utils'
+import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
-import { modulesDefaultInit } from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import DatabaseListModules, { ModulesListType } from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import RediStackSVG from 'uiSrc/assets/img/modules/RediStack.svg'
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import DatabasesList from './DatabasesList/DatabasesList'
 
@@ -213,7 +214,7 @@ const DatabasesListWrapper = ({
       truncateText: true,
       'data-test-subj': 'database-alias-column',
       sortable: ({ name }) => name?.toLowerCase(),
-      width: '50%',
+      width: '30%',
       render: function InstanceCell(name: string = '', { id, db }: Instance) {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
@@ -244,72 +245,10 @@ const DatabasesListWrapper = ({
       },
     },
     {
-      field: 'connectionType',
-      className: 'column_type',
-      name: 'Connection Type',
-      dataType: 'string',
-      sortable: true,
-      width: '180px',
-      truncateText: true,
-      hideForMobile: true,
-      render: (cellData: ConnectionType) =>
-        CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
-    },
-    {
-      field: 'modules',
-      className: 'column_modules',
-      name: 'Modules',
-      width: '14%',
-      dataType: 'string',
-      render: (a: RedisModuleDto[] = []) => {
-        const modules = [{ name: 'custom' }, { name: 'another custom' }, ...a]
-
-        return (
-          <div className="modules" data-testid="modules">
-            {modules?.map((module) => {
-              const moduleName = modulesDefaultInit[module.name]?.text || module.name
-
-              console.log(moduleName)
-
-              const { abbreviation = '', name = moduleName } = getModule(moduleName)
-
-              console.log(abbreviation)
-
-              const moduleAlias = truncateText(name, 50)
-              // eslint-disable-next-line sonarjs/no-nested-template-literals
-              const content = `${moduleAlias}${module.semanticVersion || module.version ? ` v. ${module.semanticVersion || module.version}` : ''}`
-              const icon = modulesDefaultInit[module.name]?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
-
-              return (
-                <span key={moduleName}>
-                  {icon ? (
-                    <EuiIcon
-                      type={icon}
-                      className={cx(styles.icon)}
-                      data-testid={`${module.name}_module`}
-                      aria-labelledby={`${module.name}_module`}
-                    />
-                  ) : (
-                    <span
-                      className={cx(styles.icon)}
-                      data-testid={`${module.name}_module`}
-                      aria-labelledby={`${module.name}_module`}
-                    >
-                      {abbreviation}
-                    </span>
-                  )}
-                </span>
-              )
-            })}
-          </div>
-        )
-      },
-    },
-    {
       field: 'host',
       className: 'column_host',
       name: 'Host:Port',
-      width: '18%',
+      width: '35%',
       dataType: 'string',
       truncateText: true,
       sortable: ({ host, port }) => `${host}:${port}`,
@@ -331,6 +270,40 @@ const DatabasesListWrapper = ({
               />
             </EuiToolTip>
           </div>
+        )
+      },
+    },
+    {
+      field: 'connectionType',
+      className: 'column_type',
+      name: 'Connection Type',
+      dataType: 'string',
+      sortable: true,
+      width: '180px',
+      truncateText: true,
+      hideForMobile: true,
+      render: (cellData: ConnectionType) =>
+        CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
+    },
+    {
+      field: 'modules',
+      className: 'column_modules',
+      name: 'Modules',
+      width: '150px',
+      dataType: 'string',
+      render: (cellData, { modules = [], port, isRediStack }: Instance) => {
+        return (
+          <DatabaseListModules
+            highlight={isRediStack}
+            modules={modules}
+            maxViewModules={3}
+            tooltipTitle={isRediStack ? (
+              <>
+                <EuiIcon type={RediStackSVG} className={styles.redistackIcon} />
+                <span style={{ verticalAlign: 'middle' }}>Redis Stack</span>
+              </>
+            ) : ''}
+          />
         )
       },
     },
@@ -371,7 +344,7 @@ const DatabasesListWrapper = ({
   ]
 
   const columnsHideForTablet = ['connectionType']
-  const columnsHideForEditing = ['connectionType']
+  const columnsHideForEditing = ['connectionType', 'modules']
   const columnsTablet = columnsFull.filter(
     ({ field = '' }) => columnsHideForTablet.indexOf(field) === -1
   )

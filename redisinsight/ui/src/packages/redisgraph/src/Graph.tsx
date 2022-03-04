@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import Graphd3 from './graphd3';
 import {responseParser} from './parser';
 import * as Utils from './utils';
+import { executeRedisCommand  } from 'redisinsight-plugin-sdk'
 
 import {
   EuiButtonIcon,
@@ -69,7 +70,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
     if (parsedResponse.nodeIds.length > 0) {
       try {
         /* Fetch named path nodes */
-        const resp = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n) WHERE id(n) IN [${[...parsedResponse.nodeIds]}] RETURN n"`);
+        const resp = await executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n) WHERE id(n) IN [${[...parsedResponse.nodeIds]}] RETURN n"`);
 
         if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
           const parsedData = responseParser(resp[0].response)
@@ -100,7 +101,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
 
     try {
       /* Fetch neighbours automatically */
-      const resp = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]->(m) WHERE ID(n) IN [${[...nodeIds]}] OR ID(m) IN [${[...nodeIds]}] RETURN DISTINCT t"`);
+      const resp = await executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]->(m) WHERE ID(n) IN [${[...nodeIds]}] OR ID(m) IN [${[...nodeIds]}] RETURN DISTINCT t"`);
 
       if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
         const parsedData = responseParser(resp[0].response)
@@ -161,7 +162,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       },
       async onNodeDoubleClick(nodeSvg, node) {
         /* Get direct neighbours automatically */
-        const data = await globalThis.PluginSDK?.executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]-(m) WHERE id(n)=${node.id} RETURN t, m"`)
+        const data = await executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]-(m) WHERE id(n)=${node.id} RETURN t, m"`)
         if (!Array.isArray(data)) return;
         if (data.length < 1 || data[0].status !== 'success') return;
         const parsedData = responseParser(data[0].response)

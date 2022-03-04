@@ -1,0 +1,35 @@
+@import "_dark_theme.less";
+@import "_light_theme.less";
+
+// disable plotly notifier
+div.plotly-notifier {
+  visibility: hidden;
+}
+
+.theme_DARK {
+    --body-color: white;
+}
+
+.theme_LIGHT {
+    --body-color: black;
+}
+
+body {
+    color: var(--body-color);
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+* div,
+* span {
+  font-family: 'Graphik', sans-serif !important;
+}
+
+.responseFail {
+    color: red;
+    padding: 12px !important;
+    font-family: monospace !important;
+}

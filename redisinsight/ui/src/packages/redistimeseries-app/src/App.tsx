@@ -15,8 +15,6 @@ const App = (props: Props) => {
     return <div className="responseFail">{response}</div>
   }
 
-  console.log(props, status, typeof(response))
-
   if (status === 'success' && typeof(response) === 'string') {
     return <div className="responseFail">{response}</div>
   }

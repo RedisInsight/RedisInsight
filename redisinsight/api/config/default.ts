@@ -94,7 +94,7 @@ export default {
   },
   enablementArea: {
     updateUrl: process.env.ENABLEMENT_AREA_UPDATE_URL
-      || 'https://github.com/RedisInsight/Guides/releases/download/latest',
+      || 'https://github.com/RedisInsight/Guides/releases/download/demo',
     zip: process.env.ENABLEMENT_AREA_ZIP || 'data.zip',
     buildInfo: process.env.ENABLEMENT_AREA_CHECKSUM || 'build.json',
     devMode: !!process.env.GUIDES_DEV_PATH,

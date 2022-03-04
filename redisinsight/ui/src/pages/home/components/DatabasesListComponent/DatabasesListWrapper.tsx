@@ -1,6 +1,7 @@
 import {
   EuiButton,
   EuiButtonIcon,
+  EuiIcon,
   EuiPopover,
   EuiTableFieldDataColumnType,
   EuiText,
@@ -9,7 +10,7 @@ import {
 } from '@elastic/eui'
 import { formatDistanceToNow } from 'date-fns'
 import { capitalize } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
@@ -26,11 +27,14 @@ import {
   Instance,
 } from 'uiSrc/slices/interfaces'
 import { resetKeys } from 'uiSrc/slices/keys'
-import { PageNames, Pages } from 'uiSrc/constants'
+import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { formatLongName, getDbIndex, getModule, Nullable, replaceSpaces, truncateText } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
+import { modulesDefaultInit } from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import DatabasesList from './DatabasesList/DatabasesList'
 
 import styles from './styles.module.scss'
@@ -52,6 +56,7 @@ const DatabasesListWrapper = ({
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
+  const { theme } = useContext(ThemeContext)
 
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
   const instances = useSelector(instancesSelector)
@@ -249,6 +254,56 @@ const DatabasesListWrapper = ({
       hideForMobile: true,
       render: (cellData: ConnectionType) =>
         CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
+    },
+    {
+      field: 'modules',
+      className: 'column_modules',
+      name: 'Modules',
+      width: '14%',
+      dataType: 'string',
+      render: (a: RedisModuleDto[] = []) => {
+        const modules = [{ name: 'custom' }, { name: 'another custom' }, ...a]
+
+        return (
+          <div className="modules" data-testid="modules">
+            {modules?.map((module) => {
+              const moduleName = modulesDefaultInit[module.name]?.text || module.name
+
+              console.log(moduleName)
+
+              const { abbreviation = '', name = moduleName } = getModule(moduleName)
+
+              console.log(abbreviation)
+
+              const moduleAlias = truncateText(name, 50)
+              // eslint-disable-next-line sonarjs/no-nested-template-literals
+              const content = `${moduleAlias}${module.semanticVersion || module.version ? ` v. ${module.semanticVersion || module.version}` : ''}`
+              const icon = modulesDefaultInit[module.name]?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
+
+              return (
+                <span key={moduleName}>
+                  {icon ? (
+                    <EuiIcon
+                      type={icon}
+                      className={cx(styles.icon)}
+                      data-testid={`${module.name}_module`}
+                      aria-labelledby={`${module.name}_module`}
+                    />
+                  ) : (
+                    <span
+                      className={cx(styles.icon)}
+                      data-testid={`${module.name}_module`}
+                      aria-labelledby={`${module.name}_module`}
+                    >
+                      {abbreviation}
+                    </span>
+                  )}
+                </span>
+              )
+            })}
+          </div>
+        )
+      },
     },
     {
       field: 'host',

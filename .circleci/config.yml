@@ -490,8 +490,8 @@ jobs:
                 command: |
                   PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
                   PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
-#                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
-#                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
+                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
       - persist_to_workspace:
           root: .
           paths:

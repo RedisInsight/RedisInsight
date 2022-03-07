@@ -8,7 +8,7 @@
     "url": "https://github.com/"
   },
   "description": "RedisTimeseries module",
-  "source": "./src/index.tsx",
+  "source": "./src/main.tsx",
   "styles": "./dist/styles.css",
   "main": "./dist/index.js",
   "name": "redistimeseries",

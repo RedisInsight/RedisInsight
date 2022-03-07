@@ -8,6 +8,11 @@ interface Props {
     result?: { response: any, status: string }[]
 }
 
+enum TS_CMD_RANGE_PREFIX {
+  RANGE = 'TS.RANGE',
+  REVRANGE = 'TS.REVRANGE',
+}
+
 const App = (props: Props) => {
   const { result: [{ response = '', status = '' } = {}] = [] } = props
 
@@ -19,7 +24,17 @@ const App = (props: Props) => {
     return <div className="responseFail">{response}</div>
   }
 
-  function responseParser(data: any) {
+  function responseParser(command: string, data: any) {
+
+    let [cmd, key, ..._] = command.split(' ')
+
+    if ([TS_CMD_RANGE_PREFIX.RANGE.toString(), TS_CMD_RANGE_PREFIX.REVRANGE.toString()].includes(cmd)) {
+      return [{
+        key,
+        datapoints: data,
+      }]
+    }
+
     return data.map(e => ({
       key: e[0],
       labels: e[1],
@@ -29,7 +44,7 @@ const App = (props: Props) => {
 
   return (
     <ChartResultView
-      data={responseParser(props.result[0].response) as any}
+      data={responseParser(props.command, props.result[0].response) as any}
     />
   )
 }

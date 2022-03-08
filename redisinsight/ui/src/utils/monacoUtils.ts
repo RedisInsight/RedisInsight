@@ -96,6 +96,10 @@ export const findCompleteQuery = (
   let commandName = ''
   let fullQuery = ''
   const notCommandRegEx = /^\s|\/\//
+  const commandPosition = {
+    startLine: 0,
+    endLine: 0
+  }
 
   // find command and args in the previous lines if current line is argument
   // eslint-disable-next-line for-direction
@@ -105,10 +109,13 @@ export const findCompleteQuery = (
       ? commandName.slice(0, position.column - 1)
       : commandName
     fullQuery = lineBeforePosition + fullQuery
+    commandPosition.startLine = previousLineNumber
 
     if (!notCommandRegEx.test(commandName)) {
       break
     }
+
+    fullQuery = `\n${fullQuery}`
   }
 
   const matchedCommand = commandsArray
@@ -128,19 +135,25 @@ export const findCompleteQuery = (
       break
     }
 
+    commandPosition.endLine = nextLineNumber
     const lineAfterPosition = nextLineNumber === lineNumber
       ? lineContent.slice(position.column - 1, model.getLineLength(lineNumber))
       : lineContent
+
+    if (nextLineNumber !== lineNumber) {
+      fullQuery += '\n'
+    }
 
     fullQuery += lineAfterPosition
   }
 
   const args = fullQuery
     .replace(matchedCommand, '')
-    .match(/(?:[^\s"']+|['"][^'"]*["'])+/g)
+    .match(/(?:[^\s"']+|["][^"]*["]|['][^']*['])+/g)
 
   return {
     position,
+    commandPosition,
     commandCursorPosition,
     fullQuery,
     args,

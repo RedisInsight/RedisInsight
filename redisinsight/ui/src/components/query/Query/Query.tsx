@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
@@ -32,8 +32,11 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
+import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
 
 import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
+import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -53,9 +56,12 @@ let execHistory: CommandExecutionUI[] = []
 const Query = (props: Props) => {
   const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl } = props
   let contribution: Nullable<ISnippetController> = null
+  const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
   const isWidgetOpen = useRef(false)
+  const input = useRef<HTMLDivElement>(null)
   const isWidgetEscaped = useRef(false)
   const selectedArg = useRef('')
+  const syntaxCommand = useRef<any>(null)
   let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
@@ -207,14 +213,24 @@ const Query = (props: Props) => {
       isWidgetEscaped.current = false
       return
     }
-    const queryArg = command.args[argIndex]
-    if (queryArgIndex === argIndex && /^['"].*['"]$/.test(queryArg)) {
-      if (isWidgetEscaped.current) return
 
-      const arg = command.info?.arguments?.[argIndex]?.dsl || ''
-      const lang = arg in DSLNaming ? DSLNaming[arg] : null
+    const queryArg = command.args[argIndex]
+    const argDSL = command.info?.arguments?.[argIndex]?.dsl || ''
+    if (!argIndex) {
+      isWidgetEscaped.current = false
+      return
+    }
+
+    if (queryArgIndex === argIndex && /^['"](.|[\r\n])*['"]$/.test(queryArg)) {
+      if (isWidgetEscaped.current) return
+      const lang = argDSL in DSLNaming ? DSLNaming[argDSL] : null
       lang && showSyntaxWidget(editor, e.position, lang)
       selectedArg.current = queryArg
+      syntaxCommand.current = {
+        ...command,
+        lang: argDSL,
+        argToReplace: queryArg
+      }
     }
   }
 
@@ -245,6 +261,43 @@ const Query = (props: Props) => {
     syntaxWidgetContext?.set(true)
   }
 
+  const onCancelDedicatedEditor = () => {
+    setIsDedicatedEditorOpen(false)
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    editor.updateOptions({ readOnly: false })
+  }
+
+  const updateArgFromDedicatedEditor = (value: string = '') => {
+    if (syntaxCommand.current) {
+      if (!monacoObjects.current) return
+      const { editor } = monacoObjects?.current
+
+      const model = editor.getModel()
+      if (!model) return
+
+      const wrapQuote = syntaxCommand.current.argToReplace[0]
+      const replaceCommand = syntaxCommand.current.fullQuery.replace(
+        syntaxCommand.current.argToReplace,
+        `${wrapQuote}${value}${wrapQuote}`
+      )
+      editor.updateOptions({ readOnly: false })
+      editor.executeEdits(null, [
+        {
+          range: new monaco.Range(
+            syntaxCommand.current.commandPosition.startLine,
+            0,
+            syntaxCommand.current.commandPosition.endLine,
+            model.getLineLength(syntaxCommand.current.commandPosition.endLine) + 1
+          ),
+          text: replaceCommand
+        }
+      ])
+      setIsDedicatedEditorOpen(false)
+    }
+  }
+
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
     monaco: typeof monacoEditor
@@ -268,7 +321,9 @@ const Query = (props: Props) => {
     )
 
     editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {
-      alert(selectedArg.current.replace(/(^["']|["']$)/g, ''))
+      setIsDedicatedEditorOpen(true)
+      editor.updateOptions({ readOnly: true })
+      hideSyntaxWidget(editor)
     }, SYNTAX_CONTEXT_ID)
 
     editor.addCommand(monaco.KeyCode.Escape, () => {
@@ -314,45 +369,58 @@ const Query = (props: Props) => {
     },
     lineNumbersMinChars: 4
   }
+  monaco.editor.defineTheme('dark', darkTheme)
+  monaco.editor.defineTheme('light', lightTheme)
 
   return (
-    <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
-      <div className={styles.input} data-testid="query-input-container">
-        <MonacoEditor
-          language={MonacoLanguage.Redis}
-          theme={theme === Theme.Dark ? 'vs-dark' : 'vs-light'}
-          value={query}
-          options={options}
-          className={`${MonacoLanguage.Redis}-editor`}
-          onChange={onChange}
-          editorDidMount={editorDidMount}
-        />
-      </div>
-      <div className={styles.actions}>
-        <EuiToolTip
-          position="left"
-          content={
-            KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
-              <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
-                <KeyboardShortcut
-                  separator={KEYBOARD_SHORTCUTS?._separator}
-                  items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
-                />
-              </div>
-            )
-          }
-        >
-          <EuiButtonIcon
-            onClick={() => handleSubmit()}
-            iconType="playFilled"
-            className={cx(styles.submitButton)}
-            aria-label="submit"
-            data-testid="btn-submit"
+    <>
+      <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
+        <div className={styles.input} data-testid="query-input-container" ref={input}>
+          <MonacoEditor
+            language={MonacoLanguage.Redis}
+            theme={theme === Theme.Dark ? 'dark' : 'light'}
+            value={query}
+            options={options}
+            className={`${MonacoLanguage.Redis}-editor`}
+            onChange={onChange}
+            editorDidMount={editorDidMount}
           />
-        </EuiToolTip>
+        </div>
+        <div className={styles.actions}>
+          <EuiToolTip
+            position="left"
+            content={
+              KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
+                  <KeyboardShortcut
+                    separator={KEYBOARD_SHORTCUTS?._separator}
+                    items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
+                  />
+                </div>
+              )
+            }
+          >
+            <EuiButtonIcon
+              onClick={() => handleSubmit()}
+              iconType="playFilled"
+              className={cx(styles.submitButton)}
+              aria-label="submit"
+              data-testid="btn-submit"
+            />
+          </EuiToolTip>
+        </div>
       </div>
-    </div>
+      {isDedicatedEditorOpen && (
+        <DedicatedEditor
+          lang={syntaxCommand.current.lang}
+          value={selectedArg.current.replace(/(^["']|["']$)/g, '')}
+          onSubmit={updateArgFromDedicatedEditor}
+          onCancel={onCancelDedicatedEditor}
+          width={input?.current?.scrollWidth || 300}
+        />
+      )}
+    </>
   )
 }
 

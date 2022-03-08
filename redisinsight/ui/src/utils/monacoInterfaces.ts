@@ -12,6 +12,7 @@ export interface IMonacoQuery {
   fullQuery: string
   args?: string[]
   info?: ICommand
+  commandPosition: any
   position?: monacoEditor.Position
   commandCursorPosition?: number
 }

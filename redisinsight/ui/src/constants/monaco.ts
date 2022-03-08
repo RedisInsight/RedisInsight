@@ -1,5 +1,6 @@
 export enum MonacoLanguage {
   Redis = 'redisLanguage',
+  Cypher = 'cypherLanguage'
 }
 
 export const MONACO_MANUAL = '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.\n'

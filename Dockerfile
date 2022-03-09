@@ -50,6 +50,7 @@ RUN set -ex \
  && chown avahi:avahi /var/run/avahi-daemon \
  && chmod 777 /var/run/avahi-daemon
 
+RUN apt-get install net-tools
 RUN apt-get install -y dbus-x11 gnome-keyring libsecret-1-0
 RUN dbus-uuidgen > /var/lib/dbus/machine-id
 

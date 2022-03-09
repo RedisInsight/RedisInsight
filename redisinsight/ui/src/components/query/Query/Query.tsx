@@ -50,6 +50,7 @@ export interface Props {
 }
 
 const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
+const argInQuotesRegExp = /^['"](.|[\r\n])*['"]$/
 let decorations: string[] = []
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
@@ -228,9 +229,9 @@ const Query = (props: Props) => {
       return
     }
 
-    if (queryArgIndex === argIndex && /^['"](.|[\r\n])*['"]$/.test(queryArg)) {
+    if (queryArgIndex === argIndex && argInQuotesRegExp.test(queryArg)) {
       if (isWidgetEscaped.current) return
-      const lang = argDSL in DSLNaming ? DSLNaming[argDSL] : null
+      const lang = DSLNaming[argDSL] ?? null
       lang && showSyntaxWidget(editor, e.position, lang)
       selectedArg.current = queryArg
       syntaxCommand.current = {

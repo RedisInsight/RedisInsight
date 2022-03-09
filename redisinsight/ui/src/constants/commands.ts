@@ -109,11 +109,11 @@ export enum DSL {
   lua = 'lua'
 }
 
-interface IDSNaming {
+export interface IDSLNaming {
   [key: string]: string
 }
 
-export const DSLNaming: IDSNaming = {
+export const DSLNaming: IDSLNaming = {
   [DSL.cypher]: 'Cypher',
   [DSL.lua]: 'Lua'
 }

@@ -7,8 +7,10 @@ import cx from 'classnames'
 import { EuiButtonIcon } from '@elastic/eui'
 
 import {
-  DSL, DSLNaming,
+  DSL,
+  DSLNaming,
   MonacoLanguage,
+  MonacoSyntaxLang,
 } from 'uiSrc/constants'
 import {
   decoration,
@@ -35,7 +37,7 @@ export interface Props {
   width: number
 }
 
-const langs: any = {
+const langs: MonacoSyntaxLang = {
   [DSL.cypher]: {
     name: DSLNaming[DSL.cypher],
     id: MonacoLanguage.Cypher,

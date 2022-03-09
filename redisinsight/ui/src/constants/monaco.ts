@@ -1,3 +1,15 @@
+import * as monacoEditor from 'monaco-editor'
+
+export interface MonacoSyntaxLang {
+  [key: string]: {
+    name: string
+    id: string
+    config: monacoEditor.languages.LanguageConfiguration,
+    completionProvider: () => monacoEditor.languages.CompletionItemProvider,
+    tokensProvider: () => monacoEditor.languages.IMonarchLanguage
+  }
+}
+
 export enum MonacoLanguage {
   Redis = 'redisLanguage',
   Cypher = 'cypherLanguage'

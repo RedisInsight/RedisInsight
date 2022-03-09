@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip, EuiSwitch, EuiSwitchEvent } from '@elastic/eui'
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
 import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
-import { changeKeyViewType, keysSelector } from 'uiSrc/slices/keys'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 
 import styles from './styles.module.scss'
 
@@ -23,12 +21,9 @@ const InstanceHeader = () => {
     connectionType = ConnectionType.Standalone,
     db = 0
   } = useSelector(connectedInstanceSelector)
-  const { viewType } = useSelector(keysSelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const history = useHistory()
   const [windowDimensions, setWindowDimensions] = useState(0)
-
-  const dispatch = useDispatch()
 
   useEffect(() => {
     updateWindowDimensions()
@@ -44,10 +39,6 @@ const InstanceHeader = () => {
 
   const goHome = () => {
     history.push(Pages.home)
-  }
-
-  const onChangeKeyViewType = (e: EuiSwitchEvent) => {
-    dispatch(changeKeyViewType(!e.target.checked ? KeyViewType.List : KeyViewType.Tree))
   }
 
   return (
@@ -98,13 +89,6 @@ const InstanceHeader = () => {
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </EuiToolTip>
-            </div>
-            <div style={{ paddingLeft: '10px' }}>
-              <EuiSwitch
-                label="Tree view"
-                checked={viewType !== KeyViewType.List}
-                onChange={(e) => onChangeKeyViewType(e)}
-              />
             </div>
           </div>
         </EuiFlexItem>

@@ -1,0 +1,62 @@
+.anchorTooltipNode {
+  width: 100%;
+  display: inline-block;
+  position: relative;
+}
+
+.nodeContainer {
+  border-left: 3px solid transparent;
+
+  &:hover {
+    background-color: var(--browserTreeNodeOpen);
+  }
+}
+
+.nodeContent {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  padding-right: 8px;
+  color: var(--euiTextSubduedColor) !important;
+  font: normal normal normal 13px/28px Graphik, sans-serif !important;
+  letter-spacing: -0.13px;
+
+
+  &Open {
+    color: var(--euiColorFullShade) !important;
+  }
+}
+
+.nodeSelected {
+  // border-left: 3px solid transparent;
+  border-left-color: var(--euiColorPrimary) !important;
+  background-color: var(--browserTreeNodeOpen);
+
+  .nodeContent {
+    color: var(--euiColorFullShade) !important;
+  }
+}
+
+.nodeIcon {
+  margin-right: 8px;
+
+  &Arrow {
+    margin-left: 8px;
+    margin-right: 6px;
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  &Leaf {
+    margin-left: 25px;
+    margin-bottom: 2px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.approximate {
+  display: inline-block;
+  width: 36px;
+  text-align: end;
+}

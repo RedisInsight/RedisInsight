@@ -1,16 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
+
 import {
-  EuiButton,
   EuiIcon,
   EuiText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButtonIcon,
   EuiToolTip,
   EuiTextColor,
 } from '@elastic/eui'
-import { formatDistanceToNow } from 'date-fns'
 import {
   formatBytes,
   formatLongName,
@@ -39,64 +36,32 @@ import {
 } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { GroupBadge } from 'uiSrc/components'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 
-import FilterKeyType from '../filter-key-type'
-import SearchKeyList from '../search-key-list'
-
 import styles from './styles.module.scss'
 
 export interface Props {
-  withoutHeader?: boolean;
-  keysState: IKeyListPropTypes;
-  loading: boolean;
-  selectKey: ({ rowData }: { rowData: any }) => void;
-  loadMoreItems?: ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => void;
-  handleAddKeyPanel: (value: boolean) => void;
+  hideHeader?: boolean
+  keysState: IKeyListPropTypes
+  loading: boolean
+  hideFooter?: boolean
+  selectKey: ({ rowData }: { rowData: any }) => void
+  loadMoreItems?: ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => void
 }
 
 const KeyList = (props: Props) => {
   let wheelTimer = 0
-  const { selectKey, loadMoreItems, loading, keysState, handleAddKeyPanel, withoutHeader } = props
-
-  const [lastRefreshMessage, setLastRefreshMessage] = useState('')
+  const { selectKey, loadMoreItems, loading, keysState, hideFooter } = props
 
   const { data: selectedKey } = useSelector(selectedKeySelector)
-  const { total, nextCursor, previousResultCount, lastRefreshTime } = useSelector(keysDataSelector)
+  const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered } = useSelector(keysSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
   const dispatch = useDispatch()
-
-  const handleRefreshKeys = () => {
-    sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
-    dispatch(fetchKeys(
-      '0',
-      SCAN_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
-    ))
-  }
-
-  const openAddKeyPanel = () => {
-    handleAddKeyPanel(true)
-    sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
-  }
 
   const getNoItemsMessage = () => {
     if (isSearched) {
@@ -106,14 +71,6 @@ const KeyList = (props: Props) => {
       return ScanNoResultsFoundText
     }
     return total ? NoResultsFoundText : NoKeysToDisplayText
-  }
-
-  const updateLastRefresh = () => {
-    setLastRefreshMessage(
-      lastRefreshTime
-        ? `${formatDistanceToNow(lastRefreshTime, { addSuffix: true })}`
-        : 'Refresh'
-    )
   }
 
   const onWheelSearched = (event: React.WheelEvent) => {
@@ -136,39 +93,18 @@ const KeyList = (props: Props) => {
     dispatch(setBrowserKeyListScrollPosition(position))
   }
 
-  const keyHeaderLabel = (
-    <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false} wrap>
-      <EuiFlexItem grow={false}>
-        <EuiText size="m">Key</EuiText>
-      </EuiFlexItem>
-
-      <EuiFlexItem grow={false}>
-        <EuiButton
-          style={{ marginLeft: '12px' }}
-          fill
-          size="s"
-          color="secondary"
-          onClick={openAddKeyPanel}
-          data-testid="btn-add-key"
-        >
-          + Key
-        </EuiButton>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  )
-
   const columns: ITableColumn[] = [
     {
       id: 'type',
       label: 'Type',
-      absoluteWidth: 107,
-      minWidth: 107,
+      absoluteWidth: 'auto',
+      maxWidth: 124,
       render: (cellData: any, { name }: any) => <GroupBadge type={cellData} name={name} />,
     },
     {
       id: 'name',
-      label: keyHeaderLabel,
-      minWidth: 160,
+      label: 'Key',
+      minWidth: 100,
       truncateText: true,
       render: (cellData: string = '', { name }: any) => {
         // Better to cut the long string, because it could affect virtual scroll performance
@@ -282,37 +218,11 @@ const KeyList = (props: Props) => {
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        {!withoutHeader && (
-          <div className={styles.header}>
-            <FilterKeyType />
-            <SearchKeyList />
-            <div className={styles.refresh}>
-              <EuiToolTip
-                title="Last Refresh"
-                className={styles.tooltip}
-                position="top"
-                content={lastRefreshMessage}
-              >
-                <EuiButtonIcon
-                  iconType="refresh"
-                  color="primary"
-                  disabled={loading}
-                  onClick={handleRefreshKeys}
-                  onMouseEnter={updateLastRefresh}
-                  className={styles.btnRefresh}
-                  aria-labelledby="Refresh keys"
-                  data-testid="refresh-keys-btn"
-                />
-              </EuiToolTip>
-            </div>
-          </div>
-        )}
-
-        <div className={styles.table}>
+        <div className={cx(styles.table, { [styles.table__withoutFooter]: hideFooter })}>
           <div className="key-list-table" data-testid="keyList-table">
             <VirtualTable
               onRowClick={selectKey}
-              headerHeight={withoutHeader ? 0 : 60}
+              headerHeight={0}
               rowHeight={43}
               columns={columns}
               isRowSelectable
@@ -326,6 +236,7 @@ const KeyList = (props: Props) => {
               selectedKey={selectedKey}
               scrollTopProp={scrollTopPosition}
               setScrollTopPosition={setScrollTopPosition}
+              hideFooter={hideFooter}
             />
           </div>
         </div>

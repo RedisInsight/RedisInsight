@@ -1,148 +1,118 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import cx from 'classnames'
+/* eslint-disable no-console */
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import { isArray, isEmpty } from 'lodash'
 import {
-  FixedSizeNodeData,
-  FixedSizeTree as Tree,
+  TreeWalker,
   TreeWalkerValue,
+  FixedSizeTree as Tree,
 } from 'react-vtree'
-import { ListChildComponentProps } from 'react-window'
+import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 
-import { useDisposableWebworker, useWebworker } from 'uiSrc/services'
+import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { useDispatch } from 'react-redux'
-import { NodeComponentProps, NodePublicState } from 'react-vtree/dist/es/Tree'
-import { constructTree } from './utils'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { DEFAULT_SEPARATOR, Theme } from 'uiSrc/constants'
+import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
+import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
+
+import { Node } from './components/Node'
+import { NodeMeta, TreeData, TreeNode } from './interfaces'
 
 import styles from './styles.module.scss'
 
 interface Props {
   items: IKeyPropTypes[]
   separator?: string
-  webworkerFn: (...args: any) => any
-  onSelectLeaf?: (items: any[]) => any
-  setConstructingTree: (state: boolean) => void
-}
-
-type TreeNode = Readonly<{
-  children: TreeNode[];
-  id: number;
-  keyCount: number;
-  fullName: string;
-  name: string;
-  keys: any[];
-}>
-
-type TreeData = FixedSizeNodeData &
-Readonly<{
-  isLeaf: boolean;
-  name: string;
-  keyCount: number;
-  fullName: string;
-  keys: any[];
-  nestingLevel: number;
-  setItems: (keys: any[]) => void
-}>
-
-type NodeMeta = Readonly<{
-  nestingLevel: number;
-  node: TreeNode;
-}>
-
-let statusOpen:any = {}
-
-const Node = ({
-  data: { id, isLeaf, keys, name, keyCount, nestingLevel, fullName, setItems },
-  isOpen,
-  style,
-  setOpen
-}: NodePublicState<TreeData>) => {
-  const handleClick = () => {
-    if (keys) {
-      console.log('keys', keys)
-      setItems?.(keys)
-    }
-
-    statusOpen[fullName] = !isOpen
-
-    !isLeaf && setOpen(!isOpen)
+  loadingIcon?: string
+  loading: boolean
+  statusSelected: {
+    [key: string]: IKeyPropTypes[]
   }
-
-  return (
-    <div
-      style={{
-        ...style,
-        paddingLeft: nestingLevel * 30,
-      }}
-      className={cx(styles.nodeContainer, { [styles.nodeContainerOpen]: isOpen && !isLeaf })}
-      onClick={handleClick}
-      role="treeitem"
-      onKeyDown={() => {}}
-      tabIndex={0}
-      onFocus={() => {}}
-    >
-      <div>
-        {isLeaf ? 'Keys' : `${(isOpen ? '- ' : '+ ')} ${name}`}
-      </div>
-      <div>
-        {keyCount}
-      </div>
-    </div>
-  )
+  statusOpen: {
+    [key: string]: boolean
+  }
+  webworkerFn: (...args: any) => any
+  onSelectLeaf?: (items: any[]) => void
+  onStatusOpen?: (name: string, value: boolean) => void
+  onStatusSelected?: (id: string, keys: any) => void
+  setConstructingTree: (status: boolean) => void
 }
 
 const timeLabel = 'Time for construct a Tree'
 const VirtualTree = (props: Props) => {
   const {
     items,
-    scrollTopProp = 0,
+    separator = DEFAULT_SEPARATOR,
+    loadingIcon = 'empty',
+    statusOpen = {},
+    statusSelected = {},
+    loading,
+    onStatusOpen,
+    onStatusSelected,
     onSelectLeaf,
     setConstructingTree,
-    separator = ':',
     webworkerFn = () => {}
   } = props
 
-  const dispatch = useDispatch()
+  const { theme } = useContext(ThemeContext)
 
-  // const [nodes, setNodes] = useState<Node[]>(constructTree(4, 10, 10))
   const [nodes, setNodes] = useState<TreeNode[]>([])
+  const [firstConstruct, setFirstConstruct] = useState(false)
 
-  // const { result, error, run: runWebworker } = useWebworker(webworkerFn)
-  const { result, error, run: runWebworker } = useDisposableWebworker(webworkerFn)
+  const { result, run: runWebworker } = useDisposableWebworker(webworkerFn)
 
   const handleSelectLeaf = useCallback((keys: any[]) => {
     onSelectLeaf?.(keys)
   }, [onSelectLeaf])
 
-  useEffect(() => {
-    console.log('webworker result', result)
+  const handleUpdateSelected = useCallback((fullName: string, keys: any) => {
+    onStatusSelected?.(fullName, keys)
+  }, [onStatusSelected])
 
+  const handleUpdateOpen = useCallback((name: string, value: boolean) => {
+    onStatusOpen?.(name, value)
+  }, [onStatusOpen])
+
+  useEffect(() =>
+    () => setNodes([]),
+  [])
+
+  // receive result from the "runWebworker"
+  useEffect(() => {
     if (!result) {
       return
     }
-    // dispatch(resetKeysData())
-
+    // [ToDo] remove after tests
     console.timeEnd(timeLabel)
+
     setNodes(result)
     setConstructingTree(false)
+
+    // set "root" keys after first render (construct a tree)
+    if (!firstConstruct && isArray(result) && isEmpty(statusSelected)) {
+      const rootLeaf = result?.find(({ children = [] }) => children.length === 0) ?? {}
+      setFirstConstruct(true)
+      onStatusSelected?.(rootLeaf?.fullName, rootLeaf?.keys)
+      onSelectLeaf?.(rootLeaf?.keys ?? [])
+    }
   }, [result])
 
   useEffect(() => {
     if (!items?.length) {
+      setNodes([])
       return
     }
 
+    // [ToDo] remove after tests
     console.time(timeLabel)
     setConstructingTree(true)
     runWebworker({ nodes, items, separator })
   }, [items])
 
-  useEffect(() => {
-    statusOpen = {}
-
-    return () => setNodes([])
-  }, [])
-
+  // This helper function constructs the object that will be sent back at the step
+  // [2] during the treeWalker function work. Except for the mandatory `data`
+  // field you can put any additional data here.
   const getNodeData = (
     node: TreeNode,
     nestingLevel: number,
@@ -151,28 +121,39 @@ const VirtualTree = (props: Props) => {
       id: node.id.toString(),
       isLeaf: node.children?.length === 0,
       keyCount: node.keyCount,
-      keys: node.keys || node['keys:keys'],
-      isOpenByDefault: statusOpen[node.fullName],
       name: node.name,
       fullName: node.fullName,
       nestingLevel,
-      setItems: handleSelectLeaf
+      setItems: handleSelectLeaf,
+      updateStatusSelected: handleUpdateSelected,
+      updateStatusOpen: handleUpdateOpen,
+      leafIcon: theme === Theme.Dark ? KeyDarkSVG : KeyLightSVG,
+      keyApproximate: node.keyApproximate,
+      keys: node.keys || node?.['keys:keys'],
+      isSelected: Object.keys(statusSelected)[0] === node.fullName,
+      isOpenByDefault: statusOpen[node.fullName],
     },
     nestingLevel,
     node,
   })
 
+  // The `treeWalker` function runs only on tree re-build which is performed
+  // whenever the `treeWalker` prop is changed.
   const treeWalker = useCallback(
     function* treeWalker(): ReturnType<TreeWalker<TreeData, NodeMeta>> {
+      // Step [1]: Define the root multiple nodes of our tree
       for (let i = 0; i < nodes.length; i++) {
         yield getNodeData(nodes[i], 0)
       }
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
+      // Step [2]: Get the parent component back. It will be the object
+      // the `getNodeData` function constructed, so you can read any data from it.
       while (true) {
         const parentMeta = yield
 
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < parentMeta.node.children?.length; i++) {
+          // Step [3]: Yielding all the children of the provided component. Then we
+          // will return for the step [2] with the first children.
           yield getNodeData(
             parentMeta.node.children[i],
             parentMeta.nestingLevel + 1,
@@ -180,7 +161,7 @@ const VirtualTree = (props: Props) => {
         }
       }
     },
-    [nodes],
+    [nodes, statusSelected],
   )
 
   return (
@@ -190,13 +171,21 @@ const VirtualTree = (props: Props) => {
           { nodes.length > 0 && (
             <Tree
               height={height}
-              width={width < 200 ? 200 : width}
-              itemSize={20}
+              width={width}
+              itemSize={30}
               treeWalker={treeWalker}
               className={styles.customScroll}
             >
               {Node}
             </Tree>
+          )}
+          { nodes.length === 0 && loading && (
+            <div className={styles.loadingContainer} style={{ width, height }}>
+              <div className={styles.loadingBody}>
+                <EuiLoadingSpinner size="xl" className={styles.loadingSpinner} />
+                <EuiIcon type={loadingIcon || 'empty'} className={styles.loadingIcon} />
+              </div>
+            </div>
           )}
         </>
       )}
@@ -204,5 +193,4 @@ const VirtualTree = (props: Props) => {
   )
 }
 
-// export default React.memo(VirtualTree)
 export default VirtualTree

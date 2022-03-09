@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
-import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, KeyTypes, SortOrder } from 'uiSrc/constants'
+import { apiService, localStorageService } from 'uiSrc/services'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes, SortOrder } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -38,8 +38,7 @@ export const initialState: KeysStore = {
   search: '',
   isSearched: false,
   isFiltered: false,
-  viewType: KeyViewType.Tree,
-  // viewType: KeyViewType.List,
+  viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
   data: {
     total: 0,
     scanned: 0,

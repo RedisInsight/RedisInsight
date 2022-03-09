@@ -1,377 +1,183 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import cx from 'classnames'
+import { EuiResizableContainer, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+
 import {
-  EuiButton,
-  EuiIcon,
-  EuiText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButtonIcon,
-  EuiToolTip,
-  EuiTextColor,
-} from '@elastic/eui'
-import { formatDistanceToNow } from 'date-fns'
-import {
-  formatBytes,
-  formatLongName,
-  replaceSpaces,
-  truncateTTLToDuration,
-  truncateTTLToFirstUnit,
-  truncateTTLToSeconds,
-} from 'uiSrc/utils'
-import {
-  NoKeysToDisplayText,
-  NoResultsFoundText,
-  FullScanNoResultsFoundText,
-  ScanNoResultsFoundText,
-} from 'uiSrc/constants/texts'
-import {
-  fetchKeys,
-  keysDataSelector,
-  keysSelector,
-  selectedKeySelector,
-  sourceKeysFetch,
-} from 'uiSrc/slices/keys'
-import {
-  appContextBrowser,
-  setBrowserKeyListDataLoaded,
-  setBrowserKeyListScrollPosition
+  appContextBrowserTree,
+  setBrowserTreeNodesOpen,
+  setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { GroupBadge } from 'uiSrc/components'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { IKeyListPropTypes, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
-
-import VirtualTree from 'uiSrc/components/virtual-tree'
 import { constructKeysToTree } from 'uiSrc/helpers'
-import FilterKeyType from '../filter-key-type'
-import SearchKeyList from '../search-key-list'
+import VirtualTree from 'uiSrc/components/virtual-tree'
+import { DEFAULT_SEPARATOR } from 'uiSrc/constants'
+import { IKeyListPropTypes, } from 'uiSrc/constants/prop-types/keys'
+import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 
-import styles from './styles.module.scss'
 import KeyList from '../key-list/KeyList'
+import styles from './styles.module.scss'
 
 export interface Props {
-  keysState: IKeyListPropTypes;
-  loading: boolean;
-  selectKey: ({ rowData }: { rowData: any }) => void;
-  loadMoreItems: ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => void;
-  handleAddKeyPanel: (value: boolean) => void;
+  keysState: IKeyListPropTypes
+  loading: boolean
+  selectKey: ({ rowData }: { rowData: any }) => void
+  loadMoreItems: ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => void
+  handleAddKeyPanel: (value: boolean) => void
 }
 
+export const firstPanelId = 'tree'
+export const secondPanelId = 'keys'
+
 const KeyTree = (props: Props) => {
-  let wheelTimer = 0
-  const { selectKey, loadMoreItems, loading, keysState, handleAddKeyPanel } = props
+  const { selectKey, loading, keysState } = props
 
-  const [lastRefreshMessage, setLastRefreshMessage] = useState('')
-  const [constructingTree, setConstructingTree] = useState(true)
+  const firstPanelId = 'tree'
+  const secondPanelId = 'keys'
 
-  const { data: selectedKey } = useSelector(selectedKeySelector)
-  const { total, nextCursor, previousResultCount, lastRefreshTime } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered } = useSelector(keysSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
-  const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
+  const { panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
 
+  const [statusSelected, setStatusSelected] = useState(selectedLeaf)
+  const [statusOpen, setStatusOpen] = useState(openNodes)
+  const [sizes, setSizes] = useState(panelSizes)
+  const [separator, setSeparator] = useState<string>(DEFAULT_SEPARATOR)
   const [keyListState, setKeyListState] = useState<IKeyListPropTypes>(keysState)
+  const [constructingTree, setConstructingTree] = useState(false)
 
   const dispatch = useDispatch()
 
-  const handleRefreshKeys = () => {
-    sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
-    setConstructingTree(true)
+  useEffect(() => {
+    updateKeysList()
+  }, [])
 
-    dispatch(fetchKeys(
-      '0',
-      SCAN_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
-    ))
-  }
+  useEffect(() => {
+    setStatusOpen(openNodes)
+  }, [openNodes])
 
-  const openAddKeyPanel = () => {
-    handleAddKeyPanel(true)
-    sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
-  }
-
-  const getNoItemsMessage = () => {
-    if (isSearched) {
-      return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
+  useEffect(() => {
+    if (selectedLeaf) {
+      setStatusSelected(selectedLeaf)
+      updateKeysList(Object.values(selectedLeaf)[0])
     }
-    if (isFiltered && keysState.scanned < total) {
-      return ScanNoResultsFoundText
-    }
-    return total ? NoResultsFoundText : NoKeysToDisplayText
-  }
+  }, [selectedLeaf])
 
-  const updateKeysList = (items:any) => {
+  const options: EuiSuperSelectOption<string>[] = [{
+    value: DEFAULT_SEPARATOR,
+    inputDisplay: DEFAULT_SEPARATOR,
+    'data-test-subj': 'separator-colon',
+  }]
+
+  const updateKeysList = (items:any = {}) => {
     const newState:IKeyListPropTypes = {
       ...keyListState,
       keys: Object.values(items)
     }
+
     setKeyListState(newState)
   }
 
-  const updateLastRefresh = () => {
-    setLastRefreshMessage(
-      lastRefreshTime
-        ? `${formatDistanceToNow(lastRefreshTime, { addSuffix: true })}`
-        : 'Refresh'
-    )
+  const onPanelWidthChange = useCallback((newSizes: any) => {
+    setSizes((prevSizes: any) => ({
+      ...prevSizes,
+      ...newSizes,
+    }))
+  }, [])
+
+  const onChangeSeparator = (initValue: string) => {
+    setSeparator(initValue)
   }
 
-  const onWheelSearched = (event: React.WheelEvent) => {
-    if (
-      !loading
-      && (isSearched || isFiltered)
-      && event.deltaY > 0
-      && !sourceKeysFetch
-      && nextCursor !== '0'
-      && previousResultCount === 0
-    ) {
-      clearTimeout(wheelTimer)
-      wheelTimer = window.setTimeout(() => {
-        loadMoreItems({ stopIndex: SCAN_COUNT_DEFAULT, startIndex: 1 })
-      }, 100)
-    }
-  }
+  const handleStatusOpen = (name: string, value:boolean) => {
+    setStatusOpen((prevState) => {
+      const newState = { ...prevState }
 
-  const setScrollTopPosition = (position: number) => {
-    dispatch(setBrowserKeyListScrollPosition(position))
-  }
-
-  const keyHeaderLabel = (
-    <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false} wrap>
-      <EuiFlexItem grow={false}>
-        <EuiText size="m">Key</EuiText>
-      </EuiFlexItem>
-
-      <EuiFlexItem grow={false}>
-        <EuiButton
-          style={{ marginLeft: '12px' }}
-          fill
-          size="s"
-          color="secondary"
-          onClick={openAddKeyPanel}
-          data-testid="btn-add-key"
-        >
-          + Key
-        </EuiButton>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  )
-
-  const columns: ITableColumn[] = [
-    {
-      id: 'type',
-      label: 'Type',
-      absoluteWidth: 107,
-      minWidth: 107,
-      render: (cellData: any, { name }: any) => <GroupBadge type={cellData} name={name} />,
-    },
-    {
-      id: 'name',
-      label: keyHeaderLabel,
-      minWidth: 160,
-      truncateText: true,
-      render: (cellData: string = '', { name }: any) => {
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = replaceSpaces(cellData.substring(0, 200))
-        const tooltipContent = formatLongName(cellData)
-        return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText'" data-testid={`key-${name}`}>
-              <EuiToolTip
-                title="Key Name"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
-            </div>
-          </EuiText>
-        )
-      },
-    },
-    {
-      id: 'ttl',
-      label: 'TTL',
-      absoluteWidth: 65,
-      minWidth: 65,
-      truncateText: true,
-      alignment: TableCellAlignment.Right,
-      render: (cellData: number, { name }: any) => {
-        if (cellData === -1) {
-          return (
-            <EuiTextColor color="subdued" data-testid={`ttl-${name}`}>
-              No limit
-            </EuiTextColor>
-          )
-        }
-        return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`ttl-${name}`}>
-              <EuiToolTip
-                title="Time to Live"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="right"
-                content={(
-                  <>
-                    {`${truncateTTLToSeconds(cellData)} s`}
-                    <br />
-                    {`(${truncateTTLToDuration(cellData)})`}
-                  </>
-                )}
-              >
-                <>{truncateTTLToFirstUnit(cellData)}</>
-              </EuiToolTip>
-            </div>
-          </EuiText>
-        )
-      },
-    },
-    {
-      id: 'size',
-      label: 'Size',
-      absoluteWidth: 100,
-      minWidth: 100,
-      alignment: TableCellAlignment.Right,
-      textAlignment: TableCellTextAlignment.Right,
-      render: (cellData: number, { name }: any) => {
-        if (!cellData) {
-          return (
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }} data-testid={`size-${name}`}>
-              -
-            </EuiText>
-          )
-        }
-        return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`size-${name}`}>
-              <EuiToolTip
-                title="Key Size"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="right"
-                content={(
-                  <>
-                    {formatBytes(cellData, 3)}
-                  </>
-                )}
-              >
-                <>{formatBytes(cellData, 0)}</>
-              </EuiToolTip>
-            </div>
-          </EuiText>
-        )
+      // add or remove opened node
+      if (newState[name]) {
+        delete newState[name]
+      } else {
+        newState[name] = value
       }
-    },
-    {
-      id: 'actions',
-      label: '',
-      alignment: TableCellAlignment.Center,
-      absoluteWidth: 50,
-      minWidth: 50,
-      render: () => (
-        <span className={styles.action}>
-          <EuiIcon style={{ cursor: 'pointer' }} type="arrowRight" />
-        </span>
-      ),
-    },
-  ]
 
-  const loadMoreRows = async (params: IndexRange): Promise<any> => {
-    const { startIndex, stopIndex } = params
+      dispatch(setBrowserTreeNodesOpen(newState))
+      return newState
+    })
+  }
 
-    // We do not load more results for first load
-    // if (forceScrollTop !== undefined) return
-
-    if (!loading) {
-      loadMoreItems({ startIndex, stopIndex })
-    }
+  const handleStatusSelected = (fullName: string, keys: any) => {
+    dispatch(setBrowserTreeSelectedLeaf({ [fullName]: keys }))
   }
 
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        <div className={styles.header}>
-          <FilterKeyType />
-          <SearchKeyList />
-          <div>
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              style={{ marginLeft: 25, height: 26 }}
-              disabled={loading || constructingTree}
-              onClick={() => {
-                setConstructingTree(true)
-
-                loadMoreRows({
-                  stopIndex: SCAN_COUNT_DEFAULT - 1,
-                  startIndex: 0,
-                })
-              }}
-              data-testid="scan-more"
-            >
-              Scan more
-            </EuiButton>
-          </div>
-          <div className={styles.refresh}>
-            <EuiToolTip
-              title="Last Refresh"
-              className={styles.tooltip}
-              position="top"
-              content={lastRefreshMessage}
-            >
-              <EuiButtonIcon
-                iconType="refresh"
-                color="primary"
-                disabled={loading || constructingTree}
-                onClick={handleRefreshKeys}
-                onMouseEnter={updateLastRefresh}
-                className={styles.btnRefresh}
-                aria-labelledby="Refresh keys"
-                data-testid="refresh-keys-btn"
-              />
-            </EuiToolTip>
-          </div>
-        </div>
-
         <div className={styles.body}>
-          <div className={styles.tree}>
-            {/* <div className="key-list-table" data-testid="keys-tree"> */}
-            <VirtualTree
-              items={keysState.keys}
-              webworkerFn={constructKeysToTree}
-              onSelectLeaf={updateKeysList}
-              // webworkerFn={constructKeysToTreeSingle}
-              setConstructingTree={setConstructingTree}
-            />
-          </div>
-          <div className={styles.list}>
-            <KeyList
-              withoutHeader
-              keysState={keyListState}
-              loading={loading}
-              selectKey={selectKey}
-              handleAddKeyPanel={handleAddKeyPanel}
-            />
-          </div>
+          <EuiResizableContainer onPanelWidthChange={onPanelWidthChange} style={{ height: '100%' }}>
+            {(EuiResizablePanel, EuiResizableButton) => (
+              <>
+                <EuiResizablePanel
+                  id={firstPanelId}
+                  scrollable={false}
+                  initialSize={sizes[firstPanelId] ?? 30}
+                  minSize="100px"
+                  paddingSize="none"
+                  wrapperProps={{
+                    className: cx(styles.resizablePanelLeft),
+                  }}
+                >
+                  <div className={styles.tree}>
+                    <EuiSuperSelect
+                      disabled={loading}
+                      options={options}
+                      valueOfSelected={separator}
+                      popoverClassName={styles.separatorSelect}
+                      itemClassName={styles.separatorSelectItem}
+                      onChange={(value: string) => onChangeSeparator(value)}
+                      data-testid="select-tree-view-separator"
+                    />
+                    <VirtualTree
+                      items={keysState.keys}
+                      loadingIcon={TreeViewSVG}
+                      separator={separator}
+                      statusSelected={statusSelected}
+                      statusOpen={statusOpen}
+                      loading={loading || constructingTree}
+                      setConstructingTree={setConstructingTree}
+                      webworkerFn={constructKeysToTree}
+                      onSelectLeaf={updateKeysList}
+                      onStatusSelected={handleStatusSelected}
+                      onStatusOpen={handleStatusOpen}
+                    />
+                  </div>
+                </EuiResizablePanel>
+
+                <EuiResizableButton
+                  className={cx(styles.resizableButton)}
+                  data-test-subj="resize-btn-keyList-keyDetails"
+                />
+
+                <EuiResizablePanel
+                  id={secondPanelId}
+                  scrollable={false}
+                  initialSize={sizes[secondPanelId] ?? 70}
+                  minSize="400px"
+                  paddingSize="none"
+                  wrapperProps={{
+                    className: cx(styles.resizablePanelRight),
+                  }}
+                >
+                  <div className={styles.list}>
+                    <KeyList
+                      hideHeader
+                      hideFooter
+                      keysState={keyListState}
+                      loading={loading || constructingTree}
+                      selectKey={selectKey}
+                    />
+                  </div>
+                </EuiResizablePanel>
+              </>
+            )}
+          </EuiResizableContainer>
+
         </div>
       </div>
     </div>

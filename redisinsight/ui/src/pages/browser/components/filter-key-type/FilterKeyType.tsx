@@ -15,6 +15,7 @@ import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
 import { fetchKeys, keysSelector, setFilter } from 'uiSrc/slices/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import HelpTexts from 'uiSrc/constants/help-texts'
+import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -69,6 +70,10 @@ const FilterKeyType = () => {
     setIsSelectOpen(false)
     dispatch(setFilter(value || null))
     dispatch(fetchKeys('0', SCAN_COUNT_DEFAULT))
+
+    // reset browser tree context
+    dispatch(setBrowserTreeNodesOpen({}))
+    dispatch(setBrowserTreeSelectedLeaf({}))
   }
 
   const UnsupportedInfo = () => (

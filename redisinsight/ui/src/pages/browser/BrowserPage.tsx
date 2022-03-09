@@ -33,6 +33,7 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import AddKey from './components/add-key/AddKey'
 import KeyList from './components/key-list/KeyList'
 import KeyTree from './components/key-tree'
+import KeysHeader from './components/keys-header'
 import KeyDetailsWrapper from './components/key-details/KeyDetailsWrapper'
 
 import styles from './styles.module.scss'
@@ -169,7 +170,7 @@ const BrowserPage = () => {
                   id={firstPanelId}
                   scrollable={false}
                   initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="510px"
+                  minSize="670px"
                   paddingSize="none"
                   wrapperProps={{
                     className: cx(styles.resizePanelLeft, {
@@ -178,13 +179,22 @@ const BrowserPage = () => {
                   }}
                 >
                   <>
-                    {viewType === KeyViewType.List && (
+
+                    <KeysHeader
+                      keysState={keysState}
+                      loading={loading}
+                      loadKeys={loadKeys}
+                      sizes={sizes}
+                      loadMoreItems={loadMoreItems}
+                      handleAddKeyPanel={handleAddKeyPanel}
+                    />
+                    {viewType === KeyViewType.Browser && (
                       <KeyList
+                        hideFooter
                         keysState={keysState}
                         loading={loading}
                         loadMoreItems={loadMoreItems}
                         selectKey={selectKey}
-                        handleAddKeyPanel={handleAddKeyPanel}
                       />
                     )}
                     {viewType === KeyViewType.Tree && (
@@ -193,7 +203,6 @@ const BrowserPage = () => {
                         loading={loading}
                         loadMoreItems={loadMoreItems}
                         selectKey={selectKey}
-                        handleAddKeyPanel={handleAddKeyPanel}
                       />
                     )}
                   </>

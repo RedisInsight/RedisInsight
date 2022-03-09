@@ -9,13 +9,30 @@
   position: relative;
 }
 
-.nodeContainer {
+.loadingContainer {
   display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-
-  &Open {
-    background-color:  var(--euiColorLightestShade);
-  }
+  width: 100%;
+  height: 100%;
+  align-items: center;
 }
 
+.loadingBody {
+  display: flex;
+  width: 54px;
+  height: 54px;
+  margin: auto;
+  position: relative;
+}
+
+.loadingSpinner {
+  width: 54px !important;
+  height: 54px !important;
+}
+
+.loadingIcon {
+  position: absolute;
+  width: 28px !important;
+  height: 28px !important;
+  top: 12px;
+  left: 12px;
+}

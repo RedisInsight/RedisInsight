@@ -10,7 +10,7 @@ export interface Key {
 }
 
 export enum KeyViewType {
-  List = 'List',
+  Browser = 'Browser',
   Tree = 'Tree',
 }
 
@@ -22,9 +22,6 @@ export interface KeysStore {
   isFiltered: boolean;
   isSearched: boolean;
   viewType: KeyViewType,
-  tree: {
-
-  },
   data: {
     total: number;
     scanned: number;

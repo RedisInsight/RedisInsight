@@ -9,7 +9,7 @@ const workerHandler = (fn: (...args: any) => any) => {
 
 export const useWebworker = (fn: (...args: any) => any) => {
   const [result, setResult] = useState<Nullable<any>>(null)
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<Nullable<ErrorEvent>>(null)
 
   const workerRef = useRef<Nullable<Worker>>(null)
 
@@ -19,7 +19,7 @@ export const useWebworker = (fn: (...args: any) => any) => {
     )
     workerRef.current = worker
     worker.onmessage = (event) => setResult(event.data)
-    worker.onerror = (error) => setError(error.message)
+    worker.onerror = (error: ErrorEvent) => setError(error)
     return () => {
       worker.terminate()
     }
@@ -34,7 +34,7 @@ export const useWebworker = (fn: (...args: any) => any) => {
 
 export const useDisposableWebworker = (fn: (...args: any) => any) => {
   const [result, setResult] = useState<Nullable<any>>(null)
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<Nullable<ErrorEvent>>(null)
 
   const run = (value: any) => {
     const worker = new Worker(
@@ -44,8 +44,8 @@ export const useDisposableWebworker = (fn: (...args: any) => any) => {
       setResult(event.data)
       worker.terminate()
     }
-    worker.onerror = (error) => {
-      setError(error.message)
+    worker.onerror = (error: ErrorEvent) => {
+      setError(error)
       worker.terminate()
     }
     worker.postMessage(value)

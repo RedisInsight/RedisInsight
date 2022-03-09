@@ -135,8 +135,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -150,8 +150,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -169,8 +169,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],

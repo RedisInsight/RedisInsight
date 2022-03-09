@@ -171,9 +171,6 @@ const DedicatedEditor = (props: Props) => {
     },
     overviewRulerLanes: 0,
     hideCursorInOverviewRuler: true,
-    scrollbar: {
-      vertical: 'hidden'
-    },
     overviewRulerBorder: false,
     lineNumbersMinChars: 4
   }

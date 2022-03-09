@@ -20,13 +20,14 @@ import styles from './styles.module.scss'
 const padding = parseInt(styles.paddingHorizontal)
 
 export interface Props {
-  items: Record<string, IEnablementAreaItem>;
-  loading: boolean;
-  openScript: (script: string, path?: string, name?: string) => void;
-  onOpenInternalPage: (page: IInternalPage) => void;
+  items: Record<string, IEnablementAreaItem>
+  loading: boolean
+  openScript: (script: string, path?: string, name?: string) => void
+  onOpenInternalPage: (page: IInternalPage) => void
+  isCodeBtnDisabled?: boolean
 }
 
-const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Props) => {
+const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCodeBtnDisabled }: Props) => {
   const { search } = useLocation()
   const history = useHistory()
   const dispatch = useDispatch()
@@ -100,7 +101,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage }: Prop
     )))
 
   return (
-    <EnablementAreaProvider value={{ setScript: openScript, openPage: handleOpenInternalPage }}>
+    <EnablementAreaProvider value={{ setScript: openScript, openPage: handleOpenInternalPage, isCodeBtnDisabled }}>
       <div data-testid="enablementArea" className={cx(styles.container, 'relative', 'enablement-area')}>
         { loading
           ? (

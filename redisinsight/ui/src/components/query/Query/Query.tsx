@@ -44,6 +44,7 @@ export interface Props {
   loading: boolean
   setQueryEl: Function
   setQuery: (script: string) => void
+  setIsCodeBtnDisabled: (value: boolean) => void
   onSubmit: (query?: string) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
 }
@@ -54,7 +55,7 @@ let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
 
 const Query = (props: Props) => {
-  const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl } = props
+  const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl, setIsCodeBtnDisabled } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
   const isWidgetOpen = useRef(false)
@@ -62,6 +63,7 @@ const Query = (props: Props) => {
   const isWidgetEscaped = useRef(false)
   const selectedArg = useRef('')
   const syntaxCommand = useRef<any>(null)
+  const isDedicatedEditorOpenRef = useRef<boolean>(isDedicatedEditorOpen)
   let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
@@ -107,6 +109,11 @@ const Query = (props: Props) => {
       newDecorations
     )
   }, [query])
+
+  useEffect(() => {
+    setIsCodeBtnDisabled(isDedicatedEditorOpen)
+    isDedicatedEditorOpenRef.current = isDedicatedEditorOpen
+  }, [isDedicatedEditorOpen])
 
   const onChange = (value: string = '') => {
     setQuery(value)
@@ -191,7 +198,7 @@ const Query = (props: Props) => {
 
     isWidgetOpen.current && hideSyntaxWidget(editor)
 
-    if (!model) {
+    if (!model || isDedicatedEditorOpenRef.current) {
       return
     }
 

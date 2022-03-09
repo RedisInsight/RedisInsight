@@ -369,8 +369,11 @@ const Query = (props: Props) => {
     },
     lineNumbersMinChars: 4
   }
-  monaco.editor.defineTheme('dark', darkTheme)
-  monaco.editor.defineTheme('light', lightTheme)
+
+  if (monaco?.editor) {
+    monaco.editor.defineTheme('dark', darkTheme)
+    monaco.editor.defineTheme('light', lightTheme)
+  }
 
   return (
     <>

@@ -22,8 +22,6 @@ const checkRediStack = (instances: Instance[]): Instance[] => {
     }))
   }
 
-  console.log(instances, newInstances)
-
   return newInstances
 }
 

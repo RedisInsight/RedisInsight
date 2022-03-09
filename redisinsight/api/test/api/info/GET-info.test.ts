@@ -16,7 +16,7 @@ const responseSchema = Joi.object().keys({
   createDateTime: Joi.date().required(),
   appVersion: Joi.string().required(),
   osPlatform: Joi.string().required(),
-  buildType: Joi.string().valid('ELECTRON', 'DOCKER_ON_PREMISE').required(),
+  buildType: Joi.string().valid('ELECTRON', 'DOCKER_ON_PREMISE', 'REDIS_STACK').required(),
   encryptionStrategies: Joi.array().items(Joi.string()),
   sessionId: Joi.number().required(),
 }).required();

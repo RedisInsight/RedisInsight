@@ -75,6 +75,7 @@ test
     })
     ('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         //Open Working with Hashes page
+        await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         //Put Create Hash commands into Editing area
         await t.click(workbenchPage.preselectHashCreate);
@@ -133,4 +134,18 @@ test
         await workbenchPage.sendCommandInWorkbench(command);
         //Check the command result
         await workbenchPage.checkWorkbenchCommandResult(command, result);
+    });
+test
+    .meta({ rte: rte.standalone })
+    .after(async() => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that user can use Ctrl + Enter to run the query in Workbench', async t => {
+        const command = 'FT._LIST';
+        //Type command and use Ctrl + Enter
+        await t.typeText(workbenchPage.queryInput, command, { replace: true });
+        await t.pressKey('ctrl+enter');
+        //Check that command is in results
+        await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The user can use Ctrl + Enter to run the query');
     });

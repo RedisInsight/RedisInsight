@@ -7,7 +7,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
 
 import { AppDispatch, RootState } from './store'
@@ -31,7 +31,8 @@ export const initialState: InitialStateInstances = {
     nameFromProvider: '',
     lastConnection: new Date(),
     connectionType: ConnectionType.Standalone,
-    modules: []
+    isRediStack: false,
+    modules: [],
   },
   instanceOverview: {
     version: '',
@@ -48,8 +49,8 @@ const instancesSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadInstancesSuccess: (state, { payload }) => {
-      state.data = payload
+    loadInstancesSuccess: (state, { payload }: { payload: Instance[] }) => {
+      state.data = checkRediStack(payload)
       state.loading = false
     },
     loadInstancesFailure: (state, { payload }) => {
@@ -243,7 +244,7 @@ export function createInstanceStandaloneAction(
 }
 
 // Asynchronous thunk action
-export function updateInstanceAction({ id, ...payload }: Instance) {
+export function updateInstanceAction({ id, ...payload }: Instance, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 
@@ -253,6 +254,7 @@ export function updateInstanceAction({ id, ...payload }: Instance) {
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
+        onSuccess?.()
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -303,7 +305,7 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
 }
 
 // Asynchronous thunk action
-export function fetchInstanceAction(id: string) {
+export function fetchInstanceAction(id: string, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
 
@@ -313,6 +315,7 @@ export function fetchInstanceAction(id: string) {
       if (isStatusSuccessful(status)) {
         dispatch(setConnectedInstance(data))
       }
+      onSuccess?.()
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))

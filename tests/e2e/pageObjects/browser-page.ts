@@ -110,6 +110,9 @@ export class BrowserPage {
   overviewCommandsSec: Selector
   overviewCpu: Selector
   modulesButton: Selector
+  overviewMoreInfo: Selector
+  overviewTooltip: Selector
+  overviewTooltipStatTitle: Selector
   treeViewButton: Selector
   treeViewArea: Selector
   browserViewButton: Selector
@@ -121,6 +124,7 @@ export class BrowserPage {
   treeViewMessage: Selector
   totalKeysNumber: Selector
   keysScanned: Selector
+  breadcrumbsContainer: Selector
   databaseInfoIcon: Selector
   databaseInfoToolTip: Selector
   removeHashFieldButton: Selector
@@ -187,6 +191,9 @@ export class BrowserPage {
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
       this.modulesButton = Selector('[data-testid$=_module]');
+      this.overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
+      this.overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
+      this.overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
       this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
       this.treeViewButton = Selector('');
       this.browserViewButton = Selector('');
@@ -244,6 +251,7 @@ export class BrowserPage {
       this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
       this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
+      this.breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
       this.treeViewArea = Selector('');
       this.treeViewScannedValue = Selector('');
       this.treeViewKeysNumber = Selector('');

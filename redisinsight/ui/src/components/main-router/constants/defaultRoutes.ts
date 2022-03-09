@@ -1,31 +1,19 @@
-import React from 'react'
-import { PageNames, Pages } from 'uiSrc/constants'
+import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import {
   BrowserPage,
   HomePage,
   InstancePage,
-  RedisClusterDatabasesPage,
-  RedisCloudSubscriptionsPage,
   RedisCloudDatabasesPage,
-  SettingsPage,
-  RedisCloudPage,
   RedisCloudDatabasesResultPage,
+  RedisCloudPage,
+  RedisCloudSubscriptionsPage,
+  RedisClusterDatabasesPage,
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
-import SentinelPage from 'uiSrc/pages/sentinel'
-import SentinelDatabasesPage from 'uiSrc/pages/sentinelDatabases'
-import SentinelDatabasesResultPage from 'uiSrc/pages/sentinelDatabasesResult'
 
-export interface IRoute {
-  path: any;
-  component: React.ReactNode;
-  pageName?: PageNames,
-  exact?: boolean;
-  routes?: any;
-  isAvailableWithoutAgreements?: boolean;
-}
+import COMMON_ROUTES from './commonRoutes'
 
-export const INSTANCE_ROUTES: IRoute[] = [
+const INSTANCE_ROUTES: IRoute[] = [
   {
     pageName: PageNames.browser,
     path: Pages.browser(':instanceId'),
@@ -45,13 +33,10 @@ const ROUTES: IRoute[] = [
     component: HomePage,
     isAvailableWithoutAgreements: true,
   },
+  ...COMMON_ROUTES,
   {
     path: Pages.redisEnterpriseAutodiscovery,
     component: RedisClusterDatabasesPage,
-  },
-  {
-    path: Pages.settings,
-    component: SettingsPage,
   },
   {
     path: Pages.redisCloud,
@@ -68,20 +53,6 @@ const ROUTES: IRoute[] = [
       {
         path: Pages.redisCloudDatabasesResult,
         component: RedisCloudDatabasesResultPage,
-      },
-    ],
-  },
-  {
-    path: Pages.sentinel,
-    component: SentinelPage,
-    routes: [
-      {
-        path: Pages.sentinelDatabases,
-        component: SentinelDatabasesPage,
-      },
-      {
-        path: Pages.sentinelDatabasesResult,
-        component: SentinelDatabasesResultPage,
       },
     ],
   },

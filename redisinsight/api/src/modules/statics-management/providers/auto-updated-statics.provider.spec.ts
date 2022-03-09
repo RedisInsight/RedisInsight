@@ -1,7 +1,10 @@
 import axios from 'axios';
 import * as fs from 'fs-extra';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EnablementAreaProvider } from 'src/modules/enablement-area/enablement-area.provider';
+import config from 'src/utils/config';
+import { AutoUpdatedStaticsProvider } from './auto-updated-statics.provider';
+
+const PATH_CONFIG = config.get('dir_path');
+const ENABLEMENT_AREA_CONFIG = config.get('enablementArea');
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -14,21 +17,23 @@ const mockedAdmZip = {
 };
 jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
 
-describe('EnablementAreaProvider', () => {
-  let service: EnablementAreaProvider;
+describe('AutoUpdatedStaticsProvider', () => {
+  let service: AutoUpdatedStaticsProvider;
 
   beforeEach(async () => {
     jest.mock('fs-extra', () => mockedFs);
     jest.mock('axios', () => mockedAxios);
     jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
 
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EnablementAreaProvider,
-      ],
-    }).compile();
-
-    service = module.get(EnablementAreaProvider);
+    service = new AutoUpdatedStaticsProvider({
+      name: 'EnablementAreaProvider',
+      destinationPath: PATH_CONFIG.enablementArea,
+      defaultSourcePath: PATH_CONFIG.defaultEnablementArea,
+      updateUrl: ENABLEMENT_AREA_CONFIG.updateUrl,
+      buildInfo: ENABLEMENT_AREA_CONFIG.buildInfo,
+      zip: ENABLEMENT_AREA_CONFIG.zip,
+      devMode: ENABLEMENT_AREA_CONFIG.devMode,
+    });
   });
 
   describe('onModuleInit', () => {

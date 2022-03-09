@@ -2,7 +2,8 @@ import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpe
 import {
     MyRedisDatabasePage,
     CliPage,
-    WorkbenchPage
+    WorkbenchPage,
+    BrowserPage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -12,6 +13,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
 const common = new Common();
+const browserPage = new BrowserPage();
 
 let keys: string[];
 
@@ -37,4 +39,16 @@ test
         //Verify that user can see total memory and total number of keys
         await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can see total keys');
         await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can see total memory');
+    });
+test
+    .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
+        //Verify that user can see breadcrumbs in Browser and Workbench views
+        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Browser page', { timeout: 20000 });
+        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Workbench page', { timeout: 20000 });
     });

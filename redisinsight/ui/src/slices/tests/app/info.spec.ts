@@ -149,6 +149,7 @@ describe('slices', () => {
       }
       const state = {
         ...initialState,
+        loading: false,
         server: data
       }
 

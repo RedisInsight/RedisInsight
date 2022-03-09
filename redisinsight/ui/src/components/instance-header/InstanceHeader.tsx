@@ -45,7 +45,7 @@ const InstanceHeader = () => {
     <div className={cx(styles.container)}>
       <EuiFlexGroup gutterSize="none" responsive={false}>
         <EuiFlexItem style={{ overflow: 'hidden' }}>
-          <div className={styles.breadcrumbsContainer}>
+          <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
               <EuiToolTip
                 position="bottom"
@@ -57,6 +57,7 @@ const InstanceHeader = () => {
                   iconSize="l"
                   iconType="sortLeft"
                   aria-label="My Redis databases"
+                  data-testid="my-redis-db-icon"
                   onClick={goHome}
                 />
               </EuiToolTip>

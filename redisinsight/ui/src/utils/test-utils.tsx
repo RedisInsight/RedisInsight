@@ -32,6 +32,7 @@ import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
 import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user-settings'
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
 import { initialState as initialStateWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
+import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
 
 interface Options {
   initialState?: RootState;
@@ -78,6 +79,9 @@ const initialStateDefault: RootState = {
     results: cloneDeep(initialStateWBResults),
     enablementArea: cloneDeep(initialStateWBEnablementArea),
   },
+  content: {
+    createRedisButtons: cloneDeep(initialStateCreateRedisButtons)
+  }
 }
 
 // mocked store

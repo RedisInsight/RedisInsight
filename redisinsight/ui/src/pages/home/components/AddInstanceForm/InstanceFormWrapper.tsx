@@ -41,8 +41,10 @@ export interface Props {
   instanceType: InstanceType;
   editMode: boolean;
   editedInstance: Nullable<Instance>;
-  onClose: () => void;
   onDbAdded: () => void;
+  onClose?: () => void;
+  onDbEdited?: () => void;
+  onAliasEdited?: (value: string) => void;
 }
 
 export enum SubmitBtnText {
@@ -78,6 +80,8 @@ const InstanceFormWrapper = (props: Props) => {
     isResizablePanel = false,
     onClose,
     onDbAdded,
+    onDbEdited,
+    onAliasEdited,
     editedInstance,
   } = props
   const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
@@ -137,7 +141,7 @@ const InstanceFormWrapper = (props: Props) => {
     }
   }
   const handleEditInstance = (payload: any) => {
-    dispatch(updateInstanceAction(payload))
+    dispatch(updateInstanceAction(payload, onDbEdited))
   }
 
   const handleUpdateEditingName = (name: string) => {
@@ -152,10 +156,6 @@ const InstanceFormWrapper = (props: Props) => {
     ]
     const instance = pick(editedInstance, ...requiredFields)
     dispatch(updateInstanceAction({ ...instance, name }))
-  }
-
-  const handleClose = () => {
-    onClose()
   }
 
   const autoFillFormDetails = (content: string): boolean => {
@@ -433,10 +433,11 @@ const InstanceFormWrapper = (props: Props) => {
             : TitleInstanceText.AddInstance
         }
         onSubmit={handleConnectionFormSubmit}
-        onClose={handleClose}
+        onClose={onClose}
         onHostNamePaste={autoFillFormDetails}
         isEditMode={editMode}
         updateEditingName={handleUpdateEditingName}
+        onAliasEdited={onAliasEdited}
       />
     </div>
   )

@@ -19,6 +19,7 @@ import { checkIsAnalyticsGranted, getTelemetryService } from 'uiSrc/telemetry'
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
+import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
 import favicon from 'uiSrc/assets/favicon.ico'
 
 const SETTINGS_PAGE_PATH = '/settings'
@@ -36,6 +37,7 @@ const Config = () => {
     dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
+    dispatch(fetchCreateRedisButtonsAction())
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {

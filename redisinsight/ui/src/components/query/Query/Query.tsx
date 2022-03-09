@@ -55,7 +55,7 @@ let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
 
 const Query = (props: Props) => {
-  const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl, setIsCodeBtnDisabled } = props
+  const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl, setIsCodeBtnDisabled = () => {} } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
   const isWidgetOpen = useRef(false)

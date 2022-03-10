@@ -183,7 +183,7 @@ export default merge(commonConfig, {
       NODE_ENV: 'development',
       APP_ENV: 'web',
       API_PREFIX: 'api',
-      API_PORT: '5001',
+      API_PORT: '5000',
       BASE_API_URL: `http://${require('os').hostname()}`,
       RESOURCES_BASE_URL: `http://${require('os').hostname()}`,
       SCAN_COUNT_DEFAULT: '500',

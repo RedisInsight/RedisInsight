@@ -109,7 +109,7 @@ const Node = ({
     <div
       style={{
         ...style,
-        paddingLeft: nestingLevel * 30,
+        paddingLeft: nestingLevel * 8,
       }}
       className={cx(styles.nodeContainer, { [styles.nodeSelected]: isSelected && isLeaf, })}
     >

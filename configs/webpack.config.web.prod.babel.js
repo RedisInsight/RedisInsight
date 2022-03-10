@@ -46,12 +46,13 @@ export default merge(commonConfig, {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
       APP_ENV: 'web',
-      API_PORT: '5000',
+      API_PORT: '5001',
       API_PREFIX: '',
       BASE_API_URL: 'api/',
       RESOURCES_BASE_URL:
         process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
       SCAN_COUNT_DEFAULT: '500',
+      SCAN_TREE_COUNT_DEFAULT: '10000',
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
     }),

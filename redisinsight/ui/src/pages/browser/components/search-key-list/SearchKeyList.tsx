@@ -1,18 +1,24 @@
 import { EuiFieldSearch, keys } from '@elastic/eui'
 import React, { ChangeEvent } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { replaceSpaces } from 'uiSrc/utils'
 import { fetchKeys, keysSelector, setSearchMatch } from 'uiSrc/slices/keys'
+import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 
 import styles from './styles.module.scss'
 
 const SearchKeyList = () => {
   const dispatch = useDispatch()
-  const { search: value = '' } = useSelector(keysSelector)
+  const { search: value = '', viewType } = useSelector(keysSelector)
 
   const handleApply = () => {
-    dispatch(fetchKeys('0', SCAN_COUNT_DEFAULT))
+    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
+
+    // reset browser tree context
+    dispatch(setBrowserTreeNodesOpen({}))
+    dispatch(setBrowserTreeSelectedLeaf({}))
   }
 
   const handleChangeValue = (initValue: string) => {

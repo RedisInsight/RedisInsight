@@ -1,6 +1,6 @@
 import getUrl from './getUrlInstance'
 import removeEmpty from './removeEmpty'
-import { Nullable, Maybe } from './types'
+import type { Nullable, Maybe } from './types'
 import handlePasteHostName from './handlePasteHostName'
 import RouterWithSubRoutes from './routerWithSubRoutes'
 import replaceSpaces from './replaceSpaces'

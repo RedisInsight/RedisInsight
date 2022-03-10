@@ -57,7 +57,8 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
       shard.scanned = shard.total
     }
 
-    result.keys.push(...node.keys)
+    // result.keys.push(...node.keys)
+    result.keys = result.keys.concat(node.keys)
   })
 
   // summarize result numbers

@@ -46,7 +46,7 @@ export default merge(commonConfig, {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
       APP_ENV: 'web',
-      API_PORT: '5001',
+      API_PORT: '5000',
       API_PREFIX: '',
       BASE_API_URL: 'api/',
       RESOURCES_BASE_URL:

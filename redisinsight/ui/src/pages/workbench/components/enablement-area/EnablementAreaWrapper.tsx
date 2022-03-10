@@ -17,13 +17,14 @@ import { IInternalPage } from '../../contexts/enablementAreaContext'
 import styles from './styles.module.scss'
 
 export interface Props {
-  isMinimized: boolean;
-  setIsMinimized: (value: boolean) => void;
-  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>;
-  setScript: (script: string) => void;
+  isMinimized: boolean
+  setIsMinimized: (value: boolean) => void
+  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
+  setScript: (script: string) => void
+  isCodeBtnDisabled?: boolean
 }
 
-const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptEl, setScript }: Props) => {
+const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScript, isCodeBtnDisabled }: Props) => {
   const { loading, items } = useSelector(workbenchEnablementAreaSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -86,10 +87,11 @@ const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptE
           loading={loading}
           openScript={openScript}
           onOpenInternalPage={onOpenInternalPage}
+          isCodeBtnDisabled={isCodeBtnDisabled}
         />
       </EuiFlexItem>
     </EuiFlexGroup>
   )
-})
+}
 
-export default EnablementAreaWrapper
+export default React.memo(EnablementAreaWrapper)

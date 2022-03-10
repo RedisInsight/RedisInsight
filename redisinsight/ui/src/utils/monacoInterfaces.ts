@@ -6,3 +6,13 @@ export interface IMonacoCommand {
   info?: ICommand
   position?: monacoEditor.Position
 }
+
+export interface IMonacoQuery {
+  name: string
+  fullQuery: string
+  args?: string[]
+  info?: ICommand
+  commandPosition: any
+  position?: monacoEditor.Position
+  commandCursorPosition?: number
+}

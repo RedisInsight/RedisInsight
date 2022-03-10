@@ -1,5 +1,18 @@
+import * as monacoEditor from 'monaco-editor'
+
+export interface MonacoSyntaxLang {
+  [key: string]: {
+    name: string
+    id: string
+    config: monacoEditor.languages.LanguageConfiguration,
+    completionProvider: () => monacoEditor.languages.CompletionItemProvider,
+    tokensProvider: () => monacoEditor.languages.IMonarchLanguage
+  }
+}
+
 export enum MonacoLanguage {
   Redis = 'redisLanguage',
+  Cypher = 'cypherLanguage'
 }
 
 export const MONACO_MANUAL = '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.\n'

@@ -55,6 +55,7 @@ const WBView = (props: Props) => {
   const [isMinimized, setIsMinimized] = useState<boolean>(
     (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
   )
+  const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 
   const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
 
@@ -84,6 +85,7 @@ const WBView = (props: Props) => {
             setIsMinimized={setIsMinimized}
             setScript={setScript}
             scriptEl={scriptEl}
+            isCodeBtnDisabled={isCodeBtnDisabled}
           />
         </div>
         <div className={cx(styles.content, { [styles.minimized]: isMinimized })}>
@@ -104,6 +106,7 @@ const WBView = (props: Props) => {
                     loading={loading}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
+                    setIsCodeBtnDisabled={setIsCodeBtnDisabled}
                     onSubmit={onSubmit}
                   />
                 </EuiResizablePanel>

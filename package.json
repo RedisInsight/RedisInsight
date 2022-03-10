@@ -134,7 +134,6 @@
     "@teamsupercell/typings-for-css-modules-loader": "^2.4.0",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
-    "@testing-library/react-hooks": "^5.0.3",
     "@types/axios": "^0.14.0",
     "@types/classnames": "^2.2.11",
     "@types/date-fns": "^2.6.0",

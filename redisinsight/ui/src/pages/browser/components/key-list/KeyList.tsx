@@ -23,7 +23,6 @@ import {
   ScanNoResultsFoundText,
 } from 'uiSrc/constants/texts'
 import {
-  fetchKeys,
   keysDataSelector,
   keysSelector,
   selectedKeySelector,
@@ -31,10 +30,8 @@ import {
 } from 'uiSrc/slices/keys'
 import {
   appContextBrowser,
-  setBrowserKeyListDataLoaded,
   setBrowserKeyListScrollPosition
 } from 'uiSrc/slices/app/context'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
@@ -98,7 +95,7 @@ const KeyList = (props: Props) => {
       id: 'type',
       label: 'Type',
       absoluteWidth: 'auto',
-      maxWidth: 124,
+      minWidth: 124,
       render: (cellData: any, { name }: any) => <GroupBadge type={cellData} name={name} />,
     },
     {

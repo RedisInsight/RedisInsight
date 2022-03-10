@@ -28,7 +28,7 @@ const KeysSummary = ({
 }: Props) => (
   <>
     {!!totalItemsCount && (
-      <div className={styles.content}>
+      <div className={styles.content} data-testid="keys-summary">
         {!!totalItemsCount && (
         <EuiText size="xs">
           {!!scanned && (
@@ -83,7 +83,7 @@ const KeysSummary = ({
       </div>
     )}
     {loading && !totalItemsCount && (
-      <EuiText size="xs">
+      <EuiText size="xs" data-testid="scanning-text">
         Scanning...
       </EuiText>
     )}

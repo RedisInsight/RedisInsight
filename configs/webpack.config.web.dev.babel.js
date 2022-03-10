@@ -183,10 +183,11 @@ export default merge(commonConfig, {
       NODE_ENV: 'development',
       APP_ENV: 'web',
       API_PREFIX: 'api',
-      API_PORT: '5000',
+      API_PORT: '5001',
       BASE_API_URL: `http://${require('os').hostname()}`,
       RESOURCES_BASE_URL: `http://${require('os').hostname()}`,
       SCAN_COUNT_DEFAULT: '500',
+      SCAN_TREE_COUNT_DEFAULT: '10000',
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
     }),

@@ -21,8 +21,6 @@ export interface Props {
   keysState: IKeyListPropTypes
   loading: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
-  loadMoreItems: ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => void
-  handleAddKeyPanel: (value: boolean) => void
 }
 
 export const firstPanelId = 'tree'
@@ -119,6 +117,7 @@ const KeyTree = (props: Props) => {
                   initialSize={sizes[firstPanelId] ?? 30}
                   minSize="100px"
                   paddingSize="none"
+                  data-test-subj="tree-view-panel"
                   wrapperProps={{
                     className: cx(styles.resizablePanelLeft),
                   }}
@@ -160,6 +159,7 @@ const KeyTree = (props: Props) => {
                   initialSize={sizes[secondPanelId] ?? 70}
                   minSize="400px"
                   paddingSize="none"
+                  data-test-subj="key-list-panel"
                   wrapperProps={{
                     className: cx(styles.resizablePanelRight),
                   }}

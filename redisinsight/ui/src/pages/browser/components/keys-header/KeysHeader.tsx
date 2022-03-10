@@ -21,7 +21,7 @@ import {
 } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
@@ -52,7 +52,7 @@ export interface Props {
   loading: boolean
   keysState: IKeyListPropTypes
   sizes: any
-  loadKeys: () => void
+  loadKeys: (type?: KeyViewType) => void
   loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
 }
@@ -132,12 +132,19 @@ const KeysHeader = (props: Props) => {
     })
     dispatch(fetchKeys(
       '0',
-      SCAN_COUNT_DEFAULT,
+      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       () => dispatch(setBrowserKeyListDataLoaded(true)),
       () => dispatch(setBrowserKeyListDataLoaded(false)),
     ))
     dispatch(setBrowserTreeNodesOpen({}))
     dispatch(setBrowserTreeSelectedLeaf({}))
+  }
+
+  const handleScanMore = (config: any) => {
+    loadMoreItems?.({
+      ...config,
+      stopIndex: (viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT) - 1,
+    })
   }
 
   const updateLastRefresh = () => {
@@ -157,9 +164,9 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleSwitchView = (type: KeyViewType) => {
-    loadKeys()
     dispatch(changeKeyViewType(type))
     localStorageService.set(BrowserStorageItem.browserViewType, type)
+    loadKeys(type)
   }
 
   const AddKeyBtn = (
@@ -176,7 +183,7 @@ const KeysHeader = (props: Props) => {
   )
 
   const ViewSwitch = (
-    <div className={styles.viewTypeSwitch}>
+    <div className={styles.viewTypeSwitch} data-testid="key-view-type-switcher">
       {viewTypes.map((view) => (
         <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
           <EuiButtonIcon
@@ -239,7 +246,7 @@ const KeysHeader = (props: Props) => {
           scanned={isSearched || isFiltered || viewType === KeyViewType.Tree ? keysState.scanned : 0}
           loading={loading}
           scanMoreStyle={scanMoreStyle}
-          loadMoreItems={loadMoreItems}
+          loadMoreItems={handleScanMore}
         />
         {RefreshBtn}
       </div>

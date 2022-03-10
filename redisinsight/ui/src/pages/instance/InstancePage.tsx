@@ -13,7 +13,7 @@ import {
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
-import { resetKeys } from 'uiSrc/slices/keys'
+import { resetKeysData } from 'uiSrc/slices/keys'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
@@ -82,7 +82,7 @@ const InstancePage = ({ routes = [] }: Props) => {
   const resetContext = () => {
     dispatch(setMonitorInitialState())
     dispatch(setAppContextInitialState())
-    dispatch(resetKeys())
+    dispatch(resetKeysData())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

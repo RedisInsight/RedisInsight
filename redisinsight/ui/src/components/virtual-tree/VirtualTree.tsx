@@ -21,7 +21,7 @@ import { NodeMeta, TreeData, TreeNode } from './interfaces'
 
 import styles from './styles.module.scss'
 
-interface Props {
+export interface Props {
   items: IKeyPropTypes[]
   separator?: string
   loadingIcon?: string
@@ -62,18 +62,6 @@ const VirtualTree = (props: Props) => {
 
   const { result, run: runWebworker } = useDisposableWebworker(webworkerFn)
 
-  const handleSelectLeaf = useCallback((keys: any[]) => {
-    onSelectLeaf?.(keys)
-  }, [onSelectLeaf])
-
-  const handleUpdateSelected = useCallback((fullName: string, keys: any) => {
-    onStatusSelected?.(fullName, keys)
-  }, [onStatusSelected])
-
-  const handleUpdateOpen = useCallback((name: string, value: boolean) => {
-    onStatusOpen?.(name, value)
-  }, [onStatusOpen])
-
   useEffect(() =>
     () => setNodes([]),
   [])
@@ -87,7 +75,7 @@ const VirtualTree = (props: Props) => {
     console.timeEnd(timeLabel)
 
     setNodes(result)
-    setConstructingTree(false)
+    setConstructingTree?.(false)
 
     // set "root" keys after first render (construct a tree)
     if (!firstConstruct && isArray(result) && isEmpty(statusSelected)) {
@@ -107,8 +95,20 @@ const VirtualTree = (props: Props) => {
     // [ToDo] remove after tests
     console.time(timeLabel)
     setConstructingTree(true)
-    runWebworker({ nodes, items, separator })
+    runWebworker?.({ items, separator })
   }, [items])
+
+  const handleSelectLeaf = useCallback((keys: any[]) => {
+    onSelectLeaf?.(keys)
+  }, [onSelectLeaf])
+
+  const handleUpdateSelected = useCallback((fullName: string, keys: any) => {
+    onStatusSelected?.(fullName, keys)
+  }, [onStatusSelected])
+
+  const handleUpdateOpen = useCallback((name: string, value: boolean) => {
+    onStatusOpen?.(name, value)
+  }, [onStatusOpen])
 
   // This helper function constructs the object that will be sent back at the step
   // [2] during the treeWalker function work. Except for the mandatory `data`
@@ -167,7 +167,7 @@ const VirtualTree = (props: Props) => {
   return (
     <AutoSizer>
       {({ height, width }) => (
-        <>
+        <div data-testid="auto-sizer">
           { nodes.length > 0 && (
             <Tree
               height={height}
@@ -180,14 +180,14 @@ const VirtualTree = (props: Props) => {
             </Tree>
           )}
           { nodes.length === 0 && loading && (
-            <div className={styles.loadingContainer} style={{ width, height }}>
+            <div className={styles.loadingContainer} style={{ width, height }} data-testid="virtual-tree-spinner">
               <div className={styles.loadingBody}>
                 <EuiLoadingSpinner size="xl" className={styles.loadingSpinner} />
                 <EuiIcon type={loadingIcon || 'empty'} className={styles.loadingIcon} />
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </AutoSizer>
   )

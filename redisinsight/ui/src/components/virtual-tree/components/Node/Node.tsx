@@ -1,7 +1,7 @@
 import React from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import cx from 'classnames'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip, keys as ElasticKeys } from '@elastic/eui'
 
 import { TreeData } from '../../interfaces'
 import styles from './styles.module.scss'
@@ -42,25 +42,53 @@ const Node = ({
     !isLeaf && setOpen(!isOpen)
   }
 
+  const handleKeyDown = ({ key }: React.KeyboardEvent<HTMLDivElement>) => {
+    if (key === ElasticKeys.SPACE) {
+      handleClick()
+    }
+  }
+
   const Node = (
     <div
       className={cx(styles.nodeContent, {
         [styles.nodeContentOpen]: isOpen && !isLeaf,
       })}
-      onClick={handleClick}
       role="treeitem"
-      onKeyDown={() => {}}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
       tabIndex={0}
       onFocus={() => {}}
+      data-testid={fullName}
     >
       <div>
-        {!isLeaf
-          && <EuiIcon type={isOpen ? 'arrowDown' : 'arrowRight'} className={cx(styles.nodeIcon, styles.nodeIconArrow)} /> }
-        {!isLeaf && <EuiIcon type={isOpen ? 'folderOpen' : 'folderClosed'} className={styles.nodeIcon} />}
-        {isLeaf && <EuiIcon type={leafIcon} className={cx(styles.nodeIcon, styles.nodeIconLeaf)} />}
-        {isLeaf ? 'Keys' : name}
+        {!isLeaf && (
+        <>
+          <EuiIcon
+            type={isOpen ? 'arrowDown' : 'arrowRight'}
+            className={cx(styles.nodeIcon, styles.nodeIconArrow)}
+            data-test-subj={`node-arrow-icon_${fullName}`}
+          />
+          <EuiIcon
+            type={isOpen ? 'folderOpen' : 'folderClosed'}
+            className={styles.nodeIcon}
+            data-test-subj={`node-folder-icon_${fullName}`}
+          />
+          {name}
+        </>
+        )}
+
+        {isLeaf && (
+        <>
+          <EuiIcon
+            type={leafIcon}
+            className={cx(styles.nodeIcon, styles.nodeIconLeaf)}
+            data-test-subj={`leaf-icon_${fullName}`}
+          />
+          Keys
+        </>
+        )}
       </div>
-      <div>
+      <div data-testid={`count_${fullName}`}>
         <span>{keyCount ?? ''}</span>
         <span className={styles.approximate}>
           {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : '' }

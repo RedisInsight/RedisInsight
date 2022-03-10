@@ -146,6 +146,12 @@ jest.mock('react-redux', () => ({
   }),
 }))
 
+// mock <AutoSizer />
+jest.mock(
+  'react-virtualized-auto-sizer',
+  () => ({ children }) => children({ height: 600, width: 600 })
+)
+
 export const localStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),

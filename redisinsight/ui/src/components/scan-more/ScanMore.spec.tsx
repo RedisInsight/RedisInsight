@@ -10,16 +10,31 @@ describe('ActionBar', () => {
     expect(render(<ScanMore {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should call "onCloseActionBar"', () => {
+  it('should call "loadMoreItems"', () => {
     const handleClick = jest.fn()
 
     const renderer = render(
-      <ScanMore {...instance(mockedProps)} onCloseActionBar={handleClick} />
+      <ScanMore {...instance(mockedProps)} loadMoreItems={handleClick} totalItemsCount={1} />
     )
 
     expect(renderer).toBeTruthy()
 
-    fireEvent.click(screen.getByTestId('cancel-selecting'))
+    fireEvent.click(screen.getByTestId('scan-more'))
     expect(handleClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('should button be hidden when totalItemsCount < scanned ', () => {
+    const { queryByTestId } = render(
+      <ScanMore {...instance(mockedProps)} scanned={2} totalItemsCount={1} />
+    )
+
+    expect(queryByTestId('scan-more')).not.toBeInTheDocument()
+  })
+  it('should button be shown when totalItemsCount > scanned ', () => {
+    const { queryByTestId } = render(
+      <ScanMore {...instance(mockedProps)} scanned={1} totalItemsCount={2} />
+    )
+
+    expect(queryByTestId('scan-more')).toBeInTheDocument()
   })
 })

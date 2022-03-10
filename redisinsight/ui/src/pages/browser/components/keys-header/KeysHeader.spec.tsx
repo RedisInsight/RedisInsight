@@ -31,28 +31,28 @@ const propsMock = {
     nextCursor: '0',
     total: 3,
   } as IKeyListPropTypes,
-  loadingState: false,
-  selectKey: jest.fn(),
+  loading: false,
+  sizes: {},
+  loadKeys: jest.fn(),
   loadMoreItems: jest.fn(),
   handleAddKeyPanel: jest.fn(),
 }
 
-describe('KeyList', () => {
+describe('KeysHeader', () => {
   it('should render', () => {
     expect(render(<KeysHeader {...propsMock} />)).toBeTruthy()
-  })
-
-  it('should render rows properly', () => {
-    const { container } = render(<KeysHeader {...propsMock} />)
-    const rows = container.querySelectorAll(
-      '.ReactVirtualized__Table__row[role="row"]'
-    )
-    expect(rows).toHaveLength(3)
   })
 
   it('should render search properly', () => {
     render(<KeysHeader {...propsMock} />)
     const searchInput = screen.queryByTestId('search-key')
     expect(searchInput).toBeInTheDocument()
+  })
+
+  it('should render key view type switcher properly', () => {
+    render(<KeysHeader {...propsMock} />)
+
+    const keyViewTypeSwitcherInput = screen.queryByTestId('key-view-type-switcher')
+    expect(keyViewTypeSwitcherInput).toBeInTheDocument()
   })
 })

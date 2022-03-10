@@ -5,7 +5,7 @@ import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 
 import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import {
   fetchKeys,
@@ -28,8 +28,8 @@ import {
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import InstanceHeader from 'uiSrc/components/instance-header'
-
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+
 import AddKey from './components/add-key/AddKey'
 import KeyList from './components/key-list/KeyList'
 import KeyTree from './components/key-tree'
@@ -118,11 +118,11 @@ const BrowserPage = () => {
     setIsPageViewSent(true)
   }
 
-  const loadKeys = () => {
+  const loadKeys = (keyViewType?: KeyViewType) => {
     dispatch(setConnectedInstanceId(instanceId))
     dispatch(fetchKeys(
       '0',
-      SCAN_COUNT_DEFAULT,
+      keyViewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       () => dispatch(setBrowserKeyListDataLoaded(true)),
       () => dispatch(setBrowserKeyListDataLoaded(false))
     ))

@@ -152,7 +152,7 @@ const Query = (props: Props) => {
 
   const onTriggerContentWidget = (position: Nullable<monacoEditor.Position>, language: string = ''): monaco.editor.IContentWidget => ({
     getId: () => 'syntax.content.widget',
-    getDomNode: () => createSyntaxWidget(`Use ${language} Syntax`, 'Shift+Space'),
+    getDomNode: () => createSyntaxWidget(`Use ${language} Editor`, 'Shift+Space'),
     getPosition: () => ({
       position,
       preference: [

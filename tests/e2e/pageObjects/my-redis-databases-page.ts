@@ -21,6 +21,11 @@ export class MyRedisDatabasePage {
   deleteButtonInPopover: Selector
   confirmDeleteAllDbButton: Selector
   browserButton: Selector
+  editDatabaseButton: Selector
+  editAliasButton: Selector
+  aliasInput: Selector
+  applyButton: Selector
+  submitChangesButton: Selector
   databaseInfoMessage: Selector;
 
   constructor() {
@@ -42,13 +47,22 @@ export class MyRedisDatabasePage {
       this.selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
       this.deleteButtonInPopover = Selector('#deletePopover button');
       this.confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
+      this.editDatabaseButton = Selector('[data-testid^=edit-instance]');
+      this.editAliasButton = Selector('[data-testid=edit-alias-btn]');
+      this.applyButton = Selector('[data-testid=apply-btn]');
+      this.submitChangesButton = Selector('[data-testid=btn-submit]');
       // TEXT INPUTS (also referred to as 'Text fields')
       this.dbNameList = Selector('[data-testid^=instance-name]');
       this.tableRowContent = Selector('[data-test-subj=database-alias-column]');
       this.databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
       this.hostPort = Selector('[data-testid=host-port]');
+      this.aliasInput = Selector('[data-testid=alias-input]');
   }
 
+  /**
+   * Click on the database by name
+   * @param dbName The name of the database to be opened
+   */
   async clickOnDBByName(dbName: string): Promise<void>{
       if (await this.toastCloseButton.exists) {
           await t.click(this.toastCloseButton);
@@ -90,4 +104,20 @@ export class MyRedisDatabasePage {
           }
       }
   }
+
+  /**
+   * Click on the edit database button by name
+   * @param databaseName The name of the database to be edited
+   */
+  async clickOnEditDBByName(databaseName: string): Promise<void>{
+      const dbNames = this.tableRowContent;
+      const count = await dbNames.count;
+
+      for(let i = 0; i < count; i++) {
+          if((await dbNames.nth(i).innerText || '').includes(databaseName)) {
+              await t.click(this.editDatabaseButton.nth(i));
+              break;
+          }
+      }
+    }
 }

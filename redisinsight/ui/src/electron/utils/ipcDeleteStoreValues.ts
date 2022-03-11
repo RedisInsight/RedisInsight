@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron'
-import { ElectronStorageItem, ipcEvent } from 'uiSrc/electron/constants'
+import { ElectronStorageItem, IpcEvent } from 'uiSrc/electron/constants'
 
 export const ipcDeleteDownloadedVersion = async () => {
-  await ipcRenderer.invoke(ipcEvent.deleteStoreValue, ElectronStorageItem.updateDownloadedVersion)
+  await ipcRenderer.invoke(IpcEvent.deleteStoreValue, ElectronStorageItem.updateDownloadedVersion)
 }

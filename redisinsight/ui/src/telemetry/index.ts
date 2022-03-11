@@ -1,6 +1,6 @@
 import { TelemetryEvent } from './events'
 import { TelemetryPageView } from './pageViews'
-import { ITelemetrySendEvent, ITelemetryService } from './interfaces'
+import type { ITelemetrySendEvent, ITelemetryService } from './interfaces'
 
 export * from './telemetryUtils'
 

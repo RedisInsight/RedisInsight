@@ -32,6 +32,6 @@ describe('WBResultsWrapper', () => {
 
     // sendCliClusterCommandAction.mockImplementation(() => sendCliClusterActionMock);
 
-    expect(render(<WBResultsWrapper {...instance(mockedProps)} history={history} />)).toBeTruthy()
+    expect(render(<WBResultsWrapper {...instance(mockedProps)} />)).toBeTruthy()
   })
 })

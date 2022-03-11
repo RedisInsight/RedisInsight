@@ -48,12 +48,15 @@ enum ApiEndpoints {
   ENABLEMENT_AREA = 'static/workbench/enablement-area.json',
   PLUGINS = 'plugins',
   STATE = 'state',
+  CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'
 
 const SCAN_COUNT_DEFAULT_ENV = process.env.SCAN_COUNT_DEFAULT || '500'
+const SCAN_TREE_COUNT_DEFAULT_ENV = process.env.SCAN_TREE_COUNT_DEFAULT || '10000'
 
 export const SCAN_COUNT_DEFAULT = parseInt(SCAN_COUNT_DEFAULT_ENV, 10)
+export const SCAN_TREE_COUNT_DEFAULT = parseInt(SCAN_TREE_COUNT_DEFAULT_ENV, 10)
 
 export default ApiEndpoints

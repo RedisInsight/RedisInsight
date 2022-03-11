@@ -24,8 +24,8 @@ import {
   splitCliCommandLine,
 } from 'src/utils/cli-helper';
 import {
-  CliCommandNotSupportedError,
-  CliParsingError,
+  CommandNotSupportedError,
+  CommandParsingError,
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
@@ -170,8 +170,8 @@ export class CliBusinessService {
       this.logger.error('Failed to execute redis CLI command.', error);
 
       if (
-        error instanceof CliParsingError
-        || error instanceof CliCommandNotSupportedError
+        error instanceof CommandParsingError
+        || error instanceof CommandNotSupportedError
         || error?.name === 'ReplyError'
       ) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, namespace, error);
@@ -255,7 +255,7 @@ export class CliBusinessService {
     } catch (error) {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
 
-      if (error instanceof CliParsingError || error instanceof CliCommandNotSupportedError) {
+      if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, namespace, error);
         return [
           { response: error.message, status: CommandExecutionStatus.Fail },
@@ -325,7 +325,7 @@ export class CliBusinessService {
     } catch (error) {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
 
-      if (error instanceof CliParsingError || error instanceof CliCommandNotSupportedError) {
+      if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, 'cli', error);
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
@@ -348,7 +348,7 @@ export class CliBusinessService {
     const unsupportedCommand = getUnsupportedCommands()
       .find((command) => commandLine.toLowerCase().startsWith(command));
     if (unsupportedCommand) {
-      throw new CliCommandNotSupportedError(
+      throw new CommandNotSupportedError(
         ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(
           unsupportedCommand.toUpperCase(),
         ),

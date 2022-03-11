@@ -35,7 +35,7 @@ import AboutPanelOptions from './about-panel';
 // eslint-disable-next-line import/no-cycle
 import TrayBuilder from './tray';
 import server from './api/dist/src/main';
-import { ElectronStorageItem, ipcEvent } from './ui/src/electron/constants';
+import { ElectronStorageItem, IpcEvent } from './ui/src/electron/constants';
 
 if (process.env.NODE_ENV !== 'production') {
   log.transports.file.getFile().clear();
@@ -207,6 +207,11 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
       throw new Error('"newWindow" is not defined');
     }
 
+    const zoomFactor = store?.get(ElectronStorageItem.zoomFactor) as number ?? null;
+    if (zoomFactor) {
+      newWindow?.webContents.setZoomFactor(zoomFactor);
+    }
+
     if (!trayInstance?.isDestroyed()) {
       tray?.updateTooltip(newWindow.webContents.getTitle());
     }
@@ -216,7 +221,7 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
     } else {
       newWindow?.show();
       newWindow?.focus();
-      splash?.close();
+      splash?.destroy();
     }
   });
 
@@ -296,6 +301,10 @@ export const setToQuiting = () => {
   isQuiting = true;
 };
 
+export const setValueToStore = (key: ElectronStorageItem, value: any) => {
+  store?.set(key, value);
+};
+
 /**
  * Add event listeners...
  */
@@ -370,8 +379,6 @@ autoUpdater.on('update-downloaded', (info: UpdateDownloadedEvent) => {
   store?.set(ElectronStorageItem.updateDownloadedForTelemetry, true);
   store?.set(ElectronStorageItem.updateDownloadedVersion, info.version);
   store?.set(ElectronStorageItem.updatePreviousVersion, app.getVersion());
-
-  log.info('Path to downloaded file: ', info.downloadedFile);
 });
 
 app.on('certificate-error', (event, _webContents, _url, _error, _certificate, callback) => {
@@ -381,11 +388,11 @@ app.on('certificate-error', (event, _webContents, _url, _error, _certificate, ca
 });
 
 // ipc events
-ipcMain.handle(ipcEvent.getAppVersion, () => app?.getVersion());
+ipcMain.handle(IpcEvent.getAppVersion, () => app?.getVersion());
 
-ipcMain.handle(ipcEvent.getStoreValue, (_event, key) => store?.get(key));
+ipcMain.handle(IpcEvent.getStoreValue, (_event, key) => store?.get(key));
 
-ipcMain.handle(ipcEvent.deleteStoreValue, (_event, key) => store?.delete(key));
+ipcMain.handle(IpcEvent.deleteStoreValue, (_event, key) => store?.delete(key));
 
 dialog.showErrorBox = (title: string, content: string) => {
   log.error('Dialog shows error:', `\n${title}\n${content}`);

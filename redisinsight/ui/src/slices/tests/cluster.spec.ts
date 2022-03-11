@@ -184,10 +184,6 @@ describe('cluster slice', () => {
   describe('loadInstancesRedisClusterSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
-
-      const data = [
-        { id: '70b95d32-c19d-4311-bb24-e684af12cf15', name: 'ca cert' },
-      ]
       const state = {
         ...initialState,
         loading: false,

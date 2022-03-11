@@ -1,17 +1,22 @@
 import { t } from 'testcafe';
-import { MyRedisDatabasePage } from '../pageObjects/my-redis-databases-page';
-import { AddNewDatabaseParameters, SentinelParameters, AddRedisDatabasePage, OSSClusterParameters } from '../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters, SentinelParameters, OSSClusterParameters } from '../pageObjects/add-redis-database-page';
 import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sentinel-master-groups-page';
-import { AutoDiscoverREDatabases } from '../pageObjects/auto-discover-redis-enterprise-databases';
-import { BrowserPage } from '../pageObjects/browser-page';
-import { UserAgreementPage } from '../pageObjects';
+import {
+    MyRedisDatabasePage,
+    BrowserPage,
+    AutoDiscoverREDatabases,
+    AddRedisDatabasePage,
+    UserAgreementPage,
+    CliPage
+} from '../pageObjects';
 
-const myRedisDatabasePage = new MyRedisDatabasePage;
-const addRedisDatabasePage = new AddRedisDatabasePage;
-const discoverMasterGroupsPage = new DiscoverMasterGroupsPage;
-const autoDiscoverREDatabases = new AutoDiscoverREDatabases;
-const browserPage = new BrowserPage;
-const userAgreementPage = new UserAgreementPage;
+const myRedisDatabasePage = new MyRedisDatabasePage();
+const addRedisDatabasePage = new AddRedisDatabasePage();
+const discoverMasterGroupsPage = new DiscoverMasterGroupsPage();
+const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
+const browserPage = new BrowserPage();
+const userAgreementPage = new UserAgreementPage();
+const cliPage = new CliPage();
 
 /**
  * Add a new database manually using host and port
@@ -103,10 +108,45 @@ export async function addNewRECloudDatabase(cloudAPIAccessKey: string, cloudAPIS
  * @param databaseName The database name
 */
 export async function acceptLicenseTermsAndAddDatabase(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
-    await t.maximizeWindow();
-    await userAgreementPage.acceptLicenseTerms();
-    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
+    await acceptLicenseTerms();
     await addNewStandaloneDatabase(databaseParameters);
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);
-}   
+}
+
+/**
+ * Accept License terms and add OSS cluster database
+ * @param databaseParameters The database parameters
+ * @param databaseName The database name
+*/
+export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParameters: OSSClusterParameters, databaseName: string): Promise<void> {
+    await acceptLicenseTerms();
+    await addOSSClusterDatabase(databaseParameters);
+    //Connect to DB
+    await myRedisDatabasePage.clickOnDBByName(databaseName);
+}
+
+//Accept License terms
+export async function acceptLicenseTerms(): Promise<void> {
+    await t.maximizeWindow();
+    await userAgreementPage.acceptLicenseTerms();
+    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
+}
+
+//Clear database data
+export async function clearDatabaseInCli(): Promise<void> {
+    if (await cliPage.cliCollapseButton.exists === false) {
+        await t.click(cliPage.cliExpandButton);
+    }
+    await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
+    await t.pressKey('enter');
+}
+
+/**
+ * Delete database
+ * @param databaseName The database name
+*/
+export async function deleteDatabase(databaseName: string): Promise<void> {
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await myRedisDatabasePage.deleteDatabaseByName(databaseName);
+}

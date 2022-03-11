@@ -71,7 +71,6 @@ export class BrowserPage {
   zsetScoresList: Selector
   searchInput: Selector
   searchButton: Selector
-  removeButton: Selector
   confirmRemoveSetMemberButton: Selector
   confirmRemoveHashFieldButton: Selector
   confirmRemovZSetMemberButton: Selector
@@ -111,6 +110,26 @@ export class BrowserPage {
   overviewCommandsSec: Selector
   overviewCpu: Selector
   modulesButton: Selector
+  overviewMoreInfo: Selector
+  overviewTooltip: Selector
+  overviewTooltipStatTitle: Selector
+  treeViewButton: Selector
+  treeViewArea: Selector
+  browserViewButton: Selector
+  treeViewScannedValue: Selector
+  treeViewSeparator: Selector
+  treeViewKeysNumber: Selector
+  treeViewPercentage: Selector
+  treeViewFolders: Selector
+  treeViewMessage: Selector
+  totalKeysNumber: Selector
+  keysScanned: Selector
+  breadcrumbsContainer: Selector
+  databaseInfoIcon: Selector
+  databaseInfoToolTip: Selector
+  removeHashFieldButton: Selector
+  removeSetMemberButton: Selector
+  removeZserMemberButton: Selector
 
   constructor() {
       //CSS Selectors
@@ -150,7 +169,9 @@ export class BrowserPage {
       this.keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
       this.progressLine = Selector('div.euiProgress');
       this.confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
-      this.removeButton = Selector('[data-testid*=-icon]');
+      this.removeSetMemberButton = Selector('[data-testid^=set-remove-btn]');
+      this.removeHashFieldButton = Selector('[data-testid^=remove-hash-button]');
+      this.removeZserMemberButton = Selector('[data-testid^=zset-remove-button]');
       this.confirmRemoveSetMemberButton = Selector('[data-testid^=set-remove-btn-] span');
       this.confirmRemovZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
       this.saveElementButton = Selector('[data-testid=save-elements-btn]');
@@ -170,6 +191,13 @@ export class BrowserPage {
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
       this.modulesButton = Selector('[data-testid$=_module]');
+      this.overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
+      this.overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
+      this.overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
+      this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
+      this.treeViewButton = Selector('');
+      this.browserViewButton = Selector('');
+      this.treeViewSeparator = Selector('');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
       this.keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -223,6 +251,16 @@ export class BrowserPage {
       this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
       this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
+      this.breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
+      this.treeViewArea = Selector('');
+      this.treeViewScannedValue = Selector('');
+      this.treeViewKeysNumber = Selector('');
+      this.treeViewPercentage = Selector('');
+      this.treeViewFolders = Selector('');
+      this.treeViewMessage = Selector('');
+      this.totalKeysNumber = Selector('');
+      this.keysScanned = Selector('');
+      this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
   }
 
   /**
@@ -384,6 +422,7 @@ export class BrowserPage {
 
   //Delete key from details
   async deleteKey(): Promise<void> {
+      await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);
       await t.click(this.confirmDeleteKeyButton);
   }
@@ -592,7 +631,7 @@ export class BrowserPage {
   * Add json structure
   * @param jsonStructure The structure of the json key
   */
-  async addJsonSctucture(jsonStructure: string): Promise<void>{
+  async addJsonStructure(jsonStructure: string): Promise<void>{
       await t.click(this.expandJsonObject);
       await t.click(this.editJsonObjectButton);
       await t.pressKey('ctrl+a delete');

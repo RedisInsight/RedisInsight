@@ -8,6 +8,7 @@ export interface Props {
 const Image = ({ src, ...rest }: Props) => {
   const path: string = IS_ABSOLUTE_PATH.test(src || '') ? src : `${RESOURCES_BASE_URL}${src}`
   return (
+    // eslint-disable-next-line jsx-a11y/alt-text
     <img src={path} {...rest} />
   )
 }

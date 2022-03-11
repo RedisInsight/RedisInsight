@@ -1,9 +1,9 @@
 import { ReplyError } from 'src/models';
 
-export class CliParsingError extends ReplyError {
+export class CommandParsingError extends ReplyError {
   constructor(args) {
     super(args);
-    this.name = 'CliParsingError';
+    this.name = 'CommandParsingError';
   }
 }
 
@@ -14,10 +14,10 @@ export class RedirectionParsingError extends ReplyError {
   }
 }
 
-export class CliCommandNotSupportedError extends ReplyError {
+export class CommandNotSupportedError extends ReplyError {
   constructor(args) {
     super(args);
-    this.name = 'CliCommandNotSupportedError';
+    this.name = 'CommandNotSupportedError';
   }
 }
 

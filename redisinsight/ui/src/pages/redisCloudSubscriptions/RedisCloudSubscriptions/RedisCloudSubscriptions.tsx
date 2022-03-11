@@ -52,7 +52,7 @@ const RedisCloudSubscriptions = ({
   subscriptions,
   columns,
   loading,
-  account,
+  account = null,
   onClose,
   onBack,
   onSubmit,

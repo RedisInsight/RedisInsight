@@ -17,10 +17,11 @@ import {
   CloudAuthDto,
   GetCloudAccountShortInfoResponse,
   GetDatabasesInMultipleCloudSubscriptionsDto,
-  RedisCloudDatabase,
   GetRedisCloudSubscriptionResponse,
+  RedisCloudDatabase,
 } from 'src/modules/redis-enterprise/dto/cloud.dto';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
+import { BuildType } from 'src/modules/core/models/server-provider.interface';
 
 @ApiTags('Redis Enterprise Cloud')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -33,6 +34,7 @@ export class CloudController {
   @ApiEndpoint({
     description: 'Get current account',
     statusCode: 200,
+    excludeFor: [BuildType.RedisStack],
     responses: [
       {
         status: 200,
@@ -52,6 +54,7 @@ export class CloudController {
   @ApiEndpoint({
     description: 'Get information about current account’s subscriptions.',
     statusCode: 200,
+    excludeFor: [BuildType.RedisStack],
     responses: [
       {
         status: 200,
@@ -72,6 +75,7 @@ export class CloudController {
   @ApiEndpoint({
     description: 'Get databases belonging to subscriptions',
     statusCode: 200,
+    excludeFor: [BuildType.RedisStack],
     responses: [
       {
         status: 200,

@@ -1,0 +1,42 @@
+version: "3.4"
+
+services:
+  e2e:
+    build:
+      context: .
+      dockerfile: e2e.Dockerfile
+    tty: true
+    volumes:
+      - ./results:/usr/src/app/results
+      - ./plugins:/usr/src/app/plugins
+    env_file:
+      - ./.env
+    environment:
+      COMMON_URL: 'http://app:5000'
+      E2E_CLOUD_DATABASE_HOST: $E2E_CLOUD_DATABASE_HOST
+      E2E_CLOUD_DATABASE_PORT: $E2E_CLOUD_DATABASE_PORT
+      E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
+      E2E_CLOUD_DATABASE_USERNAME: $E2E_CLOUD_DATABASE_USERNAME
+      E2E_CLOUD_DATABASE_NAME: $E2E_CLOUD_DATABASE_NAME
+    entrypoint: [
+        './upload-custom-plugins.sh',
+    ]
+    command: [
+        './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
+        '--',
+        'npx', 'yarn', 'test:chrome:ci'
+    ]
+
+  # Redisinsight API + UI build
+  app:
+    cap_add:
+      - ipc_lock
+    env_file:
+      - ./.env
+    build:
+      context: ./../../
+      dockerfile: Dockerfile
+    volumes:
+      - ./plugins:/root/.redisinsight-preview/plugins
+    ports:
+      - 5000:5000

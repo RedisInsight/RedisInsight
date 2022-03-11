@@ -26,6 +26,8 @@
   --euiColorColorWarning: #{$euiColorWarning};
   --euiColorColorDanger: #{$euiColorDanger};
 
+  --euiColorWarningLight: #{$euiColorWarningLight};
+
   // Grays
   --euiColorEmptyShade: #{$euiColorEmptyShade};
   --euiColorLightestShade: #{$euiColorLightestShade};
@@ -87,6 +89,9 @@
   --hoverInListColorDarken: #{$hoverInListColorDarken};
   --externalLinkColor: #{$externalLinkColor};
   --externalLinkTooltipColor: #{$externalLinkTooltipColor};
+  --browserViewTypePassive: #{$browserViewTypePassive};
+  --browserViewTypeActive: #{$browserViewTypeActive};
+  --browserTreeNodeOpen: #{$browserTreeNodeOpen};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
@@ -110,6 +115,8 @@
   --callOutBackgroundColor: #{$euiTooltipBackgroundColor};
 
   --overlayPromoNYColor: #{$overlayPromoNYColor};
+
+  --monacoBgColor: #{$monacoBgColor};
 
   // KeyTypes
   --typeHashColor: #{$typeHashColor};

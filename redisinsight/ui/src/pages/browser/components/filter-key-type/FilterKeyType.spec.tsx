@@ -12,9 +12,9 @@ import {
 import { loadKeys, setFilter } from 'uiSrc/slices/keys'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
 import { KeyTypes } from 'uiSrc/constants'
-import FilterKeyType, { Props } from './FilterKeyType'
+import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
+import FilterKeyType from './FilterKeyType'
 
-const mockedProps = mock<Props>()
 let store: typeof mockedStore
 
 const filterSelectId = 'select-filter-key-type'
@@ -35,13 +35,13 @@ beforeEach(() => {
 
 describe('FilterKeyType', () => {
   it('should render', () => {
-    expect(render(<FilterKeyType {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<FilterKeyType />)).toBeTruthy()
     const searchInput = screen.getByTestId(filterSelectId)
     expect(searchInput).toBeInTheDocument()
   })
 
   it('should not be disabled filter with database redis version > 6.0', () => {
-    render(<FilterKeyType {...instance(mockedProps)} />)
+    render(<FilterKeyType />)
     const filterSelect = screen.getByTestId(filterSelectId)
 
     expect(filterSelect).not.toBeDisabled()
@@ -49,20 +49,25 @@ describe('FilterKeyType', () => {
 
   it('should be info icon with database redis version > 6.0', () => {
     const { queryByTestId } = render(
-      <FilterKeyType {...instance(mockedProps)} />
+      <FilterKeyType />
     )
     expect(queryByTestId(filterInfoId)).not.toBeInTheDocument()
   })
 
   it('"setFilter" and "loadKeys" should be called after selecte "Hash" type', () => {
     const { queryByText } = render(
-      <FilterKeyType {...instance(mockedProps)} />
+      <FilterKeyType />
     )
 
     fireEvent.click(screen.getByTestId(filterSelectId))
     fireEvent.click(queryByText('Hash') || document)
 
-    const expectedActions = [setFilter(KeyTypes.Hash), loadKeys()]
+    const expectedActions = [
+      setFilter(KeyTypes.Hash),
+      loadKeys(),
+      setBrowserTreeNodesOpen({}),
+      setBrowserTreeSelectedLeaf({})
+    ]
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)
     )
@@ -72,7 +77,7 @@ describe('FilterKeyType', () => {
     connectedInstanceOverviewSelector.mockImplementation(() => ({
       version: '5.1',
     }))
-    render(<FilterKeyType {...instance(mockedProps)} />)
+    render(<FilterKeyType />)
     const filterSelect = screen.getByTestId(filterSelectId)
 
     expect(filterSelect).toBeDisabled()
@@ -82,7 +87,7 @@ describe('FilterKeyType', () => {
     connectedInstanceOverviewSelector.mockImplementation(() => ({
       version: '5.1',
     }))
-    render(<FilterKeyType {...instance(mockedProps)} />)
+    render(<FilterKeyType />)
     expect(screen.getByTestId(filterInfoId)).toBeInTheDocument()
   })
 })

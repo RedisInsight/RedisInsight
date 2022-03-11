@@ -1,5 +1,7 @@
 import * as fs from 'fs';
-import { Module, OnModuleInit } from '@nestjs/common';
+import {
+  MiddlewareConsumer, Module, NestModule, OnModuleInit,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -9,7 +11,6 @@ import config from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
 import { CommandsModule } from 'src/modules/commands/commands.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
-import { EnablementAreaModule } from 'src/modules/enablement-area/enablement-area.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -17,8 +18,10 @@ import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterpri
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
 import { CliModule } from './modules/cli/cli.module';
+import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
 import { SettingsController } from './controllers/settings.controller';
 import { ServerInfoController } from './controllers/server-info.controller';
+import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
 import ormConfig from '../config/ormconfig';
 
@@ -64,12 +67,12 @@ const PATH_CONFIG = config.get('dir_path');
         fallthrough: false,
       },
     }),
-    EnablementAreaModule,
+    StaticsManagementModule,
   ],
   controllers: [SettingsController, ServerInfoController],
   providers: [],
 })
-export class AppModule implements OnModuleInit {
+export class AppModule implements OnModuleInit, NestModule {
   onModuleInit() {
     // creating required folders
     const foldersToCreate = [
@@ -82,5 +85,13 @@ export class AppModule implements OnModuleInit {
         fs.mkdirSync(folder, { recursive: true });
       }
     });
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(ExcludeRouteMiddleware)
+      .forRoutes(
+        ...SERVER_CONFIG.excludeRoutes,
+      );
   }
 }

@@ -29,7 +29,7 @@ describe('InternalPage', () => {
     expect(onClose).toBeCalled()
   })
   it('should parse and render JSX string', () => {
-    const content = `<h1 data-testid="header">Header</h1>`
+    const content = '<h1 data-testid="header">Header</h1>'
     const { queryByTestId } = render(<InternalPage {...instance(mockedProps)} content={content} />)
 
     expect(queryByTestId('header')).toBeInTheDocument()

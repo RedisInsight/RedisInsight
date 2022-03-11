@@ -8,7 +8,7 @@ import { constants } from './constants';
  * When not defined We will up and run local server
  */
 export let server = process.env.TEST_BE_SERVER;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 
 /**
  * Initiate server if needed (only once)

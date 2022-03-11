@@ -7,9 +7,6 @@
   height: 100%;
   display: flex;
   align-items: center;
-  background-color: var(--euiColorEmptyShade);
-  border: 1px solid var(--euiColorLightShade);
-  padding: 0 12px;
 
   & > div {
     display: flex;
@@ -25,14 +22,24 @@
 
 .tooltipAnchor {
   max-width: 100%;
+  &:hover {
+    .infoIcon {
+      color: currentColor;
+    }
+  }
 }
 
 .dbName {
   display: inline-block !important;
   overflow: hidden;
-  font-size: 13px;
+  font-size: 16px;
+  font-weight: 500;
   text-overflow: ellipsis;
   max-width: 100%;
   white-space: nowrap;
+}
+
+.infoIcon {
+  color: var(--euiColorMediumShade);
 }
 

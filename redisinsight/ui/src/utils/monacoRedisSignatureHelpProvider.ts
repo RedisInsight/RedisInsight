@@ -1,11 +1,15 @@
+import { MutableRefObject } from 'react'
 import * as monacoEditor from 'monaco-editor'
 import { isNull } from 'lodash'
 import { ICommands } from 'uiSrc/constants'
 import { generateArgsNames } from 'uiSrc/utils/commands'
 import { findCommandEarlier } from './monacoUtils'
 
-export const getRedisSignatureHelpProvider = (commandsSpec: ICommands, commandsArray: string[]):
-monacoEditor.languages.SignatureHelpProvider =>
+export const getRedisSignatureHelpProvider = (
+  commandsSpec: ICommands,
+  commandsArray: string[],
+  isBlockedRef?: MutableRefObject<boolean>
+): monacoEditor.languages.SignatureHelpProvider =>
 // generate signature help provider
   ({
     // signatureHelpTriggerCharacters: [' '],
@@ -16,7 +20,7 @@ monacoEditor.languages.SignatureHelpProvider =>
     ) => {
       const command = findCommandEarlier(model, position, commandsSpec, commandsArray)
 
-      if (isNull(command)) {
+      if (isNull(command) || isBlockedRef?.current) {
         return null
       }
 

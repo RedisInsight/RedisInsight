@@ -6,7 +6,6 @@ import {
   cliTexts,
   ConnectionSuccessOutputText,
   InitOutputText,
-  mockInitOutputText,
 } from 'uiSrc/constants/cliOutput'
 import reducer, {
   initialState,

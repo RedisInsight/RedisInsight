@@ -9,12 +9,14 @@ import {
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
 import { fetchKeys, keysSelector, setFilter } from 'uiSrc/slices/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import HelpTexts from 'uiSrc/constants/help-texts'
+import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -26,7 +28,7 @@ const FilterKeyType = () => {
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
 
   const { version } = useSelector(connectedInstanceOverviewSelector)
-  const { filter } = useSelector(keysSelector)
+  const { filter, viewType } = useSelector(keysSelector)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -68,7 +70,11 @@ const FilterKeyType = () => {
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value || null))
-    dispatch(fetchKeys('0', SCAN_COUNT_DEFAULT))
+    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
+
+    // reset browser tree context
+    dispatch(setBrowserTreeNodesOpen({}))
+    dispatch(setBrowserTreeSelectedLeaf({}))
   }
 
   const UnsupportedInfo = () => (
@@ -108,6 +114,7 @@ const FilterKeyType = () => {
           <div
             className={styles.allTypes}
             onClick={() => isVersionSupported && setIsSelectOpen(!isSelectOpen)}
+            role="presentation"
           >
             <EuiIcon
               type="controlsVertical"

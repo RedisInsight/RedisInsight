@@ -1,13 +1,16 @@
 import { hot } from 'react-hot-loader/root'
 import React, { ReactElement } from 'react'
-import { Provider } from 'react-redux'
+import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
 
+import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { BuildType } from 'uiSrc/constants/env'
+import { PagePlaceholder } from 'uiSrc/components'
 import Router from './Router'
 import store from './slices/store'
 import { Theme } from './constants'
 import { themeService } from './services'
-import { NavigationMenu, Notifications, Config, ShortcutsFlyout, MonitorConfig } from './components'
+import { Config, MonitorConfig, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 
@@ -19,26 +22,35 @@ import './App.scss'
 themeService.registerTheme(Theme.Dark, [themeDark])
 themeService.registerTheme(Theme.Light, [themeLight])
 
-const App = ({ children }: { children?: ReactElement }) => (
+const AppWrapper = ({ children }: { children?: ReactElement }) => (
   <Provider store={store}>
     <ThemeProvider>
       <Router>
-        <div className="main-container">
-          <EuiPage className="main">
-            <Config />
-            <MonitorConfig />
-            <NavigationMenu />
-            <EuiPageBody component="main">
-              <MainComponent />
-            </EuiPageBody>
-          </EuiPage>
-          <Notifications />
-          <ShortcutsFlyout />
-        </div>
+        <App />
       </Router>
     </ThemeProvider>
     {children}
   </Provider>
 )
-
-export default hot(App)
+const App = () => {
+  const { loading: serverLoading, server } = useSelector(appInfoSelector)
+  return (
+    <div className="main-container">
+      { serverLoading
+        ? <PagePlaceholder />
+        : (
+          <EuiPage className="main">
+            <MonitorConfig />
+            <NavigationMenu buildType={server?.buildType as BuildType} />
+            <EuiPageBody component="main">
+              <MainComponent />
+            </EuiPageBody>
+          </EuiPage>
+        )}
+      <Notifications />
+      <Config />
+      <ShortcutsFlyout />
+    </div>
+  )
+}
+export default hot(AppWrapper)

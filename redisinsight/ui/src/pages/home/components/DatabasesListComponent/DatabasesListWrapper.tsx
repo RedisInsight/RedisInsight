@@ -1,6 +1,7 @@
 import {
   EuiButton,
   EuiButtonIcon,
+  EuiIcon,
   EuiPopover,
   EuiTableFieldDataColumnType,
   EuiText,
@@ -9,7 +10,7 @@ import {
 } from '@elastic/eui'
 import { formatDistanceToNow } from 'date-fns'
 import { capitalize } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
@@ -28,9 +29,13 @@ import {
 import { resetKeys } from 'uiSrc/slices/keys'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
+import DatabaseListModules, { ModulesListType } from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import RediStackSVG from 'uiSrc/assets/img/modules/RediStack.svg'
+import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import DatabasesList from './DatabasesList/DatabasesList'
 
 import styles from './styles.module.scss'
@@ -52,6 +57,7 @@ const DatabasesListWrapper = ({
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
+  const { theme } = useContext(ThemeContext)
 
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
   const instances = useSelector(instancesSelector)
@@ -208,7 +214,7 @@ const DatabasesListWrapper = ({
       truncateText: true,
       'data-test-subj': 'database-alias-column',
       sortable: ({ name }) => name?.toLowerCase(),
-      width: '50%',
+      width: '30%',
       render: function InstanceCell(name: string = '', { id, db }: Instance) {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
@@ -239,22 +245,10 @@ const DatabasesListWrapper = ({
       },
     },
     {
-      field: 'connectionType',
-      className: 'column_type',
-      name: 'Connection Type',
-      dataType: 'string',
-      sortable: true,
-      width: '180px',
-      truncateText: true,
-      hideForMobile: true,
-      render: (cellData: ConnectionType) =>
-        CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
-    },
-    {
       field: 'host',
       className: 'column_host',
       name: 'Host:Port',
-      width: '18%',
+      width: '35%',
       dataType: 'string',
       truncateText: true,
       sortable: ({ host, port }) => `${host}:${port}`,
@@ -276,6 +270,40 @@ const DatabasesListWrapper = ({
               />
             </EuiToolTip>
           </div>
+        )
+      },
+    },
+    {
+      field: 'connectionType',
+      className: 'column_type',
+      name: 'Connection Type',
+      dataType: 'string',
+      sortable: true,
+      width: '180px',
+      truncateText: true,
+      hideForMobile: true,
+      render: (cellData: ConnectionType) =>
+        CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
+    },
+    {
+      field: 'modules',
+      className: 'column_modules',
+      name: 'Modules',
+      width: '150px',
+      dataType: 'string',
+      render: (cellData, { modules = [], port, isRediStack }: Instance) => {
+        return (
+          <DatabaseListModules
+            highlight={isRediStack}
+            modules={modules}
+            maxViewModules={3}
+            tooltipTitle={isRediStack ? (
+              <>
+                <EuiIcon type={RediStackSVG} className={styles.redistackIcon} />
+                <span style={{ verticalAlign: 'middle' }}>Redis Stack</span>
+              </>
+            ) : ''}
+          />
         )
       },
     },
@@ -316,7 +344,7 @@ const DatabasesListWrapper = ({
   ]
 
   const columnsHideForTablet = ['connectionType']
-  const columnsHideForEditing = ['connectionType']
+  const columnsHideForEditing = ['connectionType', 'modules']
   const columnsTablet = columnsFull.filter(
     ({ field = '' }) => columnsHideForTablet.indexOf(field) === -1
   )

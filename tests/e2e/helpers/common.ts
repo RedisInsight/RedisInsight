@@ -1,7 +1,9 @@
 import {RequestMock, t} from 'testcafe';
 import {commonUrl} from "./conf";
+import { Chance } from 'chance';
 
 const settingsApiUrl = `${commonUrl}/api/settings`;
+const chance = new Chance();
 
 const mockedSettingsResponse = {
     agreements: {
@@ -34,8 +36,8 @@ export class Common {
     async createArrayWithKeyValue(length: number): Promise<string[]> {
         const arr = [];
         for(let i = 1; i <= length * 2; i++) {
-            arr[i] = `key${i}`;
-            arr[i + 1] = `value${i}`;
+            arr[i] = `${chance.word({ length: 10 })}-key${i}`;
+            arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
             i++;
         }
         return arr;

@@ -16,7 +16,7 @@ import { useParams } from 'react-router-dom'
 import { findIndex } from 'lodash'
 
 import { Theme } from 'uiSrc/constants'
-import { getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
+import { getCommandNameFromQuery, getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -64,7 +64,7 @@ const QueryCardHeader = (props: Props) => {
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
-  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+  const { spec: COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { theme } = useContext(ThemeContext)
@@ -74,15 +74,21 @@ const QueryCardHeader = (props: Props) => {
     event.stopPropagation()
   }
 
-  const handleCopy = (event: React.MouseEvent, text: string) => {
+  const sendEvent = (event: TelemetryEvent, query: string, additionalData: object = {}) => {
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_COMMAND_COPIED,
+      event,
       eventData: {
-        databaseId: instanceId
+        databaseId: instanceId,
+        command: getCommandNameFromQuery(query, COMMANDS_SPEC),
+        ...additionalData
       }
     })
+  }
+
+  const handleCopy = (event: React.MouseEvent, query: string) => {
+    sendEvent(TelemetryEvent.WORKBENCH_COMMAND_COPIED, query)
     eventStop(event)
-    navigator.clipboard.writeText(text)
+    navigator.clipboard.writeText(query)
   }
 
   const onDropDownViewClick = (event: React.MouseEvent) => {
@@ -91,29 +97,29 @@ const QueryCardHeader = (props: Props) => {
 
   const onChangeView = (initValue: string) => {
     if (selectedValue === initValue) return
-    const type: string = initValue in WBQueryType ? initValue : WBQueryType.Plugin
+    const currentView = options.find(({ id }) => id === initValue)
+    const previousView = options.find(({ id }) => id === selectedValue)
+    const type = currentView.value
     setSelectedValue(type as WBQueryType, initValue)
-    sendEventChangeVisualizationTelemetry(initValue)
+    sendEvent(
+      TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED,
+      query,
+      {
+        previousView: previousView.name,
+        isPreviousViewInternal: !!previousView?.internal,
+        currentView: currentView.name,
+        isCurrentViewInternal: !!currentView?.internal,
+      }
+    )
   }
 
   const handleQueryDelete = (event: React.MouseEvent) => {
-    sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_COMMAND_DELETE_COMMAND,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
     eventStop(event)
     onQueryDelete()
   }
 
   const handleQueryReRun = (event: React.MouseEvent) => {
-    sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
+    sendEvent(TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN, query)
     eventStop(event)
     onQueryReRun()
   }
@@ -122,46 +128,13 @@ const QueryCardHeader = (props: Props) => {
     && format(parseISO(createdAt?.toString()), `${parseISO(createdAt?.toString()).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
   ) || ''
 
-  const isViewInternal = (view: string = '') => !!options.find(({ id }) => id === view)?.internal
-
-  const getCommandForTelemetry = (query: string = '') => REDIS_COMMANDS_ARRAY.find((commandName) =>
-    query.toUpperCase().startsWith(commandName)) ?? query.split(' ')?.[0]
-
-  const sendEventToggleOpenTelemetry = () => {
-    const matchedCommand = getCommandForTelemetry(query)
-
-    sendEventTelemetry({
-      event: isOpen
-        ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED
-        : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
-      eventData: {
-        databaseId: instanceId,
-        command: matchedCommand
-      }
-    })
-  }
-
-  const sendEventChangeVisualizationTelemetry = (value: string = '') => {
-    const matchedCommand = getCommandForTelemetry(query)
-
-    sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED,
-      eventData: {
-        databaseId: instanceId,
-        command: matchedCommand,
-        previousView: selectedValue,
-        isPreviousViewInternal: isViewInternal(selectedValue),
-        currentView: value,
-        isCurrentViewInternal: isViewInternal(value),
-      }
-    })
-  }
-
   const handleToggleOpen = () => {
     if (!isFullScreen) {
-      sendEventToggleOpenTelemetry()
+      sendEvent(
+        isOpen ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
+        query
+      )
     }
-
     toggleOpen()
   }
 
@@ -169,6 +142,7 @@ const QueryCardHeader = (props: Props) => {
     .map((visualization: IPluginVisualization) => ({
       id: visualization.uniqId,
       value: WBQueryType.Plugin,
+      name: `${visualization.id}__${visualization.name}`,
       text: visualization.name,
       iconDark: (visualization.plugin.internal && visualization.iconDark)
         ? urlForAsset(visualization.plugin.baseUrl, visualization.iconDark)

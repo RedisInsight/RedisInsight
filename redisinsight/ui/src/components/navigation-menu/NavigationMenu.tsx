@@ -1,26 +1,27 @@
+/* eslint-disable react/no-this-in-sfc */
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  EuiPageSideBar,
   EuiButtonIcon,
-  EuiToolTip,
-  EuiLink,
-  EuiIcon,
-  EuiPopover,
-  EuiTitle,
-  EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiText
+  EuiIcon,
+  EuiLink,
+  EuiPageSideBar,
+  EuiPopover,
+  EuiSpacer,
+  EuiText,
+  EuiTitle,
+  EuiToolTip
 } from '@elastic/eui'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { setReleaseNotesViewed, appElectronInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
+import { appElectronInfoSelector, setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import LogoSVG from 'uiSrc/assets/img/logo.svg'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
@@ -30,6 +31,7 @@ import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
 import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 
+import { BuildType } from 'uiSrc/constants/env'
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
@@ -46,7 +48,11 @@ interface INavigations {
   getIconType: () => string;
 }
 
-const NavigationMenu = () => {
+interface IProps {
+  buildType: BuildType
+}
+
+const NavigationMenu = ({ buildType }: IProps) => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
@@ -226,7 +232,10 @@ const NavigationMenu = () => {
   return (
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
-        <EuiToolTip content="My Redis databases" position="right">
+        <EuiToolTip
+          content={buildType === BuildType.RedisStack ? 'Redis Stack' : 'My Redis databases'}
+          position="right"
+        >
           <span className={styles.iconLogo}>
             <EuiLink {...getRouterLinkProps(Pages.home)} data-test-subj="home-page-btn">
               <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />

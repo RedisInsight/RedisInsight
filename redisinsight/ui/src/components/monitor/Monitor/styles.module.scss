@@ -68,9 +68,13 @@
   align-items: center;
   max-width: 264px;
   flex-direction: column;
-  align-items: center;
 
   font: normal normal normal 12px/18px Graphik, sans-serif;
+}
+
+.startContentError {
+  max-width: 298px;
+  padding-right: 12px;
 }
 
 .autoScrollContainer {
@@ -144,6 +148,10 @@
   max-width: 330px;
   width: max-content;
   color: var(--euiTextSubduedColorHover);
+}
+
+.iconWarning {
+  color: var(--euiColorWarningText) !important;
 }
 
 .item {

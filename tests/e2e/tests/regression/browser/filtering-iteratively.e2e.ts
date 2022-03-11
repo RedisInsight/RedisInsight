@@ -1,74 +1,51 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    CliPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage, CliPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { KeyTypesTexts } from '../../../helpers/constants';
+import { KeyTypesTexts, rte } from '../../../helpers/constants';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const cliPage = new CliPage();
 const common = new Common();
+
+let keys: string[];
 
 fixture `Filtering iteratively in Browser page`
     .meta({type: 'regression'})
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async(t) => {
-        //Clear database
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, 'FLUSHDB');
-        await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+    .afterEach(async () => {
+        //Clear and delete database
+        await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test('Verify that user can see search results per 500 keys if number of results is 500', async t => {
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
-    //Create new keys
-    const arr = await common.createArrayWithKeyValue(500);
-    await t.typeText(cliPage.cliCommandInput, `MSET ${arr.join(' ')}`, { paste: true });
-    await t.pressKey('enter');
-    await t.click(cliPage.cliCollapseButton);
-    //Search all keys
-    await browserPage.searchByKeyName('*');
-    const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
-    //Verify that number of results is 500
-    await t.expect(keysNumberOfResults).contains('500', 'Number of results is 500');
-});
-test('Verify that user can search iteratively via Scan more for search pattern and selected data type', async t => {
-    //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    //Open CLI
-    await t.click(cliPage.cliExpandButton);
-    //Create new keys
-    const arr = await common.createArrayWithKeyValue(1000);
-    await t.typeText(cliPage.cliCommandInput, `MSET ${arr.join(' ')}`, { paste: true });
-    await t.pressKey('enter');
-    await t.click(cliPage.cliCollapseButton);
-    //Search all string keys
-    await browserPage.selectFilterGroupType(KeyTypesTexts.String)
-    await browserPage.searchByKeyName('*');
-    //Verify that scan more button is not shown
-    await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is shown');
-    await t.click(browserPage.scanMoreButton);
-    //Verify that number of results is 1000
-    const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
-    await t.expect(keysNumberOfResults).contains('1 000', 'Number of results is 1 000');
-});
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can see search results per 500 keys if number of results is 500', async t => {
+        //Create new keys
+        keys = await common.createArrayWithKeyValue(500);
+        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+        //Search all keys
+        await browserPage.searchByKeyName('*');
+        const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
+        //Verify that number of results is 500
+        await t.expect(keysNumberOfResults).contains('500', 'Number of results is 500');
+    });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can search iteratively via Scan more for search pattern and selected data type', async t => {
+        //Create new keys
+        keys = await common.createArrayWithKeyValue(1000);
+        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+        //Search all string keys
+        await browserPage.selectFilterGroupType(KeyTypesTexts.String)
+        await browserPage.searchByKeyName('*');
+        //Verify that scan more button is not shown
+        await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is shown');
+        await t.click(browserPage.scanMoreButton);
+        //Verify that number of results is 1000
+        const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
+        await t.expect(keysNumberOfResults).contains('1 000', 'Number of results is 1 000');
+    });

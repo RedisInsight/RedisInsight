@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
-import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, KeyTypes, SortOrder } from 'uiSrc/constants'
+import { apiService, localStorageService } from 'uiSrc/services'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes, SortOrder } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -11,7 +11,6 @@ import {
   getUrl,
   isStatusSuccessful,
 } from 'uiSrc/utils'
-import { KeysStore } from 'uiSrc/components/main-router/interfaces'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -30,6 +29,7 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { addErrorNotification, addMessageNotification } from './app/notifications'
+import { KeysStore, KeyViewType } from './interfaces/keys'
 
 export const initialState: KeysStore = {
   loading: false,
@@ -38,6 +38,7 @@ export const initialState: KeysStore = {
   search: '',
   isSearched: false,
   isFiltered: false,
+  viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
   data: {
     total: 0,
     scanned: 0,
@@ -268,6 +269,11 @@ const keysSlice = createSlice({
     setFilter: (state, { payload }) => {
       state.filter = payload
     },
+
+    changeKeyViewType: (state, { payload }:{ payload: KeyViewType }) => {
+      state.viewType = payload
+    },
+
     resetAddKey: (state) => {
       state.addKey = cloneDeep(initialState.addKey)
     },
@@ -278,6 +284,11 @@ const keysSlice = createSlice({
 
     // reset keys for keys slice
     resetKeys: () => cloneDeep(initialState),
+
+    resetKeysData: (state) => {
+      // state.data.keys = []
+      state.data.keys.length = 0
+    },
   },
 })
 
@@ -311,8 +322,10 @@ export const {
   updateSelectedKeyLength,
   setSearchMatch,
   setFilter,
+  changeKeyViewType,
   resetKeyInfo,
   resetKeys,
+  resetKeysData,
 } = keysSlice.actions
 
 // A selector

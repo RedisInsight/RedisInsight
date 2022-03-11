@@ -379,8 +379,6 @@ autoUpdater.on('update-downloaded', (info: UpdateDownloadedEvent) => {
   store?.set(ElectronStorageItem.updateDownloadedForTelemetry, true);
   store?.set(ElectronStorageItem.updateDownloadedVersion, info.version);
   store?.set(ElectronStorageItem.updatePreviousVersion, app.getVersion());
-
-  log.info('Path to downloaded file: ', info.downloadedFile);
 });
 
 app.on('certificate-error', (event, _webContents, _url, _error, _certificate, callback) => {

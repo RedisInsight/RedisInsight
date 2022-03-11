@@ -1,5 +1,6 @@
+/* eslint-disable sonarjs/no-nested-template-literals */
 import React, { useContext } from 'react'
-import { EuiButton, EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiIcon, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import {
@@ -31,16 +32,14 @@ import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.d
 import styles from './styles.module.scss'
 
 export interface Props {
-  modules: RedisModuleDto[];
-  inCircle?: boolean;
-  dark?: boolean;
+  modules: RedisModuleDto[]
+  inCircle?: boolean
+  dark?: boolean
+  highlight?: boolean
+  maxViewModules?: number
+  tooltipTitle?: React.ReactNode
 }
 
-interface ITooltipProps {
-  icon: any;
-  content: any;
-  abbreviation?: string;
-}
 export const modulesDefaultInit = {
   [RedisDefaultModules.AI]: {
     iconDark: RedisAIDark,
@@ -79,68 +78,104 @@ export const modulesDefaultInit = {
   },
 }
 
-const DatabaseListModules = React.memo(({ modules, inCircle }: Props) => {
+const DatabaseListModules = React.memo(({ modules, inCircle, highlight, tooltipTitle, maxViewModules }: Props) => {
   const { theme } = useContext(ThemeContext)
+
+  const mainContent = []
 
   const handleCopy = (text = '') => {
     navigator?.clipboard?.writeText(text)
   }
 
-  const Tooltip = ({ icon, content, abbreviation }: ITooltipProps) => (
-    <>
-      <EuiToolTip
-        content={content}
-        position="top"
-        display="inlineBlock"
-        anchorClassName={cx({ [styles.anchorCircleIcon]: inCircle })}
-      >
-        {icon ? (
-          <EuiButtonIcon
-            iconType={icon}
-            className={cx(styles.icon, { [styles.circle]: inCircle })}
-            onClick={() => handleCopy(content)}
-            data-testid={`${content}_module`}
-            aria-labelledby={`${content}_module`}
-          />
-        ) : (
-          <EuiButton
-            className={cx(styles.icon, { [styles.circle]: inCircle })}
-            onClick={() => handleCopy(content)}
-            data-testid={`${content}_module`}
-            aria-labelledby={`${content}_module`}
-          >
-            {abbreviation}
-          </EuiButton>
-        )}
-      </EuiToolTip>
-    </>
-  )
-
-  const modulesRender = modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
+  const newModules = modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
     const moduleName = modulesDefaultInit[propName]?.text || propName
 
     const { abbreviation = '', name = moduleName } = getModule(moduleName)
 
     const moduleAlias = truncateText(name, 50)
     // eslint-disable-next-line sonarjs/no-nested-template-literals
-    const content = `${moduleAlias}${semanticVersion || version ? ` v. ${semanticVersion || version}` : ''}`
     let icon = modulesDefaultInit[propName]?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
+    const content = `${moduleAlias}${semanticVersion || version ? ` v. ${semanticVersion || version}` : ''}`
 
     if (!icon && !abbreviation) {
       icon = theme === Theme.Dark ? UnknownDark : UnknownLight
     }
 
-    return (
-      <Tooltip
-        key={moduleName}
-        icon={icon}
-        abbreviation={abbreviation}
-        content={content}
-      />
-    )
+    mainContent.push({ icon, content, abbreviation })
+
+    return {
+      moduleName,
+      icon,
+      abbreviation,
+      content
+    }
   })
 
-  return <>{modulesRender}</>
+  // set count of hidden modules
+  if (maxViewModules && newModules.length > maxViewModules) {
+    newModules.length = maxViewModules
+    newModules.push({
+      icon: null,
+      content: '',
+      moduleName: '',
+      abbreviation: `+${modules.length - maxViewModules}`
+    })
+  }
+
+  const Content = mainContent.map(({ icon, content, abbreviation = '' }) => (
+    <div className={styles.tooltipItem}>
+      {!!icon && (<EuiIcon type={icon} style={{ marginRight: 10 }} />)}
+      {!icon && (
+        <EuiTextColor
+          className={cx(styles.icon, styles.abbr)}
+          style={{ marginRight: 10 }}
+        >
+          {abbreviation}
+        </EuiTextColor>
+      )}
+      {!!content && (<EuiTextColor className={cx(styles.tooltipItemText)}>{content}</EuiTextColor>)}
+      <br />
+    </div>
+  ))
+
+  return (
+    <div className={cx(styles.container, {
+      [styles.highlight]: highlight,
+      [styles.containerCircle]: inCircle,
+    })}
+    >
+      <EuiToolTip
+        position="bottom"
+        title={tooltipTitle ?? undefined}
+        display="inlineBlock"
+        content={Content}
+      >
+        <>
+          {newModules.map(({ icon, content, abbreviation, moduleName }) => (
+            icon ? (
+              <EuiButtonIcon
+                iconType={icon}
+                className={cx(styles.icon, { [styles.circle]: inCircle })}
+                onClick={() => handleCopy(content)}
+                data-testid={`${content}_module`}
+                aria-labelledby={`${content}_module`}
+                key={moduleName}
+              />
+            ) : (
+              <EuiTextColor
+                className={cx(styles.icon, styles.abbr, { [styles.circle]: inCircle })}
+                onClick={() => handleCopy(content)}
+                data-testid={`${content}_module`}
+                aria-labelledby={`${content}_module`}
+                key={moduleName}
+              >
+                {abbreviation}
+              </EuiTextColor>
+            )))}
+        </>
+      </EuiToolTip>
+    </div>
+  )
 })
 
 export default DatabaseListModules

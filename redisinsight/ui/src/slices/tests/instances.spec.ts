@@ -9,6 +9,7 @@ import {
 import { apiErrors } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { checkRediStack } from 'uiSrc/utils'
 
 import reducer, {
   initialState,
@@ -241,7 +242,7 @@ describe('instances slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        data: instances,
+        data: checkRediStack(instances),
       }
 
       // Act

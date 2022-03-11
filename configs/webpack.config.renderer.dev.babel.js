@@ -135,8 +135,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -150,8 +150,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -169,8 +169,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -209,6 +209,7 @@ export default merge(baseConfig, {
       BASE_API_URL: 'http://localhost',
       RESOURCES_BASE_URL: 'http://localhost',
       SCAN_COUNT_DEFAULT: '500',
+      SCAN_TREE_COUNT_DEFAULT: '10000',
       BUILD_TYPE: 'ELECTRON',
       APP_VERSION: version,
       SEGMENT_WRITE_KEY:

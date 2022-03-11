@@ -107,8 +107,8 @@ export default merge(commonConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -122,8 +122,8 @@ export default merge(commonConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -141,8 +141,8 @@ export default merge(commonConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -187,6 +187,7 @@ export default merge(commonConfig, {
       BASE_API_URL: `http://${require('os').hostname()}`,
       RESOURCES_BASE_URL: `http://${require('os').hostname()}`,
       SCAN_COUNT_DEFAULT: '500',
+      SCAN_TREE_COUNT_DEFAULT: '10000',
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
     }),

@@ -7,7 +7,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
 
 import { AppDispatch, RootState } from './store'
@@ -31,7 +31,8 @@ export const initialState: InitialStateInstances = {
     nameFromProvider: '',
     lastConnection: new Date(),
     connectionType: ConnectionType.Standalone,
-    modules: []
+    isRediStack: false,
+    modules: [],
   },
   instanceOverview: {
     version: '',
@@ -48,8 +49,8 @@ const instancesSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadInstancesSuccess: (state, { payload }) => {
-      state.data = payload
+    loadInstancesSuccess: (state, { payload }: { payload: Instance[] }) => {
+      state.data = checkRediStack(payload)
       state.loading = false
     },
     loadInstancesFailure: (state, { payload }) => {

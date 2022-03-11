@@ -1,7 +1,7 @@
 import * as monacoEditor from 'monaco-editor'
 import { isEmpty, isUndefined, reject } from 'lodash'
 import { ICommands } from 'uiSrc/constants'
-import { IMonacoCommand } from './monacoInterfaces'
+import { IMonacoCommand, IMonacoQuery } from './monacoInterfaces'
 import { Nullable } from './types'
 import { getCommandRepeat, isRepeatCountCorrect } from './commands'
 
@@ -84,4 +84,113 @@ export const findCommandEarlier = (
   }
 
   return command
+}
+
+export const findCompleteQuery = (
+  model: monacoEditor.editor.ITextModel,
+  position: monacoEditor.Position,
+  commandsSpec: ICommands = {},
+  commandsArray: string[] = []
+): Nullable<IMonacoQuery> => {
+  const { lineNumber } = position
+  let commandName = ''
+  let fullQuery = ''
+  const notCommandRegEx = /^\s|\/\//
+  const commandPosition = {
+    startLine: 0,
+    endLine: 0
+  }
+
+  // find command and args in the previous lines if current line is argument
+  // eslint-disable-next-line for-direction
+  for (let previousLineNumber = lineNumber; previousLineNumber > 0; previousLineNumber--) {
+    commandName = model.getLineContent(previousLineNumber) ?? ''
+    const lineBeforePosition = previousLineNumber === lineNumber
+      ? commandName.slice(0, position.column - 1)
+      : commandName
+    fullQuery = lineBeforePosition + fullQuery
+    commandPosition.startLine = previousLineNumber
+
+    if (!notCommandRegEx.test(commandName)) {
+      break
+    }
+
+    fullQuery = `\n${fullQuery}`
+  }
+
+  const matchedCommand = commandsArray
+    .find((command) => commandName?.trim().toUpperCase().startsWith(command.toUpperCase()))
+
+  if (isUndefined(matchedCommand)) {
+    return null
+  }
+
+  const commandCursorPosition = fullQuery.length
+  // find args in the next lines
+  const linesCount = model.getLineCount()
+  for (let nextLineNumber = lineNumber; nextLineNumber <= linesCount; nextLineNumber++) {
+    const lineContent = model.getLineContent(nextLineNumber) ?? ''
+
+    if (nextLineNumber !== lineNumber && !notCommandRegEx.test(lineContent)) {
+      break
+    }
+
+    commandPosition.endLine = nextLineNumber
+    const lineAfterPosition = nextLineNumber === lineNumber
+      ? lineContent.slice(position.column - 1, model.getLineLength(lineNumber))
+      : lineContent
+
+    if (nextLineNumber !== lineNumber) {
+      fullQuery += '\n'
+    }
+
+    fullQuery += lineAfterPosition
+  }
+
+  const args = fullQuery
+    .replace(matchedCommand, '')
+    .match(/(?:[^\s"']+|["][^"]*["]|['][^']*['])+/g)
+
+  return {
+    position,
+    commandPosition,
+    commandCursorPosition,
+    fullQuery,
+    args,
+    name: matchedCommand,
+    info: commandsSpec[matchedCommand]
+  } as IMonacoQuery
+}
+
+export const findArgIndexByCursor = (
+  args: string[] = [],
+  fullQuery: string,
+  cursorPosition: number
+): Nullable<number> => {
+  let argIndex = null
+  for (let i = 0; i < args.length; i++) {
+    const part = args[i]
+    const searchIndex = fullQuery?.indexOf(part) || 0
+    if (searchIndex < cursorPosition && searchIndex + part.length > cursorPosition) {
+      argIndex = i
+      break
+    }
+  }
+  return argIndex
+}
+
+export const createSyntaxWidget = (text: string, shortcutText: string) => {
+  const widget = document.createElement('div')
+  const title = document.createElement('span')
+  title.classList.add('monaco-widget__title')
+  title.innerHTML = text
+
+  const shortcut = document.createElement('span')
+  shortcut.classList.add('monaco-widget__shortcut')
+  shortcut.innerHTML = shortcutText
+
+  widget.append(title, shortcut)
+  widget.classList.add('monaco-widget')
+
+  return widget
 }

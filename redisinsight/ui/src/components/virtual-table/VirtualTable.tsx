@@ -7,17 +7,15 @@ import {
   EuiProgress,
   EuiResizeObserver,
   EuiIcon,
-  EuiTextColor,
-  EuiButton,
 } from '@elastic/eui'
 
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import TableColumnSearch from 'uiSrc/components/table-column-search/TableColumnSearch'
 import TableColumnSearchTrigger from 'uiSrc/components/table-column-search-trigger/TableColumnSearchTrigger'
 import { IColumnSearchState, IProps, IResizeEvent, ITableColumn } from './interfaces'
+import KeysSummary from '../keys-summary'
 
 import styles from './styles.module.scss'
 
@@ -27,7 +25,6 @@ const VirtualTable = (props: IProps) => {
     rowHeight = 40,
     scanned = 0,
     totalItemsCount = 0,
-    totalSize = 0,
     onRowClick = () => {},
     onSearch = () => {},
     onChangeSorting = () => {},
@@ -43,7 +40,8 @@ const VirtualTable = (props: IProps) => {
     keyName,
     loadMoreItems,
     setScrollTopPosition = () => {},
-    scrollTopProp = 0
+    scrollTopProp = 0,
+    hideFooter = false,
   } = props
   const scrollTopRef = useRef<number>(0)
   const [selectedRowIndex, setSelectedRowIndex] = useState<Nullable<number>>(null)
@@ -217,7 +215,7 @@ const VirtualTable = (props: IProps) => {
     if (forceScrollTop !== undefined) return
 
     if (!loading) {
-      loadMoreItems({ keyName, startIndex, stopIndex })
+      loadMoreItems?.({ keyName, startIndex, stopIndex })
     }
   }
 
@@ -338,6 +336,7 @@ const VirtualTable = (props: IProps) => {
                 {columns.map((column: ITableColumn, index: number) => (
                   <Column
                     minWidth={column.minWidth}
+                    maxWidth={column.maxWidth}
                     label={column.label}
                     dataKey={column.id}
                     width={
@@ -360,76 +359,18 @@ const VirtualTable = (props: IProps) => {
               </Table>
             )}
           </InfiniteLoader>
-          {!!(totalItemsCount || totalSize) && (
-            <div className={styles.tableFooter}>
-              {!!totalItemsCount && (
-                <EuiText size="xs">
-                  {scanned ? (
-                    <>
-                      <EuiTextColor className="eui-alignMiddle">
-                        <b>
-                          Results:&nbsp;
-                          <span data-testid="keys-number-of-results">{numberWithSpaces(items.length)}</span>
-                          {' '}
-                          key
-                          {items.length === 1 ? '' : 's'}
-                          .&nbsp;
-                        </b>
-                        <EuiTextColor color="subdued">
-                          Scanned
-                          {' '}
-                          <span data-testid="keys-number-of-scanned">{numberWithSpaces(scanned)}</span>
-                          {' '}
-                          /
-                          {' '}
-                          <span data-testid="keys-total">{numberWithSpaces(totalItemsCount)}</span>
-                          {' '}
-                          keys
-                          <span
-                            className={cx([styles.loading, { [styles.loadingShow]: loading }])}
-                          />
-                        </EuiTextColor>
-                      </EuiTextColor>
-                      {scanned < totalItemsCount && (
-                        <EuiButton
-                          fill
-                          size="s"
-                          color="secondary"
-                          style={{ marginLeft: 25, height: 26 }}
-                          disabled={loading}
-                          onClick={() =>
-                            loadMoreRows({
-                              stopIndex: SCAN_COUNT_DEFAULT - 1,
-                              startIndex: 0,
-                            })}
-                          data-testid="scan-more"
-                        >
-                          Scan more
-                        </EuiButton>
-                      )}
-                    </>
-                  ) : (
-                    <EuiText size="xs">
-                      <b>
-                        Total:&nbsp;
-                        {numberWithSpaces(totalItemsCount)}
-                      </b>
-                    </EuiText>
-                  )}
-                </EuiText>
-              )}
-              {!!totalSize && (
-                <div>
-                  <EuiText size="xs">
-                    <b>Total Size:</b>
-                    {' '}
-                    {totalSize / 1000}
-                    kB
-                  </EuiText>
-                </div>
-              )}
+          {!hideFooter && (
+            <div className={cx(styles.tableFooter)}>
+              <KeysSummary
+                scanned={scanned}
+                totalItemsCount={totalItemsCount}
+                loading={loading}
+                loadMoreItems={loadMoreItems}
+                items={items}
+              />
             </div>
           )}
+
         </div>
       )}
     </EuiResizeObserver>

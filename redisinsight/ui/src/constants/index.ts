@@ -18,4 +18,5 @@ export * from './socketEvents'
 export * from './mocks/mock-redis-commands'
 export * from './mocks/mock-enablement-area'
 export * from './socketErrors'
+export * from './browser'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

@@ -23,6 +23,7 @@ RedisInsight is an intuitive and efficient GUI for Redis, allowing you to intera
 * Browse, filter and visualise your key-value Redis data structures
 * CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets 
 * CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
+* Profiler - analyze every command sent to Redis in real-time 
 * Introducing Workbench - advanced command line interface with intelligent command auto-complete and complex data visualizations
 * Command auto-complete support for [RediSearch](https://oss.redis.com/redisearch/), [RedisJSON](https://oss.redis.com/redisjson/), [RedisGraph](https://oss.redis.com/redisgraph/), [RedisTimeSeries](https://oss.redis.com/redistimeseries/), [RedisAI](https://oss.redis.com/redisai/)
 * Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index, queries, and aggregations

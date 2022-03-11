@@ -90,7 +90,7 @@ const Node = ({
       </div>
       <div data-testid={`count_${fullName}`}>
         <span>{keyCount ?? ''}</span>
-        <span className={styles.approximate}>
+        <span className={styles.approximate} data-testid={`percentage_${fullName}`}>
           {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : '' }
         </span>
       </div>

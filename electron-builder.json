@@ -69,7 +69,7 @@
     "icon": "resources/icon.ico"
   },
   "appx": {
-    "publisher": "CN=Redis Labs Inc., O=Redis Labs Inc., L=Mountain View, S=California, C=US",
+    "publisher": "CN=55A7089F-565A-48D4-9D43-E226C203F9BB",
     "publisherDisplayName": "Redis Ltd.",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "displayName": "redisinsight",

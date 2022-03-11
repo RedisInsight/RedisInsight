@@ -1,10 +1,11 @@
 import { isArray, isObject } from 'lodash';
+import { getASCIISafeStringFromBuffer } from 'src/utils/cli-helper';
 import { IOutputFormatterStrategy } from '../output-formatter.interface';
 
 export class RawFormatterStrategy implements IOutputFormatterStrategy {
   public format(reply: any): any {
     if (reply instanceof Buffer) {
-      return this.formatRedisBufferReply(reply);
+      return getASCIISafeStringFromBuffer(reply);
     }
     if (isArray(reply)) {
       return this.formatRedisArrayReply(reply);
@@ -27,10 +28,6 @@ export class RawFormatterStrategy implements IOutputFormatterStrategy {
       result = this.format(reply);
     }
     return result;
-  }
-
-  private formatRedisBufferReply(reply: Buffer): string {
-    return reply.toString();
   }
 
   private formatRedisObjectReply(reply: Object): object {

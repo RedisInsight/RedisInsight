@@ -5,6 +5,10 @@ const unmapWithName = (arr: any[]) => arr.map((item) => ({ name: item }))
 const REDISTACK_MODULE_DEFAULT = unmapWithName(REDISTACK_MODULES)
 
 const getOutputCheckRediStackTests: any[] = [
+  [[{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT },
+    { port: 12000, modules: REDISTACK_MODULE_DEFAULT }],
+  [{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT, isRediStack: true },
+    { port: 12000, modules: REDISTACK_MODULE_DEFAULT, isRediStack: false }]],
   [[{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT }],
     [{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT, isRediStack: true }]],
   [[{ port: REDISTACK_PORT, modules: unmapWithName(['']) }], [{ port: REDISTACK_PORT, modules: unmapWithName(['']), isRediStack: false }]],

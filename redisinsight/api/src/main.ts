@@ -15,7 +15,10 @@ export default async function bootstrap() {
   const port = process.env.API_PORT || serverConfig.port;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
-  const options: NestApplicationOptions = {};
+  const options: NestApplicationOptions = {
+    logger,
+  };
+
   if (serverConfig.tls && serverConfig.tlsCert && serverConfig.tlsKey) {
     options.httpsOptions = {
       key: JSON.parse(`"${serverConfig.tlsKey}"`),
@@ -29,7 +32,6 @@ export default async function bootstrap() {
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
   app.setGlobalPrefix(serverConfig.globalPrefix);
-  app.useLogger(logger);
 
   if (process.env.APP_ENV !== 'electron') {
     SwaggerModule.setup(

@@ -78,7 +78,8 @@ export const modulesDefaultInit = {
   },
 }
 
-const DatabaseListModules = React.memo(({ modules, inCircle, highlight, tooltipTitle, maxViewModules }: Props) => {
+const DatabaseListModules = React.memo((props: Props) => {
+  const { modules, inCircle, highlight, tooltipTitle, maxViewModules } = props
   const { theme } = useContext(ThemeContext)
 
   const mainContent = []
@@ -112,7 +113,7 @@ const DatabaseListModules = React.memo(({ modules, inCircle, highlight, tooltipT
   })
 
   // set count of hidden modules
-  if (maxViewModules && newModules.length > maxViewModules) {
+  if (maxViewModules && newModules.length > maxViewModules + 1) {
     newModules.length = maxViewModules
     newModules.push({
       icon: null,
@@ -138,42 +139,70 @@ const DatabaseListModules = React.memo(({ modules, inCircle, highlight, tooltipT
     </div>
   ))
 
+  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => (
+    <span key={moduleName || abbreviation || content}>
+      {icon ? (
+        <EuiButtonIcon
+          iconType={icon}
+          className={cx(styles.icon, { [styles.circle]: inCircle })}
+          onClick={() => handleCopy(content)}
+          data-testid={`${content}_module`}
+          aria-labelledby={`${content}_module`}
+        />
+      ) : (
+        <EuiTextColor
+          className={cx(styles.icon, styles.abbr, { [styles.circle]: inCircle })}
+          onClick={() => handleCopy(content)}
+          data-testid={`${content}_module`}
+          aria-labelledby={`${content}_module`}
+        >
+          {abbreviation}
+        </EuiTextColor>
+      )}
+    </span>
+  )
+
+  const Modules = () => (
+    newModules.map(({ icon, content, abbreviation, moduleName }, i) => (
+      !inCircle
+        ? Module(moduleName, abbreviation, icon, content)
+        : (
+          <EuiToolTip
+            position="bottom"
+            display="inlineBlock"
+            content={Content[i]}
+            anchorClassName={styles.anchorModuleTooltip}
+            key={moduleName}
+          >
+            <>
+              {Module(moduleName, abbreviation, icon, content)}
+            </>
+          </EuiToolTip>
+        )
+    ))
+  )
+
   return (
     <div className={cx(styles.container, {
       [styles.highlight]: highlight,
       [styles.containerCircle]: inCircle,
     })}
     >
-      <EuiToolTip
-        position="bottom"
-        title={tooltipTitle ?? undefined}
-        display="inlineBlock"
-        content={Content}
-      >
-        <>
-          {newModules.map(({ icon, content, abbreviation, moduleName }) => (
-            icon ? (
-              <EuiButtonIcon
-                iconType={icon}
-                className={cx(styles.icon, { [styles.circle]: inCircle })}
-                onClick={() => handleCopy(content)}
-                data-testid={`${content}_module`}
-                aria-labelledby={`${content}_module`}
-                key={moduleName}
-              />
-            ) : (
-              <EuiTextColor
-                className={cx(styles.icon, styles.abbr, { [styles.circle]: inCircle })}
-                onClick={() => handleCopy(content)}
-                data-testid={`${content}_module`}
-                aria-labelledby={`${content}_module`}
-                key={moduleName}
-              >
-                {abbreviation}
-              </EuiTextColor>
-            )))}
-        </>
-      </EuiToolTip>
+      { inCircle ? (
+        Modules()
+      ) : (
+        <EuiToolTip
+          position="bottom"
+          title={tooltipTitle ?? undefined}
+          display="inlineBlock"
+          content={Content}
+        >
+          <>
+            {Modules()}
+          </>
+        </EuiToolTip>
+      )}
+
     </div>
   )
 })

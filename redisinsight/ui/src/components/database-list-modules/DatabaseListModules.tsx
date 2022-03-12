@@ -197,9 +197,7 @@ const DatabaseListModules = React.memo((props: Props) => {
           display="inlineBlock"
           content={Content}
         >
-          <>
-            {Modules()}
-          </>
+          {Modules()}
         </EuiToolTip>
       )}
 

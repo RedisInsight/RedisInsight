@@ -62,3 +62,12 @@ test
         await t.expect(browserPage.treeViewDeviceFolder.nth(2).textContent).notEql(keyFolder, 'The key folder is removed from the tree view');
         await t.expect(browserPage.treeViewDeviceKyesCount.textContent).notEql(numberOfKeys, 'The number of keys is recalculated');
     });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can see that “:” (colon) used as a default separator for namespaces and see the number of keys found per each namespace', async t => {
+        await t.click(browserPage.treeViewButton);
+        //Verify the default separator
+        await t.expect(browserPage.treeViewSeparator.textContent).eql(':', 'The “:” (colon) used as a default separator for namespaces');
+        //Verify the number of keys found
+        await t.expect(browserPage.treeViewKeysNumber.visible).ok('The user can see the number of keys');
+    });

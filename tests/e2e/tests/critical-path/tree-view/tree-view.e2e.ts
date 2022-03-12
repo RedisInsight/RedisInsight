@@ -40,21 +40,15 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see DB is automatically scanned by 10K keys in the background, user can see the number of keys scanned and use the "Scan More" button to search per another 10000 keys', async t => {
+        let scannedValue = 10;
         await t.click(browserPage.treeViewButton);
-        //Verify the scanned value
-        await t.expect(browserPage.scannedValue.textContent).eql('10 000', 'The database is automatically scanned by 10K keys');
+        await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, 'The database is automatically scanned by 10K keys');
         //Verify that user can use the "Scan More" button to search per another 10000 keys
-        await t.click(browserPage.scanMoreButton);
-        await t.expect(browserPage.scannedValue.textContent).contains('20 000', 'The database is automatically scanned by 10K keys');
-    });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see that “:” (colon) used as a default separator for namespaces and see the number of keys found per each namespace', async t => {
-        await t.click(browserPage.treeViewButton);
-        //Verify the default separator
-        await t.expect(browserPage.treeViewSeparator.textContent).eql(':', 'The “:” (colon) used as a default separator for namespaces');
-        //Verify the number of keys found
-        await t.expect(browserPage.treeViewKeysNumber.visible).ok('The user can see the number of keys');
+        for (let i = 0; i < 10; i++){
+            scannedValue = scannedValue + 10;
+            await t.click(browserPage.scanMoreButton);
+            await t.expect(await browserPage.scannedValue.withExactText(`${scannedValue} 000`).exists).ok('The database is automatically scanned by 10K keys');
+        }       
     });
 test
     .after(async() => {

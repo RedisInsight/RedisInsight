@@ -174,7 +174,9 @@ const DatabaseListModules = React.memo((props: Props) => {
             anchorClassName={styles.anchorModuleTooltip}
             key={moduleName}
           >
-            {Module(moduleName, abbreviation, icon, content)}
+            <>
+              {Module(moduleName, abbreviation, icon, content)}
+            </>
           </EuiToolTip>
         )
     ))
@@ -195,7 +197,9 @@ const DatabaseListModules = React.memo((props: Props) => {
           display="inlineBlock"
           content={Content}
         >
-          {Modules()}
+          <>
+            {Modules()}
+          </>
         </EuiToolTip>
       )}
 

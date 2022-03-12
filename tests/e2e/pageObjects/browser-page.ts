@@ -116,20 +116,22 @@ export class BrowserPage {
   treeViewButton: Selector
   treeViewArea: Selector
   browserViewButton: Selector
-  treeViewScannedValue: Selector
+  scannedValue: Selector
   treeViewSeparator: Selector
   treeViewKeysNumber: Selector
   treeViewPercentage: Selector
   treeViewFolders: Selector
-  treeViewMessage: Selector
   totalKeysNumber: Selector
-  keysScanned: Selector
   breadcrumbsContainer: Selector
   databaseInfoIcon: Selector
   databaseInfoToolTip: Selector
   removeHashFieldButton: Selector
   removeSetMemberButton: Selector
   removeZserMemberButton: Selector
+  treeViewKeysItem: Selector
+  treeViewNodeArrowIcon: Selector
+  treeViewDeviceFolder: Selector
+  treeViewDeviceKyesCount: Selector
 
   constructor() {
       //CSS Selectors
@@ -195,9 +197,11 @@ export class BrowserPage {
       this.overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
       this.overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
       this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
-      this.treeViewButton = Selector('');
-      this.browserViewButton = Selector('');
-      this.treeViewSeparator = Selector('');
+      this.treeViewButton = Selector('[data-testid=view-type-list-btn]');
+      this.browserViewButton = Selector('[data-testid=view-type-browser-btn]');
+      this.treeViewSeparator = Selector('[data-testid=select-tree-view-separator]');
+      this.treeViewKeysItem = Selector('[data-testid="keys:keys:"]');
+      this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
       this.keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -252,15 +256,15 @@ export class BrowserPage {
       this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
       this.breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
-      this.treeViewArea = Selector('');
-      this.treeViewScannedValue = Selector('');
-      this.treeViewKeysNumber = Selector('');
-      this.treeViewPercentage = Selector('');
-      this.treeViewFolders = Selector('');
-      this.treeViewMessage = Selector('');
-      this.totalKeysNumber = Selector('');
-      this.keysScanned = Selector('');
+      this.treeViewArea = Selector('[data-test-subj=tree-view-panel]');
+      this.scannedValue = Selector('[data-testid=keys-number-of-scanned]');
+      this.treeViewKeysNumber = Selector('[data-testid^=count_]');
+      this.treeViewPercentage = Selector('[data-testid^=percentage_]');
+      this.treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
+      this.totalKeysNumber = Selector('[data-testid=keys-total]');
       this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
+      this.treeViewDeviceFolder = Selector('[data-testid^=device] div');
+      this.treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
   }
 
   /**

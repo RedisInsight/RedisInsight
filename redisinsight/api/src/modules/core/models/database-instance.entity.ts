@@ -192,7 +192,7 @@ export class DatabaseInstanceEntity {
   @Column({ nullable: true })
   encryption: string;
 
-  constructor(partial: Partial<DatabaseInstanceEntity>) {
+  constructor(partial: Partial<ClientCertificateEntity>) {
     Object.assign(this, partial);
   }
 }

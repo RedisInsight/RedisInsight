@@ -4,7 +4,7 @@ import config from 'src/utils/config';
 import { AutoUpdatedStaticsProvider } from './auto-updated-statics.provider';
 
 const PATH_CONFIG = config.get('dir_path');
-const ENABLEMENT_AREA_CONFIG = config.get('enablementArea');
+const GUIDES = config.get('guides');
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -26,13 +26,13 @@ describe('AutoUpdatedStaticsProvider', () => {
     jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
 
     service = new AutoUpdatedStaticsProvider({
-      name: 'EnablementAreaProvider',
+      name: 'GuidesProvider',
       destinationPath: PATH_CONFIG.enablementArea,
       defaultSourcePath: PATH_CONFIG.defaultEnablementArea,
-      updateUrl: ENABLEMENT_AREA_CONFIG.updateUrl,
-      buildInfo: ENABLEMENT_AREA_CONFIG.buildInfo,
-      zip: ENABLEMENT_AREA_CONFIG.zip,
-      devMode: ENABLEMENT_AREA_CONFIG.devMode,
+      updateUrl: GUIDES.updateUrl,
+      buildInfo: GUIDES.buildInfo,
+      zip: GUIDES.zip,
+      devMode: GUIDES.devMode,
     });
   });
 

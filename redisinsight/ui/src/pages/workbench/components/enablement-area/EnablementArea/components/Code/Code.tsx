@@ -17,7 +17,7 @@ const Code = ({ children, ...rest }: Props) => {
   const { setScript, isCodeBtnDisabled } = useContext(EnablementAreaContext)
 
   const loadContent = () => {
-    const pagePath = new URLSearchParams(search).get('guide')
+    const pagePath = new URLSearchParams(search).get('item')
     if (pagePath) {
       const pageInfo = getFileInfo(pagePath)
       setScript(children, `${pageInfo.location}/${pageInfo.name}`, startCase(rest.label))

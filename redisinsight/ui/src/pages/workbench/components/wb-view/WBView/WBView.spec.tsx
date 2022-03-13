@@ -23,11 +23,11 @@ jest.mock('uiSrc/utils/workbench', () => ({
   updateWBHistoryStorage: jest.fn(),
 }))
 
-jest.mock('uiSrc/slices/workbench/wb-enablement-area', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-enablement-area').initialState
+jest.mock('uiSrc/slices/workbench/wb-guides', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-guides').initialState
   return {
-    ...jest.requireActual('uiSrc/slices/workbench/wb-enablement-area'),
-    workbenchEnablementAreaSelector: jest.fn().mockReturnValue({
+    ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
+    workbenchGuidesSelector: jest.fn().mockReturnValue({
       ...defaultState,
     }),
   }

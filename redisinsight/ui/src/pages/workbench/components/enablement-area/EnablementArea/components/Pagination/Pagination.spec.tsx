@@ -1,10 +1,10 @@
 import React from 'react'
 import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
-import { MOCK_ENABLEMENT_AREA_ITEMS } from 'uiSrc/constants'
+import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 import { defaultValue, EnablementAreaProvider } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import Pagination from './Pagination'
 
-const paginationItems = Object.values(MOCK_ENABLEMENT_AREA_ITEMS['quick-guides']?.children || {})
+const paginationItems = Object.values(MOCK_GUIDES_ITEMS['quick-guides']?.children || {})
 
 describe('Pagination', () => {
   it('should render', () => {

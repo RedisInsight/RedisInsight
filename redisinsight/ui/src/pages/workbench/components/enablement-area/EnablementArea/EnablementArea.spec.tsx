@@ -2,7 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { MOCK_ENABLEMENT_AREA_ITEMS } from 'uiSrc/constants'
+import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import EnablementArea, { Props } from './EnablementArea'
@@ -17,11 +17,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
-jest.mock('uiSrc/slices/workbench/wb-enablement-area', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-enablement-area').initialState
+jest.mock('uiSrc/slices/workbench/wb-guides', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-guides').initialState
   return {
-    ...jest.requireActual('uiSrc/slices/workbench/wb-enablement-area'),
-    workbenchEnablementAreaSelector: jest.fn().mockReturnValue({
+    ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
+    workbenchGuidesSelector: jest.fn().mockReturnValue({
       ...defaultState,
     }),
   }
@@ -29,7 +29,7 @@ jest.mock('uiSrc/slices/workbench/wb-enablement-area', () => {
 
 describe('EnablementArea', () => {
   it('should render', () => {
-    expect(render(<EnablementArea {...instance(mockedProps)} items={MOCK_ENABLEMENT_AREA_ITEMS} />))
+    expect(render(<EnablementArea {...instance(mockedProps)} items={MOCK_GUIDES_ITEMS} />))
       .toBeTruthy()
   })
 
@@ -46,7 +46,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={MOCK_ENABLEMENT_AREA_ITEMS}
+        items={MOCK_GUIDES_ITEMS}
       />
     )
     const loaderEl = queryByTestId('enablementArea-loader')
@@ -54,7 +54,7 @@ describe('EnablementArea', () => {
 
     expect(loaderEl).not.toBeInTheDocument()
     expect(treeViewEl).toBeInTheDocument()
-    expect(treeViewEl?.childNodes.length).toEqual(Object.values(MOCK_ENABLEMENT_AREA_ITEMS).length)
+    expect(treeViewEl?.childNodes.length).toEqual(Object.values(MOCK_GUIDES_ITEMS).length)
   })
   it('should render Group component', () => {
     const item: IEnablementAreaItem = {

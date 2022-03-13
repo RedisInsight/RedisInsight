@@ -13,7 +13,8 @@ import {
 import QueryWrapper, { Props as QueryProps } from 'uiSrc/components/query'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendWBCommandAction } from 'uiSrc/slices/workbench/wb-results'
-import { getWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
+import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
+import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 
 import WBViewWrapper from './WBViewWrapper'
 
@@ -70,11 +71,21 @@ jest.mock('uiSrc/slices/workbench/wb-results', () => ({
   updateCliCommandHistory: jest.fn,
 }))
 
-jest.mock('uiSrc/slices/workbench/wb-enablement-area', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-enablement-area').initialState
+jest.mock('uiSrc/slices/workbench/wb-guides', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-guides').initialState
   return {
-    ...jest.requireActual('uiSrc/slices/workbench/wb-enablement-area'),
-    workbenchEnablementAreaSelector: jest.fn().mockReturnValue({
+    ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
+    workbenchGuidesSelector: jest.fn().mockReturnValue({
+      ...defaultState,
+    }),
+  }
+})
+
+jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-tutorials').initialState
+  return {
+    ...jest.requireActual('uiSrc/slices/workbench/wb-tutorials'),
+    workbenchTutorialsSelector: jest.fn().mockReturnValue({
       ...defaultState,
     }),
   }
@@ -101,7 +112,7 @@ describe('WBViewWrapper', () => {
   it('should render with SessionStorage', () => {
     render(<WBViewWrapper />)
 
-    const expectedActions = [getWBEnablementArea()]
+    const expectedActions = [getWBGuides(), getWBTutorials()]
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
       clearStoreActions(expectedActions)
     )

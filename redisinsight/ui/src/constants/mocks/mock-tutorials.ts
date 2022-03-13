@@ -1,6 +1,6 @@
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
-export const MOCK_ENABLEMENT_AREA_ITEMS: Record<string, IEnablementAreaItem> = {
+export const MOCK_TUTORIALS_ITEMS: Record<string, IEnablementAreaItem> = {
   'quick-guides': {
     type: EnablementAreaComponent.Group,
     id: 'quick-guides',

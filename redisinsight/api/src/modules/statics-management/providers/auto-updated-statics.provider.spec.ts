@@ -27,8 +27,8 @@ describe('AutoUpdatedStaticsProvider', () => {
 
     service = new AutoUpdatedStaticsProvider({
       name: 'GuidesProvider',
-      destinationPath: PATH_CONFIG.enablementArea,
-      defaultSourcePath: PATH_CONFIG.defaultEnablementArea,
+      destinationPath: PATH_CONFIG.guides,
+      defaultSourcePath: PATH_CONFIG.defaultGuides,
       updateUrl: GUIDES.updateUrl,
       buildInfo: GUIDES.buildInfo,
       zip: GUIDES.zip,
@@ -183,7 +183,7 @@ describe('AutoUpdatedStaticsProvider', () => {
       expect(await service.getRemoteBuildInfo()).toEqual(mockRemoteBuildInfo);
     });
     it('should return empty object on fail', async () => {
-      mockedAxios.get.mockRejectedValueOnce(new Error());
+      mockedAxios.get.mockRejectedValue(new Error());
       expect(await service.getRemoteBuildInfo()).toEqual({});
     });
   });

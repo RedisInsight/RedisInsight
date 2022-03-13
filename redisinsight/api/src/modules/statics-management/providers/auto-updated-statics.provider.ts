@@ -83,7 +83,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getLatestArchive() {
     try {
-      return getFile(new URL(join(this.options.updateUrl, this.options.zip)).toString());
+      return await getFile(new URL(join(this.options.updateUrl, this.options.zip)).toString());
     } catch (e) {
       this.logger.error('Unable to get remote archive', e);
       return null;
@@ -107,7 +107,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getRemoteBuildInfo(): Promise<Record<string, any>> {
     try {
-      return getFile(new URL(join(this.options.updateUrl, this.options.buildInfo)).toString());
+      return await getFile(new URL(join(this.options.updateUrl, this.options.buildInfo)).toString());
     } catch (e) {
       this.logger.error('Unable to get remote build info', e);
       return {};

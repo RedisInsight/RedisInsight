@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react'
-import Plotly from 'plotly.js-dist-min'
+import Plotly, { Layout } from 'plotly.js-dist-min'
 import { Legend, LayoutAxis, PlotData } from 'plotly.js'
 import moment from 'moment'
 import * as d3Scale from 'd3-scale'
 import * as d3ScaleColor from 'd3-scale-chromatic'
+import { hexToRGBA } from './utils'
 
 import { Datapoint, TimeSeries, ChartConfig, GraphMode } from './interfaces'
 
@@ -31,9 +32,8 @@ export default function Chart(props: any) {
       chartContainer.current,
       getData(props),
       getLayout(props) as any,
-      { displayModeBar: false, autosizable: true, responsive: true },
+      { displayModeBar: false, autosizable: true, responsive: true, setBackground: () => 'transparent', },
     )
-
     chartContainer.current.on('plotly_hover', function (eventdata) {
       var points = eventdata.points[0]
       var pointNum = points.pointNumber
@@ -42,7 +42,8 @@ export default function Chart(props: any) {
         props.data.map((_, i) => ({
           curveNumber: i,
           pointNumber: pointNum
-      })))
+        })),
+        Object.keys((chartContainer.current)._fullLayout._plots))
     })
     chartContainer.current.on('plotly_relayout', function (eventdata) {
      if (eventdata.autosize === undefined && eventdata['xaxis.autorange'] === undefined) {
@@ -85,16 +86,22 @@ export default function Chart(props: any) {
         type: 'scatter',
         marker: { color: colorPicker(timeSeries.key) },
         fill: props.chartConfig.fill ? 'tozeroy' : undefined,
+        fillcolor: hexToRGBA(colorPicker(timeSeries.key), 0.3),
         mode: GRAPH_MODE_MAP[props.chartConfig.mode],
         line: { shape: props.chartConfig.staircase ? 'hv' : 'spline' },
       }
     })
   }
 
-  function getLayout(props: ChartProps) {
+  function getLayout(props: ChartProps): Partial<Layout> {
     const axisConfig: { [key: string]: Partial<LayoutAxis> } = {
       xaxis: {
         title: props.chartConfig.xlabel,
+        rangeslider: {
+          visible: true,
+          thickness: 0.03,
+          bgcolor: isDarkTheme ? 'white' : 'grey',
+        }
       },
       yaxis: {
         title: props.chartConfig.yAxisConfig.label,
@@ -108,18 +115,32 @@ export default function Chart(props: any) {
         overlaying: 'y',
         side: 'right',
         fixedrange: true,
-      },
+        color: 'lightblue',
+        gridcolor: 'lightblue'
+      } as LayoutAxis,
     }
 
     const legend: Partial<Legend> = {
       xanchor: 'center',
       yanchor: 'top',
-      y: -0.3,
       x: 0.5,
+      y: -0.3,
       orientation: 'h',
     }
-
-    return { ...axisConfig, legend, showlegend: true, title: props.chartConfig.title, uirevision: true, autosize: true, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', bgcolor: '#fff', font: { color: isDarkTheme ? 'white' : 'black' } }
+    return {
+      ...axisConfig,
+      legend,
+      showlegend: true,
+      title: props.chartConfig.title,
+      uirevision: 1,
+      autosize: true,
+      font: { color: isDarkTheme ? 'darkgrey' : 'black' },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      margin: {
+        pad: 6
+      }
+    }
   }
 
   function selectCol(twoDArray: Datapoint[], colIndex: number) {

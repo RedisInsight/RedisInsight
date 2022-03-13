@@ -259,3 +259,6 @@ export class GoodColorPicker extends ColorPicker<IGoodColor> {
   }
 }
 
+export function hexToRGBA(hex: string, opacity: number): string {
+  return 'rgba(' + (hex = hex.replace('#', '')).match(new RegExp('(.{' + hex.length/3 + '})', 'g')).map(function(l) { return parseInt(hex.length%2 ? l+l : l, 16) }).concat(isFinite(opacity) ? opacity : 1).join(',') + ')';
+}

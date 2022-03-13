@@ -12,6 +12,10 @@ div.plotly-notifier {
 
 .theme_LIGHT {
     --body-color: black;
+    .rangeslider-mask-min, .rangeslider-mask-max {
+        fill: lightgrey !important;
+        fill-opacity: 1 !important;
+    }
 }
 
 body {
@@ -32,4 +36,14 @@ body {
     color: red;
     padding: 12px !important;
     font-family: monospace !important;
+}
+
+
+.y-axis-config  {
+    fieldset {
+        width: 100%;
+        .euiButtonGroup__buttons label {
+            width: 100%;
+        }
+    }
 }

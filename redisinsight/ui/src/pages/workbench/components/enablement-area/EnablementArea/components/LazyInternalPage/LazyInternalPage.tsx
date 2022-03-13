@@ -14,7 +14,7 @@ import {
   setWorkbenchEAGuideScrollTop
 } from 'uiSrc/slices/app/context'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { workbenchEnablementAreaSelector } from 'uiSrc/slices/workbench/wb-enablement-area'
+import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 
 import InternalPage from '../InternalPage'
 import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
@@ -35,7 +35,7 @@ export interface Props {
 const LazyInternalPage = ({ onClose, title, path }: Props) => {
   const history = useHistory()
   const { guideScrollTop } = useSelector(appContextWorkbenchEA)
-  const enablementArea = useSelector(workbenchEnablementAreaSelector)
+  const guides = useSelector(workbenchGuidesSelector)
   const [isLoading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
   const [pageData, setPageData] = useState<IPageData>(DEFAULT_PAGE_DATA)
@@ -46,7 +46,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
     setLoading(true)
     setError('')
     const pageInfo = getFileInfo(path)
-    const relatedPages = getPagesInsideGroup(enablementArea.items, pageInfo.location)
+    const relatedPages = getPagesInsideGroup(guides.items, pageInfo.location)
     setPageData({ ...DEFAULT_PAGE_DATA, ...pageInfo, relatedPages })
     try {
       const formatter = FormatSelector.selectFor(pageInfo.extension)
@@ -67,11 +67,11 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
 
   useEffect(() => {
     (async function () {
-      if (!enablementArea.loading) {
+      if (!guides.loading) {
         await loadContent()
       }
     }())
-  }, [path, enablementArea.loading])
+  }, [path, guides.loading])
 
   const handlePageScroll = (top: number) => {
     dispatch(setWorkbenchEAGuideScrollTop(top))
@@ -84,7 +84,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
       onClose={onClose}
       title={startCase(title || pageData.name)}
       backTitle={startCase(pageData?.parent)}
-      isLoading={isLoading || enablementArea.loading}
+      isLoading={isLoading || guides.loading}
       content={pageData.content}
       error={error}
       onScroll={handlePageScroll}

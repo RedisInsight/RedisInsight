@@ -52,7 +52,7 @@ const WBView = (props: Props) => {
     scrollDivRef,
   } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
-    (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
+    (localStorageService?.get(BrowserStorageItem.isGuidesMinimized) ?? 'false') === 'true'
   )
   const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 
@@ -67,7 +67,7 @@ const WBView = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    localStorageService.set(BrowserStorageItem.isEnablementAreaMinimized, isMinimized)
+    localStorageService.set(BrowserStorageItem.isGuidesMinimized, isMinimized)
   }, [isMinimized])
 
   const onVerticalPanelWidthChange = useCallback((newSizes: any) => {

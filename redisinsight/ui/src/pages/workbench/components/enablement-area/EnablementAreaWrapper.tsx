@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { monaco } from 'react-monaco-editor'
+import { omit, findKey } from 'lodash'
 import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import cx from 'classnames'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
@@ -8,7 +9,9 @@ import { useParams } from 'react-router-dom'
 
 import { Nullable, } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { fetchEnablementArea, workbenchEnablementAreaSelector } from 'uiSrc/slices/workbench/wb-enablement-area'
+import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
+import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'
@@ -24,14 +27,34 @@ export interface Props {
   isCodeBtnDisabled?: boolean
 }
 
+const sortItems = (guides: Record<string, IEnablementAreaItem>, tutorials: Record<string, IEnablementAreaItem>)
+: Record<string, IEnablementAreaItem> => {
+  const mergedItems = { ...guides, ...tutorials }
+  const lastItemKey = findKey(mergedItems, { args: { order: 'last' } })
+
+  if (lastItemKey) {
+    return { ...omit(mergedItems, lastItemKey), lastItemKey: mergedItems[lastItemKey] }
+  }
+
+  return mergedItems
+}
+
 const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScript, isCodeBtnDisabled }: Props) => {
-  const { loading, items } = useSelector(workbenchEnablementAreaSelector)
+  const { loading: loadingGuides, items: guides } = useSelector(workbenchGuidesSelector)
+  const { loading: loadingTutorials, items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchEnablementArea())
+    dispatch(fetchGuides())
   }, [])
+
+  useEffect(() => {
+    dispatch(fetchTutorials())
+  }, [])
+
+  // TODO: update it when tutorials repo will be finish
+  const items = useMemo(() => sortItems(guides, tutorials), [guides, tutorials])
 
   const sendEventButtonClickedTelemetry = (data: Record<string, any>) => {
     sendEventTelemetry({
@@ -84,7 +107,7 @@ const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScrip
       >
         <EnablementArea
           items={items}
-          loading={loading}
+          loading={loadingGuides || loadingTutorials}
           openScript={openScript}
           onOpenInternalPage={onOpenInternalPage}
           isCodeBtnDisabled={isCodeBtnDisabled}

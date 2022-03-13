@@ -6,6 +6,7 @@ import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { appContextWorkbenchEA, resetWorkbenchEAGuide } from 'uiSrc/slices/app/context'
+import { ApiEndpoints } from 'uiSrc/constants'
 import {
   CodeButton,
   Group,
@@ -36,14 +37,15 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
   const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
 
   useEffect(() => {
-    const pagePath = new URLSearchParams(search).get('guide')
+    const pagePath = new URLSearchParams(search).get('item')
     if (pagePath) {
       setIsInternalPageVisible(true)
-      setInternalPage({ path: pagePath })
+      setInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}/${pagePath}` })
+
       return
     }
     if (guideFromContext) {
-      handleOpenInternalPage({ path: guideFromContext })
+      handleOpenInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}/${guideFromContext}` })
       return
     }
     setIsInternalPageVisible(false)
@@ -51,7 +53,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
 
   const handleOpenInternalPage = (page: IInternalPage) => {
     history.push({
-      search: `?guide=${page.path}`
+      search: `?item=${page.path}`
     })
     onOpenInternalPage(page)
   }
@@ -76,11 +78,15 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
         )
       case EnablementAreaComponent.CodeButton:
         return (
-          <div style={{ marginTop: '12px', ...paddingsStyle }}>
-            {args?.path
-              ? <LazyCodeButton label={label} {...args} />
-              : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />}
-          </div>
+          <>
+            <div style={paddingsStyle} className="divider"><hr /></div>
+            <div style={{ marginTop: '24px', ...paddingsStyle }}>
+              {args?.path
+                ? <LazyCodeButton label={label} {...args} />
+                : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />}
+            </div>
+          </>
+
         )
       case EnablementAreaComponent.InternalLink:
         return (

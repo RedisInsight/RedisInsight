@@ -70,7 +70,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
     if (parsedResponse.nodeIds.length > 0) {
       try {
         /* Fetch named path nodes */
-        const resp = await executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n) WHERE id(n) IN [${[...parsedResponse.nodeIds]}] RETURN n"`);
+        const resp = await executeRedisCommand(`graph.ro_query ${props.graphKey} "MATCH (n) WHERE id(n) IN [${[...parsedResponse.nodeIds]}] RETURN n"`);
 
         if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
           const parsedData = responseParser(resp[0].response)
@@ -101,7 +101,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
 
     try {
       /* Fetch neighbours automatically */
-      const resp = await executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]->(m) WHERE ID(n) IN [${[...nodeIds]}] OR ID(m) IN [${[...nodeIds]}] RETURN DISTINCT t"`);
+      const resp = await executeRedisCommand(`graph.ro_query ${props.graphKey} "MATCH (n)-[t]->(m) WHERE ID(n) IN [${[...nodeIds]}] OR ID(m) IN [${[...nodeIds]}] RETURN DISTINCT t"`);
 
       if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
         const parsedData = responseParser(resp[0].response)

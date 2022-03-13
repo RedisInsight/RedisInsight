@@ -78,6 +78,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
   let svgTranslate: number[];
   let node: any;
   let justLoaded = false;
+  var nominalTextSize = 10;
+  var maxTextSize = 24;
   const VERSION = '2.0.0';
 
   let zoomFuncs = {}
@@ -98,27 +100,36 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
 
   function appendGraph(container: d3.Selection<any, unknown, null, undefined>) {
     var mainSvg = container.append('svg')
-      .attr('width', '100%')
-      .attr('height', '100%')
-      .attr('class', 'graphd3-graph')
-      .call(options.graphZoom.on('zoom', (event) => {
-        let scale = event.transform.k;
-        const translate = [event.transform.x, event.transform.y];
-
-        if (svgTranslate) {
-          translate[0] += svgTranslate[0];
-          translate[1] += svgTranslate[1];
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('class', 'graphd3-graph')
+    .call(options.graphZoom.on('zoom', (event) => {
+      let scale = event.transform.k;
+      const translate = [event.transform.x, event.transform.y];
+      if (svgTranslate) {
+        translate[0] += svgTranslate[0];
+        translate[1] += svgTranslate[1];
+      }
+      if (svgScale) {
+        scale *= svgScale;
+      }
+      var text = svg.selectAll('.node .text');
+      var textSize = nominalTextSize;
+      if (nominalTextSize * scale > maxTextSize) textSize = maxTextSize / scale;
+      text.attr("font-size", (textSize - 3) + "px");
+      text.text((d) => {
+        let label: string;
+        if (typeof options.onLabelNode === 'function') {
+          label = options.onLabelNode(d);
+        } else {
+          label = d.properties?.name || (d.labels ? d.labels[0] : '');
         }
-
-        if (svgScale) {
-          scale *= svgScale;
-        }
-
-        svg.attr('transform', `translate(${translate[0]}, ${translate[1]}) scale(${scale})`);
-      }))
+        let maxLength = (maxTextSize - textSize) + 3;
+        return label.length > maxLength ? Utils.truncateText(label, maxLength) : label;
+      })
+      svg.attr('transform', `translate(${translate[0]}, ${translate[1]}) scale(${scale})`);
+    }))
     .on('dblclick.zoom', null)
-
-
       svg = mainSvg.append('g')
       .attr('width', '100%')
       .attr('height', '100%');
@@ -341,10 +352,11 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
           label = d.properties?.name || (d.labels ? d.labels[0] : '');
         }
 
-        return label.length > 10 ? Utils.truncateText(label, 10) : label;
+        let maxLength = maxTextSize - nominalTextSize - 5;
+        return label.length > maxLength ? Utils.truncateText(label, maxLength) : label;
       })
       .attr('class', 'text')
-      .attr('font-size', '10px')
+      .attr('font-size', (d) => nominalTextSize + "px")
       .attr('fill', (d) => labelColors(d.labels[0]).textColor)
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')

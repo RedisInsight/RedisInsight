@@ -22,8 +22,8 @@ export const initialState: StateAppContext = {
   workbench: {
     script: '',
     enablementArea: {
-      guidePath: '',
-      guideScrollTop: 0,
+      ItemPath: '',
+      ItemScrollTop: 0,
     },
     panelSizes: {
       vertical: {}
@@ -71,19 +71,19 @@ const appContextSlice = createSlice({
     setLastPageContext: (state, { payload }: { payload: string }) => {
       state.lastPage = payload
     },
-    setWorkbenchEAGuide: (state, { payload }: { payload: any }) => {
-      const prevValue = state.workbench.enablementArea.guidePath
-      state.workbench.enablementArea.guidePath = payload
+    setWorkbenchEAItem: (state, { payload }: { payload: any }) => {
+      const prevValue = state.workbench.enablementArea.ItemPath
+      state.workbench.enablementArea.ItemPath = payload
       if (prevValue !== payload) {
-        state.workbench.enablementArea.guideScrollTop = 0
+        state.workbench.enablementArea.ItemScrollTop = 0
       }
     },
-    setWorkbenchEAGuideScrollTop: (state, { payload }: { payload: any }) => {
-      state.workbench.enablementArea.guideScrollTop = payload || 0
+    setWorkbenchEAItemScrollTop: (state, { payload }: { payload: any }) => {
+      state.workbench.enablementArea.ItemScrollTop = payload || 0
     },
-    resetWorkbenchEAGuide: (state) => {
-      state.workbench.enablementArea.guidePath = ''
-      state.workbench.enablementArea.guideScrollTop = 0
+    resetWorkbenchEAItem: (state) => {
+      state.workbench.enablementArea.ItemPath = ''
+      state.workbench.enablementArea.ItemScrollTop = 0
     },
     resetBrowserTree: (state) => {
       state.browser.tree.selectedLeaf = {}
@@ -107,9 +107,9 @@ export const {
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
-  setWorkbenchEAGuide,
-  resetWorkbenchEAGuide,
-  setWorkbenchEAGuideScrollTop,
+  setWorkbenchEAItem,
+  resetWorkbenchEAItem,
+  setWorkbenchEAItemScrollTop,
 } = appContextSlice.actions
 
 // Selectors

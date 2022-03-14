@@ -19,10 +19,10 @@ import reducer, {
   appContextSelector,
   appContextBrowser,
   appContextWorkbench,
-  setWorkbenchEAGuide,
+  setWorkbenchEAItem,
   appContextWorkbenchEA,
-  setWorkbenchEAGuideScrollTop,
-  resetWorkbenchEAGuide
+  setWorkbenchEAItemScrollTop,
+  resetWorkbenchEAItem
 } from '../../app/context'
 
 jest.mock('uiSrc/services')
@@ -210,7 +210,7 @@ describe('slices', () => {
     })
   })
 
-  describe('setWorkbenchEAGuide', () => {
+  describe('setWorkbenchEAItem', () => {
     it('should properly set path to opened guide page', () => {
       // Arrange
       const prevState = {
@@ -218,20 +218,20 @@ describe('slices', () => {
         workbench: {
           ...initialState.workbench,
           enablementArea: {
-            guidePath: 'static/enablement-area/guides/guide1.html',
-            guideScrollTop: 200,
+            ItemPath: 'static/enablement-area/guides/guide1.html',
+            ItemScrollTop: 200,
           }
         },
       }
-      const guidePath = 'static/enablement-area/guides/guide2.html'
+      const ItemPath = 'static/enablement-area/guides/guide2.html'
       const state = {
         ...initialState.workbench.enablementArea,
-        guidePath,
-        guideScrollTop: 0,
+        ItemPath,
+        ItemScrollTop: 0,
       }
 
       // Act
-      const nextState = reducer(prevState, setWorkbenchEAGuide(guidePath))
+      const nextState = reducer(prevState, setWorkbenchEAItem(ItemPath))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -242,16 +242,16 @@ describe('slices', () => {
     })
   })
 
-  describe('setWorkbenchEAGuideScrollTop', () => {
+  describe('setWorkbenchEAItemScrollTop', () => {
     it('should properly set state', () => {
       // Arrange
       const state = {
         ...initialState.workbench.enablementArea,
-        guideScrollTop: 200,
+        ItemScrollTop: 200,
       }
 
       // Act
-      const nextState = reducer(initialState, setWorkbenchEAGuideScrollTop(200))
+      const nextState = reducer(initialState, setWorkbenchEAItemScrollTop(200))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -262,7 +262,7 @@ describe('slices', () => {
     })
   })
 
-  describe('resetWorkbenchEAGuide', () => {
+  describe('resetWorkbenchEAItem', () => {
     it('should properly reset enablement-area context', () => {
       // Arrange
       const prevState = {
@@ -270,19 +270,19 @@ describe('slices', () => {
         workbench: {
           ...initialState.workbench,
           enablementArea: {
-            guidePath: 'static/enablement-area/guides/guide1.html',
-            guideScrollTop: 200,
+            ItemPath: 'static/enablement-area/guides/guide1.html',
+            ItemScrollTop: 200,
           }
         },
       }
       const state = {
         ...initialState.workbench.enablementArea,
-        guidePath: '',
-        guideScrollTop: 0,
+        ItemPath: '',
+        ItemScrollTop: 0,
       }
 
       // Act
-      const nextState = reducer(prevState, resetWorkbenchEAGuide())
+      const nextState = reducer(prevState, resetWorkbenchEAItem())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

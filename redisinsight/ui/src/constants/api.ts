@@ -51,7 +51,7 @@ enum ApiEndpoints {
   PLUGINS = 'plugins',
   STATE = 'state',
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
-  ENABLEMENT_AREA_PATH = 'static/workbench/guides',
+  ENABLEMENT_AREA_PATH = 'static/workbench',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

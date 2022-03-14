@@ -8,10 +8,10 @@ import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 import {
-  setWorkbenchEAGuide,
-  resetWorkbenchEAGuide,
+  setWorkbenchEAItem,
+  resetWorkbenchEAItem,
   appContextWorkbenchEA,
-  setWorkbenchEAGuideScrollTop
+  setWorkbenchEAItemScrollTop
 } from 'uiSrc/slices/app/context'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
@@ -34,7 +34,7 @@ export interface Props {
 
 const LazyInternalPage = ({ onClose, title, path }: Props) => {
   const history = useHistory()
-  const { guideScrollTop } = useSelector(appContextWorkbenchEA)
+  const { ItemScrollTop } = useSelector(appContextWorkbenchEA)
   const guides = useSelector(workbenchGuidesSelector)
   const [isLoading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
@@ -52,7 +52,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
       const formatter = FormatSelector.selectFor(pageInfo.extension)
       const { data, status } = await fetchService.get<string>(path)
       if (isStatusSuccessful(status)) {
-        dispatch(setWorkbenchEAGuide(path))
+        dispatch(setWorkbenchEAItem(path))
         const contentData = await formatter.format(data, { history })
         setPageData((prevState) => ({ ...prevState, content: contentData }))
         setLoading(false)
@@ -60,7 +60,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
     } catch (error) {
       setLoading(false)
       const errorMessage: string = getApiErrorMessage(error)
-      dispatch(resetWorkbenchEAGuide())
+      dispatch(resetWorkbenchEAItem())
       setError(errorMessage)
     }
   }
@@ -74,7 +74,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
   }, [path, guides.loading])
 
   const handlePageScroll = (top: number) => {
-    dispatch(setWorkbenchEAGuideScrollTop(top))
+    dispatch(setWorkbenchEAItemScrollTop(top))
   }
 
   return (
@@ -88,7 +88,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
       content={pageData.content}
       error={error}
       onScroll={handlePageScroll}
-      scrollTop={guideScrollTop}
+      scrollTop={ItemScrollTop}
       pagination={pageData.relatedPages}
     />
   )

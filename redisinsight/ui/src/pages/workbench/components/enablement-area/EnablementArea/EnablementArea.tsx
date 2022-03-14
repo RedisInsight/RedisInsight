@@ -5,7 +5,7 @@ import cx from 'classnames'
 import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { appContextWorkbenchEA, resetWorkbenchEAGuide } from 'uiSrc/slices/app/context'
+import { appContextWorkbenchEA, resetWorkbenchEAItem } from 'uiSrc/slices/app/context'
 import { ApiEndpoints } from 'uiSrc/constants'
 import {
   CodeButton,
@@ -32,7 +32,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
   const { search } = useLocation()
   const history = useHistory()
   const dispatch = useDispatch()
-  const { guidePath: guideFromContext } = useSelector(appContextWorkbenchEA)
+  const { itemPath: itemFromContext } = useSelector(appContextWorkbenchEA)
   const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
   const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
 
@@ -44,8 +44,8 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
 
       return
     }
-    if (guideFromContext) {
-      handleOpenInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}/${guideFromContext}` })
+    if (itemFromContext) {
+      handleOpenInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}/${itemFromContext}` })
       return
     }
     setIsInternalPageVisible(false)
@@ -59,7 +59,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
   }
 
   const handleCloseInternalPage = () => {
-    dispatch(resetWorkbenchEAGuide())
+    dispatch(resetWorkbenchEAItem())
     history.push({
       // TODO: better to use query-string parser and update only one parameter (instead of replacing all)
       search: ''

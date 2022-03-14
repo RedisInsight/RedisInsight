@@ -183,7 +183,7 @@ describe('AutoUpdatedStaticsProvider', () => {
       expect(await service.getRemoteBuildInfo()).toEqual(mockRemoteBuildInfo);
     });
     it('should return empty object on fail', async () => {
-      mockedAxios.get.mockRejectedValue(new Error());
+      mockedAxios.get.mockRejectedValueOnce(new Error());
       expect(await service.getRemoteBuildInfo()).toEqual({});
     });
   });

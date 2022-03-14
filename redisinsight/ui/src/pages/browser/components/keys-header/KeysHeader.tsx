@@ -183,7 +183,7 @@ const KeysHeader = (props: Props) => {
   )
 
   const ViewSwitch = (
-    <div className={styles.viewTypeSwitch} data-testid="key-view-type-switcher">
+    <div className={styles.viewTypeSwitch} data-testid="view-type-switcher">
       {viewTypes.map((view) => (
         <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
           <EuiButtonIcon

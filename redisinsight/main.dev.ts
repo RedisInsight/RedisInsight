@@ -121,7 +121,7 @@ const bootstrap = async () => {
 
   const upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK;
 
-  if (upgradeUrl) {
+  if (upgradeUrl && process.env.BUILD_TYPE !== 'REDIS_STACK') {
     new AppUpdater(upgradeUrl);
   }
 

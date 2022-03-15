@@ -8,9 +8,12 @@ import { MyRedisDatabasePage } from '../../../pageObjects';
 import {commonUrl, ossStandaloneRedisearch} from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const moduleList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', 'RedisAI', 'RedisTimeSeries', 'RedisGears'];
+const moduleNameList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', 'RedisAI', 'RedisTimeSeries', 'RedisGears'];
+const moduleList = [myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleSearchIcon,
+      myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGraphIcon,
+      myRedisDatabasePage.moduleAIIcon, myRedisDatabasePage.moduleGearsIcon];
 
-fixture `Modules`
+fixture `Database modules`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -27,26 +30,27 @@ test
         //Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column');
         //Check that module icons are displayed
-        await t.expect(myRedisDatabasePage.moduleGraphIcon.exists).ok('Graph icon');
-        await t.expect(myRedisDatabasePage.moduleBloomIcon.exists).ok('Bloom icon');
-        await t.expect(myRedisDatabasePage.moduleJSONIcon.exists).ok('JSON icon');
+        await myRedisDatabasePage.checkModulesOnPage(moduleList);
+        //Minimize the window to check quantifier
+        await t.resizeWindow(1000, 700);
         //Verify that user can see +N icon (where N>1) on DB list page when modules icons don't fit the Module column width
-        await t.expect(myRedisDatabasePage.moduleQuantifier.textContent).eql('+4');
+        await t.expect(myRedisDatabasePage.moduleQuantifier.textContent).eql('+3');
         await t.expect(myRedisDatabasePage.moduleQuantifier.exists).ok('Quantifier icon');
         //Verify that user can hover over the module icons and see tooltip with all modules name
         await t.hover(myRedisDatabasePage.moduleQuantifier);
         await t.expect(myRedisDatabasePage.moduleTooltip.visible).ok('Module tooltip');
         //Verify that user can hover over the module icons and see tooltip with version.
-        await myRedisDatabasePage.checkModulesInTooltip(moduleList);
+        await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
     });
-test.skip
+test
     .meta({ rte: rte.standalone })
     ('Verify that user can see full module list in the Edit mode', async t => {
-        //Verify that modules are displayed
-        await t.expect(myRedisDatabasePage.allModules.exists).ok('Visible module icons');
+        //Verify that module column is displayed
+        await t.expect(myRedisDatabasePage.moduleColumn.visible).ok('Module column');
         //Open Edit mode
         await t.click(myRedisDatabasePage.editDatabaseButton);
-        await t.expect(myRedisDatabasePage.allModules.exists).notOk('Not visible module icons');
+        //Verify that module column is not displayed
+        await t.expect(myRedisDatabasePage.moduleColumn.visible).notOk('Module column');
         //Verify modules in Edit mode
-        await t.expect(myRedisDatabasePage.modulesOnEditPage.exists).ok('Edit modules');
+        await myRedisDatabasePage.checkModulesOnPage(moduleList);
     });

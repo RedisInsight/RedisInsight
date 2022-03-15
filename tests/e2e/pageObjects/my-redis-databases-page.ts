@@ -37,7 +37,6 @@ export class MyRedisDatabasePage {
     moduleGearsIcon: Selector
     moduleTooltip: Selector
     moduleQuantifier: Selector
-    allModules: Selector
     modulesOnEditPage: Selector
 
     constructor() {
@@ -73,8 +72,6 @@ export class MyRedisDatabasePage {
         this.moduleGearsIcon = Selector('[data-testid^=RedisGears]');
         this.moduleTooltip = Selector('.euiToolTipPopover');
         this.moduleQuantifier = Selector('[data-testid=_module]');
-        this.allModules = Selector('.euiToolTipAnchor');
-        this.modulesOnEditPage = Selector('[]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.dbNameList = Selector('[data-testid^=instance-name]');
         this.tableRowContent = Selector('[data-test-subj=database-alias-column]');
@@ -115,7 +112,10 @@ export class MyRedisDatabasePage {
         }
     }
 
-    //Delete database by Name
+    /**
+     * Delete DB by name
+     * @param dbName The name of the database to be deleted
+     */
     async deleteDatabaseByName(dbName: string): Promise<void> {
         const dbNames = this.tableRowContent;
         const count = await dbNames.count;
@@ -147,11 +147,21 @@ export class MyRedisDatabasePage {
 
     /**
      * Check module inside of tooltip
+     * @param moduleNameList Array with modules list
+     */
+    async checkModulesInTooltip(moduleNameList: Array<string>): Promise<void> {
+        for (const item of moduleNameList) {
+            await t.expect(this.moduleTooltip.find('span').withText(`${item} v.`).exists).ok(item)
+        }
+    }
+
+    /**
+     * Check module icons on the page
      * @param moduleList Array with modules list
      */
-    async checkModulesInTooltip(moduleList: Array<string>): Promise<void> {
+    async checkModulesOnPage(moduleList: Array<Selector>): Promise<void> {
         for (const item of moduleList) {
-            await t.expect(this.moduleTooltip.find('span').withText(`${item} v.`).exists).ok(item)
+            await t.expect(item.visible).ok(`${item} icon`)
         }
     }
 }

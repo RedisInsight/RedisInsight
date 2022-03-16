@@ -20,11 +20,7 @@ fixture `Cypher syntax at Workbench`
     })
 test
     .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that user can see popover Editor is displayed when clicks on “Use Cypher Syntax” popover in the Editor or “Shift+Space”', async t => {
+    ('Verify that user can see popover Editor when clicks on “Use Cypher Syntax” popover in the Editor or “Shift+Space”', async t => {
         const command = 'GRAPH.QUERY graph';
         //Type command and put the cursor inside
         await t.typeText(workbenchPage.queryInput, `${command} "query"`, { replace: true });
@@ -40,11 +36,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that wheh popover Editor is displayed user can see it is populated with the script that was detected between the quotes or it is blank if quotes were empty', async t => {
+    ('Verify that popover Editor is populated with the script that was detected between the quotes or it is blank if quotes were empty', async t => {
         const command = 'GRAPH.QUERY graph';
         const script = 'query'
         //Type command with empty script and open popover
@@ -56,7 +48,6 @@ test
         //Close popover editor and re-open with added script
         await t.pressKey('esc');
         await t.typeText(workbenchPage.queryInput, `${command} "${script}`, { replace: true });
-        await t.debug();
         await t.pressKey('left');
         await t.click(workbenchPage.monacoWidget);
         //Verify that the Editor is populated with the script

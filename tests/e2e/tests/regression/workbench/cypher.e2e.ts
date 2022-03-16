@@ -20,10 +20,6 @@ fixture `Cypher syntax at Workbench`
     })
 test
     .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
     ('Verify that user can see popover “Use Cypher Syntax” when cursor is inside the query argument double/single quotes in the GRAPH command', async t => {
         const command = 'GRAPH.QUERY graph';
         //Type command and put the cursor inside
@@ -39,11 +35,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that when user clicks on the “X” control or use keyboard shortcut “ESC” popover Editor is closed and changes are not saved', async t => {
+    ('Verify that when user clicks on the “X” control or use shortcut “ESC” popover Editor is closed and changes are not saved', async t => {
         const command = 'GRAPH.QUERY graph "query"';
         //Type command and open the popover editor
         await t.typeText(workbenchPage.queryInput, command, { replace: true });
@@ -66,11 +58,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that when user use keyboard shortcut “CTRL+ENTER” or clicks on the “V” control popover Editor is closed and changes are saved, converted to Redis syntax and inserted back to the Editor', async t => {
+    ('Verify that when user use shortcut “CTRL+ENTER” or clicks on the “V” control popover Editor is closed and changes are saved', async t => {
         let script = 'query';
         const command = 'GRAPH.QUERY graph';
         //Type command and open the popover editor

@@ -130,7 +130,7 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
 export async function acceptLicenseTerms(): Promise<void> {
     await t.maximizeWindow();
     await userAgreementPage.acceptLicenseTerms();
-    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
+    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 10000});
 }
 
 //Clear database data

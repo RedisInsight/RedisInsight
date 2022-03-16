@@ -62,14 +62,12 @@ const DatabaseOverview = (props: Props) => {
     })
   }, [windowDimensions, metricsProps, modulesProps])
 
-  const RediStackLogo = () => {
-    return (
-      <div className={styles.RediStackLogoWrapper}>
-        <EuiIcon type={theme === Theme.Dark ? RediStackDark : RediStackLight} className={styles.redistackIcon}/>
-        <EuiIcon type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo} className={styles.redistackLogoIcon}/>
-      </div>
-    )
-  }
+  const RediStackLogo = (
+    <div className={styles.RediStackLogoWrapper}>
+      <EuiIcon type={theme === Theme.Dark ? RediStackDark : RediStackLight} className={styles.redistackIcon}/>
+      <EuiIcon type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo} className={styles.redistackLogoIcon}/>
+    </div>
+  )
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -168,7 +166,7 @@ const DatabaseOverview = (props: Props) => {
           {isRediStack
             ? (
               <DatabaseListModules
-                content={isRediStack ? RediStackLogo() : undefined}
+                content={isRediStack ? RediStackLogo : undefined}
                 modules={modulesProps}
                 withoutStyles
               />

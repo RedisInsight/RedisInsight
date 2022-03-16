@@ -16,6 +16,13 @@ services:
   # oss standalone redisearch
   oss-standalone-redisearch:
     image: redislabs/redismod
+    command: [
+        "--loadmodule", "/usr/lib/redis/modules/redisearch.so",
+        "--loadmodule", "/usr/lib/redis/modules/redisgraph.so",
+        "--loadmodule", "/usr/lib/redis/modules/redistimeseries.so",
+        "--loadmodule", "/usr/lib/redis/modules/rejson.so",
+        "--loadmodule", "/usr/lib/redis/modules/redisbloom.so"
+    ]
     ports:
       - 8102:6379
 

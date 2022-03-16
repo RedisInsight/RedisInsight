@@ -170,7 +170,7 @@ const BrowserPage = () => {
                   id={firstPanelId}
                   scrollable={false}
                   initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="670px"
+                  minSize="600px"
                   paddingSize="none"
                   wrapperProps={{
                     className: cx(styles.resizePanelLeft, {

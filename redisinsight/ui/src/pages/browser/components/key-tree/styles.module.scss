@@ -53,9 +53,14 @@ $selectSeparatorHeight: 18px;
   padding-top: 6px;
 
   height: calc(100% - 90px);
-  overflow: hidden;
 
   flex: 1;
+}
+
+.treeContent {
+  height: calc(100% - 25px);
+  position: relative;
+  width: 100%;
 }
 
 .list {

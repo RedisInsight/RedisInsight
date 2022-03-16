@@ -106,7 +106,7 @@ describe('KeyTree', () => {
     expect(container.querySelector('[data-test-subj="key-list-panel"]')).toBeInTheDocument()
   })
 
-  it.only('"setBrowserTreeNodesOpen" should be called for Open a node', () => {
+  it('"setBrowserTreeNodesOpen" should be called for Open a node', () => {
     render(<KeyTree {...propsMock} />)
 
     fireEvent.click(screen.getByTestId(mockVirtualTreeResult?.[0]?.fullName))

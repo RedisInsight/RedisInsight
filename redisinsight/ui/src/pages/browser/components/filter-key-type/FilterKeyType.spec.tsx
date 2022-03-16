@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { instance, mock } from 'ts-mockito'
 import {
   cleanup,
   clearStoreActions,
@@ -12,7 +11,7 @@ import {
 import { loadKeys, setFilter } from 'uiSrc/slices/keys'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
 import { KeyTypes } from 'uiSrc/constants'
-import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import FilterKeyType from './FilterKeyType'
 
 let store: typeof mockedStore
@@ -65,8 +64,7 @@ describe('FilterKeyType', () => {
     const expectedActions = [
       setFilter(KeyTypes.Hash),
       loadKeys(),
-      setBrowserTreeNodesOpen({}),
-      setBrowserTreeSelectedLeaf({})
+      resetBrowserTree()
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

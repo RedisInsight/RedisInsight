@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { replaceSpaces } from 'uiSrc/utils'
 import { fetchKeys, keysSelector, setSearchMatch } from 'uiSrc/slices/keys'
-import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 
 import styles from './styles.module.scss'
@@ -17,8 +17,7 @@ const SearchKeyList = () => {
     dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
 
     // reset browser tree context
-    dispatch(setBrowserTreeNodesOpen({}))
-    dispatch(setBrowserTreeSelectedLeaf({}))
+    dispatch(resetBrowserTree())
   }
 
   const handleChangeValue = (initValue: string) => {

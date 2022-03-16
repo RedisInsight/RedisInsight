@@ -88,6 +88,7 @@ describe('VirtualTree', () => {
     render(
       <VirtualTree
         {...instance(mockedProps)}
+        selectDefaultLeaf
         items={mockedItems}
         setConstructingTree={mockConstructingTreeFn}
         onStatusSelected={mockOnStatusSelected}

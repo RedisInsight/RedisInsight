@@ -60,7 +60,7 @@ const Node = ({
       onFocus={() => {}}
       data-testid={fullName}
     >
-      <div>
+      <div className={styles.nodeName}>
         {!isLeaf && (
         <>
           <EuiIcon
@@ -78,17 +78,17 @@ const Node = ({
         )}
 
         {isLeaf && (
-        <>
-          <EuiIcon
-            type={leafIcon}
-            className={cx(styles.nodeIcon, styles.nodeIconLeaf)}
-            data-test-subj={`leaf-icon_${fullName}`}
-          />
-          Keys
-        </>
+          <>
+            <EuiIcon
+              type={leafIcon}
+              className={cx(styles.nodeIcon, styles.nodeIconLeaf)}
+              data-test-subj={`leaf-icon_${fullName}`}
+            />
+            Keys
+          </>
         )}
       </div>
-      <div data-testid={`count_${fullName}`}>
+      <div className={styles.options} data-testid={`count_${fullName}`}>
         <span>{keyCount ?? ''}</span>
         <span className={styles.approximate} data-testid={`percentage_${fullName}`}>
           {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : '' }

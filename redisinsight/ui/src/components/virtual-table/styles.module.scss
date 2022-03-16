@@ -56,8 +56,9 @@ $footerHeight: 38px;
   .tableRow {
     cursor: pointer;
     border-top-width: 0;
-    & > div:last-of-type {
-      border-right: 1px solid transparent;
+
+    & > div:first-of-type {
+      border-left: 3px solid transparent;
     }
   }
 
@@ -66,14 +67,10 @@ $footerHeight: 38px;
   }
 
   :global(.table-row-selected) {
-    background: var(--tableRowSelectedColor) !important;
-    border-top: 1px solid var(--euiColorPrimary) !important;
-    border-bottom: 1px solid var(--euiColorPrimary) !important;
+    background: var(--browserViewTypeActive) !important;
     & > div:first-of-type {
-      border-left: 1px solid var(--euiColorPrimary) !important;
-    }
-    & > div:last-of-type {
-      border-right: 1px solid var(--euiColorPrimary) !important;
+      border-left: 3px solid transparent;
+      border-left-color: var(--euiColorPrimary) !important;
     }
   }
 

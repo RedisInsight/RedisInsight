@@ -28,14 +28,15 @@ import {
   Instance,
 } from 'uiSrc/slices/interfaces'
 import { resetKeys } from 'uiSrc/slices/keys'
-import { PageNames, Pages } from 'uiSrc/constants'
+import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
-import RediStackSVG from 'uiSrc/assets/img/modules/RediStack.svg'
+import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
+import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import DatabasesList from './DatabasesList/DatabasesList'
 
 import styles from './styles.module.scss'
@@ -297,15 +298,13 @@ const DatabasesListWrapper = ({
             {({ width: columnWidth }) => (
               <div style={{ width: columnWidth, height: 40 }}>
                 <DatabaseListModules
-                  highlight={isRediStack}
+                  content={isRediStack ? (
+                    <EuiIcon
+                      type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+                    />
+                    ) : undefined}
                   modules={modules}
                   maxViewModules={Math.floor((columnWidth - 12) / 28) - 1}
-                  tooltipTitle={isRediStack ? (
-                    <>
-                      <EuiIcon type={RediStackSVG} className={styles.redistackIcon} />
-                      <span style={{ verticalAlign: 'middle' }}>Redis Stack</span>
-                    </>
-                  ) : ''}
                 />
               </div>
             )}

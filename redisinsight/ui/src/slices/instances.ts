@@ -135,7 +135,7 @@ const instancesSlice = createSlice({
 
     // set connected instance
     setConnectedInstance: (state, { payload }: { payload: Instance }) => {
-      state.connectedInstance = payload
+      state.connectedInstance = checkRediStack([payload])[0]
     },
 
     // reset connected instance

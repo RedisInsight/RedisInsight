@@ -164,6 +164,7 @@ const AddStandaloneForm = (props: Props) => {
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
+      isRediStack
     },
     initialValues: initialValuesProp,
     width,
@@ -1161,6 +1162,7 @@ const AddStandaloneForm = (props: Props) => {
       {isEditMode && name && (
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
+            isRediStack={isRediStack}
             alias={name}
             database={db}
             isLoading={loading}

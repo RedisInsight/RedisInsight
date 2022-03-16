@@ -32,12 +32,14 @@ import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.d
 import styles from './styles.module.scss'
 
 export interface Props {
+  content?: JSX.Element
   modules: RedisModuleDto[]
   inCircle?: boolean
   dark?: boolean
   highlight?: boolean
   maxViewModules?: number
   tooltipTitle?: React.ReactNode
+  withoutStyles?: boolean
 }
 
 export const modulesDefaultInit = {
@@ -79,7 +81,7 @@ export const modulesDefaultInit = {
 }
 
 const DatabaseListModules = React.memo((props: Props) => {
-  const { modules, inCircle, highlight, tooltipTitle, maxViewModules } = props
+  const { content, modules, inCircle, highlight, tooltipTitle, maxViewModules, withoutStyles } = props
   const { theme } = useContext(ThemeContext)
 
   const mainContent = []
@@ -124,7 +126,7 @@ const DatabaseListModules = React.memo((props: Props) => {
   }
 
   const Content = mainContent.map(({ icon, content, abbreviation = '' }) => (
-    <div className={styles.tooltipItem}>
+    <div className={styles.tooltipItem} key={content || abbreviation}>
       {!!icon && (<EuiIcon type={icon} style={{ marginRight: 10 }} />)}
       {!icon && (
         <EuiTextColor
@@ -183,14 +185,13 @@ const DatabaseListModules = React.memo((props: Props) => {
   )
 
   return (
-    <div className={cx(styles.container, {
+    <div className={cx({
+      [styles.container]: !withoutStyles,
       [styles.highlight]: highlight,
       [styles.containerCircle]: inCircle,
     })}
     >
-      { inCircle ? (
-        Modules()
-      ) : (
+      {inCircle ? (Modules()) : (
         <EuiToolTip
           position="bottom"
           title={tooltipTitle ?? undefined}
@@ -198,11 +199,10 @@ const DatabaseListModules = React.memo((props: Props) => {
           content={Content}
         >
           <>
-            {Modules()}
+            {content ?? Modules()}
           </>
         </EuiToolTip>
       )}
-
     </div>
   )
 })

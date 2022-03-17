@@ -5,8 +5,8 @@ import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
 import {
-  fetchInstanceAction,
-  getDatabaseConfigInfoAction,
+  fetchInstanceAction, fetchInstancesAction,
+  getDatabaseConfigInfoAction, instancesSelector,
 } from 'uiSrc/slices/instances'
 import {
   appContextSelector,
@@ -53,13 +53,16 @@ const InstancePage = ({ routes = [] }: Props) => {
   const dispatch = useDispatch()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
+  const { data: modulesData } = useSelector(instancesSelector)
   const { isShowMonitor } = useSelector(monitorSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
 
   const isShowBottomGroup = isShowCli || isShowHelper || isShowMonitor
 
   useEffect(() => {
-    dispatch(fetchInstanceAction(connectionInstanceId))
+    dispatch(fetchInstanceAction(connectionInstanceId, () => {
+      !modulesData.length && dispatch(fetchInstancesAction())
+    }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
 
     if (contextInstanceId !== connectionInstanceId) {

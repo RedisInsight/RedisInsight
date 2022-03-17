@@ -57,6 +57,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { resetKeys } from 'uiSrc/slices/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
+import { DatabaseListModules } from 'uiSrc/components'
 import {
   LoadingInstanceText,
   SubmitBtnText,
@@ -160,8 +161,10 @@ const AddStandaloneForm = (props: Props) => {
       selectedCaCertName,
       username,
       password,
+      modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
+      isRediStack
     },
     initialValues: initialValuesProp,
     width,
@@ -185,6 +188,7 @@ const AddStandaloneForm = (props: Props) => {
     password,
     tls,
     db,
+    modules,
     showDb: !!db,
     newCaCert: '',
     newCaCertName: '',
@@ -455,6 +459,22 @@ const AddStandaloneForm = (props: Props) => {
             </EuiText>
             )}
         />
+      )}
+
+      {!!modules?.length && (
+        <>
+          <EuiListGroupItem
+            className={styles.dbInfoModulesLabel}
+            label={(
+              <EuiText color="subdued" size="s">
+                Modules:
+              </EuiText>
+            )}
+          />
+          <EuiTextColor color="default" className={cx(styles.dbInfoListValue, styles.dbInfoModules)}>
+            <DatabaseListModules modules={modules} />
+          </EuiTextColor>
+        </>
       )}
     </EuiListGroup>
   )
@@ -1142,6 +1162,7 @@ const AddStandaloneForm = (props: Props) => {
       {isEditMode && name && (
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
+            isRediStack={isRediStack}
             alias={name}
             database={db}
             isLoading={loading}

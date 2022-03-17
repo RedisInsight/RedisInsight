@@ -49,6 +49,8 @@ const EditConnection = () => {
     }
   }, [])
 
+  const onClose = () => history.goBack()
+
   const getInstanceInfo = async () => {
     try {
       setState(DEFAULT_STATE)
@@ -68,7 +70,7 @@ const EditConnection = () => {
   const onInstanceChanged = () => {
     if (server?.fixedDatabaseId) {
       dispatch(setConnectedInstanceId(server.fixedDatabaseId))
-      history.push(Pages.browser(server?.fixedDatabaseId))
+      history.goBack()
     }
   }
 
@@ -78,6 +80,7 @@ const EditConnection = () => {
 
   const CreateCloudBtn = ({ content }: { content: ContentCreateRedis }) => {
     const { title, description, styles, links } = content
+
     // @ts-ignore
     const linkStyles = styles ? styles[theme] : {}
     return (
@@ -123,6 +126,7 @@ const EditConnection = () => {
                     onDbAdded={() => {}}
                     onDbEdited={onInstanceChanged}
                     onAliasEdited={onAliasChanged}
+                    onClose={onClose}
                   />
                 </div>
                 <div id="footerDatabaseForm" />

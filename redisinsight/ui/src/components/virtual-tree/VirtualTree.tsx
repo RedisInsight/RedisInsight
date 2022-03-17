@@ -9,6 +9,7 @@ import {
 } from 'react-vtree'
 import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 
+import { Maybe } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -26,6 +27,7 @@ export interface Props {
   separator?: string
   loadingIcon?: string
   loading: boolean
+  selectDefaultLeaf?: boolean
   statusSelected: {
     [key: string]: IKeyPropTypes[]
   }
@@ -34,6 +36,7 @@ export interface Props {
   }
   webworkerFn: (...args: any) => any
   onSelectLeaf?: (items: any[]) => void
+  disableSelectDefaultLeaf?: () => void
   onStatusOpen?: (name: string, value: boolean) => void
   onStatusSelected?: (id: string, keys: any) => void
   setConstructingTree: (status: boolean) => void
@@ -48,18 +51,17 @@ const VirtualTree = (props: Props) => {
     statusOpen = {},
     statusSelected = {},
     loading,
+    selectDefaultLeaf,
     onStatusOpen,
     onStatusSelected,
     onSelectLeaf,
     setConstructingTree,
+    disableSelectDefaultLeaf,
     webworkerFn = () => {}
   } = props
 
   const { theme } = useContext(ThemeContext)
-
   const [nodes, setNodes] = useState<TreeNode[]>([])
-  const [firstConstruct, setFirstConstruct] = useState(false)
-
   const { result, run: runWebworker } = useDisposableWebworker(webworkerFn)
 
   useEffect(() =>
@@ -76,15 +78,21 @@ const VirtualTree = (props: Props) => {
 
     setNodes(result)
     setConstructingTree?.(false)
+  }, [result])
 
-    // set "root" keys after first render (construct a tree)
-    if (!firstConstruct && isArray(result) && isEmpty(statusSelected)) {
-      const rootLeaf = result?.find(({ children = [] }) => children.length === 0) ?? {}
-      setFirstConstruct(true)
-      onStatusSelected?.(rootLeaf?.fullName, rootLeaf?.keys)
+  // select "root" Keys after render a new tree (construct a tree)
+  useEffect(() => {
+    if (nodes.length === 0 || !selectDefaultLeaf) {
+      return
+    }
+
+    if (isArray(nodes) && isEmpty(statusSelected)) {
+      const rootLeaf: Maybe<TreeNode> = nodes?.find(({ children = [] }) => children.length === 0)
+      disableSelectDefaultLeaf?.()
+      onStatusSelected?.(rootLeaf?.fullName ?? '', rootLeaf?.keys)
       onSelectLeaf?.(rootLeaf?.keys ?? [])
     }
-  }, [result])
+  }, [nodes, selectDefaultLeaf])
 
   useEffect(() => {
     if (!items?.length) {

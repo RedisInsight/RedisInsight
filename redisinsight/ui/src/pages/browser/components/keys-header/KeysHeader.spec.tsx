@@ -52,7 +52,7 @@ describe('KeysHeader', () => {
   it('should render key view type switcher properly', () => {
     render(<KeysHeader {...propsMock} />)
 
-    const keyViewTypeSwitcherInput = screen.queryByTestId('key-view-type-switcher')
+    const keyViewTypeSwitcherInput = screen.queryByTestId('view-type-switcher')
     expect(keyViewTypeSwitcherInput).toBeInTheDocument()
   })
 })

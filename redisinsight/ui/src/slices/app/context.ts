@@ -85,6 +85,10 @@ const appContextSlice = createSlice({
       state.workbench.enablementArea.guidePath = ''
       state.workbench.enablementArea.guideScrollTop = 0
     },
+    resetBrowserTree: (state) => {
+      state.browser.tree.selectedLeaf = {}
+      state.browser.tree.openNodes = {}
+    }
   },
 })
 
@@ -98,6 +102,7 @@ export const {
   setBrowserPanelSizes,
   setBrowserTreeSelectedLeaf,
   setBrowserTreeNodesOpen,
+  resetBrowserTree,
   setBrowserTreePanelSizes,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,

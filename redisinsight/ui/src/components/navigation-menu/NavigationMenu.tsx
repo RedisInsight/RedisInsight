@@ -233,7 +233,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
         <EuiToolTip
-          content={buildType === BuildType.RedisStack ? 'Redis Stack' : 'My Redis databases'}
+          content={buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
           position="right"
         >
           <span className={styles.iconLogo}>

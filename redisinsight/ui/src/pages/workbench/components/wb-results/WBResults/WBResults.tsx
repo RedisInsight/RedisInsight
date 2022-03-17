@@ -3,8 +3,8 @@ import cx from 'classnames'
 import { EuiIcon, EuiText } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
+import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
-import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import MultiPlayIconDark from 'uiSrc/assets/img/multi_play_icon_dark.svg'
@@ -12,9 +12,9 @@ import MultiPlayIconLight from 'uiSrc/assets/img/multi_play_icon_light.svg'
 import styles from './styles.module.scss'
 
 export interface Props {
-  items: CommandExecutionUI[];
-  scrollDivRef: React.Ref<HTMLDivElement>;
-  onQueryReRun: (query: string, commandId?: string, type?: WBQueryType) => void;
+  items: CommandExecutionUI[]
+  scrollDivRef: React.Ref<HTMLDivElement>
+  onQueryReRun: (query: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   onQueryDelete: (commandId: string) => void
   onQueryOpen: (commandId: string) => void
 }
@@ -48,7 +48,7 @@ const WBResults = ({ items = [], onQueryReRun, onQueryDelete, onQueryOpen, scrol
           command={command}
           createdAt={createdAt}
           onQueryOpen={() => onQueryOpen(id)}
-          onQueryReRun={() => onQueryReRun(command)}
+          onQueryReRun={() => onQueryReRun(command, null, false)}
           onQueryDelete={() => onQueryDelete(id)}
         />
       ))}

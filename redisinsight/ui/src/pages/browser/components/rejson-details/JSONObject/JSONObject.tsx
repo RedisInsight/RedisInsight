@@ -546,9 +546,6 @@ class JSONObject extends React.Component<Props, State> {
 
     return keys.map((key: string) => {
       if (isScalar(data[key] as JSONScalarValue) || data[key] === null) {
-        if (data[key] === null) {
-          data[key] = JSON.stringify(data[key])
-        }
         return (
           <JSONScalar
             resultTableKeyMap={resultTableKeyMap}

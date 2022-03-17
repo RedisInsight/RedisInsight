@@ -81,6 +81,8 @@ div.plotly-notifier {
         color: #8BA2FF;
         font-size: 13px;
         padding: 0px;
+        font-weight: normal;
+        border-color: #465282;
     }
     .euiButtonGroupButton.euiButtonGroupButton--text:not([class*=isDisabled]).euiButtonGroupButton-isSelected:hover {
         background-color: #292F47;
@@ -88,9 +90,29 @@ div.plotly-notifier {
         outline: unset;
     }
     .euiButtonGroup--compressed .euiButtonGroup__buttons {
-        background-color: #465282;
-        border-radius: 4px;
+        label:first-child {
+            border: 1px solid #465282;
+            border-radius: 4px;
+            border-right: 0px;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            width: 68px;
+            font-size: 13px;
+        }
+        label:last-child {
+            font-size: 13px;
+            width: 68px;
+            border: 1px solid #465282;
+            border-radius: 4px;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
     }
+
+    .euiButtonGroup--compressed .euiButtonGroupButton {
+        padding: 0px;
+    }
+
     .euiButtonGroupButton.euiButtonGroupButton--text:not([class*=isDisabled]).euiButtonGroupButton-isSelected:focus {
         background-color: #292F47;
         text-decoration: unset;
@@ -105,6 +127,7 @@ div.plotly-notifier {
     .euiButtonGroupButton.euiButtonGroupButton--text:not([class*=isDisabled]) {
         background: black;
         border-radius: 1px;
+        text-decoration: none;
     }
 
 
@@ -205,6 +228,8 @@ div.plotly-notifier {
         color: #3163D8;
         font-size: 13px;
         padding: 0px;
+        font-weight: normal;
+        border-color: #243DAC;
     }
     .euiButtonGroupButton.euiButtonGroupButton--text:not([class*=isDisabled]).euiButtonGroupButton-isSelected:hover {
         background-color: #D7E3FA;
@@ -213,9 +238,28 @@ div.plotly-notifier {
     }
 
     .euiButtonGroup--compressed .euiButtonGroup__buttons {
-        background-color: #243DAC;
-        border-radius: 4px;
+        label:first-child {
+            border: 1px solid #243DAC;
+            border-radius: 4px;
+            border-right: 0px;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            width: 68px;
+            font-size: 13px;
+        }
+        label:last-child {
+            font-size: 13px;
+            width: 68px;
+            border: 1px solid #243DAC;
+            border-radius: 4px;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
     }
+    .euiButtonGroup--compressed .euiButtonGroupButton {
+        padding: 0px;
+    }
+
     .euiButtonGroupButton.euiButtonGroupButton--text:not([class*=isDisabled]) {
         &:focus, &:focus-within, &:hover {
             background-color: #D7E3FA;
@@ -236,6 +280,7 @@ div.plotly-notifier {
     .euiButtonGroupButton.euiButtonGroupButton--text:not([class*=isDisabled]) {
         background: white;
         border-radius: 1px;
+        text-decoration: none;
     }
 
 

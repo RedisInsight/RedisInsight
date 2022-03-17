@@ -4,7 +4,7 @@ import { Legend, LayoutAxis, PlotData } from 'plotly.js'
 import moment from 'moment'
 import * as d3Scale from 'd3-scale'
 import * as d3ScaleColor from 'd3-scale-chromatic'
-import { hexToRGBA } from './utils'
+import { hexToRGBA, IGoodColor, GoodColorPicker, NODE_COLORS, NODE_COLORS_DARK, EDGE_COLORS, EDGE_COLORS_DARK } from './utils'
 
 import { Datapoint, TimeSeries, ChartConfig, GraphMode } from './interfaces'
 
@@ -22,10 +22,18 @@ const GRAPH_MODE_MAP: { [mode: string]: 'lines' | 'markers' } = {
 
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
+const colorPicker =  (COLORS: IGoodColor[]) => {
+    const color = new GoodColorPicker(COLORS)
+    return (label: string) => color.getColor(label).color
+}
+
+const labelColors = colorPicker(isDarkTheme ? NODE_COLORS_DARK : NODE_COLORS)
+const edgeColors = colorPicker(isDarkTheme ? EDGE_COLORS_DARK : EDGE_COLORS)
+
 export default function Chart(props: any) {
   const chartContainer = useRef<any>()
 
-  const colorPicker = d3Scale.scaleOrdinal(props.data.map(t => t.key), d3ScaleColor.schemeDark2)
+  const colorPicker = labelColors
 
   useEffect(() => {
     Plotly.newPlot(
@@ -100,13 +108,17 @@ export default function Chart(props: any) {
         rangeslider: {
           visible: true,
           thickness: 0.03,
-          bgcolor: isDarkTheme ? 'white' : 'grey',
-        }
+          bgcolor: isDarkTheme ? '#3D3D3D' : '#CDD7EA',
+          bordercolor: 'red',
+        },
+        color: isDarkTheme ? '#898A90' : '#527298'
       },
       yaxis: {
         title: props.chartConfig.yAxisConfig.label,
         type: props.chartConfig.yAxisConfig.scale,
         fixedrange: true,
+        color: isDarkTheme ? '#898A90' : '#527298',
+        gridcolor: isDarkTheme ? '#898A90' : '#527298',
       },
       yaxis2: {
         visible: props.chartConfig.yAxis2,
@@ -115,8 +127,8 @@ export default function Chart(props: any) {
         overlaying: 'y',
         side: 'right',
         fixedrange: true,
-        color: 'lightblue',
-        gridcolor: 'lightblue'
+        color: isDarkTheme ? '#8191CF' : '#6E6E6E',
+        gridcolor: isDarkTheme ? '#8191CF' : '#6E6E6E',
       } as LayoutAxis,
     }
 

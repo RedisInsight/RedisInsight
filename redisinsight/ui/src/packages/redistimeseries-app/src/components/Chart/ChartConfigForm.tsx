@@ -9,22 +9,13 @@ import {
   EuiSelectProps,
   EuiButtonGroup,
   EuiAccordion,
+  EuiButtonGroupProps,
 } from '@elastic/eui'
 
 import { ChartConfig, AxisScale, GraphMode } from './interfaces'
 import { X_LABEL_MAX_LENGTH, Y_LABEL_MAX_LENGTH, TITLE_MAX_LENGTH } from './constants'
 
 const styles = {
-  formSection: {
-    display: 'flex',
-    minWidth: '386px',
-    paddingRight: '5em',
-    paddingLeft: '5em',
-    paddingTop: '1em',
-    paddingBottom: '1em',
-    justifyContent: 'space-between'
-  } as CSSProperties,
-
   mainToggle: {
     marginTop: '20px'
   },
@@ -53,16 +44,14 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
   render() {
     const { onChange, value } = this.props
     return (
-      <form style={{ width: '60%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
-          <EuiFormFieldset>
-            <EnumSelect
-              inputLabel="mode"
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => onChange('mode', e.target.value)}
-              value={value.mode}
-              enumType={GraphMode}
-            />
-          </EuiFormFieldset>
+      <form className="chart-config-form">
+        <div className="chart-top-form">
+          <EnumSelect
+            inputLabel="mode"
+            onChange={(e: React.ChangeEvent<{ value: unknown }>) => onChange('mode', e.target.value)}
+            value={value.mode}
+            enumType={GraphMode}
+          />
           <EuiSwitch
             compressed
             label={<span style={{ paddingRight: '10px' }}>Staircase</span>}
@@ -76,6 +65,7 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
             onChange={(e) => onChange('fill', e.target.checked)}
           />
           <EuiAccordion
+            arrowDisplay='right'
             forceState={this.state.moreOptions ? 'open' : 'closed'}
             onToggle={isOpen => this.setState({ moreOptions: isOpen })}
             buttonContent={this.state.moreOptions ? 'Less options' : 'More options'}
@@ -86,8 +76,8 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
         {
           this.state.moreOptions &&
           <div className="more-options">
-            <section style={styles.formSection}>
-              <EuiFormFieldset style={{width: '48%'}} legend={{ children: 'Title' }}>
+            <section>
+              <EuiFormFieldset legend={{ children: 'Title' }}>
                 <EuiFieldText
                   placeholder="Title"
                   value={value.title}
@@ -96,7 +86,7 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
                   maxLength={parseInt(TITLE_MAX_LENGTH)}
                 />
               </EuiFormFieldset>
-              <EuiFormFieldset style={{width: '48%'}} legend={{ children: 'X axis Label' }}>
+              <EuiFormFieldset legend={{ children: 'X axis Label' }}>
                 <EuiFieldText
                   placeholder="X axis label"
                   value={value.xlabel}
@@ -106,9 +96,9 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
                 />
               </EuiFormFieldset>
             </section>
-            <section style={styles.formSection}>
+            <section>
               <div style={styles.rightYAxis as CSSProperties}>
-                <div style={{width: '48%'}}>
+                <div style={{ width: '100%' }}>
                   <EuiSwitch
                     compressed
                     label="Use Right Y Axis"
@@ -118,24 +108,24 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
                 </div>
                 {
                   value.yAxis2 &&
-                  <div style={{width: '48%'}}>
+                  <div className="y-axis-2" style={{ width: '100%'}}>
                     {Object.keys(value.keyToY2Axis).map(key =>
-                      <>
-                        <EuiSwitch
-                          compressed
-                          label={key}
-                          checked={value.keyToY2Axis[key]}
-                          onChange={(e) => onChange('keyToY2Axis', { ...value.keyToY2Axis, [key]: e.target.checked })}
-                          key={key}
+                      <div className='y-axis-2-item'>
+                        <div>{key}</div>
+                        <EuiButtonGroup
+                          buttonSize='compressed'
+                          options={['left', 'right'].map((v: string) => ({ id: v, label: v }))}
+                          onChange={id => onChange('keyToY2Axis', {...value.keyToY2Axis, [key]: id === 'right' })}
+                          idSelected={value.keyToY2Axis[key] === true ? 'right' : 'left'}
+                          isFullWidth
                         />
-                        <EuiSpacer size="m" />
-                      </>
+                      </div>
                     )}
                   </div>
                 }
               </div>
             </section>
-            <section className="y-axis-config" style={styles.formSection}>
+            <section className="y-axis-config">
               <YAxisConfigForm
                 label="Left Y Axis"
                 onChange={(v: any) => onChange('yAxisConfig', v)}
@@ -160,7 +150,7 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
 }
 
 const YAxisConfigForm = ({ value, onChange, label }: any) => (
-  <div style={{width: '48%'}}>
+  <div>
     <EuiFormFieldset legend={{ children: `${label} Label` }}>
       <EuiFieldText
         placeholder="Label"
@@ -170,7 +160,6 @@ const YAxisConfigForm = ({ value, onChange, label }: any) => (
         maxLength={parseInt(Y_LABEL_MAX_LENGTH)}
       />
     </EuiFormFieldset>
-    <EuiSpacer size="m" />
     <EuiFormFieldset legend={{ children: `${label} Scale` }}>
       <EnumSelect
         inputLabel="Scale"
@@ -186,16 +175,16 @@ const YAxisConfigForm = ({ value, onChange, label }: any) => (
 interface EnumSelectProps {
   enumType: any
   inputLabel: string
+  value: string
 }
-const EnumSelect = ({ enumType, inputLabel, ...props }: EnumSelectProps & EuiSelectProps) => (
-  <EuiForm component="form">
-    <EuiButtonGroup
-      legend='form-button'
-      buttonSize='s'
-      options={Object.values(enumType).map((v: string) => ({ id: v, label: v }))}
-      onChange={id => props.onChange({ target: { value: id}} as any)}
-      idSelected={props.value.toString()}
-    />
-  </EuiForm>
+const EnumSelect = ({ enumType, inputLabel, ...props }: EnumSelectProps & EuiButtonGroupProps) => (
+  <EuiButtonGroup
+    legend='form-button'
+    buttonSize='compressed'
+    options={Object.values(enumType).map((v: string) => ({ id: v, label: v }))}
+    onChange={id => props.onChange({ target: { value: id}} as any)}
+    idSelected={props.value.toString()}
+    isFullWidth
+  />
 )
 

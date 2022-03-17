@@ -23,6 +23,8 @@ interface ChartResultViewState {
   chartState: LAYOUT_STATE
 }
 
+const isDarkTheme = document.body.classList.contains('theme_DARK')
+
 export default class ChartResultView extends React.Component<ChartResultViewProps, ChartResultViewState> {
   constructor(props: ChartResultViewProps) {
     super(props)
@@ -78,7 +80,7 @@ export default class ChartResultView extends React.Component<ChartResultViewProp
   render() {
     return (
       <div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '3em', paddingTop: '0.3em'}}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '3em', paddingTop: '0.3em', color: isDarkTheme ? '#B5B6C0' : '#527298' }}>
           <i>
             {
               this.state.chartState === LAYOUT_STATE.INITIAL_STATE
@@ -95,7 +97,6 @@ export default class ChartResultView extends React.Component<ChartResultViewProp
           onRelayout={this.onRelayout}
           onDoubleClick={this.onDoubleClick}
         />
-        <EuiSpacer size="l" />
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
           <ChartConfigForm
             value={this.state.chartConfig} 

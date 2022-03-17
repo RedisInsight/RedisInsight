@@ -9,6 +9,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { Theme } from 'uiSrc/constants'
 import { getModule, truncateText } from 'uiSrc/utils'
+import { IDatabaseModule, sortModules } from 'uiSrc/utils/modules'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import RedisAILight from 'uiSrc/assets/img/modules/RedisAILight.svg'
@@ -84,13 +85,13 @@ const DatabaseListModules = React.memo((props: Props) => {
   const { content, modules, inCircle, highlight, tooltipTitle, maxViewModules, withoutStyles } = props
   const { theme } = useContext(ThemeContext)
 
-  const mainContent = []
+  const mainContent: IDatabaseModule[] = []
 
   const handleCopy = (text = '') => {
     navigator?.clipboard?.writeText(text)
   }
 
-  const newModules = modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
+  const newModules: IDatabaseModule[] = sortModules(modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
     const moduleName = modulesDefaultInit[propName]?.text || propName
 
     const { abbreviation = '', name = moduleName } = getModule(moduleName)
@@ -104,7 +105,7 @@ const DatabaseListModules = React.memo((props: Props) => {
       icon = theme === Theme.Dark ? UnknownDark : UnknownLight
     }
 
-    mainContent.push({ icon, content, abbreviation })
+    mainContent.push({ icon, content, abbreviation, moduleName })
 
     return {
       moduleName,
@@ -112,7 +113,7 @@ const DatabaseListModules = React.memo((props: Props) => {
       abbreviation,
       content
     }
-  })
+  }))
 
   // set count of hidden modules
   if (maxViewModules && newModules.length > maxViewModules + 1) {
@@ -125,7 +126,7 @@ const DatabaseListModules = React.memo((props: Props) => {
     })
   }
 
-  const Content = mainContent.map(({ icon, content, abbreviation = '' }) => (
+  const Content = sortModules(mainContent).map(({ icon, content, abbreviation = '' }) => (
     <div className={styles.tooltipItem} key={content || abbreviation}>
       {!!icon && (<EuiIcon type={icon} style={{ marginRight: 10 }} />)}
       {!icon && (
@@ -141,8 +142,9 @@ const DatabaseListModules = React.memo((props: Props) => {
     </div>
   ))
 
-  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => (
-    <span key={moduleName || abbreviation || content}>
+  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => {
+    return (
+      <span key={moduleName || abbreviation || content}>
       {icon ? (
         <EuiButtonIcon
           iconType={icon}
@@ -162,7 +164,8 @@ const DatabaseListModules = React.memo((props: Props) => {
         </EuiTextColor>
       )}
     </span>
-  )
+    )
+  }
 
   const Modules = () => (
     newModules.map(({ icon, content, abbreviation, moduleName }, i) => (
@@ -197,6 +200,7 @@ const DatabaseListModules = React.memo((props: Props) => {
           title={tooltipTitle ?? undefined}
           display="inlineBlock"
           content={Content}
+          data-testid="modules-tooltip"
         >
           <>
             {content ?? Modules()}

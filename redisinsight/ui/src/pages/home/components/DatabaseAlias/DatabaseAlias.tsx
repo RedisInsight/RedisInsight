@@ -79,7 +79,11 @@ const DatabaseAlias = (props: Props) => {
     <EuiFlexGroup responsive={false} justifyContent="spaceBetween" gutterSize="xs">
       {isRediStack && (
         <EuiFlexItem grow={false}>
-          <EuiIcon type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo} className={styles.redistackIcon}/>
+          <EuiIcon
+            type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+            className={styles.redistackIcon}
+            data-testid="redis-stack-icon"
+          />
         </EuiFlexItem>
       )}
       <EuiFlexItem

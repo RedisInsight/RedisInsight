@@ -36,7 +36,7 @@ $footerHeight: 38px;
     }
     .ReactVirtualized__Grid__innerScrollContainer {
       & > div:hover {
-        background: var(--tableRowHoverColor);
+        background: var(--browserComponentActive);
       }
     }
   }
@@ -67,7 +67,12 @@ $footerHeight: 38px;
   }
 
   :global(.table-row-selected) {
-    background: var(--browserViewTypeActive) !important;
+    background: var(--browserComponentActive) !important;
+
+    * {
+      color: var(--euiColorFullShade) !important;
+    }
+
     & > div:first-of-type {
       border-left: 3px solid transparent;
       border-left-color: var(--euiColorPrimary) !important;

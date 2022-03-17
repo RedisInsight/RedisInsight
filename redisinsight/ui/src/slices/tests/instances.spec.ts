@@ -36,6 +36,7 @@ import reducer, {
   changeInstanceAliasFailure,
   changeInstanceAliasSuccess,
   changeInstanceAliasAction,
+  resetConnectedInstance,
 } from '../instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../interfaces'
@@ -62,6 +63,7 @@ beforeEach(() => {
       password: null,
       connectionType: ConnectionType.Standalone,
       nameFromProvider: null,
+      modules: [],
       lastConnection: new Date('2021-04-22T09:03:56.917Z'),
     },
     {
@@ -73,6 +75,7 @@ beforeEach(() => {
       password: null,
       connectionType: ConnectionType.Standalone,
       nameFromProvider: null,
+      modules: [],
       tls: {
         verifyServerCert: true,
         caCertId: '70b95d32-c19d-4311-bb24-e684af12cf15',
@@ -89,6 +92,7 @@ beforeEach(() => {
       connectionType: ConnectionType.Sentinel,
       nameFromProvider: null,
       lastConnection: new Date('2021-04-22T18:40:44.031Z'),
+      modules: [],
       endpoints: [
         {
           host: 'localhost',
@@ -670,6 +674,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           setDefaultInstance(),
+          resetConnectedInstance(),
           setDefaultInstanceSuccess(),
         ]
 
@@ -702,6 +707,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           setDefaultInstance(),
+          resetConnectedInstance(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]

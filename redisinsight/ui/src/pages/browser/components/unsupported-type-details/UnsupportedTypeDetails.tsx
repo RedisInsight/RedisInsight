@@ -4,7 +4,7 @@ import { EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle } from '@elastic/eui'
 import styles from './styles.module.scss'
 
 const UnsupportedTypeDetails = () => (
-  <div className={styles.container}>
+  <div className={styles.container} data-testid="unsupported-type-details">
     <EuiFlexGroup alignItems="center" justifyContent="center">
       <EuiFlexItem className={styles.textWrapper}>
         <EuiTitle>

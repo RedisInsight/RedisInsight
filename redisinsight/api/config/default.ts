@@ -3,6 +3,8 @@ import { join } from 'path';
 const homedir = join(__dirname, '..');
 
 const buildInfoFileName = 'build.json';
+const dataZipFileName = 'data.zip';
+
 
 const staticDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'static')
@@ -39,8 +41,8 @@ export default {
     globalPrefix: 'api',
     customPluginsUri: '/plugins',
     staticUri: '/static',
-    guidesUri: '/static/workbench/guides',
-    tutorialsUri: '/static/workbench/tutorials',
+    guidesUri: '/static/guides',
+    tutorialsUri: '/static/tutorials',
     contentUri: '/static/content',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
@@ -100,21 +102,21 @@ export default {
   guides: {
     updateUrl: process.env.GUIDES_UPDATE_URL
       || 'https://github.com/RedisInsight/Guides/releases/download/latest',
-    zip: process.env.GUIDES_ZIP || 'data.zip',
+    zip: process.env.GUIDES_ZIP || dataZipFileName,
     buildInfo: process.env.GUIDES_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.GUIDES_DEV_PATH,
   },
   tutorials: {
     updateUrl: process.env.TUTORIALS_UPDATE_URL
       || 'https://github.com/RedisInsight/Tutorials/releases/download/latest',
-    zip: process.env.TUTORIALS_ZIP || 'data.zip',
+    zip: process.env.TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.TUTORIALS_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.TUTORIALS_DEV_PATH,
   },
   content: {
     updateUrl: process.env.CONTENT_UPDATE_URL
       || 'https://github.com/RedisInsight/Statics/releases/download/latest',
-    zip: process.env.CONTENT_ZIP || 'data.zip',
+    zip: process.env.CONTENT_ZIP || dataZipFileName,
     buildInfo: process.env.CONTENT_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.CONTENT_DEV_PATH,
   },

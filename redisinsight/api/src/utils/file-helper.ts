@@ -19,7 +19,7 @@ export const getFile = async (url: string): Promise<ArrayBuffer> => {
 /**
  * Purge folder and extract archive
  */
-export const updateFolderFromArchive = async (path: string, data: any): Promise<void> => {
+ export const updateFolderFromArchive = async (path: string, data: any): Promise<void> => {
   await fs.remove(path);
 
   await fs.ensureDir(path);
@@ -31,9 +31,11 @@ export const updateFolderFromArchive = async (path: string, data: any): Promise<
 /**
  * Exract file in folder
  */
-export const updateFileFromArchive = async (path: string, data: any): Promise<void> => {
-  await fs.ensureDir(path);
+export const updateFile = async (path: string, data: any): Promise<void> => {
+  // await fs.ensureDir(path);
 
-  const zip = new AdmZip(data);
-  zip.extractAllTo(path, true);
+  // const zip = new AdmZip(data);
+  // zip.extractAllTo(path, true);
+  await fs.writeFile(path, data);
 };
+

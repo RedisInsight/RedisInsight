@@ -101,7 +101,8 @@ const WBViewWrapper = () => {
 
   const handleSubmit = (
     commandInit: string = script,
-    commandId?: string,
+    commandId?: Nullable<string>,
+    clearEditor: boolean = true,
   ) => {
     const { loading } = state
     const isNewCommand = () => !commandId
@@ -121,19 +122,20 @@ const WBViewWrapper = () => {
 
     isNewCommand() && scrollResults('start')
 
-    sendCommand(commandLine, multiCommands)
+    sendCommand(commandLine, multiCommands, clearEditor)
   }
 
   const sendCommand = (
     command: string,
-    multiCommands = ''
+    multiCommands = '',
+    clearEditor = true
   ) => {
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
         command,
         multiCommands,
-        onSuccessAction: onSuccess,
+        onSuccessAction: (multiCommands) => onSuccess(multiCommands, clearEditor),
       }))
       return
     }
@@ -152,13 +154,13 @@ const WBViewWrapper = () => {
         command,
         options,
         multiCommands,
-        onSuccessAction: onSuccess,
+        onSuccessAction: (multiCommands) => onSuccess(multiCommands, clearEditor),
       })
     )
   }
 
-  const onSuccess = (multiCommands = '') => {
-    resetCommand()
+  const onSuccess = (multiCommands = '', clearEditor = true) => {
+    clearEditor && resetCommand()
     setMultiCommands(multiCommands)
   }
 

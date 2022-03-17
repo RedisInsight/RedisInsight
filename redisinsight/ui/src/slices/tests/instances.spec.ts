@@ -678,7 +678,7 @@ describe('instances slice', () => {
           setDefaultInstanceSuccess(),
         ]
 
-        expect(store.getActions().splice(0, 2)).toEqual(expectedActions)
+        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('call both checkConnectToInstance and setDefaultInstanceFailure when fetch is fail', async () => {

@@ -301,6 +301,7 @@ const DatabasesListWrapper = ({
                   content={isRediStack ? (
                     <EuiIcon
                       type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+                      data-testid="redis-stack-icon"
                     />
                     ) : undefined}
                   modules={modules}

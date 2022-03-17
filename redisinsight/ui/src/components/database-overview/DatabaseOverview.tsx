@@ -63,7 +63,7 @@ const DatabaseOverview = (props: Props) => {
   }, [windowDimensions, metricsProps, modulesProps])
 
   const RediStackLogo = (
-    <div className={styles.RediStackLogoWrapper}>
+    <div className={styles.RediStackLogoWrapper} data-testid="redis-stack-logo">
       <EuiIcon type={theme === Theme.Dark ? RediStackDark : RediStackLight} className={styles.redistackIcon}/>
       <EuiIcon type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo} className={styles.redistackLogoIcon}/>
     </div>

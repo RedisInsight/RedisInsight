@@ -15,13 +15,11 @@
   "artifactName": "${productName}-${os}-${arch}.${ext}",
   "compression": "normal",
   "mac": {
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "target": [
       {
         "target": "dmg",
         "arch": ["x64", "arm64"]
-      },
-      {
+      }, {
         "target": "zip",
         "arch": ["x64", "arm64"]
       }
@@ -92,6 +90,11 @@
     {
       "from": "./redisinsight/api/defaults",
       "to": "defaults",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "./resources/app",
+      "to": "./app",
       "filter": ["**/*"]
     }
   ]

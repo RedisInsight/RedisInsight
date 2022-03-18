@@ -34,6 +34,12 @@ export class AutoDiscoveryService implements OnModuleInit {
         return;
       }
 
+      // additional check for existing databases
+      // We should not start auto discover if any database already exists
+      if ((await this.databaseProvider.getAll()).length) {
+        return;
+      }
+
       const settings = await this.settingsService.getSettings();
       // check agreements to understand if it is first launch
       if (!settings.agreements) {

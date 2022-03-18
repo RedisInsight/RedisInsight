@@ -102,7 +102,7 @@ const launchApiServer = async () => {
     const detectPortConst = await detectPort(port);
     process.env.API_PORT = detectPortConst?.toString();
     log.info('Available port:', detectPortConst);
-    server();
+    await server();
   } catch (error) {
     log.error('Catch server error:', error);
   }

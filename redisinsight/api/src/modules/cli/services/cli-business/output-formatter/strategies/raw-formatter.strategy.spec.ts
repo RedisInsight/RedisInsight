@@ -44,7 +44,7 @@ describe('Cli RawFormatterStrategy', () => {
           Buffer.from('"quoted key"'),
         ],
       ];
-      const mockResponse = ['0', ['key', '"quoted""key"', '"quoted key"']];
+      const mockResponse = ['0', ['key', '\\"quoted\\"\\"key\\"', '\\"quoted key\\"']];
       const output = strategy.format(input);
 
       expect(output).toEqual(mockResponse);
@@ -69,7 +69,7 @@ describe('Cli RawFormatterStrategy', () => {
       const input = Buffer.from(JSON.stringify(object));
       const output = strategy.format(input);
 
-      expect(output).toEqual(JSON.stringify(object));
+      expect(output).toEqual('{\\"key\\":\\"value\\"}');
     });
   });
 });

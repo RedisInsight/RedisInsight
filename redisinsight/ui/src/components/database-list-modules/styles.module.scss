@@ -1,12 +1,14 @@
 .container {
   height: 24px;
   line-height: 20px;
+  display: inline-block;
+  width: auto;
+  padding-left: 6px;
+  padding-right: 6px;
 
   &.highlight {
     background-color: var(--hoverInListColorLight);
     border-radius: 12px;
-    padding-left: 6px;
-    padding-right: 6px;
   }
 
   &.containerCircle {
@@ -20,8 +22,8 @@
     max-width: 28px !important;
     height: 27px !important;
     border-radius: 50% !important;
-    margin-right: 14px;
     padding: 4px;
+    margin-right: 0;
 
     &:hover,
     &:focus,
@@ -36,8 +38,8 @@
 }
 
 .icon img {
-  width: 18px !important;
-  max-width: 18px !important;
+  width: 16px !important;
+  max-width: 16px !important;
   height: 16px !important;
 }
 
@@ -51,4 +53,8 @@
 
 .abbr {
   vertical-align: text-top;
+}
+
+.anchorModuleTooltip {
+  margin-right: 18px;
 }

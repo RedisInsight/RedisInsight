@@ -123,7 +123,7 @@ const DedicatedEditor = (props: Props) => {
     // https://github.com/microsoft/monaco-editor/issues/2756
     contribution = editor.getContribution<ISnippetController>('snippetController2')
 
-    editor.focus()
+    setTimeout(() => editor.focus(), 0)
 
     editor.onKeyDown(onKeyDownMonaco)
 
@@ -183,7 +183,7 @@ const DedicatedEditor = (props: Props) => {
         x: 17,
         y: 80,
         width,
-        height: 240
+        height: 176
       }}
       className={styles.rnd}
       dragHandleClassName="draggable-area"

@@ -32,19 +32,19 @@ import QueryCardTooltip from '../QueryCardTooltip'
 import styles from './styles.module.scss'
 
 export interface Props {
-  query: string;
-  isOpen: boolean;
-  isFullScreen: boolean;
-  createdAt?: Date;
-  summaryText?: string;
-  queryType: WBQueryType;
-  selectedValue: string;
-  loading?: boolean;
-  toggleOpen: () => void;
-  toggleFullScreen: () => void;
-  setSelectedValue: (type: WBQueryType, value: string) => void;
-  onQueryDelete: () => void;
-  onQueryReRun: () => void;
+  query: string
+  isOpen: boolean
+  isFullScreen: boolean
+  createdAt?: Date
+  summaryText?: string
+  queryType: WBQueryType
+  selectedValue: string
+  loading?: boolean
+  toggleOpen: () => void
+  toggleFullScreen: () => void
+  setSelectedValue: (type: WBQueryType, value: string) => void
+  onQueryDelete: () => void
+  onQueryReRun: () => void
 }
 
 const QueryCardHeader = (props: Props) => {

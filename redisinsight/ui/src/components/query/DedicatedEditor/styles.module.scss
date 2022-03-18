@@ -1,5 +1,5 @@
 .rnd {
-  position: fixed;
+  position: fixed !important;
   z-index: 100;
 }
 .container {
@@ -34,7 +34,6 @@
 .input {
   height: calc(100% - 46px);
   width: 100%;
-  background-color: var(--rsInputColor);
 }
 
 #script {

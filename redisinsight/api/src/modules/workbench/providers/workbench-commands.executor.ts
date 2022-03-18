@@ -16,11 +16,14 @@ import {
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RawFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/raw-formatter.strategy';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {
   private logger = new Logger('WorkbenchCommandsExecutor');
+
+  private formatter = new RawFormatterStrategy();
 
   constructor(
     private redisTool: RedisToolService,
@@ -60,7 +63,10 @@ export class WorkbenchCommandsExecutor {
 
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const response = await this.redisTool.execCommand(clientOptions, command, args, 'utf-8');
+      const response = this.formatter.format(
+        await this.redisTool.execCommand(clientOptions, command, args),
+      );
+
       this.logger.log('Succeed to execute workbench command.');
 
       const result = { response, status: CommandExecutionStatus.Success };
@@ -100,7 +106,6 @@ export class WorkbenchCommandsExecutor {
         args,
         role,
         nodeAddress,
-        'utf-8',
       );
       if (result.error && checkRedirectionError(result.error) && nodeOptions.enableRedirection) {
         const { slot, address } = parseRedirectionError(result.error);
@@ -110,7 +115,6 @@ export class WorkbenchCommandsExecutor {
           args,
           role,
           address,
-          'utf-8',
         );
         result.slot = parseInt(slot, 10);
       }
@@ -119,7 +123,12 @@ export class WorkbenchCommandsExecutor {
       const {
         host, port, error, slot, ...rest
       } = result;
-      return { ...rest, node: { host, port, slot } };
+
+      return {
+        ...rest,
+        response: this.formatter.format(rest.response),
+        node: { host, port, slot },
+      };
     } catch (error) {
       this.logger.error('Failed to execute redis.cluster CLI command.', error);
       const result = { response: error.message, status: CommandExecutionStatus.Fail };
@@ -148,12 +157,16 @@ export class WorkbenchCommandsExecutor {
       const [command, ...args] = splitCliCommandLine(commandLine);
 
       return (
-        await this.redisTool.execCommandForNodes(clientOptions, command, args, role, 'utf-8')
+        await this.redisTool.execCommandForNodes(clientOptions, command, args, role)
       ).map((nodeExecReply) => {
         const {
           response, status, host, port,
         } = nodeExecReply;
-        const result = { response, status, node: { host, port } };
+        const result = {
+          response: this.formatter.format(response),
+          status,
+          node: { host, port },
+        };
         this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
         return result;
       });

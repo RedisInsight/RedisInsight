@@ -11,6 +11,7 @@ export interface IDatabaseModule {
 const PREDEFINED_MODULES_ORDER = [
   DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Search],
   DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.ReJSON],
+  DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Graph],
   DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.TimeSeries],
   DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Bloom],
   DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Gears],

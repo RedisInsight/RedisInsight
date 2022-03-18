@@ -6,7 +6,7 @@ const ICON_PATH = app.isPackaged
   : path.join(__dirname, '../resources', 'icon.png');
 
 export default {
-  applicationName: 'RedisInsight-preview',
+  applicationName: 'RedisInsight',
   applicationVersion: app.getVersion() || '2.0',
   copyright: `Copyright © ${new Date().getFullYear()} Redis Ltd.`,
   iconPath: ICON_PATH,

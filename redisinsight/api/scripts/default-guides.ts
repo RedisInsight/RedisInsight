@@ -3,38 +3,37 @@ import { getFile, updateFolderFromArchive, updateFile } from '../src/utils/file-
 import { get } from '../src/utils/config';
 
 const PATH_CONFIG = get('dir_path');
-const CONTENT_CONFIG = get('content');
+const GUIDES_CONFIG = get('guides');
 
 const archiveUrl = new URL(path.join(
-  CONTENT_CONFIG.updateUrl,
-  CONTENT_CONFIG.zip,
+  GUIDES_CONFIG.updateUrl,
+  GUIDES_CONFIG.zip,
 )).toString();
 
 const buildInfoUrl = new URL(path.join(
-  CONTENT_CONFIG.updateUrl,
-  CONTENT_CONFIG.buildInfo,
+  GUIDES_CONFIG.updateUrl,
+  GUIDES_CONFIG.buildInfo,
 )).toString();
 
 async function init() {
   try {
-    // get archive
+    // // get archive
     const data = await getFile(archiveUrl);
 
     // extract archive to default folder
-    await updateFolderFromArchive(PATH_CONFIG.defaultContent, data);
+    await updateFolderFromArchive(PATH_CONFIG.defaultGuides, data);
 
-    // get build info
+    // // get build info
     const buildInfo = await getFile(buildInfoUrl);
 
     // save build info to default folder
-    await updateFile(PATH_CONFIG.defaultContent, CONTENT_CONFIG.buildInfo, buildInfo);
+    await updateFile(PATH_CONFIG.defaultGuides, GUIDES_CONFIG.buildInfo, buildInfo);
 
     process.exit(0);
   } catch (e) {
-    console.error('Something went wrong trying to get default commands jsons', e);
+    console.error('Something went wrong trying to get default guides archive', e);
     process.exit(1);
   }
 }
 
 init();
-

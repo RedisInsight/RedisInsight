@@ -109,3 +109,4 @@ export const testEndpoint = async (endpoint: Endpoint): Promise<Endpoint> => new
 export const getAvailableEndpoints = async (
   endpoints: Endpoint[],
 ): Promise<Endpoint[]> => (await Promise.all(endpoints.map(testEndpoint))).filter(isObject);
+

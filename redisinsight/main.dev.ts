@@ -102,7 +102,7 @@ const launchApiServer = async () => {
     const detectPortConst = await detectPort(port);
     process.env.API_PORT = detectPortConst?.toString();
     log.info('Available port:', detectPortConst);
-    server();
+    await server();
   } catch (error) {
     log.error('Catch server error:', error);
   }
@@ -126,7 +126,7 @@ const bootstrap = async () => {
   }
 
   app.setName('RedisInsight');
-  app.setAppUserModelId('RedisInsight-preview');
+  app.setAppUserModelId('RedisInsight');
   if (process.platform !== 'darwin') {
     app.setAboutPanelOptions(AboutPanelOptions);
   }
@@ -379,8 +379,6 @@ autoUpdater.on('update-downloaded', (info: UpdateDownloadedEvent) => {
   store?.set(ElectronStorageItem.updateDownloadedForTelemetry, true);
   store?.set(ElectronStorageItem.updateDownloadedVersion, info.version);
   store?.set(ElectronStorageItem.updatePreviousVersion, app.getVersion());
-
-  log.info('Path to downloaded file: ', info.downloadedFile);
 });
 
 app.on('certificate-error', (event, _webContents, _url, _error, _certificate, callback) => {

@@ -12,7 +12,12 @@ export const initialState: StateAppContext = {
       scrollTopPosition: 0,
       selectedKey: null
     },
-    panelSizes: {}
+    panelSizes: {},
+    tree: {
+      panelSizes: {},
+      openNodes: {},
+      selectedLeaf: {},
+    }
   },
   workbench: {
     script: '',
@@ -48,6 +53,15 @@ const appContextSlice = createSlice({
     setBrowserPanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.panelSizes = payload
     },
+    setBrowserTreeSelectedLeaf: (state, { payload }: { payload: any }) => {
+      state.browser.tree.selectedLeaf = payload
+    },
+    setBrowserTreeNodesOpen: (state, { payload }: { payload: { [key: string]: boolean; } }) => {
+      state.browser.tree.openNodes = payload
+    },
+    setBrowserTreePanelSizes: (state, { payload }: { payload: any }) => {
+      state.browser.tree.panelSizes = payload
+    },
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
     },
@@ -71,6 +85,10 @@ const appContextSlice = createSlice({
       state.workbench.enablementArea.guidePath = ''
       state.workbench.enablementArea.guideScrollTop = 0
     },
+    resetBrowserTree: (state) => {
+      state.browser.tree.selectedLeaf = {}
+      state.browser.tree.openNodes = {}
+    }
   },
 })
 
@@ -82,6 +100,10 @@ export const {
   setBrowserSelectedKey,
   setBrowserKeyListScrollPosition,
   setBrowserPanelSizes,
+  setBrowserTreeSelectedLeaf,
+  setBrowserTreeNodesOpen,
+  resetBrowserTree,
+  setBrowserTreePanelSizes,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
@@ -95,6 +117,8 @@ export const appContextSelector = (state: RootState) =>
   state.app.context
 export const appContextBrowser = (state: RootState) =>
   state.app.context.browser
+export const appContextBrowserTree = (state: RootState) =>
+  state.app.context.browser.tree
 export const appContextWorkbench = (state: RootState) =>
   state.app.context.workbench
 export const appContextSelectedKey = (state: RootState) =>

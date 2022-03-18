@@ -14,7 +14,7 @@ export interface Props {
 
 const Code = ({ children, ...rest }: Props) => {
   const { search } = useLocation()
-  const { setScript } = useContext(EnablementAreaContext)
+  const { setScript, isCodeBtnDisabled } = useContext(EnablementAreaContext)
 
   const loadContent = () => {
     const pagePath = new URLSearchParams(search).get('guide')
@@ -27,7 +27,7 @@ const Code = ({ children, ...rest }: Props) => {
   }
 
   return (
-    <CodeButton className="mb-s mt-s" onClick={loadContent} {...rest} />
+    <CodeButton className="mb-s mt-s" onClick={loadContent} disabled={isCodeBtnDisabled} {...rest} />
   )
 }
 

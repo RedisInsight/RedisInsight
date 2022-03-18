@@ -21,6 +21,15 @@ if not exist "%PLUGINS_DIR%\redisearch\dist" mkdir "%PLUGINS_DIR%\redisearch\dis
 xcopy "%REDISEARCH_DIR%\dist" "%PLUGINS_DIR%\redisearch\dist\" /s /e /y
 copy "%REDISEARCH_DIR%\package.json" "%PLUGINS_DIR%\redisearch\"
 
+:: Build redisgraph plugin
+set REDISGRAPH_DIR=".\redisinsight\ui\src\packages\redisgraph"
+call yarn --cwd "%REDISGRAPH_DIR%"
+call yarn --cwd "%REDISGRAPH_DIR%" build
+if not exist "%PLUGINS_DIR%\redisgraph" mkdir "%PLUGINS_DIR%\redisgraph"
+if not exist "%PLUGINS_DIR%\redisgraph\dist" mkdir "%PLUGINS_DIR%\redisgraph\dist"
+xcopy "%REDISGRAPH_DIR%\dist" "%PLUGINS_DIR%\redisgraph\dist\" /s /e /y
+copy "%REDISGRAPH_DIR%\package.json" "%PLUGINS_DIR%\redisgraph\"
+
 :: Build redistimeseries plugin
 set REDISTIMESERSIES_DIR=".\redisinsight\ui\src\packages\redistimeseries-app"
 call yarn --cwd "%REDISTIMESERSIES_DIR%"

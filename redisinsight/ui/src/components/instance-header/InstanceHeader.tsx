@@ -5,8 +5,10 @@ import cx from 'classnames'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
+import { BuildType } from 'uiSrc/constants/env'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
 import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
 
@@ -22,6 +24,7 @@ const InstanceHeader = () => {
     db = 0
   } = useSelector(connectedInstanceSelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
+  const { server } = useSelector(appInfoSelector)
   const history = useHistory()
   const [windowDimensions, setWindowDimensions] = useState(0)
 
@@ -45,18 +48,19 @@ const InstanceHeader = () => {
     <div className={cx(styles.container)}>
       <EuiFlexGroup gutterSize="none" responsive={false}>
         <EuiFlexItem style={{ overflow: 'hidden' }}>
-          <div className={styles.breadcrumbsContainer}>
+          <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
               <EuiToolTip
                 position="bottom"
-                content="My Redis databases"
+                content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
               >
                 <EuiButtonIcon
                   display="empty"
                   size="s"
                   iconSize="l"
                   iconType="sortLeft"
-                  aria-label="My Redis databases"
+                  aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+                  data-testid="my-redis-db-icon"
                   onClick={goHome}
                 />
               </EuiToolTip>

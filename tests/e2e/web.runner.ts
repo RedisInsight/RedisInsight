@@ -1,7 +1,7 @@
 import testcafe from 'testcafe';
 
 (async(): Promise<void> => {
-    await testcafe('localhost')
+    await testcafe()
         .then(t => {
             return t
                 .createRunner()

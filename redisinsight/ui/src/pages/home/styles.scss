@@ -290,6 +290,7 @@
     padding: 40px 30px 25px;
     border: 1px solid var(--euiColorPrimary);
     margin-right: 5px;
+    border-radius: 4px;
 
     @media only screen and (max-width: 767px) {
       height: calc(100vh - 340px);
@@ -315,6 +316,7 @@
     padding: 3px 18px 18px;
     background-color: var(--euiColorLightestShade) !important;
     border: 1px solid var(--euiColorLightShade);
+    border-radius: 4px;
 
     .euiSelect,
     .euiSuperSelectControl,
@@ -373,7 +375,7 @@
     margin-right: 20px;
   }
 
-  .flexGroupResposiveForm {
+  .flexGroupResponsiveForm {
     flex-wrap: wrap;
     margin-left: 0;
     margin-right: 0;

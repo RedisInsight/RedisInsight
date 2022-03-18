@@ -66,10 +66,10 @@ const QueryCardCliPlugin = (props: Props) => {
     pluginIframeRef?.current?.contentWindow?.dispatchEvent(event)
   }
 
-  const executeCommand = () => {
+  const executeCommand = (method: string) => {
     sendMessageToPlugin({
       event: 'executeCommand',
-      method: currentView.activationMethod,
+      method,
       data: { command: query, data: result }
     })
   }
@@ -167,7 +167,7 @@ const QueryCardCliPlugin = (props: Props) => {
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.loaded, () => {
       setIsPluginLoaded(true)
       setError('')
-      executeCommand()
+      executeCommand(currentView.activationMethod)
     })
 
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.error, (error: string) => {
@@ -226,7 +226,7 @@ const QueryCardCliPlugin = (props: Props) => {
         setCurrentPlugin(plugin?.name || null)
         return
       }
-      executeCommand()
+      executeCommand(view.activationMethod)
     }
   }, [result, id])
 

@@ -390,8 +390,8 @@ jobs:
           name: Setup sign certificates
           command: |
             mkdir -p certs
-            echo "$CSC_P12_HEX" | xxd -r -p > certs/cert.p12
-            echo "$WIN_CSC_PFX_HEX" | xxd -r -p > certs/redislabs_win.pfx
+            echo "$CSC_P12_BASE64" | base64 -id > certs/cert.p12
+            echo "$WIN_CSC_PFX_BASE64" | base64 -id > certs/redislabs_win.pfx
       - persist_to_workspace:
           root: .
           paths:
@@ -455,6 +455,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo apt-get update -y && sudo apt-get install -y rpm
             yarn --cwd redisinsight/api/ install
             yarn install
             yarn build:statics
@@ -478,6 +479,10 @@ jobs:
             equal: [ true, << parameters.redisstack >> ]
           steps:
             - run:
+                name: Repack AppImage to tar
+                command: |
+                  ARCH=x86_64 ./.circleci/redisstack/app-image.repack.sh
+            - run:
                 name: Build sources
                 command: ./.circleci/redisstack/build.sh
             - run:
@@ -491,6 +496,7 @@ jobs:
           root: .
           paths:
             - release/RedisInsight*.deb
+            - release/RedisInsight*.rpm
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
             - release/redisstack
@@ -538,6 +544,12 @@ jobs:
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             rm -rf release/mac
           no_output_timeout: 15m
+
+      - run:
+          name: Repack dmg to tar
+          command: |
+            ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
+            ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -545,6 +557,7 @@ jobs:
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
             - release/*-mac.yml
+            - release/redisstack
   windows:
     executor:
       name: win/default
@@ -662,6 +675,19 @@ jobs:
             applicationVersion=$(jq -r '.version' electron/package.json)
             echo "APP VERSION $applicationVersion"
             ghr -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${applicationVersion}
+
+  release-aws-test:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: publish
+          command: |
+            rm release/._* ||:
+            applicationVersion=$(jq -r '.version' redisinsight/package.json)
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*.json"
 
   release-aws-private:
     executor: linux-executor
@@ -879,6 +905,13 @@ workflows:
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
 
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+
       # build and release electron app (stage)
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
@@ -905,6 +938,14 @@ workflows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
           <<: *stageFilter
+
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
+
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team

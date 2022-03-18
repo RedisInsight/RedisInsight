@@ -5,15 +5,15 @@ import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
 import {
-  fetchInstanceAction,
-  getDatabaseConfigInfoAction,
+  fetchInstanceAction, fetchInstancesAction,
+  getDatabaseConfigInfoAction, instancesSelector,
 } from 'uiSrc/slices/instances'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
-import { resetKeys } from 'uiSrc/slices/keys'
+import { resetKeysData } from 'uiSrc/slices/keys'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
@@ -53,13 +53,16 @@ const InstancePage = ({ routes = [] }: Props) => {
   const dispatch = useDispatch()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
+  const { data: modulesData } = useSelector(instancesSelector)
   const { isShowMonitor } = useSelector(monitorSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
 
   const isShowBottomGroup = isShowCli || isShowHelper || isShowMonitor
 
   useEffect(() => {
-    dispatch(fetchInstanceAction(connectionInstanceId))
+    dispatch(fetchInstanceAction(connectionInstanceId, () => {
+      !modulesData.length && dispatch(fetchInstancesAction())
+    }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
 
     if (contextInstanceId !== connectionInstanceId) {
@@ -82,7 +85,7 @@ const InstancePage = ({ routes = [] }: Props) => {
   const resetContext = () => {
     dispatch(setMonitorInitialState())
     dispatch(setAppContextInitialState())
-    dispatch(resetKeys())
+    dispatch(resetKeysData())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

@@ -9,7 +9,6 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import QueryWrapper from 'uiSrc/components/query'
-import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import {
   setWorkbenchVerticalPanelSizes,
   appContextWorkbench
@@ -27,15 +26,15 @@ const verticalPanelIds = {
 }
 
 export interface Props {
-  script: string;
-  loading: boolean;
-  items: CommandExecutionUI[];
-  setScript: (script: string) => void;
-  setScriptEl: Function;
-  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>;
-  scrollDivRef: Ref<HTMLDivElement>;
-  onSubmit: (query?: string, commandId?: string, type?: WBQueryType) => void;
-  onQueryOpen: (commandId?: string) => void;
+  script: string
+  loading: boolean
+  items: CommandExecutionUI[]
+  setScript: (script: string) => void
+  setScriptEl: Function
+  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
+  scrollDivRef: Ref<HTMLDivElement>
+  onSubmit: (query?: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
+  onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
 }
 
@@ -55,6 +54,7 @@ const WBView = (props: Props) => {
   const [isMinimized, setIsMinimized] = useState<boolean>(
     (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
   )
+  const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 
   const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
 
@@ -84,6 +84,7 @@ const WBView = (props: Props) => {
             setIsMinimized={setIsMinimized}
             setScript={setScript}
             scriptEl={scriptEl}
+            isCodeBtnDisabled={isCodeBtnDisabled}
           />
         </div>
         <div className={cx(styles.content, { [styles.minimized]: isMinimized })}>
@@ -104,6 +105,7 @@ const WBView = (props: Props) => {
                     loading={loading}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
+                    setIsCodeBtnDisabled={setIsCodeBtnDisabled}
                     onSubmit={onSubmit}
                   />
                 </EuiResizablePanel>

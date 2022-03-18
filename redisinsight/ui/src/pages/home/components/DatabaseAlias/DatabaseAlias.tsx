@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useEffect } from 'react'
+import React, { ChangeEvent, useState, useEffect, useContext } from 'react'
 import {
   EuiButton,
   EuiFieldText,
@@ -10,7 +10,11 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
+import { Theme } from 'uiSrc/constants'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
+import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 
 import styles from './styles.module.scss'
 
@@ -20,14 +24,17 @@ interface Props {
   onOpen: () => void
   isLoading: boolean
   onApplyChanges: (value: string, onSuccess?: () => void, onFail?: () => void) => void
+  isRediStack?: boolean
 }
 
 const DatabaseAlias = (props: Props) => {
-  const { alias, database, onOpen, onApplyChanges, isLoading } = props
+  const { alias, database, onOpen, onApplyChanges, isLoading, isRediStack } = props
 
   const [isEditing, setIsEditing] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const [value, setValue] = useState(alias)
+
+  const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
     setValue(alias)
@@ -69,7 +76,16 @@ const DatabaseAlias = (props: Props) => {
   }
 
   return (
-    <EuiFlexGroup responsive={false} justifyContent="spaceBetween">
+    <EuiFlexGroup responsive={false} justifyContent="spaceBetween" gutterSize="xs">
+      {isRediStack && (
+        <EuiFlexItem grow={false}>
+          <EuiIcon
+            type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+            className={styles.redistackIcon}
+            data-testid="redis-stack-icon"
+          />
+        </EuiFlexItem>
+      )}
       <EuiFlexItem
         onMouseEnter={onMouseEnterAlias}
         onMouseLeave={onMouseLeaveAlias}

@@ -20,7 +20,7 @@
 }
 
 .overview {
-  &.noModules {
+  &.noModules, &.RediStack {
     .overviewItem {
       &:last-child {
         border-right: 1px solid var(--separatorColor);
@@ -90,6 +90,25 @@
     margin-right: 6px;
     font-size: 12px;
     font-weight: 200;
+  }
+}
+
+.RediStackLogoWrapper {
+  padding: 0 6px;
+  .redistackLogoIcon {
+    width: 24px;
+    height: 24px;
+    @media only screen and (min-width: 1124px) {
+      display: none;
+    }
+  }
+  .redistackIcon {
+    display: none;
+    width: 114px;
+    height: 18px;
+    @media only screen and (min-width: 1124px) {
+      display: block;
+    }
   }
 }
 

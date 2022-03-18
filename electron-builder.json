@@ -1,5 +1,5 @@
 {
-  "productName": "RedisInsight-preview",
+  "productName": "RedisInsight-V2",
   "appId": "org.RedisLabs.RedisInsight-V2",
   "copyright": "Copyright © 2021 Redis Ltd.",
   "files": [
@@ -12,7 +12,7 @@
     "package.json"
   ],
   "afterSign": "electron-builder-notarize",
-  "artifactName": "${productName}.${ext}",
+  "artifactName": "${productName}-${os}-${arch}.${ext}",
   "compression": "normal",
   "mac": {
     "target": [
@@ -32,7 +32,6 @@
     "gatekeeperAssess": false
   },
   "dmg": {
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "contents": [
       {
         "x": 130,
@@ -54,7 +53,7 @@
     "icon": "./resources/icons",
     "target": [
       {
-        "target": "zip",
+        "target": "AppImage",
         "arch": ["x64"]
       },
       {
@@ -62,13 +61,13 @@
         "arch": ["x64"]
       },
       {
-        "target": "AppImage",
+        "target": "rpm",
         "arch": ["x64"]
       }
     ],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
-    "artifactName": "${productName}-${os}.${ext}",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "desktop": {
       "Name": "RedisInsight",
       "Type": "Application",

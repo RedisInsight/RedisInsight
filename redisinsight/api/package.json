@@ -11,7 +11,8 @@
   "scripts": {
     "build:defaults:commands": "ts-node ./scripts/default-commands.ts",
     "build:defaults:enablement-area": "ts-node ./scripts/default-enablement-area.ts",
-    "build:defaults": "yarn build:defaults:enablement-area && yarn build:defaults:commands",
+    "build:defaults:content": "ts-node ./scripts/default-content.ts",
+    "build:defaults": "yarn build:defaults:enablement-area && yarn build:defaults:commands yarn build:defaults:content",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "build:prod": "rimraf dist && nest build -p ./tsconfig.build.prod.json && cross-env NODE_ENV=production",

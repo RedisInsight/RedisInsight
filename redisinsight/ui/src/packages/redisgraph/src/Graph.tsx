@@ -43,6 +43,11 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
   const parsedResponse = responseParser(props.data)
   let nodeIds = new Set(parsedResponse.nodes.map(n => n.id))
   let edgeIds = new Set(parsedResponse.edges.map(e => e.id))
+
+  if (nodeIds.size === 0 && parsedResponse.nodeIds.length === 0) {
+    return <div className="responseFail">No vizualization data.</div>
+  }
+
   let data = {
     results: [{
       columns: parsedResponse.headers,
@@ -288,7 +293,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
           </div>
         }
       </div>
-      <div ref={d3Container} id="graphd3" style={{ height: "800px" }}></div>
+      <div ref={d3Container} id="graphd3"></div>
       <div
         style={{
           position: 'absolute',

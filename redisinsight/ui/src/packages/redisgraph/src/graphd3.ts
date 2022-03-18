@@ -78,9 +78,11 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
   let svgTranslate: number[];
   let node: any;
   let justLoaded = false;
-  var nominalTextSize = 10;
-  var maxTextSize = 24;
+  let nominalTextSize = 10;
+  let maxTextSize = 24;
   const VERSION = '2.0.0';
+  let coreSvg = null;
+  let height = 585;
 
   let zoomFuncs = {}
 
@@ -99,9 +101,9 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
   }
 
   function appendGraph(container: d3.Selection<any, unknown, null, undefined>) {
-    var mainSvg = container.append('svg')
+    let mainSvg = container.append('svg')
     .attr('width', '100%')
-    .attr('height', '100%')
+    .attr('height', height)
     .attr('class', 'graphd3-graph')
     .call(options.graphZoom.on('zoom', (event) => {
       let scale = event.transform.k;
@@ -113,8 +115,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
       if (svgScale) {
         scale *= svgScale;
       }
-      var text = svg.selectAll('.node .text');
-      var textSize = nominalTextSize;
+      let text = svg.selectAll('.node .text');
+      let textSize = nominalTextSize;
       if (nominalTextSize * scale > maxTextSize) textSize = maxTextSize / scale;
       text.attr("font-size", (textSize - 3) + "px");
       text.text((d) => {
@@ -146,6 +148,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
 
     svgNodes = svg.append('g')
       .attr('class', 'nodes');
+
+    coreSvg = mainSvg
   }
 
   function appendInfoPanel(container) {
@@ -465,10 +469,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
 
   function updateNodesAndRelationships(n, r) {
 
-    var nodeIds = nodes.map(n => n.id)
+    let nodeIds = nodes.map(n => n.id)
     n = n.filter(k => !nodeIds.includes(k.id))
 
-    var edgeIds = relationships.map(e => e.id)
+    let edgeIds = relationships.map(e => e.id)
     r = r.filter(k => !edgeIds.includes(k.id))
 
     updateRelationships(r);
@@ -788,6 +792,22 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
   }
 
   init();
+
+  function resize() {
+    const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
+    if (isFullScreen) {
+      coreSvg.attr("height", parent.document.body.offsetHeight - 50)
+      coreSvg.transition().call(zoom.translateTo, ...ZOOM_PROPS.CAMERA_CENTER(coreSvg.node().getBoundingClientRect().width, coreSvg.node().getBoundingClientRect().height - 300))
+    } else {
+      coreSvg.attr("height", height)
+      coreSvg.transition().call(zoom.translateTo, ...ZOOM_PROPS.CAMERA_CENTER(coreSvg.node().getBoundingClientRect().width, coreSvg.node().getBoundingClientRect().height))
+    }
+    simulation.restart()
+  }
+
+  d3.select(window).on("resize", resize)
+
+  resize()
 
   return {
     graphDataToD3Data,

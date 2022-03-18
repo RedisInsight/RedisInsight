@@ -43,7 +43,7 @@ function responseParser(data: any) {
   let types: {[key: string]: number} = {}
   let labels: {[key: string]: number} = {}
   if (data.length === 0) return {
-    nodes, edges, types, labels
+    nodes, edges, types, labels, headers, nodeIds, edgeIds,
   }
   
   const entries = data[1].map((entry: any) => {

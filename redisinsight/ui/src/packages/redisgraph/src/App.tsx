@@ -90,7 +90,7 @@ function HandleError(props: { command?: string, data: any }): JSX.Element {
   const command = props.command.split(' ')
 
   if (command[command.length - 1] === '--compact') {
-    return <div className="responseFail">Queries with '--compact' flag is currently not supported.</div>
+    return <div className="responseFail">'--compact' flag is currently not supported.</div>
   }
 
   return null

@@ -390,8 +390,8 @@ jobs:
           name: Setup sign certificates
           command: |
             mkdir -p certs
-            echo "$CSC_P12_HEX" | xxd -r -p > certs/cert.p12
-            echo "$WIN_CSC_PFX_HEX" | xxd -r -p > certs/redislabs_win.pfx
+            echo "$CSC_P12_BASE64" | base64 -id > certs/cert.p12
+            echo "$WIN_CSC_PFX_BASE64" | base64 -id > certs/redislabs_win.pfx
       - persist_to_workspace:
           root: .
           paths:

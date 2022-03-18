@@ -51,7 +51,6 @@ describe('EnablementArea', () => {
       <EnablementArea
         {...instance(mockedProps)}
         guides={MOCK_GUIDES_ITEMS}
-        tutorials={MOCK_TUTORIALS_ITEMS}
       />
     )
     const loaderEl = queryByTestId('enablementArea-loader')

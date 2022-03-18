@@ -9,6 +9,7 @@ import {
   removeMonacoComments,
   splitMonacoValuePerLines,
   getMultiCommands,
+  scrollIntoView,
 } from 'uiSrc/utils'
 import {
   sendWBCommandAction,
@@ -165,7 +166,7 @@ const WBViewWrapper = () => {
   }
 
   const scrollResults = (inline: ScrollLogicalPosition = 'start') => {
-    scrollDivRef?.current?.scrollIntoView({
+    scrollIntoView(scrollDivRef?.current, {
       behavior: 'smooth',
       block: 'nearest',
       inline,

@@ -2,7 +2,7 @@ import React, { Ref, useEffect, useRef, useState } from 'react'
 import { EuiFlexGroup, EuiFlexItem, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { isModifiedEvent } from 'uiSrc/services'
 import { ClearCommand } from 'uiSrc/constants/cliOutput'
 import { outputSelector } from 'uiSrc/slices/cli/cli-output'
@@ -41,7 +41,7 @@ const CliBody = (props: Props) => {
 
   useEffect(() => {
     inputEl?.focus()
-    scrollDivRef?.current?.scrollIntoView({
+    scrollIntoView(scrollDivRef?.current, {
       behavior: 'smooth',
       block: 'nearest',
       inline: 'end',

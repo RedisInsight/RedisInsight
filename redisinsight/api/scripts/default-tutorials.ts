@@ -1,10 +1,9 @@
 import * as path from 'path';
-import { join } from 'path';
-import * as config from '../src/utils/config';
 import { getFile, updateFolderFromArchive, updateFile } from '../src/utils/file-helper';
+import { get } from '../src/utils/config';
 
-const PATH_CONFIG = config.get('dir_path');
-const TUTORIALS_CONFIG = config.get('tutorials');
+const PATH_CONFIG = get('dir_path');
+const TUTORIALS_CONFIG = get('tutorials');
 
 const archiveUrl = new URL(path.join(
   TUTORIALS_CONFIG.updateUrl,
@@ -15,8 +14,6 @@ const buildInfoUrl = new URL(path.join(
   TUTORIALS_CONFIG.updateUrl,
   TUTORIALS_CONFIG.buildInfo,
 )).toString();
-
-const buildInfoPath = join(PATH_CONFIG.defaultTutorials, TUTORIALS_CONFIG.buildInfo);
 
 async function init() {
   try {
@@ -30,7 +27,7 @@ async function init() {
     const buildInfo = await getFile(buildInfoUrl);
 
     // save build info to default folder
-    await updateFile(buildInfoPath, buildInfo);
+    await updateFile(PATH_CONFIG.defaultTutorials, TUTORIALS_CONFIG.buildInfo, buildInfo);
 
     process.exit(0);
   } catch (e) {

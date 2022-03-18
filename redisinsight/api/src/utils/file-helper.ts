@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as fs from 'fs-extra';
 import * as AdmZip from 'adm-zip';
+import { join } from 'path';
 
 /**
  * Download file
@@ -31,11 +32,12 @@ export const getFile = async (url: string): Promise<ArrayBuffer> => {
 /**
  * Exract file in folder
  */
-export const updateFile = async (path: string, data: any): Promise<void> => {
-  // await fs.ensureDir(path);
+export const updateFile = async (path: string, fileName: string, data: any): Promise<void> => {
 
-  // const zip = new AdmZip(data);
-  // zip.extractAllTo(path, true);
-  await fs.writeFile(path, data);
+  await fs.ensureDir(path);
+
+  const buildInfoPath = join(path, fileName);
+
+  await fs.writeFile(buildInfoPath, data);
 };
 

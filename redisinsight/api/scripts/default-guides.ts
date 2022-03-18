@@ -1,9 +1,5 @@
-import axios from 'axios';
-
 import * as path from 'path';
-import { join } from 'path';
 import { getFile, updateFolderFromArchive, updateFile } from '../src/utils/file-helper';
-
 import { get } from '../src/utils/config';
 
 const PATH_CONFIG = get('dir_path');
@@ -19,8 +15,6 @@ const buildInfoUrl = new URL(path.join(
   GUIDES_CONFIG.buildInfo,
 )).toString();
 
-const buildInfoPath = join(PATH_CONFIG.defaultGuides, GUIDES_CONFIG.buildInfo);
-
 async function init() {
   try {
     // // get archive
@@ -33,7 +27,7 @@ async function init() {
     const buildInfo = await getFile(buildInfoUrl);
 
     // save build info to default folder
-    await updateFile(buildInfoPath, buildInfo);
+    await updateFile(PATH_CONFIG.defaultGuides, GUIDES_CONFIG.buildInfo, buildInfo);
 
     process.exit(0);
   } catch (e) {

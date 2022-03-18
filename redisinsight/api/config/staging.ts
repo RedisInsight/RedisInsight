@@ -2,11 +2,14 @@ import { join } from 'path';
 import * as os from 'os';
 
 const homedir = process.env.APP_FOLDER_ABSOLUTE_PATH
-  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2.0-stage'));
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2-stage'));
+
+const prevHomedir = join(os.homedir(), '.redisinsight-v2.0-stage');
 
 export default {
   dir_path: {
     homedir,
+    prevHomedir,
     logs: join(homedir, 'logs'),
     customPlugins: join(homedir, 'plugins'),
     commands: join(homedir, 'commands'),

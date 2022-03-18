@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ARCH=${ARCH:-x64}
+ARCH=${ARCH:-x86_64}
 WORKING_DIRECTORY=$(pwd)
-SOURCE_APP=${SOURCE_APP:-"RedisInsight-preview-linux.AppImage"}
-APP_FOLDER_NAME="RedisInsight-preview-linux"
-TAR_NAME="RedisInsight-preview-app-linux.$ARCH.tar.gz"
+SOURCE_APP=${SOURCE_APP:-"RedisInsight-V2-linux-$ARCH.AppImage"}
+APP_FOLDER_NAME="RedisInsight-V2-linux"
+TAR_NAME="RedisInsight-V2-app-linux.$ARCH.tar.gz"
 TMP_FOLDER="/tmp/RedisInsight-app-$ARCH"
 
 rm -rf "$TMP_FOLDER"

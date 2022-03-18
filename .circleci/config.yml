@@ -481,8 +481,7 @@ jobs:
             - run:
                 name: Repack AppImage to tar
                 command: |
-                  ARCH=x64 ./.circleci/redisstack/app-image.repack.sh
-#                  ARCH=arm64 ./.circleci/redisstack/app-image.repack.sh
+                  ARCH=x86_64 ./.circleci/redisstack/app-image.repack.sh
             - run:
                 name: Build sources
                 command: ./.circleci/redisstack/build.sh

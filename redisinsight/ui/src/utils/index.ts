@@ -36,6 +36,7 @@ export * from './monitorUtils'
 export * from './handlePlatforms'
 export * from './plugins'
 export * from './redistack'
+export * from './polyfills'
 
 export {
   Maybe,

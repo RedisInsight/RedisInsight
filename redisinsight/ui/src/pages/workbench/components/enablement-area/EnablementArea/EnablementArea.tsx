@@ -40,12 +40,12 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
     const pagePath = new URLSearchParams(search).get('item')
     if (pagePath) {
       setIsInternalPageVisible(true)
-      setInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}/${pagePath}` })
+      setInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}${pagePath}` })
 
       return
     }
     if (itemFromContext) {
-      handleOpenInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}/${itemFromContext}` })
+      handleOpenInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}${itemFromContext}` })
       return
     }
     setIsInternalPageVisible(false)

@@ -224,20 +224,20 @@ describe('slices', () => {
         workbench: {
           ...initialState.workbench,
           enablementArea: {
-            ItemPath: 'static/enablement-area/guides/guide1.html',
-            ItemScrollTop: 200,
+            itemPath: 'static/enablement-area/guides/guide1.html',
+            itemScrollTop: 200,
           }
         },
       }
-      const ItemPath = 'static/enablement-area/guides/guide2.html'
+      const itemPath = 'static/enablement-area/guides/guide2.html'
       const state = {
         ...initialState.workbench.enablementArea,
-        ItemPath,
-        ItemScrollTop: 0,
+        itemPath,
+        itemScrollTop: 0,
       }
 
       // Act
-      const nextState = reducer(prevState, setWorkbenchEAItem(ItemPath))
+      const nextState = reducer(prevState, setWorkbenchEAItem(itemPath))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -253,7 +253,7 @@ describe('slices', () => {
       // Arrange
       const state = {
         ...initialState.workbench.enablementArea,
-        ItemScrollTop: 200,
+        itemScrollTop: 200,
       }
 
       // Act
@@ -276,15 +276,15 @@ describe('slices', () => {
         workbench: {
           ...initialState.workbench,
           enablementArea: {
-            ItemPath: 'static/enablement-area/guides/guide1.html',
-            ItemScrollTop: 200,
+            itemPath: 'static/enablement-area/guides/guide1.html',
+            itemScrollTop: 200,
           }
         },
       }
       const state = {
         ...initialState.workbench.enablementArea,
-        ItemPath: '',
-        ItemScrollTop: 0,
+        itemPath: '',
+        itemScrollTop: 0,
       }
 
       // Act

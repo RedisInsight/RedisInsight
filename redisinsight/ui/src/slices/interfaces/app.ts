@@ -59,8 +59,8 @@ export interface StateAppContext {
   workbench: {
     script: string;
     enablementArea: {
-      ItemPath: string;
-      ItemScrollTop: number;
+      itemPath: string;
+      itemScrollTop: number;
     },
     panelSizes: {
       vertical: {

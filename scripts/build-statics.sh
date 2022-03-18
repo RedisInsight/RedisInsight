@@ -25,3 +25,10 @@ yarn --cwd "${REDISGRAPH_DIR}"
 yarn --cwd "${REDISGRAPH_DIR}" build
 mkdir -p "${PLUGINS_DIR}/redisgraph"
 cp -R "${REDISGRAPH_DIR}/dist" "${REDISGRAPH_DIR}/package.json" "${PLUGINS_DIR}/redisgraph"
+
+# Build timeseries plugin
+REDISTIMESERIES_DIR="./redisinsight/ui/src/packages/redistimeseries-app"
+yarn --cwd "${REDISTIMESERIES_DIR}"
+yarn --cwd "${REDISTIMESERIES_DIR}" build
+mkdir -p "${PLUGINS_DIR}/redistimeseries-app"
+cp -R "${REDISTIMESERIES_DIR}/dist" "${REDISTIMESERIES_DIR}/package.json" "${PLUGINS_DIR}/redistimeseries-app"

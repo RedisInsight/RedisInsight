@@ -30,7 +30,7 @@ services:
   # Redisinsight API + UI build
   app:
     cap_add:
-      - ipc_lock
+      - IPC_LOCK
     env_file:
       - ./.env
     build:

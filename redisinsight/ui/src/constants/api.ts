@@ -45,13 +45,13 @@ enum ApiEndpoints {
   WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
 
   REDIS_COMMANDS = 'commands',
-  GUIDES = 'static/workbench/guides/guides.json',
+  GUIDES = 'static/guides/guides.json',
   // TODO double check it, when tutorials will be completed
-  TUTORIALS = 'static/workbench/tutorials/tutorials.json',
+  TUTORIALS = 'static/tutorials/tutorials.json',
   PLUGINS = 'plugins',
   STATE = 'state',
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
-  ENABLEMENT_AREA_PATH = 'static/workbench',
+  ENABLEMENT_AREA_PATH = 'static',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

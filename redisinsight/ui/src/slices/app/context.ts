@@ -22,8 +22,8 @@ export const initialState: StateAppContext = {
   workbench: {
     script: '',
     enablementArea: {
-      ItemPath: '',
-      ItemScrollTop: 0,
+      itemPath: '',
+      itemScrollTop: 0,
     },
     panelSizes: {
       vertical: {}
@@ -72,18 +72,18 @@ const appContextSlice = createSlice({
       state.lastPage = payload
     },
     setWorkbenchEAItem: (state, { payload }: { payload: any }) => {
-      const prevValue = state.workbench.enablementArea.ItemPath
-      state.workbench.enablementArea.ItemPath = payload
+      const prevValue = state.workbench.enablementArea.itemPath
+      state.workbench.enablementArea.itemPath = payload
       if (prevValue !== payload) {
-        state.workbench.enablementArea.ItemScrollTop = 0
+        state.workbench.enablementArea.itemScrollTop = 0
       }
     },
     setWorkbenchEAItemScrollTop: (state, { payload }: { payload: any }) => {
-      state.workbench.enablementArea.ItemScrollTop = payload || 0
+      state.workbench.enablementArea.itemScrollTop = payload || 0
     },
     resetWorkbenchEAItem: (state) => {
-      state.workbench.enablementArea.ItemPath = ''
-      state.workbench.enablementArea.ItemScrollTop = 0
+      state.workbench.enablementArea.itemPath = ''
+      state.workbench.enablementArea.itemScrollTop = 0
     },
     resetBrowserTree: (state) => {
       state.browser.tree.selectedLeaf = {}

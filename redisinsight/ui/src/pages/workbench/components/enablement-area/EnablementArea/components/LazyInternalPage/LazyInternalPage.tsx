@@ -34,7 +34,7 @@ export interface Props {
 
 const LazyInternalPage = ({ onClose, title, path }: Props) => {
   const history = useHistory()
-  const { ItemScrollTop } = useSelector(appContextWorkbenchEA)
+  const { itemScrollTop } = useSelector(appContextWorkbenchEA)
   const guides = useSelector(workbenchGuidesSelector)
   const [isLoading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
@@ -88,7 +88,7 @@ const LazyInternalPage = ({ onClose, title, path }: Props) => {
       content={pageData.content}
       error={error}
       onScroll={handlePageScroll}
-      scrollTop={ItemScrollTop}
+      scrollTop={itemScrollTop}
       pagination={pageData.relatedPages}
     />
   )

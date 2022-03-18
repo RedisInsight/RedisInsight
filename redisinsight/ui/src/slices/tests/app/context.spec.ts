@@ -23,7 +23,7 @@ import reducer, {
   setWorkbenchEAItem,
   appContextWorkbenchEA,
   setWorkbenchEAItemScrollTop,
-  resetWorkbenchEAItem
+  resetWorkbenchEAItem,
   setBrowserTreeNodesOpen,
   setBrowserTreePanelSizes,
   resetBrowserTree,

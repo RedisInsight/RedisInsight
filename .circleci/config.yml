@@ -455,6 +455,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo apt-get update -y && sudo apt-get install -y rpm
             yarn --cwd redisinsight/api/ install
             yarn install
             yarn build:statics
@@ -492,6 +493,7 @@ jobs:
           paths:
             - release/RedisInsight*.deb
             - release/RedisInsight*.AppImage
+            - release/RedisInsight*.rpm
             - release/*-linux.yml
             - release/redisstack
   macosx:
@@ -662,6 +664,19 @@ jobs:
             applicationVersion=$(jq -r '.version' electron/package.json)
             echo "APP VERSION $applicationVersion"
             ghr -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${applicationVersion}
+
+  release-aws-test:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: publish
+          command: |
+            rm release/._* ||:
+            applicationVersion=$(jq -r '.version' redisinsight/package.json)
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*.json"
 
   release-aws-private:
     executor: linux-executor
@@ -879,6 +894,13 @@ workflows:
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
 
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+
       # build and release electron app (stage)
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
@@ -905,6 +927,14 @@ workflows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
           <<: *stageFilter
+
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
+
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team

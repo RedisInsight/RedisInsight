@@ -1,6 +1,8 @@
 import { join } from 'path';
+import * as os from 'os';
 
-const homedir = join(require('os').homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-preview');
+const homedir = process.env.APP_FOLDER_ABSOLUTE_PATH
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-preview'));
 
 export default {
   dir_path: {

@@ -497,8 +497,8 @@ jobs:
           root: .
           paths:
             - release/RedisInsight*.deb
-            - release/RedisInsight*.AppImage
             - release/RedisInsight*.rpm
+            - release/RedisInsight*.AppImage
             - release/*-linux.yml
             - release/redisstack
   macosx:

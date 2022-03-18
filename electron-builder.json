@@ -94,7 +94,7 @@
     },
     {
       "from": "./resources/app",
-      "to": "../app",
+      "to": "./app",
       "filter": ["**/*"]
     }
   ]

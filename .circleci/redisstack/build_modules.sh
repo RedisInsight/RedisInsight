@@ -19,10 +19,14 @@ cp redisinsight/api/.yarnclean.prod redisinsight/api/.yarnclean
 yarn --cwd ./redisinsight/api autoclean --force
 
 rm -rf redisinsight/build.zip
+
+cp LICENSE ./redisinsight
+
 cd redisinsight && tar -czvf build.tar.gz \
 api/node_modules \
 api/dist \
 ui/dist \
+LICENSE \
 && cd ..
 
 mkdir -p release/redisstack

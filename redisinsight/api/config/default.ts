@@ -5,7 +5,6 @@ const homedir = join(__dirname, '..');
 const buildInfoFileName = 'build.json';
 const dataZipFileName = 'data.zip';
 
-
 const staticDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'static')
   : join(__dirname, '..', 'static');
@@ -17,6 +16,7 @@ const defaultsDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesP
 export default {
   dir_path: {
     homedir,
+    prevHomedir: homedir,
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),

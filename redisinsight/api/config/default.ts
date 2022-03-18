@@ -1,8 +1,6 @@
 import { join } from 'path';
 
-const prevHomedir = join(__dirname, '..', '.redisinsight-v2.0-dev');
-
-const homedir = join(__dirname, '..', '.redisinsight-v2-dev');
+const homedir = join(__dirname, '..');
 
 const buildInfoFileName = 'build.json';
 const dataZipFileName = 'data.zip';
@@ -18,7 +16,7 @@ const defaultsDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesP
 export default {
   dir_path: {
     homedir,
-    prevHomedir,
+    prevHomedir: homedir,
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),

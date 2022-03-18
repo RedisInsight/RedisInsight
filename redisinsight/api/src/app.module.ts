@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 import {
   MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
@@ -73,14 +73,18 @@ const PATH_CONFIG = config.get('dir_path');
   providers: [],
 })
 export class AppModule implements OnModuleInit, NestModule {
-  async onModuleInit() {
+  onModuleInit() {
     // creating required folders
     const foldersToCreate = [
       PATH_CONFIG.pluginsAssets,
       PATH_CONFIG.customPlugins,
     ];
 
-    await Promise.all(foldersToCreate.map(fs.ensureDir));
+    foldersToCreate.forEach((folder) => {
+      if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder, { recursive: true });
+      }
+    });
   }
 
   configure(consumer: MiddlewareConsumer) {

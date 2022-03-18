@@ -1,6 +1,6 @@
 # RedisInsight-plugin-sdk
 
-This document describes the high-level API for communication between RedisInsight
+The high-level API for communication between RedisInsight
 plugin and RedisInsight application.
 
 ## Usage
@@ -63,7 +63,7 @@ try {
 
 ### getState()
 
-Returns the_saved state for the command visualization.
+Returns saved state for the command visualization.
 
 Throw an error if the state has not been saved.
 

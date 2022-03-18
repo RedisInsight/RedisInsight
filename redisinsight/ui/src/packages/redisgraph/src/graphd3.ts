@@ -124,7 +124,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
         if (typeof options.onLabelNode === 'function') {
           label = options.onLabelNode(d);
         } else {
-          label = d.properties?.name || (d.labels ? d.labels[0] : '');
+          label = d.properties?.name || (d.labels?.length ? d.labels[0] : '');
         }
         let maxLength = (maxTextSize - textSize) + 3;
         return label.length > maxLength ? Utils.truncateText(label, maxLength) : label;
@@ -241,7 +241,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
     return node.enter()
       .append('g')
       .attr('class', (d) => {
-        const label = d.labels[0];
+        const label = d.labels?.length ? d.labels[0] : '';
         let classes = 'node';
         let highlight;
 
@@ -303,16 +303,17 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
 
   function appendRingToNode(svgNode) {
     return svgNode.append('circle')
-      .attr('class', 'ring')
-      .attr('r', options.nodeRadius * 1.16);
+    .attr('class', 'ring')
+    .style('stroke', (d) => labelColors(d.labels?.length ? d.labels[0] : '').borderColor)
+    .attr('r', options.nodeRadius * 1.16);
   }
 
   function appendOutlineToNode(svgNode) {
     return svgNode.append('circle')
       .attr('class', 'outline')
       .attr('r', options.nodeRadius)
-      .style('fill', (d) => labelColors(d.labels[0]).color)
-      .style('stroke', (d) => labelColors(d.labels[0]).borderColor);
+      .style('fill', (d) => labelColors(d.labels?.length ? d.labels[0] : '').color)
+      .style('stroke', (d) => labelColors(d.labels?.length ? d.labels[0] : '').borderColor);
   }
 
   function appendNodeInfo(svgNode) {
@@ -353,7 +354,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
         if (typeof options.onLabelNode === 'function') {
           label = options.onLabelNode(d);
         } else {
-          label = d.properties?.name || (d.labels ? d.labels[0] : '');
+          label = d.properties?.name || (d.labels?.length ? d.labels[0] : '');
         }
 
         let maxLength = maxTextSize - nominalTextSize - 5;
@@ -361,7 +362,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
       })
       .attr('class', 'text')
       .attr('font-size', (d) => nominalTextSize + "px")
-      .attr('fill', (d) => labelColors(d.labels[0]).textColor)
+      .attr('fill', (d) => labelColors(d.labels?.length ? d.labels[0] : '').textColor)
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')
       .attr('dy', () => options.nodeRadius / ((options.nodeRadius * 25) / 100));
@@ -408,7 +409,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
 
   function appendOverlayToRelationship(r) {
     return r.append('path')
-      .attr('class', 'overlay');
+    .attr('class', 'overlay')
+    .style('fill', (d) => edgeColors(d.type).color)
   }
 
   function appendTextToRelationship(r) {

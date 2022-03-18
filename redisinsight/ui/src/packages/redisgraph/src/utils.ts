@@ -78,7 +78,8 @@ export const unitaryVector = (source, target, newLength) => {
 export const darkenColor = (color) => d3.rgb(color).darker(1);
 
 
-function charCodeSum(str: string) {
+function charCodeSum(str: string | undefined) {
+  if (str === undefined) return 0
   let sum = 0
   for (let i = 0; i < str.length; i++) {
     sum += str.charCodeAt(i)

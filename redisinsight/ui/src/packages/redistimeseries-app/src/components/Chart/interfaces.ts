@@ -45,3 +45,26 @@ export interface ChartConfig {
 }
 
 export type ChartImageExportOption = 'png' | 'svg'
+
+export interface ChartProps {
+    data: TimeSeries[]
+    chartConfig: ChartConfig
+    onRelayout: () => void
+    onDoubleClick: () => void
+}
+
+
+export enum PlotlyEvents {
+  PLOTLY_HOVER = 'plotly_hover',
+  PLOTLY_RELAYOUT = 'plotly_relayout',
+  PLOTLY_DBLCLICK = 'plotly_doubleclick',
+}
+
+export interface ChartConfigFormProps {
+  value: ChartConfig
+  onChange: (control: string, value: any) => void
+}
+
+export interface ChartConfigFormState {
+    moreOptions: boolean
+}

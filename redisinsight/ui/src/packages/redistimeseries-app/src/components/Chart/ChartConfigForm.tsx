@@ -1,40 +1,14 @@
 import React, { CSSProperties } from 'react'
-
 import {
   EuiFieldText,
   EuiSwitch,
-  EuiForm,
   EuiFormFieldset,
-  EuiSpacer,
-  EuiSelectProps,
   EuiButtonGroup,
   EuiAccordion,
   EuiButtonGroupProps,
 } from '@elastic/eui'
-
-import { ChartConfig, AxisScale, GraphMode } from './interfaces'
+import { AxisScale, GraphMode, ChartConfigFormProps, ChartConfigFormState } from './interfaces'
 import { X_LABEL_MAX_LENGTH, Y_LABEL_MAX_LENGTH, TITLE_MAX_LENGTH } from './constants'
-
-const styles = {
-  mainToggle: {
-    marginTop: '20px'
-  },
-  rightYAxis: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '100%',
-  } as CSSProperties,
-}
-
-
-interface ChartConfigFormProps {
-  value: ChartConfig
-  onChange: (control: string, value: any) => void
-}
-
-interface ChartConfigFormState {
-  moreOptions: boolean
-}
 
 export default class ChartConfigForm extends React.Component<ChartConfigFormProps, ChartConfigFormState> {
   state = {
@@ -97,7 +71,7 @@ export default class ChartConfigForm extends React.Component<ChartConfigFormProp
               </EuiFormFieldset>
             </section>
             <section>
-              <div style={styles.rightYAxis as CSSProperties}>
+              <div className="right-y-axis">
                 <div style={{ width: '100%' }}>
                   <EuiSwitch
                     compressed

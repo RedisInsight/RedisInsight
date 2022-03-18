@@ -35,13 +35,12 @@ appendIconComponentCache({
   check: EuiIconCheck,
 })
 
-const isDarkTheme = document.body.classList.contains('theme_DARK')
-
 const renderChart = (props:Props) => {
   const { command = '', data: result = [] } = props
   render(
     <App command={command} result={result} />,
-    document.getElementById('app'))
+    document.getElementById('app')
+  )
 }
 
 if (process.env.NODE_ENV === 'development') {

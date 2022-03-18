@@ -1,6 +1,4 @@
-/* eslint-disable react/jsx-filename-extension */
 import React from 'react'
-
 import ChartResultView from './components/Chart/ChartResultView'
 
 interface Props {

@@ -1,19 +1,15 @@
 import React, { useRef, useEffect } from 'react'
-import Plotly, { Layout } from 'plotly.js-dist-min'
-import { Legend, LayoutAxis, PlotData } from 'plotly.js'
-import moment from 'moment'
-import * as d3Scale from 'd3-scale'
-import * as d3ScaleColor from 'd3-scale-chromatic'
-import { hexToRGBA, IGoodColor, GoodColorPicker, NODE_COLORS, NODE_COLORS_DARK, EDGE_COLORS, EDGE_COLORS_DARK } from './utils'
+import Plotly from 'plotly.js-dist-min'
+import { Legend, LayoutAxis, PlotData, PlotMouseEvent, Layout, PlotRelayoutEvent } from 'plotly.js'
+import { format  } from 'date-fns'
+import { hexToRGBA, IGoodColor, GoodColorPicker, COLORS, COLORS_DARK } from './utils'
 
-import { Datapoint, TimeSeries, ChartConfig, GraphMode } from './interfaces'
-
-interface ChartProps {
-    data: TimeSeries[]
-    chartConfig: ChartConfig
-    onRelayout: () => void
-    onDoubleClick: () => void
-}
+import {
+  Datapoint,
+  GraphMode,
+  ChartProps,
+  PlotlyEvents,
+} from './interfaces'
 
 const GRAPH_MODE_MAP: { [mode: string]: 'lines' | 'markers' } = {
     [GraphMode.line]: 'lines',
@@ -27,10 +23,9 @@ const colorPicker =  (COLORS: IGoodColor[]) => {
     return (label: string) => color.getColor(label).color
 }
 
-const labelColors = colorPicker(isDarkTheme ? NODE_COLORS_DARK : NODE_COLORS)
-const edgeColors = colorPicker(isDarkTheme ? EDGE_COLORS_DARK : EDGE_COLORS)
+const labelColors = colorPicker(isDarkTheme ? COLORS_DARK : COLORS)
 
-export default function Chart(props: any) {
+export default function Chart(props: ChartProps) {
   const chartContainer = useRef<any>()
 
   const colorPicker = labelColors
@@ -39,12 +34,12 @@ export default function Chart(props: any) {
     Plotly.newPlot(
       chartContainer.current,
       getData(props),
-      getLayout(props) as any,
+      getLayout(props),
       { displayModeBar: false, autosizable: true, responsive: true, setBackground: () => 'transparent', },
     )
-    chartContainer.current.on('plotly_hover', function (eventdata) {
-      var points = eventdata.points[0]
-      var pointNum = points.pointNumber
+    chartContainer.current.on(PlotlyEvents.PLOTLY_HOVER, function (eventdata: PlotMouseEvent) {
+      const points = eventdata.points[0]
+      const pointNum = points.pointNumber
       Plotly.Fx.hover(
         chartContainer.current,
         props.data.map((_, i) => ({
@@ -53,37 +48,26 @@ export default function Chart(props: any) {
         })),
         Object.keys((chartContainer.current)._fullLayout._plots))
     })
-    chartContainer.current.on('plotly_relayout', function (eventdata) {
+    chartContainer.current.on(PlotlyEvents.PLOTLY_RELAYOUT, function (eventdata: PlotRelayoutEvent) {
      if (eventdata.autosize === undefined && eventdata['xaxis.autorange'] === undefined) {
         props.onRelayout()
       }
     })
 
-    chartContainer.current.on('plotly_doubleclick', function(eventdata) {
-      props.onDoubleClick()
-    })
+    chartContainer.current.on(PlotlyEvents.PLOTLY_DBLCLICK, () => props.onDoubleClick())
   }, [props.chartConfig])
-
-  function getPlotArgs(props: ChartProps) {
-    return [
-      chartContainer.current,
-      getData(props),
-      getLayout(props),
-      { displayModeBar: false },
-    ]
-  }
 
   function getData(props: ChartProps): Partial<PlotData>[] {
     return props.data.map((timeSeries, i) => {
 
-      const currentData = (chartContainer.current as any).data
+      const currentData = chartContainer.current.data
       const dataUnchanged = currentData && props.data === props.data
       /*
        * Time format for inclusion of milliseconds:
        * https://github.com/moment/moment/issues/4864#issuecomment-440142542
        */
       const x = dataUnchanged ? currentData[i].x
-              : selectCol(timeSeries.datapoints, 0).map((time: number) => moment(time).format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]'))
+              : selectCol(timeSeries.datapoints, 0).map((time: number) => format(time, 'yyyy-MM-dd HH:mm:ss.SSS'))
       const y = dataUnchanged ? currentData[i].y : selectCol(timeSeries.datapoints, 1)
 
       return {

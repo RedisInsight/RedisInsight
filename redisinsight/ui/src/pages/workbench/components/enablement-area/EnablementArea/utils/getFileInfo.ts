@@ -35,8 +35,8 @@ export const getFileInfo = (path: string): IFileInfo => {
   }
 }
 
-const EA_STATIC_PATH_REGEX = /^\/?static\/(workbench|enablement-area)\//
-const EA_STATIC_ROOT_PATH = /^\/?static\/(workbench|enablement-area)\/?$/
+const EA_STATIC_PATH_REGEX = /^\/?static\/(workbench|guides|tutorials)\//
+const EA_STATIC_ROOT_PATH = /^\/?static\/(workbench|guides|tutorials)\/?$/
 
 export const getPagesInsideGroup = (
   structure: Record<string, IEnablementAreaItem>,

@@ -1,4 +1,4 @@
-import { MOCK_ENABLEMENT_AREA_ITEMS } from 'uiSrc/constants'
+import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 import { getFileInfo, getPagesInsideGroup } from './getFileInfo'
 
 const getFileInfoTests = [
@@ -52,15 +52,15 @@ describe('getFileInfo', () => {
 
 const getPagesInsideGroupTests = [
   {
-    input: [MOCK_ENABLEMENT_AREA_ITEMS, '/static/workbench/quick-guides'],
-    expected: Object.values(MOCK_ENABLEMENT_AREA_ITEMS['quick-guides'].children || {})
+    input: [MOCK_GUIDES_ITEMS, '/static/workbench/quick-guides'],
+    expected: Object.values(MOCK_GUIDES_ITEMS['quick-guides'].children || {})
   },
   {
-    input: [MOCK_ENABLEMENT_AREA_ITEMS, '/static/workbench/'],
-    expected: [MOCK_ENABLEMENT_AREA_ITEMS['internal-page'], MOCK_ENABLEMENT_AREA_ITEMS['second-internal-page']]
+    input: [MOCK_GUIDES_ITEMS, '/static/workbench/'],
+    expected: [MOCK_GUIDES_ITEMS['internal-page'], MOCK_GUIDES_ITEMS['second-internal-page']]
   },
   {
-    input: [MOCK_ENABLEMENT_AREA_ITEMS, 'https://domen.com/workbench/enablement-area/'],
+    input: [MOCK_GUIDES_ITEMS, 'https://domen.com/workbench/enablement-area/'],
     expected: []
   },
   {

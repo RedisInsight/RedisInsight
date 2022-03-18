@@ -49,10 +49,7 @@ const Group = (props: Props) => {
       style={{ whiteSpace: 'nowrap', width: 'auto' }}
       className={[withBorder ? 'withBorder' : ''].join(' ')}
     >
-      <>
-        {children}
-        {withBorder && <div style={triggerStyle} className="divider"><hr /></div> }
-      </>
+      {children}
     </EuiAccordion>
   )
 }

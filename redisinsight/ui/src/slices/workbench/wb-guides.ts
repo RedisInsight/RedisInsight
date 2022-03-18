@@ -23,18 +23,18 @@ export const initialState: StateWorkbenchEnablementArea = {
 }
 
 // A slice for recipes
-const workbenchEnablementAreaSlice = createSlice({
-  name: 'workbenchEnablementArea',
+const workbenchGuidesSlice = createSlice({
+  name: 'workbenchGuides',
   initialState,
   reducers: {
-    getWBEnablementArea: (state) => {
+    getWBGuides: (state) => {
       state.loading = true
     },
-    getWBEnablementAreaSuccess: (state, { payload }) => {
+    getWBGuidesSuccess: (state, { payload }) => {
       state.loading = false
       state.items = payload
     },
-    getWBEnablementAreaFailure: (state, { payload }) => {
+    getWBGuidesFailure: (state, { payload }) => {
       state.loading = false
       state.error = payload
       state.items = defaultItems
@@ -43,34 +43,33 @@ const workbenchEnablementAreaSlice = createSlice({
 })
 
 // A selector
-export const workbenchEnablementAreaSelector = (state: RootState) => state.workbench.enablementArea
+export const workbenchGuidesSelector = (state: RootState) => state.workbench.guides
 
 // Actions generated from the slice
 export const {
-  getWBEnablementArea,
-  getWBEnablementAreaSuccess,
-  getWBEnablementAreaFailure,
-} = workbenchEnablementAreaSlice.actions
+  getWBGuides,
+  getWBGuidesSuccess,
+  getWBGuidesFailure,
+} = workbenchGuidesSlice.actions
 
 // The reducer
-export default workbenchEnablementAreaSlice.reducer
+export default workbenchGuidesSlice.reducer
 
 // Asynchronous thunk action
-export function fetchEnablementArea(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchGuides(onSuccessAction?: () => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch) => {
-    dispatch(getWBEnablementArea())
+    dispatch(getWBGuides())
 
     try {
       const { data, status } = await resourcesService
-        .get<Record<string, IEnablementAreaItem>>(ApiEndpoints.ENABLEMENT_AREA)
-
+        .get<Record<string, IEnablementAreaItem>>(ApiEndpoints.GUIDES)
       if (isStatusSuccessful(status)) {
-        dispatch(getWBEnablementAreaSuccess(data))
+        dispatch(getWBGuidesSuccess(data))
         onSuccessAction?.()
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
-      dispatch(getWBEnablementAreaFailure(errorMessage))
+      dispatch(getWBGuidesFailure(errorMessage))
       onFailAction?.()
     }
   }

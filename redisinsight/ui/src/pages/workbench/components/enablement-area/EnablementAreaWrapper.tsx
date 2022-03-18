@@ -8,7 +8,8 @@ import { useParams } from 'react-router-dom'
 
 import { Nullable, } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { fetchEnablementArea, workbenchEnablementAreaSelector } from 'uiSrc/slices/workbench/wb-enablement-area'
+import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
+import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'
@@ -25,12 +26,17 @@ export interface Props {
 }
 
 const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScript, isCodeBtnDisabled }: Props) => {
-  const { loading, items } = useSelector(workbenchEnablementAreaSelector)
+  const { loading: loadingGuides, items: guides } = useSelector(workbenchGuidesSelector)
+  const { loading: loadingTutorials, items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchEnablementArea())
+    dispatch(fetchGuides())
+  }, [])
+
+  useEffect(() => {
+    dispatch(fetchTutorials())
   }, [])
 
   const sendEventButtonClickedTelemetry = (data: Record<string, any>) => {
@@ -83,8 +89,9 @@ const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScrip
         grow={!isMinimized}
       >
         <EnablementArea
-          items={items}
-          loading={loading}
+          guides={guides}
+          tutorials={tutorials}
+          loading={loadingGuides || loadingTutorials}
           openScript={openScript}
           onOpenInternalPage={onOpenInternalPage}
           isCodeBtnDisabled={isCodeBtnDisabled}

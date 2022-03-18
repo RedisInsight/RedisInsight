@@ -2,7 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
+import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import EnablementArea, { Props } from './EnablementArea'
@@ -29,7 +29,11 @@ jest.mock('uiSrc/slices/workbench/wb-guides', () => {
 
 describe('EnablementArea', () => {
   it('should render', () => {
-    expect(render(<EnablementArea {...instance(mockedProps)} items={MOCK_GUIDES_ITEMS} />))
+    expect(render(<EnablementArea
+      {...instance(mockedProps)}
+      guides={MOCK_GUIDES_ITEMS}
+      tutorials={MOCK_TUTORIALS_ITEMS}
+    />))
       .toBeTruthy()
   })
 
@@ -46,7 +50,8 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={MOCK_GUIDES_ITEMS}
+        guides={MOCK_GUIDES_ITEMS}
+        tutorials={MOCK_TUTORIALS_ITEMS}
       />
     )
     const loaderEl = queryByTestId('enablementArea-loader')
@@ -76,7 +81,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={{ 'quick-guides': item }}
+        guides={{ 'quick-guides': item }}
       />
     )
 
@@ -96,7 +101,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={{ manual: item }}
+        guides={{ manual: item }}
       />
     )
     const codeButtonEl = queryByTestId(`preselect-${item.label}`)
@@ -115,7 +120,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        items={{ 'internal-page': item }}
+        guides={{ 'internal-page': item }}
       />
     )
 

@@ -23,7 +23,7 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
       setLoading(true)
       setError('')
       try {
-        const { data, status } = await resourcesService.get<string>(`${ApiEndpoints.ENABLEMENT_AREA_PATH}${path}`)
+        const { data, status } = await resourcesService.get<string>(`${ApiEndpoints.TUTORIALS_PATH}${path}`)
         if (isStatusSuccessful(status)) {
           setLoading(false)
           const pageInfo = getFileInfo(path)

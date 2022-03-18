@@ -17,6 +17,7 @@ export * from './monitorEvents'
 export * from './socketEvents'
 export * from './mocks/mock-redis-commands'
 export * from './mocks/mock-guides'
+export * from './mocks/mock-tutorials'
 export * from './socketErrors'
 export * from './browser'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

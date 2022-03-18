@@ -3,7 +3,6 @@ import { ApiEndpoints, MONACO_MANUAL } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import { EnablementAreaComponent, IEnablementAreaItem, StateWorkbenchEnablementArea } from 'uiSrc/slices/interfaces'
-import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -34,7 +33,6 @@ const workbenchGuidesSlice = createSlice({
     getWBGuidesSuccess: (state, { payload }) => {
       state.loading = false
       state.items = payload
-      // state.items = MOCK_GUIDES_ITEMS
     },
     getWBGuidesFailure: (state, { payload }) => {
       state.loading = false

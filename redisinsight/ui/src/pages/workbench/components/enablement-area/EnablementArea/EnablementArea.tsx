@@ -21,14 +21,17 @@ import styles from './styles.module.scss'
 const padding = parseInt(styles.paddingHorizontal)
 
 export interface Props {
-  items: Record<string, IEnablementAreaItem>
+  guides: Record<string, IEnablementAreaItem>
+  tutorials: Record<string, IEnablementAreaItem>
   loading: boolean
   openScript: (script: string, path?: string, name?: string) => void
   onOpenInternalPage: (page: IInternalPage) => void
   isCodeBtnDisabled?: boolean
 }
 
-const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCodeBtnDisabled }: Props) => {
+const EnablementArea = ({
+  guides = {}, tutorials = {}, openScript, loading, onOpenInternalPage, isCodeBtnDisabled
+}: Props) => {
   const { search } = useLocation()
   const history = useHistory()
   const dispatch = useDispatch()
@@ -40,12 +43,12 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
     const pagePath = new URLSearchParams(search).get('item')
     if (pagePath) {
       setIsInternalPageVisible(true)
-      setInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}${pagePath}` })
+      setInternalPage({ path: pagePath })
 
       return
     }
     if (itemFromContext) {
-      handleOpenInternalPage({ path: `${ApiEndpoints.ENABLEMENT_AREA_PATH}${itemFromContext}` })
+      handleOpenInternalPage({ path: itemFromContext })
       return
     }
     setIsInternalPageVisible(false)
@@ -66,14 +69,14 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
     })
   }
 
-  const renderSwitch = (item: IEnablementAreaItem, level: number) => {
+  const renderSwitch = (item: IEnablementAreaItem, sourcePath: string, level: number) => {
     const { label, type, children, id, args } = item
     const paddingsStyle = { paddingLeft: `${padding + level * 8}px`, paddingRight: `${padding}px` }
     switch (type) {
       case EnablementAreaComponent.Group:
         return (
           <Group triggerStyle={paddingsStyle} testId={id} label={label} {...args}>
-            {renderTreeView(Object.values(children || {}) || [], level + 1)}
+            {renderTreeView(Object.values(children || {}) || [], sourcePath, level + 1)}
           </Group>
         )
       case EnablementAreaComponent.CodeButton:
@@ -90,7 +93,7 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
         )
       case EnablementAreaComponent.InternalLink:
         return (
-          <InternalLink style={paddingsStyle} testId={id || label} label={label} {...args}>
+          <InternalLink sourcePath={sourcePath} style={paddingsStyle} testId={id || label} label={label} {...args}>
             {args?.content || label}
           </InternalLink>
         )
@@ -99,10 +102,10 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
     }
   }
 
-  const renderTreeView = (elements: IEnablementAreaItem[], level: number = 0) => (
+  const renderTreeView = (elements: IEnablementAreaItem[], sourcePath: string, level: number = 0) => (
     elements?.map((item) => (
       <div className="fluid" key={item.id}>
-        {renderSwitch(item, level)}
+        {renderSwitch(item, sourcePath, level)}
       </div>
     )))
 
@@ -122,7 +125,8 @@ const EnablementArea = ({ items, openScript, loading, onOpenInternalPage, isCode
               flush
               className={cx(styles.innerContainer)}
             >
-              {renderTreeView(Object.values(items))}
+              {renderTreeView(Object.values(guides), ApiEndpoints.GUIDES_PATH)}
+              {renderTreeView(Object.values(tutorials), ApiEndpoints.TUTORIALS_PATH)}
             </EuiListGroup>
           )}
         <div

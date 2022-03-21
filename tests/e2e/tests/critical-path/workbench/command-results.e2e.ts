@@ -132,8 +132,8 @@ test
             await workbenchPage.sendCommandInWorkbench(command);
         }
         //Verify the quick access to command history by up button
+        await t.click(workbenchPage.queryInput);
         for(const command of commands.reverse()) {
-            await t.click(workbenchPage.queryInput);
             await t.pressKey('up');
             let script = await workbenchPage.scriptsLines.textContent;  
             await t.expect(script.replace(/\s/g, ' ')).contains(command, 'Result of Manual command is displayed');

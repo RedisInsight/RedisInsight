@@ -53,16 +53,15 @@ test
         await t.click(cliPage.cliExpandButton);
         for (const { textType, keyName } of keyTypes) {
             if (textType in COMMANDS_TO_CREATE_KEY) {
-                await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName));
+                await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName), { paste: true });
                 await t.pressKey('enter');
             }
         }
         await t.click(cliPage.cliCollapseButton);
-
+        await t.click(browserPage.refreshKeysButton);
         for (const { textType, keyName } of keyTypes) {
             await browserPage.selectFilterGroupType(textType);
-            const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-            await t.expect(isKeyIsDisplayedInTheList).ok(`The key of type ${textType} was found`);
+            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key of type ${textType} was found`);
             await browserPage.deleteKey();
         }
     });

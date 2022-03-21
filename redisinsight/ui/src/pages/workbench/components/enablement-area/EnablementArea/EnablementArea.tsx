@@ -7,6 +7,7 @@ import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/inter
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { appContextWorkbenchEA, resetWorkbenchEAItem } from 'uiSrc/slices/app/context'
 import { ApiEndpoints } from 'uiSrc/constants'
+import { getWBSourcePath } from './utils/getFileInfo'
 import {
   CodeButton,
   Group,
@@ -44,7 +45,6 @@ const EnablementArea = ({
     if (pagePath) {
       setIsInternalPageVisible(true)
       setInternalPage({ path: pagePath })
-
       return
     }
     if (itemFromContext) {
@@ -141,6 +141,7 @@ const EnablementArea = ({
               onClose={handleCloseInternalPage}
               title={internalPage?.label}
               path={internalPage?.path}
+              sourcePath={getWBSourcePath(internalPage?.path)}
             />
           )}
         </div>

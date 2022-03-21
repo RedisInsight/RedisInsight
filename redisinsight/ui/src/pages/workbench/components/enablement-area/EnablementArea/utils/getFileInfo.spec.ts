@@ -52,7 +52,7 @@ describe('getFileInfo', () => {
 
 const getPagesInsideGroupTests = [
   {
-    input: [MOCK_GUIDES_ITEMS, '/static/workbench/quick-guides'],
+    input: [MOCK_GUIDES_ITEMS, '/static/guides/quick-guides'],
     expected: Object.values(MOCK_GUIDES_ITEMS['quick-guides'].children || {})
   },
   {

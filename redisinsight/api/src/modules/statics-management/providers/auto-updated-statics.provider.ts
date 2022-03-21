@@ -24,10 +24,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   onModuleInit() {
     // async operation to not wait for it and not block user in case when no internet connection
-    Promise.all([
-      this.initDefaults(),
-      this.autoUpdate(),
-    ]);
+    this.initDefaults().finally(this.autoUpdate.bind(this));
   }
 
   /**
@@ -59,7 +56,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
       try {
         await this.updateStaticFiles();
       } catch (e) {
-        this.logger.error('Unable to update auto static files', e);
+        this.logger.warn('Unable to update auto static files', e);
       }
     }
   }
@@ -85,7 +82,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
     try {
       return await getFile(new URL(join(this.options.updateUrl, this.options.zip)).toString());
     } catch (e) {
-      this.logger.error('Unable to get remote archive', e);
+      this.logger.warn('Unable to get remote archive', e);
       return null;
     }
   }
@@ -109,7 +106,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
     try {
       return await getFile(new URL(join(this.options.updateUrl, this.options.buildInfo)).toString());
     } catch (e) {
-      this.logger.error('Unable to get remote build info', e);
+      this.logger.warn('Unable to get remote build info', e);
       return {};
     }
   }
@@ -124,7 +121,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
         'utf8',
       ));
     } catch (e) {
-      this.logger.error('Unable to get local checksum', e);
+      this.logger.warn('Unable to get local checksum', e);
       return {};
     }
   }

@@ -1,7 +1,5 @@
 import { PageNames, Pages, IRoute } from 'uiSrc/constants'
-import {
-  BrowserPage, InstancePage,
-} from 'uiSrc/pages'
+import { BrowserPage, InstancePage } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import EditConnection from 'uiSrc/pages/redisStack/components/edit-connection'
 import COMMON_ROUTES from './commonRoutes'
@@ -29,9 +27,10 @@ const ROUTES: IRoute[] = [
   },
   ...COMMON_ROUTES,
   {
-    path: '/:instanceId',
-    protected: true,
+    // special redis stack solution
+    path: '/:instanceId/:section',
     component: InstancePage,
+    protected: true,
     routes: INSTANCE_ROUTES,
   },
 ]

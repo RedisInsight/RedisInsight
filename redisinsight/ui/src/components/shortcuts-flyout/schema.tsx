@@ -42,6 +42,7 @@ export const SHORTCUTS: ShortcutGroup[] = [
       KEYBOARD_SHORTCUTS.workbench.listOfCommands,
       KEYBOARD_SHORTCUTS.workbench.triggerHints,
       KEYBOARD_SHORTCUTS.workbench.quickHistoryAccess,
+      KEYBOARD_SHORTCUTS.workbench.nonRedisEditor,
     ]
   },
 ]

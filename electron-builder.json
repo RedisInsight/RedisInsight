@@ -94,7 +94,7 @@
     },
     {
       "from": "LICENSE",
-      "to": "../LICENSE.redisinsight.txt"
+      "to": "LICENSE.redisinsight.txt"
     },
     {
       "from": "./resources/app",

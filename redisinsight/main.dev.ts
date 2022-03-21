@@ -125,8 +125,8 @@ const bootstrap = async () => {
     new AppUpdater(upgradeUrl);
   }
 
-  app.setName('RedisInsight');
-  app.setAppUserModelId('RedisInsight');
+  app.setName('RedisInsight-v2');
+  app.setAppUserModelId('RedisInsight-v2');
   if (process.platform !== 'darwin') {
     app.setAboutPanelOptions(AboutPanelOptions);
   }

@@ -93,6 +93,10 @@
       "filter": ["**/*"]
     },
     {
+      "from": "LICENSE",
+      "to": "../LICENSE.redisinsight.txt"
+    },
+    {
       "from": "./resources/app",
       "to": "./app",
       "filter": ["**/*"]

@@ -24,7 +24,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   onModuleInit() {
     // async operation to not wait for it and not block user in case when no internet connection
-    this.initDefaults().catch().finally(this.autoUpdate.bind(this));
+    this.initDefaults().finally(this.autoUpdate.bind(this));
   }
 
   /**

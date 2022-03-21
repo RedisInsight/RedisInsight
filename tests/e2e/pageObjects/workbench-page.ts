@@ -76,6 +76,9 @@ export class WorkbenchPage {
     preselectCreateHashIndex: Selector
     commandExecutionResult: Selector
     commandExecutionResultFailed: Selector
+    monacoWidget: Selector
+    cancelButton: Selector
+    applyButton: Selector
 
     constructor() {
         //CSS selectors
@@ -123,6 +126,8 @@ export class WorkbenchPage {
         this.enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
         this.paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
         this.fullScreenButton = Selector('[data-testid=toggle-full-screen]');
+        this.cancelButton = Selector('[data-testid=cancel-btn]');
+        this.applyButton = Selector('[data-testid=apply-btn]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.queryInput = Selector('[data-testid=query-input-container]');
         this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -157,6 +162,7 @@ export class WorkbenchPage {
         this.customPluginsViewType = Selector('[data-test-subj*=clients-list]');
         this.commandExecutionResult = Selector('[data-testid=query-common-result]');
         this.commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
+        this.monacoWidget = Selector('[data-testid=monaco-widget]');
     }
 
     /**

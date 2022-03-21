@@ -50,3 +50,18 @@ test
         await t.click(shortcutsPage.shortcutsCloseButton);
         await t.expect(shortcutsPage.shortcutsPanel.exists).notOk('Shortcuts panel is not displayed');
     })
+test
+    .meta({ rte: rte.none })
+    ('Verify that user can see description of the “up” shortcut in the Help Center > Keyboard Shortcuts > Workbench table', async t => {
+        const description = [
+            'Quick-access to command history',
+            'Up Arrow'
+        ];
+        //Open Shortcuts
+        await t.click(myRedisDatabasePage.helpCenterButton);
+        await t.click(helpCenterPage.helpCenterShortcutButton);
+        // Verify that user can see description of the “up” shortcut
+        for(const element of description) {
+            await t.expect(shortcutsPage.shortcutsPanel.textContent).contains(element, 'The user can see description of the “up” shortcut');
+        }
+    })

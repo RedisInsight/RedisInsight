@@ -115,3 +115,27 @@ test.skip
         await workbenchPage.selectViewTypeText();
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
     });
+test
+    .after(async() => {
+        //Drop database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    .meta({ rte: rte.standalone })
+    ('Verify that user can populate commands in Editor from history by clicking keyboard “up” button', async t => {
+        const commands = [
+            'FT.INFO',
+            'RANDOMKEY',
+            'set'
+        ];
+        //Send commands
+        for(const command of commands) {
+            await workbenchPage.sendCommandInWorkbench(command);
+        }
+        //Verify the quick access to command history by up button
+        for(const command of commands.reverse()) {
+            await t.click(workbenchPage.queryInput);
+            await t.pressKey('up');
+            let script = await workbenchPage.scriptsLines.textContent;  
+            await t.expect(script.replace(/\s/g, ' ')).contains(command, 'Result of Manual command is displayed');
+        }
+    });

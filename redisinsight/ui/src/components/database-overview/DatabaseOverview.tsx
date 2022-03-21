@@ -4,6 +4,7 @@ import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 import MoreInfoPopover from 'uiSrc/components/database-overview/components/MoreInfoPopover'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { sortModulesByName } from 'uiSrc/utils/modules'
 
 import RediStackDark from 'uiSrc/assets/img/modules/redistack/RediStackDark.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -21,7 +22,7 @@ interface Props {
   windowDimensions: number
   metrics?: Array<IMetric>
   modules?: Array<RedisModuleDto>
-  isRediStack: boolean
+  isRediStack?: boolean
 }
 
 interface IState<T> {
@@ -56,9 +57,11 @@ const DatabaseOverview = (props: Props) => {
       }
     })
     setMetrics(metricsState)
+
+    const sortedModules = sortModulesByName(modulesProps)
     setModules({
-      visible: modulesProps.slice(0, resolutionLimits.modules),
-      hidden: modulesProps.slice(resolutionLimits.modules)
+      visible: sortedModules.slice(0, resolutionLimits.modules),
+      hidden: sortedModules.slice(resolutionLimits.modules)
     })
   }, [windowDimensions, metricsProps, modulesProps])
 

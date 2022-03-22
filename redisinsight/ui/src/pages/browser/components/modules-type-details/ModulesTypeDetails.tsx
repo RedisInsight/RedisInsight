@@ -22,7 +22,7 @@ const ModulesTypeDetails = ({ moduleName = 'unsupported' }: { moduleName: string
       <EuiFlexGroup alignItems="center" justifyContent="center">
         <EuiFlexItem className={styles.textWrapper}>
           <EuiTitle>
-            <h4>{`This is ${moduleName} key.`}</h4>
+            <h4>{`This is a ${moduleName} key.`}</h4>
           </EuiTitle>
           <EuiText size="s">
             {'Use Redis commands in the '}

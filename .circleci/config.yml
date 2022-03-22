@@ -617,7 +617,7 @@ jobs:
       - run:
           name: export FILE_NAME environment variable
           command: |
-            echo 'export FILE_NAME="RedisInsight*.<< parameters.ext >>"' >> $BASH_ENV
+            echo 'export FILE_NAME="RedisInsight*<< parameters.ext >>"' >> $BASH_ENV
       - <<: *scan
       - <<: *validate
   docker:
@@ -995,27 +995,27 @@ workflows:
       # virus check all electron apps (prod only)
       - virustotal:
           name: Virus check - AppImage (prod)
-          ext: AppImage
+          ext: .AppImage
           requires:
             - Build app - Linux (prod)
       - virustotal:
           name: Virus check - deb (prod)
-          ext: deb
+          ext: .deb
           requires:
             - Build app - Linux (prod)
       - virustotal:
-          name: Virus check arm64 - dmg (prod)
-          ext: x64.dmg
+          name: Virus check x64 - dmg (prod)
+          ext: -x64.dmg
           requires:
             - Build app - MacOS (prod)
       - virustotal:
-          name: Virus check x64 - dmg (prod)
-          ext: arm64.dmg
+          name: Virus check arm64 - dmg (prod)
+          ext: -arm64.dmg
           requires:
             - Build app - MacOS (prod)
       - virustotal:
           name: Virus check - exe (prod)
-          ext: exe
+          ext: .exe
           requires:
             - Build app - Windows (prod)
 

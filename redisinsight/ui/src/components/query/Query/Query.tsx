@@ -457,7 +457,7 @@ const Query = (props: Props) => {
       {isDedicatedEditorOpen && (
         <DedicatedEditor
           lang={syntaxCommand.current.lang}
-          value={selectedArg.current.replace(aroundQuotesRegExp, '')}
+          query={selectedArg.current.replace(aroundQuotesRegExp, '')}
           onSubmit={updateArgFromDedicatedEditor}
           onCancel={onCancelDedicatedEditor}
           width={input?.current?.scrollWidth || 300}

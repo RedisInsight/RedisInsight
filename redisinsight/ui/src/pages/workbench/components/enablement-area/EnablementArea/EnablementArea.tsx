@@ -7,6 +7,7 @@ import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/inter
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { appContextWorkbenchEA, resetWorkbenchEAItem } from 'uiSrc/slices/app/context'
 import { ApiEndpoints } from 'uiSrc/constants'
+import { getWBSourcePath } from './utils/getFileInfo'
 import {
   CodeButton,
   Group,
@@ -44,7 +45,6 @@ const EnablementArea = ({
     if (pagePath) {
       setIsInternalPageVisible(true)
       setInternalPage({ path: pagePath })
-
       return
     }
     if (itemFromContext) {
@@ -72,6 +72,7 @@ const EnablementArea = ({
   const renderSwitch = (item: IEnablementAreaItem, sourcePath: string, level: number) => {
     const { label, type, children, id, args } = item
     const paddingsStyle = { paddingLeft: `${padding + level * 8}px`, paddingRight: `${padding}px` }
+    const borderStyle = { border: 'none', borderTop: '1px solid var(--separatorColor)' }
     switch (type) {
       case EnablementAreaComponent.Group:
         return (
@@ -82,8 +83,8 @@ const EnablementArea = ({
       case EnablementAreaComponent.CodeButton:
         return (
           <>
-            <div style={paddingsStyle} className="divider"><hr /></div>
-            <div style={{ marginTop: '24px', ...paddingsStyle }}>
+            <div style={paddingsStyle} className="divider"><hr style={borderStyle} /></div>
+            <div style={{ marginTop: '18px', ...paddingsStyle }}>
               {args?.path
                 ? <LazyCodeButton label={label} {...args} />
                 : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />}
@@ -140,6 +141,7 @@ const EnablementArea = ({
               onClose={handleCloseInternalPage}
               title={internalPage?.label}
               path={internalPage?.path}
+              sourcePath={getWBSourcePath(internalPage?.path)}
             />
           )}
         </div>

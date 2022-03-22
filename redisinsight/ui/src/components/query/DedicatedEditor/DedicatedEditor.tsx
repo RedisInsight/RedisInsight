@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { compact, findIndex } from 'lodash'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
@@ -29,7 +29,7 @@ import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/cypher/monarc
 import styles from './styles.module.scss'
 
 export interface Props {
-  value: string
+  query: string
   lang: string
   onSubmit: (query?: string) => void
   onCancel: () => void
@@ -47,11 +47,14 @@ const langs: MonacoSyntaxLang = {
   }
 }
 let decorations: string[] = []
+const notCommandRegEx = /^\s|\/\//
 
 const DedicatedEditor = (props: Props) => {
-  const { width, value = '', lang, onCancel, onSubmit } = props
+  const { width, query = '', lang, onCancel, onSubmit } = props
   const selectedLang = langs[lang]
   let contribution: Nullable<ISnippetController> = null
+
+  const [value, setValue] = useState<string>(query)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   let disposeCompletionItemProvider = () => {}
 
@@ -67,7 +70,6 @@ const DedicatedEditor = (props: Props) => {
     if (!monacoObjects.current) return
     const commands = value.split('\n')
     const { monaco, editor } = monacoObjects.current
-    const notCommandRegEx = /^\s|\/\//
 
     const newDecorations = compact(commands.map((command, index) => {
       if (!command || notCommandRegEx.test(command)) return null
@@ -78,10 +80,7 @@ const DedicatedEditor = (props: Props) => {
       )
     }))
 
-    decorations = editor.deltaDecorations(
-      decorations,
-      newDecorations
-    )
+    decorations = editor.deltaDecorations(decorations, newDecorations)
   }, [value])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -92,7 +91,11 @@ const DedicatedEditor = (props: Props) => {
 
   const handleSubmit = () => {
     const { editor } = monacoObjects?.current || {}
-    onSubmit(editor?.getValue() || '')
+    const val = editor?.getValue()
+      .split('\n')
+      .map((line: string, i: number) => (i > 0 && !notCommandRegEx.test(line)) ? `\t${line}` : line)
+      .join('\n')
+    onSubmit(val || '')
   }
 
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
@@ -194,6 +197,7 @@ const DedicatedEditor = (props: Props) => {
           <MonacoEditor
             language={selectedLang.id || MonacoLanguage.Cypher}
             value={value}
+            onChange={setValue}
             options={options}
             className={`${lang}-editor`}
             editorDidMount={editorDidMount}

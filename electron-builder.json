@@ -47,7 +47,11 @@
   },
   "win": {
     "target": ["nsis"],
-    "artifactName": "${productName}-${os}-installer.${ext}"
+    "artifactName": "${productName}-${os}-installer.${ext}",
+    "publisherName": [
+      "Redis Inc.",
+      "Redis Labs Inc."
+    ]
   },
   "linux": {
     "icon": "./resources/icons",
@@ -91,6 +95,10 @@
       "from": "./redisinsight/api/defaults",
       "to": "defaults",
       "filter": ["**/*"]
+    },
+    {
+      "from": "LICENSE",
+      "to": "LICENSE.redisinsight.txt"
     },
     {
       "from": "./resources/app",

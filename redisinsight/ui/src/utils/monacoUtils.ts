@@ -187,6 +187,7 @@ export const createSyntaxWidget = (text: string, shortcutText: string) => {
 
   const shortcut = document.createElement('span')
   shortcut.classList.add('monaco-widget__shortcut')
+  widget.setAttribute('data-testid', 'monaco-widget')
   shortcut.innerHTML = shortcutText
 
   widget.append(title, shortcut)

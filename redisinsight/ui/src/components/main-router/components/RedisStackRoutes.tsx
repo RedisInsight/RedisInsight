@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Switch, useHistory } from 'react-router-dom'
 
 import {
   checkConnectToInstanceAction,
@@ -47,7 +47,7 @@ const Router = ({ databaseId = '' }: IProps) => {
   return connection.loading
     ? <PagePlaceholder />
     : (
-      <>
+      <Switch>
         {ROUTES
           .map((route, i) => (
             route.protected
@@ -60,7 +60,7 @@ const Router = ({ databaseId = '' }: IProps) => {
               // eslint-disable-next-line react/no-array-index-key
               : <RouteWithSubRoutes key={i} {...route} />
           ))}
-      </>
+      </Switch>
     )
 }
 

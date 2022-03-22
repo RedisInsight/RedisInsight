@@ -57,7 +57,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
       default:
         return []
     }
-  }, [sourcePath])
+  }, [sourcePath, guides, tutorials])
 
   const loadContent = async () => {
     setLoading(true)
@@ -83,12 +83,13 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
   }
 
   useEffect(() => {
-    (async function () {
-      if (!guides.loading) {
+    const startLoadContent = async () => {
+      if (!guides.loading && !tutorials.loading) {
         await loadContent()
       }
-    }())
-  }, [path, guides.loading])
+    }
+    startLoadContent()
+  }, [path, sourcePath, guides.loading, tutorials.loading])
 
   const handlePageScroll = (top: number) => {
     dispatch(setWorkbenchEAItemScrollTop(top))

@@ -228,3 +228,11 @@ export class GoodColorPicker extends ColorPicker<IGoodColor> {
     super(COLORS);
   }
 }
+
+
+export function wrapText(s: string, w: number) {
+  return s.replace(
+    new RegExp(`(?![^\\n]{1,${w}}$)([^\\n]{1,${w}})\\s`, 'g'),
+    '$1\n'
+  )
+}

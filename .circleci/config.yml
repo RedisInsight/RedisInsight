@@ -1004,15 +1004,15 @@ workflows:
           requires:
             - Build app - Linux (prod)
       - virustotal:
-          name: Virus check - dmg (prod)
+          name: Virus check arm64 - dmg (prod)
           ext: x64.dmg
           requires:
-            - Build app arm64 - MacOS (prod)
+            - Build app - MacOS (prod)
       - virustotal:
-          name: Virus check - dmg (prod)
+          name: Virus check x64 - dmg (prod)
           ext: arm64.dmg
           requires:
-            - Build app x64 - MacOS (prod)
+            - Build app - MacOS (prod)
       - virustotal:
           name: Virus check - exe (prod)
           ext: exe

@@ -115,21 +115,14 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
       if (svgScale) {
         scale *= svgScale;
       }
-      let text = svg.selectAll('.node .text');
-      let textSize = nominalTextSize;
-      if (nominalTextSize * scale > maxTextSize) textSize = maxTextSize / scale;
-      text.attr("font-size", (textSize - 3) + "px");
-      text.text((d) => {
-        let label: string;
-        if (typeof options.onLabelNode === 'function') {
-          label = options.onLabelNode(d);
-        } else {
-          label = d.properties?.name || (d.labels?.length ? d.labels[0] : '');
-        }
-        let maxLength = (maxTextSize - textSize) + 3;
-        return label.length > maxLength ? Utils.truncateText(label, maxLength) : label;
-      })
-      svg.attr('transform', `translate(${translate[0]}, ${translate[1]}) scale(${scale})`);
+
+      let node = svg.selectAll('.node')
+      let textSize = nominalTextSize
+      if (nominalTextSize * scale > maxTextSize) textSize = maxTextSize / scale
+      appendTextToNode(node, textSize)
+      let text = node.selectAll('.text')
+      text.attr("font-size", (textSize - 3) + "px")
+      svg.attr('transform', `translate(${translate[0]}, ${translate[1]}) scale(${scale})`)
     }))
     .on('dblclick.zoom', null)
       svg = mainSvg.append('g')
@@ -346,23 +339,49 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
       .attr('y', '14');
   }
 
-  function appendTextToNode(svgNode) {
-    svgNode.append('text')
-      .text((d) => {
-        let label;
-
+  function appendTextToNode(svgNode, textSize = null) {
+    svgNode
+      .selectAll("text")
+      .data((d) => {
+        let label: string
         if (typeof options.onLabelNode === 'function') {
-          label = options.onLabelNode(d);
+          label = options.onLabelNode(d)
         } else {
-          label = d.properties?.name || (d.labels?.length ? d.labels[0] : '');
+          label = d.properties?.name || d.properties?.title;
         }
-
-        let maxLength = maxTextSize - nominalTextSize - 5;
-        return label.length > maxLength ? Utils.truncateText(label, maxLength) : label;
+        label ||= ''
+        if (textSize !== null) {
+          let maxLength = (maxTextSize - textSize) + 15;
+          label = label.length > maxLength ? Utils.truncateText(label, maxLength) : label;
+        }
+        let wrappedLabel = Utils.wrapText(label, 7)
+        return wrappedLabel.split('\n').map(k => ({
+            text: k,
+            actual: wrappedLabel,
+            d,
+        }))
+      })
+      .join("text")
+      .text((d) => d.text)
+      .attr("y", (d, i) => {
+        const calculatePosition = (l: number) => {
+          if (l == 1) return 0;
+          else {
+            let arr = []
+            for (let m = 0; m < l / 2; m++) {
+              let z = m * 10;
+              arr = [-z - 5, ...arr]
+              arr = [...arr, z + 5]
+            }
+            return arr;
+          }
+        }
+        const r = calculatePosition(d.actual.split('\n').length);
+        return r[i];
       })
       .attr('class', 'text')
-      .attr('font-size', (d) => nominalTextSize + "px")
-      .attr('fill', (d) => labelColors(d.labels?.length ? d.labels[0] : '').textColor)
+      .attr('font-size', () => nominalTextSize + "px")
+      .attr('fill', ({d}) => labelColors(d.labels?.length ? d.labels[0] : '').textColor)
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')
       .attr('dy', () => options.nodeRadius / ((options.nodeRadius * 25) / 100));
@@ -374,7 +393,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
     appendRingToNode(n);
     appendOutlineToNode(n);
     appendNodeInfo(n);
-    appendTextToNode(n);
+    appendTextToNode(n, null);
 
     return n;
   }

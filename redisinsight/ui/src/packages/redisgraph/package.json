@@ -29,17 +29,6 @@
   },
   "visualizations": [
     {
-      "id": "graph-table",
-      "name": "Table",
-      "activationMethod": "renderGraphTable",
-      "matchCommands": [
-        "GRAPH.RO_QUERY",
-        "GRAPH.QUERY"
-      ],
-      "description": "Example of graph table plugin",
-      "default": false
-    },
-    {
       "id": "graph-viz",
       "name": "Graph",
       "activationMethod": "renderGraph",

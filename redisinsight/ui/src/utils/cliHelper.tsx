@@ -4,7 +4,7 @@ import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import { localStorageService } from 'uiSrc/services'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-output'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
 import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
@@ -134,6 +134,20 @@ const getDbIndexFromSelectQuery = (query: string): number => {
   }
 }
 
+const getCommandNameFromQuery = (
+  query: string,
+  commandsSpec: ICommands = {},
+  queryLimit: number = 50
+): string | undefined => {
+  try {
+    const [command, firstArg] = query.slice(0, queryLimit).trim().split(/\s+/)
+    if (commandsSpec[`${command} ${firstArg}`.toUpperCase()]) return `${command} ${firstArg}`
+    return command
+  } catch (error) {
+    return undefined
+  }
+}
+
 export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
@@ -147,4 +161,5 @@ export {
   checkBlockingCommand,
   checkUnsupportedModuleCommand,
   getDbIndexFromSelectQuery,
+  getCommandNameFromQuery
 }

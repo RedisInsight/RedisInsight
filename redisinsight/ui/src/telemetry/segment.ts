@@ -21,6 +21,12 @@ export class SegmentTelemetryService implements ITelemetryService {
 
   private _sessionId: number = -1
 
+  private readonly _sourceWriteKey: string
+
+  constructor(sourceWriteKey: string) {
+    this._sourceWriteKey = sourceWriteKey
+  }
+
   private _getPageInfo = (): IContextPage => {
     const pageObject: IContextPage = {}
 
@@ -31,10 +37,6 @@ export class SegmentTelemetryService implements ITelemetryService {
     }
 
     return pageObject
-  }
-
-  constructor(private readonly _sourceWriteKey: string) {
-    this._sourceWriteKey = _sourceWriteKey
   }
 
   async initialize(): Promise<void> {

@@ -2,6 +2,7 @@ import { AxiosError } from 'axios'
 import { Nullable } from 'uiSrc/utils'
 import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 import { ICommands } from 'uiSrc/constants'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys';
 
 export interface IError extends AxiosError {
   id: string;
@@ -42,13 +43,24 @@ export interface StateAppContext {
     },
     panelSizes: {
       [key: string]: number;
+    },
+    tree: {
+      panelSizes: {
+        [key: string]: number;
+      },
+      openNodes: {
+        [key: string]: boolean;
+      },
+      selectedLeaf: {
+        [key: string]: IKeyPropTypes[];
+      },
     }
   },
   workbench: {
     script: string;
     enablementArea: {
-      guidePath: string;
-      guideScrollTop: number;
+      itemPath: string;
+      itemScrollTop: number;
     },
     panelSizes: {
       vertical: {

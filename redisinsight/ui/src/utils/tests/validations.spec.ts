@@ -9,7 +9,8 @@ import {
   validateScoreNumber,
   validateTTLNumberForAddKey,
   MAX_DATABASE_INDEX_NUMBER,
-  validateDatabaseNumber
+  validateDatabaseNumber,
+  validateCertName
 } from '../validations'
 
 const text1 = '123 123 123'
@@ -161,5 +162,20 @@ describe('Validations utils', () => {
       expect(validateEmail(text7)).toBeFalsy()
       expect(validateEmail(text8)).toBeFalsy()
     })
+  })
+  describe('validateCertName', () => {
+    it.each([
+      ['my-new_cert', 'my-new_cert'],
+      ['my-1new1_cert', 'my-1new1_cert'],
+      ['my-1!@#$%^&*-new1_cert', 'my-1!@#$%^&*-new1_cert'],
+      ['my-[new]_(cert)', 'my-[new]_(cert)'],
+      ['my [new] {cert}', 'my [new] cert'],
+      ['MY-0123456789_cert', 'MY-0123456789_cert'],
+      ['my-ффффффф[new]_фффф{cert}', 'my-[new]_cert'],
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = validateCertName(input)
+        expect(result).toBe(expected)
+      })
   })
 })

@@ -5,11 +5,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import {
+  clearSearchingCommand,
+  cliSettingsSelector,
+  setCliEnteringCommand,
   toggleCli,
   toggleCliHelper,
-  cliSettingsSelector,
-  clearSearchingCommand,
-  setCliEnteringCommand,
   toggleHideCliHelper,
 } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -59,6 +59,10 @@ const BottomGroupMinimized = () => {
   }
 
   const handleExpandMonitor = () => {
+    sendEventTelemetry({
+      event: isShowMonitor ? TelemetryEvent.PROFILER_MINIMIZED : TelemetryEvent.PROFILER_OPENED,
+      eventData: { databaseId: instanceId }
+    })
     isMinimizedMonitor && dispatch(toggleHideMonitor())
     dispatch(toggleMonitor())
   }

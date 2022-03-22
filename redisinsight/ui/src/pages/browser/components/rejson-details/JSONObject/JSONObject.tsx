@@ -38,9 +38,6 @@ import styles from '../styles.module.scss'
 interface UpdateValueBody {
 }
 
-interface changeEvent extends React.ChangeEvent<HTMLInputElement> {
-}
-
 export interface Props {
   keyName: string | number;
   value: JSONArrayValue | IJSONObject | JSONScalarValue;
@@ -117,6 +114,44 @@ class JSONObject extends React.Component<Props, State> {
     this.handlerResetAddNewKeyValuePair = this.handlerResetAddNewKeyValuePair.bind(this)
   }
 
+  handleFormSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    this.onClickAddNewKVPair()
+  }
+
+  handlerResetAddNewKeyValuePair() {
+    this.setState({
+      error: '',
+      addNewKeyValuePair: false,
+      newKey: '',
+      newValue: '',
+    })
+  }
+
+  handleUpdateValueFormSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    this.setState({
+      editEntireObject: false,
+    })
+    this.onClickSubmitEntireObject()
+  }
+
+  handleOnEsc(e: KeyboardEvent, type: string) {
+    if (e.code.toLowerCase() === 'escape' || e.keyCode === 27) {
+      e.stopPropagation()
+
+      if (type === 'add') {
+        this.handlerResetAddNewKeyValuePair()
+      }
+      if (type === 'edit') {
+        this.setState({
+          error: '',
+          editEntireObject: false,
+        })
+      }
+    }
+  }
+
   onClickEditEntireObject = () => {
     const { path, editEntireObject } = this.state
     const { handleFetchVisualisationResults } = this.props
@@ -134,16 +169,6 @@ class JSONObject extends React.Component<Props, State> {
       }))
   }
 
-  validateJSONValue = (value: any) => {
-    let error: string = ''
-    try {
-      JSON.parse(value as string)
-    } catch (e) {
-      error = JSONErrors.valueJSONFormat
-    }
-    return error
-  }
-
   onClickSubmitEntireObject = () => {
     const { path, valueOfEntireObject } = this.state
     const {
@@ -159,7 +184,7 @@ class JSONObject extends React.Component<Props, State> {
       editEntireObject: false,
     })
 
-    if (error == '') {
+    if (error === '') {
       const body: IJSONObject = {}
 
       body.path = path
@@ -212,30 +237,6 @@ class JSONObject extends React.Component<Props, State> {
       valueOfEntireObject: objectValue,
       error: '',
     })
-  }
-
-  validateKeyValue = (): string => {
-    const { newKey, newValue } = this.state
-    if (newKey === undefined || newKey === '') {
-      return JSONErrors.keyCorrectSyntax
-    }
-    if (!newKey.startsWith('"') || !newKey.endsWith('"')) {
-      return JSONErrors.keyCorrectSyntax
-    }
-    try {
-      const unescapedKey = JSON.parse(newKey as string)
-      if (unescapedKey.includes('"') && unescapedKey.includes("'")) {
-        return JSONErrors.keyCorrectSyntax
-      }
-    } catch (e) {
-      return JSONErrors.keyCorrectSyntax
-    }
-    try {
-      JSON.parse(newValue as string)
-    } catch (e) {
-      return JSONErrors.valueJSONFormat
-    }
-    return ''
   }
 
   onClickAddNewKVPair = () => {
@@ -319,46 +320,38 @@ class JSONObject extends React.Component<Props, State> {
     })
   }
 
-  handleFormSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    this.onClickAddNewKVPair()
-  }
-
-  handlerResetAddNewKeyValuePair() {
-    this.setState({
-      error: '',
-      addNewKeyValuePair: false,
-      newKey: '',
-      newValue: '',
-    })
-  }
-
-  handleUpdateValueFormSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    this.setState({
-      editEntireObject: false,
-    })
-    this.onClickSubmitEntireObject()
-  }
-
-  handleOnEsc(e: KeyboardEvent, type: string) {
-    if (e.code.toLowerCase() === 'escape' || e.keyCode === 27) {
-      e.stopPropagation()
-
-      if (type === 'add') {
-        this.handlerResetAddNewKeyValuePair()
-      }
-      if (type === 'edit') {
-        this.setState({
-          error: '',
-          editEntireObject: false,
-        })
-      }
+  validateJSONValue = (value: any) => {
+    let error: string = ''
+    try {
+      JSON.parse(value as string)
+    } catch (e) {
+      error = JSONErrors.valueJSONFormat
     }
+    return error
   }
 
-  calculateLeftPadding(leftPadding: string) {
-    return String(Number(leftPadding) + (Number(leftPadding) / 1.5 <= MAX_LEFT_PADDING_NESTING ? 1.5 : 0))
+  validateKeyValue = (): string => {
+    const { newKey, newValue } = this.state
+    if (newKey === undefined || newKey === '') {
+      return JSONErrors.keyCorrectSyntax
+    }
+    if (!newKey.startsWith('"') || !newKey.endsWith('"')) {
+      return JSONErrors.keyCorrectSyntax
+    }
+    try {
+      const unescapedKey = JSON.parse(newKey as string)
+      if (unescapedKey.includes('"') && unescapedKey.includes("'")) {
+        return JSONErrors.keyCorrectSyntax
+      }
+    } catch (e) {
+      return JSONErrors.keyCorrectSyntax
+    }
+    try {
+      JSON.parse(newValue as string)
+    } catch (e) {
+      return JSONErrors.valueJSONFormat
+    }
+    return ''
   }
 
   mapObjectValues = (data: JSONArray) => {
@@ -443,7 +436,8 @@ class JSONObject extends React.Component<Props, State> {
               handleSubmitRemoveKey={handleSubmitRemoveKey}
             />
           )
-        } if (valueType !== 'object' && valueType !== 'array') {
+        }
+        if (valueType !== 'object' && valueType !== 'array') {
           return (
             <JSONScalar
               resultTableKeyMap={resultTableKeyMap}
@@ -540,7 +534,8 @@ class JSONObject extends React.Component<Props, State> {
       onJSONPropertyAdded,
       handleFetchVisualisationResults,
       handleSubmitRemoveKey,
-      handleSetReJSONDataAction
+      handleSetReJSONDataAction,
+      parentPath,
     } = this.props
     const { path, downloaded } = this.state
 
@@ -551,9 +546,6 @@ class JSONObject extends React.Component<Props, State> {
 
     return keys.map((key: string) => {
       if (isScalar(data[key] as JSONScalarValue) || data[key] === null) {
-        if (data[key] === null) {
-          data[key] = JSON.stringify(data[key])
-        }
         return (
           <JSONScalar
             resultTableKeyMap={resultTableKeyMap}
@@ -575,12 +567,13 @@ class JSONObject extends React.Component<Props, State> {
             handleSubmitRemoveKey={handleSubmitRemoveKey}
           />
         )
-      } if (data[key] instanceof Array) {
+      }
+      if (data[key] instanceof Array) {
         return (
           <JSONArrayComponent
             resultTableKeyMap={resultTableKeyMap}
             shouldRejsonDataBeDownloaded={!downloaded}
-            key={generatePath(this.props.parentPath, key)}
+            key={generatePath(parentPath, key)}
             parentPath={path}
             keyName={key}
             onJSONPropertyAdded={onJSONPropertyAdded}
@@ -607,7 +600,7 @@ class JSONObject extends React.Component<Props, State> {
           dbNumber={dbNumber}
           instanceId={instanceId}
           onJSONPropertyDeleted={onJSONPropertyDeleted}
-          key={generatePath(this.props.parentPath, key)}
+          key={generatePath(parentPath, key)}
           selectedKey={selectedKey}
           onJSONPropertyAdded={onJSONPropertyAdded}
           onJSONPropertyEdited={onJSONPropertyEdited}
@@ -635,8 +628,12 @@ class JSONObject extends React.Component<Props, State> {
     return this.mapObject(data as IJSONObject)
   }
 
+  calculateLeftPadding(leftPadding: string) {
+    return String(Number(leftPadding) + (Number(leftPadding) / 1.5 <= MAX_LEFT_PADDING_NESTING ? 1.5 : 0))
+  }
+
   render() {
-    const { keyName, parentPath, leftPadding, handleSubmitRemoveKey, selectedKey } = this.props
+    const { keyName, parentPath, leftPadding, handleSubmitRemoveKey, selectedKey, cardinality } = this.props
 
     const {
       value,
@@ -689,6 +686,7 @@ class JSONObject extends React.Component<Props, State> {
                   <span
                     className={cx(styles.quoted, styles.keyName)}
                     onClick={() => onClickFunc(path)}
+                    role="presentation"
                   >
                     {keyName}
                   </span>
@@ -704,9 +702,10 @@ class JSONObject extends React.Component<Props, State> {
                         style={{ paddingLeft: '8px' }}
                         onClick={() => this.onClickFunc(path)}
                         data-testid="expand-object"
+                        role="presentation"
                       >
                         &#123;
-                        {this.props.cardinality ? '...' : ''}
+                        {cardinality ? '...' : ''}
                         &#125;
                       </div>
                     </EuiText>
@@ -882,7 +881,7 @@ class JSONObject extends React.Component<Props, State> {
                           isInvalid={!!error}
                           value={newKey}
                           placeholder="Enter JSON key"
-                          onChange={(event: changeEvent) =>
+                          onChange={(event: ChangeEvent) =>
                             this.onChangeSetNewKey(event.target.value)}
                           data-testid="json-key"
                         />
@@ -890,10 +889,10 @@ class JSONObject extends React.Component<Props, State> {
                       <EuiFlexItem grow component="span">
                         <EuiFieldText
                           name="newValue"
-                          isInvalid={!!this.state.error}
+                          isInvalid={!!error}
                           value={newValue as string}
                           placeholder="Enter JSON value"
-                          onChange={(event: changeEvent) =>
+                          onChange={(event: ChangeEvent) =>
                             this.onChangeSetNewValue(event.target.value)}
                           data-testid="json-value"
                         />

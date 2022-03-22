@@ -34,13 +34,14 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
           iconType="boxesVertical"
           onClick={() => setIsShowMoreInfoPopover((isOpenPopover) => !isOpenPopover)}
           aria-labelledby="more info"
+          data-testid="overview-more-info-button"
         />
       )}
     >
-      <div className="flex-row space-between">
+      <div className="flex-row space-between" data-testid="overview-more-info-tooltip">
         {!!metrics.length && (
           <div className={styles.metricsContainer}>
-            <h4 className={styles.mi_fieldName}>Database statistics</h4>
+            <h4 className={styles.mi_fieldName} data-testid="overview-db-stat-title">Database statistics</h4>
             {metrics.map((overviewItem) => (
               <EuiFlexGroup
                 className={styles.moreInfoOverviewItem}

@@ -50,8 +50,12 @@
   ],
   "exclude": [
     "./redisinsight/api",
-    "main.prod.js",
-    "renderer.prod.js",
-    "dist"
+    "**/main.prod.js",
+    "**/renderer.prod.js",
+    "./release",
+    "./node_modules",
+    "**/node_modules",
+    "./dist",
+    "**/dist"
   ]
 }

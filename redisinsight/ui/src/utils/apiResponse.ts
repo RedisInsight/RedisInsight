@@ -14,7 +14,7 @@ export function getApiErrorMessage(error: AxiosError): string {
 }
 
 export function getApiErrorName(error: AxiosError): string {
-  return get(error, 'response.data.name', 'Error')
+  return get(error, 'response.data.name', 'Error') ?? ''
 }
 
 export function getApiErrorsFromBulkOperation(

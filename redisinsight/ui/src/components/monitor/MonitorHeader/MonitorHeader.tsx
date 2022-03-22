@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+import { useParams } from 'react-router-dom'
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -16,29 +17,52 @@ import {
   setMonitorInitialState,
   toggleHideMonitor,
   toggleMonitor,
-  toggleRunMonitor
 } from 'uiSrc/slices/cli/monitor'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
+
 import styles from './styles.module.scss'
 
-const MonitorHeader = () => {
-  const { isRunning, isStarted, items } = useSelector(monitorSelector)
+export interface Props {
+  handleRunMonitor: () => void
+}
 
+const MonitorHeader = ({ handleRunMonitor }: Props) => {
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { isRunning, isStarted, items, error } = useSelector(monitorSelector)
+  const isErrorShown = !!error && !isRunning
   const dispatch = useDispatch()
 
   const handleCloseMonitor = () => {
+    if (isRunning) {
+      sendEventTelemetry({
+        event: TelemetryEvent.PROFILER_STOPPED,
+        eventData: { databaseId: instanceId }
+      })
+    }
+    sendEventTelemetry({
+      event: TelemetryEvent.PROFILER_CLOSED,
+      eventData: { databaseId: instanceId }
+    })
+
     dispatch(setMonitorInitialState())
   }
 
   const handleHideMonitor = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.PROFILER_MINIMIZED,
+      eventData: { databaseId: instanceId }
+    })
+
     dispatch(toggleMonitor())
     dispatch(toggleHideMonitor())
   }
 
-  const handleRunMonitor = () => {
-    dispatch(toggleRunMonitor())
-  }
-
   const handleClearMonitor = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.PROFILER_CLEARED,
+      eventData: { databaseId: instanceId }
+    })
     dispatch(resetMonitorItems())
   }
 
@@ -57,14 +81,15 @@ const MonitorHeader = () => {
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.actions}>
           <EuiToolTip
-            content={isRunning ? 'Stop' : 'Start'}
+            content={isErrorShown ? '' : (isRunning ? 'Stop' : 'Start')}
             anchorClassName="inline-flex"
           >
             <EuiButtonIcon
-              iconType={isRunning ? 'pause' : 'play'}
+              iconType={isErrorShown ? BanIcon : (isRunning ? 'pause' : 'play')}
               onClick={handleRunMonitor}
               aria-label="start/stop monitor"
               data-testid="toggle-run-monitor"
+              disabled={isErrorShown}
             />
           </EuiToolTip>
           <EuiToolTip

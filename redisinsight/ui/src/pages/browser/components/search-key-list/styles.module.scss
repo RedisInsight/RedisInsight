@@ -1,5 +1,5 @@
 .container {
-  max-width: calc(100% - 160px);
+  width: calc(100% - 305px);
   height: 38px;
   margin-left: 106px;
 
@@ -11,7 +11,6 @@
 
 :global(.euiFieldSearch) {
   &.input {
-    min-width: 345px;
     height: 36px !important;
     max-width: 100% !important;
 

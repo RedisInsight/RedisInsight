@@ -1,6 +1,6 @@
 import React from 'react'
 import { keys } from '@elastic/eui'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render } from 'uiSrc/utils/test-utils'
 import CLI from './Cli'
 
 const redisCommandsPath = 'uiSrc/slices/app/redis-commands'
@@ -22,7 +22,7 @@ describe('CLI', () => {
   it('on "Esc" key should focus to "close-cli" button', () => {
     const { getByTestId } = render(<CLI />)
 
-    fireEvent.keyDown(getByTestId('cli-command'), {key: keys.ESCAPE})
+    fireEvent.keyDown(getByTestId('cli-command'), { key: keys.ESCAPE })
 
     expect(getByTestId('close-cli')).toHaveFocus()
   })

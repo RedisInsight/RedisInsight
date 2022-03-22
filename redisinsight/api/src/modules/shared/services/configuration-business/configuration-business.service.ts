@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import IORedis from 'ioredis';
-import {
-  filter,
-  get,
-  isNil,
-  map,
-} from 'lodash';
+import { get, isNil } from 'lodash';
 import {
   convertBulkStringsToObject,
   convertRedisInfoReplyToObject,
@@ -15,8 +10,6 @@ import {
 } from 'src/utils';
 import { IRedisModule, IRedisClusterInfo, IRedisClusterNode } from 'src/models';
 import {
-  pluginUnsupportedCommands,
-  pluginBlockingCommands,
   REDIS_MODULES_COMMANDS,
   SUPPORTED_REDIS_MODULES,
 } from 'src/constants';

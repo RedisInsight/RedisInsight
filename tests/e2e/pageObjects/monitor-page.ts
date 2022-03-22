@@ -19,6 +19,7 @@ export class MonitorPage {
     monitorWarningMessage: Selector
     monitorCommandLinePart: Selector
     monitorCommandLineTimestamp: Selector
+    monitorNoPermissionsMessage: Selector
 
     constructor() {
         //-------------------------------------------------------------------------------------------
@@ -40,6 +41,7 @@ export class MonitorPage {
         this.monitorWarningMessage = Selector('[data-testid=monitor-warning-message]');
         this.monitorCommandLinePart = Selector('[data-testid=monitor] span');
         this.monitorCommandLineTimestamp = Selector('[data-testid=monitor] span').withText(/[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}/);
+        this.monitorNoPermissionsMessage = Selector('[data-testid=monitor-error-message]');
     }
     /**
      * Check specific command in Monitor

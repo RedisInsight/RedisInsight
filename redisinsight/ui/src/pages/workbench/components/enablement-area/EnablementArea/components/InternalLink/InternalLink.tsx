@@ -16,13 +16,14 @@ export interface Props {
   iconPosition?: 'left' | 'right';
   toolTip?: string;
   style?: any;
+  sourcePath: string;
 }
 const InternalLink = (props: Props) => {
-  const { label, testId, children, path = '', size = 's', iconType, iconPosition = 'left', toolTip, ...rest } = props
+  const { label, testId, children, path = '', size = 's', iconType, iconPosition = 'left', toolTip, sourcePath, ...rest } = props
   const { openPage } = useContext(EnablementAreaContext)
   const handleOpenPage = () => {
     if (path) {
-      openPage({ path, label })
+      openPage({ path: sourcePath + path, label })
     }
   }
 

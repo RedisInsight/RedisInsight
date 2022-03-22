@@ -18,8 +18,7 @@ export const getHostingProvider = (host: string): HostingProvider => {
   if (host.endsWith('cache.amazonaws.com')) { // lgtm[js/incomplete-url-substring-sanitization]
     return HostingProvider.AWS;
   }
-  // lgtm[js/incomplete-url-substring-sanitization]
-  if (host.endsWith('cache.windows.net')) {
+  if (host.endsWith('cache.windows.net')) { // lgtm[js/incomplete-url-substring-sanitization]
     return HostingProvider.AZURE;
   }
   return HostingProvider.UNKNOWN;

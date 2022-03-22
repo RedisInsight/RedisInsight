@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiBasicTableColumn,
@@ -6,15 +7,18 @@ import {
   EuiFlexItem,
   EuiIcon,
   EuiInMemoryTable,
-  EuiText,
   EuiTextColor,
 } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { Theme } from 'uiSrc/constants'
-import { HELP_LINKS } from 'uiSrc/pages/home/constants/help-links'
+import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getPathToResource } from 'uiSrc/services/resourcesService'
+import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
+
 import styles from './styles.module.scss'
 
 interface IContentColumn {
@@ -40,14 +44,13 @@ export interface Props {
 const ModuleNotLoaded = ({ content = {} }: Props) => {
   const {
     output = '',
-    createCloudBtnText = '',
-    createCloudBtnHref = '',
     summaryText = '',
     summaryImgDark = '',
     summaryImgLight = '',
     summaryImgPath = '',
     columns = []
   } = content
+  const { loading, data: createDbContent } = useSelector(contentSelector)
 
   const { theme } = useContext(ThemeContext)
 
@@ -69,28 +72,30 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
       }
     })
   }
-
-  const CreateCloudBtn = () => (
-    <a
-      className={styles.createCloudBtn}
-      href={createCloudBtnHref}
-      target="_blank"
-      rel="noreferrer"
-      onClick={() => handleClickLink(
-        HELP_LINKS.createRedisCloud.event,
-        { source: HELP_LINKS.createRedisCloud.sources.redisearch }
-      )}
-      data-testid="promo-btn"
-    >
-      <EuiText className={styles.createTitle}>
-        {HELP_LINKS.createRedisCloud.label}
-      </EuiText>
-      <EuiText className={styles.createText}>
-        Try Redis Cloud with enhanced database capabilities.
-      </EuiText>
-      <EuiIcon type="arrowRight" size="m" className={styles.arrowRight} />
-    </a>
-  )
+  const CreateCloudBtn = ({ content }: { content: ContentCreateRedis }) => {
+    const { title, description, styles, links } = content
+    // @ts-ignore
+    const linkStyles = styles ? styles[theme] : {}
+    return (
+      <PromoLink
+        title={title}
+        description={description}
+        url={links?.redisearch?.url}
+        testId="promo-btn"
+        icon="arrowRight"
+        onClick={() => handleClickLink(
+          links?.redisearch?.event as TelemetryEvent,
+          { source: 'RediSearch is not loaded' }
+        )}
+        styles={{
+          ...linkStyles,
+          backgroundImage: linkStyles?.backgroundImage
+            ? `url(${getPathToResource(linkStyles.backgroundImage)})`
+            : undefined
+        }}
+      />
+    )
+  }
 
   return (
     <div className={cx(styles.container)}>
@@ -115,11 +120,11 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
             />
           </EuiFlexItem>
         )}
-        {!!createCloudBtnText && (
-          <EuiFlexItem grow={false} data-testid="query-card-no-module-button">
-            <CreateCloudBtn />
+        { !loading && createDbContent?.cloud && (
+          <EuiFlexItem grow={false} data-testid="query-card-no-module-button" style={{ margin: '20px 0' }}>
+            <CreateCloudBtn content={createDbContent.cloud} />
           </EuiFlexItem>
-        ) }
+        )}
         {(!!summaryText || !!summaryImgPath || !!summaryImgDark || !!summaryImgLight) && (
           <EuiFlexItem>
             <div className={cx(styles.summary)}>

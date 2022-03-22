@@ -1,7 +1,6 @@
 import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
 import {
   CommandArgsType,
-  CommandGroup,
   CommandPrefix,
   ICommandArg,
   ICommandArgGenerated

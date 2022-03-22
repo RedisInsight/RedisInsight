@@ -1,6 +1,7 @@
 enum BrowserStorageItem {
   instancesCount = 'instancesCount',
   theme = 'theme',
+  browserViewType = 'browserViewType',
   cliClientUuid = 'cliClientUuid',
   cliResizableContainer = 'cliResizableContainer',
   cliInputHistory = 'cliInputHistory',
@@ -8,7 +9,7 @@ enum BrowserStorageItem {
   segmentAnonymousId = 'ajs_anonymous_id',
   wbClientUuid = 'wbClientUuid',
   wbInputHistory = 'wbInputHistory',
-  isEnablementAreaMinimized = 'isEnablementAreaMinimized'
+  isEnablementAreaMinimized = 'isEnablementAreaMinimized',
 }
 
 export default BrowserStorageItem

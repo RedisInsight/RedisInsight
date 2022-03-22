@@ -1,7 +1,7 @@
-enum ipcEvent {
+enum IpcEvent {
   getStoreValue = 'getStoreValue',
   deleteStoreValue = 'deleteStoreValue',
   getAppVersion = 'getAppVersion',
 }
 
-export default ipcEvent
+export default IpcEvent

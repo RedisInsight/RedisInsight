@@ -8,7 +8,8 @@ import { useParams } from 'react-router-dom'
 
 import { Nullable, } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { fetchEnablementArea, workbenchEnablementAreaSelector } from 'uiSrc/slices/workbench/wb-enablement-area'
+import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
+import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'
@@ -17,19 +18,25 @@ import { IInternalPage } from '../../contexts/enablementAreaContext'
 import styles from './styles.module.scss'
 
 export interface Props {
-  isMinimized: boolean;
-  setIsMinimized: (value: boolean) => void;
-  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>;
-  setScript: (script: string) => void;
+  isMinimized: boolean
+  setIsMinimized: (value: boolean) => void
+  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
+  setScript: (script: string) => void
+  isCodeBtnDisabled?: boolean
 }
 
-const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptEl, setScript }: Props) => {
-  const { loading, items } = useSelector(workbenchEnablementAreaSelector)
+const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScript, isCodeBtnDisabled }: Props) => {
+  const { loading: loadingGuides, items: guides } = useSelector(workbenchGuidesSelector)
+  const { loading: loadingTutorials, items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchEnablementArea())
+    dispatch(fetchGuides())
+  }, [])
+
+  useEffect(() => {
+    dispatch(fetchTutorials())
   }, [])
 
   const sendEventButtonClickedTelemetry = (data: Record<string, any>) => {
@@ -82,14 +89,16 @@ const EnablementAreaWrapper = React.memo(({ isMinimized, setIsMinimized, scriptE
         grow={!isMinimized}
       >
         <EnablementArea
-          items={items}
-          loading={loading}
+          guides={guides}
+          tutorials={tutorials}
+          loading={loadingGuides || loadingTutorials}
           openScript={openScript}
           onOpenInternalPage={onOpenInternalPage}
+          isCodeBtnDisabled={isCodeBtnDisabled}
         />
       </EuiFlexItem>
     </EuiFlexGroup>
   )
-})
+}
 
-export default EnablementAreaWrapper
+export default React.memo(EnablementAreaWrapper)

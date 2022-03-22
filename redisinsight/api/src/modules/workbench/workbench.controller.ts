@@ -8,7 +8,7 @@ import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { AppTool } from 'src/models';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import {ShortCommandExecution} from "src/modules/workbench/models/short-command-execution";
+import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 
 @ApiTags('Workbench')
 @UsePipes(new ValidationPipe({ transform: true }))

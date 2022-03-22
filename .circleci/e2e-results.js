@@ -1,9 +1,16 @@
 const fs = require('fs');
 
+let parallelNodeInfo = '';
+const totalNodes = parseInt(process.env.CIRCLE_NODE_TOTAL, 10);
+if (totalNodes > 1) {
+  parallelNodeInfo = ` (node: ${parseInt(process.env.CIRCLE_NODE_INDEX, 10) + 1}/${totalNodes})`
+}
+
 const file = 'tests/e2e/results/e2e.results.json'
+const appBuildType = process.env.APP_BUILD_TYPE || 'Web'
 const results = {
   message: {
-    text: `*E2ETest - All* (Branch: *${process.env.CIRCLE_BRANCH}*)` +
+    text: `*E2ETest - ${appBuildType}${parallelNodeInfo}* (Branch: *${process.env.CIRCLE_BRANCH}*)` +
       `\n<https://app.circleci.com/pipelines/workflows/${process.env.CIRCLE_WORKFLOW_ID}|View on CircleCI>`,
     attachments: [],
   },

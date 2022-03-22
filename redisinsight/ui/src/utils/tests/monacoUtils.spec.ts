@@ -1,4 +1,9 @@
-import { multilineCommandToOneLine, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
+import {
+  multilineCommandToOneLine,
+  removeMonacoComments,
+  splitMonacoValuePerLines,
+  findArgIndexByCursor
+} from 'uiSrc/utils'
 
 describe('removeMonacoComments', () => {
   const cases = [
@@ -96,6 +101,48 @@ describe('splitMonacoValuePerLines', () => {
     'given %p as argument, returns %p',
     (arg: string, expectedResult) => {
       const result = splitMonacoValuePerLines(arg)
+      expect(result).toEqual(expectedResult)
+    }
+  )
+})
+
+describe.only('findArgIndexByCursor', () => {
+  const cases = [
+    [
+      ['get', 'foo', 'bar'],
+      'get foo bar',
+      10,
+      2
+    ],
+    [
+      ['get', 'foo', 'bar'],
+      'get foo bar',
+      5,
+      1
+    ],
+    [
+      ['get', 'foo', 'bar'],
+      'get foo \n      bar',
+      17,
+      2
+    ],
+    [
+      ['get', 'foo', 'bar'],
+      'get foo \n\n\n      bar',
+      19,
+      2
+    ],
+    [
+      ['get', 'foo', 'bar'],
+      'get foo \n\n\n      bar',
+      25,
+      null
+    ],
+  ]
+  test.each(cases)(
+    'given %p as args, %p as fullQuery, %p as cursor position, returns %p',
+    (args: string[], fullQuery: string, cursorPosition: number, expectedResult) => {
+      const result = findArgIndexByCursor(args, fullQuery, cursorPosition)
       expect(result).toEqual(expectedResult)
     }
   )

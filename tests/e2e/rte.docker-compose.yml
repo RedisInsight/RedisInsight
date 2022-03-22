@@ -1,0 +1,68 @@
+version: "3.4"
+
+services:
+  # oss standalone
+  oss-standalone:
+    image: redislabs/redismod
+    command: [
+        "--loadmodule", "/usr/lib/redis/modules/redisearch.so",
+        "--loadmodule", "/usr/lib/redis/modules/redisgraph.so",
+        "--loadmodule", "/usr/lib/redis/modules/redistimeseries.so",
+        "--loadmodule", "/usr/lib/redis/modules/rejson.so",
+        "--loadmodule", "/usr/lib/redis/modules/redisbloom.so"
+    ]
+    ports:
+      - 8100:6379
+
+  # oss standalone v5
+  oss-standalone-v5:
+    image: redis:5
+    ports:
+      - 8101:6379
+
+  # oss standalone redisearch
+  oss-standalone-redisearch:
+    image: redislabs/redismod
+    ports:
+      - 8102:6379
+
+  oss-standalone-big:
+    build:
+      context: ./rte/oss-standalone-big
+      dockerfile: Dockerfile
+      args:
+        TEST_DB_DUMP: $TEST_BIG_DB_DUMP
+    ports:
+      - 8103:6379
+
+  # oss sentinel
+  oss-sentinel:
+    build: ./rte/oss-sentinel
+    depends_on:
+      - oss-sentinel-primary-1
+      - oss-sentinel-primary-2
+    ports:
+      - 28100:26379
+
+  oss-sentinel-primary-1:
+    image: redis:5
+
+  oss-sentinel-primary-2:
+    image: redis:5
+
+  # oss cluster
+  oss-cluster:
+    image: rdbtools/redis-cluster-modules
+    networks:
+      - default
+    ports:
+      - 8200:7000
+
+  # redis enterprise
+  redis-enterprise:
+    build: ./rte/redis-enterprise
+    cap_add:
+      - sys_resource
+    ports:
+      - 19443:9443
+      - 12000:12000

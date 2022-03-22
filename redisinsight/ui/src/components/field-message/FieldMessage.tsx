@@ -2,6 +2,7 @@ import React, { Ref, useEffect, useRef } from 'react'
 import cx from 'classnames'
 import { EuiIcon, EuiTextColor } from '@elastic/eui'
 
+import { scrollIntoView } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 type Colors = 'default' | 'secondary' | 'accent' | 'warning' | 'danger' | 'subdued' | 'ghost'
@@ -19,7 +20,7 @@ const FieldMessage = ({ children, color, testID, icon, scrollViewOnAppear }: Pro
   useEffect(() => {
     // componentDidMount
     if (scrollViewOnAppear) {
-      divRef?.current?.scrollIntoView({
+      scrollIntoView(divRef?.current, {
         behavior: 'smooth',
         block: 'nearest',
         inline: 'end',

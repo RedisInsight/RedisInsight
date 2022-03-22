@@ -14,15 +14,15 @@ const formatToText = (reply: any, command: string = ''): string => {
   } else if (isObject(reply)) {
     result = formatRedisArrayReply(flattenDeep(Object.entries(reply)))
   } else if (isFormattedCommand(command)) {
-    result = JSON.stringify(reply)
-  } else {
     result = reply
+  } else {
+    result = `"${reply}"`
   }
 
   return result
 }
 
-const isFormattedCommand = (commandLine: string = '') => !bulkReplyCommands?.find((command) =>
+const isFormattedCommand = (commandLine: string = '') => !!bulkReplyCommands?.find((command) =>
   commandLine?.trim().toUpperCase().startsWith(command))
 
 const formatRedisArrayReply = (reply: any | any[], level = 0): string => {
@@ -41,7 +41,7 @@ const formatRedisArrayReply = (reply: any | any[], level = 0): string => {
         .join('\n')
     }
   } else {
-    result = JSON.stringify(reply)
+    result = `"${reply}"`
   }
   return result
 }

@@ -71,7 +71,6 @@ export class BrowserPage {
   zsetScoresList: Selector
   searchInput: Selector
   searchButton: Selector
-  removeButton: Selector
   confirmRemoveSetMemberButton: Selector
   confirmRemoveHashFieldButton: Selector
   confirmRemovZSetMemberButton: Selector
@@ -111,6 +110,28 @@ export class BrowserPage {
   overviewCommandsSec: Selector
   overviewCpu: Selector
   modulesButton: Selector
+  overviewMoreInfo: Selector
+  overviewTooltip: Selector
+  overviewTooltipStatTitle: Selector
+  treeViewButton: Selector
+  treeViewArea: Selector
+  browserViewButton: Selector
+  scannedValue: Selector
+  treeViewSeparator: Selector
+  treeViewKeysNumber: Selector
+  treeViewPercentage: Selector
+  treeViewFolders: Selector
+  totalKeysNumber: Selector
+  breadcrumbsContainer: Selector
+  databaseInfoIcon: Selector
+  databaseInfoToolTip: Selector
+  removeHashFieldButton: Selector
+  removeSetMemberButton: Selector
+  removeZserMemberButton: Selector
+  treeViewKeysItem: Selector
+  treeViewNodeArrowIcon: Selector
+  treeViewDeviceFolder: Selector
+  treeViewDeviceKyesCount: Selector
 
   constructor() {
       //CSS Selectors
@@ -150,7 +171,9 @@ export class BrowserPage {
       this.keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
       this.progressLine = Selector('div.euiProgress');
       this.confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
-      this.removeButton = Selector('[data-testid*=-icon]');
+      this.removeSetMemberButton = Selector('[data-testid^=set-remove-btn]');
+      this.removeHashFieldButton = Selector('[data-testid^=remove-hash-button]');
+      this.removeZserMemberButton = Selector('[data-testid^=zset-remove-button]');
       this.confirmRemoveSetMemberButton = Selector('[data-testid^=set-remove-btn-] span');
       this.confirmRemovZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
       this.saveElementButton = Selector('[data-testid=save-elements-btn]');
@@ -170,6 +193,15 @@ export class BrowserPage {
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
       this.modulesButton = Selector('[data-testid$=_module]');
+      this.overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
+      this.overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
+      this.overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
+      this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
+      this.treeViewButton = Selector('[data-testid=view-type-list-btn]');
+      this.browserViewButton = Selector('[data-testid=view-type-browser-btn]');
+      this.treeViewSeparator = Selector('[data-testid=select-tree-view-separator]');
+      this.treeViewKeysItem = Selector('[data-testid="keys:keys:"]');
+      this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
       this.keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -223,6 +255,16 @@ export class BrowserPage {
       this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
       this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
       this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
+      this.breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
+      this.treeViewArea = Selector('[data-test-subj=tree-view-panel]');
+      this.scannedValue = Selector('[data-testid=keys-number-of-scanned]');
+      this.treeViewKeysNumber = Selector('[data-testid^=count_]');
+      this.treeViewPercentage = Selector('[data-testid^=percentage_]');
+      this.treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
+      this.totalKeysNumber = Selector('[data-testid=keys-total]');
+      this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
+      this.treeViewDeviceFolder = Selector('[data-testid^=device] div');
+      this.treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
   }
 
   /**
@@ -384,6 +426,7 @@ export class BrowserPage {
 
   //Delete key from details
   async deleteKey(): Promise<void> {
+      await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);
       await t.click(this.confirmDeleteKeyButton);
   }
@@ -592,7 +635,7 @@ export class BrowserPage {
   * Add json structure
   * @param jsonStructure The structure of the json key
   */
-  async addJsonSctucture(jsonStructure: string): Promise<void>{
+  async addJsonStructure(jsonStructure: string): Promise<void>{
       await t.click(this.expandJsonObject);
       await t.click(this.editJsonObjectButton);
       await t.pressKey('ctrl+a delete');

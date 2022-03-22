@@ -15,7 +15,7 @@ const renderRandomKey = (props:Props) => {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  renderRandomKey({ data: [{ response: 'key132', status: 'success' }] || [] })
+  renderRandomKey({ data: [{ response: 'key132', status: 'success' }] })
 }
 
 // This is a required action - export the main function for execution of the visualization

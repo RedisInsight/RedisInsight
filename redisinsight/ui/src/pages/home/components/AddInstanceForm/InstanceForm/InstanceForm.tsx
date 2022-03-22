@@ -57,6 +57,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { resetKeys } from 'uiSrc/slices/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
+import { DatabaseListModules } from 'uiSrc/components'
 import {
   LoadingInstanceText,
   SubmitBtnText,
@@ -104,9 +105,10 @@ export interface Props {
     value: DbConnectionInfo[K]
   ) => void;
   onSubmit: (values: DbConnectionInfo) => void;
-  onClose: () => void;
   updateEditingName: (name: string) => void;
   onHostNamePaste: (content: string) => boolean;
+  onClose?: () => void;
+  onAliasEdited?: (value: string) => void;
   setErrorMsgRef?: (instance: HTMLDivElement | null) => void;
 }
 
@@ -150,7 +152,7 @@ const AddStandaloneForm = (props: Props) => {
       nameFromProvider,
       sentinelMaster,
       connectionType,
-      endpoints,
+      endpoints = null,
       tlsClientAuthRequired,
       certificates,
       selectedTlsClientCertId = '',
@@ -159,17 +161,21 @@ const AddStandaloneForm = (props: Props) => {
       selectedCaCertName,
       username,
       password,
+      modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
+      isRediStack
     },
     initialValues: initialValuesProp,
     width,
     onClose,
     onSubmit,
+    onHostNamePaste,
     submitButtonText,
     instanceType,
     loading,
     isEditMode,
+    onAliasEdited,
   } = props
 
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
@@ -182,6 +188,7 @@ const AddStandaloneForm = (props: Props) => {
     password,
     tls,
     db,
+    modules,
     showDb: !!db,
     newCaCert: '',
     newCaCertName: '',
@@ -356,7 +363,15 @@ const AddStandaloneForm = (props: Props) => {
     onSuccess?: () => void,
     onFail?: () => void
   ) => {
-    dispatch(changeInstanceAliasAction(id, value, onSuccess, onFail))
+    dispatch(changeInstanceAliasAction(
+      id,
+      value,
+      () => {
+        onAliasEdited?.(value)
+        onSuccess?.()
+      },
+      onFail
+    ))
   }
 
   const handleChangeDbIndexCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -444,6 +459,22 @@ const AddStandaloneForm = (props: Props) => {
             </EuiText>
             )}
         />
+      )}
+
+      {!!modules?.length && (
+        <>
+          <EuiListGroupItem
+            className={styles.dbInfoModulesLabel}
+            label={(
+              <EuiText color="subdued" size="s">
+                Modules:
+              </EuiText>
+            )}
+          />
+          <EuiTextColor color="default" className={cx(styles.dbInfoListValue, styles.dbInfoModules)}>
+            <DatabaseListModules modules={modules} />
+          </EuiTextColor>
+        </>
       )}
     </EuiListGroup>
   )
@@ -585,7 +616,7 @@ const AddStandaloneForm = (props: Props) => {
                   )
                 }}
                 onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                  handlePasteHostName(props.onHostNamePaste, event)}
+                  handlePasteHostName(onHostNamePaste, event)}
                 append={<AppendHostName />}
               />
             </EuiFormRow>
@@ -1038,24 +1069,22 @@ const AddStandaloneForm = (props: Props) => {
     </EuiToolTip>
   )
 
-  const handleClose = () => {
-    onClose()
-  }
-
   const Footer = () => {
     const footerEl = document.getElementById('footerDatabaseForm')
 
     if (footerEl) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <EuiButton
-            onClick={handleClose}
-            color="secondary"
-            className="btn-cancel"
-            data-testid="btn-cancel"
-          >
-            Cancel
-          </EuiButton>
+          {onClose && (
+            <EuiButton
+              onClick={onClose}
+              color="secondary"
+              className="btn-cancel"
+              data-testid="btn-cancel"
+            >
+              Cancel
+            </EuiButton>
+          )}
           <SubmitButton
             onClick={formik.submitForm}
             text={submitButtonText}
@@ -1133,6 +1162,7 @@ const AddStandaloneForm = (props: Props) => {
       {isEditMode && name && (
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
+            isRediStack={isRediStack}
             alias={name}
             database={db}
             isLoading={loading}

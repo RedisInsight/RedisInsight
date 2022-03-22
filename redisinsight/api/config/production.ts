@@ -1,14 +1,21 @@
 import { join } from 'path';
+import * as os from 'os';
 
-const homedir = join(require('os').homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-preview');
+const homedir = process.env.APP_FOLDER_ABSOLUTE_PATH
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
+
+const prevHomedir = join(os.homedir(), '.redisinsight-preview');
 
 export default {
   dir_path: {
     homedir,
+    prevHomedir,
     logs: join(homedir, 'logs'),
     customPlugins: join(homedir, 'plugins'),
     commands: join(homedir, 'commands'),
-    enablementArea: join(homedir, 'enablement-area'),
+    guides: process.env.GUIDES_DEV_PATH || join(homedir, 'guides'),
+    tutorials: process.env.TUTORIALS_DEV_PATH || join(homedir, 'tutorials'),
+    content: process.env.CONTENT_DEV_PATH || join(homedir, 'content'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },

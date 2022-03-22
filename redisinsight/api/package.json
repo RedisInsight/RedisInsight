@@ -1,6 +1,6 @@
 {
   "name": "redisinsight-api",
-  "version": "2.0.0",
+  "version": "2.0.5",
   "description": "RedisInsight API",
   "private": true,
   "author": {
@@ -10,8 +10,10 @@
   },
   "scripts": {
     "build:defaults:commands": "ts-node ./scripts/default-commands.ts",
-    "build:defaults:enablement-area": "ts-node ./scripts/default-enablement-area.ts",
-    "build:defaults": "yarn build:defaults:enablement-area && yarn build:defaults:commands",
+    "build:defaults:guides": "ts-node ./scripts/default-guides.ts",
+    "build:defaults:tutorials": "ts-node ./scripts/default-tutorials.ts",
+    "build:defaults:content": "ts-node ./scripts/default-content.ts",
+    "build:defaults": "yarn build:defaults:guides && yarn build:defaults:commands && yarn build:defaults:content && yarn build:defaults:tutorials",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "build:prod": "rimraf dist && nest build -p ./tsconfig.build.prod.json && cross-env NODE_ENV=production",
@@ -47,10 +49,11 @@
     "@nestjs/websockets": "^8.2.3",
     "adm-zip": "^0.5.9",
     "analytics-node": "^4.0.1",
-    "axios": "^0.21.0",
+    "axios": "^0.25.0",
     "body-parser": "^1.19.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
+    "dotenv": "^16.0.0",
     "express": "^4.17.1",
     "fs-extra": "^10.0.0",
     "ioredis": "^4.27.1",

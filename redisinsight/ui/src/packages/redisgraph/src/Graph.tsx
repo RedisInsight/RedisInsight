@@ -45,7 +45,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
   let edgeIds = new Set(parsedResponse.edges.map(e => e.id))
 
   if (nodeIds.size === 0 && parsedResponse.nodeIds.length === 0) {
-    return <div className="responseFail">No vizualization data.</div>
+    return <div className="responseFail">No data to visualize. Switch to Text view to see raw information.</div>
   }
 
   let data = {

@@ -765,25 +765,32 @@ jobs:
                 [key]='platform'
                 [value]='macos'
                 [objectDownload]=${applicationName}'-mac-x64.dmg'
-                [objectUpgrade]=${applicationName}'.zip'
+                [objectUpgrade]=${applicationName}'-mac-x64.zip'
             )
 
             declare -A tag1=(
+                [key]='platform'
+                [value]='macos'
+                [objectDownload]=${applicationName}'-mac-arm64.dmg'
+                [objectUpgrade]=${applicationName}'-mac-arm64.zip'
+            )
+
+            declare -A tag2=(
                 [key]='platform'
                 [value]='windows'
                 [objectDownload]=${applicationName}'-win-installer.exe'
             )
 
-            declare -A tag2=(
-                [key]='platform'
-                [value]='linux_AppImage'
-                [objectDownload]=${applicationName}'-linux.AppImage'
-            )
-
             declare -A tag3=(
                 [key]='platform'
+                [value]='linux_AppImage'
+                [objectDownload]=${applicationName}'-x86_64.AppImage'
+            )
+
+            declare -A tag4=(
+                [key]='platform'
                 [value]='linux_deb'
-                [objectDownload]=${applicationName}'-linux.deb'
+                [objectDownload]=${applicationName}'-amd64.deb'
             )
 
             # loop for add all tags to each app and create metrics
@@ -998,7 +1005,12 @@ workflows:
             - Build app - Linux (prod)
       - virustotal:
           name: Virus check - dmg (prod)
-          ext: dmg
+          ext: x64.dmg
+          requires:
+            - Build app - MacOS (prod)
+      - virustotal:
+          name: Virus check - dmg (prod)
+          ext: arm64.dmg
           requires:
             - Build app - MacOS (prod)
       - virustotal:

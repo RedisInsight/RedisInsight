@@ -1007,12 +1007,12 @@ workflows:
           name: Virus check - dmg (prod)
           ext: x64.dmg
           requires:
-            - Build app - MacOS (prod)
+            - Build app arm64 - MacOS (prod)
       - virustotal:
           name: Virus check - dmg (prod)
           ext: arm64.dmg
           requires:
-            - Build app - MacOS (prod)
+            - Build app x64- MacOS (prod)
       - virustotal:
           name: Virus check - exe (prod)
           ext: exe

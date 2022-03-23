@@ -155,7 +155,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       graphData: graphData,
       infoPanel: true,
       // nodeRadius: 25,
-      onLabelNode: (node) => node.properties?.name || node.properties?.title || (node.labels ? node.labels[0] : ''),
+      onLabelNode: (node) => node.properties?.name || node.properties?.title || node.id || (node.labels ? node.labels[0] : ''),
       onNodeClick: (nodeSvg, node, event) => {
         if (d3.select(nodeSvg).attr('class').indexOf('selected') > 0) {
           d3.select(nodeSvg)

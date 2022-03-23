@@ -42,10 +42,10 @@ function responseParser(data: any) {
   let edges: IEdge[] = []
   let types: {[key: string]: number} = {}
   let labels: {[key: string]: number} = {}
-  if (data.length === 0) return {
+  if (data.length < 2) return {
     nodes, edges, types, labels, headers, nodeIds, edgeIds,
   }
-  
+
   const entries = data[1].map((entry: any) => {
     /* entry -> has headers number of items */
     entry.map((item: any) => {

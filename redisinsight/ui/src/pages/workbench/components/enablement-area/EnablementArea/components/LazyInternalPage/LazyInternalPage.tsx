@@ -46,7 +46,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
   const dispatch = useDispatch()
   const fetchService = IS_ABSOLUTE_PATH.test(path) ? axios : resourcesService
 
-  const getRelatedPages = useCallback((sourcePath: string): IEnablementAreaItem[] => {
+  const getRelatedPages = (sourcePath: string): IEnablementAreaItem[] => {
     const pageInfo = getFileInfo(path)
 
     switch (sourcePath) {
@@ -57,7 +57,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
       default:
         return []
     }
-  }, [sourcePath, guides, tutorials])
+  }
 
   const loadContent = async () => {
     setLoading(true)

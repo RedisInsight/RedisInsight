@@ -132,6 +132,8 @@ export class BrowserPage {
   treeViewNodeArrowIcon: Selector
   treeViewDeviceFolder: Selector
   treeViewDeviceKyesCount: Selector
+  modulesTypeDetails: Selector
+  internalLinkToWorkbench: Selector
 
   constructor() {
       //CSS Selectors
@@ -265,6 +267,8 @@ export class BrowserPage {
       this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
       this.treeViewDeviceFolder = Selector('[data-testid^=device] div');
       this.treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
+      this.modulesTypeDetails = Selector('[data-testid=modules-type-details]');
+      this.internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
   }
 
   /**

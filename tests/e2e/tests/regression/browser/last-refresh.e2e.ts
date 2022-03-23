@@ -21,6 +21,7 @@ fixture `Last refresh`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
+    .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);

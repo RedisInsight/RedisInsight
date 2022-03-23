@@ -30,6 +30,7 @@ const ModulesTypeDetails = ({ moduleName = 'unsupported' }: { moduleName: string
               tabIndex={0}
               onClick={handleGoWorkbenchPage}
               className={styles.link}
+              data-testid="internal-workbench-link"
               onKeyDown={() => ({})}
               role="link"
               rel="noreferrer"

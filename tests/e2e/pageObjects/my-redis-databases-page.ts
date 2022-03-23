@@ -37,7 +37,7 @@ export class MyRedisDatabasePage {
     moduleGearsIcon: Selector
     moduleTooltip: Selector
     moduleQuantifier: Selector
-    modulesOnEditPage: Selector
+    redisStackIcon: Selector
 
     constructor() {
         //-------------------------------------------------------------------------------------------
@@ -72,6 +72,7 @@ export class MyRedisDatabasePage {
         this.moduleGearsIcon = Selector('[data-testid^=RedisGears]');
         this.moduleTooltip = Selector('.euiToolTipPopover');
         this.moduleQuantifier = Selector('[data-testid=_module]');
+        this.redisStackIcon = Selector('[data-testid=redis-stack-icon]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.dbNameList = Selector('[data-testid^=instance-name]');
         this.tableRowContent = Selector('[data-test-subj=database-alias-column]');
@@ -103,7 +104,8 @@ export class MyRedisDatabasePage {
             await t.click(this.selectAllCheckbox);
             await t.click(this.deleteButtonInPopover);
             await t.click(this.confirmDeleteAllDbButton);
-        } else if (count === 1) {
+        }
+        else if (count === 1) {
             await t.click(this.deleteDatabaseButton);
             await t.click(this.confirmDeleteButton);
         }

@@ -262,7 +262,8 @@
     "remark-rehype": "^10.0.1",
     "socket.io-client": "^4.4.0",
     "unified": "^10.1.1",
-    "unist-util-visit": "^4.1.0"
+    "unist-util-visit": "^4.1.0",
+    "url-parse": "^1.5.10"
   },
   "devEngines": {
     "node": ">=14.x <16",

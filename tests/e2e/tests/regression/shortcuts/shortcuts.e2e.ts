@@ -65,3 +65,18 @@ test
             await t.expect(shortcutsPage.shortcutsPanel.textContent).contains(element, 'The user can see description of the “up” shortcut');
         }
     })
+test
+    .meta({ rte: rte.none })
+    ('Verify that user can see the description of the “Shift+Space” keyboard shortcut in the Keyboard Shortcuts', async t => {
+        const description = [
+            'Use Non-Redis Editor',
+            'Shift+Space'
+        ];
+        //Open Shortcuts
+        await t.click(myRedisDatabasePage.helpCenterButton);
+        await t.click(helpCenterPage.helpCenterShortcutButton);
+        // Verify that user can see description of the “Shift+Space” shortcut
+        for(const element of description) {
+            await t.expect(shortcutsPage.shortcutsPanel.textContent).contains(element, 'The user can see description of the “Shift+Space” shortcut');
+        }
+    })

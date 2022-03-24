@@ -426,6 +426,9 @@ export class BrowserPage {
 
   //Delete key from details
   async deleteKey(): Promise<void> {
+      if (await this.toastCloseButton.exists) {
+          await t.click(this.toastCloseButton);
+      }
       await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);
       await t.click(this.confirmDeleteKeyButton);
@@ -436,6 +439,9 @@ export class BrowserPage {
   * @param keyName The name of the key
   */
   async deleteKeyByName(keyName: string): Promise<void> {
+      if (await this.toastCloseButton.exists) {
+          await t.click(this.toastCloseButton);
+      }
       await this.searchByKeyName(keyName);
       await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);

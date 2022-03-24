@@ -56,6 +56,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         //Open Working with Hashes section
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
@@ -110,6 +111,7 @@ test
             'Learn More'
         ]
         //Open Working with Hashes section and click on the on page counter
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         await t.click(workbenchPage.enablementAreaPagination);
@@ -125,6 +127,7 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that user can see the quick navigation section to navigate between siblings under the scrolling content', async t => {
         //Open Working with Hashes section
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         //Verify the quick navigation section

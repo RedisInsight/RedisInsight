@@ -34,8 +34,13 @@ export interface Props {
   onSubmit: (query?: string) => void
   onCancel: () => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
-  width: number
+  height: number
+  initialHeight: number
 }
+
+// paddings of main editor
+const WRAPPER_PADDINGS_HEIGHT = 18
+const BOTTOM_INDENT_PADDING = 6
 
 const langs: MonacoSyntaxLang = {
   [DSL.cypher]: {
@@ -50,12 +55,13 @@ let decorations: string[] = []
 const notCommandRegEx = /^\s|\/\//
 
 const DedicatedEditor = (props: Props) => {
-  const { width, query = '', lang, onCancel, onSubmit } = props
+  const { height, initialHeight, query = '', lang, onCancel, onSubmit } = props
   const selectedLang = langs[lang]
   let contribution: Nullable<ISnippetController> = null
 
   const [value, setValue] = useState<string>(query)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+  const rndRef = useRef<Nullable<any>>(null)
   let disposeCompletionItemProvider = () => {}
 
   useEffect(() =>
@@ -65,6 +71,16 @@ const DedicatedEditor = (props: Props) => {
       disposeCompletionItemProvider()
     },
   [])
+
+  useEffect(() => {
+    if (height === 0) return
+
+    const rndHeight = rndRef?.current.resizableElement.current.offsetHeight || 0
+    const rndTop = rndRef?.current.draggable.state.y
+    if (height < rndTop + rndHeight + WRAPPER_PADDINGS_HEIGHT) {
+      rndRef?.current.updatePosition({ x: 0, y: height - rndHeight - WRAPPER_PADDINGS_HEIGHT })
+    }
+  }, [height])
 
   useEffect(() => {
     if (!monacoObjects.current) return
@@ -182,14 +198,28 @@ const DedicatedEditor = (props: Props) => {
 
   return (
     <Rnd
+      ref={rndRef}
       default={{
-        x: 17,
-        y: 80,
-        width,
-        height: 176
+        x: 0,
+        y: initialHeight * 0.4 - BOTTOM_INDENT_PADDING,
+        width: '100%',
+        height: '60%'
       }}
-      className={styles.rnd}
+      minHeight="80px"
+      enableResizing={{
+        top: true,
+        right: false,
+        bottom: true,
+        left: false,
+        topRight: false,
+        bottomRight: false,
+        bottomLeft: false,
+        topLeft: false
+      }}
+      dragAxis="y"
+      bounds=".editorBounder"
       dragHandleClassName="draggable-area"
+      className={styles.rnd}
     >
       <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
         <div className="draggable-area" />

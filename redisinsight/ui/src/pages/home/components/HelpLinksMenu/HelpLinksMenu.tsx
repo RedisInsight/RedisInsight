@@ -5,12 +5,12 @@ import { IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 
 import styles from './styles.module.scss'
 
-interface IProps {
+export interface Props {
   onLinkClick?: (link: string) => void
   items: IHelpGuide[]
 }
 
-const HelpLinksMenu = ({ onLinkClick, items }: IProps) => {
+const HelpLinksMenu = ({ onLinkClick, items }: Props) => {
   const [isPopoverOpen, setPopover] = useState(false)
 
   const onButtonClick = () => {
@@ -28,7 +28,7 @@ const HelpLinksMenu = ({ onLinkClick, items }: IProps) => {
     }
   }
 
-  const menuItems = items.map(({ id, url, title, primary }) => (
+  const menuItems = items?.map(({ id, url, title, primary }) => (
     <EuiContextMenuItem className={styles.item} key={id}>
       <EuiLink
         external={false}

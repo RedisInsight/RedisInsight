@@ -195,7 +195,7 @@ const DedicatedEditor = (props: Props) => {
         <div className="draggable-area" />
         <div className={styles.input} data-testid="query-input-container">
           <MonacoEditor
-            language={selectedLang.id || MonacoLanguage.Cypher}
+            language={selectedLang?.id || MonacoLanguage.Cypher}
             value={value}
             onChange={setValue}
             options={options}
@@ -204,7 +204,7 @@ const DedicatedEditor = (props: Props) => {
           />
         </div>
         <div className={cx(styles.actions)}>
-          <span>{ selectedLang.name }</span>
+          <span>{ selectedLang?.name }</span>
           <div>
             <EuiButtonIcon
               iconSize="m"

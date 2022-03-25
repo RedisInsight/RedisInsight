@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { AutoSizer } from 'react-virtualized'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'

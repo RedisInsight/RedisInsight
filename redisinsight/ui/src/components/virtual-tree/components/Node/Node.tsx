@@ -58,7 +58,7 @@ const Node = ({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       onFocus={() => {}}
-      data-testid={fullName}
+      data-testid={`node-item_${fullName}`}
     >
       <div className={styles.nodeName}>
         {!isLeaf && (

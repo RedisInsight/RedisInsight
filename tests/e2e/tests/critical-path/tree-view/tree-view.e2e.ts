@@ -42,12 +42,13 @@ test
     ('Verify that user can see DB is automatically scanned by 10K keys in the background, user can see the number of keys scanned and use the "Scan More" button to search per another 10000 keys', async t => {
         let scannedValue = 10;
         await t.click(browserPage.treeViewButton);
+        await t.expect(browserPage.scannedValue.visible).ok('The database scanned value is displayed', { timeout: 40000 });
         await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, 'The database is automatically scanned by 10K keys');
         //Verify that user can use the "Scan More" button to search per another 10000 keys
         for (let i = 0; i < 10; i++){
             scannedValue = scannedValue + 10;
             await t.click(browserPage.scanMoreButton);
-            await t.expect(await browserPage.scannedValue.withExactText(`${scannedValue} 000`).exists).ok('The database is automatically scanned by 10K keys');
+            await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, `The database is automatically scanned by ${scannedValue} 000 keys`, { timeout: 40000 });
         }       
     });
 test

@@ -31,7 +31,7 @@ export const constructKeysToTreeMockResult = [
       }
     },
     keyCount: 4,
-    fullName: 'keys:keys:',
+    fullName: `${TREE_LEAF_FIELD}:`,
     keyApproximate: 40,
   },
   {
@@ -61,7 +61,7 @@ export const constructKeysToTreeMockResult = [
           }
         },
         keyCount: 3,
-        fullName: 'keys:keys:keys:',
+        fullName: `keys:${TREE_LEAF_FIELD}:`,
         keyApproximate: 30,
       },
       {
@@ -85,7 +85,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 2,
-            fullName: 'keys:1:keys:keys:',
+            fullName: `keys:1:${TREE_LEAF_FIELD}:`,
             keyApproximate: 20,
           }
         ],
@@ -116,7 +116,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 1,
-            fullName: 'empty::keys:keys:',
+            fullName: `empty::${TREE_LEAF_FIELD}:`,
             keyApproximate: 10,
           }
         ],

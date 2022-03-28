@@ -41,7 +41,6 @@ export interface Props {
   setConstructingTree: (status: boolean) => void
 }
 
-const timeLabel = 'Time for construct a Tree'
 const VirtualTree = (props: Props) => {
   const {
     items,

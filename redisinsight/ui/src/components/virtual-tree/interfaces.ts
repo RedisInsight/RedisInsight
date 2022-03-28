@@ -1,7 +1,7 @@
 import { FixedSizeNodeData } from 'react-vtree'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
-export const TREE_LEAF_FIELD = 'keys:keys:'
+export const TREE_LEAF_FIELD = 'keys:keys'
 
 export interface TreeNode {
   children: TreeNode[]

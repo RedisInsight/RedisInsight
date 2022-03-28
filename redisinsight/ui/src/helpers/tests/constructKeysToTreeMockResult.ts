@@ -1,6 +1,8 @@
+import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
+
 export const constructKeysToTreeMockResult = [
   {
-    name: 'keys:keys',
+    name: TREE_LEAF_FIELD,
     children: [],
     keys: {
       keys2: {
@@ -36,7 +38,7 @@ export const constructKeysToTreeMockResult = [
     name: 'keys',
     children: [
       {
-        name: 'keys:keys',
+        name: TREE_LEAF_FIELD,
         children: [],
         keys: {
           'keys:1': {
@@ -66,7 +68,7 @@ export const constructKeysToTreeMockResult = [
         name: '1',
         children: [
           {
-            name: 'keys:keys',
+            name: TREE_LEAF_FIELD,
             children: [],
             keys: {
               'keys:1:2': {
@@ -103,7 +105,7 @@ export const constructKeysToTreeMockResult = [
         name: '',
         children: [
           {
-            name: 'keys:keys',
+            name: TREE_LEAF_FIELD,
             children: [],
             keys: {
               'empty::test': {

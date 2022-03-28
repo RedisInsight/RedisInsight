@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { isArray, isEmpty } from 'lodash'
@@ -18,7 +17,7 @@ import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 
 import { Node } from './components/Node'
-import { NodeMeta, TreeData, TreeNode } from './interfaces'
+import { NodeMeta, TreeData, TreeNode, TREE_LEAF_FIELD } from './interfaces'
 
 import styles from './styles.module.scss'
 
@@ -73,8 +72,6 @@ const VirtualTree = (props: Props) => {
     if (!result) {
       return
     }
-    // [ToDo] remove after tests
-    console.timeEnd(timeLabel)
 
     setNodes(result)
     setConstructingTree?.(false)
@@ -100,8 +97,6 @@ const VirtualTree = (props: Props) => {
       return
     }
 
-    // [ToDo] remove after tests
-    console.time(timeLabel)
     setConstructingTree(true)
     runWebworker?.({ items, separator })
   }, [items])
@@ -137,7 +132,7 @@ const VirtualTree = (props: Props) => {
       updateStatusOpen: handleUpdateOpen,
       leafIcon: theme === Theme.Dark ? KeyDarkSVG : KeyLightSVG,
       keyApproximate: node.keyApproximate,
-      keys: node.keys || node?.['keys:keys'],
+      keys: node.keys || node?.[TREE_LEAF_FIELD],
       isSelected: Object.keys(statusSelected)[0] === node.fullName,
       isOpenByDefault: statusOpen[node.fullName],
     },

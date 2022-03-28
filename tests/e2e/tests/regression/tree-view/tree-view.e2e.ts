@@ -52,6 +52,7 @@ test
     ('Verify that when user deletes the key he can see the key is removed from the folder, the number of keys is reduced, the percentage is recalculated', async t => {
         //Open the first key in the tree view and remove
         await t.click(browserPage.treeViewButton);
+        await t.expect(browserPage.treeViewDeviceFolder.visible).ok('The key folder is displayed', { timeout: 60000 });
         await t.click(browserPage.treeViewDeviceFolder);
         const numberOfKeys = await browserPage.treeViewDeviceKyesCount.textContent;
         const keyFolder = await browserPage.treeViewDeviceFolder.nth(2).textContent;

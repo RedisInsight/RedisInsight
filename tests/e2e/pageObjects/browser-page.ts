@@ -202,7 +202,7 @@ export class BrowserPage {
       this.treeViewButton = Selector('[data-testid=view-type-list-btn]');
       this.browserViewButton = Selector('[data-testid=view-type-browser-btn]');
       this.treeViewSeparator = Selector('[data-testid=select-tree-view-separator]');
-      this.treeViewKeysItem = Selector('[data-testid="keys:keys:"]');
+      this.treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
       this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
@@ -265,7 +265,7 @@ export class BrowserPage {
       this.treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
       this.totalKeysNumber = Selector('[data-testid=keys-total]');
       this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
-      this.treeViewDeviceFolder = Selector('[data-testid^=device] div');
+      this.treeViewDeviceFolder = Selector('[data-testid^=node-item_device] div');
       this.treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
       this.modulesTypeDetails = Selector('[data-testid=modules-type-details]');
       this.internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');

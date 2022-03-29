@@ -141,7 +141,7 @@ const instancesSlice = createSlice({
     setConnectedInstance: (state, { payload }: { payload: Instance }) => {
       const isRediStack = state.data?.find((db) => db.id === state.connectedInstance.id)?.isRediStack
       state.connectedInstance = payload
-      state.connectedInstance.isRediStack =  isRediStack || false
+      state.connectedInstance.isRediStack = isRediStack || false
     },
 
     // reset connected instance

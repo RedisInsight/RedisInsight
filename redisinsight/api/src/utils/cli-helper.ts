@@ -4,6 +4,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CommandParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
 import { ReplyError } from 'src/models';
 import { IRedirectionInfo } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
+import { IS_NON_PRINTABLE_ASCII_CHARACTER } from 'src/constants';
 
 const LOGGER_CONFIG = config.get('logger');
 const BLANK_LINE_REGEX = /^\s*\n/gm;
@@ -219,3 +220,43 @@ export const multilineCommandToOneLine = (text: string = '') => text
   .split(/(\r\n|\n|\r)+\s+/gm)
   .filter((line: string) => !(BLANK_LINE_REGEX.test(line) || isEmpty(line)))
   .join(' ');
+
+/**
+ * Produces an escaped string representation of a byte string.
+ * Ported from sdscatrepr() function in sds.c from Redis source code.
+ * This is the function redis-cli uses to escape strings for output.
+ * @param reply
+ */
+export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
+  let result = '';
+  reply.forEach((byte: number) => {
+    const char = Buffer.from([byte]).toString();
+    if (IS_NON_PRINTABLE_ASCII_CHARACTER.test(char)) {
+      result += `\\x${decimalToHexString(byte)}`;
+    } else {
+      switch (char) {
+        case '\u0007': // Bell character
+          result += '\\a';
+          break;
+        case '"':
+          result += `\\${char}`;
+          break;
+        case '\b':
+          result += '\\b';
+          break;
+        case '\t':
+          result += '\\t';
+          break;
+        case '\n':
+          result += '\\n';
+          break;
+        case '\r':
+          result += '\\r';
+          break;
+        default:
+          result += char;
+      }
+    }
+  });
+  return result;
+};

@@ -198,18 +198,6 @@ const KeyList = (props: Props) => {
         )
       }
     },
-    {
-      id: 'actions',
-      label: '',
-      alignment: TableCellAlignment.Center,
-      absoluteWidth: 50,
-      minWidth: 50,
-      render: () => (
-        <span className={styles.action}>
-          <EuiIcon style={{ cursor: 'pointer' }} type="arrowRight" />
-        </span>
-      ),
-    },
   ]
 
   return (

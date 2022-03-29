@@ -8,7 +8,7 @@
   border-left: 3px solid transparent;
 
   &:hover {
-    background-color: var(--browserTreeNodeOpen);
+    background-color: var(--browserComponentActive);
   }
 }
 
@@ -28,13 +28,18 @@
 }
 
 .nodeSelected {
-  // border-left: 3px solid transparent;
   border-left-color: var(--euiColorPrimary) !important;
-  background-color: var(--browserTreeNodeOpen);
+  background-color: var(--browserComponentActive);
 
   .nodeContent {
     color: var(--euiColorFullShade) !important;
   }
+}
+
+.nodeName {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nodeIcon {
@@ -59,4 +64,10 @@
   display: inline-block;
   width: 36px;
   text-align: end;
+}
+
+.options {
+  padding-left: 12px;
+  font-size: 12px;
+  font-weight: 300;
 }

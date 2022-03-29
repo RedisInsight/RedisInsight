@@ -115,7 +115,7 @@ describe('AnalyticsService', () => {
       });
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
-        anonymousId: NON_TRACKING_ANONYMOUS_ID,
+        anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
         properties: {},

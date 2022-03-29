@@ -56,6 +56,12 @@
   height: 30px;
   padding: 5px;
   font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--hoverInListColorDarken);
+    border-color: var(--hoverInListColorLight);
+  }
 
   &__title {
     color: var(--euiTextSubduedColor);

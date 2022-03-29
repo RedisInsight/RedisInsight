@@ -76,6 +76,10 @@ export class WorkbenchPage {
     preselectCreateHashIndex: Selector
     commandExecutionResult: Selector
     commandExecutionResultFailed: Selector
+    monacoWidget: Selector
+    cancelButton: Selector
+    applyButton: Selector
+    documentButtonInQuickGuides: Selector
 
     constructor() {
         //CSS selectors
@@ -114,7 +118,7 @@ export class WorkbenchPage {
         this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
         this.preselectSearch = Selector('[data-testid=preselect-Search]');
         this.preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
-        this.preselectCreateHashIndex = Selector('[data-testid="preselect-Create hash index"]');
+        this.preselectCreateHashIndex = Selector('[data-testid="preselect-Create a hash index"]');
         this.preselectGroupBy = Selector('[data-testid*=preselect-Group]');
         this.preselectButtons = Selector('[data-testid^=preselect-]');
         this.reRunCommandButton = Selector('[data-testid=re-run-command]');
@@ -123,6 +127,9 @@ export class WorkbenchPage {
         this.enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
         this.paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
         this.fullScreenButton = Selector('[data-testid=toggle-full-screen]');
+        this.cancelButton = Selector('[data-testid=cancel-btn]');
+        this.applyButton = Selector('[data-testid=apply-btn]');
+        this.documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.queryInput = Selector('[data-testid=query-input-container]');
         this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -157,6 +164,7 @@ export class WorkbenchPage {
         this.customPluginsViewType = Selector('[data-test-subj*=clients-list]');
         this.commandExecutionResult = Selector('[data-testid=query-common-result]');
         this.commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
+        this.monacoWidget = Selector('[data-testid=monaco-widget]');
     }
 
     /**

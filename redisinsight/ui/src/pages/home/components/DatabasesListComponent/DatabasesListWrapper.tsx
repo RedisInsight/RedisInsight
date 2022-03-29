@@ -14,6 +14,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
 import {
   checkConnectToInstanceAction,
@@ -27,15 +28,17 @@ import {
   Instance,
 } from 'uiSrc/slices/interfaces'
 import { resetKeys } from 'uiSrc/slices/keys'
-import { PageNames, Pages } from 'uiSrc/constants'
+import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
-import DatabaseListModules, { ModulesListType } from 'uiSrc/components/database-list-modules/DatabaseListModules'
-import RediStackSVG from 'uiSrc/assets/img/modules/RediStack.svg'
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
+import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
+import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
+import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 import DatabasesList from './DatabasesList/DatabasesList'
 
 import styles from './styles.module.scss'
@@ -230,8 +233,8 @@ const DatabasesListWrapper = ({
               <span className={styles.tooltipAnchorColumnName} data-testid={`instance-name-${id}`}>
                 <EuiTextColor
                   className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}
-                  onClick={(e) => handleCheckConnectToInstance(e, id)}
-                  onKeyDown={(e) => handleCheckConnectToInstance(e, id)}
+                  onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, id)}
+                  onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, id)}
                 >
                   {cellContent}
                 </EuiTextColor>
@@ -287,25 +290,40 @@ const DatabasesListWrapper = ({
     },
     {
       field: 'modules',
-      className: 'column_modules',
+      className: styles.columnModules,
       name: 'Modules',
-      width: '150px',
+      width: '30%',
       dataType: 'string',
-      render: (cellData, { modules = [], port, isRediStack }: Instance) => {
-        return (
-          <DatabaseListModules
-            highlight={isRediStack}
-            modules={modules}
-            maxViewModules={3}
-            tooltipTitle={isRediStack ? (
-              <>
-                <EuiIcon type={RediStackSVG} className={styles.redistackIcon} />
-                <span style={{ verticalAlign: 'middle' }}>Redis Stack</span>
-              </>
-            ) : ''}
-          />
-        )
-      },
+      render: (_cellData, { modules = [], isRediStack }: Instance) => (
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+          <AutoSizer>
+            {({ width: columnWidth }) => (
+              <div style={{ width: columnWidth, height: 40 }}>
+                <DatabaseListModules
+                  content={isRediStack ? (
+                    <EuiIcon
+                      type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                      data-testid="redis-stack-icon"
+                    />
+                  ) : undefined}
+                  tooltipTitle={isRediStack ? (
+                    <>
+                      <EuiIcon
+                        type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+                        className={styles.tooltipLogo}
+                        data-testid="tooltip-redis-stack-icon"
+                      />
+                      <EuiText color="subdued" style={{ marginTop: 4, marginBottom: -4 }}>Includes</EuiText>
+                    </>
+                  ) : undefined}
+                  modules={modules}
+                  maxViewModules={Math.floor((columnWidth - 12) / 28) - 1}
+                />
+              </div>
+            )}
+          </AutoSizer>
+        </div>
+      ),
     },
     {
       field: 'lastConnection',
@@ -326,7 +344,7 @@ const DatabasesListWrapper = ({
       className: 'column_controls',
       width: '100px',
       name: '',
-      render: function Icons(name: string, instance: Instance) {
+      render: function Icons(_: string, instance: Instance) {
         return (
           <>
             <EuiButtonIcon

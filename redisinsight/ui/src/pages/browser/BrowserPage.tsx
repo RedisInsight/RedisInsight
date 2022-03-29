@@ -24,6 +24,7 @@ import {
   appContextBrowser,
   setBrowserPanelSizes,
   setLastPageContext,
+  updateBrowserTreeSelectedLeaf,
 } from 'uiSrc/slices/app/context'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
@@ -158,6 +159,14 @@ const BrowserPage = () => {
     }
   }
 
+  const handleEditKey = (key: string, newKey: string) => {
+    setSelectedKey(newKey)
+
+    if (viewType === KeyViewType.Tree) {
+      dispatch(updateBrowserTreeSelectedLeaf({ key, newKey }))
+    }
+  }
+
   return (
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader />
@@ -170,7 +179,7 @@ const BrowserPage = () => {
                   id={firstPanelId}
                   scrollable={false}
                   initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="670px"
+                  minSize="600px"
                   paddingSize="none"
                   wrapperProps={{
                     className: cx(styles.resizePanelLeft, {
@@ -238,7 +247,7 @@ const BrowserPage = () => {
                     <KeyDetailsWrapper
                       keyProp={selectedKey}
                       onCloseKey={closeKey}
-                      onEditKey={(newKey: string) => setSelectedKey(newKey)}
+                      onEditKey={(key: string, newKey: string) => handleEditKey(key, newKey)}
                       onDeleteKey={() => setSelectedKey(null)}
                     />
                   )}

@@ -17,7 +17,8 @@ import {
   keysSelector,
 } from 'uiSrc/slices/keys'
 import {
-  setBrowserKeyListDataLoaded, setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf,
+  resetBrowserTree,
+  setBrowserKeyListDataLoaded,
 } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -36,7 +37,7 @@ import SearchKeyList from '../search-key-list'
 import styles from './styles.module.scss'
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * 60 // once a minute
-const HIDE_REFRESH_LABEL_WIDTH = 650
+const HIDE_REFRESH_LABEL_WIDTH = 700
 
 interface IViewType {
   tooltipText: string
@@ -106,6 +107,18 @@ const KeysHeader = (props: Props) => {
   }
 
   useEffect(() => {
+    globalThis.addEventListener('resize', updateSizes)
+
+    return () => {
+      globalThis.removeEventListener('resize', updateSizes)
+    }
+  }, [])
+
+  useEffect(() => {
+    updateSizes()
+  }, [sizes])
+
+  useEffect(() => {
     updateLastRefresh()
 
     interval = setInterval(() => {
@@ -116,12 +129,10 @@ const KeysHeader = (props: Props) => {
     return () => clearInterval(interval)
   }, [lastRefreshTime])
 
-  useEffect(() => {
+  const updateSizes = () => {
     const isShowRefreshLabel = (rootDivRef?.current?.offsetWidth || 0) > HIDE_REFRESH_LABEL_WIDTH
-    if (isShowRefreshLabel !== showRefreshLabel) {
-      setShowRefreshLabel(isShowRefreshLabel)
-    }
-  }, [sizes])
+    setShowRefreshLabel(isShowRefreshLabel)
+  }
 
   const handleRefreshKeys = () => {
     sendEventTelemetry({
@@ -136,8 +147,7 @@ const KeysHeader = (props: Props) => {
       () => dispatch(setBrowserKeyListDataLoaded(true)),
       () => dispatch(setBrowserKeyListDataLoaded(false)),
     ))
-    dispatch(setBrowserTreeNodesOpen({}))
-    dispatch(setBrowserTreeSelectedLeaf({}))
+    dispatch(resetBrowserTree())
   }
 
   const handleScanMore = (config: any) => {
@@ -165,6 +175,7 @@ const KeysHeader = (props: Props) => {
 
   const handleSwitchView = (type: KeyViewType) => {
     dispatch(changeKeyViewType(type))
+    dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
     loadKeys(type)
   }
@@ -183,7 +194,7 @@ const KeysHeader = (props: Props) => {
   )
 
   const ViewSwitch = (
-    <div className={styles.viewTypeSwitch} data-testid="key-view-type-switcher">
+    <div className={styles.viewTypeSwitch} data-testid="view-type-switcher">
       {viewTypes.map((view) => (
         <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
           <EuiButtonIcon

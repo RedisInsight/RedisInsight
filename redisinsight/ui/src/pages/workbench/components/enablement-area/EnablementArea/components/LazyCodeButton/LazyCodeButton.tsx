@@ -5,6 +5,7 @@ import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { getFileInfo } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils/getFileInfo'
+import { ApiEndpoints } from 'uiSrc/constants'
 
 import CodeButton from '../CodeButton'
 
@@ -22,7 +23,7 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
       setLoading(true)
       setError('')
       try {
-        const { data, status } = await resourcesService.get<string>(path)
+        const { data, status } = await resourcesService.get<string>(`${ApiEndpoints.TUTORIALS_PATH}${path}`)
         if (isStatusSuccessful(status)) {
           setLoading(false)
           const pageInfo = getFileInfo(path)

@@ -13,11 +13,12 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: IEnablementAreaItem[];
+  sourcePath: string;
   activePageId?: string;
   compressed?: boolean;
 }
 
-const Pagination = ({ items = [], activePageId, compressed }: Props) => {
+const Pagination = ({ items = [], sourcePath, activePageId, compressed }: Props) => {
   const [isPopoverOpen, setPopover] = useState(false)
   const [activePage, setActivePage] = useState(0)
   const { openPage } = useContext(EnablementAreaContext)
@@ -41,7 +42,7 @@ const Pagination = ({ items = [], activePageId, compressed }: Props) => {
     const path = items[index]?.args?.path
     closePopover()
     if (index !== activePage && openPage && path) {
-      openPage({ path })
+      openPage({ path: sourcePath + path })
     }
   }
 

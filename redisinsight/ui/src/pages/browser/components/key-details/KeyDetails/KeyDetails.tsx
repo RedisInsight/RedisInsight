@@ -6,11 +6,12 @@ import {
 import { isNull } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { KeyTypes } from 'uiSrc/constants'
+
 import {
   selectedKeyDataSelector,
   selectedKeySelector,
 } from 'uiSrc/slices/keys'
+import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import AddHashFields from '../../key-details-add-items/add-hash-fields/AddHashFields'
@@ -26,6 +27,7 @@ import ListDetails from '../../list-details/ListDetails'
 import RejsonDetailsWrapper from '../../rejson-details/RejsonDetailsWrapper'
 import RemoveListElements from '../../key-details-remove-items/remove-list-elements/RemoveListElements'
 import UnsupportedTypeDetails from '../../unsupported-type-details/UnsupportedTypeDetails'
+import ModulesTypeDetails from '../../modules-type-details/ModulesTypeDetails'
 
 import styles from '../styles.module.scss'
 
@@ -149,7 +151,12 @@ const KeyDetails = ({ ...props }: Props) => {
                       <RejsonDetailsWrapper />
                     )}
 
-                    {!(Object.values(KeyTypes).includes(selectedKeyType)) && (
+                    {(Object.values(ModulesKeyTypes).includes(selectedKeyType)) && (
+                      <ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]} />
+                    )}
+
+                    {!(Object.values(KeyTypes).includes(selectedKeyType))
+                    && !(Object.values(ModulesKeyTypes).includes(selectedKeyType)) && (
                       <UnsupportedTypeDetails />
                     )}
                   </div>

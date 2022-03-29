@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
@@ -50,7 +51,11 @@ export interface Props {
 }
 
 const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
+const SYNTAX_WIDGET_ID = 'syntax.content.widget'
+
 const argInQuotesRegExp = /^['"](.|[\r\n])*['"]$/
+const aroundQuotesRegExp = /(^["']|["']$)/g
+
 let decorations: string[] = []
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
@@ -75,14 +80,15 @@ const Query = (props: Props) => {
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
 
-  useEffect(() =>
-  // componentWillUnmount
-    () => {
+  useEffect(() => {
+    // componentWillUnmount
+    return () => {
       contribution?.dispose?.()
       disposeCompletionItemProvider()
       disposeSignatureHelpProvider()
-    },
-  [])
+    }
+  }, [])
+
 
   useEffect(() => {
     // HACK: The Monaco editor memoize the state and ignores updates to it
@@ -115,6 +121,23 @@ const Query = (props: Props) => {
     setIsCodeBtnDisabled(isDedicatedEditorOpen)
     isDedicatedEditorOpenRef.current = isDedicatedEditorOpen
   }, [isDedicatedEditorOpen])
+
+  const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+    const position = editor.getPosition()
+    isDedicatedEditorOpenRef.current = false
+    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 }})
+    editor.trigger('mouse', '_moveTo', { position })
+    editor.focus()
+  }
+
+  const onPressWidget = () => {
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    setIsDedicatedEditorOpen(true)
+    editor.updateOptions({ readOnly: true })
+    hideSyntaxWidget(editor)
+  }
 
   const onChange = (value: string = '') => {
     setQuery(value)
@@ -151,7 +174,7 @@ const Query = (props: Props) => {
   }
 
   const onTriggerContentWidget = (position: Nullable<monacoEditor.Position>, language: string = ''): monaco.editor.IContentWidget => ({
-    getId: () => 'syntax.content.widget',
+    getId: () => SYNTAX_WIDGET_ID,
     getDomNode: () => createSyntaxWidget(`Use ${language} Editor`, 'Shift+Space'),
     getPosition: () => ({
       position,
@@ -166,8 +189,12 @@ const Query = (props: Props) => {
     const { editor } = monacoObjects?.current
 
     const position = editor.getPosition()
-    // @ts-ignore
-    if (position?.lineNumber !== 1 || editor.getContribution('editor.contrib.suggestController')?.model?.state) return
+    if (
+      position?.column !== 1 ||
+      position?.lineNumber !== 1 ||
+      // @ts-ignore
+      editor.getContribution('editor.contrib.suggestController')?.model?.state
+    ) return
 
     if (execHistory[execHistoryPos]) {
       const command = execHistory[execHistoryPos].command || ''
@@ -230,10 +257,6 @@ const Query = (props: Props) => {
 
     const queryArg = command.args[argIndex]
     const argDSL = command.info?.arguments?.[argIndex]?.dsl || ''
-    if (!argIndex) {
-      isWidgetEscaped.current = false
-      return
-    }
 
     if (queryArgIndex === argIndex && argInQuotesRegExp.test(queryArg)) {
       if (isWidgetEscaped.current) return
@@ -281,35 +304,35 @@ const Query = (props: Props) => {
     const { editor } = monacoObjects?.current
 
     editor.updateOptions({ readOnly: false })
+    triggerUpdateCursorPosition(editor)
   }
 
   const updateArgFromDedicatedEditor = (value: string = '') => {
-    if (syntaxCommand.current) {
-      if (!monacoObjects.current) return
-      const { editor } = monacoObjects?.current
+    if (!syntaxCommand.current || !monacoObjects.current) return
+    const { editor } = monacoObjects?.current
 
-      const model = editor.getModel()
-      if (!model) return
+    const model = editor.getModel()
+    if (!model) return
 
-      const wrapQuote = syntaxCommand.current.argToReplace[0]
-      const replaceCommand = syntaxCommand.current.fullQuery.replace(
-        syntaxCommand.current.argToReplace,
-        `${wrapQuote}${value}${wrapQuote}`
-      )
-      editor.updateOptions({ readOnly: false })
-      editor.executeEdits(null, [
-        {
-          range: new monaco.Range(
-            syntaxCommand.current.commandPosition.startLine,
-            0,
-            syntaxCommand.current.commandPosition.endLine,
-            model.getLineLength(syntaxCommand.current.commandPosition.endLine) + 1
-          ),
-          text: replaceCommand
-        }
-      ])
-      setIsDedicatedEditorOpen(false)
-    }
+    const wrapQuote = syntaxCommand.current.argToReplace[0]
+    const replaceCommand = syntaxCommand.current.fullQuery.replace(
+      syntaxCommand.current.argToReplace,
+      `${wrapQuote}${value}${wrapQuote}`
+    )
+    editor.updateOptions({ readOnly: false })
+    editor.executeEdits(null, [
+      {
+        range: new monaco.Range(
+          syntaxCommand.current.commandPosition.startLine,
+          0,
+          syntaxCommand.current.commandPosition.endLine,
+          model.getLineLength(syntaxCommand.current.commandPosition.endLine) + 1
+        ),
+        text: replaceCommand
+      }
+    ])
+    setIsDedicatedEditorOpen(false)
+    triggerUpdateCursorPosition(editor)
   }
 
   const editorDidMount = (
@@ -335,10 +358,14 @@ const Query = (props: Props) => {
     )
 
     editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {
-      setIsDedicatedEditorOpen(true)
-      editor.updateOptions({ readOnly: true })
-      hideSyntaxWidget(editor)
+      onPressWidget()
     }, SYNTAX_CONTEXT_ID)
+
+    editor.onMouseDown((e: monaco.editor.IEditorMouseEvent) => {
+      if (e.target.detail === SYNTAX_WIDGET_ID) {
+        onPressWidget()
+      }
+    })
 
     editor.addCommand(monaco.KeyCode.Escape, () => {
       hideSyntaxWidget(editor)
@@ -390,8 +417,13 @@ const Query = (props: Props) => {
   }
 
   return (
-    <>
-      <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
+    <div className={styles.wrapper}>
+      <div
+        className={cx(styles.container, { [styles.disabled]: isDedicatedEditorOpen })}
+        onKeyDown={handleKeyDown}
+        role="textbox"
+        tabIndex={0}
+      >
         <div className={styles.input} data-testid="query-input-container" ref={input}>
           <MonacoEditor
             language={MonacoLanguage.Redis}
@@ -429,15 +461,22 @@ const Query = (props: Props) => {
         </div>
       </div>
       {isDedicatedEditorOpen && (
-        <DedicatedEditor
-          lang={syntaxCommand.current.lang}
-          value={selectedArg.current.replace(/(^["']|["']$)/g, '')}
-          onSubmit={updateArgFromDedicatedEditor}
-          onCancel={onCancelDedicatedEditor}
-          width={input?.current?.scrollWidth || 300}
-        />
+        <AutoSizer>
+          {({ height }) => (
+            <div className="editorBounder">
+                <DedicatedEditor
+                  initialHeight={input?.current?.scrollHeight || 0}
+                  height={height}
+                  lang={syntaxCommand.current.lang}
+                  query={selectedArg.current.replace(aroundQuotesRegExp, '')}
+                  onSubmit={updateArgFromDedicatedEditor}
+                  onCancel={onCancelDedicatedEditor}
+                />
+            </div>
+          )}
+        </AutoSizer>
       )}
-    </>
+    </div>
   )
 }
 

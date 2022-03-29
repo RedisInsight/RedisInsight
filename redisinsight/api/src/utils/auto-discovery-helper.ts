@@ -36,7 +36,7 @@ export const getRunningProcesses = async (): Promise<string[]> => new Promise((r
       stdoutData += data.toString();
     });
 
-    proc.stdout.on('error', (e) => {
+    proc.on('error', (e) => {
       reject(e);
     });
 
@@ -109,3 +109,4 @@ export const testEndpoint = async (endpoint: Endpoint): Promise<Endpoint> => new
 export const getAvailableEndpoints = async (
   endpoints: Endpoint[],
 ): Promise<Endpoint[]> => (await Promise.all(endpoints.map(testEndpoint))).filter(isObject);
+

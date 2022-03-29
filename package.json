@@ -228,7 +228,7 @@
   },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
-    "@elastic/eui": "36.0.0",
+    "@elastic/eui": "34.6.0",
     "@reduxjs/toolkit": "^1.6.2",
     "axios": "^0.25.0",
     "classnames": "^2.3.1",
@@ -262,7 +262,8 @@
     "remark-rehype": "^10.0.1",
     "socket.io-client": "^4.4.0",
     "unified": "^10.1.1",
-    "unist-util-visit": "^4.1.0"
+    "unist-util-visit": "^4.1.0",
+    "url-parse": "^1.5.10"
   },
   "devEngines": {
     "node": ">=14.x <16",

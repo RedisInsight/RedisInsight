@@ -77,7 +77,7 @@ describe('VirtualTree', () => {
       />
     )
 
-    expect(queryByTestId('test')).toBeInTheDocument()
+    expect(queryByTestId('node-item_test')).toBeInTheDocument()
   })
 
   it('should select first leaf "Keys" by default', async () => {
@@ -88,6 +88,7 @@ describe('VirtualTree', () => {
     render(
       <VirtualTree
         {...instance(mockedProps)}
+        selectDefaultLeaf
         items={mockedItems}
         setConstructingTree={mockConstructingTreeFn}
         onStatusSelected={mockOnStatusSelected}

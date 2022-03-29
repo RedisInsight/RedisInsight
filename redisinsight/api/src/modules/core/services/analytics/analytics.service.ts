@@ -61,18 +61,9 @@ export class AnalyticsService {
         'agreements.analytics',
         false,
       );
-      if (isAnalyticsGranted) {
+      if (isAnalyticsGranted || nonTracking) {
         this.analytics.track({
           anonymousId: this.anonymousId,
-          integrations: { Amplitude: { session_id: this.sessionId } },
-          event,
-          properties: {
-            ...eventData,
-          },
-        });
-      } else if (nonTracking) {
-        this.analytics.track({
-          anonymousId: NON_TRACKING_ANONYMOUS_ID,
           integrations: { Amplitude: { session_id: this.sessionId } },
           event,
           properties: {

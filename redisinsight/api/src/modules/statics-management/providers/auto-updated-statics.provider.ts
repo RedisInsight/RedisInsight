@@ -1,10 +1,10 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import axios from 'axios';
 import * as fs from 'fs-extra';
 import * as AdmZip from 'adm-zip';
 import { URL } from 'url';
 import { join } from 'path';
 import { get } from 'lodash';
+import { getFile } from 'src/utils';
 
 import { IStaticsProviderOptions } from './auto-updated-statics.interface';
 
@@ -24,10 +24,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   onModuleInit() {
     // async operation to not wait for it and not block user in case when no internet connection
-    Promise.all([
-      this.initDefaults(),
-      this.autoUpdate(),
-    ]);
+    this.initDefaults().finally(this.autoUpdate.bind(this));
   }
 
   /**
@@ -59,7 +56,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
       try {
         await this.updateStaticFiles();
       } catch (e) {
-        this.logger.error('Unable to update auto static files', e);
+        this.logger.warn('Unable to update auto static files', e);
       }
     }
   }
@@ -83,16 +80,9 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getLatestArchive() {
     try {
-      const { data } = await axios.get(
-        new URL(join(this.options.updateUrl, this.options.zip)).toString(),
-        {
-          responseType: 'arraybuffer',
-        },
-      );
-
-      return data;
+      return await getFile(new URL(join(this.options.updateUrl, this.options.zip)).toString());
     } catch (e) {
-      this.logger.error('Unable to get remote archive', e);
+      this.logger.warn('Unable to get remote archive', e);
       return null;
     }
   }
@@ -114,13 +104,9 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getRemoteBuildInfo(): Promise<Record<string, any>> {
     try {
-      const { data } = await axios.get(
-        new URL(join(this.options.updateUrl, this.options.buildInfo)).toString(),
-      );
-
-      return data;
+      return await getFile(new URL(join(this.options.updateUrl, this.options.buildInfo)).toString());
     } catch (e) {
-      this.logger.error('Unable to get remote build info', e);
+      this.logger.warn('Unable to get remote build info', e);
       return {};
     }
   }
@@ -135,7 +121,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
         'utf8',
       ));
     } catch (e) {
-      this.logger.error('Unable to get local checksum', e);
+      this.logger.warn('Unable to get local checksum', e);
       return {};
     }
   }

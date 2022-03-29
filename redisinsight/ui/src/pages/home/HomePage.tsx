@@ -16,6 +16,7 @@ import { fetchInstancesAction, instancesSelector } from 'uiSrc/slices/instances'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/sentinel'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
+import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import AddDatabaseContainer from './components/AddDatabases/AddDatabasesContainer'
 import DatabasesList from './components/DatabasesListComponent/DatabasesListWrapper'
@@ -58,6 +59,7 @@ const HomePage = () => {
     dispatch(fetchInstancesAction())
     dispatch(resetInstancesRedisCluster())
     dispatch(resetSubscriptionsRedisCloud())
+    dispatch(fetchCreateRedisButtonsAction())
   }, [])
 
   useEffect(() => {

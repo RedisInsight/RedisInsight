@@ -1,5 +1,5 @@
 {
-  "productName": "RedisInsight-preview",
+  "productName": "RedisInsight-v2",
   "appId": "org.RedisLabs.RedisInsight-V2",
   "copyright": "Copyright © 2021 Redis Ltd.",
   "files": [
@@ -12,13 +12,17 @@
     "package.json"
   ],
   "afterSign": "electron-builder-notarize",
-  "artifactName": "${productName}.${ext}",
+  "artifactName": "${productName}-${os}-${arch}.${ext}",
   "compression": "normal",
   "mac": {
     "target": [
       {
         "target": "dmg",
-        "arch": ["x64"]
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "arm64"]
       },
       {
         "target": "mas",
@@ -49,7 +53,6 @@
     "artifactName": "${productName}-${os}-mas.${ext}"
   },
   "dmg": {
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "contents": [
       {
         "x": 130,
@@ -66,7 +69,11 @@
   "win": {
     "target": ["nsis", "appx"],
     "artifactName": "${productName}-${os}-installer.${ext}",
-    "icon": "resources/icon.ico"
+    "icon": "resources/icon.ico",
+    "publisherName": [
+      "Redis Inc.",
+      "Redis Labs Inc."
+    ]
   },
   "appx": {
     "publisher": "CN=55A7089F-565A-48D4-9D43-E226C203F9BB",
@@ -77,10 +84,23 @@
   },
   "linux": {
     "icon": "./resources/icons",
-    "target": ["deb", "AppImage"],
+    "target": [
+      {
+        "target": "AppImage",
+        "arch": ["x64"]
+      },
+      {
+        "target": "deb",
+        "arch": ["x64"]
+      },
+      {
+        "target": "rpm",
+        "arch": ["x64"]
+      }
+    ],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
-    "artifactName": "${productName}-${os}.${ext}",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "desktop": {
       "Name": "RedisInsight",
       "Type": "Application",
@@ -103,6 +123,15 @@
     {
       "from": "./redisinsight/api/defaults",
       "to": "defaults",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "LICENSE",
+      "to": "LICENSE.redisinsight.txt"
+    },
+    {
+      "from": "./resources/app",
+      "to": "./app",
       "filter": ["**/*"]
     }
   ]

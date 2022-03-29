@@ -175,7 +175,7 @@ const DatabaseOverview = (props: Props) => {
             { [styles.noModules]: !modules.visible?.length, [styles.RediStack]: isRediStack }
           )}
         >
-          {isRediStack ? (
+          {isRediStack && (
             <DatabaseListModules
               content={isRediStack ? RediStackLogo : undefined}
               modules={modulesProps}
@@ -191,7 +191,10 @@ const DatabaseOverview = (props: Props) => {
               ) : undefined}
               withoutStyles
             />
-          ) : !!modules.visible?.length && (<DatabaseListModules dark inCircle modules={modules.visible} />)}
+          )}
+          {(!isRediStack && !!modules.visible?.length) && (
+            <DatabaseListModules dark inCircle modules={modules.visible} />
+          )}
           <MoreInfoPopover
             metrics={metrics.hidden}
             modules={modules.hidden}

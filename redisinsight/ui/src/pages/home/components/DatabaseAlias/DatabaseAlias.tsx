@@ -152,9 +152,7 @@ const DatabaseAlias = (props: Props) => {
                 </EuiFlexItem>
               </EuiFlexGrid>
             ) : (
-              <EuiText
-                className={styles.alias}
-              >
+              <EuiText className={styles.alias}>
                 <b className={styles.aliasText}>
                   <span>{alias}</span>
                 </b>

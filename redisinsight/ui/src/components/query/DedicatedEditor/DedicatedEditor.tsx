@@ -109,7 +109,7 @@ const DedicatedEditor = (props: Props) => {
     const { editor } = monacoObjects?.current || {}
     const val = editor?.getValue()
       .split('\n')
-      .map((line: string, i: number) => (i > 0 && !notCommandRegEx.test(line)) ? `\t${line}` : line)
+      .map((line: string, i: number) => ((i > 0 && !notCommandRegEx.test(line)) ? `\t${line}` : line))
       .join('\n')
     onSubmit(val || '')
   }

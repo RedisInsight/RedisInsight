@@ -80,6 +80,12 @@ export class WorkbenchPage {
     cancelButton: Selector
     applyButton: Selector
     documentButtonInQuickGuides: Selector
+    redisStackTutorialsButton: Selector
+    vectorSimilitaritySearchButton: Selector
+    nextPageButton: Selector
+    prevPageButton: Selector
+    hashWithVectorButton: Selector
+    redisStackLinks: Selector
 
     constructor() {
         //CSS selectors
@@ -130,6 +136,12 @@ export class WorkbenchPage {
         this.cancelButton = Selector('[data-testid=cancel-btn]');
         this.applyButton = Selector('[data-testid=apply-btn]');
         this.documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
+        this.redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
+        this.vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
+        this.nextPageButton = Selector('[data-testid=enablement-area__next-page-btn]');
+        this.prevPageButton = Selector('[data-testid=enablement-area__prev-page-btn]');
+        this.hashWithVectorButton = Selector('[data-testid="preselect-A hash with vector embeddings"]');
+        this.redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.queryInput = Selector('[data-testid=query-input-container]');
         this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');

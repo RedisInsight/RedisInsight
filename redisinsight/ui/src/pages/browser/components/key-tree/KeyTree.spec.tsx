@@ -109,7 +109,7 @@ describe('KeyTree', () => {
   it('"setBrowserTreeNodesOpen" should be called for Open a node', () => {
     render(<KeyTree {...propsMock} />)
 
-    fireEvent.click(screen.getByTestId(mockVirtualTreeResult?.[0]?.fullName))
+    fireEvent.click(screen.getByTestId(`node-item_${mockVirtualTreeResult?.[0]?.fullName}`))
 
     const expectedActions = [setBrowserTreeSelectedLeaf({}), setBrowserTreeNodesOpen({})]
 

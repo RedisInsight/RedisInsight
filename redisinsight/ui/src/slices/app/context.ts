@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { first } from 'lodash'
 import { Nullable } from 'uiSrc/utils'
+import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
 import { RootState } from '../store'
 import { StateAppContext } from '../interfaces'
 
@@ -14,6 +16,7 @@ export const initialState: StateAppContext = {
     },
     panelSizes: {},
     tree: {
+      separator: ':',
       panelSizes: {},
       openNodes: {},
       selectedLeaf: {},
@@ -55,6 +58,29 @@ const appContextSlice = createSlice({
     },
     setBrowserTreeSelectedLeaf: (state, { payload }: { payload: any }) => {
       state.browser.tree.selectedLeaf = payload
+    },
+    updateBrowserTreeSelectedLeaf: (state, { payload }) => {
+      const { selectedLeaf, separator } = state.browser.tree
+      const [[selectedLeafField = '', keys = {}]] = Object.entries(selectedLeaf)
+      const [pattern] = selectedLeafField.split(TREE_LEAF_FIELD)
+
+      if (payload.key in keys) {
+        const isFitNewKey = payload.newKey?.startsWith?.(pattern)
+          && (pattern.split(separator)?.length === payload.newKey.split(separator)?.length)
+
+        if (!isFitNewKey) {
+          delete keys[payload.key]
+          return
+        }
+
+        keys[payload.newKey] = {
+          ...keys[payload.key],
+          name: payload.newKey
+        }
+        delete keys[payload.key]
+      }
+
+      state.browser.tree.selectedLeaf[selectedLeafField] = keys
     },
     setBrowserTreeNodesOpen: (state, { payload }: { payload: { [key: string]: boolean; } }) => {
       state.browser.tree.openNodes = payload
@@ -102,6 +128,7 @@ export const {
   setBrowserPanelSizes,
   setBrowserTreeSelectedLeaf,
   setBrowserTreeNodesOpen,
+  updateBrowserTreeSelectedLeaf,
   resetBrowserTree,
   setBrowserTreePanelSizes,
   setWorkbenchScript,

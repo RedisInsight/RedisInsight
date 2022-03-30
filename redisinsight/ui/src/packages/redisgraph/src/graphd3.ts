@@ -61,7 +61,30 @@ interface IRelationship extends d3.SimulationLinkDatum<INode>{
   target: INode
 }
 
-function GraphD3(_selector: HTMLDivElement, _options: any) {
+interface IGraph {
+  nodes: INode[]
+  relationships: IRelationship[]
+}
+
+interface IZoomFuncs {
+  zoomIn: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
+  zoomOut: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
+  resetZoom: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
+  center: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
+}
+
+export interface IGraphD3 {
+  graphDataToD3Data: (data: any) => IGraph
+  size: () => {
+    nodes: number
+    relationships: number
+  }
+  updateWithD3Data: (d3Data: any) => void
+  updateWithGraphData: (graphData: any) => void
+  zoomFuncs: IZoomFuncs
+}
+
+function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   let info: any;
   let nodes: INode[];
   let relationship: d3.Selection<SVGGElement, IRelationship, SVGGElement, any>;
@@ -80,11 +103,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
   let justLoaded = false;
   let nominalTextSize = 10;
   let maxTextSize = 24;
-  const VERSION = '2.0.0';
   let coreSvg = null;
   let height = 585;
 
-  let zoomFuncs = {}
+  let zoomFuncs: IZoomFuncs;
 
   const options = { ...DEFAULT_OPTIONS, ..._options };
   let zoom: d3.ZoomBehavior<Element, unknown> = options.graphZoom
@@ -94,10 +116,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
 
   function color() {
     return COLORS[Math.floor(Math.random() * COLORS.length)];
-  }
-
-  function version() {
-    return VERSION;
   }
 
   function appendGraph(container: d3.Selection<any, unknown, null, undefined>) {
@@ -505,7 +523,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
   }
 
   function graphDataToD3Data(data) {
-    const graph = {
+    const graph: IGraph = {
       nodes: [],
       relationships: [],
     };
@@ -835,9 +853,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any) {
     size,
     updateWithD3Data,
     updateWithGraphData,
-    version,
-    invertColor: Utils.invertColor,
-    darkenColor: Utils.darkenColor,
     zoomFuncs,
   };
 }

@@ -38,6 +38,7 @@ export class MyRedisDatabasePage {
     moduleTooltip: Selector
     moduleQuantifier: Selector
     redisStackIcon: Selector
+    promoButton: Selector
 
     constructor() {
         //-------------------------------------------------------------------------------------------
@@ -73,6 +74,7 @@ export class MyRedisDatabasePage {
         this.moduleTooltip = Selector('.euiToolTipPopover');
         this.moduleQuantifier = Selector('[data-testid=_module]');
         this.redisStackIcon = Selector('[data-testid=redis-stack-icon]');
+        this.promoButton = Selector('[data-testid=promo-btn]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.dbNameList = Selector('[data-testid^=instance-name]');
         this.tableRowContent = Selector('[data-test-subj=database-alias-column]');

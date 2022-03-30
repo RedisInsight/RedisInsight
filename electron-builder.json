@@ -26,31 +26,31 @@
       },
       {
         "target": "mas",
-        "arch": ["x64"]
-      },
-      {
-        "target": "mas-dev",
-        "arch": ["x64"]
+        "arch": ["x64", "arm64"]
       }
     ],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
+    "bundleVersion": "51",
+    "icon": "resources/icon.icns",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "gatekeeperAssess": false
   },
   "mas": {
     "entitlements": "resources/entitlements.mas.plist",
-    "entitlementsInherit": "resources/entitlements.mas.plist",
+    "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
+    "provisioningProfile": "embedded.provisionprofile",
     "hardenedRuntime": true,
-    "artifactName": "${productName}-${os}-mas.${ext}"
+    "artifactName": "${productName}-${os}-${arch}-mas.${ext}"
   },
   "masDev": {
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.plist",
     "hardenedRuntime": true,
-    "artifactName": "${productName}-${os}-mas.${ext}"
+    "artifactName": "${productName}-${os}-${arch}-mas.${ext}"
   },
   "dmg": {
     "contents": [

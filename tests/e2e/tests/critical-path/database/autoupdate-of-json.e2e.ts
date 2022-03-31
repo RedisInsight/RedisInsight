@@ -10,7 +10,8 @@ import * as editJsonFile from 'edit-json-file';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const chance = new Chance();
 
-const workingDirectory = join(os.homedir(), '.redisinsight-v2-stage');
+const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 const buildPath = `${workingDirectory}/content/build.json`;
 const createRedisPath = `${workingDirectory}/content/create-redis.json`;
 const buildFilePath = editJsonFile(buildPath);
@@ -43,7 +44,7 @@ test
         const timestampAfterUpdate = await buildFilePathNew.get('timestamp');
         const cloudTitle = await createRedisFilePathNew.get('cloud.title');
         const cloudDescription = await createRedisFilePathNew.get('cloud.description');
-        await t.expect(timestampAfterUpdate).notEql(timestampForEdit);
-        await t.expect(cloudTitle).notEql(cloudValueForEdit);
-        await t.expect(cloudDescription).notEql(cloudValueForEdit);
+        await t.expect(timestampAfterUpdate).notEql(timestampForEdit, 'The timestamp in the build.json file is automatically updated');
+        await t.expect(cloudTitle).notEql(cloudValueForEdit, 'The cloud title in the create-redis.json file is automatically updated');
+        await t.expect(cloudDescription).notEql(cloudValueForEdit, 'The cloud description in the create-redis.json file is automatically updated');
     });

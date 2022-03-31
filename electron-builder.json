@@ -26,7 +26,7 @@
       },
       {
         "target": "mas",
-        "arch": ["x64", "arm64"]
+        "arch": ["universal"]
       }
     ],
     "type": "distribution",

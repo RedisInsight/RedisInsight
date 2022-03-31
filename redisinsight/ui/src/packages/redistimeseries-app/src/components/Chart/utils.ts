@@ -106,11 +106,11 @@ export class ColorPicker<T extends IColor> {
     const goodColor = this.currentColorStore[charCodeSum(label) % this.currentColorStore.length]
 
     // since the color has been taken by `label`, remove it from the current color store.
-    this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor);
+    this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor)
 
     // cache the label and color key value pair.
     this.labelStore[label] = goodColor
-    return goodColor;
+    return goodColor
   }
 }
 
@@ -119,11 +119,18 @@ export class ColorPicker<T extends IColor> {
  */
 export class GoodColorPicker extends ColorPicker<IGoodColor> {
   constructor(COLORS: IGoodColor[]) {
-    super(COLORS);
+    super(COLORS)
   }
 }
 
+export function hexToRGBA(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16),
+        g = parseInt(hex.slice(3, 5), 16),
+        b = parseInt(hex.slice(5, 7), 16)
 
-export function hexToRGBA(hex: string, opacity: number): string {
-    return 'rgba(' + (hex = hex.replace('#', '')).match(new RegExp('(.{' + hex.length / 3 + '})', 'g')).map(function(l) { return parseInt(hex.length % 2 ? l + l : l, 16) }).concat(isFinite(opacity) ? opacity : 1).join(',') + ')';
+  if (alpha) {
+    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")"
+  } else {
+    return "rgb(" + r + ", " + g + ", " + b + ")";
+  }
 }

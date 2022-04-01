@@ -1,6 +1,8 @@
+import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
+
 export const constructKeysToTreeMockResult = [
   {
-    name: 'keys:keys',
+    name: TREE_LEAF_FIELD,
     children: [],
     keys: {
       keys2: {
@@ -29,14 +31,14 @@ export const constructKeysToTreeMockResult = [
       }
     },
     keyCount: 4,
-    fullName: 'keys:keys:',
+    fullName: `${TREE_LEAF_FIELD}:`,
     keyApproximate: 40,
   },
   {
     name: 'keys',
     children: [
       {
-        name: 'keys:keys',
+        name: TREE_LEAF_FIELD,
         children: [],
         keys: {
           'keys:1': {
@@ -59,14 +61,14 @@ export const constructKeysToTreeMockResult = [
           }
         },
         keyCount: 3,
-        fullName: 'keys:keys:keys:',
+        fullName: `keys:${TREE_LEAF_FIELD}:`,
         keyApproximate: 30,
       },
       {
         name: '1',
         children: [
           {
-            name: 'keys:keys',
+            name: TREE_LEAF_FIELD,
             children: [],
             keys: {
               'keys:1:2': {
@@ -83,7 +85,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 2,
-            fullName: 'keys:1:keys:keys:',
+            fullName: `keys:1:${TREE_LEAF_FIELD}:`,
             keyApproximate: 20,
           }
         ],
@@ -103,7 +105,7 @@ export const constructKeysToTreeMockResult = [
         name: '',
         children: [
           {
-            name: 'keys:keys',
+            name: TREE_LEAF_FIELD,
             children: [],
             keys: {
               'empty::test': {
@@ -114,7 +116,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 1,
-            fullName: 'empty::keys:keys:',
+            fullName: `empty::${TREE_LEAF_FIELD}:`,
             keyApproximate: 10,
           }
         ],

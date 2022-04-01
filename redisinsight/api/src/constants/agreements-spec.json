@@ -1,5 +1,5 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.5",
   "agreements": {
     "analytics": {
       "defaultValue": false,
@@ -38,6 +38,17 @@
           "title": "Encryption",
           "label": "Encrypt sensitive information",
           "description": "Install or enable the system keychain to encrypt and securely store your sensitive information added before using the application. Otherwise, this information will be stored locally in plain text and may lead to security risks."
+        },
+        "stack_false": {
+          "defaultValue": false,
+          "displayInSetting": false,
+          "required": false,
+          "editable": true,
+          "disabled": true,
+          "since": "1.0.5",
+          "title": "Encryption",
+          "label": "Encrypt sensitive information",
+          "description": "Data encryption is available in the desktop application version. Download it <a target=\"_blank\" href=\"https://redis.com/redis-enterprise/redis-insight\">here</a>."
         }
       }
     },

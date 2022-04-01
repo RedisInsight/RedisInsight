@@ -104,7 +104,8 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getRemoteBuildInfo(): Promise<Record<string, any>> {
     try {
-      return await getFile(new URL(join(this.options.updateUrl, this.options.buildInfo)).toString());
+      const buildInfoBuffer = await getFile(new URL(join(this.options.updateUrl, this.options.buildInfo)).toString());
+      return JSON.parse(buildInfoBuffer.toString());
     } catch (e) {
       this.logger.warn('Unable to get remote build info', e);
       return {};

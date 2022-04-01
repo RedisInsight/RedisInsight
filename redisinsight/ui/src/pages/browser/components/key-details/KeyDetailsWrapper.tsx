@@ -18,7 +18,7 @@ import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
   onCloseKey: () => void;
-  onEditKey: (newKey: string) => void;
+  onEditKey: (key: string, newKey: string) => void;
   onDeleteKey: () => void;
   keyProp: string | null;
 }
@@ -79,7 +79,7 @@ const KeyDetailsWrapper = ({ onCloseKey, onEditKey, onDeleteKey, keyProp }: Prop
     dispatch(editKeyTTL(key, ttl))
   }
   const handleEditKey = (oldKey: string, newKey: string, onFailure?: () => void) => {
-    dispatch(editKey(oldKey, newKey, () => onEditKey(newKey), onFailure))
+    dispatch(editKey(oldKey, newKey, () => onEditKey(oldKey, newKey), onFailure))
   }
 
   const handleClose = () => {

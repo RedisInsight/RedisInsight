@@ -57,6 +57,10 @@ const COMMON_SHORTCUTS = {
     quickHistoryAccess: {
       description: 'Quick-access to command history',
       keys: ['Up Arrow']
+    },
+    nonRedisEditor: {
+      description: 'Use Non-Redis Editor',
+      keys: ['Shift', 'Space'],
     }
   }
 }
@@ -116,6 +120,10 @@ const MAC_SHORTCUTS = {
     quickHistoryAccess: {
       description: 'Quick-access to command history',
       keys: ['Up Arrow']
+    },
+    nonRedisEditor: {
+      description: 'Use Non-Redis Editor',
+      keys: [(<span className="shiftSymbol">⇧</span>), 'Space'],
     }
   }
 }

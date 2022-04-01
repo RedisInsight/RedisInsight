@@ -112,3 +112,12 @@
   }
 }
 
+.tooltipLogo {
+  width: 88px !important;
+  height: 18px !important;
+
+  @media only screen and (min-width: 1124px) {
+    display: none !important;
+  }
+}
+

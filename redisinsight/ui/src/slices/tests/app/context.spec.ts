@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash'
+import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
 import { KeyTypes } from 'uiSrc/constants'
 
 import {
@@ -28,7 +29,8 @@ import reducer, {
   setBrowserTreePanelSizes,
   resetBrowserTree,
   appContextBrowserTree,
-  setBrowserTreeSelectedLeaf
+  setBrowserTreeSelectedLeaf,
+  updateBrowserTreeSelectedLeaf
 } from '../../app/context'
 
 jest.mock('uiSrc/services')
@@ -357,13 +359,15 @@ describe('slices', () => {
     it('should properly set selected keys in the tree', () => {
       // Arrange
       const selectedLeaf = {
-        key1: [{
-          name: 'test',
-          type: KeyTypes.Hash,
-          ttl: 123,
-          size: 123,
-          length: 321
-        }]
+        [TREE_LEAF_FIELD]: {
+          test: {
+            name: 'test',
+            type: KeyTypes.Hash,
+            ttl: 123,
+            size: 123,
+            length: 321
+          }
+        }
       }
       const prevState = {
         ...initialState,
@@ -428,13 +432,15 @@ describe('slices', () => {
               test: true
             },
             selectedLeaf: {
-              key1: [{
-                name: 'test',
-                type: KeyTypes.Hash,
-                ttl: 123,
-                size: 123,
-                length: 321
-              }]
+              [TREE_LEAF_FIELD]: {
+                test: {
+                  name: 'test',
+                  type: KeyTypes.Hash,
+                  ttl: 123,
+                  size: 123,
+                  length: 321
+                }
+              }
             }
           }
         },
@@ -447,6 +453,119 @@ describe('slices', () => {
 
       // Act
       const nextState = reducer(prevState, resetBrowserTree())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+  })
+
+  describe('updateBrowserTreeSelectedLeaf', () => {
+    it('should properly update selected leaf and add a new fitted key', () => {
+      const payload = {
+        key: 'test',
+        newKey: 'test2'
+      }
+      // Arrange
+      const prevState = {
+        ...initialState,
+        browser: {
+          ...initialState.browser,
+          tree: {
+            ...initialState.browser.tree,
+            selectedLeaf: {
+              [TREE_LEAF_FIELD]: {
+                [payload.key]: {
+                  name: payload.key,
+                  type: KeyTypes.Hash,
+                  ttl: 123,
+                  size: 123,
+                  length: 321
+                }
+              }
+            }
+          }
+        },
+      }
+      const state = {
+        ...initialState.browser.tree,
+        openNodes: {},
+        selectedLeaf: {
+          [TREE_LEAF_FIELD]: {
+            [payload.newKey]: {
+              name: payload.newKey,
+              type: KeyTypes.Hash,
+              ttl: 123,
+              size: 123,
+              length: 321
+            } }
+        }
+      }
+
+      // Act
+      const nextState = reducer(prevState, updateBrowserTreeSelectedLeaf(payload))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+    it("should properly update selected leaf and remove old key (new key does't fit)", () => {
+      const payload = {
+        key: 'test',
+        newKey: 'test:2'
+      }
+      // Arrange
+      const prevState = {
+        ...initialState,
+        browser: {
+          ...initialState.browser,
+          tree: {
+            ...initialState.browser.tree,
+            selectedLeaf: {
+              [TREE_LEAF_FIELD]: {
+                [payload.key]: {
+                  name: payload.key,
+                  type: KeyTypes.Hash,
+                  ttl: 123,
+                  size: 123,
+                  length: 321
+                },
+                test2: {
+                  name: 'test2',
+                  type: KeyTypes.Hash,
+                  ttl: 123,
+                  size: 123,
+                  length: 321
+                }
+              }
+            }
+          }
+        },
+      }
+      const state = {
+        ...initialState.browser.tree,
+        openNodes: {},
+        selectedLeaf: {
+          [TREE_LEAF_FIELD]: {
+            test2: {
+              name: 'test2',
+              type: KeyTypes.Hash,
+              ttl: 123,
+              size: 123,
+              length: 321
+            },
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(prevState, updateBrowserTreeSelectedLeaf(payload))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

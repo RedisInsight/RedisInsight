@@ -132,6 +132,8 @@ export class BrowserPage {
   treeViewNodeArrowIcon: Selector
   treeViewDeviceFolder: Selector
   treeViewDeviceKyesCount: Selector
+  modulesTypeDetails: Selector
+  internalLinkToWorkbench: Selector
 
   constructor() {
       //CSS Selectors
@@ -200,7 +202,7 @@ export class BrowserPage {
       this.treeViewButton = Selector('[data-testid=view-type-list-btn]');
       this.browserViewButton = Selector('[data-testid=view-type-browser-btn]');
       this.treeViewSeparator = Selector('[data-testid=select-tree-view-separator]');
-      this.treeViewKeysItem = Selector('[data-testid="keys:keys:"]');
+      this.treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
       this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
@@ -263,8 +265,10 @@ export class BrowserPage {
       this.treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
       this.totalKeysNumber = Selector('[data-testid=keys-total]');
       this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
-      this.treeViewDeviceFolder = Selector('[data-testid^=device] div');
+      this.treeViewDeviceFolder = Selector('[data-testid^=node-item_device] div');
       this.treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
+      this.modulesTypeDetails = Selector('[data-testid=modules-type-details]');
+      this.internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
   }
 
   /**
@@ -426,6 +430,9 @@ export class BrowserPage {
 
   //Delete key from details
   async deleteKey(): Promise<void> {
+      if (await this.toastCloseButton.exists) {
+          await t.click(this.toastCloseButton);
+      }
       await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);
       await t.click(this.confirmDeleteKeyButton);
@@ -436,6 +443,9 @@ export class BrowserPage {
   * @param keyName The name of the key
   */
   async deleteKeyByName(keyName: string): Promise<void> {
+      if (await this.toastCloseButton.exists) {
+          await t.click(this.toastCloseButton);
+      }
       await this.searchByKeyName(keyName);
       await t.click(this.keyNameInTheList);
       await t.click(this.deleteKeyButton);

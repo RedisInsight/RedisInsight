@@ -23,6 +23,7 @@ import {
   htmlIdGenerator,
   EuiLink,
   keys,
+  EuiCallOut,
 } from '@elastic/eui'
 import { capitalize, isEmpty, pick } from 'lodash'
 import ReactDOM from 'react-dom'
@@ -556,16 +557,6 @@ const AddStandaloneForm = (props: Props) => {
     </EuiToolTip>
   )
 
-  const AppendDbIndex = () => (
-    <EuiToolTip
-      anchorClassName="inputAppendIcon"
-      position="right"
-      content="Select the Redis logical database to work with in Browser and Workbench."
-    >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-    </EuiToolTip>
-  )
-
   const AppendEndpoints = () => (
     <EuiToolTip
       title="Host:port"
@@ -718,7 +709,7 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
-              label="Database Index"
+              label="Select the Redis logical database"
               checked={!!formik.values.showDb}
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"
@@ -731,6 +722,15 @@ const AddStandaloneForm = (props: Props) => {
         <EuiFlexGroup
           className={flexGroupClassName}
         >
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiCallOut>
+              <EuiText size="s" data-testid="db-index-message">
+                When the database is added, you can select logical databases only in CLI.
+                To work with other logical databases in Browser and Workbench, add another database with the same host and port,
+                but a different database index.
+              </EuiText>
+            </EuiCallOut>
+          </EuiFlexItem>
           <EuiFlexItem className={cx(
             flexItemClassName,
             styles.dbInput,
@@ -742,7 +742,7 @@ const AddStandaloneForm = (props: Props) => {
                 name="db"
                 id="db"
                 data-testid="db"
-                style={{ width: '100%' }}
+                style={{ width: 120 }}
                 placeholder="Enter Database Index"
                 value={formik.values.db ?? '0'}
                 maxLength={6}
@@ -755,7 +755,6 @@ const AddStandaloneForm = (props: Props) => {
                 type="text"
                 min={0}
                 max={MAX_DATABASE_INDEX_NUMBER}
-                append={<AppendDbIndex />}
               />
             </EuiFormRow>
           </EuiFlexItem>

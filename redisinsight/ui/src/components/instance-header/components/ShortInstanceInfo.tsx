@@ -11,7 +11,7 @@ import { ReactComponent as VersionIcon } from 'uiSrc/assets/img/icons/version.sv
 
 import styles from './styles.module.scss'
 
-interface IProps {
+export interface Props {
   info: {
     name: string
     host: string
@@ -22,7 +22,7 @@ interface IProps {
     user?: Nullable<string>
   }
 }
-const ShortInstanceInfo = ({ info }: IProps) => {
+const ShortInstanceInfo = ({ info }: Props) => {
   const { name, host, port, connectionType, version, user, dbIndex } = info
   return ((
     <div data-testid="db-info-tooltip">

@@ -26,13 +26,13 @@
       },
       {
         "target": "mas",
-        "arch": ["universal"]
+        "arch": ["x64", "arm64", "universal"]
       }
     ],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "52",
+    "bundleVersion": "0.0.1",
     "icon": "resources/icon.icns",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",

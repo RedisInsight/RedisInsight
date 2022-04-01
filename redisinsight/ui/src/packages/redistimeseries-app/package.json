@@ -15,7 +15,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "cross-env NODE_ENV=development parcel serve src/index.html",
-    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js && yarn build:css\" \"yarn build:assets\"",
+    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\" \"yarn build:assets\"",
     "build:js": "parcel build src/main.tsx --dist-dir dist",
     "build:css": "parcel build src/styles/styles.less  --dist-dir dist",
     "build:assets": "parcel build src/assets/**/* --dist-dir dist",

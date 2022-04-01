@@ -1,7 +1,7 @@
 import * as d3 from 'd3'
 
 export function pulse(node: d3.Selection<SVGElement, any, any, any>) {
-    var times = 0;
+    var times = 0
   (function repeat() {
     node
     .transition()
@@ -22,58 +22,58 @@ export function pulse(node: d3.Selection<SVGElement, any, any, any>) {
     .on("end", () => {
       if (times === 3) {
         node.transition().attr("data-pulse", "")
-        return;
+        return
       }
-      times++;
+      times++
       repeat()
-    });
+    })
   })()
 }
 export const toString = (d) => {
-  let s = d.labels ? d.labels[0] : d.type;
+  let s = d.labels ? d.labels[0] : d.type
 
-  s += ` (<id>:  ${d.id}`;
+  s += ` (<id>:  ${d.id}`
 
   Object.keys(d.properties).forEach((property) => {
-    s += `, ${property} : ${JSON.stringify(d.properties[property])}`;
-  });
+    s += `, ${property} : ${JSON.stringify(d.properties[property])}`
+  })
 
-  s += ')';
+  s += ')'
 
-  return s;
-};
+  return s
+}
 
 export const truncateText = (str = '', length = 100) => {
-  const ending = '...';
+  const ending = '...'
 
   if (str.length > length) {
-    return str.substring(0, length - ending.length) + ending;
+    return str.substring(0, length - ending.length) + ending
   }
 
-  return str;
-};
+  return str
+}
 
 export const rotate = (cx, cy, x, y, angle) => {
-  const radians = (Math.PI / 180) * angle;
-  const cos = Math.cos(radians);
-  const sin = Math.sin(radians);
-  const nx = (cos * (x - cx)) + (sin * (y - cy)) + cx;
-  const ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+  const radians = (Math.PI / 180) * angle
+  const cos = Math.cos(radians)
+  const sin = Math.sin(radians)
+  const nx = (cos * (x - cx)) + (sin * (y - cy)) + cx
+  const ny = (cos * (y - cy)) - (sin * (x - cx)) + cy
 
-  return { x: nx, y: ny };
-};
+  return { x: nx, y: ny }
+}
 
 export const unitaryVector = (source, target, newLength) => {
   const length = Math.sqrt((target.x - source.x) ** 2
-    + (target.y - source.y) ** 2) / Math.sqrt(newLength || 1);
+    + (target.y - source.y) ** 2) / Math.sqrt(newLength || 1)
 
   return {
     x: (target.x - source.x) / length,
     y: (target.y - source.y) / length,
-  };
-};
+  }
+}
 
-export const darkenColor = (color) => d3.rgb(color).darker(1);
+export const darkenColor = (color) => d3.rgb(color).darker(1)
 
 
 function charCodeSum(str: string | undefined) {
@@ -87,27 +87,27 @@ function charCodeSum(str: string | undefined) {
 
 export function invertColor(hex: string) {
     if (hex.indexOf('#') === 0) {
-        hex = hex.slice(1);
+        hex = hex.slice(1)
     }
     // convert 3-digit hex to 6-digits.
     if (hex.length === 3) {
-        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
     }
     if (hex.length !== 6) {
-        throw new Error('Invalid HEX color.');
+        throw new Error('Invalid HEX color.')
     }
     // invert color components
     var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
         g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
-        b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
+        b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16)
     // pad each with zeros and return
-    return '#' + padZero(r) + padZero(g) + padZero(b);
+    return '#' + padZero(r) + padZero(g) + padZero(b)
 }
 
 function padZero(str) {
-    let len = str.length || 2;
-    var zeros = new Array(len).join('0');
-    return (zeros + str).slice(-len);
+    let len = str.length || 2
+    var zeros = new Array(len).join('0')
+    return (zeros + str).slice(-len)
 }
 
 interface IColor {
@@ -157,11 +157,11 @@ export class ColorPicker<T extends IColor> {
     const goodColor = this.currentColorStore[charCodeSum(label) % this.currentColorStore.length]
 
     // since the color has been taken by `label`, remove it from the current color store.
-    this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor);
+    this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor)
 
     // cache the label and color key value pair.
     this.labelStore[label] = goodColor
-    return goodColor;
+    return goodColor
   }
 }
 
@@ -170,7 +170,7 @@ export class ColorPicker<T extends IColor> {
  */
 export class GoodColorPicker extends ColorPicker<IGoodColor> {
   constructor(COLORS: IGoodColor[]) {
-    super(COLORS);
+    super(COLORS)
   }
 }
 

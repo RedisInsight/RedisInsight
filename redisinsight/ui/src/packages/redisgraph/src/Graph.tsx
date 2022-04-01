@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
-import * as d3 from 'd3';
+import { useEffect, useRef, useState, useMemo } from 'react'
+import * as d3 from 'd3'
 import { executeRedisCommand } from 'redisinsight-plugin-sdk'
 import {
   EuiButtonIcon,
   EuiToolTip,
 } from '@elastic/eui'
-import Graphd3, { IGraphD3 } from './graphd3';
-import { responseParser } from './parser';
+import Graphd3, { IGraphD3 } from './graphd3'
+import { responseParser } from './parser'
 import {
   IGoodColor,
   GoodColorPicker,
   getFetchNodesByIdQuery,
   getFetchDirectNeighboursOfNodeQuery,
   getFetchNodeRelationshipsQuery,
-} from './utils';
+} from './utils'
 import {
   EDGE_COLORS,
   EDGE_COLORS_DARK,
@@ -88,7 +88,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
     if (parsedResponse.nodeIds.length > 0) {
       try {
         /* Fetch named path nodes */
-        const resp = await executeRedisCommand(getFetchNodesByIdQuery(props.graphKey, [...parsedResponse.nodeIds]));
+        const resp = await executeRedisCommand(getFetchNodesByIdQuery(props.graphKey, [...parsedResponse.nodeIds]))
 
         if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
           const parsedData = responseParser(resp[0].response)
@@ -122,7 +122,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
 
     try {
       /* Fetch neighbours automatically */
-      const resp = await executeRedisCommand(getFetchNodeRelationshipsQuery(props.graphKey, [...nodeIds], [...nodeIds]));
+      const resp = await executeRedisCommand(getFetchNodeRelationshipsQuery(props.graphKey, [...nodeIds], [...nodeIds]))
 
       if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
         const parsedData = responseParser(resp[0].response)
@@ -164,8 +164,8 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
 
   const zoom = d3.zoom().scaleExtent([0, 3])  /* min, mac of zoom */
   useEffect(() => {
-    if (container != null) return;
-    if (!start) return;
+    if (container != null) return
+    if (!start) return
 
     const graphd3 = Graphd3(d3Container.current, {
       labelColors,
@@ -180,17 +180,17 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       onNodeClick: (nodeSvg, node, event) => {
         if (d3.select(nodeSvg).attr('class').indexOf('selected') > 0) {
           d3.select(nodeSvg)
-            .attr('class', 'node');
+            .attr('class', 'node')
         } else {
           d3.select(nodeSvg)
-            .attr('class', 'node selected');
+            .attr('class', 'node selected')
         }
       },
       async onNodeDoubleClick(nodeSvg, node) {
         /* Get direct neighbours automatically */
         const data = await executeRedisCommand(getFetchDirectNeighboursOfNodeQuery(props.graphKey, node.id))
-        if (!Array.isArray(data)) return;
-        if (data.length < 1 || data[0].status !== 'success') return;
+        if (!Array.isArray(data)) return
+        if (data.length < 1 || data[0].status !== 'success') return
         const parsedData = responseParser(data[0].response)
 
         let newNodeLabels = nodeLabels
@@ -223,16 +223,16 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       onRelationshipDoubleClick(relationship) {
       },
       onDisplayInfo: (infoSvg, entity) => {
-        let property: string;
-        let entityColor: IGoodColor;
-        let t: EntityType;
+        let property: string
+        let entityColor: IGoodColor
+        let t: EntityType
 
         if (entity.labels) {
-          [property] = entity.labels;
+          [property] = entity.labels
           entityColor = labelColors(property)
           t = EntityType.Node
         } else {
-          property = entity.type;
+          property = entity.type
           entityColor = edgeColors(property)
           t = EntityType.Edge
         }
@@ -246,7 +246,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
         })
       },
       zoomFit: false,
-    });
+    })
 
     setContainer(graphd3)
   }, [start])

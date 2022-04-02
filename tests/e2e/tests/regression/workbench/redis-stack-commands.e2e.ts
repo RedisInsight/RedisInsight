@@ -72,4 +72,3 @@ test
         await workbenchPage.selectViewTypeText();
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The result in text view is displayed');
     });
-    

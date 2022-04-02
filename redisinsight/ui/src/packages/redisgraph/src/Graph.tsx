@@ -231,7 +231,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
   }, [start])
 
   return (
-    <div className="core-container">
+    <div className="core-container" data-testid="query-graph-container">
       <div className="d3-info">
         <div className="graph-legends">
           {

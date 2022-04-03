@@ -67,13 +67,13 @@ describe('monitor', function () {
           client.on('monitorData', (data) => {
             expect(data).to.be.an('array');
             data.forEach((log) => {
-              if (_.isEqual(log.args, ['get', constants.TEST_STRING_KEY_1])) {
+              if (_.isEqual(log.args, ['scan', '2'])) {
                 resolve(log);
               }
             });
           });
 
-          await rte.data.executeCommand('get', constants.TEST_STRING_KEY_1);
+          await rte.data.executeCommand('scan', '2');
         })
       });
     });
@@ -92,7 +92,7 @@ describe('monitor', function () {
           client.on('monitorData', (data) => {
             expect(data).to.be.an('array');
             data.forEach((log) => {
-              if (_.isEqual(log.args, ['get', constants.TEST_NOT_EXISTED_INSTANCE_ID])) {
+              if (_.isEqual(log.args, ['scan', '2'])) {
                 counts[client.id].numberOfTargetLogs += 1;
               }
             });
@@ -105,7 +105,7 @@ describe('monitor', function () {
       ));
 
       await Promise.all((new Array(100).fill(1))
-        .map(() => rte.data.executeCommand('get', constants.TEST_NOT_EXISTED_INSTANCE_ID)))
+        .map(() => rte.data.executeCommand('scan', '2')))
 
       // Wait for a while
       await new Promise((resolve) => setTimeout(resolve, 2000));

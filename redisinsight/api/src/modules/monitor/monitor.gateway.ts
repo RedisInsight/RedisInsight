@@ -32,8 +32,6 @@ export class MonitorGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async handleConnection(socketClient: Socket): Promise<void> {
     // eslint-disable-next-line sonarjs/no-duplicate-string
     const instanceId = get(socketClient, 'handshake.query.instanceId');
-    this.logger.log('handleConnection.instanceId: ', instanceId)
-
     this.logger.log(`Client connected: ${socketClient.id}, instanceId: ${instanceId}`);
   }
 
@@ -41,8 +39,6 @@ export class MonitorGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   async monitor(socketClient: Socket): Promise<any> {
     try {
       const instanceId = get(socketClient, 'handshake.query.instanceId');
-      this.logger.log('monitor.instanceId: ', instanceId)
-
       await this.service.addListenerForInstance(
         instanceId,
         new ClientMonitorObserver(socketClient.id, socketClient),

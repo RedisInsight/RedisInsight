@@ -3,6 +3,7 @@ import { JSONTree } from 'react-json-tree'
 import { ResultsParser } from './parser'
 import Graph from './Graph'
 import { Table } from './Table'
+import { COMPACT_FLAG } from './constants'
 
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
@@ -36,29 +37,29 @@ export function TableApp(props: { command?: string, data: any }) {
   const tableData = ResultsParser(props.data[0].response as any)
 
   return (
-      <div className="table-view">
-          <Table
-              data={tableData.results}
-              columns={tableData.headers.map(h => ({
-                  field: h,
-                  name: h,
-                  render: d => (
-                      <JSONTree
-                          invertTheme={isDarkTheme}
-                          theme={{
-                              extend: json_tree_theme,
-                              tree: ({ style }) => ({
-                                  style: { ...style, backgroundColor: undefined }, // removing default background color from styles
-                              }),
-                          }}
-                          labelRenderer={(key) => key ? key : null}
-                          hideRoot
-                          data={d}
-                      />
-                  )
-              }))}
-          />
-      </div>
+    <div className="table-view">
+      <Table
+        data={tableData.results}
+        columns={tableData.headers.map(h => ({
+          field: h,
+          name: h,
+          render: d => (
+            <JSONTree
+              invertTheme={isDarkTheme}
+              theme={{
+                extend: json_tree_theme,
+                tree: ({ style }) => ({
+                  style: { ...style, backgroundColor: undefined }, // removing default background color from styles
+                }),
+              }}
+              labelRenderer={(key) => key ? key : null}
+              hideRoot
+              data={d}
+            />
+          )
+        }))}
+      />
+    </div>
   )
 }
 
@@ -89,8 +90,8 @@ function HandleError(props: { command?: string, data: any }): JSX.Element {
 
   const command = props.command.split(' ')
 
-  if (command[command.length - 1] === '--compact') {
-    return <div className="responseFail">'--compact' flag is currently not supported.</div>
+  if (command[command.length - 1] === COMPACT_FLAG) {
+    return <div className="responseFail">'{COMPACT_FLAG}' flag is currently not supported.</div>
   }
 
   return null

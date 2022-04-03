@@ -33,17 +33,18 @@ appendIconComponentCache({
   cross: EuiIconCross,
 })
 
-const renderGraphTable = (props: Props) => {
-  render(
-    <TableApp data={props.data} command={props.command} />,
-    document.getElementById('app'))
-}
+const renderApp = (element: JSX.Element) => render(
+  element,
+  document.getElementById('app')
+)
 
-const renderGraph = (props: Props) => {
-  render(
-    <GraphApp data={props.data} command={props.command} />,
-    document.getElementById('app'))
-}
+const renderGraphTable = (props: Props) => renderApp(
+  <TableApp data={props.data} command={props.command} />
+)
+
+const renderGraph = (props: Props) => renderApp(
+  <GraphApp data={props.data} command={props.command} />
+)
 
 // This is a required action - export the main function for execution of the visualization
 export default { renderGraphTable, renderGraph }

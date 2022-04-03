@@ -1,14 +1,25 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import * as d3 from 'd3';
-import Graphd3 from './graphd3';
-import {responseParser} from './parser';
-import * as Utils from './utils';
-import { executeRedisCommand  } from 'redisinsight-plugin-sdk'
-
+import { useEffect, useRef, useState, useMemo } from 'react'
+import * as d3 from 'd3'
+import { executeRedisCommand } from 'redisinsight-plugin-sdk'
 import {
   EuiButtonIcon,
   EuiToolTip,
 } from '@elastic/eui'
+import Graphd3, { IGraphD3 } from './graphd3'
+import { responseParser } from './parser'
+import {
+  IGoodColor,
+  GoodColorPicker,
+  getFetchNodesByIdQuery,
+  getFetchDirectNeighboursOfNodeQuery,
+  getFetchNodeRelationshipsQuery,
+} from './utils'
+import {
+  EDGE_COLORS,
+  EDGE_COLORS_DARK,
+  NODE_COLORS,
+  NODE_COLORS_DARK,
+} from './constants'
 
 enum EntityType {
   Node = 'Node',
@@ -25,20 +36,19 @@ interface ISelectedEntityProps {
 
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
-const colorPicker =  (COLORS: Utils.IGoodColor[]) => {
-  const color = new Utils.GoodColorPicker(COLORS)
+const colorPicker =  (COLORS: IGoodColor[]) => {
+  const color = new GoodColorPicker(COLORS)
   return (label: string) => color.getColor(label)
 }
 
-const labelColors = colorPicker(isDarkTheme ? Utils.NODE_COLORS_DARK : Utils.NODE_COLORS)
-const edgeColors = colorPicker(isDarkTheme ? Utils.EDGE_COLORS_DARK : Utils.EDGE_COLORS)
-
+const labelColors = colorPicker(isDarkTheme ? NODE_COLORS_DARK : NODE_COLORS)
+const edgeColors = colorPicker(isDarkTheme ? EDGE_COLORS_DARK : EDGE_COLORS)
 export default function Graph(props: { graphKey: string, data: any[] }) {
 
   const d3Container = useRef<HTMLDivElement>()
-  const [container, setContainer] = useState(null)
+  const [container, setContainer] = useState<IGraphD3>(null)
   const [selectedEntity, setSelectedEntity] = useState<ISelectedEntityProps | null>(null)
-  const [start, setStart] = useState(false)
+  const [start, setStart] = useState<boolean>(false)
 
   const parsedResponse = responseParser(props.data)
   let nodeIds = new Set(parsedResponse.nodes.map(n => n.id))
@@ -54,7 +64,10 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       data: [{
         graph: {
           nodes: parsedResponse.nodes,
-          relationships: parsedResponse.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+          relationships: parsedResponse
+            .edges
+            .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
+            .map(e => ({ ...e, startNode: e.source, endNode: e.target }))
         }
       }]
     }],
@@ -75,7 +88,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
     if (parsedResponse.nodeIds.length > 0) {
       try {
         /* Fetch named path nodes */
-        const resp = await executeRedisCommand(`graph.ro_query ${props.graphKey} "MATCH (n) WHERE id(n) IN [${[...parsedResponse.nodeIds]}] RETURN n"`);
+        const resp = await executeRedisCommand(getFetchNodesByIdQuery(props.graphKey, [...parsedResponse.nodeIds]))
 
         if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
           const parsedData = responseParser(resp[0].response)
@@ -94,7 +107,10 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
                 data: [{
                   graph: {
                     nodes: parsedData.nodes,
-                    relationships: parsedData.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
+                    relationships: parsedData
+                      .edges
+                      .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id))
+                      .map(e => ({ ...e, startNode: e.source, endNode: e.target }))
                   }
                 }]
               }
@@ -106,7 +122,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
 
     try {
       /* Fetch neighbours automatically */
-      const resp = await executeRedisCommand(`graph.ro_query ${props.graphKey} "MATCH (n)-[t]->(m) WHERE ID(n) IN [${[...nodeIds]}] OR ID(m) IN [${[...nodeIds]}] RETURN DISTINCT t"`);
+      const resp = await executeRedisCommand(getFetchNodeRelationshipsQuery(props.graphKey, [...nodeIds], [...nodeIds]))
 
       if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
         const parsedData = responseParser(resp[0].response)
@@ -114,8 +130,13 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
           nodeIds.add(n.id)
           n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
         })
-        const filteredEdges = parsedData.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id)).map(e => ({ ...e, startNode: e.source, endNode: e.target }))
-        filteredEdges.forEach(e => newEdgeTypes[e.type] = (newEdgeTypes[e.type] + 1) || 1)
+        const filteredEdges = parsedData
+          .edges
+          .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target) && !edgeIds.has(e.id))
+          .map(e => {
+            newEdgeTypes[e.type] = (newEdgeTypes[e.type] + 1 || 1)
+            return ({ ...e, startNode: e.source, endNode: e.target })
+          })
 
         setGraphData({
           ...newGraphData,
@@ -143,8 +164,8 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
 
   const zoom = d3.zoom().scaleExtent([0, 3])  /* min, mac of zoom */
   useEffect(() => {
-    if (container != null) return;
-    if (!start) return;
+    if (container != null) return
+    if (!start) return
 
     const graphd3 = Graphd3(d3Container.current, {
       labelColors,
@@ -159,17 +180,17 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       onNodeClick: (nodeSvg, node, event) => {
         if (d3.select(nodeSvg).attr('class').indexOf('selected') > 0) {
           d3.select(nodeSvg)
-            .attr('class', 'node');
+            .attr('class', 'node')
         } else {
           d3.select(nodeSvg)
-            .attr('class', 'node selected');
+            .attr('class', 'node selected')
         }
       },
       async onNodeDoubleClick(nodeSvg, node) {
         /* Get direct neighbours automatically */
-        const data = await executeRedisCommand(`graph.ro_query "${props.graphKey}" "MATCH (n)-[t]-(m) WHERE id(n)=${node.id} RETURN t, m"`)
-        if (!Array.isArray(data)) return;
-        if (data.length < 1 || data[0].status !== 'success') return;
+        const data = await executeRedisCommand(getFetchDirectNeighboursOfNodeQuery(props.graphKey, node.id))
+        if (!Array.isArray(data)) return
+        if (data.length < 1 || data[0].status !== 'success') return
         const parsedData = responseParser(data[0].response)
 
         let newNodeLabels = nodeLabels
@@ -202,16 +223,16 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       onRelationshipDoubleClick(relationship) {
       },
       onDisplayInfo: (infoSvg, entity) => {
-        let property: string;
-        let entityColor: Utils.IGoodColor;
-        let t: EntityType;
+        let property: string
+        let entityColor: IGoodColor
+        let t: EntityType
 
         if (entity.labels) {
-          [property] = entity.labels;
+          [property] = entity.labels
           entityColor = labelColors(property)
           t = EntityType.Node
         } else {
-          property = entity.type;
+          property = entity.type
           entityColor = edgeColors(property)
           t = EntityType.Edge
         }
@@ -225,7 +246,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
         })
       },
       zoomFit: false,
-    });
+    })
 
     setContainer(graphd3)
   }, [start])

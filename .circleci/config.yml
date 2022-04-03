@@ -302,7 +302,7 @@ jobs:
           name: .AppImage tests
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
-            .circleci/scripts/e2e/app-image.e2e.sh
+            .circleci/e2e/test.app-image.sh
       - when:
           condition:
             equal: [ true, << parameters.report >> ]
@@ -315,6 +315,15 @@ jobs:
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
+  e2e-exe:
+    executor:
+      name: win/default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: choco install nodejs --version=15.14.0
+      - run: .circleci/scripts/e2e/e2e-win.cmd
 
   e2e-tests:
     executor: linux-executor

@@ -318,12 +318,39 @@ jobs:
   e2e-exe:
     executor:
       name: win/default
+    parameters:
+      report:
+        description: Send report for test run to slack
+        type: boolean
+        default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - attach_workspace:
           at: .
       - run: choco install nodejs --version=15.14.0
-      - run: .circleci/scripts/e2e/e2e-win.cmd
+      - run:
+          command: |
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
+            .circleci/e2e/test.exe.cmd
+          shell: bash.exe
+      - when:
+          condition:
+            equal: [ true, << parameters.report >> ]
+          steps:
+            - run:
+                name: Send report
+                when: always
+                command: |
+                  APP_BUILD_TYPE="Electron (Windows)" node ./.circleci/e2e-results.js
+                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+                shell: bash.exe
+      - store_test_results:
+          path: ./tests/e2e/results
 
   e2e-tests:
     executor: linux-executor
@@ -1089,6 +1116,10 @@ workflows:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)
+      - windows:
+          name: Build app - Windows (stage)
+          requires:
+            - Setup build (stage)
       # integration tests on docker image build
       - integration-tests-run:
           matrix:
@@ -1115,3 +1146,10 @@ workflows:
           report: true
           requires:
             - Build app - Linux (stage)
+      # e2e desktop tests on exe build
+      - e2e-exe:
+          name: E2ETest (exe) - Nightly
+          parallelism: 4
+          report: true
+          requires:
+            - Build app - Windows (stage)

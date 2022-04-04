@@ -13,7 +13,7 @@
     font-size: 13px;
     line-height: 18px;
     font-weight: 400;
-    letter-spacing: -.13px;
+    letter-spacing: -0.13px;
 
     &:not(.euiFormLabel-isFocused, .euiFormLabel-isInvalid) {
       color: var(--euiTextSubduedColor);
@@ -34,6 +34,10 @@
   .euiFieldText:disabled {
     background-color: initial;
     color: #b5b6c0;
+  }
+
+  .euiButtonIcon {
+    align-self: center;
   }
 }
 
@@ -60,7 +64,7 @@
 
 .euiRadio .euiRadio__circle,
 .euiCheckbox .euiCheckbox__square {
-    border-width: 2px !important;
+  border-width: 2px !important;
 }
 
 body {
@@ -105,20 +109,20 @@ body {
 }
 
 .euiRadio .euiRadio__input:checked + .euiRadio__circle,
-.euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square{
+.euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square {
   border-color: var(--euiColorPrimary) !important;
 }
 
 .euiRadio:hover,
-.euiCheckbox:hover, {
+.euiCheckbox:hover {
   .euiRadio__label,
   .euiCheckbox__label {
     transition: color 150ms ease-in;
     color: var(--controlsLabelHoverColor) !important;
   }
 }
-.euiCheckbox .euiCheckbox__input:checked  ~ .euiCheckbox__label,
-.euiRadio .euiRadio__input:checked  ~ .euiRadio__label {
+.euiCheckbox .euiCheckbox__input:checked ~ .euiCheckbox__label,
+.euiRadio .euiRadio__input:checked ~ .euiRadio__label {
   color: var(--controlsLabelHoverColor) !important;
 }
 
@@ -137,7 +141,8 @@ body {
 .inlineFieldsNoSpace {
   .euiFlexGroup {
     .euiFlexItem:not(:first-child) {
-      .euiFieldText, .euiFormControlLayout--group {
+      .euiFieldText,
+      .euiFormControlLayout--group {
         border-left: 0 !important;
       }
     }

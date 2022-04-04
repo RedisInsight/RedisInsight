@@ -42,7 +42,8 @@ test.skip
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.queryGraphContainer).exists).ok('The Graph view is switched for GRAPH command');
     });
-test
+//skipped due the inaccessibility of the iframe
+test.skip
     .meta({ rte: rte.standalone })
     ('Verify that user can see "No data to visualize" message for Graph command', async t => {
         //Send Graph command
@@ -51,7 +52,7 @@ test
         await t.click(workbenchPage.preselectModelBikeSalesButton);
         await t.click(workbenchPage.submitCommandButton);
         //Check result
-        await t.switchToIframe(workbenchPage.iframe)
+        await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.resposeInfo.textContent).eql('No data to visualize. Switch to Text view to see raw information.', 'The info message is displayed for Graph');
         //Switch to Text view and check result
         await t.switchToMainWindow();

@@ -180,7 +180,7 @@ export class WorkbenchPage {
         this.monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
         this.monacoShortcutInput = Selector('input.input');
         this.monacoSuggestionOption = Selector('div.monaco-list-row');
-        this.iframe = Selector('[data-testid=pluginIframe]', {timeout: 60000});
+        this.iframe = Selector('[data-testid=pluginIframe]', {timeout: 10000});
         this.monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
         this.noCommandHistorySection = Selector('[data-testid=wb_no-results]');
         this.preselectArea = Selector('[data-testid=enablementArea]');

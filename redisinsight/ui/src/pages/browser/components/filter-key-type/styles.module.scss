@@ -2,6 +2,9 @@
   position: absolute;
   height: 38px;
   width: 180px;
+  border: 1px solid var(--separatorColor);
+  border-radius: 4px 0 0 4px;
+  overflow: hidden;
 
   :global {
     .euiFormControlLayout {
@@ -9,19 +12,20 @@
         display: flex;
         align-items: center;
         height: 36px !important;
-        background-color: var(--euiColorLightShade) !important;
+        background-color: var(--browserTableRowEven) !important;
         box-shadow: none !important;
         border: 0 !important;
-
-        .euiHealth {
-          margin-left: -5px;
-        }
+        padding: 0 !important;
 
         &.euiSuperSelect--isOpen__button {
-          background-color: var(--euiColorLightShade) !important;
+          background-color: var(--browserTableRowEven) !important;
         }
+
         &:focus {
-          background-color: var(--euiColorLightShade) !important;
+          background-color: var(--browserTableRowEven) !important;
+        }
+        &:not(:disabled):hover {
+          background-color: var(--hoverInListColorDarken) !important;
         }
       }
     }
@@ -29,31 +33,42 @@
     .euiPopover:not(.euiSuperSelect) {
       position: absolute;
       z-index: 10;
-      top: 7px;
-      right: 88px;
+      top: 10px;
+      left: 24px;
 
       svg {
-        width: 24px !important;
-        height: 24px !important;
+        width: 18px !important;
+        height: 18px !important;
       }
     }
     .euiFormControlLayoutIcons {
-      right: 88px;
+      left: 24px;
+
+      :global(.euiIcon) {
+        width: 16px;
+        height: 12px;
+      }
     }
   }
 }
 
 .filterKeyType {
+  position: relative;
   height: 32px;
-  line-height: 16px !important;
+  line-height: 14px !important;
   padding: 4px !important;
+  background-color: var(--browserTableRowEven);
+
+  &:hover, &:focus {
+    background-color: var(--hoverInListColorDarken) !important;
+  }
 }
 
 .controlsIcon {
   cursor: pointer;
-  margin-left: 3px;
-  height: 20px !important;
-  width: 20px !important;
+  margin-left: 6px;
+  height: 16px !important;
+  width: 16px !important;
   &:global(.euiIcon) {
     color: var(--inputTextColor) !important;
   }
@@ -66,12 +81,13 @@
   display: flex;
   align-items: center;
 
-  width: 106px;
+  width: 22px;
   height: 36px;
-  padding-left: 12px;
+  padding-left: 0;
 
   cursor: pointer;
   z-index: 5;
+  pointer-events: none;
 }
 
 .unsupported {
@@ -104,4 +120,20 @@
   :global(.euiPopover__panelArrow:after) {
     border-bottom-color: var(--euiTooltipBackgroundColor) !important;
   }
+}
+
+.clearSelectionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: -28px;
+  border-top: 1px solid var(--separatorColor);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+
+  text-decoration: underline;
+  cursor: pointer;
 }

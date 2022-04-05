@@ -134,6 +134,7 @@ export class BrowserPage {
   treeViewDeviceKyesCount: Selector
   modulesTypeDetails: Selector
   internalLinkToWorkbench: Selector
+  deleteFilterButton: Selector
 
   constructor() {
       //CSS Selectors
@@ -204,6 +205,7 @@ export class BrowserPage {
       this.treeViewSeparator = Selector('[data-testid=select-tree-view-separator]');
       this.treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
       this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
+      this.deleteFilterButton = Selector('[data-testid*=delete-btn]');
       //TEXT INPUTS (also referred to as 'Text fields')
       this.keySizeDetails = Selector('[data-testid=key-size-text]');
       this.keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -397,6 +399,9 @@ export class BrowserPage {
   * @param groupName The group name
   */
   async selectFilterGroupType(groupName: string): Promise<void> {
+      if(await this.deleteFilterButton.visible) {
+          await t.click(this.deleteFilterButton);
+      }
       await t.click(this.filterByKeyTypeDropDown);
       await t.click(this.filterOptionType.withExactText(groupName));
   }

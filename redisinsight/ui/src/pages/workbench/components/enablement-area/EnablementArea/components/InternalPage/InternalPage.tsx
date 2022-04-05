@@ -35,6 +35,7 @@ export interface Props {
   onScroll?: (top: number) => void;
   id: string;
   path: string;
+  sourcePath: string;
   pagination?: IEnablementAreaItem[]
 }
 const InternalPage = (props: Props) => {
@@ -51,6 +52,7 @@ const InternalPage = (props: Props) => {
     pagination,
     id,
     path,
+    sourcePath
   } = props
   const components: any = { LazyCodeButton, Image, Code }
   const containerRef = useRef<HTMLDivElement>(null)
@@ -146,10 +148,10 @@ const InternalPage = (props: Props) => {
       {!!pagination?.length && (
         <>
           <div className={cx(styles.footer, 'eui-showFor--xl')}>
-            <Pagination items={pagination} activePageId={id} />
+            <Pagination sourcePath={sourcePath} items={pagination} activePageId={id} />
           </div>
           <div className={cx(styles.footer, 'eui-hideFor--xl')}>
-            <Pagination items={pagination} activePageId={id} compressed />
+            <Pagination sourcePath={sourcePath} items={pagination} activePageId={id} compressed />
           </div>
         </>
       )}

@@ -28,7 +28,9 @@ export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabas
     //Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     //Wait for database to be exist
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName).exists).ok('The existence of the database', { timeout: 60000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName).exists).ok('The existence of the database', { timeout: 10000 });
+    //Close message
+    await t.click(myRedisDatabasePage.toastCloseButton);
 }
 
 /**
@@ -102,6 +104,13 @@ export async function addNewRECloudDatabase(cloudAPIAccessKey: string, cloudAPIS
     return databaseName;
 }
 
+//Accept License terms
+export async function acceptLicenseTerms(): Promise<void> {
+    await t.maximizeWindow();
+    await userAgreementPage.acceptLicenseTerms();
+    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
+}
+
 /**
  * Accept License terms and add database
  * @param databaseParameters The database parameters
@@ -124,13 +133,6 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
     await addOSSClusterDatabase(databaseParameters);
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);
-}
-
-//Accept License terms
-export async function acceptLicenseTerms(): Promise<void> {
-    await t.maximizeWindow();
-    await userAgreementPage.acceptLicenseTerms();
-    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 10000});
 }
 
 //Clear database data

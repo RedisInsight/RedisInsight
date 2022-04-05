@@ -112,10 +112,9 @@ test
         const command = `JSON.GET ${keyName}`;
         //Open CLI and run command
         await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command);
+        await t.typeText(cliPage.cliCommandInput, command, { paste: true });
         await t.pressKey('enter');
         //Verify result
-        //const commandResult = jsonValue.replace(/"/g, '\\"');
         await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(jsonValueCli, 'The user can see JSON object with escaped quotes');
 });
 test

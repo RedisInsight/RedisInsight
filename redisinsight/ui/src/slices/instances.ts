@@ -52,6 +52,10 @@ const instancesSlice = createSlice({
     loadInstancesSuccess: (state, { payload }: { payload: Instance[] }) => {
       state.data = checkRediStack(payload)
       state.loading = false
+      if (state.connectedInstance.id) {
+        const isRediStack = state.data.find((db) => db.id === state.connectedInstance.id)?.isRediStack
+        state.connectedInstance.isRediStack = isRediStack || false
+      }
     },
     loadInstancesFailure: (state, { payload }) => {
       state.loading = false
@@ -135,7 +139,9 @@ const instancesSlice = createSlice({
 
     // set connected instance
     setConnectedInstance: (state, { payload }: { payload: Instance }) => {
+      const isRediStack = state.data?.find((db) => db.id === state.connectedInstance.id)?.isRediStack
       state.connectedInstance = payload
+      state.connectedInstance.isRediStack = isRediStack || false
     },
 
     // reset connected instance
@@ -332,6 +338,7 @@ export function checkConnectToInstanceAction(
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
+    dispatch(resetConnectedInstance())
     try {
       const { status } = await apiService.get(`${ApiEndpoints.INSTANCE}/${id}/connect`)
 

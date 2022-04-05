@@ -15,7 +15,7 @@ import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
 import { fetchKeys, keysSelector, setFilter } from 'uiSrc/slices/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
@@ -41,7 +41,7 @@ const FilterKeyType = () => {
   }, [version])
 
   useEffect(() => {
-    filter && setTypeSelected(filter)
+    setTypeSelected(filter ?? '')
   }, [filter])
 
   const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS.map(
@@ -56,7 +56,6 @@ const FilterKeyType = () => {
               className={styles.controlsIcon}
               data-testid={`filter-option-type-selected-${value}`}
             />
-            <EuiHealth color={color} />
           </>
         ),
         dropdownDisplay: <EuiHealth color={color}>{text}</EuiHealth>,
@@ -65,16 +64,23 @@ const FilterKeyType = () => {
     }
   )
 
+  options.push({
+    value: 'clear',
+    inputDisplay: null,
+    dropdownDisplay: (
+      <div className={styles.clearSelectionBtn} data-testid="clear-selection-btn">Clear Selection</div>
+    )
+  })
+
   const onChangeType = (initValue: string) => {
-    const value = typeSelected === initValue ? '' : initValue
+    const value = (initValue === 'clear') ? '' : typeSelected === initValue ? '' : initValue
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value || null))
     dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
 
     // reset browser tree context
-    dispatch(setBrowserTreeNodesOpen({}))
-    dispatch(setBrowserTreeSelectedLeaf({}))
+    dispatch(resetBrowserTree())
   }
 
   const UnsupportedInfo = () => (

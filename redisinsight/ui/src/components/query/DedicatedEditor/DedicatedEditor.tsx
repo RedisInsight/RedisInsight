@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { compact, findIndex } from 'lodash'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
@@ -29,13 +29,18 @@ import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/cypher/monarc
 import styles from './styles.module.scss'
 
 export interface Props {
-  value: string
+  query: string
   lang: string
   onSubmit: (query?: string) => void
   onCancel: () => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
-  width: number
+  height: number
+  initialHeight: number
 }
+
+// paddings of main editor
+const WRAPPER_PADDINGS_HEIGHT = 18
+const BOTTOM_INDENT_PADDING = 6
 
 const langs: MonacoSyntaxLang = {
   [DSL.cypher]: {
@@ -47,12 +52,16 @@ const langs: MonacoSyntaxLang = {
   }
 }
 let decorations: string[] = []
+const notCommandRegEx = /^\s|\/\//
 
 const DedicatedEditor = (props: Props) => {
-  const { width, value = '', lang, onCancel, onSubmit } = props
+  const { height, initialHeight, query = '', lang, onCancel, onSubmit } = props
   const selectedLang = langs[lang]
   let contribution: Nullable<ISnippetController> = null
+
+  const [value, setValue] = useState<string>(query)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+  const rndRef = useRef<Nullable<any>>(null)
   let disposeCompletionItemProvider = () => {}
 
   useEffect(() =>
@@ -64,10 +73,19 @@ const DedicatedEditor = (props: Props) => {
   [])
 
   useEffect(() => {
+    if (height === 0) return
+
+    const rndHeight = rndRef?.current.resizableElement.current.offsetHeight || 0
+    const rndTop = rndRef?.current.draggable.state.y
+    if (height < rndTop + rndHeight + WRAPPER_PADDINGS_HEIGHT) {
+      rndRef?.current.updatePosition({ x: 0, y: height - rndHeight - WRAPPER_PADDINGS_HEIGHT })
+    }
+  }, [height])
+
+  useEffect(() => {
     if (!monacoObjects.current) return
     const commands = value.split('\n')
     const { monaco, editor } = monacoObjects.current
-    const notCommandRegEx = /^\s|\/\//
 
     const newDecorations = compact(commands.map((command, index) => {
       if (!command || notCommandRegEx.test(command)) return null
@@ -78,10 +96,7 @@ const DedicatedEditor = (props: Props) => {
       )
     }))
 
-    decorations = editor.deltaDecorations(
-      decorations,
-      newDecorations
-    )
+    decorations = editor.deltaDecorations(decorations, newDecorations)
   }, [value])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -92,7 +107,11 @@ const DedicatedEditor = (props: Props) => {
 
   const handleSubmit = () => {
     const { editor } = monacoObjects?.current || {}
-    onSubmit(editor?.getValue() || '')
+    const val = editor?.getValue()
+      .split('\n')
+      .map((line: string, i: number) => ((i > 0 && !notCommandRegEx.test(line)) ? `\t${line}` : line))
+      .join('\n')
+    onSubmit(val || '')
   }
 
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
@@ -123,7 +142,7 @@ const DedicatedEditor = (props: Props) => {
     // https://github.com/microsoft/monaco-editor/issues/2756
     contribution = editor.getContribution<ISnippetController>('snippetController2')
 
-    editor.focus()
+    setTimeout(() => editor.focus(), 0)
 
     editor.onKeyDown(onKeyDownMonaco)
 
@@ -179,28 +198,43 @@ const DedicatedEditor = (props: Props) => {
 
   return (
     <Rnd
+      ref={rndRef}
       default={{
-        x: 17,
-        y: 80,
-        width,
-        height: 240
+        x: 0,
+        y: initialHeight * 0.4 - BOTTOM_INDENT_PADDING,
+        width: '100%',
+        height: '60%'
       }}
-      className={styles.rnd}
+      minHeight="80px"
+      enableResizing={{
+        top: true,
+        right: false,
+        bottom: true,
+        left: false,
+        topRight: false,
+        bottomRight: false,
+        bottomLeft: false,
+        topLeft: false
+      }}
+      dragAxis="y"
+      bounds=".editorBounder"
       dragHandleClassName="draggable-area"
+      className={styles.rnd}
     >
       <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
         <div className="draggable-area" />
         <div className={styles.input} data-testid="query-input-container">
           <MonacoEditor
-            language={selectedLang.id || MonacoLanguage.Cypher}
+            language={selectedLang?.id || MonacoLanguage.Cypher}
             value={value}
+            onChange={setValue}
             options={options}
             className={`${lang}-editor`}
             editorDidMount={editorDidMount}
           />
         </div>
         <div className={cx(styles.actions)}>
-          <span>{ selectedLang.name }</span>
+          <span>{ selectedLang?.name }</span>
           <div>
             <EuiButtonIcon
               iconSize="m"

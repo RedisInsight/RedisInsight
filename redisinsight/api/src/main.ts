@@ -1,17 +1,20 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
+import { get } from 'src/utils';
+import { migrateHomeFolder } from 'src/init-helper';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
-import config from './utils/config';
 
 export default async function bootstrap() {
-  const serverConfig = config.get('server');
+  await migrateHomeFolder();
+
+  const serverConfig = get('server');
   const port = process.env.API_PORT || serverConfig.port;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 

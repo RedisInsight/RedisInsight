@@ -26,7 +26,7 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)', async t => {
         //Verify that Browser view is selected by default and Tree view is disabled
-        await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(33, 37, 54)', 'The Browser is selected by default');
+        await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(41, 47, 71)', 'The Browser is selected by default');
         await t.expect(browserPage.treeViewArea.visible).notOk('The tree view is not displayed', { timeout: 20000 });
     });
 test
@@ -42,12 +42,13 @@ test
     ('Verify that user can see DB is automatically scanned by 10K keys in the background, user can see the number of keys scanned and use the "Scan More" button to search per another 10000 keys', async t => {
         let scannedValue = 10;
         await t.click(browserPage.treeViewButton);
+        await t.expect(browserPage.scannedValue.visible).ok('The database scanned value is displayed', { timeout: 60000 });
         await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, 'The database is automatically scanned by 10K keys');
         //Verify that user can use the "Scan More" button to search per another 10000 keys
         for (let i = 0; i < 10; i++){
             scannedValue = scannedValue + 10;
             await t.click(browserPage.scanMoreButton);
-            await t.expect(await browserPage.scannedValue.withExactText(`${scannedValue} 000`).exists).ok('The database is automatically scanned by 10K keys');
+            await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, `The database is automatically scanned by ${scannedValue} 000 keys`, { timeout: 60000 });
         }       
     });
 test
@@ -64,6 +65,7 @@ test
         const percentage = await browserPage.treeViewPercentage.textContent;
         //Set filter by key name
         await browserPage.searchByKeyName(keyNameFilter);
+        await t.expect(browserPage.treeViewKeysItem.visible).ok('The key appears after the filtering', { timeout: 60000 });
         await t.click(browserPage.treeViewKeysItem);
         //Verify the results
         await t.expect(browserPage.treeViewKeysNumber.textContent).notEql(numberOfKeys, 'The number of keys is recalculated');

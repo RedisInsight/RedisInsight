@@ -1,8 +1,14 @@
 import { map, isEqual } from 'lodash'
-import { Instance } from 'uiSrc/slices/interfaces'
+import { Instance, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 export const REDISTACK_PORT = 6379
-export const REDISTACK_MODULES = ['ReJSON', 'graph', 'timeseries', 'search', 'bf'].sort()
+export const REDISTACK_MODULES = [
+  RedisDefaultModules.ReJSON,
+  RedisDefaultModules.Graph,
+  RedisDefaultModules.TimeSeries,
+  RedisDefaultModules.Search,
+  RedisDefaultModules.Bloom,
+].sort()
 
 const checkRediStackModules = (modules: any[]) => isEqual(map(modules, 'name').sort(), REDISTACK_MODULES)
 

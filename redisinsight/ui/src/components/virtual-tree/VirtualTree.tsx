@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { isArray, isEmpty } from 'lodash'
@@ -9,6 +8,7 @@ import {
 } from 'react-vtree'
 import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 
+import { Maybe } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -17,7 +17,7 @@ import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 
 import { Node } from './components/Node'
-import { NodeMeta, TreeData, TreeNode } from './interfaces'
+import { NodeMeta, TreeData, TreeNode, TREE_LEAF_FIELD } from './interfaces'
 
 import styles from './styles.module.scss'
 
@@ -26,6 +26,7 @@ export interface Props {
   separator?: string
   loadingIcon?: string
   loading: boolean
+  selectDefaultLeaf?: boolean
   statusSelected: {
     [key: string]: IKeyPropTypes[]
   }
@@ -34,12 +35,12 @@ export interface Props {
   }
   webworkerFn: (...args: any) => any
   onSelectLeaf?: (items: any[]) => void
+  disableSelectDefaultLeaf?: () => void
   onStatusOpen?: (name: string, value: boolean) => void
   onStatusSelected?: (id: string, keys: any) => void
   setConstructingTree: (status: boolean) => void
 }
 
-const timeLabel = 'Time for construct a Tree'
 const VirtualTree = (props: Props) => {
   const {
     items,
@@ -48,18 +49,17 @@ const VirtualTree = (props: Props) => {
     statusOpen = {},
     statusSelected = {},
     loading,
+    selectDefaultLeaf,
     onStatusOpen,
     onStatusSelected,
     onSelectLeaf,
     setConstructingTree,
+    disableSelectDefaultLeaf,
     webworkerFn = () => {}
   } = props
 
   const { theme } = useContext(ThemeContext)
-
   const [nodes, setNodes] = useState<TreeNode[]>([])
-  const [firstConstruct, setFirstConstruct] = useState(false)
-
   const { result, run: runWebworker } = useDisposableWebworker(webworkerFn)
 
   useEffect(() =>
@@ -71,20 +71,24 @@ const VirtualTree = (props: Props) => {
     if (!result) {
       return
     }
-    // [ToDo] remove after tests
-    console.timeEnd(timeLabel)
 
     setNodes(result)
     setConstructingTree?.(false)
+  }, [result])
 
-    // set "root" keys after first render (construct a tree)
-    if (!firstConstruct && isArray(result) && isEmpty(statusSelected)) {
-      const rootLeaf = result?.find(({ children = [] }) => children.length === 0) ?? {}
-      setFirstConstruct(true)
-      onStatusSelected?.(rootLeaf?.fullName, rootLeaf?.keys)
+  // select "root" Keys after render a new tree (construct a tree)
+  useEffect(() => {
+    if (nodes.length === 0 || !selectDefaultLeaf) {
+      return
+    }
+
+    if (isArray(nodes) && isEmpty(statusSelected)) {
+      const rootLeaf: Maybe<TreeNode> = nodes?.find(({ children = [] }) => children.length === 0)
+      disableSelectDefaultLeaf?.()
+      onStatusSelected?.(rootLeaf?.fullName ?? '', rootLeaf?.keys)
       onSelectLeaf?.(rootLeaf?.keys ?? [])
     }
-  }, [result])
+  }, [nodes, selectDefaultLeaf])
 
   useEffect(() => {
     if (!items?.length) {
@@ -92,8 +96,6 @@ const VirtualTree = (props: Props) => {
       return
     }
 
-    // [ToDo] remove after tests
-    console.time(timeLabel)
     setConstructingTree(true)
     runWebworker?.({ items, separator })
   }, [items])
@@ -129,7 +131,7 @@ const VirtualTree = (props: Props) => {
       updateStatusOpen: handleUpdateOpen,
       leafIcon: theme === Theme.Dark ? KeyDarkSVG : KeyLightSVG,
       keyApproximate: node.keyApproximate,
-      keys: node.keys || node?.['keys:keys'],
+      keys: node.keys || node?.[TREE_LEAF_FIELD],
       isSelected: Object.keys(statusSelected)[0] === node.fullName,
       isOpenByDefault: statusOpen[node.fullName],
     },

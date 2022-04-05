@@ -74,7 +74,7 @@
   }
 
   &.active {
-    background-color: var(--browserViewTypeActive) !important;
+    background-color: var(--browserComponentActive) !important;
 
     svg {
       color: var(--euiColorPrimary) !important;

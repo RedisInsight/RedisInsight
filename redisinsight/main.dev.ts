@@ -102,7 +102,7 @@ const launchApiServer = async () => {
     const detectPortConst = await detectPort(port);
     process.env.API_PORT = detectPortConst?.toString();
     log.info('Available port:', detectPortConst);
-    server();
+    await server();
   } catch (error) {
     log.error('Catch server error:', error);
   }
@@ -125,8 +125,8 @@ const bootstrap = async () => {
     new AppUpdater(upgradeUrl);
   }
 
-  app.setName('RedisInsight');
-  app.setAppUserModelId('RedisInsight-preview');
+  app.setName('RedisInsight-v2');
+  app.setAppUserModelId('RedisInsight-v2');
   if (process.platform !== 'darwin') {
     app.setAboutPanelOptions(AboutPanelOptions);
   }

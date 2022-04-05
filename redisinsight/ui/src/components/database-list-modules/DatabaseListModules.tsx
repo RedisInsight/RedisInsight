@@ -9,6 +9,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { Theme } from 'uiSrc/constants'
 import { getModule, truncateText } from 'uiSrc/utils'
+import { IDatabaseModule, sortModules } from 'uiSrc/utils/modules'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import RedisAILight from 'uiSrc/assets/img/modules/RedisAILight.svg'
@@ -32,12 +33,14 @@ import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.d
 import styles from './styles.module.scss'
 
 export interface Props {
+  content?: JSX.Element
   modules: RedisModuleDto[]
   inCircle?: boolean
   dark?: boolean
   highlight?: boolean
   maxViewModules?: number
   tooltipTitle?: React.ReactNode
+  withoutStyles?: boolean
 }
 
 export const modulesDefaultInit = {
@@ -79,16 +82,16 @@ export const modulesDefaultInit = {
 }
 
 const DatabaseListModules = React.memo((props: Props) => {
-  const { modules, inCircle, highlight, tooltipTitle, maxViewModules } = props
+  const { content, modules, inCircle, highlight, tooltipTitle, maxViewModules, withoutStyles } = props
   const { theme } = useContext(ThemeContext)
 
-  const mainContent = []
+  const mainContent: IDatabaseModule[] = []
 
   const handleCopy = (text = '') => {
     navigator?.clipboard?.writeText(text)
   }
 
-  const newModules = modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
+  const newModules: IDatabaseModule[] = sortModules(modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
     const moduleName = modulesDefaultInit[propName]?.text || propName
 
     const { abbreviation = '', name = moduleName } = getModule(moduleName)
@@ -102,7 +105,7 @@ const DatabaseListModules = React.memo((props: Props) => {
       icon = theme === Theme.Dark ? UnknownDark : UnknownLight
     }
 
-    mainContent.push({ icon, content, abbreviation })
+    mainContent.push({ icon, content, abbreviation, moduleName })
 
     return {
       moduleName,
@@ -110,7 +113,7 @@ const DatabaseListModules = React.memo((props: Props) => {
       abbreviation,
       content
     }
-  })
+  }))
 
   // set count of hidden modules
   if (maxViewModules && newModules.length > maxViewModules + 1) {
@@ -123,8 +126,8 @@ const DatabaseListModules = React.memo((props: Props) => {
     })
   }
 
-  const Content = mainContent.map(({ icon, content, abbreviation = '' }) => (
-    <div className={styles.tooltipItem}>
+  const Content = sortModules(mainContent).map(({ icon, content, abbreviation = '' }) => (
+    <div className={styles.tooltipItem} key={content || abbreviation}>
       {!!icon && (<EuiIcon type={icon} style={{ marginRight: 10 }} />)}
       {!icon && (
         <EuiTextColor
@@ -139,8 +142,9 @@ const DatabaseListModules = React.memo((props: Props) => {
     </div>
   ))
 
-  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => (
-    <span key={moduleName || abbreviation || content}>
+  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => {
+    return (
+      <span key={moduleName || abbreviation || content}>
       {icon ? (
         <EuiButtonIcon
           iconType={icon}
@@ -160,7 +164,8 @@ const DatabaseListModules = React.memo((props: Props) => {
         </EuiTextColor>
       )}
     </span>
-  )
+    )
+  }
 
   const Modules = () => (
     newModules.map(({ icon, content, abbreviation, moduleName }, i) => (
@@ -183,26 +188,25 @@ const DatabaseListModules = React.memo((props: Props) => {
   )
 
   return (
-    <div className={cx(styles.container, {
+    <div className={cx({
+      [styles.container]: !withoutStyles,
       [styles.highlight]: highlight,
       [styles.containerCircle]: inCircle,
     })}
     >
-      { inCircle ? (
-        Modules()
-      ) : (
+      {inCircle ? (Modules()) : (
         <EuiToolTip
           position="bottom"
           title={tooltipTitle ?? undefined}
           display="inlineBlock"
           content={Content}
+          data-testid="modules-tooltip"
         >
           <>
-            {Modules()}
+            {content ?? Modules()}
           </>
         </EuiToolTip>
       )}
-
     </div>
   )
 })

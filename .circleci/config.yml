@@ -302,7 +302,7 @@ jobs:
           name: .AppImage tests
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
-            .circleci/scripts/e2e/app-image.e2e.sh
+            .circleci/e2e/test.app-image.sh
       - when:
           condition:
             equal: [ true, << parameters.report >> ]
@@ -313,6 +313,42 @@ jobs:
                 command: |
                   APP_BUILD_TYPE="Electron (Linux)" node ./.circleci/e2e-results.js
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+      - store_test_results:
+          path: ./tests/e2e/results
+  e2e-exe:
+    executor:
+      name: win/default
+    parameters:
+      report:
+        description: Send report for test run to slack
+        type: boolean
+        default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: choco install nodejs --version=15.14.0
+      - run:
+          command: |
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
+            .circleci/e2e/test.exe.cmd
+          shell: bash.exe
+      - when:
+          condition:
+            equal: [ true, << parameters.report >> ]
+          steps:
+            - run:
+                name: Send report
+                when: always
+                command: |
+                  APP_BUILD_TYPE="Electron (Windows)" node ./.circleci/e2e-results.js
+                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+                shell: bash.exe
       - store_test_results:
           path: ./tests/e2e/results
 
@@ -390,8 +426,8 @@ jobs:
           name: Setup sign certificates
           command: |
             mkdir -p certs
-            echo "$CSC_P12_HEX" | xxd -r -p > certs/cert.p12
-            echo "$WIN_CSC_PFX_HEX" | xxd -r -p > certs/redislabs_win.pfx
+            echo "$CSC_P12_BASE64" | base64 -id > certs/cert.p12
+            echo "$WIN_CSC_PFX_BASE64" | base64 -id > certs/redislabs_win.pfx
       - persist_to_workspace:
           root: .
           paths:
@@ -455,6 +491,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo apt-get update -y && sudo apt-get install -y rpm
             yarn --cwd redisinsight/api/ install
             yarn install
             yarn build:statics
@@ -478,6 +515,10 @@ jobs:
             equal: [ true, << parameters.redisstack >> ]
           steps:
             - run:
+                name: Repack AppImage to tar
+                command: |
+                  ARCH=x86_64 ./.circleci/redisstack/app-image.repack.sh
+            - run:
                 name: Build sources
                 command: ./.circleci/redisstack/build.sh
             - run:
@@ -491,6 +532,7 @@ jobs:
           root: .
           paths:
             - release/RedisInsight*.deb
+            - release/RedisInsight*.rpm
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
             - release/redisstack
@@ -538,6 +580,12 @@ jobs:
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             rm -rf release/mac
           no_output_timeout: 15m
+
+      - run:
+          name: Repack dmg to tar
+          command: |
+            ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
+            ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -545,6 +593,7 @@ jobs:
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
             - release/*-mac.yml
+            - release/redisstack
   windows:
     executor:
       name: win/default
@@ -604,7 +653,7 @@ jobs:
       - run:
           name: export FILE_NAME environment variable
           command: |
-            echo 'export FILE_NAME="RedisInsight*.<< parameters.ext >>"' >> $BASH_ENV
+            echo 'export FILE_NAME="RedisInsight*<< parameters.ext >>"' >> $BASH_ENV
       - <<: *scan
       - <<: *validate
   docker:
@@ -662,6 +711,19 @@ jobs:
             applicationVersion=$(jq -r '.version' electron/package.json)
             echo "APP VERSION $applicationVersion"
             ghr -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${applicationVersion}
+
+  release-aws-test:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: publish
+          command: |
+            rm release/._* ||:
+            applicationVersion=$(jq -r '.version' redisinsight/package.json)
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*.json"
 
   release-aws-private:
     executor: linux-executor
@@ -739,25 +801,32 @@ jobs:
                 [key]='platform'
                 [value]='macos'
                 [objectDownload]=${applicationName}'-mac-x64.dmg'
-                [objectUpgrade]=${applicationName}'.zip'
+                [objectUpgrade]=${applicationName}'-mac-x64.zip'
             )
 
             declare -A tag1=(
+                [key]='platform'
+                [value]='macos'
+                [objectDownload]=${applicationName}'-mac-arm64.dmg'
+                [objectUpgrade]=${applicationName}'-mac-arm64.zip'
+            )
+
+            declare -A tag2=(
                 [key]='platform'
                 [value]='windows'
                 [objectDownload]=${applicationName}'-win-installer.exe'
             )
 
-            declare -A tag2=(
-                [key]='platform'
-                [value]='linux_AppImage'
-                [objectDownload]=${applicationName}'-linux.AppImage'
-            )
-
             declare -A tag3=(
                 [key]='platform'
+                [value]='linux_AppImage'
+                [objectDownload]=${applicationName}'-x86_64.AppImage'
+            )
+
+            declare -A tag4=(
+                [key]='platform'
                 [value]='linux_deb'
-                [objectDownload]=${applicationName}'-linux.deb'
+                [objectDownload]=${applicationName}'-amd64.deb'
             )
 
             # loop for add all tags to each app and create metrics
@@ -879,6 +948,13 @@ workflows:
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
 
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+
       # build and release electron app (stage)
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
@@ -905,6 +981,14 @@ workflows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
           <<: *stageFilter
+
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
+
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team
@@ -947,22 +1031,27 @@ workflows:
       # virus check all electron apps (prod only)
       - virustotal:
           name: Virus check - AppImage (prod)
-          ext: AppImage
+          ext: .AppImage
           requires:
             - Build app - Linux (prod)
       - virustotal:
           name: Virus check - deb (prod)
-          ext: deb
+          ext: .deb
           requires:
             - Build app - Linux (prod)
       - virustotal:
-          name: Virus check - dmg (prod)
-          ext: dmg
+          name: Virus check x64 - dmg (prod)
+          ext: -x64.dmg
+          requires:
+            - Build app - MacOS (prod)
+      - virustotal:
+          name: Virus check arm64 - dmg (prod)
+          ext: -arm64.dmg
           requires:
             - Build app - MacOS (prod)
       - virustotal:
           name: Virus check - exe (prod)
-          ext: exe
+          ext: .exe
           requires:
             - Build app - Windows (prod)
 
@@ -972,7 +1061,8 @@ workflows:
           requires:
             - Virus check - AppImage (prod)
             - Virus check - deb (prod)
-            - Virus check - dmg (prod)
+            - Virus check x64 - dmg (prod)
+            - Virus check arm64 - dmg (prod)
             - Virus check - exe (prod)
 
       - release-github:
@@ -981,7 +1071,8 @@ workflows:
           requires:
             - Virus check - AppImage (prod)
             - Virus check - deb (prod)
-            - Virus check - dmg (prod)
+            - Virus check x64 - dmg (prod)
+            - Virus check arm64 - dmg (prod)
             - Virus check - exe (prod)
 
       # Manual approve for publish release
@@ -1025,6 +1116,10 @@ workflows:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)
+      - windows:
+          name: Build app - Windows (stage)
+          requires:
+            - Setup build (stage)
       # integration tests on docker image build
       - integration-tests-run:
           matrix:
@@ -1051,3 +1146,10 @@ workflows:
           report: true
           requires:
             - Build app - Linux (stage)
+      # e2e desktop tests on exe build
+      - e2e-exe:
+          name: E2ETest (exe) - Nightly
+          parallelism: 4
+          report: true
+          requires:
+            - Build app - Windows (stage)

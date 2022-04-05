@@ -9,6 +9,7 @@ import {
   setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
 import { constructKeysToTree } from 'uiSrc/helpers'
+import { keysSelector } from 'uiSrc/slices/keys'
 import VirtualTree from 'uiSrc/components/virtual-tree'
 import { DEFAULT_SEPARATOR } from 'uiSrc/constants'
 import { IKeyListPropTypes, } from 'uiSrc/constants/prop-types/keys'
@@ -32,6 +33,7 @@ const KeyTree = (props: Props) => {
   const firstPanelId = 'tree'
   const secondPanelId = 'keys'
 
+  const { filter, search } = useSelector(keysSelector)
   const { panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
 
   const [statusSelected, setStatusSelected] = useState(selectedLeaf)
@@ -40,6 +42,7 @@ const KeyTree = (props: Props) => {
   const [separator, setSeparator] = useState<string>(DEFAULT_SEPARATOR)
   const [keyListState, setKeyListState] = useState<IKeyListPropTypes>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
+  const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(true)
 
   const dispatch = useDispatch()
 
@@ -57,6 +60,11 @@ const KeyTree = (props: Props) => {
       updateKeysList(Object.values(selectedLeaf)[0])
     }
   }, [selectedLeaf])
+
+  useEffect(() => {
+    // select default leaf "Keys" after each search or filter
+    setSelectDefaultLeaf(true)
+  }, [filter, search])
 
   const options: EuiSuperSelectOption<string>[] = [{
     value: DEFAULT_SEPARATOR,
@@ -123,28 +131,34 @@ const KeyTree = (props: Props) => {
                   }}
                 >
                   <div className={styles.tree}>
-                    <EuiSuperSelect
-                      disabled={loading}
-                      options={options}
-                      valueOfSelected={separator}
-                      popoverClassName={styles.separatorSelect}
-                      itemClassName={styles.separatorSelectItem}
-                      onChange={(value: string) => onChangeSeparator(value)}
-                      data-testid="select-tree-view-separator"
-                    />
-                    <VirtualTree
-                      items={keysState.keys}
-                      loadingIcon={TreeViewSVG}
-                      separator={separator}
-                      statusSelected={statusSelected}
-                      statusOpen={statusOpen}
-                      loading={loading || constructingTree}
-                      setConstructingTree={setConstructingTree}
-                      webworkerFn={constructKeysToTree}
-                      onSelectLeaf={updateKeysList}
-                      onStatusSelected={handleStatusSelected}
-                      onStatusOpen={handleStatusOpen}
-                    />
+                    <div className={styles.treeHeader}>
+                      <EuiSuperSelect
+                        disabled={loading}
+                        options={options}
+                        valueOfSelected={separator}
+                        popoverClassName={styles.separatorSelect}
+                        itemClassName={styles.separatorSelectItem}
+                        onChange={(value: string) => onChangeSeparator(value)}
+                        data-testid="select-tree-view-separator"
+                      />
+                    </div>
+                    <div className={styles.treeContent}>
+                      <VirtualTree
+                        items={keysState.keys}
+                        loadingIcon={TreeViewSVG}
+                        separator={separator}
+                        statusSelected={statusSelected}
+                        statusOpen={statusOpen}
+                        loading={loading || constructingTree}
+                        setConstructingTree={setConstructingTree}
+                        webworkerFn={constructKeysToTree}
+                        onSelectLeaf={updateKeysList}
+                        onStatusSelected={handleStatusSelected}
+                        onStatusOpen={handleStatusOpen}
+                        selectDefaultLeaf={selectDefaultLeaf}
+                        disableSelectDefaultLeaf={() => setSelectDefaultLeaf(false)}
+                      />
+                    </div>
                   </div>
                 </EuiResizablePanel>
 

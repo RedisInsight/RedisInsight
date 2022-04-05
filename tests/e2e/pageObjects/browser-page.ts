@@ -190,7 +190,7 @@ export class BrowserPage {
       this.scoreButton = Selector('[data-testid=score-button]');
       this.editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
       this.applyEditButton = Selector('[data-testid=apply-edit-btn]');
-      this.filterByKeyTypeDropDown = Selector('[data-testid=select-filter-key-type]');
+      this.filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
       this.filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
       this.scanMoreButton = Selector('[data-testid=scan-more]');
       this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');

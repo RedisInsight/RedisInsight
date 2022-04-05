@@ -1,0 +1,30 @@
+.badgeWrapper {
+
+  :global(.euiBadge__text) {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.deleteIcon {
+  margin-left: 4px;
+  width: 16px !important;
+
+  :global(.euiIcon) {
+    width: 10px !important;
+    height: 10px !important;
+  }
+}
+
+.withDeleteBtn {
+  padding-right: 0 !important;
+}
+
+.compressed {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+
+  .deleteIcon {
+    margin-left: 0;
+  }
+}

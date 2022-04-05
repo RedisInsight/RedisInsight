@@ -1,7 +1,8 @@
 .container {
-  width: calc(100% - 305px);
+  width: calc(100% - 248px);
   height: 38px;
-  margin-left: 106px;
+  margin-left: 48px;
+  position: relative;
 
   :global(.euiFormControlLayout) {
     max-width: calc(100%) !important;

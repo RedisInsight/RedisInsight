@@ -9,7 +9,7 @@ const standalonePorts = [8100, 8101, 8102, 8103, 12000];
 const otherPorts = [28100, 8200];
 
 fixture `Autodiscovery`
-    .meta({ type: 'regression' })
+    .meta({ type: 'critical_path' })
     .page(commonUrl)
 test
     .meta({ env: env.desktop, rte: rte.none })

@@ -14,6 +14,7 @@ export class WorkbenchPage {
     cssMonacoCommandPaletteLine: string
     cssQueryTextResult: string
     cssQueryTableResult: string
+    queryGraphContainer: string
     cssCustomPluginTableResult: string
     cssCommandExecutionDateTime: string
     //------------------------------------------------------------------------------------------
@@ -86,6 +87,15 @@ export class WorkbenchPage {
     prevPageButton: Selector
     hashWithVectorButton: Selector
     redisStackLinks: Selector
+    workingWithGraphLink: Selector
+    createGraphBikeButton: Selector
+    graphViewTypeOption: Selector
+    preselectModelBikeSalesButton: Selector
+    queryPluginResult: Selector
+    resposeInfo: Selector
+    showSalesPerRegiomButton: Selector
+    timeSeriesLink: Selector
+    chartViewTypeOptionSelected: Selector
 
     constructor() {
         //CSS selectors
@@ -99,6 +109,7 @@ export class WorkbenchPage {
         this.cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
         this.cssQueryTextResult = '[data-testid=query-cli-result]';
         this.cssQueryTableResult = '[data-testid^=query-table-result-]';
+        this.queryGraphContainer = '[data-testid=query-graph-container]';
         this.cssQueryCardCommand = '[data-testid=query-card-command]';
         this.cssQueryCardCommandResult = '[data-testid=query-common-result]';
         this.cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
@@ -119,6 +130,7 @@ export class WorkbenchPage {
         this.selectViewType = Selector('[data-testid=select-view-type]');
         this.textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
         this.tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
+        this.graphViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin-graph]');
         this.preselectList = Selector('[data-testid*=preselect-List]');
         this.preselectHashCreate = Selector('[data-testid=preselect-Create]');
         this.preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
@@ -142,6 +154,13 @@ export class WorkbenchPage {
         this.prevPageButton = Selector('[data-testid=enablement-area__prev-page-btn]');
         this.hashWithVectorButton = Selector('[data-testid="preselect-A hash with vector embeddings"]');
         this.redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
+        this.workingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
+        this.createGraphBikeButton = Selector('[data-testid="preselect-Create a bike node"]');
+        this.preselectModelBikeSalesButton = Selector('[data-testid="preselect-Model bike sales"]');
+        this.queryPluginResult = Selector('[data-testid=query-plugin-result]');
+        this.resposeInfo = Selector('[class="responseInfo"]');
+        this.showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
+        this.timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.queryInput = Selector('[data-testid=query-input-container]');
         this.scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
@@ -177,6 +196,7 @@ export class WorkbenchPage {
         this.commandExecutionResult = Selector('[data-testid=query-common-result]');
         this.commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
         this.monacoWidget = Selector('[data-testid=monaco-widget]');
+        this.chartViewTypeOptionSelected = Selector('[data-testid=view-type-selected-Plugin-redistimeseries__redistimeseries-chart]');
     }
 
     /**
@@ -199,13 +219,19 @@ export class WorkbenchPage {
         await t.click(this.tableViewTypeOption);
     }
 
+    //Select view option in Workbench results
+    async selectViewTypeGraph(): Promise<void> {
+        await t.click(this.selectViewType);
+        await t.click(this.graphViewTypeOption);
+    }
+
     /**
      * Send a command in Workbench
      * @param command The command
      * @param speed The speed in seconds. Default is 1
      * @param paste
      */
-    async sendCommandInWorkbench(command: string, speed = 1, paste = false): Promise<void> {
+    async sendCommandInWorkbench(command: string, speed = 1, paste = true): Promise<void> {
         await t.typeText(this.queryInput, command, { replace: true, speed, paste });
         await t.click(this.submitCommandButton);
     }

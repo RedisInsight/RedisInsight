@@ -200,7 +200,8 @@
       }
     }
 
-    .euiTableFooterCell, .euiTableHeaderCell {
+    .euiTableFooterCell,
+    .euiTableHeaderCell {
       color: var(--htmlColor);
     }
 
@@ -481,14 +482,6 @@
       .euiTableHeaderCell .euiTableCellContent {
         color: #fff !important;
       }
-    }
-  }
-}
-
-.theme_DARK {
-  .homePage {
-    .footerAddDatabase {
-      background-image: linear-gradient(#101010, #161616);
     }
   }
 }

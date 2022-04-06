@@ -30,6 +30,8 @@ test
         //Hover over redis stack icon
         await t.hover(myRedisDatabasePage.redisStackIcon);
         await t.expect(myRedisDatabasePage.moduleTooltip.visible).ok('Tooltip with modules');
+        //Verify that user can see the Redis Stack logo is placed in the module list tooltip in the list of DBs
+        await t.expect(myRedisDatabasePage.tooltipRedisStackLogo.visible).ok('Redis Stack logo');
         //Check all Redis Stack modules inside
         await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
     });
@@ -40,6 +42,9 @@ test
         await t.click(myRedisDatabasePage.editDatabaseButton);
         //Check redis stack icon near the db name
         await t.expect(myRedisDatabasePage.redisStackIcon.visible).ok('Redis Stack icon');
+        //Verify that user can see the Redis Stack logo is placed in the DB edit form when hover over the RedisStack logo
+        await t.hover(myRedisDatabasePage.redisStackIcon);
+        await t.expect(myRedisDatabasePage.tooltipRedisStackLogo.visible).ok('Redis Stack logo');
         const databaseName = await myRedisDatabasePage.redisStackIcon.parent().nextSibling();
         await t.expect(databaseName.withAttribute('data-testid', 'edit-alias-btn').exists).ok();
     });

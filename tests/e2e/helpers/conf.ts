@@ -2,7 +2,7 @@ import { Chance } from 'chance';
 const chance = new Chance();
 
 // Urls for using in the tests
-export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
+export const commonUrl = process.env.COMMON_URL || 'http://localhost:5000';
 
 const uniqueId = chance.string({ length: 10 });
 

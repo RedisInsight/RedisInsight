@@ -1,8 +1,9 @@
-import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
+import { getTreeLeafField } from 'uiSrc/components/virtual-tree'
+import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 
 export const constructKeysToTreeMockResult = [
   {
-    name: TREE_LEAF_FIELD,
+    name: getTreeLeafField(DEFAULT_DELIMITER),
     children: [],
     keys: {
       keys2: {
@@ -31,14 +32,14 @@ export const constructKeysToTreeMockResult = [
       }
     },
     keyCount: 4,
-    fullName: `${TREE_LEAF_FIELD}:`,
+    fullName: `${getTreeLeafField(DEFAULT_DELIMITER)}:`,
     keyApproximate: 40,
   },
   {
     name: 'keys',
     children: [
       {
-        name: TREE_LEAF_FIELD,
+        name: getTreeLeafField(DEFAULT_DELIMITER),
         children: [],
         keys: {
           'keys:1': {
@@ -61,14 +62,14 @@ export const constructKeysToTreeMockResult = [
           }
         },
         keyCount: 3,
-        fullName: `keys:${TREE_LEAF_FIELD}:`,
+        fullName: `keys:${getTreeLeafField(DEFAULT_DELIMITER)}:`,
         keyApproximate: 30,
       },
       {
         name: '1',
         children: [
           {
-            name: TREE_LEAF_FIELD,
+            name: getTreeLeafField(DEFAULT_DELIMITER),
             children: [],
             keys: {
               'keys:1:2': {
@@ -85,7 +86,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 2,
-            fullName: `keys:1:${TREE_LEAF_FIELD}:`,
+            fullName: `keys:1:${getTreeLeafField(DEFAULT_DELIMITER)}:`,
             keyApproximate: 20,
           }
         ],
@@ -105,7 +106,7 @@ export const constructKeysToTreeMockResult = [
         name: '',
         children: [
           {
-            name: TREE_LEAF_FIELD,
+            name: getTreeLeafField(DEFAULT_DELIMITER),
             children: [],
             keys: {
               'empty::test': {
@@ -116,7 +117,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 1,
-            fullName: `empty::${TREE_LEAF_FIELD}:`,
+            fullName: `empty::${getTreeLeafField(DEFAULT_DELIMITER)}:`,
             keyApproximate: 10,
           }
         ],

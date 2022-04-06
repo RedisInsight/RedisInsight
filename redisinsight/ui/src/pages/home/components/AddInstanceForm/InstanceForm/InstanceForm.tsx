@@ -699,9 +699,9 @@ const AddStandaloneForm = (props: Props) => {
     <>
       <EuiFlexGroup
         className={flexGroupClassName}
+        responsive={false}
       >
         <EuiFlexItem
-          style={{ width: '230px' }}
           grow={false}
           className={flexItemClassName}
         >
@@ -731,11 +731,12 @@ const AddStandaloneForm = (props: Props) => {
               </EuiText>
             </EuiCallOut>
           </EuiFlexItem>
-          <EuiFlexItem className={cx(
-            flexItemClassName,
-            styles.dbInput,
-            { [styles.dbInputBig]: !flexItemClassName }
-          )}
+          <EuiFlexItem
+            className={cx(
+              flexItemClassName,
+              styles.dbInput,
+              { [styles.dbInputBig]: !flexItemClassName }
+            )}
           >
             <EuiFormRow label="Database Index" helpText="Should not exceed 15.">
               <EuiFieldNumber

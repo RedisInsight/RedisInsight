@@ -45,7 +45,7 @@ export interface StateAppContext {
       [key: string]: number
     },
     tree: {
-      separator: string
+      delimiter: string
       panelSizes: {
         [key: string]: number
       },

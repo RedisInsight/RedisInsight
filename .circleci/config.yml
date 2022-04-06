@@ -792,6 +792,9 @@ jobs:
             aws s3 mv s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
               s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
 
+            # invalidate cloudfront cash
+            aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"
+
       - run:
           name: Add tags for all objects and create S3 metrics
           command: |

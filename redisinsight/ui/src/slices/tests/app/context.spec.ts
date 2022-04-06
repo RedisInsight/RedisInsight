@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
-import { getTreeLeafField } from 'uiSrc/components/virtual-tree'
 import { DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
+import { getTreeLeafField } from 'uiSrc/utils'
 
 import {
   cleanup,

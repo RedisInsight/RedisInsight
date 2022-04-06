@@ -1,8 +1,6 @@
 import { FixedSizeNodeData } from 'react-vtree'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
-export const getTreeLeafField = (delimiter = '') => `keys${delimiter}keys`
-
 export interface TreeNode {
   children: TreeNode[]
   id: number

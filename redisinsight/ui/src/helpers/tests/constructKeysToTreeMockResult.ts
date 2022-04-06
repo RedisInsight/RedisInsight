@@ -1,5 +1,5 @@
-import { getTreeLeafField } from 'uiSrc/components/virtual-tree'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { getTreeLeafField } from 'uiSrc/utils'
 
 export const constructKeysToTreeMockResult = [
   {

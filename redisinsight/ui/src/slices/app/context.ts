@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { Nullable } from 'uiSrc/utils'
+import { getTreeLeafField, Nullable } from 'uiSrc/utils'
 import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { getTreeLeafField } from 'uiSrc/components/virtual-tree'
 import { localStorageService } from 'uiSrc/services'
 import { RootState } from '../store'
 import { StateAppContext } from '../interfaces'

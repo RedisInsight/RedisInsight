@@ -8,7 +8,7 @@ import {
 } from 'react-vtree'
 import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 
-import { Maybe } from 'uiSrc/utils'
+import { getTreeLeafField, Maybe } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -17,7 +17,7 @@ import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 
 import { Node } from './components/Node'
-import { NodeMeta, TreeData, TreeNode, getTreeLeafField } from './interfaces'
+import { NodeMeta, TreeData, TreeNode } from './interfaces'
 
 import styles from './styles.module.scss'
 

@@ -1,12 +1,15 @@
 .monaco-editor * {
   // font: initial !important;
+  background-color: var(--monacoBgColor);
 }
 .monaco-editor .markdown-docs {
- h1, h2, h3 {
-   font-weight: bold;
-   margin: 12px 0;
-   font-size: 1.1em;
- }
+  h1,
+  h2,
+  h3 {
+    font-weight: bold;
+    margin: 12px 0;
+    font-size: 1.1em;
+  }
   h2 {
     margin: 14px 0;
     font-size: 1.4em;
@@ -32,7 +35,7 @@
 
 .monaco-glyph-run-command {
   color: var(--rsSubmitBtn);
-  opacity: .5 !important;
+  opacity: 0.5 !important;
   margin-left: 10px;
 
   &::before {
@@ -42,7 +45,8 @@
     background-image: url('uiSrc/assets/img/play_icon.svg');
     background-size: contain;
     font-size: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Helvetica, Arial, sans-serif;
   }
 }
 

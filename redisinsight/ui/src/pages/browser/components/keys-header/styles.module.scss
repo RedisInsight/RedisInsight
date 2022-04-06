@@ -17,10 +17,10 @@
       font: normal normal 500 15px/24px 'Graphik', sans-serif !important;
     }
   }
-
 }
 
-.top, .bottom {
+.top,
+.bottom {
   display: flex;
   text-align: center;
   align-items: center;
@@ -30,7 +30,6 @@
 .bottom {
   padding-top: 10px;
 }
-
 
 .refresh {
   right: 18px;
@@ -63,7 +62,6 @@
   padding: 0 24px;
 }
 
-
 .viewTypeBtn {
   width: 36px !important;
   height: 36px !important;
@@ -73,11 +71,19 @@
     color: var(--euiTextSubduedColor) !important;
   }
 
+  svg > g > path {
+    fill: var(--euiTextSubduedColor) !important;
+  }
+
   &.active {
     background-color: var(--browserComponentActive) !important;
 
     svg {
       color: var(--euiColorPrimary) !important;
+    }
+
+    svg > g > path {
+      fill: var(--euiColorPrimary) !important;
     }
   }
 }

@@ -6,7 +6,7 @@ $euiColorSuccess: #3953c3;
 $euiColorSuccessText: #8ba2ff;
 $euiColorDanger: #b92733;
 $euiColorDangerText: #ad0017;
-$euiColorWarning: #b92733;
+$euiColorWarning: #9d6901;
 $euiColorWarningText: #9d6901;
 $euiTextSubduedColor: #3f597d;
 $euiTextSubduedColorHover: #173369;
@@ -15,7 +15,7 @@ $euiTooltipBackgroundColor: #ffffff;
 $euiTooltipTextColor: #173369;
 $euiTooltipTextSecondColor: #395b88;
 $euiTooltipTitleTextColor: #395984;
-$euiColorLightShade: #e9edf3;
+$euiColorLightShade: #cdd7e6;
 $euiColorLightestShade: #f6f8fd;
 $euiColorEmptyShade: #ffffff;
 $euiBreadcrumbActive: #395984;
@@ -30,14 +30,14 @@ $euiColorGhost: #ffffff;
 
 $htmlColor: #173369;
 $navBackgroundColor: #0f1633;
-$externalLinkColor: #3953c3;
+$externalLinkColor: #cdd7e6;
 $externalLinkTooltipColor: #3163d8;
 
 $tableRowHoverColor: #fafbfd;
-$tableRowSelectedColor: #E9EDFA;
-$tableLightestBorderColor: #C1CBD9;
-$tableLightBorderColor: #E4EAF2;
-$tableDarkestBorderColor: #E9EDF3;
+$tableRowSelectedColor: #e9edfa;
+$tableLightestBorderColor: #c1cbd9;
+$tableLightBorderColor: #e4eaf2;
+$tableDarkestBorderColor: #e9edf3;
 
 $browserTableRowEven: #f6f7f9;
 $browserViewTypePassive: #f6f7f9;
@@ -63,7 +63,7 @@ $buttonDangerHoverColor: #cb3844;
 $buttonIconPrimaryHover: #dfe4fb;
 
 $hoverInListColor: #e9edfa;
-$hoverInListColorLight: #e9edfa;
+$hoverInListColorLight: #d7e3fa;
 $textColorShade: #3f597d;
 $cliOutputResponseColor: #395b88;
 $cliOutputResponseFailColor: #aa131f;
@@ -110,4 +110,7 @@ $jsonNonStringPrimitiveColor: #6b9fff;
 // RediSearch colors
 $rsSubmitBtn: #13a450;
 $rsInputColor: #fff;
-$rsInputWrapperColor: #edf0f4;
+$rsInputWrapperColor: #fff;
+
+//workbench
+$wbRunResultsBg: #fff;

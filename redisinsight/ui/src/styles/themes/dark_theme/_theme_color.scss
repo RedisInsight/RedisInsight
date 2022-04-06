@@ -20,7 +20,7 @@ $euiColorLightShade: #383838;
 $euiColorLightestShade: #2b2b2b;
 $euiColorEmptyShade: #202020;
 $euiBreadcrumbActive: #dfe5ef;
-$euiToastBackgroundColor: #3f4b5f;
+$euiToastBackgroundColor: #333d4f;
 $euiToastSuccessBtnColor: #637084;
 $euiToastSuccessBorderColor: #7989a3;
 $euiToastDangerBtnColor: #ce4841;
@@ -38,7 +38,7 @@ $externalLinkColor: #8ba2ff;
 $externalLinkTooltipColor: #8ba2ff;
 
 $tableRowHoverColor: #070707;
-$tableRowSelectedColor: #20222c;
+$tableRowSelectedColor: #212536;
 $tableLightestBorderColor: #707070;
 $tableLightBorderColor: #2b2b2b;
 $tableDarkestBorderColor: #2c2c2c;
@@ -52,7 +52,7 @@ $inputTextColor: #dfe5ef;
 $inputDisabledBackgroundColor: $euiColorEmptyShade;
 $inputPlaceholderColor: #898a90;
 $controlsBoxShadowColor: rgba(0, 0, 0, 0.45);
-$controlsBorderColor: #757575;
+$controlsBorderColor: #6b6b6b;
 $controlsLabelColor: #b5b6c0;
 $iconsDefaultColor: #b5b6c0;
 $iconsDefaultHoverColor: #dfe5ef;
@@ -112,5 +112,8 @@ $jsonNonStringPrimitiveColor: #6b9fff;
 
 // RediSearch colors
 $rsInputColor: #000;
-$rsInputWrapperColor: #2f2f2f;
+$rsInputWrapperColor: #202020;
 $rsSubmitBtn: #1ae26e;
+
+//workbench
+$wbRunResultsBg: #000;

@@ -280,7 +280,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
           orientation="vertical"
         />
         <EuiToolTip
-          content="RedisInsight repository"
+          content="RedisInsight Repository"
           position="right"
         >
           <span className={cx(styles.iconNavItem, styles.githubLink)}>

@@ -70,7 +70,7 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
           <InlineItemEditor
             initialValue={delimiter}
             controlsDesign="separate"
-            placeholder="Enter Delimiter"
+            placeholder=":"
             fieldName="delimiter"
             maxLength={MAX_DELIMITER_LENGTH}
             isLoading={loading}

@@ -62,9 +62,7 @@ const KeyTree = (props: Props) => {
   }, [selectedLeaf])
 
   useEffect(() => {
-    if (keysState.keys?.length) {
-      setItems(keysState.keys)
-    }
+    setItems(keysState.keys)
   }, [keysState.keys])
 
   useEffect(() => {

@@ -202,7 +202,7 @@ export class BrowserPage {
       this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
       this.treeViewButton = Selector('[data-testid=view-type-list-btn]');
       this.browserViewButton = Selector('[data-testid=view-type-browser-btn]');
-      this.treeViewSeparator = Selector('[data-testid=select-tree-view-separator]');
+      this.treeViewSeparator = Selector('[data-testid=tree-view-delimiter-btn]');
       this.treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
       this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
       this.deleteFilterButton = Selector('[data-testid*=delete-btn]');

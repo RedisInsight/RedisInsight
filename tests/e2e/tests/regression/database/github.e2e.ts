@@ -1,5 +1,5 @@
 import {ClientFunction} from 'testcafe';
-import {rte} from '../../../helpers/constants';
+import {rte, env} from '../../../helpers/constants';
 import {
     acceptLicenseTerms,
     addNewStandaloneDatabase,
@@ -15,7 +15,6 @@ fixture `Github functionality`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        // await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await acceptLicenseTerms();
         await addNewStandaloneDatabase(ossStandaloneConfig);
     })
@@ -23,8 +22,8 @@ fixture `Github functionality`
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test.only
-    .meta({ rte: rte.standalone })
+test
+    .meta({ rte: rte.standalone, env: env.web })
     ('Verify that user can work with Github link in the application', async t => {
         //Verify that user can see the icon for GitHub reference at the bottom of the left side bar in the List of DBs
         await t.expect(myRedisDatabasePage.githubButton.visible).ok('Github button');

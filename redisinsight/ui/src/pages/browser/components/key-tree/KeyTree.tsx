@@ -63,6 +63,9 @@ const KeyTree = (props: Props) => {
 
   useEffect(() => {
     setItems(keysState.keys)
+    if (keysState.keys?.length === 0) {
+      dispatch(setBrowserTreeSelectedLeaf({}))
+    }
   }, [keysState.keys])
 
   useEffect(() => {

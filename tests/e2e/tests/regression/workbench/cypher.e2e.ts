@@ -108,10 +108,10 @@ test
         await t.click(workbenchPage.monacoWidget);
         //Check that user can resize editor by top border
         let editorHeight = await workbenchPage.queryInput.nth(1).clientHeight;
-        await t.drag(workbenchPage.nonRedisEditorResizeRow, 0, -offsetY, { speed: 0.4 });
+        await t.drag(workbenchPage.nonRedisEditorResizeTop, 0, -offsetY, { speed: 0.4 });
         await t.expect(workbenchPage.queryInput.nth(1).clientHeight).eql(editorHeight + offsetY, 'The non-Redis editor is resized by the top border');
         //Check that user can resize editor by bottom border
         editorHeight = await workbenchPage.queryInput.nth(1).clientHeight;
-        await t.drag(workbenchPage.nonRedisEditorResizeRow.nth(1), 0, -offsetY, { speed: 0.4 });
+        await t.drag(workbenchPage.nonRedisEditorResizeButtom.nth(1), 0, -offsetY, { speed: 0.4 });
         await t.expect(workbenchPage.queryInput.nth(1).clientHeight).eql(editorHeight - offsetY, 'The non-Redis editor is resized by the bottom border');
     });

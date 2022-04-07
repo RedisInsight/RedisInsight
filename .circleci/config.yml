@@ -798,35 +798,41 @@ jobs:
 
             # declare all tags
             declare -A tag0=(
-                [key]='platform'
-                [value]='macos'
+                [arch]='x64'
+                [platform]='macos'
                 [objectDownload]=${applicationName}'-mac-x64.dmg'
                 [objectUpgrade]=${applicationName}'-mac-x64.zip'
             )
 
             declare -A tag1=(
-                [key]='platform'
-                [value]='macos'
+                [arch]='arm64'
+                [platform]='macos'
                 [objectDownload]=${applicationName}'-mac-arm64.dmg'
                 [objectUpgrade]=${applicationName}'-mac-arm64.zip'
             )
 
             declare -A tag2=(
-                [key]='platform'
-                [value]='windows'
+                [arch]='x64'
+                [platform]='windows'
                 [objectDownload]=${applicationName}'-win-installer.exe'
             )
 
             declare -A tag3=(
-                [key]='platform'
-                [value]='linux_AppImage'
-                [objectDownload]=${applicationName}'-x86_64.AppImage'
+                [arch]='x64'
+                [platform]='linux_AppImage'
+                [objectDownload]=${applicationName}'-linux-x86_64.AppImage'
             )
 
             declare -A tag4=(
-                [key]='platform'
-                [value]='linux_deb'
-                [objectDownload]=${applicationName}'-amd64.deb'
+                [arch]='x64'
+                [platform]='linux_deb'
+                [objectDownload]=${applicationName}'-linux-amd64.deb'
+            )
+
+            declare -A tag5=(
+                [arch]='x64'
+                [platform]='linux_rpm'
+                [objectDownload]=${applicationName}'-linux-x86_64.rpm'
             )
 
             # loop for add all tags to each app and create metrics
@@ -836,32 +842,32 @@ jobs:
                 designation0="downloads"
                 designation1="upgrades"
 
-                id0="${tag[value]}_${designation0}_${applicationVersion}"
-                id1="${tag[value]}_${designation1}_${applicationVersion}"
+                id0="${tag[platform]}_${tag[arch]}_${designation0}_${applicationVersion}"
+                id1="${tag[platform]}_${tag[arch]}_${designation1}_${applicationVersion}"
 
                 # add tags to each app for download
                 aws s3api put-object-tagging \
                   --bucket ${AWS_BUCKET_NAME} \
                   --key ${downloadLatestFolderPath}/${tag[objectDownload]} \
-                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
+                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
 
                 # add tags to each app for upgrades
                 aws s3api put-object-tagging \
                   --bucket ${AWS_BUCKET_NAME} \
                   --key ${upgradeLatestFolderPath}/${tag[objectUpgrade]:=${tag[objectDownload]}} \
-                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
+                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
 
                 # Create metrics for all tags for downloads to S3
                 aws s3api put-bucket-metrics-configuration \
                   --bucket ${AWS_BUCKET_NAME} \
                   --id ${id0} \
-                  --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
+                  --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
 
                 # Create metrics for all tags for upgrades to S3
                 aws s3api put-bucket-metrics-configuration \
                   --bucket ${AWS_BUCKET_NAME} \
                   --id ${id1} \
-                  --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
+                  --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
 
             done
 

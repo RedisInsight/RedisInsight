@@ -24,7 +24,7 @@ export interface Props {
 }
 const ShortInstanceInfo = ({ info }: Props) => {
   const { name, host, port, connectionType, version, user, dbIndex } = info
-  return ((
+  return (
     <div data-testid="db-info-tooltip">
       <div className={styles.tooltipItem}>
         <b style={{ fontSize: 13 }}>{dbIndex > 0 ? `${name} [${dbIndex}]` : name }</b>
@@ -59,7 +59,7 @@ const ShortInstanceInfo = ({ info }: Props) => {
         </EuiFlexItem>
       </EuiFlexGroup>
     </div>
-  ))
+  )
 }
 
 export default ShortInstanceInfo

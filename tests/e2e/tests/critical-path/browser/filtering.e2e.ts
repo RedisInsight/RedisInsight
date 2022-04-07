@@ -19,7 +19,7 @@ const chance = new Chance();
 let keyName = chance.word({ length: 10 });
 
 fixture `Filtering per key name in Browser page`
-    .meta({type: 'critical_path'})
+    .meta({type: 'critical_path', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -29,7 +29,6 @@ fixture `Filtering per key name in Browser page`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
@@ -47,7 +46,10 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key was found');
     });
 test
-    .meta({ rte: rte.standalone })
+    .after(async () => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
     ('Verify that user can filter keys per data type in Browser page', async t => {
         keyName = chance.word({ length: 10 });
         //Create new keys
@@ -74,7 +76,6 @@ test
         //Delete database
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
     })
-    .meta({ rte: rte.standalone })
     ('Verify that user see the key type label when filtering per key types and when removes lable the filter is removed on Browser page', async t => {        //Check filtering labes
         for (const { textType } of keyTypes) {
             await browserPage.selectFilterGroupType(textType);
@@ -88,7 +89,6 @@ test
          await t.expect(browserPage.keysSummary.textContent).contains('Total', `The filter is removed`);
     });
 test
-    .meta({ rte: rte.standalone })
     ('Verify that user can see filtering per key name starts when he press Enter or clicks the control to filter per key name', async t => {        //Check filtering labes
         keyName = chance.word({ length: 10 });
         await t.expect(browserPage.keyListTable.textContent).contains('No keys to display.', 'The filtering is not set');

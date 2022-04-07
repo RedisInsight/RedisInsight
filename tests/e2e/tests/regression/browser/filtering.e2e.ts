@@ -12,7 +12,7 @@ let keyName2 = chance.word({ length: 20 });
 const COMMAND_GROUP_SET = 'Set';
 
 fixture `Filtering per key name in Browser page`
-    .meta({type: 'critical_path'})
+    .meta({type: 'critical_path', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -23,7 +23,6 @@ fixture `Filtering per key name in Browser page`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .meta({ rte: rte.standalone })
     ('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
         keyName = chance.word({ length: 20 });
         //Add new key
@@ -38,7 +37,6 @@ test
         await t.expect(searchAdvices).eql('Check the spelling.Check upper and lower cases.Use an asterisk (*) in your request for more generic results.', 'The advices text');
     });
 test
-    .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with * (matches keys with any number of characters instead of *)', async t => {
         keyName = `KeyForSearch*${chance.word({ length: 10 })}?[]789`;
         //Add new key
@@ -50,7 +48,6 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
     });
 test
-    .meta({ rte: rte.standalone })
     ('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
         const randomValue = chance.word({ length: 10 });
         keyName = `KeyForSearch*?[]789${randomValue}`;
@@ -63,7 +60,6 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
     });
 test
-    .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
@@ -84,7 +80,6 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).ok('The key was found');
     });
 test
-    .meta({ rte: rte.standalone })    
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
@@ -106,7 +101,6 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).notOk('The key wasn\'t found');
     });
 test
-    .meta({ rte: rte.standalone })    
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
@@ -131,7 +125,6 @@ test
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    .meta({ rte: rte.standalone })
     ('Verify that when user clicks on “clear” control with no filter per key name applied all characters and filter per key type are removed, “clear” control is disappeared', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         //Set filter by key type and type characters
@@ -148,7 +141,6 @@ test
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    .meta({ rte: rte.standalone })
     ('Verify that when user clicks on “clear” control and filter per key name is applied all characters and filter per key type are removed, “clear” control is disappeared', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         //Set filter by key type and filter per key name
@@ -165,7 +157,6 @@ test
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    .meta({ rte: rte.standalone })
     ('Verify that when user clicks on “clear” control and filter per key name is applied filter is reseted and rescan initiated', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         //Set filter by key name
@@ -180,7 +171,6 @@ test
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    .meta({ rte: rte.standalone })
     ('Verify that when user clicks "Clear selection button" in Dropdown with key data types selected data type is reseted', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         //Set filter by key type and type characters

@@ -423,6 +423,7 @@ const Query = (props: Props) => {
         onKeyDown={handleKeyDown}
         role="textbox"
         tabIndex={0}
+        data-testid="main-input-container-area"
       >
         <div className={styles.input} data-testid="query-input-container" ref={input}>
           <MonacoEditor
@@ -449,6 +450,7 @@ const Query = (props: Props) => {
                 </div>
               )
             }
+            data-testid="run-query-tooltip"
           >
             <EuiButtonIcon
               onClick={() => handleSubmit()}

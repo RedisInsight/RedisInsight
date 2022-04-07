@@ -27,6 +27,7 @@ export class AddRedisDatabasePage {
     welcomePageTitle: Selector
     databaseIndexCheckbox: Selector
     databaseIndexInput: Selector
+    databaseIndexMessage: Selector
     errorMessage: Selector
     secretKeyInput: Selector;
 
@@ -61,6 +62,7 @@ export class AddRedisDatabasePage {
         this.welcomePageTitle = Selector('[data-testid=welcome-page-title]');
         this.databaseIndexInput = Selector('[data-testid=db]');
         this.errorMessage = Selector('[data-test-subj=toast-error]');
+        this.databaseIndexMessage = Selector('[data-testid=db-index-message]');
     }
 
     /**

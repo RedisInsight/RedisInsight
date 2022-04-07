@@ -2,8 +2,6 @@
   position: absolute;
   height: 36px;
   width: 154px;
-  border: 1px solid var(--separatorColor);
-  border-radius: 4px 0 0 4px;
   overflow: hidden;
 
   :global {
@@ -14,7 +12,8 @@
         height: 36px !important;
         background-color: var(--browserTableRowEven) !important;
         box-shadow: none !important;
-        border: 0 !important;
+        border: 1px solid var(--separatorColor) !important;
+        border-radius: 4px 0 0 4px;
         padding: 0 !important;
 
         &.euiSuperSelect--isOpen__button {

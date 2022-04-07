@@ -435,7 +435,7 @@ const Query = (props: Props) => {
             editorDidMount={editorDidMount}
           />
         </div>
-        <div className={styles.actions}>
+        <div className={cx(styles.actions, { [styles.disabledActions]: isDedicatedEditorOpen })}>
           <EuiToolTip
             position="left"
             content={
@@ -464,14 +464,14 @@ const Query = (props: Props) => {
         <AutoSizer>
           {({ height }) => (
             <div className="editorBounder">
-                <DedicatedEditor
-                  initialHeight={input?.current?.scrollHeight || 0}
-                  height={height}
-                  lang={syntaxCommand.current.lang}
-                  query={selectedArg.current.replace(aroundQuotesRegExp, '')}
-                  onSubmit={updateArgFromDedicatedEditor}
-                  onCancel={onCancelDedicatedEditor}
-                />
+              <DedicatedEditor
+                initialHeight={input?.current?.scrollHeight || 0}
+                height={height}
+                lang={syntaxCommand.current.lang}
+                query={selectedArg.current.replace(aroundQuotesRegExp, '')}
+                onSubmit={updateArgFromDedicatedEditor}
+                onCancel={onCancelDedicatedEditor}
+              />
             </div>
           )}
         </AutoSizer>

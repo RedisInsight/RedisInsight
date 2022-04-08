@@ -1,5 +1,8 @@
-.monaco-editor * {
-  background-color: var(--monacoBgColor);
+.monaco-editor,
+.monaco-editor .margin,
+.monaco-editor .minimap-decorations-layer,
+.monaco-editor-background {
+  background-color: var(--monacoBgColor) !important;
 }
 
 .monaco-editor .markdown-docs {

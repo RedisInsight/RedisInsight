@@ -45,6 +45,7 @@ export interface Props {
   iconSize?: IconSize
   viewChildrenMode?: boolean
   autoComplete?: string
+  select?: boolean
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -70,10 +71,13 @@ const InlineItemEditor = (props: Props) => {
     iconSize,
     isDisabled,
     autoComplete = 'off',
+    select,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
   const [isError, setIsError] = useState<boolean>(false)
+
+  const inputRef: Ref<HTMLInputElement> = useRef(null)
 
   useEffect(() =>
     // componentWillUnmount
@@ -81,6 +85,13 @@ const InlineItemEditor = (props: Props) => {
       declineOnUnmount && onDecline()
     },
   [])
+
+  useEffect(() => {
+    setTimeout(() => {
+      inputRef?.current?.focus()
+      select && inputRef?.current?.select()
+    }, 100)
+  }, [])
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
@@ -155,6 +166,7 @@ const InlineItemEditor = (props: Props) => {
                           isInvalid={isInvalid}
                           data-testid="inline-item-editor"
                           autoComplete={autoComplete}
+                          inputRef={inputRef}
                         />
                         {expandable && (
                           <p className={styles.keyHiddenText}>{value}</p>

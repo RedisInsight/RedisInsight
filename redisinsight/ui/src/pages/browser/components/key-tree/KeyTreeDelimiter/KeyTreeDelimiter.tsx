@@ -58,6 +58,7 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
   return (
     <div className={styles.container}>
       <EuiPopover
+        ownFocus={false}
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
         anchorClassName={styles.anchorWrapper}
@@ -68,6 +69,7 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
         <div className={styles.inputLabel}>Delimiter</div>
         <div className={styles.input} data-testid="tree-view-delimiter-input">
           <InlineItemEditor
+            select
             initialValue={delimiter}
             controlsDesign="separate"
             placeholder=":"

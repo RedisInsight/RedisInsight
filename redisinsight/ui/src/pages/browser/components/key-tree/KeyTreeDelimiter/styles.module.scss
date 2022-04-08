@@ -3,7 +3,7 @@ $selectDelimiterHeight: 18px;
 .anchorBtn {
   width: 60px;
   height: $selectDelimiterHeight;
-  margin-left: 12px;
+  margin-left: 6px;
   padding-left: 6px;
   margin-bottom: 10px;
   border: 1px solid var(--separatorColor) !important;
@@ -30,11 +30,23 @@ $selectDelimiterHeight: 18px;
   padding: 12px 18px !important;
   margin-top: -18px;
   border: 1px solid var(--euiColorPrimary) !important;
+  background-color: var(--euiColorLightestShade) !important;
 
   :global(.euiPopover__panelArrow) {
     &::before,
     &::after {
       content: none !important;
+    }
+  }
+
+  .input {
+    display: inline-block;
+    width: 72px;
+
+    input {
+      height: 36px !important;
+      border-radius: 4px;
+      background-color: var(--browserViewTypePassive) !important;
     }
   }
 }
@@ -49,4 +61,8 @@ $selectDelimiterHeight: 18px;
 .input {
   display: inline-block;
   width: 72px;
+
+  input {
+    background-color: var(--euiColorEmptyShade) !important;
+  }
 }

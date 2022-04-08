@@ -18,8 +18,9 @@ import { formatDistanceToNow } from 'date-fns'
 
 import { GroupBadge } from 'uiSrc/components'
 import { KeyTypes, KEY_TYPES_ACTIONS, LENGTH_NAMING_BY_TYPE } from 'uiSrc/constants'
-import { selectedKeyDataSelector, selectedKeySelector, } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, selectedKeySelector, keysSelector } from 'uiSrc/slices/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
@@ -62,6 +63,7 @@ const KeyDetailsHeader = ({
   const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
   const { ttl: ttlProp, name: keyProp = '', type, size, length } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState(false)
   const [lastRefreshMessage, setLastRefreshMessage] = useState('')
@@ -131,7 +133,9 @@ const KeyDetailsHeader = ({
   const showPopoverDelete = () => {
     setIsPopoverDeleteOpen((isPopoverDeleteOpen) => !isPopoverDeleteOpen)
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
+      event: viewType === KeyViewType.Browser
+        ? TelemetryEvent.BROWSER_KEY_DELETE_CLICKED
+        : TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED,
       eventData: {
         databaseId: instanceId,
         keyType: type
@@ -154,7 +158,9 @@ const KeyDetailsHeader = ({
     event.stopPropagation()
 
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_COPIED,
+      event: viewType === KeyViewType.Browser
+        ? TelemetryEvent.BROWSER_KEY_COPIED
+        : TelemetryEvent.TREE_VIEW_KEY_COPIED,
       eventData: {
         databaseId: instanceId,
         keyType: type
@@ -164,7 +170,9 @@ const KeyDetailsHeader = ({
 
   const handleRefreshKey = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
+      event: viewType === KeyViewType.Browser
+        ? TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED
+        : TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED,
       eventData: {
         databaseId: instanceId,
         keyType: type

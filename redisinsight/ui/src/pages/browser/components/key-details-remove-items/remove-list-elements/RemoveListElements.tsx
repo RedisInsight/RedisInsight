@@ -24,9 +24,10 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import { deleteListElementsAction } from 'uiSrc/slices/list'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
 
@@ -69,6 +70,7 @@ const RemoveListElements = (props: Props) => {
   }
   const { version: databaseVersion = '' } = useSelector(connectedInstanceOverviewSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   const countInput = useRef<HTMLInputElement>(null)
 
@@ -102,7 +104,9 @@ const RemoveListElements = (props: Props) => {
   const showPopover = () => {
     setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+      event: viewType === KeyViewType.Browser
+        ? TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED
+        : TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.List

@@ -20,7 +20,8 @@ import {
   ITableColumn,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
@@ -62,6 +63,7 @@ const HashDetails = (props: Props) => {
   } = useSelector(hashDataSelector)
   const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   useEffect(() => {
     const hashFields: IHashField[] = loadedFields.map((item) => ({
@@ -109,7 +111,9 @@ const HashDetails = (props: Props) => {
 
   const handleRemoveIconClick = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+      event: viewType === KeyViewType.Browser
+        ? TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED
+        : TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Hash

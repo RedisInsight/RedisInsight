@@ -136,7 +136,9 @@ const KeysHeader = (props: Props) => {
 
   const handleRefreshKeys = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
+      event: viewType === KeyViewType.Browser
+        ? TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED
+        : TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED,
       eventData: {
         databaseId: instanceId
       }
@@ -166,7 +168,9 @@ const KeysHeader = (props: Props) => {
   const openAddKeyPanel = () => {
     handleAddKeyPanel(true)
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
+      event: viewType === KeyViewType.Browser
+        ? TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED
+        : TelemetryEvent.TREE_VIEW_KEY_ADD_BUTTON_CLICKED,
       eventData: {
         databaseId: instanceId
       }

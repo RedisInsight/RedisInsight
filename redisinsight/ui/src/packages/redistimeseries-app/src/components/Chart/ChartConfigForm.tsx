@@ -45,8 +45,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
           <span></span>
         </EuiAccordion>
       </div>
-      {
-        moreOptions &&
+      { moreOptions && (
         <div className="more-options">
           <section>
             <EuiFormFieldset legend={{ children: 'Title' }}>
@@ -78,10 +77,9 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
                   onChange={(e) => onChange('yAxis2', e.target.checked)}
                 />
               </div>
-              {
-                value.yAxis2 &&
+              { value.yAxis2 && (
                 <div className="y-axis-2" style={{ width: '100%' }}>
-                  {Object.keys(value.keyToY2Axis).map(key =>
+                  { Object.keys(value.keyToY2Axis).map(key =>
                     <div className='y-axis-2-item'>
                       <div>{key}</div>
                       <EuiButtonGroup
@@ -94,7 +92,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
                     </div>
                   )}
                 </div>
-              }
+              )}
             </div>
           </section>
           <section className="y-axis-config">
@@ -104,18 +102,17 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
               isLeftYAxis={true}
               value={value.yAxisConfig}
             />
-            {
-              value.yAxis2 &&
+            { value.yAxis2 && (
               <YAxisConfigForm
                 label="Right Y Axis"
                 onChange={(v: any) => onChange('yAxis2Config', v)}
                 isLeftYAxis={false}
                 value={value.yAxis2Config}
               />
-            }
+            )}
           </section>
         </div>
-      }
+      )}
     </form >
   )
 }

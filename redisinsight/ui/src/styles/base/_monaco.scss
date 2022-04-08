@@ -1,7 +1,7 @@
 .monaco-editor * {
-  // font: initial !important;
   background-color: var(--monacoBgColor);
 }
+
 .monaco-editor .markdown-docs {
   h1,
   h2,
@@ -73,5 +73,9 @@
 
   &__shortcut {
     color: var(--euiColorMediumShade);
+  }
+
+  & * {
+    background: transparent;
   }
 }

@@ -45,7 +45,6 @@ export interface Props {
   iconSize?: IconSize
   viewChildrenMode?: boolean
   autoComplete?: string
-  select?: boolean
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -71,7 +70,6 @@ const InlineItemEditor = (props: Props) => {
     iconSize,
     isDisabled,
     autoComplete = 'off',
-    select,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -89,7 +87,7 @@ const InlineItemEditor = (props: Props) => {
   useEffect(() => {
     setTimeout(() => {
       inputRef?.current?.focus()
-      select && inputRef?.current?.select()
+      inputRef?.current?.select()
     }, 100)
   }, [])
 

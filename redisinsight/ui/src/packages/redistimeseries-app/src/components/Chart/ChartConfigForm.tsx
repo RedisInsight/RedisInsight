@@ -26,7 +26,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
         />
         <EuiSwitch
           compressed
-          label={<span style={{ paddingRight: '10px' }}>Staircase</span>}
+          label={<span className="switch-staircase-label">Staircase</span>}
           checked={value.staircase}
           onChange={(e) => onChange('staircase', e.target.checked)}
         />
@@ -69,7 +69,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
           </section>
           <section>
             <div className="right-y-axis">
-              <div style={{ width: '100%' }}>
+              <div className="switch-wrapper">
                 <EuiSwitch
                   compressed
                   label="Use Right Y Axis"
@@ -78,7 +78,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
                 />
               </div>
               { value.yAxis2 && (
-                <div className="y-axis-2" style={{ width: '100%' }}>
+                <div className="y-axis-2">
                   { Object.keys(value.keyToY2Axis).map(key =>
                     <div className='y-axis-2-item'>
                       <div>{key}</div>

@@ -12,8 +12,6 @@ interface ChartResultViewProps {
     data: TimeSeries[]
 }
 
-const isDarkTheme = document.body.classList.contains('theme_DARK')
-
 export default function ChartResultView(props: ChartResultViewProps) {
 
   const defaultYAxisConfig: YAxisConfig = { label: '', scale: AxisScale.linear }
@@ -61,7 +59,7 @@ export default function ChartResultView(props: ChartResultViewProps) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '3em', paddingTop: '0.3em', color: isDarkTheme ? '#B5B6C0' : '#527298' }}>
+      <div className="zoom-helper-text">
         <i>
           {
             chartState === LAYOUT_STATE.INITIAL_STATE
@@ -78,7 +76,7 @@ export default function ChartResultView(props: ChartResultViewProps) {
         onRelayout={onRelayout}
         onDoubleClick={onDoubleClick}
       />
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div className="config-form-wrapper">
         <ChartConfigForm
           value={chartConfig}
           onChange={handleChartConfigChanged}

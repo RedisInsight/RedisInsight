@@ -8,6 +8,7 @@ div.plotly-notifier {
 
 .theme_DARK {
     --body-color: white;
+    --text-color: #B5B6C0;
 
     // switches
     .euiSwitch .euiSwitch__body {
@@ -151,6 +152,8 @@ div.plotly-notifier {
 
 .theme_LIGHT {
     --body-color: black;
+    --text-color: #527298;
+
     .rangeslider-mask-min, .rangeslider-mask-max {
         fill: #F6F7F9 !important;
         fill-opacity: 1 !important;
@@ -361,6 +364,11 @@ body {
                 display: flex;
                 justify-content: space-between;
                 width: 100%;
+
+                .switch-wrapper {
+                  width: 100%;
+                }
+
             }
 
             .y-axis-2 {
@@ -376,4 +384,23 @@ body {
 
         }
     }
+}
+
+.zoom-helper-text {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 3em !important;
+  padding-top: 0.3em !important;
+  color: var(--text-color);
+}
+
+
+.config-form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.switch-staircase-label {
+  padding-right: 10px !important;
 }

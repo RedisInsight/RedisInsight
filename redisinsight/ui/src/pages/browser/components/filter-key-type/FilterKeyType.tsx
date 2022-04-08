@@ -58,7 +58,7 @@ const FilterKeyType = () => {
             />
           </>
         ),
-        dropdownDisplay: <EuiHealth color={color}>{text}</EuiHealth>,
+        dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
         'data-test-subj': `filter-option-type-${value}`,
       }
     }

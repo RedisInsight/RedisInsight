@@ -1,9 +1,7 @@
 .container {
   position: absolute;
-  height: 38px;
-  width: 180px;
-  border: 1px solid var(--separatorColor);
-  border-radius: 4px 0 0 4px;
+  height: 36px;
+  width: 154px;
   overflow: hidden;
 
   :global {
@@ -14,7 +12,8 @@
         height: 36px !important;
         background-color: var(--browserTableRowEven) !important;
         box-shadow: none !important;
-        border: 0 !important;
+        border: 1px solid var(--separatorColor) !important;
+        border-radius: 4px 0 0 4px;
         padding: 0 !important;
 
         &.euiSuperSelect--isOpen__button {
@@ -29,7 +28,6 @@
         }
       }
     }
-
     .euiPopover:not(.euiSuperSelect) {
       position: absolute;
       z-index: 10;
@@ -39,6 +37,11 @@
       svg {
         width: 18px !important;
         height: 18px !important;
+      }
+    }
+    .euiPopover.euiPopover-isOpen {
+      .euiIcon {
+        color: var(--euiTextSubduedColorHover);
       }
     }
     .euiFormControlLayoutIcons {
@@ -54,13 +57,22 @@
 
 .filterKeyType {
   position: relative;
-  height: 32px;
+  height: 30px;
   line-height: 14px !important;
   padding: 4px !important;
   background-color: var(--browserTableRowEven);
 
   &:hover, &:focus {
     background-color: var(--hoverInListColorDarken) !important;
+  }
+
+  :global {
+    .euiContextMenu__icon {
+      margin-left: 8px;
+      margin-right: 2px;
+      width: 16px;
+      height: 14px;
+    }
   }
 }
 
@@ -136,4 +148,13 @@
 
   text-decoration: underline;
   cursor: pointer;
+}
+
+.dropdownDisplay {
+  :global {
+    .euiFlexGroup {
+      margin: 0;
+      line-height: 1;
+    }
+  }
 }

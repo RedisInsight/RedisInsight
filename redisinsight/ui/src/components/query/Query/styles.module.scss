@@ -4,7 +4,7 @@
     top: 12px;
     bottom: 6px;
     left: 18px;
-    right: 0;
+    right: 46px;
   }
 }
 .wrapper {
@@ -26,6 +26,11 @@
 
 .disabled {
   opacity: 0.8;
+}
+
+.disabledActions {
+  pointer-events: none;
+  user-select: none;
 }
 
 .containerPlaceholder {

@@ -9,6 +9,8 @@
 .deleteIcon {
   margin-left: 4px;
   width: 16px !important;
+  height: 18px !important;
+  color: var(--htmlColor) !important;
 
   :global(.euiIcon) {
     width: 10px !important;

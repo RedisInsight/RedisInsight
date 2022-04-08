@@ -21,6 +21,7 @@ const GroupBadge = ({ type, name = '', className = '', onDelete, compressed }: P
       className,
       { [styles.withDeleteBtn]: onDelete, [styles.compressed]: compressed }
     )}
+    title={undefined}
     data-testid={`badge-${type}_${name}`}
   >
     {!compressed && (

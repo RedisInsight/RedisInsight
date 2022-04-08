@@ -55,9 +55,9 @@ const MultiSearch = (props: Props) => {
           controlOnly
           {...rest}
         />
-        {value && (
+        {(value || !!options.length) && (
           <EuiToolTip
-            content="Reset Filter"
+            content="Reset Filters"
             position="bottom"
           >
             <EuiButtonIcon
@@ -65,7 +65,7 @@ const MultiSearch = (props: Props) => {
               iconType="cross"
               color="primary"
               size="xs"
-              aria-label="Clear"
+              aria-label="Reset Filters"
               onClick={onClear}
               className={styles.clearButton}
               data-testid="reset-filter-btn"

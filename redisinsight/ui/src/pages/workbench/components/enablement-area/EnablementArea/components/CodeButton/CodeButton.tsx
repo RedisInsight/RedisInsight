@@ -1,5 +1,6 @@
 import React from 'react'
 import { EuiButton } from '@elastic/eui'
+import { truncateText } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -24,7 +25,7 @@ const CodeButton = ({ onClick, label, isLoading, className, disabled, ...rest }:
     disabled={disabled}
     {...rest}
   >
-    {label}
+    {truncateText(label, 86)}
   </EuiButton>
 )
 

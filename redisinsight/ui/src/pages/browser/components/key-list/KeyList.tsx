@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
 import {
-  EuiIcon,
   EuiText,
   EuiToolTip,
   EuiTextColor,

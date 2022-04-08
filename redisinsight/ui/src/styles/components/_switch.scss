@@ -1,4 +1,8 @@
 .euiSwitch {
+  .euiSwitch__button {
+    width: 50px;
+  }
+
   .euiSwitch__thumb {
     background-color: var(--euiColorPrimaryText) !important;
     border-color: transparent !important;

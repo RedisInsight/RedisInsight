@@ -1,15 +1,14 @@
 import { rte } from '../../../helpers/constants';
-import { BrowserPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { AddRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, invalidOssStandaloneConfig } from '../../../helpers/conf';
 import { acceptLicenseTerms } from '../../../helpers/database';
 
 const addRedisDatabasePage = new AddRedisDatabasePage();
-const browserPage = new BrowserPage();
 
 fixture `Connecting to the databases verifications`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTerms();
     })
 test

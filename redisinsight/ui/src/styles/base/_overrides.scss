@@ -51,3 +51,7 @@
 .euiOverlayMask {
   padding-bottom: 0 !important;
 }
+
+body .euiSuperSelect__listbox {
+  max-height: 340px;
+}

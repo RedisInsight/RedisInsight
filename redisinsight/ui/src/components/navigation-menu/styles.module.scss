@@ -93,13 +93,16 @@ $sideBarWidth: 60px;
     height: 34px;
   }
 
-  :global(.euiLink) {
+  :global(.euiLink.euiLink--primary) {
     display: flex;
     flex: 1;
     height: 100%;
     width: 100%;
     align-items: center;
     justify-content: center;
+    &:focus {
+      animation: none !important;
+    }
   }
 }
 

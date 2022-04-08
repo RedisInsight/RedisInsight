@@ -37,6 +37,7 @@ export * from './handlePlatforms'
 export * from './plugins'
 export * from './redistack'
 export * from './polyfills'
+export * from './tree'
 
 export {
   Maybe,

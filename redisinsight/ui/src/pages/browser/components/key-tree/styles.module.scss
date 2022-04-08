@@ -2,8 +2,6 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
-$selectSeparatorHeight: 18px;
-
 .page {
   height: 100%;
   overflow: hidden;
@@ -84,42 +82,4 @@ $selectSeparatorHeight: 18px;
 
 :global(.table-row-selected) .action {
   opacity: 1;
-}
-
-.separatorSelect {
-  width: 60px;
-  height: $selectSeparatorHeight;
-  padding-left: 12px;
-  margin-bottom: 10px;
-
-  :global {
-    .euiSuperSelectControl,
-    .euiPopover__anchor {
-      height: $selectSeparatorHeight;
-      line-height: $selectSeparatorHeight;
-    }
-
-    .euiSuperSelectControl {
-      display: flex;
-      align-items: flex-end;
-      border-color: var(--separatorColor) !important;
-      border-radius: 4px !important;
-      padding-left: 8px;
-    }
-
-    .euiFormControlLayoutIcons {
-      right: 2px !important;
-    }
-  }
-
-
-  svg {
-    width: 12px !important;
-    height: 12px !important;
-  }
-
-}
-
-.separatorSelectItem {
-  height: $selectSeparatorHeight;
 }

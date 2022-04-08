@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
-import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
-import { KeyTypes } from 'uiSrc/constants'
+import { DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
+import { getTreeLeafField } from 'uiSrc/utils'
 
 import {
   cleanup,
@@ -30,7 +30,8 @@ import reducer, {
   resetBrowserTree,
   appContextBrowserTree,
   setBrowserTreeSelectedLeaf,
-  updateBrowserTreeSelectedLeaf
+  updateBrowserTreeSelectedLeaf,
+  setBrowserTreeDelimiter
 } from '../../app/context'
 
 jest.mock('uiSrc/services')
@@ -359,7 +360,7 @@ describe('slices', () => {
     it('should properly set selected keys in the tree', () => {
       // Arrange
       const selectedLeaf = {
-        [TREE_LEAF_FIELD]: {
+        [getTreeLeafField(DEFAULT_DELIMITER)]: {
           test: {
             name: 'test',
             type: KeyTypes.Hash,
@@ -419,6 +420,27 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+  describe('setBrowserTreeDelimiter', () => {
+    it('should properly set browser tree delimiter', () => {
+      // Arrange
+      const delimiter = '_'
+
+      const state = {
+        ...initialState.browser.tree,
+        delimiter
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserTreeDelimiter(delimiter))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+  })
   describe('resetBrowserTree', () => {
     it('should properly set last page', () => {
       // Arrange
@@ -432,7 +454,7 @@ describe('slices', () => {
               test: true
             },
             selectedLeaf: {
-              [TREE_LEAF_FIELD]: {
+              [getTreeLeafField(DEFAULT_DELIMITER)]: {
                 test: {
                   name: 'test',
                   type: KeyTypes.Hash,
@@ -477,7 +499,7 @@ describe('slices', () => {
           tree: {
             ...initialState.browser.tree,
             selectedLeaf: {
-              [TREE_LEAF_FIELD]: {
+              [getTreeLeafField(DEFAULT_DELIMITER)]: {
                 [payload.key]: {
                   name: payload.key,
                   type: KeyTypes.Hash,
@@ -494,7 +516,7 @@ describe('slices', () => {
         ...initialState.browser.tree,
         openNodes: {},
         selectedLeaf: {
-          [TREE_LEAF_FIELD]: {
+          [getTreeLeafField(DEFAULT_DELIMITER)]: {
             [payload.newKey]: {
               name: payload.newKey,
               type: KeyTypes.Hash,
@@ -528,7 +550,7 @@ describe('slices', () => {
           tree: {
             ...initialState.browser.tree,
             selectedLeaf: {
-              [TREE_LEAF_FIELD]: {
+              [getTreeLeafField(DEFAULT_DELIMITER)]: {
                 [payload.key]: {
                   name: payload.key,
                   type: KeyTypes.Hash,
@@ -552,7 +574,7 @@ describe('slices', () => {
         ...initialState.browser.tree,
         openNodes: {},
         selectedLeaf: {
-          [TREE_LEAF_FIELD]: {
+          [getTreeLeafField(DEFAULT_DELIMITER)]: {
             test2: {
               name: 'test2',
               type: KeyTypes.Hash,

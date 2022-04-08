@@ -11,6 +11,7 @@ export class MyRedisDatabasePage {
     settingsButton: Selector
     workbenchButton: Selector
     helpCenterButton: Selector
+    githubButton: Selector
     myRedisDBButton: Selector
     toastCloseButton: Selector
     deleteDatabaseButton: Selector
@@ -38,6 +39,7 @@ export class MyRedisDatabasePage {
     moduleTooltip: Selector
     moduleQuantifier: Selector
     redisStackIcon: Selector
+    tooltipRedisStackLogo: Selector
 
     constructor() {
         //-------------------------------------------------------------------------------------------
@@ -50,6 +52,7 @@ export class MyRedisDatabasePage {
         this.settingsButton = Selector('[data-testid=settings-page-btn]');
         this.workbenchButton = Selector('[data-testid=workbench-page-btn]');
         this.helpCenterButton = Selector('[data-testid=help-menu-button]');
+        this.githubButton = Selector('[data-testid=github-repo-icon]');
         this.browserButton = Selector('[data-testid=browser-page-btn]');
         this.myRedisDBButton = Selector('[data-test-subj=home-page-btn]');
         this.deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
@@ -73,6 +76,7 @@ export class MyRedisDatabasePage {
         this.moduleTooltip = Selector('.euiToolTipPopover');
         this.moduleQuantifier = Selector('[data-testid=_module]');
         this.redisStackIcon = Selector('[data-testid=redis-stack-icon]');
+        this.tooltipRedisStackLogo = Selector('[data-testid=tooltip-redis-stack-icon]');
         // TEXT INPUTS (also referred to as 'Text fields')
         this.dbNameList = Selector('[data-testid^=instance-name]');
         this.tableRowContent = Selector('[data-test-subj=database-alias-column]');
@@ -90,8 +94,7 @@ export class MyRedisDatabasePage {
             await t.click(this.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t.expect(db.exists)
-            .ok('The database exists', {timeout: 60000});
+        await t.expect(db.exists).ok('The database exists', {timeout: 10000});
         await t.click(db);
     }
 

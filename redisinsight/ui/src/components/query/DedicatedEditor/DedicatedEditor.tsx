@@ -216,10 +216,15 @@ const DedicatedEditor = (props: Props) => {
         bottomLeft: false,
         topLeft: false
       }}
+      resizeHandleClasses={{
+        top: 't_resize-top',
+        bottom: 't_resize-buttom'
+      }}
       dragAxis="y"
       bounds=".editorBounder"
       dragHandleClassName="draggable-area"
       className={styles.rnd}
+      data-testid="draggable-area"
     >
       <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
         <div className="draggable-area" />

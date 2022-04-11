@@ -98,7 +98,8 @@ export class WorkbenchPage {
     chartViewTypeOptionSelected: Selector
     mainEditorArea: Selector
     runButtonToolTip: Selector
-    nonRedisEditorResizeRow: Selector
+    nonRedisEditorResizeTop: Selector
+    nonRedisEditorResizeBottom: Selector
 
     constructor() {
         //CSS selectors
@@ -202,7 +203,8 @@ export class WorkbenchPage {
         this.monacoWidget = Selector('[data-testid=monaco-widget]');
         this.chartViewTypeOptionSelected = Selector('[data-testid=view-type-selected-Plugin-redistimeseries__redistimeseries-chart]');
         this.runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
-        this.nonRedisEditorResizeRow = Selector('div[style*="cursor: row-resize;"]');
+        this.nonRedisEditorResizeBottom = Selector('.t_resize-bottom');
+        this.nonRedisEditorResizeTop = Selector('.t_resize-top');
     }
 
     /**

@@ -218,7 +218,7 @@ const DedicatedEditor = (props: Props) => {
       }}
       resizeHandleClasses={{
         top: 't_resize-top',
-        bottom: 't_resize-buttom'
+        bottom: 't_resize-bottom'
       }}
       dragAxis="y"
       bounds=".editorBounder"

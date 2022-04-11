@@ -31,7 +31,7 @@ const propsMock = {
     nextCursor: '0',
     total: 3,
   } as IKeyListPropTypes,
-  loadingState: false,
+  loading: false,
   selectKey: jest.fn(),
   loadMoreItems: jest.fn(),
   handleAddKeyPanel: jest.fn(),
@@ -48,11 +48,5 @@ describe('KeyList', () => {
       '.ReactVirtualized__Table__row[role="row"]'
     )
     expect(rows).toHaveLength(3)
-  })
-
-  it('should render search properly', () => {
-    render(<KeyList {...propsMock} />)
-    const searchInput = screen.queryByTestId('search-key')
-    expect(searchInput).toBeInTheDocument()
   })
 })

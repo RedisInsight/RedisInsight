@@ -1,0 +1,85 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.page {
+  height: 100%;
+  overflow: hidden;
+}
+
+.tooltip {
+  max-width: 372px !important;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  background-color: var(--euiColorEmptyShade);
+  border-top: 1px solid var(--euiColorLightShade);
+}
+
+.body {
+  display: flex;
+  height: calc(100% - 20px);
+
+  :global(.ReactVirtualized__Table__headerRow) {
+    border: none !important;
+  }
+}
+
+.resizablePanelLeft {
+  border-right: 1px solid var(--euiColorLightShade);
+}
+.resizablePanelLeft,
+.resizablePanelRight {
+  :global(.euiResizablePanel__content) {
+    padding-right: 0px !important;
+  }
+}
+
+.resizableButton:not(:hover) {
+  &::before, &::after {
+    width: 0px !important;
+  }
+}
+
+.tree {
+  @include euiScrollBar;
+
+  border-bottom: none;
+  position: relative;
+  padding-top: 6px;
+
+  height: calc(100% - 90px);
+
+  flex: 1;
+}
+
+.treeContent {
+  height: calc(100% - 25px);
+  position: relative;
+  width: 100%;
+}
+
+.list {
+  height: calc(100% + 20px);
+  flex: 3;
+  min-width: 400px;
+}
+
+.filter {
+  display: inline-block;
+  width: 100px;
+  height: 38px;
+  margin-left: 8px;
+  background-color: var(--tableLightestBorderColor);
+}
+
+.action {
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+}
+
+:global(.table-row-selected) .action {
+  opacity: 1;
+}

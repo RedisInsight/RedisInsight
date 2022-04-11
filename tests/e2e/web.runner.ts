@@ -1,7 +1,7 @@
 import testcafe from 'testcafe';
 
 (async(): Promise<void> => {
-    await testcafe('localhost')
+    await testcafe()
         .then(t => {
             return t
                 .createRunner()
@@ -24,6 +24,7 @@ import testcafe from 'testcafe';
                 .run({
                     skipJsErrors: true,
                     browserInitTimeout: 60000,
+                    selectorTimeout: 5000,
                     speed: 1,
                     quarantineMode: { successThreshold: '1', attemptLimit: '3' }
                 });

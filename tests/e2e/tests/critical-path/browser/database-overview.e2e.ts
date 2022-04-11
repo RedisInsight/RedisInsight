@@ -156,7 +156,7 @@ test
     })
     .after(async () => {
         //Delete database and index
-        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX permits DD`);
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX idx:schools DD`);
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
     })
     ('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
@@ -169,6 +169,7 @@ test
         await t.expect(browserPage.overviewCommandsSec.visible).ok('Commands/Sec is dispalyed in the Overview');
         await t.expect(browserPage.overviewCpu.visible).ok('CPU (%) is dispalyed in the Overview');
         //Run Create hash index command
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         await t.click(workbenchPage.preselectCreateHashIndex);
         await t.click(workbenchPage.submitCommandButton);

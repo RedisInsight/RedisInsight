@@ -195,7 +195,6 @@ describe('VirtualTable', () => {
       const onLoadMoreItems = jest.fn()
 
       const argMock = {
-        keyName: '',
         stopIndex: SCAN_COUNT_DEFAULT - 1,
         startIndex: 0,
       }

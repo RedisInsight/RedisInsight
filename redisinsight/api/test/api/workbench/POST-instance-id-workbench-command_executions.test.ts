@@ -439,7 +439,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
             expect(body.result).to.eql([
               {
                 status: 'success',
-                response: '"value"'
+                response: '\\"value\\"'
               },
             ]);
           }
@@ -750,7 +750,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
               for (let i = 0; i < 10; i++) {
                 response.push(
                   `${constants.TEST_SEARCH_JSON_KEY_PREFIX_1}${i}`,
-                  ['$', `{"user":{"name":"John Smith${i}"}}`],
+                  ['$', `{\\"user\\":{\\"name\\":\\"John Smith${i}\\"}}`],
                 );
               }
 

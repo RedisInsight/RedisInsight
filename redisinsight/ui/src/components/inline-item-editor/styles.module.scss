@@ -7,7 +7,7 @@
 }
 
 .field {
-  min-width: 110px;
+  min-width: 72px;
   max-width: 100% !important;
   box-shadow: 0 3px 3px var(--controlsBoxShadowColor) !important;
   height: 33px !important;
@@ -54,6 +54,29 @@
   right: 100%;
   border-radius: 10px 0 0 10px;
   box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
+}
+
+.controlsSeparate {
+  border-radius: 0;
+  box-shadow: none;
+  background-color: inherit !important;
+  text-align: right;
+  width: 60px;
+
+  .btn {
+    margin: 6px 3px;
+    height: 24px !important;
+    width: 24px !important;
+
+    &:hover {
+      background-color: var(--hoverInListColorDarken) !important;
+    }
+  }
+
+  svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
 }
 
 .declineBtn:hover {

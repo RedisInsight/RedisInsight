@@ -125,8 +125,8 @@ consistency with plugin visualisations and the entire application.
 
 Find the example of the plugin here.
 
-* [Client List Plugin README](../../redisinsight/ui/src/packages/clients-list-example/README.md)
-* [Client List Plugin dir](../../redisinsight/ui/src/packages/clients-list-example/)
+* [Client List Plugin README](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/README.md)
+* [Client List Plugin dir](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/)
 
 ### Available parameters
 

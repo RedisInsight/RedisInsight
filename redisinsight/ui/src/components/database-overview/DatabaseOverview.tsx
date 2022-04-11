@@ -1,7 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import MoreInfoPopover from 'uiSrc/components/database-overview/components/MoreInfoPopover'
+import { Theme } from 'uiSrc/constants'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { sortModulesByName } from 'uiSrc/utils/modules'
+
+import RediStackDark from 'uiSrc/assets/img/modules/redistack/RediStackDark.svg'
+import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
+import RediStackLight from 'uiSrc/assets/img/modules/redistack/RediStackLight.svg'
+import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
+import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
+import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
+
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { getResolutionLimits } from './utils/resolutionHelper'
 import { IMetric } from './components/OverviewMetrics'
@@ -10,20 +21,23 @@ import DatabaseListModules from '../database-list-modules/DatabaseListModules'
 import styles from './styles.module.scss'
 
 interface Props {
-  windowDimensions: number;
-  metrics?: Array<IMetric>;
-  modules?: Array<RedisModuleDto>;
+  windowDimensions: number
+  metrics?: Array<IMetric>
+  modules?: Array<RedisModuleDto>
+  isRediStack?: boolean
 }
 
 interface IState<T> {
-  visible: Array<T>,
+  visible: Array<T>
   hidden: Array<T>
 }
 
 const DatabaseOverview = (props: Props) => {
-  const { metrics: metricsProps = [], modules: modulesProps = [], windowDimensions } = props
+  const { metrics: metricsProps = [], modules: modulesProps = [], windowDimensions, isRediStack } = props
   const [metrics, setMetrics] = useState<IState<IMetric>>({ visible: [], hidden: [] })
   const [modules, setModules] = useState<IState<RedisModuleDto>>({ visible: [], hidden: [] })
+
+  const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
     const resolutionLimits = getResolutionLimits(
@@ -45,11 +59,26 @@ const DatabaseOverview = (props: Props) => {
       }
     })
     setMetrics(metricsState)
+
+    const sortedModules = sortModulesByName(modulesProps)
     setModules({
-      visible: modulesProps.slice(0, resolutionLimits.modules),
-      hidden: modulesProps.slice(resolutionLimits.modules)
+      visible: sortedModules.slice(0, resolutionLimits.modules),
+      hidden: sortedModules.slice(resolutionLimits.modules)
     })
   }, [windowDimensions, metricsProps, modulesProps])
+
+  const RediStackLogo = (
+    <div className={styles.RediStackLogoWrapper} data-testid="redis-stack-logo">
+      <EuiIcon
+        type={theme === Theme.Dark ? RediStackDark : RediStackLight}
+        className={styles.redistackIcon}
+      />
+      <EuiIcon
+        type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+        className={styles.redistackLogoIcon}
+      />
+    </div>
+  )
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -94,7 +123,13 @@ const DatabaseOverview = (props: Props) => {
     <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
       {metrics.visible?.length > 0 && (
         <EuiFlexItem key="overview">
-          <div className={cx('flex-row', styles.itemContainer, styles.overview, { [styles.noModules]: !modules.visible?.length })}>
+          <div className={cx(
+            'flex-row',
+            styles.itemContainer,
+            styles.overview,
+            { [styles.noModules]: !modules.visible?.length, [styles.RediStack]: isRediStack }
+          )}
+          >
             <EuiFlexGroup gutterSize="none" responsive={false}>
               {
                 metrics.visible.map((overviewItem) => (
@@ -133,9 +168,31 @@ const DatabaseOverview = (props: Props) => {
       )}
       <EuiFlexItem grow={false} style={{ flexShrink: 0 }}>
         <div
-          className={cx('flex-row', styles.itemContainer, styles.modules, { [styles.noModules]: !modules.visible?.length })}
+          className={cx(
+            'flex-row',
+            styles.itemContainer,
+            styles.modules,
+            { [styles.noModules]: !modules.visible?.length, [styles.RediStack]: isRediStack }
+          )}
         >
-          {!!modules.visible?.length && (
+          {isRediStack && (
+            <DatabaseListModules
+              content={isRediStack ? RediStackLogo : undefined}
+              modules={modulesProps}
+              tooltipTitle={isRediStack ? (
+                <>
+                  <EuiIcon
+                    type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+                    className={styles.tooltipLogo}
+                    data-testid="tooltip-redis-stack-icon"
+                  />
+                  <EuiText color="subdued" style={{ marginTop: 4, marginBottom: -4 }}>Includes</EuiText>
+                </>
+              ) : undefined}
+              withoutStyles
+            />
+          )}
+          {(!isRediStack && !!modules.visible?.length) && (
             <DatabaseListModules dark inCircle modules={modules.visible} />
           )}
           <MoreInfoPopover

@@ -1,8 +1,8 @@
 import { sendMessageToMain } from './helpers'
 import { POST_MESSAGE_EVENTS } from './events'
 
-const { config, callbacks = { counter: 0 } } = window.state
-const { iframeId } = config
+const { config, callbacks = { counter: 0 } } = window.state || {}
+const { iframeId } = config || {}
 
 /**
  * Set text to the header result

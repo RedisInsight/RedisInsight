@@ -24,6 +24,10 @@ $footerHeight: 38px;
   padding-bottom: $footerHeight;
 }
 
+:global(.keys-tree__count) {
+  padding-left: 10px;
+}
+
 .table {
   :global {
     .ReactVirtualized__Table__headerRow {
@@ -32,7 +36,7 @@ $footerHeight: 38px;
     }
     .ReactVirtualized__Grid__innerScrollContainer {
       & > div:hover {
-        background: var(--tableRowHoverColor);
+        background: var(--browserComponentActive);
       }
     }
   }
@@ -45,17 +49,16 @@ $footerHeight: 38px;
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    padding: 8px;
+    padding: 8px 18px;
     min-height: 43px;
   }
 
   .tableRow {
     cursor: pointer;
-    border-bottom: 1px solid var(--euiColorLightShade);
-    // border-top: 1px solid transparent;
     border-top-width: 0;
-    & > div:last-of-type {
-      border-right: 1px solid transparent;
+
+    & > div:first-of-type {
+      border-left: 3px solid transparent;
     }
   }
 
@@ -64,14 +67,15 @@ $footerHeight: 38px;
   }
 
   :global(.table-row-selected) {
-    background: var(--tableRowSelectedColor) !important;
-    border-top: 1px solid var(--euiColorPrimary) !important;
-    border-bottom: 1px solid var(--euiColorPrimary) !important;
-    & > div:first-of-type {
-      border-left: 1px solid var(--euiColorPrimary) !important;
+    background: var(--browserComponentActive) !important;
+
+    * {
+      color: var(--euiColorFullShade) !important;
     }
-    & > div:last-of-type {
-      border-right: 1px solid var(--euiColorPrimary) !important;
+
+    & > div:first-of-type {
+      border-left: 3px solid transparent;
+      border-left-color: var(--euiColorPrimary) !important;
     }
   }
 
@@ -135,15 +139,20 @@ $footerHeight: 38px;
   white-space: pre-wrap;
 }
 
-:global(.key-details-table),
-:global(.key-list-table) {
-  height: calc(100% - 38px);
+
+:global(.key-details-table) {
   :global(.ReactVirtualized__Table__row) {
     font-size: 13px;
   }
 }
 
+:global(.key-list-table) {
+  height: calc(100% - 58px);
+}
+
+
 :global(.key-details-table) {
+  height: calc(100% - 38px);
   &:global(.footerOpened) {
     :global(.ReactVirtualized__Table__Grid) {
       padding-bottom: 254px;

@@ -1,6 +1,6 @@
 import { PageNames, Pages, IRoute } from 'uiSrc/constants'
 import {
-  BrowserPage, InstancePage, SettingsPage,
+  BrowserPage, InstancePage,
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import EditConnection from 'uiSrc/pages/redisStack/components/edit-connection'
@@ -28,10 +28,6 @@ const ROUTES: IRoute[] = [
     component: EditConnection,
   },
   ...COMMON_ROUTES,
-  {
-    path: Pages.settings,
-    component: SettingsPage,
-  },
   {
     path: '/:instanceId',
     protected: true,

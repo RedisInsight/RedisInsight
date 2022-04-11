@@ -76,6 +76,7 @@
   --htmlColor: #{$htmlColor};
   --textColorShade: #{$textColorShade};
   --tableLightestBorderColor: #{$tableLightestBorderColor};
+  --tableLightBorderColor: #{$tableLightBorderColor};
   --tableDarkestBorderColor: #{$tableDarkestBorderColor};
   --browserTableRowEven: #{$browserTableRowEven};
   --inputPlaceholderColor: #{$inputPlaceholderColor};
@@ -89,6 +90,9 @@
   --hoverInListColorDarken: #{$hoverInListColorDarken};
   --externalLinkColor: #{$externalLinkColor};
   --externalLinkTooltipColor: #{$externalLinkTooltipColor};
+  --browserViewTypePassive: #{$browserViewTypePassive};
+  --browserComponentActive: #{$browserComponentActive};
+  --browserTreeNodeOpen: #{$browserTreeNodeOpen};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
@@ -112,6 +116,8 @@
   --callOutBackgroundColor: #{$euiTooltipBackgroundColor};
 
   --overlayPromoNYColor: #{$overlayPromoNYColor};
+
+  --monacoBgColor: #{$monacoBgColor};
 
   // KeyTypes
   --typeHashColor: #{$typeHashColor};

@@ -51,7 +51,7 @@ test.skip
         const commandToGet = 'get key';
         //Send command with value that exceed 1MB
         let commandText = getRandomParagraph(10).repeat(100);
-        await workbenchPage.sendCommandInWorkbench(`${commandToSend} "${commandText}"`, 1, true);
+        await workbenchPage.sendCommandInWorkbench(`${commandToSend} "${commandText}"`);
         await workbenchPage.sendCommandInWorkbench(commandToGet);
         //Refresh the page and check result
         await t.eval(() => location.reload());
@@ -76,3 +76,22 @@ test
         }
         await t.expect(workbenchPage.noCommandHistoryTitle.visible).ok('The first command is deleted when user executes 31 command');
     });
+test
+    .meta({ rte: rte.none })
+    ('Verify that user can see cursor is at the first character when Editor is empty', async t => {
+        const commands = [
+            'FT.INFO',
+            'RANDOMKEY'
+        ];
+        const commandForCheck = 'SET';
+        //Send commands
+        for(const command of commands) {
+            await workbenchPage.sendCommandInWorkbench(command);
+        }
+        //Verify the quick access to history works when cursor is at the first character
+        await t.typeText(workbenchPage.queryInput, commandForCheck);
+        await t.pressKey('enter');
+        await t.pressKey('up');
+        let script = await workbenchPage.scriptsLines.textContent;
+        await t.expect(script.replace(/\s/g, ' ')).contains(commandForCheck, 'The command is not changed');
+    })

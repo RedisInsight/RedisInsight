@@ -1,0 +1,83 @@
+.content {
+  width: 100%;
+  background-color: var(--euiColorEmptyShade);
+
+  height: 108px;
+  padding: 18px 18px 0;
+
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  .addKey {
+    height: 36px !important;
+    width: 78px !important;
+
+    :global(.euiButton__text) {
+      font: normal normal 500 15px/24px 'Graphik', sans-serif !important;
+    }
+  }
+
+}
+
+.top, .bottom {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  min-height: 38px;
+}
+
+.bottom {
+  padding-top: 10px;
+}
+
+
+.refresh {
+  right: 18px;
+  position: absolute;
+}
+
+.btnRefresh {
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.refreshTime {
+  color: var(--euiColorWarningLight);
+  padding-right: 6px;
+}
+
+.refreshSummary {
+  vertical-align: middle;
+  font: normal normal normal 12px/18px 'Graphik', sans-serif !important;
+  letter-spacing: -0.12px;
+}
+
+.tooltip {
+  max-width: 372px !important;
+}
+
+.viewTypeSwitch {
+  padding: 0 24px;
+}
+
+
+.viewTypeBtn {
+  width: 36px !important;
+  height: 36px !important;
+  background-color: var(--browserViewTypePassive) !important;
+
+  svg {
+    color: var(--euiTextSubduedColor) !important;
+  }
+
+  &.active {
+    background-color: var(--browserComponentActive) !important;
+
+    svg {
+      color: var(--euiColorPrimary) !important;
+    }
+  }
+}

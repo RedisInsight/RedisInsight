@@ -141,7 +141,7 @@ const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
           <EuiText className={styles.label}>{parse(consent.label)}</EuiText>
           {consent.description && (
             <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
-              {consent.description}
+              {parse(consent.description)}
             </EuiText>
           )}
         </EuiFlexItem>

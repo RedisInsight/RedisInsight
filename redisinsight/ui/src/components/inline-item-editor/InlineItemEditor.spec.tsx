@@ -34,4 +34,9 @@ describe('InlineItemEditor', () => {
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
     expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveValue(validateScoreNumber('val123'))
   })
+
+  it('should be focused properly', () => {
+    render(<InlineItemEditor {...instance(mockedProps)} onDecline={jest.fn()} />)
+    expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveFocus()
+  })
 })

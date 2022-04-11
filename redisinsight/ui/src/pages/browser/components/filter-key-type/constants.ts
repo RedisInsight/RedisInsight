@@ -1,6 +1,7 @@
 import {
   GROUP_TYPES_COLORS,
   KeyTypes,
+  ModulesKeyTypes,
   UnsupportedKeyTypes,
 } from 'uiSrc/constants'
 
@@ -11,9 +12,9 @@ export const FILTER_KEY_TYPE_OPTIONS = [
     color: GROUP_TYPES_COLORS[KeyTypes.Hash],
   },
   {
-    text: 'Sorted Set',
-    value: KeyTypes.ZSet,
-    color: GROUP_TYPES_COLORS[KeyTypes.ZSet],
+    text: 'List',
+    value: KeyTypes.List,
+    color: GROUP_TYPES_COLORS[KeyTypes.List],
   },
   {
     text: 'Set',
@@ -21,14 +22,14 @@ export const FILTER_KEY_TYPE_OPTIONS = [
     color: GROUP_TYPES_COLORS[KeyTypes.Set],
   },
   {
+    text: 'Sorted Set',
+    value: KeyTypes.ZSet,
+    color: GROUP_TYPES_COLORS[KeyTypes.ZSet],
+  },
+  {
     text: 'String',
     value: KeyTypes.String,
     color: GROUP_TYPES_COLORS[KeyTypes.String],
-  },
-  {
-    text: 'List',
-    value: KeyTypes.List,
-    color: GROUP_TYPES_COLORS[KeyTypes.List],
   },
   {
     text: 'JSON',
@@ -42,12 +43,12 @@ export const FILTER_KEY_TYPE_OPTIONS = [
   },
   {
     text: 'GRAPH',
-    value: UnsupportedKeyTypes.Graph,
-    color: GROUP_TYPES_COLORS[UnsupportedKeyTypes.Graph],
+    value: ModulesKeyTypes.Graph,
+    color: GROUP_TYPES_COLORS[ModulesKeyTypes.Graph],
   },
   {
     text: 'TS',
-    value: UnsupportedKeyTypes.TimeSeries,
-    color: GROUP_TYPES_COLORS[UnsupportedKeyTypes.TimeSeries],
+    value: ModulesKeyTypes.TimeSeries,
+    color: GROUP_TYPES_COLORS[ModulesKeyTypes.TimeSeries],
   },
 ]

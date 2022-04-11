@@ -1,7 +1,8 @@
 .container {
-  max-width: calc(100% - 160px);
-  height: 38px;
-  margin-left: 106px;
+  width: calc(100% - 248px);
+  height: 36px;
+  margin-left: 48px;
+  position: relative;
 
   :global(.euiFormControlLayout) {
     max-width: calc(100%) !important;
@@ -11,8 +12,7 @@
 
 :global(.euiFieldSearch) {
   &.input {
-    min-width: 345px;
-    height: 36px !important;
+    height: 34px !important;
     max-width: 100% !important;
 
     box-shadow: none !important;

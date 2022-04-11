@@ -15,11 +15,12 @@ export interface Props {
   loading: boolean
   setQuery: (script: string) => void
   setQueryEl: Function
+  setIsCodeBtnDisabled: (value: boolean) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onSubmit: (value?: string) => void
 }
 const QueryWrapper = (props: Props) => {
-  const { query = '', loading, setQuery, setQueryEl, onKeyDown, onSubmit } = props
+  const { query = '', loading, setQuery, setQueryEl, setIsCodeBtnDisabled, onKeyDown, onSubmit } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const {
     loading: isCommandsLoading,
@@ -72,10 +73,11 @@ const QueryWrapper = (props: Props) => {
       loading={loading}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
+      setIsCodeBtnDisabled={setIsCodeBtnDisabled}
       onKeyDown={onKeyDown}
       onSubmit={handleSubmit}
     />
   )
 }
 
-export default QueryWrapper
+export default React.memo(QueryWrapper)

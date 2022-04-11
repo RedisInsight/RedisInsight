@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import * as chai from 'chai';
 import * as localDb from '../helpers/local-db';
 import { constants } from '../helpers/constants';
-import { getServer } from '../helpers/server';
+import { getServer, getSocket } from '../helpers/server';
 import { testEnv } from '../helpers/test';
 import * as redis from '../helpers/redis';
 import { initCloudDatabase } from '../helpers/cloud';
@@ -33,6 +33,7 @@ export const deps = {
   request,
   expect: chai.expect,
   server: null,
+  getSocket,
   rte: null,
   testEnv,
 }

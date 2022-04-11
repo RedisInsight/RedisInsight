@@ -45,3 +45,29 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 }
+
+.monaco-widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--euiColorEmptyShade);
+  border: 1px solid var(--euiColorLightestShade);
+  width: 220px;
+  height: 30px;
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--hoverInListColorDarken);
+    border-color: var(--hoverInListColorLight);
+  }
+
+  &__title {
+    color: var(--euiTextSubduedColor);
+  }
+
+  &__shortcut {
+    color: var(--euiColorMediumShade);
+  }
+}

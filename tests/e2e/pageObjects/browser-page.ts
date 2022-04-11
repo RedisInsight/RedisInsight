@@ -523,7 +523,7 @@ export class BrowserPage {
   * @param value The value of the search parameter
   */
   async searchByTheValueInKeyDetails(value: string): Promise<void>{
-      await t.click(this.searchButton);
+      await t.click(this.searchButtonInKeyDetails);
       await t.pressKey('ctrl+a delete');
       await t.typeText(this.searchInput, value);
       await t.pressKey('enter');

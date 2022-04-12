@@ -49,6 +49,17 @@ export class MonitorObserver implements IMonitorObserver {
     }
   }
 
+  public disconnect(id: string) {
+    const userClient = this.clientMonitorObservers.get(id);
+    if (userClient) {
+      userClient.destroy();
+    }
+    this.clientMonitorObservers.delete(id);
+    if (this.clientMonitorObservers.size === 0) {
+      this.clear();
+    }
+  }
+
   public clear() {
     this.clientMonitorObservers.clear();
     this.shardsObservers.forEach((observer) => observer.disconnect());

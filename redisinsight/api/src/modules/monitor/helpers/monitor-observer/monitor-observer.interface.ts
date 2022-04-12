@@ -11,6 +11,7 @@ export interface IMonitorObserver {
   status: MonitorObserverStatus;
   subscribe: (client: IClientMonitorObserver) => Promise<void>;
   unsubscribe: (id: string) => void;
+  disconnect: (id: string) => void;
   getSize: () => number;
   clear: () => void;
 }

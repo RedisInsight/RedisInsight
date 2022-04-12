@@ -11,9 +11,9 @@ import {
 import { Socket, Server } from 'socket.io';
 import { get } from 'lodash';
 import config from 'src/utils/config';
+import { MonitorSettings } from 'src/modules/monitor/models/monitor-settings';
 import { MonitorService } from './monitor.service';
 import { MonitorGatewayClientEvents } from './constants/events';
-import ClientMonitorObserver from './helpers/client-monitor-observer/client-monitor-observer';
 
 const SOCKETS_CONFIG = config.get('sockets');
 
@@ -36,22 +36,44 @@ export class MonitorGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
   @SubscribeMessage(MonitorGatewayClientEvents.Monitor)
-  async monitor(socketClient: Socket): Promise<any> {
+  async monitor(client: Socket, settings: MonitorSettings = null): Promise<any> {
     try {
-      const instanceId = get(socketClient, 'handshake.query.instanceId');
-      await this.service.addListenerForInstance(
-        instanceId,
-        new ClientMonitorObserver(socketClient.id, socketClient),
-      );
+      const instanceId = get(client, 'handshake.query.instanceId');
+      await this.service.addListenerForInstance(instanceId, client, settings);
+
       return { status: 'ok' };
     } catch (error) {
       throw new WsException(error);
     }
   }
 
-  handleDisconnect(socketClient: Socket): void {
+  @SubscribeMessage(MonitorGatewayClientEvents.Pause)
+  async pause(client: Socket): Promise<any> {
+    try {
+      const instanceId = get(client, 'handshake.query.instanceId');
+      await this.service.removeListenerFromInstance(instanceId, client.id);
+
+      return { status: 'ok' };
+    } catch (error) {
+      throw new WsException(error);
+    }
+  }
+
+  @SubscribeMessage(MonitorGatewayClientEvents.FlushLogs)
+  async flushLogs(client: Socket): Promise<any> {
+    try {
+      const instanceId = get(client, 'handshake.query.instanceId');
+      await this.service.flushLogs(instanceId, client.id);
+
+      return { status: 'ok' };
+    } catch (error) {
+      throw new WsException(error);
+    }
+  }
+
+  async handleDisconnect(socketClient: Socket): Promise<void> {
     const instanceId = get(socketClient, 'handshake.query.instanceId');
     this.logger.log(`Client disconnected: ${socketClient.id}, instanceId: ${instanceId}`);
-    this.service.removeListenerFromInstance(instanceId, socketClient.id);
+    await this.service.disconnectListenerFromInstance(instanceId, socketClient.id);
   }
 }

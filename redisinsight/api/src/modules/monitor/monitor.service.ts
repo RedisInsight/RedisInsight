@@ -8,8 +8,12 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { Socket } from 'socket.io';
+import { MonitorSettings } from 'src/modules/monitor/models/monitor-settings';
+import ClientMonitorObserver from 'src/modules/monitor/helpers/client-monitor-observer/client-monitor-observer';
+import ClientLogsEmitter from 'src/modules/monitor/helpers/emitters/client.logs-emitter';
+import { ProfilerLogFilesProvider } from 'src/modules/monitor/providers/profiler-log-files.provider';
 import { IMonitorObserver, MonitorObserver, MonitorObserverStatus } from './helpers/monitor-observer';
-import { IClientMonitorObserver } from './helpers/client-monitor-observer/client-monitor-observer.interface';
 
 const serverConfig = config.get('server');
 
@@ -19,22 +23,72 @@ export class MonitorService {
 
   private monitorObservers: Record<string, IMonitorObserver> = {};
 
+  private clientObservers: Record<string, ClientMonitorObserver> = {};
+
   constructor(
     private redisService: RedisService,
     private instancesBusinessService: InstancesBusinessService,
+    private profilerLogFilesProvider: ProfilerLogFilesProvider,
   ) {}
 
-  async addListenerForInstance(instanceId: string, client: IClientMonitorObserver) {
+  /**
+   * Create or use existing user client to send monitor data from redis client to the user
+   * We are storing user clients to have a possibility to "pause" logs without disconnecting
+   *
+   * @param instanceId
+   * @param client
+   * @param settings
+   */
+  async addListenerForInstance(instanceId: string, client: Socket, settings: MonitorSettings = null) {
     this.logger.log(`Add listener for instance: ${instanceId}.`);
+
+    let clientObserver = this.clientObservers[client.id];
+
+    if (!clientObserver) {
+      clientObserver = new ClientMonitorObserver(client.id, client);
+      clientObserver.addLogsEmitter(new ClientLogsEmitter(client));
+
+      if (settings?.logFileId) {
+        const profilerLogFile = await this.profilerLogFilesProvider.getOrCreate(settings.logFileId);
+
+        // set database alias as part of the log file name
+        const alias = (await this.instancesBusinessService.getOneById(instanceId)).name;
+        profilerLogFile.setAlias(alias);
+
+        clientObserver.addLogsEmitter(await profilerLogFile.getEmitter());
+      }
+    }
+
     const monitorObserver = await this.getMonitorObserver(instanceId);
-    await monitorObserver.subscribe(client);
+    await monitorObserver.subscribe(clientObserver);
   }
 
-  removeListenerFromInstance(instanceId: string, listenerId: string) {
+  /**
+   * Basically used to remove listener that triggered by user action, e.g. "pause" action
+   * @param instanceId
+   * @param listenerId
+   */
+  async removeListenerFromInstance(instanceId: string, listenerId: string) {
     this.logger.log(`Remove listener from instance: ${instanceId}.`);
     const observer = this.monitorObservers[instanceId];
     if (observer) {
       observer.unsubscribe(listenerId);
+    }
+  }
+
+  async disconnectListenerFromInstance(instanceId: string, listenerId: string) {
+    this.logger.log(`Remove listener from instance: ${instanceId}.`);
+    const observer = this.monitorObservers[instanceId];
+    if (observer) {
+      observer.disconnect(listenerId);
+    }
+  }
+
+  async flushLogs(instanceId: string, clientId: string) {
+    this.logger.log(`Flush logs for instance ${instanceId} and client ${clientId}.`);
+    const observer = this.monitorObservers[instanceId];
+    if (observer) {
+      // observer.unsubscribe(listenerId);
     }
   }
 
@@ -46,6 +100,7 @@ export class MonitorService {
       if (monitorObserver) {
         monitorObserver.clear();
         delete this.monitorObservers[instanceId];
+        delete this.clientObservers[instanceId];
       }
     } catch (e) {
       // continue regardless of error

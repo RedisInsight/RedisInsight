@@ -12,4 +12,5 @@ export interface IClientMonitorObserver {
   id: string;
   handleOnData: (data: IOnDatePayload) => void;
   handleOnDisconnect: () => void;
+  destroy: () => void;
 }

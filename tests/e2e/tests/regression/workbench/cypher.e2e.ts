@@ -37,8 +37,9 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that when user clicks on the “X” control or use shortcut “ESC” popover Editor is closed and changes are not saved', async t => {
+        const cypherCommand = `${command} "query"`;
         //Type command and open the popover editor
-        await t.typeText(workbenchPage.queryInput, `${command} "query"`, { replace: true });
+        await t.typeText(workbenchPage.queryInput, cypherCommand, { replace: true });
         await t.pressKey('left');
         await t.click(workbenchPage.monacoWidget);
         //Do some changes in the Editor and close by “X” control
@@ -47,14 +48,14 @@ test
         //Verify that editor is closed and changes are not saved
         let commandAfter = await workbenchPage.scriptsLines.textContent;
         await t.expect(workbenchPage.queryInput.nth(1).exists).notOk('The popover Editor is closed');
-        await t.expect(commandAfter.replace(/\s/g, ' ')).eql(command, 'The changes are not saved from the Editor');
+        await t.expect(commandAfter.replace(/\s/g, ' ')).eql(cypherCommand, 'The changes are not saved from the Editor');
         //Re-open the Editor and do some changes and close by shortcut “ESC”
         await t.click(workbenchPage.monacoWidget);
         await t.typeText(workbenchPage.queryInput.nth(1), 'test', { replace: true });
         await t.pressKey('esc');
         //Verify that editor is closed and changes are not saved
         commandAfter = await workbenchPage.scriptsLines.textContent;
-        await t.expect(commandAfter.replace(/\s/g, ' ')).eql(command, 'The changes are not saved from the Editor');
+        await t.expect(commandAfter.replace(/\s/g, ' ')).eql(cypherCommand, 'The changes are not saved from the Editor');
     });
 test
     .meta({ rte: rte.standalone })
@@ -112,6 +113,6 @@ test
         await t.expect(workbenchPage.queryInput.nth(1).clientHeight).eql(editorHeight + offsetY, 'The non-Redis editor is resized by the top border');
         //Check that user can resize editor by bottom border
         editorHeight = await workbenchPage.queryInput.nth(1).clientHeight;
-        await t.drag(workbenchPage.nonRedisEditorResizeBottom.nth(1), 0, -offsetY, { speed: 0.4 });
+        await t.drag(workbenchPage.nonRedisEditorResizeBottom, 0, -offsetY, { speed: 0.4 });
         await t.expect(workbenchPage.queryInput.nth(1).clientHeight).eql(editorHeight - offsetY, 'The non-Redis editor is resized by the bottom border');
     });

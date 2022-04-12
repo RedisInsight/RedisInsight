@@ -80,7 +80,7 @@ test
         for (const { textType } of keyTypes) {
             await browserPage.selectFilterGroupType(textType);
             //Check key type label
-            await t.expect(browserPage.filteringLabel.getAttribute('title')).eql(textType.toUpperCase( ), `The label of type ${textType} is dispalyed`);
+            await t.expect((await browserPage.filteringLabel.textContent).toUpperCase).eql(textType.toUpperCase, `The label of type ${textType} is dispalyed`);
             await t.expect(browserPage.keysNumberOfResults.visible).ok(`The filter ${textType} is applied`);
         }
          //Check removing of the label

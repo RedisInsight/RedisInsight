@@ -132,8 +132,9 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
 export async function acceptLicenseTerms(): Promise<void> {
     await t.maximizeWindow();
     await userAgreementPage.acceptLicenseTerms();
-    await t.expect(userAgreementPage.userAgreementsPopup.visible).notOk('The user agreements popup is not shown', {timeout: 5000});
+    await t.expect(userAgreementPage.userAgreementsPopup.visible).notOk('The user agreements popup is not shown', {timeout: 2000});
 }
+
 //Accept License terms and connect to the RedisStack database
 export async function acceptLicenseAndConnectToRedisStack(): Promise<void> {
     await acceptLicenseTerms();

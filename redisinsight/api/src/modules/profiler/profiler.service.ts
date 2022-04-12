@@ -1,34 +1,35 @@
+import { Socket } from 'socket.io';
+import IORedis from 'ioredis';
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import IORedis from 'ioredis';
 import { AppTool } from 'src/models';
-import config from 'src/utils/config';
 import { AppRedisInstanceEvents } from 'src/constants';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-import { Socket } from 'socket.io';
-import { MonitorSettings } from 'src/modules/monitor/models/monitor-settings';
-import ClientMonitorObserver from 'src/modules/monitor/helpers/client-monitor-observer/client-monitor-observer';
-import ClientLogsEmitter from 'src/modules/monitor/helpers/emitters/client.logs-emitter';
-import { ProfilerLogFilesProvider } from 'src/modules/monitor/providers/profiler-log-files.provider';
-import { IMonitorObserver, MonitorObserver, MonitorObserverStatus } from './helpers/monitor-observer';
+import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
+import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
+import ClientLogsEmitter from 'src/modules/profiler/emitters/client.logs-emitter';
+import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
+import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
+import { RedisObserverStatus } from 'src/modules/profiler/constants';
+import config from 'src/utils/config';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const serverConfig = config.get('server');
 
 @Injectable()
-export class MonitorService {
+export class ProfilerService {
   private logger = new Logger('MonitorService');
 
-  private monitorObservers: Record<string, IMonitorObserver> = {};
+  private monitorObservers: Record<string, RedisObserver> = {};
 
-  private clientObservers: Record<string, ClientMonitorObserver> = {};
+  private clientObservers: Record<string, ProfilerClient> = {};
 
   constructor(
     private redisService: RedisService,
     private instancesBusinessService: InstancesBusinessService,
-    private profilerLogFilesProvider: ProfilerLogFilesProvider,
+    private profilerLogFilesProvider: LogFileProvider,
   ) {}
 
   /**
@@ -45,7 +46,7 @@ export class MonitorService {
     let clientObserver = this.clientObservers[client.id];
 
     if (!clientObserver) {
-      clientObserver = new ClientMonitorObserver(client.id, client);
+      clientObserver = new ProfilerClient(client.id, client);
       clientObserver.addLogsEmitter(new ClientLogsEmitter(client));
 
       if (settings?.logFileId) {
@@ -107,15 +108,15 @@ export class MonitorService {
     }
   }
 
-  private async getMonitorObserver(instanceId: string): Promise<IMonitorObserver> {
+  private async getMonitorObserver(instanceId: string): Promise<RedisObserver> {
     this.logger.log('Getting redis monitor observer...');
     try {
       if (
         !this.monitorObservers[instanceId]
-        || this.monitorObservers[instanceId].status !== MonitorObserverStatus.Ready
+        || this.monitorObservers[instanceId].status !== RedisObserverStatus.Ready
       ) {
         const redisClient = await this.getRedisClientForInstance(instanceId);
-        this.monitorObservers[instanceId] = new MonitorObserver(redisClient);
+        this.monitorObservers[instanceId] = new RedisObserver(redisClient);
       }
       this.logger.log('Succeed to get monitor observer.');
       return this.monitorObservers[instanceId];

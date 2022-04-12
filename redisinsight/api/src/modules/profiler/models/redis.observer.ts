@@ -1,27 +1,27 @@
-import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
 import IORedis from 'ioredis';
-import ERROR_MESSAGES from 'src/constants/error-messages';
+import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
-import { IMonitorObserver, MonitorObserverStatus } from './monitor-observer.interface';
-import { IShardObserver } from './shard-obsever.interface';
-import { IClientMonitorObserver } from '../client-monitor-observer';
+import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
+import { RedisObserverStatus } from 'src/modules/profiler/constants';
+import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
-export class MonitorObserver implements IMonitorObserver {
+export class RedisObserver {
   private readonly redis: IORedis.Redis | IORedis.Cluster;
 
-  private clientMonitorObservers: Map<string, IClientMonitorObserver> = new Map();
+  private clientMonitorObservers: Map<string, ProfilerClient> = new Map();
 
   private shardsObservers: IShardObserver[] = [];
 
-  public status: MonitorObserverStatus;
+  public status: RedisObserverStatus;
 
   constructor(redis: IORedis.Redis | IORedis.Cluster) {
     this.redis = redis;
-    this.status = MonitorObserverStatus.Wait;
+    this.status = RedisObserverStatus.Wait;
   }
 
-  public async subscribe(client: IClientMonitorObserver) {
-    if (this.status !== MonitorObserverStatus.Ready) {
+  public async subscribe(client: ProfilerClient) {
+    if (this.status !== RedisObserverStatus.Ready) {
       await this.connect();
     }
     if (this.clientMonitorObservers.has(client.id)) {
@@ -64,7 +64,7 @@ export class MonitorObserver implements IMonitorObserver {
     this.clientMonitorObservers.clear();
     this.shardsObservers.forEach((observer) => observer.disconnect());
     this.shardsObservers = [];
-    this.status = MonitorObserverStatus.End;
+    this.status = RedisObserverStatus.End;
   }
 
   public getSize(): number {
@@ -80,9 +80,9 @@ export class MonitorObserver implements IMonitorObserver {
       } else {
         this.shardsObservers = [await this.createShardObserver(this.redis)];
       }
-      this.status = MonitorObserverStatus.Ready;
+      this.status = RedisObserverStatus.Ready;
     } catch (error) {
-      this.status = MonitorObserverStatus.Error;
+      this.status = RedisObserverStatus.Error;
 
       if (error?.message?.includes(RedisErrorCodes.NoPermission)) {
         throw new ForbiddenException(error.message);
@@ -94,7 +94,7 @@ export class MonitorObserver implements IMonitorObserver {
 
   private async createShardObserver(redis: IORedis.Redis): Promise<IShardObserver> {
     // HACK: ioredis impropriety throw error a user has no permissions to run the 'monitor' command
-    await MonitorObserver.isMonitorAvailable(redis);
+    await RedisObserver.isMonitorAvailable(redis);
     return await redis.monitor() as IShardObserver;
   }
 

@@ -2,12 +2,12 @@ import { join } from 'path';
 import * as fs from 'fs-extra';
 import { ReadStream, WriteStream } from 'fs';
 import config from 'src/utils/config';
-import FileLogsEmitter from 'src/modules/monitor/helpers/emitters/file.logs-emitter';
+import FileLogsEmitter from 'src/modules/profiler/emitters/file.logs-emitter';
 
 const DIR_PATH = config.get('dir_path');
 const PROFILER = config.get('profiler');
 
-export class ProfilerLogFile {
+export class LogFile {
   private readonly filePath: string;
 
   private startTime: Date;
@@ -95,7 +95,6 @@ export class ProfilerLogFile {
    * Remove file after finish
    */
   async destroy() {
-    console.log('___LofFile.destroy');
     try {
       this.writeStream = null;
       await fs.unlink(this.filePath);

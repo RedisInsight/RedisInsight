@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
-import { ILogsEmitter } from 'src/modules/monitor/helpers/emitters/logs-emitter.interface';
-import { MonitorGatewayServerEvents } from 'src/modules/monitor/constants/events';
+import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
+import { ProfilerServerEvents } from 'src/modules/profiler/constants';
 
 class ClientLogsEmitter implements ILogsEmitter {
   private readonly client: Socket;
@@ -13,7 +13,7 @@ class ClientLogsEmitter implements ILogsEmitter {
   }
 
   public async emit(items: any[]) {
-    return this.client.emit(MonitorGatewayServerEvents.Data, items);
+    return this.client.emit(ProfilerServerEvents.Data, items);
   }
 
   public addClientObserver() {}

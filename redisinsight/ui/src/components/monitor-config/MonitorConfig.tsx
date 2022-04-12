@@ -16,7 +16,7 @@ import { getBaseApiUrl } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { IOnDatePayload } from 'apiSrc/modules/monitor/helpers/client-monitor-observer'
+import { IOnDatePayload } from 'apiSrc/modules/profiler/helpers/client-monitor-observer'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
 

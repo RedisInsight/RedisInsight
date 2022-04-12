@@ -1,19 +1,19 @@
 import { ReadStream } from 'fs';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ProfilerLogFile } from 'src/modules/monitor/helpers/file-logger/profiler-log-file';
+import { LogFile } from 'src/modules/profiler/models/log-file';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 @Injectable()
-export class ProfilerLogFilesProvider {
-  private profilerLogFiles: Map<string, ProfilerLogFile> = new Map();
+export class LogFileProvider {
+  private profilerLogFiles: Map<string, LogFile> = new Map();
 
   /**
    * Get or create Profiler Log File to work with
    * @param id
    */
-  async getOrCreate(id: string): Promise<ProfilerLogFile> {
+  async getOrCreate(id: string): Promise<LogFile> {
     if (!this.profilerLogFiles.has(id)) {
-      this.profilerLogFiles.set(id, new ProfilerLogFile(id));
+      this.profilerLogFiles.set(id, new LogFile(id));
     }
 
     return this.profilerLogFiles.get(id);
@@ -23,7 +23,7 @@ export class ProfilerLogFilesProvider {
    * Get Profiler Log File or throw an error
    * @param id
    */
-  async get(id: string): Promise<ProfilerLogFile> {
+  async get(id: string): Promise<LogFile> {
     if (!this.profilerLogFiles.has(id)) {
       throw new NotFoundException(ERROR_MESSAGES.PROFILER_LOG_FILE_NOT_FOUND);
     }

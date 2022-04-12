@@ -1,12 +1,12 @@
 import { Socket } from 'socket.io';
-import { MonitorGatewayServerEvents } from 'src/modules/monitor/constants/events';
-import { WsException } from '@nestjs/websockets';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { debounce } from 'lodash';
-import { ILogsEmitter } from 'src/modules/monitor/helpers/emitters/logs-emitter.interface';
-import { IClientMonitorObserver, IOnDatePayload } from './client-monitor-observer.interface';
+import { WsException } from '@nestjs/websockets';
+import { ProfilerServerEvents } from 'src/modules/profiler/constants';
+import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
+import { IMonitorData } from 'src/modules/profiler/interfaces/monitor-data.interface';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
-class ClientMonitorObserver implements IClientMonitorObserver {
+export class ProfilerClient {
   public readonly id: string;
 
   private readonly client: Socket;
@@ -35,7 +35,7 @@ class ClientMonitorObserver implements IClientMonitorObserver {
     });
   }
 
-  public handleOnData(payload: IOnDatePayload) {
+  public handleOnData(payload: IMonitorData) {
     const {
       time, args, source, database,
     } = payload;
@@ -49,7 +49,7 @@ class ClientMonitorObserver implements IClientMonitorObserver {
 
   public handleOnDisconnect() {
     this.client.emit(
-      MonitorGatewayServerEvents.Exception,
+      ProfilerServerEvents.Exception,
       new WsException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
     );
   }
@@ -63,4 +63,3 @@ class ClientMonitorObserver implements IClientMonitorObserver {
     this.logsEmitters.forEach((emitter) => emitter.removeClientObserver(this.id));
   }
 }
-export default ClientMonitorObserver;

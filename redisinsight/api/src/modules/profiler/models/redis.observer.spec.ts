@@ -3,8 +3,8 @@ import * as Redis from 'ioredis';
 import { mockClientMonitorObserver, mockRedisMonitorObserver } from 'src/__mocks__/monitor';
 import { ReplyError } from 'src/models';
 import { mockRedisNoPermError } from 'src/__mocks__';
-import { MonitorObserverStatus } from './monitor-observer.interface';
-import { MonitorObserver } from './monitor-observer';
+import { MonitorObserverStatus } from '../helpers/monitor-observer/monitor-observer.interface';
+import { RedisMonitorClient } from '../../observers/monitor-observer';
 
 const nodeClient = Object.create(Redis.prototype);
 nodeClient.monitor = jest.fn().mockResolvedValue(mockRedisMonitorObserver);
@@ -28,8 +28,8 @@ describe('MonitorObserver', () => {
   describe('for redis standalone', () => {
     let monitorObserver;
     beforeEach(() => {
-      MonitorObserver.isMonitorAvailable = jest.fn().mockResolvedValue(true);
-      monitorObserver = new MonitorObserver(nodeClient);
+      RedisMonitorClient.isMonitorAvailable = jest.fn().mockResolvedValue(true);
+      monitorObserver = new RedisMonitorClient(nodeClient);
     });
 
     it('should create shard observer only on first subscribe call', async () => {
@@ -68,7 +68,7 @@ describe('MonitorObserver', () => {
       expect(monitorObserver.shardsObservers.length).toEqual(0);
     });
     it('should throw ForbiddenException if a user has no permissions', async () => {
-      MonitorObserver.isMonitorAvailable = jest.fn().mockRejectedValue(NO_PERM_ERROR);
+      RedisMonitorClient.isMonitorAvailable = jest.fn().mockRejectedValue(NO_PERM_ERROR);
 
       await expect(
         monitorObserver.subscribe({ ...mockClientMonitorObserver, id: '1' }),
@@ -78,8 +78,8 @@ describe('MonitorObserver', () => {
   describe('for redis cluster', () => {
     let monitorObserver;
     beforeEach(() => {
-      MonitorObserver.isMonitorAvailable = jest.fn().mockResolvedValue(true);
-      monitorObserver = new MonitorObserver(clusterClient);
+      RedisMonitorClient.isMonitorAvailable = jest.fn().mockResolvedValue(true);
+      monitorObserver = new RedisMonitorClient(clusterClient);
     });
 
     it('should create shard observer only on first subscribe call', async () => {
@@ -104,7 +104,7 @@ describe('MonitorObserver', () => {
     });
     // eslint-disable-next-line sonarjs/no-identical-functions
     it('should throw ForbiddenException if a user has no permissions', async () => {
-      MonitorObserver.isMonitorAvailable = jest.fn().mockRejectedValue(NO_PERM_ERROR);
+      RedisMonitorClient.isMonitorAvailable = jest.fn().mockRejectedValue(NO_PERM_ERROR);
 
       await expect(
         monitorObserver.subscribe({ ...mockClientMonitorObserver, id: '1' }),

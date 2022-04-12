@@ -1,9 +1,9 @@
 import { WsException } from '@nestjs/websockets';
 import * as MockedSocket from 'socket.io-mock';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { MonitorGatewayServerEvents } from 'src/modules/monitor/constants/events';
-import ClientMonitorObserver from './client-monitor-observer';
-import { IOnDatePayload } from './client-monitor-observer.interface';
+import { MonitorGatewayServerEvents } from 'src/modules/profiler/constants/events';
+import { ProfilerClient } from './profiler.client';
+import { IOnDatePayload } from '../interfaces/client-monitor-observer.interface';
 
 describe('ClientMonitorObserver', () => {
   let socketClient;
@@ -15,12 +15,12 @@ describe('ClientMonitorObserver', () => {
   });
 
   it.only('should be defined', () => {
-    const client = new ClientMonitorObserver(socketClient.id, socketClient);
+    const client = new ProfilerClient(socketClient.id, socketClient);
 
     expect(client.id).toEqual(socketClient.id);
   });
   it.only('should emit event on monitorData', async () => {
-    const client = new ClientMonitorObserver(socketClient.id, socketClient);
+    const client = new ProfilerClient(socketClient.id, socketClient);
     const monitorData = {
       // unix timestamp
       time: `${(new Date()).getTime() / 1000}`,
@@ -37,7 +37,7 @@ describe('ClientMonitorObserver', () => {
     expect(socketClient.emit).toHaveBeenCalledWith(MonitorGatewayServerEvents.Data, [monitorData]);
   });
   it.only('should emit exception event', () => {
-    const client = new ClientMonitorObserver(socketClient.id, socketClient);
+    const client = new ProfilerClient(socketClient.id, socketClient);
 
     client.handleOnDisconnect();
 

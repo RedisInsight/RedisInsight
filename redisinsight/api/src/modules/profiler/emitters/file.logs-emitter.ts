@@ -1,12 +1,12 @@
-import { ILogsEmitter } from 'src/modules/monitor/helpers/emitters/logs-emitter.interface';
-import { ProfilerLogFile } from 'src/modules/monitor/helpers/file-logger/profiler-log-file';
+import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
+import { LogFile } from 'src/modules/profiler/models/log-file';
 
 class FileLogsEmitter implements ILogsEmitter {
   public readonly id: string;
 
-  private readonly logFile: ProfilerLogFile;
+  private readonly logFile: LogFile;
 
-  constructor(logFile: ProfilerLogFile) {
+  constructor(logFile: LogFile) {
     this.id = logFile.id;
     this.logFile = logFile;
   }

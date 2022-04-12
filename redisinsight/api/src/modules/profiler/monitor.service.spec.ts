@@ -6,8 +6,8 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-import { MonitorService } from './monitor.service';
-import { MonitorObserver } from './helpers/monitor-observer';
+import { ProfilerService } from './monitor.service';
+import { RedisMonitorClient } from './helpers/monitor-observer';
 
 jest.mock('./helpers/monitor-observer');
 
@@ -19,7 +19,7 @@ describe('MonitorService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MonitorService,
+        ProfilerService,
         {
           provide: RedisService,
           useFactory: () => ({
@@ -36,7 +36,7 @@ describe('MonitorService', () => {
       ],
     }).compile();
 
-    service = module.get<MonitorService>(MonitorService);
+    service = module.get<ProfilerService>(ProfilerService);
     redisService = await module.get<RedisService>(RedisService);
     instancesBusinessService = await module.get<InstancesBusinessService>(InstancesBusinessService);
   });
@@ -56,7 +56,7 @@ describe('MonitorService', () => {
       await service.addListenerForInstance(instanceId, mockClientMonitorObserver);
 
       expect(getRedisClientForInstance).toHaveBeenCalledWith(instanceId);
-      expect(MonitorObserver).toHaveBeenCalled();
+      expect(RedisMonitorClient).toHaveBeenCalled();
       expect(service.monitorObservers[instanceId]).toBeDefined();
     });
     it('should use exist monitor observer for instance', async () => {
@@ -77,7 +77,7 @@ describe('MonitorService', () => {
 
       await service.addListenerForInstance(instanceId, mockClientMonitorObserver);
 
-      expect(MonitorObserver).toHaveBeenCalled();
+      expect(RedisMonitorClient).toHaveBeenCalled();
       expect(getRedisClientForInstance).toHaveBeenCalled();
       expect(Object.keys(service.monitorObservers).length).toEqual(1);
     });

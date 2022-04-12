@@ -1,10 +1,9 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase, acceptLicenseAndConnectToRedisStack } from '../../../helpers/database';
-import { CliPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
+import { CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const cliPage = new CliPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
@@ -13,11 +12,7 @@ fixture `CLI Command helper`
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async () => {
-        if(await addRedisDatabasePage.addDatabaseButton.visible) {
-            await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        } else {
-            await acceptLicenseAndConnectToRedisStack();
-        }
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Delete database

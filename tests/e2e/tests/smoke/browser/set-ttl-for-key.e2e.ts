@@ -1,12 +1,11 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase, acceptLicenseAndConnectToRedisStack } from '../../../helpers/database';
-import { BrowserPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let keyName = chance.word({ length: 10 });
 
@@ -14,11 +13,7 @@ fixture `Set TTL for Key`
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async () => {
-        if(await addRedisDatabasePage.addDatabaseButton.visible) {
-            await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        } else {
-            await acceptLicenseAndConnectToRedisStack();
-        }
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Clear and delete database

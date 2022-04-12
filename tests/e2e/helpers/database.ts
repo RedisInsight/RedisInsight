@@ -139,7 +139,7 @@ export async function acceptLicenseAndConnectToRedisStack(): Promise<void> {
     await acceptLicenseTerms();
     //Connect to DB
     await t.click(myRedisDatabasePage.myRedisDBButton);
-    await t.click(addRedisDatabasePage.connectToDatabaseButton);
+    await t.click(addRedisDatabasePage.connectToRedisStackButton);
 }
 
 //Clear database data
@@ -159,5 +159,18 @@ export async function deleteDatabase(databaseName: string): Promise<void> {
     await t.click(myRedisDatabasePage.myRedisDBButton);
     if(await addRedisDatabasePage.addDatabaseButton.visible) {
         await myRedisDatabasePage.deleteDatabaseByName(databaseName);
+    }
+}
+
+/**
+ * Accept License terms and add database or connect to the Redis stask database
+ * @param databaseParameters The database parameters
+ * @param databaseName The database name
+*/
+export async function acceptTermsAddDatabaseOrConnectToRedisStack(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+    if(await addRedisDatabasePage.addDatabaseButton.visible) {
+        await acceptLicenseTermsAndAddDatabase(databaseParameters, databaseName);
+    } else {
+        await acceptLicenseAndConnectToRedisStack();
     }
 }

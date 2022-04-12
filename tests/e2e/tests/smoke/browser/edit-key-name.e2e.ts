@@ -1,12 +1,11 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase, acceptLicenseAndConnectToRedisStack } from '../../../helpers/database';
-import { BrowserPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let keyNameBefore = chance.word({ length: 10 });
 let keyNameAfter = chance.word({ length: 10 });
@@ -15,11 +14,7 @@ fixture `Edit Key names verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async () => {
-        if(await addRedisDatabasePage.addDatabaseButton.visible) {
-            await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        } else {
-            await acceptLicenseAndConnectToRedisStack();
-        }
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Clear and delete database

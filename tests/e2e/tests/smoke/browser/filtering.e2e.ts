@@ -1,13 +1,12 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase, acceptLicenseAndConnectToRedisStack } from '../../../helpers/database';
-import { BrowserPage, CliPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let keyName = `KeyForSearch*?[]789${chance.word({ length: 10 })}`;
 let keyName2 = chance.word({ length: 10 });
@@ -20,11 +19,7 @@ fixture `Filtering per key name in Browser page`
     .meta({type: 'smoke'})
     .page(commonUrl)
     .beforeEach(async () => {
-        if(await addRedisDatabasePage.addDatabaseButton.visible) {
-            await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        } else {
-            await acceptLicenseAndConnectToRedisStack();
-        }
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Clear and delete database

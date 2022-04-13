@@ -67,6 +67,7 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
   return (
     <div className={styles.container}>
       <EuiPopover
+        ownFocus={false}
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
         anchorClassName={styles.anchorWrapper}

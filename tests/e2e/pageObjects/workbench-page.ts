@@ -96,6 +96,10 @@ export class WorkbenchPage {
     showSalesPerRegiomButton: Selector
     timeSeriesLink: Selector
     chartViewTypeOptionSelected: Selector
+    mainEditorArea: Selector
+    runButtonToolTip: Selector
+    nonRedisEditorResizeTop: Selector
+    nonRedisEditorResizeBottom: Selector
 
     constructor() {
         //CSS selectors
@@ -167,6 +171,7 @@ export class WorkbenchPage {
         this.queryCardContainer = Selector('[data-testid^=query-card-container]');
         this.queryCardCommand = Selector('[data-testid=query-card-command]');
         this.queryTableResult = Selector('[data-testid^=query-table-result-]');
+        this.mainEditorArea = Selector('[data-testid=main-input-container-area]')
         this.queryTextResult = Selector(this.cssQueryTextResult);
         this.queryColumns = Selector('[data-testid*=query-column-]');
         this.queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
@@ -197,6 +202,9 @@ export class WorkbenchPage {
         this.commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
         this.monacoWidget = Selector('[data-testid=monaco-widget]');
         this.chartViewTypeOptionSelected = Selector('[data-testid=view-type-selected-Plugin-redistimeseries__redistimeseries-chart]');
+        this.runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
+        this.nonRedisEditorResizeBottom = Selector('.t_resize-bottom');
+        this.nonRedisEditorResizeTop = Selector('.t_resize-top');
     }
 
     /**

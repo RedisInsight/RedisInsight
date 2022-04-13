@@ -1,5 +1,5 @@
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { Chance } from 'chance';
@@ -14,7 +14,7 @@ fixture `JSON verifications at Workbench`
     .meta({type: 'smoke'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })

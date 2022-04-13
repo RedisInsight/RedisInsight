@@ -15,6 +15,8 @@ export const ZOOM_PROPS = {
 
 export const COMPACT_FLAG = '--compact'
 
+export const EDGE_CAPTION_EXTERNAL = "external"
+
 export const NODE_COLORS_DARK = [
     { color: '#6A1DC3', borderColor: '#6A1DC3', textColor: '#FFFFFF' },
     { color: '#364CFF', borderColor: '#364CFF', textColor: '#FFFFFF' },

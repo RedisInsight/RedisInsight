@@ -5,6 +5,7 @@ import {
   NODE_STROKE_WIDTH,
   NODE_RADIUS,
   ZOOM_PROPS,
+  EDGE_CAPTION_EXTERNAL,
 } from './constants'
 
 const DEFAULT_OPTIONS = {
@@ -208,7 +209,7 @@ function StraightArrow(
 
   // for shortCaptionLength we use textBoundingBox = text.node().getComputedTextLength(),
   this.outline = function (shortCaptionLength: number) {
-    if (captionLayout === "external") {
+    if (captionLayout === EDGE_CAPTION_EXTERNAL) {
       const startBreak = startArrow + (this.shaftLength - shortCaptionLength) / 2
       const endBreak = endShaft - (this.shaftLength - shortCaptionLength) / 2
 
@@ -443,7 +444,7 @@ function ArcArrow(
       ].join(" ")
     }
 
-    if (captionLayout === "external") {
+    if (captionLayout === EDGE_CAPTION_EXTERNAL) {
       let captionSweep = shortCaptionLength / arcRadius
       if (this.deflection > 0) {
         captionSweep *= -1
@@ -1333,18 +1334,18 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
     return (() => {
       const result = []
-      for (var nodePair of Array.from(nodePairs)) {
-        for (var relationship of Array.from(nodePair.relationships)) {
+      for (let nodePair of Array.from(nodePairs)) {
+        for (let relationship of Array.from(nodePair.relationships)) {
           delete relationship.arrow
         }
 
-        var middleRelationshipIndex = (nodePair.relationships.length - 1) / 2
-        var defaultDeflectionStep = 30
+        let middleRelationshipIndex = (nodePair.relationships.length - 1) / 2
+        let defaultDeflectionStep = 30
         const maximumTotalDeflection = 150
         const numberOfSteps = nodePair.relationships.length - 1
         const totalDeflection = defaultDeflectionStep * numberOfSteps
 
-        var deflectionStep =
+        let deflectionStep =
           totalDeflection > maximumTotalDeflection
             ? maximumTotalDeflection / numberOfSteps
             : defaultDeflectionStep
@@ -1352,7 +1353,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         result.push(
           (() => {
             for (let i = 0; i < nodePair.relationships.length; i++) {
-              var ref
+              let ref
               relationship = nodePair.relationships[i]
               const nodeRadius = options.nodeRadius
               const shaftWidth = options.relationshipWidth
@@ -1378,7 +1379,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                     shaftWidth,
                     headWidth,
                     headHeight,
-                    relationship.captionLayout || "external"
+                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL
                   )
                 } else {
                   let deflection =
@@ -1396,7 +1397,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                     shaftWidth,
                     headWidth,
                     headHeight,
-                    relationship.captionLayout || "external"
+                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL
                   )
                 }
               }
@@ -1462,8 +1463,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         if (!nodePair.isLoop()) {
           const dx = nodePair.nodeA.x - nodePair.nodeB.x
           const dy = nodePair.nodeA.y - nodePair.nodeB.y
-          var angle = ((Math.atan2(dy, dx) / Math.PI) * 180 + 360) % 360
-          var centreDistance = Math.sqrt(square(dx) + square(dy))
+          let angle = ((Math.atan2(dy, dx) / Math.PI) * 180 + 360) % 360
+          let centreDistance = Math.sqrt(square(dx) + square(dy))
           result.push(
             (() => {
               const result1: number[] = []
@@ -1488,12 +1489,12 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   function distributeAnglesForLoopArrows(nodePairs: NodePair[], relationships: IRelationship[]) {
     return (() => {
       const result = []
-      for (var nodePair of Array.from(nodePairs)) {
+      for (let nodePair of Array.from(nodePairs)) {
         if (nodePair.isLoop()) {
-          var i: number, separation: number
+          let i: number, separation: number
           let angles = []
           const node = nodePair.nodeA
-          for (var relationship of Array.from(relationships)) {
+          for (let relationship of Array.from(relationships)) {
             if (!relationship.isLoop()) {
               if (relationship.source === node) {
                 angles.push(relationship.naturalAngle)
@@ -1505,8 +1506,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
           }
           angles = angles.map((a) => (a + 360) % 360).sort((a, b) => a - b)
           if (angles.length > 0) {
-            var end: number, start: number
-            var biggestGap = {
+            let end: number, start: number
+            let biggestGap = {
               start: 0,
               end: 0,
             }

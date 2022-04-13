@@ -1,5 +1,5 @@
 export const NODE_STROKE_WIDTH = 1.5
-export const NODE_RADIUS = 30
+export const NODE_RADIUS = 25
 
 export const EDGE_STROKE = 1.8
 

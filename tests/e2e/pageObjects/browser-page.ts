@@ -8,6 +8,7 @@ export class BrowserPage {
     cssSelectorGrid: string
     cssSelectorRows: string
     cssSelectorKey: string
+    cssFilteringLabel: string
     //------------------------------------------------------------------------------------------
     //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
     //*Assign the 'Selector' type to any element/component nested within the constructor.
@@ -70,7 +71,7 @@ export class BrowserPage {
     zsetMembersList: Selector
     zsetScoresList: Selector
     searchInput: Selector
-    searchButton: Selector
+    searchButtonInKeyDetails: Selector
     confirmRemoveSetMemberButton: Selector
     confirmRemoveHashFieldButton: Selector
     confirmRemovZSetMemberButton: Selector
@@ -140,12 +141,20 @@ export class BrowserPage {
     modulesTypeDetails: Selector
     internalLinkToWorkbench: Selector
     deleteFilterButton: Selector
+    filteringLabel: Selector
+    keysSummary: Selector
+    multiSearchArea: Selector
+    searchButton: Selector
+    clearFilterButton: Selector
+    clearSelectionButton: Selector
+    filterOptionTypeSelected: Selector
 
     constructor() {
         //CSS Selectors
         this.cssSelectorGrid = '[aria-label="grid"]';
         this.cssSelectorRows = '[aria-label="row"]';
         this.cssSelectorKey = '[data-testid^=key-]';
+        this.cssFilteringLabel = '[data-testid=multi-search]';
         //-------------------------------------------------------------------------------------------
         //DECLARATION OF SELECTORS
         //*Declare all elements/components of the relevant page.
@@ -174,7 +183,7 @@ export class BrowserPage {
         this.addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');
         this.saveHashFieldButton = Selector('[data-testid=save-fields-btn]');
         this.saveMemberButton = Selector('[data-testid=save-members-btn]');
-        this.searchButton = Selector('[data-testid=search-button]');
+        this.searchButtonInKeyDetails = Selector('[data-testid=search-button]');
         this.addKeyButton = Selector('span').withExactText('Add Key');
         this.keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
         this.progressLine = Selector('div.euiProgress');
@@ -212,6 +221,9 @@ export class BrowserPage {
         this.treeViewNotPatternedKeys = Selector('[data-testid*="node-item_keys"]');
         this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
         this.deleteFilterButton = Selector('[data-testid*=delete-btn]');
+        this.searchButton = Selector('[data-testid=search-btn]');
+        this.clearFilterButton = Selector('[data-testid=reset-filter-btn]');
+        this.clearSelectionButton = Selector('[data-testid=clear-selection-btn]');
         //TEXT INPUTS (also referred to as 'Text fields')
         this.keySizeDetails = Selector('[data-testid=key-size-text]');
         this.keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -281,6 +293,10 @@ export class BrowserPage {
         this.treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
         this.modulesTypeDetails = Selector('[data-testid=modules-type-details]');
         this.internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
+        this.filteringLabel = Selector('[data-testid^=badge-]');
+        this.keysSummary = Selector('[data-testid=keys-summary]');
+        this.multiSearchArea = Selector(this.cssFilteringLabel);
+        this.filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     }
 
     /**
@@ -517,7 +533,7 @@ export class BrowserPage {
      * @param value The value of the search parameter
      */
     async searchByTheValueInKeyDetails(value: string): Promise<void> {
-        await t.click(this.searchButton);
+        await t.click(this.searchButtonInKeyDetails);
         await t.pressKey('ctrl+a delete');
         await t.typeText(this.searchInput, value);
         await t.pressKey('enter');

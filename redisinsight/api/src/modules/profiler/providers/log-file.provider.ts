@@ -40,10 +40,10 @@ export class LogFileProvider implements OnModuleDestroy {
     const logFile = await this.get(id);
     const stream = await logFile.getReadStream();
 
-    // stream.once('end', () => {
-    //   stream.destroy();
-    //   logFile.destroy();
-    // });
+    stream.once('end', () => {
+      stream.destroy();
+      // logFile.destroy();
+    });
 
     return { stream, filename: logFile.getFilename() };
   }

@@ -29,7 +29,9 @@ export class AddRedisDatabasePage {
     databaseIndexInput: Selector
     databaseIndexMessage: Selector
     errorMessage: Selector
-    secretKeyInput: Selector;
+    secretKeyInput: Selector
+    connectToDatabaseButton: Selector
+    connectToRedisStackButton: Selector
 
     constructor() {
         //-------------------------------------------------------------------------------------------
@@ -50,6 +52,8 @@ export class AddRedisDatabasePage {
         this.databaseName = Selector('.euiTableCellContent.column_name');
         this.selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
         this.databaseIndexCheckbox = Selector('[data-testid=showDb]~div');
+        this.connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
+        this.connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
         //TEXT INPUTS (also referred to as 'Text fields')
         this.hostInput = Selector('[data-testid=host]');
         this.portInput = Selector('[data-testid=port]');

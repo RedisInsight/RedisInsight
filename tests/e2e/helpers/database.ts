@@ -104,13 +104,6 @@ export async function addNewRECloudDatabase(cloudAPIAccessKey: string, cloudAPIS
     return databaseName;
 }
 
-//Accept License terms
-export async function acceptLicenseTerms(): Promise<void> {
-    await t.maximizeWindow();
-    await userAgreementPage.acceptLicenseTerms();
-    await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', {timeout: 20000});
-}
-
 /**
  * Accept License terms and add database
  * @param databaseParameters The database parameters
@@ -135,6 +128,21 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
     await myRedisDatabasePage.clickOnDBByName(databaseName);
 }
 
+//Accept License terms
+export async function acceptLicenseTerms(): Promise<void> {
+    await t.maximizeWindow();
+    await userAgreementPage.acceptLicenseTerms();
+    await t.expect(userAgreementPage.userAgreementsPopup.visible).notOk('The user agreements popup is not shown', {timeout: 2000});
+}
+
+//Accept License terms and connect to the RedisStack database
+export async function acceptLicenseAndConnectToRedisStack(): Promise<void> {
+    await acceptLicenseTerms();
+    //Connect to DB
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(addRedisDatabasePage.connectToRedisStackButton);
+}
+
 //Clear database data
 export async function clearDatabaseInCli(): Promise<void> {
     if (await cliPage.cliCollapseButton.exists === false) {
@@ -150,5 +158,20 @@ export async function clearDatabaseInCli(): Promise<void> {
 */
 export async function deleteDatabase(databaseName: string): Promise<void> {
     await t.click(myRedisDatabasePage.myRedisDBButton);
-    await myRedisDatabasePage.deleteDatabaseByName(databaseName);
+    if(await addRedisDatabasePage.addDatabaseButton.visible) {
+        await myRedisDatabasePage.deleteDatabaseByName(databaseName);
+    }
+}
+
+/**
+ * Accept License terms and add database or connect to the Redis stask database
+ * @param databaseParameters The database parameters
+ * @param databaseName The database name
+*/
+export async function acceptTermsAddDatabaseOrConnectToRedisStack(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+    if(await addRedisDatabasePage.addDatabaseButton.visible) {
+        await acceptLicenseTermsAndAddDatabase(databaseParameters, databaseName);
+    } else {
+        await acceptLicenseAndConnectToRedisStack();
+    }
 }

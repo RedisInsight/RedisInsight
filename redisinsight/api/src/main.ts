@@ -44,6 +44,8 @@ export default async function bootstrap() {
     );
   }
 
+  app.enableShutdownHooks();
+
   await app.listen(port);
   logger.log({
     message: `Server is running on http(s)://localhost:${port}`,

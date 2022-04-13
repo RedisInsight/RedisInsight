@@ -90,8 +90,7 @@ export default {
     unsupportedCommands: JSON.parse(process.env.CLI_UNSUPPORTED_COMMANDS || '[]'),
   },
   profiler: {
-    // logFileIdleThreshold: parseInt(process.env.PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 60, // 1min
-    logFileIdleThreshold: parseInt(process.env.PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 10, // 1min
+    logFileIdleThreshold: parseInt(process.env.PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 60, // 1min
   },
   analytics: {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',

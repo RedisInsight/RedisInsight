@@ -30,6 +30,7 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
       await this.service.addListenerForInstance(ProfilerGateway.getInstanceId(client), client, settings);
       return { status: 'ok' };
     } catch (error) {
+      this.logger.error('Unable to add listener', error);
       throw new WsException(error);
     }
   }
@@ -40,6 +41,7 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
       await this.service.removeListenerFromInstance(ProfilerGateway.getInstanceId(client), client.id);
       return { status: 'ok' };
     } catch (error) {
+      this.logger.error('Unable to pause monitor', error);
       throw new WsException(error);
     }
   }
@@ -47,9 +49,10 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   @SubscribeMessage(ProfilerClientEvents.FlushLogs)
   async flushLogs(client: Socket): Promise<any> {
     try {
-      await this.service.flushLogs(ProfilerGateway.getInstanceId(client), client.id);
+      await this.service.flushLogs(client.id);
       return { status: 'ok' };
     } catch (error) {
+      this.logger.error('Unable to flush logs', error);
       throw new WsException(error);
     }
   }

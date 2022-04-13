@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
 import { ProfilerServerEvents } from 'src/modules/profiler/constants';
 
-class ClientLogsEmitter implements ILogsEmitter {
+export class ClientLogsEmitter implements ILogsEmitter {
   private readonly client: Socket;
 
   public readonly id: string;
@@ -16,9 +16,9 @@ class ClientLogsEmitter implements ILogsEmitter {
     return this.client.emit(ProfilerServerEvents.Data, items);
   }
 
-  public addClientObserver() {}
+  public addProfilerClient() {}
 
-  public removeClientObserver() {}
+  public removeProfilerClient() {}
+
+  public flushLogs() {}
 }
-
-export default ClientLogsEmitter;

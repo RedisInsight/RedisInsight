@@ -72,12 +72,12 @@ export class LogFile {
     this.alias = alias;
   }
 
-  public addClientObserver(id: string) {
+  addProfilerClient(id: string) {
     this.clientObservers.set(id, id);
     this.idleSince = 0;
   }
 
-  public removeClientObserver(id: string) {
+  removeProfilerClient(id: string) {
     this.clientObservers.delete(id);
 
     if (!this.clientObservers.size) {
@@ -92,10 +92,11 @@ export class LogFile {
   }
 
   /**
-   * Remove file after finish
+   * Remove file and delete write stream after finish
    */
   async destroy() {
     try {
+      this.writeStream?.close();
       this.writeStream = null;
       await fs.unlink(this.filePath);
     } catch (e) {

@@ -56,10 +56,14 @@ export class ProfilerClient {
 
   public addLogsEmitter(emitter: ILogsEmitter) {
     this.logsEmitters.set(emitter.id, emitter);
-    emitter.addClientObserver(this.id);
+    emitter.addProfilerClient(this.id);
+  }
+
+  async flushLogs() {
+    this.logsEmitters.forEach((emitter) => emitter.flushLogs());
   }
 
   public destroy() {
-    this.logsEmitters.forEach((emitter) => emitter.removeClientObserver(this.id));
+    this.logsEmitters.forEach((emitter) => emitter.removeProfilerClient(this.id));
   }
 }

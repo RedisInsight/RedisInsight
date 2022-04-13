@@ -9,7 +9,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 export class RedisObserver {
   private readonly redis: IORedis.Redis | IORedis.Cluster;
 
-  private clientMonitorObservers: Map<string, ProfilerClient> = new Map();
+  private profilerClients: Map<string, ProfilerClient> = new Map();
 
   private shardsObservers: IShardObserver[] = [];
 
@@ -20,65 +20,82 @@ export class RedisObserver {
     this.status = RedisObserverStatus.Wait;
   }
 
-  public async subscribe(client: ProfilerClient) {
+  /**
+   * Create "monitor" clients for each shard if not exists
+   * Subscribe profiler client to each each shard
+   * Ignore when profiler client with such id already exists
+   * @param profilerClient
+   */
+  public async subscribe(profilerClient: ProfilerClient) {
     if (this.status !== RedisObserverStatus.Ready) {
       await this.connect();
     }
-    if (this.clientMonitorObservers.has(client.id)) {
+
+    if (this.profilerClients.has(profilerClient.id)) {
       return;
     }
 
     this.shardsObservers.forEach((observer) => {
       observer.on('monitor', (time, args, source, database) => {
-        client.handleOnData({
+        profilerClient.handleOnData({
           time, args, database, source, shardOptions: observer.options,
         });
       });
       observer.on('end', () => {
-        client.handleOnDisconnect();
+        profilerClient.handleOnDisconnect();
         this.clear();
       });
     });
-    this.clientMonitorObservers.set(client.id, client);
+    this.profilerClients.set(profilerClient.id, profilerClient);
   }
 
   public unsubscribe(id: string) {
-    this.clientMonitorObservers.delete(id);
-    if (this.clientMonitorObservers.size === 0) {
+    this.profilerClients.delete(id);
+    if (this.profilerClients.size === 0) {
       this.clear();
     }
   }
 
   public disconnect(id: string) {
-    const userClient = this.clientMonitorObservers.get(id);
+    const userClient = this.profilerClients.get(id);
     if (userClient) {
       userClient.destroy();
     }
-    this.clientMonitorObservers.delete(id);
-    if (this.clientMonitorObservers.size === 0) {
+    this.profilerClients.delete(id);
+    if (this.profilerClients.size === 0) {
       this.clear();
     }
   }
 
   public clear() {
-    this.clientMonitorObservers.clear();
-    this.shardsObservers.forEach((observer) => observer.disconnect());
+    this.profilerClients.clear();
+    this.shardsObservers.forEach((observer) => {
+      observer.removeAllListeners('end');
+      observer.disconnect();
+    });
     this.shardsObservers = [];
     this.status = RedisObserverStatus.End;
   }
 
-  public getSize(): number {
-    return this.clientMonitorObservers.size;
+  /**
+   * Return number of profilerClients for current Redis Observer instance
+   */
+  public getProfilerClientsSize(): number {
+    return this.profilerClients.size;
   }
 
+  /**
+   * Create shard observer for each Redis shard to receive "monitor" data
+   * @private
+   */
   private async connect(): Promise<void> {
     try {
       if (this.redis instanceof IORedis.Cluster) {
         this.shardsObservers = await Promise.all(
-          this.redis.nodes('all').filter((node) => node.status === 'ready').map(this.createShardObserver),
+          this.redis.nodes('all').filter((node) => node.status === 'ready').map(RedisObserver.createShardObserver),
         );
       } else {
-        this.shardsObservers = [await this.createShardObserver(this.redis)];
+        this.shardsObservers = [await RedisObserver.createShardObserver(this.redis)];
       }
       this.status = RedisObserverStatus.Ready;
     } catch (error) {
@@ -92,12 +109,20 @@ export class RedisObserver {
     }
   }
 
-  private async createShardObserver(redis: IORedis.Redis): Promise<IShardObserver> {
-    // HACK: ioredis impropriety throw error a user has no permissions to run the 'monitor' command
+  /**
+   * Create and return shard observer using IORedis common client
+   * @param redis
+   */
+  static async createShardObserver(redis: IORedis.Redis): Promise<IShardObserver> {
     await RedisObserver.isMonitorAvailable(redis);
     return await redis.monitor() as IShardObserver;
   }
 
+  /**
+   * HACK: ioredis do not handle error when a user has no permissions to run the 'monitor' command
+   * Here we try to send "monitor" command directly to throw error (like NOPERM) if any
+   * @param redis
+   */
   static async isMonitorAvailable(redis: IORedis.Redis): Promise<boolean> {
     // @ts-ignore
     const duplicate = redis.duplicate({

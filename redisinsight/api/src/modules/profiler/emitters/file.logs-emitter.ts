@@ -14,7 +14,7 @@ class FileLogsEmitter implements ILogsEmitter {
   /**
    * Write batch of logs to a file
    */
-  public async emit(items: any[]) {
+  async emit(items: any[]) {
     try {
       if (!this.logFile.getWriteStream()) {
         return;
@@ -31,12 +31,16 @@ class FileLogsEmitter implements ILogsEmitter {
     }
   }
 
-  public addClientObserver(id: string) {
-    return this.logFile.addClientObserver(id);
+  async addProfilerClient(id: string) {
+    return this.logFile.addProfilerClient(id);
   }
 
-  public removeClientObserver(id: string) {
-    return this.logFile.removeClientObserver(id);
+  async removeProfilerClient(id: string) {
+    return this.logFile.removeProfilerClient(id);
+  }
+
+  async flushLogs() {
+    return this.logFile.destroy();
   }
 }
 export default FileLogsEmitter;

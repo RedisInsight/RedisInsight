@@ -70,6 +70,7 @@ export class RedisObserver {
   public clear() {
     this.profilerClients.clear();
     this.shardsObservers.forEach((observer) => {
+      observer.removeAllListeners('monitor');
       observer.removeAllListeners('end');
       observer.disconnect();
     });

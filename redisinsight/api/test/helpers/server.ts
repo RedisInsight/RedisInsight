@@ -51,7 +51,8 @@ export const getServer = async () => {
 
 export const getSocket = async (namespace: string, options = {}): Promise<Socket> => {
   return new Promise((resolve, reject) => {
-    const client = connect(`${(new URL(baseUrl)).host}/${namespace}`, {
+    const base = new URL(baseUrl);
+    const client = connect(`ws${base.protocol === 'https:' ? 's' : ''}://${base.host}/${namespace}`, {
       forceNew: true,
       rejectUnauthorized: false,
       ...options,

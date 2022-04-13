@@ -89,14 +89,13 @@ test
         //Verify Command helper information
         await t.expect(cliPage.cliHelperTitleArgs.textContent).contains(commandToCheck, 'Command Helper information persists after reopening');
     });
-//skipped due the changes of url
-test.skip
+test
     .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'JSON';
         commandToCheck = 'JSON.SET';
         commandArgumentsToCheck = 'JSON.SET key path value [NX|XX]';
-        externalPageLink = '/#jsonset';
+        externalPageLink = 'https://redis.io/commands/json.set/';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select one command from the list
@@ -107,19 +106,16 @@ test.skip
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).contains(externalPageLink);
-        //Check that command info is displayed on the page
-        await t.expect(cliPage.cliReadMoreJSONCommandDocumentation().textContent).contains('JSON.SET');
+        await t.expect(getPageUrl()).eql(externalPageLink);
         await t.switchToParentWindow();
     });
-//skipped due the changes of url
-test.skip
+test
     .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'Search';
         commandToCheck = 'FT.EXPLAIN';
         commandArgumentsToCheck = 'FT.EXPLAIN index query [dialect]';
-        externalPageLink = '/#ftexplain';
+        externalPageLink = 'https://redis.io/commands/ft.explain/';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select one command from the list
@@ -130,9 +126,7 @@ test.skip
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).contains(externalPageLink);
-        //Check that command info is displayed on the page
-        await t.expect(cliPage.cliReadMoreRediSearchCommandDocumentation().textContent).contains(commandToCheck);
+        await t.expect(getPageUrl()).eql(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -141,7 +135,7 @@ test
         filteringGroup = 'HyperLogLog';
         commandToCheck = 'PFCOUNT';
         commandArgumentsToCheck = 'PFCOUNT key [key ...]';
-        externalPageLink = '/pfcount';
+        externalPageLink = 'https://redis.io/commands/pfcount/';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select one command from the list
@@ -152,7 +146,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).contains(externalPageLink);
+        await t.expect(getPageUrl()).eql(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -172,10 +166,10 @@ test
             'AI.TENSORSET key FLOAT|DOUBLE|INT8|INT16|INT32|INT64|UINT8|UINT16|STRING|BOOL shape [shape ...] [BLOB blob] [VALUES value [VALUES value ...]]'
         ];
         externalPageLinks = [
-            '/#aimodeldel',
-            '/#aiscriptstore',
-            '/#aiscriptexecute',
-            '/#aitensorset'
+            'https://redis.io/commands/ai.modeldel',
+            'https://redis.io/commands/ai.scriptstore',
+            'https://redis.io/commands/ai.scriptexecute',
+            'https://redis.io/commands/ai.tensorset'
         ];
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
@@ -190,7 +184,7 @@ test
             //Click on Read More link for selected command
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).contains(externalPageLinks[i]);
+            await t.expect(getPageUrl()).eql(externalPageLinks[i]);
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;
@@ -202,7 +196,7 @@ test
         filteringGroup = 'Gears';
         commandToCheck = 'RG.GETEXECUTION';
         commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD|CLUSTER]';
-        externalPageLink = '#rggetexecution';
+        externalPageLink = 'https://redis.io/commands/rg.getexecution';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Verify that user can see Gears group in Command Helper (RedisGears module)
@@ -214,7 +208,7 @@ test
         //Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).contains(externalPageLink);
+        await t.expect(getPageUrl()).eql(externalPageLink);
         //Close the window with external link to switch to the application window
         await t.closeWindow();
     });
@@ -237,11 +231,11 @@ test
             'CF.ADD key item'
         ];
         externalPageLinks = [
-            '/#bfmexists',
-            '/#cmsquery',
-            'tdigest.reset',
-            '/#topklist',
-            '/#cfadd'
+            'https://redis.io/commands/bf.mexists/',
+            'https://redis.io/commands/cms.query/',
+            'https://redis.io/commands/tdigest.reset/',
+            'https://redis.io/commands/topk.list/',
+            'https://redis.io/commands/cf.add/'
         ];
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
@@ -256,7 +250,7 @@ test
             //Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).contains(externalPageLinks[i]);
+            await t.expect(getPageUrl()).eql(externalPageLinks[i]);
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;

@@ -705,7 +705,7 @@ export class BrowserPage {
      * @delimiter string with delimiter value
      * @commonKeyFolder flag if not patterned keys will be displayed
      */
-    async checkTreeViewFoldersStructure(folders: Array<Array<string>>, delimiter: string, commonKeyFolder: boolean): Promise<void> {
+    async checkTreeViewFoldersStructure(folders: string[][], delimiter: string, commonKeyFolder: boolean): Promise<void> {
         // Verify that all keys that are not inside of tree view doesn't contain delimiter
         if (commonKeyFolder) {
             await t.expect(this.treeViewNotPatternedKeys.exists).ok('Folder with not patterned keys');

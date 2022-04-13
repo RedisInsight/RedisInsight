@@ -106,7 +106,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink);
+        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         await t.switchToParentWindow();
     });
 test
@@ -126,7 +126,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink);
+        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         await t.switchToParentWindow();
     });
 test
@@ -146,7 +146,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink);
+        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         await t.switchToParentWindow();
     });
 test
@@ -184,7 +184,7 @@ test
             //Click on Read More link for selected command
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).eql(externalPageLinks[i]);
+            await t.expect(getPageUrl()).eql(externalPageLinks[i], 'The opened page');
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;
@@ -208,7 +208,7 @@ test
         //Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink);
+        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         //Close the window with external link to switch to the application window
         await t.closeWindow();
     });
@@ -250,7 +250,7 @@ test
             //Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).eql(externalPageLinks[i]);
+            await t.expect(getPageUrl()).eql(externalPageLinks[i], 'The opened page');
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;

@@ -51,7 +51,7 @@ export const getServer = async () => {
 
 export const getSocket = async (namespace: string, options = {}): Promise<Socket> => {
   return new Promise((resolve, reject) => {
-    const client = connect(`${baseUrl}/${namespace}`, {
+    const client = connect(`${(new URL(baseUrl)).host}/${namespace}`, {
       forceNew: true,
       rejectUnauthorized: false,
       ...options,

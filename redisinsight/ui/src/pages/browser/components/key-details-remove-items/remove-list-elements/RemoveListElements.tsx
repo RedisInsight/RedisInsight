@@ -20,14 +20,13 @@ import {
 
 import { KeyTypes } from 'uiSrc/constants'
 import { validateCountNumber, isVersionHigherOrEquals, formatNameShort } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import { deleteListElementsAction } from 'uiSrc/slices/list'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
 
@@ -104,9 +103,11 @@ const RemoveListElements = (props: Props) => {
   const showPopover = () => {
     setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED
-        : TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.List

@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep } from 'lodash'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { refreshKeyInfoAction } from './keys'
 import { addErrorNotification } from './app/notifications'
@@ -128,6 +129,17 @@ export function updateStringValueAction(
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.String,
+          }
+        })
         dispatch(updateValueSuccess(value))
         dispatch<any>(refreshKeyInfoAction(key))
         onSuccess?.()

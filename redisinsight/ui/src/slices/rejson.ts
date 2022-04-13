@@ -2,8 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
 
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getJsonPathLevel } from 'uiSrc/telemetry'
 import {
   getApiErrorMessage,
   getUrl,
@@ -182,6 +183,17 @@ export function setReJSONDataAction(
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyLevel: getJsonPathLevel(path),
+          }
+        })
         dispatch(setReJSONDataSuccess())
         dispatch<any>(fetchReJSON(key, '.'))
         dispatch<any>(refreshKeyInfoAction(key))
@@ -220,6 +232,18 @@ export function appendReJSONArrayItemAction(
       )
 
       if (isStatusSuccessful(status)) {
+        const keyLevel = path === '.' ? '0' : getJsonPathLevel(`${path}[0]`)
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+            TelemetryEvent.TREE_VIEW_JSON_PROPERTY_ADDED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyLevel
+          }
+        })
         dispatch(appendReJSONArrayItemSuccess())
         dispatch<any>(fetchReJSON(key, '.'))
         dispatch<any>(refreshKeyInfoAction(key))
@@ -257,6 +281,17 @@ export function removeReJSONKeyAction(
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_JSON_PROPERTY_DELETED,
+            TelemetryEvent.TREE_VIEW_JSON_PROPERTY_DELETED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyLevel: getJsonPathLevel(path),
+          }
+        })
         dispatch(removeRejsonKeySuccess())
         dispatch<any>(fetchReJSON(key, '.'))
         dispatch<any>(refreshKeyInfoAction(key))

@@ -6,7 +6,7 @@ import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/rejson'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 
 import RejsonDetails from './RejsonDetails/RejsonDetails'
 
@@ -25,9 +25,11 @@ const RejsonDetailsWrapper = () => {
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_JSON_KEY_COLLAPSED
-        : TelemetryEvent.TREE_VIEW_JSON_KEY_COLLAPSED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_JSON_KEY_COLLAPSED,
+        TelemetryEvent.TREE_VIEW_JSON_KEY_COLLAPSED
+      ),
       eventData: {
         databaseId: instanceId,
         level
@@ -37,9 +39,11 @@ const RejsonDetailsWrapper = () => {
 
   const reportJSONKeyExpanded = (level: number) => {
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_JSON_KEY_EXPANDED
-        : TelemetryEvent.TREE_VIEW_JSON_KEY_EXPANDED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_JSON_KEY_EXPANDED,
+        TelemetryEvent.TREE_VIEW_JSON_KEY_EXPANDED
+      ),
       eventData: {
         databaseId: instanceId,
         level

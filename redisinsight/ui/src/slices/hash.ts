@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, isNull } from 'lodash'
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -208,6 +209,19 @@ export function fetchHashFields(
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.Hash,
+            match: 'EXACT_VALUE_NAME',
+            length: data.total,
+          }
+        })
         dispatch(loadHashFieldsSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }
@@ -306,6 +320,18 @@ export function deleteHashFields(key: string, fields: string[]) {
       )
       const newTotalValue = state.browser.hash.data.total - data.affected
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.Hash,
+            numberOfRemoved: fields.length,
+          }
+        })
         dispatch(removeHashFieldsSuccess())
         dispatch(removeFieldsFromList(fields))
         if (newTotalValue > 0) {
@@ -349,6 +375,18 @@ export function addHashFieldsAction(
         data
       )
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.Hash,
+            numberOfAdded: data.fields.length,
+          }
+        })
         if (onSuccessAction) {
           onSuccessAction()
         }
@@ -383,6 +421,17 @@ export function updateHashFieldsAction(
         data
       )
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.Hash,
+          }
+        })
         if (onSuccessAction) {
           onSuccessAction()
         }

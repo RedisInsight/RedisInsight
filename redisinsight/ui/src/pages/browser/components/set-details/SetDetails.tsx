@@ -8,7 +8,7 @@ import {
 
 import { formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import {
@@ -18,7 +18,6 @@ import {
   setDataSelector,
   setSelector,
 } from 'uiSrc/slices/set'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -66,9 +65,11 @@ const SetDetails = (props: Props) => {
 
   const handleRemoveIconClick = () => {
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED
-        : TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Set

@@ -12,7 +12,7 @@ import {
   updateHashFieldsAction,
 } from 'uiSrc/slices/hash'
 import { formatLongName, Nullable } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import {
@@ -21,7 +21,6 @@ import {
 } from 'uiSrc/components/virtual-table/interfaces'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
@@ -111,9 +110,11 @@ const HashDetails = (props: Props) => {
 
   const handleRemoveIconClick = () => {
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED
-        : TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Hash

@@ -22,7 +22,7 @@ import { selectedKeyDataSelector, selectedKeySelector, keysSelector } from 'uiSr
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent} from 'uiSrc/telemetry'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
@@ -133,9 +133,11 @@ const KeyDetailsHeader = ({
   const showPopoverDelete = () => {
     setIsPopoverDeleteOpen((isPopoverDeleteOpen) => !isPopoverDeleteOpen)
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_KEY_DELETE_CLICKED
-        : TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: type
@@ -158,9 +160,11 @@ const KeyDetailsHeader = ({
     event.stopPropagation()
 
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_KEY_COPIED
-        : TelemetryEvent.TREE_VIEW_KEY_COPIED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_COPIED,
+        TelemetryEvent.TREE_VIEW_KEY_COPIED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: type
@@ -170,9 +174,11 @@ const KeyDetailsHeader = ({
 
   const handleRefreshKey = () => {
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED
-        : TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: type

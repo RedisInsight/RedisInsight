@@ -15,7 +15,7 @@ import {
 import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import AddHashFields from '../../key-details-add-items/add-hash-fields/AddHashFields'
 import AddZsetMembers from '../../key-details-add-items/add-zset-members/AddZsetMembers'
 import AddSetMembers from '../../key-details-add-items/add-set-members/AddSetMembers'
@@ -62,9 +62,11 @@ const KeyDetails = ({ ...props }: Props) => {
     setIsRemoveItemPanelOpen(false)
     setIsAddItemPanelOpen(true)
     sendEventTelemetry({
-      event: viewType === KeyViewType.Browser
-        ? TelemetryEvent.BROWSER_KEY_ADD_VALUE_CLICKED
-        : TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_ADD_VALUE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: selectedKeyType
@@ -80,9 +82,11 @@ const KeyDetails = ({ ...props }: Props) => {
   const closeAddItemPanel = (isCancelled?: boolean) => {
     if (isCancelled && isAddItemPanelOpen) {
       sendEventTelemetry({
-        event: viewType === KeyViewType.Browser
-          ? TelemetryEvent.BROWSER_KEY_ADD_VALUE_CANCELLED
-          : TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CANCELLED,
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_ADD_VALUE_CANCELLED,
+          TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CANCELLED
+        ),
         eventData: {
           databaseId: instanceId,
           keyType: selectedKeyType

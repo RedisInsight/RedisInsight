@@ -131,7 +131,7 @@ export function updateStringValueAction(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
           ),

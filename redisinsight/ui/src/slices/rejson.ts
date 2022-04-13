@@ -185,7 +185,7 @@ export function setReJSONDataAction(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
           ),
@@ -235,7 +235,7 @@ export function appendReJSONArrayItemAction(
         const keyLevel = path === '.' ? '0' : getJsonPathLevel(`${path}[0]`)
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
             TelemetryEvent.TREE_VIEW_JSON_PROPERTY_ADDED
           ),
@@ -283,7 +283,7 @@ export function removeReJSONKeyAction(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_JSON_PROPERTY_DELETED,
             TelemetryEvent.TREE_VIEW_JSON_PROPERTY_DELETED
           ),

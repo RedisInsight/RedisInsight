@@ -304,7 +304,7 @@ export function fetchSearchingListElementAction(
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
           ),
@@ -360,7 +360,7 @@ export function updateListElementAction(
         dispatch(updateElementInList(data))
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
           ),
@@ -404,7 +404,7 @@ export function insertListElementsAction(
         dispatch<any>(fetchKeyInfo(data.keyName))
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
           ),
@@ -445,7 +445,7 @@ export function deleteListElementsAction(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
           ),

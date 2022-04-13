@@ -211,7 +211,7 @@ export function fetchHashFields(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
           ),
@@ -322,7 +322,7 @@ export function deleteHashFields(key: string, fields: string[]) {
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
           ),
@@ -377,7 +377,7 @@ export function addHashFieldsAction(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
           ),
@@ -423,7 +423,7 @@ export function updateHashFieldsAction(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
           ),

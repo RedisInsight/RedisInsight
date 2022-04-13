@@ -392,7 +392,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
         if (!!type || !!match) {
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
-              state.browser.keys.viewType,
+              state.browser.keys?.viewType,
               TelemetryEvent.BROWSER_KEYS_SCANNED_WITH_FILTER_ENABLED,
               TelemetryEvent.TREE_VIEW_KEYS_SCANNED_WITH_FILTER_ENABLED
             ),
@@ -409,7 +409,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
         if (!type && !match && cursor === '0') {
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
-              state.browser.keys.viewType,
+              state.browser.keys?.viewType,
               TelemetryEvent.BROWSER_KEYS_SCANNED,
               TelemetryEvent.TREE_VIEW_KEYS_SCANNED
             ),
@@ -463,7 +463,7 @@ export function fetchMoreKeys(cursor: string, count: number) {
         dispatch(loadMoreKeysSuccess(parseKeysListResponse(state.browser.keys.data.shardsMeta, data)))
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEYS_ADDITIONALLY_SCANNED,
             TelemetryEvent.TREE_VIEW_KEYS_ADDITIONALLY_SCANNED
           ),
@@ -593,7 +593,7 @@ function addTypedKey(
         )
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_ADDED,
             TelemetryEvent.TREE_VIEW_KEY_ADDED
           ),
@@ -692,7 +692,7 @@ export function deleteKeyAction(key: string, onSuccessAction?: () => void) {
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEYS_DELETED,
             TelemetryEvent.TREE_VIEW_KEYS_DELETED
           ),
@@ -764,7 +764,7 @@ export function editKeyTTL(key: string, ttl: number) {
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_TTL_CHANGED,
             TelemetryEvent.TREE_VIEW_KEY_TTL_CHANGED
           ),

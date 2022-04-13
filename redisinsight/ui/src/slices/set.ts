@@ -172,7 +172,7 @@ export function fetchSetMembers(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
           ),
@@ -284,7 +284,7 @@ export function addSetMembersAction(
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
           ),
@@ -330,7 +330,7 @@ export function deleteSetMembers(key: string, members: string[]) {
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
-            state.browser.keys.viewType,
+            state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
             TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
           ),

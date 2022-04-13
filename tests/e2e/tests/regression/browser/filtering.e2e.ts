@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
+import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -14,10 +14,10 @@ const COMMAND_GROUP_SET = 'Set';
 fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path', rte: rte.standalone})
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -60,7 +60,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was found');
     });
 test
-    .after(async () => {
+    .after(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
@@ -80,7 +80,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).ok('The key was found');
     });
 test
-    .after(async () => {
+    .after(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
@@ -101,7 +101,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName2)).notOk('The key wasn\'t found');
     });
 test
-    .after(async () => {
+    .after(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
@@ -181,4 +181,27 @@ test
         await t.click(browserPage.clearSelectionButton);
         await t.expect(browserPage.multiSearchArea.find(browserPage.cssFilteringLabel).visible).notOk('The filter per key type is removed');
         await t.expect(browserPage.filterByPatterSearchInput.getAttribute('value')).eql(keyName, 'All characters from filter input are not removed');
+    });
+test
+    .before(async() => {
+        // Add Big standalone DB
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+    })
+    .after(async() => {
+        // Delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+    })
+    ('Verify that user can filter per exact key without using any patterns in DB with 10 millions of keys', async t => {
+        // Create new key
+        keyName = `KeyForSearch${chance.word({ length: 10 })}`;
+        await browserPage.addSetKey(keyName);
+        // Search by key name
+        await browserPage.searchByKeyName(keyName);
+        // Verify that required key is displayed
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
+        // Switch to tree view
+        await t.click(browserPage.treeViewButton);
+        // Check searched key in tree view
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });

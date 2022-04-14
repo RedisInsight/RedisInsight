@@ -6,11 +6,11 @@ import { io } from 'socket.io-client'
 import {
   setSocket,
   monitorSelector,
-  toggleRunMonitor,
   concatMonitorItems,
   stopMonitor,
   setError,
-  resetMonitorItems
+  resetMonitorItems,
+  setStartTimestamp
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
@@ -25,7 +25,7 @@ interface IProps {
 }
 const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
-  const { socket, isRunning, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
+  const { socket, isRunning, isPaused, isSaveToFile, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
 
   const dispatch = useDispatch()
 
@@ -79,7 +79,13 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     newSocket.on(SocketEvent.Connect, () => {
       // Trigger Monitor event
       clearTimeout(retryTimer)
-      newSocket.emit(MonitorEvent.Monitor, handleMonitorEvents)
+      const timestampStart = Date.now()
+      dispatch(setStartTimestamp(timestampStart))
+      newSocket.emit(
+        MonitorEvent.Monitor,
+        { logFileId: isSaveToFile ? timestampStart.toString() : null },
+        handleMonitorEvents
+      )
     })
 
     // Catch exceptions
@@ -93,7 +99,7 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
 
       payloads.push({ isError: true, time: `${Date.now()}`, ...payload })
       setNewItems(payloads, () => { payloads.length = 0 })
-      dispatch(toggleRunMonitor())
+      dispatch(stopMonitor())
     })
 
     // Catch disconnect
@@ -109,12 +115,19 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     newSocket.on(SocketEvent.ConnectionError, (error) => {
       payloads.push({ isError: true, time: `${Date.now()}`, message: getErrorMessage(error) })
       setNewItems(payloads, () => { payloads.length = 0 })
-      dispatch(toggleRunMonitor())
+      dispatch(stopMonitor())
     })
-  }, [instanceId, isRunning])
+  }, [instanceId, isRunning, isSaveToFile])
+
+  useEffect(() => {
+    if (!isRunning) return
+    !isPaused && socket?.emit(MonitorEvent.Monitor)
+    isPaused && socket?.emit(MonitorEvent.Pause)
+  }, [isPaused, isRunning])
 
   useEffect(() => {
     if (!isRunning) {
+      socket?.emit(MonitorEvent.FlushLogs)
       socket?.removeAllListeners()
       socket?.disconnect()
     }

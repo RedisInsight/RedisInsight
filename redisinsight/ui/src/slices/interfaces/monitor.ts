@@ -8,11 +8,21 @@ export interface IMonitorDataPayload extends Partial<IOnDatePayload>{
 }
 
 export interface StateMonitor {
+  loading: boolean
   isShowMonitor: boolean
   isMinimizedMonitor: boolean
   isRunning: boolean
   isStarted: boolean
+  isPaused: boolean
+  isSaveToFile: boolean
   socket: Nullable<Socket>
   items: IMonitorDataPayload[]
   error: string
+  logFile: any
+  timestamp: {
+    start: number
+    end: number
+    unPaused: number
+    duration: number
+  }
 }

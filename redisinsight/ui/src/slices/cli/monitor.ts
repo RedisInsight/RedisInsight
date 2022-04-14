@@ -1,16 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { MonitorEvent } from 'uiSrc/constants'
 
 import { IMonitorDataPayload, StateMonitor } from '../interfaces'
 import { RootState } from '../store'
 
 export const initialState: StateMonitor = {
+  loading: false,
   isShowMonitor: false,
   isRunning: false,
   isStarted: false,
+  isPaused: false,
+  isSaveToFile: false,
   isMinimizedMonitor: false,
   socket: null,
   error: '',
   items: [],
+  logFile: null,
+  timestamp: {
+    start: 0,
+    end: 0,
+    unPaused: 0,
+    duration: 0
+  }
 }
 
 export const MONITOR_ITEMS_MAX_COUNT = 5_000
@@ -21,6 +32,7 @@ const monitorSlice = createSlice({
   initialState,
   reducers: {
     setMonitorInitialState: (state) => {
+      state.socket?.emit(MonitorEvent.FlushLogs)
       state.socket?.removeAllListeners()
       state.socket?.disconnect()
       return { ...initialState }
@@ -46,13 +58,55 @@ const monitorSlice = createSlice({
       state.isStarted = true
     },
 
+    startMonitor: (state, { payload }) => {
+      state.isRunning = true
+      state.error = ''
+      state.isSaveToFile = payload
+    },
+
+    setStartTimestamp: (state, { payload }) => {
+      state.timestamp.start = payload
+      state.timestamp.unPaused = state.timestamp.start
+    },
+
     toggleRunMonitor: (state) => {
       state.isRunning = !state.isRunning
       state.error = ''
+      if (!state.isRunning) {
+        state.timestamp.end = Date.now()
+        state.timestamp.duration += state.timestamp.end - state.timestamp.unPaused
+        state.isPaused = false
+      }
+    },
+
+    togglePauseMonitor: (state) => {
+      state.isPaused = !state.isPaused
+      if (!state.isPaused) {
+        state.timestamp.unPaused = Date.now()
+      }
+      if (state.isPaused) {
+        state.timestamp.end = Date.now()
+        state.timestamp.duration += state.timestamp.end - state.timestamp.unPaused
+      }
     },
 
     stopMonitor: (state) => {
       state.isRunning = false
+      state.error = ''
+      state.timestamp.end = Date.now()
+      state.timestamp.duration += state.timestamp.end - state.timestamp.unPaused
+      state.isPaused = false
+    },
+
+    resetProfiler: (state) => {
+      state.socket?.emit(MonitorEvent.FlushLogs)
+      state.socket?.removeAllListeners()
+      state.socket?.disconnect()
+      return {
+        ...initialState,
+        isShowMonitor: state.isShowMonitor,
+        isMinimizedMonitor: state.isMinimizedMonitor
+      }
     },
 
     concatMonitorItems: (state, { payload }: { payload: IMonitorDataPayload[] }) => {
@@ -76,7 +130,7 @@ const monitorSlice = createSlice({
     },
     setError: (state, { payload }) => {
       state.error = payload
-    }
+    },
   },
 })
 
@@ -88,7 +142,11 @@ export const {
   toggleHideMonitor,
   setSocket,
   toggleRunMonitor,
+  togglePauseMonitor,
+  startMonitor,
+  setStartTimestamp,
   stopMonitor,
+  resetProfiler,
   concatMonitorItems,
   resetMonitorItems,
   setError

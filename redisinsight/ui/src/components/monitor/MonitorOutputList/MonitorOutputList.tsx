@@ -67,8 +67,8 @@ const MonitorOutputList = (props: Props) => {
           <div onLoad={measure} className={styles.item} ref={registerChild} style={style}>
             {!isError && (
               <>
-                <span>{getFormatTime(time)}</span>
-                <span>{`[${database} ${source}]`}</span>
+                {width > 460 && (<span>{getFormatTime(time)}</span>)}
+                {width > 360 && (<span>{`[${database} ${source}]`}</span>)}
                 <span>{getArgs(args)}</span>
               </>
             )}

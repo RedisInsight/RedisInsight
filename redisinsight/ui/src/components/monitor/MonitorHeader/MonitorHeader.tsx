@@ -29,7 +29,7 @@ export interface Props {
 
 const MonitorHeader = ({ handleRunMonitor }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { isRunning, isStarted, items, error } = useSelector(monitorSelector)
+  const { isRunning, isPaused, isStarted, items, error } = useSelector(monitorSelector)
   const isErrorShown = !!error && !isRunning
   const dispatch = useDispatch()
 
@@ -44,7 +44,6 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
       event: TelemetryEvent.PROFILER_CLOSED,
       eventData: { databaseId: instanceId }
     })
-
     dispatch(setMonitorInitialState())
   }
 
@@ -79,31 +78,33 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
           <EuiIcon type="inspect" size="m" />
           <EuiText>Profiler</EuiText>
         </EuiFlexItem>
-        <EuiFlexItem grow={false} className={styles.actions}>
-          <EuiToolTip
-            content={isErrorShown ? '' : (isRunning ? 'Stop' : 'Start')}
-            anchorClassName="inline-flex"
-          >
-            <EuiButtonIcon
-              iconType={isErrorShown ? BanIcon : (isRunning ? 'pause' : 'play')}
-              onClick={handleRunMonitor}
-              aria-label="start/stop monitor"
-              data-testid="toggle-run-monitor"
-              disabled={isErrorShown}
-            />
-          </EuiToolTip>
-          <EuiToolTip
-            content={!isStarted || !items.length ? '' : 'Clear'}
-            anchorClassName={cx('inline-flex', { transparent: !isStarted || !items.length })}
-          >
-            <EuiButtonIcon
-              iconType="eraser"
-              onClick={handleClearMonitor}
-              aria-label="clear profiler"
-              data-testid="clear-monitor"
-            />
-          </EuiToolTip>
-        </EuiFlexItem>
+        {isStarted && (
+          <EuiFlexItem grow={false} className={styles.actions}>
+            <EuiToolTip
+              content={isErrorShown ? '' : (!isPaused ? 'Pause' : 'Resume')}
+              anchorClassName="inline-flex"
+            >
+              <EuiButtonIcon
+                iconType={isErrorShown ? BanIcon : (!isPaused ? 'pause' : 'play')}
+                onClick={() => handleRunMonitor()}
+                aria-label="start/stop monitor"
+                data-testid="toggle-run-monitor"
+                disabled={isErrorShown}
+              />
+            </EuiToolTip>
+            <EuiToolTip
+              content={!isStarted || !items.length ? '' : 'Clear Profiler window'}
+              anchorClassName={cx('inline-flex', { transparent: !isStarted || !items.length })}
+            >
+              <EuiButtonIcon
+                iconType="eraser"
+                onClick={handleClearMonitor}
+                aria-label="clear profiler"
+                data-testid="clear-monitor"
+              />
+            </EuiToolTip>
+          </EuiFlexItem>
+        )}
         <EuiFlexItem grow />
         <EuiFlexItem grow={false}>
           <EuiToolTip

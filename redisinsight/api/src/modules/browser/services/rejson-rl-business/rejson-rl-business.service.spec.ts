@@ -9,7 +9,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { randomBytes } from 'crypto';
 import { when } from 'jest-when';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
@@ -24,7 +23,6 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { RejsonRlBusinessService } from './rejson-rl-business.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -43,10 +41,6 @@ describe('JsonBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RejsonRlBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,

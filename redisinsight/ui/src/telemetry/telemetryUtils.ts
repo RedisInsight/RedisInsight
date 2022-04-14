@@ -3,11 +3,14 @@
  * This module abstracts the exact service/framework used for tracking usage.
  */
 import { get } from 'lodash'
+import * as jsonpath from 'jsonpath'
 import { Nullable } from 'uiSrc/utils'
 import store from 'uiSrc/slices/store'
 import { localStorageService } from 'uiSrc/services'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes } from 'uiSrc/constants'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService } from './interfaces'
+import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
 
 let telemetryService: Nullable<ITelemetryService> = null
@@ -79,4 +82,86 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
   }
 }
 
-export { getTelemetryService, sendEventTelemetry, sendPageViewTelemetry, checkIsAnalyticsGranted }
+const getBasedOnViewTypeEvent = (
+  viewType: KeyViewType,
+  browserEvent: TelemetryEvent,
+  treeViewEvent: TelemetryEvent
+): TelemetryEvent => {
+  switch (viewType) {
+    case KeyViewType.Browser:
+      return browserEvent
+    case KeyViewType.Tree:
+      return treeViewEvent
+    default:
+      return browserEvent
+  }
+}
+
+const getJsonPathLevel = (path: string): string => {
+  try {
+    if (path === '.') {
+      return 'root'
+    }
+    const levelsLength = jsonpath.parse(
+      `$${path.startsWith('.') ? '' : '..'}${path}`,
+    ).length
+    if (levelsLength === 1) {
+      return 'root'
+    }
+    return `${levelsLength - 2}`
+  } catch (e) {
+    return 'root'
+  }
+}
+
+const getAdditionalAddedEventData = (endpoint: ApiEndpoints, data: any) => {
+  switch (endpoint) {
+    case ApiEndpoints.HASH:
+      return {
+        keyType: KeyTypes.Hash,
+        length: data.fields?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.SET:
+      return {
+        keyType: KeyTypes.Set,
+        length: data.members?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.ZSET:
+      return {
+        keyType: KeyTypes.ZSet,
+        length: data.members?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.STRING:
+      return {
+        keyType: KeyTypes.String,
+        length: data.value?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.LIST:
+      return {
+        keyType: KeyTypes.List,
+        length: 1,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.REJSON:
+      return {
+        keyType: KeyTypes.ReJSON,
+        TTL: -1
+      }
+    default:
+      return {}
+  }
+}
+
+export {
+  getTelemetryService,
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+  checkIsAnalyticsGranted,
+  getBasedOnViewTypeEvent,
+  getJsonPathLevel,
+  getAdditionalAddedEventData
+}

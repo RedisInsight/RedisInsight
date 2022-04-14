@@ -21,7 +21,7 @@ import {
   setBrowserKeyListDataLoaded,
 } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import KeysSummary from 'uiSrc/components/keys-summary'
@@ -135,7 +135,11 @@ const KeysHeader = (props: Props) => {
 
   const handleRefreshKeys = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED
+      ),
       eventData: {
         databaseId: instanceId
       }
@@ -165,7 +169,11 @@ const KeysHeader = (props: Props) => {
   const openAddKeyPanel = () => {
     handleAddKeyPanel(true)
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_ADD_BUTTON_CLICKED
+      ),
       eventData: {
         databaseId: instanceId
       }
@@ -173,6 +181,14 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleSwitchView = (type: KeyViewType) => {
+    if (type === KeyViewType.Tree) {
+      sendEventTelemetry({
+        event: TelemetryEvent.TREE_VIEW_OPENED,
+        eventData: {
+          databaseId: instanceId
+        }
+      })
+    }
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)

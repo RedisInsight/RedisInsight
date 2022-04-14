@@ -86,6 +86,7 @@ export class BrowserPage {
     removeFromHeadSelection: Selector
     addJsonObjectButton: Selector
     jsonKeyValue: Selector
+    jsonScalarValue: Selector
     jsonValueInput: Selector
     jsonKeyInput: Selector
     jsonError: Selector
@@ -261,6 +262,7 @@ export class BrowserPage {
         this.searchInput = Selector('[data-testid=search]');
         this.addListKeyElementInput = Selector('[data-testid=elements-input]');
         this.jsonKeyValue = Selector('[data-testid=json-data]');
+        this.jsonScalarValue = Selector('[data-testid=json-scalar-value]');
         this.jsonKeyInput = Selector('[data-testid=json-key]');
         this.jsonValueInput = Selector('[data-testid=json-value]');
         this.jsonError = Selector('[data-testid=edit-json-error]');
@@ -339,6 +341,7 @@ export class BrowserPage {
             await t.typeText(this.keyTTLInput, TTL);
         }
         await t.click(this.addKeyButton);
+        await t.click(this.toastCloseButton);
     }
 
     /**

@@ -38,14 +38,14 @@
 
 .monaco-glyph-run-command {
   color: var(--rsSubmitBtn);
-  opacity: 0.5 !important;
   margin-left: 10px;
 
   &::before {
     content: '';
-    width: 12px;
-    height: 12px;
-    background-image: url('uiSrc/assets/img/play_icon.svg');
+    width: 16px;
+    height: 16px;
+    mask-image: url(uiSrc/assets/img/play_icon.svg);
+    background-color: var(--rsSubmitBtn);
     background-size: contain;
     font-size: 16px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,

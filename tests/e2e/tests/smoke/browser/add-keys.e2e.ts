@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -97,7 +97,7 @@ test
         const keyTTL = '2147476121';
         const value = '{"name":"xyz"}';
         //add JSON key
-        await browserPage.addJsonKey(keyName, keyTTL, value);
+        await browserPage.addJsonKey(keyName, value, keyTTL);
         //check the notification message
         const notofication = await browserPage.getMessageText();
         await t.expect(notofication).contains('Key has been added', 'The notification');

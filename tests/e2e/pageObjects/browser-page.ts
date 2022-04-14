@@ -326,16 +326,18 @@ export class BrowserPage {
      * @param TTL The Time to live value of the key
      * @param value The key value
      */
-    async addJsonKey(keyName: string, TTL = ' ', value = ' '): Promise<void> {
+    async addJsonKey(keyName: string, value = ' ', TTL?: string): Promise<void> {
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.jsonOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
-        await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
         await t.click(this.jsonKeyValueInput);
         await t.typeText(this.jsonKeyValueInput, value);
+        if (TTL) {
+            await t.click(this.keyTTLInput);
+            await t.typeText(this.keyTTLInput, TTL);
+        }
         await t.click(this.addKeyButton);
     }
 
@@ -449,14 +451,12 @@ export class BrowserPage {
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
         const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
-        const res = keyNameInTheList.exists;
-        return res;
+        return keyNameInTheList.exists;
     }
 
     //Getting the text of the Notification message
     async getMessageText(): Promise<string> {
-        const text = this.notificationMessage.textContent;
-        return text;
+        return this.notificationMessage.textContent;
     }
 
     //Delete key from details
@@ -509,8 +509,7 @@ export class BrowserPage {
 
     //Get string key value from details
     async getStringKeyValue(): Promise<string> {
-        const value = this.stringKeyValue.textContent;
-        return value;
+        return this.stringKeyValue.textContent;
     }
 
     /**
@@ -580,8 +579,7 @@ export class BrowserPage {
 
     //Get databases name
     async getDatabasesName(): Promise<string> {
-        const text = this.databaseNames.textContent;
-        return text;
+        return this.databaseNames.textContent;
     }
 
     //Open key details

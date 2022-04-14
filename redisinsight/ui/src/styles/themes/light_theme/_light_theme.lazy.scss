@@ -68,6 +68,7 @@
   --euiTooltipTextSecondColor: #{$euiTooltipTextSecondColor};
   --euiTooltipTitleTextColor: #{$euiTooltipTitleTextColor};
   --euiToastBackgroundColor: #{$euiToastBackgroundColor};
+  --euiToastDangerBgColor: #{$euiToastDangerBgColor};
   --euiToastSuccessBtnColor: #{$euiToastSuccessBtnColor};
   --euiToastSuccessBorderColor: #{$euiToastSuccessBorderColor};
   --euiToastDangerBtnColor: #{$euiToastDangerBtnColor};
@@ -100,6 +101,7 @@
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
 
   --separatorColor: #{$separatorColor};
+  --separatorNavigationColor: #{$separatorNavigationColor};
   --separatorDropdownColor: #{$separatorDropdownColor};
 
   --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
@@ -156,4 +158,7 @@
   --rsSubmitBtn: #{$rsSubmitBtn};
   --rsInputColor: #{$rsInputColor};
   --rsInputWrapperColor: #{$rsInputWrapperColor};
+
+  // Workbench
+  --wbRunResultsBg: #{$wbRunResultsBg};
 }

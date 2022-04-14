@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { cloneDeep, hasIn } from 'lodash'
+import { cloneDeep } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
 import * as jsonpath from 'jsonpath'
 

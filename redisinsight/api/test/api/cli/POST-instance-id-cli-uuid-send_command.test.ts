@@ -64,7 +64,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
 
   before(rte.data.truncate);
   // Create Redis client for CLI
-  before(async () => await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`))
+  beforeEach(async () => await request(server).patch(`/instance/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`))
 
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(

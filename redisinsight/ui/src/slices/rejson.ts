@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
 
-import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getJsonPathLevel } from 'uiSrc/telemetry'
 import {

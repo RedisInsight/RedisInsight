@@ -242,7 +242,6 @@
     "formik": "^2.2.9",
     "html-entities": "^2.3.2",
     "html-react-parser": "^1.2.4",
-    "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
     "react": "^17.0.1",
     "react-contenteditable": "^3.3.5",

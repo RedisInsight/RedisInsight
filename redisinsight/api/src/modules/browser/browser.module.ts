@@ -18,7 +18,6 @@ import { ZSetBusinessService } from './services/z-set-business/z-set-business.se
 import { RejsonRlBusinessService } from './services/rejson-rl-business/rejson-rl-business.service';
 import { BrowserToolService } from './services/browser-tool/browser-tool.service';
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
-import { BrowserAnalyticsService } from './services/browser-analytics/browser-analytics.service';
 
 @Module({
   imports: [SharedModule],
@@ -41,7 +40,6 @@ import { BrowserAnalyticsService } from './services/browser-analytics/browser-an
     HashBusinessService,
     BrowserToolService,
     BrowserToolClusterService,
-    BrowserAnalyticsService,
   ],
 })
 export class BrowserModule implements NestModule {

@@ -26,7 +26,6 @@ import {
   BrowserToolRejsonRlCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 @Injectable()
 export class RejsonRlBusinessService {
@@ -34,7 +33,6 @@ export class RejsonRlBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   private async forceGetJson(
@@ -232,13 +230,6 @@ export class RejsonRlBusinessService {
       }
 
       this.logger.log('Succeed to create REJSON-RL key type.');
-      this.browserAnalyticsService.sendKeyAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.JSON,
-        {
-          TTL: -1,
-        },
-      );
 
       if (expire) {
         try {
@@ -246,11 +237,6 @@ export class RejsonRlBusinessService {
             clientOptions,
             BrowserToolKeysCommands.Expire,
             [keyName, expire],
-          );
-          this.browserAnalyticsService.sendKeyTTLChangedEvent(
-            clientOptions.instanceId,
-            expire,
-            -1,
           );
         } catch (err) {
           this.logger.error(
@@ -361,17 +347,6 @@ export class RejsonRlBusinessService {
         BrowserToolRejsonRlCommands.JsonSet,
         [keyName, path, data],
       );
-      if (type) {
-        this.browserAnalyticsService.sendJsonPropertyEditedEvent(
-          clientOptions.instanceId,
-          path,
-        );
-      } else {
-        this.browserAnalyticsService.sendJsonPropertyAddedEvent(
-          clientOptions.instanceId,
-          path,
-        );
-      }
 
       this.logger.log('Succeed to modify REJSON-RL key type.');
     } catch (error) {
@@ -425,10 +400,6 @@ export class RejsonRlBusinessService {
         BrowserToolRejsonRlCommands.JsonArrAppend,
         [keyName, path, ...data],
       );
-      this.browserAnalyticsService.sendJsonArrayPropertyAppendEvent(
-        clientOptions.instanceId,
-        path,
-      );
       this.logger.log('Succeed to modify REJSON-RL key type.');
     } catch (error) {
       this.logger.error('Failed to modify REJSON-RL key type', error);
@@ -474,12 +445,6 @@ export class RejsonRlBusinessService {
         BrowserToolRejsonRlCommands.JsonDel,
         [keyName, path],
       );
-      if (affected) {
-        this.browserAnalyticsService.sendJsonPropertyDeletedEvent(
-          clientOptions.instanceId,
-          path,
-        );
-      }
       this.logger.log('Succeed to remove REJSON-RL path.');
       return { affected };
     } catch (error) {

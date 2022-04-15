@@ -740,7 +740,22 @@ export class BrowserPage {
             await t.click(await Selector(folderSelector));
             const foundKeyName = `${folders[i].join(delimiter)}`;
             await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).visible).ok('Specific key');
+            await t.click(array[0]);
         }
+    }
+    /**
+     * Change delimiter value
+     * @delimiter string with delimiter value
+     */
+    async changeDelimiterInTreeView(delimiter: string): Promise<void> {
+        // Open delimiter popup
+        await t.click(this.treeViewDelimiterButton);
+        // Check the previous value
+        await t.expect(this.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value');
+        // Apply new value to the field
+        await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
+        // Click on save button
+        await t.click(this.treeViewDelimiterValueSave);
     }
 }
 

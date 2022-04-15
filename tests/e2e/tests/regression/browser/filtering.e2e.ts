@@ -194,7 +194,7 @@ test
     })
     ('Verify that user can filter per exact key without using any patterns in DB with 10 millions of keys', async t => {
         // Create new key
-        keyName = `KeyForSearch${chance.word({ length: 10 })}`;
+        keyName = `KeyForSearch-${chance.word({ length: 10 })}`;
         await browserPage.addSetKey(keyName);
         // Search by key name
         await browserPage.searchByKeyName(keyName);
@@ -203,5 +203,6 @@ test
         // Switch to tree view
         await t.click(browserPage.treeViewButton);
         // Check searched key in tree view
+        await t.click(browserPage.treeViewNotPatternedKeys);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });

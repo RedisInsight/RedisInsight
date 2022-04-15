@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
+import * as jsonpath from 'jsonpath'
 
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
@@ -183,17 +184,23 @@ export function setReJSONDataAction(
       )
 
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyLevel: getJsonPathLevel(path),
-          }
-        })
+        try {
+          const isEditMode = jsonpath.query(state.browser.rejson?.data?.data, `$..${path}`).length > 0
+          sendEventTelemetry({
+            event: getBasedOnViewTypeEvent(
+              state.browser.keys?.viewType,
+              TelemetryEvent[`BROWSER_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`],
+              TelemetryEvent[`TREE_VIEW_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`],
+            ),
+            eventData: {
+              databaseId: state.connections.instances?.connectedInstance?.id,
+              keyLevel: getJsonPathLevel(path),
+            }
+          })
+        } catch (error) {
+          // console.log(error)
+        }
+
         dispatch(setReJSONDataSuccess())
         dispatch<any>(fetchReJSON(key, '.'))
         dispatch<any>(refreshKeyInfoAction(key))
@@ -236,7 +243,7 @@ export function appendReJSONArrayItemAction(
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+            TelemetryEvent.BROWSER_JSON_PROPERTY_ADDED,
             TelemetryEvent.TREE_VIEW_JSON_PROPERTY_ADDED
           ),
           eventData: {

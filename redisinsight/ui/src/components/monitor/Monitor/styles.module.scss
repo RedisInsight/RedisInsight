@@ -22,7 +22,8 @@
   overflow: auto;
 
   :global {
-    .euiFlexGroup, .euiFlexItem {
+    .euiFlexGroup,
+    .euiFlexItem {
       margin: 0px !important;
     }
   }
@@ -105,7 +106,7 @@
     .euiTableRow {
       td:first-child,
       td:last-child {
-         border: none
+        border: none;
       }
 
       &:hover {
@@ -176,8 +177,11 @@
   border-right: 1px solid var(--euiColorLightShade);
 }
 
-
 .scrollDivRef {
   padding-top: 10px;
   margin-left: -12px;
+}
+
+.time {
+  color: var(--monitorTimeColor);
 }

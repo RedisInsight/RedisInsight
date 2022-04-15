@@ -46,7 +46,6 @@ import {
 } from './key-info-manager/strategies/rejson-rl-type-info/rejson-rl-type-info.strategy';
 import { TSTypeInfoStrategy } from './key-info-manager/strategies/ts-type-info/ts-type-info.strategy';
 import { GraphTypeInfoStrategy } from './key-info-manager/strategies/graph-type-info/graph-type-info.strategy';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 @Injectable()
 export class KeysBusinessService {
@@ -60,7 +59,6 @@ export class KeysBusinessService {
     private instancesBusinessService: InstancesBusinessService,
     private browserTool: BrowserToolService,
     private browserToolCluster: BrowserToolClusterService,
-    private browserAnalyticsService: BrowserAnalyticsService,
     @Inject('SETTINGS_PROVIDER')
     private settingsService: ISettingsProvider,
   ) {
@@ -130,19 +128,6 @@ export class KeysBusinessService {
       );
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientOptions, dto);
-      this.browserAnalyticsService.sendKeysScannedEvent(
-        clientOptions.instanceId,
-        dto.match,
-        dto.type,
-        {
-          databaseSize: result.reduce((prev, cur) => prev + cur.total, 0),
-          numberOfKeysScanned: result.reduce(
-            (prev, cur) => prev + cur.scanned,
-            0,
-          ),
-          scanCount: dto.count,
-        },
-      );
       return result;
     } catch (error) {
       this.logger.error(
@@ -207,10 +192,6 @@ export class KeysBusinessService {
       this.logger.error('Failed to delete keys. Not Found keys');
       throw new NotFoundException();
     }
-    this.browserAnalyticsService.sendKeysDeletedEvent(
-      clientOptions.instanceId,
-      result,
-    );
     this.logger.log('Succeed to delete keys');
     return { affected: result };
   }
@@ -295,11 +276,6 @@ export class KeysBusinessService {
       throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
     }
     this.logger.log('Succeed to set a timeout on key.');
-    this.browserAnalyticsService.sendKeyTTLChangedEvent(
-      clientOptions.instanceId,
-      ttl >= 0 ? ttl : -2,
-      currentTtl,
-    );
     return { ttl: ttl >= 0 ? ttl : -2 };
   }
 
@@ -328,11 +304,6 @@ export class KeysBusinessService {
           clientOptions,
           BrowserToolKeysCommands.Persist,
           [keyName],
-        );
-        this.browserAnalyticsService.sendKeyTTLChangedEvent(
-          clientOptions.instanceId,
-          -1,
-          currentTtl,
         );
       }
     } catch (error) {

@@ -28,7 +28,6 @@ import {
   HashFieldDto,
   HashScanResponse,
 } from '../../dto/hash.dto';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -38,7 +37,6 @@ export class HashBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async createHash(
@@ -72,14 +70,6 @@ export class HashBusinessService {
       } else {
         await this.createSimpleHash(clientOptions, keyName, args);
       }
-      this.browserAnalyticsService.sendKeyAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.Hash,
-        {
-          length: fields.length,
-          TTL: dto.expire || -1,
-        },
-      );
       this.logger.log('Succeed to create Hash data type.');
     } catch (error) {
       this.logger.error('Failed to create Hash data type.', error);
@@ -129,14 +119,6 @@ export class HashBusinessService {
         const scanResult = await this.scanHash(clientOptions, dto);
         result = { ...result, ...scanResult };
       }
-      this.browserAnalyticsService.sendKeyScannedEvent(
-        clientOptions.instanceId,
-        RedisDataType.Hash,
-        dto.match,
-        {
-          length: result.total,
-        },
-      );
       this.logger.log('Succeed to get fields of the Hash data type.');
       return result;
     } catch (error) {
@@ -174,21 +156,6 @@ export class HashBusinessService {
         BrowserToolHashCommands.HSet,
         [keyName, ...args],
       );
-      if (added) {
-        this.browserAnalyticsService.sendKeyValueAddedEvent(
-          clientOptions.instanceId,
-          RedisDataType.Hash,
-          {
-            numberOfAdded: added,
-          },
-        );
-      }
-      if (fields.length - added > 0) {
-        this.browserAnalyticsService.sendKeyValueEditedEvent(
-          clientOptions.instanceId,
-          RedisDataType.Hash,
-        );
-      }
       this.logger.log('Succeed to add fields to Hash data type.');
     } catch (error) {
       this.logger.error('Failed to add fields to Hash data type.', error);
@@ -232,15 +199,6 @@ export class HashBusinessService {
         throw new BadRequestException(error.message);
       }
       catchAclError(error);
-    }
-    if (result) {
-      this.browserAnalyticsService.sendKeyValueRemovedEvent(
-        clientOptions.instanceId,
-        RedisDataType.Hash,
-        {
-          numberOfRemoved: result,
-        },
-      );
     }
     this.logger.log('Succeed to delete fields from the Hash data type.');
     return { affected: result };

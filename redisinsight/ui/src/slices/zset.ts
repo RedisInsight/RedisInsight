@@ -2,8 +2,9 @@ import { cloneDeep, isNull, remove } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
+import { ApiEndpoints, SortOrder, KeyTypes } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { StateZset } from 'uiSrc/slices/interfaces/zset'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -301,6 +302,18 @@ export function fetchAddZSetMembers(
         data
       )
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.ZSet,
+            numberOfAdded: data.members.length,
+          }
+        })
         onSuccessAction?.()
         dispatch(updateScoreSuccess())
         dispatch<any>(fetchKeyInfo(data.keyName))
@@ -332,6 +345,18 @@ export function deleteZSetMembers(key: string, members: string[]) {
         }
       )
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.ZSet,
+            numberOfRemoved: members.length,
+          }
+        })
         const newTotalValue = state.browser.zset.data.total - data.affected
         dispatch(removeZsetMembersSuccess())
         dispatch(removeMembersFromList(members))
@@ -373,6 +398,17 @@ export function updateZSetMembers(
         data
       )
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.ZSet,
+          }
+        })
         onSuccessAction?.()
         dispatch(updateScoreSuccess())
         dispatch(updateMembersInList(data.members))
@@ -411,6 +447,19 @@ export function fetchSearchZSetMembers(
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.ZSet,
+            match: 'EXACT_VALUE_NAME',
+            length: data.total,
+          }
+        })
         dispatch(searchZSetMembersSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }

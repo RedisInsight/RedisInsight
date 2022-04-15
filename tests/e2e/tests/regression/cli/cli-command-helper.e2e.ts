@@ -215,7 +215,7 @@ test
 test
     .meta({ env: env.web, rte: rte.standalone })
     ('Verify that user can work with Bloom groups in Command Helper (RedisBloom module)', async t => {
-        filteringGroups = ['Bloom', 'CMS', 'TDigest', 'TopK', 'Cuckoo'];
+        filteringGroups = ['Bf', 'CMS', 'TDigest', 'TopK', 'Cf'];
         commandsToCheck = [
             'BF.MEXISTS',
             'CMS.QUERY',

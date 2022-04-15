@@ -5,6 +5,7 @@ import {
   NODE_STROKE_WIDTH,
   NODE_RADIUS,
   ZOOM_PROPS,
+  EDGE_CAPTION_EXTERNAL,
 } from './constants'
 
 const DEFAULT_OPTIONS = {
@@ -13,11 +14,12 @@ const DEFAULT_OPTIONS = {
   minCollision: undefined,
   graphData: undefined,
   nodeOutlineFillColor: undefined,
-  nodeRadius: 25,
+  nodeRadius: NODE_RADIUS,
   relationshipColor: '#a5abb6',
   zoomFit: false,
   labelProperty: 'name',
   infoPanel: false,
+  relationshipWidth: 1.5,
 }
 
 const COLORS = [
@@ -44,11 +46,531 @@ const COLORS = [
   '#ff75ea', // pink
 ]
 
+class Point {
+  x: number
+  y: number
+
+  constructor(_x: number, _y: number) {
+    this.x = _x;
+    this.y = _y;
+  }
+
+  toString(): string {
+    return  `${this.x} ${this.y}`
+  }
+}
+
+function LoopArrow(
+  nodeRadius: number,
+  straightLength: number,
+  spreadDegrees: number,
+  shaftWidth: number,
+  headWidth: number,
+  headLength: number,
+  captionHeight: number,
+) {
+  this.outline
+  this.overlay, this.shaftLength
+  this.midShaftPoint
+
+  const spread = (spreadDegrees * Math.PI) / 180
+  const r1 = nodeRadius
+  const r2 = nodeRadius + headLength
+  const r3 = nodeRadius + straightLength
+  const loopRadius = r3 * Math.tan(spread / 2)
+  const shaftRadius = shaftWidth / 2
+  this.shaftLength = loopRadius * 3 + shaftWidth
+
+  const normalPoint = function (sweep: number, radius: number, displacement: number) {
+    const localLoopRadius = radius * Math.tan(spread / 2)
+    const cy = radius / Math.cos(spread / 2)
+    return new Point(
+      (localLoopRadius + displacement) * Math.sin(sweep),
+      cy + (localLoopRadius + displacement) * Math.cos(sweep)
+    )
+  }
+
+  this.midShaftPoint = normalPoint(
+    0,
+    r3,
+    shaftRadius + captionHeight / 2 + 2
+  )
+  const startPoint = (radius: number, displacement: number) =>
+    normalPoint((Math.PI + spread) / 2, radius, displacement)
+  const endPoint = (radius: number, displacement: number) =>
+    normalPoint(-(Math.PI + spread) / 2, radius, displacement)
+
+  this.outline = function () {
+    const inner = loopRadius - shaftRadius
+    const outer = loopRadius + shaftRadius
+    return [
+      "M",
+      startPoint(r1, shaftRadius),
+      "L",
+      startPoint(r3, shaftRadius),
+      "A",
+      outer,
+      outer,
+      0,
+      1,
+      1,
+      endPoint(r3, shaftRadius),
+      "L",
+      endPoint(r2, shaftRadius),
+      "L",
+      endPoint(r2, -headWidth / 2),
+      "L",
+      endPoint(r1, 0),
+      "L",
+      endPoint(r2, headWidth / 2),
+      "L",
+      endPoint(r2, -shaftRadius),
+      "L",
+      endPoint(r3, -shaftRadius),
+      "A",
+      inner,
+      inner,
+      0,
+      1,
+      0,
+      startPoint(r3, -shaftRadius),
+      "L",
+      startPoint(r1, -shaftRadius),
+      "Z",
+    ].join(" ")
+  }
+
+  this.overlay = function (minWidth: number) {
+    const displacement = Math.max(minWidth / 2, shaftRadius)
+    const inner = loopRadius - displacement
+    const outer = loopRadius + displacement
+    return [
+      "M",
+      startPoint(r1, displacement),
+      "L",
+      startPoint(r3, displacement),
+      "A",
+      outer,
+      outer,
+      0,
+      1,
+      1,
+      endPoint(r3, displacement),
+      "L",
+      endPoint(r2, displacement),
+      "L",
+      endPoint(r2, -displacement),
+      "L",
+      endPoint(r3, -displacement),
+      "A",
+      inner,
+      inner,
+      0,
+      1,
+      0,
+      startPoint(r3, -displacement),
+      "L",
+      startPoint(r1, -displacement),
+      "Z",
+    ].join(" ")
+  }
+}
+
+
+function StraightArrow(
+  startRadius: number,
+  endRadius: number,
+  centreDistance: number,
+  shaftWidth: number,
+  headWidth: number,
+  headHeight: number,
+  captionLayout: string
+) {
+  this.length
+  this.midShaftPoint
+  this.outline
+  this.overlay
+  this.shaftLength
+  this.deflection = 0
+
+  this.length = centreDistance - (startRadius + endRadius)
+  this.shaftLength = this.length - headHeight
+
+  const startArrow = startRadius
+  const endShaft = startArrow + this.shaftLength
+  const endArrow = startArrow + this.length
+  const shaftRadius = shaftWidth / 2
+  const headRadius = headWidth / 2
+
+  this.midShaftPoint = {
+    x: startArrow + this.shaftLength / 2,
+    y: 0,
+  }
+
+  // for shortCaptionLength we use textBoundingBox = text.node().getComputedTextLength(),
+  this.outline = function (shortCaptionLength: number) {
+    if (captionLayout === EDGE_CAPTION_EXTERNAL) {
+      const startBreak = startArrow + (this.shaftLength - shortCaptionLength) / 2
+      const endBreak = endShaft - (this.shaftLength - shortCaptionLength) / 2
+
+      return [
+        "M",
+        startArrow,
+        shaftRadius,
+        "L",
+        startBreak,
+        shaftRadius,
+        "L",
+        startBreak,
+        -shaftRadius,
+        "L",
+        startArrow,
+        -shaftRadius,
+        "Z",
+        "M",
+        endBreak,
+        shaftRadius,
+        "L",
+        endShaft,
+        shaftRadius,
+        "L",
+        endShaft,
+        headRadius,
+        "L",
+        endArrow,
+        0,
+        "L",
+        endShaft,
+        -headRadius,
+        "L",
+        endShaft,
+        -shaftRadius,
+        "L",
+        endBreak,
+        -shaftRadius,
+        "Z",
+      ].join(" ")
+    } else {
+      return [
+        "M",
+        startArrow,
+        shaftRadius,
+        "L",
+        endShaft,
+        shaftRadius,
+        "L",
+        endShaft,
+        headRadius,
+        "L",
+        endArrow,
+        0,
+        "L",
+        endShaft,
+        -headRadius,
+        "L",
+        endShaft,
+        -shaftRadius,
+        "L",
+        startArrow,
+        -shaftRadius,
+        "Z",
+      ].join(" ")
+    }
+  }
+
+  this.overlay = function (minWidth: number) {
+    const radius = Math.max(minWidth / 2, shaftRadius)
+    return [
+      "M",
+      startArrow,
+      radius,
+      "L",
+      endArrow,
+      radius,
+      "L",
+      endArrow,
+      -radius,
+      "L",
+      startArrow,
+      -radius,
+      "Z",
+    ].join(" ")
+  }
+}
+
+function ArcArrow(
+  startRadius: number,
+  endRadius: number,
+  endCentre: number,
+  _deflection: number,
+  arrowWidth: number,
+  headWidth: number,
+  headLength: number,
+  captionLayout: string
+) {
+  this.deflection = _deflection
+  const square = (l: number) => l * l
+
+  const deflectionRadians = (this.deflection * Math.PI) / 180
+  const startAttach = {
+    x: Math.cos(deflectionRadians) * startRadius,
+    y: Math.sin(deflectionRadians) * startRadius,
+  }
+
+  const radiusRatio = startRadius / (endRadius + headLength)
+  const homotheticCenter = (-endCentre * radiusRatio) / (1 - radiusRatio)
+
+  const intersectWithOtherCircle = function (
+    fixedPoint: Point,
+    radius: number,
+    xCenter: number,
+    polarity: number,
+  ) {
+    const gradient = fixedPoint.y / (fixedPoint.x - homotheticCenter)
+    const hc = fixedPoint.y - gradient * fixedPoint.x
+
+    const A = 1 + square(gradient)
+    const B = 2 * (gradient * hc - xCenter)
+    const C = square(hc) + square(xCenter) - square(radius)
+
+    const intersection: Point = {
+      x: (-B + polarity * Math.sqrt(square(B) - 4 * A * C)) / (2 * A),
+      y: 0,
+    }
+    intersection.y = (intersection.x - homotheticCenter) * gradient
+
+    return intersection
+  }
+
+  const endAttach = intersectWithOtherCircle(
+    startAttach,
+    endRadius + headLength,
+    endCentre,
+    -1
+  )
+
+  const g1 = -startAttach.x / startAttach.y
+  const c1 = startAttach.y + square(startAttach.x) / startAttach.y
+  const g2 = -(endAttach.x - endCentre) / endAttach.y
+  const c2 =
+    endAttach.y + ((endAttach.x - endCentre) * endAttach.x) / endAttach.y
+
+  const cx = (c1 - c2) / (g2 - g1)
+  const cy = g1 * cx + c1
+
+  const arcRadius = Math.sqrt(
+    square(cx - startAttach.x) + square(cy - startAttach.y)
+  )
+  const startAngle = Math.atan2(startAttach.x - cx, cy - startAttach.y)
+  const endAngle = Math.atan2(endAttach.x - cx, cy - endAttach.y)
+  let sweepAngle = endAngle - startAngle
+  if (this.deflection > 0) {
+    sweepAngle = 2 * Math.PI - sweepAngle
+  }
+
+  this.shaftLength = sweepAngle * arcRadius
+  if (startAngle > endAngle) {
+    this.shaftLength = 0
+  }
+
+  let midShaftAngle = (startAngle + endAngle) / 2
+  if (this.deflection > 0) {
+    midShaftAngle += Math.PI
+  }
+  this.midShaftPoint = {
+    x: cx + arcRadius * Math.sin(midShaftAngle),
+    y: cy - arcRadius * Math.cos(midShaftAngle),
+  }
+
+  const startTangent = function (dr: number) {
+    const dx = (dr < 0 ? 1 : -1) * Math.sqrt(square(dr) / (1 + square(g1)))
+    const dy = g1 * dx
+    return {
+      x: startAttach.x + dx,
+      y: startAttach.y + dy,
+    }
+  }
+
+  const endTangent = function (dr: number) {
+    const dx = (dr < 0 ? -1 : 1) * Math.sqrt(square(dr) / (1 + square(g2)))
+    const dy = g2 * dx
+    return {
+      x: endAttach.x + dx,
+      y: endAttach.y + dy,
+    }
+  }
+
+  const angleTangent = (angle: number, dr: number) => ({
+    x: cx + (arcRadius + dr) * Math.sin(angle),
+    y: cy - (arcRadius + dr) * Math.cos(angle),
+  })
+
+  const endNormal = function (dc: number) {
+    const dx =
+      (dc < 0 ? -1 : 1) * Math.sqrt(square(dc) / (1 + square(1 / g2)))
+    const dy = dx / g2
+    return {
+      x: endAttach.x + dx,
+      y: endAttach.y - dy,
+    }
+  }
+
+  const endOverlayCorner = function (dr: number, dc: number) {
+    const shoulder = endTangent(dr)
+    const arrowTip = endNormal(dc)
+    return {
+      x: shoulder.x + arrowTip.x - endAttach.x,
+      y: shoulder.y + arrowTip.y - endAttach.y,
+    }
+  }
+
+  const coord = (point: Point) => `${point.x},${point.y}`
+
+  const shaftRadius = arrowWidth / 2
+  const headRadius = headWidth / 2
+  const positiveSweep = startAttach.y > 0 ? 0 : 1
+  const negativeSweep = startAttach.y < 0 ? 0 : 1
+
+  this.outline = function (shortCaptionLength: number) {
+    if (startAngle > endAngle) {
+      return [
+        "M",
+        coord(endTangent(-headRadius)),
+        "L",
+        coord(endNormal(headLength)),
+        "L",
+        coord(endTangent(headRadius)),
+        "Z",
+      ].join(" ")
+    }
+
+    if (captionLayout === EDGE_CAPTION_EXTERNAL) {
+      let captionSweep = shortCaptionLength / arcRadius
+      if (this.deflection > 0) {
+        captionSweep *= -1
+      }
+
+      const startBreak = midShaftAngle - captionSweep / 2
+      const endBreak = midShaftAngle + captionSweep / 2
+
+      return [
+        "M",
+        coord(startTangent(shaftRadius)),
+        "L",
+        coord(startTangent(-shaftRadius)),
+        "A",
+        arcRadius - shaftRadius,
+        arcRadius - shaftRadius,
+        0,
+        0,
+        positiveSweep,
+        coord(angleTangent(startBreak, -shaftRadius)),
+        "L",
+        coord(angleTangent(startBreak, shaftRadius)),
+        "A",
+        arcRadius + shaftRadius,
+        arcRadius + shaftRadius,
+        0,
+        0,
+        negativeSweep,
+        coord(startTangent(shaftRadius)),
+        "Z",
+        "M",
+        coord(angleTangent(endBreak, shaftRadius)),
+        "L",
+        coord(angleTangent(endBreak, -shaftRadius)),
+        "A",
+        arcRadius - shaftRadius,
+        arcRadius - shaftRadius,
+        0,
+        0,
+        positiveSweep,
+        coord(endTangent(-shaftRadius)),
+        "L",
+        coord(endTangent(-headRadius)),
+        "L",
+        coord(endNormal(headLength)),
+        "L",
+        coord(endTangent(headRadius)),
+        "L",
+        coord(endTangent(shaftRadius)),
+        "A",
+        arcRadius + shaftRadius,
+        arcRadius + shaftRadius,
+        0,
+        0,
+        negativeSweep,
+        coord(angleTangent(endBreak, shaftRadius)),
+      ].join(" ")
+    } else {
+      return [
+        "M",
+        coord(startTangent(shaftRadius)),
+        "L",
+        coord(startTangent(-shaftRadius)),
+        "A",
+        arcRadius - shaftRadius,
+        arcRadius - shaftRadius,
+        0,
+        0,
+        positiveSweep,
+        coord(endTangent(-shaftRadius)),
+        "L",
+        coord(endTangent(-headRadius)),
+        "L",
+        coord(endNormal(headLength)),
+        "L",
+        coord(endTangent(headRadius)),
+        "L",
+        coord(endTangent(shaftRadius)),
+        "A",
+        arcRadius + shaftRadius,
+        arcRadius + shaftRadius,
+        0,
+        0,
+        negativeSweep,
+        coord(startTangent(shaftRadius)),
+      ].join(" ")
+    }
+  }
+
+  this.overlay = function (minWidth: number) {
+    const radius = Math.max(minWidth / 2, shaftRadius)
+    return [
+      "M",
+      coord(startTangent(radius)),
+      "L",
+      coord(startTangent(-radius)),
+      "A",
+      arcRadius - radius,
+      arcRadius - radius,
+      0,
+      0,
+      positiveSweep,
+      coord(endTangent(-radius)),
+      "L",
+      coord(endOverlayCorner(-radius, headLength)),
+      "L",
+      coord(endOverlayCorner(radius, headLength)),
+      "L",
+      coord(endTangent(radius)),
+      "A",
+      arcRadius + radius,
+      arcRadius + radius,
+      0,
+      0,
+      negativeSweep,
+      coord(startTangent(radius)),
+    ].join(" ")
+  }
+}
+
+
 interface INode extends d3.SimulationNodeDatum {
-    id: string
-    properties: { [key: string]: string | number | object }
-    labels: string[]
-    color: string
+  id: string
+  properties: { [key: string]: string | number | object }
+  labels: string[]
+  color: string
 }
 
 interface IRelationship extends d3.SimulationLinkDatum<INode>{
@@ -59,6 +581,17 @@ interface IRelationship extends d3.SimulationLinkDatum<INode>{
   endNode: string
   source: INode
   target: INode
+  naturalAngle: number
+  centreDistance: number
+  isLoop: () => boolean
+  captionLayout: string
+  captionHeight: number
+  arrow: {
+    outline: Function
+    overlay: Function
+    shaftLength: number
+    midShaftPoint: Point
+  }
 }
 
 interface IGraph {
@@ -108,11 +641,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
   let zoomFuncs: IZoomFuncs
 
-  const options = { ...DEFAULT_OPTIONS, ..._options };
+  const options = { ...DEFAULT_OPTIONS, ..._options }
   let zoom: d3.ZoomBehavior<Element, unknown> = options.graphZoom
 
   const {labelColors, edgeColors} = options
-
 
   function color() {
     return COLORS[Math.floor(Math.random() * COLORS.length)]
@@ -290,7 +822,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       })
       .on('mouseenter', function onNodeMouseEnter(event, d) {
         if (info) {
-          updateInfo(d);
+          updateInfo(d)
         }
 
         if (typeof options.onNodeMouseEnter === 'function') {
@@ -489,9 +1021,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   function updateRelationships(r: IRelationship) {
     Array.prototype.push.apply(relationships, r)
 
-      let a = svgRelationships.selectAll('.relationship')
-      relationship = svgRelationships.selectAll('.relationship')
-          .data(relationships, (d: IRelationship) => d.id) as d3.Selection<SVGGElement, IRelationship, SVGGElement, any>
+    let a = svgRelationships.selectAll('.relationship')
+    relationship = svgRelationships
+      .selectAll('.relationship')
+      .data(relationships, (d: IRelationship) => d.id) as d3.Selection<SVGGElement, IRelationship, SVGGElement, any>
 
     const relationshipEnter = appendRelationshipToGraph()
 
@@ -524,7 +1057,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
   function graphDataToD3Data(data) {
     const graph: IGraph = {
-      nodes: [],
+      nodes: nodes,
       relationships: [],
     }
 
@@ -571,6 +1104,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       })
     })
 
+    mapData(graph)
+
     return graph
   }
 
@@ -614,124 +1149,60 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function tickRelationshipsOutlines() {
-    relationship.each(function relationshipNode() {
-      const rel = d3.select(this)
-      const outline = rel.select('.outline')
-      const textNode = rel.select('.text')
-      const textBoundingBox = (textNode.node() as SVGSVGElement).getBBox()
+    relationship.each(function (relationship) {
+      // FIXME:
 
-      outline.attr('d', (d: any) => {
-        const center = { x: 0, y: 0 }
-        const angle = rotation(d.source, d.target)
-        const textPadding = 0
-        const u = Utils.unitaryVector(d.source, d.target, 1)
-        const textMargin = {
-          x: (d.target.x - d.source.x - (textBoundingBox.width + textPadding) * u.x) * 0.5,
-          y: (d.target.y - d.source.y - (textBoundingBox.width + textPadding) * u.y) * 0.5,
+      let rel = d3.select(this),
+          outline = rel.select(".outline") as unknown as d3.Selection<d3.BaseType, IRelationship, null, undefined>,
+          text = rel.select(".text"),
+          textPadding = 8,
+          textLength = text.node().getComputedTextLength(),
+          captionLength = textLength > 0 ? textLength + textPadding : 0
+
+      outline.attr("d", (d) => {
+        if (captionLength > d.arrow.shaftLength) {
+          captionLength = d.arrow.shaftLength
         }
-        const n = unitaryNormalVector(d.source, d.target, 1)
-        const rotatedPointA1 = rotatePoint(center, {
-          x: 0 + (options.nodeRadius + 1) * u.x - n.x,
-          y: 0 + (options.nodeRadius + 1) * u.y - n.y,
-        }, angle)
-        const rotatedPointB1 = rotatePoint(center, { x: textMargin.x - n.x, y: textMargin.y - n.y }, angle)
-        const rotatedPointC1 = rotatePoint(center, { x: textMargin.x, y: textMargin.y }, angle)
-        const rotatedPointD1 = rotatePoint(center, {
-          x: 0 + (options.nodeRadius + 1) * u.x,
-          y: 0 + (options.nodeRadius + 1) * u.y,
-        }, angle)
-        const rotatedPointA2 = rotatePoint(center, {
-          x: d.target.x - d.source.x - textMargin.x - n.x,
-          y: d.target.y - d.source.y - textMargin.y - n.y,
-        }, angle)
-        const rotatedPointB2 = rotatePoint(center, {
-          x: d.target.x - d.source.x - (options.nodeRadius + 1) * u.x - n.x - u.x * options.arrowSize,
-          y: d.target.y - d.source.y - (options.nodeRadius + 1) * u.y - n.y - u.y * options.arrowSize,
-        }, angle)
-        const rotatedPointC2 = rotatePoint(center, {
-          x: d.target.x - d.source.x - (options.nodeRadius + 1) * u.x - n.x + (n.x - u.x) * options.arrowSize,
-          y: d.target.y - d.source.y - (options.nodeRadius + 1) * u.y - n.y + (n.y - u.y) * options.arrowSize,
-        }, angle)
-        const rotatedPointD2 = rotatePoint(center, {
-          x: d.target.x - d.source.x - (options.nodeRadius + 1) * u.x,
-          y: d.target.y - d.source.y - (options.nodeRadius + 1) * u.y,
-        }, angle)
-        const rotatedPointE2 = rotatePoint(center, {
-          x: d.target.x - d.source.x - (options.nodeRadius + 1) * u.x + (-n.x - u.x) * options.arrowSize,
-          y: d.target.y - d.source.y - (options.nodeRadius + 1) * u.y + (-n.y - u.y) * options.arrowSize,
-        }, angle)
-        const rotatedPointF2 = rotatePoint(center, {
-          x: d.target.x - d.source.x - (options.nodeRadius + 1) * u.x - u.x * options.arrowSize,
-          y: d.target.y - d.source.y - (options.nodeRadius + 1) * u.y - u.y * options.arrowSize,
-        }, angle)
-        const rotatedPointG2 = rotatePoint(center, {
-          x: d.target.x - d.source.x - textMargin.x,
-          y: d.target.y - d.source.y - textMargin.y,
-        }, angle)
-
-        return `M ${rotatedPointA1.x} ${rotatedPointA1.y}
-          L ${rotatedPointB1.x} ${rotatedPointB1.y}
-          L ${rotatedPointC1.x} ${rotatedPointC1.y}
-          L ${rotatedPointD1.x} ${rotatedPointD1.y}
-          Z M ${rotatedPointA2.x} ${rotatedPointA2.y}
-          L ${rotatedPointB2.x} ${rotatedPointB2.y}
-          L ${rotatedPointC2.x} ${rotatedPointC2.y}
-          L ${rotatedPointD2.x} ${rotatedPointD2.y}
-          L ${rotatedPointE2.x} ${rotatedPointE2.y}
-          L ${rotatedPointF2.x} ${rotatedPointF2.y}
-          L ${rotatedPointG2.x} ${rotatedPointG2.y}
-          Z`
+        return d.arrow.outline(captionLength)
       })
     })
   }
 
   function tickRelationshipsOverlays() {
-    relationshipOverlay.attr('d', (d) => {
-      const center = { x: 0, y: 0 }
-      const angle = rotation(d.source, d.target)
-      const n1 = unitaryNormalVector(d.source, d.target, 1)
-      const n = unitaryNormalVector(d.source, d.target, 50)
-      const rotatedPointA = rotatePoint(center, { x: 0 - n.x, y: 0 - n.y }, angle)
-      const rotatedPointB = rotatePoint(center, {
-        x: d.target.x - d.source.x - n.x,
-        y: d.target.y - d.source.y - n.y,
-      }, angle)
-      const rotatedPointC = rotatePoint(center, {
-        x: d.target.x - d.source.x + n.x - n1.x,
-        y: d.target.y - d.source.y + n.y - n1.y,
-      }, angle)
-      const rotatedPointD = rotatePoint(center, { x: 0 + n.x - n1.x, y: 0 + n.y - n1.y }, angle)
-
-      return `M ${rotatedPointA.x} ${rotatedPointA.y}
-        L ${rotatedPointB.x} ${rotatedPointB.y}
-        L ${rotatedPointC.x} ${rotatedPointC.y}
-        L ${rotatedPointD.x} ${rotatedPointD.y}
-        Z`
+    relationshipOverlay.attr("d", (d) => {
+      return d.arrow.overlay(options.arrowSize)
     })
   }
 
   function tickRelationshipsTexts() {
-    relationshipText.attr('transform', (d) => {
-      const angle = (rotation(d.source, d.target) + 360) % 360
-      const mirror = angle > 90 && angle < 270
-      const center = { x: 0, y: 0 }
-      const n = unitaryNormalVector(d.source, d.target, 1)
-      const nWeight = mirror ? 2 : -3
-      const point = {
-        x: (d.target.x - d.source.x) * 0.5 + n.x * nWeight,
-        y: (d.target.y - d.source.y) * 0.5 + n.y * nWeight,
+    relationshipText.attr("transform", (rel) => {
+      if (rel.naturalAngle < 90 || rel.naturalAngle > 270) {
+        return `rotate(180 ${rel.arrow.midShaftPoint.x} ${rel.arrow.midShaftPoint.y})`
+      } else {
+        return null
       }
-      const rotatedPoint = rotatePoint(center, point, angle)
-
-      return `translate(${rotatedPoint.x}, ${rotatedPoint.y}) rotate(${mirror ? 180 : 0})`
     })
+
+    relationshipText.attr("x", (rel) => rel.arrow.midShaftPoint.x)
+    relationshipText.attr(
+      "y",
+      //TODO: Make the fontsize and padding dynamic
+      (rel) => rel.arrow.midShaftPoint.y + 8.5 / 2 - 1
+    )
   }
 
   function tickRelationships() {
+    //TODO: add multiple cases
+
+    layoutRelationships()
+
     if (relationship) {
-      relationship.attr('transform', (d: IRelationship) => {
-        const angle = rotation(d.source, d.target)
-        return `translate(${d.source.x} , ${d.source.y}) rotate(${angle})`
+      layoutRelationships()
+
+      relationship.attr("transform", (d) => {
+        return `translate(${d.source.x} ${d.source.y}) rotate(${
+          d.naturalAngle + 180
+        })`
       })
 
       tickRelationshipsTexts()
@@ -755,11 +1226,11 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
   // eslint-disable-next-line no-unused-vars
   function zoomFit() {
-    const bounds = svg.node().getBBox();
+    const bounds = svg.node().getBBox()
     const parent = svg.node().parentElement.parentElement
 
     if (!parent) {
-      return;
+      return
     }
 
     const fullWidth = parent.clientWidth
@@ -769,7 +1240,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     const midY = bounds.y + height / 2
 
     if (width === 0 || height === 0) {
-      return; // nothing to fit
+      return // nothing to fit
     }
 
     svgScale = 0.85 / Math.max(width / fullWidth, height / fullHeight)
@@ -830,6 +1301,263 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   init()
+
+  class NodePair {
+    nodeA: INode
+    nodeB: INode
+    relationships: IRelationship[]
+
+    constructor(node1: INode, node2: INode) {
+      if (node1.id < node2.id) {
+        this.nodeA = node1
+        this.nodeB = node2
+      } else {
+        this.nodeA = node2
+        this.nodeB = node1
+      }
+      this.relationships = []
+    }
+
+    isLoop () : boolean{
+      return this.nodeA.id === this.nodeB.id
+    }
+
+    toString() {
+      return `${this.nodeA.id}:${this.nodeB.id}`
+    }
+  }
+
+  function layoutRelationships() {
+    const nodePairs = groupedRelationships()
+    computeGeometryForNonLoopArrows(nodePairs)
+    distributeAnglesForLoopArrows(nodePairs, relationships)
+
+    return (() => {
+      const result = []
+      for (let nodePair of Array.from(nodePairs)) {
+        for (let relationship of Array.from(nodePair.relationships)) {
+          delete relationship.arrow
+        }
+
+        let middleRelationshipIndex = (nodePair.relationships.length - 1) / 2
+        let defaultDeflectionStep = 30
+        const maximumTotalDeflection = 150
+        const numberOfSteps = nodePair.relationships.length - 1
+        const totalDeflection = defaultDeflectionStep * numberOfSteps
+
+        let deflectionStep =
+          totalDeflection > maximumTotalDeflection
+            ? maximumTotalDeflection / numberOfSteps
+            : defaultDeflectionStep
+
+        result.push(
+          (() => {
+            for (let i = 0; i < nodePair.relationships.length; i++) {
+              let ref
+              relationship = nodePair.relationships[i]
+              const nodeRadius = options.nodeRadius
+              const shaftWidth = options.relationshipWidth
+              const headWidth = options.arrowSize
+              const headHeight = headWidth
+
+              if (nodePair.isLoop()) {
+                relationship.arrow = new LoopArrow(
+                  nodeRadius,
+                  40,
+                  defaultDeflectionStep,
+                  shaftWidth,
+                  headWidth,
+                  headHeight,
+                  relationship.captionHeight || 11
+                )
+              } else {
+                if (i === middleRelationshipIndex) {
+                  relationship.arrow = new StraightArrow(
+                    nodeRadius,
+                    nodeRadius,
+                    relationship.centreDistance,
+                    shaftWidth,
+                    headWidth,
+                    headHeight,
+                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL
+                  )
+                } else {
+                  let deflection =
+                    deflectionStep * (i - middleRelationshipIndex)
+
+                  if (nodePair.nodeA !== relationship.source) {
+                    deflection *= -1
+                  }
+
+                  relationship.arrow = new ArcArrow(
+                    nodeRadius,
+                    nodeRadius,
+                    relationship.centreDistance,
+                    deflection,
+                    shaftWidth,
+                    headWidth,
+                    headHeight,
+                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL
+                  )
+                }
+              }
+            }
+          })()
+        )
+      }
+      return result
+    })()
+  }
+
+  //FIXME:DONT HAVE TO REPEAT
+
+  function findNode(id, nodes) {
+    let match
+    nodes.forEach((node) => {
+      if (node.id == id) match = node
+    })
+    return match;
+  }
+
+
+  function mapData(d: IGraph) {
+    d.relationships.map((r) => {
+      let source = findNode(r.startNode, d.nodes)
+      let target = findNode(r.endNode, d.nodes);
+
+      (r.source = source),
+        (r.target = target),
+        (r.naturalAngle = 0),
+        (r.isLoop = function () {
+          return this.source === this.target
+        })
+      return r
+    })
+  }
+
+  function groupedRelationships(): NodePair[] {
+    const groups: {
+      [key: string]: NodePair
+    } = {}
+    for (const relationship of Array.from(relationships)) {
+      let nodePair = new NodePair(relationship.source, relationship.target)
+        nodePair = groups[nodePair.toString()] != null ? groups[nodePair.toString()] : nodePair
+      nodePair.relationships.push(relationship)
+      groups[nodePair.toString()] = nodePair
+    }
+    return (() => {
+      const result = []
+      for (const ignored in groups) {
+        const pair = groups[ignored]
+        result.push(pair)
+      }
+      return result
+    })()
+  }
+
+  function computeGeometryForNonLoopArrows(nodePairs: NodePair[]) {
+    const square = (distance: number) => distance * distance
+    return (() => {
+      const result: number[][] | undefined = []
+      for (let nodePair of Array.from(nodePairs)) {
+        if (!nodePair.isLoop()) {
+          const dx = nodePair.nodeA.x - nodePair.nodeB.x
+          const dy = nodePair.nodeA.y - nodePair.nodeB.y
+          let angle = ((Math.atan2(dy, dx) / Math.PI) * 180 + 360) % 360
+          let centreDistance = Math.sqrt(square(dx) + square(dy))
+          result.push(
+            (() => {
+              const result1: number[] = []
+              for (const relationship of Array.from(nodePair.relationships)) {
+                relationship.naturalAngle =
+                  relationship.target === nodePair.nodeA
+                    ? (angle + 180) % 360
+                    : angle
+                result1.push((relationship.centreDistance = centreDistance))
+              }
+              return result1
+            })()
+          )
+        } else {
+          result.push(undefined)
+        }
+      }
+      return result
+    })()
+  }
+
+  function distributeAnglesForLoopArrows(nodePairs: NodePair[], relationships: IRelationship[]) {
+    return (() => {
+      const result = []
+      for (let nodePair of Array.from(nodePairs)) {
+        if (nodePair.isLoop()) {
+          let i: number, separation: number
+          let angles = []
+          const node = nodePair.nodeA
+          for (let relationship of Array.from(relationships)) {
+            if (!relationship.isLoop()) {
+              if (relationship.source === node) {
+                angles.push(relationship.naturalAngle)
+              }
+              if (relationship.target === node) {
+                angles.push(relationship.naturalAngle + 180)
+              }
+            }
+          }
+          angles = angles.map((a) => (a + 360) % 360).sort((a, b) => a - b)
+          if (angles.length > 0) {
+            let end: number, start: number
+            let biggestGap = {
+              start: 0,
+              end: 0,
+            }
+            for (i = 0; i < angles.length; i++) {
+              const angle = angles[i]
+              start = angle
+              end = i === angles.length - 1 ? angles[0] + 360 : angles[i + 1]
+              if (end - start > biggestGap.end - biggestGap.start) {
+                biggestGap.start = start
+                biggestGap.end = end
+              }
+            }
+            separation =
+              (biggestGap.end - biggestGap.start) /
+              (nodePair.relationships.length + 1);
+            result.push(
+              (() => {
+                const result1 = []
+                for (i = 0; i < nodePair.relationships.length; i++) {
+                  relationship = nodePair.relationships[i];
+                  result1.push(
+                    (relationship.naturalAngle =
+                      (biggestGap.start + (i + 1) * separation - 90) % 360)
+                  )
+                }
+                return result1
+              })()
+            )
+          } else {
+            separation = 360 / nodePair.relationships.length
+
+            result.push(
+              (() => {
+                const result2 = []
+                for (i = 0; i < nodePair.relationships.length; i++) {
+                  relationship = nodePair.relationships[i]
+                  result2.push((relationship.naturalAngle = i * separation))
+                }
+                return result2
+              })()
+            )
+          }
+        } else {
+          result.push(undefined)
+        }
+      }
+      return result
+    })()
+  }
+
 
   function resize() {
     const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0

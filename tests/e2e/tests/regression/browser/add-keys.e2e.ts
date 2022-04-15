@@ -27,6 +27,7 @@ fixture `Different JSON types creation`
 test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
     for (let i = 0; i < jsonKeys.length; i++) {
         await browserPage.addJsonKey(jsonKeys[i][0], jsonKeys[i][1]);
+        await t.click(browserPage.toastCloseButton);
         await t.click(browserPage.refreshKeysButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(jsonKeys[i][0])).ok('New keys is displayed');
         if (i === jsonKeys.length - 1) {

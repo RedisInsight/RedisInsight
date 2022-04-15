@@ -341,7 +341,6 @@ export class BrowserPage {
             await t.typeText(this.keyTTLInput, TTL);
         }
         await t.click(this.addKeyButton);
-        await t.click(this.toastCloseButton);
     }
 
     /**

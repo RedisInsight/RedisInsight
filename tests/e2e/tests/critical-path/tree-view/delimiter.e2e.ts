@@ -22,7 +22,7 @@ fixture `Delimiter tests`
     .afterEach(async() => {
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
     })
-test.only('Verify that when user changes the delimiter and clicks on Save button delimiter is applied', async t => {
+test('Verify that when user changes the delimiter and clicks on Save button delimiter is applied', async t => {
     // Switch to tree view
     await t.click(browserPage.treeViewButton);
     // Change delimiter

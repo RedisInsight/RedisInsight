@@ -1,3 +1,4 @@
+import isGlob from 'is-glob'
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
@@ -390,6 +391,12 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
           })
         )
         if (!!type || !!match) {
+          let matchValue = '*'
+          if (match !== '*' && !!match) {
+            matchValue = !isGlob(match, { strict: false })
+              ? 'EXACT_KEY_NAME'
+              : 'PATTERN'
+          }
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
               state.browser.keys?.viewType,
@@ -399,7 +406,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
             eventData: {
               databaseId: state.connections.instances?.connectedInstance?.id,
               keyType: type,
-              match: 'EXACT KEY NAME',
+              match: matchValue,
               databaseSize: data[0].total,
               numberOfKeysScanned: data[0].scanned,
               scanCount: count,

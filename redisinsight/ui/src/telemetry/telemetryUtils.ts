@@ -54,6 +54,8 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
+  console.log(event)
+console.log(eventData)
   if (isAnalyticsGranted || nonTracking) {
     telemetryService?.event({
       event,

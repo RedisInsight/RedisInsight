@@ -1,3 +1,4 @@
+import isGlob from 'is-glob'
 import { cloneDeep, isNull, remove } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 
@@ -447,6 +448,9 @@ export function fetchSearchZSetMembers(
       )
 
       if (isStatusSuccessful(status)) {
+        const matchValue = !isGlob(match, { strict: false })
+          ? 'EXACT_VALUE_NAME'
+          : 'PATTERN'
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
@@ -456,7 +460,7 @@ export function fetchSearchZSetMembers(
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             keyType: KeyTypes.ZSet,
-            match: 'EXACT_VALUE_NAME',
+            match: matchValue,
             length: data.total,
           }
         })

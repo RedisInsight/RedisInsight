@@ -1,3 +1,4 @@
+import isGlob from 'is-glob'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, isNull } from 'lodash'
 import { apiService } from 'uiSrc/services'
@@ -209,6 +210,9 @@ export function fetchHashFields(
       )
 
       if (isStatusSuccessful(status)) {
+        const matchValue = !isGlob(match, { strict: false })
+          ? 'EXACT_VALUE_NAME'
+          : 'PATTERN'
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
@@ -218,10 +222,11 @@ export function fetchHashFields(
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             keyType: KeyTypes.Hash,
-            match: 'EXACT_VALUE_NAME',
+            match: matchValue,
             length: data.total,
           }
         })
+
         dispatch(loadHashFieldsSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }

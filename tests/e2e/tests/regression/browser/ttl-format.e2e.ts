@@ -62,6 +62,7 @@ test
         await browserPage.addStringKey(keyName, 'test', '3');
         await t.click(browserPage.refreshKeysButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Added key');
+        // Wait 3 seconds to finish key TTL
         await t.wait(3000);
         await t.click(browserPage.refreshKeysButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Not displayed key');

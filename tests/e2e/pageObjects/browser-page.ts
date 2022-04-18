@@ -325,8 +325,8 @@ export class BrowserPage {
     /**
      *Adding a new Json key
      * @param keyName The name of the key
-     * @param TTL The Time to live value of the key
      * @param value The key value
+     * @param TTL The Time to live value of the key (optional parameter)
      */
     async addJsonKey(keyName: string, value = ' ', TTL?: string): Promise<void> {
         await t.click(this.plusAddKeyButton);

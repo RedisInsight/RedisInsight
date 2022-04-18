@@ -4,7 +4,7 @@ import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { IFormatterConfig } from './formatter/formatter.interfaces'
 
-const additionalPath = (search?: string) => {
+const getSourcelPath = (search?: string) => {
   switch (true) {
     case search?.indexOf(ApiEndpoints.GUIDES_PATH) !== -1:
       return 'static/guides/'
@@ -15,9 +15,12 @@ const additionalPath = (search?: string) => {
   }
 }
 
+const updateUrl = (url: string) => url.replace(/^\//, '')
+
 export const remarkImage = (config?: IFormatterConfig): (tree: Node) => void => (tree: any) => {
+  const sourcePath = getSourcelPath(config?.history?.location?.search)
   // Find img node in syntax tree
   visit(tree, 'image', (node) => {
-    node.url = IS_ABSOLUTE_PATH.test(node.url || '') ? node.url : `${RESOURCES_BASE_URL}${additionalPath(config?.history?.location?.search)}${node.url.replace(/^\//, '')}`
+    node.url = IS_ABSOLUTE_PATH.test(node.url || '') ? node.url : `${RESOURCES_BASE_URL}${sourcePath}${updateUrl(node.url)}`
   })
 }

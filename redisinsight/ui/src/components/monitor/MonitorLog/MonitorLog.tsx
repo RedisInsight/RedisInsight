@@ -9,7 +9,9 @@ import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/mo
 import { cutDurationText, getBaseApiUrl } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
-import 'react-virtualized/styles.css'
+
+const MIDDLE_SCREEN_RESOLUTION = 460
+const SMALL_SCREEN_RESOLUTION = 360
 
 const MonitorLog = () => {
   const { timestamp } = useSelector(monitorSelector)
@@ -40,8 +42,8 @@ const MonitorLog = () => {
   }
 
   const getPaddingByWidth = (width: number): number => {
-    if (width < 360) return 6
-    if (width < 460) return 12
+    if (width < SMALL_SCREEN_RESOLUTION) return 6
+    if (width < MIDDLE_SCREEN_RESOLUTION) return 12
     return 18
   }
 
@@ -60,7 +62,7 @@ const MonitorLog = () => {
               {format(timestamp.paused, 'hh:mm:ss')}
               &nbsp;(
               {duration}
-              {width > 360 && ' Running time'}
+              {width > SMALL_SCREEN_RESOLUTION && ' Running time'}
               )
             </EuiText>
             <EuiFlexGroup
@@ -83,7 +85,7 @@ const MonitorLog = () => {
                     data-testid="download-log-btn"
                     {...downloadBtnProps}
                   >
-                    {width > 360 && ' Download '}
+                    {width > SMALL_SCREEN_RESOLUTION && ' Download '}
                     Log
                   </EuiButton>
                 </EuiToolTip>
@@ -99,7 +101,7 @@ const MonitorLog = () => {
                   data-testid="reset-profiler-btn"
                 >
                   Reset
-                  {width > 360 && ' Profiler'}
+                  {width > SMALL_SCREEN_RESOLUTION && ' Profiler'}
                 </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>

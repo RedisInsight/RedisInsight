@@ -81,7 +81,7 @@ const monitorSlice = createSlice({
       }
     },
 
-    setLoadingPause: (state, { payload }) => {
+    setMonitorLoadingPause: (state, { payload }) => {
       state.loadingPause = payload
     },
 
@@ -139,7 +139,7 @@ export const {
   togglePauseMonitor,
   startMonitor,
   setStartTimestamp,
-  setLoadingPause,
+  setMonitorLoadingPause,
   stopMonitor,
   resetProfiler,
   concatMonitorItems,

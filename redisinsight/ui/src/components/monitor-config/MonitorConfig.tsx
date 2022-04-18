@@ -11,7 +11,7 @@ import {
   setError,
   resetMonitorItems,
   setStartTimestamp,
-  setLoadingPause
+  setMonitorLoadingPause
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
@@ -60,7 +60,7 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     let payloads: IMonitorDataPayload[] = []
 
     const handleMonitorEvents = () => {
-      dispatch(setLoadingPause(false))
+      dispatch(setMonitorLoadingPause(false))
       newSocket.on(MonitorEvent.MonitorData, (payload: IMonitorData[]) => {
         payloads = payloads.concat(payload)
 
@@ -125,11 +125,11 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     if (!isRunning) return
 
     const pauseUnpause = async () => {
-      !isPaused && await new Promise<void>((resolve) => { socket?.emit(MonitorEvent.Monitor, () => resolve()) })
+      !isPaused && await new Promise<void>((resolve) => socket?.emit(MonitorEvent.Monitor, () => resolve()))
       isPaused && await new Promise<void>((resolve) => socket?.emit(MonitorEvent.Pause, () => resolve()))
-      dispatch(setLoadingPause(false))
+      dispatch(setMonitorLoadingPause(false))
     }
-    dispatch(setLoadingPause(true))
+    dispatch(setMonitorLoadingPause(true))
     pauseUnpause().catch(console.error)
   }, [isPaused, isRunning])
 

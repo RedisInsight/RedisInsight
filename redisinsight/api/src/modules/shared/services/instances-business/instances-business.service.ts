@@ -575,6 +575,9 @@ export class InstancesBusinessService {
       ...rest,
     });
     database.tls = !!tls;
+    if (tls?.servername) {
+      database.tlsServername = tls.servername;
+    }
     if (storeCert && database.tls) {
       database.verifyServerCert = tls.verifyServerCert;
       if (tls.newCaCert) {

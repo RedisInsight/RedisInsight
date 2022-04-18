@@ -103,6 +103,13 @@ export class DatabaseInstanceEntity {
   @Column({ nullable: false })
   tls: boolean;
 
+  @ApiPropertyOptional({
+    description: 'SNI servername',
+    type: String,
+  })
+  @Column({ nullable: true })
+  tlsServername?: string;
+
   @ApiProperty({
     description: 'The certificate returned by the server needs to be verified.',
     type: Boolean,

@@ -3,7 +3,7 @@ import { cloneDeep, remove, isNull } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -209,6 +209,7 @@ export function fetchHashFields(
       )
 
       if (isStatusSuccessful(status)) {
+        const matchValue = getMatchType(match)
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
@@ -218,10 +219,11 @@ export function fetchHashFields(
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             keyType: KeyTypes.Hash,
-            match: 'EXACT_VALUE_NAME',
+            match: matchValue,
             length: data.total,
           }
         })
+
         dispatch(loadHashFieldsSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }

@@ -4,302 +4,157 @@ import {Common} from '../helpers/common';
 const common = new Common();
 
 export class BrowserPage {
-    //DECLARATION OF CSS selectors
-    cssSelectorGrid: string
-    cssSelectorRows: string
-    cssSelectorKey: string
-    cssFilteringLabel: string
-    //------------------------------------------------------------------------------------------
-    //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
-    //*Assign the 'Selector' type to any element/component nested within the constructor.
-    //------------------------------------------------------------------------------------------
-
-    plusAddKeyButton: Selector
-    addKeyButton: Selector
-    keyTypeDropDown: Selector
-    progressLine: Selector
-    keyDetailsHeader: Selector
-    keyListTable: Selector
-    keyDetailsBadge: Selector
-    deleteKeyButton: Selector
-    confirmDeleteKeyButton: Selector
-    keyNameFormDetails: Selector
-    keyDetailsTTL: Selector
-    editKeyTTLButton: Selector
-    editKeyTTLInput: Selector
-    ttlText: Selector
-    closeEditTTL: Selector
-    saveTTLValue: Selector
-    refreshKeysButton: Selector
-    refreshKeyButton: Selector
-    applyButton: Selector
-    applyEditButton: Selector
-    filterByKeyTypeDropDown: Selector
-    filterOptionType: Selector
-    scanMoreButton: Selector
-    resizeBtnKeyList: Selector
-    editKeyNameButton: Selector
-    stringKeyValue: Selector
-    addKeyNameInput: Selector
-    keyNameInput: Selector
-    keyTTLInput: Selector
-    ttlValueInKeysTable: Selector
-    listKeyElementInput: Selector
-    jsonKeyValueInput: Selector
-    setMemberInput: Selector
-    zsetMemberScoreInput: Selector
-    stringKeyValueInput: Selector
-    hashFieldNameInput: Selector
-    hashFieldValueInput: Selector
-    filterByPatterSearchInput: Selector
-    notificationMessage: Selector
-    stringOption: Selector
-    jsonOption: Selector
-    setOption: Selector
-    zsetOption: Selector
-    listOption: Selector
-    hashOption: Selector
-    closeKeyButton: Selector
-    addKeyValueItemsButton: Selector
-    hashFieldInput: Selector
-    hashValueInput: Selector
-    saveHashFieldButton: Selector
-    saveMemberButton: Selector
-    hashFieldsList: Selector
-    hashValuesList: Selector
-    setMembersList: Selector
-    zsetMembersList: Selector
-    zsetScoresList: Selector
-    searchInput: Selector
-    searchButtonInKeyDetails: Selector
-    confirmRemoveSetMemberButton: Selector
-    confirmRemoveHashFieldButton: Selector
-    confirmRemovZSetMemberButton: Selector
-    databaseNames: Selector
-    addListKeyElementInput: Selector
-    saveElementButton: Selector
-    listElementsList: Selector
-    removeElementFromListButton: Selector
-    removeElementFromListIconButton: Selector
-    confirmRemoveListElementButton: Selector
-    removeElementFromListSelect: Selector
-    removeFromHeadSelection: Selector
-    addJsonObjectButton: Selector
-    jsonKeyValue: Selector
-    jsonScalarValue: Selector
-    jsonValueInput: Selector
-    jsonKeyInput: Selector
-    jsonError: Selector
-    editJsonObjectButton: Selector
-    expandJsonObject: Selector
-    addJsonFieldButton: Selector
-    toastCloseButton: Selector
-    keySizeDetails: Selector
-    keyLengthDetails: Selector
-    scoreButton: Selector
-    noResultsFound: Selector
-    searchAdvices: Selector
-    countInput: Selector
-    tooltip: Selector
-    keyNameInTheList: Selector
-    keysNumberOfResults: Selector
-    keysNumberOfScanned: Selector
-    keysTotalNumber: Selector
-    overviewTotalKeys: Selector
-    overviewTotalMemory: Selector
-    overviewConnectedClients: Selector
-    selectedFilterTypeString: Selector
-    overviewCommandsSec: Selector
-    overviewCpu: Selector
-    modulesButton: Selector
-    overviewMoreInfo: Selector
-    overviewTooltip: Selector
-    overviewTooltipStatTitle: Selector
-    treeViewButton: Selector
-    treeViewArea: Selector
-    browserViewButton: Selector
-    scannedValue: Selector
-    treeViewSeparator: Selector
-    treeViewKeysNumber: Selector
-    treeViewPercentage: Selector
-    treeViewFolders: Selector
-    totalKeysNumber: Selector
-    breadcrumbsContainer: Selector
-    databaseInfoIcon: Selector
-    databaseInfoToolTip: Selector
-    removeHashFieldButton: Selector
-    removeSetMemberButton: Selector
-    removeZserMemberButton: Selector
-    treeViewKeysItem: Selector
-    treeViewNodeArrowIcon: Selector
-    treeViewDeviceFolder: Selector
-    treeViewDeviceKyesCount: Selector
-    treeViewDelimiterButton: Selector
-    treeViewDelimiterInput: Selector
-    treeViewDelimiterValueSave: Selector
-    treeViewDelimiterValueCancel: Selector
-    treeViewNotPatternedKeys: Selector
-    modulesTypeDetails: Selector
-    internalLinkToWorkbench: Selector
-    deleteFilterButton: Selector
-    filteringLabel: Selector
-    keysSummary: Selector
-    multiSearchArea: Selector
-    searchButton: Selector
-    clearFilterButton: Selector
-    clearSelectionButton: Selector
-    filterOptionTypeSelected: Selector
-
-    constructor() {
-        //CSS Selectors
-        this.cssSelectorGrid = '[aria-label="grid"]';
-        this.cssSelectorRows = '[aria-label="row"]';
-        this.cssSelectorKey = '[data-testid^=key-]';
-        this.cssFilteringLabel = '[data-testid=multi-search]';
-        //-------------------------------------------------------------------------------------------
-        //DECLARATION OF SELECTORS
-        //*Declare all elements/components of the relevant page.
-        //*Target any element/component via data-id, if possible!
-        //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
-        //-------------------------------------------------------------------------------------------
-        //BUTTONS
-        this.keyDetailsHeader = Selector('[data-testid=key-details-header]');
-        this.keyListTable = Selector('[data-testid=keyList-table]');
-        this.deleteKeyButton = Selector('[data-testid=delete-key-btn]');
-        this.confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
-        this.keyNameFormDetails = Selector('[data-testid=key-name-text]');
-        this.keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
-        this.editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
-        this.closeEditTTL = Selector('[data-testid=cancel-btn]');
-        this.saveTTLValue = Selector('[data-testid=apply-btn]');
-        this.ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
-        this.refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
-        this.refreshKeyButton = Selector('[data-testid=refresh-key-btn]')
-        this.applyButton = Selector('[data-testid=apply-btn]');
-        this.editKeyNameButton = Selector('[data-testid=edit-key-btn]');
-        this.closeKeyButton = Selector('[data-testid=close-key-btn]');
-        this.stringKeyValue = Selector('.key-details-body pre');
-        this.keyDetailsBadge = Selector('.key-details-header .euiBadge__text');
-        this.plusAddKeyButton = Selector('[data-testid=btn-add-key]');
-        this.addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');
-        this.saveHashFieldButton = Selector('[data-testid=save-fields-btn]');
-        this.saveMemberButton = Selector('[data-testid=save-members-btn]');
-        this.searchButtonInKeyDetails = Selector('[data-testid=search-button]');
-        this.addKeyButton = Selector('span').withExactText('Add Key');
-        this.keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
-        this.progressLine = Selector('div.euiProgress');
-        this.confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
-        this.removeSetMemberButton = Selector('[data-testid^=set-remove-btn]');
-        this.removeHashFieldButton = Selector('[data-testid^=remove-hash-button]');
-        this.removeZserMemberButton = Selector('[data-testid^=zset-remove-button]');
-        this.confirmRemoveSetMemberButton = Selector('[data-testid^=set-remove-btn-] span');
-        this.confirmRemovZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
-        this.saveElementButton = Selector('[data-testid=save-elements-btn]');
-        this.removeElementFromListIconButton = Selector('[data-testid=remove-key-value-items-btn]');
-        this.removeElementFromListButton = Selector('[data-testid=remove-elements-btn]');
-        this.confirmRemoveListElementButton = Selector('[data-testid=remove-submit]');
-        this.removeElementFromListSelect = Selector('[data-testid=destination-select]');
-        this.addJsonObjectButton = Selector('[data-testid=add-object-btn]');
-        this.addJsonFieldButton = Selector('[data-testid=add-field-btn]');
-        this.expandJsonObject = Selector('[data-testid=expand-object]');
-        this.toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
-        this.scoreButton = Selector('[data-testid=score-button]');
-        this.editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
-        this.applyEditButton = Selector('[data-testid=apply-edit-btn]');
-        this.filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
-        this.filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
-        this.scanMoreButton = Selector('[data-testid=scan-more]');
-        this.resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
-        this.modulesButton = Selector('[data-testid$=_module]');
-        this.overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
-        this.overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
-        this.overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
-        this.databaseInfoIcon = Selector('[data-testid=db-info-icon]');
-        this.treeViewButton = Selector('[data-testid=view-type-list-btn]');
-        this.browserViewButton = Selector('[data-testid=view-type-browser-btn]');
-        this.treeViewSeparator = Selector('[data-testid=tree-view-delimiter-btn]');
-        this.treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
-        this.treeViewNotPatternedKeys = Selector('[data-testid*="node-item_keys"]');
-        this.treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
-        this.deleteFilterButton = Selector('[data-testid*=delete-btn]');
-        this.searchButton = Selector('[data-testid=search-btn]');
-        this.clearFilterButton = Selector('[data-testid=reset-filter-btn]');
-        this.clearSelectionButton = Selector('[data-testid=clear-selection-btn]');
-        //TEXT INPUTS (also referred to as 'Text fields')
-        this.keySizeDetails = Selector('[data-testid=key-size-text]');
-        this.keyLengthDetails = Selector('[data-testid=key-length-text]');
-        this.addKeyNameInput = Selector('[data-testid=key]');
-        this.keyNameInput = Selector('[data-testid=edit-key-input]');
-        this.keyTTLInput = Selector('[data-testid=ttl]');
-        this.editKeyTTLInput = Selector('[data-testid=edit-ttl-input]');
-        this.ttlText = Selector('[data-testid=key-ttl-text] span')
-        this.hashFieldValueInput = Selector('[data-testid=field-value]');
-        this.hashFieldNameInput = Selector('[data-testid=field-name]');
-        this.listKeyElementInput = Selector('[data-testid=element]');
-        this.stringKeyValueInput = Selector('[data-testid=string-value]');
-        this.jsonKeyValueInput = Selector('[data-testid=json-value]');
-        this.setMemberInput = Selector('[data-testid=member-name]');
-        this.zsetMemberScoreInput = Selector('[data-testid=member-score]');
-        this.filterByPatterSearchInput = Selector('[data-testid=search-key]');
-        this.notificationMessage = Selector('[data-test-subj=euiToastHeader]');
-        this.stringOption = Selector('#string');
-        this.jsonOption = Selector('#ReJSON-RL');
-        this.setOption = Selector('#set');
-        this.zsetOption = Selector('#zset');
-        this.listOption = Selector('#list');
-        this.hashOption = Selector('#hash');
-        this.removeFromHeadSelection = Selector('#HEAD');
-        this.keyNameInTheList = Selector(this.cssSelectorKey);
-        this.databaseNames = Selector('[data-testid^=db_name_]');
-        this.hashFieldInput = Selector('[data-testid=hash-field]');
-        this.hashValueInput = Selector('[data-testid=hash-value]');
-        this.hashFieldsList = Selector('[data-testid^=hash-field-] span');
-        this.hashValuesList = Selector('[data-testid^=hash-field-value-] span');
-        this.setMembersList = Selector('[data-testid^=set-member-value-]');
-        this.zsetMembersList = Selector('[data-testid^=zset-member-value-]');
-        this.zsetScoresList = Selector('[data-testid^=zset-score-value-]');
-        this.listElementsList = Selector('[data-testid^=list-element-value-]');
-        this.searchInput = Selector('[data-testid=search]');
-        this.addListKeyElementInput = Selector('[data-testid=elements-input]');
-        this.jsonKeyValue = Selector('[data-testid=json-data]');
-        this.jsonScalarValue = Selector('[data-testid=json-scalar-value]');
-        this.jsonKeyInput = Selector('[data-testid=json-key]');
-        this.jsonValueInput = Selector('[data-testid=json-value]');
-        this.jsonError = Selector('[data-testid=edit-json-error]');
-        this.tooltip = Selector('[role=tooltip]');
-        this.noResultsFound = Selector('[data-test-subj=no-result-found]');
-        this.searchAdvices = Selector('[data-test-subj=search-advices]');
-        this.countInput = Selector('[data-testid=count-input]');
-        this.keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
-        this.keysNumberOfScanned = Selector('[data-testid=keys-number-of-scanned]');
-        this.keysTotalNumber = Selector('[data-testid=keys-total]');
-        this.overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
-        this.overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
-        this.overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
-        this.overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
-        this.overviewCpu = Selector('[data-test-subj=overview-cpu]');
-        this.selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
-        this.breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
-        this.treeViewArea = Selector('[data-test-subj=tree-view-panel]');
-        this.scannedValue = Selector('[data-testid=keys-number-of-scanned]');
-        this.treeViewKeysNumber = Selector('[data-testid^=count_]');
-        this.treeViewPercentage = Selector('[data-testid^=percentage_]');
-        this.treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
-        this.totalKeysNumber = Selector('[data-testid=keys-total]');
-        this.databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
-        this.treeViewDeviceFolder = Selector('[data-testid^=node-item_device] div');
-        this.treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
-        this.treeViewDelimiterButton = Selector('[data-testid=tree-view-delimiter-btn]');
-        this.treeViewDelimiterInput = Selector('[data-testid=tree-view-delimiter-input]');
-        this.treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
-        this.treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
-        this.modulesTypeDetails = Selector('[data-testid=modules-type-details]');
-        this.internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
-        this.filteringLabel = Selector('[data-testid^=badge-]');
-        this.keysSummary = Selector('[data-testid=keys-summary]');
-        this.multiSearchArea = Selector(this.cssFilteringLabel);
-        this.filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
-    }
+    //CSS Selectors
+    cssSelectorGrid = '[aria-label="grid"]';
+    cssSelectorRows = '[aria-label="row"]';
+    cssSelectorKey = '[data-testid^=key-]';
+    cssFilteringLabel = '[data-testid=multi-search]';
+    //-------------------------------------------------------------------------------------------
+    //DECLARATION OF SELECTORS
+    //*Declare all elements/components of the relevant page.
+    //*Target any element/component via data-id, if possible!
+    //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
+    //-------------------------------------------------------------------------------------------
+    //BUTTONS
+    deleteKeyButton = Selector('[data-testid=delete-key-btn]');
+    confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
+    editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
+    closeEditTTL = Selector('[data-testid=cancel-btn]');
+    saveTTLValue = Selector('[data-testid=apply-btn]');
+    refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
+    refreshKeyButton = Selector('[data-testid=refresh-key-btn]')
+    applyButton = Selector('[data-testid=apply-btn]');
+    editKeyNameButton = Selector('[data-testid=edit-key-btn]');
+    closeKeyButton = Selector('[data-testid=close-key-btn]');
+    plusAddKeyButton = Selector('[data-testid=btn-add-key]');
+    addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');
+    saveHashFieldButton = Selector('[data-testid=save-fields-btn]');
+    saveMemberButton = Selector('[data-testid=save-members-btn]');
+    searchButtonInKeyDetails = Selector('[data-testid=search-button]');
+    addKeyButton = Selector('span').withExactText('Add Key');
+    keyTypeDropDown = Selector('fieldset button.euiSuperSelectControl');
+    confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
+    removeSetMemberButton = Selector('[data-testid^=set-remove-btn]');
+    removeHashFieldButton = Selector('[data-testid^=remove-hash-button]');
+    removeZserMemberButton = Selector('[data-testid^=zset-remove-button]');
+    confirmRemoveSetMemberButton = Selector('[data-testid^=set-remove-btn-] span');
+    confirmRemovZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
+    saveElementButton = Selector('[data-testid=save-elements-btn]');
+    removeElementFromListIconButton = Selector('[data-testid=remove-key-value-items-btn]');
+    removeElementFromListButton = Selector('[data-testid=remove-elements-btn]');
+    confirmRemoveListElementButton = Selector('[data-testid=remove-submit]');
+    removeElementFromListSelect = Selector('[data-testid=destination-select]');
+    addJsonObjectButton = Selector('[data-testid=add-object-btn]');
+    addJsonFieldButton = Selector('[data-testid=add-field-btn]');
+    expandJsonObject = Selector('[data-testid=expand-object]');
+    toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
+    scoreButton = Selector('[data-testid=score-button]');
+    editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
+    applyEditButton = Selector('[data-testid=apply-edit-btn]');
+    scanMoreButton = Selector('[data-testid=scan-more]');
+    resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
+    modulesButton = Selector('[data-testid$=_module]');
+    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
+    overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
+    overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
+    databaseInfoIcon = Selector('[data-testid=db-info-icon]');
+    treeViewButton = Selector('[data-testid=view-type-list-btn]');
+    browserViewButton = Selector('[data-testid=view-type-browser-btn]');
+    treeViewSeparator = Selector('[data-testid=tree-view-delimiter-btn]');
+    deleteFilterButton = Selector('[data-testid*=delete-btn]');
+    searchButton = Selector('[data-testid=search-btn]');
+    clearFilterButton = Selector('[data-testid=reset-filter-btn]');
+    clearSelectionButton = Selector('[data-testid=clear-selection-btn]');
+    treeViewDelimiterButton = Selector('[data-testid=tree-view-delimiter-btn]');
+    treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
+    treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
+    //LINKS
+    internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
+    //OPTION ELEMENTS
+    stringOption = Selector('#string');
+    jsonOption = Selector('#ReJSON-RL');
+    setOption = Selector('#set');
+    zsetOption = Selector('#zset');
+    listOption = Selector('#list');
+    hashOption = Selector('#hash');
+    removeFromHeadSelection = Selector('#HEAD');
+    selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
+    filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
+    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
+    filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
+    //TEXT INPUTS (also referred to as 'Text fields')
+    addKeyNameInput = Selector('[data-testid=key]');
+    keyNameInput = Selector('[data-testid=edit-key-input]');
+    keyTTLInput = Selector('[data-testid=ttl]');
+    editKeyTTLInput = Selector('[data-testid=edit-ttl-input]');
+    ttlText = Selector('[data-testid=key-ttl-text] span')
+    hashFieldValueInput = Selector('[data-testid=field-value]');
+    hashFieldNameInput = Selector('[data-testid=field-name]');
+    listKeyElementInput = Selector('[data-testid=element]');
+    stringKeyValueInput = Selector('[data-testid=string-value]');
+    jsonKeyValueInput = Selector('[data-testid=json-value]');
+    setMemberInput = Selector('[data-testid=member-name]');
+    zsetMemberScoreInput = Selector('[data-testid=member-score]');
+    filterByPatterSearchInput = Selector('[data-testid=search-key]');
+    hashFieldInput = Selector('[data-testid=hash-field]');
+    hashValueInput = Selector('[data-testid=hash-value]');
+    searchInput = Selector('[data-testid=search]');
+    addListKeyElementInput = Selector('[data-testid=elements-input]');
+    jsonKeyInput = Selector('[data-testid=json-key]');
+    jsonValueInput = Selector('[data-testid=json-value]');
+    countInput = Selector('[data-testid=count-input]');
+    treeViewDelimiterInput = Selector('[data-testid=tree-view-delimiter-input]');
+    //TEXT ELEMENTS
+    keySizeDetails = Selector('[data-testid=key-size-text]');
+    keyLengthDetails = Selector('[data-testid=key-length-text]');
+    notificationMessage = Selector('[data-test-subj=euiToastHeader]');
+    keyNameInTheList = Selector(this.cssSelectorKey);
+    databaseNames = Selector('[data-testid^=db_name_]');
+    hashFieldsList = Selector('[data-testid^=hash-field-] span');
+    hashValuesList = Selector('[data-testid^=hash-field-value-] span');
+    setMembersList = Selector('[data-testid^=set-member-value-]');
+    zsetMembersList = Selector('[data-testid^=zset-member-value-]');
+    zsetScoresList = Selector('[data-testid^=zset-score-value-]');
+    listElementsList = Selector('[data-testid^=list-element-value-]');
+    jsonKeyValue = Selector('[data-testid=json-data]');
+    jsonError = Selector('[data-testid=edit-json-error]');
+    tooltip = Selector('[role=tooltip]');
+    noResultsFound = Selector('[data-test-subj=no-result-found]');
+    searchAdvices = Selector('[data-test-subj=search-advices]');
+    keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
+    keysNumberOfScanned = Selector('[data-testid=keys-number-of-scanned]');
+    keysTotalNumber = Selector('[data-testid=keys-total]');
+    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
+    overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
+    overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
+    overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
+    overviewCpu = Selector('[data-test-subj=overview-cpu]');
+    breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
+    treeViewArea = Selector('[data-test-subj=tree-view-panel]');
+    scannedValue = Selector('[data-testid=keys-number-of-scanned]');
+    treeViewKeysNumber = Selector('[data-testid^=count_]');
+    treeViewPercentage = Selector('[data-testid^=percentage_]');
+    treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
+    totalKeysNumber = Selector('[data-testid=keys-total]');
+    databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
+    treeViewDeviceFolder = Selector('[data-testid^=node-item_device] div');
+    treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
+    ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
+    stringKeyValue = Selector('.key-details-body pre');
+    keyDetailsBadge = Selector('.key-details-header .euiBadge__text');
+    treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
+    treeViewNotPatternedKeys = Selector('[data-testid*="node-item_keys"]');
+    treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
+    modulesTypeDetails = Selector('[data-testid=modules-type-details]');
+    filteringLabel = Selector('[data-testid^=badge-]');
+    keysSummary = Selector('[data-testid=keys-summary]');
+    multiSearchArea = Selector(this.cssFilteringLabel);
+    keyDetailsHeader = Selector('[data-testid=key-details-header]');
+    keyListTable = Selector('[data-testid=keyList-table]');
+    keyNameFormDetails = Selector('[data-testid=key-name-text]');
+    keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
+    progressLine = Selector('div.euiProgress');
+    jsonScalarValue = Selector('[data-testid=json-scalar-value]');
 
     /**
      * Adding a new String key
@@ -740,7 +595,22 @@ export class BrowserPage {
             await t.click(await Selector(folderSelector));
             const foundKeyName = `${folders[i].join(delimiter)}`;
             await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).visible).ok('Specific key');
+            await t.click(array[0]);
         }
+    }
+    /**
+     * Change delimiter value
+     * @delimiter string with delimiter value
+     */
+    async changeDelimiterInTreeView(delimiter: string): Promise<void> {
+        // Open delimiter popup
+        await t.click(this.treeViewDelimiterButton);
+        // Check the previous value
+        await t.expect(this.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value');
+        // Apply new value to the field
+        await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
+        // Click on save button
+        await t.click(this.treeViewDelimiterValueSave);
     }
 }
 

@@ -25,16 +25,8 @@ fixture `Delimiter tests`
 test('Verify that when user changes the delimiter and clicks on Save button delimiter is applied', async t => {
     // Switch to tree view
     await t.click(browserPage.treeViewButton);
-    // Check that keys are displayed according to the selected delimiter
-    await browserPage.checkTreeViewFoldersStructure([['mobile', '739'], ['device', '2330'], ['user', '91']], ':', true);
-    // Open delimiter popup
-    await t.click(browserPage.treeViewDelimiterButton);
-    // Check the previous value
-    await t.expect(browserPage.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value');
-    // Apply new value to the field
-    await t.typeText(browserPage.treeViewDelimiterInput, '-', { replace: true });
-    // Click on save button
-    await t.click(browserPage.treeViewDelimiterValueSave);
+    // Change delimiter
+    await browserPage.changeDelimiterInTreeView('-');
     // Check tree view according to the applied delimiter
     await browserPage.checkTreeViewFoldersStructure([['device_us', 'west'], ['mobile_eu', 'central'], ['mobile_us', 'east'], ['user_us', 'west'], ['device_eu', 'central'], ['user_eu', 'central']], '-', true);
 });

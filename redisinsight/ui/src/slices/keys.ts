@@ -12,7 +12,7 @@ import {
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   CreateListWithExpireDto,
@@ -390,6 +390,10 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
           })
         )
         if (!!type || !!match) {
+          let matchValue = '*'
+          if (match !== '*' && !!match) {
+            matchValue = getMatchType(match)
+          }
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
               state.browser.keys?.viewType,
@@ -399,7 +403,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
             eventData: {
               databaseId: state.connections.instances?.connectedInstance?.id,
               keyType: type,
-              match: 'EXACT KEY NAME',
+              match: matchValue,
               databaseSize: data[0].total,
               numberOfKeysScanned: data[0].scanned,
               scanCount: count,

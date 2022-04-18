@@ -1,14 +1,15 @@
 import { Socket } from 'socket.io-client'
 import { Nullable } from 'uiSrc/utils'
-import { IOnDatePayload } from 'apiSrc/modules/profiler/helpers/client-monitor-observer'
+import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
-export interface IMonitorDataPayload extends Partial<IOnDatePayload>{
+export interface IMonitorDataPayload extends Partial<IMonitorData>{
   isError?: boolean
   message?: string
 }
 
 export interface StateMonitor {
   loading: boolean
+  loadingPause: boolean
   isShowMonitor: boolean
   isMinimizedMonitor: boolean
   isRunning: boolean
@@ -21,7 +22,7 @@ export interface StateMonitor {
   logFile: any
   timestamp: {
     start: number
-    end: number
+    paused: number
     unPaused: number
     duration: number
   }

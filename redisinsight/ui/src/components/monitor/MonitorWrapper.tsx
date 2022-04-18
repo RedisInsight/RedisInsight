@@ -19,7 +19,7 @@ const MonitorWrapper = () => {
 
   const handleRunMonitor = () => {
     sendEventTelemetry({
-      event: isRunning ? TelemetryEvent.PROFILER_STOPPED : TelemetryEvent.PROFILER_STARTED,
+      event: isPaused ? TelemetryEvent.PROFILER_RESUMED : TelemetryEvent.PROFILER_PAUSED,
       eventData: { databaseId: instanceId }
     })
     dispatch(togglePauseMonitor())
@@ -28,7 +28,10 @@ const MonitorWrapper = () => {
   const onRunMonitor = (isSaveToLog?: boolean) => {
     sendEventTelemetry({
       event: TelemetryEvent.PROFILER_STARTED,
-      eventData: { databaseId: instanceId }
+      eventData: {
+        databaseId: instanceId,
+        logSaving: isSaveToLog
+      }
     })
     dispatch(startMonitor(isSaveToLog))
   }

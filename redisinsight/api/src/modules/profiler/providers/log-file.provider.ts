@@ -11,7 +11,7 @@ export class LogFileProvider implements OnModuleDestroy {
    * Get or create Profiler Log File to work with
    * @param id
    */
-  async getOrCreate(id: string): Promise<LogFile> {
+  getOrCreate(id: string): LogFile {
     if (!this.profilerLogFiles.has(id)) {
       this.profilerLogFiles.set(id, new LogFile(id));
     }
@@ -23,7 +23,7 @@ export class LogFileProvider implements OnModuleDestroy {
    * Get Profiler Log File or throw an error
    * @param id
    */
-  async get(id: string): Promise<LogFile> {
+  get(id: string): LogFile {
     if (!this.profilerLogFiles.has(id)) {
       throw new NotFoundException(ERROR_MESSAGES.PROFILER_LOG_FILE_NOT_FOUND);
     }

@@ -96,6 +96,7 @@ export default {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
   },
   logger: {
+    logLevel: process.env.LOG_LEVEL || 'info', // log level
     stdout: process.env.STDOUT_LOGGER ? process.env.STDOUT_LOGGER === 'true' : false, // disabled by default
     files: process.env.FILES_LOGGER ? process.env.FILES_LOGGER === 'true' : true, // enabled by default
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,

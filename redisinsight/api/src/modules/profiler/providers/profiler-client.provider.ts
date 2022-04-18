@@ -19,10 +19,12 @@ export class ProfilerClientProvider {
   async getOrCreateClient(socket: Socket, settings: MonitorSettings): Promise<ProfilerClient> {
     if (!this.profilerClients.has(socket.id)) {
       const clientObserver = new ProfilerClient(socket.id, socket);
+      this.profilerClients.set(socket.id, clientObserver);
+
       clientObserver.addLogsEmitter(new ClientLogsEmitter(socket));
 
       if (settings?.logFileId) {
-        const profilerLogFile = await this.logFileProvider.getOrCreate(settings.logFileId);
+        const profilerLogFile = this.logFileProvider.getOrCreate(settings.logFileId);
 
         // set database alias as part of the log file name
         const alias = (await this.instancesBusinessService.getOneById(

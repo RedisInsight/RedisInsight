@@ -1,23 +1,42 @@
 import IORedis from 'ioredis';
-import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
+import { ForbiddenException, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
-export class RedisObserver {
-  private readonly redis: IORedis.Redis | IORedis.Cluster;
+export class RedisObserver extends EventEmitter2 {
+  private logger = new Logger('RedisObserver');
+
+  private redis: IORedis.Redis | IORedis.Cluster;
 
   private profilerClients: Map<string, ProfilerClient> = new Map();
+
+  private profilerClientsListeners: Map<string, any[]> = new Map();
 
   private shardsObservers: IShardObserver[] = [];
 
   public status: RedisObserverStatus;
 
-  constructor(redis: IORedis.Redis | IORedis.Cluster) {
-    this.redis = redis;
-    this.status = RedisObserverStatus.Wait;
+  constructor() {
+    super();
+    this.status = RedisObserverStatus.Empty;
+  }
+
+  init(func: () => Promise<IORedis.Redis | IORedis.Cluster>) {
+    this.status = RedisObserverStatus.Initializing;
+
+    func()
+      .then((redis) => {
+        this.redis = redis;
+        this.status = RedisObserverStatus.Connected;
+        this.emit('connect');
+      })
+      .catch((err) => {
+        this.emit('connect_error', err);
+      });
   }
 
   /**
@@ -35,36 +54,84 @@ export class RedisObserver {
       return;
     }
 
+    if (!this.profilerClientsListeners.get(profilerClient.id)) {
+      this.profilerClientsListeners.set(profilerClient.id, []);
+    }
+
+    const profilerListeners = this.profilerClientsListeners.get(profilerClient.id);
+
     this.shardsObservers.forEach((observer) => {
-      observer.on('monitor', (time, args, source, database) => {
+      const monitorListenerFn = (time, args, source, database) => {
         profilerClient.handleOnData({
           time, args, database, source, shardOptions: observer.options,
         });
-      });
-      observer.on('end', () => {
+      };
+      const endListenerFn = () => {
         profilerClient.handleOnDisconnect();
         this.clear();
-      });
+      };
+
+      observer.on('monitor', monitorListenerFn);
+      observer.on('end', endListenerFn);
+
+      profilerListeners.push(monitorListenerFn, endListenerFn);
+      this.logger.debug(`Subscribed to shard observer. Current listeners: ${observer.listenerCount('monitor')}`);
     });
     this.profilerClients.set(profilerClient.id, profilerClient);
+
+    this.logger.debug(`Profiler Client with id:${profilerClient.id} was added`);
+    this.logCurrentState();
+  }
+
+  public removeShardsListeners(profilerClientId: string) {
+    this.shardsObservers.forEach((observer) => {
+      (this.profilerClientsListeners.get(profilerClientId) || []).forEach((listener) => {
+        observer.removeListener('monitor', listener);
+        observer.removeListener('end', listener);
+      });
+
+      this.logger.debug(
+        `Unsubscribed from from shard observer. Current listeners: ${observer.listenerCount('monitor')}`,
+      );
+    });
   }
 
   public unsubscribe(id: string) {
+    this.removeShardsListeners(id);
     this.profilerClients.delete(id);
+    this.profilerClientsListeners.delete(id);
     if (this.profilerClients.size === 0) {
       this.clear();
     }
+
+    this.logger.debug(`Profiler Client with id:${id} was unsubscribed`);
+    this.logCurrentState();
   }
 
   public disconnect(id: string) {
-    const userClient = this.profilerClients.get(id);
-    if (userClient) {
-      userClient.destroy();
+    this.removeShardsListeners(id);
+    const profilerClient = this.profilerClients.get(id);
+    if (profilerClient) {
+      profilerClient.destroy();
     }
     this.profilerClients.delete(id);
+    this.profilerClientsListeners.delete(id);
     if (this.profilerClients.size === 0) {
       this.clear();
     }
+
+    this.logger.debug(`Profiler Client with id:${id} was disconnected`);
+    this.logCurrentState();
+  }
+
+  /**
+   * Logs useful inforation about current state for debug purposes
+   * @private
+   */
+  private logCurrentState() {
+    this.logger.debug(
+      `Status: ${this.status}; Shards: ${this.shardsObservers.length}; Listeners: ${this.getProfilerClientsSize()}`,
+    );
   }
 
   public clear() {
@@ -98,6 +165,13 @@ export class RedisObserver {
       } else {
         this.shardsObservers = [await RedisObserver.createShardObserver(this.redis)];
       }
+
+      this.shardsObservers.forEach((observer) => {
+        observer.on('error', (e) => {
+          this.logger.error('Error on shard observer', e);
+        });
+      });
+
       this.status = RedisObserverStatus.Ready;
     } catch (error) {
       this.status = RedisObserverStatus.Error;
@@ -130,6 +204,7 @@ export class RedisObserver {
       ...redis.options,
       monitor: false,
       lazyLoading: false,
+      connectionName: `redisinsight-monitor-perm-check-${Math.random()}`,
     });
 
     await duplicate.send_command('monitor');

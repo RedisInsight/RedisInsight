@@ -10,6 +10,7 @@ export default {
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : false,
   },
   logger: {
+    logLevel: process.env.LOG_LEVEL || 'debug',
     stdout: process.env.STDOUT_LOGGER ? process.env.STDOUT_LOGGER === 'true' : true, // enabled by default
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : false,
   },

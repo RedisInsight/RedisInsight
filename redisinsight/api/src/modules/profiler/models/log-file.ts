@@ -38,7 +38,7 @@ export class LogFile {
     if (!this.writeStream) {
       this.writeStream = fs.createWriteStream(this.filePath, { flags: 'a' });
     }
-
+    this.writeStream.on('error', () => {});
     return this.writeStream;
   }
 

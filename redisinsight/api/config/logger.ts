@@ -58,6 +58,7 @@ if (LOGGER_CONFIG.files) {
 const logger: WinstonModuleOptions = {
   format: format.errors({ stack: true }),
   transports: transportsConfig,
+  level: LOGGER_CONFIG.logLevel,
 };
 
 export default logger;

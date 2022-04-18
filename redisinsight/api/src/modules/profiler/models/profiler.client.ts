@@ -1,12 +1,15 @@
 import { Socket } from 'socket.io';
 import { debounce } from 'lodash';
 import { WsException } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
 import { ProfilerServerEvents } from 'src/modules/profiler/constants';
 import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
 import { IMonitorData } from 'src/modules/profiler/interfaces/monitor-data.interface';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export class ProfilerClient {
+  private logger = new Logger('ProfilerClient');
+
   public readonly id: string;
 
   private readonly client: Socket;
@@ -57,6 +60,7 @@ export class ProfilerClient {
   public addLogsEmitter(emitter: ILogsEmitter) {
     this.logsEmitters.set(emitter.id, emitter);
     emitter.addProfilerClient(this.id);
+    this.logCurrentState();
   }
 
   async flushLogs() {
@@ -65,5 +69,15 @@ export class ProfilerClient {
 
   public destroy() {
     this.logsEmitters.forEach((emitter) => emitter.removeProfilerClient(this.id));
+  }
+
+  /**
+   * Logs useful information about current state for debug purposes
+   * @private
+   */
+  private logCurrentState() {
+    this.logger.debug(
+      `Emitters: ${this.logsEmitters.size}`,
+    );
   }
 }

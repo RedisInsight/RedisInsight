@@ -10,6 +10,9 @@ export enum ProfilerServerEvents {
 }
 
 export enum RedisObserverStatus {
+  Empty = 'empty',
+  Initializing = 'initializing',
+  Connected = 'connected',
   Wait = 'wait',
   Ready = 'ready',
   End = 'end',

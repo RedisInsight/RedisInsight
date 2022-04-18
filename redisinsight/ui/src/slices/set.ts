@@ -1,11 +1,10 @@
-import isGlob from 'is-glob'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getMatchType } from 'uiSrc/telemetry'
 import {
   AddMembersToSetDto,
   GetSetMembersResponse,
@@ -171,9 +170,7 @@ export function fetchSetMembers(
       )
 
       if (isStatusSuccessful(status)) {
-        const matchValue = !isGlob(match, { strict: false })
-          ? 'EXACT_VALUE_NAME'
-          : 'PATTERN'
+        const matchValue = getMatchType(match)
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,

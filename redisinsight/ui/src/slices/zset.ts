@@ -1,11 +1,10 @@
-import isGlob from 'is-glob'
 import { cloneDeep, isNull, remove } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, SortOrder, KeyTypes } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getMatchType } from 'uiSrc/telemetry'
 import { StateZset } from 'uiSrc/slices/interfaces/zset'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -448,9 +447,7 @@ export function fetchSearchZSetMembers(
       )
 
       if (isStatusSuccessful(status)) {
-        const matchValue = !isGlob(match, { strict: false })
-          ? 'EXACT_VALUE_NAME'
-          : 'PATTERN'
+        const matchValue = getMatchType(match)
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,

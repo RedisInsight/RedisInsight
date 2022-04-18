@@ -3,13 +3,14 @@
  * This module abstracts the exact service/framework used for tracking usage.
  */
 import { get } from 'lodash'
+import isGlob from 'is-glob'
 import * as jsonpath from 'jsonpath'
 import { Nullable } from 'uiSrc/utils'
 import store from 'uiSrc/slices/store'
 import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService } from './interfaces'
+import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService, MatchType } from './interfaces'
 import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
 
@@ -54,8 +55,6 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
-  console.log(event)
-console.log(eventData)
   if (isAnalyticsGranted || nonTracking) {
     telemetryService?.event({
       event,
@@ -158,6 +157,12 @@ const getAdditionalAddedEventData = (endpoint: ApiEndpoints, data: any) => {
   }
 }
 
+const getMatchType = (match: string): MatchType => (
+  !isGlob(match, { strict: false })
+    ? MatchType.EXACT_VALUE_NAME
+    : MatchType.PATTERN
+)
+
 export {
   getTelemetryService,
   sendEventTelemetry,
@@ -165,5 +170,6 @@ export {
   checkIsAnalyticsGranted,
   getBasedOnViewTypeEvent,
   getJsonPathLevel,
-  getAdditionalAddedEventData
+  getAdditionalAddedEventData,
+  getMatchType
 }

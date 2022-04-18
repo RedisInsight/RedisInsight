@@ -1,4 +1,3 @@
-import isGlob from 'is-glob'
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
@@ -13,7 +12,7 @@ import {
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   CreateListWithExpireDto,
@@ -393,9 +392,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
         if (!!type || !!match) {
           let matchValue = '*'
           if (match !== '*' && !!match) {
-            matchValue = !isGlob(match, { strict: false })
-              ? 'EXACT_KEY_NAME'
-              : 'PATTERN'
+            matchValue = getMatchType(match)
           }
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(

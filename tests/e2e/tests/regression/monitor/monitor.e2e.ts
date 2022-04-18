@@ -116,13 +116,16 @@ test
 test
     .meta({ rte: rte.standalone })
     .before(async t => {
+        console.log('Before acceptLicenseTermsAndAddDatabase function');
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        console.log('After acceptLicenseTermsAndAddDatabase function');
         await cliPage.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor');
         //Check command result in CLI
         await t.click(cliPage.cliExpandButton);
         await t.expect(cliPage.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was found & executed');
         await t.click(cliPage.cliCollapseButton);
         await deleteDatabase(ossStandaloneConfig.databaseName);
+        console.log('Before addNewStandaloneDatabase function with no permissions');
         await addNewStandaloneDatabase(ossStandaloneNoPermissionsConfig);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })

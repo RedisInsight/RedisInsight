@@ -36,14 +36,16 @@ fixture `Automatically update information`
 test
     .meta({ rte: rte.standalone, env: env.desktop })
     ('Verify that user has the ability to update "Create free database" button without changing the app', async t => {
+        //Create new file paths due to cacheability
         const buildFilePathNew = editJsonFile(buildPath);
         const createRedisFilePathNew = editJsonFile(createRedisPath);
-        //Check the promo button
+        //Check the promo button after the opening of app
         await t.expect(myRedisDatabasePage.promoButton.textContent).notContains(cloudValueForEdit, 'Promo button text is updated');
-        //Check the json files are automatically updated
+        //Get the values from build.json and create-redis.json files
         const timestampAfterUpdate = await buildFilePathNew.get('timestamp');
         const cloudTitle = await createRedisFilePathNew.get('cloud.title');
         const cloudDescription = await createRedisFilePathNew.get('cloud.description');
+        //Check the json files are automatically updated
         await t.expect(timestampAfterUpdate).notEql(timestampForEdit, 'The timestamp in the build.json file is automatically updated');
         await t.expect(cloudTitle).notEql(cloudValueForEdit, 'The cloud title in the create-redis.json file is automatically updated');
         await t.expect(cloudDescription).notEql(cloudValueForEdit, 'The cloud description in the create-redis.json file is automatically updated');

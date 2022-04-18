@@ -1,73 +1,39 @@
 import {t, Selector} from 'testcafe';
 
 export class AddRedisDatabasePage {
-
-    //------------------------------------------------------------------------------------------
-    //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
-    //*Assign the 'Selector' type to any element/component nested within the constructor.
-    //------------------------------------------------------------------------------------------
-
-    addDatabaseButton: Selector
-    addDatabaseManually: Selector
-    addAutoDiscoverDatabase: Selector
-    redisClusterType: Selector
-    redisCloudProType: Selector
-    redisSentinelType: Selector
-    databaseName: Selector
-    hostInput: Selector
-    portInput: Selector
-    databaseAliasInput: Selector
-    passwordInput: Selector
-    usernameInput: Selector
-    addRedisDatabaseButton: Selector
-    discoverSentinelDatabaseButton: Selector
-    accessKeyInput: Selector
-    showDatabasesButton: Selector
-    selectAllCheckbox: Selector
-    welcomePageTitle: Selector
-    databaseIndexCheckbox: Selector
-    databaseIndexInput: Selector
-    databaseIndexMessage: Selector
-    errorMessage: Selector
-    secretKeyInput: Selector
-    connectToDatabaseButton: Selector
-    connectToRedisStackButton: Selector
-
-    constructor() {
-        //-------------------------------------------------------------------------------------------
-        //DECLARATION OF SELECTORS
-        //*Declare all elements/components of the relevant page.
-        //*Target any element/component via data-id, if possible!
-        //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
-        //-------------------------------------------------------------------------------------------
-        //BUTTONS
-        this.addDatabaseButton = Selector('[data-testid=add-redis-database]');
-        this.addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
-        this.addDatabaseManually = Selector('[data-testid=add-manual]');
-        this.addAutoDiscoverDatabase = Selector('[data-testid=add-auto]');
-        this.redisClusterType = Selector('[data-test-subj=radio-btn-enterprise-cluster]');
-        this.redisCloudProType = Selector('[data-test-subj=radio-btn-cloud-pro]');
-        this.redisSentinelType = Selector('[data-test-subj=radio-btn-sentinel]');
-        this.showDatabasesButton = Selector('[data-testid=btn-show-databases]');
-        this.databaseName = Selector('.euiTableCellContent.column_name');
-        this.selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
-        this.databaseIndexCheckbox = Selector('[data-testid=showDb]~div');
-        this.connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
-        this.connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
-        //TEXT INPUTS (also referred to as 'Text fields')
-        this.hostInput = Selector('[data-testid=host]');
-        this.portInput = Selector('[data-testid=port]');
-        this.databaseAliasInput = Selector('[data-testid=name]');
-        this.passwordInput = Selector('[data-testid=password]');
-        this.usernameInput = Selector('[data-testid=username]');
-        this.discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
-        this.accessKeyInput = Selector('[data-testid=access-key]');
-        this.secretKeyInput = Selector('[data-testid=secret-key]');
-        this.welcomePageTitle = Selector('[data-testid=welcome-page-title]');
-        this.databaseIndexInput = Selector('[data-testid=db]');
-        this.errorMessage = Selector('[data-test-subj=toast-error]');
-        this.databaseIndexMessage = Selector('[data-testid=db-index-message]');
-    }
+    //-------------------------------------------------------------------------------------------
+    //DECLARATION OF SELECTORS
+    //*Declare all elements/components of the relevant page.
+    //*Target any element/component via data-id, if possible!
+    //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
+    //-------------------------------------------------------------------------------------------
+    //BUTTONS
+    addDatabaseButton = Selector('[data-testid=add-redis-database]');
+    addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
+    addDatabaseManually = Selector('[data-testid=add-manual]');
+    addAutoDiscoverDatabase = Selector('[data-testid=add-auto]');
+    redisClusterType = Selector('[data-test-subj=radio-btn-enterprise-cluster]');
+    redisCloudProType = Selector('[data-test-subj=radio-btn-cloud-pro]');
+    redisSentinelType = Selector('[data-test-subj=radio-btn-sentinel]');
+    showDatabasesButton = Selector('[data-testid=btn-show-databases]');
+    databaseName = Selector('.euiTableCellContent.column_name');
+    selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
+    databaseIndexCheckbox = Selector('[data-testid=showDb]~div');
+    connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
+    connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
+    discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
+    //TEXT INPUTS (also referred to as 'Text fields')
+    hostInput = Selector('[data-testid=host]');
+    portInput = Selector('[data-testid=port]');
+    databaseAliasInput = Selector('[data-testid=name]');
+    passwordInput = Selector('[data-testid=password]');
+    usernameInput = Selector('[data-testid=username]');
+    accessKeyInput = Selector('[data-testid=access-key]');
+    secretKeyInput = Selector('[data-testid=secret-key]');
+    welcomePageTitle = Selector('[data-testid=welcome-page-title]');
+    databaseIndexInput = Selector('[data-testid=db]');
+    errorMessage = Selector('[data-test-subj=toast-error]');
+    databaseIndexMessage = Selector('[data-testid=db-index-message]');
 
     /**
      * Adding a new redis database

@@ -1,174 +1,165 @@
 {
-    "root": true,
-    "env": {
-      "browser": true,
-      "es2017": true
-    },
-    "extends": ["plugin:@typescript-eslint/recommended", "plugin:import/errors"],
-    "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
-    "overrides": [
-      {
-        "files": ["*.ts", "**/*.ts, *.js", "**/*.js"],
-        "rules": {
-          "no-multi-spaces": [
-            "error",
-            {
-              "exceptions": {
-                //our imports
-                "ImportDeclaration": true,
-                //our variables
-                "VariableDeclarator": true
-              }
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2017": true
+  },
+  "extends": ["plugin:@typescript-eslint/recommended", "plugin:import/errors"],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/**/*.ts", "**/**/**/*.ts", "**/**/**/**/*.ts", "**/**/**/**/**/*.ts"],
+      "rules": {
+        //this will conflict with our standards regarding horizontal and vertical aligning in page models class parameters.
+        //we must decide if this rules is relevant or not, we can't do both...
+        //******************************************** STANDARDS ********************************************
+        //Forcing usage of ;
+        "semi": "off",
+        "@typescript-eslint/semi": ["error"],
+        //All clauses must have {}
+        "curly": ["error", "all"],
+        //Forces usage of string[] over Array<string>
+        "@typescript-eslint/array-type": ["error", {
+          "array": true
+        }],
+        //Makes sure that the identation is 4 each all the time.
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        //Forcing a function to have a return type
+        "@typescript-eslint/explicit-function-return-type": "error",
+        //Use ' instead of "
+        "quotes": ["error", "single"],
+        //Use let only when reusing a variable. Else always use const.
+        "prefer-const": "error",
+        //Use grace accent (`) for string concetration rather than +
+        "prefer-template": "error",
+        //Forcing usage of primitive types over boxed types. i.e. Use number instead of Number
+        "@typescript-eslint/ban-types": [
+          "error",
+          {
+            "types": {
+              "object": false
             }
-          ],
-          //Makes sure that the identation is 4 each all the time.
-          "indent": ["error", 4, { "SwitchCase": 1 }],
-          //Limits the length of a row to 100
-          "max-len": ["off", 200],
-          //Forcing a function to have a return type
-          "@typescript-eslint/explicit-function-return-type": "error",
-          //Forcing that all of the comments are with spaces.
-          "spaced-comment": "off",
-          //Forcing not to have random spaces.
-          "no-trailing-spaces": [
-            "error",
-            {
-              "ignoreComments": false
-            }
-          ],
-          //Forcing to use json.['dot'] vs json.dot
-          "dot-notation": "error",
-          //Require === and !== (eqeqeq)
-          "eqeqeq": "error",
-          //preventing from us to keep unused variables. relevant for imports as well.
-          "no-unused-vars": "error",
-          //prevents from having multiple empty lines, our standard should be max of 1 empty line.
-          "no-multiple-empty-lines": [
-            "error",
-            {
-              "max": 1
-            }
-          ],
-          "comma-dangle": ["error", "never"],
-          "brace-style": ["error", "stroustrup"],
-          //using { key: value } or { 'key': value } consistently only!
-          "quote-props": ["error", "consistent"],
-          //cannot use constructor () only constructor()
-          "space-before-function-paren": ["error", "never"],
-          //cannot use else return
-          "no-else-return": [
-            "error",
-            {
-              "allowElseIf": true
-            }
-          ],
-          //spaces between ops, bad: a+ b, good: a + b
-          "space-infix-ops": "error",
-          "radix": "off",
-          "prefer-const": "error",
-          "comma-spacing": [
-            "error",
-            {
-              "before": false,
-              "after": true
-            }
-          ],
-          "import/no-unresolved": "off",
-          "space-in-parens": ["error", "never"],
-          "quotes": ["error", "single"],
-          "prefer-template": "error",
-          "default-case": "error",
-          "nonblock-statement-body-position": [
-            "error", "beside", { "overrides": { "if": "any" }}
-          ],
-          "no-extra-semi": "error",
-          "no-empty-function": "error",
-          "no-spaced-func": "off",
-          "func-call-spacing": "off",
-          "dot-location": "off",
-          "arrow-spacing": [
-            "error",
-            {
-              "before": true,
-              "after": true
-            }
-          ],
-          "import/order": "error",
-          "import/no-duplicates": "error",
-          /* below are extended rules regarding the recommended typescript rule package...*/
-          "@typescript-eslint/type-annotation-spacing": "error", //RELEVANT: makes sure you have spaces around type declaration.
-          "@typescript-eslint/member-delimiter-style": [
-            "error",
-            {
-              "multiline": {
-                "delimiter": "comma",
-                "requireLast": false
-              },
-              "singleline": {
-                "delimiter": "comma",
-                "requireLast": false
-              }
-            }
-          ], //interface styling for each row, we use comma
-          "@typescript-eslint/no-inferrable-types": "error", // Tells you not to add a type, because it automatically taken it!
+          }
+        ],
+        //Require === and !== (eqeqeq) unless Comparing two literal values, Evaluating the value of typeof, Comparing against null
+        "eqeqeq": ["error", "smart"],
 
-          //Additional rules..
-          "key-spacing": [
-            "error",
-            {
-              "beforeColon": false,
-              "afterColon": true
+        // ******************** NOT README STANDARDS ********************
+        //Limits the length of a row to 400
+        "max-len": ["error", 400],
+        
+        //Forcing that all of the comments are with spaces.
+        "spaced-comment": "off",
+        //Forcing not to have random spaces.
+        "no-trailing-spaces": [
+          "error",
+          {
+            "ignoreComments": false
+          }
+        ],
+        //Forcing to use json.['dot'] vs json.dot
+        "dot-notation": "error",
+
+        //preventing from us to keep unused variables. relevant for imports as well.
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error",
+        //prevents from having multiple empty lines, our standard should be max of 1 empty line.
+        "no-multiple-empty-lines": [
+          "error",
+          {
+            "max": 1
+          }
+        ],
+        //Require or disallow trailing commas
+        "comma-dangle": ["error", "never"],
+        //Forcing if, else if, else, finally, catch to have opening curly brackets on the same line
+        "brace-style": ["error", "stroustrup"],
+        //using { key: value } or { 'key': value } consistently only!
+        "quote-props": ["error", "consistent"],
+        //cannot use constructor () only constructor()
+        "space-before-function-paren": ["error", "never"],
+        //cannot use else return
+        "no-else-return": [
+          "error",
+          {
+            "allowElseIf": true
+          }
+        ],
+        //spaces between ops, bad: a+ b, good: a + b
+        "space-infix-ops": "error",
+        //Disabling the requirement of using the Radix parameter when using parseInt function
+        "radix": "off",
+        //Forcing command spacing, comma (,) should not have a space before but should have one after.
+        "comma-spacing": [
+          "error",
+          {
+            "before": false,
+            "after": true
+          }
+        ],
+        //Ensures an imported module can be resolved to a module on the local filesystem
+        "import/no-unresolved": "off",
+        //Disallow or enforce spaces inside of parentheses
+        "space-in-parens": ["error", "never"],
+        //Require Default Case in Switch Statements
+        "default-case": "error",
+        //Disallow unnecessary semicolons
+        "no-extra-semi": "error",
+        //Disallow empty functions
+        "no-empty-function": "error",
+        //Disallow spacing between function identifiers and their applications
+        "no-spaced-func": "error",
+        //Eequire or disallow spacing between function identifiers and their invocations
+        "func-call-spacing": ["error", "never"],
+        //Enforce newline before and after dot
+        "dot-location": ["off"],
+        //Require space before/after arrow function's arrow. (a) => {}
+        "arrow-spacing": [
+          "error",
+          {
+            "before": true,
+            "after": true
+          }
+        ],
+        //Enforce a convention in module import order
+        "import/order": "error",
+        //Disallow duplicate imports
+        "import/no-duplicates": "error",
+        /* Below are extended rules regarding the recommended typescript rule package...*/
+        //Require consistent spacing around type annotations
+        "@typescript-eslint/type-annotation-spacing": "error", //RELEVANT: makes sure you have spaces around type declaration.
+        //Require a specific member delimiter style for interfaces and type literals.
+        "@typescript-eslint/member-delimiter-style": [
+          "error",
+          {
+            "multiline": {
+              "delimiter": "comma",
+              "requireLast": false
+            },
+            "singleline": {
+              "delimiter": "comma",
+              "requireLast": false
             }
-          ]
-        }
-      },
-      {
-        //Exceptions for our tests
-        "files": ["tests/*.ts", "tests/**/*.ts"],
-        "rules": {
-          "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
-          "key-spacing": "off",
-          "indent": "off",
-          "@typescript-eslint/camelcase": "off"
-        }
-      },
-      {
-        //Exceptions for our API files
-        "files": "api/*.ts",
-        "rules": {
-          "@typescript-eslint/camelcase": "off",
-          "@typescript-eslint/no-use-before-define": "off"
-        }
-      },
-      {
-        //Exceptions for our page models
-        "files": "pageObjects/*.ts",
-        "rules": {
-          "no-multi-spaces": "off",
-          "@typescript-eslint/type-annotation-spacing": "off",
-          "@typescript-eslint/no-use-before-define": "off",
-          "key-spacing": "off"
-        }
-      },
-      {
-        //Exceptions for filler file.
-        "files": "*/filler.ts",
-        "rules": {
-          "indent": "off",
-          "@typescript-eslint/no-var-requires": "off"
-        }
-      },
-      {
-        "files": "common-actions/*.ts",
-        "rules": {
-          "@typescript-eslint/camelcase": "off",
-          "space-infix-ops": "off"
-        }
+          }
+        ], //interface styling for each row, we use comma
+        //Disallows explicit type declarations for variables or parameters initialized to a number, string, or boolean
+        "@typescript-eslint/no-inferrable-types": "error",
+
+        //Enforce consistent spacing between keys and values in object literal properties
+        //Colons never have a space before and only after. key: item instead of key : item
+        "key-spacing": [
+          "error",
+          {
+            "beforeColon": false,
+            "afterColon": true
+          }
+        ]
       }
-    ]
-  }
+    }
+  ]
+}

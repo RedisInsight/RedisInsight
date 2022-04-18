@@ -1354,7 +1354,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
           (() => {
             for (let i = 0; i < nodePair.relationships.length; i++) {
               let ref
-              relationship = nodePair.relationships[i]
+              const relationship = nodePair.relationships[i]
               const nodeRadius = options.nodeRadius
               const shaftWidth = options.relationshipWidth
               const headWidth = options.arrowSize

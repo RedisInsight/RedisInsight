@@ -13,7 +13,7 @@ const chance = new Chance();
 const keyName = chance.word({length: 20});
 const keysData = keyTypes.slice(0, 6);
 for (const key of keysData) {
-    key.keyName = `${key.keyName}` + '-' + `${chance.word({length: keyLength})}`
+    key.keyName = `${key.keyName}` + '-' + `${chance.word({length: keyLength})}`;
 }
 //Arrays with TTL in seconds, min, hours, days, months, years and their values in Browser Page
 const ttlForSet = [59, 800, 20000, 2000000, 31000000, 2147483647];
@@ -34,7 +34,7 @@ fixture `TTL values in Keys Table`
             await browserPage.deleteKey();
         }
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {
     //Create new keys with TTL
     await t.click(cliPage.cliExpandButton);
@@ -56,8 +56,7 @@ test('Verify that user can see TTL in the list of keys rounded down to the neare
 test
     .after(async() => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that Key is deleted if TTL finishes', async t => {
+    })('Verify that Key is deleted if TTL finishes', async t => {
         // Create new key with TTL
         await browserPage.addStringKey(keyName, 'test', '3');
         await t.click(browserPage.refreshKeysButton);

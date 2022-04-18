@@ -6,6 +6,7 @@ import { EuiIcon, EuiPopover } from '@elastic/eui'
 
 import { replaceSpaces } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { appContextBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
@@ -51,6 +52,14 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
   )
 
   const handleApplyDelimiter = (value: string) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.TREE_VIEW_DELIMITER_CHANGED,
+      eventData: {
+        databaseId: instanceId,
+        from: delimiter,
+        to: value || DEFAULT_DELIMITER
+      }
+    })
     closePopover()
     dispatch(setBrowserTreeDelimiter(value || DEFAULT_DELIMITER))
   }

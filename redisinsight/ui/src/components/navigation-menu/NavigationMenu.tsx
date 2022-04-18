@@ -272,9 +272,9 @@ const NavigationMenu = ({ buildType }: IProps) => {
             />
           </EuiToolTip>
         ))}
-        <Divider colorVariable="euiColorSecondary" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+        <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
         <Divider
-          colorVariable="euiColorSecondary"
+          colorVariable="separatorNavigationColor"
           className="eui-showFor--xs--flex eui-showFor--s--flex"
           variant="middle"
           orientation="vertical"

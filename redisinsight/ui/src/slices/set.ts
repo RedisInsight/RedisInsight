@@ -2,8 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getMatchType } from 'uiSrc/telemetry'
 import {
   AddMembersToSetDto,
   GetSetMembersResponse,
@@ -169,6 +170,20 @@ export function fetchSetMembers(
       )
 
       if (isStatusSuccessful(status)) {
+        const matchValue = getMatchType(match)
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.Set,
+            match: matchValue,
+            length: data.total,
+          }
+        })
         dispatch(loadSetMembersSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }
@@ -268,6 +283,18 @@ export function addSetMembersAction(
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.Set,
+            numberOfAdded: data.members.length,
+          }
+        })
         dispatch(addSetMembersSuccess())
         dispatch<any>(fetchKeyInfo(data.keyName))
         onSuccessAction?.()
@@ -302,6 +329,18 @@ export function deleteSetMembers(key: string, members: string[]) {
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.Set,
+            numberOfRemoved: members.length,
+          }
+        })
         const newTotalValue = state.browser.set.data.total - data.affected
         dispatch(removeSetMembersSuccess())
         dispatch(removeMembersFromList(members))

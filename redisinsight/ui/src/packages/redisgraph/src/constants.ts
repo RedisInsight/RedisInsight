@@ -1,5 +1,5 @@
 export const NODE_STROKE_WIDTH = 1.5
-export const NODE_RADIUS = 30
+export const NODE_RADIUS = 25
 
 export const EDGE_STROKE = 1.8
 
@@ -14,6 +14,8 @@ export const ZOOM_PROPS = {
 
 
 export const COMPACT_FLAG = '--compact'
+
+export const EDGE_CAPTION_EXTERNAL = "external"
 
 export const NODE_COLORS_DARK = [
     { color: '#6A1DC3', borderColor: '#6A1DC3', textColor: '#FFFFFF' },

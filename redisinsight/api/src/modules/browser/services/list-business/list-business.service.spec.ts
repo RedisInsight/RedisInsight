@@ -8,7 +8,6 @@ import {
 import { when } from 'jest-when';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongNumberOfArgumentsError,
@@ -33,7 +32,6 @@ import {
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { ListBusinessService } from './list-business.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -84,10 +82,6 @@ describe('ListBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ListBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,

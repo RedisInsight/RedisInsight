@@ -2,21 +2,19 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 interface Props {
   items: IKeyPropTypes[]
-  separator?: string
+  delimiter?: string
 }
 
 export const constructKeysToTree = (props: Props): any[] => {
-  const { items: keys, separator = ':' } = props
-  // const keysSymbol = Symbol(`keys${separator}keys`)
-  // const keysSymbol = Symbol('keys')
-  const keysSymbol = `keys${separator}keys`
+  const { items: keys, delimiter = ':' } = props
+  const keysSymbol = `keys${delimiter}keys`
   const tree: any = {}
 
   keys.forEach((key: any) => {
     // eslint-disable-next-line prefer-object-spread
     let currentNode: any = tree
     const { name } = key
-    const nameSplitted = name.split(separator)
+    const nameSplitted = name.split(delimiter)
     const lastIndex = nameSplitted.length - 1
 
     nameSplitted.forEach((value:any, index: number) => {
@@ -50,7 +48,7 @@ export const constructKeysToTree = (props: Props): any[] => {
   }
 
   // FormatTreeData
-  const formatTreeData = (tree: any, previousKey = '', separator = ':') => {
+  const formatTreeData = (tree: any, previousKey = '', delimiter = ':') => {
     const treeNodes = Reflect.ownKeys(tree)
 
     // sort Ungrouped Keys group to top
@@ -67,11 +65,11 @@ export const constructKeysToTree = (props: Props): any[] => {
     return treeNodes.map((key) => {
       const name = key?.toString()
       const node: any = { name }
-      const tillNowKeyName = previousKey + name + separator
+      const tillNowKeyName = previousKey + name + delimiter
 
       // populate node with children nodes
       if (key !== keysSymbol && Reflect.ownKeys(tree[key]).length > 0) {
-        node.children = formatTreeData(tree[key], tillNowKeyName, separator)
+        node.children = formatTreeData(tree[key], tillNowKeyName, delimiter)
         node.keyCount = node.children.reduce((a: any, b:any) => a + (b.keyCount || 0), 0)
       } else {
         // populate leaf with keys
@@ -87,5 +85,5 @@ export const constructKeysToTree = (props: Props): any[] => {
     })
   }
 
-  return formatTreeData(tree, '', separator)
+  return formatTreeData(tree, '', delimiter)
 }

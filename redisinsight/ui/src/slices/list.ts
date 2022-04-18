@@ -2,7 +2,8 @@ import { cloneDeep, isNull } from 'lodash'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   getUrl,
   Nullable,
@@ -301,6 +302,18 @@ export function fetchSearchingListElementAction(
       if (isStatusSuccessful(status)) {
         dispatch(loadSearchingListElementSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.List,
+            match: 'EXACT_VALUE_NAME',
+          }
+        })
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -345,6 +358,17 @@ export function updateListElementAction(
         onSuccessAction?.()
         dispatch(updateValueSuccess())
         dispatch(updateElementInList(data))
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.List,
+          }
+        })
         dispatch<any>(refreshKeyInfoAction(data.keyName))
       }
     } catch (error) {
@@ -378,6 +402,18 @@ export function insertListElementsAction(
         onSuccessAction?.()
         dispatch(insertListElementsSuccess())
         dispatch<any>(fetchKeyInfo(data.keyName))
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.List,
+            numberOfAdded: 1,
+          }
+        })
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -407,6 +443,18 @@ export function deleteListElementsAction(
         { data }
       )
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            keyType: KeyTypes.List,
+            numberOfRemoved: data.count,
+          }
+        })
         onSuccessAction?.()
         dispatch(deleteListElementsSuccess())
         if (state.browser.list.data?.total - data.count > 0) {

@@ -699,9 +699,9 @@ const AddStandaloneForm = (props: Props) => {
     <>
       <EuiFlexGroup
         className={flexGroupClassName}
+        responsive={false}
       >
         <EuiFlexItem
-          style={{ width: '230px' }}
           grow={false}
           className={flexItemClassName}
         >
@@ -709,7 +709,7 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
-              label="Database Index"
+              label="Select the Redis logical database"
               checked={!!formik.values.showDb}
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"
@@ -731,13 +731,14 @@ const AddStandaloneForm = (props: Props) => {
               </EuiText>
             </EuiCallOut>
           </EuiFlexItem>
-          <EuiFlexItem className={cx(
-            flexItemClassName,
-            styles.dbInput,
-            { [styles.dbInputBig]: !flexItemClassName }
-          )}
+          <EuiFlexItem
+            className={cx(
+              flexItemClassName,
+              styles.dbInput,
+              { [styles.dbInputBig]: !flexItemClassName }
+            )}
           >
-            <EuiFormRow label="Select the Redis logical database" helpText="Should not exceed 15.">
+            <EuiFormRow label="Database Index" helpText="Should not exceed 15.">
               <EuiFieldNumber
                 name="db"
                 id="db"

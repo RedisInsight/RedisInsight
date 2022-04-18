@@ -117,7 +117,7 @@
   height: 18px !important;
 
   @media only screen and (min-width: 1124px) {
-    display: none;
+    display: none !important;
   }
 }
 

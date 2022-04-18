@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
@@ -5,7 +6,6 @@ import {
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -15,10 +15,10 @@ const keyNameFilter = `keyName${chance.word({ length: 10 })}`;
 fixture `Tree view verifications`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
     })
@@ -49,7 +49,7 @@ test
             scannedValue = scannedValue + 10;
             await t.click(browserPage.scanMoreButton);
             await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, `The database is automatically scanned by ${scannedValue} 000 keys`, { timeout: 60000 });
-        }       
+        }
     });
 test
     .after(async() => {
@@ -84,7 +84,7 @@ test
         await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
         await t.click(browserPage.treeViewButton);
         //Set filter by key type
-        await browserPage.selectFilterGroupType(KeyTypesTexts.String); 
+        await browserPage.selectFilterGroupType(KeyTypesTexts.String);
         await t.click(browserPage.browserViewButton);
         await t.click(browserPage.treeViewButton);
         //Verify that state of filer by key type is saved

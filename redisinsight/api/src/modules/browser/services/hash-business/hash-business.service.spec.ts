@@ -9,7 +9,6 @@ import { when } from 'jest-when';
 import { flatMap } from 'lodash';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
@@ -30,7 +29,6 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { HashBusinessService } from './hash-business.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -80,10 +78,6 @@ describe('HashBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HashBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,

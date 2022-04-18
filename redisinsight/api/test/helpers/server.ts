@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import * as bodyParser from 'body-parser';
 import { constants } from './constants';
+import { connect, Socket } from "socket.io-client";
 
 /**
  * TEST_BE_SERVER - url to already running API that we want to test
@@ -9,6 +10,8 @@ import { constants } from './constants';
  */
 export let server = process.env.TEST_BE_SERVER;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
+
+export let baseUrl = server;
 
 /**
  * Initiate server if needed (only once)
@@ -38,7 +41,23 @@ export const getServer = async () => {
 
     await app.init();
     server = await app.getHttpServer();
+
+    await app.listen(0, '0.0.0.0');
+    baseUrl = await app.getUrl();
   }
 
   return server;
+}
+
+export const getSocket = async (namespace: string, options = {}): Promise<Socket> => {
+  return new Promise((resolve, reject) => {
+    const base = new URL(baseUrl);
+    const client = connect(`ws${base.protocol === 'https:' ? 's' : ''}://${base.host}/${namespace}`, {
+      forceNew: true,
+      rejectUnauthorized: false,
+      ...options,
+    });
+    client.on('connect_error', reject);
+    client.on('connect', () => resolve(client));
+  });
 }

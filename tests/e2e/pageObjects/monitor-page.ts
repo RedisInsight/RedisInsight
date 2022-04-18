@@ -1,48 +1,28 @@
 import {Selector, t} from 'testcafe';
 
 export class MonitorPage {
+    //-------------------------------------------------------------------------------------------
+    //DECLARATION OF SELECTORS
+    //*Declare all elements/components of the relevant page.
+    //*Target any element/component via data-id, if possible!
+    //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
+    //-------------------------------------------------------------------------------------------
+    //BUTTONS
+    expandMonitor = Selector('[data-testid=expand-monitor]');
+    runMonitorToggle = Selector('[data-testid=toggle-run-monitor]');
+    startMonitorButton = Selector('[data-testid=start-monitor]');
+    clearMonitorButton = Selector('[data-testid=clear-monitor]');
+    hideMonitor = Selector('[data-testid=hide-monitor]');
+    closeMonitor = Selector('[data-testid=close-monitor]');
+    //TEXT ELEMENTS
+    monitorIsStoppedText = Selector('[data-testid=monitor-stopped]');
+    monitorIsStartedText = Selector('[data-testid=monitor-started]');
+    monitorArea = Selector('[data-testid=monitor]');
+    monitorWarningMessage = Selector('[data-testid=monitor-warning-message]');
+    monitorCommandLinePart = Selector('[data-testid=monitor] span');
+    monitorCommandLineTimestamp = Selector('[data-testid=monitor] span').withText(/[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}/);
+    monitorNoPermissionsMessage = Selector('[data-testid=monitor-error-message]');
 
-    //------------------------------------------------------------------------------------------
-    //DECLARATION OF TYPES: DOM ELEMENTS and UI COMPONENTS
-    //*Assign the 'Selector' type to any element/component nested within the constructor.
-    //------------------------------------------------------------------------------------------
-
-    expandMonitor: Selector
-    monitorArea: Selector
-    runMonitorToggle: Selector
-    startMonitorButton: Selector
-    clearMonitorButton: Selector
-    monitorIsStoppedText: Selector
-    monitorIsStartedText: Selector
-    hideMonitor: Selector
-    closeMonitor: Selector
-    monitorWarningMessage: Selector
-    monitorCommandLinePart: Selector
-    monitorCommandLineTimestamp: Selector
-    monitorNoPermissionsMessage: Selector
-
-    constructor() {
-        //-------------------------------------------------------------------------------------------
-        //DECLARATION OF SELECTORS
-        //*Declare all elements/components of the relevant page.
-        //*Target any element/component via data-id, if possible!
-        //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
-        //-------------------------------------------------------------------------------------------
-        //BUTTONS
-        this.expandMonitor = Selector('[data-testid=expand-monitor]');
-        this.monitorArea = Selector('[data-testid=monitor]');
-        this.runMonitorToggle = Selector('[data-testid=toggle-run-monitor]');
-        this.startMonitorButton = Selector('[data-testid=start-monitor]');
-        this.clearMonitorButton = Selector('[data-testid=clear-monitor]');
-        this.monitorIsStoppedText = Selector('[data-testid=monitor-stopped]');
-        this.monitorIsStartedText = Selector('[data-testid=monitor-started]');
-        this.hideMonitor = Selector('[data-testid=hide-monitor]');
-        this.closeMonitor = Selector('[data-testid=close-monitor]');
-        this.monitorWarningMessage = Selector('[data-testid=monitor-warning-message]');
-        this.monitorCommandLinePart = Selector('[data-testid=monitor] span');
-        this.monitorCommandLineTimestamp = Selector('[data-testid=monitor] span').withText(/[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}/);
-        this.monitorNoPermissionsMessage = Selector('[data-testid=monitor-error-message]');
-    }
     /**
      * Check specific command in Monitor
      * @param command A command which should be displayed in monitor

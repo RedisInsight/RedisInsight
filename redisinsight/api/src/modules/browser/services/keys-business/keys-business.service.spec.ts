@@ -9,7 +9,6 @@ import { when } from 'jest-when';
 import { get } from 'lodash';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserAnalyticsService,
   mockOSSClusterDatabaseEntity,
   mockRedisClusterConsumer,
   mockRedisConsumer,
@@ -39,7 +38,6 @@ import {
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
 import { KeysBusinessService } from './keys-business.service';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testString',
@@ -71,10 +69,6 @@ describe('KeysBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         KeysBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: getRepositoryToken(DatabaseInstanceEntity),
           useFactory: mockRepository,

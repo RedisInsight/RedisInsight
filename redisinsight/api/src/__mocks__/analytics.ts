@@ -7,22 +7,6 @@ export const mockInstancesAnalyticsService = () => ({
   sendConnectionFailedEvent: jest.fn(),
 });
 
-export const mockBrowserAnalyticsService = () => ({
-  sendKeysScannedEvent: jest.fn(),
-  sendKeyAddedEvent: jest.fn(),
-  sendKeyTTLChangedEvent: jest.fn(),
-  sendKeysDeletedEvent: jest.fn(),
-  sendKeyValueAddedEvent: jest.fn(),
-  sendKeyValueEditedEvent: jest.fn(),
-  sendKeyValueRemovedEvent: jest.fn(),
-  sendKeyScannedEvent: jest.fn(),
-  sendGetListElementByIndexEvent: jest.fn(),
-  sendJsonPropertyAddedEvent: jest.fn(),
-  sendJsonPropertyEditedEvent: jest.fn(),
-  sendJsonPropertyDeletedEvent: jest.fn(),
-  sendJsonArrayPropertyAppendEvent: jest.fn(),
-});
-
 export const mockCliAnalyticsService = () => ({
   sendClientCreatedEvent: jest.fn(),
   sendClientCreationFailedEvent: jest.fn(),

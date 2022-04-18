@@ -2,18 +2,22 @@ import { ReadStream } from 'fs';
 import { Injectable, NotFoundException, OnModuleDestroy } from '@nestjs/common';
 import { LogFile } from 'src/modules/profiler/models/log-file';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { ProfilerAnalyticsService } from 'src/modules/profiler/profiler-analytics.service';
 
 @Injectable()
 export class LogFileProvider implements OnModuleDestroy {
   private profilerLogFiles: Map<string, LogFile> = new Map();
 
+  constructor(private analyticsService: ProfilerAnalyticsService) {}
+
   /**
    * Get or create Profiler Log File to work with
+   * @param instanceId
    * @param id
    */
-  getOrCreate(id: string): LogFile {
+  getOrCreate(instanceId: string, id: string): LogFile {
     if (!this.profilerLogFiles.has(id)) {
-      this.profilerLogFiles.set(id, new LogFile(id));
+      this.profilerLogFiles.set(id, new LogFile(instanceId, id, this.analyticsService.getEventsEmitters()));
     }
 
     return this.profilerLogFiles.get(id);
@@ -39,11 +43,6 @@ export class LogFileProvider implements OnModuleDestroy {
   async getDownloadData(id): Promise<{ stream: ReadStream, filename: string }> {
     const logFile = await this.get(id);
     const stream = await logFile.getReadStream();
-
-    stream.once('end', () => {
-      stream.destroy();
-      // logFile.destroy();
-    });
 
     return { stream, filename: logFile.getFilename() };
   }

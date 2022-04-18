@@ -28,7 +28,7 @@ export class ProfilerService {
   async addListenerForInstance(instanceId: string, client: Socket, settings: MonitorSettings = null) {
     this.logger.log(`Add listener for instance: ${instanceId}.`);
 
-    const profilerClient = await this.profilerClientProvider.getOrCreateClient(client, settings);
+    const profilerClient = await this.profilerClientProvider.getOrCreateClient(instanceId, client, settings);
     const monitorObserver = await this.redisObserverProvider.getOrCreateObserver(instanceId);
     await monitorObserver.subscribe(profilerClient);
   }

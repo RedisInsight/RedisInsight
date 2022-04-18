@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import { ReadStream, WriteStream } from 'fs';
 import config from 'src/utils/config';
 import FileLogsEmitter from 'src/modules/profiler/emitters/file.logs-emitter';
+import { TelemetryEvents } from 'src/constants';
 
 const DIR_PATH = config.get('dir_path');
 const PROFILER = config.get('profiler');
@@ -22,13 +23,19 @@ export class LogFile {
 
   private alias: string;
 
+  private analyticsEvents: Map<TelemetryEvents, Function>;
+
+  public readonly instanceId: string;
+
   public readonly id: string;
 
-  constructor(id: string, alias: string = null) {
+  constructor(instanceId: string, id: string, analyticsEvents?: Map<TelemetryEvents, Function>) {
+    this.instanceId = instanceId;
     this.id = id;
-    this.alias = alias || id;
+    this.alias = id;
     this.filePath = join(DIR_PATH.tmpDir, this.id);
     this.startTime = new Date();
+    this.analyticsEvents = analyticsEvents || new Map();
   }
 
   /**
@@ -47,7 +54,18 @@ export class LogFile {
    * Used to download file using http server
    */
   getReadStream(): ReadStream {
-    return fs.createReadStream(this.filePath);
+    const stream = fs.createReadStream(this.filePath);
+    stream.once('end', () => {
+      stream.destroy();
+      try {
+        this.analyticsEvents.get(TelemetryEvents.ProfilerLogDownloaded)(this.instanceId, this.getFileSize());
+      } catch (e) {
+        // ignore analytics errors
+      }
+      // logFile.destroy();
+    });
+
+    return stream;
   }
 
   /**
@@ -66,6 +84,11 @@ export class LogFile {
    */
   getFilename(): string {
     return `${this.alias}-${this.startTime.getTime()}-${Date.now()}`;
+  }
+
+  getFileSize(): number {
+    const stats = fs.statSync(this.filePath);
+    return stats.size;
   }
 
   setAlias(alias: string) {
@@ -98,7 +121,10 @@ export class LogFile {
     try {
       this.writeStream?.close();
       this.writeStream = null;
+      const size = this.getFileSize();
       await fs.unlink(this.filePath);
+
+      this.analyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)(this.instanceId, size);
     } catch (e) {
       // ignore error
     }

@@ -2,13 +2,14 @@
   border-width: 0 !important;
   box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
 }
-.euiToast--danger, .euiToast--success {
+.euiToast--danger,
+.euiToast--success {
   border-top-width: 3px !important;
 }
 
 .euiToast--danger {
   border-color: var(--euiToastDangerBorderColor) !important;
-  background-color: var(--euiColorColorWarning) !important;
+  background-color: var(--euiToastDangerBgColor) !important;
 }
 
 .euiToast--success {
@@ -38,7 +39,7 @@
 
 .toast-danger-btn {
   box-shadow: none !important;
-  border-color: var(--euiToastDangerBtnColor) !important;
+  border: none !important;
   float: right;
   &.euiButton {
     color: white !important;
@@ -57,7 +58,6 @@
   left: 14px !important;
 }
 
-
 @media only screen and (max-width: 767px) {
   .euiGlobalToastList {
     width: 400px !important;
@@ -67,5 +67,3 @@
     left: auto !important;
   }
 }
-
-

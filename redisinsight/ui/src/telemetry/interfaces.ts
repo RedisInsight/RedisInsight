@@ -29,3 +29,8 @@ export interface ITelemetryEvent {
   event: TelemetryEvent;
   properties?: object;
 }
+
+export enum MatchType {
+  EXACT_VALUE_NAME = 'EXACT_VALUE_NAME',
+  PATTERN = 'PATTERN'
+}

@@ -1,4 +1,4 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -39,19 +39,29 @@ const MonitorLog = () => {
     dispatch(resetProfiler())
   }
 
+  const getPaddingByWidth = (width: number): number => {
+    if (width < 360) return 6
+    if (width < 460) return 12
+    return 18
+  }
+
   return (
     <div className={styles.monitorLogWrapper}>
       <AutoSizer disableHeight>
         {({ width }) => (
-          <div className={styles.container} style={{ width }}>
+          <div
+            className={styles.container}
+            style={{ width, paddingLeft: getPaddingByWidth(width), paddingRight: getPaddingByWidth(width) }}
+          >
             <EuiText size="xs" color="subdued" className={styles.time}>
               <EuiIcon type="clock" />
               {format(timestamp.start, 'hh:mm:ss')}
               &nbsp;&#8211;&nbsp;
-              {format(timestamp.end, 'hh:mm:ss')}
+              {format(timestamp.paused, 'hh:mm:ss')}
               &nbsp;(
               {duration}
-              &nbsp;Running time)
+              {width > 360 && ' Running time'}
+              )
             </EuiText>
             <EuiFlexGroup
               className={styles.actions}
@@ -61,17 +71,22 @@ const MonitorLog = () => {
               responsive={false}
             >
               <EuiFlexItem grow={false}>
-                <EuiButton
-                  size="s"
-                  color="secondary"
-                  href={linkToDownload}
-                  iconType="download"
-                  className={styles.btn}
-                  {...downloadBtnProps}
+                <EuiToolTip
+                  content="Download Profiler Log"
                 >
-                  {width > 360 && ' Download '}
-                  Log
-                </EuiButton>
+                  <EuiButton
+                    size="s"
+                    color="secondary"
+                    href={linkToDownload}
+                    iconType="download"
+                    className={styles.btn}
+                    data-testid="download-log-btn"
+                    {...downloadBtnProps}
+                  >
+                    {width > 360 && ' Download '}
+                    Log
+                  </EuiButton>
+                </EuiToolTip>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton
@@ -81,6 +96,7 @@ const MonitorLog = () => {
                   onClick={onResetProfiler}
                   iconType="refresh"
                   className={styles.btn}
+                  data-testid="reset-profiler-btn"
                 >
                   Reset
                   {width > 360 && ' Profiler'}

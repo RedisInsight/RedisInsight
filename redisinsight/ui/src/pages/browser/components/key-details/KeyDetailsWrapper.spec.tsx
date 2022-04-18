@@ -59,30 +59,30 @@ jest.mock('./KeyDetails/KeyDetails', () => ({
   default: jest.fn(),
 }))
 
-jest.mock('uiSrc/slices/hash')
-jest.mock('uiSrc/slices/zset')
-jest.mock('uiSrc/slices/string')
-jest.mock('uiSrc/slices/set')
-jest.mock('uiSrc/slices/list')
-jest.mock('uiSrc/slices/keys')
+// jest.mock('uiSrc/slices/hash')
+// jest.mock('uiSrc/slices/zset')
+// jest.mock('uiSrc/slices/string')
+// jest.mock('uiSrc/slices/set')
+// jest.mock('uiSrc/slices/list')
+// jest.mock('uiSrc/slices/keys')
 
 describe('KeyDetailsWrapper', () => {
   beforeAll(() => {
     KeyDetails.mockImplementation(MockKeyDetails)
   })
-  beforeEach(() => {
-    refreshHashFieldsAction.mockImplementation(() => jest.fn)
-    refreshZsetMembersAction.mockImplementation(() => jest.fn)
-    resetStringValue.mockImplementation(() => jest.fn)
-    refreshSetMembersAction.mockImplementation(() => jest.fn)
-    refreshListElementsAction.mockImplementation(() => jest.fn)
-    deleteKeyAction.mockImplementation(() => jest.fn)
-    editKey.mockImplementation(() => jest.fn)
-    editKeyTTL.mockImplementation(() => jest.fn)
-    fetchKeyInfo.mockImplementation(() => jest.fn)
-    refreshKeyInfoAction.mockImplementation(() => jest.fn)
-    selectedKeySelector.mockReturnValue('keyName')
-  })
+  // beforeEach(() => {
+  //   refreshHashFieldsAction.mockImplementation(() => jest.fn)
+  //   refreshZsetMembersAction.mockImplementation(() => jest.fn)
+  //   resetStringValue.mockImplementation(() => jest.fn)
+  //   refreshSetMembersAction.mockImplementation(() => jest.fn)
+  //   refreshListElementsAction.mockImplementation(() => jest.fn)
+  //   deleteKeyAction.mockImplementation(() => jest.fn)
+  //   editKey.mockImplementation(() => jest.fn)
+  //   editKeyTTL.mockImplementation(() => jest.fn)
+  //   fetchKeyInfo.mockImplementation(() => jest.fn)
+  //   refreshKeyInfoAction.mockImplementation(() => jest.fn)
+  //   selectedKeySelector.mockReturnValue('keyName')
+  // })
   it('should render', () => {
     expect(
       render(<KeyDetailsWrapper {...instance(mockedProps)} />)

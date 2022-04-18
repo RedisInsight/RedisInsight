@@ -29,7 +29,7 @@ export interface Props {
 
 const MonitorHeader = ({ handleRunMonitor }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { isRunning, isPaused, isStarted, items, error } = useSelector(monitorSelector)
+  const { isRunning, isPaused, isStarted, items = [], error, loadingPause } = useSelector(monitorSelector)
   const isErrorShown = !!error && !isRunning
   const dispatch = useDispatch()
 
@@ -89,7 +89,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                 onClick={() => handleRunMonitor()}
                 aria-label="start/stop monitor"
                 data-testid="toggle-run-monitor"
-                disabled={isErrorShown}
+                disabled={isErrorShown || loadingPause}
               />
             </EuiToolTip>
             <EuiToolTip

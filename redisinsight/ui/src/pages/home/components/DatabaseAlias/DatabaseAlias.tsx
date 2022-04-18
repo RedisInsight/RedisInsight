@@ -170,6 +170,7 @@ const DatabaseAlias = (props: Props) => {
           color="secondary"
           iconType="kqlFunction"
           aria-label="Connect to database"
+          data-testid="connect-to-db-btn"
           className={styles.btnOpen}
           onClick={handleOpen}
         >

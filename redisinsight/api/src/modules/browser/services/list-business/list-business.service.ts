@@ -30,7 +30,6 @@ import {
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 @Injectable()
 export class ListBusinessService {
@@ -38,7 +37,6 @@ export class ListBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async createList(
@@ -66,14 +64,6 @@ export class ListBusinessService {
       } else {
         await this.createSimpleList(clientOptions, dto);
       }
-      this.browserAnalyticsService.sendKeyAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
-        {
-          length: 1,
-          TTL: dto.expire || -1,
-        },
-      );
       this.logger.log('Succeed to create list data type.');
     } catch (error) {
       this.logger.error('Failed to create list data type.', error);
@@ -104,13 +94,6 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      this.browserAnalyticsService.sendKeyValueAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
-        {
-          numberOfAdded: 1,
-        },
-      );
       this.logger.log(
         `Succeed to insert element at the ${destination} of the list data type.`,
       );
@@ -200,9 +183,6 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()),
         );
       }
-      this.browserAnalyticsService.sendGetListElementByIndexEvent(
-        clientOptions.instanceId,
-      );
       this.logger.log('Succeed to get List element by index.');
       return { keyName, value };
     } catch (error) {
@@ -238,10 +218,6 @@ export class ListBusinessService {
         clientOptions,
         BrowserToolListCommands.LSet,
         [keyName, index, element],
-      );
-      this.browserAnalyticsService.sendKeyValueEditedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
       );
       this.logger.log('Succeed to set the list element at index.');
     } catch (error) {
@@ -290,13 +266,6 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      this.browserAnalyticsService.sendKeyValueRemovedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
-        {
-          numberOfRemoved: isArray(result) ? result.length : 1,
-        },
-      );
       return {
         elements: isArray(result) ? [...result] : [result],
       };

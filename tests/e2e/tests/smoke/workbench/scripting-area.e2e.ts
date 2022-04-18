@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     WorkbenchPage
@@ -16,7 +16,7 @@ fixture `Scripting area at Workbench`
     .meta({type: 'smoke'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })

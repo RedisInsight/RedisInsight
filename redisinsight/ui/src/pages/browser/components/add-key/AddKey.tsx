@@ -14,9 +14,9 @@ import {
 } from '@elastic/eui'
 import { KeyTypes } from 'uiSrc/constants'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { addKeyStateSelector, resetAddKey } from 'uiSrc/slices/keys'
+import { addKeyStateSelector, resetAddKey, keysSelector } from 'uiSrc/slices/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash/AddKeyHash'
 import AddKeyZset from './AddKeyZset/AddKeyZset'
@@ -37,6 +37,7 @@ const AddKey = (props: Props) => {
 
   const { loading } = useSelector(addKeyStateSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   useEffect(() =>
     // componentWillUnmount
@@ -64,7 +65,11 @@ const AddKey = (props: Props) => {
 
   const closeKeyTelemetry = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_ADD_CANCELLED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_ADD_CANCELLED,
+        TelemetryEvent.TREE_VIEW_KEY_ADD_CANCELLED
+      ),
       eventData: {
         databaseId: instanceId
       }

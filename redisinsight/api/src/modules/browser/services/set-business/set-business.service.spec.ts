@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { when } from 'jest-when';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
@@ -28,7 +27,6 @@ import {
   GetSetMembersDto,
   GetSetMembersResponse,
 } from '../../dto';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -71,10 +69,6 @@ describe('SetBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SetBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,

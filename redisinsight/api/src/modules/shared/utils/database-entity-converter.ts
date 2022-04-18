@@ -5,6 +5,7 @@ export const convertEntityToDto = (database: DatabaseInstanceEntity): DatabaseIn
   if (database) {
     const {
       tls,
+      tlsServername,
       verifyServerCert,
       caCert,
       clientCert,
@@ -31,7 +32,7 @@ export const convertEntityToDto = (database: DatabaseInstanceEntity): DatabaseIn
       };
     }
     if (tls) {
-      result.tls = { verifyServerCert: verifyServerCert || false };
+      result.tls = { verifyServerCert: verifyServerCert || false, servername: tlsServername };
       if (caCert) {
         result.tls.caCertId = caCert.id;
       }

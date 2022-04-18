@@ -18,6 +18,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   lastConnection: Joi.date().allow(null).required(),
   provider: Joi.string().required(),
   tls: Joi.object().keys({
+    servername: Joi.string().allow(null),
     verifyServerCert: Joi.boolean().required(),
     caCertId: Joi.string(),
     clientCertPairId: Joi.string(),

@@ -1,5 +1,41 @@
-xdescribe('dummy', () => {
-  it('dummy', () => {});
+import * as Redis from 'ioredis-mock';
+import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
+import { RedisObserverStatus } from 'src/modules/profiler/constants';
+
+const redisClient = new Redis();
+const getRedisClientFn = jest.fn();
+
+describe('RedisObserver', () => {
+  let redisObserver: RedisObserver;
+
+  beforeEach(() => {
+    redisObserver = new RedisObserver();
+    getRedisClientFn.mockResolvedValue(redisClient);
+  });
+
+  it('initialization', () => {
+    expect(redisObserver['status']).toEqual(RedisObserverStatus.Empty);
+  });
+
+  describe('init', () => {
+    it('successfully init', async () => {
+      await new Promise((resolve) => {
+        redisObserver.init(getRedisClientFn);
+        expect(redisObserver['status']).toEqual(RedisObserverStatus.Initializing);
+        redisObserver.on('connect', () => {
+          resolve(true);
+        });
+      });
+      expect(redisObserver['status']).toEqual(RedisObserverStatus.Connected);
+      expect(redisObserver['redis']).toEqual(redisClient);
+    });
+    it('init error due to redis connection', async () => {
+      getRedisClientFn.mockRejectedValueOnce(new Error('error'));
+      await redisObserver.init(getRedisClientFn);
+      expect(redisObserver['status']).toEqual(RedisObserverStatus.Error);
+      expect(redisObserver['redis']).toEqual(undefined);
+    });
+  });
 });
 
 // import { ForbiddenException } from '@nestjs/common';

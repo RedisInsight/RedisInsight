@@ -39,12 +39,13 @@ describe('LogFile', () => {
     expect(logFile.getWriteStream()).toEqual(stream);
   });
 
-  it('getReadStream', () => {
+  it('getReadStream', async () => {
     const stream = logFile.getReadStream();
     expect(stream).toBeInstanceOf(ReadStream);
     expect(stream.destroyed).toEqual(false);
     expect(logFile.getReadStream()).not.toEqual(stream);
     stream.emit('end');
+    await new Promise((r) => setTimeout(r, 500));
     expect(stream.destroyed).toEqual(true);
     expect(mockProfilerAnalyticsEvents.get(TelemetryEvents.ProfilerLogDownloaded)).toHaveBeenCalled();
   });
@@ -96,6 +97,7 @@ describe('LogFile', () => {
     const stream = logFile.getWriteStream();
     expect(stream['_writableState'].ended).toEqual(false);
     stream.write('somedata');
+    await new Promise((r) => setTimeout(r, 500));
     expect(fs.existsSync(logFile['filePath'])).toEqual(true);
     expect(logFile['writeStream']).toEqual(stream);
     await logFile.destroy();

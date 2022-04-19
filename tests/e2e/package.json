@@ -34,7 +34,7 @@
     "dotenv-cli": "^5.0.0",
     "eslint": "7.32.0",
     "eslint-plugin-import": "2.24.2",
-    "testcafe": "1.18.5",
+    "testcafe": "1.14.2",
     "testcafe-browser-provider-electron": "0.0.18",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "2.2.0",

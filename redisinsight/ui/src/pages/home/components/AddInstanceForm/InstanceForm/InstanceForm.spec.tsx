@@ -232,6 +232,74 @@ describe('InstanceForm', () => {
     )
   })
 
+  it('should change "Use SNI" with prepopulated with host', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          formFields={{
+            ...formFields,
+            tls: {},
+            connectionType: ConnectionType.Cluster,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+    fireEvent.click(screen.getByTestId('sni'))
+
+    const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    await waitFor(() => {
+      fireEvent.click(submitBtn)
+    })
+
+    expect(handleSubmit).toBeCalledWith(
+      expect.objectContaining({
+        sni: true,
+        servername: formFields.host
+      })
+    )
+  })
+
+  it('should change "Use SNI"', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          formFields={{
+            ...formFields,
+            tls: {},
+            connectionType: ConnectionType.Cluster,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+    fireEvent.click(screen.getByTestId('sni'))
+
+    await waitFor(() => {
+      fireEvent.change(screen.getByTestId('sni-servername'), {
+        target: { value: '12' },
+      })
+    })
+
+    const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    await waitFor(() => {
+      fireEvent.click(submitBtn)
+    })
+
+    expect(handleSubmit).toBeCalledWith(
+      expect.objectContaining({
+        sni: true,
+        servername: '12'
+      })
+    )
+  })
+
   it('should change "Verify TLS Certificate"', async () => {
     const handleSubmit = jest.fn()
     render(

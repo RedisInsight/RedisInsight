@@ -8,14 +8,21 @@ import reducer, {
   toggleMonitor,
   showMonitor,
   toggleHideMonitor,
-  toggleRunMonitor,
+  stopMonitor,
+  setError,
+  togglePauseMonitor,
+  startMonitor,
+  setStartTimestamp,
   setSocket,
   concatMonitorItems,
-  MONITOR_ITEMS_MAX_COUNT, stopMonitor, setError,
+  MONITOR_ITEMS_MAX_COUNT,
 } from '../../cli/monitor'
 
 let store: typeof mockedStore
 let socket: typeof MockedSocket
+let dateNow: jest.SpyInstance<number>
+const timestamp = 1629128049027
+
 beforeEach(() => {
   cleanup()
   socket = new MockedSocket()
@@ -24,6 +31,13 @@ beforeEach(() => {
 })
 
 describe('monitor slice', () => {
+  beforeAll(() => {
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => timestamp)
+  })
+
+  afterAll(() => {
+    dateNow.mockRestore()
+  })
   describe('toggleMonitor', () => {
     it('default state.isShowMonitor should be falsy', () => {
       // Arrange
@@ -99,16 +113,70 @@ describe('monitor slice', () => {
     })
   })
 
-  describe('toggleRunMonitor', () => {
-    it('should properly set !isRunning', () => {
+  describe('startMonitor', () => {
+    it('should properly set new state', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
         isRunning: true,
+        isSaveToFile: true
       }
 
       // Act
-      const nextState = reducer(initialState, toggleRunMonitor())
+      const nextState = reducer(initialState, startMonitor(true))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        cli: {
+          monitor: nextState,
+        },
+      })
+      expect(monitorSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setStartTimestamp', () => {
+    it('should properly set new state', () => {
+      // Arrange
+      const state: typeof initialState = {
+        ...initialState,
+        timestamp: {
+          ...initialState.timestamp,
+          start: timestamp,
+          unPaused: timestamp
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setStartTimestamp(timestamp))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        cli: {
+          monitor: nextState,
+        },
+      })
+      expect(monitorSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('togglePauseMonitor', () => {
+    it('should properly set new state', () => {
+      // Arrange
+      const diffTimestamp = 5
+      const intermediateState = reducer(initialState, setStartTimestamp(timestamp - diffTimestamp))
+      const state: typeof intermediateState = {
+        ...intermediateState,
+        isPaused: true,
+        timestamp: {
+          ...intermediateState.timestamp,
+          paused: timestamp,
+          duration: diffTimestamp
+        }
+      }
+
+      // Act
+      const nextState = reducer(intermediateState, togglePauseMonitor())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -123,10 +191,14 @@ describe('monitor slice', () => {
   describe('stopMonitor', () => {
     it('should properly set new state', () => {
       // Arrange
-      toggleRunMonitor()
       const state: typeof initialState = {
         ...initialState,
         isRunning: false,
+        timestamp: {
+          ...initialState.timestamp,
+          paused: Date.now(),
+          duration: Date.now() - initialState.timestamp.unPaused
+        }
       }
 
       // Act

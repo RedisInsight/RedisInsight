@@ -1,4 +1,5 @@
 import { join } from 'path';
+import * as os from 'os';
 
 const homedir = join(__dirname, '..');
 
@@ -15,6 +16,7 @@ const defaultsDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesP
 
 export default {
   dir_path: {
+    tmpDir: os.tmpdir(),
     homedir,
     prevHomedir: homedir,
     staticDir,
@@ -87,10 +89,14 @@ export default {
   redis_cli: {
     unsupportedCommands: JSON.parse(process.env.CLI_UNSUPPORTED_COMMANDS || '[]'),
   },
+  profiler: {
+    logFileIdleThreshold: parseInt(process.env.PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 60, // 1min
+  },
   analytics: {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
   },
   logger: {
+    logLevel: process.env.LOG_LEVEL || 'info', // log level
     stdout: process.env.STDOUT_LOGGER ? process.env.STDOUT_LOGGER === 'true' : false, // disabled by default
     files: process.env.FILES_LOGGER ? process.env.FILES_LOGGER === 'true' : true, // enabled by default
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,

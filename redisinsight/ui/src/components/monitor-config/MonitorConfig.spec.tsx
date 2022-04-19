@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
-import { monitorSelector, setSocket, stopMonitor, toggleRunMonitor } from 'uiSrc/slices/cli/monitor'
+import { monitorSelector, setMonitorLoadingPause, setSocket, stopMonitor } from 'uiSrc/slices/cli/monitor'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
 import MonitorConfig from './MonitorConfig'
@@ -52,6 +52,7 @@ describe('MonitorConfig', () => {
     const { unmount } = render(<MonitorConfig />)
     const afterRenderActions = [
       setSocket(socket),
+      setMonitorLoadingPause(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -66,7 +67,7 @@ describe('MonitorConfig', () => {
 
     const { unmount } = render(<MonitorConfig />)
 
-    socket.on(MonitorEvent.MonitorData, (data) => {
+    socket.on(MonitorEvent.MonitorData, (data: []) => {
       expect(data).toEqual(['message1', 'message2'])
     })
 
@@ -74,6 +75,7 @@ describe('MonitorConfig', () => {
 
     const afterRenderActions = [
       setSocket(socket),
+      setMonitorLoadingPause(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -88,7 +90,7 @@ describe('MonitorConfig', () => {
     })
     monitorSelector.mockImplementation(monitorSelectorMock)
 
-    socket.on(MonitorEvent.Exception, (error) => {
+    socket.on(MonitorEvent.Exception, (error: Error) => {
       expect(error).toEqual({ message: 'test', name: 'error' })
       // done()
     })
@@ -97,7 +99,8 @@ describe('MonitorConfig', () => {
 
     const afterRenderActions = [
       setSocket(socket),
-      toggleRunMonitor()
+      setMonitorLoadingPause(true),
+      stopMonitor()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -112,7 +115,7 @@ describe('MonitorConfig', () => {
     })
     monitorSelector.mockImplementation(monitorSelectorMock)
 
-    socket.on(SocketEvent.ConnectionError, (error) => {
+    socket.on(SocketEvent.ConnectionError, (error: Error) => {
       expect(error).toEqual({ message: 'test', name: 'error' })
     })
 
@@ -120,7 +123,8 @@ describe('MonitorConfig', () => {
 
     const afterRenderActions = [
       setSocket(socket),
-      toggleRunMonitor()
+      setMonitorLoadingPause(true),
+      stopMonitor()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -139,6 +143,7 @@ describe('MonitorConfig', () => {
 
     const afterRenderActions = [
       setSocket(socket),
+      setMonitorLoadingPause(true),
       stopMonitor()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])

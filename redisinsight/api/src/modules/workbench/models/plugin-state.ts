@@ -17,7 +17,9 @@ export class PluginState {
   commandExecutionId: string;
 
   @ApiProperty({
-    description: 'State stored',
+    type: String,
+    example: 'any',
+    description: 'Stored state',
   })
   @Expose()
   state: any;

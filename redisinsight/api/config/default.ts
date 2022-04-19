@@ -1,6 +1,10 @@
 import { join } from 'path';
+import * as os from 'os';
 
 const homedir = join(__dirname, '..');
+
+const buildInfoFileName = 'build.json';
+const dataZipFileName = 'data.zip';
 
 const staticDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'static')
@@ -12,7 +16,9 @@ const defaultsDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesP
 
 export default {
   dir_path: {
+    tmpDir: os.tmpdir(),
     homedir,
+    prevHomedir: homedir,
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),
@@ -21,8 +27,12 @@ export default {
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),
-    enablementArea: join(homedir, 'enablement-area'),
-    defaultEnablementArea: join(defaultsDir, 'enablement-area'),
+    guides: process.env.GUIDES_DEV_PATH || join(homedir, 'guides'),
+    defaultGuides: join(defaultsDir, 'guides'),
+    tutorials: process.env.TUTORIALS_DEV_PATH || join(homedir, 'tutorials'),
+    defaultTutorials: join(defaultsDir, 'tutorials'),
+    content: process.env.CONTENT_DEV_PATH || join(homedir, 'content'),
+    defaultContent: join(defaultsDir, 'content'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },
@@ -33,7 +43,9 @@ export default {
     globalPrefix: 'api',
     customPluginsUri: '/plugins',
     staticUri: '/static',
-    enablementAreaUri: '/static/workbench',
+    guidesUri: '/static/guides',
+    tutorialsUri: '/static/tutorials',
+    contentUri: '/static/content',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
     secretStoragePassword: process.env.SECRET_STORAGE_PASSWORD,
@@ -44,6 +56,11 @@ export default {
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
     appVersion: process.env.APP_VERSION || '2.0.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
+    excludeRoutes: [],
+  },
+  sockets: {
+    cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
+    serveClient: process.env.SOCKETS_SERVE_CLIENT ? process.env.SOCKETS_SERVE_CLIENT === 'true' : false,
   },
   db: {
     database: join(homedir, 'redisinsight.db'),
@@ -72,10 +89,14 @@ export default {
   redis_cli: {
     unsupportedCommands: JSON.parse(process.env.CLI_UNSUPPORTED_COMMANDS || '[]'),
   },
+  profiler: {
+    logFileIdleThreshold: parseInt(process.env.PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 60, // 1min
+  },
   analytics: {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
   },
   logger: {
+    logLevel: process.env.LOG_LEVEL || 'info', // log level
     stdout: process.env.STDOUT_LOGGER ? process.env.STDOUT_LOGGER === 'true' : false, // disabled by default
     files: process.env.FILES_LOGGER ? process.env.FILES_LOGGER === 'true' : true, // enabled by default
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,
@@ -84,11 +105,26 @@ export default {
   plugins: {
     stateMaxSize: parseInt(process.env.PLUGIN_STATE_MAX_SIZE, 10) || 1024 * 1024,
   },
-  enablementArea: {
-    updateUrl: process.env.ENABLEMENT_AREA_UPDATE_URL
-      || 'https://s3.amazonaws.com/redisinsight.download/public/guides',
-    zip: process.env.ENABLEMENT_AREA_ZIP || 'data.zip',
-    buildInfo: process.env.ENABLEMENT_AREA_CHECKSUM || 'build.json',
+  guides: {
+    updateUrl: process.env.GUIDES_UPDATE_URL
+      || 'https://github.com/RedisInsight/Guides/releases/download/latest',
+    zip: process.env.GUIDES_ZIP || dataZipFileName,
+    buildInfo: process.env.GUIDES_CHECKSUM || buildInfoFileName,
+    devMode: !!process.env.GUIDES_DEV_PATH,
+  },
+  tutorials: {
+    updateUrl: process.env.TUTORIALS_UPDATE_URL
+      || 'https://github.com/RedisInsight/Tutorials/releases/download/latest',
+    zip: process.env.TUTORIALS_ZIP || dataZipFileName,
+    buildInfo: process.env.TUTORIALS_CHECKSUM || buildInfoFileName,
+    devMode: !!process.env.TUTORIALS_DEV_PATH,
+  },
+  content: {
+    updateUrl: process.env.CONTENT_UPDATE_URL
+      || 'https://github.com/RedisInsight/Statics/releases/download/latest',
+    zip: process.env.CONTENT_ZIP || dataZipFileName,
+    buildInfo: process.env.CONTENT_CHECKSUM || buildInfoFileName,
+    devMode: !!process.env.CONTENT_DEV_PATH,
   },
   workbench: {
     maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,
@@ -137,4 +173,10 @@ export default {
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
   ],
+  redisStack: {
+    id: process.env.BUILD_TYPE === 'REDIS_STACK' ? process.env.REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
+    name: process.env.REDIS_STACK_DATABASE_NAME,
+    host: process.env.REDIS_STACK_DATABASE_HOST,
+    port: process.env.REDIS_STACK_DATABASE_PORT,
+  },
 };

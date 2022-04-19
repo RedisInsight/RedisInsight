@@ -1,39 +1,33 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage,
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
+import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
+
+let keyName = chance.word({ length: 10 });
 
 fixture `Edit Key values verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-      await t.maximizeWindow();
-      await userAgreementPage.acceptLicenseTerms();
-      await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
-      await addNewStandaloneDatabase(ossStandaloneConfig);
+    .beforeEach(async () => {
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
     })
 test
-    .after(async() => {
-        await browserPage.deleteKey();
-    })('Verify that user can edit String value', async t => {
-        const keyName = 'String1testKeyForEditValue';
+    .meta({ rte: rte.standalone })
+    ('Verify that user can edit String value', async t => {
+        keyName = chance.word({ length: 10 });
         const keyTTL = '2147476121';
         const keyValueBefore = 'StringValueBeforeEdit!';
         const keyValueAfter = 'StringValueBeforeEdit!';
 
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Add string key
         await browserPage.addStringKey(keyName, keyValueBefore, keyTTL);
         //Check the key value before edit

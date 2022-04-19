@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react'
+import { setHeaderText } from 'redisinsight-plugin-sdk'
 import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon'
 
 import {
@@ -36,7 +37,7 @@ const App = (props: Props) => {
 
   if (commandUpper.startsWith(Command.Aggregate)) {
     const [matched, ...arrayResponse] = response
-    globalThis.PluginSDK?.setHeaderText?.(`Matched:${matched}`)
+    setHeaderText(`Matched:${matched}`)
 
     const result = parseAggregateRawResponse(arrayResponse)
     return <TableResult query={command} result={result} matched={matched} />
@@ -44,7 +45,7 @@ const App = (props: Props) => {
 
   if (commandUpper.startsWith(Command.Search)) {
     const [matched, ...arrayResponse] = response
-    globalThis.PluginSDK?.setHeaderText?.(`Matched:${matched}`)
+    setHeaderText(`Matched:${matched}`)
 
     const result = parseSearchRawResponse(command, arrayResponse)
     return <TableResult query={command} result={result} matched={matched} />

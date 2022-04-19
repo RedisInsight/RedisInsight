@@ -162,6 +162,8 @@ export const {
 
 // A selector
 export const cliSettingsSelector = (state: RootState) => state.cli.settings
+export const cliUnsupportedCommandsSelector = (state: RootState, exclude: string[] = []): string[] =>
+  state.cli.settings.unsupportedCommands.filter((command: string) => !exclude.includes(command.toLowerCase()))
 
 // The reducer
 export default cliSettingsSlice.reducer
@@ -264,7 +266,7 @@ export function resetCliSettingsAction(
     const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
 
     dispatch(resetCliSettings())
-    dispatch(deleteCliClientAction(contextInstanceId, cliClientUuid, onSuccessAction))
+    cliClientUuid && dispatch(deleteCliClientAction(contextInstanceId, cliClientUuid, onSuccessAction))
   }
 }
 

@@ -8,6 +8,7 @@ import {
   isRepeatCountCorrect
 } from 'uiSrc/utils'
 import { cliTexts, SelectCommand } from 'uiSrc/constants/cliOutput'
+import { CommandMonitor } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { RSNotLoadedContent } from 'uiSrc/pages/workbench/constants'
@@ -21,6 +22,16 @@ const CommonErrorResponse = (command = '', result?: any) => {
   const { modules } = useSelector(connectedInstanceSelector)
   const unsupportedCommands = [SelectCommand.toLowerCase(), ...cliUnsupportedCommands, ...blockingCommands]
   const [commandLine, countRepeat] = getCommandRepeat(command)
+
+  // Flow if monitor command was executed
+  if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
+    return cliParseTextResponse(
+      cliTexts.MONITOR_COMMAND,
+      commandLine,
+      CommandExecutionStatus.Fail,
+    )
+  }
+
   const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
 
   if (result === null) {

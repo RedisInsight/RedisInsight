@@ -9,6 +9,7 @@ import {
 import { apiErrors } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { checkRediStack } from 'uiSrc/utils'
 
 import reducer, {
   initialState,
@@ -35,6 +36,7 @@ import reducer, {
   changeInstanceAliasFailure,
   changeInstanceAliasSuccess,
   changeInstanceAliasAction,
+  resetConnectedInstance,
 } from '../instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../interfaces'
@@ -61,6 +63,7 @@ beforeEach(() => {
       password: null,
       connectionType: ConnectionType.Standalone,
       nameFromProvider: null,
+      modules: [],
       lastConnection: new Date('2021-04-22T09:03:56.917Z'),
     },
     {
@@ -72,6 +75,7 @@ beforeEach(() => {
       password: null,
       connectionType: ConnectionType.Standalone,
       nameFromProvider: null,
+      modules: [],
       tls: {
         verifyServerCert: true,
         caCertId: '70b95d32-c19d-4311-bb24-e684af12cf15',
@@ -88,6 +92,7 @@ beforeEach(() => {
       connectionType: ConnectionType.Sentinel,
       nameFromProvider: null,
       lastConnection: new Date('2021-04-22T18:40:44.031Z'),
+      modules: [],
       endpoints: [
         {
           host: 'localhost',
@@ -241,7 +246,7 @@ describe('instances slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        data: instances,
+        data: checkRediStack(instances),
       }
 
       // Act
@@ -669,10 +674,11 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           setDefaultInstance(),
+          resetConnectedInstance(),
           setDefaultInstanceSuccess(),
         ]
 
-        expect(store.getActions().splice(0, 2)).toEqual(expectedActions)
+        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('call both checkConnectToInstance and setDefaultInstanceFailure when fetch is fail', async () => {
@@ -701,6 +707,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           setDefaultInstance(),
+          resetConnectedInstance(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]

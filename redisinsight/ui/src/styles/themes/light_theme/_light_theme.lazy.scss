@@ -28,6 +28,8 @@
   --euiColorColorWarning: #{$euiColorWarning};
   --euiColorColorDanger: #{$euiColorDanger};
 
+  --euiColorWarningLight: #{$euiColorWarning};
+
   // Grays
   --euiColorEmptyShade: #{$euiColorEmptyShade};
   --euiColorLightestShade: #{$euiColorLightestShade};
@@ -66,6 +68,7 @@
   --euiTooltipTextSecondColor: #{$euiTooltipTextSecondColor};
   --euiTooltipTitleTextColor: #{$euiTooltipTitleTextColor};
   --euiToastBackgroundColor: #{$euiToastBackgroundColor};
+  --euiToastDangerBgColor: #{$euiToastDangerBgColor};
   --euiToastSuccessBtnColor: #{$euiToastSuccessBtnColor};
   --euiToastSuccessBorderColor: #{$euiToastSuccessBorderColor};
   --euiToastDangerBtnColor: #{$euiToastDangerBtnColor};
@@ -75,6 +78,7 @@
   --htmlColor: #{$htmlColor};
   --textColorShade: #{$textColorShade};
   --tableLightestBorderColor: #{$tableLightestBorderColor};
+  --tableLightBorderColor: #{$tableLightBorderColor};
   --tableDarkestBorderColor: #{$tableDarkestBorderColor};
   --browserTableRowEven: #{$browserTableRowEven};
   --inputPlaceholderColor: #{$inputPlaceholderColor};
@@ -89,11 +93,15 @@
   --hoverInListColorDarken: #{$hoverInListColorLight};
   --externalLinkColor: #{$externalLinkColor};
   --externalLinkTooltipColor: #{$externalLinkTooltipColor};
+  --browserViewTypePassive: #{$browserViewTypePassive};
+  --browserComponentActive: #{$browserComponentActive};
+  --browserTreeNodeOpen: #{$browserTreeNodeOpen};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
 
   --separatorColor: #{$separatorColor};
+  --separatorNavigationColor: #{$separatorNavigationColor};
   --separatorDropdownColor: #{$separatorDropdownColor};
 
   --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
@@ -112,6 +120,8 @@
   --callOutBackgroundColor: #{$callOutBackgroundColor};
 
   --overlayPromoNYColor: #{$overlayPromoNYColor};
+
+  --monacoBgColor: #{$monacoBgColor};
 
   // KeyTypes
   --typeHashColor: #{$typeHashColor};
@@ -148,4 +158,10 @@
   --rsSubmitBtn: #{$rsSubmitBtn};
   --rsInputColor: #{$rsInputColor};
   --rsInputWrapperColor: #{$rsInputWrapperColor};
+
+  // Workbench
+  --wbRunResultsBg: #{$wbRunResultsBg};
+
+  // Profiler
+  --monitorTimeColor: #{$monitorTimeColor};
 }

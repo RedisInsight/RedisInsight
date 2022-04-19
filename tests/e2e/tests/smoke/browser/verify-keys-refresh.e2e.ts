@@ -1,40 +1,33 @@
-import { addNewStandaloneDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage,
-    UserAgreementPage,
-    AddRedisDatabasePage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { rte } from '../../../helpers/constants';
+import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Chance } from 'chance';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const chance = new Chance();
 
-const keyName = 'Hash1testKeyForRefresh!12344';
+let keyName = chance.word({ length: 10 });
+let newKeyName = chance.word({ length: 10 });
 
 fixture `Keys refresh functionality`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-        await userAgreementPage.acceptLicenseTerms();
-        await t.expect(addRedisDatabasePage.addDatabaseButton.exists).ok('The add redis database view', { timeout: 20000 });
+    .beforeEach(async () => {
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-
+    .afterEach(async () => {
+        //Clear and delete database
+        await browserPage.deleteKeyByName(newKeyName);
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
 test
-    .after(async() => {
-        await browserPage.deleteKeyByName(keyName);
-    })('Verify that user can refresh Keys', async t => {
+    .meta({ rte: rte.standalone })
+    ('Verify that user can refresh Keys', async t => {
+        keyName = chance.word({ length: 10 });
         const keyTTL = '2147476121';
-        const newKeyName = 'KeyNameAfterEdit!testKey123456765432';
+        newKeyName = chance.word({ length: 10 });
 
-        await addNewStandaloneDatabase(ossStandaloneConfig);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //add hash key
         await browserPage.addHashKey(keyName, keyTTL);
         const notofication = await browserPage.getMessageText();
@@ -50,4 +43,4 @@ test
         await t.click(browserPage.refreshKeysButton);
         await browserPage.searchByKeyName(keyName);
         await t.expect(browserPage.keyNameInTheList.withExactText(keyName).exists).notOk('The key is not in the list', { timeout: 20000 });
-    });
+});

@@ -20,6 +20,7 @@ export default merge(baseConfig, {
       RESOURCES_BASE_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
       APP_ENV: 'electron',
       SCAN_COUNT_DEFAULT: '500',
+      SCAN_COUNT_MEMORY_ANALYSES: '10000',
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
     }),

@@ -24,7 +24,7 @@ const endpoint = (
 const dataSchema = Joi.object({
   state: Joi.any().required(),
 }).messages({
-  'any.required': '{#label} should not be empty',
+  'any.required': '{#label} should be defined',
 }).strict();
 
 const validInputData = {
@@ -80,7 +80,7 @@ describe('POST /instance/:instanceId/plugins/:vId/command-executions/:id/state',
         },
       },
       {
-        name: 'Should get string',
+        name: 'Should set string',
         data: {
           state: 'some state',
         },
@@ -94,6 +94,52 @@ describe('POST /instance/:instanceId/plugins/:vId/command-executions/:id/state',
             });
 
           expect(entity.state).to.eql(localDb.encryptData(JSON.stringify('some state')))
+        },
+        before: async () => {
+          await localDb.generateNCommandExecutions({
+            databaseId: constants.TEST_INSTANCE_ID,
+            id: constants.TEST_COMMAND_EXECUTION_ID_1,
+          }, 1);
+        }
+      },
+      {
+        name: 'Should set empty string',
+        data: {
+          state: '',
+        },
+        statusCode: 201,
+        checkFn: async ({ body }) => {
+          expect(body).to.eql({});
+          const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
+            .findOne({
+              commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
+              visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
+            });
+
+          expect(entity.state).to.eql(localDb.encryptData(JSON.stringify('')))
+        },
+        before: async () => {
+          await localDb.generateNCommandExecutions({
+            databaseId: constants.TEST_INSTANCE_ID,
+            id: constants.TEST_COMMAND_EXECUTION_ID_1,
+          }, 1);
+        }
+      },
+      {
+        name: 'Should set null state',
+        data: {
+          state: null,
+        },
+        statusCode: 201,
+        checkFn: async ({ body }) => {
+          expect(body).to.eql({});
+          const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
+            .findOne({
+              commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
+              visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
+            });
+
+          expect(entity.state).to.eql(localDb.encryptData(JSON.stringify(null)))
         },
         before: async () => {
           await localDb.generateNCommandExecutions({

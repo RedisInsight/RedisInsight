@@ -11,8 +11,11 @@ export enum KeyTypes {
 }
 
 export enum UnsupportedKeyTypes {
-  Graph = 'graphdata',
   Stream = 'stream',
+}
+
+export enum ModulesKeyTypes {
+  Graph = 'graphdata',
   TimeSeries = 'TSDB-TYPE',
 }
 
@@ -25,8 +28,8 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [KeyTypes.ReJSON]: 'JSON',
   [KeyTypes.JSON]: 'JSON',
   [UnsupportedKeyTypes.Stream]: 'Stream',
-  [UnsupportedKeyTypes.Graph]: 'GRAPH',
-  [UnsupportedKeyTypes.TimeSeries]: 'TS',
+  [ModulesKeyTypes.Graph]: 'GRAPH',
+  [ModulesKeyTypes.TimeSeries]: 'TS',
   [CommandGroup.Bitmap]: 'Bitmap',
   [CommandGroup.Cluster]: 'Cluster',
   [CommandGroup.Connection]: 'Connection',
@@ -54,8 +57,8 @@ export const GROUP_TYPES_COLORS = Object.freeze({
   [KeyTypes.ReJSON]: 'var(--typeReJSONColor)',
   [KeyTypes.JSON]: 'var(--typeReJSONColor)',
   [UnsupportedKeyTypes.Stream]: 'var(--typeStreamColor)',
-  [UnsupportedKeyTypes.Graph]: 'var(--typeGraphColor)',
-  [UnsupportedKeyTypes.TimeSeries]: 'var(--typeTimeSeriesColor)',
+  [ModulesKeyTypes.Graph]: 'var(--typeGraphColor)',
+  [ModulesKeyTypes.TimeSeries]: 'var(--typeTimeSeriesColor)',
   [CommandGroup.SortedSet]: 'var(--groupSortedSetColor)',
   [CommandGroup.Bitmap]: 'var(--groupBitmapColor)',
   [CommandGroup.Cluster]: 'var(--groupClusterColor)',
@@ -107,7 +110,12 @@ export enum SortOrder {
 }
 
 export const LENGTH_NAMING_BY_TYPE = Object.freeze({
-  [UnsupportedKeyTypes.Graph]: 'Nodes',
-  [UnsupportedKeyTypes.TimeSeries]: 'Samples',
+  [ModulesKeyTypes.Graph]: 'Nodes',
+  [ModulesKeyTypes.TimeSeries]: 'Samples',
   [UnsupportedKeyTypes.Stream]: 'Entries'
+})
+
+export const MODULES_KEY_TYPES_NAMES = Object.freeze({
+  [ModulesKeyTypes.Graph]: 'RedisGraph',
+  [ModulesKeyTypes.TimeSeries]: 'RedisTimeSeries',
 })

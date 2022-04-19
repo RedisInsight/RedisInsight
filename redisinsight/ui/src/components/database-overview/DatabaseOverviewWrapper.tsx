@@ -17,7 +17,7 @@ interface IProps { windowDimensions: number }
 const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
   let interval: NodeJS.Timeout
   const { theme } = useContext(ThemeContext)
-  const { id: connectedInstanceId = '', modules = [] } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', modules = [], isRediStack } = useSelector(connectedInstanceSelector)
   const overview = useSelector(connectedInstanceOverviewSelector)
 
   const dispatch = useDispatch()
@@ -40,6 +40,7 @@ const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
       modules={modules}
       metrics={getOverviewMetrics({ theme, items: overview })}
       windowDimensions={windowDimensions}
+      isRediStack={isRediStack}
     />
   )
 }

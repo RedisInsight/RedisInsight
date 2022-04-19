@@ -34,7 +34,7 @@ module.exports = {
     radix: 'off',
     semi: ['error', 'never'],
     'no-bitwise': ['error', { allow: ['|'] }],
-    'max-len': ['error', { ignoreComments: true, ignoreStrings: true, ignoreRegExpLiterals: true, code: 110 }],
+    'max-len': ['error', { ignoreComments: true, ignoreStrings: true, ignoreRegExpLiterals: true, code: 120 }],
     'class-methods-use-this': 'off',
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
@@ -45,12 +45,15 @@ module.exports = {
     'no-return-await': 'off',
     'no-underscore-dangle': 'off',
     'no-useless-catch': 'off',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'jsx-a11y/anchor-is-valid': 'off',
+    'jsx-a11y/no-access-key': 'off',
     'max-classes-per-file': 'off',
     'no-case-declarations': 'off',
     'react-hooks/exhaustive-deps': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/require-default-props': 'off',
+    'react/prop-types': 1,
     '@typescript-eslint/comma-dangle': 'off',
     '@typescript-eslint/no-shadow': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
@@ -59,6 +62,9 @@ module.exports = {
     'implicit-arrow-linebreak': 'off',
     'object-curly-newline': 'off',
     'no-nested-ternary': 'off',
-    'no-param-reassign': ['error', { props: false }]
+    'no-param-reassign': ['error', { props: false }],
+    'sonarjs/no-duplicate-string': 'off',
+    'sonarjs/cognitive-complexity': [1, 15],
+    'sonarjs/no-identical-functions': [0, 5]
   },
 }

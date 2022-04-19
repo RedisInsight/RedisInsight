@@ -1,6 +1,4 @@
-import * as jsonpath from 'jsonpath';
 import { isNil } from 'lodash';
-import { RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto';
 
 export const TOTAL_KEYS_BREAKPOINTS = [
   500000,
@@ -41,23 +39,6 @@ export const getRangeForNumber = (
   return `${numberWithSpaces(
     breakpoints[index - 1] + 1,
   )} - ${numberWithSpaces(breakpoints[index])}`;
-};
-
-export const getJsonPathLevel = (path: string): string => {
-  try {
-    if (path === '.') {
-      return 'root';
-    }
-    const levelsLength = jsonpath.parse(
-      `$${path.startsWith('.') ? '' : '..'}${path}`,
-    ).length;
-    if (levelsLength === 1) {
-      return 'root';
-    }
-    return `${levelsLength - 2}`;
-  } catch (e) {
-    return 'root';
-  }
 };
 
 export const calculateRedisHitRatio = (

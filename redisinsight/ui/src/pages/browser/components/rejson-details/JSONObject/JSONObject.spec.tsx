@@ -1,6 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen, mockedStore } from 'uiSrc/utils/test-utils'
+
 import { fetchVisualisationResults, setReJSONDataAction } from 'uiSrc/slices/rejson'
 import JSONObject, { Props } from './JSONObject'
 
@@ -10,7 +11,6 @@ const JSON_VALUE_DOT = '.jsonValue'
 const EDIT_OBJECT_BTN = 'edit-object-btn'
 
 const mockedProps = mock<Props>()
-jest.mock('uiSrc/slices/rejson')
 
 const mockedSimpleJSONObject = { a: 1, b: null, c: 'string', d: true }
 const mockedDownloadedObjectWithObjects = {
@@ -20,14 +20,15 @@ const mockedDownloadedObjectWithArray = {
   a: [1, null, 'aaa']
 }
 
-describe('JSONObject', () => {
-  beforeEach(() => {
-    setReJSONDataAction.mockImplementation(() => jest.fn)
-    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
-      Promise.resolve({ data: mockedSimpleJSONObject })
-    ))
-  })
+jest.mock('uiSrc/slices/rejson', () => ({
+  ...jest.requireActual('uiSrc/slices/rejson'),
+  setReJSONDataAction: jest.fn,
+  fetchVisualisationResults: jest.fn().mockReturnValue(
+    Promise.resolve({ data: mockedSimpleJSONObject })
+  ),
+}))
 
+describe('JSONObject', () => {
   it('should render', () => {
     expect(render(
       <JSONObject
@@ -115,6 +116,9 @@ describe('JSONObject', () => {
   })
 
   it('should render simple not downloaded JSON', async () => {
+    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
+      Promise.resolve({ data: mockedSimpleJSONObject })
+    ))
     const { container } = render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"

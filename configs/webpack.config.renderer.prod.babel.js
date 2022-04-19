@@ -119,8 +119,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -134,8 +134,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -153,8 +153,8 @@ export default merge(baseConfig, {
             loader: 'file-loader',
             options: {
               name: '[hash]-[name].[ext]',
-              outputPath: 'static',
-              publicPath: 'static',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
             },
           },
         ],
@@ -164,16 +164,9 @@ export default merge(baseConfig, {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader',
       },
-      // SVG Font
       {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml',
-          },
-        },
+        test: /\.svg$/,
+        use: ['@svgr/webpack', 'url-loader'],
       },
       // Common Image Formats
       {
@@ -204,6 +197,7 @@ export default merge(baseConfig, {
       RESOURCES_BASE_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
       APP_ENV: 'electron',
       SCAN_COUNT_DEFAULT: '500',
+      SCAN_TREE_COUNT_DEFAULT: '10000',
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
     }),

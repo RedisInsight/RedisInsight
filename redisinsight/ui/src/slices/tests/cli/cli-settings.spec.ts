@@ -1,12 +1,11 @@
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
-import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, initialStateDefault, clearStoreActions } from 'uiSrc/utils/test-utils'
 import { concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import {
   cliTexts,
   ConnectionSuccessOutputText,
   InitOutputText,
-  mockInitOutputText,
 } from 'uiSrc/constants/cliOutput'
 import reducer, {
   initialState,
@@ -484,7 +483,7 @@ describe('cliSettings slice', () => {
         processCliClientFailure(responsePayload.response.data.message),
         concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage))
       ]
-      expect(store.getActions()).toEqual(expectedActions)
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
 
     it('call both updateCliClientAction and processCliClientSuccess when fetch is successed', async () => {

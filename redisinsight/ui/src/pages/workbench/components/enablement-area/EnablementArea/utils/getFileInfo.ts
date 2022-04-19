@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { API_URL } from 'uiSrc/constants'
+import { API_URL, ApiEndpoints } from 'uiSrc/constants'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
@@ -35,8 +35,10 @@ export const getFileInfo = (path: string): IFileInfo => {
   }
 }
 
-const EA_STATIC_PATH_REGEX = /^\/?static\/(workbench|enablement-area)\//
-const EA_STATIC_ROOT_PATH = /^\/?static\/(workbench|enablement-area)\/?$/
+const EA_STATIC_PATH_REGEX = /^\/?static\/(workbench|guides|tutorials)\//
+const EA_STATIC_ROOT_PATH = /^\/?static\/(workbench|guides|tutorials)\/?$/
+const EA_GUIDES_PATH = '/static/guides/'
+const EA_TUTORIALS_PATH = '/static/'
 
 export const getPagesInsideGroup = (
   structure: Record<string, IEnablementAreaItem>,
@@ -44,10 +46,11 @@ export const getPagesInsideGroup = (
 ): IEnablementAreaItem[] => {
   try {
     if (EA_STATIC_PATH_REGEX.test(path)) {
-      let groupPath = path.replace(EA_STATIC_PATH_REGEX, '')
+      let groupPath = path.replace(EA_GUIDES_PATH, '').replace(EA_TUTORIALS_PATH, '')
       let groupChildren
       if (!EA_STATIC_ROOT_PATH.test(path)) {
         groupPath = groupPath.replace('/', '.children.')
+        // groupPath = 'tutorials.children.redis_stack'
         groupChildren = get(structure, groupPath, undefined)?.children
       } else {
         groupChildren = structure
@@ -61,4 +64,14 @@ export const getPagesInsideGroup = (
   } catch (e) {
     return []
   }
+}
+
+export const getWBSourcePath = (path: string): string => {
+  if (path.includes(ApiEndpoints.TUTORIALS_PATH)) {
+    return ApiEndpoints.TUTORIALS_PATH
+  }
+  if (path.includes(ApiEndpoints.GUIDES_PATH)) {
+    return ApiEndpoints.GUIDES_PATH
+  }
+  return ''
 }

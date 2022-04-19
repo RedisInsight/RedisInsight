@@ -103,6 +103,13 @@ export class DatabaseInstanceEntity {
   @Column({ nullable: false })
   tls: boolean;
 
+  @ApiPropertyOptional({
+    description: 'SNI servername',
+    type: String,
+  })
+  @Column({ nullable: true })
+  tlsServername?: string;
+
   @ApiProperty({
     description: 'The certificate returned by the server needs to be verified.',
     type: Boolean,
@@ -192,7 +199,7 @@ export class DatabaseInstanceEntity {
   @Column({ nullable: true })
   encryption: string;
 
-  constructor(partial: Partial<ClientCertificateEntity>) {
+  constructor(partial: Partial<DatabaseInstanceEntity>) {
     Object.assign(this, partial);
   }
 }

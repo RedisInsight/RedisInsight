@@ -1,5 +1,5 @@
 [![Release](https://img.shields.io/github/v/release/RedisInsight/RedisInsight.svg?sort=semver)](https://github.com/RedisInsight/RedisInsight/releases)
-[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/master.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsighth/tree/master)
+[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisInsight/RedisInsight.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisInsight/RedisInsight/alerts/)
 
 # <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  RedisInsight - Developer GUI for Redis, by Redis. 
@@ -23,6 +23,7 @@ RedisInsight is an intuitive and efficient GUI for Redis, allowing you to intera
 * Browse, filter and visualise your key-value Redis data structures
 * CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets 
 * CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
+* Profiler - analyze every command sent to Redis in real-time 
 * Introducing Workbench - advanced command line interface with intelligent command auto-complete and complex data visualizations
 * Command auto-complete support for [RediSearch](https://oss.redis.com/redisearch/), [RedisJSON](https://oss.redis.com/redisjson/), [RedisGraph](https://oss.redis.com/redisgraph/), [RedisTimeSeries](https://oss.redis.com/redistimeseries/), [RedisAI](https://oss.redis.com/redisai/)
 * Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index, queries, and aggregations

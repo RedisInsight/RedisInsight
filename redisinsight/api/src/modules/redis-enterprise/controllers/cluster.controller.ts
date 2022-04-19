@@ -13,10 +13,8 @@ import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interc
 import {
   RedisEnterpriseBusinessService,
 } from 'src/modules/shared/services/redis-enterprise-business/redis-enterprise-business.service';
-import {
-  RedisEnterpriseDatabase,
-  ClusterConnectionDetailsDto,
-} from '../dto/cluster.dto';
+import { BuildType } from 'src/modules/core/models/server-provider.interface';
+import { ClusterConnectionDetailsDto, RedisEnterpriseDatabase } from '../dto/cluster.dto';
 
 @ApiTags('Redis Enterprise Cluster')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -30,6 +28,7 @@ export class ClusterController {
   @ApiEndpoint({
     description: 'Get all databases in the cluster.',
     statusCode: 200,
+    excludeFor: [BuildType.RedisStack],
     responses: [
       {
         status: 200,

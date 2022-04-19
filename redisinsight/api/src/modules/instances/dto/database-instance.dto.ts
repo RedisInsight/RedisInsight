@@ -139,6 +139,15 @@ export class BasicTlsDto {
   @IsString({ always: true })
   @IsOptional()
   clientCertPairId?: string;
+
+  @ApiPropertyOptional({
+    description: 'SNI servername',
+    type: String,
+  })
+  @Type(() => String)
+  @IsString()
+  @IsOptional()
+  servername?: string;
 }
 
 export class TlsDto extends BasicTlsDto {

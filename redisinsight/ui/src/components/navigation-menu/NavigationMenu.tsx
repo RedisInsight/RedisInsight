@@ -1,26 +1,28 @@
+/* eslint-disable react/no-this-in-sfc */
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  EuiPageSideBar,
   EuiButtonIcon,
-  EuiToolTip,
-  EuiLink,
-  EuiIcon,
-  EuiPopover,
-  EuiTitle,
-  EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiText
+  EuiIcon,
+  EuiLink,
+  EuiPageSideBar,
+  EuiPopover,
+  EuiSpacer,
+  EuiText,
+  EuiTitle,
+  EuiToolTip
 } from '@elastic/eui'
 
 import { PageNames, Pages } from 'uiSrc/constants'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { setReleaseNotesViewed, appElectronInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
+import { appElectronInfoSelector, setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import LogoSVG from 'uiSrc/assets/img/logo.svg'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
@@ -28,8 +30,10 @@ import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import BrowserActiveSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
 import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
+import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 
+import { BuildType } from 'uiSrc/constants/env'
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
@@ -46,7 +50,11 @@ interface INavigations {
   getIconType: () => string;
 }
 
-const NavigationMenu = () => {
+interface IProps {
+  buildType: BuildType
+}
+
+const NavigationMenu = ({ buildType }: IProps) => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
@@ -171,7 +179,7 @@ const NavigationMenu = () => {
             <EuiLink
               external={false}
               className={styles.helpMenuItemLink}
-              href="https://github.com/RedisInsight/RedisInsight/issues"
+              href={EXTERNAL_LINKS.githubIssues}
               target="_blank"
               data-testid="submit-bug-btn"
             >
@@ -206,7 +214,7 @@ const NavigationMenu = () => {
               external={false}
               className={styles.helpMenuItemLink}
               onClick={onClickReleaseNotes}
-              href="https://docs.redis.com/staging/release-ri-v2.0/ri/release-notes/"
+              href={EXTERNAL_LINKS.releaseNotes}
               target="_blank"
               data-testid="release-notes-btn"
             >
@@ -226,20 +234,16 @@ const NavigationMenu = () => {
   return (
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
-        <EuiToolTip content="My Redis databases" position="right">
-          <span className={styles.iconLogo}>
+        <EuiToolTip
+          content={buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+          position="right"
+        >
+          <span className={cx(styles.iconNavItem, styles.homeIcon)}>
             <EuiLink {...getRouterLinkProps(Pages.home)} data-test-subj="home-page-btn">
               <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
             </EuiLink>
           </span>
         </EuiToolTip>
-        <Divider color="#465282" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
-        <Divider
-          color="#465282"
-          className="eui-showFor--xs--flex eui-showFor--s--flex"
-          variant="middle"
-          orientation="vertical"
-        />
 
         {connectedInstanceId && (
           privateRoutes.map((nav) => (
@@ -256,13 +260,6 @@ const NavigationMenu = () => {
         )}
       </div>
       <div className={styles.bottomContainer}>
-        <Divider color="#465282" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
-        <Divider
-          color="#465282"
-          className="eui-showFor--xs--flex eui-showFor--s--flex"
-          variant="middle"
-          orientation="vertical"
-        />
         {HelpMenu()}
         {publicRoutes.map((nav) => (
           <EuiToolTip content={nav.tooltipText} position="right" key={nav.tooltipText}>
@@ -275,6 +272,33 @@ const NavigationMenu = () => {
             />
           </EuiToolTip>
         ))}
+        <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+        <Divider
+          colorVariable="separatorNavigationColor"
+          className="eui-showFor--xs--flex eui-showFor--s--flex"
+          variant="middle"
+          orientation="vertical"
+        />
+        <EuiToolTip
+          content="RedisInsight Repository"
+          position="right"
+        >
+          <span className={cx(styles.iconNavItem, styles.githubLink)}>
+            <EuiLink
+              external={false}
+              href={EXTERNAL_LINKS.githubRepo}
+              target="_blank"
+              data-test-subj="github-repo-btn"
+            >
+              <EuiIcon
+                className={styles.githubIcon}
+                aria-label="redis insight github repository"
+                type={GithubSVG}
+                data-testid="github-repo-icon"
+              />
+            </EuiLink>
+          </span>
+        </EuiToolTip>
       </div>
     </EuiPageSideBar>
   )

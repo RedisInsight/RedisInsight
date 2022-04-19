@@ -17,7 +17,9 @@ import {
   sendCliClusterCommandAction,
   processUnsupportedCommand,
   processUnrepeatableNumber,
+  processMonitorCommand,
 } from 'uiSrc/slices/cli/cli-output'
+import { CommandMonitor } from 'uiSrc/constants'
 import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
@@ -25,6 +27,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
+
 import CliBody from './CliBody'
 
 import styles from './CliBody/styles.module.scss'
@@ -72,6 +75,12 @@ const CliBodyWrapper = () => {
 
     if (!isRepeatCountCorrect(countRepeat)) {
       dispatch(processUnrepeatableNumber(commandLine, resetCommand))
+      return
+    }
+
+    // Flow if monitor command was executed
+    if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
+      dispatch(processMonitorCommand(commandLine, resetCommand))
       return
     }
 

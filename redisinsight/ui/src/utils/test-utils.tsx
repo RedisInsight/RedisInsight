@@ -28,9 +28,12 @@ import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/r
 import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
+import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
 import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user-settings'
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
-import { initialState as initialStateWBEnablementArea } from 'uiSrc/slices/workbench/wb-enablement-area'
+import { initialState as initialStateWBEGuides } from 'uiSrc/slices/workbench/wb-guides'
+import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
+import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
 
 interface Options {
   initialState?: RootState;
@@ -68,14 +71,19 @@ const initialStateDefault: RootState = {
   cli: {
     settings: cloneDeep(initialStateCliSettings),
     output: cloneDeep(initialStateCliOutput),
+    monitor: cloneDeep(initialStateMonitor),
   },
   user: {
     settings: cloneDeep(initialStateUserSettings),
   },
   workbench: {
     results: cloneDeep(initialStateWBResults),
-    enablementArea: cloneDeep(initialStateWBEnablementArea),
+    guides: cloneDeep(initialStateWBEGuides),
+    tutorials: cloneDeep(initialStateWBETutorials),
   },
+  content: {
+    createRedisButtons: cloneDeep(initialStateCreateRedisButtons)
+  }
 }
 
 // mocked store
@@ -139,6 +147,12 @@ jest.mock('react-redux', () => ({
     dispatch: jest.fn,
   }),
 }))
+
+// mock <AutoSizer />
+jest.mock(
+  'react-virtualized-auto-sizer',
+  () => ({ children }) => children({ height: 600, width: 600 })
+)
 
 export const localStorageMock = {
   getItem: jest.fn(),

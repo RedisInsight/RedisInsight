@@ -20,6 +20,7 @@ export interface ICommandArg {
   command?: string;
   multiple?: boolean;
   variadic?: boolean;
+  dsl?: string;
 }
 
 export interface ICommandArgGenerated extends ICommandArg {
@@ -78,6 +79,8 @@ export enum CommandPrefix {
   TopK = 'TOPK',
 }
 
+export const CommandMonitor = 'MONITOR'
+
 export enum CommandRediSearch {
   Search = 'FT.SEARCH',
   Aggregate = 'FT.AGGREGATE',
@@ -99,4 +102,18 @@ export enum CommandRSSearchArgument {
   WithScores = 'WITHSCORES',
   WithPayloads = 'WITHPAYLOADS',
   WithSortKeys = 'WITHSORTKEYS',
+}
+
+export enum DSL {
+  cypher = 'cypher',
+  lua = 'lua'
+}
+
+export interface IDSLNaming {
+  [key: string]: string
+}
+
+export const DSLNaming: IDSLNaming = {
+  [DSL.cypher]: 'Cypher',
+  [DSL.lua]: 'Lua'
 }

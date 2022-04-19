@@ -8,7 +8,6 @@ import {
 import { when } from 'jest-when';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
@@ -26,7 +25,6 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptions';
 import { StringBusinessService } from './string-business.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const mockSetStringDto: SetStringDto = {
   keyName: 'foo',
@@ -45,10 +43,6 @@ describe('StringBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StringBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,

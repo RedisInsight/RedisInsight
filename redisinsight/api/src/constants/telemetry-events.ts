@@ -23,21 +23,6 @@ export enum TelemetryEvents {
   SentinelMasterGroupsDiscoverySucceed = 'CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUCCEEDED',
   SentinelMasterGroupsDiscoveryFailed = 'CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_FAILED',
 
-  // Events for browser tool
-  BrowserKeysScanned = 'BROWSER_KEYS_SCANNED',
-  BrowserKeysScannedWithFilters = 'BROWSER_KEYS_SCANNED_WITH_FILTER_ENABLED',
-  BrowserKeyAdded = 'BROWSER_KEY_ADDED',
-  BrowserKeyTTLChanged = 'BROWSER_KEY_TTL_CHANGED',
-  BrowserKeysDeleted = 'BROWSER_KEYS_DELETED',
-  BrowserKeyValueFiltered = 'BROWSER_KEY_VALUE_FILTERED',
-  BrowserKeyValueAdded = 'BROWSER_KEY_VALUE_ADDED',
-  BrowserKeyValueEdited = 'BROWSER_KEY_VALUE_EDITED',
-  BrowserKeyValueRemoved = 'BROWSER_KEY_VALUE_REMOVED',
-  BrowserKeyValueDeleted = 'BROWSER_KEY_VALUE_FILTERED',
-  BrowserJSONPropertyEdited = 'BROWSER_JSON_PROPERTY_EDITED',
-  BrowserJSONPropertyAdded = 'BROWSER_JSON_PROPERTY_ADDED',
-  BrowserJSONPropertyDeleted = 'BROWSER_JSON_PROPERTY_DELETED',
-
   // Events for cli tool
   ClientCreated = 'CLIENT_CREATED',
   ClientCreationFailed = 'CLIENT_CREATION_FAILED',
@@ -47,4 +32,13 @@ export enum TelemetryEvents {
   CommandExecuted = 'COMMAND_EXECUTED',
   ClusterNodeCommandExecuted = 'CLUSTER_COMMAND_EXECUTED',
   CommandErrorReceived = 'COMMAND_ERROR_RECEIVED',
+
+  // Events for workbench tool
+  WorkbenchCommandExecuted = 'WORKBENCH_COMMAND_EXECUTED',
+  WorkbenchCommandErrorReceived = 'WORKBENCH_COMMAND_ERROR_RECEIVED',
+  WorkbenchCommandDeleted = 'WORKBENCH_COMMAND_DELETE_COMMAND',
+
+  // Profiler
+  ProfilerLogDownloaded = 'PROFILER_LOG_DOWNLOADED',
+  ProfilerLogDeleted = 'PROFILER_LOG_DELETED',
 }

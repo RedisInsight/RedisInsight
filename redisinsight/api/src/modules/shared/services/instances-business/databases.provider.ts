@@ -5,20 +5,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { Repository } from 'typeorm';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 
 @Injectable()
 export class DatabasesProvider {
-  private logger = new Logger('DatabaseProvider');
+  protected logger = new Logger('DatabaseProvider');
 
   constructor(
     @InjectRepository(DatabaseInstanceEntity)
-    private readonly databasesRepository: Repository<DatabaseInstanceEntity>,
-    private readonly encryptionService: EncryptionService,
+    protected readonly databasesRepository: Repository<DatabaseInstanceEntity>,
+    protected readonly encryptionService: EncryptionService,
   ) {}
 
   /**

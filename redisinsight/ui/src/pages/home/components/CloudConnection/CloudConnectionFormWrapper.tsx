@@ -12,7 +12,7 @@ import CloudConnectionForm from './CloudConnectionForm/CloudConnectionForm'
 
 export interface Props {
   width: number;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export interface ICloudConnectionSubmit {
@@ -47,10 +47,6 @@ const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
     history.push(Pages.redisCloudSubscriptions)
   }
 
-  const handleClose = () => {
-    onClose()
-  }
-
   return (
     <div ref={formRef}>
       <CloudConnectionForm
@@ -58,7 +54,7 @@ const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
         secretKey={credentials?.secretKey ?? ''}
         flexGroupClassName={flexGroupClassName}
         flexItemClassName={flexItemClassName}
-        onClose={handleClose}
+        onClose={onClose}
         onSubmit={formSubmit}
         loading={loading}
       />

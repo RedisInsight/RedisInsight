@@ -1,3 +1,16 @@
+:global {
+  .editorBounder {
+    position: absolute;
+    top: 12px;
+    bottom: 6px;
+    left: 18px;
+    right: 46px;
+  }
+}
+.wrapper {
+  position: relative;
+  height: 100%;
+}
 .container {
   display: flex;
   padding: 8px 0 8px 16px;
@@ -9,6 +22,15 @@
   background-color: var(--rsInputWrapperColor);
   color: var(--euiTextSubduedColor) !important;
   border: 1px solid var(--euiColorLightShade);
+}
+
+.disabled {
+  opacity: 0.8;
+}
+
+.disabledActions {
+  pointer-events: none;
+  user-select: none;
 }
 
 .containerPlaceholder {

@@ -23,6 +23,7 @@ import {
   htmlIdGenerator,
   EuiLink,
   keys,
+  EuiCallOut,
 } from '@elastic/eui'
 import { capitalize, isEmpty, pick } from 'lodash'
 import ReactDOM from 'react-dom'
@@ -57,6 +58,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { resetKeys } from 'uiSrc/slices/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
+import { DatabaseListModules } from 'uiSrc/components'
 import {
   LoadingInstanceText,
   SubmitBtnText,
@@ -104,9 +106,10 @@ export interface Props {
     value: DbConnectionInfo[K]
   ) => void;
   onSubmit: (values: DbConnectionInfo) => void;
-  onClose: () => void;
   updateEditingName: (name: string) => void;
   onHostNamePaste: (content: string) => boolean;
+  onClose?: () => void;
+  onAliasEdited?: (value: string) => void;
   setErrorMsgRef?: (instance: HTMLDivElement | null) => void;
 }
 
@@ -150,7 +153,7 @@ const AddStandaloneForm = (props: Props) => {
       nameFromProvider,
       sentinelMaster,
       connectionType,
-      endpoints,
+      endpoints = null,
       tlsClientAuthRequired,
       certificates,
       selectedTlsClientCertId = '',
@@ -159,17 +162,21 @@ const AddStandaloneForm = (props: Props) => {
       selectedCaCertName,
       username,
       password,
+      modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
+      isRediStack
     },
     initialValues: initialValuesProp,
     width,
     onClose,
     onSubmit,
+    onHostNamePaste,
     submitButtonText,
     instanceType,
     loading,
     isEditMode,
+    onAliasEdited,
   } = props
 
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
@@ -182,6 +189,7 @@ const AddStandaloneForm = (props: Props) => {
     password,
     tls,
     db,
+    modules,
     showDb: !!db,
     newCaCert: '',
     newCaCertName: '',
@@ -356,7 +364,15 @@ const AddStandaloneForm = (props: Props) => {
     onSuccess?: () => void,
     onFail?: () => void
   ) => {
-    dispatch(changeInstanceAliasAction(id, value, onSuccess, onFail))
+    dispatch(changeInstanceAliasAction(
+      id,
+      value,
+      () => {
+        onAliasEdited?.(value)
+        onSuccess?.()
+      },
+      onFail
+    ))
   }
 
   const handleChangeDbIndexCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -445,6 +461,22 @@ const AddStandaloneForm = (props: Props) => {
             )}
         />
       )}
+
+      {!!modules?.length && (
+        <>
+          <EuiListGroupItem
+            className={styles.dbInfoModulesLabel}
+            label={(
+              <EuiText color="subdued" size="s">
+                Modules:
+              </EuiText>
+            )}
+          />
+          <EuiTextColor color="default" className={cx(styles.dbInfoListValue, styles.dbInfoModules)}>
+            <DatabaseListModules modules={modules} />
+          </EuiTextColor>
+        </>
+      )}
     </EuiListGroup>
   )
 
@@ -525,16 +557,6 @@ const AddStandaloneForm = (props: Props) => {
     </EuiToolTip>
   )
 
-  const AppendDbIndex = () => (
-    <EuiToolTip
-      anchorClassName="inputAppendIcon"
-      position="right"
-      content="Select the Redis logical database to work with in Browser and Workbench."
-    >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-    </EuiToolTip>
-  )
-
   const AppendEndpoints = () => (
     <EuiToolTip
       title="Host:port"
@@ -585,7 +607,7 @@ const AddStandaloneForm = (props: Props) => {
                   )
                 }}
                 onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                  handlePasteHostName(props.onHostNamePaste, event)}
+                  handlePasteHostName(onHostNamePaste, event)}
                 append={<AppendHostName />}
               />
             </EuiFormRow>
@@ -677,9 +699,9 @@ const AddStandaloneForm = (props: Props) => {
     <>
       <EuiFlexGroup
         className={flexGroupClassName}
+        responsive={false}
       >
         <EuiFlexItem
-          style={{ width: '230px' }}
           grow={false}
           className={flexItemClassName}
         >
@@ -687,7 +709,7 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
-              label="Database Index"
+              label="Select the Redis logical database"
               checked={!!formik.values.showDb}
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"
@@ -700,18 +722,28 @@ const AddStandaloneForm = (props: Props) => {
         <EuiFlexGroup
           className={flexGroupClassName}
         >
-          <EuiFlexItem className={cx(
-            flexItemClassName,
-            styles.dbInput,
-            { [styles.dbInputBig]: !flexItemClassName }
-          )}
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiCallOut>
+              <EuiText size="s" data-testid="db-index-message">
+                When the database is added, you can select logical databases only in CLI.
+                To work with other logical databases in Browser and Workbench, add another database with the same host and port,
+                but a different database index.
+              </EuiText>
+            </EuiCallOut>
+          </EuiFlexItem>
+          <EuiFlexItem
+            className={cx(
+              flexItemClassName,
+              styles.dbInput,
+              { [styles.dbInputBig]: !flexItemClassName }
+            )}
           >
             <EuiFormRow label="Database Index" helpText="Should not exceed 15.">
               <EuiFieldNumber
                 name="db"
                 id="db"
                 data-testid="db"
-                style={{ width: '100%' }}
+                style={{ width: 120 }}
                 placeholder="Enter Database Index"
                 value={formik.values.db ?? '0'}
                 maxLength={6}
@@ -724,7 +756,6 @@ const AddStandaloneForm = (props: Props) => {
                 type="text"
                 min={0}
                 max={MAX_DATABASE_INDEX_NUMBER}
-                append={<AppendDbIndex />}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -1038,24 +1069,22 @@ const AddStandaloneForm = (props: Props) => {
     </EuiToolTip>
   )
 
-  const handleClose = () => {
-    onClose()
-  }
-
   const Footer = () => {
     const footerEl = document.getElementById('footerDatabaseForm')
 
     if (footerEl) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <EuiButton
-            onClick={handleClose}
-            color="secondary"
-            className="btn-cancel"
-            data-testid="btn-cancel"
-          >
-            Cancel
-          </EuiButton>
+          {onClose && (
+            <EuiButton
+              onClick={onClose}
+              color="secondary"
+              className="btn-cancel"
+              data-testid="btn-cancel"
+            >
+              Cancel
+            </EuiButton>
+          )}
           <SubmitButton
             onClick={formik.submitForm}
             text={submitButtonText}
@@ -1133,6 +1162,7 @@ const AddStandaloneForm = (props: Props) => {
       {isEditMode && name && (
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
+            isRediStack={isRediStack}
             alias={name}
             database={db}
             isLoading={loading}

@@ -11,6 +11,7 @@ import KeyDetailsWrapper, {
   Props as KeyDetailsWrapperProps
 } from './components/key-details/KeyDetailsWrapper'
 import AddKey, { Props as AddKeyProps } from './components/add-key/AddKey'
+import KeysHeader, { Props as KeysHeaderProps } from './components/keys-header'
 
 jest.mock('./components/key-list/KeyList', () => ({
   __esModule: true,
@@ -30,19 +31,18 @@ jest.mock('./components/key-details/KeyDetailsWrapper', () => ({
   default: jest.fn(),
 }))
 
+jest.mock('./components/keys-header', () => ({
+  __esModule: true,
+  namedExport: jest.fn(),
+  default: jest.fn(),
+}))
+
 const mockKeyList = (props: KeyListProps) => (
   <div>
     <button
       type="button"
-      data-testid="handleAddKeyPanel-btn"
-      onClick={() => props.handleAddKeyPanel(true)}
-    >
-      handleAddKeyPanel
-    </button>
-    <button
-      type="button"
       data-testid="loadMoreItems-btn"
-      onClick={() => props.loadMoreItems({ startIndex: 1, stopIndex: 2 })}
+      onClick={() => props?.loadMoreItems?.({ startIndex: 1, stopIndex: 2 })}
     >
       loadMoreItems
     </button>
@@ -61,6 +61,18 @@ const mockAddKey = (props: AddKeyProps) => (
   </div>
 )
 
+const mockKeysHeader = (props: KeysHeaderProps) => (
+  <div>
+    <button
+      type="button"
+      data-testid="handleAddKeyPanel-btn"
+      onClick={() => props?.handleAddKeyPanel?.(true)}
+    >
+      handleAddKeyPanel
+    </button>
+  </div>
+)
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -71,6 +83,7 @@ beforeEach(() => {
 describe('BrowserPage', () => {
   beforeAll(() => {
     KeyList.mockImplementation(mockKeyList)
+    KeysHeader.mockImplementation(mockKeysHeader)
     KeyDetailsWrapper.mockImplementation(mockKeyDetailsWrapper)
     AddKey.mockImplementation(mockAddKey)
   })

@@ -1,0 +1,122 @@
+# RedisInsight-plugin-sdk
+
+The high-level API for communication between RedisInsight
+plugin and RedisInsight application.
+
+## Usage
+```
+npm install redisinsight-plugin-sdk
+or
+yarn add redisinsight-plugin-sdk
+```
+
+## Available methods
+
+### setHeaderText(text)
+Sets any custom text to the header of the command result
+
+**Parameters:**
+
+* `text` **{String}**
+
+**Example:**
+
+```js
+import { setHeaderText } from 'redisinsight-plugin-sdk';
+setHeaderText('Matched: 10')
+```
+
+### executeRedisCommand(command)
+
+Executes a Redis command _(currently, only read-only commands are supported)_.
+
+**Parameters:**
+
+* `command` **{String}** - command to execute
+
+**Returns:**
+* `Promise<[{ response, status }]>`
+
+```js
+/**
+ * @async
+ * @param {String} command
+ * @returns {Promise.<[{ response, status }]>}
+ * @throws {Error}
+ */
+```
+
+**Example:**
+
+```js
+import { executeRedisCommand } from 'redisinsight-plugin-sdk';
+try {
+  const result = await executeRedisCommand('GET foo');
+  const [{ response, status }] = result;
+  if (status === 'success') {
+    // Do smth
+  }
+} catch (e) {
+    console.error(e);
+}
+```
+
+### getState()
+
+Returns saved state for the command visualization.
+
+Throw an error if the state has not been saved.
+
+**Parameters:**
+
+* `state` **{any}** - any data to save
+
+**Returns:**
+* `Promise<any>`
+
+```js
+/**
+ * @async
+ * @returns {Promise.<any>} state
+ * @throws {Error}
+ */
+```
+
+**Example:**
+
+```js
+import { getState } from 'redisinsight-plugin-sdk';
+try {
+  const result = await getState();
+} catch (e) {
+    console.error(e);
+}
+```
+
+
+### setState(state)
+
+Save the state for the command visualization.
+
+**Returns:**
+* `Promise<any>`
+
+```js
+/**
+ * @async
+ * @param {any} state
+ * @returns {Promise.<any>} state
+ * @throws {Error}
+ */
+```
+
+**Example:**
+
+```js
+import { setState } from 'redisinsight-plugin-sdk';
+try {
+  await setState({ a: 1, b: 2 });
+} catch (e) {
+    console.error(e);
+}
+```

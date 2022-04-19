@@ -72,7 +72,7 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
       numbers: [
         [/0[xX][0-9a-fA-F]*/, 'number'],
         [/[$][+-]*\d*(\.\d*)?/, 'number'],
-        [/((\d+(\.\d*)?)|(\.\d+))([eE][\-+]?\d+)?/, 'number'],
+        [/((\d+(\.\d*)?)|(\.\d+))([eE][-+]?\d+)?/, 'number'],
       ],
       strings: [
         [/'/, { token: 'string', next: '@string' }],

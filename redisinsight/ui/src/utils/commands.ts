@@ -1,7 +1,6 @@
 import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
 import {
   CommandArgsType,
-  CommandGroup,
   CommandPrefix,
   ICommandArg,
   ICommandArgGenerated
@@ -57,43 +56,9 @@ export const generateArgsNames = (
     isEmpty
   )
 
-const getExternalCommandFormat = (commandName = '') =>
-  commandName
-    .replace(/\s+/g, '_')
-    .replace(/[.]+/g, '')
-    .toLowerCase()
-
-export const getDocUrlForCommand = (
-  commandName: string,
-): string => {
-  let command = getExternalCommandFormat(commandName)
-  const commandStartsWith = commandName.split('.')[0]
-
-  switch (commandStartsWith) {
-    case CommandPrefix.Search:
-      return `https://oss.redis.com/redisearch/Commands/#${command}`
-    case CommandPrefix.JSON:
-      return `https://oss.redis.com/redisjson/commands/#${command}`
-    case CommandPrefix.TimeSeries:
-      return `https://oss.redis.com/redistimeseries/commands/#${command}`
-    case CommandPrefix.Graph:
-      return `https://oss.redis.com/redisgraph/commands/#${command}`
-    case CommandPrefix.AI:
-      return `https://oss.redis.com/redisai/commands/#${command}`
-    case CommandPrefix.Gears:
-      return `https://oss.redis.com/redisgears/commands.html#${command}`
-    case CommandPrefix.BloomFilter:
-      return `https://oss.redis.com/redisbloom/Bloom_Commands/#${command}`
-    case CommandPrefix.CuckooFilter:
-      return `https://oss.redis.com/redisbloom/Cuckoo_Commands/#${command}`
-    case CommandPrefix.CountMinSketchFilter:
-      return `https://oss.redis.com/redisbloom/CountMinSketch_Commands/#${command}`
-    case CommandPrefix.TopK:
-      return `https://oss.redis.com/redisbloom/TopK_Commands/#${command}`
-    default:
-      command = commandName.replace(/\s+/g, '-').toLowerCase()
-      return `https://redis.io/commands/${command}`
-  }
+export const getDocUrlForCommand = (commandName: string): string => {
+  const command = commandName.replace(/\s+/g, '-').toLowerCase()
+  return `https://redis.io/commands/${command}`
 }
 
 export const getCommandRepeat = (command = ''): [string, number] => {

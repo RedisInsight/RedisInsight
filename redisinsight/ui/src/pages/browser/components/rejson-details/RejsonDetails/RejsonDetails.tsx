@@ -32,7 +32,7 @@ import {
 } from '../JSONInterfaces'
 import styles from '../styles.module.scss'
 
-interface changeEvent extends React.ChangeEvent<HTMLInputElement> {
+interface ChangeEvent extends React.ChangeEvent<HTMLInputElement> {
 }
 
 export interface Props {
@@ -185,7 +185,7 @@ class RejsonDetails extends React.Component<Props, State> {
   }
 
   onClickSubmitRootKVPair = () => {
-    const { newRootKey, newRootValue } = this.state
+    const { newRootKey, newRootValue, path } = this.state
     const {
       data,
       handleSubmitJsonUpdateValue,
@@ -208,7 +208,7 @@ class RejsonDetails extends React.Component<Props, State> {
 
       body.operation = 'update'
       body.value = newRootValue as string
-      body.previous_path = this.state.path as string
+      body.previous_path = path as string
       body.new_key = newRootKey as string
 
       if (data instanceof Array && dataType !== 'object') {
@@ -292,6 +292,7 @@ class RejsonDetails extends React.Component<Props, State> {
                   selectedKey={selectedKey}
                   parentPath=""
                   keyName={i}
+                  /* eslint-disable-next-line react/no-array-index-key */
                   key={i}
                   value={eachEntry as JSONScalarValue}
                   handleSubmitUpdateValue={handleSubmitUpdateValue}
@@ -305,6 +306,7 @@ class RejsonDetails extends React.Component<Props, State> {
                 <JSONArrayComponent
                   resultTableKeyMap={resultTableKeyMap}
                   shouldRejsonDataBeDownloaded={shouldRejsonDataBeDownloaded}
+                  /* eslint-disable-next-line react/no-array-index-key */
                   key={i}
                   handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
                   parentPath=""
@@ -340,6 +342,7 @@ class RejsonDetails extends React.Component<Props, State> {
                 onJSONPropertyAdded={onJSONPropertyAdded}
                 parentPath=""
                 keyName={i}
+                /* eslint-disable-next-line react/no-array-index-key */
                 key={i}
                 onJSONKeyExpandAndCollapse={onJSONKeyExpandAndCollapse}
                 value={eachEntry}
@@ -376,7 +379,8 @@ class RejsonDetails extends React.Component<Props, State> {
                 handleSubmitRemoveKey={(path, jsonKeyName) => this.onClickRemoveKey(path, jsonKeyName)}
               />
             )
-          } if ((data[key] as JSONArrayValue) instanceof Array) {
+          }
+          if ((data[key] as JSONArrayValue) instanceof Array) {
             return (
               <JSONArrayComponent
                 resultTableKeyMap={resultTableKeyMap}
@@ -638,9 +642,9 @@ class RejsonDetails extends React.Component<Props, State> {
                               <EuiFieldText
                                 name="newRootKey"
                                 value={newRootKey}
-                                isInvalid={!!this.state.error}
+                                isInvalid={!!error}
                                 placeholder="Enter JSON key"
-                                onChange={(event: changeEvent) =>
+                                onChange={(event: ChangeEvent) =>
                                   this.onChangeSetRootKey(event.target.value)}
                                 data-testid="json-key"
                               />
@@ -651,8 +655,8 @@ class RejsonDetails extends React.Component<Props, State> {
                           name="newValue"
                           value={newRootValue as string}
                           placeholder="Enter JSON value"
-                          isInvalid={!!this.state.error}
-                          onChange={(event: changeEvent) =>
+                          isInvalid={!!error}
+                          onChange={(event: ChangeEvent) =>
                             this.onChangeSetRootValue(event.target.value)}
                           data-testid="json-value"
                         />

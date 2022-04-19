@@ -41,9 +41,10 @@ export interface IConsent {
 
 export interface Props {
   liveEditMode?: boolean;
+  onSubmitted?: () => void;
 }
 
-const ConsentsSettings = ({ liveEditMode = false }: Props) => {
+const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
   const [consents, setConsents] = useState<IConsent[]>([])
   const [requiredConsents, setRequiredConsents] = useState<IConsent[]>([])
   const [nonRequiredConsents, setNonRequiredConsents] = useState<IConsent[]>([])
@@ -119,7 +120,7 @@ const ConsentsSettings = ({ liveEditMode = false }: Props) => {
     if (submitIsDisabled()) {
       return
     }
-    dispatch(updateUserConfigSettingsAction({ agreements: values }))
+    dispatch(updateUserConfigSettingsAction({ agreements: values }, onSubmitted))
   }
 
   const renderConsentOption = (consent: IConsent, withHR = false) => (
@@ -140,7 +141,7 @@ const ConsentsSettings = ({ liveEditMode = false }: Props) => {
           <EuiText className={styles.label}>{parse(consent.label)}</EuiText>
           {consent.description && (
             <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
-              {consent.description}
+              {parse(consent.description)}
             </EuiText>
           )}
         </EuiFlexItem>

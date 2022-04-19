@@ -125,8 +125,8 @@ consistency with plugin visualisations and the entire application.
 
 Find the example of the plugin here.
 
-* [Client List Plugin README](../../redisinsight/ui/src/packages/clients-list-example/README.md)
-* [Client List Plugin dir](../../redisinsight/ui/src/packages/clients-list-example/)
+* [Client List Plugin README](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/README.md)
+* [Client List Plugin dir](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/)
 
 ### Available parameters
 
@@ -186,6 +186,12 @@ export default { renderVisualization }
 ```
 
 
-## Plugins communication
-> **_Future updates:_**
-Support of communication with the main application via a third-party library - _redisinsight-plugin-sdk_.
+## Plugin communication
+
+Use the [redisinsight-plugin-sdk](https://www.npmjs.com/package/redisinsight-plugin-sdk), which is a third party library, 
+to communicate with the main app.
+
+Find the list and
+description of methods called in the 
+[README.md](../../redisinsight/ui/src/packages/redisinsight-plugin-sdk/README.md).
+

@@ -17,13 +17,16 @@ import rejsonReducer from './rejson'
 import notificationsReducer from './app/notifications'
 import cliSettingsReducer from './cli/cli-settings'
 import outputReducer from './cli/cli-output'
+import monitorReducer from './cli/monitor'
 import userSettingsReducer from './user/user-settings'
 import appInfoReducer from './app/info'
 import appContextReducer from './app/context'
 import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import workbenchResultsReducer from './workbench/wb-results'
-import workbenchEnablementAreaReducer from './workbench/wb-enablement-area'
+import workbenchGuidesReducer from './workbench/wb-guides'
+import workbenchTutorialsReducer from './workbench/wb-tutorials'
+import contentCreateRedisButtonReducer from './content/create-redis-buttons'
 
 export const history = createBrowserHistory()
 
@@ -55,13 +58,18 @@ export const rootReducer = combineReducers({
   cli: combineReducers({
     settings: cliSettingsReducer,
     output: outputReducer,
+    monitor: monitorReducer,
   }),
   user: combineReducers({
     settings: userSettingsReducer,
   }),
   workbench: combineReducers({
     results: workbenchResultsReducer,
-    enablementArea: workbenchEnablementAreaReducer,
+    guides: workbenchGuidesReducer,
+    tutorials: workbenchTutorialsReducer,
+  }),
+  content: combineReducers({
+    createRedisButtons: contentCreateRedisButtonReducer,
   }),
 })
 

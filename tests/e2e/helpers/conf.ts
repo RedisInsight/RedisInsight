@@ -1,10 +1,15 @@
+import { Chance } from 'chance';
+const chance = new Chance();
+
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
+
+const uniqueId = chance.string({ length: 10 });
 
 export const ossStandaloneConfig = {
     host: process.env.OSS_STANDALONE_HOST || 'oss-standalone',
     port: process.env.OSS_STANDALONE_PORT || '6379',
-    databaseName: process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };
@@ -12,7 +17,7 @@ export const ossStandaloneConfig = {
 export const ossStandaloneV5Config = {
     host: process.env.OSS_STANDALONE_V5_HOST || 'oss-standalone-v5',
     port: process.env.OSS_STANDALONE_V5_PORT || '6379',
-    databaseName: process.env.OSS_STANDALONE_V5_DATABASE_NAME || 'test_standalone-v5',
+    databaseName: `${process.env.OSS_STANDALONE_V5_DATABASE_NAME || 'test_standalone-v5'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_V5_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_V5_PASSWORD
 };
@@ -20,7 +25,7 @@ export const ossStandaloneV5Config = {
 export const ossStandaloneRedisearch = {
     host: process.env.OSS_STANDALONE_REDISEARCH_HOST || 'oss-standalone-redisearch',
     port: process.env.OSS_STANDALONE_REDISEARCH_PORT || '6379',
-    databaseName: process.env.OSS_STANDALONE_REDISEARCH_DATABASE_NAME || 'test_standalone-redisearch',
+    databaseName: `${process.env.OSS_STANDALONE_REDISEARCH_DATABASE_NAME || 'test_standalone-redisearch'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_REDISEARCH_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_REDISEARCH_PASSWORD
 };
@@ -28,7 +33,7 @@ export const ossStandaloneRedisearch = {
 export const ossClusterConfig = {
     ossClusterHost: process.env.OSS_CLUSTER_HOST || 'oss-cluster',
     ossClusterPort: process.env.OSS_CLUSTER_PORT || '7000',
-    ossClusterDatabaseName: process.env.OSS_CLUSTER_DATABASE_NAME || 'test_cluster'
+    ossClusterDatabaseName: `${process.env.OSS_CLUSTER_DATABASE_NAME || 'test_cluster'}-${uniqueId}`
 };
 
 export const ossSentinelConfig = {
@@ -46,9 +51,33 @@ export const redisEnterpriseClusterConfig = {
 };
 
 export const invalidOssStandaloneConfig = {
-    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-invalid',
-    port: process.env.OSS_STANDALONE_PORT || '1010',
-    databaseName: process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone-invalid',
+    host: 'oss-standalone-invalid',
+    port: '1010',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone-invalid'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+
+export const ossStandaloneBigConfig = {
+    host: process.env.OSS_STANDALONE_BIG_HOST || 'oss-standalone-big',
+    port: process.env.OSS_STANDALONE_BIG_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_BIG_DATABASE_NAME || 'test_standalone_big'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_BIG_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_BIG_PASSWORD
+};
+
+export const cloudDatabaseConfig = {
+    host: process.env.E2E_CLOUD_DATABASE_HOST || '',
+    port: process.env.E2E_CLOUD_DATABASE_PORT || '',
+    databaseName: `${process.env.E2E_CLOUD_DATABASE_NAME || 'cloud-database'}-${uniqueId}`,
+    databaseUsername: process.env.E2E_CLOUD_DATABASE_USERNAME,
+    databasePassword: process.env.E2E_CLOUD_DATABASE_PASSWORD
+};
+
+export const ossStandaloneNoPermissionsConfig = {
+    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone',
+    port: process.env.OSS_STANDALONE_PORT = '6379' || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-no-permissions'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_USERNAME || 'noperm',
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };

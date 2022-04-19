@@ -43,17 +43,26 @@ enum ApiEndpoints {
   SETTINGS = 'settings',
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
   WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
+  PROFILER = 'profiler',
+  PROFILER_LOGS = 'profiler/logs',
 
   REDIS_COMMANDS = 'commands',
-  ENABLEMENT_AREA = 'static/workbench/enablement-area.json',
+  GUIDES = 'static/guides/guides.json',
+  // TODO double check it, when tutorials will be completed
+  TUTORIALS = 'static/tutorials/tutorials.json',
   PLUGINS = 'plugins',
   STATE = 'state',
+  CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
+  GUIDES_PATH = 'static/guides',
+  TUTORIALS_PATH = 'static/tutorials',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'
 
 const SCAN_COUNT_DEFAULT_ENV = process.env.SCAN_COUNT_DEFAULT || '500'
+const SCAN_TREE_COUNT_DEFAULT_ENV = process.env.SCAN_TREE_COUNT_DEFAULT || '10000'
 
 export const SCAN_COUNT_DEFAULT = parseInt(SCAN_COUNT_DEFAULT_ENV, 10)
+export const SCAN_TREE_COUNT_DEFAULT = parseInt(SCAN_TREE_COUNT_DEFAULT_ENV, 10)
 
 export default ApiEndpoints

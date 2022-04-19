@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
-import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, KeyTypes, SortOrder } from 'uiSrc/constants'
+import { apiService, localStorageService } from 'uiSrc/services'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes, SortOrder } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -11,8 +11,8 @@ import {
   getUrl,
   isStatusSuccessful,
 } from 'uiSrc/utils'
-import { KeysStore } from 'uiSrc/components/main-router/interfaces'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   CreateListWithExpireDto,
@@ -30,6 +30,7 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { addErrorNotification, addMessageNotification } from './app/notifications'
+import { KeysStore, KeyViewType } from './interfaces/keys'
 
 export const initialState: KeysStore = {
   loading: false,
@@ -38,6 +39,7 @@ export const initialState: KeysStore = {
   search: '',
   isSearched: false,
   isFiltered: false,
+  viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
   data: {
     total: 0,
     scanned: 0,
@@ -268,6 +270,11 @@ const keysSlice = createSlice({
     setFilter: (state, { payload }) => {
       state.filter = payload
     },
+
+    changeKeyViewType: (state, { payload }:{ payload: KeyViewType }) => {
+      state.viewType = payload
+    },
+
     resetAddKey: (state) => {
       state.addKey = cloneDeep(initialState.addKey)
     },
@@ -278,6 +285,11 @@ const keysSlice = createSlice({
 
     // reset keys for keys slice
     resetKeys: () => cloneDeep(initialState),
+
+    resetKeysData: (state) => {
+      // state.data.keys = []
+      state.data.keys.length = 0
+    },
   },
 })
 
@@ -311,8 +323,10 @@ export const {
   updateSelectedKeyLength,
   setSearchMatch,
   setFilter,
+  changeKeyViewType,
   resetKeyInfo,
   resetKeys,
+  resetKeysData,
 } = keysSlice.actions
 
 // A selector
@@ -375,6 +389,42 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
             isFiltered: !!type,
           })
         )
+        if (!!type || !!match) {
+          let matchValue = '*'
+          if (match !== '*' && !!match) {
+            matchValue = getMatchType(match)
+          }
+          sendEventTelemetry({
+            event: getBasedOnViewTypeEvent(
+              state.browser.keys?.viewType,
+              TelemetryEvent.BROWSER_KEYS_SCANNED_WITH_FILTER_ENABLED,
+              TelemetryEvent.TREE_VIEW_KEYS_SCANNED_WITH_FILTER_ENABLED
+            ),
+            eventData: {
+              databaseId: state.connections.instances?.connectedInstance?.id,
+              keyType: type,
+              match: matchValue,
+              databaseSize: data[0].total,
+              numberOfKeysScanned: data[0].scanned,
+              scanCount: count,
+            }
+          })
+        }
+        if (!type && !match && cursor === '0') {
+          sendEventTelemetry({
+            event: getBasedOnViewTypeEvent(
+              state.browser.keys?.viewType,
+              TelemetryEvent.BROWSER_KEYS_SCANNED,
+              TelemetryEvent.TREE_VIEW_KEYS_SCANNED
+            ),
+            eventData: {
+              databaseId: state.connections.instances?.connectedInstance?.id,
+              databaseSize: data[0].total,
+              numberOfKeysScanned: data[0].scanned,
+              scanCount: count,
+            }
+          })
+        }
         onSuccess?.()
       }
     } catch (error) {
@@ -415,6 +465,19 @@ export function fetchMoreKeys(cursor: string, count: number) {
       sourceKeysFetch = null
       if (isStatusSuccessful(status)) {
         dispatch(loadMoreKeysSuccess(parseKeysListResponse(state.browser.keys.data.shardsMeta, data)))
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEYS_ADDITIONALLY_SCANNED,
+            TelemetryEvent.TREE_VIEW_KEYS_ADDITIONALLY_SCANNED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            databaseSize: data[0].total,
+            numberOfKeysScanned: state.browser.keys.data.scanned + data[0].scanned,
+            scanCount: count,
+          }
+        })
       }
     } catch (error) {
       if (!axios.isCancel(error)) {
@@ -510,7 +573,7 @@ export function refreshKeyInfoAction(key: string) {
 
 function addTypedKey(
   data: any,
-  endpoint: string,
+  endpoint: ApiEndpoints,
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
@@ -523,6 +586,7 @@ function addTypedKey(
         data
       )
       if (isStatusSuccessful(status)) {
+        const additionalData = getAdditionalAddedEventData(endpoint, data)
         if (onSuccessAction) {
           onSuccessAction()
         }
@@ -531,6 +595,17 @@ function addTypedKey(
         dispatch(
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
         )
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_ADDED,
+            TelemetryEvent.TREE_VIEW_KEY_ADDED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            ...additionalData
+          }
+        })
       }
     } catch (error) {
       if (onFailAction) {
@@ -619,6 +694,17 @@ export function deleteKeyAction(key: string, onSuccessAction?: () => void) {
       )
 
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEYS_DELETED,
+            TelemetryEvent.TREE_VIEW_KEYS_DELETED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            numberOfDeletedKeys: 1
+          }
+        })
         dispatch(deleteKeySuccess())
         dispatch(deleteKeyFromList(key))
         onSuccessAction?.()
@@ -679,8 +765,19 @@ export function editKeyTTL(key: string, ttl: number) {
         ),
         { keyName: key, ttl }
       )
-
       if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEY_TTL_CHANGED,
+            TelemetryEvent.TREE_VIEW_KEY_TTL_CHANGED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            ttl: ttl >= 0 ? ttl : -1,
+            previousTTL: state.browser.keys.selectedKey?.data?.ttl,
+          }
+        })
         if (ttl !== 0) {
           dispatch(editKeyTTLFromList({ key, ttl }))
           dispatch<any>(fetchKeyInfo(key))

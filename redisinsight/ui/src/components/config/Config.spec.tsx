@@ -43,7 +43,7 @@ describe('Config', () => {
     expect(store.getActions()).toEqual([...afterRenderActions])
   })
 
-  it('should call setSettingsPopupState with difference of agreements', () => {
+  it('should call the list of actions', () => {
     const userSettingsSelectorMock = jest.fn().mockReturnValue({
       config: {
         agreements: {},

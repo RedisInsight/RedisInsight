@@ -2,7 +2,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 8px 0;
   hr {
     border: none;
     height: 1px;
@@ -11,7 +10,6 @@
   }
   &-vertical {
     height: auto;
-    margin: 0 8px;
     hr {
       height: 100%;
       width: 1px;
@@ -19,14 +17,13 @@
   }
 
   &-middle {
-    margin: 8px 6px;
+    margin: 6px 12px;
     &.divider-vertical {
-      margin: 6px 8px;
+      margin: 12px 6px;
     }
   }
 
   &-half {
-    margin: 8px 0;
     hr {
       width: 50%;
     }

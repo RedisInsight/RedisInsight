@@ -8,7 +8,7 @@ interface Props {
 
 const THEME_NAMES = THEMES.map(({ value }) => value)
 
-const defaultState = {
+export const defaultState = {
   theme: THEME_NAMES[0],
   changeTheme: (themeValue: any) => {
     themeService.applyTheme(themeValue)

@@ -14,6 +14,9 @@ import AdvancedSettings from './advanced-settings/AdvancedSettings'
 import { ConsentsSettings, ConsentsSettingsPopup } from './consents-settings'
 import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
 import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
+import MonitorConfig from './monitor-config'
+import MonitorWrapper from './monitor'
+import PagePlaceholder from './page-placeholder'
 
 export {
   NavigationMenu,
@@ -32,5 +35,8 @@ export {
   ConsentsSettingsPopup,
   AdvancedSettings,
   KeyboardShortcut,
-  ShortcutsFlyout
+  MonitorConfig,
+  MonitorWrapper,
+  ShortcutsFlyout,
+  PagePlaceholder,
 }

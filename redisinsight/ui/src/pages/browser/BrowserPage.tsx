@@ -5,7 +5,7 @@ import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 
 import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import {
   fetchKeys,
@@ -24,19 +24,23 @@ import {
   appContextBrowser,
   setBrowserPanelSizes,
   setLastPageContext,
+  updateBrowserTreeSelectedLeaf,
 } from 'uiSrc/slices/app/context'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import InstanceHeader from 'uiSrc/components/instance-header'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 
 import AddKey from './components/add-key/AddKey'
 import KeyList from './components/key-list/KeyList'
+import KeyTree from './components/key-tree'
+import KeysHeader from './components/keys-header'
 import KeyDetailsWrapper from './components/key-details/KeyDetailsWrapper'
 
 import styles from './styles.module.scss'
 
 const widthResponsiveSize = 1124
-export const firstPanelId = 'keyList'
+export const firstPanelId = 'keys'
 export const secondPanelId = 'keyDetails'
 
 const BrowserPage = () => {
@@ -48,7 +52,7 @@ const BrowserPage = () => {
     panelSizes
   } = useSelector(appContextBrowser)
   const keysState = useSelector(keysDataSelector)
-  const { loading } = useSelector(keysSelector)
+  const { loading, viewType } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '' }
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
@@ -115,11 +119,11 @@ const BrowserPage = () => {
     setIsPageViewSent(true)
   }
 
-  const loadKeys = () => {
+  const loadKeys = (keyViewType?: KeyViewType) => {
     dispatch(setConnectedInstanceId(instanceId))
     dispatch(fetchKeys(
       '0',
-      SCAN_COUNT_DEFAULT,
+      keyViewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       () => dispatch(setBrowserKeyListDataLoaded(true)),
       () => dispatch(setBrowserKeyListDataLoaded(false))
     ))
@@ -155,6 +159,14 @@ const BrowserPage = () => {
     }
   }
 
+  const handleEditKey = (key: string, newKey: string) => {
+    setSelectedKey(newKey)
+
+    if (viewType === KeyViewType.Tree) {
+      dispatch(updateBrowserTreeSelectedLeaf({ key, newKey }))
+    }
+  }
+
   return (
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader />
@@ -167,7 +179,7 @@ const BrowserPage = () => {
                   id={firstPanelId}
                   scrollable={false}
                   initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="510px"
+                  minSize="600px"
                   paddingSize="none"
                   wrapperProps={{
                     className: cx(styles.resizePanelLeft, {
@@ -175,13 +187,34 @@ const BrowserPage = () => {
                     }),
                   }}
                 >
-                  <KeyList
-                    keysState={keysState}
-                    loading={loading}
-                    loadMoreItems={loadMoreItems}
-                    selectKey={selectKey}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                  />
+                  <>
+
+                    <KeysHeader
+                      keysState={keysState}
+                      loading={loading}
+                      loadKeys={loadKeys}
+                      sizes={sizes}
+                      loadMoreItems={loadMoreItems}
+                      handleAddKeyPanel={handleAddKeyPanel}
+                    />
+                    {viewType === KeyViewType.Browser && (
+                      <KeyList
+                        hideFooter
+                        keysState={keysState}
+                        loading={loading}
+                        loadMoreItems={loadMoreItems}
+                        selectKey={selectKey}
+                      />
+                    )}
+                    {viewType === KeyViewType.Tree && (
+                      <KeyTree
+                        keysState={keysState}
+                        loading={loading}
+                        loadMoreItems={loadMoreItems}
+                        selectKey={selectKey}
+                      />
+                    )}
+                  </>
                 </EuiResizablePanel>
 
                 <EuiResizableButton
@@ -214,7 +247,7 @@ const BrowserPage = () => {
                     <KeyDetailsWrapper
                       keyProp={selectedKey}
                       onCloseKey={closeKey}
-                      onEditKey={(newKey: string) => setSelectedKey(newKey)}
+                      onEditKey={(key: string, newKey: string) => handleEditKey(key, newKey)}
                       onDeleteKey={() => setSelectedKey(null)}
                     />
                   )}

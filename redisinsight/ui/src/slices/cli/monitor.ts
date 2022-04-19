@@ -6,6 +6,7 @@ import { RootState } from '../store'
 
 export const initialState: StateMonitor = {
   loading: false,
+  loadingPause: false,
   isShowMonitor: false,
   isRunning: false,
   isStarted: false,
@@ -18,7 +19,7 @@ export const initialState: StateMonitor = {
   logFile: null,
   timestamp: {
     start: 0,
-    end: 0,
+    paused: 0,
     unPaused: 0,
     duration: 0
   }
@@ -69,32 +70,26 @@ const monitorSlice = createSlice({
       state.timestamp.unPaused = state.timestamp.start
     },
 
-    toggleRunMonitor: (state) => {
-      state.isRunning = !state.isRunning
-      state.error = ''
-      if (!state.isRunning) {
-        state.timestamp.end = Date.now()
-        state.timestamp.duration += state.timestamp.end - state.timestamp.unPaused
-        state.isPaused = false
-      }
-    },
-
     togglePauseMonitor: (state) => {
       state.isPaused = !state.isPaused
       if (!state.isPaused) {
         state.timestamp.unPaused = Date.now()
       }
       if (state.isPaused) {
-        state.timestamp.end = Date.now()
-        state.timestamp.duration += state.timestamp.end - state.timestamp.unPaused
+        state.timestamp.paused = Date.now()
+        state.timestamp.duration += state.timestamp.paused - state.timestamp.unPaused
       }
+    },
+
+    setMonitorLoadingPause: (state, { payload }) => {
+      state.loadingPause = payload
     },
 
     stopMonitor: (state) => {
       state.isRunning = false
       state.error = ''
-      state.timestamp.end = Date.now()
-      state.timestamp.duration += state.timestamp.end - state.timestamp.unPaused
+      state.timestamp.paused = Date.now()
+      state.timestamp.duration += state.timestamp.paused - state.timestamp.unPaused
       state.isPaused = false
     },
 
@@ -141,10 +136,10 @@ export const {
   toggleMonitor,
   toggleHideMonitor,
   setSocket,
-  toggleRunMonitor,
   togglePauseMonitor,
   startMonitor,
   setStartTimestamp,
+  setMonitorLoadingPause,
   stopMonitor,
   resetProfiler,
   concatMonitorItems,

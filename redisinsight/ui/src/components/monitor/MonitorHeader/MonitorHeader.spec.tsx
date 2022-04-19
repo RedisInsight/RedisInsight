@@ -8,6 +8,7 @@ import {
   screen,
 } from 'uiSrc/utils/test-utils'
 import {
+  monitorSelector,
   resetMonitorItems,
   setMonitorInitialState,
   toggleHideMonitor,
@@ -16,7 +17,20 @@ import {
 import MonitorHeader, { Props } from './MonitorHeader'
 
 const mockedProps = mock<Props>()
+const monitorPath = 'uiSrc/slices/cli/monitor'
 let store: typeof mockedStore
+
+jest.mock(monitorPath, () => {
+  const defaultState = jest.requireActual(monitorPath).initialState
+  return {
+    ...jest.requireActual(monitorPath),
+    monitorSelector: jest.fn().mockReturnValue({
+      ...defaultState,
+      isMinimizedMonitor: false,
+      isShowMonitor: true,
+    })
+  }
+})
 
 beforeEach(() => {
   cleanup()
@@ -47,6 +61,10 @@ describe('MonitorHeader', () => {
 
   it('Should call handleRunMonitor after click on the play button', () => {
     const handleRunMonitor = jest.fn()
+    const monitorSelectorMock = jest.fn().mockReturnValue({
+      isStarted: true,
+    })
+    monitorSelector.mockImplementation(monitorSelectorMock)
     render(<MonitorHeader handleRunMonitor={handleRunMonitor} />)
 
     fireEvent.click(screen.getByTestId('toggle-run-monitor'))
@@ -55,6 +73,10 @@ describe('MonitorHeader', () => {
   })
 
   it('Should clear Monitor items after click on the clear button', () => {
+    const monitorSelectorMock = jest.fn().mockReturnValue({
+      isStarted: true,
+    })
+    monitorSelector.mockImplementation(monitorSelectorMock)
     render(<MonitorHeader {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('clear-monitor'))

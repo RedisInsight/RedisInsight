@@ -8,9 +8,9 @@ import {
 
 import { formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import {
   deleteSetMembers,
   fetchSetMembers,
@@ -46,6 +46,7 @@ const SetDetails = (props: Props) => {
   const { key = '', members, total, nextCursor } = useSelector(setDataSelector)
   const { length = 0 } = useSelector(selectedKeyDataSelector) ?? {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   const dispatch = useDispatch()
 
@@ -64,7 +65,11 @@ const SetDetails = (props: Props) => {
 
   const handleRemoveIconClick = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Set

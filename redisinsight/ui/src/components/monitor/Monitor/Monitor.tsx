@@ -14,7 +14,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
 
-import MonitorLog from '../MonitorLog/MonitorLog'
+import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'
 
 import styles from './styles.module.scss'
@@ -87,14 +87,12 @@ const Monitor = (props: Props) => {
           content="Profiler log is saved to a file on your local machine with no size limitation.
           The temporary log file will be automatically rewritten when the Profiler is reset"
         >
-          <>
-            <EuiSwitch
-              compressed
-              label={<span>Save Log</span>}
-              checked={saveLogValue}
-              onChange={(e) => setSaveLogValue(e.target.checked)}
-            />
-          </>
+          <EuiSwitch
+            compressed
+            label={<span>Save Log</span>}
+            checked={saveLogValue}
+            onChange={(e) => setSaveLogValue(e.target.checked)}
+          />
         </EuiToolTip>
       </div>
     </div>

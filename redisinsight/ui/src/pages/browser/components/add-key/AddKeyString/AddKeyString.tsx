@@ -13,6 +13,7 @@ import {
 import { Maybe } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/keys'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCommonFields/AddKeyCommonFields'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/dto'

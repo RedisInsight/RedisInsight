@@ -19,9 +19,9 @@ import { KeyTypes, SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import { formatLongName, validateScoreNumber } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -56,6 +56,7 @@ const ZSetDetails = (props: Props) => {
   const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { total, nextCursor, members: loadedMembers } = useSelector(zsetDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   useEffect(() => {
     const zsetMembers: IZsetMember[] = loadedMembers.map((item) => ({
@@ -106,7 +107,11 @@ const ZSetDetails = (props: Props) => {
 
   const handleRemoveIconClick = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.ZSet

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-this-in-sfc */
-import React, { Ref, useEffect, useRef, useState } from 'react'
+import React, { Ref, useEffect, useRef, useState, FC, SVGProps } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { formatDistanceToNow } from 'date-fns'
@@ -21,15 +21,14 @@ import {
   setBrowserKeyListDataLoaded,
 } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
-import TreeViewActiveSVG from 'uiSrc/assets/img/icons/treeview_active.svg'
+import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.svg'
 
 import FilterKeyType from '../filter-key-type'
 import SearchKeyList from '../search-key-list'
@@ -46,7 +45,7 @@ interface IViewType {
   dataTestId: string
   getClassName: () => string
   isActiveView: () => boolean
-  getIconType: () => string
+  getIconType: () => string | FC<SVGProps<SVGSVGElement>>
 }
 
 export interface Props {
@@ -96,7 +95,7 @@ const KeysHeader = (props: Props) => {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
-        return this.isActiveView() ? TreeViewActiveSVG : TreeViewSVG
+        return TreeViewIcon
       },
     },
   ]
@@ -136,7 +135,11 @@ const KeysHeader = (props: Props) => {
 
   const handleRefreshKeys = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED
+      ),
       eventData: {
         databaseId: instanceId
       }
@@ -166,7 +169,11 @@ const KeysHeader = (props: Props) => {
   const openAddKeyPanel = () => {
     handleAddKeyPanel(true)
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_ADD_BUTTON_CLICKED
+      ),
       eventData: {
         databaseId: instanceId
       }
@@ -174,6 +181,14 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleSwitchView = (type: KeyViewType) => {
+    if (type === KeyViewType.Tree) {
+      sendEventTelemetry({
+        event: TelemetryEvent.TREE_VIEW_OPENED,
+        eventData: {
+          databaseId: instanceId
+        }
+      })
+    }
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)

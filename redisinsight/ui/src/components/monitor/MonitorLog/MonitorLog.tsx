@@ -1,4 +1,4 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,7 +9,9 @@ import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/mo
 import { cutDurationText, getBaseApiUrl } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
-import 'react-virtualized/styles.css'
+
+const MIDDLE_SCREEN_RESOLUTION = 460
+const SMALL_SCREEN_RESOLUTION = 360
 
 const MonitorLog = () => {
   const { timestamp } = useSelector(monitorSelector)
@@ -39,19 +41,29 @@ const MonitorLog = () => {
     dispatch(resetProfiler())
   }
 
+  const getPaddingByWidth = (width: number): number => {
+    if (width < SMALL_SCREEN_RESOLUTION) return 6
+    if (width < MIDDLE_SCREEN_RESOLUTION) return 12
+    return 18
+  }
+
   return (
     <div className={styles.monitorLogWrapper}>
       <AutoSizer disableHeight>
         {({ width }) => (
-          <div className={styles.container} style={{ width }}>
+          <div
+            className={styles.container}
+            style={{ width, paddingLeft: getPaddingByWidth(width), paddingRight: getPaddingByWidth(width) }}
+          >
             <EuiText size="xs" color="subdued" className={styles.time}>
               <EuiIcon type="clock" />
               {format(timestamp.start, 'hh:mm:ss')}
               &nbsp;&#8211;&nbsp;
-              {format(timestamp.end, 'hh:mm:ss')}
+              {format(timestamp.paused, 'hh:mm:ss')}
               &nbsp;(
               {duration}
-              &nbsp;Running time)
+              {width > SMALL_SCREEN_RESOLUTION && ' Running time'}
+              )
             </EuiText>
             <EuiFlexGroup
               className={styles.actions}
@@ -61,17 +73,22 @@ const MonitorLog = () => {
               responsive={false}
             >
               <EuiFlexItem grow={false}>
-                <EuiButton
-                  size="s"
-                  color="secondary"
-                  href={linkToDownload}
-                  iconType="download"
-                  className={styles.btn}
-                  {...downloadBtnProps}
+                <EuiToolTip
+                  content="Download Profiler Log"
                 >
-                  {width > 360 && ' Download '}
-                  Log
-                </EuiButton>
+                  <EuiButton
+                    size="s"
+                    color="secondary"
+                    href={linkToDownload}
+                    iconType="download"
+                    className={styles.btn}
+                    data-testid="download-log-btn"
+                    {...downloadBtnProps}
+                  >
+                    {width > SMALL_SCREEN_RESOLUTION && ' Download '}
+                    Log
+                  </EuiButton>
+                </EuiToolTip>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton
@@ -81,9 +98,10 @@ const MonitorLog = () => {
                   onClick={onResetProfiler}
                   iconType="refresh"
                   className={styles.btn}
+                  data-testid="reset-profiler-btn"
                 >
                   Reset
-                  {width > 360 && ' Profiler'}
+                  {width > SMALL_SCREEN_RESOLUTION && ' Profiler'}
                 </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>

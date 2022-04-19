@@ -1,6 +1,5 @@
 import {
   calculateRedisHitRatio,
-  getJsonPathLevel,
   getRangeForNumber,
 } from 'src/utils/analytics-helper';
 
@@ -30,19 +29,6 @@ const getRangeForNumberTests = [
   { input: 2000000000, output: '1 000 000 001 +' },
 ];
 /* eslint-enable sonarjs/no-duplicate-string */
-
-const getJsonPathLevelTests = [
-  { input: '.', output: 'root' },
-  { input: '', output: 'root' },
-  { input: '.foo', output: '0' },
-  { input: 'foo', output: '0' },
-  { input: '.foo["bar"]', output: '1' },
-  { input: 'foo["bar"]', output: '1' },
-  { input: 'foo[0]["bar"]', output: '2' },
-  { input: '[\'foo\']["bar"]', output: '1' },
-  { input: '[\'foo\'][0].bar["test"]', output: '3' },
-];
-
 const calculateRedisHitRatioTests = [
   { input: { hits: null, misses: null }, output: undefined },
   { input: { hits: undefined, misses: undefined }, output: undefined },
@@ -68,16 +54,6 @@ describe('getRangeForNumber', () => {
   getRangeForNumberTests.forEach((test) => {
     it(`should be output: ${test.output} for input: ${test.input} `, async () => {
       const result = getRangeForNumber(test.input);
-
-      expect(result).toEqual(test.output);
-    });
-  });
-});
-
-describe('getJsonPathLevel', () => {
-  getJsonPathLevelTests.forEach((test) => {
-    it(`should be output: ${test.output} for input: ${test.input} `, async () => {
-      const result = getJsonPathLevel(test.input);
 
       expect(result).toEqual(test.output);
     });

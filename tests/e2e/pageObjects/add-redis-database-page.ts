@@ -40,6 +40,7 @@ export class AddRedisDatabasePage {
      * @param parameters the parameters of the database
      */
     async addRedisDataBase(parameters: AddNewDatabaseParameters): Promise<void> {
+        const addDatabaseButtonElement = await this.addDatabaseButton.with({ visibilityCheck: true, timeout: 30000 })();
         await t
             .click(this.addDatabaseButton)
             .click(this.addDatabaseManually)

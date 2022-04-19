@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import { LogFile } from 'src/modules/profiler/models/log-file';
 import {
-  mockLogFile, mockProfilerAnalyticsService, mockProfilerAnalyticsEvents, mockSocket,
+  mockLogFile, mockProfilerAnalyticsEvents, mockSocket,
 } from 'src/__mocks__';
 import config from 'src/utils/config';
 import { join } from 'path';
@@ -15,7 +15,8 @@ describe('LogFile', () => {
   let logFile: LogFile;
 
   beforeEach(() => {
-    logFile = new LogFile(mockLogFile.instanceId, mockLogFile.id, mockProfilerAnalyticsService.getEventsEmitters());
+    logFile = new LogFile(mockLogFile.instanceId, mockLogFile.id, mockProfilerAnalyticsEvents);
+    jest.resetAllMocks();
   });
 
   it('Initialization', () => {
@@ -45,7 +46,6 @@ describe('LogFile', () => {
     expect(stream).toBeInstanceOf(ReadStream);
     expect(stream.destroyed).toEqual(false);
     stream.emit('end');
-    await new Promise((r) => setTimeout(r, 1000));
     expect(stream.destroyed).toEqual(true);
     expect(mockProfilerAnalyticsEvents.get(TelemetryEvents.ProfilerLogDownloaded)).toHaveBeenCalled();
     expect(logFile.getReadStream()).not.toEqual(stream);

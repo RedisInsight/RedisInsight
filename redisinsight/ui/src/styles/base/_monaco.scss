@@ -44,7 +44,8 @@
     content: '';
     width: 16px;
     height: 16px;
-    mask-image: url(uiSrc/assets/img/play_icon.svg);
+    mask-image: url('uiSrc/assets/img/play_icon.svg');
+    -webkit-mask-image: url('uiSrc/assets/img/play_icon.svg');
     background-color: var(--rsSubmitBtn);
     background-size: contain;
     font-size: 16px;

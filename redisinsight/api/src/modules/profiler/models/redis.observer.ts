@@ -28,13 +28,14 @@ export class RedisObserver extends EventEmitter2 {
   init(func: () => Promise<IORedis.Redis | IORedis.Cluster>) {
     this.status = RedisObserverStatus.Initializing;
 
-    func()
+    return func()
       .then((redis) => {
         this.redis = redis;
         this.status = RedisObserverStatus.Connected;
         this.emit('connect');
       })
       .catch((err) => {
+        this.status = RedisObserverStatus.Error;
         this.emit('connect_error', err);
       });
   }

@@ -1,7 +1,7 @@
 import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
 import { LogFile } from 'src/modules/profiler/models/log-file';
 
-class FileLogsEmitter implements ILogsEmitter {
+export class FileLogsEmitter implements ILogsEmitter {
   public readonly id: string;
 
   private readonly logFile: LogFile;
@@ -43,4 +43,3 @@ class FileLogsEmitter implements ILogsEmitter {
     return this.logFile.destroy();
   }
 }
-export default FileLogsEmitter;

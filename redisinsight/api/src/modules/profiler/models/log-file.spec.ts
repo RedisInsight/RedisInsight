@@ -1,83 +1,107 @@
-xdescribe('dummy', () => {
-  it('dummy', () => {});
-});
+import * as fs from 'fs-extra';
+import { LogFile } from 'src/modules/profiler/models/log-file';
+import {
+  mockLogFile, mockProfilerAnalyticsService, mockProfilerAnalyticsEvents, mockSocket,
+} from 'src/__mocks__';
+import config from 'src/utils/config';
+import { join } from 'path';
+import { ReadStream, WriteStream } from 'fs';
+import { FileLogsEmitter } from 'src/modules/profiler/emitters/file.logs-emitter';
+import { TelemetryEvents } from 'src/constants';
 
-// import * as fs from 'fs-extra';
-// import { WsException } from '@nestjs/websockets';
-// import * as MockedSocket from 'socket.io-mock';
-// import ERROR_MESSAGES from 'src/constants/error-messages';
-// import { LogFile } from 'src/modules/profiler/models/log-file';
-// import { ProfilerClient } from './profiler.client';
-//
-// describe('LogFile', () => {
-//   let socketClient;
-//
-//   beforeEach(() => {
-//     socketClient = new MockedSocket();
-//     socketClient.id = '123';
-//     socketClient.emit = jest.fn();
-//   });
-//
-//   it('should create log file', async () => {
-//     const logFile = new LogFile('1234');
-//     const writeStream = logFile.getWriteStream();
-//     writeStream.on('error', (e) => {
-//       console.log('ERROR: ', e);
-//     });
-//     writeStream.on('close', () => {
-//       console.log('CLOSED: ');
-//     });
-//     await new Promise((res) => {
-//       writeStream.on('ready', () => {
-//         console.log('READY');
-//         res(null);
-//       });
-//       writeStream.on('open', () => {
-//         console.log('OPENED');
-//         res(null);
-//       });
-//
-//     });
-//     await writeStream.write('aaa');
-//     await writeStream.write('bbb');
-//     const { path } = writeStream;
-//     console.log('1', fs.readFileSync(path).toString())
-//     await fs.unlink(path);
-//     // console.log('2', fs.readFileSync(path).toString())
-//     writeStream.write('ccc');
-//     writeStream.write('ddd');
-//     writeStream.close();
-//     // console.log('3', fs.readFileSync(path).toString())
-//     // const client = new ProfilerClient(socketClient.id, socketClient);
-//
-//     // expect(client.id).toEqual(socketClient.id);
-//     await new Promise((res) => setTimeout(res, 2000));
-//   });
-//   // it('should emit event on monitorData', async () => {
-//   //   const client = new ProfilerClient(socketClient.id, socketClient);
-//   //   const monitorData = {
-//   //     // unix timestamp
-//   //     time: `${(new Date()).getTime() / 1000}`,
-//   //     source: '127.0.0.1:58612',
-//   //     database: 0,
-//   //     args: ['set', 'foo', 'bar'],
-//   //   };
-//   //   const payload: IOnDatePayload = { ...monitorData, shardOptions: { host: '127.0.0.1', port: 6379 } };
-//   //
-//   //   client.handleOnData(payload);
-//   //
-//   //   await new Promise((r) => setTimeout(r, 500));
-//   //
-//   //   expect(socketClient.emit).toHaveBeenCalledWith(MonitorGatewayServerEvents.Data, [monitorData]);
-//   // });
-//   // it.only('should emit exception event', () => {
-//   //   const client = new ProfilerClient(socketClient.id, socketClient);
-//   //
-//   //   client.handleOnDisconnect();
-//   //
-//   //   expect(socketClient.emit).toHaveBeenCalledWith(
-//   //     MonitorGatewayServerEvents.Exception,
-//   //     new WsException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
-//   //   );
-//   // });
-// });
+const DIR_PATH = config.get('dir_path');
+
+describe('LogFile', () => {
+  let logFile: LogFile;
+
+  beforeEach(() => {
+    logFile = new LogFile(mockLogFile.instanceId, mockLogFile.id, mockProfilerAnalyticsService.getEventsEmitters());
+  });
+
+  it('Initialization', () => {
+    const initTime = new Date();
+    logFile = new LogFile(mockLogFile.instanceId, mockLogFile.id);
+
+    expect(logFile.instanceId).toEqual(mockLogFile.instanceId);
+    expect(logFile.id).toEqual(mockLogFile.id);
+    expect(logFile['alias']).toEqual(mockLogFile.id);
+    expect(logFile['filePath']).toEqual(join(DIR_PATH.tmpDir, logFile.id));
+    expect(logFile['startTime'].getTime()).toBeGreaterThanOrEqual(initTime.getTime());
+    expect(logFile['startTime'].getTime()).toBeLessThanOrEqual((new Date()).getTime());
+    expect(logFile['analyticsEvents']).toEqual(new Map());
+    expect(logFile['clientObservers']).toEqual(new Map());
+    expect(logFile['emitter']).toEqual(undefined);
+  });
+
+  it('getWriteStream', () => {
+    const stream = logFile.getWriteStream();
+    expect(stream).toBeInstanceOf(WriteStream);
+    expect(logFile.getWriteStream()).toEqual(stream);
+  });
+
+  it('getReadStream', () => {
+    const stream = logFile.getReadStream();
+    expect(stream).toBeInstanceOf(ReadStream);
+    expect(stream.destroyed).toEqual(false);
+    expect(logFile.getReadStream()).not.toEqual(stream);
+    stream.emit('end');
+    expect(stream.destroyed).toEqual(true);
+    expect(mockProfilerAnalyticsEvents.get(TelemetryEvents.ProfilerLogDownloaded)).toHaveBeenCalled();
+  });
+
+  it('getEmitter', () => {
+    const emitter = logFile.getEmitter();
+    expect(emitter).toBeInstanceOf(FileLogsEmitter);
+    expect(emitter.id).toEqual(logFile.id);
+    expect(emitter['logFile']).toEqual(logFile);
+    expect(logFile.getEmitter()).toEqual(emitter);
+  });
+
+  it('getFilename + setAlias', () => {
+    const fileName = logFile.getFilename();
+    expect(logFile['alias']).toEqual(logFile['id']);
+    expect(fileName).toMatch(`${logFile['id']}-${logFile['startTime'].getTime()}-`);
+    logFile.setAlias('someAlias');
+    expect(logFile['alias']).toEqual('someAlias');
+    expect(logFile.getFilename()).toMatch(`someAlias-${logFile['startTime'].getTime()}-`);
+  });
+
+  it('addProfilerClient + removeProfilerClient', async () => {
+    logFile['destroy'] = jest.fn();
+
+    expect(logFile['clientObservers'].size).toEqual(0);
+    logFile.addProfilerClient(mockSocket.id);
+    expect(logFile['clientObservers'].size).toEqual(1);
+    expect(logFile['idleSince']).toEqual(0);
+    logFile.removeProfilerClient('007');
+    expect(logFile['clientObservers'].size).toEqual(1);
+    expect(logFile['idleSince']).toEqual(0);
+    logFile.removeProfilerClient(mockSocket.id);
+    expect(logFile['clientObservers'].size).toEqual(0);
+    expect(logFile['idleSince']).toBeGreaterThan(0);
+    expect(logFile.destroy).not.toHaveBeenCalled();
+    // wait until idle threshold pass (3sec for test env)
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    expect(logFile.destroy).toHaveBeenCalled();
+  });
+
+  it('destroy', async () => {
+    try {
+      fs.unlinkSync(logFile['filePath']);
+    } catch (e) {
+      // ignore file not found
+    }
+    expect(logFile['writeStream']).toEqual(undefined);
+    expect(fs.existsSync(logFile['filePath'])).toEqual(false);
+    const stream = logFile.getWriteStream();
+    expect(stream['_writableState'].ended).toEqual(false);
+    stream.write('somedata');
+    expect(fs.existsSync(logFile['filePath'])).toEqual(true);
+    expect(logFile['writeStream']).toEqual(stream);
+    await logFile.destroy();
+    expect(logFile['writeStream']).toEqual(null);
+    expect(fs.existsSync(logFile['filePath'])).toEqual(false);
+    expect(stream['_writableState'].ended).toEqual(true);
+    expect(mockProfilerAnalyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)).toHaveBeenCalled();
+  });
+});

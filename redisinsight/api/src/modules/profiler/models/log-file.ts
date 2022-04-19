@@ -2,7 +2,7 @@ import { join } from 'path';
 import * as fs from 'fs-extra';
 import { ReadStream, WriteStream } from 'fs';
 import config from 'src/utils/config';
-import FileLogsEmitter from 'src/modules/profiler/emitters/file.logs-emitter';
+import { FileLogsEmitter } from 'src/modules/profiler/emitters/file.logs-emitter';
 import { TelemetryEvents } from 'src/constants';
 
 const DIR_PATH = config.get('dir_path');

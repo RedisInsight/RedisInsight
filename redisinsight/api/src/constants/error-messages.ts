@@ -2,6 +2,7 @@
 export default {
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
   COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',
+  PROFILER_LOG_FILE_NOT_FOUND: 'Profiler log file was not found.',
   PLUGIN_STATE_NOT_FOUND: 'Plugin state was not found.',
   UNDEFINED_INSTANCE_ID: 'Undefined redis database instance id.',
   NO_CONNECTION_TO_REDIS_DB: 'No connection to the Redis Database.',

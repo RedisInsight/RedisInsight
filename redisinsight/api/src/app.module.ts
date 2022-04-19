@@ -16,7 +16,7 @@ import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
-import { MonitorModule } from './modules/monitor/monitor.module';
+import { ProfilerModule } from './modules/profiler/profiler.module';
 import { CliModule } from './modules/cli/cli.module';
 import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
 import { SettingsController } from './controllers/settings.controller';
@@ -41,7 +41,7 @@ const PATH_CONFIG = config.get('dir_path');
     WorkbenchModule,
     PluginModule,
     CommandsModule,
-    MonitorModule,
+    ProfilerModule,
     EventEmitterModule.forRoot(),
     ...(SERVER_CONFIG.staticContent
       ? [

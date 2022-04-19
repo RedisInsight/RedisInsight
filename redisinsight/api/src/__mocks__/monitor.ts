@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { IClientMonitorObserver } from 'src/modules/monitor/helpers/client-monitor-observer';
-import { IMonitorObserver, IShardObserver, MonitorObserverStatus } from 'src/modules/monitor/helpers/monitor-observer';
+import { IClientMonitorObserver } from 'src/modules/profiler/helpers/client-monitor-observer';
+import { IMonitorObserver, IShardObserver, MonitorObserverStatus } from 'src/modules/profiler/helpers/monitor-observer';
+import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
 
 export const mockClientMonitorObserver: IClientMonitorObserver = {
   id: uuidv4(),
@@ -33,4 +34,12 @@ export const mockRedisMonitorObserver: IShardObserver = {
   off: jest.fn(),
   once: jest.fn(),
   disconnect: jest.fn(),
+};
+
+export const mockLogEmitter: ILogsEmitter = {
+  id: 'test',
+  emit: jest.fn(),
+  addProfilerClient: jest.fn(),
+  removeProfilerClient: jest.fn(),
+  flushLogs: jest.fn(),
 };

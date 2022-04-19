@@ -6,17 +6,18 @@ import { io } from 'socket.io-client'
 import {
   setSocket,
   monitorSelector,
-  toggleRunMonitor,
   concatMonitorItems,
   stopMonitor,
   setError,
-  resetMonitorItems
+  resetMonitorItems,
+  setStartTimestamp,
+  setMonitorLoadingPause
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { IOnDatePayload } from 'apiSrc/modules/monitor/helpers/client-monitor-observer'
+import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
 
@@ -25,7 +26,7 @@ interface IProps {
 }
 const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
-  const { socket, isRunning, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
+  const { socket, isRunning, isPaused, isSaveToFile, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
 
   const dispatch = useDispatch()
 
@@ -59,7 +60,8 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     let payloads: IMonitorDataPayload[] = []
 
     const handleMonitorEvents = () => {
-      newSocket.on(MonitorEvent.MonitorData, (payload:IOnDatePayload[]) => {
+      dispatch(setMonitorLoadingPause(false))
+      newSocket.on(MonitorEvent.MonitorData, (payload: IMonitorData[]) => {
         payloads = payloads.concat(payload)
 
         // set batch of payloads and then clear batch
@@ -79,7 +81,13 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     newSocket.on(SocketEvent.Connect, () => {
       // Trigger Monitor event
       clearTimeout(retryTimer)
-      newSocket.emit(MonitorEvent.Monitor, handleMonitorEvents)
+      const timestampStart = Date.now()
+      dispatch(setStartTimestamp(timestampStart))
+      newSocket.emit(
+        MonitorEvent.Monitor,
+        { logFileId: isSaveToFile ? timestampStart.toString() : null },
+        handleMonitorEvents
+      )
     })
 
     // Catch exceptions
@@ -93,7 +101,7 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
 
       payloads.push({ isError: true, time: `${Date.now()}`, ...payload })
       setNewItems(payloads, () => { payloads.length = 0 })
-      dispatch(toggleRunMonitor())
+      dispatch(stopMonitor())
     })
 
     // Catch disconnect
@@ -109,12 +117,25 @@ const MonitorConfig = ({ retryDelay = 10000 } : IProps) => {
     newSocket.on(SocketEvent.ConnectionError, (error) => {
       payloads.push({ isError: true, time: `${Date.now()}`, message: getErrorMessage(error) })
       setNewItems(payloads, () => { payloads.length = 0 })
-      dispatch(toggleRunMonitor())
+      dispatch(stopMonitor())
     })
-  }, [instanceId, isRunning])
+  }, [instanceId, isRunning, isSaveToFile])
+
+  useEffect(() => {
+    if (!isRunning) return
+
+    const pauseUnpause = async () => {
+      !isPaused && await new Promise<void>((resolve) => socket?.emit(MonitorEvent.Monitor, () => resolve()))
+      isPaused && await new Promise<void>((resolve) => socket?.emit(MonitorEvent.Pause, () => resolve()))
+      dispatch(setMonitorLoadingPause(false))
+    }
+    dispatch(setMonitorLoadingPause(true))
+    pauseUnpause().catch(console.error)
+  }, [isPaused, isRunning])
 
   useEffect(() => {
     if (!isRunning) {
+      socket?.emit(MonitorEvent.FlushLogs)
       socket?.removeAllListeners()
       socket?.disconnect()
     }

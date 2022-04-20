@@ -117,12 +117,12 @@ export class LogFile {
   /**
    * Remove file and delete write stream after finish
    */
-  async destroy() {
+  destroy() {
     try {
       this.writeStream?.close();
       this.writeStream = null;
       const size = this.getFileSize();
-      await fs.unlink(this.filePath);
+      fs.unlink(this.filePath);
 
       this.analyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)(this.instanceId, size);
     } catch (e) {

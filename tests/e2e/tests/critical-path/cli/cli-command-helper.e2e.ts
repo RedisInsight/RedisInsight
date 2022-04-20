@@ -140,9 +140,7 @@ test
         }
         //Check first command documentation url
         await t.click(cliPage.cliHelperOutputTitles.withExactText(timeSeriesCommands[0]));
-        await t.click(cliPage.readMoreButton);
-        console.log(timeSeriesCommands[0].toLowerCase());
-        
+        await t.click(cliPage.readMoreButton);        
         await t.expect(getPageUrl()).eql(`https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`, 'The opened page');
         await t.switchToParentWindow();
     });

@@ -23,6 +23,7 @@ export class MyRedisDatabasePage {
     editAliasButton = Selector('[data-testid=edit-alias-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     submitChangesButton = Selector('[data-testid=btn-submit]');
+    promoButton = Selector('[data-testid=promo-btn]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     //ICONS

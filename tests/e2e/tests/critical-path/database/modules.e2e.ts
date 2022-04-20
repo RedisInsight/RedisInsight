@@ -1,17 +1,18 @@
+import { Selector } from 'testcafe';
 import { rte, env } from '../../../helpers/constants';
 import {
     acceptLicenseTerms,
     addNewStandaloneDatabase,
     deleteDatabase
 } from '../../../helpers/database';
-import { MyRedisDatabasePage } from '../../../pageObjects';
-import {commonUrl, ossStandaloneRedisearch} from '../../../helpers/conf';
+import { MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseOverviewPage = new DatabaseOverviewPage();
+
 const moduleNameList = ['RediSearch', 'RedisJSON', 'RedisGraph', 'RedisTimeSeries', 'RedisBloom', 'RedisGears', 'RedisAI'];
-const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleGraphIcon,
-      myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGearsIcon,
-      myRedisDatabasePage.moduleAIIcon];
+const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleGraphIcon, myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGearsIcon, myRedisDatabasePage.moduleAIIcon];
 
 fixture `Database modules`
     .meta({ type: 'critical_path' })
@@ -23,10 +24,9 @@ fixture `Database modules`
     .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneRedisearch.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone, env: env.web })
-    ('Verify that user can see DB modules on DB list page for Standalone DB', async t => {
+    .meta({ rte: rte.standalone, env: env.web })('Verify that user can see DB modules on DB list page for Standalone DB', async t => {
         //Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column');
         //Verify that user can see the following sorting order: Search, JSON, Graph, TimeSeries, Bloom, Gears, AI for modules
@@ -49,8 +49,7 @@ test
         await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see full module list in the Edit mode', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see full module list in the Edit mode', async t => {
         //Verify that module column is displayed
         await t.expect(myRedisDatabasePage.moduleColumn.visible).ok('Module column');
         //Open Edit mode
@@ -59,4 +58,21 @@ test
         await t.expect(myRedisDatabasePage.moduleColumn.visible).notOk('Module column');
         //Verify modules in Edit mode
         await myRedisDatabasePage.checkModulesOnPage(moduleList);
+    });
+test
+    .meta({ rte: rte.standalone })('Verify that user can see icons in DB header for RediSearch, RedisGraph, RedisJSON, RedisBloom, RedisTimeSeries, RedisGears, RedisAI default modules', async t => {
+        // Connect to DB
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
+        // Check all available modules in overview
+        const moduleIcons = await Selector('div').find('[data-testid^=Redi]');
+        const numberOfIcons = await moduleIcons.count;
+        for (let i = 0; i < numberOfIcons; i++) {
+            const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');
+            await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon');
+        }
+        // Verify that if DB has more than 6 modules loaded, user can click on three dots and see other modules in the tooltip
+        await t.click(databaseOverviewPage.overviewMoreInfo);
+        for (let j = numberOfIcons; j < moduleNameList.length; j++) {
+            await t.expect(databaseOverviewPage.overviewTooltip.withText(moduleNameList[j]).visible).ok('Tooltip module');
+        }
     });

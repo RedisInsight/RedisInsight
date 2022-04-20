@@ -54,9 +54,6 @@ export class BrowserPage {
     scanMoreButton = Selector('[data-testid=scan-more]');
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
     modulesButton = Selector('[data-testid$=_module]');
-    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
-    overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
-    overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
     databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     treeViewButton = Selector('[data-testid=view-type-list-btn]');
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');

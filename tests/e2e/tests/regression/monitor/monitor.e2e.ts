@@ -52,9 +52,13 @@ test
         //Click on Stop Monitor button
         await t.click(monitorPage.runMonitorToggle);
         //Check for "Monitor is stopped." text
-        await t.expect(monitorPage.monitorIsStoppedText.innerText).eql('Profiler is stopped.');
-        //Check that no commands are displayed after "Monitor is stopped" text
-        await t.expect(monitorPage.monitorIsStoppedText.nextSibling().exists).notOk('No commands in monitor');
+        await t.expect(monitorPage.monitorIsStoppedText.innerText).eql('Profiler is paused.');
+        //Get the last log line
+        const lastTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;
+        //Click on refresh keys to get new logs
+        await t.click(browserPage.refreshKeysButton);
+        //Check that no commands are displayed after monitor paused
+        await t.expect(monitorPage.monitorCommandLineTimestamp.nth(-1).textContent).eql(lastTimestamp);
     });
 test
     .meta({ rte: rte.standalone })('Verify that when user refreshes the page the list of results in Monitor is not saved', async t => {
@@ -72,12 +76,16 @@ test
     .meta({ rte: rte.standalone })('Verify that when user clicks on "Clear" button in Monitor, all commands history is removed', async t => {
         //Run monitor
         await monitorPage.startMonitor();
+        //Click on refresh keys to get new logs
+        await t.click(browserPage.refreshKeysButton);
+        //Get last timestamp
+        const lastTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1);
         //Stop Monitor
         await monitorPage.stopMonitor();
         //Click on Clear button
         await t.click(monitorPage.clearMonitorButton);
-        //Check that monitor has start screen
-        await t.expect(monitorPage.startMonitorButton.exists).ok('Start monitor button');
+        //Check that monitor screen is cleared
+        await t.expect(lastTimestamp.exists).notOk('Cleared last line');
     });
 test
     .meta({ rte: rte.standalone })

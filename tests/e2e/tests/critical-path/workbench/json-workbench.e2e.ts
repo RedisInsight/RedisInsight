@@ -18,14 +18,14 @@ fixture `JSON verifications at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async () => {
+    .afterEach(async t => {
         //Drop index, documents and database
+        await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneRedisearch.databaseName);
     })
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user can see result in Table and Text view for JSON data types for FT.AGGREGATE command in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const commandsForSend = [

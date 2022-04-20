@@ -79,9 +79,8 @@ test
             await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command ${command}`);
         }
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
         indexName = chance.word({ length: 5 });
         const commands = [
@@ -101,9 +100,8 @@ test.skip
         await workbenchPage.selectViewTypeText();
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default

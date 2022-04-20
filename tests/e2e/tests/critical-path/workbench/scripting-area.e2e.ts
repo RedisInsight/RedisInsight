@@ -45,9 +45,8 @@ test
         await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
         await t.expect(await workbenchPage.queryInput.clientHeight).eql(inputHeightStart + offsetY, 'Scripting area after resize has proper size');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
@@ -88,9 +87,8 @@ test.skip
         await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonNext).exists)
             .ok('Pagination next button exists');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });

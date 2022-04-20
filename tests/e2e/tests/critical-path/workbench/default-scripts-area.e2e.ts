@@ -20,14 +20,14 @@ fixture `Default scripts area at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async () => {
+    .afterEach(async t => {
         //Drop index, documents and database
+        await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
@@ -55,11 +55,9 @@ test.skip
         //Check the FT.INFO result
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command');
-        await t.switchToMainWindow();
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
@@ -82,11 +80,9 @@ test.skip
         const name = workbenchPage.queryTableResult.withText('Apple Juice');
         await t.expect(key.exists).ok('The added key is in the Search result');
         await t.expect(name.exists).ok('The added key name field is in the Search result');
-        await t.switchToMainWindow();
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
+test
+    .meta({ env: env.desktop, rte: rte.standalone })
     ('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         const aggregationResultField = 'max_price';
@@ -107,7 +103,6 @@ test.skip
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryTableResult.textContent).contains(aggregationResultField, 'The aggregation field name is in the Search result');
         await t.expect(workbenchPage.queryTableResult.textContent).contains('100', 'The aggregation max value is in the Search result');
-        await t.switchToMainWindow();
     });
 test
     .meta({ rte: rte.standalone })

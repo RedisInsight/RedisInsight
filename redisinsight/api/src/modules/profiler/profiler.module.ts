@@ -19,5 +19,6 @@ import { ProfilerService } from './profiler.service';
     ProfilerService,
   ],
   controllers: [ProfilerController],
+  exports: [LogFileProvider],
 })
 export class ProfilerModule {}

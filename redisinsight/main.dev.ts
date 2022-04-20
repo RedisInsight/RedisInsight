@@ -97,12 +97,14 @@ export const getDisplayAppInTrayValue = (): boolean => {
  * Backend part...
  */
 const port = 5001;
+
+let backendGracefulShutdown: Function;
 const launchApiServer = async () => {
   try {
     const detectPortConst = await detectPort(port);
     process.env.API_PORT = detectPortConst?.toString();
     log.info('Available port:', detectPortConst);
-    await server();
+    backendGracefulShutdown = await server();
   } catch (error) {
     log.error('Catch server error:', error);
   }
@@ -387,6 +389,15 @@ app.on('certificate-error', (event, _webContents, _url, _error, _certificate, ca
   callback(true);
 });
 
+app.on('quit', () => {
+  try {
+    if (backendGracefulShutdown) {
+      backendGracefulShutdown();
+    }
+  } catch (e) {
+    // ignore any error
+  }
+});
 // ipc events
 ipcMain.handle(IpcEvent.getAppVersion, () => app?.getVersion());
 

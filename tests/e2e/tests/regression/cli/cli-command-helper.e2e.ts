@@ -30,10 +30,9 @@ fixture `CLI Command helper`
     .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can open/close CLI separately from Command Helper', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can open/close CLI separately from Command Helper', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Verify that CLI is opened separately
@@ -47,8 +46,7 @@ test
         await t.expect(cliPage.cliCollapseButton.visible).notOk('CLI is closed');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can open/close Command Helper separately from CLI', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can open/close Command Helper separately from CLI', async t => {
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Verify that Command Helper is opened separately
@@ -62,8 +60,7 @@ test
         await t.expect(cliPage.cliCollapseButton.visible).ok('CLI is opended');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see that Command Helper is minimized when he clicks the "minimize" button', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see that Command Helper is minimized when he clicks the "minimize" button', async t => {
         const helperColourBefore = await common.getBackgroundColour(cliPage.commandHelperBadge);
         //Open Command Helper and minimize
         await t.click(cliPage.expandCommandHelperButton);
@@ -74,8 +71,7 @@ test
         await t.expect(cliPage.minimizeCliButton.visible).eql(false, 'Command helper is mimized');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see that Command Helper displays the previous information when he re-opens it', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see that Command Helper displays the previous information when he re-opens it', async t => {
         filteringGroup = 'Search';
         commandToCheck = 'FT.EXPLAIN';
         //Open Command Helper
@@ -90,8 +86,7 @@ test
         await t.expect(cliPage.cliHelperTitleArgs.textContent).contains(commandToCheck, 'Command Helper information persists after reopening');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'JSON';
         commandToCheck = 'JSON.SET';
         commandArgumentsToCheck = 'JSON.SET key path value [NX|XX]';
@@ -110,8 +105,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'Search';
         commandToCheck = 'FT.EXPLAIN';
         commandArgumentsToCheck = 'FT.EXPLAIN index query [dialect]';
@@ -130,8 +124,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
         filteringGroup = 'HyperLogLog';
         commandToCheck = 'PFCOUNT';
         commandArgumentsToCheck = 'PFCOUNT key [key ...]';
@@ -150,8 +143,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
         filteringGroups = ['Model', 'Script', 'Inference', 'Tensor'];
         commandsToCheck = [
             'AI.MODELDEL',
@@ -191,8 +183,7 @@ test
         }
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
         filteringGroup = 'Gears';
         commandToCheck = 'RG.GETEXECUTION';
         commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD|CLUSTER]';
@@ -213,8 +204,7 @@ test
         await t.closeWindow();
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can work with Bloom groups in Command Helper (RedisBloom module)', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can work with Bloom groups in Command Helper (RedisBloom module)', async t => {
         filteringGroups = ['Bf', 'CMS', 'TDigest', 'TopK', 'Cf'];
         commandsToCheck = [
             'BF.MEXISTS',
@@ -227,7 +217,7 @@ test
             'BF.MEXISTS key item [item ...]',
             'CMS.QUERY key item [item ...]',
             'TDIGEST.RESET key',
-            'TOPK.LIST key numKeys WITHCOUNT',
+            'TOPK.LIST key numKeys withcount',
             'CF.ADD key item'
         ];
         externalPageLinks = [

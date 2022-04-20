@@ -31,10 +31,9 @@ fixture `Monitor`
     .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user closes the Monitor by clicking on "Close Monitor" button Monitor stopped', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user closes the Monitor by clicking on "Close Monitor" button Monitor stopped', async t => {
         //Run monitor
         await monitorPage.startMonitor();
         //Close Monitor
@@ -47,8 +46,7 @@ test
         await t.expect(monitorPage.startMonitorButton.visible).ok('Start profiler button');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that Monitor is stopped when user clicks on "Stop" button', async t => {
+    .meta({ rte: rte.standalone })('Verify that Monitor is stopped when user clicks on "Stop" button', async t => {
         //Run monitor
         await monitorPage.startMonitor();
         //Click on Stop Monitor button
@@ -59,8 +57,7 @@ test
         await t.expect(monitorPage.monitorIsStoppedText.nextSibling().exists).notOk('No commands in monitor');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user refreshes the page the list of results in Monitor is not saved', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user refreshes the page the list of results in Monitor is not saved', async t => {
         //Run monitor
         await monitorPage.startMonitor();
         //Refresh the page
@@ -72,8 +69,7 @@ test
         await t.expect(monitorPage.monitorWarningMessage.exists).ok('Warning message in monitor');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user clicks on "Clear" button in Monitor, all commands history is removed', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user clicks on "Clear" button in Monitor, all commands history is removed', async t => {
         //Run monitor
         await monitorPage.startMonitor();
         //Stop Monitor
@@ -99,12 +95,11 @@ test
         await settingsPage.changeKeysToScanValue('10000');
         //Delete database
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
-    })
-    ('Verify that user can see monitor results in high DB load', async t => {
+    })('Verify that user can see monitor results in high DB load', async t => {
         //Run monitor
         await monitorPage.startMonitor();
         //Search by not existed key pattern
-        await browserPage.searchByKeyName(`${chance.string({ length:10 })}*`);
+        await browserPage.searchByKeyName(`${chance.string({ length: 10 })}*`);
         //Check that the last child is updated
         for (let i = 0; i <= 10; i++) {
             const previousTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;
@@ -131,8 +126,7 @@ test
         await cliPage.sendCommandInCli('acl DELUSER noperm');
         //Delete database
         await deleteDatabase(ossStandaloneNoPermissionsConfig.databaseName);
-    })
-    ('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
+    })('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
         //Expand the Profiler
         await t.click(monitorPage.expandMonitor);
         //Click on run monitor button

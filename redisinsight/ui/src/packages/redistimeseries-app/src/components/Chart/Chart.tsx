@@ -120,7 +120,7 @@ export default function Chart(props: ChartProps) {
       xanchor: 'center',
       yanchor: 'top',
       x: 0.5,
-      y: -0.3,
+      y: -0.5,
       orientation: 'h',
     }
     return {

@@ -15,7 +15,8 @@ fixture `Autodiscovery`
     .beforeEach(async() => {
         await acceptLicenseTerms();
     })
-test
+// Marking as skipped due to the issue on Circle CI https://redislabs.atlassian.net/browse/RI-2691
+test.skip
     .meta({ env: env.desktop, rte: rte.none })
     .after(async() => {
         // Delete all auto-discovered databases

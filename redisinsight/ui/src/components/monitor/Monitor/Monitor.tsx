@@ -151,7 +151,7 @@ const Monitor = (props: Props) => {
             )}
           </div>
         )}
-        {isStarted && isPaused && !isSaveToFile && (
+        {isRunning && isPaused && !isSaveToFile && (
           <div data-testid="monitor-stopped" className={styles.monitorStoppedText}>
             Profiler is paused.
           </div>

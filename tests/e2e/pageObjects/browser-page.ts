@@ -22,7 +22,7 @@ export class BrowserPage {
     closeEditTTL = Selector('[data-testid=cancel-btn]');
     saveTTLValue = Selector('[data-testid=apply-btn]');
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
-    refreshKeyButton = Selector('[data-testid=refresh-key-btn]')
+    refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
@@ -84,7 +84,7 @@ export class BrowserPage {
     keyNameInput = Selector('[data-testid=edit-key-input]');
     keyTTLInput = Selector('[data-testid=ttl]');
     editKeyTTLInput = Selector('[data-testid=edit-ttl-input]');
-    ttlText = Selector('[data-testid=key-ttl-text] span')
+    ttlText = Selector('[data-testid=key-ttl-text] span');
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
     listKeyElementInput = Selector('[data-testid=element]');
@@ -296,7 +296,7 @@ export class BrowserPage {
         await t.click(this.filterByPatterSearchInput);
         await t.pressKey('ctrl+a delete');
         await t.typeText(this.filterByPatterSearchInput, keyName);
-        await t.pressKey('enter')
+        await t.pressKey('enter');
     }
 
     /**
@@ -541,7 +541,7 @@ export class BrowserPage {
      * Get Values list of the key
      * @param element Selector of the element with list
      */
-    async getValuesListByElement(element): Promise<string[]> {
+    async getValuesListByElement(element: any): Promise<string[]> {
         const keyValues = [];
         const count = await element.count;
         for (let i = 0; i < count; i++) {
@@ -588,7 +588,7 @@ export class BrowserPage {
             }
             // Verify that the last folder level contains required keys
             const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
-            const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`
+            const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`;
             await t.click(await Selector(folderSelector));
             const foundKeyName = `${folders[i].join(delimiter)}`;
             await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).visible).ok('Specific key');
@@ -627,4 +627,4 @@ export type AddNewKeyParameters = {
     members?: string,
     scores?: string,
     field?: string
-}
+};

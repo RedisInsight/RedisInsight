@@ -76,7 +76,7 @@ export const cloudDatabaseConfig = {
 
 export const ossStandaloneNoPermissionsConfig = {
     host: process.env.OSS_STANDALONE_HOST || 'oss-standalone',
-    port: process.env.OSS_STANDALONE_PORT = '6379' || '6379',
+    port: process.env.OSS_STANDALONE_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-no-permissions'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME || 'noperm',
     databasePassword: process.env.OSS_STANDALONE_PASSWORD

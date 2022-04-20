@@ -100,7 +100,7 @@ const Query = (props: Props) => {
     if (!monacoObjects.current) return
     const commands = query.split('\n')
     const { monaco, editor } = monacoObjects.current
-    const notCommandRegEx = /^\s|\/\//
+    const notCommandRegEx = /^[\s|//]/
 
     const newDecorations = compact(commands.map((command, index) => {
       if (!command || notCommandRegEx.test(command)) return null

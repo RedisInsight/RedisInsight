@@ -47,7 +47,13 @@ export class LogFileProvider implements OnModuleDestroy {
     return { stream, filename: logFile.getFilename() };
   }
 
-  async onModuleDestroy() {
-    await Promise.all(Array.from(this.profilerLogFiles.values()).map((logFile: LogFile) => logFile.destroy()));
+  onModuleDestroy() {
+    this.profilerLogFiles.forEach((logFile) => {
+      try {
+        logFile.destroy();
+      } catch (e) {
+        // process other files on error
+      }
+    });
   }
 }

@@ -29,8 +29,17 @@ export interface Props {
 
 const MonitorHeader = ({ handleRunMonitor }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { isRunning, isPaused, isStarted, items = [], error, loadingPause } = useSelector(monitorSelector)
+  const {
+    isRunning,
+    isPaused,
+    isResumeLocked,
+    isStarted,
+    items = [],
+    error,
+    loadingPause
+  } = useSelector(monitorSelector)
   const isErrorShown = !!error && !isRunning
+  const disabledPause = isErrorShown || isResumeLocked || loadingPause
   const dispatch = useDispatch()
 
   const handleCloseMonitor = () => {
@@ -81,19 +90,19 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
         {isStarted && (
           <EuiFlexItem grow={false} className={styles.actions}>
             <EuiToolTip
-              content={isErrorShown ? '' : (!isPaused ? 'Pause' : 'Resume')}
+              content={(isErrorShown || isResumeLocked) ? '' : (!isPaused ? 'Pause' : 'Resume')}
               anchorClassName="inline-flex"
             >
               <EuiButtonIcon
-                iconType={isErrorShown ? BanIcon : (!isPaused ? 'pause' : 'play')}
+                iconType={(isErrorShown || isResumeLocked) ? BanIcon : (!isPaused ? 'pause' : 'play')}
                 onClick={() => handleRunMonitor()}
                 aria-label="start/stop monitor"
                 data-testid="toggle-run-monitor"
-                disabled={isErrorShown || loadingPause}
+                disabled={disabledPause}
               />
             </EuiToolTip>
             <EuiToolTip
-              content={!isStarted || !items.length ? '' : 'Clear Profiler window'}
+              content={!isStarted || !items.length ? '' : 'Clear Profiler Window'}
               anchorClassName={cx('inline-flex', { transparent: !isStarted || !items.length })}
             >
               <EuiButtonIcon

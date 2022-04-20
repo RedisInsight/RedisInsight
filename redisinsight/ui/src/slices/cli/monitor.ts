@@ -11,12 +11,13 @@ export const initialState: StateMonitor = {
   isRunning: false,
   isStarted: false,
   isPaused: false,
+  isResumeLocked: false,
   isSaveToFile: false,
   isMinimizedMonitor: false,
   socket: null,
   error: '',
   items: [],
-  logFile: null,
+  logFileId: null,
   timestamp: {
     start: 0,
     paused: 0,
@@ -65,6 +66,10 @@ const monitorSlice = createSlice({
       state.isSaveToFile = payload
     },
 
+    setLogFileId: (state, { payload }) => {
+      state.logFileId = payload
+    },
+
     setStartTimestamp: (state, { payload }) => {
       state.timestamp.start = payload
       state.timestamp.unPaused = state.timestamp.start
@@ -81,16 +86,18 @@ const monitorSlice = createSlice({
       }
     },
 
+    pauseMonitor: (state) => {
+      state.isPaused = true
+      state.timestamp.paused = Date.now()
+      state.timestamp.duration += state.timestamp.paused - state.timestamp.unPaused
+    },
+
     setMonitorLoadingPause: (state, { payload }) => {
       state.loadingPause = payload
     },
 
     stopMonitor: (state) => {
       state.isRunning = false
-      state.error = ''
-      state.timestamp.paused = Date.now()
-      state.timestamp.duration += state.timestamp.paused - state.timestamp.unPaused
-      state.isPaused = false
     },
 
     resetProfiler: (state) => {
@@ -126,6 +133,11 @@ const monitorSlice = createSlice({
     setError: (state, { payload }) => {
       state.error = payload
     },
+
+    lockResume: (state) => {
+      state.isResumeLocked = true
+      state.isPaused = true
+    }
   },
 })
 
@@ -137,8 +149,11 @@ export const {
   toggleHideMonitor,
   setSocket,
   togglePauseMonitor,
+  pauseMonitor,
+  lockResume,
   startMonitor,
   setStartTimestamp,
+  setLogFileId,
   setMonitorLoadingPause,
   stopMonitor,
   resetProfiler,

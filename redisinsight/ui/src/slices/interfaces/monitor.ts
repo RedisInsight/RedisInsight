@@ -15,11 +15,12 @@ export interface StateMonitor {
   isRunning: boolean
   isStarted: boolean
   isPaused: boolean
+  isResumeLocked: boolean
   isSaveToFile: boolean
   socket: Nullable<Socket>
   items: IMonitorDataPayload[]
   error: string
-  logFile: any
+  logFileId: Nullable<string>
   timestamp: {
     start: number
     paused: number

@@ -3,7 +3,14 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
-import { monitorSelector, setMonitorLoadingPause, setSocket, stopMonitor } from 'uiSrc/slices/cli/monitor'
+import {
+  monitorSelector,
+  setMonitorLoadingPause,
+  pauseMonitor,
+  setSocket,
+  stopMonitor,
+  lockResume
+} from 'uiSrc/slices/cli/monitor'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
 import MonitorConfig from './MonitorConfig'
@@ -100,7 +107,7 @@ describe('MonitorConfig', () => {
     const afterRenderActions = [
       setSocket(socket),
       setMonitorLoadingPause(true),
-      stopMonitor()
+      pauseMonitor()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -123,8 +130,7 @@ describe('MonitorConfig', () => {
 
     const afterRenderActions = [
       setSocket(socket),
-      setMonitorLoadingPause(true),
-      stopMonitor()
+      setMonitorLoadingPause(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -144,7 +150,9 @@ describe('MonitorConfig', () => {
     const afterRenderActions = [
       setSocket(socket),
       setMonitorLoadingPause(true),
-      stopMonitor()
+      pauseMonitor(),
+      stopMonitor(),
+      lockResume()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

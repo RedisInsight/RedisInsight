@@ -209,21 +209,22 @@ export function fetchHashFields(
       )
 
       if (isStatusSuccessful(status)) {
-        const matchValue = getMatchType(match)
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.Hash,
-            match: matchValue,
-            length: data.total,
-          }
-        })
-
+        if (match !== '*') {
+          const matchValue = getMatchType(match)
+          sendEventTelemetry({
+            event: getBasedOnViewTypeEvent(
+              state.browser.keys?.viewType,
+              TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+              TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+            ),
+            eventData: {
+              databaseId: state.connections.instances?.connectedInstance?.id,
+              keyType: KeyTypes.Hash,
+              match: matchValue,
+              length: data.total,
+            }
+          })
+        }
         dispatch(loadHashFieldsSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }

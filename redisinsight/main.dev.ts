@@ -391,9 +391,7 @@ app.on('certificate-error', (event, _webContents, _url, _error, _certificate, ca
 
 app.on('quit', () => {
   try {
-    if (backendGracefulShutdown) {
-      backendGracefulShutdown();
-    }
+    backendGracefulShutdown?.();
   } catch (e) {
     // ignore any error
   }

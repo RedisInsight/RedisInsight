@@ -102,11 +102,14 @@
 
 .euiButton {
   &.euiButton--warning.euiButton--fill:not([class*='isDisabled']) {
+    background-color: var(--buttonWarningColor);
+    border-color: var(--buttonWarningColor);
+
     &:hover,
     &:focus,
     &:focus-within {
-      background-color: var(--buttonDangerHoverColor);
-      border-color: var(--buttonDangerHoverColor);
+      background-color: var(--buttonWarningHoverColor);
+      border-color: var(--buttonWarningHoverColor);
     }
   }
 }

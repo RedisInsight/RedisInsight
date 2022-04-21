@@ -45,8 +45,12 @@
     color: white !important;
   }
   &.euiButton--fill {
-    border-color: var(--euiColorColorWarning) !important;
-    background-color: var(--euiToastDangerBtnColor) !important;
+    border: 1px solid var(--buttonDangerToastColor) !important;
+    background-color: transparent !important;
+  }
+  &.euiButton--fill:hover {
+    border: 1px solid var(--buttonDangerToastHoverColor) !important;
+    background-color: var(--buttonDangerToastHoverColor) !important;
   }
 }
 

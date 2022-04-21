@@ -43,6 +43,7 @@ export class LogFile {
    */
   getWriteStream(): WriteStream {
     if (!this.writeStream) {
+      fs.ensureFileSync(this.filePath);
       this.writeStream = fs.createWriteStream(this.filePath, { flags: 'a' });
     }
     this.writeStream.on('error', () => {});
@@ -54,6 +55,7 @@ export class LogFile {
    * Used to download file using http server
    */
   getReadStream(): ReadStream {
+    fs.ensureFileSync(this.filePath);
     const stream = fs.createReadStream(this.filePath);
     stream.once('end', () => {
       stream.destroy();

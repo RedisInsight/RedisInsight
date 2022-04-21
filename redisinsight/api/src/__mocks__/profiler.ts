@@ -8,17 +8,19 @@ import { MockType } from 'src/__mocks__/common';
 import { TelemetryEvents } from 'src/constants';
 import * as MockedSocket from 'socket.io-mock';
 import { IMonitorData } from 'src/modules/profiler/interfaces/monitor-data.interface';
+import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
+import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
 
 export const mockMonitorDataItemEmitted = {
   time: '14239988881.12341',
+  args: ['set', 'foo', 'bar'],
   source: '127.0.0.1',
   database: 0,
-  args: ['set', 'foo', 'bar'],
 };
 
 export const mockMonitorDataItem: IMonitorData = {
   ...mockMonitorDataItemEmitted,
-  shardOptions: null,
+  shardOptions: undefined,
 };
 
 export const mockSocket = new MockedSocket();
@@ -88,7 +90,20 @@ export const mockLogFile: LogFile = new LogFile('instanceid', testLogFileId, moc
 mockLogFile['getWriteStream'] = jest.fn();
 mockLogFile['addProfilerClient'] = jest.fn();
 mockLogFile['removeProfilerClient'] = jest.fn();
+mockLogFile['setAlias'] = jest.fn();
 mockLogFile['destroy'] = jest.fn();
 
-export const mockProfilerClientId = 'profiler-client-id';
-export const mockProfilerClient: ProfilerClient = new ProfilerClient(mockProfilerClientId, mockSocket);
+export const mockProfilerClient: ProfilerClient = new ProfilerClient(mockSocket.id, mockSocket);
+mockProfilerClient['handleOnData'] = jest.fn();
+mockProfilerClient['handleOnDisconnect'] = jest.fn();
+
+export const mockMonitorSettings: MonitorSettings = {
+  logFileId: testLogFileId,
+};
+
+export const mockLogFileProvider: MockType<LogFileProvider> = {
+  getOrCreate: jest.fn(),
+  get: jest.fn(),
+  getDownloadData: jest.fn(),
+  onModuleDestroy: jest.fn(),
+};

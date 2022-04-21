@@ -95,7 +95,7 @@ const InstanceFormWrapper = (props: Props) => {
 
   const tlsClientAuthRequired = !!editedInstance?.tls?.clientCertPairId ?? false
   const selectedTlsClientCertId = editedInstance?.tls?.clientCertPairId ?? ADD_NEW
-  const verifyServerTlsCert = editedInstance?.tls?.verifyServerCert ?? true
+  const verifyServerTlsCert = editedInstance?.tls?.verifyServerCert ?? false
   const selectedCaCertName = editedInstance?.tls?.caCertId ?? NO_CA_CERT
   const sentinelMasterUsername = editedInstance?.sentinelMaster?.username ?? ''
   const sentinelMasterPassword = editedInstance?.sentinelMaster?.password ?? ''

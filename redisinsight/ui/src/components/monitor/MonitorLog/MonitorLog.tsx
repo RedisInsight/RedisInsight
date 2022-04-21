@@ -75,22 +75,18 @@ const MonitorLog = () => {
             >
               <EuiFlexItem grow={false}>
                 {isSaveToFile && (
-                  <EuiToolTip
-                    content="Download Profiler Log"
+                  <EuiButton
+                    size="s"
+                    color="secondary"
+                    href={linkToDownload}
+                    iconType="download"
+                    className={styles.btn}
+                    data-testid="download-log-btn"
+                    {...downloadBtnProps}
                   >
-                    <EuiButton
-                      size="s"
-                      color="secondary"
-                      href={linkToDownload}
-                      iconType="download"
-                      className={styles.btn}
-                      data-testid="download-log-btn"
-                      {...downloadBtnProps}
-                    >
-                      {width > SMALL_SCREEN_RESOLUTION && ' Download '}
-                      Log
-                    </EuiButton>
-                  </EuiToolTip>
+                    {width > SMALL_SCREEN_RESOLUTION && ' Download '}
+                    Log
+                  </EuiButton>
                 )}
               </EuiFlexItem>
               <EuiFlexItem grow={false}>

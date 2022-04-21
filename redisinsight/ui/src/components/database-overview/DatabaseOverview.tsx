@@ -197,7 +197,7 @@ const DatabaseOverview = (props: Props) => {
           )}
           <MoreInfoPopover
             metrics={metrics.hidden}
-            modules={modules.hidden}
+            modules={isRediStack ? [...modules.hidden, ...modules.visible] : modules.hidden}
           />
         </div>
       </EuiFlexItem>

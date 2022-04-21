@@ -83,9 +83,9 @@ const Monitor = (props: Props) => {
       </div>
       <div className={styles.saveLogContainer}>
         <EuiToolTip
-          title="Allows you to download the generated log file after pausing the Profiler."
+          title="Allows you to download the generated log file after pausing the Profiler"
           content="Profiler log is saved to a file on your local machine with no size limitation.
-          The temporary log file will be automatically rewritten when the Profiler is reset"
+          The temporary log file will be automatically rewritten when the Profiler is reset."
         >
           <EuiSwitch
             compressed
@@ -122,7 +122,7 @@ const Monitor = (props: Props) => {
 
   return (
     <>
-      <div className={styles.container} data-testid="monitor">
+      <div className={cx(styles.container, { [styles.isRunning]: isRunning && !isPaused })} data-testid="monitor">
         {(error && !isRunning)
           ? (<MonitorError />)
           : (
@@ -151,12 +151,7 @@ const Monitor = (props: Props) => {
             )}
           </div>
         )}
-        {isRunning && isPaused && !isSaveToFile && (
-          <div data-testid="monitor-stopped" className={styles.monitorStoppedText}>
-            Profiler is paused.
-          </div>
-        )}
-        {(isStarted && isPaused && isSaveToFile) && (
+        {(isStarted && isPaused) && (
           <MonitorLog />
         )}
       </div>

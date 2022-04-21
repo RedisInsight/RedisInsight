@@ -15,7 +15,7 @@ const MIDDLE_SCREEN_RESOLUTION = 460 - PADDINGS_OUTSIDE
 const SMALL_SCREEN_RESOLUTION = 360 - PADDINGS_OUTSIDE
 
 const MonitorLog = () => {
-  const { timestamp, logFileId } = useSelector(monitorSelector)
+  const { timestamp, logFileId, isSaveToFile } = useSelector(monitorSelector)
   const dispatch = useDispatch()
 
   const duration = cutDurationText(
@@ -74,22 +74,24 @@ const MonitorLog = () => {
               responsive={false}
             >
               <EuiFlexItem grow={false}>
-                <EuiToolTip
-                  content="Download Profiler Log"
-                >
-                  <EuiButton
-                    size="s"
-                    color="secondary"
-                    href={linkToDownload}
-                    iconType="download"
-                    className={styles.btn}
-                    data-testid="download-log-btn"
-                    {...downloadBtnProps}
+                {isSaveToFile && (
+                  <EuiToolTip
+                    content="Download Profiler Log"
                   >
-                    {width > SMALL_SCREEN_RESOLUTION && ' Download '}
-                    Log
-                  </EuiButton>
-                </EuiToolTip>
+                    <EuiButton
+                      size="s"
+                      color="secondary"
+                      href={linkToDownload}
+                      iconType="download"
+                      className={styles.btn}
+                      data-testid="download-log-btn"
+                      {...downloadBtnProps}
+                    >
+                      {width > SMALL_SCREEN_RESOLUTION && ' Download '}
+                      Log
+                    </EuiButton>
+                  </EuiToolTip>
+                )}
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton

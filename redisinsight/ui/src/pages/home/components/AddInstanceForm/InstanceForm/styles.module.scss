@@ -150,3 +150,13 @@
     text-decoration: none !important;
   }
 }
+
+.tlsContainer {
+  min-height: 90px;
+  padding: 12px 0 15px;
+  flex-wrap: wrap;
+}
+
+.fullWidth {
+  flex-basis: 100% !important;
+}

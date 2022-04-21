@@ -782,8 +782,8 @@ const AddStandaloneForm = (props: Props) => {
   const TlsDetails = () => (
     <>
       <EuiFlexGroup
-        style={{ padding: '12px 0px 15px' }}
-        className={flexGroupClassName}
+        className={cx(flexGroupClassName, { [styles.tlsContainer]: !flexGroupClassName })}
+        alignItems="center"
       >
         <EuiFlexItem
           style={{ width: '230px' }}
@@ -819,7 +819,7 @@ const AddStandaloneForm = (props: Props) => {
               />
             </EuiFlexItem>
             {formik.values.sni && (
-              <EuiFlexItem className={flexItemClassName}>
+              <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px' }}>
                 <EuiFieldText
                   name="servername"
                   id="servername"
@@ -836,7 +836,7 @@ const AddStandaloneForm = (props: Props) => {
                 />
               </EuiFlexItem>
             )}
-            <EuiFlexItem className={flexItemClassName}>
+            <EuiFlexItem className={cx(flexItemClassName, { [styles.fullWidth]: formik.values.sni })}>
               <EuiCheckbox
                 id={`${htmlIdGenerator()()} verifyServerTlsCert`}
                 name="verifyServerTlsCert"

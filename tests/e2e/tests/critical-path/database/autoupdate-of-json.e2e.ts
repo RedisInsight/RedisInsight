@@ -20,18 +20,17 @@ const timestampBeforeUpdate = buildFilePath.get("timestamp");
 const timestampForEdit = timestampBeforeUpdate - 1;
 const cloudValueForEdit = chance.word({ length: 10 });
 
-//Edit json file values
-createRedisFilePath.set('cloud.title', cloudValueForEdit);
-createRedisFilePath.set('cloud.description', cloudValueForEdit);
-createRedisFilePath.save();
-buildFilePath.set('timestamp', timestampForEdit);
-buildFilePath.save();
-
 fixture `Automatically update information`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async () => {
         await acceptLicenseTerms();
+        //Edit json file values
+        createRedisFilePath.set('cloud.title', cloudValueForEdit);
+        createRedisFilePath.set('cloud.description', cloudValueForEdit);
+        createRedisFilePath.save();
+        buildFilePath.set('timestamp', timestampForEdit);
+        buildFilePath.save();
     })
 test
     .meta({ rte: rte.standalone, env: env.desktop })

@@ -18,7 +18,8 @@
   pointer-events: none !important;
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: var(--inputPlaceholderColor) !important;
 }
 
@@ -30,6 +31,10 @@ input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons {
 
 .euiFieldPassword.euiFieldPassword--compressed {
   padding: 8px !important;
+}
+
+.inputAppendIcon.inputAppendIcon {
+  height: auto;
 }
 
 .euiFormControlLayout > .euiFormControlLayout__append,

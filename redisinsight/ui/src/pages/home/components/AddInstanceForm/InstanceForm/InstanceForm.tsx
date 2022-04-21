@@ -723,7 +723,7 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
-              label="Select the Redis logical database"
+              label="Select Logical Database"
               checked={!!formik.values.showDb}
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"

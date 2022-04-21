@@ -155,6 +155,18 @@
   min-height: 90px;
   padding: 12px 0 15px;
   flex-wrap: wrap;
+
+  :global(.euiCheckbox) {
+    padding-bottom: 10px !important;
+  }
+}
+
+.tlsSniOpened {
+  padding-top: 0 !important;
+
+  :global(.euiFlexItem) {
+    margin-top: 0 !important;
+  }
 }
 
 .fullWidth {

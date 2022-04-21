@@ -782,8 +782,11 @@ const AddStandaloneForm = (props: Props) => {
   const TlsDetails = () => (
     <>
       <EuiFlexGroup
-        className={cx(flexGroupClassName, { [styles.tlsContainer]: !flexGroupClassName })}
-        alignItems="center"
+        className={cx(flexGroupClassName, {
+          [styles.tlsContainer]: !flexGroupClassName,
+          [styles.tlsSniOpened]: formik.values.sni
+        })}
+        alignItems={!flexGroupClassName ? 'flexEnd' : undefined}
       >
         <EuiFlexItem
           style={{ width: '230px' }}
@@ -820,20 +823,22 @@ const AddStandaloneForm = (props: Props) => {
             </EuiFlexItem>
             {formik.values.sni && (
               <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px' }}>
-                <EuiFieldText
-                  name="servername"
-                  id="servername"
-                  fullWidth
-                  maxLength={200}
-                  placeholder="Enter Server Name"
-                  value={formik.values.servername ?? ''}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateField(e.target.value.trim())
-                    )}
-                  data-testid="sni-servername"
-                />
+                <EuiFormRow label="Server Name*" style={{ paddingTop: 0 }}>
+                  <EuiFieldText
+                    name="servername"
+                    id="servername"
+                    fullWidth
+                    maxLength={200}
+                    placeholder="Enter Server Name"
+                    value={formik.values.servername ?? ''}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      formik.setFieldValue(
+                        e.target.name,
+                        validateField(e.target.value.trim())
+                      )}
+                    data-testid="sni-servername"
+                  />
+                </EuiFormRow>
               </EuiFlexItem>
             )}
             <EuiFlexItem className={cx(flexItemClassName, { [styles.fullWidth]: formik.values.sni })}>

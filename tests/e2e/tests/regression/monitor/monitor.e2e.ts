@@ -51,8 +51,8 @@ test
         await monitorPage.startMonitor();
         //Click on Stop Monitor button
         await t.click(monitorPage.runMonitorToggle);
-        //Check for "Monitor is stopped." text
-        await t.expect(monitorPage.monitorIsStoppedText.innerText).eql('Profiler is paused.', 'Paused profiler message');
+        //Check that Monitor is stopped
+        await t.expect(monitorPage.resetProfilerButton.visible).ok('Reset profiler button appeared');
         //Get the last log line
         const lastTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;
         //Click on refresh keys to get new logs

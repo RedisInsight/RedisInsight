@@ -28,7 +28,7 @@ test
         //Verify that user when users select DB index they can see info message how to work with DB index in add DB screen
         await t.expect(addRedisDatabasePage.databaseIndexMessage.visible).ok('Index message');
         await t.expect(addRedisDatabasePage.databaseIndexMessage.innerText).eql(indexDbMessage);
-        await t.expect(addRedisDatabasePage.databaseIndexCheckbox.parent().withExactText('Select the Redis logical database').exists).ok('Checkbox text');
+        await t.expect(addRedisDatabasePage.databaseIndexCheckbox.parent().withExactText('Select Logical Database').exists).ok('Checkbox text');
         //Click for saving
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         //Verify that the database is in the list

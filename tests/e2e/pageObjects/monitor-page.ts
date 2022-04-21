@@ -14,6 +14,7 @@ export class MonitorPage {
     clearMonitorButton = Selector('[data-testid=clear-monitor]');
     hideMonitor = Selector('[data-testid=hide-monitor]');
     closeMonitor = Selector('[data-testid=close-monitor]');
+    resetProfilerButton = Selector('[data-testid=reset-profiler-btn]');
     //TEXT ELEMENTS
     monitorIsStoppedText = Selector('[data-testid=monitor-stopped]');
     monitorIsStartedText = Selector('[data-testid=monitor-started]');
@@ -53,6 +54,6 @@ export class MonitorPage {
      */
     async stopMonitor(): Promise<void> {
         await t.click(this.runMonitorToggle);
-        await t.expect(this.monitorIsStoppedText.exists).ok('Profiler is stopped text');
+        await t.expect(this.resetProfilerButton.visible).ok('Reset profiler button appeared');
     }
 }

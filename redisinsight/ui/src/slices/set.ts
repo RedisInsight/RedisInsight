@@ -4,7 +4,7 @@ import { remove } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getMatchType } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   AddMembersToSetDto,
   GetSetMembersResponse,
@@ -149,7 +149,8 @@ export function fetchSetMembers(
   key: string,
   cursor: number,
   count: number,
-  match: string
+  match: string,
+  onSuccess?: (data: GetSetMembersResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadSetMembers(match))
@@ -170,24 +171,9 @@ export function fetchSetMembers(
       )
 
       if (isStatusSuccessful(status)) {
-        if (match !== '*') {
-          const matchValue = getMatchType(match)
-          sendEventTelemetry({
-            event: getBasedOnViewTypeEvent(
-              state.browser.keys?.viewType,
-              TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
-              TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
-            ),
-            eventData: {
-              databaseId: state.connections.instances?.connectedInstance?.id,
-              keyType: KeyTypes.Set,
-              match: matchValue,
-              length: data.total,
-            }
-          })
-        }
         dispatch(loadSetMembersSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
+        onSuccess?.(data)
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)

@@ -21,13 +21,13 @@ export class ProfilerAnalyticsService extends TelemetryBaseService {
     this.events.set(TelemetryEvents.ProfilerLogDeleted, this.sendLogDeleted.bind(this));
   }
 
-  sendLogDeleted(databaseId: string, fileSize: number): void {
+  sendLogDeleted(databaseId: string, fileSizeBytes: number): void {
     try {
       this.sendEvent(
         TelemetryEvents.ProfilerLogDeleted,
         {
           databaseId,
-          fileSize,
+          fileSizeBytes,
         },
       );
     } catch (e) {
@@ -35,13 +35,13 @@ export class ProfilerAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendLogDownloaded(databaseId: string, fileSize: number): void {
+  sendLogDownloaded(databaseId: string, fileSizeBytes: number): void {
     try {
       this.sendEvent(
         TelemetryEvents.ProfilerLogDownloaded,
         {
           databaseId,
-          fileSize,
+          fileSizeBytes,
         },
       );
     } catch (e) {

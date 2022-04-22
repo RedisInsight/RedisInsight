@@ -13,11 +13,24 @@ const { getSocket, constants, rte } = deps;
 const getMonitorClient = async (instanceId): Promise<Socket> => {
   return getSocket('monitor', {
     query: { instanceId },
-  })
+  });
 };
 
 describe('monitor', function () {
   this.timeout(4000);
+
+  describe('Connection edge cases', () => {
+    it('should not crash on 100 concurrent monitor connections to the same db', async () => {
+      const client = await getMonitorClient(constants.TEST_INSTANCE_ID);
+      await Promise.all((new Array(100).fill(1)).map(() => new Promise((res, rej) => {
+        client.emit('monitor', { logFileId: constants.getRandomString() }, (ack) => {
+          expect(ack).to.eql({ status: 'ok' });
+          res(ack);
+        });
+        client.on('exception', rej);
+      })));
+    });
+  });
 
   describe('Client creation', () => {
     it('Should successfully create a client', async () => {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as Redis from 'ioredis-mock';
+import * as Redis from 'ioredis';
 import {
-  mockLogFile,
+  mockLogFile, mockRedisShardObserver,
   MockType,
 } from 'src/__mocks__';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
@@ -10,7 +10,12 @@ import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 
-const mockRedisClient = new Redis();
+const nodeClient = Object.create(Redis.prototype);
+nodeClient.monitor = jest.fn();
+nodeClient.status = 'ready';
+nodeClient.disconnect = jest.fn();
+nodeClient.duplicate = jest.fn();
+nodeClient.send_command = jest.fn();
 
 describe('RedisObserverProvider', () => {
   let service: RedisObserverProvider;
@@ -44,9 +49,12 @@ describe('RedisObserverProvider', () => {
     redisService = await module.get(RedisService);
     databaseService = await module.get(InstancesBusinessService);
 
-    redisService.getClientInstance.mockReturnValue(mockRedisClientInstance);
+    redisService.getClientInstance.mockReturnValue({ ...mockRedisClientInstance, client: nodeClient });
     redisService.isClientConnected.mockReturnValue(true);
-    databaseService.connectToInstance.mockResolvedValue(mockRedisClient);
+    databaseService.connectToInstance.mockResolvedValue(nodeClient);
+    nodeClient.send_command.mockResolvedValue('OK');
+    nodeClient.duplicate.mockReturnValue(nodeClient);
+    nodeClient.monitor.mockReturnValue(mockRedisShardObserver);
   });
 
   it('getOrCreateObserver new observer get existing redis client', async () => {
@@ -54,7 +62,7 @@ describe('RedisObserverProvider', () => {
       mockLogFile.instanceId,
     );
 
-    expect(redisObserver['redis']).toEqual(mockRedisClientInstance.client);
+    expect(redisObserver['redis']).toEqual(nodeClient);
     expect(service['redisObservers'].size).toEqual(1);
 
     expect(await service.getObserver(mockLogFile.instanceId)).toEqual(redisObserver);
@@ -77,9 +85,9 @@ describe('RedisObserverProvider', () => {
       mockLogFile.instanceId,
     );
 
-    redisObserver['init'] = jest.fn();
-    expect(redisObserver['redis']).toEqual(mockRedisClientInstance.client);
-    expect(redisObserver['status']).toEqual(RedisObserverStatus.Connected);
+    redisObserver['init'] = jest.fn().mockResolvedValue(Promise.resolve());
+    expect(redisObserver['redis']).toEqual(nodeClient);
+    expect(redisObserver['status']).toEqual(RedisObserverStatus.Ready);
 
     const promise = service.getOrCreateObserver(mockLogFile.instanceId);
     redisObserver.emit('connect');

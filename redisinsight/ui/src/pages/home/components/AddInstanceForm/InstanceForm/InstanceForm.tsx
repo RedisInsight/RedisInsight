@@ -822,7 +822,7 @@ const AddStandaloneForm = (props: Props) => {
               />
             </EuiFlexItem>
             {formik.values.sni && (
-              <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px' }}>
+              <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px', marginTop: 0 }}>
                 <EuiFormRow label="Server Name*" style={{ paddingTop: 0 }}>
                   <EuiFieldText
                     name="servername"
@@ -940,7 +940,7 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexGroup>
       )}
       {formik.values.tls && formik.values.tlsClientAuthRequired && (
-        <div className="boxSection">
+        <div className="boxSection" style={{ marginTop: 15 }}>
           <EuiFlexGroup className={flexGroupClassName}>
             <EuiFlexItem className={flexItemClassName}>
               <EuiFormRow label="Client Certificate*">

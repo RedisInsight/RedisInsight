@@ -32,11 +32,16 @@ export class RedisObserver extends EventEmitter2 {
       .then((redis) => {
         this.redis = redis;
         this.status = RedisObserverStatus.Connected;
+      })
+      .then(() => this.connect())
+      .then(() => {
         this.emit('connect');
+        return Promise.resolve();
       })
       .catch((err) => {
         this.status = RedisObserverStatus.Error;
         this.emit('connect_error', err);
+        return Promise.reject(err);
       });
   }
 

@@ -38,7 +38,7 @@ export class RedisObserverProvider {
         this.redisObservers.set(instanceId, redisObserver);
 
         // initialize redis observer
-        redisObserver.init(this.getRedisClientFn(instanceId));
+        redisObserver.init(this.getRedisClientFn(instanceId)).catch();
       } else {
         switch (redisObserver.status) {
           case RedisObserverStatus.Ready:
@@ -49,7 +49,7 @@ export class RedisObserverProvider {
           case RedisObserverStatus.Error:
             this.logger.debug(`Trying to reconnect. Current status: ${redisObserver.status}`);
             // try to reconnect
-            redisObserver.init(this.getRedisClientFn(instanceId));
+            redisObserver.init(this.getRedisClientFn(instanceId)).catch();
             break;
           case RedisObserverStatus.Initializing:
           case RedisObserverStatus.Wait:

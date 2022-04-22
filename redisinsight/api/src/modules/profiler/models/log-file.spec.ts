@@ -97,8 +97,15 @@ describe('LogFile', () => {
     expect(fs.existsSync(logFile['filePath'])).toEqual(false);
     const stream = logFile.getWriteStream();
     expect(stream['_writableState'].ended).toEqual(false);
-    stream.write('somedata', () => {
-      expect(fs.existsSync(logFile['filePath'])).toEqual(true);
+    await new Promise((res, rej) => {
+      stream.write('somedata', (err) => {
+        if (err) {
+          return rej(err);
+        }
+
+        expect(fs.existsSync(logFile['filePath'])).toEqual(true);
+        return res(true);
+      });
     });
     expect(logFile['writeStream']).toEqual(stream);
     await logFile.destroy();

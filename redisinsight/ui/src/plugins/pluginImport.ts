@@ -35,14 +35,6 @@ export const importPluginScript = () => (config) => {
 
   const providePluginSDK = () => {
     globalThis.PluginSDK = {
-      setHeaderText: (text) => {
-        deprecatedMethodWarning('setHeaderText')
-        sendMessageToMain({
-          event: events.SET_HEADER_TEXT,
-          iframeId,
-          text
-        })
-      },
       setPluginLoadSucceed: () => {
         sendMessageToMain({
           event: events.LOADED,

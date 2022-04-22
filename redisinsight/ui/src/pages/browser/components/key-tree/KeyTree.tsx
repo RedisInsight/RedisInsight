@@ -69,19 +69,14 @@ const KeyTree = (props: Props) => {
   }, [keysState.keys])
 
   useEffect(() => {
-    // select default leaf "Keys" after each change delimiter
+    // select default leaf "Keys" after each change delimiter, filter or search
     setItems([])
     setTimeout(() => {
       setStatusSelected({})
       setSelectDefaultLeaf(true)
       setItems(keysState.keys)
     }, 0)
-  }, [delimiter])
-
-  useEffect(() => {
-    // select default leaf "Keys" after each search or filter
-    setSelectDefaultLeaf(true)
-  }, [filter, search])
+  }, [delimiter, filter, search])
 
   const updateKeysList = (items:any = {}) => {
     const newState:IKeyListPropTypes = {

@@ -11,15 +11,15 @@ import {
 import { constructKeysToTree } from 'uiSrc/helpers'
 import { keysSelector } from 'uiSrc/slices/keys'
 import VirtualTree from 'uiSrc/components/virtual-tree'
-import { IKeyListPropTypes, } from 'uiSrc/constants/prop-types/keys'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
+import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import KeyTreeDelimiter from './KeyTreeDelimiter'
 
 import KeyList from '../key-list/KeyList'
 import styles from './styles.module.scss'
 
 export interface Props {
-  keysState: IKeyListPropTypes
+  keysState: KeysStoreData
   loading: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
 }
@@ -39,7 +39,7 @@ const KeyTree = (props: Props) => {
   const [statusSelected, setStatusSelected] = useState(selectedLeaf)
   const [statusOpen, setStatusOpen] = useState(openNodes)
   const [sizes, setSizes] = useState(panelSizes)
-  const [keyListState, setKeyListState] = useState<IKeyListPropTypes>(keysState)
+  const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
   const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(true)
   const [items, setItems] = useState(keysState.keys ?? [])
@@ -69,17 +69,21 @@ const KeyTree = (props: Props) => {
   }, [keysState.keys])
 
   useEffect(() => {
-    // select default leaf "Keys" after each change delimiter, filter or search
+    updateSelectedKeys()
+  }, [delimiter, filter, search, keysState.lastRefreshTime])
+
+  // select default leaf "Keys" after each change delimiter, filter or search
+  const updateSelectedKeys = () => {
     setItems([])
     setTimeout(() => {
       setStatusSelected({})
       setSelectDefaultLeaf(true)
       setItems(keysState.keys)
     }, 0)
-  }, [delimiter, filter, search])
+  }
 
   const updateKeysList = (items:any = {}) => {
-    const newState:IKeyListPropTypes = {
+    const newState:KeysStoreData = {
       ...keyListState,
       keys: Object.values(items)
     }

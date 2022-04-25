@@ -7,10 +7,3 @@ export interface IKeyPropTypes {
   size: number
   length: number
 }
-
-export interface IKeyListPropTypes {
-  nextCursor: string
-  total: number
-  scanned: number
-  keys: IKeyPropTypes[]
-}

@@ -1,11 +1,11 @@
+import { join } from 'path';
+import * as os from 'os';
+import { Chance } from 'chance';
+import * as editJsonFile from 'edit-json-file';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl } from '../../../helpers/conf';
 import { rte, env } from '../../../helpers/constants';
-import { Chance } from 'chance';
-import { join } from 'path';
-import * as os from 'os';
-import * as editJsonFile from 'edit-json-file';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const chance = new Chance();
@@ -16,26 +16,26 @@ const buildPath = `${workingDirectory}/content/build.json`;
 const createRedisPath = `${workingDirectory}/content/create-redis.json`;
 const buildFilePath = editJsonFile(buildPath);
 const createRedisFilePath = editJsonFile(createRedisPath);
-const timestampBeforeUpdate = buildFilePath.get("timestamp");
+const timestampBeforeUpdate = buildFilePath.get('timestamp');
 const timestampForEdit = timestampBeforeUpdate - 1;
 const cloudValueForEdit = chance.word({ length: 10 });
+
+//Edit json file values
+createRedisFilePath.set('cloud.title', cloudValueForEdit);
+createRedisFilePath.set('cloud.description', cloudValueForEdit);
+createRedisFilePath.save();
+buildFilePath.set('timestamp', timestampForEdit);
+buildFilePath.save();
 
 fixture `Automatically update information`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTerms();
-        //Edit json file values
-        createRedisFilePath.set('cloud.title', cloudValueForEdit);
-        createRedisFilePath.set('cloud.description', cloudValueForEdit);
-        createRedisFilePath.save();
-        buildFilePath.set('timestamp', timestampForEdit);
-        buildFilePath.save();
-    })
+    });
 test
-    .meta({ rte: rte.standalone, env: env.desktop })
-    ('Verify that user has the ability to update "Create free database" button without changing the app', async t => {
-        //Create new file paths due to cacheability
+    .meta({ rte: rte.standalone, env: env.desktop })('Verify that user has the ability to update "Create free database" button without changing the app', async t => {
+        //Create new file paths due to cache-ability
         const buildFilePathNew = editJsonFile(buildPath);
         const createRedisFilePathNew = editJsonFile(createRedisPath);
         //Check the promo button after the opening of app

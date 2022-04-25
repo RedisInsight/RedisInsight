@@ -58,11 +58,21 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that Key is deleted if TTL finishes', async t => {
         // Create new key with TTL
-        await browserPage.addStringKey(keyName, 'test', '3');
+        const TTL = 5;
+        let ttlToCompare = TTL;
+        await browserPage.addStringKey(keyName, 'test', TTL.toString());
         await t.click(browserPage.refreshKeysButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Added key');
-        // Wait 3 seconds to finish key TTL
-        await t.wait(3000);
+        // Specify selector with TTL
+        const ttlValueElement = Selector(`[data-testid="ttl-${keyName}"]`);
+        // Check that TTL reduces every page refresh
+        while (await browserPage.isKeyIsDisplayedInTheList(keyName)) {
+            const actualTTL = Number((await ttlValueElement.innerText).slice(0, -2));
+            await t.expect(actualTTL).lte(ttlToCompare);
+            await t.click(browserPage.refreshKeysButton);
+            ttlToCompare = actualTTL;
+        }
+        // Check that key with finished TTL is deleted
         await t.click(browserPage.refreshKeysButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Not displayed key');
     });

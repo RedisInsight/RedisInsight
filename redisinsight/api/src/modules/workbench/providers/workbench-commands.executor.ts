@@ -6,7 +6,12 @@ import {
   ClusterNodeRole, ClusterSingleNodeOptions,
   CommandExecutionStatus,
 } from 'src/modules/cli/dto/cli.dto';
-import { checkRedirectionError, parseRedirectionError, splitCliCommandLine } from 'src/utils/cli-helper';
+import {
+  checkHumanReadableCommands,
+  checkRedirectionError,
+  parseRedirectionError,
+  splitCliCommandLine,
+} from 'src/utils/cli-helper';
 import {
   CommandNotSupportedError,
   CommandParsingError,
@@ -63,8 +68,10 @@ export class WorkbenchCommandsExecutor {
 
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+      const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
+
       const response = this.formatter.format(
-        await this.redisTool.execCommand(clientOptions, command, args),
+        await this.redisTool.execCommand(clientOptions, command, args, replyEncoding),
       );
 
       this.logger.log('Succeed to execute workbench command.');
@@ -98,6 +105,7 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+      const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
       const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
       let result = await this.redisTool.execCommandForNode(
@@ -106,6 +114,7 @@ export class WorkbenchCommandsExecutor {
         args,
         role,
         nodeAddress,
+        replyEncoding,
       );
       if (result.error && checkRedirectionError(result.error) && nodeOptions.enableRedirection) {
         const { slot, address } = parseRedirectionError(result.error);
@@ -115,6 +124,7 @@ export class WorkbenchCommandsExecutor {
           args,
           role,
           address,
+          replyEncoding,
         );
         result.slot = parseInt(slot, 10);
       }
@@ -155,9 +165,10 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+      const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
       return (
-        await this.redisTool.execCommandForNodes(clientOptions, command, args, role)
+        await this.redisTool.execCommandForNodes(clientOptions, command, args, role, replyEncoding)
       ).map((nodeExecReply) => {
         const {
           response, status, host, port,

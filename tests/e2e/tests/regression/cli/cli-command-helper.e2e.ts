@@ -89,7 +89,7 @@ test
     .meta({ env: env.web, rte: rte.standalone })('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'JSON';
         commandToCheck = 'JSON.SET';
-        commandArgumentsToCheck = 'JSON.SET key path value [NX|XX]';
+        commandArgumentsToCheck = 'JSON.SET key path value [condition]';
         externalPageLink = 'https://redis.io/commands/json.set/';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);

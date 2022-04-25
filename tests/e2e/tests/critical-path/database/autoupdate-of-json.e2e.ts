@@ -11,7 +11,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const chance = new Chance();
 
 const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
-  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2-stage'));
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 const buildPath = `${workingDirectory}/content/build.json`;
 const createRedisPath = `${workingDirectory}/content/create-redis.json`;
 const buildFilePath = editJsonFile(buildPath);

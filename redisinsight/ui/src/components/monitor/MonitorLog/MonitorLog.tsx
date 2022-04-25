@@ -10,11 +10,12 @@ import { cutDurationText, getBaseApiUrl } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
-const MIDDLE_SCREEN_RESOLUTION = 460
-const SMALL_SCREEN_RESOLUTION = 360
+const PADDINGS_OUTSIDE = 12
+const MIDDLE_SCREEN_RESOLUTION = 460 - PADDINGS_OUTSIDE
+const SMALL_SCREEN_RESOLUTION = 360 - PADDINGS_OUTSIDE
 
 const MonitorLog = () => {
-  const { timestamp } = useSelector(monitorSelector)
+  const { timestamp, logFileId, isSaveToFile } = useSelector(monitorSelector)
   const dispatch = useDispatch()
 
   const duration = cutDurationText(
@@ -26,7 +27,7 @@ const MonitorLog = () => {
     )
   )
   const baseApiUrl = getBaseApiUrl()
-  const linkToDownload = `${baseApiUrl}/api/${ApiEndpoints.PROFILER_LOGS}/${timestamp.start}`
+  const linkToDownload = `${baseApiUrl}/api/${ApiEndpoints.PROFILER_LOGS}/${logFileId}`
   const isElectron = process.env.APP_ENV === AppEnv.ELECTRON
 
   const downloadBtnProps: any = {}
@@ -73,9 +74,7 @@ const MonitorLog = () => {
               responsive={false}
             >
               <EuiFlexItem grow={false}>
-                <EuiToolTip
-                  content="Download Profiler Log"
-                >
+                {isSaveToFile && (
                   <EuiButton
                     size="s"
                     color="secondary"
@@ -88,7 +87,7 @@ const MonitorLog = () => {
                     {width > SMALL_SCREEN_RESOLUTION && ' Download '}
                     Log
                   </EuiButton>
-                </EuiToolTip>
+                )}
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButton

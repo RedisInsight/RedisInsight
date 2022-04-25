@@ -282,7 +282,8 @@ export function fetchMoreListElements(
 // Asynchronous thunk actions
 export function fetchSearchingListElementAction(
   key: string,
-  index: Nullable<number>
+  index: Nullable<number>,
+  onSuccess?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadSearchingListElement(index))
@@ -302,18 +303,7 @@ export function fetchSearchingListElementAction(
       if (isStatusSuccessful(status)) {
         dispatch(loadSearchingListElementSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.List,
-            match: 'EXACT_VALUE_NAME',
-          }
-        })
+        onSuccess?.()
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)

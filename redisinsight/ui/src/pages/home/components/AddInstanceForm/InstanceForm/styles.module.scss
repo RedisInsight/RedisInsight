@@ -117,10 +117,9 @@
 :global(.euiFlexGroup--gutterLarge) > .dbInput {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 
   &.dbInputBig{
-    padding-bottom: 20px;
     max-width: calc(50% - 24px);
   }
 }
@@ -149,4 +148,23 @@
   &:hover {
     text-decoration: none !important;
   }
+}
+
+.tlsContainer {
+  min-height: 90px;
+  padding: 12px 0 10px;
+  flex-wrap: wrap;
+
+  :global(.euiCheckbox) {
+    padding-bottom: 10px !important;
+  }
+
+}
+
+.tlsSniOpened {
+  padding-bottom: 0;
+}
+
+.fullWidth {
+  flex-basis: 100% !important;
 }

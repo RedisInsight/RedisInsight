@@ -71,7 +71,7 @@ const CliBodyWrapper = () => {
   const handleSubmit = () => {
     const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
-    dispatch(concatToOutput(cliCommandOutput(command, currentDbIndex)))
+    dispatch(concatToOutput(cliCommandOutput(decode(command), currentDbIndex)))
 
     if (!isRepeatCountCorrect(countRepeat)) {
       dispatch(processUnrepeatableNumber(commandLine, resetCommand))

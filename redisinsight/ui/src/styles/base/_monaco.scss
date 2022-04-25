@@ -39,6 +39,7 @@
 .monaco-glyph-run-command {
   color: var(--rsSubmitBtn);
   margin-left: 10px;
+  opacity: 0.5 !important;
 
   &::before {
     content: '';

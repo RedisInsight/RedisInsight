@@ -723,7 +723,7 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
-              label="Select the Redis logical database"
+              label="Select Logical Database"
               checked={!!formik.values.showDb}
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"
@@ -782,8 +782,11 @@ const AddStandaloneForm = (props: Props) => {
   const TlsDetails = () => (
     <>
       <EuiFlexGroup
-        style={{ padding: '12px 0px 15px' }}
-        className={flexGroupClassName}
+        className={cx(flexGroupClassName, {
+          [styles.tlsContainer]: !flexGroupClassName,
+          [styles.tlsSniOpened]: formik.values.sni
+        })}
+        alignItems={!flexGroupClassName ? 'flexEnd' : undefined}
       >
         <EuiFlexItem
           style={{ width: '230px' }}
@@ -819,24 +822,26 @@ const AddStandaloneForm = (props: Props) => {
               />
             </EuiFlexItem>
             {formik.values.sni && (
-              <EuiFlexItem className={flexItemClassName}>
-                <EuiFieldText
-                  name="servername"
-                  id="servername"
-                  fullWidth
-                  maxLength={200}
-                  placeholder="Enter Server Name"
-                  value={formik.values.servername ?? ''}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateField(e.target.value.trim())
-                    )}
-                  data-testid="sni-servername"
-                />
+              <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px', marginTop: 0 }}>
+                <EuiFormRow label="Server Name*" style={{ paddingTop: 0 }}>
+                  <EuiFieldText
+                    name="servername"
+                    id="servername"
+                    fullWidth
+                    maxLength={200}
+                    placeholder="Enter Server Name"
+                    value={formik.values.servername ?? ''}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      formik.setFieldValue(
+                        e.target.name,
+                        validateField(e.target.value.trim())
+                      )}
+                    data-testid="sni-servername"
+                  />
+                </EuiFormRow>
               </EuiFlexItem>
             )}
-            <EuiFlexItem className={flexItemClassName}>
+            <EuiFlexItem className={cx(flexItemClassName, { [styles.fullWidth]: formik.values.sni })}>
               <EuiCheckbox
                 id={`${htmlIdGenerator()()} verifyServerTlsCert`}
                 name="verifyServerTlsCert"
@@ -935,7 +940,7 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexGroup>
       )}
       {formik.values.tls && formik.values.tlsClientAuthRequired && (
-        <div className="boxSection">
+        <div className="boxSection" style={{ marginTop: 15 }}>
           <EuiFlexGroup className={flexGroupClassName}>
             <EuiFlexItem className={flexItemClassName}>
               <EuiFormRow label="Client Certificate*">

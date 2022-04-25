@@ -193,12 +193,7 @@ describe('monitor slice', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
-        isRunning: false,
-        timestamp: {
-          ...initialState.timestamp,
-          paused: Date.now(),
-          duration: Date.now() - initialState.timestamp.unPaused
-        }
+        isRunning: false
       }
 
       // Act

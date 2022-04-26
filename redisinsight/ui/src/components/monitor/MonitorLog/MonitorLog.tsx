@@ -46,7 +46,7 @@ const MonitorLog = () => {
 
   return (
     <div className={styles.monitorLogWrapper}>
-      <iframe name={DOWNLOAD_IFRAME_NAME} style={{ display: 'none' }}>Some iframe</iframe>
+      <iframe title="downloadIframeTarget" name={DOWNLOAD_IFRAME_NAME} style={{ display: 'none' }} />
       <AutoSizer disableHeight>
         {({ width }) => (
           <div

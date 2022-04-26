@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
@@ -5,7 +6,6 @@ import {
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -15,10 +15,10 @@ const keyNameFilter = `keyName${chance.word({ length: 10 })}`;
 fixture `Tree view verifications`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
     })
@@ -42,13 +42,14 @@ test
     ('Verify that user can see DB is automatically scanned by 10K keys in the background, user can see the number of keys scanned and use the "Scan More" button to search per another 10000 keys', async t => {
         let scannedValue = 10;
         await t.click(browserPage.treeViewButton);
+        await t.expect(browserPage.scannedValue.visible).ok('The database scanned value is displayed', { timeout: 60000 });
         await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, 'The database is automatically scanned by 10K keys');
         //Verify that user can use the "Scan More" button to search per another 10000 keys
         for (let i = 0; i < 10; i++){
             scannedValue = scannedValue + 10;
             await t.click(browserPage.scanMoreButton);
-            await t.expect(await browserPage.scannedValue.withExactText(`${scannedValue} 000`).exists).ok('The database is automatically scanned by 10K keys');
-        }       
+            await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, `The database is automatically scanned by ${scannedValue} 000 keys`, { timeout: 60000 });
+        }
     });
 test
     .after(async() => {
@@ -64,6 +65,7 @@ test
         const percentage = await browserPage.treeViewPercentage.textContent;
         //Set filter by key name
         await browserPage.searchByKeyName(keyNameFilter);
+        await t.expect(browserPage.treeViewKeysItem.visible).ok('The key appears after the filtering', { timeout: 60000 });
         await t.click(browserPage.treeViewKeysItem);
         //Verify the results
         await t.expect(browserPage.treeViewKeysNumber.textContent).notEql(numberOfKeys, 'The number of keys is recalculated');
@@ -82,7 +84,7 @@ test
         await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
         await t.click(browserPage.treeViewButton);
         //Set filter by key type
-        await browserPage.selectFilterGroupType(KeyTypesTexts.String); 
+        await browserPage.selectFilterGroupType(KeyTypesTexts.String);
         await t.click(browserPage.browserViewButton);
         await t.click(browserPage.treeViewButton);
         //Verify that state of filer by key type is saved

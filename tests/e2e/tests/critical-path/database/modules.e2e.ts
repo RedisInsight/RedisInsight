@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import { rte, env } from '../../../helpers/constants';
 import {
     acceptLicenseTerms,
     addNewStandaloneDatabase,
@@ -8,10 +8,10 @@ import { MyRedisDatabasePage } from '../../../pageObjects';
 import {commonUrl, ossStandaloneRedisearch} from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const moduleNameList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', 'RedisAI', 'RedisTimeSeries', 'RedisGears'];
-const moduleList = [myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleSearchIcon,
-      myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGraphIcon,
-      myRedisDatabasePage.moduleAIIcon, myRedisDatabasePage.moduleGearsIcon];
+const moduleNameList = ['RediSearch', 'RedisJSON', 'RedisGraph', 'RedisTimeSeries', 'RedisBloom', 'RedisGears', 'RedisAI'];
+const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleGraphIcon,
+      myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGearsIcon,
+      myRedisDatabasePage.moduleAIIcon];
 
 fixture `Database modules`
     .meta({ type: 'critical_path' })
@@ -25,12 +25,18 @@ fixture `Database modules`
         await deleteDatabase(ossStandaloneRedisearch.databaseName);
     })
 test
-    .meta({ rte: rte.standalone })
+    .meta({ rte: rte.standalone, env: env.web })
     ('Verify that user can see DB modules on DB list page for Standalone DB', async t => {
         //Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column');
-        //Check that module icons are displayed
-        await myRedisDatabasePage.checkModulesOnPage(moduleList);
+        //Verify that user can see the following sorting order: Search, JSON, Graph, TimeSeries, Bloom, Gears, AI for modules
+        const databaseLine = await myRedisDatabasePage.dbNameList.withExactText(ossStandaloneRedisearch.databaseName).parent('tr');
+        const moduleIcons = await databaseLine.find('[data-testid^=Redi]');
+        const numberOfIcons = await moduleIcons.count;
+        for (let i = 0; i < numberOfIcons; i++) {
+            const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');
+            await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon');
+        }
         //Minimize the window to check quantifier
         await t.resizeWindow(1000, 700);
         //Verify that user can see +N icon (where N>1) on DB list page when modules icons don't fit the Module column width

@@ -68,13 +68,11 @@ test
     .meta({ rte: rte.standalone })
     .after(async() => {
         //Clear and delete database
-        for(let i = 1; i < 4; i++) {
-            await cliPage.sendCommandInCli(`DEL permit:${i}`);
-        }
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
     ('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         //Open Working with Hashes page
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         //Put Create Hash commands into Editing area

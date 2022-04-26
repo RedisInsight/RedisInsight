@@ -179,7 +179,7 @@ describe('AutoUpdatedStaticsProvider', () => {
   describe('getRemoteBuildInfo', () => {
     it('should return remote build info json', async () => {
       const mockRemoteBuildInfo = { timestamp: 1 };
-      mockedAxios.get.mockResolvedValueOnce({ data: mockRemoteBuildInfo });
+      mockedAxios.get.mockResolvedValueOnce({ data: Buffer.from(JSON.stringify(mockRemoteBuildInfo)) });
       expect(await service.getRemoteBuildInfo()).toEqual(mockRemoteBuildInfo);
     });
     it('should return empty object on fail', async () => {

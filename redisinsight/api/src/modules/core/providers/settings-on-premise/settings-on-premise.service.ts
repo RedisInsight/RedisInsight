@@ -24,6 +24,7 @@ import { SettingsRepository } from '../../repositories/settings.repository';
 import { SettingsAnalyticsService } from '../../services/settings-analytics/settings-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
+const SERVER_CONFIG = config.get('server');
 
 @Injectable()
 export class SettingsOnPremiseService
@@ -134,7 +135,13 @@ implements OnModuleInit, ISettingsProvider {
   private async getAgreementsOption(checker: string, defaultOption: string): Promise<string> {
     try {
       if (checker === 'KEYTAR') {
-        return `${await this.keytarEncryptionStrategy.isAvailable()}`;
+        const isEncryptionAvailable = await this.keytarEncryptionStrategy.isAvailable();
+
+        if (!isEncryptionAvailable && SERVER_CONFIG.buildType === 'REDIS_STACK') {
+          return 'stack_false';
+        }
+
+        return `${isEncryptionAvailable}`;
       }
     } catch (e) {
       this.logger.error(`Unable to proceed agreements checker ${checker}`);

@@ -10,6 +10,7 @@ enum BrowserStorageItem {
   wbClientUuid = 'wbClientUuid',
   wbInputHistory = 'wbInputHistory',
   isEnablementAreaMinimized = 'isEnablementAreaMinimized',
+  treeViewDelimiter = 'treeViewDelimiter',
 }
 
 export default BrowserStorageItem

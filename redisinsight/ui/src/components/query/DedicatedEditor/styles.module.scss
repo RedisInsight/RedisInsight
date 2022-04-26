@@ -1,5 +1,5 @@
 .rnd {
-  position: fixed !important;
+  width: 100% !important;
   z-index: 100;
 }
 .container {
@@ -45,7 +45,7 @@
 }
 
 :global(.draggable-area) {
-  height: 20px;
+  height: 16px;
   width: 100%;
   cursor: grab;
   background-color: var(--monacoBgColor);
@@ -57,7 +57,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 6px 12px;
+  padding: 6px;
   background-color: var(--monacoBgColor);
   border-radius: 0 0 4px 4px;
   justify-content: space-between;

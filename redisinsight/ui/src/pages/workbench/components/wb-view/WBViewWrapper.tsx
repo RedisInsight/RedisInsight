@@ -160,7 +160,7 @@ const WBViewWrapper = () => {
     )
   }
 
-  const onSuccess = (multiCommands = '', clearEditor = true) => {
+  const onSuccess = (multiCommands = '', clearEditor = false) => {
     clearEditor && resetCommand()
     setMultiCommands(multiCommands)
   }

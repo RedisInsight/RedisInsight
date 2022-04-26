@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { Nullable } from 'uiSrc/utils'
+import { getTreeLeafField, Nullable } from 'uiSrc/utils'
+import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 import { RootState } from '../store'
 import { StateAppContext } from '../interfaces'
 
@@ -14,6 +16,7 @@ export const initialState: StateAppContext = {
     },
     panelSizes: {},
     tree: {
+      delimiter: DEFAULT_DELIMITER,
       panelSizes: {},
       openNodes: {},
       selectedLeaf: {},
@@ -56,11 +59,38 @@ const appContextSlice = createSlice({
     setBrowserTreeSelectedLeaf: (state, { payload }: { payload: any }) => {
       state.browser.tree.selectedLeaf = payload
     },
+    updateBrowserTreeSelectedLeaf: (state, { payload }) => {
+      const { selectedLeaf, delimiter } = state.browser.tree
+      const [[selectedLeafField = '', keys = {}]] = Object.entries(selectedLeaf)
+      const [pattern] = selectedLeafField.split(getTreeLeafField(delimiter))
+
+      if (payload.key in keys) {
+        const isFitNewKey = payload.newKey?.startsWith?.(pattern)
+          && (pattern.split(delimiter)?.length === payload.newKey.split(delimiter)?.length)
+
+        if (!isFitNewKey) {
+          delete keys[payload.key]
+          return
+        }
+
+        keys[payload.newKey] = {
+          ...keys[payload.key],
+          name: payload.newKey
+        }
+        delete keys[payload.key]
+      }
+
+      state.browser.tree.selectedLeaf[selectedLeafField] = keys
+    },
     setBrowserTreeNodesOpen: (state, { payload }: { payload: { [key: string]: boolean; } }) => {
       state.browser.tree.openNodes = payload
     },
     setBrowserTreePanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.tree.panelSizes = payload
+    },
+    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
+      localStorageService.set(BrowserStorageItem.treeViewDelimiter + state.contextInstanceId, payload)
+      state.browser.tree.delimiter = payload
     },
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
@@ -102,6 +132,8 @@ export const {
   setBrowserPanelSizes,
   setBrowserTreeSelectedLeaf,
   setBrowserTreeNodesOpen,
+  setBrowserTreeDelimiter,
+  updateBrowserTreeSelectedLeaf,
   resetBrowserTree,
   setBrowserTreePanelSizes,
   setWorkbenchScript,

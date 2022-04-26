@@ -5,14 +5,15 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const indexDbMessage = 'When the database is added, you can select logical databases only in CLI. To work with other logical databases in Browser and Workbench, add another database with the same host and port, but a different database index.';
 
 fixture `Logical databases`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTerms();
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
@@ -24,10 +25,14 @@ test
         //Enter logical index
         await t.click(addRedisDatabasePage.databaseIndexCheckbox);
         await t.typeText(addRedisDatabasePage.databaseIndexInput, index, { paste: true });
+        //Verify that user when users select DB index they can see info message how to work with DB index in add DB screen
+        await t.expect(addRedisDatabasePage.databaseIndexMessage.visible).ok('Index message');
+        await t.expect(addRedisDatabasePage.databaseIndexMessage.innerText).eql(indexDbMessage);
+        await t.expect(addRedisDatabasePage.databaseIndexCheckbox.parent().withExactText('Select Logical Database').exists).ok('Checkbox text');
         //Click for saving
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         //Verify that the database is in the list
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The existence of the database', { timeout: 60000 });
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The existence of the database', { timeout: 10000 });
     });
 test
     .meta({ rte: rte.standalone })

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
@@ -99,7 +100,7 @@ const Query = (props: Props) => {
     if (!monacoObjects.current) return
     const commands = query.split('\n')
     const { monaco, editor } = monacoObjects.current
-    const notCommandRegEx = /^\s|\/\//
+    const notCommandRegEx = /^[\s|//]/
 
     const newDecorations = compact(commands.map((command, index) => {
       if (!command || notCommandRegEx.test(command)) return null
@@ -416,8 +417,14 @@ const Query = (props: Props) => {
   }
 
   return (
-    <>
-      <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
+    <div className={styles.wrapper}>
+      <div
+        className={cx(styles.container, { [styles.disabled]: isDedicatedEditorOpen })}
+        onKeyDown={handleKeyDown}
+        role="textbox"
+        tabIndex={0}
+        data-testid="main-input-container-area"
+      >
         <div className={styles.input} data-testid="query-input-container" ref={input}>
           <MonacoEditor
             language={MonacoLanguage.Redis}
@@ -429,7 +436,7 @@ const Query = (props: Props) => {
             editorDidMount={editorDidMount}
           />
         </div>
-        <div className={styles.actions}>
+        <div className={cx(styles.actions, { [styles.disabledActions]: isDedicatedEditorOpen })}>
           <EuiToolTip
             position="left"
             content={
@@ -443,6 +450,7 @@ const Query = (props: Props) => {
                 </div>
               )
             }
+            data-testid="run-query-tooltip"
           >
             <EuiButtonIcon
               onClick={() => handleSubmit()}
@@ -455,15 +463,22 @@ const Query = (props: Props) => {
         </div>
       </div>
       {isDedicatedEditorOpen && (
-        <DedicatedEditor
-          lang={syntaxCommand.current.lang}
-          query={selectedArg.current.replace(aroundQuotesRegExp, '')}
-          onSubmit={updateArgFromDedicatedEditor}
-          onCancel={onCancelDedicatedEditor}
-          width={input?.current?.scrollWidth || 300}
-        />
+        <AutoSizer>
+          {({ height }) => (
+            <div className="editorBounder">
+              <DedicatedEditor
+                initialHeight={input?.current?.scrollHeight || 0}
+                height={height}
+                lang={syntaxCommand.current.lang}
+                query={selectedArg.current.replace(aroundQuotesRegExp, '')}
+                onSubmit={updateArgFromDedicatedEditor}
+                onCancel={onCancelDedicatedEditor}
+              />
+            </div>
+          )}
+        </AutoSizer>
       )}
-    </>
+    </div>
   )
 }
 

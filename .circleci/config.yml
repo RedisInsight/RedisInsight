@@ -302,7 +302,7 @@ jobs:
           name: .AppImage tests
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
-            .circleci/scripts/e2e/app-image.e2e.sh
+            .circleci/e2e/test.app-image.sh
       - when:
           condition:
             equal: [ true, << parameters.report >> ]
@@ -313,6 +313,42 @@ jobs:
                 command: |
                   APP_BUILD_TYPE="Electron (Linux)" node ./.circleci/e2e-results.js
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+      - store_test_results:
+          path: ./tests/e2e/results
+  e2e-exe:
+    executor:
+      name: win/default
+    parameters:
+      report:
+        description: Send report for test run to slack
+        type: boolean
+        default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: choco install nodejs --version=15.14.0
+      - run:
+          command: |
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
+            .circleci/e2e/test.exe.cmd
+          shell: bash.exe
+      - when:
+          condition:
+            equal: [ true, << parameters.report >> ]
+          steps:
+            - run:
+                name: Send report
+                when: always
+                command: |
+                  APP_BUILD_TYPE="Electron (Windows)" node ./.circleci/e2e-results.js
+                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+                shell: bash.exe
       - store_test_results:
           path: ./tests/e2e/results
 
@@ -756,41 +792,50 @@ jobs:
             aws s3 mv s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
               s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
 
+            # invalidate cloudfront cash
+            aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"
+
       - run:
           name: Add tags for all objects and create S3 metrics
           command: |
 
             # declare all tags
             declare -A tag0=(
-                [key]='platform'
-                [value]='macos'
+                [arch]='x64'
+                [platform]='macos'
                 [objectDownload]=${applicationName}'-mac-x64.dmg'
                 [objectUpgrade]=${applicationName}'-mac-x64.zip'
             )
 
             declare -A tag1=(
-                [key]='platform'
-                [value]='macos'
+                [arch]='arm64'
+                [platform]='macos'
                 [objectDownload]=${applicationName}'-mac-arm64.dmg'
                 [objectUpgrade]=${applicationName}'-mac-arm64.zip'
             )
 
             declare -A tag2=(
-                [key]='platform'
-                [value]='windows'
+                [arch]='x64'
+                [platform]='windows'
                 [objectDownload]=${applicationName}'-win-installer.exe'
             )
 
             declare -A tag3=(
-                [key]='platform'
-                [value]='linux_AppImage'
-                [objectDownload]=${applicationName}'-x86_64.AppImage'
+                [arch]='x64'
+                [platform]='linux_AppImage'
+                [objectDownload]=${applicationName}'-linux-x86_64.AppImage'
             )
 
             declare -A tag4=(
-                [key]='platform'
-                [value]='linux_deb'
-                [objectDownload]=${applicationName}'-amd64.deb'
+                [arch]='x64'
+                [platform]='linux_deb'
+                [objectDownload]=${applicationName}'-linux-amd64.deb'
+            )
+
+            declare -A tag5=(
+                [arch]='x64'
+                [platform]='linux_rpm'
+                [objectDownload]=${applicationName}'-linux-x86_64.rpm'
             )
 
             # loop for add all tags to each app and create metrics
@@ -800,32 +845,32 @@ jobs:
                 designation0="downloads"
                 designation1="upgrades"
 
-                id0="${tag[value]}_${designation0}_${applicationVersion}"
-                id1="${tag[value]}_${designation1}_${applicationVersion}"
+                id0="${tag[platform]}_${tag[arch]}_${designation0}_${applicationVersion}"
+                id1="${tag[platform]}_${tag[arch]}_${designation1}_${applicationVersion}"
 
                 # add tags to each app for download
                 aws s3api put-object-tagging \
                   --bucket ${AWS_BUCKET_NAME} \
                   --key ${downloadLatestFolderPath}/${tag[objectDownload]} \
-                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
+                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
 
                 # add tags to each app for upgrades
                 aws s3api put-object-tagging \
                   --bucket ${AWS_BUCKET_NAME} \
                   --key ${upgradeLatestFolderPath}/${tag[objectUpgrade]:=${tag[objectDownload]}} \
-                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
+                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
 
                 # Create metrics for all tags for downloads to S3
                 aws s3api put-bucket-metrics-configuration \
                   --bucket ${AWS_BUCKET_NAME} \
                   --id ${id0} \
-                  --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
+                  --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
 
                 # Create metrics for all tags for upgrades to S3
                 aws s3api put-bucket-metrics-configuration \
                   --bucket ${AWS_BUCKET_NAME} \
                   --id ${id1} \
-                  --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
+                  --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
 
             done
 
@@ -1064,7 +1109,6 @@ workflows:
             branches:
               only:
                 - main
-                - latest
     jobs:
       # build docker image
       - docker:
@@ -1078,6 +1122,10 @@ workflows:
             - Setup sign certificates (stage)
       - linux:
           name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
+      - windows:
+          name: Build app - Windows (stage)
           requires:
             - Setup build (stage)
       # integration tests on docker image build
@@ -1106,3 +1154,10 @@ workflows:
           report: true
           requires:
             - Build app - Linux (stage)
+      # e2e desktop tests on exe build
+      - e2e-exe:
+          name: E2ETest (exe) - Nightly
+          parallelism: 4
+          report: true
+          requires:
+            - Build app - Windows (stage)

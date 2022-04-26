@@ -51,7 +51,7 @@ test.skip
         const commandToGet = 'get key';
         //Send command with value that exceed 1MB
         let commandText = getRandomParagraph(10).repeat(100);
-        await workbenchPage.sendCommandInWorkbench(`${commandToSend} "${commandText}"`, 1, true);
+        await workbenchPage.sendCommandInWorkbench(`${commandToSend} "${commandText}"`);
         await workbenchPage.sendCommandInWorkbench(commandToGet);
         //Refresh the page and check result
         await t.eval(() => location.reload());

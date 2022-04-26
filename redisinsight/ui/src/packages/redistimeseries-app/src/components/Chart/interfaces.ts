@@ -64,7 +64,3 @@ export interface ChartConfigFormProps {
   value: ChartConfig
   onChange: (control: string, value: any) => void
 }
-
-export interface ChartConfigFormState {
-    moreOptions: boolean
-}

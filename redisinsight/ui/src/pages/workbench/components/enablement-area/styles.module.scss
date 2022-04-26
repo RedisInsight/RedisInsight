@@ -27,7 +27,9 @@
 }
 
 .areaContentWrapper {
-  height: 100% !important;
+  &:not(.minimized) {
+    height: 100% !important;
+  }
 
   &.minimized {
     width: 0;

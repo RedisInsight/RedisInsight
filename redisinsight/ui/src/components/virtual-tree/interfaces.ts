@@ -9,7 +9,7 @@ export interface TreeNode {
   fullName: string
   name: string
   keys: any[]
-  'keys:keys'?: any
+  [key: string]: any
 }
 
 export interface NodeMeta {

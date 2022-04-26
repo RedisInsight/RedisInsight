@@ -6,6 +6,11 @@
   :global(thead) {
     display: none;
   }
+  :global {
+    td, tr {
+      border-color: var(--tableLightBorderColor) !important;
+    }
+  }
   &:global(.inMemoryTableDefault .euiTableCellContent span) {
     padding-top: 0 !important;
     white-space: normal;

@@ -43,6 +43,8 @@ enum ApiEndpoints {
   SETTINGS = 'settings',
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
   WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
+  PROFILER = 'profiler',
+  PROFILER_LOGS = 'profiler/logs',
 
   REDIS_COMMANDS = 'commands',
   GUIDES = 'static/guides/guides.json',

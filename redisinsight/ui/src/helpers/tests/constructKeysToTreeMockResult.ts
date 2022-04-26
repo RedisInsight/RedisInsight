@@ -1,6 +1,9 @@
+import { DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { getTreeLeafField } from 'uiSrc/utils'
+
 export const constructKeysToTreeMockResult = [
   {
-    name: 'keys:keys',
+    name: getTreeLeafField(DEFAULT_DELIMITER),
     children: [],
     keys: {
       keys2: {
@@ -29,14 +32,14 @@ export const constructKeysToTreeMockResult = [
       }
     },
     keyCount: 4,
-    fullName: 'keys:keys:',
+    fullName: `${getTreeLeafField(DEFAULT_DELIMITER)}:`,
     keyApproximate: 40,
   },
   {
     name: 'keys',
     children: [
       {
-        name: 'keys:keys',
+        name: getTreeLeafField(DEFAULT_DELIMITER),
         children: [],
         keys: {
           'keys:1': {
@@ -59,14 +62,14 @@ export const constructKeysToTreeMockResult = [
           }
         },
         keyCount: 3,
-        fullName: 'keys:keys:keys:',
+        fullName: `keys:${getTreeLeafField(DEFAULT_DELIMITER)}:`,
         keyApproximate: 30,
       },
       {
         name: '1',
         children: [
           {
-            name: 'keys:keys',
+            name: getTreeLeafField(DEFAULT_DELIMITER),
             children: [],
             keys: {
               'keys:1:2': {
@@ -83,7 +86,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 2,
-            fullName: 'keys:1:keys:keys:',
+            fullName: `keys:1:${getTreeLeafField(DEFAULT_DELIMITER)}:`,
             keyApproximate: 20,
           }
         ],
@@ -103,7 +106,7 @@ export const constructKeysToTreeMockResult = [
         name: '',
         children: [
           {
-            name: 'keys:keys',
+            name: getTreeLeafField(DEFAULT_DELIMITER),
             children: [],
             keys: {
               'empty::test': {
@@ -114,7 +117,7 @@ export const constructKeysToTreeMockResult = [
               }
             },
             keyCount: 1,
-            fullName: 'empty::keys:keys:',
+            fullName: `empty::${getTreeLeafField(DEFAULT_DELIMITER)}:`,
             keyApproximate: 10,
           }
         ],

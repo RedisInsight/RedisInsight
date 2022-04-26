@@ -68,6 +68,7 @@
   --euiTooltipTextSecondColor: #{$euiTooltipTextSecondColor};
   --euiTooltipTitleTextColor: #{$euiTooltipTitleTextColor};
   --euiToastBackgroundColor: #{$euiToastBackgroundColor};
+  --euiToastDangerBgColor: #{$euiToastDangerBgColor};
   --euiToastSuccessBtnColor: #{$euiToastSuccessBtnColor};
   --euiToastSuccessBorderColor: #{$euiToastSuccessBorderColor};
   --euiToastDangerBtnColor: #{$euiToastDangerBtnColor};
@@ -77,6 +78,7 @@
   --htmlColor: #{$htmlColor};
   --textColorShade: #{$textColorShade};
   --tableLightestBorderColor: #{$tableLightestBorderColor};
+  --tableLightBorderColor: #{$tableLightBorderColor};
   --tableDarkestBorderColor: #{$tableDarkestBorderColor};
   --browserTableRowEven: #{$browserTableRowEven};
   --inputPlaceholderColor: #{$inputPlaceholderColor};
@@ -99,6 +101,7 @@
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
 
   --separatorColor: #{$separatorColor};
+  --separatorNavigationColor: #{$separatorNavigationColor};
   --separatorDropdownColor: #{$separatorDropdownColor};
 
   --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
@@ -106,6 +109,10 @@
   --buttonSecondaryDisabledTextColor: #{$buttonSecondaryDisabledTextColor};
   --buttonDangerHoverColor: #{$buttonDangerHoverColor};
   --buttonIconPrimaryHover: #{$buttonIconPrimaryHover};
+  --buttonWarningColor: #{$buttonWarningColor};
+  --buttonWarningHoverColor: #{$buttonWarningHoverColor};
+  --buttonDangerToastColor: #{$buttonDangerToastColor};
+  --buttonDangerToastHoverColor: #{$buttonDangerToastHoverColor};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};
@@ -155,4 +162,10 @@
   --rsSubmitBtn: #{$rsSubmitBtn};
   --rsInputColor: #{$rsInputColor};
   --rsInputWrapperColor: #{$rsInputWrapperColor};
+
+  // Workbench
+  --wbRunResultsBg: #{$wbRunResultsBg};
+
+  // Profiler
+  --monitorTimeColor: #{$monitorTimeColor};
 }

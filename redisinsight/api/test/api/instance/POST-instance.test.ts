@@ -16,6 +16,7 @@ const responseSchema = Joi.object().keys({
   lastConnection: Joi.date().allow(null).required(),
   provider: Joi.string().valid('LOCALHOST', 'UNKNOWN', 'RE_CLOUD', 'RE_CLUSTER').required(),
   tls: Joi.object().keys({
+    servername: Joi.string().allow(null),
     verifyServerCert: Joi.boolean().required(),
     caCertId: Joi.string(),
     clientCertPairId: Joi.string(),

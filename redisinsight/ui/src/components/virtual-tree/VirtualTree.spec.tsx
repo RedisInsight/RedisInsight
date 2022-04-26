@@ -77,7 +77,7 @@ describe('VirtualTree', () => {
       />
     )
 
-    expect(queryByTestId('test')).toBeInTheDocument()
+    expect(queryByTestId('node-item_test')).toBeInTheDocument()
   })
 
   it('should select first leaf "Keys" by default', async () => {

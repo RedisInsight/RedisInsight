@@ -17,6 +17,8 @@ export interface Props {
 }
 
 const PROTRUDING_OFFSET = 2
+const MIDDLE_SCREEN_RESOLUTION = 460
+const SMALL_SCREEN_RESOLUTION = 360
 
 const MonitorOutputList = (props: Props) => {
   const { compressed, items = [], width = 0, height = 0 } = props
@@ -67,8 +69,13 @@ const MonitorOutputList = (props: Props) => {
           <div onLoad={measure} className={styles.item} ref={registerChild} style={style}>
             {!isError && (
               <>
-                <span>{getFormatTime(time)}</span>
-                <span>{`[${database} ${source}]`}</span>
+                {width > MIDDLE_SCREEN_RESOLUTION && (
+                  <span className={cx(styles.time)}>
+                    {getFormatTime(time)}
+                    &nbsp;
+                  </span>
+                )}
+                {width > SMALL_SCREEN_RESOLUTION && (<span>{`[${database} ${source}] `}</span>)}
                 <span>{getArgs(args)}</span>
               </>
             )}

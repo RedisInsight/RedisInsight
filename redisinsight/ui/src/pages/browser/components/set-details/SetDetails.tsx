@@ -8,9 +8,9 @@ import {
 
 import { formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import {
   deleteSetMembers,
   fetchSetMembers,
@@ -24,6 +24,7 @@ import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 
 import styles from './styles.module.scss'
 
@@ -46,6 +47,7 @@ const SetDetails = (props: Props) => {
   const { key = '', members, total, nextCursor } = useSelector(setDataSelector)
   const { length = 0 } = useSelector(selectedKeyDataSelector) ?? {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   const dispatch = useDispatch()
 
@@ -64,7 +66,11 @@ const SetDetails = (props: Props) => {
 
   const handleRemoveIconClick = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Set
@@ -77,8 +83,24 @@ const SetDetails = (props: Props) => {
     if (!fieldColumn) { return }
 
     const { value: match } = fieldColumn
+    const onSuccess = (data: GetSetMembersResponse) => {
+      const matchValue = getMatchType(match)
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: KeyTypes.Set,
+          match: matchValue,
+          length: data.total,
+        }
+      })
+    }
     setMatch(match)
-    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue))
+    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, onSuccess))
   }
 
   const columns:ITableColumn[] = [

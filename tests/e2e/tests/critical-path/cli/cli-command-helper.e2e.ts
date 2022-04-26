@@ -2,6 +2,8 @@ import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { ClientFunction } from 'testcafe';
+import { lowerCase } from 'lodash';
 
 const cliPage = new CliPage();
 
@@ -10,6 +12,7 @@ const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
 const COMMAND_GROUP_TIMESERIES = 'TimeSeries';
 const COMMAND_GROUP_GRAPH = 'Graph';
+const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `CLI Command helper`
     .meta({ type: 'critical_path' })
@@ -135,11 +138,17 @@ test
         for(let i = 0; i < commandsCount; i++){
             await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(timeSeriesCommands[i], 'Results in the output contains searched value');
         }
+        //Check first command documentation url
+        await t.click(cliPage.cliHelperOutputTitles.withExactText(timeSeriesCommands[0]));
+        await t.click(cliPage.readMoreButton);        
+        await t.expect(getPageUrl()).eql(`https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`, 'The opened page');
+        await t.switchToParentWindow();
     });
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
         const commandForSearch = 'GRAPH.';
+        const externalPageLink = 'https://redis.io/commands/graph.config-get/';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select group from list and remeber commands
@@ -158,4 +167,9 @@ test
         for(let i = 0; i < commandsCount; i++){
             await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(graphCommands[i], 'Results in the output contains searched value');
         }
+        //Check first command documentation url
+        await t.click(cliPage.cliHelperOutputTitles.withExactText(graphCommands[0]));
+        await t.click(cliPage.readMoreButton);
+        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await t.switchToParentWindow();
     });

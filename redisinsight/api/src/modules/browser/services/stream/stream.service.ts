@@ -35,7 +35,7 @@ export class StreamService {
     dto: GetStreamEntriesDto,
   ): Promise<GetStreamEntriesResponse> {
     try {
-      this.logger.log('Getting members of the ZSet data type stored at key.');
+      this.logger.log('Getting entries of the Stream data type stored at key.');
 
       const { keyName, sortOrder } = dto;
 

@@ -9,7 +9,6 @@ import { when } from 'jest-when';
 import { SortOrder } from 'src/constants/sort';
 import { ReplyError } from 'src/models';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
@@ -32,7 +31,6 @@ import {
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { ZSetBusinessService } from './z-set-business.service';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -107,10 +105,6 @@ describe('ZSetBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ZSetBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { isArray, isEmpty } from 'lodash'
@@ -9,11 +8,11 @@ import {
 } from 'react-vtree'
 import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 
-import { Maybe } from 'uiSrc/utils'
+import { getTreeLeafField, Maybe } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { DEFAULT_SEPARATOR, Theme } from 'uiSrc/constants'
+import { DEFAULT_DELIMITER, Theme } from 'uiSrc/constants'
 import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 
@@ -24,13 +23,15 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: IKeyPropTypes[]
-  separator?: string
+  delimiter?: string
   loadingIcon?: string
   loading: boolean
   selectDefaultLeaf?: boolean
   statusSelected: {
-    [key: string]: IKeyPropTypes[]
-  }
+    [key: string]: {
+      [key: string]: IKeyPropTypes
+    }
+  },
   statusOpen: {
     [key: string]: boolean
   }
@@ -42,11 +43,10 @@ export interface Props {
   setConstructingTree: (status: boolean) => void
 }
 
-const timeLabel = 'Time for construct a Tree'
 const VirtualTree = (props: Props) => {
   const {
     items,
-    separator = DEFAULT_SEPARATOR,
+    delimiter = DEFAULT_DELIMITER,
     loadingIcon = 'empty',
     statusOpen = {},
     statusSelected = {},
@@ -73,8 +73,6 @@ const VirtualTree = (props: Props) => {
     if (!result) {
       return
     }
-    // [ToDo] remove after tests
-    console.timeEnd(timeLabel)
 
     setNodes(result)
     setConstructingTree?.(false)
@@ -100,11 +98,9 @@ const VirtualTree = (props: Props) => {
       return
     }
 
-    // [ToDo] remove after tests
-    console.time(timeLabel)
     setConstructingTree(true)
-    runWebworker?.({ items, separator })
-  }, [items])
+    runWebworker?.({ items, delimiter })
+  }, [items, delimiter])
 
   const handleSelectLeaf = useCallback((keys: any[]) => {
     onSelectLeaf?.(keys)
@@ -137,7 +133,7 @@ const VirtualTree = (props: Props) => {
       updateStatusOpen: handleUpdateOpen,
       leafIcon: theme === Theme.Dark ? KeyDarkSVG : KeyLightSVG,
       keyApproximate: node.keyApproximate,
-      keys: node.keys || node?.['keys:keys'],
+      keys: node.keys || node?.[getTreeLeafField(delimiter)],
       isSelected: Object.keys(statusSelected)[0] === node.fullName,
       isOpenByDefault: statusOpen[node.fullName],
     },

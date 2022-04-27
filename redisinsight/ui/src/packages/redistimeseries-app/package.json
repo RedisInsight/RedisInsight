@@ -15,11 +15,12 @@
   "version": "0.0.1",
   "scripts": {
     "start": "cross-env NODE_ENV=development parcel serve src/index.html",
-    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js && yarn build:css\" \"yarn build:assets\"",
+    "build": "rimraf dist .parcel-cache && cross-env NODE_ENV=production yarn build:js && yarn minify:js && yarn build:css && yarn build:assets",
     "build:js": "parcel build src/main.tsx --dist-dir dist",
     "build:css": "parcel build src/styles/styles.less  --dist-dir dist",
     "build:assets": "parcel build src/assets/**/* --dist-dir dist",
-    "minify:js": "terser --compress --mangle -- dist/main.js > dist/index.js && rimraf dist/main.js"
+    "minify:js": "terser --compress --mangle -- dist/main.js > dist/index.js && rimraf dist/main.js",
+    "test": "jest"
   },
   "targets": {
     "main": false,
@@ -48,12 +49,15 @@
     "@parcel/transformer-less": "^2.0.1",
     "@parcel/transformer-sass": "2.3.2",
     "@types/file-saver": "^2.0.5",
+    "@types/jest": "^27.4.1",
     "@types/plotly.js-dist-min": "^2.3.0",
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
+    "jest": "^27.5.1",
     "parcel": "^2.0.0",
     "rimraf": "^3.0.2",
-    "terser": "^5.9.0"
+    "terser": "^5.9.0",
+    "ts-jest": "^27.1.4"
   },
   "dependencies": {
     "@elastic/eui": "34.6.0",

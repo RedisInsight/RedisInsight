@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
-import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import KeysHeader from './KeysHeader'
 
 const propsMock = {
@@ -30,7 +30,11 @@ const propsMock = {
     ],
     nextCursor: '0',
     total: 3,
-  } as IKeyListPropTypes,
+    scanned: 5,
+    shardsMeta: {},
+    previousResultCount: 1,
+    lastRefreshTime: 3
+  } as KeysStoreData,
   loading: false,
   sizes: {},
   loadKeys: jest.fn(),

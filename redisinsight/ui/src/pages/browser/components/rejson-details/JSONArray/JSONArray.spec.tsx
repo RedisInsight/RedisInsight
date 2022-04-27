@@ -1,11 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import {
-  appendReJSONArrayItemAction,
-  fetchVisualisationResults,
-  setReJSONDataAction
-} from 'uiSrc/slices/rejson'
+import { fetchVisualisationResults } from 'uiSrc/slices/rejson'
 import JSONArray, { Props } from './JSONArray'
 
 const EXPAND_ARRAY = 'expand-array'
@@ -28,16 +24,16 @@ const mockedDownloadedArrayWithArrays = [
   [3, 4]
 ]
 
-jest.mock('uiSrc/slices/rejson')
+jest.mock('uiSrc/slices/rejson', () => ({
+  ...jest.requireActual('uiSrc/slices/rejson'),
+  appendReJSONArrayItemAction: jest.fn,
+  setReJSONDataAction: jest.fn,
+  fetchVisualisationResults: jest.fn().mockReturnValue(
+    Promise.resolve({ data: mockedDownloadedSimpleArray })
+  ),
+}))
 
 describe('JSONArray', () => {
-  beforeEach(() => {
-    appendReJSONArrayItemAction.mockImplementation(() => jest.fn)
-    setReJSONDataAction.mockImplementation(() => jest.fn)
-    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
-      Promise.resolve({ data: mockedDownloadedSimpleArray })
-    ))
-  })
   it('should render simple JSON', () => {
     expect(render(<JSONArray
       {...instance(mockedProps)}
@@ -124,6 +120,9 @@ describe('JSONArray', () => {
   })
 
   it('should render simple not downloaded JSON', async () => {
+    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
+      Promise.resolve({ data: mockedDownloadedSimpleArray })
+    ))
     const { container } = render(<JSONArray
       {...instance(mockedProps)}
       keyName="keyName"

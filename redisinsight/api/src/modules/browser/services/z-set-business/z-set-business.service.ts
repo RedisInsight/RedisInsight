@@ -33,7 +33,6 @@ import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -43,7 +42,6 @@ export class ZSetBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async createZSet(
@@ -71,14 +69,6 @@ export class ZSetBusinessService {
       } else {
         await this.createSimpleZSet(clientOptions, dto);
       }
-      this.browserAnalyticsService.sendKeyAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.ZSet,
-        {
-          length: dto.members.length,
-          TTL: dto.expire || -1,
-        },
-      );
       this.logger.log('Succeed to create ZSet data type.');
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -161,21 +151,6 @@ export class ZSetBusinessService {
         BrowserToolZSetCommands.ZAdd,
         [keyName, ...args],
       );
-      if (added) {
-        this.browserAnalyticsService.sendKeyValueAddedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-          {
-            numberOfAdded: added,
-          },
-        );
-      }
-      if (members.length - added > 0) {
-        this.browserAnalyticsService.sendKeyValueEditedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-        );
-      }
       this.logger.log('Succeed to add members to ZSet data type.');
     } catch (error) {
       this.logger.error('Failed to add members to Set data type.', error);
@@ -220,12 +195,6 @@ export class ZSetBusinessService {
           new NotFoundException(ERROR_MESSAGES.MEMBER_IN_SET_NOT_EXIST),
         );
       }
-      if (result) {
-        this.browserAnalyticsService.sendKeyValueEditedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-        );
-      }
       this.logger.log('Succeed to update member in ZSet data type.');
     } catch (error) {
       this.logger.error('Failed to update member in ZSet data type.', error);
@@ -263,15 +232,6 @@ export class ZSetBusinessService {
         BrowserToolZSetCommands.ZRem,
         [keyName, ...members],
       );
-      if (result) {
-        this.browserAnalyticsService.sendKeyValueRemovedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-          {
-            numberOfRemoved: result,
-          },
-        );
-      }
     } catch (error) {
       this.logger.error('Failed to delete members from the ZSet data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -324,14 +284,6 @@ export class ZSetBusinessService {
         const scanResult = await this.scanZSet(clientOptions, dto);
         result = { ...result, ...scanResult };
       }
-      this.browserAnalyticsService.sendKeyScannedEvent(
-        clientOptions.instanceId,
-        RedisDataType.ZSet,
-        dto.match,
-        {
-          length: result.total,
-        },
-      );
       this.logger.log('Succeed to search members of the ZSet data type.');
       return result;
     } catch (error) {

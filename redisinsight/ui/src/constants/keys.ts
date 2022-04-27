@@ -45,6 +45,8 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [CommandGroup.CMS]: 'CMS',
   [CommandGroup.TDigest]: 'TDigest',
   [CommandGroup.TopK]: 'TopK',
+  [CommandGroup.BloomFilter]: 'Bloom Filter',
+  [CommandGroup.CuckooFilter]: 'Cuckoo Filter',
 })
 
 // Enums don't allow to use dynamic key

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiResizableContainer, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
+import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -11,15 +11,15 @@ import {
 import { constructKeysToTree } from 'uiSrc/helpers'
 import { keysSelector } from 'uiSrc/slices/keys'
 import VirtualTree from 'uiSrc/components/virtual-tree'
-import { DEFAULT_SEPARATOR } from 'uiSrc/constants'
-import { IKeyListPropTypes, } from 'uiSrc/constants/prop-types/keys'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
+import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
+import KeyTreeDelimiter from './KeyTreeDelimiter'
 
 import KeyList from '../key-list/KeyList'
 import styles from './styles.module.scss'
 
 export interface Props {
-  keysState: IKeyListPropTypes
+  keysState: KeysStoreData
   loading: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
 }
@@ -34,15 +34,15 @@ const KeyTree = (props: Props) => {
   const secondPanelId = 'keys'
 
   const { filter, search } = useSelector(keysSelector)
-  const { panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
+  const { delimiter, panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
 
   const [statusSelected, setStatusSelected] = useState(selectedLeaf)
   const [statusOpen, setStatusOpen] = useState(openNodes)
   const [sizes, setSizes] = useState(panelSizes)
-  const [separator, setSeparator] = useState<string>(DEFAULT_SEPARATOR)
-  const [keyListState, setKeyListState] = useState<IKeyListPropTypes>(keysState)
+  const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
   const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(true)
+  const [items, setItems] = useState(keysState.keys ?? [])
 
   const dispatch = useDispatch()
 
@@ -62,18 +62,28 @@ const KeyTree = (props: Props) => {
   }, [selectedLeaf])
 
   useEffect(() => {
-    // select default leaf "Keys" after each search or filter
-    setSelectDefaultLeaf(true)
-  }, [filter, search])
+    setItems(keysState.keys)
+    if (keysState.keys?.length === 0) {
+      dispatch(setBrowserTreeSelectedLeaf({}))
+    }
+  }, [keysState.keys])
 
-  const options: EuiSuperSelectOption<string>[] = [{
-    value: DEFAULT_SEPARATOR,
-    inputDisplay: DEFAULT_SEPARATOR,
-    'data-test-subj': 'separator-colon',
-  }]
+  useEffect(() => {
+    updateSelectedKeys()
+  }, [delimiter, keysState.lastRefreshTime])
+
+  // select default leaf "Keys" after each change delimiter, filter or search
+  const updateSelectedKeys = () => {
+    setItems([])
+    setTimeout(() => {
+      setStatusSelected({})
+      setSelectDefaultLeaf(true)
+      setItems(keysState.keys)
+    }, 0)
+  }
 
   const updateKeysList = (items:any = {}) => {
-    const newState:IKeyListPropTypes = {
+    const newState:KeysStoreData = {
       ...keyListState,
       keys: Object.values(items)
     }
@@ -88,14 +98,9 @@ const KeyTree = (props: Props) => {
     }))
   }, [])
 
-  const onChangeSeparator = (initValue: string) => {
-    setSeparator(initValue)
-  }
-
   const handleStatusOpen = (name: string, value:boolean) => {
     setStatusOpen((prevState) => {
       const newState = { ...prevState }
-
       // add or remove opened node
       if (newState[name]) {
         delete newState[name]
@@ -132,21 +137,13 @@ const KeyTree = (props: Props) => {
                 >
                   <div className={styles.tree}>
                     <div className={styles.treeHeader}>
-                      <EuiSuperSelect
-                        disabled={loading}
-                        options={options}
-                        valueOfSelected={separator}
-                        popoverClassName={styles.separatorSelect}
-                        itemClassName={styles.separatorSelectItem}
-                        onChange={(value: string) => onChangeSeparator(value)}
-                        data-testid="select-tree-view-separator"
-                      />
+                      <KeyTreeDelimiter loading={loading} />
                     </div>
                     <div className={styles.treeContent}>
                       <VirtualTree
-                        items={keysState.keys}
+                        items={items}
                         loadingIcon={TreeViewSVG}
-                        separator={separator}
+                        delimiter={delimiter}
                         statusSelected={statusSelected}
                         statusOpen={statusOpen}
                         loading={loading || constructingTree}

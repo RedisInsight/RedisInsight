@@ -6,7 +6,7 @@ import { MAX_TTL_NUMBER } from './validations'
 const TRUNCATE_DELIMITER = ', '
 // Replace default strings of duration to cutted
 // 94 years, 9 month, 3 minutes => 94 yr, 9mo, 3min
-const cutDurationText = (text = '') => text
+export const cutDurationText = (text = '') => text
   .replace(/years?/, 'yr')
   .replace(/months?/, 'mo')
   .replace(/days?/, 'd')

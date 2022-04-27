@@ -10,7 +10,6 @@ import {
 import { getServerInfo } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
-import { getContent as getCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -39,7 +38,6 @@ describe('Config', () => {
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
-      getCreateRedisButtons(),
       getUserConfigSettings()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
@@ -69,7 +67,6 @@ describe('Config', () => {
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
-      getCreateRedisButtons(),
       getUserConfigSettings(),
       setSettingsPopupState(true),
     ]

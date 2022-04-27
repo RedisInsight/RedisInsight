@@ -2,111 +2,114 @@ import { AxiosError } from 'axios'
 import { Nullable } from 'uiSrc/utils'
 import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 import { ICommands } from 'uiSrc/constants'
-import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys';
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 export interface IError extends AxiosError {
-  id: string;
-  instanceId?: string;
+  id: string
+  instanceId?: string
 }
 
 export interface IMessage {
-  id: string;
-  title: string;
-  message: string;
-  group?: string;
+  id: string
+  title: string
+  message: string
+  group?: string
 }
 
 export interface StateAppInfo {
-  loading: boolean;
-  error: string;
-  server: Nullable<GetServerInfoResponse>;
+  loading: boolean
+  error: string
+  server: Nullable<GetServerInfoResponse>
   analytics: {
-    segmentWriteKey: string;
-    identified: boolean;
-  };
+    segmentWriteKey: string
+    identified: boolean
+  }
   electron: {
-    isUpdateAvailable: Nullable<boolean>;
-    updateDownloadedVersion: string;
-    isReleaseNotesViewed: Nullable<boolean>;
-  };
-  isShortcutsFlyoutOpen: boolean;
+    isUpdateAvailable: Nullable<boolean>
+    updateDownloadedVersion: string
+    isReleaseNotesViewed: Nullable<boolean>
+  }
+  isShortcutsFlyoutOpen: boolean
 }
 
 export interface StateAppContext {
-  contextInstanceId: string;
-  lastPage: string;
+  contextInstanceId: string
+  lastPage: string
   browser: {
     keyList: {
-      isDataLoaded: boolean;
-      scrollTopPosition: number;
-      selectedKey: Nullable<string>;
+      isDataLoaded: boolean
+      scrollTopPosition: number
+      selectedKey: Nullable<string>
     },
     panelSizes: {
-      [key: string]: number;
+      [key: string]: number
     },
     tree: {
+      delimiter: string
       panelSizes: {
-        [key: string]: number;
+        [key: string]: number
       },
       openNodes: {
-        [key: string]: boolean;
+        [key: string]: boolean
       },
       selectedLeaf: {
-        [key: string]: IKeyPropTypes[];
+        [key: string]: {
+          [key: string]: IKeyPropTypes
+        }
       },
     }
   },
   workbench: {
-    script: string;
+    script: string
     enablementArea: {
-      itemPath: string;
-      itemScrollTop: number;
+      itemPath: string
+      itemScrollTop: number
     },
     panelSizes: {
       vertical: {
-        [key: string]: number;
+        [key: string]: number
       }
     }
   }
 }
 
 export interface StateAppRedisCommands {
-  loading: boolean;
-  error: string;
-  spec: ICommands;
-  commandsArray: string[];
-  commandGroups: string[];
+  loading: boolean
+  error: string
+  spec: ICommands
+  commandsArray: string[]
+  commandGroups: string[]
 }
 
 export interface IPluginVisualization {
-  id: string;
+  id: string
   uniqId: string
-  name: string;
-  plugin: any;
-  activationMethod: string;
-  matchCommands: string[];
-  default?: boolean;
-  iconDark?: string;
-  iconLight?: string;
+  name: string
+  plugin: any
+  activationMethod: string
+  matchCommands: string[]
+  default?: boolean
+  iconDark?: string
+  iconLight?: string
 }
 
 export interface PluginsResponse {
-  static: string;
+  static: string
   plugins: IPlugin[]
 }
 export interface IPlugin {
-  name: string;
-  main: string;
-  styles: string | string[];
-  baseUrl: string;
-  visualizations: any[];
-  internal?: boolean;
+  name: string
+  main: string
+  styles: string | string[]
+  baseUrl: string
+  visualizations: any[]
+  internal?: boolean
 }
 
 export interface StateAppPlugins {
-  loading: boolean;
-  error: string;
-  staticPath: string;
-  plugins: IPlugin[];
-  visualizations: IPluginVisualization[];
+  loading: boolean
+  error: string
+  staticPath: string
+  plugins: IPlugin[]
+  visualizations: IPluginVisualization[]
 }

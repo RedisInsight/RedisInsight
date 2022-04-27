@@ -1,5 +1,5 @@
-.euiToolTip {
-  max-width: 470px;
+body .euiToolTip {
+  max-width: 288px;
   padding: 12px 15px !important;
   color: var(--euiTooltipTextColor) !important;
   box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
@@ -13,7 +13,7 @@
 }
 .euiToolTip__title {
   border-bottom: none !important;
-  font: normal normal 500 12px/17px Graphik, sans-serif !important;
+  font: normal normal 500 13px/17px Graphik, sans-serif !important;
   letter-spacing: -0.12px;
 }
 .euiToolTip__content {

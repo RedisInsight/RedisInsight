@@ -17,7 +17,7 @@ class MarkdownToJsxString implements IFormatter {
         .use(remarkParse)
         .use(remarkGfm) // support GitHub Flavored Markdown
         .use(remarkRedisCode) // Add custom component for Redis code block
-        .use(remarkImage) // Add custom component for Redis code block
+        .use(remarkImage, config ? { history: config.history } : undefined) // Add custom component for Redis code block
         .use(remarkRehype, { allowDangerousHtml: true }) // Pass raw HTML strings through.
         .use(rehypeLinks, config ? { history: config.history } : undefined) // Customise links
         .use(MarkdownToJsxString.rehypeWrapSymbols) // Wrap special symbols inside curly braces for JSX parse

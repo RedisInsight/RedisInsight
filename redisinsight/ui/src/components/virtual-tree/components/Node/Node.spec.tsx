@@ -5,7 +5,7 @@ import { render, screen } from 'uiSrc/utils/test-utils'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import Node from './Node'
 import { TreeData } from '../../interfaces'
-import { mockLeafKeys } from '../../VirtualTree.spec'
+import { mockLeafKeys, mockVirtualTreeResult } from '../../VirtualTree.spec'
 
 const mockedProps = mock<NodePublicState<TreeData>>()
 const mockedPropsData = mock<TreeData>()
@@ -15,6 +15,11 @@ const mockedData: TreeData = {
   leafIcon: KeyDarkSVG
 }
 const mockDataFullName = 'test'
+
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
+}))
 
 describe('Node', () => {
   it('should render', () => {
@@ -69,7 +74,7 @@ describe('Node', () => {
       data={mockData}
     />)
 
-    screen.getByTestId(mockDataFullName).click()
+    screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
     expect(mockSetItems).toBeCalledWith(mockLeafKeys)
     expect(mockUpdateStatusSelected).toBeCalledWith(mockDataFullName, mockLeafKeys)
@@ -101,7 +106,7 @@ describe('Node', () => {
       data={mockData}
     />)
 
-    screen.getByTestId(mockDataFullName).click()
+    screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
     expect(mockSetItems).not.toBeCalled()
     expect(mockUpdateStatusSelected).not.toBeCalled()

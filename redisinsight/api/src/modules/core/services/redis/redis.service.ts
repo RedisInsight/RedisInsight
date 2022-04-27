@@ -295,6 +295,7 @@ export class RedisService {
     config = {
       rejectUnauthorized: tls.verifyServerCert,
       checkServerIdentity: () => undefined,
+      servername: tls.servername || undefined,
     };
     if (tls.caCertId || tls.newCaCert) {
       const caCertConfig = await this.getCaCertConfig(tls);

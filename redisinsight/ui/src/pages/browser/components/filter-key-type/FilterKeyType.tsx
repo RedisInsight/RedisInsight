@@ -41,7 +41,7 @@ const FilterKeyType = () => {
   }, [version])
 
   useEffect(() => {
-    filter && setTypeSelected(filter)
+    setTypeSelected(filter ?? '')
   }, [filter])
 
   const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS.map(
@@ -56,17 +56,24 @@ const FilterKeyType = () => {
               className={styles.controlsIcon}
               data-testid={`filter-option-type-selected-${value}`}
             />
-            <EuiHealth color={color} />
           </>
         ),
-        dropdownDisplay: <EuiHealth color={color}>{text}</EuiHealth>,
+        dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
         'data-test-subj': `filter-option-type-${value}`,
       }
     }
   )
 
+  options.push({
+    value: 'clear',
+    inputDisplay: null,
+    dropdownDisplay: (
+      <div className={styles.clearSelectionBtn} data-testid="clear-selection-btn">Clear Selection</div>
+    )
+  })
+
   const onChangeType = (initValue: string) => {
-    const value = typeSelected === initValue ? '' : initValue
+    const value = (initValue === 'clear') ? '' : typeSelected === initValue ? '' : initValue
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value || null))

@@ -7,9 +7,10 @@ import {
   mockedStore,
   render,
   screen,
+  waitFor,
 } from 'uiSrc/utils/test-utils'
 import { setSearchMatch } from 'uiSrc/slices/keys'
-import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import { mockVirtualTreeResult } from 'uiSrc/components/virtual-tree/VirtualTree.spec'
 import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
 import KeyTree from './KeyTree'
@@ -48,7 +49,11 @@ const propsMock = {
     ],
     nextCursor: '0',
     total: 3,
-  } as IKeyListPropTypes,
+    scanned: 5,
+    shardsMeta: {},
+    previousResultCount: 1,
+    lastRefreshTime: 3
+  } as KeysStoreData,
   loading: false,
   selectKey: jest.fn(),
 }
@@ -88,10 +93,10 @@ jest.mock('uiSrc/services', () => ({
 }))
 
 describe('KeyTree', () => {
-  it('Key tree separator should be in the document', () => {
+  it('Key tree delimiter should be in the document', () => {
     render(<KeyTree {...propsMock} />)
 
-    expect(screen.getByTestId('select-tree-view-separator')).toBeInTheDocument()
+    expect(screen.getByTestId('tree-view-delimiter-btn')).toBeInTheDocument()
   })
 
   it('Tree view panel should be in the document', () => {
@@ -106,12 +111,22 @@ describe('KeyTree', () => {
     expect(container.querySelector('[data-test-subj="key-list-panel"]')).toBeInTheDocument()
   })
 
-  it('"setBrowserTreeNodesOpen" should be called for Open a node', () => {
+  it.skip('"setBrowserTreeNodesOpen" should be called for Open a node', async () => {
+    jest.useFakeTimers()
     render(<KeyTree {...propsMock} />)
 
-    fireEvent.click(screen.getByTestId(mockVirtualTreeResult?.[0]?.fullName))
+    await waitFor(() => {
+      jest.advanceTimersByTime(1000)
+    })
 
-    const expectedActions = [setBrowserTreeSelectedLeaf({}), setBrowserTreeNodesOpen({})]
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId(`node-item_${mockVirtualTreeResult?.[0]?.fullName}`))
+    })
+
+    const expectedActions = [
+      setBrowserTreeSelectedLeaf({}),
+      setBrowserTreeNodesOpen({})
+    ]
 
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

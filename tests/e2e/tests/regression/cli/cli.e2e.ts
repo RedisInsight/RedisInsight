@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { BrowserPage, CliPage } from '../../../pageObjects';
@@ -6,7 +7,6 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { Chance } from 'chance';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -16,14 +16,15 @@ const browserPage = new BrowserPage();
 let keyName = chance.word({ length: 20 });
 const keyTTL = '2147476121';
 const jsonValue = '{"name":"xyz"}';
+const cliCommands = ['get test', 'acl help', 'client list'];
 
 fixture `CLI`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
@@ -81,7 +82,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         //Clear database and delete
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -99,7 +100,7 @@ test
 });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         //Clear database and delete
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -112,15 +113,14 @@ test
         const command = `JSON.GET ${keyName}`;
         //Open CLI and run command
         await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command);
+        await t.typeText(cliPage.cliCommandInput, command, { paste: true });
         await t.pressKey('enter');
         //Verify result
-        //const commandResult = jsonValue.replace(/"/g, '\\"');
         await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(jsonValueCli, 'The user can see JSON object with escaped quotes');
 });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
@@ -129,4 +129,28 @@ test
         //Open CLI and check endpoint
         await t.click(cliPage.cliExpandButton);
         await t.expect(cliPage.cliEndpoint.textContent).eql(databaseEndpoint, 'The user can see DB endpoint in the header of CLI');
-});
+    });
+test
+    .meta({rte: rte.standalone})
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        for (const command of cliCommands) {
+            await cliPage.sendCommandInCli(command);
+        }
+    })
+    .after(async() => {
+        //Delete database
+        await deleteDatabase(ossStandaloneConfig.databaseName);
+    })
+    ('Verify that user can use "Up" and "Down" keys to view previous commands in CLI in the application', async t => {
+        await t.click(cliPage.cliExpandButton);
+        await t.expect(cliPage.cliCommandInput.innerText).eql('');
+        for (let i = cliCommands.length - 1; i >= 0; i--) {
+            await t.pressKey('up');
+            await t.expect(cliPage.cliCommandInput.innerText).eql(cliCommands[i]);
+        }
+        for (let i = 0; i < cliCommands.length; i++) {
+            await t.expect(cliPage.cliCommandInput.innerText).eql(cliCommands[i]);
+            await t.pressKey('down');
+        }
+    });

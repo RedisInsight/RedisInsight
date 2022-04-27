@@ -56,6 +56,7 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         //Open Working with Hashes section
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
@@ -110,6 +111,7 @@ test
             'Learn More'
         ]
         //Open Working with Hashes section and click on the on page counter
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         await t.click(workbenchPage.enablementAreaPagination);
@@ -125,8 +127,44 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that user can see the quick navigation section to navigate between siblings under the scrolling content', async t => {
         //Open Working with Hashes section
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         //Verify the quick navigation section
         await t.expect(workbenchPage.enablementAreaPagination.visible).ok('The quick navigation section is displayed');
+    });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that user can see the pagination for redis stack pages in Tutorials', async t => {
+        //Open any redis stack Tutorials
+        await t.click(workbenchPage.redisStackTutorialsButton);
+        await t.click(workbenchPage.vectorSimilitaritySearchButton);
+        //Verify the pagination
+        await t.expect(workbenchPage.enablementAreaPagination.visible).ok('The user can see the pagination for redis stack pages');
+        await t.expect(workbenchPage.nextPageButton.visible).ok('The user can see the next page for redis stack pages');
+        await t.expect(workbenchPage.prevPageButton.visible).ok('The user can see the prev page for redis stack pages');
+    });
+test
+    .meta({ rte: rte.standalone })
+    ('Verify that the same type of content is supported in the “Tutorials” as in the “Quick Guides”', async t => {
+        const tutorialsContent = [
+            'Working with JSON',
+            'Vector Similarity Search',
+            'Redis for time series',
+            'Working with graphs',
+            'Probabilistic data structures'
+        ];
+        const command = 'HSET bikes:10000  ';
+        //Verify the redis stack links
+        await t.click(workbenchPage.redisStackTutorialsButton);
+        const linksCount = await workbenchPage.redisStackLinks.count;
+        for(let i = 0; i < linksCount; i++) {
+            await t.expect(workbenchPage.redisStackLinks.nth(i).textContent).eql(tutorialsContent[i], `The link ${tutorialsContent[i]} is in the Enablement area`);
+        }
+        //Verify the load script to Editor
+        await t.click(workbenchPage.vectorSimilitaritySearchButton);
+        await t.expect(workbenchPage.queryInputScriptArea.textContent).eql('', 'The editor is empty');
+        await t.click(workbenchPage.hashWithVectorButton);
+        const editorContent = (await workbenchPage.queryInputScriptArea.textContent).replace(/\s/g, ' ')
+        await t.expect(editorContent).eql(command, 'The selected command is in the Editor');
     });

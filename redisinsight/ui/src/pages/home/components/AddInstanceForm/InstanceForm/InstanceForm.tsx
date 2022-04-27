@@ -23,6 +23,7 @@ import {
   htmlIdGenerator,
   EuiLink,
   keys,
+  EuiCallOut,
 } from '@elastic/eui'
 import { capitalize, isEmpty, pick } from 'lodash'
 import ReactDOM from 'react-dom'
@@ -77,6 +78,7 @@ export interface DbConnectionInfo extends Instance {
   newTlsCertPairName?: string;
   newTlsClientCert?: string;
   newTlsClientKey?: string;
+  servername?: string;
   verifyServerTlsCert?: boolean;
   caCertificates?: { name: string; id: string }[];
   selectedCaCertName: string | typeof ADD_NEW_CA_CERT | typeof NO_CA_CERT;
@@ -85,6 +87,7 @@ export interface DbConnectionInfo extends Instance {
   username?: string;
   password?: string;
   showDb?: boolean;
+  sni?: boolean;
   sentinelMasterUsername?: string;
   sentinelMasterPassword?: string;
 }
@@ -128,6 +131,7 @@ const fieldDisplayNames: DbConnectionInfo = {
   newTlsCertPairName: 'Client Certificate Name',
   newTlsClientCert: 'Client Certificate',
   newTlsClientKey: 'Private Key',
+  servername: 'Server Name',
 }
 
 const getInitFieldsDisplayNames = ({ host, port, name, instanceType }: any) => {
@@ -164,7 +168,8 @@ const AddStandaloneForm = (props: Props) => {
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
-      isRediStack
+      isRediStack,
+      servername,
     },
     initialValues: initialValuesProp,
     width,
@@ -190,6 +195,7 @@ const AddStandaloneForm = (props: Props) => {
     db,
     modules,
     showDb: !!db,
+    sni: !!servername,
     newCaCert: '',
     newCaCertName: '',
     selectedCaCertName,
@@ -260,6 +266,14 @@ const AddStandaloneForm = (props: Props) => {
       && values.newCaCert === ''
     ) {
       errs.newCaCert = fieldDisplayNames.newCaCert
+    }
+
+    if (
+      values.tls
+      && values.sni
+      && values.servername === ''
+    ) {
+      errs.servername = fieldDisplayNames.servername
     }
 
     if (
@@ -556,16 +570,6 @@ const AddStandaloneForm = (props: Props) => {
     </EuiToolTip>
   )
 
-  const AppendDbIndex = () => (
-    <EuiToolTip
-      anchorClassName="inputAppendIcon"
-      position="right"
-      content="Select the Redis logical database to work with in Browser and Workbench."
-    >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-    </EuiToolTip>
-  )
-
   const AppendEndpoints = () => (
     <EuiToolTip
       title="Host:port"
@@ -602,6 +606,7 @@ const AddStandaloneForm = (props: Props) => {
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Host*">
               <EuiFieldText
+                autoFocus
                 name="host"
                 id="host"
                 data-testid="host"
@@ -708,9 +713,9 @@ const AddStandaloneForm = (props: Props) => {
     <>
       <EuiFlexGroup
         className={flexGroupClassName}
+        responsive={false}
       >
         <EuiFlexItem
-          style={{ width: '230px' }}
           grow={false}
           className={flexItemClassName}
         >
@@ -718,7 +723,7 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
-              label="Database Index"
+              label="Select Logical Database"
               checked={!!formik.values.showDb}
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"
@@ -731,18 +736,29 @@ const AddStandaloneForm = (props: Props) => {
         <EuiFlexGroup
           className={flexGroupClassName}
         >
-          <EuiFlexItem className={cx(
-            flexItemClassName,
-            styles.dbInput,
-            { [styles.dbInputBig]: !flexItemClassName }
-          )}
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiCallOut>
+              <EuiText size="s" data-testid="db-index-message">
+                When the database is added, you can select logical databases only in CLI.
+                To work with other logical databases in Browser and Workbench,
+                add another database with the same host and port,
+                but a different database index.
+              </EuiText>
+            </EuiCallOut>
+          </EuiFlexItem>
+          <EuiFlexItem
+            className={cx(
+              flexItemClassName,
+              styles.dbInput,
+              { [styles.dbInputBig]: !flexItemClassName }
+            )}
           >
             <EuiFormRow label="Database Index" helpText="Should not exceed 15.">
               <EuiFieldNumber
                 name="db"
                 id="db"
                 data-testid="db"
-                style={{ width: '100%' }}
+                style={{ width: 120 }}
                 placeholder="Enter Database Index"
                 value={formik.values.db ?? '0'}
                 maxLength={6}
@@ -755,7 +771,6 @@ const AddStandaloneForm = (props: Props) => {
                 type="text"
                 min={0}
                 max={MAX_DATABASE_INDEX_NUMBER}
-                append={<AppendDbIndex />}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -767,8 +782,11 @@ const AddStandaloneForm = (props: Props) => {
   const TlsDetails = () => (
     <>
       <EuiFlexGroup
-        style={{ padding: '12px 0px 15px' }}
-        className={flexGroupClassName}
+        className={cx(flexGroupClassName, {
+          [styles.tlsContainer]: !flexGroupClassName,
+          [styles.tlsSniOpened]: formik.values.sni
+        })}
+        alignItems={!flexGroupClassName ? 'flexEnd' : undefined}
       >
         <EuiFlexItem
           style={{ width: '230px' }}
@@ -786,16 +804,54 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexItem>
 
         {formik.values.tls && (
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiCheckbox
-              id={`${htmlIdGenerator()()} verifyServerTlsCert`}
-              name="verifyServerTlsCert"
-              label="Verify TLS Certificate"
-              checked={!!formik.values.verifyServerTlsCert}
-              onChange={formik.handleChange}
-              data-testid="verify-tls-cert"
-            />
-          </EuiFlexItem>
+          <>
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiCheckbox
+                id={`${htmlIdGenerator()()} sni`}
+                name="sni"
+                label="Use SNI"
+                checked={!!formik.values.sni}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    'servername',
+                    formik.values.servername ?? formik.values.host ?? ''
+                  )
+                  return formik.handleChange(e)
+                }}
+                data-testid="sni"
+              />
+            </EuiFlexItem>
+            {formik.values.sni && (
+              <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px', marginTop: 0 }}>
+                <EuiFormRow label="Server Name*" style={{ paddingTop: 0 }}>
+                  <EuiFieldText
+                    name="servername"
+                    id="servername"
+                    fullWidth
+                    maxLength={200}
+                    placeholder="Enter Server Name"
+                    value={formik.values.servername ?? ''}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      formik.setFieldValue(
+                        e.target.name,
+                        validateField(e.target.value.trim())
+                      )}
+                    data-testid="sni-servername"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+            )}
+            <EuiFlexItem className={cx(flexItemClassName, { [styles.fullWidth]: formik.values.sni })}>
+              <EuiCheckbox
+                id={`${htmlIdGenerator()()} verifyServerTlsCert`}
+                name="verifyServerTlsCert"
+                label="Verify TLS Certificate"
+                checked={!!formik.values.verifyServerTlsCert}
+                onChange={formik.handleChange}
+                data-testid="verify-tls-cert"
+              />
+            </EuiFlexItem>
+          </>
         )}
       </EuiFlexGroup>
       {formik.values.tls && (
@@ -884,7 +940,7 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexGroup>
       )}
       {formik.values.tls && formik.values.tlsClientAuthRequired && (
-        <div className="boxSection">
+        <div className="boxSection" style={{ marginTop: 15 }}>
           <EuiFlexGroup className={flexGroupClassName}>
             <EuiFlexItem className={flexItemClassName}>
               <EuiFormRow label="Client Certificate*">

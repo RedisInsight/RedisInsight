@@ -1,3 +1,4 @@
+import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { constructKeysToTree } from '../constructKeysToTree'
 import { constructKeysToTreeMockResult } from './constructKeysToTreeMockResult'
 
@@ -15,7 +16,8 @@ const constructKeysToTreeTests: any[] = [
       { name: 'keys:3', type: 'hash', ttl: -1, size: 71 },
       { name: 'keys:2', type: 'hash', ttl: -1, size: 71 },
     ],
-    separator: ':' },
+    delimiter: DEFAULT_DELIMITER
+  },
   constructKeysToTreeMockResult
   ]
 ]

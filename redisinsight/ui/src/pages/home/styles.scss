@@ -200,7 +200,8 @@
       }
     }
 
-    .euiTableFooterCell, .euiTableHeaderCell {
+    .euiTableFooterCell,
+    .euiTableHeaderCell {
       color: var(--htmlColor);
     }
 
@@ -317,6 +318,7 @@
     background-color: var(--euiColorLightestShade) !important;
     border: 1px solid var(--euiColorLightShade);
     border-radius: 4px;
+    margin-top: 10px;
 
     .euiSelect,
     .euiSuperSelectControl,
@@ -481,14 +483,6 @@
       .euiTableHeaderCell .euiTableCellContent {
         color: #fff !important;
       }
-    }
-  }
-}
-
-.theme_DARK {
-  .homePage {
-    .footerAddDatabase {
-      background-image: linear-gradient(#101010, #161616);
     }
   }
 }

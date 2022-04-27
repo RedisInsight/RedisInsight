@@ -20,7 +20,6 @@ import {
   BrowserToolKeysCommands,
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 @Injectable()
 export class StringBusinessService {
@@ -28,7 +27,6 @@ export class StringBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async setString(
@@ -62,14 +60,6 @@ export class StringBusinessService {
       );
       throw new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST);
     }
-    this.browserAnalyticsService.sendKeyAddedEvent(
-      clientOptions.instanceId,
-      RedisDataType.String,
-      {
-        length: dto.value.length,
-        TTL: dto.expire || -1,
-      },
-    );
     this.logger.log('Succeed to set string key type.');
   }
 
@@ -129,10 +119,6 @@ export class StringBusinessService {
           [keyName, ttl],
         );
       }
-      this.browserAnalyticsService.sendKeyValueEditedEvent(
-        clientOptions.instanceId,
-        RedisDataType.String,
-      );
     } catch (error) {
       this.logger.error('Failed to update string value.', error);
       catchAclError(error);

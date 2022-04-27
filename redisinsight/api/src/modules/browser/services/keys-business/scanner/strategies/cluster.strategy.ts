@@ -68,8 +68,14 @@ export class ClusterStrategy extends AbstractStrategy {
     while (
       !allNodesScanned
       && nodes.reduce((prev, cur) => prev + cur.keys.length, 0) < count
-      && nodes.reduce((prev, cur) => prev + cur.scanned, 0)
-        < settings.scanThreshold
+      && (
+        (
+          nodes.reduce((prev, cur) => prev + cur.total, 0) < settings.scanThreshold
+          && nodes.find((node) => !!node.cursor)
+        )
+        || nodes.reduce((prev, cur) => prev + cur.scanned, 0)
+          < settings.scanThreshold
+      )
     ) {
       await this.scanNodes(clientOptions, nodes, match, count, args.type);
       allNodesScanned = !nodes.some((node) => node.cursor !== 0);

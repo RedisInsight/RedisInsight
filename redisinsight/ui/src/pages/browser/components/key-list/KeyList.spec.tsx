@@ -1,6 +1,6 @@
 import React from 'react'
-import { render, screen } from 'uiSrc/utils/test-utils'
-import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { render } from 'uiSrc/utils/test-utils'
+import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import KeyList from './KeyList'
 
 const propsMock = {
@@ -30,7 +30,11 @@ const propsMock = {
     ],
     nextCursor: '0',
     total: 3,
-  } as IKeyListPropTypes,
+    scanned: 5,
+    shardsMeta: {},
+    previousResultCount: 1,
+    lastRefreshTime: 3
+  } as KeysStoreData,
   loading: false,
   selectKey: jest.fn(),
   loadMoreItems: jest.fn(),

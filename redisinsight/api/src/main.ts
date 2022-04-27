@@ -7,11 +7,12 @@ import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get } from 'src/utils';
 import { migrateHomeFolder } from 'src/init-helper';
+import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
 
-export default async function bootstrap() {
+export default async function bootstrap(): Promise<Function> {
   await migrateHomeFolder();
 
   const serverConfig = get('server');
@@ -44,16 +45,28 @@ export default async function bootstrap() {
     );
   }
 
+  const logFileProvider = app.get(LogFileProvider);
+
   await app.listen(port);
   logger.log({
     message: `Server is running on http(s)://localhost:${port}`,
     context: 'bootstrap',
   });
 
-  process.on('SIGTERM', () => {
-    logger.log('SIGTERM command received. Shutting down...');
+  const gracefulShutdown = (signal) => {
+    try {
+      logger.log(`Signal ${signal} received. Shutting down...`);
+      logFileProvider.onModuleDestroy();
+    } catch (e) {
+      // ignore errors if any
+    }
     process.exit(0);
-  });
+  };
+
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
+
+  return gracefulShutdown;
 }
 
 if (process.env.APP_ENV !== 'electron') {

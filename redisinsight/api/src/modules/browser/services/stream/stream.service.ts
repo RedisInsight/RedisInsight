@@ -14,6 +14,7 @@ import {
   BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import {
+  AddStreamEntriesDto, AddStreamEntriesResponse,
   CreateStreamDto,
   GetStreamEntriesDto,
   GetStreamEntriesResponse,
@@ -149,9 +150,10 @@ export class StreamService {
     dto: CreateStreamDto,
   ): Promise<void> {
     this.logger.log('Creating stream data type.');
-    const { keyName, entries } = dto;
 
     try {
+      const { keyName, entries } = dto;
+
       const isExist = await this.browserTool.execCommand(
         clientOptions,
         BrowserToolKeysCommands.Exists,
@@ -200,6 +202,85 @@ export class StreamService {
 
       if (error instanceof NotFoundException) {
         throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+
+      if (error?.message.includes('ID specified in XADD is equal or smaller')) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Aff entries to the existing stream and return entries IDs list
+   * @param clientOptions
+   * @param dto
+   */
+  public async addEntries(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: AddStreamEntriesDto,
+  ): Promise<AddStreamEntriesResponse> {
+    this.logger.log('Adding entries to stream.');
+
+    try {
+      const { keyName, entries } = dto;
+
+      const exists = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [keyName],
+      );
+
+      if (!exists) {
+        throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
+      }
+
+      const entriesArray = entries.map((entry) => [
+        entry.id,
+        ...flatMap(map(entry.fields, (value, field) => [field, value])),
+      ]);
+
+      const toolCommands: Array<[
+        toolCommand: BrowserToolCommands,
+        ...args: Array<string | number>,
+      ]> = entriesArray.map((entry) => (
+        [
+          BrowserToolStreamCommands.XAdd,
+          keyName,
+          ...entry,
+        ]
+      ));
+
+      const [
+        transactionError,
+        transactionResults,
+      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      catchTransactionError(transactionError, transactionResults);
+
+      this.logger.log('Succeed to add entries to the stream.');
+
+      return {
+        keyName,
+        entries: transactionResults.map((entryResult) => entryResult[1]),
+      };
+    } catch (error) {
+      this.logger.error('Failed to add entries to the stream.', error);
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+
+      if (error?.message.includes('ID specified in XADD is equal or smaller')) {
+        throw new BadRequestException(error.message);
       }
 
       throw catchAclError(error);

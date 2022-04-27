@@ -2,13 +2,18 @@ import {
   Body,
   Controller,
   Param,
-  Post,
+  Post, Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
-import { CreateStreamDto, GetStreamEntriesDto, GetStreamEntriesResponse } from 'src/modules/browser/dto/stream.dto';
+import {
+  AddStreamEntriesDto, AddStreamEntriesResponse,
+  CreateStreamDto,
+  GetStreamEntriesDto,
+  GetStreamEntriesResponse,
+} from 'src/modules/browser/dto/stream.dto';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
 
 @ApiTags('Streams')
@@ -27,6 +32,25 @@ export class StreamController {
       @Body() dto: CreateStreamDto,
   ): Promise<void> {
     return this.service.createStream({ instanceId }, dto);
+  }
+
+  @Put('')
+  @ApiRedisInstanceOperation({
+    description: 'Add entries to the stream',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Returns entries IDs added',
+        type: AddStreamEntriesResponse,
+      },
+    ],
+  })
+  async addEntries(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: AddStreamEntriesDto,
+  ): Promise<AddStreamEntriesResponse> {
+    return this.service.addEntries({ instanceId }, dto);
   }
 
   @Post('/get-entries')

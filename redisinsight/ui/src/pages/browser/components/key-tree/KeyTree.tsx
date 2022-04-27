@@ -70,7 +70,7 @@ const KeyTree = (props: Props) => {
 
   useEffect(() => {
     updateSelectedKeys()
-  }, [delimiter, filter, search, keysState.lastRefreshTime])
+  }, [delimiter, keysState.lastRefreshTime])
 
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {

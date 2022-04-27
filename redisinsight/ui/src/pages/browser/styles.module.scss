@@ -29,6 +29,10 @@ $breakpoint-to-hide-resize-panel: 1124px;
   display: none;
 }
 
+.noVisible {
+  visibility: hidden;
+}
+
 .resizePanelLeft {
   :global(.euiResizablePanel__content) {
     @media (min-width: 1124px) {
@@ -48,6 +52,10 @@ $breakpoint-to-hide-resize-panel: 1124px;
 .fullWidth {
   width: 100% !important;
   min-width: 100% !important;
+  :global(.euiResizablePanel__content) {
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 
 .keysContainer {

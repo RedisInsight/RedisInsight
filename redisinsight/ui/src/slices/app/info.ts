@@ -7,7 +7,7 @@ import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateAppInfo } from '../interfaces'
 
-const segmentWriteKey = process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY'
+const segmentWriteKey = 'KSKD2KYXyEC2298VjgAKKDC0pwCgMc1q'
 
 export const initialState: StateAppInfo = {
   loading: true,

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {
   deleteKeyAction,
   editKey,
   editKeyTTL,
   fetchKeyInfo,
   refreshKeyInfoAction,
-  selectedKeySelector,
+  toggleBrowserFullScreen,
 } from 'uiSrc/slices/keys'
 import { KeyTypes } from 'uiSrc/constants'
 import { refreshHashFieldsAction } from 'uiSrc/slices/hash'
@@ -17,16 +17,25 @@ import { refreshListElementsAction } from 'uiSrc/slices/list'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
-  onCloseKey: () => void;
-  onEditKey: (key: string, newKey: string) => void;
-  onDeleteKey: () => void;
-  keyProp: string | null;
+  isFullScreen: boolean
+  onToggleFullScreen: () => void
+  onCloseKey: () => void
+  onEditKey: (key: string, newKey: string) => void
+  onDeleteKey: () => void
+  keyProp: string | null
 }
 
-const KeyDetailsWrapper = ({ onCloseKey, onEditKey, onDeleteKey, keyProp }: Props) => {
+const KeyDetailsWrapper = (
+  {
+    isFullScreen,
+    onToggleFullScreen,
+    onCloseKey,
+    onEditKey,
+    onDeleteKey,
+    keyProp
+  }: Props
+) => {
   const dispatch = useDispatch()
-
-  const selectedKey = useSelector(selectedKeySelector)
 
   useEffect(() => {
     if (keyProp === null) {
@@ -86,10 +95,16 @@ const KeyDetailsWrapper = ({ onCloseKey, onEditKey, onDeleteKey, keyProp }: Prop
     onCloseKey()
   }
 
+  const handleClosePanel = () => {
+    dispatch(toggleBrowserFullScreen())
+  }
+
   return (
     <KeyDetails
-      selectedKey={selectedKey}
+      isFullScreen={isFullScreen}
+      onToggleFullScreen={onToggleFullScreen}
       onClose={handleClose}
+      onClosePanel={handleClosePanel}
       onRefresh={handleRefreshKey}
       onDelete={handleDeleteKey}
       onEditTTL={handleEditTTL}

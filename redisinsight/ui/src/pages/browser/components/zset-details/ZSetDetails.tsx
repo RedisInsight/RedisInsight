@@ -21,12 +21,12 @@ import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
 import { formatLongName, validateScoreNumber } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
+import { AddMembersToZSetDto, SearchZSetMembersResponse, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -124,6 +124,22 @@ const ZSetDetails = (props: Props) => {
     if (!fieldColumn) { return }
 
     const { value: match } = fieldColumn
+    const onSuccess = (data: SearchZSetMembersResponse) => {
+      const matchValue = getMatchType(match)
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: KeyTypes.ZSet,
+          match: matchValue,
+          length: data.total,
+        }
+      })
+    }
     setMatch(match)
     if (match === '') {
       dispatch(
@@ -132,7 +148,7 @@ const ZSetDetails = (props: Props) => {
       return
     }
     dispatch(
-      fetchSearchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, match)
+      fetchSearchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, match, onSuccess)
     )
   }
 

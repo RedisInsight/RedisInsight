@@ -24,9 +24,8 @@ import {
 import { connectedInstanceSelector } from 'uiSrc/slices/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import KeysSummary from 'uiSrc/components/keys-summary'
-import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.svg'
@@ -53,7 +52,7 @@ interface IViewType {
 export interface Props {
   loading: boolean
   isFullScreen: boolean
-  keysState: IKeyListPropTypes
+  keysState: KeysStoreData
   loadKeys: (type?: KeyViewType) => void
   loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void

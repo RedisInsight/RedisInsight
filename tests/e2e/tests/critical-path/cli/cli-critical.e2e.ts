@@ -96,9 +96,9 @@ test
     .meta({ rte: rte.standalone })
     ('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, FT.DROPINDEX/JSON.GET, JSON.DEL), he can see hints with arguments', async t => {
         const commandHints =[
-            'index [ON HASH|JSON] [PREFIX count prefix [prefix ...]] [LANGUAGE default_lang] [LANGUAGE_FIELD lang_attribute] [SCORE default_score] [SCORE_FIELD score_attribute] [PAYLOAD_FIELD payload_attribute] [MAXTEXTFIELDS] [TEMPORARY seconds] [NOOFFSETS] [NOHL] [NOFIELDS] [NOFREQS] [count stopword [stopword ...]] SCHEMA field_name [AS alias] TEXT|TAG|NUMERIC|GEO [SORTABLE [UNF]] [NOINDEX]',
-            'index [DD]',
-            'key [INDENT indent] [NEWLINE newline] [SPACE space] [paths [paths ...]]',
+            'index [data_type] [prefix] [default_lang] [lang_attribute] [default_score] [score_attribute] [payload_attribute] [maxtextfields] [seconds] [nooffsets] [nohl] [nofields] [nofreqs] [stopwords] schema field [field ...]',
+            'index [delete docs]',
+            'key [indent] [newline] [space] [paths [paths ...]]',
             'key [path]'
         ];
         const commands = [

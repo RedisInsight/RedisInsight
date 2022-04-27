@@ -1,3 +1,4 @@
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import { KeyTypes, UnsupportedKeyTypes } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { Maybe, Nullable } from 'uiSrc/utils'
@@ -24,21 +25,7 @@ export interface KeysStore {
   isSearched: boolean
   isBrowserFullScreen: boolean
   viewType: KeyViewType
-  data: {
-    total: number
-    scanned: number
-    nextCursor: string
-    keys: Key[]
-    shardsMeta: Record<string, {
-      cursor: number
-      scanned: number
-      total: number
-      host?: string
-      port?: number
-    }>
-    previousResultCount: number
-    lastRefreshTime: Nullable<number>
-  };
+  data: KeysStoreData
   selectedKey: {
     loading: boolean
     refreshing: boolean
@@ -50,5 +37,21 @@ export interface KeysStore {
   addKey: {
     loading: boolean
     error: string
-  };
+  }
+}
+
+export interface KeysStoreData {
+  total: number
+  scanned: number
+  nextCursor: string
+  keys: GetKeyInfoResponse[]
+  shardsMeta: Record<string, {
+    cursor: number
+    scanned: number
+    total: number
+    host?: string
+    port?: number
+  }>
+  previousResultCount: number
+  lastRefreshTime: Nullable<number>
 }

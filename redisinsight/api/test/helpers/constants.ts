@@ -162,6 +162,7 @@ export const constants = {
   TEST_STREAM_KEY_1: TEST_RUN_ID + '_stream_1' + CLUSTER_HASH_SLOT,
   TEST_STREAM_DATA_1: TEST_RUN_ID + '_stream_data_1',
   TEST_STREAM_DATA_2: TEST_RUN_ID + '_stream_data_2',
+  TEST_STREAM_HUGE_KEY: TEST_RUN_ID + '_stream_huge' + CLUSTER_HASH_SLOT,
 
   // ReJSON-RL
   TEST_REJSON_TYPE: 'ReJSON-RL',

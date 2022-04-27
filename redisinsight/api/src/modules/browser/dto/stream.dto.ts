@@ -1,9 +1,35 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, IntersectionType } from '@nestjs/swagger';
 import {
-  IsEnum, IsInt, IsString, Min,
+  ArrayNotEmpty,
+  IsArray,
+  IsDefined,
+  IsEnum, IsInt, IsNotEmpty, IsObject, IsString, Min, ValidateNested,
 } from 'class-validator';
-import { KeyDto } from 'src/modules/browser/dto/keys.dto';
+import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
+import { Type } from 'class-transformer';
+
+export class StreamEntryDto {
+  @ApiProperty({
+    type: String,
+    description: 'Entry ID',
+    example: '*',
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @ApiProperty({
+    type: Object,
+    description: 'Entry fields',
+    example: { field1: 'value1', field2: 'value2' },
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsObject()
+  fields: Record<string, string>;
+}
 
 export class GetStreamEntriesDto extends KeyDto {
   @ApiPropertyOptional({
@@ -46,21 +72,6 @@ export class GetStreamEntriesDto extends KeyDto {
   sortOrder?: SortOrder = SortOrder.Desc;
 }
 
-export class StreamEntryDto {
-  @ApiProperty({
-    type: String,
-    description: 'Entry ID',
-  })
-  @IsString()
-  id: string;
-
-  @ApiProperty({
-    type: String,
-    description: 'Entry fields',
-  })
-  fields: Record<string, string>;
-}
-
 export class GetStreamEntriesResponse {
   @ApiProperty({
     type: String,
@@ -99,3 +110,38 @@ export class GetStreamEntriesResponse {
   })
   entries: StreamEntryDto[];
 }
+
+export class AddStreamEntriesDto extends KeyDto {
+  @ApiProperty({
+    description: 'Entries to push',
+    type: StreamEntryDto,
+    isArray: true,
+    example: [
+      {
+        id: '*',
+        fields: {
+          field1: 'value1',
+          field2: 'value2',
+        },
+      },
+      {
+        id: '*',
+        fields: {
+          field1: 'value1',
+          field2: 'value2',
+        },
+      },
+    ],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => StreamEntryDto)
+  entries: StreamEntryDto[];
+}
+
+export class CreateStreamDto extends IntersectionType(
+  AddStreamEntriesDto,
+  KeyWithExpireDto,
+) {}

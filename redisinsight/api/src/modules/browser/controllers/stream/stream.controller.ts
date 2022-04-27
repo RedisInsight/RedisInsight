@@ -13,7 +13,7 @@ import { StreamService } from 'src/modules/browser/services/stream/stream.servic
 
 @ApiTags('Streams')
 @Controller('streams')
-@UsePipes(new ValidationPipe({ transform: false }))
+@UsePipes(new ValidationPipe({ transform: true }))
 export class StreamController {
   constructor(private service: StreamService) {}
 

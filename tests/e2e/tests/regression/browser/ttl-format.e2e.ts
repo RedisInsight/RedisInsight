@@ -58,7 +58,7 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that Key is deleted if TTL finishes', async t => {
         // Create new key with TTL
-        const TTL = 5;
+        const TTL = 15;
         let ttlToCompare = TTL;
         await browserPage.addStringKey(keyName, 'test', TTL.toString());
         await t.click(browserPage.refreshKeysButton);

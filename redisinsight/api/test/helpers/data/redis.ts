@@ -217,13 +217,7 @@ export const initDataHelper = (rte) => {
       await truncate();
     }
 
-    await executeCommand(
-      'xadd',
-      constants.TEST_STREAM_KEY_1,
-      constants.TEST_STREAM_ID_1,
-      constants.TEST_STREAM_FIELD_1,
-      constants.TEST_STREAM_VALUE_1,
-    );
+    await client.xadd(constants.TEST_STREAM_KEY_1, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
   };
 
   const generateHugeStream = async (number: number = 100000, clean: boolean) => {

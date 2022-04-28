@@ -204,11 +204,10 @@ export class StreamService {
         throw error;
       }
 
-      if (error?.message.includes(RedisErrorCodes.WrongType)) {
-        throw new BadRequestException(error.message);
-      }
-
-      if (error?.message.includes('ID specified in XADD is equal or smaller')) {
+      if (
+        error?.message.includes(RedisErrorCodes.WrongType)
+        || error?.message.includes('ID specified in XADD is equal or smaller')
+      ) {
         throw new BadRequestException(error.message);
       }
 
@@ -275,11 +274,10 @@ export class StreamService {
         throw error;
       }
 
-      if (error?.message.includes(RedisErrorCodes.WrongType)) {
-        throw new BadRequestException(error.message);
-      }
-
-      if (error?.message.includes('ID specified in XADD is equal or smaller')) {
+      if (
+        error?.message.includes(RedisErrorCodes.WrongType)
+        || error?.message.includes('ID specified in XADD is equal or smaller')
+      ) {
         throw new BadRequestException(error.message);
       }
 

@@ -210,6 +210,24 @@ export const initDataHelper = (rte) => {
     await executeCommand('json.set', constants.TEST_REJSON_KEY_3, '.', JSON.stringify(constants.TEST_REJSON_VALUE_3));
   };
 
+  const generateHugeStream = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['xadd', `${constants.TEST_STREAM_HUGE_KEY}`, '*', `f_${inserted}`, `v_${inserted}`]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline);
+    } while (inserted < number)
+  };
+
   const generateHugeNumberOfFieldsForHashKey = async (number: number = 100000, clean: boolean) => {
     if (clean) {
       await truncate();
@@ -288,6 +306,7 @@ export const initDataHelper = (rte) => {
     generateKeys,
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,
+    generateHugeStream,
     generateNKeys,
     generateNReJSONs,
     generateNTimeSeries,

@@ -27,8 +27,16 @@
   min-height: 38px;
 }
 
+.top {
+  justify-content: space-between;
+}
+
 .bottom {
   padding-top: 10px;
+}
+
+.exitFullScreenBtn {
+  margin-left: 18px;
 }
 
 .refresh {
@@ -59,7 +67,14 @@
 }
 
 .viewTypeSwitch {
-  padding: 0 24px;
+  padding: 0 18px;
+  flex-shrink: 0;
+  &.middleScreen {
+    padding: 0 36px;
+  }
+  &.fullScreen {
+    padding: 0 120px;
+  }
 }
 
 .viewTypeBtn {

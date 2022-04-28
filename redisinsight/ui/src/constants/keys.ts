@@ -74,7 +74,21 @@ export const GROUP_TYPES_COLORS = Object.freeze({
   [CommandGroup.HyperLogLog]: 'var(--groupHyperLolLogColor)',
 })
 
-export const KEY_TYPES_ACTIONS = Object.freeze({
+export type KeyTypesActions = {
+  [key: string]: {
+    addItems?: {
+      name: string
+    }
+    removeItems?: {
+      name: string
+    }
+    editItem?: {
+      name: string
+    }
+  }
+}
+
+export const KEY_TYPES_ACTIONS: KeyTypesActions = Object.freeze({
   [KeyTypes.Hash]: {
     addItems: {
       name: 'Add Fields',
@@ -111,13 +125,21 @@ export enum SortOrder {
   DESC = 'DESC',
 }
 
-export const LENGTH_NAMING_BY_TYPE = Object.freeze({
+export interface LengthNamingByType {
+  [key: string]: string
+}
+
+export const LENGTH_NAMING_BY_TYPE: LengthNamingByType = Object.freeze({
   [ModulesKeyTypes.Graph]: 'Nodes',
   [ModulesKeyTypes.TimeSeries]: 'Samples',
   [UnsupportedKeyTypes.Stream]: 'Entries'
 })
 
-export const MODULES_KEY_TYPES_NAMES = Object.freeze({
+export interface ModulesKeyTypesNames {
+  [key: string]: string
+}
+
+export const MODULES_KEY_TYPES_NAMES: ModulesKeyTypesNames = Object.freeze({
   [ModulesKeyTypes.Graph]: 'RedisGraph',
   [ModulesKeyTypes.TimeSeries]: 'RedisTimeSeries',
 })

@@ -8,6 +8,7 @@ export interface Key {
   type: KeyTypes
   ttl: number
   size: number
+  length: number
 }
 
 export enum KeyViewType {
@@ -22,7 +23,8 @@ export interface KeysStore {
   filter: Nullable<KeyTypes | UnsupportedKeyTypes>
   isFiltered: boolean
   isSearched: boolean
-  viewType: KeyViewType,
+  isBrowserFullScreen: boolean
+  viewType: KeyViewType
   data: KeysStoreData
   selectedKey: {
     loading: boolean

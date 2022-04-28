@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { cloneDeep, remove, get } from 'lodash'
+import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes, SortOrder } from 'uiSrc/constants'
@@ -10,6 +10,7 @@ import {
   parseKeysListResponse,
   getUrl,
   isStatusSuccessful,
+  Maybe,
 } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
@@ -39,6 +40,7 @@ export const initialState: KeysStore = {
   search: '',
   isSearched: false,
   isFiltered: false,
+  isBrowserFullScreen: false,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
   data: {
     total: 0,
@@ -290,6 +292,14 @@ const keysSlice = createSlice({
       // state.data.keys = []
       state.data.keys.length = 0
     },
+
+    toggleBrowserFullScreen: (state, { payload }: { payload: Maybe<boolean> }) => {
+      if (!isUndefined(payload)) {
+        state.isBrowserFullScreen = payload
+        return
+      }
+      state.isBrowserFullScreen = !state.isBrowserFullScreen
+    }
   },
 })
 
@@ -327,6 +337,7 @@ export const {
   resetKeyInfo,
   resetKeys,
   resetKeysData,
+  toggleBrowserFullScreen
 } = keysSlice.actions
 
 // A selector

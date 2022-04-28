@@ -3,6 +3,7 @@ import React, { Ref, useEffect, useRef, useState, FC, SVGProps } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { formatDistanceToNow } from 'date-fns'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import {
   EuiButton,
   EuiButtonIcon,
@@ -36,6 +37,7 @@ import styles from './styles.module.scss'
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * 60 // once a minute
 const HIDE_REFRESH_LABEL_WIDTH = 700
+const FULL_SCREEN_RESOLUTION = 1260
 
 interface IViewType {
   tooltipText: string
@@ -49,23 +51,31 @@ interface IViewType {
 
 export interface Props {
   loading: boolean
+  isFullScreen: boolean
   keysState: KeysStoreData
-  sizes: any
   loadKeys: (type?: KeyViewType) => void
   loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
+  onExitFullScreen: () => void
 }
 
 const KeysHeader = (props: Props) => {
   let interval: NodeJS.Timeout
-  const { loading, keysState, sizes, loadKeys, loadMoreItems, handleAddKeyPanel } = props
+  const {
+    loading,
+    isFullScreen,
+    keysState,
+    loadKeys,
+    loadMoreItems,
+    handleAddKeyPanel,
+    onExitFullScreen
+  } = props
 
   const { lastRefreshTime } = useSelector(keysDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType, isSearched, isFiltered } = useSelector(keysSelector)
 
   const [lastRefreshMessage, setLastRefreshMessage] = useState('')
-  const [showRefreshLabel, setShowRefreshLabel] = useState(true)
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
   const dispatch = useDispatch()
@@ -105,18 +115,6 @@ const KeysHeader = (props: Props) => {
   }
 
   useEffect(() => {
-    globalThis.addEventListener('resize', updateSizes)
-
-    return () => {
-      globalThis.removeEventListener('resize', updateSizes)
-    }
-  }, [])
-
-  useEffect(() => {
-    updateSizes()
-  }, [sizes])
-
-  useEffect(() => {
     updateLastRefresh()
 
     interval = setInterval(() => {
@@ -126,11 +124,6 @@ const KeysHeader = (props: Props) => {
     }, TIMEOUT_TO_UPDATE_REFRESH_TIME)
     return () => clearInterval(interval)
   }, [lastRefreshTime])
-
-  const updateSizes = () => {
-    const isShowRefreshLabel = (rootDivRef?.current?.offsetWidth || 0) > HIDE_REFRESH_LABEL_WIDTH
-    setShowRefreshLabel(isShowRefreshLabel)
-  }
 
   const handleRefreshKeys = () => {
     sendEventTelemetry({
@@ -207,8 +200,32 @@ const KeysHeader = (props: Props) => {
     </EuiButton>
   )
 
-  const ViewSwitch = (
-    <div className={styles.viewTypeSwitch} data-testid="view-type-switcher">
+  const exitFullScreenBtn = (
+    <EuiToolTip
+      content="Exit Full Screen"
+      position="left"
+      anchorClassName={styles.exitFullScreenBtn}
+    >
+      <EuiButtonIcon
+        iconType="fullScreenExit"
+        color="primary"
+        aria-label="Exit full screen"
+        onClick={onExitFullScreen}
+        data-testid="toggle-full-screen"
+      />
+    </EuiToolTip>
+  )
+
+  const ViewSwitch = (width: number) => (
+    <div
+      className={
+        cx(styles.viewTypeSwitch, {
+          [styles.middleScreen]: width > HIDE_REFRESH_LABEL_WIDTH,
+          [styles.fullScreen]: width > FULL_SCREEN_RESOLUTION
+        })
+      }
+      data-testid="view-type-switcher"
+    >
       {viewTypes.map((view) => (
         <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
           <EuiButtonIcon
@@ -224,9 +241,9 @@ const KeysHeader = (props: Props) => {
     </div>
   )
 
-  const RefreshBtn = (
+  const RefreshBtn = (width: number) => (
     <div className={styles.refresh}>
-      {showRefreshLabel && (
+      {width > HIDE_REFRESH_LABEL_WIDTH && (
         <EuiTextColor className={styles.refreshSummary} style={{ verticalAlign: 'middle' }}>
           Last refresh:
           <span className={styles.refreshTime}>
@@ -257,24 +274,33 @@ const KeysHeader = (props: Props) => {
 
   return (
     <div className={styles.content} ref={rootDivRef}>
-      <div className={styles.top}>
-        <FilterKeyType />
-        <SearchKeyList />
-        {ViewSwitch}
-        {AddKeyBtn}
-      </div>
+      <AutoSizer disableHeight>
+        {({ width }) => (
+          <div style={{ width }}>
+            <div className={styles.top}>
+              <FilterKeyType />
+              <SearchKeyList />
+              {ViewSwitch(width)}
+              <div>
+                {AddKeyBtn}
+                {isFullScreen && exitFullScreenBtn}
+              </div>
+            </div>
 
-      <div className={styles.bottom}>
-        <KeysSummary
-          items={keysState.keys}
-          totalItemsCount={keysState.total}
-          scanned={isSearched || isFiltered || viewType === KeyViewType.Tree ? keysState.scanned : 0}
-          loading={loading}
-          scanMoreStyle={scanMoreStyle}
-          loadMoreItems={handleScanMore}
-        />
-        {RefreshBtn}
-      </div>
+            <div className={styles.bottom}>
+              <KeysSummary
+                items={keysState.keys}
+                totalItemsCount={keysState.total}
+                scanned={isSearched || isFiltered || viewType === KeyViewType.Tree ? keysState.scanned : 0}
+                loading={loading}
+                scanMoreStyle={scanMoreStyle}
+                loadMoreItems={handleScanMore}
+              />
+              {RefreshBtn(width)}
+            </div>
+          </div>
+        )}
+      </AutoSizer>
     </div>
   )
 }

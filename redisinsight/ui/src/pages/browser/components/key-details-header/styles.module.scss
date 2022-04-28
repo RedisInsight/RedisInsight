@@ -3,7 +3,7 @@
     .key-details-header {
       .euiFieldText--compressed,
       .euiFormControlLayout--compressed {
-        height: 31px !important;
+        height: 29px !important;
       }
 
       .euiFormControlLayout {
@@ -33,11 +33,10 @@
 }
 
 .container {
-  padding: 12px 12px 12px 16px;
+  min-height: 108px;
+  padding: 18px 18px 12px 18px;
   border-bottom: 1px solid var(--euiColorLightShade);
   min-width: 100%;
-  width: 1px;
-  min-height: 84px;
   position: relative;
 }
 
@@ -50,21 +49,16 @@
   line-height: 31px !important;
 }
 
-.keyType {
-  padding-top: 6px;
-  padding-right: 5px;
-}
-
 .flexItemTTL {
-  width: 180px;
-  min-width: 180px;
+  width: 152px;
+  min-width: 152px;
 }
 
 .ttlInput {
-  min-width: 110px;
+  min-width: 106px;
   font-size: 13px !important;
   &.editing {
-    width: 150px;
+    width: 124px;
   }
 }
 
@@ -87,9 +81,6 @@
   padding-left: 11px;
 }
 
-.groupSecondLine {
-  margin-bottom: -20px !important;
-}
 
 .controlsTTL,
 .controlsKey {
@@ -155,16 +146,16 @@
 .copyKey {
   position: absolute;
   padding-left: 7px;
-  padding-top: 2px;
+  padding-top: 4px;
   right: 0;
-  height: 25px;
+  height: 31px;
   width: 25px;
 }
 
 .subtitleActionBtns {
   display: flex;
   justify-content: flex-end;
-  padding-top: 4px;
+  align-items: center;
   right: 13px;
 }
 
@@ -183,10 +174,32 @@
   word-break: break-all;
 }
 
-.refreshKeyTooltip {
-  padding-right: 7%;
+.actionBtn {
+  margin-right: 12px;
+
+  &.withText {
+    color: var(--euiTextSubduedColor) !important;
+    :global(.euiButton__text) {
+      font: normal normal normal 12px/18px Graphik !important;
+    }
+  }
 }
 
 .capitalize {
   text-transform: capitalize;
+}
+
+.groupSecondLine {
+  margin-top: 4px !important;
+}
+
+.refreshSummary {
+  color: var(--euiColorMediumShade) !important;
+  font: normal normal normal 12px/18px Graphik;
+  padding-bottom: 2px;
+  margin-right: 4px;
+}
+
+.refreshTime {
+  color: var(--euiTextSubduedColor) !important;
 }

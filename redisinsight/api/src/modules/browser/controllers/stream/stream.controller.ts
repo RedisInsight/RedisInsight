@@ -34,7 +34,7 @@ export class StreamController {
     return this.service.createStream({ instanceId }, dto);
   }
 
-  @Put('')
+  @Post('entries')
   @ApiRedisInstanceOperation({
     description: 'Add entries to the stream',
     statusCode: 200,
@@ -53,7 +53,7 @@ export class StreamController {
     return this.service.addEntries({ instanceId }, dto);
   }
 
-  @Post('/get-entries')
+  @Post('/entries/get')
   @ApiRedisInstanceOperation({
     description: 'Get stream entries',
     statusCode: 200,

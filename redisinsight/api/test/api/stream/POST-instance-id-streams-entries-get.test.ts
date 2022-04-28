@@ -14,7 +14,7 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/instance/${instanceId}/streams/get-entries`);
+  request(server).post(`/instance/${instanceId}/streams/entries/get`);
 
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
@@ -65,7 +65,7 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-describe('POST /instance/:instanceId/streams/get-entries', () => {
+describe('POST /instance/:instanceId/streams/entries/get', () => {
   before(async () => await rte.data.generateKeys(true));
   before(async () => await rte.data.generateHugeStream(10000, false));
 

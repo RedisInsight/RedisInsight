@@ -141,6 +141,21 @@ export class AddStreamEntriesDto extends KeyDto {
   entries: StreamEntryDto[];
 }
 
+export class AddStreamEntriesResponse {
+  @ApiProperty({
+    type: String,
+    description: 'Key Name',
+  })
+  keyName: string;
+
+  @ApiProperty({
+    description: 'Entries IDs',
+    type: String,
+    isArray: true,
+  })
+  entries: string[];
+}
+
 export class CreateStreamDto extends IntersectionType(
   AddStreamEntriesDto,
   KeyWithExpireDto,

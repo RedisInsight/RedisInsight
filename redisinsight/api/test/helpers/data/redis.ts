@@ -211,7 +211,7 @@ export const initDataHelper = (rte) => {
     await executeCommand('json.set', constants.TEST_REJSON_KEY_3, '.', JSON.stringify(constants.TEST_REJSON_VALUE_3));
   };
 
-  // ReJSON-RL
+  // Streams
   const generateStreams = async (clean: boolean = false) => {
     if (clean) {
       await truncate();

@@ -14,7 +14,7 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).put(`/instance/${instanceId}/streams`);
+  request(server).post(`/instance/${instanceId}/streams/entries`);
 
 const entrySchema = Joi.object().keys({
   id: Joi.string().label('entries.0.id').required(),
@@ -34,11 +34,7 @@ const dataSchema = Joi.object({
 
 const responseSchema = Joi.object().keys({
   keyName: Joi.string().required(),
-  total: Joi.number().integer().required(),
-  lastGeneratedId: Joi.string().required(),
-  firstEntry: entrySchema.required(),
-  lastEntry: entrySchema.required(),
-  entries: Joi.array().items(entrySchema.required()).required(),
+  entries: Joi.array().items(Joi.string()).required(),
 }).required();
 
 const validInputData = {
@@ -73,7 +69,7 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-describe('POST /instance/:instanceId/streams/get-entries', () => {
+describe('POST /instance/:instanceId/streams/entries', () => {
   before(async () => await rte.data.generateKeys(true));
 
   describe('Validation', () => {
@@ -97,6 +93,7 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
             }
           ]
         },
+        responseSchema,
         after: async () => {
           expect(await rte.client.xlen(constants.TEST_STREAM_KEY_1)).to.eq(2);
           const [entry] = await rte.client.xrevrange(constants.TEST_STREAM_KEY_1, '+', '-', 'COUNT', 1);
@@ -124,6 +121,7 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
             },
           ]
         },
+        responseSchema,
         after: async () => {
           expect(await rte.client.xlen(constants.TEST_STREAM_KEY_1)).to.eq(4);
           const [entry1, entry2] = await rte.client.xrevrange(constants.TEST_STREAM_KEY_1, '+', '-', 'COUNT', 2);
@@ -197,6 +195,7 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
         data: {
           ...validInputData,
         },
+        responseSchema,
       },
       {
         name: 'Should throw error if no permissions for "exists" command',

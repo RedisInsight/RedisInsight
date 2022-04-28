@@ -66,7 +66,7 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-describe('POST /instance/:instanceId/streams/get-entries', () => {
+describe('POST /instance/:instanceId/streams', () => {
   before(async () => await rte.data.generateKeys(true));
 
   describe('Validation', () => {
@@ -87,7 +87,7 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
           keyName: constants.TEST_STREAM_KEY_1,
           entries: [
             {
-              id: constants.TEST_STREAM_ID_1,
+              id: '*',
               fields: {
                 [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
               }
@@ -97,9 +97,7 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
         statusCode: 201,
         after: async () => {
           const entries = await rte.client.xrange(constants.TEST_STREAM_KEY_1, '-', '+');
-          expect(entries).to.eql([
-            [constants.TEST_STREAM_ID_1, [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1]],
-          ]);
+          expect(entries[0][1]).to.eql([constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1]);
         },
       },
       {
@@ -108,7 +106,7 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
           keyName: constants.TEST_STREAM_KEY_1,
           entries: [
             {
-              id: constants.TEST_STREAM_ID_1,
+              id: '*',
               fields: {
                 [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
               },
@@ -123,9 +121,7 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
           expect(ttl).to.gt(0);
 
           const entries = await rte.client.xrange(constants.TEST_STREAM_KEY_1, '-', '+');
-          expect(entries).to.eql([
-            [constants.TEST_STREAM_ID_1, [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1]],
-          ]);
+          expect(entries[0][1]).to.eql([constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1]);
         },
       },
       {
@@ -134,14 +130,14 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
           keyName: constants.TEST_STREAM_KEY_1,
           entries: [
             {
-              id: constants.TEST_STREAM_ID_1,
+              id: '*',
               fields: {
                 [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
                 [constants.TEST_STREAM_FIELD_2]: constants.TEST_STREAM_VALUE_2,
               }
             },
             {
-              id: constants.TEST_STREAM_ID_2,
+              id: '*',
               fields: {
                 [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
                 [constants.TEST_STREAM_FIELD_2]: constants.TEST_STREAM_VALUE_2,
@@ -152,21 +148,13 @@ describe('POST /instance/:instanceId/streams/get-entries', () => {
         statusCode: 201,
         after: async () => {
           const entries = await rte.client.xrange(constants.TEST_STREAM_KEY_1, '-', '+');
-          expect(entries).to.eql([
-            [
-              constants.TEST_STREAM_ID_1,
-              [
-                constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1,
-                constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_VALUE_2,
-              ],
-            ],
-            [
-              constants.TEST_STREAM_ID_2,
-              [
-                constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1,
-                constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_VALUE_2,
-              ],
-            ],
+          expect(entries[0][1]).to.eql([
+            constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1,
+            constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_VALUE_2,
+          ]);
+          expect(entries[1][1]).to.eql([
+            constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1,
+            constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_VALUE_2,
           ]);
         },
       },

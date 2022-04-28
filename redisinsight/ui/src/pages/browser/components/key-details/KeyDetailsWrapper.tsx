@@ -25,16 +25,15 @@ export interface Props {
   keyProp: string | null
 }
 
-const KeyDetailsWrapper = (
-  {
+const KeyDetailsWrapper = (props: Props) => {
+  const {
     isFullScreen,
     onToggleFullScreen,
     onCloseKey,
     onEditKey,
     onDeleteKey,
     keyProp
-  }: Props
-) => {
+  } = props
   const dispatch = useDispatch()
 
   useEffect(() => {

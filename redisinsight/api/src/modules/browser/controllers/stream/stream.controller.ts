@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
-import { GetStreamEntriesDto, GetStreamEntriesResponse } from 'src/modules/browser/dto/stream.dto';
+import { CreateStreamDto, GetStreamEntriesDto, GetStreamEntriesResponse } from 'src/modules/browser/dto/stream.dto';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
 
 @ApiTags('Streams')
@@ -16,6 +16,18 @@ import { StreamService } from 'src/modules/browser/services/stream/stream.servic
 @UsePipes(new ValidationPipe({ transform: true }))
 export class StreamController {
   constructor(private service: StreamService) {}
+
+  @Post('')
+  @ApiRedisInstanceOperation({
+    description: 'Create stream',
+    statusCode: 201,
+  })
+  async createStream(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: CreateStreamDto,
+  ): Promise<void> {
+    return this.service.createStream({ instanceId }, dto);
+  }
 
   @Post('/get-entries')
   @ApiRedisInstanceOperation({

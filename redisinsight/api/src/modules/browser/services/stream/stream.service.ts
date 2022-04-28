@@ -1,18 +1,24 @@
-import { chunk } from 'lodash';
+import { chunk, flatMap, map } from 'lodash';
 import {
-  BadRequestException,
+  BadRequestException, ConflictException,
   Injectable,
   Logger, NotFoundException,
 } from '@nestjs/common';
-import { catchAclError, convertStringsArrayToObject } from 'src/utils';
+import { catchAclError, catchTransactionError, convertStringsArrayToObject } from 'src/utils';
 import { SortOrder } from 'src/constants/sort';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
+  BrowserToolCommands,
   BrowserToolKeysCommands,
   BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { GetStreamEntriesDto, GetStreamEntriesResponse, StreamEntryDto } from 'src/modules/browser/dto/stream.dto';
+import {
+  CreateStreamDto,
+  GetStreamEntriesDto,
+  GetStreamEntriesResponse,
+  StreamEntryDto,
+} from 'src/modules/browser/dto/stream.dto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 
@@ -131,6 +137,73 @@ export class StreamService {
     );
 
     return StreamService.formatReplyToDto(execResult);
+  }
+
+  /**
+   * Create streams with\without expiration time and add multiple entries in a transaction
+   * @param clientOptions
+   * @param dto
+   */
+  public async createStream(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: CreateStreamDto,
+  ): Promise<void> {
+    this.logger.log('Creating stream data type.');
+    const { keyName, entries } = dto;
+
+    try {
+      const isExist = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [keyName],
+      );
+      if (isExist) {
+        this.logger.error(
+          `Failed to create stream data type. ${ERROR_MESSAGES.KEY_NAME_EXIST} key: ${keyName}`,
+        );
+        return Promise.reject(
+          new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST),
+        );
+      }
+
+      const entriesArray = entries.map((entry) => [
+        entry.id,
+        ...flatMap(map(entry.fields, (value, field) => [field, value])),
+      ]);
+
+      const toolCommands: Array<[
+        toolCommand: BrowserToolCommands,
+        ...args: Array<string | number>,
+      ]> = entriesArray.map((entry) => (
+        [
+          BrowserToolStreamCommands.XAdd,
+          keyName,
+          ...entry,
+        ]
+      ));
+
+      if (dto.expire) {
+        toolCommands.push([BrowserToolKeysCommands.Expire, keyName, dto.expire]);
+      }
+
+      const [
+        transactionError,
+        transactionResults,
+      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      catchTransactionError(transactionError, transactionResults);
+
+      this.logger.log('Succeed to create stream.');
+
+      return undefined;
+    } catch (error) {
+      this.logger.error('Failed to create stream.', error);
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw catchAclError(error);
+    }
   }
 
   /**

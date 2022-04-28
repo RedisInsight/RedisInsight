@@ -63,6 +63,7 @@ export const initDataHelper = (rte) => {
     await generateZSets();
     await generateHashes();
     await generateReJSONs();
+    await generateStreams();
   };
 
   const insertKeysBasedOnEnv = async (pipeline, forcePipeline: boolean = false) => {
@@ -208,6 +209,15 @@ export const initDataHelper = (rte) => {
     await executeCommand('json.set', constants.TEST_REJSON_KEY_1, '.', JSON.stringify(constants.TEST_REJSON_VALUE_1));
     await executeCommand('json.set', constants.TEST_REJSON_KEY_2, '.', JSON.stringify(constants.TEST_REJSON_VALUE_2));
     await executeCommand('json.set', constants.TEST_REJSON_KEY_3, '.', JSON.stringify(constants.TEST_REJSON_VALUE_3));
+  };
+
+  // ReJSON-RL
+  const generateStreams = async (clean: boolean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    await client.xadd(constants.TEST_STREAM_KEY_1, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
   };
 
   const generateHugeStream = async (number: number = 100000, clean: boolean) => {

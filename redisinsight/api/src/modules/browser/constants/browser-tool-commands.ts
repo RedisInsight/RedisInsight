@@ -78,6 +78,7 @@ export enum BrowserToolStreamCommands {
   XInfoStream = 'xinfo stream',
   XRange = 'xrange',
   XRevRange = 'xrevrange',
+  XAdd = 'xadd',
 }
 
 export enum BrowserToolTSCommands {

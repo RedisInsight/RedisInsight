@@ -108,7 +108,7 @@ export class StreamController {
     responses: [
       {
         status: 200,
-        description: 'Returnы first entry id and last entry id',
+        description: 'Returns first entry id and last entry id',
         type: GetStreamRangeInfoResponse,
       },
     ],

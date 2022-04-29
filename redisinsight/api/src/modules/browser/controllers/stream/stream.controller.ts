@@ -75,9 +75,9 @@ export class StreamController {
     return this.service.getEntries({ instanceId }, dto);
   }
 
-  @Delete('/members')
+  @Delete('/entries')
   @ApiRedisInstanceOperation({
-    description: 'Remove the specified members from the Set stored at key',
+    description: 'Remove the specified entries from the Stream stored at key',
     statusCode: 200,
     responses: [
       {

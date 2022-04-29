@@ -156,6 +156,28 @@ export class AddStreamEntriesResponse {
   entries: string[];
 }
 
+export class DeleteStreamEntriesDto extends KeyDto {
+  @ApiProperty({
+    description: 'Entries IDs',
+    type: String,
+    isArray: true,
+    example: ['1650985323741-0', '1650985323770-0'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => String)
+  entries: string[];
+}
+
+export class DeleteStreamEntriesResponse {
+  @ApiProperty({
+    description: 'Number of deleted entries',
+    type: Number,
+  })
+  affected: number;
+}
+
 export class CreateStreamDto extends IntersectionType(
   AddStreamEntriesDto,
   KeyWithExpireDto,

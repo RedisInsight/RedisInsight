@@ -18,6 +18,8 @@ import {
   CreateStreamDto,
   GetStreamEntriesDto,
   GetStreamEntriesResponse,
+  DeleteStreamEntriesDto,
+  DeleteStreamEntriesResponse,
   StreamEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -216,7 +218,7 @@ export class StreamService {
   }
 
   /**
-   * Aff entries to the existing stream and return entries IDs list
+   * Add entries to the existing stream and return entries IDs list
    * @param clientOptions
    * @param dto
    */
@@ -283,6 +285,48 @@ export class StreamService {
 
       throw catchAclError(error);
     }
+  }
+
+  /**
+ * Delete entries from the existing stream and return number of deleted entries
+ * @param clientOptions
+ * @param dto
+ */
+  public async deleteEntries(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: DeleteStreamEntriesDto,
+  ): Promise<DeleteStreamEntriesResponse> {
+    this.logger.log('Deleting entries from the Stream data type.');
+    const { keyName, entries } = dto;
+    let result;
+    try {
+      const isExist = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [keyName],
+      );
+      if (!isExist) {
+        this.logger.error(
+          `Failed to delete entries from the Stream data type. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
+        );
+        return Promise.reject(
+          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
+        );
+      }
+      result = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolStreamCommands.XDel,
+        [keyName, ...entries],
+      );
+    } catch (error) {
+      this.logger.error('Failed to delete entries from the Stream data type.', error);
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+      catchAclError(error);
+    }
+    this.logger.log('Succeed to delete entries from the Stream data type.');
+    return { affected: result };
   }
 
   /**

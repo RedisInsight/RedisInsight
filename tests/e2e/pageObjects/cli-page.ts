@@ -48,67 +48,66 @@ export class CliPage {
     cliEndpoint = Selector('[data-testid^=cli-endpoint]');
     cliDbIndex = Selector('[data-testid=cli-db-index]');
 
-  /**
+    /**
   * Select filter group type
   * @param groupName The group name
   */
-  async selectFilterGroupType(groupName: string): Promise<void>{
-      await t.click(this.filterGroupTypeButton);
-      await t.click(this.filterOptionGroupType.withExactText(groupName));
-  }
+    async selectFilterGroupType(groupName: string): Promise<void>{
+        await t.click(this.filterGroupTypeButton);
+        await t.click(this.filterOptionGroupType.withExactText(groupName));
+    }
 
-  /**
+    /**
    * Add keys from CLI
    * @param keyCommand The command from cli to add key
    * @param amount The amount of the keys
    * @param keyName The name of the keys. The default value is keyName
    */
-  async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void>{
-      //Open CLI
-      await t.click(this.cliExpandButton);
-      //Add keys
-      const keyValueArray = await common.createArrayWithKeyValueAndKeyname(amount, keyName);
-      await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
-      await t.pressKey('enter');
-      await t.click(this.cliCollapseButton);
-  }
+    async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void>{
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        //Add keys
+        const keyValueArray = await common.createArrayWithKeyValueAndKeyname(amount, keyName);
+        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
+    }
 
-  /**
+    /**
    * Send command in Cli
    * @param command The command to send
    */
-  async sendCommandInCli(command: string): Promise<void>{
-      //Open CLI
-      await t.click(this.cliExpandButton);
-      await t.typeText(this.cliCommandInput, command, { paste: true });
-      await t.pressKey('enter');
-      await t.click(this.cliCollapseButton);
-  }
+    async sendCommandInCli(command: string): Promise<void>{
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        await t.typeText(this.cliCommandInput, command, { paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
+    }
 
-  /**
+    /**
    * Get command result execution
    * @param command The command for send in CLI
    */
-  async getSuccessCommandResultFromCli(command: string): Promise<string>{
-      //Open CLI
-      await t.click(this.cliExpandButton);
-      //Add keys
-      await t.typeText(this.cliCommandInput, command, { paste: true });
-      await t.pressKey('enter');
-      const commandResult = await this.cliOutputResponseSuccess.innerText;
-      await t.click(this.cliCollapseButton);
-      return commandResult;
-  }
+    async getSuccessCommandResultFromCli(command: string): Promise<string>{
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        //Add keys
+        await t.typeText(this.cliCommandInput, command, { paste: true });
+        await t.pressKey('enter');
+        const commandResult = await this.cliOutputResponseSuccess.innerText;
+        await t.click(this.cliCollapseButton);
+        return commandResult;
+    }
 
-  /**
+    /**
    * Send command in Cli and wait for total keys after 5 seconds
    * @param command The command to send
    */
-  async sendCliCommandAndWaitForTotalKeys(command: string): Promise<string> {
-      await this.sendCommandInCli(command);
-      //Wait 5 seconds and return total keys
-      await t.wait(5000);
-      const totalKeys = await browserPage.overviewTotalKeys.innerText;
-      return totalKeys;
-  }
+    async sendCliCommandAndWaitForTotalKeys(command: string): Promise<string> {
+        await this.sendCommandInCli(command);
+        //Wait 5 seconds and return total keys
+        await t.wait(5000);
+        return await browserPage.overviewTotalKeys.innerText;
+    }
 }

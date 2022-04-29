@@ -1,9 +1,9 @@
+import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -15,17 +15,16 @@ let keyName = chance.word({ length: 10 });
 fixture `Cases with large data`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see relevant information about key size', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see relevant information about key size', async t => {
         keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
@@ -37,14 +36,14 @@ test
         //Remember the values of the key size
         await browserPage.openKeyDetails(keyName);
         const keySizeText = await browserPage.keySizeDetails.textContent;
-        const keySize = keySizeText.split('KB')[0];
+        const keySize = keySizeText.split(' ')[2];
         //Verify that user can see relevant information about key size
-        await t.expect(keySizeText).contains('KB', 'Key size text');
-        await t.expect(+keySize).gt(5, 'Key size value');
+        await t.expect(keySizeText).contains('Key Size:', 'Key size text');
+        await t.expect(keySizeText).contains('KB', 'Key measure');
+        await t.expect(+keySize).gt(10, 'Key size value');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see relevant information about key length', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see relevant information about key length', async t => {
         keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);

@@ -1,8 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
-  Post, Put,
+  Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -13,6 +14,8 @@ import {
   CreateStreamDto,
   GetStreamEntriesDto,
   GetStreamEntriesResponse,
+  DeleteStreamEntriesDto,
+  DeleteStreamEntriesResponse,
 } from 'src/modules/browser/dto/stream.dto';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
 
@@ -70,5 +73,29 @@ export class StreamController {
       @Body() dto: GetStreamEntriesDto,
   ): Promise<GetStreamEntriesResponse> {
     return this.service.getEntries({ instanceId }, dto);
+  }
+
+  @Delete('/entries')
+  @ApiRedisInstanceOperation({
+    description: 'Remove the specified entries from the Stream stored at key',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Ok',
+        type: DeleteStreamEntriesResponse,
+      },
+    ],
+  })
+  async deleteEntries(
+    @Param('dbInstance') dbInstance: string,
+      @Body() dto: DeleteStreamEntriesDto,
+  ): Promise<DeleteStreamEntriesResponse> {
+    return await this.service.deleteEntries(
+      {
+        instanceId: dbInstance,
+      },
+      dto,
+    );
   }
 }

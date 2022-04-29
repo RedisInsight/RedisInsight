@@ -15,21 +15,20 @@ import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/keys'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
 
 import {
-  AddCommonFieldsFormConfig as defaultConfig,
   AddJSONFormConfig as config
 } from '../constants/fields-config'
 
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-import AddKeyCommonFields from '../AddKeyCommonFields/AddKeyCommonFields'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  keyName: string
+  keyTTL: Maybe<number>
+  onCancel: (isCancelled?: boolean) => void
 }
 
 const AddKeyReJSON = (props: Props) => {
+  const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
-  const [keyName, setKeyName] = useState<string>('')
-  const [keyTTL, setKeyTTL] = useState<Maybe<number>>(undefined)
   const [ReJSONValue, setReJSONValue] = useState<string>('')
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
@@ -65,20 +64,11 @@ const AddKeyReJSON = (props: Props) => {
     if (keyTTL !== undefined) {
       data.expire = keyTTL
     }
-    dispatch(addReJSONKey(data, props.onCancel))
+    dispatch(addReJSONKey(data, onCancel))
   }
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <AddKeyCommonFields
-        config={defaultConfig}
-        loading={loading}
-        keyName={keyName}
-        setKeyName={setKeyName}
-        keyTTL={keyTTL}
-        setKeyTTL={setKeyTTL}
-      />
-
       <EuiFormRow label={config.value.label} fullWidth>
         <EuiTextArea
           fullWidth
@@ -110,7 +100,7 @@ const AddKeyReJSON = (props: Props) => {
               <div>
                 <EuiButton
                   color="secondary"
-                  onClick={() => props.onCancel(true)}
+                  onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
                   <EuiTextColor>Cancel</EuiTextColor>

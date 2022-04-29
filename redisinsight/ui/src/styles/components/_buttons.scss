@@ -113,3 +113,29 @@
     }
   }
 }
+
+.euiButtonEmpty.euiButtonEmpty--primary {
+  color: var(--euiTextSubduedColor);
+  transition: color ease 0.3s;
+
+  .euiButtonEmpty__text, .euiText {
+    transition: color ease 0.3s;
+    color: var(--euiTextSubduedColor) !important;
+  }
+
+  &:hover, &:focus {
+    text-decoration: none !important;
+  }
+
+  &:hover {
+    color: var(--euiColorSecondaryText);
+
+    .euiButtonEmpty__text, .euiText {
+      color: var(--euiColorSecondaryText) !important;
+    }
+  }
+
+  &:focus {
+    background-color: transparent;
+  }
+}

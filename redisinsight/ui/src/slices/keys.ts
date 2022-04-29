@@ -690,6 +690,16 @@ export function addReJSONKey(
 }
 
 // Asynchronous thunk action
+export function addStreamKey(
+  data: CreateHashWithExpireDto,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  const endpoint = ApiEndpoints.STREAMS
+  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+}
+
+// Asynchronous thunk action
 export function deleteKeyAction(key: string, onSuccessAction?: () => void) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(deleteKey())

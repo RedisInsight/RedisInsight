@@ -1,13 +1,13 @@
 interface IFormField {
-  name: string;
-  isRequire: boolean;
-  label: string;
-  placeholder: string;
+  name: string
+  isRequire: boolean
+  label: string
+  placeholder: string
 }
 
 export interface IAddCommonFieldsFormConfig {
-  keyName: IFormField;
-  keyTTL: IFormField;
+  keyName: IFormField
+  keyTTL: IFormField
 }
 
 export const AddCommonFieldsFormConfig: IAddCommonFieldsFormConfig = {
@@ -26,25 +26,11 @@ export const AddCommonFieldsFormConfig: IAddCommonFieldsFormConfig = {
 }
 
 interface IAddHashFormConfig {
-  keyName: IFormField;
-  keyTTL: IFormField;
-  fieldName: IFormField;
-  fieldValue: IFormField;
+  fieldName: IFormField
+  fieldValue: IFormField
 }
 
 export const AddHashFormConfig: IAddHashFormConfig = {
-  keyName: {
-    name: 'keyName',
-    isRequire: true,
-    label: 'Key name*',
-    placeholder: 'Key Name',
-  },
-  keyTTL: {
-    name: 'keyTTL',
-    isRequire: false,
-    label: 'TTL',
-    placeholder: 'No limit',
-  },
   fieldName: {
     name: 'fieldName',
     isRequire: false,
@@ -60,8 +46,8 @@ export const AddHashFormConfig: IAddHashFormConfig = {
 }
 
 interface IAddZsetFormConfig {
-  score: IFormField;
-  member: IFormField;
+  score: IFormField
+  member: IFormField
 }
 
 export const AddZsetFormConfig: IAddZsetFormConfig = {
@@ -80,7 +66,7 @@ export const AddZsetFormConfig: IAddZsetFormConfig = {
 }
 
 interface IAddSetFormConfig {
-  member: IFormField;
+  member: IFormField
 }
 
 export const AddSetFormConfig: IAddSetFormConfig = {
@@ -93,7 +79,7 @@ export const AddSetFormConfig: IAddSetFormConfig = {
 }
 
 interface IAddStringFormConfig {
-  value: IFormField;
+  value: IFormField
 }
 
 export const AddStringFormConfig: IAddStringFormConfig = {
@@ -106,8 +92,8 @@ export const AddStringFormConfig: IAddStringFormConfig = {
 }
 
 interface IAddListFormConfig {
-  element: IFormField;
-  count: IFormField;
+  element: IFormField
+  count: IFormField
 }
 
 export const AddListFormConfig: IAddListFormConfig = {
@@ -126,7 +112,7 @@ export const AddListFormConfig: IAddListFormConfig = {
 }
 
 interface IAddJSONFormConfig {
-  value: IFormField;
+  value: IFormField
 }
 
 export const AddJSONFormConfig: IAddJSONFormConfig = {
@@ -135,5 +121,32 @@ export const AddJSONFormConfig: IAddJSONFormConfig = {
     isRequire: false,
     label: 'Value*',
     placeholder: 'Enter JSON',
+  },
+}
+
+interface IAddStreamFormConfig {
+  entryId: IFormField
+  fieldName: IFormField
+  fieldValue: IFormField
+}
+
+export const AddStreamFormConfig: IAddStreamFormConfig = {
+  entryId: {
+    name: 'entryId',
+    isRequire: true,
+    label: 'Entry ID *',
+    placeholder: 'Enter Entry ID *'
+  },
+  fieldName: {
+    name: 'fieldName',
+    isRequire: false,
+    label: 'Field',
+    placeholder: 'Enter Field *',
+  },
+  fieldValue: {
+    name: 'fieldValue',
+    isRequire: false,
+    label: 'Value',
+    placeholder: 'Enter Value *',
   },
 }

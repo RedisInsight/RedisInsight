@@ -13,11 +13,13 @@ import {
   BrowserToolKeysCommands,
   BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { KeyDto } from 'src/modules/browser/dto/keys.dto';
 import {
   AddStreamEntriesDto, AddStreamEntriesResponse,
   CreateStreamDto,
   GetStreamEntriesDto,
   GetStreamEntriesResponse,
+  GetStreamRangeInfoResponse,
   DeleteStreamEntriesDto,
   DeleteStreamEntriesResponse,
   StreamEntryDto,
@@ -327,6 +329,27 @@ export class StreamService {
     }
     this.logger.log('Succeed to delete entries from the Stream data type.');
     return { affected: result };
+  }
+
+  /**
+ * Get stream firstEntry and lastEntry ids
+ * @param clientOptions
+ * @param dto
+ */
+  public async getRangeInfo(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: KeyDto,
+  ): Promise<GetStreamRangeInfoResponse> {
+    this.logger.log('Deleting entries from the Stream data type.');
+    const { keyName } = dto;
+
+    const result = await this.browserTool.execCommand(
+      clientOptions,
+      BrowserToolStreamCommands.XInfoStream,
+      [keyName],
+    );
+    return { firstEntry: result[11][0], lastEntry: result[13][0] };
+
   }
 
   /**

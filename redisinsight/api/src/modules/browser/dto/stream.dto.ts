@@ -178,6 +178,20 @@ export class DeleteStreamEntriesResponse {
   affected: number;
 }
 
+export class GetStreamRangeInfoResponse {
+  @ApiProperty({
+    type: String,
+    description: 'Key Name',
+  })
+  firstEntry: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Key Name',
+  })
+  lastEntry: string;
+}
+
 export class CreateStreamDto extends IntersectionType(
   AddStreamEntriesDto,
   KeyWithExpireDto,

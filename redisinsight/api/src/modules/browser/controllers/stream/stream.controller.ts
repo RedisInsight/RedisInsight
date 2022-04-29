@@ -9,11 +9,13 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
+import { KeyDto } from 'src/modules/browser/dto/keys.dto';
 import {
   AddStreamEntriesDto, AddStreamEntriesResponse,
   CreateStreamDto,
   GetStreamEntriesDto,
   GetStreamEntriesResponse,
+  GetStreamRangeInfoResponse,
   DeleteStreamEntriesDto,
   DeleteStreamEntriesResponse,
 } from 'src/modules/browser/dto/stream.dto';
@@ -97,5 +99,24 @@ export class StreamController {
       },
       dto,
     );
+  }
+
+  @Post('/info/get')
+  @ApiRedisInstanceOperation({
+    description: 'Get stream first and last entries ids',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Returns ordered stream entries in defined range.',
+        type: GetStreamRangeInfoResponse,
+      },
+    ],
+  })
+  async getRangeInfo(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: KeyDto,
+  ): Promise<GetStreamRangeInfoResponse> {
+    return this.service.getRangeInfo({ instanceId }, dto);
   }
 }

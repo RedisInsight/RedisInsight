@@ -38,8 +38,8 @@ export const FILTER_KEY_TYPE_OPTIONS = [
   },
   {
     text: 'STREAM',
-    value: UnsupportedKeyTypes.Stream,
-    color: GROUP_TYPES_COLORS[UnsupportedKeyTypes.Stream],
+    value: KeyTypes.Stream,
+    color: GROUP_TYPES_COLORS[KeyTypes.Stream],
   },
   {
     text: 'GRAPH',

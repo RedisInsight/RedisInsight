@@ -8,9 +8,6 @@ export enum KeyTypes {
   String = 'string',
   ReJSON = 'ReJSON-RL',
   JSON = 'json',
-}
-
-export enum UnsupportedKeyTypes {
   Stream = 'stream',
 }
 
@@ -27,7 +24,7 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [KeyTypes.String]: 'String',
   [KeyTypes.ReJSON]: 'JSON',
   [KeyTypes.JSON]: 'JSON',
-  [UnsupportedKeyTypes.Stream]: 'Stream',
+  [KeyTypes.Stream]: 'Stream',
   [ModulesKeyTypes.Graph]: 'GRAPH',
   [ModulesKeyTypes.TimeSeries]: 'TS',
   [CommandGroup.Bitmap]: 'Bitmap',
@@ -58,7 +55,7 @@ export const GROUP_TYPES_COLORS = Object.freeze({
   [KeyTypes.String]: 'var(--typeStringColor)',
   [KeyTypes.ReJSON]: 'var(--typeReJSONColor)',
   [KeyTypes.JSON]: 'var(--typeReJSONColor)',
-  [UnsupportedKeyTypes.Stream]: 'var(--typeStreamColor)',
+  [KeyTypes.Stream]: 'var(--typeStreamColor)',
   [ModulesKeyTypes.Graph]: 'var(--typeGraphColor)',
   [ModulesKeyTypes.TimeSeries]: 'var(--typeTimeSeriesColor)',
   [CommandGroup.SortedSet]: 'var(--groupSortedSetColor)',
@@ -132,7 +129,7 @@ export interface LengthNamingByType {
 export const LENGTH_NAMING_BY_TYPE: LengthNamingByType = Object.freeze({
   [ModulesKeyTypes.Graph]: 'Nodes',
   [ModulesKeyTypes.TimeSeries]: 'Samples',
-  [UnsupportedKeyTypes.Stream]: 'Entries'
+  [KeyTypes.Stream]: 'Entries'
 })
 
 export interface ModulesKeyTypesNames {

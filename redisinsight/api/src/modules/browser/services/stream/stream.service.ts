@@ -340,7 +340,7 @@ export class StreamService {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: KeyDto,
   ): Promise<GetStreamRangeInfoResponse> {
-    this.logger.log('Deleting entries from the Stream data type.');
+    this.logger.log('Succeed get stream first and last entries');
     const { keyName } = dto;
 
     const result = await this.browserTool.execCommand(
@@ -349,7 +349,6 @@ export class StreamService {
       [keyName],
     );
     return { firstEntry: result[11][0], lastEntry: result[13][0] };
-
   }
 
   /**

@@ -181,13 +181,13 @@ export class DeleteStreamEntriesResponse {
 export class GetStreamRangeInfoResponse {
   @ApiProperty({
     type: String,
-    description: 'Key Name',
+    description: 'First entry id',
   })
   firstEntry: string;
 
   @ApiProperty({
     type: String,
-    description: 'Key Name',
+    description: 'Last entry id',
   })
   lastEntry: string;
 }

@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import {env, rte} from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -108,7 +108,7 @@ test
         await t.expect(cliPage.cliHelperOutputTitles.withText('SADD').exists).ok('Proper command was found');
     });
 test
-    .meta({ rte: rte.standalone })('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
         const commandForSearch = 'TS.';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
@@ -128,7 +128,7 @@ test
         await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
         const commandForSearch = 'GRAPH.';
         const externalPageLink = 'https://redis.io/commands/graph.config-get/';
         //Open Command Helper

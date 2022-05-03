@@ -1,9 +1,10 @@
-import { t, Selector } from 'testcafe';
+import { t, Selector, ClientFunction } from 'testcafe';
 import { Common } from '../helpers/common';
 import { BrowserPage } from '../pageObjects';
 
 const common = new Common();
 const browserPage = new BrowserPage();
+const getPageUrl = ClientFunction(() => window.location.href);
 
 export class CliPage {
     //-------------------------------------------------------------------------------------------
@@ -109,5 +110,30 @@ export class CliPage {
         //Wait 5 seconds and return total keys
         await t.wait(5000);
         return await browserPage.overviewTotalKeys.innerText;
+    }
+
+    /**
+     * Check URL of command opened from command helper
+     * @param command The command for which to open Read more link
+     * @param url Command URL for external resourse
+     */
+    async checkURLCommand(command: string, url: string): Promise<void> {
+        await t.click(this.cliHelperOutputTitles.withExactText(command));
+        await t.click(this.readMoreButton);
+        await t.expect(getPageUrl()).eql(url, 'The opened page');
+    }
+
+    /**
+     * Check URL of command opened from command helper
+     * @param searchedCommand Searched command in Command Helper
+     * @param listToCompare The list with commands to compare with opened in Command Helper
+     */
+    async checkSearchedCommandInCommandHelper(searchedCommand: string, listToCompare: string[]): Promise<void> {
+        await t.typeText(this.cliHelperSearch, searchedCommand, { speed: 0.5 });
+        //Verify results in the output
+        const commandsCount = await this.cliHelperOutputTitles.count;
+        for (let i = 0; i < commandsCount; i++) {
+            await t.expect(this.cliHelperOutputTitles.nth(i).textContent).eql(listToCompare[i], 'Results in the output contains searched value');
+        }
     }
 }

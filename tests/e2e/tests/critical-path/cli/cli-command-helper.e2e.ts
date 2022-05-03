@@ -1,4 +1,3 @@
-import { ClientFunction } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { CliPage } from '../../../pageObjects';
@@ -11,7 +10,6 @@ const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
 const COMMAND_GROUP_TIMESERIES = 'TimeSeries';
 const COMMAND_GROUP_GRAPH = 'Graph';
-const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `CLI Command helper`
     .meta({ type: 'critical_path' })
@@ -123,18 +121,10 @@ test
         }
         //Unselect group from list
         await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
-        //Search per command
-        await t.expect(cliPage.cliHelperSearch.visible).ok('Search field', { timeout: 3000 });
-        await t.typeText(cliPage.cliHelperSearch, commandForSearch, { replace: true, paste: true });
-        //Verify results in the output
-        const commandsCount = await cliPage.cliHelperOutputTitles.count;
-        for (let i = 0; i < commandsCount; i++) {
-            await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(timeSeriesCommands[i], 'Results in the output contains searched value');
-        }
-        //Check first command documentation url
-        await t.click(cliPage.cliHelperOutputTitles.withExactText(timeSeriesCommands[0]));
-        await t.click(cliPage.readMoreButton);
-        await t.expect(getPageUrl()).eql(`https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`, 'The opened page');
+        //Search per part of command and check all opened commands
+        await cliPage.checkSearchedCommandInCommandHelper(commandForSearch, timeSeriesCommands);
+        //Check the first command documentation url
+        await cliPage.checkURLCommand(timeSeriesCommands[0], `https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`);
         await t.switchToParentWindow();
     });
 test
@@ -152,18 +142,9 @@ test
         }
         //Unselect group from list
         await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
-        await t.expect(cliPage.filterOptionGroupType.exists).notOk('Dropdown with groups');
-        //Search per command
-        await t.expect(cliPage.cliHelperSearch.visible).ok('Search field', { timeout: 3000 });
-        await t.typeText(cliPage.cliHelperSearch, commandForSearch, { replace: true, paste: true });
-        //Verify results in the output
-        const commandsCount = await cliPage.cliHelperOutputTitles.count;
-        for(let i = 0; i < commandsCount; i++){
-            await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(graphCommands[i], 'Results in the output contains searched value');
-        }
-        //Check first command documentation url
-        await t.click(cliPage.cliHelperOutputTitles.withExactText(graphCommands[0]));
-        await t.click(cliPage.readMoreButton);
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        //Search per part of command and check all opened commands
+        await cliPage.checkSearchedCommandInCommandHelper(commandForSearch, graphCommands);
+        //Check the first command documentation url
+        await cliPage.checkURLCommand(graphCommands[0], externalPageLink);
         await t.switchToParentWindow();
     });

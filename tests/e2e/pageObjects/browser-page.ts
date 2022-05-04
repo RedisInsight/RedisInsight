@@ -151,12 +151,12 @@ export class BrowserPage {
     multiSearchArea = Selector(this.cssFilteringLabel);
     keyDetailsHeader = Selector('[data-testid=key-details-header]');
     keyListTable = Selector('[data-testid=keyList-table]');
-    keyDetailsTable = Selector('#keyDetails');
+    keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
     progressLine = Selector('div.euiProgress');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
-    noKeysToDisplayText = Selector('p').withExactText('Select the key from the list on the left to see the details of the key.');
+    noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
 
     /**
      * Adding a new String key

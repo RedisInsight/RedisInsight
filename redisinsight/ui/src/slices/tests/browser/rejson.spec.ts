@@ -29,9 +29,9 @@ import reducer, {
   setReJSONDataAction,
   appendReJSONArrayItemAction,
   removeReJSONKeyAction,
-} from '../rejson'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { refreshKeyInfo } from '../keys'
+} from '../../browser/rejson'
+import { addErrorNotification, addMessageNotification } from '../../app/notifications'
+import { refreshKeyInfo } from '../../browser/keys'
 
 jest.mock('uiSrc/services')
 

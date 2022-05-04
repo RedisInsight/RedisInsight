@@ -22,9 +22,9 @@ import reducer, {
   createInstancesRedisClusterSuccess,
   createInstancesRedisClusterFailure,
   addInstancesRedisCluster,
-} from '../cluster'
+} from '../../instances/cluster'
 
-import { addErrorNotification } from '../app/notifications'
+import { addErrorNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
 

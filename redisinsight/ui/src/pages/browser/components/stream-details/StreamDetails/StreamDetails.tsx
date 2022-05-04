@@ -39,7 +39,7 @@ export interface Props {
 }
 
 const StreamDetails = (props: Props) => {
-  const { data: entries, columns, onClosePopover } = props
+  const { data: entries = [], columns = [], onClosePopover } = props
   const dispatch = useDispatch()
 
   const { loading } = useSelector(streamSelector)
@@ -102,7 +102,7 @@ const StreamDetails = (props: Props) => {
           noItemsMessage={NoResultsFoundText}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
-          tableWidth={(columns.length) * minColumnWidth - actionsWidth}
+          tableWidth={columns.length * minColumnWidth - actionsWidth}
           sortedColumn={{
             column: sortedColumnName,
             order: sortedColumnOrder,

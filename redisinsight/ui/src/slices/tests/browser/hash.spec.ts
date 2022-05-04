@@ -14,7 +14,7 @@ import {
   deleteKeySuccess,
   deleteKeyFromList,
   updateSelectedKeyRefreshTime,
-} from '../keys'
+} from '../../browser/keys'
 import reducer, {
   deleteHashFields,
   fetchMoreHashFields,
@@ -581,6 +581,7 @@ describe('hash slice', () => {
           const mockedStore = mockStore(nextState)
 
           apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+          apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
           // Act
           await mockedStore.dispatch<any>(deleteHashFields(key, fields))

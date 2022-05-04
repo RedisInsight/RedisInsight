@@ -37,10 +37,10 @@ import reducer, {
   changeInstanceAliasSuccess,
   changeInstanceAliasAction,
   resetConnectedInstance,
-} from '../instances'
-import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../app/notifications'
-import { ConnectionType, InitialStateInstances, Instance } from '../interfaces'
-import { loadMastersSentinel } from '../sentinel'
+} from '../../instances/instances'
+import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
+import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
+import { loadMastersSentinel } from '../../instances/sentinel'
 
 jest.mock('uiSrc/services')
 jest.mock('uiSrc/constants')

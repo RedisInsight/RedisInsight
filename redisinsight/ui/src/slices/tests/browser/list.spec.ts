@@ -15,7 +15,7 @@ import {
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
-} from '../keys'
+} from '../../browser/keys'
 import reducer, {
   initialState,
   setListInitialState,
@@ -47,8 +47,8 @@ import reducer, {
   deleteListElements,
   deleteListElementsSuccess,
   deleteListElementsFailure
-} from '../list'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
+} from '../../browser/list'
+import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
 

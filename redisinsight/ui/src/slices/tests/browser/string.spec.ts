@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { refreshKeyInfo } from '../keys'
+import { refreshKeyInfo } from '../../browser/keys'
 import reducer, {
   initialState,
   getString,
@@ -17,7 +17,7 @@ import reducer, {
   updateValueFailure,
   resetStringValue,
   updateStringValueAction
-} from '../string'
+} from '../../browser/string'
 
 let store: typeof mockedStore
 beforeEach(() => {

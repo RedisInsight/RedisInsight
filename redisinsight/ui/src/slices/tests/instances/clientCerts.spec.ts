@@ -8,7 +8,7 @@ import reducer, {
   loadClientCertsFailure,
   clientCertsSelector,
   fetchClientCerts,
-} from '../clientCerts'
+} from '../../instances/clientCerts'
 
 jest.mock('uiSrc/services')
 

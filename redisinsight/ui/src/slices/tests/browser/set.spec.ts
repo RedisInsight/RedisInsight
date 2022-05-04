@@ -15,7 +15,7 @@ import {
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
-} from '../keys'
+} from '../../browser/keys'
 import reducer, {
   initialState,
   loadMoreSetMembers,
@@ -36,7 +36,7 @@ import reducer, {
   fetchMoreSetMembers,
   addSetMembersAction,
   deleteSetMembers,
-} from '../set'
+} from '../../browser/set'
 
 jest.mock('uiSrc/services')
 

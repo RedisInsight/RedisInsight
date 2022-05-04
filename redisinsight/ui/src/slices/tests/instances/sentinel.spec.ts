@@ -24,9 +24,9 @@ import reducer, {
   createMastersSentinel,
   createMastersSentinelFailure,
   updateMastersSentinel,
-} from '../sentinel'
-import { addErrorNotification } from '../app/notifications'
-import { LoadedSentinel, ModifiedSentinelMaster } from '../interfaces'
+} from '../../instances/sentinel'
+import { addErrorNotification } from '../../app/notifications'
+import { LoadedSentinel, ModifiedSentinelMaster } from '../../interfaces'
 
 jest.mock('uiSrc/services')
 

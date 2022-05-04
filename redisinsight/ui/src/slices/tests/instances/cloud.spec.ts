@@ -29,9 +29,9 @@ import reducer, {
   createInstancesRedisCloudFailure,
   createInstancesRedisCloud,
   createInstancesRedisCloudSuccess,
-} from '../cloud'
-import { LoadedCloud } from '../interfaces'
-import { addErrorNotification } from '../app/notifications'
+} from '../../instances/cloud'
+import { LoadedCloud } from '../../interfaces'
+import { addErrorNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
 

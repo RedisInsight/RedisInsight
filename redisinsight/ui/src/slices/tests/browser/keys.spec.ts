@@ -55,8 +55,8 @@ import reducer, {
   addStringKey,
   addZsetKey,
   updateSelectedKeyRefreshTime,
-} from '../keys'
-import { getString } from '../string'
+} from '../../browser/keys'
+import { getString } from '../../browser/string'
 
 jest.mock('uiSrc/services')
 

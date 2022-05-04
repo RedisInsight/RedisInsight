@@ -9,7 +9,7 @@ import {
   screen,
   waitFor,
 } from 'uiSrc/utils/test-utils'
-import { setSearchMatch } from 'uiSrc/slices/keys'
+import { setSearchMatch } from 'uiSrc/slices/browser/keys'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import { mockVirtualTreeResult } from 'uiSrc/components/virtual-tree/VirtualTree.spec'
 import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'

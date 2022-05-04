@@ -13,8 +13,8 @@ import {
   EuiSuperSelectOption,
 } from '@elastic/eui'
 
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
-import { insertListElementsAction } from 'uiSrc/slices/list'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { insertListElementsAction } from 'uiSrc/slices/browser/list'
 import { PushElementToListDto } from 'apiSrc/modules/browser/dto'
 
 import { AddListFormConfig as config } from '../../add-key/constants/fields-config'

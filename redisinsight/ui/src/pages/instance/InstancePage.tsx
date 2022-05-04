@@ -7,13 +7,13 @@ import cx from 'classnames'
 import {
   fetchInstanceAction, fetchInstancesAction,
   getDatabaseConfigInfoAction, instancesSelector,
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
-import { resetKeysData } from 'uiSrc/slices/keys'
+import { resetKeysData } from 'uiSrc/slices/browser/keys'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'

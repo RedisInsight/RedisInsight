@@ -13,7 +13,7 @@ import {
 } from '@elastic/eui'
 import {
   addHashKey, addKeyStateSelector,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/dto/hash.dto'
 import {
   IHashFieldState,

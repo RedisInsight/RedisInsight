@@ -14,7 +14,7 @@ import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { RSNotLoadedContent } from 'uiSrc/pages/workbench/constants'
 
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import ModuleNotLoaded from 'uiSrc/pages/workbench/components/module-not-loaded'
 
 const CommonErrorResponse = (command = '', result?: any) => {

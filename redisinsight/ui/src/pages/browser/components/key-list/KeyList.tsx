@@ -26,7 +26,7 @@ import {
   keysSelector,
   selectedKeySelector,
   sourceKeysFetch,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import {
   appContextBrowser,
   setBrowserKeyListScrollPosition

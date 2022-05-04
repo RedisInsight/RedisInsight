@@ -14,7 +14,7 @@ import {
 import { connect } from 'react-redux'
 import cx from 'classnames'
 
-import { fetchVisualisationResults, setReJSONDataAction } from 'uiSrc/slices/rejson'
+import { fetchVisualisationResults, setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'

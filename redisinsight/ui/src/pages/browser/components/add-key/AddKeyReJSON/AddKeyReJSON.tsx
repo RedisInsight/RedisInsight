@@ -10,7 +10,7 @@ import {
   EuiPanel, EuiTextArea,
 } from '@elastic/eui'
 import { Maybe } from 'uiSrc/utils'
-import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/keys'
+import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
 
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
 

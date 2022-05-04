@@ -14,7 +14,7 @@ import {
 } from '@elastic/eui'
 import { Maybe, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
-import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/keys'
+import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
 import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
 

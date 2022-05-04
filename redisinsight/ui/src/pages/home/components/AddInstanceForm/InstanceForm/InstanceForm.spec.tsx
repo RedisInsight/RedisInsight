@@ -24,7 +24,7 @@ const formFields = {
   certificates: [],
 }
 
-jest.mock('uiSrc/slices/instances', () => ({
+jest.mock('uiSrc/slices/instances/instances', () => ({
   checkConnectToInstanceAction: () => jest.fn,
   resetInstanceUpdateAction: () => jest.fn,
   changeInstanceAliasAction: () => jest.fn,

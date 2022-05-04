@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { fetchVisualisationResults } from 'uiSrc/slices/rejson'
+import { fetchVisualisationResults } from 'uiSrc/slices/browser/rejson'
 import JSONArray, { Props } from './JSONArray'
 
 const EXPAND_ARRAY = 'expand-array'
@@ -24,8 +24,8 @@ const mockedDownloadedArrayWithArrays = [
   [3, 4]
 ]
 
-jest.mock('uiSrc/slices/rejson', () => ({
-  ...jest.requireActual('uiSrc/slices/rejson'),
+jest.mock('uiSrc/slices/browser/rejson', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/rejson'),
   appendReJSONArrayItemAction: jest.fn,
   setReJSONDataAction: jest.fn,
   fetchVisualisationResults: jest.fn().mockReturnValue(

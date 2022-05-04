@@ -17,7 +17,7 @@ import {
   appendReJSONArrayItemAction,
   fetchVisualisationResults,
   setReJSONDataAction
-} from 'uiSrc/slices/rejson'
+} from 'uiSrc/slices/browser/rejson'
 
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'

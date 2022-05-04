@@ -16,8 +16,8 @@ import {
   selectedKeyDataSelector,
   setInitialStateByType,
   toggleBrowserFullScreen,
-} from 'uiSrc/slices/keys'
-import { connectedInstanceSelector, setConnectedInstanceId } from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import {
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,

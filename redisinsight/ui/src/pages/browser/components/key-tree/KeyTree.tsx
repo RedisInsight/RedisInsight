@@ -9,7 +9,7 @@ import {
   setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
 import { constructKeysToTree } from 'uiSrc/helpers'
-import { keysSelector } from 'uiSrc/slices/keys'
+import { keysSelector } from 'uiSrc/slices/browser/keys'
 import VirtualTree from 'uiSrc/components/virtual-tree'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'

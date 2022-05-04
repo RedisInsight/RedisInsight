@@ -18,7 +18,7 @@ import {
   clusterSelector,
   resetDataRedisCluster,
   resetInstancesRedisCluster,
-} from 'uiSrc/slices/cluster'
+} from 'uiSrc/slices/instances/cluster'
 import { Maybe, formatLongName, parseInstanceOptionsCluster, setTitle } from 'uiSrc/utils'
 import { InstanceRedisCluster, AddRedisDatabaseStatus } from 'uiSrc/slices/interfaces'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'

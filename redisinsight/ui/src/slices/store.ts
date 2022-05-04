@@ -1,19 +1,20 @@
 import { createBrowserHistory } from 'history'
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 
-import instancesReducer from './instances'
-import caCertsReducer from './caCerts'
-import clientCertsReducer from './clientCerts'
-import clusterReducer from './cluster'
-import cloudReducer from './cloud'
-import sentinelReducer from './sentinel'
-import keysReducer from './keys'
-import stringReducer from './string'
-import zsetReducer from './zset'
-import setReducer from './set'
-import hashReducer from './hash'
-import listReducer from './list'
-import rejsonReducer from './rejson'
+import instancesReducer from './instances/instances'
+import caCertsReducer from './instances/caCerts'
+import clientCertsReducer from './instances/clientCerts'
+import clusterReducer from './instances/cluster'
+import cloudReducer from './instances/cloud'
+import sentinelReducer from './instances/sentinel'
+import keysReducer from './browser/keys'
+import stringReducer from './browser/string'
+import zsetReducer from './browser/zset'
+import setReducer from './browser/set'
+import hashReducer from './browser/hash'
+import listReducer from './browser/list'
+import rejsonReducer from './browser/rejson'
+import streamReducer from './browser/stream'
 import notificationsReducer from './app/notifications'
 import cliSettingsReducer from './cli/cli-settings'
 import outputReducer from './cli/cli-output'
@@ -54,6 +55,7 @@ export const rootReducer = combineReducers({
     hash: hashReducer,
     list: listReducer,
     rejson: rejsonReducer,
+    stream: streamReducer,
   }),
   cli: combineReducers({
     settings: cliSettingsReducer,

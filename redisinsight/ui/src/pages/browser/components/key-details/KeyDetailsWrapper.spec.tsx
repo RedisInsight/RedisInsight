@@ -2,19 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { KeyTypes } from 'uiSrc/constants'
-import { refreshHashFieldsAction } from 'uiSrc/slices/hash'
-import { refreshZsetMembersAction } from 'uiSrc/slices/zset'
-import { refreshSetMembersAction } from 'uiSrc/slices/set'
-import { refreshListElementsAction } from 'uiSrc/slices/list'
-import { resetStringValue } from 'uiSrc/slices/string'
-import {
-  deleteKeyAction,
-  editKey,
-  editKeyTTL,
-  fetchKeyInfo,
-  refreshKeyInfoAction,
-  selectedKeySelector
-} from 'uiSrc/slices/keys'
+
 import KeyDetails, { Props as KeyDetailsProps } from './KeyDetails/KeyDetails'
 import KeyDetailsWrapper, { Props } from './KeyDetailsWrapper'
 
@@ -59,12 +47,12 @@ jest.mock('./KeyDetails/KeyDetails', () => ({
   default: jest.fn(),
 }))
 
-// jest.mock('uiSrc/slices/hash')
-// jest.mock('uiSrc/slices/zset')
-// jest.mock('uiSrc/slices/string')
-// jest.mock('uiSrc/slices/set')
-// jest.mock('uiSrc/slices/list')
-// jest.mock('uiSrc/slices/keys')
+// jest.mock('uiSrc/slices/browser/hash')
+// jest.mock('uiSrc/slices/browser/zset')
+// jest.mock('uiSrc/slices/browser/string')
+// jest.mock('uiSrc/slices/browser/set')
+// jest.mock('uiSrc/slices/browser/list')
+// jest.mock('uiSrc/slices/browser/keys')
 
 describe('KeyDetailsWrapper', () => {
   beforeAll(() => {

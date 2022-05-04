@@ -4,8 +4,8 @@ import ListDetails from './ListDetails'
 
 const elements = ['element1', 'element2', 'element3']
 
-jest.mock('uiSrc/slices/list', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/list').initialState
+jest.mock('uiSrc/slices/browser/list', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
   return {
     listSelector: jest.fn().mockReturnValue(defaultState),
     updateListValueStateSelector: jest

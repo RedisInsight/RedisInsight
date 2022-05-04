@@ -10,7 +10,7 @@ import {
   fetchMoreHashFields,
   updateHashValueStateSelector,
   updateHashFieldsAction,
-} from 'uiSrc/slices/hash'
+} from 'uiSrc/slices/browser/hash'
 import { formatLongName, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -20,8 +20,8 @@ import {
   ITableColumn,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import {

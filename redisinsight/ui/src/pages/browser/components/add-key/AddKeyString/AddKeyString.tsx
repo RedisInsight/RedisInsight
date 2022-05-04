@@ -12,7 +12,7 @@ import {
 } from '@elastic/eui'
 import { Maybe } from 'uiSrc/utils'
 
-import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/keys'
+import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'

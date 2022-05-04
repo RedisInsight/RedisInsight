@@ -5,7 +5,7 @@ import {
   connectedInstanceOverviewSelector,
   connectedInstanceSelector,
   getDatabaseConfigInfoAction
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import { getOverviewMetrics } from './components/OverviewMetrics'

@@ -13,9 +13,9 @@ import {
   selectedKeyDataSelector,
   selectedKeySelector,
   keysSelector,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import AddHashFields from '../../key-details-add-items/add-hash-fields/AddHashFields'
 import AddZsetMembers from '../../key-details-add-items/add-zset-members/AddZsetMembers'
@@ -28,6 +28,7 @@ import SetDetails from '../../set-details/SetDetails'
 import HashDetails from '../../hash-details/HashDetails'
 import ListDetails from '../../list-details/ListDetails'
 import RejsonDetailsWrapper from '../../rejson-details/RejsonDetailsWrapper'
+import StreamDetailsWrapper from '../../stream-details'
 import RemoveListElements from '../../key-details-remove-items/remove-list-elements/RemoveListElements'
 import UnsupportedTypeDetails from '../../unsupported-type-details/UnsupportedTypeDetails'
 import ModulesTypeDetails from '../../modules-type-details/ModulesTypeDetails'
@@ -116,7 +117,8 @@ const KeyDetails = ({ ...props }: Props) => {
     ),
     [KeyTypes.Hash]: <HashDetails isFooterOpen={isAddItemPanelOpen} />,
     [KeyTypes.List]: <ListDetails isFooterOpen={isAddItemPanelOpen || isRemoveItemPanelOpen} />,
-    [KeyTypes.ReJSON]: <RejsonDetailsWrapper />
+    [KeyTypes.ReJSON]: <RejsonDetailsWrapper />,
+    [KeyTypes.Stream]: <StreamDetailsWrapper />,
   }
 
   return (

@@ -13,8 +13,8 @@ import {
   updateListElementAction,
   updateListValueStateSelector,
   fetchSearchingListElementAction,
-} from 'uiSrc/slices/list'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/browser/list'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { KeyTypes } from 'uiSrc/constants'
 import {
@@ -22,7 +22,7 @@ import {
   IColumnSearchState,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { formatLongName, validateListIndex } from 'uiSrc/utils'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'

@@ -12,7 +12,7 @@ import {
 } from 'uiSrc/utils/test-utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { processCliClient, resetCliSettings, toggleCli } from 'uiSrc/slices/cli/cli-settings'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sessionStorageService } from 'uiSrc/services'
 import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import CliHeader from './CliHeader'
@@ -24,8 +24,8 @@ beforeEach(() => {
   store.clearActions()
 })
 
-jest.mock('uiSrc/slices/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances'),
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     host: 'localhost',
     port: 6379,

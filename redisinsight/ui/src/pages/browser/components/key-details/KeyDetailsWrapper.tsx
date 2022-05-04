@@ -7,13 +7,13 @@ import {
   fetchKeyInfo,
   refreshKeyInfoAction,
   toggleBrowserFullScreen,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import { KeyTypes } from 'uiSrc/constants'
-import { refreshHashFieldsAction } from 'uiSrc/slices/hash'
-import { refreshZsetMembersAction } from 'uiSrc/slices/zset'
-import { resetStringValue } from 'uiSrc/slices/string'
-import { refreshSetMembersAction } from 'uiSrc/slices/set'
-import { refreshListElementsAction } from 'uiSrc/slices/list'
+import { refreshHashFieldsAction } from 'uiSrc/slices/browser/hash'
+import { refreshZsetMembersAction } from 'uiSrc/slices/browser/zset'
+import { resetStringValue } from 'uiSrc/slices/browser/string'
+import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
+import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {

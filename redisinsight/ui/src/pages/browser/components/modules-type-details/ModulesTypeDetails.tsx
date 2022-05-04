@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { Pages } from 'uiSrc/constants'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from '../unsupported-type-details/styles.module.scss'
 

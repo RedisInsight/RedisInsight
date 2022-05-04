@@ -19,7 +19,7 @@ import {
 } from 'uiSrc/slices/cli/cli-settings'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { sessionStorageService } from 'uiSrc/services'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { outputSelector, resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 

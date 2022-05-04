@@ -24,9 +24,9 @@ import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiS
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { deleteListElementsAction } from 'uiSrc/slices/list'
-import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
+import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
 

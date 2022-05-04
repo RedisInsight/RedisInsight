@@ -6,7 +6,7 @@ import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import { cliTexts, ConnectionSuccessOutputText, InitOutputText } from 'uiSrc/constants/cliOutput'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { AppDispatch, RootState } from '../store'
 import { StateCliSettings } from '../interfaces/cli'

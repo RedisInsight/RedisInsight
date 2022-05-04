@@ -16,12 +16,12 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import {
   resetBrowserTree,
   setBrowserKeyListDataLoaded,
 } from 'uiSrc/slices/app/context'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'

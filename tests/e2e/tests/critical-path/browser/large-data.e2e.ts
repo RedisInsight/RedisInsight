@@ -38,7 +38,6 @@ test
         const keySizeText = await browserPage.keySizeDetails.textContent;
         const keySize = keySizeText.split(' ')[2];
         //Verify that user can see relevant information about key size
-        await t.expect(keySizeText).contains('Key Size:', 'Key size text');
         await t.expect(keySizeText).contains('KB', 'Key measure');
         await t.expect(+keySize).gt(10, 'Key size value');
     });

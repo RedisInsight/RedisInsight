@@ -51,8 +51,8 @@ describe('NavigationMenu', () => {
 
   describe('with connectedInstance', () => {
     beforeAll(() => {
-      jest.mock('uiSrc/slices/instances', () => ({
-        ...jest.requireActual('uiSrc/slices/instances'),
+      jest.mock('uiSrc/slices/instances/instances', () => ({
+        ...jest.requireActual('uiSrc/slices/instances/instances'),
         connectedInstanceSelector: jest.fn().mockReturnValue({
           id: '123',
           connectionType: 'STANDALONE',

@@ -20,7 +20,7 @@ import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
 
 import { Pages } from 'uiSrc/constants'
-import { cloudSelector } from 'uiSrc/slices/cloud'
+import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
 import { PageHeader } from 'uiSrc/components'
 import validationErrors from 'uiSrc/constants/validationErrors'

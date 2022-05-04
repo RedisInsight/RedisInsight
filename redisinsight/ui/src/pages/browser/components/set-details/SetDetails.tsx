@@ -9,15 +9,15 @@ import {
 import { formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import {
   deleteSetMembers,
   fetchSetMembers,
   fetchMoreSetMembers,
   setDataSelector,
   setSelector,
-} from 'uiSrc/slices/set'
+} from 'uiSrc/slices/browser/set'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'

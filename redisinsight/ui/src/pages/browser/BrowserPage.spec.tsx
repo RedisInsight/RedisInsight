@@ -1,8 +1,8 @@
 /* eslint-disable sonarjs/no-identical-functions */
 import React from 'react'
 import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
-import { setConnectedInstanceId } from 'uiSrc/slices/instances'
-import { loadKeys, resetKeyInfo } from 'uiSrc/slices/keys'
+import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
+import { loadKeys, resetKeyInfo } from 'uiSrc/slices/browser/keys'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { cloneDeep } from 'lodash'
 import BrowserPage from './BrowserPage'

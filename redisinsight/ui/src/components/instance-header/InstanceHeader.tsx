@@ -7,7 +7,7 @@ import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@
 import { Pages } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
 import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'

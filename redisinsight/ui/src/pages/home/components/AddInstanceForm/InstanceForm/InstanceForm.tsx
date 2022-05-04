@@ -49,13 +49,13 @@ import {
   checkConnectToInstanceAction,
   resetInstanceUpdateAction,
   setConnectedInstanceId,
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import { handlePasteHostName } from 'uiSrc/utils'
 import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
 import { useResizableFormField } from 'uiSrc/services'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { resetKeys } from 'uiSrc/slices/keys'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
 import { DatabaseListModules } from 'uiSrc/components'

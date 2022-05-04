@@ -21,13 +21,13 @@ import {
   deleteInstancesAction,
   instancesSelector,
   setConnectedInstanceId,
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import {
   CONNECTION_TYPE_DISPLAY,
   ConnectionType,
   Instance,
 } from 'uiSrc/slices/interfaces'
-import { resetKeys } from 'uiSrc/slices/keys'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'

@@ -53,11 +53,7 @@ $maxWidthCell: 190px;
 
 .actions,
 .actionsHeader {
-  width: 45px;
-  z-index: 11;
-  position: absolute;
-
-  right: 20px;
+  width: 54px;
 }
 
 .actions {
@@ -66,9 +62,14 @@ $maxWidthCell: 190px;
   }
 }
 
-.actionsHeader {
-  width: 45px;
+.columnManager {
+  z-index: 11;
+  position: absolute;
+  right: 18px;
+  margin-top: 20px;
+  width: 40px;
   button {
+    width: 40px;
     background-color: var(--euiColorEmptyShade) !important;
   }
 }

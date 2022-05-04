@@ -1,7 +1,7 @@
 import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { keyBy } from 'lodash'
 
 import { formatLongName } from 'uiSrc/utils'
@@ -27,8 +27,6 @@ const actionsWidth = 50
 const minColumnWidth = 190
 
 const StreamDetailsWrapper = () => {
-  const dispatch = useDispatch()
-
   const {
     entries: loadedEntries = [],
     keyName: key
@@ -57,7 +55,7 @@ const StreamDetailsWrapper = () => {
 
     setUniqFields(fields)
     setEntries(streamEntries)
-    setColumns([...defaultColumns, ...Object.keys(fields).map((field) => getTemplateColumn(field))])
+    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
   }, [loadedEntries])
 
   const closePopover = useCallback(() => {
@@ -132,7 +130,7 @@ const StreamDetailsWrapper = () => {
     }
   })
 
-  const defaultColumns: ITableColumn[] = [
+  const [idColumn, actionsColumn]: ITableColumn[] = [
     {
       id: 'id',
       label: 'Entry ID',
@@ -159,55 +157,9 @@ const StreamDetailsWrapper = () => {
         )
       },
     },
-    // {
-    //   id: 'value',
-    //   label: 'Value',
-    //   truncateText: true,
-    //   render: function Value(
-    //     _name: string,
-    //     { field, value, editing }: IStreamEntry
-    //   ) {
-    //     // Better to cut the long string, because it could affect virtual scroll performance
-    //     const cellContent = value.substring(0, 200)
-    //     const tooltipContent = formatLongName(value)
-    //     if (editing) {
-    //       return (
-    //         <InlineItemEditor
-    //           initialValue={value}
-    //           controlsPosition="right"
-    //           placeholder="Enter Value"
-    //           fieldName="fieldValue"
-    //           expandable
-    //           isLoading={updateLoading}
-    //           onDecline={() => handleEditField(field, false)}
-    //           onApply={(value) => handleApplyEditField(field, value)}
-    //         />
-    //       )
-    //     }
-    //     return (
-    //       <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-    //         <div
-    //           style={{ display: 'flex' }}
-    //           className="truncateText"
-    //           data-testid={`stream-entry-value-${field}`}
-    //         >
-    //           <EuiToolTip
-    //             title="Value"
-    //             className={styles.tooltip}
-    //             anchorClassName="truncateText"
-    //             position="bottom"
-    //             content={tooltipContent}
-    //           >
-    //             <>{cellContent}</>
-    //           </EuiToolTip>
-    //         </div>
-    //       </EuiText>
-    //     )
-    //   },
-    // },
     {
       id: 'actions',
-      label: <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />,
+      label: '',
       headerClassName: styles.actionsHeader,
       className: styles.actions,
       textAlignment: TableCellTextAlignment.Left,
@@ -215,15 +167,6 @@ const StreamDetailsWrapper = () => {
       render: function Actions(_act: any, { id }: StreamEntryDto) {
         return (
           <div className={cx('value-table-actions', 'stream-entry-actions')}>
-            {/* <EuiButtonIcon
-              iconType="pencil"
-              aria-label="Edit Entry"
-              className="editFieldBtn"
-              color="primary"
-              // disabled={updateLoading}
-              onClick={() => handleEditEntry(id, true)}
-              data-testid={`edit-entry-button-${id}`}
-            /> */}
             <PopoverDelete
               item={id}
               keyName={key}

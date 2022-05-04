@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last } from 'lodash'
 import cx from 'classnames'
+import { EuiButtonIcon } from '@elastic/eui'
 
 import {
   fetchMoreStreamEntries,
@@ -24,6 +25,7 @@ const headerHeight = 60
 const rowHeight = 54
 const actionsWidth = 54
 const minColumnWidth = 190
+const xrangeIdPrefix = '('
 
 interface IStreamEntry extends StreamEntryDto {
   editing: boolean
@@ -59,7 +61,7 @@ const StreamDetails = (props: Props) => {
       dispatch(
         fetchMoreStreamEntries(
           key,
-          `(${lastLoadedEntryId}`,
+          `${xrangeIdPrefix + lastLoadedEntryId}`,
           SCAN_COUNT_DEFAULT,
           sortedColumnOrder,
         )
@@ -83,6 +85,9 @@ const StreamDetails = (props: Props) => {
           styles.container,
         )}
       >
+        <div className={styles.columnManager}>
+          <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />
+        </div>
         <VirtualTable
           selectable={false}
           keyName={key}
@@ -97,7 +102,7 @@ const StreamDetails = (props: Props) => {
           noItemsMessage={NoResultsFoundText}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
-          tableWidth={(columns.length - 1) * minColumnWidth + actionsWidth}
+          tableWidth={(columns.length) * minColumnWidth - actionsWidth}
           sortedColumn={{
             column: sortedColumnName,
             order: sortedColumnOrder,

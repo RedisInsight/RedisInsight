@@ -17,7 +17,7 @@ import {
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
-} from '../keys'
+} from '../../browser/keys'
 import reducer, {
   initialState,
   setZsetInitialState,
@@ -51,7 +51,7 @@ import reducer, {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
   refreshZsetMembersAction,
-} from '../zset'
+} from '../../browser/zset'
 
 jest.mock('uiSrc/services')
 

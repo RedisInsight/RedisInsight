@@ -13,8 +13,8 @@ import reducer, {
   loadCaCertsFailure,
   caCertsSelector,
   fetchCaCerts,
-} from '../caCerts'
-import { addErrorNotification } from '../app/notifications'
+} from '../../instances/caCerts'
+import { addErrorNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
 

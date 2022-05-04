@@ -8,7 +8,7 @@ import {
   EuiFlexItem,
   EuiPanel,
 } from '@elastic/eui'
-import { addStreamKey } from 'uiSrc/slices/keys'
+import { addStreamKey } from 'uiSrc/slices/browser/keys'
 import { isRequiredStringsValid, Maybe, validateEntryId } from 'uiSrc/utils'
 import { AddStreamEntity } from 'uiSrc/pages/browser/components/key-details-add-items'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'

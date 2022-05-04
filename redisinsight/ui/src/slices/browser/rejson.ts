@@ -21,8 +21,8 @@ import {
 
 import { InitialStateRejson } from './interfaces'
 import { refreshKeyInfoAction } from './keys'
-import { addErrorNotification, addMessageNotification } from './app/notifications'
-import { AppDispatch, RootState } from './store'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import { AppDispatch, RootState } from '../store'
 
 export const initialState: InitialStateRejson = {
   loading: false,

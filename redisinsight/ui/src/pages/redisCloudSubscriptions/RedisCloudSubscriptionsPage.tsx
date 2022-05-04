@@ -21,7 +21,7 @@ import {
   fetchInstancesRedisCloud,
   resetDataRedisCloud,
   resetLoadedRedisCloud,
-} from 'uiSrc/slices/cloud'
+} from 'uiSrc/slices/instances/cloud'
 import { formatLongName, Maybe, replaceSpaces, setTitle } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RedisCloudSubscriptions from './RedisCloudSubscriptions/RedisCloudSubscriptions'

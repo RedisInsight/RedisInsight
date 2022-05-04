@@ -5,8 +5,8 @@ import ZSetDetails, { Props } from './ZSetDetails'
 
 const mockedProps = mock<Props>()
 
-jest.mock('uiSrc/slices/zset', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/zset').initialState
+jest.mock('uiSrc/slices/browser/zset', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/browser/zset').initialState
   return ({
     zsetSelector: jest.fn().mockReturnValue(defaultState),
     setZsetInitialState: jest.fn,

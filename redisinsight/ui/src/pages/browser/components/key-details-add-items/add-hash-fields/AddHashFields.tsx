@@ -10,12 +10,12 @@ import {
   EuiFieldText,
   EuiPanel,
 } from '@elastic/eui'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import {
   updateHashValueStateSelector,
   resetUpdateValue,
   addHashFieldsAction,
-} from 'uiSrc/slices/hash'
+} from 'uiSrc/slices/browser/hash'
 import { AddFieldsToHashDto } from 'apiSrc/modules/browser/dto/hash.dto'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 

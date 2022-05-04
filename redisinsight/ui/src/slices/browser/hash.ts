@@ -18,9 +18,9 @@ import {
   refreshKeyInfoAction,
   updateSelectedKeyRefreshTime,
 } from './keys'
-import { AppDispatch, RootState } from './store'
-import { StateHash } from './interfaces'
-import { addErrorNotification, addMessageNotification } from './app/notifications'
+import { AppDispatch, RootState } from '../store'
+import { StateHash } from '../interfaces'
+import { addErrorNotification } from '../app/notifications'
 
 export const initialState: StateHash = {
   loading: false,

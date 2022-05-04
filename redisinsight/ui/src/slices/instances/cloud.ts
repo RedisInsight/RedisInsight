@@ -16,9 +16,9 @@ import {
   InitialStateCloud,
   InstanceRedisCloud,
   LoadedCloud,
-} from './interfaces'
-import { addErrorNotification } from './app/notifications'
-import { AppDispatch, RootState } from './store'
+} from '../interfaces'
+import { addErrorNotification } from '../app/notifications'
+import { AppDispatch, RootState } from '../store'
 
 export const initialState: InitialStateCloud = {
   loading: false,

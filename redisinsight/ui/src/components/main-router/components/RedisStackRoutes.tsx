@@ -6,7 +6,7 @@ import {
   checkConnectToInstanceAction,
   resetConnectedInstance,
   setConnectedInstanceId
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import RouteWithSubRoutes from 'uiSrc/utils/routerWithSubRoutes'
 import { Pages } from 'uiSrc/constants'
 import { PagePlaceholder } from 'uiSrc/components'

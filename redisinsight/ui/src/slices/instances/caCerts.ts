@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
-import { addErrorNotification } from './app/notifications'
-import { AppDispatch, RootState } from './store'
+import { addErrorNotification } from '../app/notifications'
+import { AppDispatch, RootState } from '../store'
 
 export const initialState = {
   loading: false,
@@ -13,20 +13,20 @@ export const initialState = {
 }
 
 // A slice for recipes
-const clientCertsSlice = createSlice({
-  name: 'clientCerts',
+const caCertsSlice = createSlice({
+  name: 'caCerts',
   initialState,
   reducers: {
-    // load client certificates
-    loadClientCerts: (state) => {
+    // load ca certificates
+    loadCaCerts: (state) => {
       state.loading = true
       state.error = ''
     },
-    loadClientCertsSuccess: (state, { payload }) => {
+    loadCaCertsSuccess: (state, { payload }) => {
       state.data = payload
       state.loading = false
     },
-    loadClientCertsFailure: (state, { payload }) => {
+    loadCaCertsFailure: (state, { payload }) => {
       state.loading = false
       state.error = payload
     },
@@ -35,35 +35,34 @@ const clientCertsSlice = createSlice({
 
 // Actions generated from the slice
 export const {
-  loadClientCerts,
-  loadClientCertsSuccess,
-  loadClientCertsFailure,
-} = clientCertsSlice.actions
+  loadCaCerts,
+  loadCaCertsSuccess,
+  loadCaCertsFailure,
+} = caCertsSlice.actions
 
 // A selector
-export const clientCertsSelector = (state: RootState) =>
-  state.connections.clientCerts
+export const caCertsSelector = (state: RootState) => state.connections.caCerts
 
 // The reducer
-export default clientCertsSlice.reducer
+export default caCertsSlice.reducer
 
 // Asynchronous thunk action
-export function fetchClientCerts() {
+export function fetchCaCerts() {
   return async (dispatch: AppDispatch) => {
-    dispatch(loadClientCerts())
+    dispatch(loadCaCerts())
 
     try {
       const { data, status } = await apiService.get(
-        `${ApiEndpoints.CLIENT_CERTIFICATES}`
+        `${ApiEndpoints.CA_CERTIFICATES}`
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadClientCertsSuccess(data))
+        dispatch(loadCaCertsSuccess(data))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
-      dispatch(loadClientCertsFailure(errorMessage))
       dispatch(addErrorNotification(error))
+      dispatch(loadCaCertsFailure(errorMessage))
     }
   }
 }

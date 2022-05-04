@@ -19,9 +19,9 @@ import {
   refreshKeyInfoAction,
   updateSelectedKeyRefreshTime,
 } from './keys'
-import { AppDispatch, RootState } from './store'
+import { AppDispatch, RootState } from '../store'
 import { InitialStateSet } from './interfaces'
-import { addErrorNotification, addMessageNotification } from './app/notifications'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: InitialStateSet = {
   loading: false,

@@ -39,8 +39,8 @@ import reducer, {
   updateFieldsInList,
   updateHashFieldsAction,
   refreshHashFieldsAction,
-} from '../hash'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
+} from '../../browser/hash'
+import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
 

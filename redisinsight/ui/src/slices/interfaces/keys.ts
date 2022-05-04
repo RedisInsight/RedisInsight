@@ -1,5 +1,5 @@
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
-import { KeyTypes, UnsupportedKeyTypes } from 'uiSrc/constants'
+import { KeyTypes } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { Maybe, Nullable } from 'uiSrc/utils'
 
@@ -20,7 +20,7 @@ export interface KeysStore {
   loading: boolean
   error: string
   search: string
-  filter: Nullable<KeyTypes | UnsupportedKeyTypes>
+  filter: Nullable<KeyTypes>
   isFiltered: boolean
   isSearched: boolean
   isBrowserFullScreen: boolean

@@ -19,9 +19,9 @@ import {
   Instance,
   LoadedSentinel,
   ModifiedSentinelMaster,
-} from './interfaces'
-import { AppDispatch, RootState } from './store'
-import { addErrorNotification } from './app/notifications'
+} from '../interfaces'
+import { AppDispatch, RootState } from '../store'
+import { addErrorNotification } from '../app/notifications'
 
 export const initialState: InitialStateSentinel = {
   loading: false,

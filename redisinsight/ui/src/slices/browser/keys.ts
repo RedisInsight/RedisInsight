@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
-import axios, { CancelTokenSource } from 'axios'
+import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes, SortOrder } from 'uiSrc/constants'
 import {
@@ -23,15 +23,16 @@ import {
   CreateRejsonRlWithExpireDto,
   CreateSetWithExpireDto,
 } from 'apiSrc/modules/browser/dto'
-import { AppDispatch, RootState } from './store'
+import { AppDispatch, RootState } from '../store'
 import { fetchString } from './string'
 import { setZsetInitialState, fetchZSetMembers } from './zset'
 import { fetchSetMembers } from './set'
 import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
-import { addErrorNotification, addMessageNotification } from './app/notifications'
-import { KeysStore, KeyViewType } from './interfaces/keys'
+import { fetchStreamEntries } from './stream'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import { KeysStore, KeyViewType } from '../interfaces/keys'
 
 export const initialState: KeysStore = {
   loading: false,
@@ -543,7 +544,11 @@ export function fetchKeyInfo(key: string) {
       if (data.type === KeyTypes.ReJSON) {
         dispatch<any>(fetchReJSON(key, '.'))
       }
-    } catch (error) {
+      if (data.type === KeyTypes.Stream) {
+        dispatch<any>(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SortOrder.DESC))
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(defaultSelectedKeyActionFailure(errorMessage))

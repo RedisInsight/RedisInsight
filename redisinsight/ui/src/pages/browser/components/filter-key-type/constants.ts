@@ -2,7 +2,6 @@ import {
   GROUP_TYPES_COLORS,
   KeyTypes,
   ModulesKeyTypes,
-  UnsupportedKeyTypes,
 } from 'uiSrc/constants'
 
 export const FILTER_KEY_TYPE_OPTIONS = [

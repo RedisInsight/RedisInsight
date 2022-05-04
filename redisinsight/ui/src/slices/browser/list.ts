@@ -21,9 +21,9 @@ import {
 
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { StateList } from './interfaces/list'
-import { AppDispatch, RootState } from './store'
-import { addErrorNotification, addMessageNotification } from './app/notifications'
+import { StateList } from '../interfaces/list'
+import { AppDispatch, RootState } from '../store'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import {
   refreshKeyInfoAction,
   fetchKeyInfo,

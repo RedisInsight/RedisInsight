@@ -15,7 +15,7 @@ import {
   stringDataSelector,
   stringSelector,
   updateStringValueAction,
-} from 'uiSrc/slices/string'
+} from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 

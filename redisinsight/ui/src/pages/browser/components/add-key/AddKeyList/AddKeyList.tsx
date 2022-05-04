@@ -13,7 +13,7 @@ import {
 } from '@elastic/eui'
 
 import { Maybe } from 'uiSrc/utils'
-import { addKeyStateSelector, addListKey } from 'uiSrc/slices/keys'
+import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
 import { CreateListWithExpireDto } from 'apiSrc/modules/browser/dto'
 
 import {

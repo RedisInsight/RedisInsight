@@ -20,8 +20,8 @@ import {
   refreshKeyInfoAction,
   updateSelectedKeyRefreshTime,
 } from './keys'
-import { AppDispatch, RootState } from './store'
-import { addErrorNotification, addMessageNotification } from './app/notifications'
+import { AppDispatch, RootState } from '../store'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: StateZset = {
   loading: false,

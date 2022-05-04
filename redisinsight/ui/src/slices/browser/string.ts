@@ -6,8 +6,8 @@ import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { refreshKeyInfoAction } from './keys'
-import { addErrorNotification } from './app/notifications'
-import { AppDispatch, RootState } from './store'
+import { addErrorNotification } from '../app/notifications'
+import { AppDispatch, RootState } from '../store'
 import { StringState } from './interfaces/string'
 
 export const initialState: StringState = {

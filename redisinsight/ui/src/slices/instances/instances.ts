@@ -9,11 +9,11 @@ import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
-
-import { AppDispatch, RootState } from './store'
 import { fetchMastersSentinelAction } from './sentinel'
-import { addErrorNotification, addMessageNotification } from './app/notifications'
-import { Instance, InitialStateInstances, ConnectionType } from './interfaces'
+
+import { AppDispatch, RootState } from '../store'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
 
 export const initialState: InitialStateInstances = {
   loading: false,

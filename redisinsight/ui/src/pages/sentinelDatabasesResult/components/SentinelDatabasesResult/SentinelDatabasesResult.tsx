@@ -14,7 +14,7 @@ import {
 import { useSelector } from 'react-redux'
 
 import { PageHeader } from 'uiSrc/components'
-import { sentinelSelector } from 'uiSrc/slices/sentinel'
+import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 

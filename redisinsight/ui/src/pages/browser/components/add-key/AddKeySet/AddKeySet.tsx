@@ -14,7 +14,7 @@ import {
 import { Maybe } from 'uiSrc/utils'
 import {
   addSetKey, addKeyStateSelector,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/dto/set.dto'
 

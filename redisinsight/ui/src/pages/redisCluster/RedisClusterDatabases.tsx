@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux'
 import { Maybe } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { InstanceRedisCluster } from 'uiSrc/slices/interfaces'
-import { clusterSelector } from 'uiSrc/slices/cluster'
+import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import validationErrors from 'uiSrc/constants/validationErrors'
 
 import styles from './styles.module.scss'

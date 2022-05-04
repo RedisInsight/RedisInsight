@@ -23,7 +23,7 @@ fixture `Different JSON types creation`
         }
         await cliPage.sendCommandInCli(commandString);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
     for (let i = 0; i < jsonKeys.length; i++) {
         await browserPage.addJsonKey(jsonKeys[i][0], jsonKeys[i][1]);

@@ -1,4 +1,5 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import { keyBy, mapValues } from 'lodash'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import {
   EuiButton,
@@ -9,8 +10,10 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 import { addStreamKey } from 'uiSrc/slices/browser/keys'
-import { isRequiredStringsValid, Maybe, validateEntryId } from 'uiSrc/utils'
-import { AddStreamEntity } from 'uiSrc/pages/browser/components/key-details-add-items'
+import { entryIdRegex, isRequiredStringsValid, Maybe } from 'uiSrc/utils'
+import { StreamEntryFields } from 'uiSrc/pages/browser/components/key-details-add-items'
+import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
 import styles from './styles.module.scss'
@@ -21,7 +24,7 @@ export interface Props {
   onCancel: (isCancelled?: boolean) => void
 }
 
-const INITIAL_STREAM_FIELD_STATE = {
+export const INITIAL_STREAM_FIELD_STATE = {
   fieldName: '',
   fieldValue: '',
   id: 0,
@@ -29,6 +32,8 @@ const INITIAL_STREAM_FIELD_STATE = {
 
 const AddKeyStream = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
+
+  const [entryIdError, setEntryIdError] = useState('')
   const [entryID, setEntryID] = useState<string>('*')
   const [fields, setFields] = useState<any[]>([{ ...INITIAL_STREAM_FIELD_STATE }])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
@@ -36,61 +41,18 @@ const AddKeyStream = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const isValid = isRequiredStringsValid(keyName, entryID)
+    const isValid = isRequiredStringsValid(keyName)
+      && !entryIdError
       && fields.every((f) => isRequiredStringsValid(f.fieldName, f.fieldValue))
     setIsFormValid(isValid)
-  }, [keyName, fields, entryID])
+  }, [keyName, fields, entryIdError])
 
-  const addField = () => {
-    const lastField = fields[fields.length - 1]
-    const newState = [
-      ...fields,
-      {
-        ...INITIAL_STREAM_FIELD_STATE,
-        id: lastField.id + 1
-      }
-    ]
-    setFields(newState)
-  }
+  useEffect(() => {
+    validateEntryID()
+  }, [entryID])
 
-  const removeField = (id: number) => {
-    const newState = fields.filter((item) => item.id !== id)
-    setFields(newState)
-  }
-
-  const clearFieldsValues = (id: number) => {
-    const newState = fields.map((item) => (item.id === id
-      ? {
-        ...item,
-        fieldName: '',
-        fieldValue: ''
-      } : item))
-    setFields(newState)
-  }
-
-  const handleClickRemove = (id: number) => {
-    if (fields.length !== 1) {
-      removeField(id)
-    } else {
-      clearFieldsValues(id)
-    }
-  }
-
-  const handleEntryIdChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEntryID(validateEntryId(e.target.value))
-  }
-
-  const handleFieldChange = (formField: string, id: number, value: any) => {
-    const newState = fields.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          [formField]: value
-        }
-      }
-      return item
-    })
-    setFields(newState)
+  const validateEntryID = () => {
+    setEntryIdError(entryIdRegex.test(entryID) ? '' : `${config.entryId.name} format is incorrect`)
   }
 
   const onFormSubmit = (event: FormEvent<HTMLFormElement>): void => {
@@ -101,15 +63,11 @@ const AddKeyStream = (props: Props) => {
   }
 
   const submitData = (): void => {
-    const data: any = {
+    const data: CreateStreamDto = {
       keyName,
       entries: [{
         id: entryID,
-        fields: {
-          ...fields.map((item) => ({
-            [item.fieldName]: item.fieldValue
-          }))
-        }
+        fields: mapValues(keyBy(fields, 'fieldName'), 'fieldValue')
       }]
     }
     if (keyTTL !== undefined) {
@@ -120,13 +78,12 @@ const AddKeyStream = (props: Props) => {
 
   return (
     <EuiForm className={styles.container} component="form" onSubmit={onFormSubmit}>
-      <AddStreamEntity
+      <StreamEntryFields
         entryID={entryID}
+        entryIdError={entryIdError}
         fields={fields}
-        addField={addField}
-        handleClickRemove={handleClickRemove}
-        handleEntryIdChange={handleEntryIdChange}
-        handleFieldChange={handleFieldChange}
+        setFields={setFields}
+        setEntryID={setEntryID}
       />
       <EuiButton type="submit" fill style={{ display: 'none' }}>
         Submit

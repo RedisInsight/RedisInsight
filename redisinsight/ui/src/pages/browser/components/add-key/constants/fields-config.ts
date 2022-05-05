@@ -1,4 +1,5 @@
 interface IFormField {
+  id?: string
   name: string
   isRequire: boolean
   label: string
@@ -132,21 +133,24 @@ interface IAddStreamFormConfig {
 
 export const AddStreamFormConfig: IAddStreamFormConfig = {
   entryId: {
-    name: 'entryId',
+    id: 'entryId',
+    name: 'Entry ID',
     isRequire: true,
-    label: 'Entry ID *',
-    placeholder: 'Enter Entry ID *'
+    label: 'Entry ID*',
+    placeholder: 'Enter Entry ID'
   },
   fieldName: {
-    name: 'fieldName',
+    id: 'fieldName',
+    name: 'Field Name',
     isRequire: false,
     label: 'Field',
-    placeholder: 'Enter Field *',
+    placeholder: 'Enter Field*',
   },
   fieldValue: {
-    name: 'fieldValue',
+    id: 'fieldValue',
+    name: 'Field Value',
     isRequire: false,
     label: 'Value',
-    placeholder: 'Enter Value *',
+    placeholder: 'Enter Value*',
   },
 }

@@ -23,6 +23,7 @@ import {
   CreateRejsonRlWithExpireDto,
   CreateSetWithExpireDto,
 } from 'apiSrc/modules/browser/dto'
+import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
 import { fetchString } from './string'
 import { setZsetInitialState, fetchZSetMembers } from './zset'
@@ -696,7 +697,7 @@ export function addReJSONKey(
 
 // Asynchronous thunk action
 export function addStreamKey(
-  data: CreateHashWithExpireDto,
+  data: CreateStreamDto,
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {

@@ -11,33 +11,39 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import cx from 'classnames'
-
+import { validateEntryId } from 'uiSrc/utils'
+import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 
-import styles from './styles.module.scss'
+import styles from '../styles.module.scss'
 
 export interface Props {
   compressed?: boolean
+  entryIdError?: string
+  clearEntryIdError?: () => void
   entryID: string
-  handleEntryIdChange: (e: ChangeEvent<HTMLInputElement>) => void
+  setEntryID: React.Dispatch<React.SetStateAction<string>>
   fields: any[]
-  handleFieldChange: (formField: string, id: number, value: any) => void
-  handleClickRemove: (id: number) => void
-  addField: () => void
+  setFields: React.Dispatch<React.SetStateAction<any[]>>
+  handleBlurEntryID?: () => void
 }
 
-const AddStreamEntity = (props: Props) => {
+const MIN_ENTRY_ID_VALUE = '0-1'
+
+const StreamEntryFields = (props: Props) => {
   const {
+    compressed,
     entryID,
+    setEntryID,
+    entryIdError,
     fields,
-    addField,
-    handleEntryIdChange,
-    handleFieldChange,
-    handleClickRemove
+    setFields,
   } = props
 
+  const [isEntryIdFocused, setIsEntryIdFocused] = React.useState(false)
   const prevCountFields = useRef<number>(0)
   const lastAddedFieldName = useRef<HTMLInputElement>(null)
+  const entryIdRef = useRef<HTMLInputElement>(null)
 
   const isClearDisabled = (item: any): boolean =>
     fields.length === 1 && !(item.fieldName.length || item.fieldValue.length)
@@ -49,17 +55,79 @@ const AddStreamEntity = (props: Props) => {
     prevCountFields.current = fields.length
   }, [fields.length])
 
+  const addField = () => {
+    const lastField = fields[fields.length - 1]
+    const newState = [
+      ...fields,
+      {
+        ...INITIAL_STREAM_FIELD_STATE,
+        id: lastField.id + 1
+      }
+    ]
+    setFields(newState)
+  }
+
+  const removeField = (id: number) => {
+    const newState = fields.filter((item) => item.id !== id)
+    setFields(newState)
+  }
+
+  const clearFieldsValues = (id: number) => {
+    const newState = fields.map((item) => (item.id === id
+      ? {
+        ...item,
+        fieldName: '',
+        fieldValue: ''
+      } : item))
+    setFields(newState)
+  }
+
+  const handleClickRemove = (id: number) => {
+    if (fields.length !== 1) {
+      removeField(id)
+    } else {
+      clearFieldsValues(id)
+    }
+  }
+
+  const handleEntryIdChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEntryID(validateEntryId(e.target.value))
+  }
+
+  const handleFieldChange = (formField: string, id: number, value: any) => {
+    const newState = fields.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          [formField]: value
+        }
+      }
+      return item
+    })
+    setFields(newState)
+  }
+
+  const onEntryIdBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.value === '0-0' && setEntryID(MIN_ENTRY_ID_VALUE)
+    setIsEntryIdFocused(false)
+  }
+
+  const showEntryError = !isEntryIdFocused && entryIdError
+
   return (
-    <div className={styles.container}>
+    <div className={cx(styles.container, { [styles.compressed]: compressed })}>
       <div className={styles.entryIdContainer}>
         <EuiFormRow label={config.entryId.label}>
           <EuiFieldText
+            inputRef={entryIdRef}
             fullWidth
             name={config.entryId.name}
-            id={config.entryId.name}
+            id={config.entryId.id}
             placeholder={config.entryId.placeholder}
             value={entryID}
             onChange={handleEntryIdChange}
+            onBlur={onEntryIdBlur}
+            onFocus={() => setIsEntryIdFocused(true)}
             append={(
               <EuiToolTip
                 anchorClassName="inputAppendIcon"
@@ -77,10 +145,13 @@ const AddStreamEntity = (props: Props) => {
                 <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
               </EuiToolTip>
             )}
-            data-testid={config.entryId.name}
+            isInvalid={!!entryIdError}
+            autoComplete="off"
+            data-testid={config.entryId.id}
           />
         </EuiFormRow>
-        <span className={styles.timestampText}>Timestamp - Sequence Number or *</span>
+        {!showEntryError && <span className={styles.timestampText}>Timestamp - Sequence Number or *</span>}
+        {showEntryError && <span className={styles.error}>{entryIdError}</span>}
       </div>
 
       <div className={styles.fieldsWrapper}>
@@ -92,10 +163,10 @@ const AddStreamEntity = (props: Props) => {
                 className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace', styles.row)}
                 grow
               >
-                <EuiFlexGroup gutterSize="none">
+                <EuiFlexGroup gutterSize="none" responsive={false}>
                   <EuiFlexItem grow>
-                    <EuiFlexGroup gutterSize="none" alignItems="center">
-                      <EuiFlexItem grow>
+                    <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+                      <EuiFlexItem className={styles.fieldItemWrapper} grow>
                         <EuiFormRow fullWidth>
                           <EuiFieldText
                             fullWidth
@@ -115,7 +186,7 @@ const AddStreamEntity = (props: Props) => {
                           />
                         </EuiFormRow>
                       </EuiFlexItem>
-                      <EuiFlexItem grow>
+                      <EuiFlexItem className={styles.valueItemWrapper} grow>
                         <EuiFormRow fullWidth>
                           <EuiFieldText
                             fullWidth
@@ -145,7 +216,7 @@ const AddStreamEntity = (props: Props) => {
                       position="left"
                     >
                       <EuiButtonIcon
-                        iconType="trash"
+                        iconType="minusInCircle"
                         color="primary"
                         aria-label={fields.length === 1 ? 'Clear Item' : 'Remove Item'}
                         onClick={() => handleClickRemove(item.id)}
@@ -173,4 +244,4 @@ const AddStreamEntity = (props: Props) => {
   )
 }
 
-export default AddStreamEntity
+export default StreamEntryFields

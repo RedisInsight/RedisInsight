@@ -3,8 +3,13 @@ import { AxiosError } from 'axios'
 
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
+import { fetchKeyInfo } from 'uiSrc/slices/browser/keys'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/dto/stream.dto'
+import {
+  AddStreamEntriesDto,
+  AddStreamEntriesResponse,
+  GetStreamEntriesResponse
+} from 'apiSrc/modules/browser/dto/stream.dto'
 import { addErrorNotification } from '../app/notifications'
 import { StateStream } from '../interfaces/stream'
 import { AppDispatch, RootState } from '../store'
@@ -68,6 +73,17 @@ const streamSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    addNewEntries: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    addNewEntriesSuccess: (state) => {
+      state.loading = true
+    },
+    addNewEntriesFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
   },
 })
 
@@ -79,6 +95,9 @@ export const {
   loadMoreEntries,
   loadMoreEntriesSuccess,
   loadMoreEntriesFailure,
+  addNewEntries,
+  addNewEntriesSuccess,
+  addNewEntriesFailure
 } = streamSlice.actions
 
 // A selector
@@ -169,6 +188,40 @@ export function fetchMoreStreamEntries(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(loadMoreEntriesFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function addNewEntriesAction(
+  data: AddStreamEntriesDto,
+  onSuccess?: () => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(addNewEntries())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post<AddStreamEntriesResponse>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_ENTRIES
+        ),
+        data
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(addNewEntriesSuccess())
+        dispatch<any>(fetchKeyInfo(data.keyName))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(addNewEntriesFailure(errorMessage))
+      onFail?.()
     }
   }
 }

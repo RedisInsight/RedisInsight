@@ -3,10 +3,38 @@
 
 $rowHeight: 43px;
 
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: none !important;
+  border-top: 1px solid var(--euiColorPrimary);
+  padding: 12px 20px;
+}
 
 .container {
   display: flex;
   flex-direction: column;
+
+  &.compressed {
+    flex-direction: row;
+
+    .entryIdContainer {
+      width: 190px;
+
+      :global(.euiFormControlLayout--group) {
+        border-right: 0;
+      }
+    }
+
+    .fieldsWrapper {
+      width: auto;
+    }
+
+    .valueItemWrapper {
+      flex-grow: 1.5;
+    }
+  }
 
   .entryIdContainer {
     width: 50%;
@@ -17,6 +45,7 @@ $rowHeight: 43px;
       color: var(--euiColorMediumShade);
       font: normal normal normal 12px/18px Graphik;
       margin-top: 6px;
+      padding-right: 6px;
     }
   }
 
@@ -65,4 +94,12 @@ $rowHeight: 43px;
 
 .addRowBtn {
   margin-top: 12px;
+}
+
+.error {
+  display: inline-block;
+  color: var(--euiColorDangerText);
+  font: normal normal normal 12px/18px Graphik;
+  margin-top: 6px;
+  padding-right: 6px;
 }

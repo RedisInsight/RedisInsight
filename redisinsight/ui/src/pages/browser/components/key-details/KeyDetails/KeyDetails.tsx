@@ -8,6 +8,13 @@ import {
 import { isNull } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
+import {
+  AddStreamEntries,
+  AddListElements,
+  AddSetMembers,
+  AddZsetMembers,
+  AddHashFields
+} from 'uiSrc/pages/browser/components/key-details-add-items'
 
 import {
   selectedKeyDataSelector,
@@ -17,10 +24,7 @@ import {
 import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import AddHashFields from '../../key-details-add-items/add-hash-fields/AddHashFields'
-import AddZsetMembers from '../../key-details-add-items/add-zset-members/AddZsetMembers'
-import AddSetMembers from '../../key-details-add-items/add-set-members/AddSetMembers'
-import AddListElements from '../../key-details-add-items/add-list-elements/AddListElements'
+
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
 import StringDetails from '../../string-details/StringDetails'
@@ -118,7 +122,7 @@ const KeyDetails = ({ ...props }: Props) => {
     [KeyTypes.Hash]: <HashDetails isFooterOpen={isAddItemPanelOpen} />,
     [KeyTypes.List]: <ListDetails isFooterOpen={isAddItemPanelOpen || isRemoveItemPanelOpen} />,
     [KeyTypes.ReJSON]: <RejsonDetailsWrapper />,
-    [KeyTypes.Stream]: <StreamDetailsWrapper />,
+    [KeyTypes.Stream]: <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />,
   }
 
   return (
@@ -192,6 +196,9 @@ const KeyDetails = ({ ...props }: Props) => {
                     )}
                     {selectedKeyType === KeyTypes.List && (
                       <AddListElements onCancel={closeAddItemPanel} />
+                    )}
+                    {selectedKeyType === KeyTypes.Stream && (
+                      <AddStreamEntries onCancel={closeAddItemPanel} />
                     )}
                   </div>
                 )}

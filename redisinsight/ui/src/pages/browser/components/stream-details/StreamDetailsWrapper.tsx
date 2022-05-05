@@ -109,7 +109,7 @@ const StreamDetailsWrapper = () => {
       const tooltipContent = formatLongName(value)
 
       return (
-        <EuiText size="s" style={{ maxWidth: '100%' }}>
+        <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
           <div
             style={{ display: 'flex' }}
             className="streamEntry"

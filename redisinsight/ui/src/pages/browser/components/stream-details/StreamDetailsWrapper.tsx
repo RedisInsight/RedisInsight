@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -13,10 +13,11 @@ import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiS
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+
 import StreamDetails from './StreamDetails'
+import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './StreamDetails/styles.module.scss'
-import PopoverDelete from '../popover-delete/PopoverDelete'
 
 export interface IStreamEntry extends StreamEntryDto {
   editing: boolean
@@ -26,7 +27,11 @@ const suffix = '_stream'
 const actionsWidth = 50
 const minColumnWidth = 190
 
-const StreamDetailsWrapper = () => {
+interface Props {
+  isFooterOpen: boolean
+}
+
+const StreamDetailsWrapper = (props: Props) => {
   const {
     entries: loadedEntries = [],
     keyName: key
@@ -55,7 +60,7 @@ const StreamDetailsWrapper = () => {
 
     setUniqFields(fields)
     setEntries(streamEntries)
-    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
+    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field))])
   }, [loadedEntries])
 
   const closePopover = useCallback(() => {
@@ -192,6 +197,7 @@ const StreamDetailsWrapper = () => {
         columns={columns}
         onEditEntry={handleEditEntry}
         onClosePopover={closePopover}
+        {...props}
       />
     </>
   )

@@ -1,3 +1,5 @@
-import AddStreamEntity from './AddStreamEntity'
+import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
+import AddStreamEntries from './AddStreamEntries'
 
-export default AddStreamEntity
+export { StreamEntryFields }
+export default AddStreamEntries

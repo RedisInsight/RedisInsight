@@ -115,6 +115,11 @@ export const KEY_TYPES_ACTIONS: KeyTypesActions = Object.freeze({
     },
   },
   [KeyTypes.ReJSON]: {},
+  [KeyTypes.Stream]: {
+    addItems: {
+      name: 'New Entry',
+    },
+  }
 })
 
 export enum SortOrder {

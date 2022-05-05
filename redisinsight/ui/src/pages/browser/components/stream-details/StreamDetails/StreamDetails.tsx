@@ -36,10 +36,11 @@ export interface Props {
   columns: ITableColumn[]
   onEditEntry: (entryId:string, editing: boolean) => void
   onClosePopover: () => void
+  isFooterOpen?: boolean
 }
 
 const StreamDetails = (props: Props) => {
-  const { data: entries = [], columns = [], onClosePopover } = props
+  const { data: entries = [], columns = [], onClosePopover, isFooterOpen } = props
   const dispatch = useDispatch()
 
   const { loading } = useSelector(streamSelector)
@@ -83,6 +84,7 @@ const StreamDetails = (props: Props) => {
           'key-details-table',
           'stream-entries-container',
           styles.container,
+          { footerOpened: isFooterOpen }
         )}
       >
         <div className={styles.columnManager}>

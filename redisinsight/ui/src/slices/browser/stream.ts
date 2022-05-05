@@ -1,16 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import { remove } from 'lodash'
 
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { fetchKeyInfo } from 'uiSrc/slices/browser/keys'
+import { fetchKeyInfo, refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import {
   AddStreamEntriesDto,
   AddStreamEntriesResponse,
-  GetStreamEntriesResponse
+  GetStreamEntriesResponse,
 } from 'apiSrc/modules/browser/dto/stream.dto'
-import { addErrorNotification } from '../app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { StateStream } from '../interfaces/stream'
 import { AppDispatch, RootState } from '../store'
 
@@ -84,6 +86,26 @@ const streamSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    // delete Stream entries
+    removeStreamEtries: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    removeStreamEtriesSuccess: (state) => {
+      state.loading = false
+    },
+    removeStreamEtriesFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
+    removeEtriesFromList: (state, { payload }: { payload: string[] }) => {
+      remove(state.data?.entries, (entry) => payload.includes(entry.id))
+
+      state.data = {
+        ...state.data,
+        total: state.data.total - 1,
+      }
+    },
   },
 })
 
@@ -97,7 +119,11 @@ export const {
   loadMoreEntriesFailure,
   addNewEntries,
   addNewEntriesSuccess,
-  addNewEntriesFailure
+  addNewEntriesFailure,
+  removeStreamEtries,
+  removeStreamEtriesSuccess,
+  removeStreamEtriesFailure,
+  removeEtriesFromList
 } = streamSlice.actions
 
 // A selector
@@ -222,6 +248,43 @@ export function addNewEntriesAction(
       dispatch(addErrorNotification(error))
       dispatch(addNewEntriesFailure(errorMessage))
       onFail?.()
+    }
+  }
+}
+// Asynchronous thunk actions
+export function deleteStreamEntry(key: string, entries: string[]) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(removeStreamEtries())
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_ENTRIES
+        ),
+        {
+          data: {
+            keyName: key,
+            entries,
+          },
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        dispatch(removeStreamEtriesSuccess())
+        dispatch(removeEtriesFromList(entries))
+        dispatch<any>(refreshKeyInfoAction(key))
+        dispatch(addMessageNotification(
+          successMessages.REMOVED_KEY_VALUE(
+            key,
+            entries.join(''),
+            'Entry'
+          )
+        ))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(removeStreamEtriesFailure(errorMessage))
     }
   }
 }

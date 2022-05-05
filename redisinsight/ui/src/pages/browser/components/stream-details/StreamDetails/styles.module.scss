@@ -9,6 +9,22 @@ $maxWidthCell: 190px;
 
   :global {
     .ReactVirtualized__Grid__innerScrollContainer {
+      .ReactVirtualized__Table__rowColumn {
+        border-right: 1px solid var(--tableDarkestBorderColor) !important;
+
+        &:last-of-type,
+        &:nth-last-of-type(2) {
+          border-right: none !important;
+        }
+      }
+
+      .ReactVirtualized__Table__row {
+        border-bottom: 1px solid var(--tableDarkestBorderColor) !important;
+        &:last-of-type {
+          border-bottom: none !important;
+        }
+      }
+
       & > div:hover {
         background: var(--euiColorLightestShade);
 
@@ -49,6 +65,10 @@ $maxWidthCell: 190px;
 :global(.streamEntryId) {
   color: var(--euiColorMediumShade) !important;
   display: flex;
+}
+
+:global(.stream-entry-actions) {
+  margin-left: -5px;
 }
 
 .actions,

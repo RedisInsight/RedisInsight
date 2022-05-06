@@ -15,7 +15,6 @@ export interface Props {
   handleButtonClick?: () => void,
   keyName: string,
   appendInfo?: JSX.Element | string | null,
-  customMessage?: JSX.Element | string,
   testid?: string,
 }
 
@@ -31,7 +30,6 @@ const PopoverDelete = (props: Props) => {
     handleDeleteItem,
     handleButtonClick,
     appendInfo,
-    customMessage,
     testid = '',
   } = props
 
@@ -69,20 +67,17 @@ const PopoverDelete = (props: Props) => {
       )}
     >
       <div className={styles.popover}>
-        {customMessage
-          || (
-            <EuiText size="m">
-              <h4 className={styles.popoverTitle}>
-                <b>{shorItemName}</b>
-              </h4>
-              <EuiText size="s" className={styles.popoverSubTitle}>
-                will be removed from
-                {' '}
-                <b>{shorKeyName}</b>
-              </EuiText>
-              {appendInfo}
-            </EuiText>
-          )}
+        <EuiText size="m">
+          <h4 className={styles.popoverTitle}>
+            <b>{shorItemName}</b>
+          </h4>
+          <EuiText size="s" className={styles.popoverSubTitle}>
+            will be removed from
+            {' '}
+            <b>{shorKeyName}</b>
+          </EuiText>
+          {appendInfo}
+        </EuiText>
         <EuiSpacer />
         <div className={styles.popoverFooter}>
           <EuiButton

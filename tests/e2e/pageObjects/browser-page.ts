@@ -65,6 +65,9 @@ export class BrowserPage {
     treeViewDelimiterButton = Selector('[data-testid=tree-view-delimiter-btn]');
     treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
     treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
+    fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
+    disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
+    closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -148,10 +151,12 @@ export class BrowserPage {
     multiSearchArea = Selector(this.cssFilteringLabel);
     keyDetailsHeader = Selector('[data-testid=key-details-header]');
     keyListTable = Selector('[data-testid=keyList-table]');
+    keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
     progressLine = Selector('div.euiProgress');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
+    noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
 
     /**
      * Adding a new String key

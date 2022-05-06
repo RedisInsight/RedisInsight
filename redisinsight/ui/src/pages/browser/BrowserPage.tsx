@@ -236,6 +236,7 @@ const BrowserPage = () => {
                   initialSize={sizes[secondPanelId] ?? 50}
                   minSize="550px"
                   paddingSize="none"
+                  data-testid="key-details"
                   wrapperProps={{
                     className: cx(styles.resizePanelRight, {
                       [styles.noVisible]: isBrowserFullScreen && !isRightPanelOpen,

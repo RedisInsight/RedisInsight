@@ -151,7 +151,7 @@ const KeyDetails = ({ ...props }: Props) => {
 
               <div className={styles.placeholder}>
                 <EuiText textAlign="center" grow color="subdued" size="m">
-                  <p>
+                  <p data-testid="no-keys-selected-text">
                     {error
                       || 'Select the key from the list on the left to see the details of the key.'}
                   </p>

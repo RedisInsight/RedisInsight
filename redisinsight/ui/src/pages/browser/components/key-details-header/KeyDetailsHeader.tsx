@@ -491,10 +491,8 @@ const KeyDetailsHeader = ({
                     data-testid="key-length-text"
                   >
                     {LENGTH_NAMING_BY_TYPE[type] ?? 'Length'}
-                    {' '}
-                    (
+                    {': '}
                     {length ?? '-'}
-                    )
                   </EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem

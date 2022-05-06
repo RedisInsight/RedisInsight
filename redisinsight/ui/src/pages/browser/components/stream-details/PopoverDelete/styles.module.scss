@@ -10,8 +10,7 @@
 }
 
 .text {
-  // TODO find color var
-  color: #a7acb6;
+  color: var(--textColorShade);
 }
 
 .name {

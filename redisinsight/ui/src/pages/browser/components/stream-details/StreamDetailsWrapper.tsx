@@ -1,10 +1,9 @@
 import { EuiText, EuiToolTip } from '@elastic/eui'
-import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { keyBy } from 'lodash'
 
-import { formatLongName, formatNameShort } from 'uiSrc/utils'
+import { formatLongName } from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
@@ -15,7 +14,7 @@ import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import StreamDetails from './StreamDetails'
-import PopoverDelete from '../popover-delete/PopoverDelete'
+import PopoverDelete from './PopoverDelete'
 
 import styles from './StreamDetails/styles.module.scss'
 
@@ -62,14 +61,12 @@ const StreamDetailsWrapper = (props: Props) => {
 
     setUniqFields(fields)
     setEntries(streamEntries)
-    setColumns([idColumn, actionsColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field))])
+    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
   }, [loadedEntries, deleting])
 
   const closePopover = useCallback(() => {
     setDeleting('')
   }, [])
-
-  const shorKeyName = formatNameShort(key)
 
   const showPopover = useCallback((entry = '') => {
     setDeleting(`${entry + suffix}`)
@@ -170,12 +167,11 @@ const StreamDetailsWrapper = (props: Props) => {
       id: 'actions',
       label: '',
       headerClassName: styles.actionsHeader,
-      className: styles.actions,
       textAlignment: TableCellTextAlignment.Left,
       absoluteWidth: actionsWidth,
       render: function Actions(_act: any, { id }: StreamEntryDto) {
         return (
-          <div className={cx('value-table-actions', 'stream-entry-actions')}>
+          <div>
             <PopoverDelete
               item={id}
               keyName={key}
@@ -187,15 +183,6 @@ const StreamDetailsWrapper = (props: Props) => {
               testid={`remove-entry-button-${id}`}
               handleDeleteItem={handleDeleteEntry}
               handleButtonClick={handleRemoveIconClick}
-              customMessage={(
-                <EuiText size="m">
-                  <EuiText size="s" className={styles.popoverSubTitle}>
-                    The Entry will be removed from
-                    <br />
-                    {shorKeyName}
-                  </EuiText>
-                </EuiText>
-              )}
             />
           </div>
         )

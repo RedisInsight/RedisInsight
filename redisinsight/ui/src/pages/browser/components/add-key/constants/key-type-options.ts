@@ -22,11 +22,6 @@ export const ADD_KEY_TYPE_OPTIONS = [
     color: GROUP_TYPES_COLORS[KeyTypes.ZSet],
   },
   {
-    text: 'Stream',
-    value: KeyTypes.Stream,
-    color: GROUP_TYPES_COLORS[KeyTypes.Stream],
-  },
-  {
     text: 'String',
     value: KeyTypes.String,
     color: GROUP_TYPES_COLORS[KeyTypes.String],
@@ -35,5 +30,10 @@ export const ADD_KEY_TYPE_OPTIONS = [
     text: 'JSON',
     value: KeyTypes.ReJSON,
     color: GROUP_TYPES_COLORS[KeyTypes.ReJSON],
+  },
+  {
+    text: 'Stream',
+    value: KeyTypes.Stream,
+    color: GROUP_TYPES_COLORS[KeyTypes.Stream],
   },
 ]

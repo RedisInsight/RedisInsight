@@ -115,8 +115,10 @@
 }
 
 .euiButtonEmpty.euiButtonEmpty--primary {
+  border-radius: 4px;
   color: var(--euiTextSubduedColor);
-  transition: color ease 0.3s;
+  background-color: transparent;
+  transition: color ease 0.3s, background-color ease 0.3s;
 
   .euiButtonEmpty__text, .euiText {
     transition: color ease 0.3s;
@@ -125,17 +127,11 @@
 
   &:hover, &:focus {
     text-decoration: none !important;
-  }
-
-  &:hover {
-    color: var(--euiColorSecondaryText);
+    background-color: var(--hoverInListColorDarken);
+    color: var(--htmlColor);
 
     .euiButtonEmpty__text, .euiText {
-      color: var(--euiColorSecondaryText) !important;
+      color: var(--htmlColor) !important;
     }
-  }
-
-  &:focus {
-    background-color: transparent;
   }
 }

@@ -20,7 +20,7 @@ export interface Props {
 
 const KeysSummary = (props: Props) => {
   const {
-    items,
+    items = [],
     loading,
     scanned = 0,
     totalItemsCount = 0,

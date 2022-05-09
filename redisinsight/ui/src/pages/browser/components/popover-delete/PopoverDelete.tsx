@@ -1,27 +1,28 @@
 import React from 'react'
 import { EuiButton, EuiButtonIcon, EuiPopover, EuiSpacer, EuiText } from '@elastic/eui'
-import { formatNameShort } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
 export interface Props {
+  header?: string,
+  text: JSX.Element | string,
   item: string,
   suffix: string,
   deleting: string,
   closePopover: () => void,
-  showPopover: (item: any) => void,
+  showPopover: (item: string) => void,
   updateLoading: boolean,
   handleDeleteItem: (item: string) => void,
   handleButtonClick?: () => void,
-  keyName: string,
   appendInfo?: JSX.Element | string | null,
   testid?: string,
 }
 
 const PopoverDelete = (props: Props) => {
   const {
+    header,
+    text,
     item,
-    keyName,
     suffix,
     deleting,
     closePopover,
@@ -32,9 +33,6 @@ const PopoverDelete = (props: Props) => {
     appendInfo,
     testid = '',
   } = props
-
-  const shorKeyName = formatNameShort(keyName)
-  const shorItemName = formatNameShort(item)
 
   const onButtonClick = () => {
     if (item + suffix !== deleting) {
@@ -47,12 +45,12 @@ const PopoverDelete = (props: Props) => {
 
   return (
     <EuiPopover
-      key={shorItemName}
+      key={item}
       anchorPosition="leftCenter"
       ownFocus
       isOpen={item + suffix === deleting}
       closePopover={() => closePopover()}
-      panelPaddingSize="l"
+      panelPaddingSize="m"
       anchorClassName="deleteFieldPopover"
       button={(
         <EuiButtonIcon
@@ -68,13 +66,13 @@ const PopoverDelete = (props: Props) => {
     >
       <div className={styles.popover}>
         <EuiText size="m">
-          <h4 className={styles.popoverTitle}>
-            <b>{shorItemName}</b>
-          </h4>
+          {!!header && (
+            <h4 className={styles.popoverTitle}>
+              {header}
+            </h4>
+          )}
           <EuiText size="s" className={styles.popoverSubTitle}>
-            will be removed from
-            {' '}
-            <b>{shorKeyName}</b>
+            {text}
           </EuiText>
           {appendInfo}
         </EuiText>

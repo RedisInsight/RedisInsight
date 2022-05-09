@@ -6,6 +6,7 @@ import { keyBy } from 'lodash'
 import { formatLongName } from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
+import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -14,7 +15,6 @@ import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import StreamDetails from './StreamDetails'
-import PopoverDelete from './PopoverDelete'
 
 import styles from './StreamDetails/styles.module.scss'
 
@@ -173,8 +173,14 @@ const StreamDetailsWrapper = (props: Props) => {
         return (
           <div>
             <PopoverDelete
+              text={(
+                <>
+                  The Entry will be removed from
+                  <br />
+                  {key}
+                </>
+              )}
               item={id}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}

@@ -16,7 +16,6 @@ describe('PopoverDelete', () => {
       <PopoverDelete
         {...instance(mockedProps)}
         item="name"
-        keyName="key"
         showPopover={showPopover}
       />
     )
@@ -36,7 +35,6 @@ describe('PopoverDelete', () => {
         item="name"
         suffix="_"
         deleting="name_"
-        keyName="key"
         handleDeleteItem={handleDeleteItem}
       />
     )

@@ -1,21 +1,21 @@
 import React from 'react'
-import { EuiButton, EuiButtonIcon, EuiPopover, EuiSpacer, EuiText } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiPopover, EuiText } from '@elastic/eui'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  header?: string,
-  text: JSX.Element | string,
-  item: string,
-  suffix: string,
-  deleting: string,
-  closePopover: () => void,
-  showPopover: (item: string) => void,
-  updateLoading: boolean,
-  handleDeleteItem: (item: string) => void,
-  handleButtonClick?: () => void,
-  appendInfo?: JSX.Element | string | null,
-  testid?: string,
+  header?: string
+  text: JSX.Element | string
+  item: string
+  suffix: string
+  deleting: string
+  closePopover: () => void
+  showPopover: (item: string) => void
+  updateLoading: boolean
+  handleDeleteItem: (item: string) => void
+  handleButtonClick?: () => void
+  appendInfo?: JSX.Element | string | null
+  testid?: string
 }
 
 const PopoverDelete = (props: Props) => {
@@ -56,7 +56,6 @@ const PopoverDelete = (props: Props) => {
         <EuiButtonIcon
           iconType="trash"
           aria-label="Remove field"
-          className="deleteFieldBtn"
           color="primary"
           disabled={updateLoading}
           onClick={onButtonClick}
@@ -67,16 +66,15 @@ const PopoverDelete = (props: Props) => {
       <div className={styles.popover}>
         <EuiText size="m">
           {!!header && (
-            <h4 className={styles.popoverTitle}>
-              {header}
+            <h4>
+              <b>{header}</b>
             </h4>
           )}
-          <EuiText size="s" className={styles.popoverSubTitle}>
+          <EuiText size="s">
             {text}
           </EuiText>
           {appendInfo}
         </EuiText>
-        <EuiSpacer />
         <div className={styles.popoverFooter}>
           <EuiButton
             fill
@@ -84,7 +82,6 @@ const PopoverDelete = (props: Props) => {
             color="warning"
             iconType="trash"
             onClick={() => handleDeleteItem(item)}
-            className={styles.popoverDeleteBtn}
             data-testid={testid || 'remove'}
           >
             Remove

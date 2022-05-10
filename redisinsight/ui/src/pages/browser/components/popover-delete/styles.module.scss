@@ -9,20 +9,14 @@
   word-wrap: break-word;
 }
 
-.text {
-  color: var(--textColorShade);
-}
+.appendInfo {
+  display: flex;
+  margin-top: 1rem;
+  color: var(--euiTextSubduedColor);
 
-.name {
-  color: var(--htmlColor);
-}
-
-.btnWrapper {
-  display: flex !important;
-  justify-content: center;
-  height: 54px;
-  width: 36px;
-  background-color: var(--euiColorLightestShade);
+  > div {
+    font-size: 12px !important;
+  }
 }
 
 .popoverFooter {

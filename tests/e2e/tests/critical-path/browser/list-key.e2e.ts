@@ -65,10 +65,10 @@ test
         await t.click(cliPage.cliCollapseButton);
         //Remove element from the key
         await browserPage.openKeyDetails(keyName);
-        const lengthBeforeRemove = (await browserPage.keyLengthDetails.textContent).split('(')[1].split(')')[0];
+        const lengthBeforeRemove = (await browserPage.keyLengthDetails.textContent).split(': ')[1];
         await browserPage.removeListElementFromHeadOld();
         //Check that only one element is removed
-        const lengthAfterRemove = (await browserPage.keyLengthDetails.textContent).split('(')[1].split(')')[0];
+        const lengthAfterRemove = (await browserPage.keyLengthDetails.textContent).split(': ')[1];
         const removedElements = toNumber(lengthBeforeRemove) - toNumber(lengthAfterRemove);
         await t.expect(removedElements).eql(1, 'only one element is removed');
     });

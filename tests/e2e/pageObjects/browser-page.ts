@@ -155,6 +155,7 @@ export class BrowserPage {
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
     progressLine = Selector('div.euiProgress');
+    progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
 
@@ -463,6 +464,7 @@ export class BrowserPage {
     //Remove List element from tail for Redis databases less then v. 6.2.
     async removeListElementFromTailOld(): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
+        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
         await t.click(this.removeElementFromListButton);
         await t.click(this.confirmRemoveListElementButton);
     }
@@ -470,6 +472,7 @@ export class BrowserPage {
     //Remove List element from head for Redis databases less then v. 6.2.
     async removeListElementFromHeadOld(): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
+        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
         //Select Remove from head selection
         await t.click(this.removeElementFromListSelect);
         await t.click(this.removeFromHeadSelection);

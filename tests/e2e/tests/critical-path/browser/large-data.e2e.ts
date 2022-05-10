@@ -36,7 +36,7 @@ test
         //Remember the values of the key size
         await browserPage.openKeyDetails(keyName);
         const keySizeText = await browserPage.keySizeDetails.textContent;
-        const keySize = keySizeText.split(' ')[2];
+        const keySize = keySizeText.split(' ')[0];
         //Verify that user can see relevant information about key size
         await t.expect(keySizeText).contains('KB', 'Key measure');
         await t.expect(+keySize).gt(10, 'Key size value');
@@ -56,5 +56,5 @@ test
         await browserPage.openKeyDetails(keyName);
         const keyLength = await browserPage.keyLengthDetails.textContent;
         //Verify that user can see relevant information about key size
-        await t.expect(keyLength).eql(`Length (${length})`, 'Key length');
+        await t.expect(keyLength).eql(`Length: ${length}`, 'Key length');
     });

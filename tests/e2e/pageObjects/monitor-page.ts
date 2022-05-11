@@ -73,4 +73,10 @@ export class MonitorPage {
         await t.click(this.runMonitorToggle);
         await t.expect(this.resetProfilerButton.visible).ok('Reset profiler button appeared');
     }
+
+    //Reset profiler
+    async resetProfiler(): Promise<void> {
+        await t.click(this.runMonitorToggle);
+        await t.click(this.resetProfilerButton);
+    }
 }

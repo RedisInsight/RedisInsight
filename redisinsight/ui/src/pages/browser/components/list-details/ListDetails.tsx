@@ -13,13 +13,16 @@ import {
   updateListElementAction,
   updateListValueStateSelector,
   fetchSearchingListElementAction,
-} from 'uiSrc/slices/list'
+} from 'uiSrc/slices/browser/list'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import { KeyTypes } from 'uiSrc/constants'
 import {
   ITableColumn,
   IColumnSearchState,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { formatLongName, validateListIndex } from 'uiSrc/utils'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -53,6 +56,8 @@ const ListDetails = (props: Props) => {
   )
 
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   const dispatch = useDispatch()
 
@@ -91,6 +96,20 @@ const ListDetails = (props: Props) => {
 
   const handleSearch = (search: IColumnSearchState[]) => {
     const indexColumn = search.find((column) => column.id === 'index')
+    const onSuccess = () => {
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: KeyTypes.List,
+          match: 'EXACT_VALUE_NAME',
+        }
+      })
+    }
 
     if (!indexColumn?.value) {
       dispatch(fetchListElements(key, 0, SCAN_COUNT_DEFAULT))
@@ -102,7 +121,8 @@ const ListDetails = (props: Props) => {
       dispatch(
         fetchSearchingListElementAction(
           key,
-          value ? +value : initSearchingIndex
+          value ? +value : initSearchingIndex,
+          onSuccess
         )
       )
     }

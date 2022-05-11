@@ -16,7 +16,7 @@ import {
   cloudSelector,
   resetDataRedisCloud,
   resetLoadedRedisCloud,
-} from 'uiSrc/slices/cloud'
+} from 'uiSrc/slices/instances/cloud'
 import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,

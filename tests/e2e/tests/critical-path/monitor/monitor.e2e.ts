@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
@@ -11,7 +12,6 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
@@ -31,14 +31,13 @@ fixture `Monitor`
     })
     .afterEach(async() => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that user can work with Monitor', async t => {
+    })('Verify that user can work with Monitor', async t => {
         const command = 'set';
         //Verify that user can open Monitor
         await t.click(monitorPage.expandMonitor);
@@ -56,17 +55,14 @@ test
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
         //Define commands in different clients
         const cli_command = 'command';
         const workbench_command = 'hello';
         const common_command = 'info';
         const browser_command = 'dbsize';
-        //Expand Monitor panel
-        await t.click(monitorPage.expandMonitor);
-        //Start monitor (using run button in header)
-        await t.click(monitorPage.runMonitorToggle);
+        //Start Monitor
+        await monitorPage.startMonitor();
         //Send command in CLI
         await cliPage.getSuccessCommandResultFromCli(cli_command);
         //Check that command from CLI is displayed in monitor

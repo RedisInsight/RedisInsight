@@ -23,7 +23,7 @@ import { CommandMonitor } from 'uiSrc/constants'
 import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
@@ -71,7 +71,7 @@ const CliBodyWrapper = () => {
   const handleSubmit = () => {
     const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
-    dispatch(concatToOutput(cliCommandOutput(command, currentDbIndex)))
+    dispatch(concatToOutput(cliCommandOutput(decode(command), currentDbIndex)))
 
     if (!isRepeatCountCorrect(countRepeat)) {
       dispatch(processUnrepeatableNumber(commandLine, resetCommand))

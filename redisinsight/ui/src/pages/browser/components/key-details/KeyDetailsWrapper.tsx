@@ -1,32 +1,40 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {
   deleteKeyAction,
   editKey,
   editKeyTTL,
   fetchKeyInfo,
   refreshKeyInfoAction,
-  selectedKeySelector,
-} from 'uiSrc/slices/keys'
+  toggleBrowserFullScreen,
+} from 'uiSrc/slices/browser/keys'
 import { KeyTypes } from 'uiSrc/constants'
-import { refreshHashFieldsAction } from 'uiSrc/slices/hash'
-import { refreshZsetMembersAction } from 'uiSrc/slices/zset'
-import { resetStringValue } from 'uiSrc/slices/string'
-import { refreshSetMembersAction } from 'uiSrc/slices/set'
-import { refreshListElementsAction } from 'uiSrc/slices/list'
+import { refreshHashFieldsAction } from 'uiSrc/slices/browser/hash'
+import { refreshZsetMembersAction } from 'uiSrc/slices/browser/zset'
+import { resetStringValue } from 'uiSrc/slices/browser/string'
+import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
+import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
-  onCloseKey: () => void;
-  onEditKey: (key: string, newKey: string) => void;
-  onDeleteKey: () => void;
-  keyProp: string | null;
+  isFullScreen: boolean
+  onToggleFullScreen: () => void
+  onCloseKey: () => void
+  onEditKey: (key: string, newKey: string) => void
+  onDeleteKey: () => void
+  keyProp: string | null
 }
 
-const KeyDetailsWrapper = ({ onCloseKey, onEditKey, onDeleteKey, keyProp }: Props) => {
+const KeyDetailsWrapper = (props: Props) => {
+  const {
+    isFullScreen,
+    onToggleFullScreen,
+    onCloseKey,
+    onEditKey,
+    onDeleteKey,
+    keyProp
+  } = props
   const dispatch = useDispatch()
-
-  const selectedKey = useSelector(selectedKeySelector)
 
   useEffect(() => {
     if (keyProp === null) {
@@ -86,10 +94,16 @@ const KeyDetailsWrapper = ({ onCloseKey, onEditKey, onDeleteKey, keyProp }: Prop
     onCloseKey()
   }
 
+  const handleClosePanel = () => {
+    dispatch(toggleBrowserFullScreen())
+  }
+
   return (
     <KeyDetails
-      selectedKey={selectedKey}
+      isFullScreen={isFullScreen}
+      onToggleFullScreen={onToggleFullScreen}
       onClose={handleClose}
+      onClosePanel={handleClosePanel}
       onRefresh={handleRefreshKey}
       onDelete={handleDeleteKey}
       onEditTTL={handleEditTTL}

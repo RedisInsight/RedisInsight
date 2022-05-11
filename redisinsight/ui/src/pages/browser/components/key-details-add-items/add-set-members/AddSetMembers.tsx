@@ -11,8 +11,8 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
-import { addSetMembersAction, setSelector } from 'uiSrc/slices/set'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { addSetMembersAction, setSelector } from 'uiSrc/slices/browser/set'
 
 import AddItemsActions from '../../add-items-actions/AddItemsActions'
 import { AddZsetFormConfig as config } from '../../add-key/constants/fields-config'

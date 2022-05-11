@@ -26,14 +26,14 @@ import {
   keysSelector,
   selectedKeySelector,
   sourceKeysFetch,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import {
   appContextBrowser,
   setBrowserKeyListScrollPosition
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
@@ -42,7 +42,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   hideHeader?: boolean
-  keysState: IKeyListPropTypes
+  keysState: KeysStoreData
   loading: boolean
   hideFooter?: boolean
   selectKey: ({ rowData }: { rowData: any }) => void

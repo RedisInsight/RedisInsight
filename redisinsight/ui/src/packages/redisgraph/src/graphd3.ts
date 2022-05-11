@@ -621,6 +621,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   let info: any
   let nodes: INode[]
   let relationship: d3.Selection<SVGGElement, IRelationship, SVGGElement, any>
+  let labelCounter = 0;
+  let labels: { [key: string]: number } = { }
   let relationshipOutline
   let relationshipOverlay
   let relationshipText
@@ -644,7 +646,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   const options = { ...DEFAULT_OPTIONS, ..._options }
   let zoom: d3.ZoomBehavior<Element, unknown> = options.graphZoom
 
-  const {labelColors, edgeColors} = options
+  const { labelColors, edgeColors } = options
 
   function color() {
     return COLORS[Math.floor(Math.random() * COLORS.length)]
@@ -725,11 +727,15 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       .html(`<strong>${property}</strong> ${value}`)
   }
 
-  function stickNode(event, d) {
+  function stickNode(ele, event, d) {
     /* eslint-disable */
     d.fx = event.x
     d.fy = event.y
     /* eslint-enable */
+
+    // Add a ring to specify that the node was selected
+    d3.select(ele).attr('class', 'node selected')
+
   }
 
   function dragEnded(event, d) {
@@ -743,7 +749,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function dragged(event, d) {
-    stickNode(event, d)
+    stickNode(this, event, d)
   }
 
   function dragStarted(event, d) {
@@ -812,13 +818,29 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         }
       })
       .on('dblclick', function onNodeDoubleClick(event, d) {
-        stickNode(event, d)
+        stickNode(this, event, d)
 
         if (typeof options.onNodeDoubleClick === 'function') {
           options.onNodeDoubleClick(this, d, event)
         }
 
-        d3.select('.graphd3-graph').transition().call(zoom.translateTo as any, d.x, d.y)
+        [...new Set(nodes.map(n => n.labels[0]))].forEach(l => {
+          if (labels[l] === undefined) {
+            labels[l] = labelCounter
+            labelCounter += 1
+          }
+        })
+
+        // Pulse on double click
+        Utils.pulse(d3.select(event.currentTarget).select('.outline'));
+
+        // Calculating the next positio of the node takes some times
+        // so start transition only after the calculation. So delay
+        // starting the transition by some milliseconds.
+        setTimeout(() => d3.select('.graphd3-graph')
+                           .transition()
+                           .duration(500)
+                           .call(zoom.translateTo as any, d.x, d.y), 10)
       })
       .on('mouseenter', function onNodeMouseEnter(event, d) {
         if (info) {
@@ -1252,26 +1274,20 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   function initSimulation() {
     const spreadFactor = 1.25
     return d3.forceSimulation()
-    // .force('x', d3.forceCollide().strength(0.002))
-    // .force('y', d3.forceCollide().strength(0.002))
-    // .force('y', d3.force().strength(0.002))
-    .velocityDecay(0.4)
-    .force('collide', d3.forceCollide().radius(() => options.minCollision * spreadFactor).iterations(10))
-    .force('charge', d3.forceManyBody().strength(-400))
-    .force('link', d3.forceLink().id((d: IRelationship) => d.id))
-    .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2,
-                                    svg.node().parentElement.parentElement.clientHeight / 2))
-    .force('centerX', d3.forceX(0).strength(0.03))
-    .force('centerX', d3.forceX(0).strength(0.03))
-    .on('tick', () => {
-      tick()
-    })
-    .on('end', () => {
-      if (options.zoomFit && !justLoaded) {
-        justLoaded = true
-        zoomFit()
-      }
-    })
+             .force('link', d3.forceLink().id((d: IRelationship) => d.id).distance(70))
+             .force('charge', d3.forceManyBody().strength((d, i) => i ? -5000 : 500))
+             .force("y", d3.forceY(svg.node().parentElement.parentElement.clientHeight / 2))
+             .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2,
+                                             svg.node().parentElement.parentElement.clientHeight / 2))
+             .on('tick', () => {
+               tick()
+             })
+             .on('end', () => {
+               if (options.zoomFit && !justLoaded) {
+                 justLoaded = true
+                 zoomFit()
+               }
+             })
   }
 
   function init() {
@@ -1298,7 +1314,22 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     } else {
       console.error('Error: graphData is empty!')
     }
-  }
+
+    [...new Set(nodes.map(n => n.labels[0]))].forEach(l => {
+      if (labels[l] === undefined) {
+        labels[l] = labelCounter
+        labelCounter += 1
+      }
+    });
+
+    simulation
+      .force("x", d3.forceX(d => d.angleX || 0))
+      .force("y", d3.forceY(d => d.angleY || 0))
+      .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2,
+                                      svg.node().parentElement.parentElement.clientHeight / 2))
+      .force('centerX', d3.forceX(0).strength(0.03))
+      .force('centerX', d3.forceX(0).strength(0.03))
+    }
 
   init()
 
@@ -1421,9 +1452,11 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
 
   function mapData(d: IGraph) {
-    d.relationships.map((r) => {
+    d.relationships.map(r => {
       let source = findNode(r.startNode, d.nodes)
       let target = findNode(r.endNode, d.nodes);
+
+      source.links = source.links ? Array.from(new Set([...source.links, target.labels[0]])) : [target.labels[0]];
 
       (r.source = source),
         (r.target = target),
@@ -1433,6 +1466,37 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         })
       return r
     })
+
+    nodes.map(n => {
+      if (n.links !== undefined) {
+        let labels = {}
+        n.links.forEach((l, i) => {
+          labels[l] = i;
+        });
+
+        const equalAngles = 360 / Object.keys(labels).length
+        let angleIterator = 0
+        Object.keys(labels).map(l => {
+          labels[l] = angleIterator;
+          angleIterator += equalAngles;
+        });
+
+        n.targetLabels = labels;
+      }
+    })
+
+    d.relationships.map(r => {
+      const radius = 1300
+      const onlyOne = Object.keys(r.source.targetLabels).length === 1
+
+      const degree = Math.PI * 2 * r.source.targetLabels[r.target.labels[0]] / 360;
+      const angleX = onlyOne ? 0 : radius * Math.sin(degree)
+      const angleY = onlyOne ? 0 : radius * Math.cos(degree)
+
+      r.target.angleX = angleX;
+      r.target.angleY = angleY;
+    })
+
   }
 
   function groupedRelationships(): NodePair[] {
@@ -1441,7 +1505,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     } = {}
     for (const relationship of Array.from(relationships)) {
       let nodePair = new NodePair(relationship.source, relationship.target)
-        nodePair = groups[nodePair.toString()] != null ? groups[nodePair.toString()] : nodePair
+      nodePair = groups[nodePair.toString()] != null ? groups[nodePair.toString()] : nodePair
       nodePair.relationships.push(relationship)
       groups[nodePair.toString()] = nodePair
     }

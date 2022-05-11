@@ -8,8 +8,8 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { loadKeys, setFilter } from 'uiSrc/slices/keys'
-import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
+import { loadKeys, setFilter } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { KeyTypes } from 'uiSrc/constants'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import FilterKeyType from './FilterKeyType'
@@ -19,7 +19,7 @@ let store: typeof mockedStore
 const filterSelectId = 'select-filter-key-type'
 const filterInfoId = 'filter-info-popover-icon'
 
-jest.mock('uiSrc/slices/instances', () => ({
+jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceOverviewSelector: jest.fn().mockReturnValue({
     version: '6.2.1',
   }),

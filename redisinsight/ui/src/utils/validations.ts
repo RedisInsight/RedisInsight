@@ -1,9 +1,13 @@
 export const MAX_TTL_NUMBER = 2147483647
 export const MAX_PORT_NUMBER = 65535
-export const MAX_DATABASE_INDEX_NUMBER = 15
+export const MAX_DATABASE_INDEX_NUMBER = 99
 export const MAX_SCORE_DECIMAL_LENGTH = 15
 
+export const entryIdRegex = /^(\*)$|^(([0-9]+)(-)((\*)$|([0-9]+$)))/
+
 export const validateField = (text: string) => text.replace(/\s/g, '')
+
+export const validateEntryId = (initValue: string) => initValue.replace(/[^0-9-*]+/gi, '')
 
 export const validateCountNumber = (initValue: string) => {
   const value = initValue.replace(/[^0-9]+/gi, '')
@@ -72,3 +76,5 @@ export const validateNumber = (initValue: string, maxNumber: number = MAX_PORT_N
 
 export const validateCertName = (initValue: string) =>
   initValue.replace(/[^ a-zA-Z0-9!@#$%^&*-_()[\]]+/gi, '').toString()
+
+export const isRequiredStringsValid = (...params: string[]) => params.every((p = '') => p.length > 0)

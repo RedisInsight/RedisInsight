@@ -83,7 +83,10 @@ export class StandaloneStrategy extends AbstractStrategy {
       node.total > 0
       && !fullScanned
       && node.keys.length < count
-      && node.scanned < settings.scanThreshold
+      && (
+        (node.total < settings.scanThreshold && node.cursor)
+        || node.scanned < settings.scanThreshold
+      )
     ) {
       let commandArgs = [`${node.cursor}`, 'MATCH', match, 'COUNT', count];
       if (type) {

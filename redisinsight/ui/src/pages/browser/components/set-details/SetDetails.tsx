@@ -6,24 +6,25 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 
-import { formatLongName } from 'uiSrc/utils'
+import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import {
   deleteSetMembers,
   fetchSetMembers,
   fetchMoreSetMembers,
   setDataSelector,
   setSelector,
-} from 'uiSrc/slices/set'
+} from 'uiSrc/slices/browser/set'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 
 import styles from './styles.module.scss'
 
@@ -82,8 +83,24 @@ const SetDetails = (props: Props) => {
     if (!fieldColumn) { return }
 
     const { value: match } = fieldColumn
+    const onSuccess = (data: GetSetMembersResponse) => {
+      const matchValue = getMatchType(match)
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: KeyTypes.Set,
+          match: matchValue,
+          length: data.total,
+        }
+      })
+    }
     setMatch(match)
-    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue))
+    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, onSuccess))
   }
 
   const columns:ITableColumn[] = [
@@ -128,8 +145,9 @@ const SetDetails = (props: Props) => {
         return (
           <div className="value-table-actions">
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(cellData)}
               item={cellData}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}

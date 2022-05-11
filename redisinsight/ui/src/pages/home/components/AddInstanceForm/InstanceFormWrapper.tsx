@@ -9,11 +9,11 @@ import {
   createInstanceStandaloneAction,
   updateInstanceAction,
   instancesSelector,
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import {
   clientCertsSelector,
   fetchClientCerts,
-} from 'uiSrc/slices/clientCerts'
+} from 'uiSrc/slices/instances/clientCerts'
 import { Nullable, removeEmpty } from 'uiSrc/utils'
 import {
   ConnectionType,
@@ -21,12 +21,12 @@ import {
   InstanceType,
 } from 'uiSrc/slices/interfaces'
 import { localStorageService } from 'uiSrc/services'
-import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/caCerts'
+import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { DbType, BrowserStorageItem, REDIS_URI_SCHEMES, Pages } from 'uiSrc/constants'
 import {
   fetchMastersSentinelAction,
   sentinelSelector,
-} from 'uiSrc/slices/sentinel'
+} from 'uiSrc/slices/instances/sentinel'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import InstanceForm, {
@@ -95,7 +95,7 @@ const InstanceFormWrapper = (props: Props) => {
 
   const tlsClientAuthRequired = !!editedInstance?.tls?.clientCertPairId ?? false
   const selectedTlsClientCertId = editedInstance?.tls?.clientCertPairId ?? ADD_NEW
-  const verifyServerTlsCert = editedInstance?.tls?.verifyServerCert ?? true
+  const verifyServerTlsCert = editedInstance?.tls?.verifyServerCert ?? false
   const selectedCaCertName = editedInstance?.tls?.caCertId ?? NO_CA_CERT
   const sentinelMasterUsername = editedInstance?.sentinelMaster?.username ?? ''
   const sentinelMasterPassword = editedInstance?.sentinelMaster?.password ?? ''
@@ -221,6 +221,7 @@ const InstanceFormWrapper = (props: Props) => {
 
     const {
       useTls,
+      servername,
       verifyServerCert,
       caCert,
       clientAuth,
@@ -229,7 +230,7 @@ const InstanceFormWrapper = (props: Props) => {
 
     if (useTls) {
       db.tls = {}
-
+      db.tls.servername = servername
       db.tls.verifyServerCert = !!verifyServerCert
 
       if (typeof caCert?.new !== 'undefined') {
@@ -280,6 +281,7 @@ const InstanceFormWrapper = (props: Props) => {
 
     const {
       useTls,
+      servername,
       verifyServerCert,
       caCert,
       clientAuth,
@@ -288,7 +290,7 @@ const InstanceFormWrapper = (props: Props) => {
 
     if (useTls) {
       database.tls = {}
-
+      database.tls.servername = servername
       database.tls.verifyServerCert = !!verifyServerCert
       if (typeof caCert?.new !== 'undefined') {
         database.tls.newCaCert = {
@@ -331,6 +333,8 @@ const InstanceFormWrapper = (props: Props) => {
     const {
       newCaCert,
       tls,
+      sni,
+      servername,
       newCaCertName,
       selectedCaCertName,
       tlsClientAuthRequired,
@@ -343,6 +347,7 @@ const InstanceFormWrapper = (props: Props) => {
 
     const tlsSettings = {
       useTls: tls,
+      servername: (sni && servername) || undefined,
       verifyServerCert: verifyServerTlsCert,
       caCert:
         !tls || selectedCaCertName === NO_CA_CERT

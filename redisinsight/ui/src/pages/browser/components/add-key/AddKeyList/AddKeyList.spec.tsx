@@ -37,10 +37,7 @@ describe('AddKeyList', () => {
   })
 
   it('should not be disabled add key with proper values', () => {
-    const { container } = render(<AddKeyList {...instance(mockedProps)} />)
-    const keyNameInput = screen.getByTestId('key')
-    const value = 'key name'
-    fireEvent.change(keyNameInput, { target: { value } })
+    const { container } = render(<AddKeyList {...instance(mockedProps)} keyName="name" />)
     expect(container.querySelector('.btn-add')).not.toBeDisabled()
   })
 })

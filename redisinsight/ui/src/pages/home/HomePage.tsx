@@ -6,15 +6,15 @@ import {
   clusterSelector,
   resetDataRedisCluster,
   resetInstancesRedisCluster,
-} from 'uiSrc/slices/cluster'
+} from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { Instance } from 'uiSrc/slices/interfaces'
-import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/cloud'
-import { fetchInstancesAction, instancesSelector } from 'uiSrc/slices/instances'
+import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
+import { fetchInstancesAction, instancesSelector } from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
-import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/sentinel'
+import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'

@@ -181,9 +181,6 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
         if (d3.select(nodeSvg).attr('class').indexOf('selected') > 0) {
           d3.select(nodeSvg)
             .attr('class', 'node')
-        } else {
-          d3.select(nodeSvg)
-            .attr('class', 'node selected')
         }
       },
       async onNodeDoubleClick(nodeSvg, node) {

@@ -22,7 +22,7 @@ export class BrowserPage {
     closeEditTTL = Selector('[data-testid=cancel-btn]');
     saveTTLValue = Selector('[data-testid=apply-btn]');
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
-    refreshKeyButton = Selector('[data-testid=refresh-key-btn]')
+    refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
@@ -54,9 +54,6 @@ export class BrowserPage {
     scanMoreButton = Selector('[data-testid=scan-more]');
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
     modulesButton = Selector('[data-testid$=_module]');
-    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
-    overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
-    overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
     databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     treeViewButton = Selector('[data-testid=view-type-list-btn]');
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');
@@ -68,6 +65,9 @@ export class BrowserPage {
     treeViewDelimiterButton = Selector('[data-testid=tree-view-delimiter-btn]');
     treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
     treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
+    fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
+    disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
+    closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -87,7 +87,7 @@ export class BrowserPage {
     keyNameInput = Selector('[data-testid=edit-key-input]');
     keyTTLInput = Selector('[data-testid=ttl]');
     editKeyTTLInput = Selector('[data-testid=edit-ttl-input]');
-    ttlText = Selector('[data-testid=key-ttl-text] span')
+    ttlText = Selector('[data-testid=key-ttl-text] span');
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
     listKeyElementInput = Selector('[data-testid=element]');
@@ -151,9 +151,13 @@ export class BrowserPage {
     multiSearchArea = Selector(this.cssFilteringLabel);
     keyDetailsHeader = Selector('[data-testid=key-details-header]');
     keyListTable = Selector('[data-testid=keyList-table]');
+    keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
     progressLine = Selector('div.euiProgress');
+    progressKeyList = Selector('[data-testid=progress-key-list]');
+    jsonScalarValue = Selector('[data-testid=json-scalar-value]');
+    noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
 
     /**
      * Adding a new String key
@@ -179,19 +183,21 @@ export class BrowserPage {
     /**
      *Adding a new Json key
      * @param keyName The name of the key
-     * @param TTL The Time to live value of the key
      * @param value The key value
+     * @param TTL The Time to live value of the key (optional parameter)
      */
-    async addJsonKey(keyName: string, TTL = ' ', value = ' '): Promise<void> {
+    async addJsonKey(keyName: string, value = ' ', TTL?: string): Promise<void> {
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.jsonOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
-        await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
         await t.click(this.jsonKeyValueInput);
         await t.typeText(this.jsonKeyValueInput, value);
+        if (TTL) {
+            await t.click(this.keyTTLInput);
+            await t.typeText(this.keyTTLInput, TTL);
+        }
         await t.click(this.addKeyButton);
     }
 
@@ -296,7 +302,7 @@ export class BrowserPage {
         await t.click(this.filterByPatterSearchInput);
         await t.pressKey('ctrl+a delete');
         await t.typeText(this.filterByPatterSearchInput, keyName);
-        await t.pressKey('enter')
+        await t.pressKey('enter');
     }
 
     /**
@@ -305,14 +311,12 @@ export class BrowserPage {
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
         const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
-        const res = keyNameInTheList.exists;
-        return res;
+        return keyNameInTheList.exists;
     }
 
     //Getting the text of the Notification message
     async getMessageText(): Promise<string> {
-        const text = this.notificationMessage.textContent;
-        return text;
+        return this.notificationMessage.textContent;
     }
 
     //Delete key from details
@@ -365,8 +369,7 @@ export class BrowserPage {
 
     //Get string key value from details
     async getStringKeyValue(): Promise<string> {
-        const value = this.stringKeyValue.textContent;
-        return value;
+        return this.stringKeyValue.textContent;
     }
 
     /**
@@ -436,8 +439,7 @@ export class BrowserPage {
 
     //Get databases name
     async getDatabasesName(): Promise<string> {
-        const text = this.databaseNames.textContent;
-        return text;
+        return this.databaseNames.textContent;
     }
 
     //Open key details
@@ -462,6 +464,7 @@ export class BrowserPage {
     //Remove List element from tail for Redis databases less then v. 6.2.
     async removeListElementFromTailOld(): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
+        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
         await t.click(this.removeElementFromListButton);
         await t.click(this.confirmRemoveListElementButton);
     }
@@ -469,6 +472,7 @@ export class BrowserPage {
     //Remove List element from head for Redis databases less then v. 6.2.
     async removeListElementFromHeadOld(): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
+        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
         //Select Remove from head selection
         await t.click(this.removeElementFromListSelect);
         await t.click(this.removeFromHeadSelection);
@@ -545,7 +549,7 @@ export class BrowserPage {
      * Get Values list of the key
      * @param element Selector of the element with list
      */
-    async getValuesListByElement(element): Promise<string[]> {
+    async getValuesListByElement(element: any): Promise<string[]> {
         const keyValues = [];
         const count = await element.count;
         for (let i = 0; i < count; i++) {
@@ -592,7 +596,7 @@ export class BrowserPage {
             }
             // Verify that the last folder level contains required keys
             const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
-            const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`
+            const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`;
             await t.click(await Selector(folderSelector));
             const foundKeyName = `${folders[i].join(delimiter)}`;
             await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).visible).ok('Specific key');
@@ -631,4 +635,4 @@ export type AddNewKeyParameters = {
     members?: string,
     scores?: string,
     field?: string
-}
+};

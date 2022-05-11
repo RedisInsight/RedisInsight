@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -14,10 +14,10 @@ const expectedTTL = /214747612*/;
 fixture `Key details verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -115,7 +115,7 @@ test
 
         const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
 
-        await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
+        await browserPage.addJsonKey(keyName, jsonValue, keyTTL);
         const keyDetails = await browserPage.keyDetailsHeader.textContent;
         const keyBadge = await browserPage.keyDetailsBadge.textContent;
         const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
@@ -127,4 +127,3 @@ test
         await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
         await t.expect(keyBadge).contains('JSON', 'The Key Badge');
     });
-    

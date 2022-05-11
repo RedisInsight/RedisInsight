@@ -15,7 +15,7 @@ import {
   appendReJSONArrayItemAction,
   removeReJSONKeyAction,
   setReJSONDataAction
-} from 'uiSrc/slices/rejson'
+} from 'uiSrc/slices/browser/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { JSONErrors } from '../constants'
 import JSONScalar from '../JSONScalar/JSONScalar'

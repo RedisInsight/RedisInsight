@@ -16,7 +16,6 @@ describe('LogFile', () => {
 
   beforeEach(() => {
     logFile = new LogFile(mockLogFile.instanceId, mockLogFile.id, mockProfilerAnalyticsEvents);
-    jest.resetAllMocks();
   });
 
   it('Initialization', () => {
@@ -98,9 +97,16 @@ describe('LogFile', () => {
     expect(fs.existsSync(logFile['filePath'])).toEqual(false);
     const stream = logFile.getWriteStream();
     expect(stream['_writableState'].ended).toEqual(false);
-    stream.write('somedata');
-    await new Promise((r) => setTimeout(r, 500));
-    expect(fs.existsSync(logFile['filePath'])).toEqual(true);
+    await new Promise((res, rej) => {
+      stream.write('somedata', (err) => {
+        if (err) {
+          return rej(err);
+        }
+
+        expect(fs.existsSync(logFile['filePath'])).toEqual(true);
+        return res(true);
+      });
+    });
     expect(logFile['writeStream']).toEqual(stream);
     await logFile.destroy();
     expect(logFile['writeStream']).toEqual(null);

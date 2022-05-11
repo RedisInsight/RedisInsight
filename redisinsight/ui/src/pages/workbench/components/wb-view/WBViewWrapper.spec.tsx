@@ -11,7 +11,7 @@ import {
   waitFor,
 } from 'uiSrc/utils/test-utils'
 import QueryWrapper, { Props as QueryProps } from 'uiSrc/components/query'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendWBCommandAction } from 'uiSrc/slices/workbench/wb-results'
 import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
@@ -49,8 +49,8 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-jest.mock('uiSrc/slices/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances'),
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: '123',
     connectionType: 'STANDALONE',

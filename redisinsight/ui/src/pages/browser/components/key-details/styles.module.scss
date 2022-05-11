@@ -18,6 +18,7 @@
 .content {
   height: calc(100% - 220px);
   background-color: var(--euiColorEmptyShade);
+  position: relative;
   > div {
     height: 100%;
   }
@@ -42,6 +43,19 @@
 }
 
 :global(.key-details-body) {
-  height: calc(100% - 85px);
+  height: calc(100% - 105px);
   //min-height: 300px;
+}
+
+.closeRightPanel {
+  position: absolute;
+  top: 22px;
+  right: 18px;
+
+  .closeBtn {
+    :global(svg) {
+      width: 20px;
+      height: 20px;
+    }
+  }
 }

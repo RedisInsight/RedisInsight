@@ -1,23 +1,26 @@
-.tooltip {
-  max-width: 312px !important;
+:global {
+  .euiPanel--paddingMedium {
+    padding: 18px !important;
+  }
 }
 
 .popover {
-  max-width: 312px !important;
+  max-width: 564px !important;
   word-wrap: break-word;
 }
 
-.popoverTitle {
-  margin-top: 0 !important;
-}
-
 .appendInfo {
-  color: var(--euiTextSubduedColor);
-
   display: flex;
   margin-top: 1rem;
+  color: var(--euiTextSubduedColor);
 
   > div {
     font-size: 12px !important;
   }
+}
+
+.popoverFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
 }

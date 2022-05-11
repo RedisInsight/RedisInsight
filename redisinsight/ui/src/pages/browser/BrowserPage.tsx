@@ -15,8 +15,9 @@ import {
   resetKeyInfo,
   selectedKeyDataSelector,
   setInitialStateByType,
-} from 'uiSrc/slices/keys'
-import { connectedInstanceSelector, setConnectedInstanceId } from 'uiSrc/slices/instances'
+  toggleBrowserFullScreen,
+} from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import {
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,
@@ -52,7 +53,7 @@ const BrowserPage = () => {
     panelSizes
   } = useSelector(appContextBrowser)
   const keysState = useSelector(keysDataSelector)
-  const { loading, viewType } = useSelector(keysSelector)
+  const { loading, viewType, isBrowserFullScreen } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '' }
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
@@ -111,6 +112,10 @@ const BrowserPage = () => {
     }))
   }, [])
 
+  const handleToggleFullScreen = () => {
+    dispatch(toggleBrowserFullScreen())
+  }
+
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.BROWSER_PAGE,
@@ -167,6 +172,8 @@ const BrowserPage = () => {
     }
   }
 
+  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen
+
   return (
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader />
@@ -179,21 +186,21 @@ const BrowserPage = () => {
                   id={firstPanelId}
                   scrollable={false}
                   initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="600px"
+                  minSize="550px"
                   paddingSize="none"
                   wrapperProps={{
                     className: cx(styles.resizePanelLeft, {
-                      [styles.fullWidth]: arePanelsCollapsed,
+                      [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen)
                     }),
                   }}
                 >
                   <>
-
                     <KeysHeader
                       keysState={keysState}
                       loading={loading}
+                      isFullScreen={isBrowserFullScreen}
+                      onExitFullScreen={handleToggleFullScreen}
                       loadKeys={loadKeys}
-                      sizes={sizes}
                       loadMoreItems={loadMoreItems}
                       handleAddKeyPanel={handleAddKeyPanel}
                     />
@@ -210,7 +217,6 @@ const BrowserPage = () => {
                       <KeyTree
                         keysState={keysState}
                         loading={loading}
-                        loadMoreItems={loadMoreItems}
                         selectKey={selectKey}
                       />
                     )}
@@ -219,7 +225,7 @@ const BrowserPage = () => {
 
                 <EuiResizableButton
                   className={cx(styles.resizableButton, {
-                    [styles.hidden]: arePanelsCollapsed,
+                    [styles.hidden]: arePanelsCollapsed || isBrowserFullScreen,
                   })}
                   data-test-subj="resize-btn-keyList-keyDetails"
                 />
@@ -228,13 +234,15 @@ const BrowserPage = () => {
                   id={secondPanelId}
                   scrollable={false}
                   initialSize={sizes[secondPanelId] ?? 50}
-                  minSize="500px"
+                  minSize="550px"
                   paddingSize="none"
+                  data-testid="key-details"
                   wrapperProps={{
                     className: cx(styles.resizePanelRight, {
-                      [styles.fullWidth]: arePanelsCollapsed,
-                      [styles.keyDetails]: arePanelsCollapsed,
-                      [styles.keyDetailsOpen]: isAddKeyPanelOpen || selectedKey !== null,
+                      [styles.noVisible]: isBrowserFullScreen && !isRightPanelOpen,
+                      [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
+                      [styles.keyDetails]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
+                      [styles.keyDetailsOpen]: isRightPanelOpen,
                     }),
                   }}
                 >
@@ -245,6 +253,8 @@ const BrowserPage = () => {
                     />
                   ) : (
                     <KeyDetailsWrapper
+                      isFullScreen={isBrowserFullScreen}
+                      onToggleFullScreen={handleToggleFullScreen}
                       keyProp={selectedKey}
                       onCloseKey={closeKey}
                       onEditKey={(key: string, newKey: string) => handleEditKey(key, newKey)}

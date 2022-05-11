@@ -64,6 +64,8 @@ export enum CommandGroup {
   TDigest = 'tdigest',
   CMS = 'cms',
   TopK = 'topk',
+  BloomFilter = 'bf',
+  CuckooFilter = 'cf'
 }
 
 export enum CommandPrefix {

@@ -30,6 +30,7 @@ export interface ITableColumn {
   isSearchOpen?: boolean
   initialSearchValue?: string
   headerClassName?: string
+  headerCellClassName?: string
   truncateText?: boolean
   relativeWidth?: number
   absoluteWidth?: number | string
@@ -49,7 +50,7 @@ export interface IProps {
   loadMoreItems?: (config: any) => void
   rowHeight?: number
   footerHeight?: number
-  isRowSelectable?: boolean
+  selectable?: boolean
   keyName?: string
   headerHeight?: number
   searching?: boolean
@@ -66,6 +67,7 @@ export interface IProps {
   setScrollTopPosition?: (position: number) => void
   scrollTopProp?: number
   hideFooter?: boolean
+  tableWidth?: number
 }
 
 export interface ISortedColumn {

@@ -10,9 +10,9 @@ import {
   fetchMoreHashFields,
   updateHashValueStateSelector,
   updateHashFieldsAction,
-} from 'uiSrc/slices/hash'
-import { formatLongName, Nullable } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+} from 'uiSrc/slices/browser/hash'
+import { formatLongName, createDeleteFieldHeader, createDeleteFieldMessage, Nullable } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import {
@@ -20,11 +20,12 @@ import {
   ITableColumn,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import {
+  GetHashFieldsResponse,
   AddFieldsToHashDto,
   HashFieldDto,
 } from 'apiSrc/modules/browser/dto/hash.dto'
@@ -126,8 +127,24 @@ const HashDetails = (props: Props) => {
     const fieldColumn = search.find((column) => column.id === 'field')
     if (fieldColumn) {
       const { value: match } = fieldColumn
+      const onSuccess = (data: GetHashFieldsResponse) => {
+        const matchValue = getMatchType(match)
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          ),
+          eventData: {
+            databaseId: instanceId,
+            keyType: KeyTypes.Hash,
+            match: matchValue,
+            length: data.total,
+          }
+        })
+      }
       setMatch(match)
-      dispatch(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue))
+      dispatch(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, onSuccess))
     }
   }
 
@@ -227,8 +244,9 @@ const HashDetails = (props: Props) => {
               data-testid={`edit-hash-button-${field}`}
             />
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(field)}
               item={field}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}

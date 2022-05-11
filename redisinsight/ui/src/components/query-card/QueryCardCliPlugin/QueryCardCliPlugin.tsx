@@ -15,7 +15,7 @@ import {
   sendPluginCommandAction,
   setPluginStateAction
 } from 'uiSrc/slices/app/plugins'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appServerInfoSelector } from 'uiSrc/slices/app/info'
 
 import styles from './styles.module.scss'

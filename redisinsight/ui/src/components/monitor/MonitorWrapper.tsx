@@ -25,7 +25,7 @@ const MonitorWrapper = () => {
     dispatch(togglePauseMonitor())
   }
 
-  const onRunMonitor = (isSaveToLog?: boolean) => {
+  const onRunMonitor = (isSaveToLog: boolean = false) => {
     sendEventTelemetry({
       event: TelemetryEvent.PROFILER_STARTED,
       eventData: {

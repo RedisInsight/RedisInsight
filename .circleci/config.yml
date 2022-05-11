@@ -1109,7 +1109,6 @@ workflows:
             branches:
               only:
                 - main
-                - latest
     jobs:
       # build docker image
       - docker:

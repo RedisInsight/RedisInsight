@@ -18,7 +18,8 @@
   pointer-events: none !important;
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: var(--inputPlaceholderColor) !important;
 }
 
@@ -32,6 +33,10 @@ input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons {
   padding: 8px !important;
 }
 
+.inputAppendIcon.inputAppendIcon {
+  height: auto;
+}
+
 .euiFormControlLayout > .euiFormControlLayout__append,
 .inputAppendIcon > svg {
   width: 41px !important;
@@ -42,5 +47,5 @@ input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons {
 .euiFormControlLayout--compressed .inputAppendIcon > svg,
 .euiFormControlLayout--compressed > .euiFormControlLayout__append {
   width: 34px !important;
-  height: 30px !important;
+  height: 29px !important;
 }

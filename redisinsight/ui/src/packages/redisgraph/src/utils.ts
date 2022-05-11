@@ -1,11 +1,12 @@
 import * as d3 from 'd3'
 
 export function pulse(node: d3.Selection<SVGElement, any, any, any>) {
-    var times = 0
+  var times = 0;
   (function repeat() {
     node
     .transition()
     .duration(100)
+    .attr("class", "")
     .attr("data-pulse", "true")
     .attr("stroke", "purple")
     .attr("stroke-width", 0)
@@ -13,7 +14,7 @@ export function pulse(node: d3.Selection<SVGElement, any, any, any>) {
     .transition()
     .duration(500)
     .attr("stroke-width", 0)
-    .attr('stroke-opacity', 0.5)
+    .attr('stroke-opacity', 1)
     .transition()
     .duration(1000)
     .attr("stroke-width", 65)
@@ -21,7 +22,7 @@ export function pulse(node: d3.Selection<SVGElement, any, any, any>) {
     .ease(d3.easeCubicInOut)
     .on("end", () => {
       if (times === 3) {
-        node.transition().attr("data-pulse", "")
+        node.transition().attr("data-pulse", "").attr("class", "outline")
         return
       }
       times++

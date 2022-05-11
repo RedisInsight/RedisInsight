@@ -14,19 +14,19 @@ import {
   updateZSetMembers,
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
-} from 'uiSrc/slices/zset'
+} from 'uiSrc/slices/browser/zset'
 import { KeyTypes, SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { formatLongName, validateScoreNumber } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName, validateScoreNumber } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
+import { AddMembersToZSetDto, SearchZSetMembersResponse, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -124,6 +124,22 @@ const ZSetDetails = (props: Props) => {
     if (!fieldColumn) { return }
 
     const { value: match } = fieldColumn
+    const onSuccess = (data: SearchZSetMembersResponse) => {
+      const matchValue = getMatchType(match)
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: KeyTypes.ZSet,
+          match: matchValue,
+          length: data.total,
+        }
+      })
+    }
     setMatch(match)
     if (match === '') {
       dispatch(
@@ -132,7 +148,7 @@ const ZSetDetails = (props: Props) => {
       return
     }
     dispatch(
-      fetchSearchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, match)
+      fetchSearchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, match, onSuccess)
     )
   }
 
@@ -233,8 +249,9 @@ const ZSetDetails = (props: Props) => {
               data-testid={`zset-edit-button-${name}`}
             />
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(name)}
               item={name}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}

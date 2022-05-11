@@ -23,14 +23,13 @@ fixture `Index Schema at Workbench`
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneRedisearch.databaseName);
-    })
+    });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })
-    ('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-            `HMSET product:1 name "Apple Juice"`
+            'HMSET product:1 name "Apple Juice"'
         ];
         const searchCommand = `FT.INFO ${indexName}`;
         //Send commands
@@ -47,8 +46,7 @@ test
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
     });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })
-    ('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const commandsForSend = [
             `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,

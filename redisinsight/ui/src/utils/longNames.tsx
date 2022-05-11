@@ -1,3 +1,4 @@
+import React from 'react'
 import replaceSpaces from './replaceSpaces'
 
 export function formatLongName(
@@ -26,3 +27,13 @@ export function getDbIndex(db: number = 0) {
 
 export const truncateText = (text = '', maxLength = 0, separator = '...') =>
   (text.length >= maxLength ? text.slice(0, maxLength) + separator : text)
+
+export const createDeleteFieldHeader = (keyName: string) => formatNameShort(keyName)
+
+export const createDeleteFieldMessage = (field: string) => (
+  <>
+    will be removed from
+    {' '}
+    <b>{formatNameShort(field)}</b>
+  </>
+)

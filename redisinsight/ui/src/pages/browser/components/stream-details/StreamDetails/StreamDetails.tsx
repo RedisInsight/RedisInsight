@@ -26,6 +26,7 @@ const rowHeight = 54
 const actionsWidth = 54
 const minColumnWidth = 190
 const xrangeIdPrefix = '('
+const noItemsMessageString = 'There are no Entries in the Stream.'
 
 interface IStreamEntry extends StreamEntryDto {
   editing: boolean
@@ -104,6 +105,7 @@ const StreamDetails = (props: Props) => {
           noItemsMessage={NoResultsFoundText}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
+          noItemsMessage={noItemsMessageString}
           tableWidth={columns.length * minColumnWidth - actionsWidth}
           sortedColumn={{
             column: sortedColumnName,

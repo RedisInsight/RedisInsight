@@ -6,7 +6,7 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 
-import { formatLongName } from 'uiSrc/utils'
+import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -145,8 +145,9 @@ const SetDetails = (props: Props) => {
         return (
           <div className="value-table-actions">
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(cellData)}
               item={cellData}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}

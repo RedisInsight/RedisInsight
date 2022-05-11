@@ -47,7 +47,7 @@ test
             await t.click(browserPage.scanMoreButton);
             await t.expect(browserPage.progressKeyList.exists).notOk('Progress Bar', { timeout: 30000 });
             const scannedValueText = await browserPage.scannedValue.textContent;
-            const regExp = new RegExp(`${scannedValue} 00` + '\.');
+            const regExp = new RegExp(`${scannedValue} 00` + '.');
             await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${scannedValue} 000 keys`, { timeout: 30000 });
         }
     });

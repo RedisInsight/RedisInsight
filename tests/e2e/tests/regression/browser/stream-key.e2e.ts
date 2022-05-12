@@ -32,7 +32,7 @@ test('Verify that user can see a Stream in a table format', async t => {
     ];
     keyName = chance.word({length: 20});
     const command = `XADD ${keyName} * '${field}' '${value}'`;
-    //Add new Stream key
+    //Add new Stream key with 5 EntryIds
     for(let i = 0; i < 5; i++){
         await cliPage.sendCommandInCli(command);
     }
@@ -47,7 +47,7 @@ test('Verify that user can see a Stream in a table format', async t => {
 test('Verify that user can sort ASC/DESC by Entry ID', async t => {
     keyName = chance.word({length: 20});
     const command = `XADD ${keyName} * '${field}' '${value}'`;
-    //Add new Stream key
+    //Add new Stream key with 5 EntryIds
     for(let i = 0; i < 5; i++){
         await cliPage.sendCommandInCli(command);
     }
@@ -79,7 +79,7 @@ test('Verify that user can see all the columns are displayed by default for Stre
         '78',
         '27'
     ];
-    //Add new Stream key
+    //Add new Stream key with 3 fields
     for(let i = 0; i < fields.length; i++){
         await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
     }
@@ -99,7 +99,7 @@ test('Verify that the multi-line cell value tooltip is available on hover as per
         'Humidity'
     ];
     const entryValue = chance.sentence({words: 5});
-    //Add new Stream key
+    //Add new Stream key with multi-line cell value
     for(let i = 0; i < fields.length; i++){
         await cliPage.sendCommandInCli(`XADD ${keyName} * '${fields[i]}' '${entryValue}'`);
     }

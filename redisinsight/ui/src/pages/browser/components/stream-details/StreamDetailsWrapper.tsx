@@ -175,7 +175,7 @@ const StreamDetailsWrapper = (props: Props) => {
             <PopoverDelete
               text={(
                 <>
-                  The Entry will be removed from
+                  This Entry will be removed from
                   <br />
                   {key}
                 </>

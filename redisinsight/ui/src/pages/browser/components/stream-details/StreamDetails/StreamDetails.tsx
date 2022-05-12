@@ -11,8 +11,7 @@ import {
   streamSelector,
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { NoResultsFoundText } from 'uiSrc/constants/texts'
+import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces''
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
@@ -102,7 +101,6 @@ const StreamDetails = (props: Props) => {
           loading={loading}
           items={entries}
           totalItemsCount={total}
-          noItemsMessage={NoResultsFoundText}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={noItemsMessageString}

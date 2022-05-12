@@ -77,6 +77,7 @@ export class BrowserPage {
     zsetOption = Selector('#zset');
     listOption = Selector('#list');
     hashOption = Selector('#hash');
+    streamOption = Selector('#stream');
     removeFromHeadSelection = Selector('#HEAD');
     selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
@@ -104,6 +105,10 @@ export class BrowserPage {
     jsonValueInput = Selector('[data-testid=json-value]');
     countInput = Selector('[data-testid=count-input]');
     treeViewDelimiterInput = Selector('[data-testid=tree-view-delimiter-input]');
+    streamEntryId = Selector('[data-testid=entryId]');
+    streamField = Selector('[data-testid=field-name]');
+    streamValue = Selector('[data-testid=field-value]');
+    addStreamRow = Selector('[data-testid=add-new-row]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -158,6 +163,23 @@ export class BrowserPage {
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
+
+    /**
+     * Common part for Add any new key
+     * @param keyName The name of the key
+     * @param TTL The Time to live value of the key
+     */
+    async commonAddNewKey(keyName: string, TTL?: string): Promise<void> {
+        await common.waitForElementNotVisible(this.progressLine);
+        await t.click(this.plusAddKeyButton);
+        await t.click(this.addKeyNameInput);
+        await t.typeText(this.addKeyNameInput, keyName);
+        if (TTL) {
+            await t.click(this.keyTTLInput);
+            await t.typeText(this.keyTTLInput, TTL);
+        }
+        await t.click(this.keyTypeDropDown);
+    }
 
     /**
      * Adding a new String key
@@ -279,6 +301,24 @@ export class BrowserPage {
         await t.typeText(this.keyTTLInput, TTL);
         await t.typeText(this.hashFieldNameInput, field);
         await t.typeText(this.hashFieldValueInput, value);
+        await t.click(this.addKeyButton);
+    }
+
+    /**
+     * Adding a new Stream key
+     * @param keyName The name of the key
+     * @param TTL The Time to live value of the key
+     * @param field The field name of the key
+     * @param value The value of the key
+     */
+    async addStreamKey(keyName: string, field = ' ', value = ' ', TTL?: string): Promise<void> {
+        await this.commonAddNewKey(keyName, TTL);
+        await t.click(this.streamOption);
+        // Verify that user can see Entity ID filled by * by default on add Stream key form
+        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field')
+        await t.typeText(this.streamField, field);
+        await t.typeText(this.streamValue, value);
+        await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
         await t.click(this.addKeyButton);
     }
 

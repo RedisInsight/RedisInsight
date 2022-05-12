@@ -15,7 +15,7 @@ export class MyRedisDatabasePage {
     browserButton = Selector('[data-testid=browser-page-btn]');
     myRedisDBButton = Selector('[data-test-subj=home-page-btn]');
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
-    confirmDeleteButton = Selector('[data-testid^=delete-instance-confirm]');
+    confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
     toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
     deleteButtonInPopover = Selector('#deletePopover button');
     confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');

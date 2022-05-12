@@ -76,6 +76,82 @@ describe('POST /instance/:instanceId/streams/entries', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
     );
+
+    // extra validation
+    [
+      {
+        name: 'Should throw 400 error when passed field value as another object',
+        data: {
+          keyName: constants.TEST_STREAM_KEY_1,
+          entries: [
+            {
+              id: '*',
+              fields: {
+                [constants.TEST_STREAM_FIELD_1]: { some: constants.TEST_STREAM_FIELD_1 },
+              }
+            }
+          ]
+        },
+        statusCode: 400,
+        checkFn: ({ body }) => {
+          expect(body.message[0]).to.have.string('must be an object with string values')
+        }
+      },
+      {
+        name: 'Should throw 400 error when passed field value as another boolean',
+        data: {
+          keyName: constants.TEST_STREAM_KEY_1,
+          entries: [
+            {
+              id: '*',
+              fields: {
+                [constants.TEST_STREAM_FIELD_1]: true,
+              }
+            }
+          ]
+        },
+        statusCode: 400,
+        checkFn: ({ body }) => {
+          expect(body.message[0]).to.have.string('must be an object with string values')
+        }
+      },
+      {
+        name: 'Should throw 400 error when passed field value as another number',
+        data: {
+          keyName: constants.TEST_STREAM_KEY_1,
+          entries: [
+            {
+              id: '*',
+              fields: {
+                [constants.TEST_STREAM_FIELD_1]: 100,
+              }
+            }
+          ]
+        },
+        statusCode: 400,
+        checkFn: ({ body }) => {
+          expect(body.message[0]).to.have.string('must be an object with string values')
+        }
+      },
+      {
+        name: 'Should throw 400 error when passed field value as another null',
+        data: {
+          keyName: constants.TEST_STREAM_KEY_1,
+          entries: [
+            {
+              id: '*',
+              fields: {
+                [constants.TEST_STREAM_FIELD_1]: null,
+              }
+            }
+          ]
+        },
+        statusCode: 400,
+        checkFn: ({ body }) => {
+          expect(body.message[0]).to.have.string('must be an object with string values')
+        }
+      },
+    ].map(mainCheckFn)
   });
 
   describe('Common', () => {

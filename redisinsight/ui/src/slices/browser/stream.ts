@@ -42,7 +42,7 @@ const streamSlice = createSlice({
     loadEntries: (state) => {
       state.loading = true
       state.error = ''
-      state.data = initialState.data
+      // state.data = initialState.data
     },
     loadEntriesSuccess: (state, { payload }: { payload: GetStreamEntriesResponse }) => {
       state.data = {
@@ -111,14 +111,16 @@ export default streamSlice.reducer
 export function fetchStreamEntries(
   key: string,
   count: number,
+  start: string,
+  end: string,
   sortOrder: SortOrder,
   onSuccess?: (data: GetStreamEntriesResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadEntries())
 
-    const start = '-'
-    const end = '+'
+    // const start = '-'
+    // const end = '+'
 
     try {
       const state = stateInit()

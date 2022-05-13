@@ -12,7 +12,7 @@ import {
   isStatusSuccessful,
   Maybe,
 } from 'uiSrc/utils'
-import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -546,7 +546,7 @@ export function fetchKeyInfo(key: string) {
         dispatch<any>(fetchReJSON(key, '.'))
       }
       if (data.type === KeyTypes.Stream) {
-        dispatch<any>(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SortOrder.DESC))
+        dispatch<any>(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT, SortOrder.DESC))
       }
     } catch (_err) {
       const error = _err as AxiosError

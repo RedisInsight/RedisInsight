@@ -93,3 +93,69 @@ $maxWidthCell: 190px;
     background-color: var(--euiColorEmptyShade) !important;
   }
 }
+
+.rangeWrapper :global(.euiRangeWrapper) {
+  height: auto;
+}
+
+.filter {
+  :global(.euiRangeTrack--hasTicks) {
+    margin: 30px 30px 26px !important;
+    height: 24px !important;
+  }
+
+  :global(.euiRangeTick) {
+    color: var(--euiColorMediumShade);
+    width: max-content;
+    padding: 0 !important;
+    cursor: default !important;
+
+    &:enabled:hover,
+    &:selected,
+    &:focus {
+      color: var(--euiColorMediumShade) !important;
+    }
+
+    &:before,
+    :global(.euiRangeTick__pseudo) {
+      display: none;
+    }
+    &:first-child {
+      transform: translate(0, -24px);
+    }
+    &:last-child {
+      transform: translate(-100%, 14px);
+    }
+  }
+
+  :global(.euiRangeHighlight__progress) {
+    height: 5px !important;
+    background-color: var(--euiColorPrimary) !important;
+    border-radius: 0;
+  }
+
+  :global(.euiRangeThumb) {
+    width: 2px;
+    height: 12px;
+    background-color: var(--euiColorPrimary);
+    box-shadow: none;
+    border-radius: 0;
+    border: none;
+    &:last-child {
+      margin-top: 4px;
+      transform: translateX(14px);
+    }
+  }
+}
+
+.resetButton {
+  position: absolute;
+  right: 30px;
+  text-decoration: underline;
+  color: var(--euiTextSubduedColor);
+  &:hover,
+  &:focus {
+    color: var(--euiTextColor);
+  }
+  font: normal normal 500 13px/18px Graphik, sans-serif;
+}

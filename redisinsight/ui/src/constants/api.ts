@@ -67,5 +67,7 @@ const SCAN_TREE_COUNT_DEFAULT_ENV = process.env.SCAN_TREE_COUNT_DEFAULT || '1000
 
 export const SCAN_COUNT_DEFAULT = parseInt(SCAN_COUNT_DEFAULT_ENV, 10)
 export const SCAN_TREE_COUNT_DEFAULT = parseInt(SCAN_TREE_COUNT_DEFAULT_ENV, 10)
+export const SCAN_STREAM_START_DEFAULT = '-'
+export const SCAN_STREAM_END_DEFAULT = '+'
 
 export default ApiEndpoints

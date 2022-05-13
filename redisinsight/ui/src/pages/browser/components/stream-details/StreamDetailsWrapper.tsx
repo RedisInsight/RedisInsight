@@ -42,7 +42,7 @@ const StreamDetailsWrapper = (props: Props) => {
   const [uniqFields, setUniqFields] = useState({})
   const [entries, setEntries] = useState<IStreamEntry[]>([])
   const [columns, setColumns] = useState<ITableColumn[]>([])
-  const [deleting, setDeleting] = useState('')
+  const [deleting, setDeleting] = useState<string>('')
 
   useEffect(() => {
     let fields = {}

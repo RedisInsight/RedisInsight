@@ -24,6 +24,7 @@ import {
 import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import StreamRangeContext from 'uiSrc/contexts/streamRangeContext'
 
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
@@ -62,6 +63,12 @@ const KeyDetails = ({ ...props }: Props) => {
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
   const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] = useState<boolean>(false)
   const [editItem, setEditItem] = useState<boolean>(false)
+  const [range, setRange] = useState<[number?, number?]>([])
+
+  useEffect(() => {
+    // Close 'Add Item Panel' on change selected key
+    setRange([])
+  }, [selectedKey])
 
   useEffect(() => {
     // Close 'Add Item Panel' on change selected key
@@ -122,7 +129,11 @@ const KeyDetails = ({ ...props }: Props) => {
     [KeyTypes.Hash]: <HashDetails isFooterOpen={isAddItemPanelOpen} />,
     [KeyTypes.List]: <ListDetails isFooterOpen={isAddItemPanelOpen || isRemoveItemPanelOpen} />,
     [KeyTypes.ReJSON]: <RejsonDetailsWrapper />,
-    [KeyTypes.Stream]: <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />,
+    [KeyTypes.Stream]: (
+      <StreamRangeContext.Provider value={[range, setRange]}>
+        <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />
+      </StreamRangeContext.Provider>
+    ),
   }
 
   return (

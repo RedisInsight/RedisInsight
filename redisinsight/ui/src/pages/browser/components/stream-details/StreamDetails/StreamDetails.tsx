@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last } from 'lodash'
 import cx from 'classnames'
@@ -16,8 +16,9 @@ import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
-
+import StreamRangeContext from 'uiSrc/contexts/streamRangeContext'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import StreamRangeFilter from './StreamRangeFilter'
 
 import styles from './styles.module.scss'
 
@@ -51,34 +52,43 @@ const StreamDetails = (props: Props) => {
   } = useSelector(streamDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
-  const [sortedColumnName, setSortedColumnName] = useState('id')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState(SortOrder.DESC)
+  const [sortedColumnName, setSortedColumnName] = useState<string>('id')
+  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
+
+  const [range] = useContext(StreamRangeContext)
 
   const loadMoreItems = () => {
     const lastLoadedEntryId = last(entries)?.id ?? ''
     const lastEntryId = sortedColumnOrder === SortOrder.ASC ? lastEntry?.id : firstEntry?.id
 
-    if (lastLoadedEntryId && lastLoadedEntryId !== lastEntryId) {
-      dispatch(
-        fetchMoreStreamEntries(
-          key,
-          `${xrangeIdPrefix + lastLoadedEntryId}`,
-          SCAN_COUNT_DEFAULT,
-          sortedColumnOrder,
-        )
-      )
-    }
+    // if (lastLoadedEntryId && lastLoadedEntryId !== lastEntryId) {
+    //   dispatch(
+    //     fetchMoreStreamEntries(
+    //       key,
+    //       `${xrangeIdPrefix + lastLoadedEntryId}`,
+    //       SCAN_COUNT_DEFAULT,
+    //       sortedColumnOrder,
+    //     )
+    //   )
+    // }
   }
 
   const onChangeSorting = (column: any, order: SortOrder) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
 
-    dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, order))
+    dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, range[0], range[1], order))
   }
 
   return (
     <>
+      {firstEntry.id !== '' && lastEntry.id !== '' && (
+      <StreamRangeFilter
+        sortedColumnOrder={sortedColumnOrder}
+        min={firstEntry.id}
+        max={lastEntry.id}
+      />
+      )}
       <div
         className={cx(
           'key-details-table',

@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsInt,
   IsNumber, Min, NotEquals, ValidateIf,
 } from 'class-validator';
 
@@ -11,7 +12,7 @@ export class SlowLogConfig {
   })
   @NotEquals(null)
   @ValidateIf((object, value) => value !== undefined)
-  @IsNumber()
+  @IsInt()
   @Min(0)
   slowlogMaxLen?: number;
 
@@ -22,7 +23,7 @@ export class SlowLogConfig {
   })
   @NotEquals(null)
   @ValidateIf((object, value) => value !== undefined)
-  @IsNumber()
-  @Min(0)
+  @IsInt()
+  @Min(-1)
   slowlogLogSlowerThan?: number;
 }

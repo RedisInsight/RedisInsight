@@ -10,6 +10,7 @@ import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constant
 import { catchAclError, convertStringsArrayToObject } from 'src/utils';
 import { UpdateSlowLogConfigDto } from 'src/modules/slow-log/dto/update-slow-log-config.dto';
 import { GetSlowLogsDto } from 'src/modules/slow-log/dto/get-slow-logs.dto';
+import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';
 
 @Injectable()
 export class SlowLogService {
@@ -18,6 +19,7 @@ export class SlowLogService {
   constructor(
     private redisService: RedisService,
     private instancesBusinessService: InstancesBusinessService,
+    private analyticsService: SlowLogAnalyticsService,
   ) {}
 
   /**
@@ -126,19 +128,34 @@ export class SlowLogService {
   ): Promise<SlowLogConfig> {
     try {
       const commands = [];
+      const config = await this.getConfig(clientOptions);
 
       if (dto.slowlogLogSlowerThan !== undefined) {
         commands.push({
           command: SlowLogCommands.Config,
           args: [SlowLogArguments.Set, 'slowlog-log-slower-than', dto.slowlogLogSlowerThan],
+          analytics: () => this.analyticsService.slowlogLogSlowerThanUpdated(
+            clientOptions.instanceId,
+            config.slowlogLogSlowerThan,
+            dto.slowlogLogSlowerThan,
+          ),
         });
+
+        config.slowlogLogSlowerThan = dto.slowlogLogSlowerThan;
       }
 
       if (dto.slowlogMaxLen !== undefined) {
         commands.push({
           command: SlowLogCommands.Config,
           args: [SlowLogArguments.Set, 'slowlog-max-len', dto.slowlogMaxLen],
+          analytics: () => this.analyticsService.slowlogMaxLenUpdated(
+            clientOptions.instanceId,
+            config.slowlogMaxLen,
+            dto.slowlogMaxLen,
+          ),
         });
+
+        config.slowlogMaxLen = dto.slowlogMaxLen;
       }
 
       if (commands.length) {
@@ -147,10 +164,13 @@ export class SlowLogService {
         if (client instanceof IORedis.Cluster) {
           return Promise.reject(new BadRequestException('Configuration slowlog for cluster is deprecated'));
         }
-        await Promise.all(commands.map((command) => client.send_command(command.command, command.args)));
+        await Promise.all(commands.map((command) => client.send_command(
+          command.command,
+          command.args,
+        ).then(command.analytics)));
       }
 
-      return this.getConfig(clientOptions);
+      return config;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

@@ -8,6 +8,8 @@ import { AppTool } from 'src/models';
 import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
+import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -48,13 +50,14 @@ const mockSlowLogReply = [mockLogReply, mockLogReply];
 
 const mockRedisNode = Object.create(Redis.prototype);
 mockRedisNode.send_command = jest.fn();
-mockRedisNode.send_command = jest.fn();
 
 const mockRedisCluster = Object.create(Redis.Cluster.prototype);
+mockRedisCluster.send_command = jest.fn();
 mockRedisCluster.nodes = jest.fn().mockResolvedValue([mockRedisNode, mockRedisNode]);
 
 describe('SlowLogService', () => {
   let service: SlowLogService;
+  let analyticsService: SlowLogAnalyticsService;
   let redisService: MockType<RedisService>;
   let databaseService: MockType<InstancesBusinessService>;
 
@@ -63,6 +66,8 @@ describe('SlowLogService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SlowLogService,
+        EventEmitter2,
+        SlowLogAnalyticsService,
         {
           provide: RedisService,
           useFactory: () => ({
@@ -83,6 +88,7 @@ describe('SlowLogService', () => {
     service = await module.get(SlowLogService);
     redisService = await module.get(RedisService);
     databaseService = await module.get(InstancesBusinessService);
+    analyticsService = await module.get(SlowLogAnalyticsService);
 
     redisService.getClientInstance.mockReturnValue({
       ...mockRedisClientInstance,
@@ -208,8 +214,8 @@ describe('SlowLogService', () => {
 
   describe('updateConfig', () => {
     it('should update slowlogs config (1 field)', async () => {
-      mockRedisNode.send_command.mockResolvedValueOnce('OK');
       mockRedisNode.send_command.mockResolvedValueOnce(mockSlowlogConfigReply);
+      mockRedisNode.send_command.mockResolvedValueOnce('OK');
 
       const res = await service.updateConfig(mockClientOptions, { slowlogMaxLen: 128 });
       expect(res).toEqual(mockSlowLogConfig);
@@ -217,16 +223,18 @@ describe('SlowLogService', () => {
     });
     it('should update slowlogs config (2 fields)', async () => {
       mockRedisNode.send_command
+        .mockResolvedValueOnce(mockSlowlogConfigReply)
         .mockResolvedValueOnce('OK')
-        .mockResolvedValueOnce('OK')
-        .mockResolvedValueOnce(mockSlowlogConfigReply);
+        .mockResolvedValueOnce('OK');
 
       const res = await service.updateConfig(mockClientOptions, { slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
-      expect(res).toEqual(mockSlowLogConfig);
+      expect(res).toEqual({ slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
       expect(mockRedisNode.send_command).toHaveBeenCalledTimes(3);
     });
     it('should throw an error for cluster', async () => {
       try {
+        mockRedisCluster.send_command.mockResolvedValueOnce(mockSlowlogConfigReply);
+
         redisService.getClientInstance.mockReturnValue({
           ...mockRedisClientInstance,
           client: mockRedisCluster,

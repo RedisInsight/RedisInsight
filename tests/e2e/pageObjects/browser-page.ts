@@ -109,6 +109,7 @@ export class BrowserPage {
     streamField = Selector('[data-testid=field-name]');
     streamValue = Selector('[data-testid=field-value]');
     addStreamRow = Selector('[data-testid=add-new-row]');
+    streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -163,6 +164,11 @@ export class BrowserPage {
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
+    virtualTableContainer = Selector('[data-testid=virtual-table-container]');
+    streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
+    streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
+    streamFields = Selector('[data-testid=column-label].truncateText span');
+    streamEntryFields = Selector('[data-testid^=stream-entry-field]');
 
     /**
      * Common part for Add any new key
@@ -643,6 +649,7 @@ export class BrowserPage {
             await t.click(array[0]);
         }
     }
+
     /**
      * Change delimiter value
      * @delimiter string with delimiter value

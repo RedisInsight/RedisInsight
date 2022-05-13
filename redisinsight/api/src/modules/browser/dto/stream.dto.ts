@@ -3,11 +3,12 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsDefined,
-  IsEnum, IsInt, IsNotEmpty, IsObject, IsString, Min, ValidateNested,
+  IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested, isString,
 } from 'class-validator';
 import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
 import { Type } from 'class-transformer';
+import { IsObjectWithValues } from 'src/validators/isObjectWithValues.validator';
 
 export class StreamEntryDto {
   @ApiProperty({
@@ -27,7 +28,7 @@ export class StreamEntryDto {
   })
   @IsDefined()
   @IsNotEmpty()
-  @IsObject()
+  @IsObjectWithValues([isString], { message: '$property must be an object with string values' })
   fields: Record<string, string>;
 }
 

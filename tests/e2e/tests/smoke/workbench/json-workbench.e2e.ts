@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { env, rte } from '../../../helpers/constants';
 import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -23,10 +23,9 @@ fixture `JSON verifications at Workbench`
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneRedisearch.databaseName);
-    })
+    });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })
-    ('Verify that user can execute redisearch command for JSON data type in Workbench', async t => {
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can execute redisearch command for JSON data type in Workbench', async t => {
         indexName = chance.word({ length: 10 });
         const commandsForSend = [
             `FT.CREATE ${indexName} ON JSON SCHEMA $.title AS title TEXT`,
@@ -43,5 +42,5 @@ test
         await workbenchPage.sendCommandInWorkbench(searchCommand);
         //Verify that the search command is executed
         await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(workbenchPage.queryTableResult.textContent).contains('{\"title\":\"foo\",\"content\":\"bar\"}', `The ${searchCommand} command is executed`);
+        await t.expect(workbenchPage.queryColumns.nth(1).textContent).contains('{\\"title\\":\\"foo\\",\\"content\\":\\"bar\\"}', `The ${searchCommand} command is executed`);
     });

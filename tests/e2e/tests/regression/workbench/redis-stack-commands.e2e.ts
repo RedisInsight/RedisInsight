@@ -1,12 +1,11 @@
+import { t } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { MyRedisDatabasePage } from '../../../pageObjects';
+import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
-import { t } from 'testcafe';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -24,10 +23,10 @@ fixture `Redis Stack command in Workbench`
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`GRAPH.DELETE ${keyNameGraph}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-test
-    .meta({ env: env.desktop, rte: rte.standalone })
-    ('Verify that user can switches between Graph and Text for GRAPH command and see results corresponding to their views', async t => {
+    });
+//skipped due the inaccessibility of the iframe
+test.skip
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can switches between Graph and Text for GRAPH command and see results corresponding to their views', async t => {
         //Send Graph command
         await t.click(workbenchPage.redisStackTutorialsButton);
         await t.click(workbenchPage.workingWithGraphLink);
@@ -42,8 +41,7 @@ test
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.queryGraphContainer).exists).ok('The Graph view is switched for GRAPH command');
     });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })
-    ('Verify that user can see "No data to visualize" message for Graph command', async t => {
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can see "No data to visualize" message for Graph command', async t => {
         //Send Graph command
         await t.click(workbenchPage.redisStackTutorialsButton);
         await t.click(workbenchPage.workingWithGraphLink);
@@ -58,8 +56,7 @@ test
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result in text view is displayed');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can switches between Chart and Text for TimeSeries command and see results corresponding to their views', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can switches between Chart and Text for TimeSeries command and see results corresponding to their views', async t => {
         //Send TimeSeries command
         await t.click(workbenchPage.redisStackTutorialsButton);
         await t.click(workbenchPage.timeSeriesLink);

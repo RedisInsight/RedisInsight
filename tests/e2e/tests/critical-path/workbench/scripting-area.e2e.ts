@@ -75,14 +75,10 @@ test
         await workbenchPage.sendCommandInWorkbench(commandToCreateSchema);
         //Send search command
         await workbenchPage.sendCommandInWorkbench(searchCommand);
-        //Get needed container
-        const containerOfCommand = await workbenchPage.getCardContainerByCommand(searchCommand);
         //Verify that we have pagination buttons
         await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonPrevious).exists)
-            .ok('Pagination previous button exists');
-        await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonNext).exists)
-            .ok('Pagination next button exists');
+        await t.expect(workbenchPage.paginationButtonPrevious.exists).ok('Pagination previous button exists');
+        await t.expect(workbenchPage.paginationButtonNext.exists).ok('Pagination next button exists');
     });
 test
     .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {

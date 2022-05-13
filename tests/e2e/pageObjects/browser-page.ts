@@ -174,7 +174,7 @@ export class BrowserPage {
         await t.click(this.plusAddKeyButton);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
-        if (TTL) {
+        if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
         }
@@ -193,7 +193,7 @@ export class BrowserPage {
         await t.click(this.stringOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
-        if (TTL) {
+        if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
         }
@@ -216,7 +216,7 @@ export class BrowserPage {
         await t.typeText(this.addKeyNameInput, keyName);
         await t.click(this.jsonKeyValueInput);
         await t.typeText(this.jsonKeyValueInput, value);
-        if (TTL) {
+        if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
         }
@@ -307,9 +307,9 @@ export class BrowserPage {
     /**
      * Adding a new Stream key
      * @param keyName The name of the key
-     * @param TTL The Time to live value of the key
      * @param field The field name of the key
      * @param value The value of the key
+     * @param TTL The Time to live value of the key
      */
     async addStreamKey(keyName: string, field = ' ', value = ' ', TTL?: string): Promise<void> {
         await this.commonAddNewKey(keyName, TTL);

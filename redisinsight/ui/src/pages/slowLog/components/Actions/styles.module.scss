@@ -1,0 +1,49 @@
+.actions {
+  .icon {
+    color: var(--iconsDefaultColor);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: var(--iconsDefaultHoverColor);
+    }
+
+    :global(.euiIcon) {
+      width: 18px;
+      height: 18px;
+    }
+
+    .infoIcon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.popoverContainer {
+  display: flex;
+  align-items: flex-start;
+
+  .warningIcon {
+    color: var(--euiColorWarningLight) !important;
+    margin: 2px 6px 2px;
+  }
+
+  .popoverTitle {
+    font: normal normal 500 13px/22px Graphik;
+    color: var(--euiColorFullShade) !important;
+  }
+
+  .popoverFooter {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .popoverDBName {
+    color: var(--htmlColor)
+  }
+}

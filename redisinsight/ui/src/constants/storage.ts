@@ -11,6 +11,11 @@ enum BrowserStorageItem {
   wbInputHistory = 'wbInputHistory',
   isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
+  dbConfig = 'dbConfig_'
 }
 
 export default BrowserStorageItem
+
+export enum ConfigDBStorageItem {
+  slowLogDurationUnit = 'slowLogDurationUnit'
+}

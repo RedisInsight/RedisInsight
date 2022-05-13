@@ -54,6 +54,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/require-default-props': 'off',
     'react/prop-types': 1,
+    'react/jsx-one-expression-per-line': 'off',
     '@typescript-eslint/comma-dangle': 'off',
     '@typescript-eslint/no-shadow': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',

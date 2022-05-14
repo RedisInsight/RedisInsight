@@ -13,6 +13,10 @@ body {
     letter-spacing: -0.13px;
   }
 
+  .euiSuperSelect__item .euiContextMenuItem__text {
+    line-height: 16px;
+  }
+
   .euiText {
     font-size: 0.875rem;
     letter-spacing: -0.14px;
@@ -41,17 +45,20 @@ body {
 }
 
 body {
-  input, textarea, select, button {
+  input,
+  textarea,
+  select,
+  button {
     font-family: 'Graphik', sans-serif;
   }
 }
-
 
 .euiSuperSelectControl {
   font-family: 'Graphik', sans-serif !important;
 }
 
-.euiText, .euiTitle {
+.euiText,
+.euiTitle {
   color: var(--htmlColor) !important;
 }
 
@@ -59,15 +66,17 @@ body {
   color: var(--htmlColor);
 }
 
-.euiText h4, .euiText dt {
- color: var(--euiTextSubduedColor) !important;
+.euiText h4,
+.euiText dt {
+  color: var(--euiTextSubduedColor) !important;
 }
 
 .euiTextColor--danger {
   color: var(--euiColorDangerText) !important;
 }
 
-.euiTextColor--warning.warning--light, .euiIcon--warning.warning--light {
+.euiTextColor--warning.warning--light,
+.euiIcon--warning.warning--light {
   color: var(--euiColorWarningLight) !important;
 }
 

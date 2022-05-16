@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { EuiButtonIcon, EuiPopover, EuiSwitch, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
-import { MIN_REFRESH_RATE, Nullable, truncateNumberToFirstUnit, validateRefreshRateNumber } from 'uiSrc/utils'
+import { MIN_REFRESH_RATE, Nullable, validateRefreshRateNumber } from 'uiSrc/utils'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
+import {
+  getTextByRefreshTime,
+  DEFAULT_REFRESH_RATE,
+  DURATION_FIRST_REFRESH_TIME,
+  MINUTE,
+  NOW,
+} from './utils'
 
 import styles from './styles.module.scss'
 
@@ -20,10 +27,6 @@ export interface Props {
   onRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
-const NOW = 'now'
-export const DEFAULT_REFRESH_RATE = '5.0'
-const MINUTE = 60
-const DURATION_FIRST_REFRESH_TIME = 5
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
 
 const AutoRefresh = ({
@@ -104,17 +107,7 @@ const AutoRefresh = ({
 
   const updateLastRefresh = () => {
     const delta = getLastRefreshDelta(lastRefreshTime)
-    let text = ''
-
-    if (delta > MINUTE) {
-      text = truncateNumberToFirstUnit((Date.now() - (lastRefreshTime || 0)) / 1_000)
-    }
-    if (delta < MINUTE) {
-      text = '< 1 min'
-    }
-    if (delta < DURATION_FIRST_REFRESH_TIME) {
-      text = NOW
-    }
+    const text = getTextByRefreshTime(delta, lastRefreshTime ?? 0)
 
     lastRefreshTime && setRefreshMessage(text)
   }

@@ -1,7 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, screen, render } from 'uiSrc/utils/test-utils'
-import AutoRefresh, { DEFAULT_REFRESH_RATE, Props } from './AutoRefresh'
+import AutoRefresh, { Props } from './AutoRefresh'
+import { DEFAULT_REFRESH_RATE } from './utils'
 
 const mockedProps = mock<Props>()
 

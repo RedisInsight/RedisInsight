@@ -337,6 +337,7 @@ jobs:
       - run:
           name: Download build from S3
           command: |
+            brew install wget
             mkdir -p release && cd release && wget https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg
       - run:
           name: Run e2e tests

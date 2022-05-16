@@ -8,8 +8,8 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
 
-const field = chance.word({length: 5});
 const value = chance.word({length: 5});
+let field = chance.word({length: 5});
 let keyName = chance.word({length: 20});
 
 fixture `Stream key`
@@ -90,7 +90,7 @@ test('Verify that user can see all the columns are displayed by default for Stre
         const fieldName = await browserPage.streamFields.nth(i).textContent;
         await t.expect(fieldName).eql(fields[i], 'All the columns are displayed by default for Stream');
     }
-    await t.click(browserPage.closeKeyButton);
+    await t.click(browserPage.fullScreenModeButton.nth(1));
 });
 test('Verify that the multi-line cell value tooltip is available on hover as per standard key details behavior', async t => {
     keyName = chance.word({length: 20});
@@ -107,4 +107,16 @@ test('Verify that the multi-line cell value tooltip is available on hover as per
     await browserPage.openKeyDetails(keyName);
     await t.hover(browserPage.streamEntryFields);
     await t.expect(browserPage.tooltip.textContent).contains(entryValue, 'The multi-line cell value tooltip is available');
+});
+test('Verify that user can see a confirmation message when request to delete an entry in the Stream', async t => {
+    keyName = chance.word({length: 20});
+    field = 'fieldForRemoving';
+    const confirmationMessage = 'This Entry will be removed from';
+    //Add new Stream key with 1 field
+    await cliPage.sendCommandInCli(`XADD ${keyName} * ${field} ${value}`);
+    //Open key details and click on delete entry
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.removeEntryButton);
+    //Check the confirmation message
+    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(confirmationMessage, `The confirmation message ${keyName}`);
 });

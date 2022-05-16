@@ -11,6 +11,7 @@ enum BrowserStorageItem {
   wbInputHistory = 'wbInputHistory',
   isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
+  autoRefreshRate = 'autoRefreshRate',
   dbConfig = 'dbConfig_'
 }
 

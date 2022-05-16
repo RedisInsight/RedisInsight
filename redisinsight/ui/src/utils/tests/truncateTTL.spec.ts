@@ -1,6 +1,6 @@
 import {
   truncateTTLToDuration,
-  truncateTTLToFirstUnit,
+  truncateNumberToFirstUnit,
   truncateTTLToRange,
   truncateTTLToSeconds,
 } from '../truncateTTL'
@@ -133,14 +133,14 @@ describe('Truncate TTL util tests', () => {
     })
   })
 
-  describe('truncateTTLToFirstUnit', () => {
-    it('truncateTTLToFirstUnit should return appropriate value', () => {
-      const ttl1 = 100
-      const ttl2 = 1_534
-      const ttl3 = 54_334
-      const ttl4 = 4_325_634
-      const ttl5 = 112_012_330
-      const ttl6 = 2_120_042_300
+  describe('truncateNumberToFirstUnit', () => {
+    it('truncateNumberToFirstUnit should return appropriate value', () => {
+      const number1 = 100
+      const number2 = 1_534
+      const number3 = 54_334
+      const number4 = 4_325_634
+      const number5 = 112_012_330
+      const number6 = 2_120_042_300
 
       const expectedResponse1 = '1 min' // '1 min, 40 s'
       const expectedResponse2 = '25 min' // '25 min, 34 s'
@@ -149,12 +149,12 @@ describe('Truncate TTL util tests', () => {
       const expectedResponse5 = '3 yr' // '3 yr, 6 mo, 19 d, 10 h, 32 min, 10 s'
       const expectedResponse6 = '67 yr' // '67 yr, 2 mo, 6 d, 12 h, 38 min, 20 s'
 
-      expect(truncateTTLToFirstUnit(ttl1)).toEqual(expectedResponse1)
-      expect(truncateTTLToFirstUnit(ttl2)).toEqual(expectedResponse2)
-      expect(truncateTTLToFirstUnit(ttl3)).toEqual(expectedResponse3)
-      expect(truncateTTLToFirstUnit(ttl4)).toEqual(expectedResponse4)
-      expect(truncateTTLToFirstUnit(ttl5)).toEqual(expectedResponse5)
-      expect(truncateTTLToFirstUnit(ttl6)).toEqual(expectedResponse6)
+      expect(truncateNumberToFirstUnit(number1)).toEqual(expectedResponse1)
+      expect(truncateNumberToFirstUnit(number2)).toEqual(expectedResponse2)
+      expect(truncateNumberToFirstUnit(number3)).toEqual(expectedResponse3)
+      expect(truncateNumberToFirstUnit(number4)).toEqual(expectedResponse4)
+      expect(truncateNumberToFirstUnit(number5)).toEqual(expectedResponse5)
+      expect(truncateNumberToFirstUnit(number6)).toEqual(expectedResponse6)
     })
   })
 })

@@ -79,7 +79,7 @@ describe('set slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, loadSetMembers(''))
+      const nextState = reducer(initialState, loadSetMembers(['', undefined]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -472,7 +472,7 @@ describe('set slice', () => {
 
         // Assert
         const expectedActions = [
-          loadSetMembers(data.match),
+          loadSetMembers([data.match, undefined]),
           loadSetMembersSuccess(responsePayload.data),
           updateSelectedKeyRefreshTime(Date.now()),
         ]
@@ -495,7 +495,7 @@ describe('set slice', () => {
 
         // Assert
         const expectedActions = [
-          loadSetMembers('*'),
+          loadSetMembers(['*', undefined]),
           addErrorNotification(responsePayload as AxiosError),
           loadSetMembersFailure(errorMessage),
         ]

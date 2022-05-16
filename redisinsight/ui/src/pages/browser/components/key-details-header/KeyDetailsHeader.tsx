@@ -10,12 +10,11 @@ import {
   EuiText,
   EuiToolTip,
   EuiLoadingContent,
-  EuiTextColor,
 } from '@elastic/eui'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { isNull } from 'lodash'
 import cx from 'classnames'
-import { formatDistanceToNow } from 'date-fns'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge } from 'uiSrc/components'
@@ -26,13 +25,14 @@ import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTT
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   keyType: KeyTypes | ModulesKeyTypes
   onClose: (key: string) => void
-  onRefresh: (key: string, type: KeyTypes) => void
+  onRefresh: (key: string, type: KeyTypes | ModulesKeyTypes) => void
   onDelete: (key: string, type: string) => void
   onEditTTL: (key: string, ttl: number) => void
   onEditKey: (key: string, newKey: string, onFailure?: () => void) => void
@@ -46,14 +46,14 @@ export interface Props {
 const COPY_KEY_NAME_ICON = 'copyKeyNameIcon'
 const initialKeyInfo = {
   ttl: -1,
-  name: '',
+  name: null,
   type: KeyTypes.String,
   size: 1,
   length: 0,
 }
 
 const PADDING_WRAPPER_SIZE = 36
-const HIDE_LAST_REFRESH = 860 - PADDING_WRAPPER_SIZE
+const HIDE_LAST_REFRESH = 770 - PADDING_WRAPPER_SIZE
 const MIDDLE_SCREEN_RESOLUTION = 640 - PADDING_WRAPPER_SIZE
 
 const KeyDetailsHeader = ({
@@ -75,7 +75,6 @@ const KeyDetailsHeader = ({
   const { viewType } = useSelector(keysSelector)
 
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState(false)
-  const [lastRefreshMessage, setLastRefreshMessage] = useState('')
 
   const [ttl, setTTL] = useState(`${ttlProp}`)
   const [ttlIsEditing, setTTLIsEditing] = useState(false)
@@ -90,11 +89,7 @@ const KeyDetailsHeader = ({
     setTTL(`${ttlProp}`)
   }, [keyProp, ttlProp])
 
-  useEffect(() => {
-    updateLastRefresh()
-  }, [lastRefreshTime])
-
-  const keyNameRef = useRef(null)
+  const keyNameRef = useRef<HTMLInputElement>(null)
 
   const tooltipContent = formatNameShort(keyProp)
 
@@ -118,7 +113,7 @@ const KeyDetailsHeader = ({
     setKeyIsEditing(false)
     setKeyIsHovering(false)
 
-    if (keyProp !== key) {
+    if (keyProp !== key && !isNull(keyProp)) {
       onEditKey(keyProp, key, () => setKey(keyProp))
     }
   }
@@ -158,7 +153,7 @@ const KeyDetailsHeader = ({
     event: any,
     text = '',
     keyInputIsEditing: boolean,
-    keyNameInputRef: React.MutableRefObject<null>
+    keyNameInputRef: React.RefObject<HTMLInputElement>
   ) => {
     navigator.clipboard.writeText(text)
 
@@ -236,14 +231,6 @@ const KeyDetailsHeader = ({
 
   const appendTTLEditing = () =>
     (!ttlIsEditing ? <EuiIcon type="pencil" color="subdued" /> : '')
-
-  const updateLastRefresh = () => {
-    setLastRefreshMessage(
-      lastRefreshTime
-        ? `${formatDistanceToNow(lastRefreshTime, { addSuffix: true })}`
-        : 'Refresh'
-    )
-  }
 
   const KeySize = (width: number) => (
     <EuiFlexItem grow={false}>
@@ -436,7 +423,7 @@ const KeyDetailsHeader = ({
                   ) : (
                     <EuiText className={styles.key} data-testid="key-name-text">
                       <b className="truncateText">
-                        {replaceSpaces(keyProp.substring(0, 200))}
+                        {replaceSpaces(keyProp?.substring(0, 200))}
                       </b>
                     </EuiText>
                   )}
@@ -568,29 +555,15 @@ const KeyDetailsHeader = ({
                 </EuiFlexItem>
                 <EuiFlexItem>
                   <div className={styles.subtitleActionBtns}>
-                    {width > HIDE_LAST_REFRESH && (
-                      <EuiTextColor className={styles.refreshSummary}>
-                        Last refresh:
-                        <span className={styles.refreshTime}>
-                          {` ${lastRefreshMessage}`}
-                        </span>
-                      </EuiTextColor>
-                    )}
-                    <EuiToolTip
-                      title="Last Refresh"
-                      content={lastRefreshMessage}
-                      position="left"
-                      anchorClassName={styles.actionBtn}
-                    >
-                      <EuiButtonIcon
-                        iconType="refresh"
-                        color="primary"
-                        aria-label="Refresh key"
-                        onClick={handleRefreshKey}
-                        onMouseEnter={updateLastRefresh}
-                        data-testid="refresh-key-btn"
-                      />
-                    </EuiToolTip>
+                    <AutoRefresh
+                      postfix={type}
+                      loading={loading}
+                      lastRefreshTime={lastRefreshTime}
+                      displayText={width > HIDE_LAST_REFRESH}
+                      onRefresh={handleRefreshKey}
+                      containerClassName={styles.actionBtn}
+                      testid="refresh-key-btn"
+                    />
                     {(keyType && KEY_TYPES_ACTIONS[keyType]) && Actions(width)}
 
                     <EuiPopover

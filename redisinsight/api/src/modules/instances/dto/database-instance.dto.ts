@@ -212,7 +212,6 @@ export class ConnectionOptionsDto extends EndpointDto {
     example: 0,
   })
   @IsInt()
-  @Max(15)
   @Min(0)
   @Type(() => Number)
   @IsOptional()
@@ -403,15 +402,13 @@ export class AddDatabaseInstanceDto extends ConnectionOptionsDto {
 
 export class ConnectToRedisDatabaseIndexDto {
   @ApiPropertyOptional({
-    description: 'Databases index. Redis databases are numbered from 0 to 15.',
+    description: 'Databases index.',
     type: Number,
     minimum: 0,
-    maximum: 15,
     default: 0,
   })
   @IsInt()
   @Min(0)
-  @Max(15)
   @Type(() => Number)
   @IsNotEmpty()
   dbNumber?: number;

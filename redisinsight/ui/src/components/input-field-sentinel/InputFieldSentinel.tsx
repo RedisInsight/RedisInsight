@@ -3,7 +3,6 @@ import { omit } from 'lodash'
 import React, { useState } from 'react'
 import cx from 'classnames'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { validateDatabaseNumber } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -77,7 +76,7 @@ const InputFieldSentinel = (props: Props) => {
           compressed
           type="text"
           value={value}
-          onChange={(e) => handleChange(validateDatabaseNumber(e.target?.value))}
+          onChange={(e) => handleChange(e.target?.value)}
           data-testid="sentinel-input-number"
         />
       )}

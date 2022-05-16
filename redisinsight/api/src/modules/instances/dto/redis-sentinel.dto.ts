@@ -64,7 +64,6 @@ export class AddSentinelMasterDto {
     example: 0,
   })
   @IsInt()
-  @Max(15)
   @Min(0)
   @Type(() => Number)
   @IsOptional()

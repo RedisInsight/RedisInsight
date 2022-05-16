@@ -57,8 +57,6 @@ export const validateEmail = (email: string) => {
 }
 
 export const validatePortNumber = (initValue: string) => validateNumber(initValue, MAX_PORT_NUMBER)
-export const validateDatabaseNumber = (initValue: string) =>
-  validateNumber(initValue, MAX_DATABASE_INDEX_NUMBER)
 
 export const validateNumber = (initValue: string, maxNumber: number = MAX_PORT_NUMBER) => {
   const value = initValue ? +initValue.replace(/[^0-9]+/gi, '') : ''

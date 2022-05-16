@@ -129,9 +129,9 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
         value={maxVal}
         ref={maxValRef}
         onChange={(event) => {
-          const value = Math.max(+event.target.value, minVal + 1);
-          setMaxVal(value);
-          event.target.value = value.toString();
+          const value = Math.max(+event.target.value, minVal + 1)
+          setMaxVal(value)
+          event.target.value = value.toString()
         }}
         className={`${styles.thumb} ${styles['thumb--zindex-4']}`}
       />

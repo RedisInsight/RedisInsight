@@ -8,11 +8,11 @@ export class GetSlowLogsDto {
   @ApiPropertyOptional({
     description: 'Specifying the number of slow logs to fetch per node.',
     type: Number,
-    minimum: 0,
+    minimum: -1,
     default: 50,
   })
   @IsInt()
-  @Min(0)
+  @Min(-1)
   @Type(() => Number)
   @IsNotEmpty()
   @IsOptional()

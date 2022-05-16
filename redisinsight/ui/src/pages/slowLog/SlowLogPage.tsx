@@ -1,10 +1,13 @@
 import {
   EuiFlexGroup,
   EuiFlexItem,
+  EuiSuperSelect,
+  EuiSuperSelectOption,
   EuiText,
   EuiTitle,
 } from '@elastic/eui'
 import { format } from 'date-fns'
+import { minBy, toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -15,6 +18,8 @@ import { DATE_FORMAT } from 'uiSrc/pages/slowLog/components/SlowLogTable/SlowLog
 import { DurationUnits } from 'uiSrc/pages/slowLog/interfaces'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
 import { getDBConfigStorageField } from 'uiSrc/services'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import {
   clearSlowLogAction,
   fetchSlowLogsAction,
@@ -28,19 +33,39 @@ import { EmptySlowLog, SlowLogTable, Actions } from './components'
 
 import styles from './styles.module.scss'
 
+const DEFAULT_COUNT_VALUE = '50'
+const countOptions: EuiSuperSelectOption<string>[] = [
+  { value: '10', inputDisplay: '10' },
+  { value: '25', inputDisplay: '25' },
+  { value: '50', inputDisplay: '50' },
+  { value: '100', inputDisplay: '100' },
+  { value: '-1', inputDisplay: 'Max' },
+]
+
 const SlowLogPage = () => {
+  const { connectionType } = useSelector(connectedInstanceSelector)
   const { data, loading, config } = useSelector(slowLogSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
-  const lastTimestamp = [...data].sort((a: any, b: any) => (a.time - b.time))[0]?.time || 0
   const [durationUnit, setDurationUnit] = useState(
     getDBConfigStorageField(instanceId, ConfigDBStorageItem.slowLogDurationUnit) || DurationUnits.microSeconds
   )
+  const [count, setCount] = useState<string>(DEFAULT_COUNT_VALUE)
 
   const dispatch = useDispatch()
 
+  const lastTimestamp = minBy(data, 'time')?.time
+
   useEffect(() => {
-    getSlowLogs(
-      (data: SlowLog[]) => {
+    getConfig()
+  }, [])
+
+  useEffect(() => {
+    getSlowLogs()
+  }, [count])
+
+  const getSlowLogs = () => {
+    dispatch(
+      fetchSlowLogsAction(instanceId, toNumber(count), (data: SlowLog[]) => {
         sendEventTelemetry({
           event: TelemetryEvent.SLOWLOG_LOADED,
           eventData: {
@@ -48,13 +73,8 @@ const SlowLogPage = () => {
             numberOfCommands: data.length
           }
         })
-      }
+      })
     )
-    getConfig()
-  }, [])
-
-  const getSlowLogs = (onSuccess?: (data: SlowLog[]) => void) => {
-    dispatch(fetchSlowLogsAction(instanceId, onSuccess))
   }
 
   const getConfig = () => {
@@ -86,7 +106,7 @@ const SlowLogPage = () => {
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>
-            {config && (
+            {connectionType !== ConnectionType.Cluster && config && (
               <EuiText size="xs" color="subdued" data-testid="config-info">
                 Execution time: {numberWithSpaces(convertNumberByUnits(config.slowlogLogSlowerThan, durationUnit))}
                 &nbsp;
@@ -99,11 +119,29 @@ const SlowLogPage = () => {
 
         <EuiFlexGroup className={styles.actionsLine} responsive={false} alignItems="center" justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
-            {!isEmptySlowLog && lastTimestamp && (
-              <EuiText size="xs" color="subdued" data-testid="entries-from-timestamp">
-                {data.length} entries from {format(lastTimestamp * 1000, DATE_FORMAT)}
-              </EuiText>
-            )}
+            <EuiFlexGroup responsive={false} alignItems="center" gutterSize="xs">
+              <EuiFlexItem grow={false}>
+                <EuiText color="subdued">
+                  {connectionType === ConnectionType.Cluster ? 'Display per node:' : 'Display:'}
+                </EuiText>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiSuperSelect
+                  options={countOptions}
+                  valueOfSelected={count}
+                  onChange={(value) => setCount(value)}
+                  className={styles.countSelect}
+                  popoverClassName={styles.countSelectWrapper}
+                  data-testid="count-select"
+                />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+                <EuiText size="xs" color="subdued" data-testid="entries-from-timestamp">
+                  ({data.length} entries
+                  {lastTimestamp && (<>&nbsp;from {format(lastTimestamp * 1000, DATE_FORMAT)}</>)})
+                </EuiText>
+              </EuiFlexItem>
+            </EuiFlexGroup>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Actions

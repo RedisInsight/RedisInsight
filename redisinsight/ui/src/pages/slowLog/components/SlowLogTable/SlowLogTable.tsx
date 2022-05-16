@@ -86,7 +86,7 @@ const SlowLogTable = (props: Props) => {
   }
 
   return (
-    <div className={styles.tableWrapper}>
+    <div className={styles.tableWrapper} data-testid="slowlog-table">
       <VirtualTable
         selectable={false}
         loading={loading}

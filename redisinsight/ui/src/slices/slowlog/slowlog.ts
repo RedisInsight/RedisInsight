@@ -78,6 +78,7 @@ export default slowLogSlice.reducer
 // Asynchronous thunk action
 export function fetchSlowLogsAction(
   instanceId: string,
+  count: number,
   onSuccessAction?: (data: SlowLog[]) => void,
   onFailAction?: () => void,
 ) {
@@ -90,6 +91,9 @@ export function fetchSlowLogsAction(
           instanceId,
           ApiEndpoints.SLOW_LOGS
         ),
+        {
+          params: { count }
+        }
       )
 
       if (isStatusSuccessful(status)) {

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
 import * as jsonpath from 'jsonpath'
@@ -10,6 +10,7 @@ import {
   getApiErrorMessage,
   getUrl,
   isStatusSuccessful,
+  Maybe,
   Nullable,
 } from 'uiSrc/utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -19,7 +20,7 @@ import {
   RemoveRejsonRlResponse,
 } from 'apiSrc/modules/browser/dto/rejson-rl.dto'
 
-import { InitialStateRejson } from './interfaces'
+import { InitialStateRejson } from '../interfaces'
 import { refreshKeyInfoAction } from './keys'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
@@ -40,10 +41,13 @@ const rejsonSlice = createSlice({
   initialState,
   reducers: {
     // load reJSON part
-    loadRejsonBranch: (state) => {
+    loadRejsonBranch: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
       state.error = ''
-      state.data = cloneDeep(initialState.data)
+
+      if (resetData) {
+        state.data = initialState.data
+      }
     },
     loadRejsonBranchSuccess: (state, { payload }) => {
       state.data = payload
@@ -120,9 +124,9 @@ export default rejsonSlice.reducer
 export let sourceRejson: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
-export function fetchReJSON(key: string, path = '.') {
+export function fetchReJSON(key: string, path = '.', resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadRejsonBranch())
+    dispatch(loadRejsonBranch(resetData))
 
     try {
       sourceRejson?.cancel?.()

@@ -78,5 +78,5 @@ export const truncateTTLToDuration = (ttl: number): string => {
 export const truncateTTLToSeconds = (ttl: number) =>
   ttl?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') ?? ''
 
-export const truncateTTLToFirstUnit = (ttl: number): string =>
+export const truncateNumberToFirstUnit = (ttl: number): string =>
   truncateTTLToDuration(ttl).split(TRUNCATE_DELIMITER)[0]

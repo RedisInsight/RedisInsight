@@ -16,6 +16,7 @@ $outer-height-mobile: 340px;
 
   color: var(--euiTextSubduedColor);
   flex: 1;
+  position: relative;
 
   @media only screen and (max-width: 767px) {
     max-height: calc(100vh - #{$outer-height-mobile});
@@ -32,14 +33,6 @@ $outer-height-mobile: 340px;
   color: inherit !important;
   padding: 0 !important;
   background: inherit !important;
-}
-
-.spinnerWrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .stringTextArea {

@@ -43,7 +43,8 @@ const VirtualTable = (props: IProps) => {
     setScrollTopPosition = () => {},
     scrollTopProp = 0,
     hideFooter = false,
-    tableWidth = 0
+    tableWidth = 0,
+    hideProgress,
   } = props
   const scrollTopRef = useRef<number>(0)
   const [selectedRowIndex, setSelectedRowIndex] = useState<Nullable<number>>(null)
@@ -291,7 +292,7 @@ const VirtualTable = (props: IProps) => {
           onWheel={onWheel}
           data-testid="virtual-table-container"
         >
-          {loading ? (
+          {loading && !hideProgress ? (
             <EuiProgress
               color="primary"
               size="xs"

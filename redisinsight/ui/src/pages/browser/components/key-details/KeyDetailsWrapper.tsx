@@ -8,12 +8,14 @@ import {
   refreshKeyInfoAction,
   toggleBrowserFullScreen,
 } from 'uiSrc/slices/browser/keys'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { refreshHashFieldsAction } from 'uiSrc/slices/browser/hash'
 import { refreshZsetMembersAction } from 'uiSrc/slices/browser/zset'
-import { resetStringValue } from 'uiSrc/slices/browser/string'
+import { fetchString, resetStringValue } from 'uiSrc/slices/browser/string'
 import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
 import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
+import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
+import { refreshStreamEntries } from 'uiSrc/slices/browser/stream'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -56,30 +58,40 @@ const KeyDetailsWrapper = (props: Props) => {
     dispatch(deleteKeyAction(key, onDeleteKey))
   }
 
-  const handleRefreshKey = (key: string, type: KeyTypes) => {
+  const handleRefreshKey = (key: string, type: KeyTypes | ModulesKeyTypes) => {
+    const resetData = false
+    dispatch(refreshKeyInfoAction(key))
     switch (type) {
       case KeyTypes.Hash: {
-        dispatch(refreshKeyInfoAction(key))
-        dispatch(refreshHashFieldsAction(key))
+        dispatch(refreshHashFieldsAction(key, resetData))
         break
       }
       case KeyTypes.ZSet: {
-        dispatch(refreshKeyInfoAction(key))
-        dispatch(refreshZsetMembersAction(key))
+        dispatch(refreshZsetMembersAction(key, resetData))
         break
       }
       case KeyTypes.Set: {
-        dispatch(refreshKeyInfoAction(key))
-        dispatch(refreshSetMembersAction(key))
+        dispatch(refreshSetMembersAction(key, resetData))
         break
       }
       case KeyTypes.List: {
-        dispatch(refreshKeyInfoAction(key))
-        dispatch(refreshListElementsAction(key))
+        dispatch(refreshListElementsAction(key, resetData))
+        break
+      }
+      case KeyTypes.String: {
+        dispatch(fetchString(key, resetData))
+        break
+      }
+      case KeyTypes.ReJSON: {
+        dispatch(fetchReJSON(key, '.', resetData))
+        break
+      }
+      case KeyTypes.Stream: {
+        dispatch(refreshStreamEntries(key, resetData))
         break
       }
       default:
-        dispatch(fetchKeyInfo(key))
+        dispatch(fetchKeyInfo(key, resetData))
     }
   }
 

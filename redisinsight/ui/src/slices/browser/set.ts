@@ -3,7 +3,7 @@ import { remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   AddMembersToSetDto,
@@ -20,7 +20,7 @@ import {
   updateSelectedKeyRefreshTime,
 } from './keys'
 import { AppDispatch, RootState } from '../store'
-import { InitialStateSet } from './interfaces'
+import { InitialStateSet } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: InitialStateSet = {
@@ -42,12 +42,17 @@ const setSlice = createSlice({
   initialState,
   reducers: {
     // load Set members
-    loadSetMembers: (state, { payload }) => {
+    loadSetMembers: (state, { payload: [match, resetData = true] }: PayloadAction<[string, Maybe<boolean>]>) => {
       state.loading = true
       state.error = ''
+
+      if (resetData) {
+        state.data = initialState.data
+      }
+
       state.data = {
-        ...initialState.data,
-        match: payload || '*',
+        ...state.data,
+        match: match || '*'
       }
     },
     loadSetMembersSuccess: (
@@ -150,10 +155,11 @@ export function fetchSetMembers(
   cursor: number,
   count: number,
   match: string,
+  resetData?: boolean,
   onSuccess?: (data: GetSetMembersResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadSetMembers(match))
+    dispatch(loadSetMembers([match, resetData]))
 
     try {
       const state = stateInit()
@@ -220,11 +226,11 @@ export function fetchMoreSetMembers(
 }
 
 // Asynchronous thunk actions
-export function refreshSetMembersAction(key: string = '') {
+export function refreshSetMembersAction(key: string = '', resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { match } = state.browser.set.data
-    dispatch(loadSetMembers(match || '*'))
+    dispatch(loadSetMembers([match || '*', resetData]))
 
     try {
       const { data, status } = await apiService.post<GetSetMembersResponse>(

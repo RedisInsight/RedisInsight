@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress } from '@elastic/eui'
 
 import {
   fetchMoreStreamEntries,
@@ -88,10 +88,19 @@ const StreamDetails = (props: Props) => {
         )}
         data-test-id="stream-entries-container"
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-stream"
+          />
+        )}
         <div className={styles.columnManager}>
           <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />
         </div>
         <VirtualTable
+          hideProgress
           selectable={false}
           keyName={key}
           headerHeight={headerHeight}

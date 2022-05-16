@@ -106,7 +106,7 @@ describe('zset slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, loadZSetMembers(initialState.data.sortOrder))
+      const nextState = reducer(initialState, loadZSetMembers([initialState.data.sortOrder, undefined]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -748,7 +748,7 @@ describe('zset slice', () => {
 
         // Assert
         const expectedActions = [
-          loadZSetMembers(SortOrder.ASC),
+          loadZSetMembers([SortOrder.ASC, undefined]),
           loadZSetMembersSuccess(responsePayload.data),
           updateSelectedKeyRefreshTime(Date.now()),
         ]
@@ -774,7 +774,7 @@ describe('zset slice', () => {
 
         // Assert
         const expectedActions = [
-          loadZSetMembers(SortOrder.ASC),
+          loadZSetMembers([SortOrder.ASC, undefined]),
           addErrorNotification(responsePayload as AxiosError),
           loadZSetMembersFailure(errorMessage),
         ]
@@ -1165,7 +1165,7 @@ describe('zset slice', () => {
 
         // Assert
         const expectedActions = [
-          loadZSetMembers(SortOrder.ASC),
+          loadZSetMembers([SortOrder.ASC, undefined]),
           loadZSetMembersSuccess(responsePayload.data),
         ]
 
@@ -1190,7 +1190,7 @@ describe('zset slice', () => {
 
         // Assert
         const expectedActions = [
-          loadZSetMembers(SortOrder.ASC),
+          loadZSetMembers([SortOrder.ASC, undefined]),
           addErrorNotification(responsePayload as AxiosError),
           loadZSetMembersFailure(errorMessage),
         ]

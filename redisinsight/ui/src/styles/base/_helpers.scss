@@ -84,3 +84,14 @@
     opacity: 1;
   }
 }
+
+.popover-without-top-tail {
+  margin-top: -8px;
+
+  .euiPopover__panelArrow {
+    &::before,
+    &::after {
+      content: none !important;
+    }
+  }
+}

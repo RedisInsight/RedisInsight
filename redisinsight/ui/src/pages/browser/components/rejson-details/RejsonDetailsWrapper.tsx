@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiLoadingSpinner } from '@elastic/eui'
+import { EuiProgress } from '@elastic/eui'
 
 import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
@@ -68,31 +68,33 @@ const RejsonDetailsWrapper = () => {
 
   return (
     <div className={`${[styles.container].join(' ')}`}>
-      {loading ? (
-        <div className={styles.placeholder}>
-          <EuiLoadingSpinner size="xl" />
-        </div>
-      ) : (
-        <RejsonDetails
-          selectedKey={selectedKey}
-          dbNumber={0}
-          dataType={type || ''}
-          deleteMsg=""
-          instanceId={123}
-          resultTableKeyMap={{}}
-          handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-          onJSONPropertyDeleted={reportJSONPropertyDeleted}
-          data={data}
-          onJSONKeyExpandAndCollapse={reportJSONKeyExpandAndCollapse}
-          onJSONPropertyAdded={reportJSONPropertyAdded}
-          onJSONPropertyEdited={reportJSONPropertyEdited}
-          shouldRejsonDataBeDownloaded={!downloaded}
-          handleSubmitUpdateValue={handleEditValueUpdate}
-          handleDeleteKeyDialogOpen={() => {}}
-          handleOpenExpiryDialog={() => {}}
-          keyProperty={{}}
+      {loading && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-json"
         />
       )}
+      <RejsonDetails
+        selectedKey={selectedKey}
+        dbNumber={0}
+        dataType={type || ''}
+        deleteMsg=""
+        instanceId={123}
+        resultTableKeyMap={{}}
+        handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+        onJSONPropertyDeleted={reportJSONPropertyDeleted}
+        data={data}
+        onJSONKeyExpandAndCollapse={reportJSONKeyExpandAndCollapse}
+        onJSONPropertyAdded={reportJSONPropertyAdded}
+        onJSONPropertyEdited={reportJSONPropertyEdited}
+        shouldRejsonDataBeDownloaded={!downloaded}
+        handleSubmitUpdateValue={handleEditValueUpdate}
+        handleDeleteKeyDialogOpen={() => {}}
+        handleOpenExpiryDialog={() => {}}
+        keyProperty={{}}
+      />
     </div>
   )
 }

@@ -2,6 +2,8 @@ export const MAX_TTL_NUMBER = 2147483647
 export const MAX_PORT_NUMBER = 65535
 export const MAX_DATABASE_INDEX_NUMBER = 99
 export const MAX_SCORE_DECIMAL_LENGTH = 15
+export const MAX_REFRESH_RATE = 999.9
+export const MIN_REFRESH_RATE = 1.0
 
 export const entryIdRegex = /^(\*)$|^(([0-9]+)(-)((\*)$|([0-9]+$)))/
 
@@ -74,7 +76,32 @@ export const validateNumber = (initValue: string, maxNumber: number = MAX_PORT_N
   return value.toString()
 }
 
+export const validateRefreshRateNumber = (initValue: string) => {
+  let value = initValue.replace(/[^0-9.]/gi, '')
+
+  if (countDecimals(+value) > 0) {
+    value = Number(value)
+      .toLocaleString('en-US', { maximumFractionDigits: 1 })
+      .replace(',', '')
+  }
+
+  if (+value > MAX_REFRESH_RATE) {
+    return MAX_REFRESH_RATE.toString()
+  }
+
+  if (+value < 0 || (+value === 0 && initValue !== '0')) {
+    return ''
+  }
+
+  return value.toString()
+}
+
 export const validateCertName = (initValue: string) =>
   initValue.replace(/[^ a-zA-Z0-9!@#$%^&*-_()[\]]+/gi, '').toString()
 
 export const isRequiredStringsValid = (...params: string[]) => params.every((p = '') => p.length > 0)
+
+const countDecimals = (value: number) => {
+  if (Math.floor(value) === value) return 0
+  return value.toString().split('.')?.[1]?.length || 0
+}

@@ -83,7 +83,7 @@ describe('hash slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, loadHashFields('*'))
+      const nextState = reducer(initialState, loadHashFields(['*', undefined]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -489,7 +489,7 @@ describe('hash slice', () => {
 
         // Assert
         const expectedActions = [
-          loadHashFields('*'),
+          loadHashFields(['*', true]),
           loadHashFieldsSuccess(responsePayload.data),
           updateSelectedKeyRefreshTime(Date.now()),
         ]
@@ -548,7 +548,7 @@ describe('hash slice', () => {
 
         // Assert
         const expectedActions = [
-          loadHashFields('*'),
+          loadHashFields(['*', undefined]),
           loadHashFieldsSuccess(responsePayload.data),
         ]
 

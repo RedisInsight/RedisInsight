@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -286,7 +286,16 @@ const HashDetails = (props: Props) => {
           { footerOpened: isFooterOpen }
         )}
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-hash"
+          />
+        )}
         <VirtualTable
+          hideProgress
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}

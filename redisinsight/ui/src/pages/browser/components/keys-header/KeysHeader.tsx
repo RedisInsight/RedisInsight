@@ -1,13 +1,11 @@
 /* eslint-disable react/no-this-in-sfc */
-import React, { Ref, useEffect, useRef, useState, FC, SVGProps } from 'react'
+import React, { Ref, useRef, FC, SVGProps } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { formatDistanceToNow } from 'date-fns'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 
@@ -32,11 +30,11 @@ import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.
 
 import FilterKeyType from '../filter-key-type'
 import SearchKeyList from '../search-key-list'
+import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
 
-const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * 60 // once a minute
-const HIDE_REFRESH_LABEL_WIDTH = 700
+const HIDE_REFRESH_LABEL_WIDTH = 550
 const FULL_SCREEN_RESOLUTION = 1260
 
 interface IViewType {
@@ -60,7 +58,6 @@ export interface Props {
 }
 
 const KeysHeader = (props: Props) => {
-  let interval: NodeJS.Timeout
   const {
     loading,
     isFullScreen,
@@ -75,7 +72,6 @@ const KeysHeader = (props: Props) => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType, isSearched, isFiltered } = useSelector(keysSelector)
 
-  const [lastRefreshMessage, setLastRefreshMessage] = useState('')
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
   const dispatch = useDispatch()
@@ -114,17 +110,6 @@ const KeysHeader = (props: Props) => {
     height: '36px !important',
   }
 
-  useEffect(() => {
-    updateLastRefresh()
-
-    interval = setInterval(() => {
-      if (document.hidden) return
-
-      updateLastRefresh()
-    }, TIMEOUT_TO_UPDATE_REFRESH_TIME)
-    return () => clearInterval(interval)
-  }, [lastRefreshTime])
-
   const handleRefreshKeys = () => {
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
@@ -150,12 +135,6 @@ const KeysHeader = (props: Props) => {
       ...config,
       stopIndex: (viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT) - 1,
     })
-  }
-
-  const updateLastRefresh = () => {
-    lastRefreshTime && setLastRefreshMessage(
-      `${formatDistanceToNow(lastRefreshTime, { addSuffix: true })}`
-    )
   }
 
   const openAddKeyPanel = () => {
@@ -241,37 +220,6 @@ const KeysHeader = (props: Props) => {
     </div>
   )
 
-  const RefreshBtn = (width: number) => (
-    <div className={styles.refresh}>
-      {width > HIDE_REFRESH_LABEL_WIDTH && (
-        <EuiTextColor className={styles.refreshSummary} style={{ verticalAlign: 'middle' }}>
-          Last refresh:
-          <span className={styles.refreshTime}>
-            {` ${lastRefreshMessage}`}
-          </span>
-        </EuiTextColor>
-      )}
-
-      <EuiToolTip
-        title="Last Refresh"
-        className={styles.tooltip}
-        position="top"
-        content={lastRefreshMessage}
-      >
-        <EuiButtonIcon
-          iconType="refresh"
-          color="primary"
-          disabled={loading}
-          onClick={handleRefreshKeys}
-          onMouseEnter={updateLastRefresh}
-          className={styles.btnRefresh}
-          aria-labelledby="Refresh keys"
-          data-testid="refresh-keys-btn"
-        />
-      </EuiToolTip>
-    </div>
-  )
-
   return (
     <div className={styles.content} ref={rootDivRef}>
       <AutoSizer disableHeight>
@@ -296,7 +244,15 @@ const KeysHeader = (props: Props) => {
                 scanMoreStyle={scanMoreStyle}
                 loadMoreItems={handleScanMore}
               />
-              {RefreshBtn(width)}
+              <AutoRefresh
+                postfix="keys"
+                loading={loading}
+                lastRefreshTime={lastRefreshTime}
+                displayText={width > HIDE_REFRESH_LABEL_WIDTH}
+                containerClassName={styles.refreshContainer}
+                onRefresh={handleRefreshKeys}
+                testid="refresh-keys-btn"
+              />
             </div>
           </div>
         )}

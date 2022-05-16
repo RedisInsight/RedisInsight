@@ -10,7 +10,9 @@ import {
   validateTTLNumberForAddKey,
   MAX_DATABASE_INDEX_NUMBER,
   validateDatabaseNumber,
-  validateCertName
+  validateCertName,
+  validateRefreshRateNumber,
+  MAX_REFRESH_RATE,
 } from '../validations'
 
 const text1 = '123 123 123'
@@ -175,6 +177,28 @@ describe('Validations utils', () => {
     ])('for input: %s (input), should be output: %s',
       (input, expected) => {
         const result = validateCertName(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('validateRefreshRateNumber', () => {
+    it.each([
+      [text1, `${MAX_REFRESH_RATE}`],
+      [text2, `${MAX_REFRESH_RATE}`],
+      [text3, ''],
+      [text4, '.'],
+      [text5, '.'],
+      [text6, `${MAX_REFRESH_RATE}`],
+      [text7, `${MAX_REFRESH_RATE}`],
+      [text8, `${MAX_REFRESH_RATE}`],
+      [text9, `${MAX_REFRESH_RATE}`],
+      [text10, '348.3'],
+      [text12, '32'],
+      [text13, '5'],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = validateRefreshRateNumber(input)
         expect(result).toBe(expected)
       })
   })

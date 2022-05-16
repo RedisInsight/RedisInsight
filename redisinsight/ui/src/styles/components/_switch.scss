@@ -5,9 +5,8 @@
 
   .euiSwitch__thumb {
     background-color: var(--euiColorPrimaryText) !important;
-    border-color: transparent !important;
   }
-  .euiSwitch__button[aria-checked='false'] .euiSwitch__body {
+  .euiSwitch__button[aria-checked="false"] .euiSwitch__body {
     background-color: #707070 !important;
   }
   .euiSwitch__body {
@@ -16,5 +15,11 @@
     .euiSwitch__icon--checked {
       fill: #fff;
     }
+  }
+}
+
+.euiSwitch:not(.euiSwitch--compressed) {
+  .euiSwitch__thumb {
+    border-color: transparent !important;
   }
 }

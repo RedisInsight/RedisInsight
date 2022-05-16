@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
+  EuiProgress,
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
@@ -100,7 +101,7 @@ const SetDetails = (props: Props) => {
       })
     }
     setMatch(match)
-    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, onSuccess))
+    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
   }
 
   const columns:ITableColumn[] = [
@@ -183,7 +184,16 @@ const SetDetails = (props: Props) => {
         )
       }
     >
+      {loading && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-set"
+        />
+      )}
       <VirtualTable
+        hideProgress
         keyName={key}
         headerHeight={headerHeight}
         rowHeight={rowHeight}

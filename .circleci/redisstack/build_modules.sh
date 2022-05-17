@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euxo pipefail
 
 PLATFORM=${PLATFORM:-'linux'}
 ELECTRON_VERSION=$(cat electron/version)

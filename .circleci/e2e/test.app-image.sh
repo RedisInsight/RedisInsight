@@ -1,3 +1,6 @@
+#!/bin/bash
+set -euxo pipefail
+
 yarn --cwd tests/e2e install
 
 # mount app resources

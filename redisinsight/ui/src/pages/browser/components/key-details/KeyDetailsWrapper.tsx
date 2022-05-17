@@ -20,6 +20,7 @@ import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
   isFullScreen: boolean
+  arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
   onCloseKey: () => void
   onEditKey: (key: string, newKey: string) => void
@@ -30,6 +31,7 @@ export interface Props {
 const KeyDetailsWrapper = (props: Props) => {
   const {
     isFullScreen,
+    arePanelsCollapsed,
     onToggleFullScreen,
     onCloseKey,
     onEditKey,
@@ -113,6 +115,7 @@ const KeyDetailsWrapper = (props: Props) => {
   return (
     <KeyDetails
       isFullScreen={isFullScreen}
+      arePanelsCollapsed={arePanelsCollapsed}
       onToggleFullScreen={onToggleFullScreen}
       onClose={handleClose}
       onClosePanel={handleClosePanel}

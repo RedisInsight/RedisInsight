@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euxo pipefail
 
 # =============== Plugins ===============
 PLUGINS_DIR="./redisinsight/api/static/plugins"

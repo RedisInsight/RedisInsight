@@ -40,6 +40,7 @@ export interface Props {
   onEditItem?: () => void
   onRemoveItem?: () => void
   isFullScreen: boolean
+  arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
 }
 
@@ -58,6 +59,7 @@ const MIDDLE_SCREEN_RESOLUTION = 640 - PADDING_WRAPPER_SIZE
 
 const KeyDetailsHeader = ({
   isFullScreen,
+  arePanelsCollapsed,
   onToggleFullScreen = () => {},
   onRefresh,
   onClose,
@@ -429,21 +431,23 @@ const KeyDetailsHeader = ({
                   )}
                 </EuiFlexItem>
                 <EuiFlexItem />
-                <EuiFlexItem grow={false} style={{ marginRight: '8px' }}>
-                  <EuiToolTip
-                    content={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-                    position="left"
-                    anchorClassName={styles.exitFullScreenBtn}
-                  >
-                    <EuiButtonIcon
-                      iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
-                      color="primary"
-                      aria-label="Open full screen"
-                      onClick={onToggleFullScreen}
-                      data-testid="toggle-full-screen"
-                    />
-                  </EuiToolTip>
-                </EuiFlexItem>
+                {!arePanelsCollapsed && (
+                  <EuiFlexItem grow={false} style={{ marginRight: '8px' }}>
+                    <EuiToolTip
+                      content={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
+                      position="left"
+                      anchorClassName={styles.exitFullScreenBtn}
+                    >
+                      <EuiButtonIcon
+                        iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
+                        color="primary"
+                        aria-label="Open full screen"
+                        onClick={onToggleFullScreen}
+                        data-testid="toggle-full-screen"
+                      />
+                    </EuiToolTip>
+                  </EuiFlexItem>
+                )}
                 <EuiFlexItem grow={false}>
                   <EuiToolTip
                     content="Close"

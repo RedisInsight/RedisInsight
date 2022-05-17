@@ -134,16 +134,19 @@ const BrowserPage = () => {
     ))
   }
 
-  const handleAddKeyPanel = (value: boolean) => {
+  const handleAddKeyPanel = (value: boolean, keyName?: string) => {
     if (value && !isAddKeyPanelOpen) {
       dispatch(resetKeyInfo())
-      setSelectedKey(null)
     }
+    setSelectedKey(keyName ?? null)
+    dispatch(toggleBrowserFullScreen(false))
     setIsAddKeyPanelOpen(value)
   }
 
   const selectKey = ({ rowData }: { rowData: any }) => {
     if (rowData.name !== selectedKey) {
+      dispatch(toggleBrowserFullScreen(false))
+
       dispatch(setInitialStateByType(prevSelectedType.current))
       setSelectedKey(rowData.name)
       setIsAddKeyPanelOpen(false)
@@ -153,6 +156,7 @@ const BrowserPage = () => {
 
   const closeKey = () => {
     dispatch(resetKeyInfo())
+    dispatch(toggleBrowserFullScreen(true))
 
     setSelectedKey(null)
     setIsAddKeyPanelOpen(false)
@@ -198,8 +202,6 @@ const BrowserPage = () => {
                     <KeysHeader
                       keysState={keysState}
                       loading={loading}
-                      isFullScreen={isBrowserFullScreen}
-                      onExitFullScreen={handleToggleFullScreen}
                       loadKeys={loadKeys}
                       loadMoreItems={loadMoreItems}
                       handleAddKeyPanel={handleAddKeyPanel}
@@ -254,6 +256,7 @@ const BrowserPage = () => {
                   ) : (
                     <KeyDetailsWrapper
                       isFullScreen={isBrowserFullScreen}
+                      arePanelsCollapsed={arePanelsCollapsed}
                       onToggleFullScreen={handleToggleFullScreen}
                       keyProp={selectedKey}
                       onCloseKey={closeKey}

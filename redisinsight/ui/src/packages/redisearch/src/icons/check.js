@@ -12,21 +12,24 @@ var EuiIconCheck = function EuiIconCheck(_ref) {
       props = _objectWithoutProperties(_ref, ["title", "titleId"]);
 
   // For e2e tests. TestCafe is failing for default icons
-  if(process.env.E2E) {
+  try {
+    document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    return /*#__PURE__*/React.createElement("svg", _extends({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      xmlns: "http://www.w3.org/2000/svg",
+      "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/React.createElement("title", {
+      id: titleId
+    }, title) : null, /*#__PURE__*/React.createElement("path", {
+      fillRule: "evenodd",
+      d: "M6.5 12a.502.502 0 01-.354-.146l-4-4a.502.502 0 01.708-.708L6.5 10.793l6.646-6.647a.502.502 0 01.708.708l-7 7A.502.502 0 016.5 12"
+    }));
+  } catch (e) {
     return <span>&#10004;</span>
   }
-  return /*#__PURE__*/React.createElement("svg", _extends({
-    width: 16,
-    height: 16,
-    viewBox: "0 0 16 16",
-    xmlns: "http://www.w3.org/2000/svg",
-    "aria-labelledby": titleId
-  }, props), title ? /*#__PURE__*/React.createElement("title", {
-    id: titleId
-  }, title) : null, /*#__PURE__*/React.createElement("path", {
-    fillRule: "evenodd",
-    d: "M6.5 12a.502.502 0 01-.354-.146l-4-4a.502.502 0 01.708-.708L6.5 10.793l6.646-6.647a.502.502 0 01.708.708l-7 7A.502.502 0 016.5 12"
-  }));
 };
 
 export var icon = EuiIconCheck;

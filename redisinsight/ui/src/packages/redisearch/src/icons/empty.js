@@ -12,16 +12,19 @@ var EuiIconEmpty = function EuiIconEmpty(_ref) {
       props = _objectWithoutProperties(_ref, ["title", "titleId"]);
 
   // For e2e tests. TestCafe is failing for default icons
-  if(process.env.E2E) {
+  try {
+    document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    return /*#__PURE__*/React.createElement("svg", _extends({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      xmlns: "http://www.w3.org/2000/svg",
+      "aria-labelledby": titleId
+    }, props));
+  } catch (e) {
     return <span>''</span>
   }
-  return /*#__PURE__*/React.createElement("svg", _extends({
-    width: 16,
-    height: 16,
-    viewBox: "0 0 16 16",
-    xmlns: "http://www.w3.org/2000/svg",
-    "aria-labelledby": titleId
-  }, props));
 };
 
 export var icon = EuiIconEmpty;

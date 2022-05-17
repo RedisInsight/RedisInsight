@@ -96,13 +96,13 @@ export class GetStreamEntriesResponse {
     description: 'First stream entry',
     type: StreamEntryDto,
   })
-  firstEntry: StreamEntryDto;
+  firstEntry: StreamEntryDto | '';
 
   @ApiProperty({
     description: 'Last stream entry',
     type: StreamEntryDto,
   })
-  lastEntry: StreamEntryDto;
+  lastEntry: StreamEntryDto | '';
 
   @ApiProperty({
     description: 'Stream entries',

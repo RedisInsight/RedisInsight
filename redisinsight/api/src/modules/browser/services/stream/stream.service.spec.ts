@@ -43,6 +43,31 @@ const mockStreamInfoReply = [
   ['1651130346487-1', ['field1', 'value1', 'field2', 'value2']],
 ];
 
+const mockEmptyStreamInfoReply = [
+  'length',
+  0,
+  'radix-tree-keys',
+  1,
+  'radix-tree-nodes',
+  2,
+  'last-generated-id',
+  '1651130346487-1',
+  'groups',
+  0,
+  'first-entry',
+  'null',
+  'last-entry',
+  'null',
+];
+
+const mockEmptyStreamInfo = {
+  keyName: mockAddStreamEntriesDto.keyName,
+  total: 0,
+  lastGeneratedId: '1651130346487-1',
+  firstEntry: '',
+  lastEntry: '',
+};
+
 const mockStreamInfo = {
   keyName: mockAddStreamEntriesDto.keyName,
   total: 2,
@@ -60,6 +85,7 @@ const mockStreamEntriesReply = [
   ['1651130346487-1', ['field1', 'value1', 'field2', 'value2']],
   ['1651130346487-0', ['field1', 'value1', 'field2', 'value2']],
 ];
+const mockEmptyStreamEntriesReply = [];
 const mockStreamEntries = [
   { id: '1651130346487-1', fields: { field1: 'value1', field2: 'value2' } },
   { id: '1651130346487-0', fields: { field1: 'value1', field2: 'value2' } },
@@ -290,6 +316,28 @@ describe('StreamService', () => {
         expect(e).toBeInstanceOf(InternalServerErrorException);
         expect(e.message).toEqual('oO');
       }
+    });
+  });
+  describe('get etries from empty stream', () => {
+    beforeEach(() => {
+      when(browserTool.execCommand)
+        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+        .mockResolvedValue(true);
+      when(browserTool.execCommand)
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoStream, [mockAddStreamEntriesDto.keyName])
+        .mockResolvedValue(mockEmptyStreamInfoReply);
+      when(browserTool.execCommand)
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XRevRange, expect.anything())
+        .mockResolvedValue(mockEmptyStreamEntriesReply);
+    });
+    it('Should return stream with 0 entries', async () => {
+      const result = await service.getEntries(mockClientOptions, {
+        ...mockGetStreamEntriesDto,
+      });
+      expect(result).toEqual({
+        ...mockEmptyStreamInfo,
+        entries: mockEmptyStreamEntriesReply,
+      });
     });
   });
   describe('getEntries', () => {

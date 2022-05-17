@@ -1,4 +1,10 @@
 .actions {
+  width: 370px;
+
+  @media only screen and (max-width: 870px) {
+    width: 300px;
+  }
+
   .icon {
     color: var(--iconsDefaultColor);
     width: 24px;
@@ -44,6 +50,12 @@
   }
 
   .popoverDBName {
-    color: var(--htmlColor)
+    color: var(--htmlColor);
   }
+}
+
+.configWrapper {
+  padding: 24px !important;
+  box-shadow: 0px 3px 15px #00000099;
+  background-color: var(--euiColorLightestShade) !important;
 }

@@ -66,6 +66,19 @@ module.exports = {
     'no-param-reassign': ['error', { props: false }],
     'sonarjs/no-duplicate-string': 'off',
     'sonarjs/cognitive-complexity': [1, 15],
-    'sonarjs/no-identical-functions': [0, 5]
+    'sonarjs/no-identical-functions': [0, 5],
+    'import/order': [
+      1,
+      {
+        groups: [
+          'external',
+          'builtin',
+          'internal',
+          'sibling',
+          'parent',
+          'index',
+        ],
+      },
+    ],
   },
 }

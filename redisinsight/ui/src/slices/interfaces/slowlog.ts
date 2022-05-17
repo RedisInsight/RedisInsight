@@ -1,14 +1,12 @@
-import { SlowLog } from 'src/modules/slow-log/models'
+import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
+import { DurationUnits } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
-
-export interface SlowLogConfig {
-  slowlogLogSlowerThan: number
-  slowlogMaxLen: number
-}
 
 export interface StateSlowLog {
   loading: boolean
   error: string
   data: SlowLog[]
-  config: Nullable<SlowLogConfig>
+  lastRefreshTime: Nullable<number>,
+  config: Nullable<SlowLogConfig>,
+  durationUnit: Nullable<DurationUnits>
 }

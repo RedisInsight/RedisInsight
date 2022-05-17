@@ -1,4 +1,4 @@
-import { DurationUnits } from 'uiSrc/pages/slowLog/interfaces'
+import { DurationUnits } from 'uiSrc/constants'
 
 // convert from microSeconds
 export const convertNumberByUnits = (number: number, unit: DurationUnits): number => {

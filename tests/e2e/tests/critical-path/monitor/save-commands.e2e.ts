@@ -11,7 +11,7 @@ import { rte } from '../../../helpers/constants';
 const monitorPage = new MonitorPage();
 const cliPage = new CliPage();
 const tempDir = os.tmpdir();
-const downloadsDir = `${process.env.USERPROFILE}/Downloads`;
+const downloadsDir = `${process.env.HOME}\\Downloads`;
 
 fixture `Save commands`
     .meta({ type: 'regression' })

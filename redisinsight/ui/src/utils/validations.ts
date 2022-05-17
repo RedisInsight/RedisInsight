@@ -62,14 +62,16 @@ export const validatePortNumber = (initValue: string) => validateNumber(initValu
 export const validateDatabaseNumber = (initValue: string) =>
   validateNumber(initValue, MAX_DATABASE_INDEX_NUMBER)
 
-export const validateNumber = (initValue: string, maxNumber: number = MAX_PORT_NUMBER) => {
-  const value = initValue ? +initValue.replace(/[^0-9]+/gi, '') : ''
+export const validateNumber = (initValue: string, maxNumber: number = Infinity, minNumber: number = 0) => {
+  const positiveNumbers = /[^0-9]+/gi
+  const negativeNumbers = /[^0-9-]+/gi
+  const value = initValue ? initValue.replace(minNumber < 0 ? negativeNumbers : positiveNumbers, '') : ''
 
-  if (value > maxNumber) {
+  if (+value > maxNumber) {
     return maxNumber.toString()
   }
 
-  if (value < 0) {
+  if (+value < minNumber) {
     return ''
   }
 

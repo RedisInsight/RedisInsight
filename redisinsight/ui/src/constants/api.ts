@@ -58,6 +58,9 @@ enum ApiEndpoints {
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
   GUIDES_PATH = 'static/guides',
   TUTORIALS_PATH = 'static/tutorials',
+
+  SLOW_LOGS = 'slow-logs',
+  SLOW_LOGS_CONFIG = 'slow-logs/config',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

@@ -1,0 +1,25 @@
+.main {
+  margin: 0 16px 0;
+  height: calc(100% - 70px);
+  background-color: var(--euiColorEmptyShade);
+  padding: 18px;
+
+  .title {
+    font-size: 24px;
+  }
+
+  .actionsLine {
+    margin-bottom: 12px;
+  }
+
+  .countSelectWrapper {
+    height: 30px;
+  }
+
+  .countSelect {
+    width: 78px;
+    height: 30px;
+    padding-left: 12px;
+    padding-right: 32px;
+  }
+}

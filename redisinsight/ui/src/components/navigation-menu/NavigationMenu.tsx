@@ -30,6 +30,8 @@ import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import BrowserActiveSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
 import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
+import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
+import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 
@@ -38,6 +40,7 @@ import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
+const slowLogPath = `/${PageNames.slowLog}`
 
 interface INavigations {
   isActivePage: boolean;
@@ -78,6 +81,9 @@ const NavigationMenu = ({ buildType }: IProps) => {
   const handleGoBrowserPage = () => {
     history.push(Pages.browser(connectedInstanceId))
   }
+  const handleGoSlowLogPage = () => {
+    history.push(Pages.slowLog(connectedInstanceId))
+  }
 
   const onKeyboardShortcutClick = () => {
     setIsHelpMenuActive(false)
@@ -111,6 +117,20 @@ const NavigationMenu = ({ buildType }: IProps) => {
       },
       getIconType() {
         return this.isActivePage ? WorkbenchSVG : WorkbenchActiveSVG
+      },
+    },
+    {
+      tooltipText: 'SlowLog',
+      ariaLabel: 'SlowLog page button',
+      onClick: handleGoSlowLogPage,
+      dataTestId: 'slowlog-page-btn',
+      connectedInstanceId,
+      isActivePage: activePage === slowLogPath,
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
       },
     },
   ]

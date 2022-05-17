@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -15,28 +15,26 @@ const score = '0';
 fixture `ZSet Key fields verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can add members to Zset', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can add members to Zset', async t => {
         keyName = chance.word({ length: 10 });
         await browserPage.addZSetKey(keyName, '5', keyTTL);
         //Add member to the ZSet key
         await browserPage.addMemberToZSet(keyMember, score);
         //Check the added member
-        await t.expect(browserPage.zsetMembersList.withExactText(keyMember).exists).ok('The existence of the Zset member', { timeout: 20000 });
-        await t.expect(browserPage.zsetScoresList.withExactText(score).exists).ok('The existence of the Zset score', { timeout: 20000 });
+        await t.expect(browserPage.zsetMembersList.withExactText(keyMember).exists).ok('The existence of the Zset member', { timeout: 10000 });
+        await t.expect(browserPage.zsetScoresList.withExactText(score).exists).ok('The existence of the Zset score', { timeout: 10000 });
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can remove member from ZSet', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can remove member from ZSet', async t => {
         keyName = chance.word({ length: 10 });
         await browserPage.addZSetKey(keyName, '6', keyTTL);
         //Add member to the ZSet key

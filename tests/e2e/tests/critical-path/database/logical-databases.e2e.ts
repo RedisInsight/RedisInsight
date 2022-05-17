@@ -16,10 +16,9 @@ fixture `Logical databases`
     .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can add DB with logical index via host and port from Add DB manually form', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can add DB with logical index via host and port from Add DB manually form', async t => {
         const index = '0';
         await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);
         //Enter logical index
@@ -35,8 +34,7 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The existence of the database', { timeout: 10000 });
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that if user adds DB with logical DB >0, DB name contains postfix "space+[{database index}]"', async t => {
+    .meta({ rte: rte.standalone })('Verify that if user adds DB with logical DB > 0, DB name contains postfix "space+[{database index}]"', async t => {
         const index = '10';
         await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);
         //Enter logical index
@@ -45,5 +43,5 @@ test
         //Click for saving
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         //Verify that the database name contains postfix
-        await t.expect(myRedisDatabasePage.dbNameList.textContent).eql(`${ossStandaloneConfig.databaseName} [${index}]`, 'The postfix is added to the database name', { timeout: 60000 });
+        await t.expect(myRedisDatabasePage.dbNameList.textContent).eql(`${ossStandaloneConfig.databaseName} [${index}]`, 'The postfix is added to the database name', { timeout: 10000 });
     });

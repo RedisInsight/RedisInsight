@@ -43,9 +43,9 @@ export async function discoverSentinelDatabase(databaseParameters: SentinelParam
     // Click for autodiscover
     await t
         .click(addRedisDatabasePage.discoverSentinelDatabaseButton)
-        .expect(discoverMasterGroupsPage.addPrimaryGroupButton.exists).ok('Verify that user is on the second step of Sentinel flow', { timeout: 60000 });
+        .expect(discoverMasterGroupsPage.addPrimaryGroupButton.exists).ok('Verify that user is on the second step of Sentinel flow', { timeout: 10000 });
     // Select Master Groups and Add to RedisInsight
-    await discoverMasterGroupsPage.addMasterGroups()
+    await discoverMasterGroupsPage.addMasterGroups();
     await t.click(autoDiscoverREDatabases.viewDatabasesButton);
 }
 
@@ -59,7 +59,7 @@ export async function addNewREClusterDatabase(databaseParameters: AddNewDatabase
     //Click on submit button
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     //Wait for database to be exist in the list of Autodiscover databases and select it
-    await t.expect(autoDiscoverREDatabases.databaseNames.withExactText(databaseParameters.databaseName).exists).ok('The existence of the database', { timeout: 60000 });
+    await t.expect(autoDiscoverREDatabases.databaseNames.withExactText(databaseParameters.databaseName).exists).ok('The existence of the database', { timeout: 10000 });
     await t.typeText(autoDiscoverREDatabases.search, databaseParameters.databaseName);
     await t.click(autoDiscoverREDatabases.databaseCheckbox);
     //Click Add selected databases button
@@ -77,9 +77,9 @@ export async function addOSSClusterDatabase(databaseParameters: OSSClusterParame
     //Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     //Check for info message that DB was added
-    await t.expect(myRedisDatabasePage.databaseInfoMessage.exists).ok('Check that info message exists', { timeout: 60000 });
+    await t.expect(myRedisDatabasePage.databaseInfoMessage.exists).ok('Check that info message exists', { timeout: 10000 });
     //Wait for database to be exist
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.ossClusterDatabaseName).exists).ok('The existence of the database', { timeout: 60000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.ossClusterDatabaseName).exists).ok('The existence of the database', { timeout: 10000 });
 }
 
 /**
@@ -100,7 +100,7 @@ export async function addNewRECloudDatabase(cloudAPIAccessKey: string, cloudAPIS
     await t.click(autoDiscoverREDatabases.addSelectedDatabases);
     //Wait for database to be exist in the My redis databases list
     await t.click(autoDiscoverREDatabases.viewDatabasesButton);
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The existence of the database', { timeout: 60000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The existence of the database', { timeout: 10000 });
     return databaseName;
 }
 
@@ -171,7 +171,8 @@ export async function deleteDatabase(databaseName: string): Promise<void> {
 export async function acceptTermsAddDatabaseOrConnectToRedisStack(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
     if(await addRedisDatabasePage.addDatabaseButton.visible) {
         await acceptLicenseTermsAndAddDatabase(databaseParameters, databaseName);
-    } else {
+    }
+    else {
         await acceptLicenseAndConnectToRedisStack();
     }
 }

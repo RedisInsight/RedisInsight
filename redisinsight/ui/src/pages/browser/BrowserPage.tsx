@@ -177,7 +177,6 @@ const BrowserPage = () => {
   }
 
   const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen
-  console.log(selectedKey)
 
   return (
     <div className={`browserPage ${styles.container}`}>

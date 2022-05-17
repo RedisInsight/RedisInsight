@@ -64,22 +64,25 @@ const StreamDetails = (props: Props) => {
     const lastEntryId = sortedColumnOrder === SortOrder.ASC ? lastEntry?.id : firstEntry?.id
 
     if (lastLoadedEntryId && lastLoadedEntryId !== lastEntryId) {
-      // dispatch(
-      //   fetchMoreStreamEntries(
-      //     key,
-      //     `${xrangeIdPrefix + lastLoadedEntryId}`,
-      //     SCAN_COUNT_DEFAULT,
-      //     sortedColumnOrder,
-      //   )
-      // )
+      dispatch(
+        fetchMoreStreamEntries(
+          key,
+          `${xrangeIdPrefix + lastLoadedEntryId}`,
+          SCAN_COUNT_DEFAULT,
+          sortedColumnOrder,
+        )
+      )
     }
   }
 
   const onChangeSorting = (column: any, order: SortOrder) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
-
-    dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, minVal, maxVal, order))
+    if (minVal && maxVal) {
+      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, minVal.toString(), maxVal.toString(), order))
+    } else {
+      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, '-', '+', order))
+    }
   }
 
   return (

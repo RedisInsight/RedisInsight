@@ -81,10 +81,13 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
     if (!minVal) {
       setMinVal(firstEntryTimeStamp)
     }
+  }, [min])
+
+  useEffect(() => {
     if (!maxVal) {
       setMaxVal(lastEntryTimeStamp)
     }
-  }, [max, min])
+  }, [max])
 
   useEffect(() => {
     if (!!max && typeof prevMaxValue === 'string' && maxVal === parseInt(prevMaxValue.split('-')[0], 10)) {
@@ -113,8 +116,10 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
   if (firstEntryTimeStamp === lastEntryTimeStamp) {
     return (
       <div className={styles.rangeWrapper}>
-        <div className={styles['slider__left-value']}>{getFormatTime(minVal)}</div>
-        <div className={styles['slider__right-value']}>{getFormatTime(maxVal)}</div>
+        <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.slider__range}>
+          <div className={styles['slider__left-value']}>{getFormatTime(minVal)}</div>
+          <div className={styles['slider__right-value']}>{getFormatTime(maxVal)}</div>
+        </div>
       </div>
     )
   }
@@ -150,9 +155,10 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
         />
         <div className={styles.slider}>
           <div className={styles.slider__track} />
-          <div ref={range} className={styles.slider__range} />
-          <div className={styles['slider__left-value']}>{getFormatTime(minVal)}</div>
-          <div className={styles['slider__right-value']}>{getFormatTime(maxVal)}</div>
+          <div ref={range} className={styles.slider__range}>
+            <div className={styles['slider__left-value']}>{getFormatTime(minVal)}</div>
+            <div className={styles['slider__right-value']}>{getFormatTime(maxVal)}</div>
+          </div>
         </div>
       </div>
       {(minVal !== firstEntryTimeStamp || maxVal !== lastEntryTimeStamp) && (

@@ -68,7 +68,7 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
     const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
-    await browserPage.addEntryToStream(keyField, keyValue);
+    await browserPage.addEntryToStream(chance.word({ length: 20 }), chance.word({ length: 20 }));
     // Compare that after adding new entry, new column and row were added
     const paramsAfterEntryAdding = await browserPage.getStreamRowColumnNumber();
     await t.expect(paramsAfterEntryAdding[0]).eql(toString(toNumber(paramsBeforeEntryAdding[0]) + 1), 'Increased number of columns after adding');

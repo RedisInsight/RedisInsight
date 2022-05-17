@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -e
 
 ARCH=${ARCH:-x64}
 WORKING_DIRECTORY=$(pwd)

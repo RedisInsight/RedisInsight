@@ -69,6 +69,8 @@ export class BrowserPage {
     disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
     addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
+    removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
+    confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -111,7 +113,6 @@ export class BrowserPage {
     streamValue = Selector('[data-testid=field-value]');
     addStreamRow = Selector('[data-testid=add-new-row]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
-    clearStreamEntryInputs = Selector('[data-testid=remove-item]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -171,8 +172,9 @@ export class BrowserPage {
     streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
-    streamFields = Selector('[data-testid=column-label].truncateText span');
+    streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
+    confirmationMessagePopover = Selector('div.euiPopover__panel');
 
     /**
      * Common part for Add any new key
@@ -371,6 +373,7 @@ export class BrowserPage {
             await t.typeText(this.streamEntryId, entryId);
         }
     }
+
     /**
      * Get number of existed columns and rows of Stream key
      */
@@ -715,6 +718,12 @@ export class BrowserPage {
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
         // Click on save button
         await t.click(this.treeViewDelimiterValueSave);
+    }
+
+    //Delete entry from Stream key
+    async deleteStreamEntry(): Promise<void> {
+        await t.click(this.removeEntryButton);
+        await t.click(this.confirmRemoveEntryButton);
     }
 
     /**

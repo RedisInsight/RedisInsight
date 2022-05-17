@@ -31,6 +31,7 @@ export class WorkbenchPage {
     paginationButtonPrevious = Selector(this.cssSelectorPaginationButtonPrevious);
     paginationButtonNext = Selector(this.cssSelectorPaginationButtonNext);
     preselectList = Selector('[data-testid*=preselect-List]');
+    preselectIndexInformation = Selector('[data-testid="preselect-Additional index information"]');
     preselectHashCreate = Selector('[data-testid=preselect-Create]');
     preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
     preselectSearch = Selector('[data-testid=preselect-Search]');

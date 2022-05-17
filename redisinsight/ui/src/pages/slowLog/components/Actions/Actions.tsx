@@ -63,7 +63,9 @@ const Actions = (props: Props) => {
 
   const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent[enableAutoRefresh ? 'SLOWLOG_AUTO_REFRESH_ENABLED' : 'SLOWLOG_AUTO_REFRESH_DISABLED'],
+      event: enableAutoRefresh
+        ? TelemetryEvent.SLOWLOG_AUTO_REFRESH_ENABLED
+        : TelemetryEvent.SLOWLOG_AUTO_REFRESH_DISABLED,
       eventData: {
         databaseId: instanceId,
         refreshRate: enableAutoRefresh ? refreshRate : undefined

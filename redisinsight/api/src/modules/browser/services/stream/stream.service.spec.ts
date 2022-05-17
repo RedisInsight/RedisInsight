@@ -64,8 +64,8 @@ const mockEmptyStreamInfo = {
   keyName: mockAddStreamEntriesDto.keyName,
   total: 0,
   lastGeneratedId: '1651130346487-1',
-  firstEntry: '',
-  lastEntry: '',
+  firstEntry: null,
+  lastEntry: null,
 };
 
 const mockStreamInfo = {

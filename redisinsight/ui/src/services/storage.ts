@@ -51,7 +51,7 @@ export const sessionStorageService = new StorageService(sessionStorage)
 
 export const getDBConfigStorageField = (instanceId: string, field: string = '') => {
   try {
-    return localStorageService.get(BrowserStorageItem.dbConfig + instanceId)[field]
+    return localStorageService.get(BrowserStorageItem.dbConfig + instanceId)?.[field]
   } catch (e) {
     return null
   }
@@ -59,11 +59,7 @@ export const getDBConfigStorageField = (instanceId: string, field: string = '') 
 
 export const setDBConfigStorageField = (instanceId: string, field: string = '', value?: any) => {
   try {
-    const config = localStorageService.get(BrowserStorageItem.dbConfig + instanceId)
-
-    if (!config) {
-      return
-    }
+    const config = localStorageService.get(BrowserStorageItem.dbConfig + instanceId) || {}
 
     if (value === undefined) {
       delete config[field]

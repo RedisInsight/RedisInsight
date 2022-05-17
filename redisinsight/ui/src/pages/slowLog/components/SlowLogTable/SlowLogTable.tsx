@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { SortOrder, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
-import { DurationUnits } from 'uiSrc/pages/slowLog/interfaces'
+import { DurationUnits, SortOrder, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { Nullable } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import styles from '../styles.module.scss'
@@ -17,7 +17,7 @@ export const DATE_FORMAT = 'HH:mm:ss d LLL yyyy'
 export interface Props {
   items: any
   loading: boolean
-  durationUnit: DurationUnits
+  durationUnit: Nullable<DurationUnits>
 }
 
 const sortByTimeStamp = (items = [], order: SortOrder) =>

@@ -11,24 +11,32 @@ import {
 } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { DurationUnits } from 'uiSrc/pages/slowLog/interfaces'
+import cx from 'classnames'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { ConnectionType } from 'uiSrc/slices/interfaces'
-
+import { DurationUnits } from 'uiSrc/constants'
+import { slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
+import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
+import { Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
+import SlowLogConfig from '../SlowLogConfig'
 
 export interface Props {
+  width: number
   isEmptySlowLog: boolean
-  durationUnit: DurationUnits
+  durationUnit: Nullable<DurationUnits>
   onClear: () => void
   onRefresh: () => void
 }
 
+const HIDE_REFRESH_LABEL_WIDTH = 850
+
 const Actions = (props: Props) => {
-  const { isEmptySlowLog, durationUnit, onClear = () => {}, onRefresh } = props
-  const { name = '', connectionType } = useSelector(connectedInstanceSelector)
+  const { isEmptySlowLog, durationUnit, width, onClear = () => {}, onRefresh } = props
+  const { name = '' } = useSelector(connectedInstanceSelector)
+  const { loading, lastRefreshTime } = useSelector(slowLogSelector)
 
   const [isPopoverClearOpen, setIsPopoverClearOpen] = useState(false)
+  const [isPopoverConfigOpen, setIsPopoverConfigOpen] = useState(false)
 
   const showClearPopover = () => {
     setIsPopoverClearOpen((isPopoverClearOpen) => !isPopoverClearOpen)
@@ -36,6 +44,13 @@ const Actions = (props: Props) => {
 
   const closePopoverClear = () => {
     setIsPopoverClearOpen(false)
+  }
+  const showConfigPopover = () => {
+    setIsPopoverConfigOpen((isPopoverConfigOpen) => !isPopoverConfigOpen)
+  }
+
+  const closePopoverConfig = () => {
+    setIsPopoverConfigOpen(false)
   }
 
   const handleClearClick = () => {
@@ -77,56 +92,64 @@ const Actions = (props: Props) => {
 
   return (
     <EuiFlexGroup className={styles.actions} gutterSize="s" alignItems="center" responsive={false}>
-      <EuiFlexItem>
-        <EuiToolTip
-          content="Refresh"
-          position="left"
-          anchorClassName={styles.icon}
-        >
-          <EuiButtonIcon
-            iconType="refresh"
-            color="primary"
-            aria-label="Refresh"
-            onClick={() => onRefresh()}
-            data-testid="refresh-btn"
-          />
-        </EuiToolTip>
+      <EuiFlexItem grow={5} style={{ alignItems: 'flex-end' }}>
+        <AutoRefresh
+          postfix="slowlog"
+          loading={loading}
+          displayText={width > HIDE_REFRESH_LABEL_WIDTH}
+          lastRefreshTime={lastRefreshTime}
+          containerClassName={styles.refreshContainer}
+          onRefresh={onRefresh}
+          testid="refresh-slowlog-btn"
+        />
       </EuiFlexItem>
       <EuiFlexItem>
-        <EuiButton
-          size="s"
-          iconType="gear"
-          color="secondary"
-          aria-label="Configure"
-          onClick={() => {}}
-          data-testid="configure-btn"
-          disabled={connectionType === ConnectionType.Cluster}
+
+        <EuiPopover
+          ownFocus
+          anchorPosition="downRight"
+          isOpen={isPopoverConfigOpen}
+          panelPaddingSize="m"
+          closePopover={() => {}}
+          panelClassName={cx('popover-without-top-tail', styles.configWrapper)}
+          button={(
+            <EuiButton
+              size="s"
+              iconType="gear"
+              color="secondary"
+              aria-label="Configure"
+              onClick={() => showConfigPopover()}
+              data-testid="configure-btn"
+            >
+              Configure
+            </EuiButton>
+          )}
         >
-          Configure
-        </EuiButton>
+          <SlowLogConfig closePopover={closePopoverConfig} onRefresh={onRefresh} />
+        </EuiPopover>
       </EuiFlexItem>
       {!isEmptySlowLog && (
-        <EuiFlexItem>
-          <EuiPopover
-            anchorPosition="leftCenter"
-            ownFocus
-            isOpen={isPopoverClearOpen}
-            closePopover={closePopoverClear}
-            panelPaddingSize="m"
-            button={(
-              <EuiButtonIcon
-                iconType="eraser"
-                className={styles.icon}
-                color="primary"
-                aria-label="Clear Slow Log"
-                onClick={() => showClearPopover()}
-                data-testid="clear-btn"
-              />
+      <EuiFlexItem>
+        <EuiPopover
+          anchorPosition="leftCenter"
+          ownFocus
+          isOpen={isPopoverClearOpen}
+          closePopover={closePopoverClear}
+          panelPaddingSize="m"
+          button={(
+            <EuiButtonIcon
+              iconType="eraser"
+              className={styles.icon}
+              color="primary"
+              aria-label="Clear Slow Log"
+              onClick={() => showClearPopover()}
+              data-testid="clear-btn"
+            />
             )}
-          >
-            {ToolTipContent}
-          </EuiPopover>
-        </EuiFlexItem>
+        >
+          {ToolTipContent}
+        </EuiPopover>
+      </EuiFlexItem>
       )}
       <EuiFlexItem>
         <EuiToolTip

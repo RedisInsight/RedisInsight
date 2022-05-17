@@ -25,7 +25,7 @@ describe('Actions', () => {
     const onRefresh = jest.fn()
     render(<Actions {...mockedProps} onRefresh={onRefresh} isEmptySlowLog={false} />)
 
-    fireEvent.click(screen.getByTestId('refresh-btn'))
+    fireEvent.click(screen.getByTestId('refresh-slowlog-btn'))
 
     expect(onRefresh).toBeCalled()
   })

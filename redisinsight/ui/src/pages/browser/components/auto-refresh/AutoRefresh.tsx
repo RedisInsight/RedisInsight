@@ -24,7 +24,8 @@ export interface Props {
   testid?: string
   containerClassName?: string
   turnOffAutoRefresh?: boolean
-  onRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
+  onRefresh: () => void
+  onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
@@ -38,6 +39,7 @@ const AutoRefresh = ({
   testid = '',
   turnOffAutoRefresh,
   onRefresh,
+  onEnableAutoRefresh,
 }: Props) => {
   let intervalText: NodeJS.Timeout
   let timeoutRefresh: NodeJS.Timeout
@@ -130,11 +132,13 @@ const AutoRefresh = ({
   }
 
   const handleRefresh = () => {
-    onRefresh(enableAutoRefresh, refreshRate)
+    onRefresh()
   }
 
   const onChangeEnableAutoRefresh = (value: boolean) => {
     setEnableAutoRefresh(value)
+
+    onEnableAutoRefresh?.(value, refreshRate)
   }
 
   return (

@@ -36,7 +36,8 @@ test
         await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 20000 });
         await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value');
     });
-test
+//skipped due the issue https://redislabs.atlassian.net/browse/RI-2866
+test.skip
     .meta({ rte: rte.standalone })
     ('Verify that user can add key with value to any level of JSON structure', async t => {
         keyName = chance.word({ length: 10 });

@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 yarn --cwd tests/e2e install
 
 # mount app resources

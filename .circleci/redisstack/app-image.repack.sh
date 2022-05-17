@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 ARCH=${ARCH:-x86_64}
 WORKING_DIRECTORY=$(pwd)

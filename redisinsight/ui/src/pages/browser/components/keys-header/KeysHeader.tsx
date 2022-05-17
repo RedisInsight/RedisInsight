@@ -49,23 +49,19 @@ interface IViewType {
 
 export interface Props {
   loading: boolean
-  isFullScreen: boolean
   keysState: KeysStoreData
   loadKeys: (type?: KeyViewType) => void
   loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
-  onExitFullScreen: () => void
 }
 
 const KeysHeader = (props: Props) => {
   const {
     loading,
-    isFullScreen,
     keysState,
     loadKeys,
     loadMoreItems,
     handleAddKeyPanel,
-    onExitFullScreen
   } = props
 
   const { lastRefreshTime } = useSelector(keysDataSelector)
@@ -179,22 +175,6 @@ const KeysHeader = (props: Props) => {
     </EuiButton>
   )
 
-  const exitFullScreenBtn = (
-    <EuiToolTip
-      content="Exit Full Screen"
-      position="left"
-      anchorClassName={styles.exitFullScreenBtn}
-    >
-      <EuiButtonIcon
-        iconType="fullScreenExit"
-        color="primary"
-        aria-label="Exit full screen"
-        onClick={onExitFullScreen}
-        data-testid="toggle-full-screen"
-      />
-    </EuiToolTip>
-  )
-
   const ViewSwitch = (width: number) => (
     <div
       className={
@@ -231,7 +211,6 @@ const KeysHeader = (props: Props) => {
               {ViewSwitch(width)}
               <div>
                 {AddKeyBtn}
-                {isFullScreen && exitFullScreenBtn}
               </div>
             </div>
 

@@ -15,6 +15,16 @@ export const initDataHelper = (rte) => {
     })) : client.send_command(args.shift(), ...args);
   };
 
+  const executeCommandAll = async (...args: string[]): Promise<any> => {
+    return client.nodes ? Promise.all(client.nodes().map(async (node) => {
+      try {
+        return node.send_command(...args);
+      } catch (e) {
+        return null;
+      }
+    })) : client.send_command(args.shift(), ...args);
+  };
+
   const setAclUserRules = async (
     rules: string,
   ): Promise<any> => {
@@ -309,8 +319,17 @@ export const initDataHelper = (rte) => {
     ], number, clean);
   };
 
+  const getClientNodes = () => {
+    if (client.nodes) {
+      return client.nodes();
+    } else {
+      return [client];
+    }
+  }
+
   return {
     executeCommand,
+    executeCommandAll,
     setAclUserRules,
     truncate,
     generateKeys,
@@ -322,5 +341,6 @@ export const initDataHelper = (rte) => {
     generateNTimeSeries,
     generateNStreams,
     generateNGraphs,
+    getClientNodes,
   }
 }

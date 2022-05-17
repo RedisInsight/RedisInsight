@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
+  EuiProgress,
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
 
-import { formatLongName } from 'uiSrc/utils'
+import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -100,7 +101,7 @@ const SetDetails = (props: Props) => {
       })
     }
     setMatch(match)
-    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, onSuccess))
+    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
   }
 
   const columns:ITableColumn[] = [
@@ -145,8 +146,9 @@ const SetDetails = (props: Props) => {
         return (
           <div className="value-table-actions">
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(cellData)}
               item={cellData}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
@@ -182,7 +184,16 @@ const SetDetails = (props: Props) => {
         )
       }
     >
+      {loading && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-set"
+        />
+      )}
       <VirtualTable
+        hideProgress
         keyName={key}
         headerHeight={headerHeight}
         rowHeight={rowHeight}

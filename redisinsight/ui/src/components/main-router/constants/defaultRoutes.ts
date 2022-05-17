@@ -10,6 +10,7 @@ import {
   RedisClusterDatabasesPage,
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
+import SlowLogPage from 'uiSrc/pages/slowLog'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -23,6 +24,11 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.workbench,
     path: Pages.workbench(':instanceId'),
     component: WorkbenchPage,
+  },
+  {
+    pageName: PageNames.slowLog,
+    path: Pages.slowLog(':instanceId'),
+    component: SlowLogPage,
   },
 ]
 

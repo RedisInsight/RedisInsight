@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 
 import {
   zsetSelector,
@@ -20,7 +20,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { formatLongName, validateScoreNumber } from 'uiSrc/utils'
+import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName, validateScoreNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -249,8 +249,9 @@ const ZSetDetails = (props: Props) => {
               data-testid={`zset-edit-button-${name}`}
             />
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(name)}
               item={name}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
@@ -313,7 +314,16 @@ const ZSetDetails = (props: Props) => {
           { footerOpened: isFooterOpen }
         )}
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-zset"
+          />
+        )}
         <VirtualTable
+          hideProgress
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}

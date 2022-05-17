@@ -1,12 +1,12 @@
 import { EuiText, EuiToolTip } from '@elastic/eui'
-import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { keyBy } from 'lodash'
 
 import { formatLongName } from 'uiSrc/utils'
-import { streamDataSelector } from 'uiSrc/slices/browser/stream'
+import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
+import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -15,7 +15,6 @@ import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import StreamDetails from './StreamDetails'
-import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './StreamDetails/styles.module.scss'
 
@@ -39,6 +38,8 @@ const StreamDetailsWrapper = (props: Props) => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
+  const dispatch = useDispatch()
+
   const [uniqFields, setUniqFields] = useState({})
   const [entries, setEntries] = useState<IStreamEntry[]>([])
   const [columns, setColumns] = useState<ITableColumn[]>([])
@@ -60,19 +61,19 @@ const StreamDetailsWrapper = (props: Props) => {
 
     setUniqFields(fields)
     setEntries(streamEntries)
-    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field))])
-  }, [loadedEntries])
+    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
+  }, [loadedEntries, deleting])
 
   const closePopover = useCallback(() => {
     setDeleting('')
   }, [])
 
-  const showPopover = useCallback((field = '') => {
-    setDeleting(`${field + suffix}`)
+  const showPopover = useCallback((entry = '') => {
+    setDeleting(`${entry + suffix}`)
   }, [])
 
   const handleDeleteEntry = (entryId = '') => {
-    // dispatch(deleteStreamEntry(key, [field]))
+    dispatch(deleteStreamEntry(key, [entryId]))
     closePopover()
   }
 
@@ -166,15 +167,20 @@ const StreamDetailsWrapper = (props: Props) => {
       id: 'actions',
       label: '',
       headerClassName: styles.actionsHeader,
-      className: styles.actions,
       textAlignment: TableCellTextAlignment.Left,
       absoluteWidth: actionsWidth,
       render: function Actions(_act: any, { id }: StreamEntryDto) {
         return (
-          <div className={cx('value-table-actions', 'stream-entry-actions')}>
+          <div>
             <PopoverDelete
+              text={(
+                <>
+                  This Entry will be removed from
+                  <br />
+                  {key}
+                </>
+              )}
               item={id}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}

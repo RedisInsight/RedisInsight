@@ -21,34 +21,31 @@ fixture `Tree view verifications`
     .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)', async t => {
         //Verify that Browser view is selected by default and Tree view is disabled
         await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(41, 47, 71)', 'The Browser is selected by default');
         await t.expect(browserPage.treeViewArea.visible).notOk('The tree view is not displayed', { timeout: 20000 });
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
         await t.click(browserPage.treeViewButton);
         await t.eval(() => location.reload());
         //Verify that "Tree view" mode enabled state is saved
         await t.expect(browserPage.treeViewArea.visible).ok('The tree view is displayed');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see DB is automatically scanned by 10K keys in the background, user can see the number of keys scanned and use the "Scan More" button to search per another 10000 keys', async t => {
-        let scannedValue = 10;
+    .meta({ rte: rte.standalone })('Verify that user can see DB is automatically scanned by 10K keys in the background, user can see the number of keys scanned and use the "Scan More" button to search per another 10000 keys', async t => {
         await t.click(browserPage.treeViewButton);
-        await t.expect(browserPage.scannedValue.visible).ok('The database scanned value is displayed', { timeout: 60000 });
-        await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, 'The database is automatically scanned by 10K keys');
         //Verify that user can use the "Scan More" button to search per another 10000 keys
-        for (let i = 0; i < 10; i++){
-            scannedValue = scannedValue + 10;
+        for (let i = 10; i < 100; i += 10){
+            // scannedValue = scannedValue + 10;
+            await t.expect(browserPage.progressKeyList.exists).notOk('Progress Bar', { timeout: 30000 });
+            const scannedValueText = await browserPage.scannedValue.textContent;
+            const regExp = new RegExp(`${i} 00` + '.');
+            await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${i} 000 keys`, { timeout: 30000 });
             await t.click(browserPage.scanMoreButton);
-            await t.expect(browserPage.scannedValue.textContent).eql(`${scannedValue} 000`, `The database is automatically scanned by ${scannedValue} 000 keys`, { timeout: 60000 });
         }
     });
 test
@@ -57,8 +54,7 @@ test
         await browserPage.deleteKeyByName(keyNameFilter);
         await deleteDatabase(ossStandaloneBigConfig.databaseName);
     })
-    .meta({ rte: rte.standalone })
-    ('Verify that when user enables filtering by key name he can see only folder with appropriate keys are displayed and the number of keys and percentage is recalculated', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user enables filtering by key name he can see only folder with appropriate keys are displayed and the number of keys and percentage is recalculated', async t => {
         await browserPage.addHashKey(keyNameFilter);
         await t.click(browserPage.treeViewButton);
         const numberOfKeys = await browserPage.treeViewKeysNumber.textContent;
@@ -73,8 +69,7 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNameFilter)).ok('The appropriate keys are displayed');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user switched from Tree View to Browser and goes back state of filer by key name/key type is saved', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user switched from Tree View to Browser and goes back state of filer by key name/key type is saved', async t => {
         const keyName = 'user*';
         await t.click(browserPage.treeViewButton);
         await browserPage.searchByKeyName(keyName);

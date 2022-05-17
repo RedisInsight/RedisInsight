@@ -1,22 +1,27 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import { remove } from 'lodash'
 
-import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { fetchKeyInfo } from 'uiSrc/slices/browser/keys'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
+import { fetchKeyInfo, refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   AddStreamEntriesDto,
   AddStreamEntriesResponse,
-  GetStreamEntriesResponse
+  GetStreamEntriesResponse,
+  StreamEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
-import { addErrorNotification } from '../app/notifications'
-import { StateStream } from '../interfaces/stream'
 import { AppDispatch, RootState } from '../store'
+import { StateStream } from '../interfaces/stream'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: StateStream = {
   loading: false,
   error: '',
+  sortOrder: SortOrder.DESC,
   data: {
     total: 0,
     entries: [],
@@ -39,17 +44,22 @@ const streamSlice = createSlice({
   initialState,
   reducers: {
     // load stream entries
-    loadEntries: (state) => {
+    loadEntries: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
       state.error = ''
-      // state.data = initialState.data
+
+      if (resetData) {
+        state.data = initialState.data
+      }
     },
-    loadEntriesSuccess: (state, { payload }: { payload: GetStreamEntriesResponse }) => {
+    loadEntriesSuccess: (state, { payload: [data, sortOrder] }:
+    PayloadAction<[GetStreamEntriesResponse, SortOrder]>) => {
       state.data = {
         ...state.data,
-        ...payload,
+        ...data,
       }
-      state.data.keyName = payload.keyName
+      state.data.keyName = data?.keyName
+      state.sortOrder = sortOrder
       state.loading = false
     },
     loadEntriesFailure: (state, { payload }) => {
@@ -61,7 +71,7 @@ const streamSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadMoreEntriesSuccess: (state, { payload: { entries, ...rest } }: { payload: GetStreamEntriesResponse }) => {
+    loadMoreEntriesSuccess: (state, { payload: { entries, ...rest } }: PayloadAction<GetStreamEntriesResponse>) => {
       state.data = {
         ...state.data,
         ...rest,
@@ -84,6 +94,26 @@ const streamSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    // delete Stream entries
+    removeStreamEntries: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    removeStreamEntriesSuccess: (state) => {
+      state.loading = false
+    },
+    removeStreamEntriesFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
+    removeEntriesFromList: (state, { payload }: PayloadAction<string[]>) => {
+      remove(state.data?.entries, (entry: StreamEntryDto) => payload.includes(entry.id))
+
+      state.data = {
+        ...state.data,
+        total: state.data.total - 1,
+      }
+    },
   },
 })
 
@@ -97,7 +127,11 @@ export const {
   loadMoreEntriesFailure,
   addNewEntries,
   addNewEntriesSuccess,
-  addNewEntriesFailure
+  addNewEntriesFailure,
+  removeStreamEntries,
+  removeStreamEntriesSuccess,
+  removeStreamEntriesFailure,
+  removeEntriesFromList
 } = streamSlice.actions
 
 // A selector
@@ -114,10 +148,11 @@ export function fetchStreamEntries(
   start: string,
   end: string,
   sortOrder: SortOrder,
+  resetData?: boolean,
   onSuccess?: (data: GetStreamEntriesResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadEntries())
+    dispatch(loadEntries(resetData))
 
     // const start = '-'
     // const end = '+'
@@ -139,8 +174,48 @@ export function fetchStreamEntries(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadEntriesSuccess(data))
+        dispatch(loadEntriesSuccess([data, sortOrder]))
         onSuccess?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(loadEntriesFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function refreshStreamEntries(
+  key: string,
+  resetData?: boolean,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadEntries(resetData))
+
+    const start = '-'
+    const end = '+'
+
+    try {
+      const state = stateInit()
+      const { sortOrder } = state.browser.stream
+      const { data, status } = await apiService.post<GetStreamEntriesResponse>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_ENTRIES_GET
+        ),
+        {
+          keyName: key,
+          start,
+          end,
+          sortOrder,
+          count: SCAN_COUNT_DEFAULT,
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadEntriesSuccess([data, sortOrder]))
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -224,6 +299,43 @@ export function addNewEntriesAction(
       dispatch(addErrorNotification(error))
       dispatch(addNewEntriesFailure(errorMessage))
       onFail?.()
+    }
+  }
+}
+// Asynchronous thunk actions
+export function deleteStreamEntry(key: string, entries: string[]) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(removeStreamEntries())
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_ENTRIES
+        ),
+        {
+          data: {
+            keyName: key,
+            entries,
+          },
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        dispatch(removeStreamEntriesSuccess())
+        dispatch(removeEntriesFromList(entries))
+        dispatch<any>(refreshKeyInfoAction(key))
+        dispatch(addMessageNotification(
+          successMessages.REMOVED_KEY_VALUE(
+            key,
+            entries.join(''),
+            'Entry'
+          )
+        ))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(removeStreamEntriesFailure(errorMessage))
     }
   }
 }

@@ -503,7 +503,7 @@ export function fetchMoreKeys(cursor: string, count: number) {
 }
 
 // Asynchronous thunk action
-export function fetchKeyInfo(key: string) {
+export function fetchKeyInfo(key: string, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultSelectedKeyAction())
 
@@ -526,27 +526,34 @@ export function fetchKeyInfo(key: string) {
       }
 
       if (data.type === KeyTypes.Hash) {
-        dispatch<any>(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, '*'))
+        dispatch<any>(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.List) {
-        dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT))
+        dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT, resetData))
       }
       if (data.type === KeyTypes.String) {
-        dispatch<any>(fetchString(key))
+        dispatch<any>(fetchString(key, resetData))
       }
       if (data.type === KeyTypes.ZSet) {
         dispatch<any>(
-          fetchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, SortOrder.ASC)
+          fetchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, SortOrder.ASC, resetData)
         )
       }
       if (data.type === KeyTypes.Set) {
-        dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*'))
+        dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.ReJSON) {
-        dispatch<any>(fetchReJSON(key, '.'))
+        dispatch<any>(fetchReJSON(key, '.', resetData))
       }
       if (data.type === KeyTypes.Stream) {
-        dispatch<any>(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT, SortOrder.DESC))
+        dispatch<any>(fetchStreamEntries(
+          key,
+          SCAN_COUNT_DEFAULT,
+          SCAN_STREAM_START_DEFAULT,
+          SCAN_STREAM_END_DEFAULT,
+          SortOrder.DESC,
+          resetData
+        ))
       }
     } catch (_err) {
       const error = _err as AxiosError

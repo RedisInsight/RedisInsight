@@ -99,19 +99,19 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
     const delayDebounceFn = setTimeout(() => {
       const lastEntryFilter = maxVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : maxVal.toString()
       const firstEntryFilter = minVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : minVal.toString()
-      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, firstEntryFilter, lastEntryFilter, sortedColumnOrder))
+      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, firstEntryFilter, lastEntryFilter, sortedColumnOrder, false))
     }, 500)
 
     return () => clearTimeout(delayDebounceFn)
   }, [minVal, maxVal])
 
-  if (!minVal && !maxVal) {
-    return (
-      <div className={styles.rangeWrapper}>
-        <div className={styles.line} />
-      </div>
-    )
-  }
+  // if (!minVal && !maxVal) {
+  //   return (
+  //     <div className={styles.rangeWrapper}>
+  //       <div className={styles.line} />
+  //     </div>
+  //   )
+  // }
 
   if (firstEntryTimeStamp === lastEntryTimeStamp) {
     return (

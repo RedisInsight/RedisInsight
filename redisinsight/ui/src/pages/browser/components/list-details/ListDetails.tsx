@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -253,7 +253,16 @@ const ListDetails = (props: Props) => {
         },
       )}
     >
+      {loading && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-list"
+        />
+      )}
       <VirtualTable
+        hideProgress
         keyName={key}
         headerHeight={headerHeight}
         rowHeight={rowHeight}

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, isNull } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -46,12 +46,17 @@ const hashSlice = createSlice({
   reducers: {
     setHashInitialState: () => initialState,
     // load Hash fields
-    loadHashFields: (state, { payload }: PayloadAction<string>) => {
+    loadHashFields: (state, { payload: [match = '', resetData = true] }: PayloadAction<[string, Maybe<boolean>]>) => {
       state.loading = true
       state.error = ''
+
+      if (resetData) {
+        state.data = initialState.data
+      }
+
       state.data = {
-        ...initialState.data,
-        match: payload || '*',
+        ...state.data,
+        match: match || '*'
       }
     },
     loadHashFieldsSuccess: (
@@ -192,7 +197,7 @@ export function fetchHashFields(
   onSuccess?: (data: GetHashFieldsResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadHashFields(isNull(match) ? '*' : match))
+    dispatch(loadHashFields([isNull(match) ? '*' : match, true]))
 
     try {
       const state = stateInit()
@@ -223,11 +228,11 @@ export function fetchHashFields(
 }
 
 // Asynchronous thunk actions
-export function refreshHashFieldsAction(key: string = '') {
+export function refreshHashFieldsAction(key: string = '', resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { match } = state.browser.hash.data
-    dispatch(loadHashFields(match || '*'))
+    dispatch(loadHashFields([match || '*', resetData]))
 
     try {
       const { data, status } = await apiService.post<GetHashFieldsResponse>(

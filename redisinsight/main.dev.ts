@@ -43,6 +43,24 @@ if (process.env.NODE_ENV !== 'production') {
 
 log.info('App starting.....');
 
+// Replacing sensitive data inside error message
+// todo: split main.ts file and make proper structure
+const wrapErrorMessageSensitiveData = (e: Error) => {
+  const regexp = /(\/[^\s]*\/)|(\\[^\s]*\\)/ig;
+  e.message = e.message.replace(regexp, (_match, unixPath, winPath): string => {
+    if (unixPath) {
+      return '*****/';
+    }
+    if (winPath) {
+      return '*****\\';
+    }
+
+    return _match;
+  });
+
+  return e;
+};
+
 export default class AppUpdater {
   constructor(url: string = '') {
     log.info('AppUpdater initialization');
@@ -54,7 +72,7 @@ export default class AppUpdater {
         url,
       });
     } catch (error) {
-      log.error(error);
+      log.error(wrapErrorMessageSensitiveData(error));
     }
 
     autoUpdater.checkForUpdatesAndNotify();
@@ -78,7 +96,7 @@ const installExtensions = async () => {
     loadExtensionOptions: { allowFileAccess: true },
   })
     .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log('An error occurred: ', err.toString()));
+    .catch((err) => console.log('An error occurred: ', wrapErrorMessageSensitiveData(err).toString()));
 };
 
 let store: Store;
@@ -106,7 +124,7 @@ const launchApiServer = async () => {
     log.info('Available port:', detectPortConst);
     backendGracefulShutdown = await server();
   } catch (error) {
-    log.error('Catch server error:', error);
+    log.error('Catch server error:', wrapErrorMessageSensitiveData(error));
   }
 };
 
@@ -335,7 +353,7 @@ app.whenReady()
   .then(bootstrap)
   .then(createSplashScreen)
   .then(createWindow)
-  .catch(console.log);
+  .catch((e) => console.log(wrapErrorMessageSensitiveData(e)));
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
@@ -359,8 +377,8 @@ autoUpdater.on('update-not-available', () => {
   sendStatusToWindow('Update not available.');
   store?.set(ElectronStorageItem.isUpdateAvailable, false);
 });
-autoUpdater.on('error', (err: string) => {
-  sendStatusToWindow(`Error in auto-updater. ${err}`);
+autoUpdater.on('error', (err: Error) => {
+  sendStatusToWindow(`Error in auto-updater. ${wrapErrorMessageSensitiveData(err)}`);
 });
 autoUpdater.on('download-progress', (progressObj) => {
   let logMessage = `Download speed: ${progressObj.bytesPerSecond}`;

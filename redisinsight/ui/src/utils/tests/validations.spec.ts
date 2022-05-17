@@ -10,7 +10,9 @@ import {
   validateTTLNumberForAddKey,
   MAX_DATABASE_INDEX_NUMBER,
   validateDatabaseNumber,
-  validateCertName
+  validateCertName,
+  validateRefreshRateNumber,
+  MAX_REFRESH_RATE,
 } from '../validations'
 
 const text1 = '123 123 123'
@@ -114,8 +116,8 @@ describe('Validations utils', () => {
     it('validatePortNumber should return only numbers between 0 and MAX_PORT_NUMBER', () => {
       const expectedResponse1 = `${MAX_PORT_NUMBER}`
       const expectedResponse2 = '12312'
-      const expectedResponse4 = '0'
-      const expectedResponse5 = '0'
+      const expectedResponse4 = ''
+      const expectedResponse5 = ''
       const expectedResponse6 = '2323'
       const expectedResponse7 = `${MAX_PORT_NUMBER}`
       const expectedResponse8 = `${MAX_PORT_NUMBER}`
@@ -134,8 +136,8 @@ describe('Validations utils', () => {
     it('validateDatabaseNumber should return only numbers between 0 and MAX_DATABASE_INDEX_NUMBER', () => {
       const expectedResponse1 = `${MAX_DATABASE_INDEX_NUMBER}`
       const expectedResponse2 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse4 = '0'
-      const expectedResponse5 = '0'
+      const expectedResponse4 = ''
+      const expectedResponse5 = ''
       const expectedResponse6 = `${MAX_DATABASE_INDEX_NUMBER}`
       const expectedResponse7 = `${MAX_DATABASE_INDEX_NUMBER}`
       const expectedResponse8 = `${MAX_DATABASE_INDEX_NUMBER}`
@@ -175,6 +177,28 @@ describe('Validations utils', () => {
     ])('for input: %s (input), should be output: %s',
       (input, expected) => {
         const result = validateCertName(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('validateRefreshRateNumber', () => {
+    it.each([
+      [text1, `${MAX_REFRESH_RATE}`],
+      [text2, `${MAX_REFRESH_RATE}`],
+      [text3, ''],
+      [text4, '.'],
+      [text5, '.'],
+      [text6, `${MAX_REFRESH_RATE}`],
+      [text7, `${MAX_REFRESH_RATE}`],
+      [text8, `${MAX_REFRESH_RATE}`],
+      [text9, `${MAX_REFRESH_RATE}`],
+      [text10, '348.3'],
+      [text12, '32'],
+      [text13, '5'],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = validateRefreshRateNumber(input)
         expect(result).toBe(expected)
       })
   })

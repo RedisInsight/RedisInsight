@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,7 +11,7 @@ import {
   updateHashValueStateSelector,
   updateHashFieldsAction,
 } from 'uiSrc/slices/browser/hash'
-import { formatLongName, Nullable } from 'uiSrc/utils'
+import { formatLongName, createDeleteFieldHeader, createDeleteFieldMessage, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -244,8 +244,9 @@ const HashDetails = (props: Props) => {
               data-testid={`edit-hash-button-${field}`}
             />
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(field)}
               item={field}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
@@ -285,7 +286,16 @@ const HashDetails = (props: Props) => {
           { footerOpened: isFooterOpen }
         )}
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-hash"
+          />
+        )}
         <VirtualTable
+          hideProgress
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}

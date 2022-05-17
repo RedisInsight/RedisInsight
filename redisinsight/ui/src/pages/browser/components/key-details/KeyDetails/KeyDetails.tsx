@@ -43,6 +43,7 @@ import styles from '../styles.module.scss'
 
 export interface Props {
   isFullScreen: boolean
+  arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
   onClose: (key: string) => void
   onClosePanel: () => void

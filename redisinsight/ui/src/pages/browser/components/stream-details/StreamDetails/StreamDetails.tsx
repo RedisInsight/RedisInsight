@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress } from '@elastic/eui'
 
 import {
   fetchMoreStreamEntries,
@@ -12,7 +12,6 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
@@ -28,6 +27,7 @@ const rowHeight = 54
 const actionsWidth = 54
 const minColumnWidth = 190
 const xrangeIdPrefix = '('
+const noItemsMessageString = 'There are no Entries in the Stream.'
 
 interface IStreamEntry extends StreamEntryDto {
   editing: boolean
@@ -88,11 +88,11 @@ const StreamDetails = (props: Props) => {
   return (
     <>
       {firstEntry.id !== '' && lastEntry.id !== '' && (
-      <StreamRangeFilter
-        sortedColumnOrder={sortedColumnOrder}
-        min={firstEntry.id}
-        max={lastEntry.id}
-      />
+        <StreamRangeFilter
+          sortedColumnOrder={sortedColumnOrder}
+          min={firstEntry.id}
+          max={lastEntry.id}
+        />
       )}
       <div
         className={cx(
@@ -101,11 +101,21 @@ const StreamDetails = (props: Props) => {
           styles.container,
           { footerOpened: isFooterOpen }
         )}
+        data-test-id="stream-entries-container"
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-stream"
+          />
+        )}
         <div className={styles.columnManager}>
           <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />
         </div>
         <VirtualTable
+          hideProgress
           selectable={false}
           keyName={key}
           headerHeight={headerHeight}
@@ -116,9 +126,9 @@ const StreamDetails = (props: Props) => {
           loading={loading}
           items={entries}
           totalItemsCount={total}
-          noItemsMessage={NoResultsFoundText}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
+          noItemsMessage={noItemsMessageString}
           tableWidth={columns.length * minColumnWidth - actionsWidth}
           sortedColumn={{
             column: sortedColumnName,

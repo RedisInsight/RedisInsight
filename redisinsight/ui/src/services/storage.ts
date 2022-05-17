@@ -1,4 +1,5 @@
 import { isObjectLike } from 'lodash'
+import BrowserStorageItem from '../constants/storage'
 
 class StorageService {
   private storage: Storage
@@ -47,5 +48,32 @@ class StorageService {
 }
 export const localStorageService = new StorageService(localStorage)
 export const sessionStorageService = new StorageService(sessionStorage)
+
+export const getDBConfigStorageField = (instanceId: string, field: string = '') => {
+  try {
+    return localStorageService.get(BrowserStorageItem.dbConfig + instanceId)?.[field]
+  } catch (e) {
+    return null
+  }
+}
+
+export const setDBConfigStorageField = (instanceId: string, field: string = '', value?: any) => {
+  try {
+    const config = localStorageService.get(BrowserStorageItem.dbConfig + instanceId) || {}
+
+    if (value === undefined) {
+      delete config[field]
+      localStorageService.set(BrowserStorageItem.dbConfig + instanceId, config)
+      return
+    }
+
+    localStorageService.set(BrowserStorageItem.dbConfig + instanceId, {
+      ...config,
+      [field]: value
+    })
+  } catch (e) {
+    console.error(e)
+  }
+}
 
 export default StorageService

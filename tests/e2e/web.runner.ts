@@ -29,8 +29,8 @@ import testcafe from 'testcafe';
                     quarantineMode: { successThreshold: '1', attemptLimit: '3' }
                 });
         })
-        .then(() => {
-            process.exit(0);
+        .then((failedCount) => {
+            process.exit(failedCount);
         })
         .catch((e) => {
             console.error(e)

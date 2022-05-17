@@ -139,8 +139,8 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
 
   return (
     <div className={cx(styles.container, { [styles.containerCluster]: connectionType === ConnectionType.Cluster })}>
-      { connectionType === ConnectionType.Cluster && (clusterContent())}
-      { connectionType !== ConnectionType.Cluster && (
+      {connectionType === ConnectionType.Cluster && (clusterContent())}
+      {connectionType !== ConnectionType.Cluster && (
       <>
         <EuiForm component="form">
           <EuiFormRow className={styles.formRow}>

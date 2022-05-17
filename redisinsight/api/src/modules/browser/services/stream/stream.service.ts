@@ -77,8 +77,12 @@ export class StreamService {
         keyName,
         total: info.length,
         lastGeneratedId: info['last-generated-id'],
-        firstEntry: StreamService.formatReplyToDto([info['first-entry']])[0],
-        lastEntry: StreamService.formatReplyToDto([info['last-entry']])[0],
+        firstEntry: entries.length !== 0
+          ? StreamService.formatReplyToDto([info['first-entry']])[0]
+          : null,
+        lastEntry: entries.length !== 0
+          ? StreamService.formatReplyToDto([info['last-entry']])[0]
+          : null,
         entries,
       };
     } catch (error) {

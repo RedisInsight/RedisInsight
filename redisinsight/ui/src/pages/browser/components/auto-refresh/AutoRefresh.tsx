@@ -19,7 +19,7 @@ import styles from './styles.module.scss'
 export interface Props {
   postfix: string
   loading: boolean
-  displayText: boolean
+  displayText?: boolean
   lastRefreshTime: Nullable<number>
   testid?: string
   containerClassName?: string
@@ -32,7 +32,7 @@ const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
 const AutoRefresh = ({
   postfix,
   loading,
-  displayText,
+  displayText = true,
   lastRefreshTime,
   containerClassName = '',
   testid = '',

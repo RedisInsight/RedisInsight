@@ -24,7 +24,8 @@ import {
 import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import StreamRangeContext from 'uiSrc/contexts/streamRangeContext'
+import StreamMinRangeContext from 'uiSrc/contexts/streamMinRangeContext'
+import StreamMaxRangeContext from 'uiSrc/contexts/streamMaxRangeContext'
 
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
@@ -63,16 +64,19 @@ const KeyDetails = ({ ...props }: Props) => {
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
   const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] = useState<boolean>(false)
   const [editItem, setEditItem] = useState<boolean>(false)
-  const [range, setRange] = useState<[number?, number?]>([])
+  const [minVal, setMinVal] = useState<number>()
+  const [maxVal, setMaxVal] = useState<number>()
 
-  useEffect(() => {
-    // Close 'Add Item Panel' on change selected key
-    setRange([])
-  }, [selectedKey])
+  // useEffect(() => {
+  //   // Close 'Add Item Panel' on change selected key
+  //   setRange([])
+  // }, [selectedKey])
 
   useEffect(() => {
     // Close 'Add Item Panel' on change selected key
     closeAddItemPanel()
+    setMinVal(undefined)
+    setMaxVal(undefined)
   }, [selectedKey])
 
   const openAddItemPanel = () => {
@@ -130,9 +134,11 @@ const KeyDetails = ({ ...props }: Props) => {
     [KeyTypes.List]: <ListDetails isFooterOpen={isAddItemPanelOpen || isRemoveItemPanelOpen} />,
     [KeyTypes.ReJSON]: <RejsonDetailsWrapper />,
     [KeyTypes.Stream]: (
-      <StreamRangeContext.Provider value={[range, setRange]}>
-        <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />
-      </StreamRangeContext.Provider>
+      <StreamMinRangeContext.Provider value={[minVal, setMinVal]}>
+        <StreamMaxRangeContext.Provider value={[maxVal, setMaxVal]}>
+          <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />
+        </StreamMaxRangeContext.Provider>
+      </StreamMinRangeContext.Provider>
     ),
   }
 

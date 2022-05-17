@@ -96,6 +96,8 @@ $maxWidthCell: 190px;
 
 .rangeWrapper :global(.euiRangeWrapper) {
   height: auto;
+  margin: 30px 30px 26px !important;
+  height: 24px !important;
 }
 
 .filter {
@@ -148,9 +150,15 @@ $maxWidthCell: 190px;
   }
 }
 
+.rangeWrapper {
+  margin: 30px 30px 26px;
+  padding: 12px 0;
+}
+
 .resetButton {
   position: absolute;
   right: 30px;
+  top: 190px;
   text-decoration: underline;
   color: var(--euiTextSubduedColor);
   &:hover,
@@ -162,7 +170,7 @@ $maxWidthCell: 190px;
 
 .slider {
   position: relative;
-  width: 200px;
+  width: 100%;
 }
 
 .slider__track,
@@ -215,7 +223,7 @@ $maxWidthCell: 190px;
   pointer-events: none;
   position: absolute;
   height: 0;
-  width: 200px;
+  width: calc(100% - 60px);
   outline: none;
 }
 
@@ -227,33 +235,13 @@ $maxWidthCell: 190px;
   z-index: 4;
 }
 
-.thumb--zindex-5 {
-  z-index: 5;
-}
-
-/* For Chrome browsers */
-.thumb::-webkit-slider-thumb {
-  background-color: #f1f5f7;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 0 1px 1px #ced4da;
-  cursor: pointer;
-  height: 18px;
-  width: 18px;
-  margin-top: 4px;
-  pointer-events: all;
-  position: relative;
-}
-
-/* For Firefox browsers */
+.thumb::-webkit-slider-thumb,
 .thumb::-moz-range-thumb {
-  background-color: #f1f5f7;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 0 1px 1px #ced4da;
-  cursor: pointer;
-  height: 12px;
   width: 2px;
+  height: 12px;
+  background-color: var(--euiColorPrimary);
+  border: none;
+  cursor: pointer;
   margin-top: 4px;
   pointer-events: all;
   position: relative;

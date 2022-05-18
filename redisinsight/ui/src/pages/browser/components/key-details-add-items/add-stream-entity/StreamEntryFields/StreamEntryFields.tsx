@@ -127,9 +127,9 @@ const StreamEntryFields = (props: Props) => {
                 title="Enter Valid ID or *"
                 content={(
                   <>
-                    Valid ID must be in a Timestamp-Sequence Number format and be greater than the last ID.
+                    ID must be a timestamp and sequence number greater than the last ID.
                     <EuiSpacer size="xs" />
-                    Type * to use auto-generated ID based on the Database current time.
+                    Otherwise, type * to auto-generate ID based on the database current time.
                   </>
                 )}
               >

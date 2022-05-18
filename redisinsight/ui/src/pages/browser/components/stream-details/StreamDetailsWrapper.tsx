@@ -26,7 +26,7 @@ const suffix = '_stream'
 const actionsWidth = 50
 const minColumnWidth = 190
 
-export interface Props {
+interface Props {
   isFooterOpen: boolean
 }
 

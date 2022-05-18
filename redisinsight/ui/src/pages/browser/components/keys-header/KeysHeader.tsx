@@ -14,6 +14,7 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
+  resetKeysData,
 } from 'uiSrc/slices/browser/keys'
 import {
   resetBrowserTree,
@@ -123,7 +124,6 @@ const KeysHeader = (props: Props) => {
       () => dispatch(setBrowserKeyListDataLoaded(true)),
       () => dispatch(setBrowserKeyListDataLoaded(false)),
     ))
-    dispatch(resetBrowserTree())
   }
 
   const handleScanMore = (config: any) => {
@@ -159,6 +159,7 @@ const KeysHeader = (props: Props) => {
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
+    dispatch(resetKeysData())
     loadKeys(type)
   }
 

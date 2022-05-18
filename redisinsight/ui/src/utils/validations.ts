@@ -1,3 +1,5 @@
+import { floor } from 'lodash'
+
 export const MAX_TTL_NUMBER = 2147483647
 export const MAX_PORT_NUMBER = 65535
 export const MAX_DATABASE_INDEX_NUMBER = 99
@@ -82,9 +84,7 @@ export const validateRefreshRateNumber = (initValue: string) => {
   let value = initValue.replace(/[^0-9.]/gi, '')
 
   if (countDecimals(+value) > 0) {
-    value = Number(value)
-      .toLocaleString('en-US', { maximumFractionDigits: 1 })
-      .replace(',', '')
+    value = `${floor(+value, 1)}`
   }
 
   if (+value > MAX_REFRESH_RATE) {

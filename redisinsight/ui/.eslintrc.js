@@ -78,6 +78,15 @@ module.exports = {
           'parent',
           'index',
         ],
+        pathGroups: [
+          {
+            pattern: '{.,..}/*.scss', // same directory only
+            // pattern: '{.,..}/**/*\.scss' // same & outside directories (e.g. import '../foo/foo.scss')
+            group: 'object',
+            position: 'after'
+          }
+        ],
+        warnOnUnassignedImports: true
       },
     ],
   },

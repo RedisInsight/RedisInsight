@@ -18,6 +18,7 @@ import {
   DEFAULT_SLOWLOG_SLOWER_THAN,
   DurationUnits,
   DURATION_UNITS,
+  MINUS_ONE,
   Pages
 } from 'uiSrc/constants'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -27,8 +28,8 @@ import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { openCli } from 'uiSrc/slices/cli/cli-settings'
-import styles from './styles.module.scss'
 import { convertNumberByUnits } from '../../utils'
+import styles from './styles.module.scss'
 
 export interface Props {
   closePopover: () => void
@@ -46,9 +47,12 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
     slowlogLogSlowerThan = DEFAULT_SLOWLOG_SLOWER_THAN,
   } = useSelector(slowLogConfigSelector)
 
-  const [maxLen, setMaxLen] = useState(`${slowlogMaxLen}`)
-  const [slowerThan, setSlowerThan] = useState(validateNumber(`${slowlogLogSlowerThan}`, Infinity, -1))
   const [durationUnit, setDurationUnit] = useState(durationUnitStore ?? DEFAULT_SLOWLOG_DURATION_UNIT)
+  const [maxLen, setMaxLen] = useState(`${slowlogMaxLen}`)
+
+  const [slowerThan, setSlowerThan] = useState(slowlogLogSlowerThan !== MINUS_ONE
+    ? `${convertNumberByUnits(slowlogLogSlowerThan, durationUnit)}`
+    : `${MINUS_ONE}`)
 
   const dispatch = useDispatch()
 
@@ -57,21 +61,29 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   }
 
   const handleDefault = () => {
-    setMaxLen(`${slowlogMaxLen}`)
-    setSlowerThan(`${slowlogLogSlowerThan}`)
-    setDurationUnit(durationUnitStore ?? DEFAULT_SLOWLOG_DURATION_UNIT)
+    setMaxLen(`${DEFAULT_SLOWLOG_MAX_LEN}`)
+    setSlowerThan(`${DEFAULT_SLOWLOG_SLOWER_THAN}`)
+    setDurationUnit(DEFAULT_SLOWLOG_DURATION_UNIT)
   }
 
   const handleCancel = () => {
     closePopover()
   }
 
+  const calculateSlowlogLogSlowerThan = (initSlowerThan: string) => {
+    if (initSlowerThan === `${MINUS_ONE}`) {
+      return MINUS_ONE
+    }
+    return durationUnit === DurationUnits.microSeconds ? +initSlowerThan : +initSlowerThan * 1000
+  }
+
   const handleSave = () => {
+    const slowlogLogSlowerThan = calculateSlowlogLogSlowerThan(slowerThan)
     dispatch(patchSlowLogConfigAction(
       instanceId,
       {
         slowlogMaxLen: +maxLen,
-        slowlogLogSlowerThan: convertNumberByUnits(+slowerThan || -1, durationUnit)
+        slowlogLogSlowerThan,
       },
       durationUnit,
       onSuccess
@@ -95,7 +107,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
     dispatch(openCli())
   }
 
-  const disabledApplyBtn = () => errorValidateNegativeInteger(slowerThan)
+  const disabledApplyBtn = () => errorValidateNegativeInteger(`${slowerThan}`)
 
   const clusterContent = () => (
     <>

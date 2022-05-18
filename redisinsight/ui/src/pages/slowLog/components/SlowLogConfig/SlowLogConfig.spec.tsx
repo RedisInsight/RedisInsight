@@ -2,6 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { DEFAULT_SLOWLOG_MAX_LEN, DEFAULT_SLOWLOG_SLOWER_THAN } from 'uiSrc/constants'
 
 import SlowLogConfig, { Props } from './SlowLogConfig'
 
@@ -74,7 +75,7 @@ describe('SlowLogConfig', () => {
     fireEvent.change(screen.getByTestId('slower-than-input'), { target: { value: '123223' } })
 
     fireEvent.click(screen.getByTestId('slowlog-config-default-btn'))
-    expect(screen.getByTestId('max-len-input')).toHaveValue(`${slowlogMaxLenMock}`)
-    expect(screen.getByTestId('slower-than-input')).toHaveValue(`${slowlogLogSlowerThanMock}`)
+    expect(screen.getByTestId('max-len-input')).toHaveValue(`${DEFAULT_SLOWLOG_MAX_LEN}`)
+    expect(screen.getByTestId('slower-than-input')).toHaveValue(`${DEFAULT_SLOWLOG_SLOWER_THAN}`)
   })
 })

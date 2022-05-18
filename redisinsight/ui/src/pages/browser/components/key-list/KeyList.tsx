@@ -209,7 +209,6 @@ const KeyList = (props: Props) => {
               headerHeight={0}
               rowHeight={43}
               columns={columns}
-              isRowSelectable
               loadMoreItems={loadMoreItems}
               onWheel={onWheelSearched}
               loading={loading}

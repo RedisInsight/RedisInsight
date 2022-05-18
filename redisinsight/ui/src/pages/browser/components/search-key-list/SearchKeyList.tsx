@@ -20,10 +20,10 @@ const SearchKeyList = () => {
   }, [filter])
 
   const handleApply = () => {
-    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
-
     // reset browser tree context
     dispatch(resetBrowserTree())
+
+    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
   }
 
   const handleChangeValue = (initValue: string) => {

@@ -68,6 +68,7 @@ export class BrowserPage {
     fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
     disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
+    addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
     removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
     confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
     //LINKS
@@ -168,6 +169,8 @@ export class BrowserPage {
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
+    streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
+    streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
     streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
@@ -324,11 +327,60 @@ export class BrowserPage {
         await this.commonAddNewKey(keyName, TTL);
         await t.click(this.streamOption);
         // Verify that user can see Entity ID filled by * by default on add Stream key form
-        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field')
+        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field');
         await t.typeText(this.streamField, field);
         await t.typeText(this.streamValue, value);
         await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
         await t.click(this.addKeyButton);
+        await t.click(this.toastCloseButton);
+    }
+
+    /**
+     * Adding a new Entry to a Stream key
+     * @param field The field name of the key
+     * @param value The value of the key
+     * @param entryId The identification of specific entry of the Stream Key
+     */
+    async addEntryToStream(field: string, value: string, entryId?: string): Promise<void> {
+        await t.click(this.addNewStreamEntry);
+        // Specify field, value and add new entry
+        await t.typeText(this.streamField, field);
+        await t.typeText(this.streamValue, value);
+        if (entryId !== undefined) {
+            await t.typeText(this.streamEntryId, entryId);
+        }
+        await t.click(this.saveElementButton);
+        // Validate that new entry is added
+        await t.expect(this.streamEntriesContainer.textContent).contains(field, 'Field parameter');
+        await t.expect(this.streamEntriesContainer.textContent).contains(value, 'Value parameter');
+    }
+
+    /**
+     * Adding a new Entry to a Stream key
+     * @param fields The field name of the key
+     * @param values The value of the key
+     * @param entryId The identification of specific entry of the Stream Key
+     */
+    async fulfillSeveralStreamFields(fields: string[], values: string[], entryId?: string): Promise<void> {
+        for (let i = 0; i < fields.length; i++) {
+            await t.typeText(this.streamField.nth(-1), fields[i]);
+            await t.typeText(this.streamValue.nth(-1), values[i]);
+            if (i < fields.length - 1) {
+                await t.click(this.addStreamRow);
+            }
+        }
+        if (entryId !== undefined) {
+            await t.typeText(this.streamEntryId, entryId);
+        }
+    }
+
+    /**
+     * Get number of existed columns and rows of Stream key
+     */
+    async getStreamRowColumnNumber(): Promise<string[]> {
+        const columnStreamNumber = await this.streamEntriesContainer.find('[aria-colcount]').getAttribute('aria-colcount');
+        const rowStreamNumber = await this.streamEntriesContainer.find('[aria-rowcount]').getAttribute('aria-rowcount');
+        return [columnStreamNumber, rowStreamNumber];
     }
 
     /**
@@ -672,6 +724,14 @@ export class BrowserPage {
     async deleteStreamEntry(): Promise<void> {
         await t.click(this.removeEntryButton);
         await t.click(this.confirmRemoveEntryButton);
+    }
+
+    /**
+     * Get key length from opened key details
+     */
+    async getKeyLength(): Promise<string> {
+        const rawValue = await this.keyLengthDetails.textContent;
+        return rawValue.split(' ')[rawValue.split(' ').length - 1];
     }
 }
 

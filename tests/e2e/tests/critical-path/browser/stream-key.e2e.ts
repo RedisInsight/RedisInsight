@@ -1,5 +1,6 @@
 import { Chance } from 'chance';
 import { Selector } from 'testcafe';
+import { toNumber, toString } from 'lodash';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
@@ -61,4 +62,72 @@ test('Verify that user can add several fields and values during Stream key creat
     await t.expect(browserPage.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
     await t.click(browserPage.addKeyButton);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).visible).ok('Stream Key Name');
+});
+test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
+    // Add New Stream Key
+    await browserPage.addStreamKey(keyName, keyField, keyValue);
+    // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
+    const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
+    await browserPage.addEntryToStream(chance.word({ length: 20 }), chance.word({ length: 20 }));
+    // Compare that after adding new entry, new column and row were added
+    const paramsAfterEntryAdding = await browserPage.getStreamRowColumnNumber();
+    await t.expect(paramsAfterEntryAdding[0]).eql(toString(toNumber(paramsBeforeEntryAdding[0]) + 1), 'Increased number of columns after adding');
+    await t.expect(paramsAfterEntryAdding[1]).eql(toString(toNumber(paramsBeforeEntryAdding[1]) + 1), 'Increased number of rows after adding');
+    // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
+    const paramsBeforeExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
+    await browserPage.addEntryToStream(keyField, chance.word({ length: 20 }));
+    const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
+    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
+    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
+});
+test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
+    // Generate data for stream
+    const fields = [keyField, chance.word({ length: 20 })];
+    const values = [keyValue, chance.word({ length: 20 })];
+    // Add New Stream Key
+    await browserPage.addStreamKey(keyName, keyField, keyValue);
+    await t.click(browserPage.addNewStreamEntry);
+    await browserPage.fulfillSeveralStreamFields(fields, values);
+    // Check number of rows
+    const fieldsNumberBeforeDeletion = await browserPage.streamField.count;
+    // Click on delete field for the last entity
+    await t.click(browserPage.clearStreamEntryInputs.nth(-1));
+    const fieldsNumberAfterDeletion = await browserPage.streamField.count;
+    await t.expect(fieldsNumberAfterDeletion).lt(fieldsNumberBeforeDeletion, 'Number of fields after deletion');
+    // Validate that the last field and value were fulfilled
+    await t.expect(browserPage.streamField.withAttribute('value', keyField).exists).ok('Filled input for field');
+    await t.expect(browserPage.streamValue.withAttribute('value', keyValue).exists).ok('Filled input for value');
+    // Click on clear button
+    await t.hover(browserPage.streamValue);
+    await t.click(browserPage.clearStreamEntryInputs);
+    // Validate that data was cleared
+    await t.expect(browserPage.streamField.withAttribute('value', keyField).exists).notOk('Cleared input for field');
+    await t.expect(browserPage.streamValue.withAttribute('value', keyValue).exists).notOk('Cleared input for value');
+    // Validate that the form is still displayed
+    await t.expect(browserPage.streamField.count).eql(fieldsNumberAfterDeletion, 'Number of fields after deletion');
+});
+test('Verify that user can add several fields and values to the existing Stream Key', async t => {
+    // Generate field value data
+    const entryQuantity = 10;
+    const fields: string[] = [];
+    const values: string[] = [];
+    for (let i = 0; i < entryQuantity; i++) {
+        const randomGeneratorValue = chance.integer({ min: 1, max: 50 });
+        fields.push(chance.word({ length: randomGeneratorValue }));
+        values.push(chance.word({ length: randomGeneratorValue }));
+    }
+    // Add New Stream Key
+    await browserPage.addStreamKey(keyName, keyField, keyValue);
+    await t.click(browserPage.addNewStreamEntry);
+    // Filled Stream by new several Fields
+    await browserPage.fulfillSeveralStreamFields(fields, values);
+    await t.click(browserPage.saveElementButton);
+    // Check that all data is saved in Stream
+    for (let i = 0; i < fields.length; i++) {
+        await t.expect(browserPage.streamEntriesContainer.find('span').withExactText(fields[i]).exists).ok('Added Field');
+        await t.expect(browserPage.streamFieldsValues.find('span').withExactText(values[i]).exists).ok('Added Value');
+    }
+    // Check Stream length
+    const streamLength = await browserPage.getKeyLength();
+    await t.expect(streamLength).eql('2', 'Stream length after adding new entry');
 });

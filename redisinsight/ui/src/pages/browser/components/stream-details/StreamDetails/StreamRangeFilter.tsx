@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
 
 import {
   fetchStreamEntries,
@@ -124,7 +125,7 @@ const StreamRangeFilter = ({ sortedColumnOrder }: Props) => {
   if (start === '' && end === '') {
     return (
       <div className={styles.rangeWrapper}>
-        <div className={`${styles.sliderTrack} ${styles.mockRange}`} />
+        <div className={cx(styles.sliderTrack, styles.mockRange)} />
       </div>
     )
   }
@@ -132,7 +133,7 @@ const StreamRangeFilter = ({ sortedColumnOrder }: Props) => {
   if (start === end) {
     return (
       <div className={styles.rangeWrapper}>
-        <div className={`${styles.sliderRange} ${styles.mockRange}`}>
+        <div className={cx(styles.sliderRange, styles.mockRange)}>
           <div className={styles.sliderLeftValue}>{getFormatTime(start)}</div>
           <div className={styles.sliderRightValue}>{getFormatTime(end)}</div>
         </div>
@@ -154,7 +155,7 @@ const StreamRangeFilter = ({ sortedColumnOrder }: Props) => {
             dispatch(updateStart(value.toString()))
             event.target.value = value.toString()
           }}
-          className={`${styles.thumb} ${styles.thumbZindex3}`}
+          className={cx(styles.thumb, styles.thumbZindex3)}
           data-testid="range-start-input"
         />
         <input
@@ -168,7 +169,7 @@ const StreamRangeFilter = ({ sortedColumnOrder }: Props) => {
             dispatch(updateEnd(value.toString()))
             event.target.value = value.toString()
           }}
-          className={`${styles.thumb} ${styles.thumbZindex4}`}
+          className={cx(styles.thumb, styles.thumbZindex4)}
           data-testid="range-end-input"
         />
         <div className={styles.slider}>

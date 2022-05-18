@@ -5,7 +5,7 @@ import StreamRangeFilter, { Props } from './StreamDetails'
 
 const mockedProps = mock<Props>()
 
-describe('StreamDetails', () => {
+describe('StreamRangeFilter', () => {
   it('should render', () => {
     expect(render(<StreamRangeFilter {...instance(mockedProps)} />)).toBeTruthy()
   })

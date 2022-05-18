@@ -102,7 +102,7 @@ const StreamDetails = (props: Props) => {
       )
         : (
           <div className={styles.rangeWrapper}>
-            <div className={`${styles.sliderTrack} ${styles.mockRange}`} />
+            <div className={cx(styles.sliderTrack, styles.mockRange)} />
           </div>
         )}
       <div

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   EuiText,
   EuiFlexGroup,
@@ -6,7 +6,7 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import { isNull } from 'lodash'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   AddStreamEntries,
@@ -21,11 +21,10 @@ import {
   selectedKeySelector,
   keysSelector,
 } from 'uiSrc/slices/browser/keys'
+import { cleanRangeFilter } from 'uiSrc/slices/browser/stream'
 import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
-import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
 
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
@@ -66,14 +65,12 @@ const KeyDetails = ({ ...props }: Props) => {
   const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] = useState<boolean>(false)
   const [editItem, setEditItem] = useState<boolean>(false)
 
-  const { setStartVal } = useContext(StreamRangeStartContext)
-  const { setEndVal } = useContext(StreamRangeEndContext)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     // Close 'Add Item Panel' and remove stream range on change selected key
     closeAddItemPanel()
-    setStartVal(undefined)
-    setEndVal(undefined)
+    dispatch(cleanRangeFilter())
   }, [selectedKey])
 
   const openAddItemPanel = () => {

@@ -7,6 +7,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { fetchKeyInfo, refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { getStreamRangeStart, getStreamRangeEnd } from 'uiSrc/utils/streamUtils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   AddStreamEntriesDto,
@@ -22,6 +23,8 @@ export const initialState: StateStream = {
   loading: false,
   error: '',
   sortOrder: SortOrder.DESC,
+  start: '',
+  end: '',
   data: {
     total: 0,
     entries: [],
@@ -114,6 +117,16 @@ const streamSlice = createSlice({
         total: state.data.total - 1,
       }
     },
+    updateStart: (state, { payload }: PayloadAction<string>) => {
+      state.start = payload
+    },
+    updateEnd: (state, { payload }: PayloadAction<string>) => {
+      state.end = payload
+    },
+    cleanRangeFilter: (state) => {
+      state.start = ''
+      state.end = ''
+    },
   },
 })
 
@@ -131,7 +144,10 @@ export const {
   removeStreamEntries,
   removeStreamEntriesSuccess,
   removeStreamEntriesFailure,
-  removeEntriesFromList
+  removeEntriesFromList,
+  updateStart,
+  updateEnd,
+  cleanRangeFilter
 } = streamSlice.actions
 
 // A selector
@@ -145,8 +161,6 @@ export default streamSlice.reducer
 export function fetchStreamEntries(
   key: string,
   count: number,
-  start: string,
-  end: string,
   sortOrder: SortOrder,
   resetData?: boolean,
   onSuccess?: (data: GetStreamEntriesResponse) => void,
@@ -156,6 +170,8 @@ export function fetchStreamEntries(
 
     try {
       const state = stateInit()
+      const start = getStreamRangeStart(state.browser.stream.start, state.browser.stream.data.firstEntry?.id)
+      const end = getStreamRangeEnd(state.browser.stream.end, state.browser.stream.data.lastEntry?.id)
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -186,8 +202,6 @@ export function fetchStreamEntries(
 // Asynchronous thunk action
 export function refreshStreamEntries(
   key: string,
-  start: string,
-  end: string,
   resetData?: boolean,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -196,6 +210,8 @@ export function refreshStreamEntries(
     try {
       const state = stateInit()
       const { sortOrder } = state.browser.stream
+      const start = getStreamRangeStart(state.browser.stream.start, state.browser.stream.data.firstEntry?.id)
+      const end = getStreamRangeEnd(state.browser.stream.end, state.browser.stream.data.lastEntry?.id)
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,

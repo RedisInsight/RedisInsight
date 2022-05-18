@@ -1,13 +1,16 @@
-import React, { useCallback, useEffect, useContext, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { fetchStreamEntries } from 'uiSrc/slices/browser/stream'
+import {
+  fetchStreamEntries,
+  streamSelector,
+  updateStart,
+  updateEnd,
+} from 'uiSrc/slices/browser/stream'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { getFormatTime, getTimestampFromId } from 'uiSrc/utils/streamUtils'
 import { SortOrder } from 'uiSrc/constants'
-import { SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
-import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
-import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import styles from './styles.module.scss'
 
@@ -30,6 +33,14 @@ function usePrevious(value: any) {
 const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
   const dispatch = useDispatch()
 
+  const {
+    start,
+    end,
+  } = useSelector(streamSelector)
+
+  const startNumber = start === '' ? 0 : parseInt(start, 10)
+  const endNumber = end === '' ? 0 : parseInt(end, 10)
+
   const firstEntryTimeStamp: number = getTimestampFromId(min)
   const lastEntryTimeStamp: number = getTimestampFromId(max)
 
@@ -39,8 +50,6 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
     (value) => Math.round(((value - firstEntryTimeStamp) / (lastEntryTimeStamp - firstEntryTimeStamp)) * 100),
     [firstEntryTimeStamp, lastEntryTimeStamp]
   )
-  const { startVal, setStartVal } = useContext(StreamRangeStartContext)
-  const { endVal, setEndVal } = useContext(StreamRangeEndContext)
 
   const minValRef = useRef<HTMLInputElement>(null)
   const maxValRef = useRef<HTMLInputElement>(null)
@@ -50,15 +59,15 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
 
   const resetFilter = useCallback(
     () => {
-      setStartVal(firstEntryTimeStamp)
-      setEndVal(lastEntryTimeStamp)
+      dispatch(updateStart(firstEntryTimeStamp.toString()))
+      dispatch(updateEnd(lastEntryTimeStamp.toString()))
     },
     [firstEntryTimeStamp, lastEntryTimeStamp]
   )
 
   useEffect(() => {
     if (maxValRef.current) {
-      const minPercent = getPercent(startVal)
+      const minPercent = getPercent(startNumber)
       const maxPercent = getPercent(+maxValRef.current.value)
 
       if (range.current) {
@@ -66,53 +75,49 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
         range.current.style.width = `${maxPercent - minPercent}%`
       }
     }
-  }, [startVal, getPercent])
+  }, [startNumber, getPercent])
 
   useEffect(() => {
     if (minValRef.current) {
       const minPercent = getPercent(+minValRef.current.value)
-      const maxPercent = getPercent(endVal)
+      const maxPercent = getPercent(endNumber)
 
       if (range.current) {
         range.current.style.width = `${maxPercent - minPercent}%`
       }
     }
-  }, [endVal, getPercent])
+  }, [endNumber, getPercent])
 
   useEffect(() => {
-    if (!startVal) {
-      setStartVal(firstEntryTimeStamp)
+    if (start === '') {
+      dispatch(updateStart(firstEntryTimeStamp.toString()))
     }
   }, [min])
 
   useEffect(() => {
-    if (!endVal) {
-      setEndVal(lastEntryTimeStamp)
+    if (end === '') {
+      dispatch(updateEnd(lastEntryTimeStamp.toString()))
     }
   }, [max])
 
   useEffect(() => {
-    if (max && prevMaxValue && endVal === getTimestampFromId(prevMaxValue.max)) {
-      setEndVal(getTimestampFromId(max))
+    if (max && prevMaxValue && endNumber === getTimestampFromId(prevMaxValue.max)) {
+      dispatch(updateEnd(getTimestampFromId(max).toString()))
     }
   }, [prevMaxValue])
 
   useEffect(() => {
-    if (startVal && endVal) {
-      const lastEntryFilter = endVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : endVal.toString()
-      const firstEntryFilter = startVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : startVal.toString()
+    if (start && end) {
       dispatch(fetchStreamEntries(
         key,
         SCAN_COUNT_DEFAULT,
-        firstEntryFilter,
-        lastEntryFilter,
         sortedColumnOrder,
         false
       ))
     }
-  }, [startVal, endVal])
+  }, [start, end])
 
-  if (!startVal && !endVal) {
+  if (start === '' && end === '') {
     return (
       <div className={styles.rangeWrapper}>
         <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.sliderTrack} />
@@ -120,12 +125,12 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
     )
   }
 
-  if (firstEntryTimeStamp === lastEntryTimeStamp) {
+  if (start === end) {
     return (
       <div className={styles.rangeWrapper}>
         <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.sliderRange}>
-          <div className={styles.sliderLeftValue}>{getFormatTime(startVal?.toString())}</div>
-          <div className={styles.sliderRightValue}>{getFormatTime(endVal?.toString())}</div>
+          <div className={styles.sliderLeftValue}>{getFormatTime(start)}</div>
+          <div className={styles.sliderRightValue}>{getFormatTime(end)}</div>
         </div>
       </div>
     )
@@ -138,11 +143,11 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
           type="range"
           min={firstEntryTimeStamp}
           max={lastEntryTimeStamp}
-          value={startVal}
+          value={startNumber}
           ref={minValRef}
           onChange={(event) => {
-            const value = Math.min(+event.target.value, endVal! - 1)
-            setStartVal(value)
+            const value = Math.min(+event.target.value, endNumber - 1)
+            dispatch(updateStart(value.toString()))
             event.target.value = value.toString()
           }}
           className={`${styles.thumb} ${styles.thumbZindex3}`}
@@ -151,11 +156,11 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
           type="range"
           min={firstEntryTimeStamp}
           max={lastEntryTimeStamp}
-          value={endVal}
+          value={endNumber}
           ref={maxValRef}
           onChange={(event) => {
-            const value = Math.max(+event.target.value, startVal! + 1)
-            setEndVal(value)
+            const value = Math.max(+event.target.value, startNumber + 1)
+            dispatch(updateEnd(value.toString()))
             event.target.value = value.toString()
           }}
           className={`${styles.thumb} ${styles.thumbZindex4}`}
@@ -163,12 +168,12 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
         <div className={styles.slider}>
           <div className={styles.sliderTrack} />
           <div ref={range} className={styles.sliderRange}>
-            <div className={styles.sliderLeftValue}>{getFormatTime(startVal?.toString())}</div>
-            <div className={styles.sliderRightValue}>{getFormatTime(endVal?.toString())}</div>
+            <div className={styles.sliderLeftValue}>{getFormatTime(start)}</div>
+            <div className={styles.sliderRightValue}>{getFormatTime(end)}</div>
           </div>
         </div>
       </div>
-      {(startVal !== firstEntryTimeStamp || endVal !== lastEntryTimeStamp) && (
+      {(startNumber !== firstEntryTimeStamp || endNumber !== lastEntryTimeStamp) && (
         <button
           data-testid="range-filter-btn"
           className={styles.resetButton}

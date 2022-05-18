@@ -5,5 +5,7 @@ export interface StateStream {
   loading: boolean
   error: string
   sortOrder: SortOrder
+  start: string
+  end: string
   data: GetStreamEntriesResponse
 }

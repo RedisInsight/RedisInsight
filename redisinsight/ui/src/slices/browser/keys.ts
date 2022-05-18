@@ -12,7 +12,7 @@ import {
   isStatusSuccessful,
   Maybe,
 } from 'uiSrc/utils'
-import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
+import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -24,7 +24,6 @@ import {
   CreateSetWithExpireDto,
 } from 'apiSrc/modules/browser/dto'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
-import { AppDispatch, RootState } from '../store'
 import { fetchString } from './string'
 import { setZsetInitialState, fetchZSetMembers } from './zset'
 import { fetchSetMembers } from './set'
@@ -32,6 +31,7 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries } from './stream'
+import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType } from '../interfaces/keys'
 
@@ -549,8 +549,6 @@ export function fetchKeyInfo(key: string, resetData?: boolean) {
         dispatch<any>(fetchStreamEntries(
           key,
           SCAN_COUNT_DEFAULT,
-          SCAN_STREAM_START_DEFAULT,
-          SCAN_STREAM_END_DEFAULT,
           SortOrder.DESC,
           resetData
         ))

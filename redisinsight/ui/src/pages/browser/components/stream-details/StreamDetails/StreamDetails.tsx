@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last } from 'lodash'
 import cx from 'classnames'
@@ -13,11 +13,9 @@ import {
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import { SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
 import { getTimestampFromId } from 'uiSrc/utils/streamUtils'
-import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
-import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamRangeFilter from './StreamRangeFilter'
 
@@ -46,7 +44,7 @@ const StreamDetails = (props: Props) => {
   const { data: entries = [], columns = [], onClosePopover, isFooterOpen } = props
   const dispatch = useDispatch()
 
-  const { loading } = useSelector(streamSelector)
+  const { loading, start, end } = useSelector(streamSelector)
   const {
     total,
     firstEntry,
@@ -57,15 +55,12 @@ const StreamDetails = (props: Props) => {
   const [sortedColumnName, setSortedColumnName] = useState<string>('id')
   const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
 
-  const { startVal } = useContext(StreamRangeStartContext)
-  const { endVal } = useContext(StreamRangeEndContext)
-
   const loadMoreItems = () => {
     const lastLoadedEntryId = last(entries)?.id
     const lastLoadedEntryTimeStamp = getTimestampFromId(lastLoadedEntryId)
 
-    const lastRangeEntryTimestamp = endVal ? endVal.toString() : getTimestampFromId(lastEntry?.id)
-    const firstRangeEntryTimestamp = startVal ? startVal.toString() : getTimestampFromId(firstEntry?.id)
+    const lastRangeEntryTimestamp = end ? parseInt(end, 10) : getTimestampFromId(lastEntry?.id)
+    const firstRangeEntryTimestamp = start ? parseInt(start, 10) : getTimestampFromId(firstEntry?.id)
     const shouldLoadMore = () => {
       if (!lastLoadedEntryTimeStamp) {
         return false
@@ -79,8 +74,8 @@ const StreamDetails = (props: Props) => {
       dispatch(
         fetchMoreStreamEntries(
           key,
-          sortedColumnOrder === SortOrder.DESC ? startVal!.toString() : `${xrangeIdPrefix + lastLoadedEntryId}`,
-          sortedColumnOrder === SortOrder.DESC ? `${xrangeIdPrefix + lastLoadedEntryId}` : endVal!.toString(),
+          sortedColumnOrder === SortOrder.DESC ? start : `${xrangeIdPrefix + lastLoadedEntryId}`,
+          sortedColumnOrder === SortOrder.DESC ? `${xrangeIdPrefix + lastLoadedEntryId}` : end,
           SCAN_COUNT_DEFAULT,
           sortedColumnOrder,
         )
@@ -92,20 +87,12 @@ const StreamDetails = (props: Props) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
 
-    if (startVal && endVal) {
-      const firstEntryTimeStamp: number = getTimestampFromId(firstEntry?.id)
-      const lastEntryTimeStamp: number = getTimestampFromId(lastEntry?.id)
-      const lastEntryFilter = endVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : endVal.toString()
-      const firstEntryFilter = startVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : startVal.toString()
-      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, firstEntryFilter, lastEntryFilter, order))
-    } else {
-      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_START_DEFAULT, order))
-    }
+    dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, order))
   }
 
   return (
     <>
-      {(firstEntry !== null && lastEntry !== null) ? (
+      {(firstEntry !== null && firstEntry.id !== '' && lastEntry !== null && lastEntry.id !== '') ? (
         <StreamRangeFilter
           sortedColumnOrder={sortedColumnOrder}
           min={firstEntry.id}

@@ -2,8 +2,6 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { KeyTypes } from 'uiSrc/constants'
-import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
-import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
 
 import KeyDetails, { Props as KeyDetailsProps } from './KeyDetails/KeyDetails'
 import KeyDetailsWrapper, { Props } from './KeyDetailsWrapper'
@@ -14,14 +12,6 @@ const key = 'key'
 interface ExtendedKeyDetailsProps extends KeyDetailsProps {
   keyType: string
 }
-
-const MockKeyDetailsWrapper = (props: any) => (
-  <StreamRangeStartContext.Provider value={{ startVal: undefined, setStartVal: () => {} }}>
-    <StreamRangeEndContext.Provider value={{ endVal: undefined, setEndVal: () => {} }}>
-      <KeyDetailsWrapper {...instance(mockedProps)} {...props} />
-    </StreamRangeEndContext.Provider>
-  </StreamRangeStartContext.Provider>
-)
 
 const MockKeyDetails = (props: ExtendedKeyDetailsProps) => (
   <div>
@@ -95,7 +85,7 @@ describe('KeyDetailsWrapper', () => {
           keyType={keyType}
         />
       ))
-      const component = render(<MockKeyDetailsWrapper />)
+      const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
       fireEvent(
         screen.getByTestId('refresh-btn'),
         new MouseEvent(
@@ -110,7 +100,7 @@ describe('KeyDetailsWrapper', () => {
   })
 
   it('should call onDelete', () => {
-    const component = render(<MockKeyDetailsWrapper />)
+    const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
     fireEvent(
       screen.getByTestId('delete-btn'),
       new MouseEvent(
@@ -125,7 +115,7 @@ describe('KeyDetailsWrapper', () => {
 
   it('should call onClose', () => {
     const onClose = jest.fn()
-    const component = render(<MockKeyDetailsWrapper onCloseKey={onClose} />)
+    const component = render(<KeyDetailsWrapper {...instance(mockedProps)} onCloseKey={onClose} />)
     fireEvent(
       screen.getByTestId('close-btn'),
       new MouseEvent(
@@ -140,7 +130,7 @@ describe('KeyDetailsWrapper', () => {
   })
 
   it('should call onEditKey', () => {
-    const component = render(<MockKeyDetailsWrapper />)
+    const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
     fireEvent(
       screen.getByTestId('edit-key-btn'),
       new MouseEvent(
@@ -154,7 +144,7 @@ describe('KeyDetailsWrapper', () => {
   })
 
   it('should call onEditTtl', () => {
-    const component = render(<MockKeyDetailsWrapper />)
+    const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
     fireEvent(
       screen.getByTestId('edit-ttl-btn'),
       new MouseEvent(

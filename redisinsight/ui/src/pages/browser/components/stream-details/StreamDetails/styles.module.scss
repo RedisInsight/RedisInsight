@@ -156,6 +156,11 @@ $maxWidthCell: 190px;
   right: -4px;
 }
 
+.mockRange {
+  left: 30px;
+  width: calc(100% - 56px);
+}
+
 .thumb,
 .thumb::-webkit-slider-thumb {
   -webkit-appearance: none;

@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import {
   fetchStreamEntries,
-  streamSelector,
+  streamRangeSelector,
+  streamDataSelector,
   updateStart,
   updateEnd,
 } from 'uiSrc/slices/browser/stream'
@@ -16,10 +17,8 @@ import styles from './styles.module.scss'
 
 const buttonString = 'Reset Filter'
 
-interface Props {
+export interface Props {
   sortedColumnOrder: SortOrder
-  max: string
-  min: string
 }
 
 function usePrevious(value: any) {
@@ -30,16 +29,21 @@ function usePrevious(value: any) {
   return ref.current
 }
 
-const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
+const StreamRangeFilter = ({ sortedColumnOrder }: Props) => {
   const dispatch = useDispatch()
 
   const {
     start,
     end,
-  } = useSelector(streamSelector)
+  } = useSelector(streamRangeSelector)
+
+  const { firstEntry, lastEntry } = useSelector(streamDataSelector)
 
   const startNumber = start === '' ? 0 : parseInt(start, 10)
   const endNumber = end === '' ? 0 : parseInt(end, 10)
+
+  const min = firstEntry?.id
+  const max = lastEntry?.id
 
   const firstEntryTimeStamp: number = getTimestampFromId(min)
   const lastEntryTimeStamp: number = getTimestampFromId(max)
@@ -101,13 +105,13 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
   }, [max])
 
   useEffect(() => {
-    if (max && prevMaxValue && endNumber === getTimestampFromId(prevMaxValue.max)) {
+    if (max && prevMaxValue && prevMaxValue.max !== max && endNumber === getTimestampFromId(prevMaxValue.max)) {
       dispatch(updateEnd(getTimestampFromId(max).toString()))
     }
   }, [prevMaxValue])
 
   useEffect(() => {
-    if (start && end) {
+    if (start !== '' && end !== '') {
       dispatch(fetchStreamEntries(
         key,
         SCAN_COUNT_DEFAULT,
@@ -120,7 +124,7 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
   if (start === '' && end === '') {
     return (
       <div className={styles.rangeWrapper}>
-        <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.sliderTrack} />
+        <div className={`${styles.sliderTrack} ${styles.mockRange}`} />
       </div>
     )
   }
@@ -128,7 +132,7 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
   if (start === end) {
     return (
       <div className={styles.rangeWrapper}>
-        <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.sliderRange}>
+        <div className={`${styles.sliderRange} ${styles.mockRange}`}>
           <div className={styles.sliderLeftValue}>{getFormatTime(start)}</div>
           <div className={styles.sliderRightValue}>{getFormatTime(end)}</div>
         </div>
@@ -151,6 +155,7 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
             event.target.value = value.toString()
           }}
           className={`${styles.thumb} ${styles.thumbZindex3}`}
+          data-testid="range-start-input"
         />
         <input
           type="range"
@@ -164,6 +169,7 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
             event.target.value = value.toString()
           }}
           className={`${styles.thumb} ${styles.thumbZindex4}`}
+          data-testid="range-end-input"
         />
         <div className={styles.slider}>
           <div className={styles.sliderTrack} />

@@ -23,8 +23,7 @@ export const initialState: StateStream = {
   loading: false,
   error: '',
   sortOrder: SortOrder.DESC,
-  start: '',
-  end: '',
+  range: { start: '', end: '' },
   data: {
     total: 0,
     entries: [],
@@ -118,14 +117,22 @@ const streamSlice = createSlice({
       }
     },
     updateStart: (state, { payload }: PayloadAction<string>) => {
-      state.start = payload
+      state.range = {
+        ...state.range,
+        start: payload,
+      }
     },
     updateEnd: (state, { payload }: PayloadAction<string>) => {
-      state.end = payload
+      state.range = {
+        ...state.range,
+        end: payload,
+      }
     },
     cleanRangeFilter: (state) => {
-      state.start = ''
-      state.end = ''
+      state.range = {
+        start: '',
+        end: '',
+      }
     },
   },
 })
@@ -147,12 +154,14 @@ export const {
   removeEntriesFromList,
   updateStart,
   updateEnd,
+  updateRange,
   cleanRangeFilter
 } = streamSlice.actions
 
 // A selector
 export const streamSelector = (state: RootState) => state.browser.stream
 export const streamDataSelector = (state: RootState) => state.browser.stream?.data
+export const streamRangeSelector = (state: RootState) => state.browser.stream?.range
 
 // The reducer
 export default streamSlice.reducer
@@ -170,8 +179,8 @@ export function fetchStreamEntries(
 
     try {
       const state = stateInit()
-      const start = getStreamRangeStart(state.browser.stream.start, state.browser.stream.data.firstEntry?.id)
-      const end = getStreamRangeEnd(state.browser.stream.end, state.browser.stream.data.lastEntry?.id)
+      const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
+      const end = getStreamRangeEnd(state.browser.stream.range.end, state.browser.stream.data.lastEntry?.id)
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -210,8 +219,8 @@ export function refreshStreamEntries(
     try {
       const state = stateInit()
       const { sortOrder } = state.browser.stream
-      const start = getStreamRangeStart(state.browser.stream.start, state.browser.stream.data.firstEntry?.id)
-      const end = getStreamRangeEnd(state.browser.stream.end, state.browser.stream.data.lastEntry?.id)
+      const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
+      const end = getStreamRangeEnd(state.browser.stream.range.end, state.browser.stream.data.lastEntry?.id)
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,

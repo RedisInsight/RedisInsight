@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { last } from 'lodash'
+import { last, isNull } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiProgress } from '@elastic/eui'
 
@@ -9,14 +9,16 @@ import {
   fetchStreamEntries,
   streamDataSelector,
   streamSelector,
+  streamRangeSelector,
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
-
+import { getTimestampFromId } from 'uiSrc/utils/streamUtils'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import StreamRangeFilter from './StreamRangeFilter'
 
 import styles from './styles.module.scss'
 
@@ -44,6 +46,7 @@ const StreamDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   const { loading } = useSelector(streamSelector)
+  const { start, end } = useSelector(streamRangeSelector)
   const {
     total,
     firstEntry,
@@ -51,18 +54,33 @@ const StreamDetails = (props: Props) => {
   } = useSelector(streamDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
-  const [sortedColumnName, setSortedColumnName] = useState('id')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState(SortOrder.DESC)
+  const shouldFilterRender = !isNull(firstEntry) && (firstEntry.id !== '') && !isNull(lastEntry) && lastEntry.id !== ''
+
+  const [sortedColumnName, setSortedColumnName] = useState<string>('id')
+  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
 
   const loadMoreItems = () => {
-    const lastLoadedEntryId = last(entries)?.id ?? ''
-    const lastEntryId = sortedColumnOrder === SortOrder.ASC ? lastEntry?.id : firstEntry?.id
+    const lastLoadedEntryId = last(entries)?.id
+    const lastLoadedEntryTimeStamp = getTimestampFromId(lastLoadedEntryId)
 
-    if (lastLoadedEntryId && lastLoadedEntryId !== lastEntryId) {
+    const lastRangeEntryTimestamp = end ? parseInt(end, 10) : getTimestampFromId(lastEntry?.id)
+    const firstRangeEntryTimestamp = start ? parseInt(start, 10) : getTimestampFromId(firstEntry?.id)
+    const shouldLoadMore = () => {
+      if (!lastLoadedEntryTimeStamp) {
+        return false
+      }
+      return sortedColumnOrder === SortOrder.ASC
+        ? lastLoadedEntryTimeStamp > lastRangeEntryTimestamp
+        : lastLoadedEntryTimeStamp < firstRangeEntryTimestamp
+    }
+    const previousLoadedString = `${xrangeIdPrefix + lastLoadedEntryId}`
+
+    if (shouldLoadMore()) {
       dispatch(
         fetchMoreStreamEntries(
           key,
-          `${xrangeIdPrefix + lastLoadedEntryId}`,
+          sortedColumnOrder === SortOrder.DESC ? start : previousLoadedString,
+          sortedColumnOrder === SortOrder.DESC ? previousLoadedString : end,
           SCAN_COUNT_DEFAULT,
           sortedColumnOrder,
         )
@@ -79,6 +97,14 @@ const StreamDetails = (props: Props) => {
 
   return (
     <>
+      {shouldFilterRender ? (
+        <StreamRangeFilter sortedColumnOrder={sortedColumnOrder} />
+      )
+        : (
+          <div className={styles.rangeWrapper}>
+            <div className={cx(styles.sliderTrack, styles.mockRange)} />
+          </div>
+        )}
       <div
         className={cx(
           'key-details-table',

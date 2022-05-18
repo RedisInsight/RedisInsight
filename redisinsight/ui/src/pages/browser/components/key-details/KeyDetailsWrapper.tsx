@@ -38,6 +38,7 @@ const KeyDetailsWrapper = (props: Props) => {
     onDeleteKey,
     keyProp
   } = props
+
   const dispatch = useDispatch()
 
   useEffect(() => {

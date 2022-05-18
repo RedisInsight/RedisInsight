@@ -31,6 +31,7 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries } from './stream'
+import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
@@ -545,7 +546,12 @@ export function fetchKeyInfo(key: string, resetData?: boolean) {
         dispatch<any>(fetchReJSON(key, '.', resetData))
       }
       if (data.type === KeyTypes.Stream) {
-        dispatch<any>(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SortOrder.DESC, resetData))
+        dispatch<any>(fetchStreamEntries(
+          key,
+          SCAN_COUNT_DEFAULT,
+          SortOrder.DESC,
+          resetData
+        ))
       }
     } catch (_err) {
       const error = _err as AxiosError

@@ -7,6 +7,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { fetchKeyInfo, refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { getStreamRangeStart, getStreamRangeEnd } from 'uiSrc/utils/streamUtils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   AddStreamEntriesDto,
@@ -22,6 +23,7 @@ export const initialState: StateStream = {
   loading: false,
   error: '',
   sortOrder: SortOrder.DESC,
+  range: { start: '', end: '' },
   data: {
     total: 0,
     entries: [],
@@ -114,6 +116,18 @@ const streamSlice = createSlice({
         total: state.data.total - 1,
       }
     },
+    updateStart: (state, { payload }: PayloadAction<string>) => {
+      state.range.start = payload
+    },
+    updateEnd: (state, { payload }: PayloadAction<string>) => {
+      state.range.end = payload
+    },
+    cleanRangeFilter: (state) => {
+      state.range = {
+        start: '',
+        end: '',
+      }
+    },
   },
 })
 
@@ -131,12 +145,16 @@ export const {
   removeStreamEntries,
   removeStreamEntriesSuccess,
   removeStreamEntriesFailure,
-  removeEntriesFromList
+  removeEntriesFromList,
+  updateStart,
+  updateEnd,
+  cleanRangeFilter
 } = streamSlice.actions
 
 // A selector
 export const streamSelector = (state: RootState) => state.browser.stream
 export const streamDataSelector = (state: RootState) => state.browser.stream?.data
+export const streamRangeSelector = (state: RootState) => state.browser.stream?.range
 
 // The reducer
 export default streamSlice.reducer
@@ -152,11 +170,10 @@ export function fetchStreamEntries(
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadEntries(resetData))
 
-    const start = '-'
-    const end = '+'
-
     try {
       const state = stateInit()
+      const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
+      const end = getStreamRangeEnd(state.browser.stream.range.end, state.browser.stream.data.lastEntry?.id)
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -192,12 +209,11 @@ export function refreshStreamEntries(
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadEntries(resetData))
 
-    const start = '-'
-    const end = '+'
-
     try {
       const state = stateInit()
       const { sortOrder } = state.browser.stream
+      const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
+      const end = getStreamRangeEnd(state.browser.stream.range.end, state.browser.stream.data.lastEntry?.id)
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -227,16 +243,14 @@ export function refreshStreamEntries(
 // Asynchronous thunk action
 export function fetchMoreStreamEntries(
   key: string,
-  id: string,
+  start: string,
+  end: string,
   count: number,
   sortOrder: SortOrder,
   onSuccess?: (data: GetStreamEntriesResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadMoreEntries())
-
-    const start = sortOrder === SortOrder.DESC ? '-' : id
-    const end = sortOrder === SortOrder.DESC ? id : '+'
 
     try {
       const state = stateInit()

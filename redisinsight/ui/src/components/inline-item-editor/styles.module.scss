@@ -83,8 +83,12 @@
   color: var(--euiColorColorDanger) !important;
 }
 
-.applyBtn:hover {
+.applyBtn:hover:not(.applyBtnDisabled) {
   color: var(--euiColorPrimary) !important;
+}
+
+.applyBtnDisabled {
+  background-color: initial !important;
 }
 
 .keyHiddenText {

@@ -96,14 +96,14 @@ const StreamDetails = (props: Props) => {
             data-testid="progress-key-stream"
           />
         )}
-        <div className={styles.columnManager}>
+        {/* <div className={styles.columnManager}>
           <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />
-        </div>
+        </div> */}
         <VirtualTable
           hideProgress
           selectable={false}
           keyName={key}
-          headerHeight={headerHeight}
+          headerHeight={entries?.length ? headerHeight : 0}
           rowHeight={rowHeight}
           columns={columns}
           footerHeight={0}
@@ -115,10 +115,10 @@ const StreamDetails = (props: Props) => {
           onChangeSorting={onChangeSorting}
           noItemsMessage={noItemsMessageString}
           tableWidth={columns.length * minColumnWidth - actionsWidth}
-          sortedColumn={{
+          sortedColumn={entries?.length ? {
             column: sortedColumnName,
             order: sortedColumnOrder,
-          }}
+          } : undefined}
         />
       </div>
     </>

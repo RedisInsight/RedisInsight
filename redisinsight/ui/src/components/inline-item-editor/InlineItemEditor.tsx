@@ -196,7 +196,7 @@ const InlineItemEditor = (props: Props) => {
                       color="primary"
                       type="submit"
                       aria-label="Apply"
-                      className={cx(styles.btn, styles.applyBtn)}
+                      className={cx(styles.btn, styles.applyBtn, { [styles.applyBtnDisabled]: isDisabledApply() })}
                       disabled={isDisabledApply()}
                       data-testid="apply-btn"
                     />

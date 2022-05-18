@@ -13,6 +13,7 @@ import {
   validateCertName,
   validateRefreshRateNumber,
   MAX_REFRESH_RATE,
+  errorValidateRefreshRateNumber,
 } from '../validations'
 
 const text1 = '123 123 123'
@@ -199,6 +200,28 @@ describe('Validations utils', () => {
     ])('for input: %s (input), should be output: %s',
       (input, expected) => {
         const result = validateRefreshRateNumber(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('errorValidateRefreshRateNumber', () => {
+    it.each([
+      [validateRefreshRateNumber(text1), false],
+      [validateRefreshRateNumber(text2), false],
+      [validateRefreshRateNumber(text3), true],
+      [validateRefreshRateNumber(text4), true],
+      [validateRefreshRateNumber(text5), true],
+      [validateRefreshRateNumber(text6), false],
+      [validateRefreshRateNumber(text7), false],
+      [validateRefreshRateNumber(text8), false],
+      [validateRefreshRateNumber(text9), false],
+      [validateRefreshRateNumber(text10), false],
+      [validateRefreshRateNumber(text12), false],
+      [validateRefreshRateNumber(text13), false],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = errorValidateRefreshRateNumber(input)
         expect(result).toBe(expected)
       })
   })

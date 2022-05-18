@@ -14,8 +14,8 @@ import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import KeyTreeDelimiter from './KeyTreeDelimiter'
 
+import KeyList from '../key-list'
 import styles from './styles.module.scss'
-import KeyList from '../key-list/KeyList'
 
 export interface Props {
   keysState: KeysStoreData

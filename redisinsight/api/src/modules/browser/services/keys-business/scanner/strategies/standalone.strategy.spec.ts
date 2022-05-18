@@ -71,6 +71,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
+          null,
         )
         .mockResolvedValue([0, [getKeyInfoResponse.name]]);
       when(browserTool.execCommand)
@@ -99,6 +100,7 @@ describe('Standalone Scanner Strategy', () => {
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
+        null,
       );
     });
     it('should call scan 3 times and return appropriate value', async () => {
@@ -109,7 +111,7 @@ describe('Standalone Scanner Strategy', () => {
           '*',
           'COUNT',
           getKeysDto.count,
-        ])
+        ], null)
         .mockResolvedValue(['1', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Scan, [
@@ -118,7 +120,7 @@ describe('Standalone Scanner Strategy', () => {
           '*',
           'COUNT',
           getKeysDto.count,
-        ])
+        ], null)
         .mockResolvedValue(['2', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Scan, [
@@ -127,7 +129,7 @@ describe('Standalone Scanner Strategy', () => {
           '*',
           'COUNT',
           getKeysDto.count,
-        ])
+        ], null)
         .mockResolvedValue(['0', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
         .calledWith(
@@ -164,18 +166,21 @@ describe('Standalone Scanner Strategy', () => {
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', getKeysDto.count],
+        null,
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         3,
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', getKeysDto.count],
+        null,
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         4,
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['2', 'MATCH', '*', 'COUNT', getKeysDto.count],
+        null,
       );
     });
     it('should call scan N times until threshold exceeds', async () => {
@@ -184,6 +189,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
+          null,
         )
         .mockResolvedValue(['1', []]);
       when(browserTool.execCommand)
@@ -304,6 +310,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
+          null,
         )
         .mockRejectedValue(replyError);
 

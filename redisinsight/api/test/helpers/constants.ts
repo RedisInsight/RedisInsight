@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
+import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
 
 const TEST_RUN_ID = `=${uuidv4()}`;
 const KEY_TTL = 100;
@@ -108,6 +109,10 @@ export const constants = {
   TEST_STRING_KEY_2: TEST_RUN_ID + '_string_2' + CLUSTER_HASH_SLOT,
   TEST_STRING_VALUE_2: TEST_RUN_ID + '_value_2',
   TEST_STRING_EXPIRE_2: KEY_TTL,
+  TEST_STRING_KEY_ASCII: getASCIISafeStringFromBuffer(getBufferFromSafeASCIIString(TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT)),
+  TEST_STRING_KEY_ASCII_BUFFER: getBufferFromSafeASCIIString(TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT),
+  TEST_STRING_KEY_ASCII_UNICODE: TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT,
+  TEST_STRING_KEY_ASCII_VALUE: TEST_RUN_ID + '_value_ascii',
 
   // Redis List
   TEST_LIST_TYPE: 'list',

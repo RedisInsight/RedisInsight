@@ -113,6 +113,7 @@ export const initDataHelper = (rte) => {
 
     await client.set(constants.TEST_STRING_KEY_1, constants.TEST_STRING_VALUE_1);
     await client.set(constants.TEST_STRING_KEY_2, constants.TEST_STRING_VALUE_2, 'EX', constants.TEST_STRING_EXPIRE_2);
+    await client.set(constants.TEST_STRING_KEY_ASCII_BUFFER, constants.TEST_STRING_KEY_ASCII_VALUE);
   };
 
   // List

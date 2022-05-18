@@ -3,7 +3,7 @@ import cx from 'classnames'
 import { keyBy, mapValues, toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { entryIdRegex, isRequiredStringsValid } from 'uiSrc/utils'
+import { entryIdRegex } from 'uiSrc/utils'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewEntriesAction, streamDataSelector } from 'uiSrc/slices/browser/stream'
 
@@ -31,7 +31,7 @@ const AddStreamEntries = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const isValid = !entryIdError && fields.every((f) => isRequiredStringsValid(f.fieldName, f.fieldValue))
+    const isValid = !entryIdError
     setIsFormValid(isValid)
   }, [fields, entryIdError])
 

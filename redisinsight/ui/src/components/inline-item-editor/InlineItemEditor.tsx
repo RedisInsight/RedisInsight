@@ -187,7 +187,7 @@ const InlineItemEditor = (props: Props) => {
                       aria-label="Cancel editing"
                       className={cx(styles.btn, styles.declineBtn)}
                       onClick={onDecline}
-                      disabled={isLoading}
+                      isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
                     <EuiButtonIcon
@@ -197,7 +197,7 @@ const InlineItemEditor = (props: Props) => {
                       type="submit"
                       aria-label="Apply"
                       className={cx(styles.btn, styles.applyBtn)}
-                      disabled={isDisabledApply()}
+                      isDisabled={isDisabledApply()}
                       data-testid="apply-btn"
                     />
                   </div>

@@ -24,7 +24,6 @@ import {
   CreateSetWithExpireDto,
 } from 'apiSrc/modules/browser/dto'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
-import { AppDispatch, RootState } from '../store'
 import { fetchString } from './string'
 import { setZsetInitialState, fetchZSetMembers } from './zset'
 import { fetchSetMembers } from './set'
@@ -34,6 +33,7 @@ import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries } from './stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType } from '../interfaces/keys'
+import { AppDispatch, RootState } from '../store'
 
 export const initialState: KeysStore = {
   loading: false,

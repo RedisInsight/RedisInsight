@@ -83,7 +83,7 @@
   color: var(--euiColorColorDanger) !important;
 }
 
-.applyBtn:hover {
+.applyBtn:hover:not([class*="isDisabled"]) {
   color: var(--euiColorPrimary) !important;
 }
 

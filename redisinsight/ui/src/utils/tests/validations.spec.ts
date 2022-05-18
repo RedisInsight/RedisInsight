@@ -13,6 +13,8 @@ import {
   validateCertName,
   validateRefreshRateNumber,
   MAX_REFRESH_RATE,
+  errorValidateRefreshRateNumber,
+  errorValidateNegativeInteger,
 } from '../validations'
 
 const text1 = '123 123 123'
@@ -199,6 +201,50 @@ describe('Validations utils', () => {
     ])('for input: %s (input), should be output: %s',
       (input, expected) => {
         const result = validateRefreshRateNumber(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('errorValidateRefreshRateNumber', () => {
+    it.each([
+      [validateRefreshRateNumber(text1), false],
+      [validateRefreshRateNumber(text2), false],
+      [validateRefreshRateNumber(text3), true],
+      [validateRefreshRateNumber(text4), true],
+      [validateRefreshRateNumber(text5), true],
+      [validateRefreshRateNumber(text6), false],
+      [validateRefreshRateNumber(text7), false],
+      [validateRefreshRateNumber(text8), false],
+      [validateRefreshRateNumber(text9), false],
+      [validateRefreshRateNumber(text10), false],
+      [validateRefreshRateNumber(text12), false],
+      [validateRefreshRateNumber(text13), false],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = errorValidateRefreshRateNumber(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('errorValidateNegativeInteger', () => {
+    it.each([
+      [validateRefreshRateNumber(text1), true],
+      [validateRefreshRateNumber(text2), true],
+      [validateRefreshRateNumber(text3), true],
+      [validateRefreshRateNumber(text4), true],
+      [validateRefreshRateNumber(text5), true],
+      [validateRefreshRateNumber(text6), true],
+      [validateRefreshRateNumber(text7), true],
+      [validateRefreshRateNumber(text8), true],
+      [validateRefreshRateNumber(text9), true],
+      [validateRefreshRateNumber(text10), true],
+      [validateRefreshRateNumber(text12), false],
+      [validateRefreshRateNumber(text13), false],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = errorValidateNegativeInteger(input)
         expect(result).toBe(expected)
       })
   })

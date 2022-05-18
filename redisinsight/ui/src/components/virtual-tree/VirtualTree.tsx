@@ -80,7 +80,7 @@ const VirtualTree = (props: Props) => {
 
   // select "root" Keys after render a new tree (construct a tree)
   useEffect(() => {
-    if (nodes.length === 0 || !selectDefaultLeaf) {
+    if (nodes.length === 0 || !selectDefaultLeaf || loading) {
       return
     }
 
@@ -90,7 +90,7 @@ const VirtualTree = (props: Props) => {
       onStatusSelected?.(rootLeaf?.fullName ?? '', rootLeaf?.keys)
       onSelectLeaf?.(rootLeaf?.keys ?? [])
     }
-  }, [nodes, selectDefaultLeaf])
+  }, [nodes, loading, selectDefaultLeaf])
 
   useEffect(() => {
     if (!items?.length) {

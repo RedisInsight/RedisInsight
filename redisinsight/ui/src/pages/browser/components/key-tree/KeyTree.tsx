@@ -9,14 +9,13 @@ import {
   setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
 import { constructKeysToTree } from 'uiSrc/helpers'
-import { keysSelector } from 'uiSrc/slices/browser/keys'
 import VirtualTree from 'uiSrc/components/virtual-tree'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import KeyTreeDelimiter from './KeyTreeDelimiter'
 
-import KeyList from '../key-list/KeyList'
 import styles from './styles.module.scss'
+import KeyList from '../key-list/KeyList'
 
 export interface Props {
   keysState: KeysStoreData
@@ -33,7 +32,6 @@ const KeyTree = (props: Props) => {
   const firstPanelId = 'tree'
   const secondPanelId = 'keys'
 
-  const { filter, search } = useSelector(keysSelector)
   const { delimiter, panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
 
   const [statusSelected, setStatusSelected] = useState(selectedLeaf)
@@ -74,11 +72,10 @@ const KeyTree = (props: Props) => {
 
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {
-    setItems([])
+    setItems(keysState.keys)
     setTimeout(() => {
       setStatusSelected({})
       setSelectDefaultLeaf(true)
-      setItems(keysState.keys)
     }, 0)
   }
 

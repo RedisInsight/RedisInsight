@@ -74,7 +74,6 @@ const keysSlice = createSlice({
   reducers: {
     // load Keys
     loadKeys: (state) => {
-      state.data = initialState.data
       state.loading = true
       state.error = ''
     },

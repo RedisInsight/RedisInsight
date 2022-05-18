@@ -66,7 +66,6 @@ export class BrowserPage {
     treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
     treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
     fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
-    disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
     addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
     removeEntryButton = Selector('[data-testid^=remove-entry-button-]');

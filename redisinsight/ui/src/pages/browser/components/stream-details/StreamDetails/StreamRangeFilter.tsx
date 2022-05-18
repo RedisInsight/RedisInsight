@@ -1,9 +1,9 @@
-import React, { useCallback, useState, useEffect, useContext, useRef } from 'react'
+import React, { useCallback, useEffect, useContext, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { fetchStreamEntries } from 'uiSrc/slices/browser/stream'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import { getFormatTime } from 'uiSrc/utils/streamUtils'
+import { getFormatTime, getTimestampFromId } from 'uiSrc/utils/streamUtils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
 import StreamMinRangeContext from 'uiSrc/contexts/streamMinRangeContext'
@@ -19,7 +19,7 @@ interface Props {
   min: string
 }
 
-function usePrevious(value: unknown) {
+function usePrevious(value: any) {
   const ref = useRef()
   useEffect(() => {
     ref.current = value
@@ -30,8 +30,8 @@ function usePrevious(value: unknown) {
 const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
   const dispatch = useDispatch()
 
-  const firstEntryTimeStamp: number = parseInt(min.split('-')[0], 10)
-  const lastEntryTimeStamp: number = parseInt(max.split('-')[0], 10)
+  const firstEntryTimeStamp: number = getTimestampFromId(min)
+  const lastEntryTimeStamp: number = getTimestampFromId(max)
 
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
@@ -39,20 +39,20 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
     (value) => Math.round(((value - firstEntryTimeStamp) / (lastEntryTimeStamp - firstEntryTimeStamp)) * 100),
     [firstEntryTimeStamp, lastEntryTimeStamp]
   )
-  const [minVal, setMinVal] = useContext(StreamMinRangeContext)
-  const [maxVal, setMaxVal] = useContext(StreamMaxRangeContext)
+  const { minVal, setMinVal } = useContext(StreamMinRangeContext)
+  const { maxVal, setMaxVal } = useContext(StreamMaxRangeContext)
 
-  const minValRef = useRef(null)
-  const maxValRef = useRef(null)
-  const range = useRef(null)
+  const minValRef = useRef<HTMLInputElement>(null)
+  const maxValRef = useRef<HTMLInputElement>(null)
+  const range = useRef<HTMLInputElement>(null)
 
-  const prevMaxValue = usePrevious({ max })
+  const prevMaxValue: Props = usePrevious({ max })
 
   const resetFilter = () => {
     setMinVal(firstEntryTimeStamp)
     setMaxVal(lastEntryTimeStamp)
   }
-  // Set width of the range to decrease from the left side
+
   useEffect(() => {
     if (maxValRef.current) {
       const minPercent = getPercent(minVal)
@@ -65,7 +65,6 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
     }
   }, [minVal, getPercent])
 
-  // Set width of the range to decrease from the right side
   useEffect(() => {
     if (minValRef.current) {
       const minPercent = getPercent(+minValRef.current.value)
@@ -90,35 +89,40 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
   }, [max])
 
   useEffect(() => {
-    if (!!max && typeof prevMaxValue === 'string' && maxVal === parseInt(prevMaxValue.split('-')[0], 10)) {
-      setMaxVal(parseInt(max.split('-')[0], 10))
+    if (max && prevMaxValue && maxVal === getTimestampFromId(prevMaxValue.max)) {
+      setMaxVal(getTimestampFromId(max))
     }
   }, [prevMaxValue])
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+    if (minVal && maxVal) {
       const lastEntryFilter = maxVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : maxVal.toString()
       const firstEntryFilter = minVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : minVal.toString()
-      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, firstEntryFilter, lastEntryFilter, sortedColumnOrder, false))
-    }, 500)
-
-    return () => clearTimeout(delayDebounceFn)
+      dispatch(fetchStreamEntries(
+        key,
+        SCAN_COUNT_DEFAULT,
+        firstEntryFilter,
+        lastEntryFilter,
+        sortedColumnOrder,
+        false
+      ))
+    }
   }, [minVal, maxVal])
 
-  // if (!minVal && !maxVal) {
-  //   return (
-  //     <div className={styles.rangeWrapper}>
-  //       <div className={styles.line} />
-  //     </div>
-  //   )
-  // }
+  if (!minVal && !maxVal) {
+    return (
+      <div className={styles.rangeWrapper}>
+        <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.slider__track} />
+      </div>
+    )
+  }
 
   if (firstEntryTimeStamp === lastEntryTimeStamp) {
     return (
       <div className={styles.rangeWrapper}>
         <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.slider__range}>
-          <div className={styles['slider__left-value']}>{getFormatTime(minVal)}</div>
-          <div className={styles['slider__right-value']}>{getFormatTime(maxVal)}</div>
+          <div className={styles['slider__left-value']}>{getFormatTime(minVal?.toString())}</div>
+          <div className={styles['slider__right-value']}>{getFormatTime(maxVal?.toString())}</div>
         </div>
       </div>
     )
@@ -134,7 +138,7 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
           value={minVal}
           ref={minValRef}
           onChange={(event) => {
-            const value = Math.min(+event.target.value, maxVal - 1)
+            const value = Math.min(+event.target.value, maxVal ?? 0 - 1)
             setMinVal(value)
             event.target.value = value.toString()
           }}
@@ -147,7 +151,7 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
           value={maxVal}
           ref={maxValRef}
           onChange={(event) => {
-            const value = Math.max(+event.target.value, minVal + 1)
+            const value = Math.max(+event.target.value, minVal ?? 0 + 1)
             setMaxVal(value)
             event.target.value = value.toString()
           }}
@@ -156,8 +160,8 @@ const StreamRangeFilter = ({ sortedColumnOrder, max, min }: Props) => {
         <div className={styles.slider}>
           <div className={styles.slider__track} />
           <div ref={range} className={styles.slider__range}>
-            <div className={styles['slider__left-value']}>{getFormatTime(minVal)}</div>
-            <div className={styles['slider__right-value']}>{getFormatTime(maxVal)}</div>
+            <div className={styles['slider__left-value']}>{getFormatTime(minVal?.toString())}</div>
+            <div className={styles['slider__right-value']}>{getFormatTime(maxVal?.toString())}</div>
           </div>
         </div>
       </div>

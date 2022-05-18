@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
   EuiText,
   EuiFlexGroup,
@@ -65,13 +65,9 @@ const KeyDetails = ({ ...props }: Props) => {
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
   const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] = useState<boolean>(false)
   const [editItem, setEditItem] = useState<boolean>(false)
-  const [minVal, setMinVal] = useState<number>()
-  const [maxVal, setMaxVal] = useState<number>()
 
-  // useEffect(() => {
-  //   // Close 'Add Item Panel' on change selected key
-  //   setRange([])
-  // }, [selectedKey])
+  const { setMinVal } = useContext(StreamMinRangeContext)
+  const { setMaxVal } = useContext(StreamMaxRangeContext)
 
   useEffect(() => {
     // Close 'Add Item Panel' on change selected key
@@ -134,13 +130,7 @@ const KeyDetails = ({ ...props }: Props) => {
     [KeyTypes.Hash]: <HashDetails isFooterOpen={isAddItemPanelOpen} />,
     [KeyTypes.List]: <ListDetails isFooterOpen={isAddItemPanelOpen || isRemoveItemPanelOpen} />,
     [KeyTypes.ReJSON]: <RejsonDetailsWrapper />,
-    [KeyTypes.Stream]: (
-      <StreamMinRangeContext.Provider value={[minVal, setMinVal]}>
-        <StreamMaxRangeContext.Provider value={[maxVal, setMaxVal]}>
-          <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />
-        </StreamMaxRangeContext.Provider>
-      </StreamMinRangeContext.Provider>
-    ),
+    [KeyTypes.Stream]: <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />,
   }
 
   return (

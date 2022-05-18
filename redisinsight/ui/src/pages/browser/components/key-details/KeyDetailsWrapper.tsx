@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   deleteKeyAction,
   editKey,
@@ -8,14 +8,18 @@ import {
   refreshKeyInfoAction,
   toggleBrowserFullScreen,
 } from 'uiSrc/slices/browser/keys'
+import { getTimestampFromId } from 'uiSrc/utils/streamUtils'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import { SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
 import { refreshHashFieldsAction } from 'uiSrc/slices/browser/hash'
 import { refreshZsetMembersAction } from 'uiSrc/slices/browser/zset'
 import { fetchString, resetStringValue } from 'uiSrc/slices/browser/string'
 import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
 import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
-import { refreshStreamEntries } from 'uiSrc/slices/browser/stream'
+import { refreshStreamEntries, streamDataSelector } from 'uiSrc/slices/browser/stream'
+import StreamMinRangeContext from 'uiSrc/contexts/streamMinRangeContext'
+import StreamMaxRangeContext from 'uiSrc/contexts/streamMaxRangeContext'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -38,6 +42,12 @@ const KeyDetailsWrapper = (props: Props) => {
     onDeleteKey,
     keyProp
   } = props
+
+  const [minVal, setMinVal] = useState<number>()
+  const [maxVal, setMaxVal] = useState<number>()
+
+  const { firstEntry, lastEntry } = useSelector(streamDataSelector)
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -89,7 +99,12 @@ const KeyDetailsWrapper = (props: Props) => {
         break
       }
       case KeyTypes.Stream: {
-        dispatch(refreshStreamEntries(key, resetData))
+        const firstEntryTimeStamp = getTimestampFromId(firstEntry?.id)
+        const lastEntryTimeStamp = getTimestampFromId(lastEntry?.id)
+
+        const lastEntryFilter = maxVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : maxVal?.toString()
+        const firstEntryFilter = minVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : minVal?.toString()
+        dispatch(refreshStreamEntries(key, firstEntryFilter!, lastEntryFilter!, resetData))
         break
       }
       default:
@@ -113,17 +128,21 @@ const KeyDetailsWrapper = (props: Props) => {
   }
 
   return (
-    <KeyDetails
-      isFullScreen={isFullScreen}
-      arePanelsCollapsed={arePanelsCollapsed}
-      onToggleFullScreen={onToggleFullScreen}
-      onClose={handleClose}
-      onClosePanel={handleClosePanel}
-      onRefresh={handleRefreshKey}
-      onDelete={handleDeleteKey}
-      onEditTTL={handleEditTTL}
-      onEditKey={handleEditKey}
-    />
+    <StreamMinRangeContext.Provider value={{ minVal, setMinVal }}>
+      <StreamMaxRangeContext.Provider value={{ maxVal, setMaxVal }}>
+        <KeyDetails
+          isFullScreen={isFullScreen}
+          arePanelsCollapsed={arePanelsCollapsed}
+          onToggleFullScreen={onToggleFullScreen}
+          onClose={handleClose}
+          onClosePanel={handleClosePanel}
+          onRefresh={handleRefreshKey}
+          onDelete={handleDeleteKey}
+          onEditTTL={handleEditTTL}
+          onEditKey={handleEditKey}
+        />
+      </StreamMaxRangeContext.Provider>
+    </StreamMinRangeContext.Provider>
   )
 }
 

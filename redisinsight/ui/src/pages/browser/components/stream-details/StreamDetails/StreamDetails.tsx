@@ -56,23 +56,27 @@ const StreamDetails = (props: Props) => {
   const [sortedColumnName, setSortedColumnName] = useState<string>('id')
   const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
 
-  const [minVal] = useContext(StreamMinRangeContext)
-  const [maxVal] = useContext(StreamMaxRangeContext)
+  const { minVal } = useContext(StreamMinRangeContext)
+  const { maxVal } = useContext(StreamMaxRangeContext)
 
   const loadMoreItems = () => {
-    const lastLoadedEntryId = last(entries)?.id ?? ''
-    const lastEntryId = sortedColumnOrder === SortOrder.ASC ? lastEntry?.id : firstEntry?.id
+    // const lastLoadedEntryId = last(entries)?.id.split('-')[0] ?? ''
 
-    if (lastLoadedEntryId && lastLoadedEntryId !== lastEntryId) {
-      dispatch(
-        fetchMoreStreamEntries(
-          key,
-          `${xrangeIdPrefix + lastLoadedEntryId}`,
-          SCAN_COUNT_DEFAULT,
-          sortedColumnOrder,
-        )
-      )
-    }
+    // const lastRangeEntryId = maxVal ? maxVal.toString() : lastEntry?.id.split('-')[0]
+    // const firstRangeEntryId = minVal ? minVal.toString() : firstEntry?.id.split('-')[0]
+    // const lastEntryId = sortedColumnOrder === SortOrder.ASC ? lastRangeEntryId : firstRangeEntryId
+
+    // if (lastLoadedEntryId && lastLoadedEntryId !== lastEntryId) {
+    //   dispatch(
+    //     fetchMoreStreamEntries(
+    //       key,
+    //       sortedColumnOrder === SortOrder.DESC ? minVal.toString() : `${xrangeIdPrefix + lastLoadedEntryId}`,
+    //       sortedColumnOrder === SortOrder.DESC ? `${xrangeIdPrefix + lastLoadedEntryId}` : maxVal.toString(),
+    //       SCAN_COUNT_DEFAULT,
+    //       sortedColumnOrder,
+    //     )
+    //   )
+    // }
   }
 
   const onChangeSorting = (column: any, order: SortOrder) => {
@@ -87,13 +91,18 @@ const StreamDetails = (props: Props) => {
 
   return (
     <>
-      {firstEntry.id !== '' && lastEntry.id !== '' && (
+      {(firstEntry !== null && lastEntry !== null) ? (
         <StreamRangeFilter
           sortedColumnOrder={sortedColumnOrder}
           min={firstEntry.id}
           max={lastEntry.id}
         />
-      )}
+      )
+        : (
+          <div className={styles.rangeWrapper}>
+            <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.slider__track} />
+          </div>
+        )}
       <div
         className={cx(
           'key-details-table',

@@ -154,9 +154,6 @@ export function fetchStreamEntries(
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadEntries(resetData))
 
-    // const start = '-'
-    // const end = '+'
-
     try {
       const state = stateInit()
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
@@ -189,13 +186,12 @@ export function fetchStreamEntries(
 // Asynchronous thunk action
 export function refreshStreamEntries(
   key: string,
+  start: string,
+  end: string,
   resetData?: boolean,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadEntries(resetData))
-
-    const start = '-'
-    const end = '+'
 
     try {
       const state = stateInit()
@@ -229,16 +225,14 @@ export function refreshStreamEntries(
 // Asynchronous thunk action
 export function fetchMoreStreamEntries(
   key: string,
-  id: string,
+  start: string,
+  end: string,
   count: number,
   sortOrder: SortOrder,
   onSuccess?: (data: GetStreamEntriesResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadMoreEntries())
-
-    const start = sortOrder === SortOrder.DESC ? '-' : id
-    const end = sortOrder === SortOrder.DESC ? id : '+'
 
     try {
       const state = stateInit()

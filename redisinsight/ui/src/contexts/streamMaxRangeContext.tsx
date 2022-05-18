@@ -1,5 +1,10 @@
 import { createContext } from 'react'
 
-const StreamMaxRangeContext = createContext([undefined, () => {}])
+interface Props {
+  maxVal?: number;
+  setMaxVal: (value?: number) => void;
+}
+
+const StreamMaxRangeContext = createContext<Props>(undefined!)
 
 export default StreamMaxRangeContext

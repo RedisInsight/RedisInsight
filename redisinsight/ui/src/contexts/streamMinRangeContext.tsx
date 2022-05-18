@@ -1,5 +1,10 @@
 import { createContext } from 'react'
 
-const StreamMinRangeContext = createContext([undefined, () => {}])
+interface Props {
+  minVal?: number;
+  setMinVal: (value?: number) => void;
+}
+
+const StreamMinRangeContext = createContext<Props>(undefined!)
 
 export default StreamMinRangeContext

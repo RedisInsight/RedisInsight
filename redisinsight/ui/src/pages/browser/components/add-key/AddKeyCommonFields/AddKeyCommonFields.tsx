@@ -50,20 +50,6 @@ const AddKeyCommonFields = (props: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      <EuiFormRow label={config.keyName.label} fullWidth>
-        <EuiFieldText
-          fullWidth
-          name={config.keyName.name}
-          id={config.keyName.name}
-          value={keyName}
-          placeholder={config.keyName.placeholder}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setKeyName(e.target.value)}
-          disabled={loading}
-          autoComplete="off"
-          data-testid="key"
-        />
-      </EuiFormRow>
       <EuiFlexGroup className={styles.container} responsive={false}>
         <EuiFlexItem>
           <EuiFormFieldset
@@ -103,6 +89,20 @@ const AddKeyCommonFields = (props: Props) => {
           </EuiFormRow>
         </EuiFlexItem>
       </EuiFlexGroup>
+      <EuiFormRow label={config.keyName.label} fullWidth>
+        <EuiFieldText
+          fullWidth
+          name={config.keyName.name}
+          id={config.keyName.name}
+          value={keyName}
+          placeholder={config.keyName.placeholder}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setKeyName(e.target.value)}
+          disabled={loading}
+          autoComplete="off"
+          data-testid="key"
+        />
+      </EuiFormRow>
     </div>
   )
 }

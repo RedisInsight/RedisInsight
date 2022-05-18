@@ -10,6 +10,8 @@ $rowHeight: 43px;
   border: none !important;
   border-top: 1px solid var(--euiColorPrimary);
   padding: 12px 20px;
+  max-height: 234px;
+  scroll-padding-bottom: 30px;
 }
 
 .container {
@@ -53,15 +55,15 @@ $rowHeight: 43px;
     flex-grow: 1;
     flex-shrink: 0;
     width: 100%;
-    margin-top: 24px;
+    margin-top: 12px;
   }
 
 
-  .fieldsContainer {
-    @include euiScrollBar;
-    max-height: calc(4*#{$rowHeight});
-    overflow-x: hidden;
-  }
+  //.fieldsContainer {
+  //  @include euiScrollBar;
+  //  max-height: calc(4*#{$rowHeight});
+  //  overflow-x: hidden;
+  //}
 }
 
 
@@ -80,6 +82,12 @@ $rowHeight: 43px;
 
 .row {
   position: relative;
+  margin-top: 8px;
+  margin-bottom: 16px;
+
+  &.compressed {
+    margin-bottom: 0;
+  }
 
   &:hover {
     .deleteBtn {

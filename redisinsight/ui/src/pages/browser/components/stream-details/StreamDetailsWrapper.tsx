@@ -169,6 +169,8 @@ const StreamDetailsWrapper = (props: Props) => {
       headerClassName: styles.actionsHeader,
       textAlignment: TableCellTextAlignment.Left,
       absoluteWidth: actionsWidth,
+      maxWidth: actionsWidth,
+      minWidth: actionsWidth,
       render: function Actions(_act: any, { id }: StreamEntryDto) {
         return (
           <div>

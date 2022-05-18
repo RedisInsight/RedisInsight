@@ -144,13 +144,13 @@ export const AddStreamFormConfig: IAddStreamFormConfig = {
     name: 'Field Name',
     isRequire: false,
     label: 'Field',
-    placeholder: 'Enter Field*',
+    placeholder: 'Enter Field',
   },
   fieldValue: {
     id: 'fieldValue',
     name: 'Field Value',
     isRequire: false,
     label: 'Value',
-    placeholder: 'Enter Value*',
+    placeholder: 'Enter Value',
   },
 }

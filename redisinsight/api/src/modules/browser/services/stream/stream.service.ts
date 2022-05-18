@@ -77,12 +77,8 @@ export class StreamService {
         keyName,
         total: info.length,
         lastGeneratedId: info['last-generated-id'],
-        firstEntry: entries.length !== 0
-          ? StreamService.formatReplyToDto([info['first-entry']])[0]
-          : null,
-        lastEntry: entries.length !== 0
-          ? StreamService.formatReplyToDto([info['last-entry']])[0]
-          : null,
+        firstEntry: StreamService.formatArrayToDto(info['first-entry']),
+        lastEntry: StreamService.formatArrayToDto(info['last-entry']),
         entries,
       };
     } catch (error) {
@@ -351,15 +347,25 @@ export class StreamService {
    * @param reply
    */
   static formatReplyToDto(reply: Array<string | string[]>): StreamEntryDto[] {
-    return reply.map((entry) => {
-      const dto = { id: entry[0], fields: {} };
+    return reply.map(StreamService.formatArrayToDto);
+  }
 
-      chunk(entry[1] || [], 2).forEach((keyFieldPair) => {
-        // eslint-disable-next-line prefer-destructuring
-        dto.fields[keyFieldPair[0]] = keyFieldPair[1];
-      });
+  /**
+   * Format single reply entry to DTO
+   * @param entry
+   */
+  static formatArrayToDto(entry: Array<string>): StreamEntryDto {
+    if (!entry?.length) {
+      return null;
+    }
 
-      return dto;
+    const dto = { id: entry[0], fields: {} };
+
+    chunk(entry[1] || [], 2).forEach((keyFieldPair) => {
+      // eslint-disable-next-line prefer-destructuring
+      dto.fields[keyFieldPair[0]] = keyFieldPair[1];
     });
+
+    return dto;
   }
 }

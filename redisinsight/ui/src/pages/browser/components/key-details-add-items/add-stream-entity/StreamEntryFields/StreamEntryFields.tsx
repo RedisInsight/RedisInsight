@@ -1,16 +1,15 @@
 import React, { ChangeEvent, useEffect, useRef } from 'react'
 import {
-  EuiButtonEmpty,
-  EuiButtonIcon,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
   EuiIcon,
-  EuiSpacer, EuiText,
+  EuiSpacer,
   EuiToolTip
 } from '@elastic/eui'
 import cx from 'classnames'
+import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import { validateEntryId } from 'uiSrc/utils'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
@@ -82,14 +81,6 @@ const StreamEntryFields = (props: Props) => {
     setFields(newState)
   }
 
-  const handleClickRemove = (id: number) => {
-    if (fields.length !== 1) {
-      removeField(id)
-    } else {
-      clearFieldsValues(id)
-    }
-  }
-
   const handleEntryIdChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEntryID(validateEntryId(e.target.value))
   }
@@ -115,7 +106,7 @@ const StreamEntryFields = (props: Props) => {
   const showEntryError = !isEntryIdFocused && entryIdError
 
   return (
-    <div className={cx(styles.container, { [styles.compressed]: compressed })}>
+    <div className={cx(styles.container)}>
       <div className={styles.entryIdContainer}>
         <EuiFormRow label={config.entryId.label}>
           <EuiFieldText
@@ -160,7 +151,7 @@ const StreamEntryFields = (props: Props) => {
             fields.map((item, index) => (
               <EuiFlexItem
                 key={item.id}
-                className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace', styles.row)}
+                className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace', styles.row, { [styles.compressed]: compressed })}
                 grow
               >
                 <EuiFlexGroup gutterSize="none" responsive={false}>
@@ -206,39 +197,24 @@ const StreamEntryFields = (props: Props) => {
                           />
                         </EuiFormRow>
                       </EuiFlexItem>
+                      <AddItemsActions
+                        id={item.id}
+                        index={index}
+                        length={fields.length}
+                        addItem={addField}
+                        loading={false}
+                        removeItem={removeField}
+                        clearItemValues={clearFieldsValues}
+                        clearIsDisabled={isClearDisabled(item)}
+                        anchorClassName={styles.refreshKeyTooltip}
+                      />
                     </EuiFlexGroup>
                   </EuiFlexItem>
                 </EuiFlexGroup>
-                {!isClearDisabled(item) && (
-                  <div className={styles.deleteBtn}>
-                    <EuiToolTip
-                      content={fields.length === 1 ? 'Clear' : 'Remove'}
-                      position="left"
-                    >
-                      <EuiButtonIcon
-                        iconType="minusInCircle"
-                        color="primary"
-                        aria-label={fields.length === 1 ? 'Clear Item' : 'Remove Item'}
-                        onClick={() => handleClickRemove(item.id)}
-                        data-testid="remove-item"
-                      />
-                    </EuiToolTip>
-                  </div>
-                )}
               </EuiFlexItem>
             ))
           }
         </div>
-        <EuiButtonEmpty
-          size="s"
-          className={styles.addRowBtn}
-          type="submit"
-          onClick={() => addField()}
-          iconType="plusInCircle"
-          data-testid="add-new-row"
-        >
-          <EuiText size="s">Add Row</EuiText>
-        </EuiButtonEmpty>
       </div>
     </div>
   )

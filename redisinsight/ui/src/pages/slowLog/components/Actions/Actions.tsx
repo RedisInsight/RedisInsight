@@ -12,11 +12,13 @@ import {
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
+import { useParams } from 'react-router-dom'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DurationUnits } from 'uiSrc/constants'
 import { slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
 import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { Nullable } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 import SlowLogConfig from '../SlowLogConfig'
 
@@ -32,6 +34,7 @@ const HIDE_REFRESH_LABEL_WIDTH = 850
 
 const Actions = (props: Props) => {
   const { isEmptySlowLog, durationUnit, width, onClear = () => {}, onRefresh } = props
+  const { instanceId } = useParams<{ instanceId: string }>()
   const { name = '' } = useSelector(connectedInstanceSelector)
   const { loading, lastRefreshTime } = useSelector(slowLogSelector)
 
@@ -56,6 +59,18 @@ const Actions = (props: Props) => {
   const handleClearClick = () => {
     onClear()
     closePopoverClear()
+  }
+
+  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+    sendEventTelemetry({
+      event: enableAutoRefresh
+        ? TelemetryEvent.SLOWLOG_AUTO_REFRESH_ENABLED
+        : TelemetryEvent.SLOWLOG_AUTO_REFRESH_DISABLED,
+      eventData: {
+        databaseId: instanceId,
+        refreshRate: enableAutoRefresh ? refreshRate : undefined
+      }
+    })
   }
 
   const ToolTipContent = (
@@ -100,6 +115,7 @@ const Actions = (props: Props) => {
           lastRefreshTime={lastRefreshTime}
           containerClassName={styles.refreshContainer}
           onRefresh={onRefresh}
+          onEnableAutoRefresh={handleEnableAutoRefresh}
           testid="refresh-slowlog-btn"
         />
       </EuiFlexItem>
@@ -145,7 +161,7 @@ const Actions = (props: Props) => {
               onClick={() => showClearPopover()}
               data-testid="clear-btn"
             />
-            )}
+          )}
         >
           {ToolTipContent}
         </EuiPopover>

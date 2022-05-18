@@ -34,7 +34,7 @@ import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
 
-const HIDE_REFRESH_LABEL_WIDTH = 550
+const HIDE_REFRESH_LABEL_WIDTH = 600
 const FULL_SCREEN_RESOLUTION = 1260
 
 interface IViewType {

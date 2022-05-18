@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { EuiButtonIcon, EuiPopover, EuiSwitch, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
-import { MIN_REFRESH_RATE, Nullable, validateRefreshRateNumber } from 'uiSrc/utils'
+import {
+  errorValidateRefreshRateNumber,
+  MIN_REFRESH_RATE,
+  Nullable,
+  validateRefreshRateNumber
+} from 'uiSrc/utils'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -24,7 +29,8 @@ export interface Props {
   testid?: string
   containerClassName?: string
   turnOffAutoRefresh?: boolean
-  onRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
+  onRefresh: () => void
+  onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
@@ -38,6 +44,7 @@ const AutoRefresh = ({
   testid = '',
   turnOffAutoRefresh,
   onRefresh,
+  onEnableAutoRefresh,
 }: Props) => {
   let intervalText: NodeJS.Timeout
   let timeoutRefresh: NodeJS.Timeout
@@ -130,11 +137,13 @@ const AutoRefresh = ({
   }
 
   const handleRefresh = () => {
-    onRefresh(enableAutoRefresh, refreshRate)
+    onRefresh()
   }
 
   const onChangeEnableAutoRefresh = (value: boolean) => {
     setEnableAutoRefresh(value)
+
+    onEnableAutoRefresh?.(value, refreshRate)
   }
 
   return (
@@ -214,6 +223,7 @@ const AutoRefresh = ({
                   placeholder={DEFAULT_REFRESH_RATE}
                   isLoading={loading}
                   validation={validateRefreshRateNumber}
+                  disableByValidation={errorValidateRefreshRateNumber}
                   onDecline={() => handleDeclineAutoRefreshRate()}
                   onApply={(value) => handleApplyAutoRefreshRate(value)}
                 />

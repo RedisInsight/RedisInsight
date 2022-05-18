@@ -92,20 +92,17 @@ const InlineItemEditor = (props: Props) => {
   }, [])
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
+    let newValue = e.target.value
 
+    if (validation) {
+      newValue = validation(newValue)
+    }
     if (disableByValidation) {
       setIsError(disableByValidation(newValue))
     }
 
-    if (validation) {
-      const validatedValue = validation(newValue)
-      setValue(validatedValue)
-      onChange?.(validatedValue)
-    } else {
-      setValue(newValue)
-      onChange?.(newValue)
-    }
+    setValue(newValue)
+    onChange?.(newValue)
   }
 
   const handleClickOutside = (event: any) => {

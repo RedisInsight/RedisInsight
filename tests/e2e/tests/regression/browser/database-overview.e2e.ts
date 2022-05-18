@@ -20,17 +20,16 @@ let keys: string[];
 fixture `Database overview`
     .meta({type: 'regression'})
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
         //Create new keys
         keys = await common.createArrayWithKeyValue(10);
         await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
@@ -42,13 +41,12 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
+    })('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
         //Verify that user can see breadcrumbs in Browser and Workbench views
-        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Browser page', { timeout: 20000 });
+        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Browser page', { timeout: 10000 });
         await t.click(myRedisDatabasePage.workbenchButton);
-        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Workbench page', { timeout: 20000 });
+        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Workbench page', { timeout: 10000 });
     });

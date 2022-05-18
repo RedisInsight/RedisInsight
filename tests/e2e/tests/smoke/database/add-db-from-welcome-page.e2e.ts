@@ -9,20 +9,19 @@ const addRedisDatabasePage = new AddRedisDatabasePage();
 fixture `Add database from welcome page`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTerms();
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can add first DB from Welcome page', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can add first DB from Welcome page', async t => {
         //Delete all the databases to open Welcome page
         await myRedisDatabasePage.deleteAllDatabases();
         await t.expect(addRedisDatabasePage.welcomePageTitle.exists).ok('The welcome page title');
         //Add database from Welcome page
         await addNewStandaloneDatabase(ossStandaloneConfig);
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database adding', { timeout: 60000 });
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database adding', { timeout: 10000 });
     });

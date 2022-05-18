@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { env, rte } from '../../../helpers/constants';
 import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -14,20 +14,19 @@ let keyName = chance.word({ length: 10 });
 fixture `CLI`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
     .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that user can add data via CLI', async t => {
+    })('Verify that user can add data via CLI', async t => {
         keyName = chance.word({ length: 10 });
         //Open CLI
         await t.click(cliPage.cliExpandButton);
@@ -40,17 +39,15 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can expand CLI', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can expand CLI', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Check that CLI is opened
         await t.expect(cliPage.cliArea.exists).ok('CLI area is displayed');
-        await t.expect(cliPage.cliCommandInput.exists).ok('CLI input is displayed')
+        await t.expect(cliPage.cliCommandInput.exists).ok('CLI input is displayed');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can collapse CLI', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can collapse CLI', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Check that CLI is opened
@@ -61,8 +58,7 @@ test
         await t.expect(cliPage.cliArea.visible).notOk('CLI area should not be displayed');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can use blocking command', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can use blocking command', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Type blocking command
@@ -72,8 +68,7 @@ test
         await t.expect(cliPage.cliCommandInput.exists).notOk('Cli input is not shown');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can use unblocking command', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can use unblocking command', async t => {
         //Open CLI
         await t.click(cliPage.cliExpandButton);
         //Get clientId
@@ -96,5 +91,5 @@ test
         await t.typeText(cliPage.cliCommandInput, `client unblock ${clientId}`);
         await t.pressKey('enter');
         await t.closeWindow();
-        await t.expect(cliPage.cliCommandInput.exists).ok('Cli input is shown, the client was unblocked', { timeout: 20000 });
+        await t.expect(cliPage.cliCommandInput.exists).ok('Cli input is shown, the client was unblocked', { timeout: 10000 });
     });

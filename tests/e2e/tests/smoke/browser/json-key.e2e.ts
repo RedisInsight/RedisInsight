@@ -22,24 +22,22 @@ fixture `JSON Key verification`
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can create JSON object', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can create JSON object', async t => {
         keyName = chance.word({ length: 10 });
         //Add Json key with json object
         await browserPage.addJsonKey(keyName, value, keyTTL);
         //Check the notification message
-        const notofication = await browserPage.getMessageText();
-        await t.expect(notofication).contains('Key has been added', 'The notification');
+        const notification = await browserPage.getMessageText();
+        await t.expect(notification).contains('Key has been added', 'The notification');
         //Check the added key contains json object
-        await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 20000 });
+        await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 10000 });
         await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value');
     });
 //skipped due the issue https://redislabs.atlassian.net/browse/RI-2866
 test.skip
-    .meta({ rte: rte.standalone })
-    ('Verify that user can add key with value to any level of JSON structure', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can add key with value to any level of JSON structure', async t => {
         keyName = chance.word({ length: 10 });
         //Add Json key with json object
         await browserPage.addJsonKey(keyName, value, keyTTL);
@@ -49,7 +47,7 @@ test.skip
         //Add key with value on the same level
         await browserPage.addJsonKeyOnTheSameLevel('"key1"', '"value1"');
         //Check the added key contains json object with added key
-        await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 20000 });
+        await t.expect(browserPage.addJsonObjectButton.exists).ok('The existence of the add Json object button', { timeout: 10000 });
         await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"}', 'The json object value');
         //Add key with value inside the json
         await browserPage.addJsonKeyOnTheSameLevel('"key2"', '{}');

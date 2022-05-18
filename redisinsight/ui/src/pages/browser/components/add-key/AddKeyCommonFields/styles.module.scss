@@ -1,7 +1,7 @@
 .wrapper {
   .container {
     &:global(.euiFlexGroup.euiFlexGroup--gutterLarge) {
-      margin: 6px -12px -12px !important;
+      margin: -12px -12px 12px !important;
     }
   }
 }

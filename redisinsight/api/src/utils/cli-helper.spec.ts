@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CommandParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
 import {
@@ -11,7 +12,10 @@ import {
   splitCliCommandLine,
   getBlockingCommands,
   checkRedirectionError,
-  parseRedirectionError, getRedisPipelineSummary,
+  parseRedirectionError,
+  getRedisPipelineSummary,
+  getASCIISafeStringFromBuffer,
+  getBufferFromSafeASCIIString,
 } from 'src/utils/cli-helper';
 
 describe('Cli helper', () => {
@@ -275,6 +279,64 @@ describe('Cli helper', () => {
       it(`should be output: ${JSON.stringify(test.output)} for input: ${JSON.stringify(test.input)} `, async () => {
         expect(getRedisPipelineSummary(test.input.pipeline, test.input.limit)).toEqual(test.output);
       });
+    });
+  });
+
+  describe('getASCIISafeStringFromBuffer', () => {
+    const tests: Record<string, any>[] = [
+      {
+        buffer: Buffer.from([0x73, 0x69, 0x6d, 0x70, 0x6c, 0x65]),
+        string: 'simple',
+        unicode: 'simple',
+      },
+      {
+        buffer: Buffer.from([0x45, 0x75, 0x72, 0x6f, 0x20, 0x2d, 0x20, 0xe2, 0x82, 0xac]),
+        string: 'Euro - \\xe2\\x82\\xac',
+        unicode: 'Euro - €',
+      },
+      {
+        buffer: Buffer.from([
+          0xe2, 0x82, 0xac, // €
+          0x20, 0x21, 0x3d, 0x20, // _!=_
+          0x5c, 0x65, 0x32, // \e2
+          0x5c, 0x78, 0x7a, 0x73, // \xzs
+          0x5c, 0x30, 0x32, // \02
+        ]),
+        string: '\\xe2\\x82\\xac != \\e2\\xzs\\02',
+        unicode: '€ != \\e2\\xzs\\02',
+      },
+      {
+        buffer: Buffer.from([
+          0x02, 0x00, 0x00, 0x00, // special symbols
+          0x7a, 0x69, 0x70, 0x63, 0x6f, 0x64, 0x65, // zipcode
+        ]),
+        string: '\\x02\\x00\\x00\\x00zipcode',
+        unicode: '\x02\x00\x00\x00zipcode',
+      },
+    ];
+    tests.forEach((test) => {
+      it(`should convert ${test.unicode} to buffer and to ASCII string representation`, async () => {
+        const str = getASCIISafeStringFromBuffer(test.buffer);
+        const buf = getBufferFromSafeASCIIString(test.string);
+
+        expect(test.string).toEqual(str);
+        expect(test.buffer).toEqual(buf);
+        expect(test.unicode).toEqual(buf.toString());
+      });
+    });
+
+    it('test huge string timings', () => {
+      const buf = randomBytes(1024 * 1024);
+
+      let startTime = Date.now();
+      const str = getASCIISafeStringFromBuffer(buf);
+      console.log('To ASCII string took: ', Date.now() - startTime);
+      expect(Date.now() - startTime).toBeLessThan(5000); // usually takes ~1s
+
+      startTime = Date.now();
+      getBufferFromSafeASCIIString(str);
+      console.log('Back to Buffer took: ', Date.now() - startTime);
+      expect(Date.now() - startTime).toBeLessThan(5000); // usually takes ~0.7s
     });
   });
 });

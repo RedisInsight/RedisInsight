@@ -167,6 +167,7 @@ export class ClusterStrategy extends AbstractStrategy {
           BrowserToolKeysCommands.Scan,
           commandArgs,
           { host: node.host, port: node.port },
+          null,
         );
 
         // eslint-disable-next-line no-param-reassign

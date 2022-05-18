@@ -66,7 +66,6 @@ export class BrowserPage {
     treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
     treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
     fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
-    disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
     removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
     confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
@@ -324,7 +323,7 @@ export class BrowserPage {
         await this.commonAddNewKey(keyName, TTL);
         await t.click(this.streamOption);
         // Verify that user can see Entity ID filled by * by default on add Stream key form
-        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field')
+        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field');
         await t.typeText(this.streamField, field);
         await t.typeText(this.streamValue, value);
         await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');

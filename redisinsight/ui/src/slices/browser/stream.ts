@@ -117,16 +117,10 @@ const streamSlice = createSlice({
       }
     },
     updateStart: (state, { payload }: PayloadAction<string>) => {
-      state.range = {
-        ...state.range,
-        start: payload,
-      }
+      state.range.start = payload
     },
     updateEnd: (state, { payload }: PayloadAction<string>) => {
-      state.range = {
-        ...state.range,
-        end: payload,
-      }
+      state.range.end = payload
     },
     cleanRangeFilter: (state) => {
       state.range = {
@@ -154,7 +148,6 @@ export const {
   removeEntriesFromList,
   updateStart,
   updateEnd,
-  updateRange,
   cleanRangeFilter
 } = streamSlice.actions
 

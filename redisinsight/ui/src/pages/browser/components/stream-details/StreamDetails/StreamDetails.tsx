@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last } from 'lodash'
 import cx from 'classnames'
@@ -13,10 +13,11 @@ import {
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
-import StreamMinRangeContext from 'uiSrc/contexts/streamMinRangeContext'
-import StreamMaxRangeContext from 'uiSrc/contexts/streamMaxRangeContext'
+import { getTimestampFromId } from 'uiSrc/utils/streamUtils'
+import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
+import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamRangeFilter from './StreamRangeFilter'
 
@@ -56,36 +57,49 @@ const StreamDetails = (props: Props) => {
   const [sortedColumnName, setSortedColumnName] = useState<string>('id')
   const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
 
-  const { minVal } = useContext(StreamMinRangeContext)
-  const { maxVal } = useContext(StreamMaxRangeContext)
+  const { startVal } = useContext(StreamRangeStartContext)
+  const { endVal } = useContext(StreamRangeEndContext)
 
   const loadMoreItems = () => {
-    // const lastLoadedEntryId = last(entries)?.id.split('-')[0] ?? ''
+    const lastLoadedEntryId = last(entries)?.id
+    const lastLoadedEntryTimeStamp = getTimestampFromId(lastLoadedEntryId)
 
-    // const lastRangeEntryId = maxVal ? maxVal.toString() : lastEntry?.id.split('-')[0]
-    // const firstRangeEntryId = minVal ? minVal.toString() : firstEntry?.id.split('-')[0]
-    // const lastEntryId = sortedColumnOrder === SortOrder.ASC ? lastRangeEntryId : firstRangeEntryId
+    const lastRangeEntryTimestamp = endVal ? endVal.toString() : getTimestampFromId(lastEntry?.id)
+    const firstRangeEntryTimestamp = startVal ? startVal.toString() : getTimestampFromId(firstEntry?.id)
+    const shouldLoadMore = () => {
+      if (!lastLoadedEntryTimeStamp) {
+        return false
+      }
+      return sortedColumnOrder === SortOrder.ASC
+        ? lastLoadedEntryTimeStamp > lastRangeEntryTimestamp
+        : lastLoadedEntryTimeStamp < firstRangeEntryTimestamp
+    }
 
-    // if (lastLoadedEntryId && lastLoadedEntryId !== lastEntryId) {
-    //   dispatch(
-    //     fetchMoreStreamEntries(
-    //       key,
-    //       sortedColumnOrder === SortOrder.DESC ? minVal.toString() : `${xrangeIdPrefix + lastLoadedEntryId}`,
-    //       sortedColumnOrder === SortOrder.DESC ? `${xrangeIdPrefix + lastLoadedEntryId}` : maxVal.toString(),
-    //       SCAN_COUNT_DEFAULT,
-    //       sortedColumnOrder,
-    //     )
-    //   )
-    // }
+    if (shouldLoadMore()) {
+      dispatch(
+        fetchMoreStreamEntries(
+          key,
+          sortedColumnOrder === SortOrder.DESC ? startVal!.toString() : `${xrangeIdPrefix + lastLoadedEntryId}`,
+          sortedColumnOrder === SortOrder.DESC ? `${xrangeIdPrefix + lastLoadedEntryId}` : endVal!.toString(),
+          SCAN_COUNT_DEFAULT,
+          sortedColumnOrder,
+        )
+      )
+    }
   }
 
   const onChangeSorting = (column: any, order: SortOrder) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
-    if (minVal && maxVal) {
-      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, minVal.toString(), maxVal.toString(), order))
+
+    if (startVal && endVal) {
+      const firstEntryTimeStamp: number = getTimestampFromId(firstEntry?.id)
+      const lastEntryTimeStamp: number = getTimestampFromId(lastEntry?.id)
+      const lastEntryFilter = endVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : endVal.toString()
+      const firstEntryFilter = startVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : startVal.toString()
+      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, firstEntryFilter, lastEntryFilter, order))
     } else {
-      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, '-', '+', order))
+      dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SCAN_STREAM_START_DEFAULT, SCAN_STREAM_START_DEFAULT, order))
     }
   }
 
@@ -100,7 +114,7 @@ const StreamDetails = (props: Props) => {
       )
         : (
           <div className={styles.rangeWrapper}>
-            <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.slider__track} />
+            <div style={{ left: '30px', width: 'calc(100% - 56px)' }} className={styles.sliderTrack} />
           </div>
         )}
       <div

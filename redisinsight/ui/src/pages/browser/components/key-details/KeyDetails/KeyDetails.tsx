@@ -24,8 +24,8 @@ import {
 import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import StreamMinRangeContext from 'uiSrc/contexts/streamMinRangeContext'
-import StreamMaxRangeContext from 'uiSrc/contexts/streamMaxRangeContext'
+import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
+import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
 
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
@@ -66,14 +66,14 @@ const KeyDetails = ({ ...props }: Props) => {
   const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] = useState<boolean>(false)
   const [editItem, setEditItem] = useState<boolean>(false)
 
-  const { setMinVal } = useContext(StreamMinRangeContext)
-  const { setMaxVal } = useContext(StreamMaxRangeContext)
+  const { setStartVal } = useContext(StreamRangeStartContext)
+  const { setEndVal } = useContext(StreamRangeEndContext)
 
   useEffect(() => {
-    // Close 'Add Item Panel' on change selected key
+    // Close 'Add Item Panel' and remove stream range on change selected key
     closeAddItemPanel()
-    setMinVal(undefined)
-    setMaxVal(undefined)
+    setStartVal(undefined)
+    setEndVal(undefined)
   }, [selectedKey])
 
   const openAddItemPanel = () => {

@@ -18,8 +18,8 @@ import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
 import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
 import { refreshStreamEntries, streamDataSelector } from 'uiSrc/slices/browser/stream'
-import StreamMinRangeContext from 'uiSrc/contexts/streamMinRangeContext'
-import StreamMaxRangeContext from 'uiSrc/contexts/streamMaxRangeContext'
+import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
+import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -43,8 +43,8 @@ const KeyDetailsWrapper = (props: Props) => {
     keyProp
   } = props
 
-  const [minVal, setMinVal] = useState<number>()
-  const [maxVal, setMaxVal] = useState<number>()
+  const [startVal, setStartVal] = useState<number>()
+  const [endVal, setEndVal] = useState<number>()
 
   const { firstEntry, lastEntry } = useSelector(streamDataSelector)
 
@@ -102,8 +102,8 @@ const KeyDetailsWrapper = (props: Props) => {
         const firstEntryTimeStamp = getTimestampFromId(firstEntry?.id)
         const lastEntryTimeStamp = getTimestampFromId(lastEntry?.id)
 
-        const lastEntryFilter = maxVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : maxVal?.toString()
-        const firstEntryFilter = minVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : minVal?.toString()
+        const lastEntryFilter = endVal === lastEntryTimeStamp ? SCAN_STREAM_END_DEFAULT : endVal?.toString()
+        const firstEntryFilter = startVal === firstEntryTimeStamp ? SCAN_STREAM_START_DEFAULT : startVal?.toString()
         dispatch(refreshStreamEntries(key, firstEntryFilter!, lastEntryFilter!, resetData))
         break
       }
@@ -128,8 +128,8 @@ const KeyDetailsWrapper = (props: Props) => {
   }
 
   return (
-    <StreamMinRangeContext.Provider value={{ minVal, setMinVal }}>
-      <StreamMaxRangeContext.Provider value={{ maxVal, setMaxVal }}>
+    <StreamRangeStartContext.Provider value={{ startVal, setStartVal }}>
+      <StreamRangeEndContext.Provider value={{ endVal, setEndVal }}>
         <KeyDetails
           isFullScreen={isFullScreen}
           arePanelsCollapsed={arePanelsCollapsed}
@@ -141,8 +141,8 @@ const KeyDetailsWrapper = (props: Props) => {
           onEditTTL={handleEditTTL}
           onEditKey={handleEditKey}
         />
-      </StreamMaxRangeContext.Provider>
-    </StreamMinRangeContext.Provider>
+      </StreamRangeEndContext.Provider>
+    </StreamRangeStartContext.Provider>
   )
 }
 

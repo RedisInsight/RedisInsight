@@ -80,8 +80,12 @@ const DatabaseAlias = (props: Props) => {
 
   return (
     <EuiFlexGroup responsive={false} justifyContent="spaceBetween" gutterSize="xs">
-      <EuiFlexItem grow={false}>
-        <EuiFlexGroup responsive={false} justifyContent="spaceBetween" gutterSize="xs">
+      <EuiFlexItem grow={false} style={{ overflow: isEditing || isHovering ? 'inherit' : 'hidden' }}>
+        <EuiFlexGroup
+          responsive={false}
+          justifyContent="spaceBetween"
+          gutterSize="xs"
+        >
           {isRediStack && (
             <EuiFlexItem grow={false}>
               <EuiToolTip

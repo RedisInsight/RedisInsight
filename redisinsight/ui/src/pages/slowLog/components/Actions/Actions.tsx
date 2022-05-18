@@ -161,7 +161,7 @@ const Actions = (props: Props) => {
               onClick={() => showClearPopover()}
               data-testid="clear-btn"
             />
-            )}
+          )}
         >
           {ToolTipContent}
         </EuiPopover>

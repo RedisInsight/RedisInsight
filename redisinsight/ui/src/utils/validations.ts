@@ -103,6 +103,11 @@ export const errorValidateRefreshRateNumber = (value: string) => {
   return !decimalsRegexp.test(value)
 }
 
+export const errorValidateNegativeInteger = (value: string) => {
+  const negativeIntegerRegexp = /^-?\d+$/
+  return !negativeIntegerRegexp.test(value)
+}
+
 export const validateCertName = (initValue: string) =>
   initValue.replace(/[^ a-zA-Z0-9!@#$%^&*-_()[\]]+/gi, '').toString()
 

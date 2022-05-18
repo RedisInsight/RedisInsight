@@ -24,7 +24,7 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { setDBConfigStorageField } from 'uiSrc/services'
 import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
-import { validateNumber } from 'uiSrc/utils'
+import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { openCli } from 'uiSrc/slices/cli/cli-settings'
 import styles from './styles.module.scss'
@@ -89,10 +89,13 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
     e.preventDefault()
     history.push(Pages.workbench(instanceId))
   }
+
   const handleOpenCli = (e: React.MouseEvent) => {
     e.preventDefault()
     dispatch(openCli())
   }
+
+  const disabledApplyBtn = () => errorValidateNegativeInteger(slowerThan)
 
   const clusterContent = () => (
     <>
@@ -213,7 +216,13 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
             <EuiButton color="secondary" onClick={handleCancel} data-testid="slowlog-config-cancel-btn">
               Cancel
             </EuiButton>
-            <EuiButton fill color="secondary" onClick={handleSave} data-testid="slowlog-config-save-btn">
+            <EuiButton
+              fill
+              color="secondary"
+              isDisabled={disabledApplyBtn()}
+              onClick={handleSave}
+              data-testid="slowlog-config-save-btn"
+            >
               Save
             </EuiButton>
           </div>

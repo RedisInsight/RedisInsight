@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
 import StreamRangeStartContext from 'uiSrc/contexts/streamRangeStartContext'
 import StreamRangeEndContext from 'uiSrc/contexts/streamRangeEndContext'
-import StreamDetailsWrapper, { Props }from './StreamDetailsWrapper'
+import StreamDetailsWrapper, { Props } from './StreamDetailsWrapper'
 
 const mockedProps = mock<Props>()
 

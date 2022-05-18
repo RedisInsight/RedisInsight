@@ -55,9 +55,9 @@ const mockEmptyStreamInfoReply = [
   'groups',
   0,
   'first-entry',
-  'null',
+  null,
   'last-entry',
-  'null',
+  null,
 ];
 
 const mockEmptyStreamInfo = {

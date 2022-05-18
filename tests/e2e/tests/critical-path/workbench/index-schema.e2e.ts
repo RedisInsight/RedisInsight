@@ -18,19 +18,18 @@ fixture `Index Schema at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async () => {
+    .afterEach(async t => {
         //Drop index, documents and database
+        await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneRedisearch.databaseName);
-    })
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
+    });
+test
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-            `HMSET product:1 name "Apple Juice"`
+            'HMSET product:1 name "Apple Juice"'
         ];
         const searchCommand = `FT.INFO ${indexName}`;
         //Send commands
@@ -46,10 +45,8 @@ test.skip
         //Check that result is displayed in Text view
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
+test
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can open results in Text and Table views for FT.INFO for JSON in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         const commandsForSend = [
             `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,

@@ -1,9 +1,8 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { rte, env } from '../../../helpers/constants';
-import { MyRedisDatabasePage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
+import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { rte, env } from '../../../helpers/constants';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -20,15 +19,14 @@ fixture `Default scripts area at Workbench`
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async () => {
+    .afterEach(async t => {
         //Drop index, documents and database
+        await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+    });
+test
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -38,29 +36,25 @@ test.skip
         ];
         //Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
-        //Run automatically added "FT._LIST" script
+        //Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
-        await t.click(workbenchPage.preselectList);
-        await t.click(workbenchPage.submitCommandButton);
-        //Check the FT._LIST result
-        await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command');
-        //Run automatically added "FT.INFO {index}" script with added index
-        await t.click(workbenchPage.preselectIndexInfo);
-        let addedScript = await workbenchPage.queryInputScriptArea.nth(3).textContent;
+        await t.click(workbenchPage.preselectIndexInformation);
         //Replace the {index} with indexName value in script and send
-        addedScript = addedScript.replace('"permits"', indexName);
+        let addedScript = await workbenchPage.queryInputScriptArea.nth(2).textContent;
+        addedScript = addedScript.replace('"idx:schools"', indexName);
         addedScript = addedScript.replace(/\s/g, ' ');
+        await t.click(workbenchPage.submitCommandButton);
         await t.pressKey('ctrl+a delete');
         await workbenchPage.sendCommandInWorkbench(addedScript);
+        //Check the FT._LIST result
+        await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command');
         //Check the FT.INFO result
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command');
-        await t.switchToMainWindow();
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
+test
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -68,10 +62,11 @@ test.skip
             `HMSET product:1 name "${keyName}"`,
             `HMSET product:2 name "${keyName}"`
         ];
-        const searchCommand = `FT.SEARCH "${indexName}" "Apple Juice"`;
+        const searchCommand = `FT.SEARCH ${indexName} "${keyName}"`;
         //Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
         //Run automatically added FT.SEARCH script with edits
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         await t.click(workbenchPage.preselectExactSearch);
         await t.pressKey('ctrl+a delete');
@@ -79,15 +74,12 @@ test.skip
         //Check the FT.SEARCH result
         await t.switchToIframe(workbenchPage.iframe);
         const key = workbenchPage.queryTableResult.withText('product:1');
-        const name = workbenchPage.queryTableResult.withText('Apple Juice');
+        const name = workbenchPage.queryTableResult.withText(keyName);
         await t.expect(key.exists).ok('The added key is in the Search result');
         await t.expect(name.exists).ok('The added key name field is in the Search result');
-        await t.switchToMainWindow();
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
+test
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         const aggregationResultField = 'max_price';
         const commandsForSend = [
@@ -99,6 +91,7 @@ test.skip
         //Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
         //Run automatically added FT.Aggregate script with edits
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         await t.click(workbenchPage.preselectGroupBy);
         await t.pressKey('ctrl+a delete');
@@ -107,11 +100,9 @@ test.skip
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryTableResult.textContent).contains(aggregationResultField, 'The aggregation field name is in the Search result');
         await t.expect(workbenchPage.queryTableResult.textContent).contains('100', 'The aggregation max value is in the Search result');
-        await t.switchToMainWindow();
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
+    .meta({ rte: rte.standalone })('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
         const information = [
             '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.',
             '// Enter multiple commands at different rows to run them at once.',
@@ -119,7 +110,7 @@ test
         ];
         //Click on the Manual option
         await t.click(workbenchPage.preselectManual);
-        //Resize the scriptiong area
+        //Resize the scripting area
         const offsetY = 200;
         await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
         //Check the result

@@ -68,6 +68,8 @@ export class BrowserPage {
     fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
     disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
+    removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
+    confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -167,8 +169,9 @@ export class BrowserPage {
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
-    streamFields = Selector('[data-testid=column-label].truncateText span');
+    streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
+    confirmationMessagePopover = Selector('div.euiPopover__panel');
 
     /**
      * Common part for Add any new key
@@ -663,6 +666,12 @@ export class BrowserPage {
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
         // Click on save button
         await t.click(this.treeViewDelimiterValueSave);
+    }
+
+    //Delete entry from Stream key
+    async deleteStreamEntry(): Promise<void> {
+        await t.click(this.removeEntryButton);
+        await t.click(this.confirmRemoveEntryButton);
     }
 }
 

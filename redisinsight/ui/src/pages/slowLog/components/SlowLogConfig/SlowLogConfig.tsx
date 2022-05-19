@@ -8,6 +8,7 @@ import {
   EuiSuperSelect,
   EuiText,
 } from '@elastic/eui'
+import { toNumber } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -28,6 +29,7 @@ import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { openCli } from 'uiSrc/slices/cli/cli-settings'
+import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
 
@@ -152,6 +154,19 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
     </>
   )
 
+  const unitConverter = () => {
+    if (durationUnit === DurationUnits.microSeconds) {
+      const value = numberWithSpaces(convertNumberByUnits(toNumber(slowerThan), DurationUnits.milliSeconds))
+      return `${value} ${DurationUnits.milliSeconds}`
+    }
+
+    if (durationUnit === DurationUnits.milliSeconds) {
+      const value = numberWithSpaces(toNumber(slowerThan) * 1000)
+      return `${value} ${DurationUnits.microSeconds}`
+    }
+    return null
+  }
+
   return (
     <div className={cx(styles.container, { [styles.containerCluster]: connectionType === ConnectionType.Cluster })}>
       {connectionType === ConnectionType.Cluster && (clusterContent())}
@@ -183,7 +198,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   data-test-subj="select-default-unit"
                 />
                 <div className={styles.helpText}>
-                  <div>10 ms</div>
+                  <div data-testid="unit-converter">{unitConverter()}</div>
                   <div>
                     Execution time to exceed in order to log the command.
                     <br />

@@ -331,7 +331,8 @@ export function addNewEntriesAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(addNewEntriesSuccess())
-        dispatch<any>(fetchKeyInfo(data.keyName))
+        dispatch<any>(refreshStreamEntries(data.keyName, false))
+        dispatch<any>(refreshKeyInfoAction(data.keyName))
         onSuccess?.()
       }
     } catch (_err) {

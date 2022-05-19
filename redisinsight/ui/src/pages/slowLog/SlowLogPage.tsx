@@ -159,7 +159,7 @@ const SlowLogPage = () => {
           )}
         </AutoSizer>
         {isEmptySlowLog
-          ? <EmptySlowLog />
+          ? <EmptySlowLog slowlogLogSlowerThan={slowlogLogSlowerThan} durationUnit={durationUnit} />
           : <SlowLogTable items={data} loading={loading} durationUnit={durationUnit} />}
       </div>
     </>

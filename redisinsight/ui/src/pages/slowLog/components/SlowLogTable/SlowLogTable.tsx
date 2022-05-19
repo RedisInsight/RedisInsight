@@ -7,7 +7,6 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { DurationUnits, SortOrder, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { Nullable } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import styles from '../styles.module.scss'
@@ -17,7 +16,7 @@ export const DATE_FORMAT = 'HH:mm:ss d LLL yyyy'
 export interface Props {
   items: any
   loading: boolean
-  durationUnit: Nullable<DurationUnits>
+  durationUnit: DurationUnits
 }
 
 const sortByTimeStamp = (items = [], order: SortOrder) =>

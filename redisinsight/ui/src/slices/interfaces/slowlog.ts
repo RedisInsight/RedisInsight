@@ -8,5 +8,5 @@ export interface StateSlowLog {
   data: SlowLog[]
   lastRefreshTime: Nullable<number>,
   config: Nullable<SlowLogConfig>,
-  durationUnit: Nullable<DurationUnits>
+  durationUnit: DurationUnits
 }

@@ -27,8 +27,10 @@ const slowLogSlice = createSlice({
     getSlowLogs: (state) => {
       state.loading = true
     },
-    getSlowLogsSuccess: (state, { payload: [data, durationUnit] }:
-    PayloadAction<[SlowLog[], Nullable<DurationUnits> ]>) => {
+    getSlowLogsSuccess: (
+      state,
+      { payload: [data, durationUnit] }: PayloadAction<[SlowLog[], DurationUnits]>
+    ) => {
       state.loading = false
       state.data = data
       state.durationUnit = durationUnit
@@ -52,8 +54,10 @@ const slowLogSlice = createSlice({
     getSlowLogConfig: (state) => {
       state.loading = true
     },
-    getSlowLogConfigSuccess: (state, { payload: [data, durationUnit] }:
-    PayloadAction<[SlowLogConfig, Nullable<DurationUnits> ]>) => {
+    getSlowLogConfigSuccess: (
+      state,
+      { payload: [data, durationUnit] }: PayloadAction<[SlowLogConfig, Nullable<DurationUnits> ]>
+    ) => {
       state.loading = false
       state.config = data
 
@@ -203,10 +207,6 @@ export function patchSlowLogConfigAction(
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      console.log('instanceId', instanceId)
-      console.log('config', config)
-      console.log('durationUnit', durationUnit)
-
       dispatch(getSlowLogConfig())
 
       const { data, status } = await apiService.patch<SlowLogConfig>(

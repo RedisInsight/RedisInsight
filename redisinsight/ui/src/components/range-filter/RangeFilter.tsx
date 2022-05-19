@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useState, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
 import { getFormatTime, } from 'uiSrc/utils/streamUtils'
@@ -27,6 +27,9 @@ function usePrevious(value: any) {
 const RangeFilter = (props: Props) => {
   const { max, min, start, end, handleChangeStart, handleChangeEnd } = props
 
+  const [startVal, setStartVal] = useState(start)
+  const [endVal, setEndVal] = useState(end)
+
   const getPercent = useCallback(
     (value) => Math.round(((value - min) / (max - min)) * 100),
     [min, max]
@@ -47,24 +50,36 @@ const RangeFilter = (props: Props) => {
   )
 
   const onChangeStart = useCallback(
-    (event) => {
-      const value = Math.min(+event.target.value, end - 1)
+    ({ target: { value } }) => {
+      setStartVal(value)
+    },
+    []
+  )
+
+  const onMouseUpStart = useCallback(
+    ({ target: { value } }) => {
       handleChangeStart(value)
     },
-    [end]
+    []
+  )
+
+  const onMouseUpEnd = useCallback(
+    ({ target: { value } }) => {
+      handleChangeEnd(value)
+    },
+    []
   )
 
   const onChangeEnd = useCallback(
-    (event) => {
-      const value = Math.max(+event.target.value, start + 1)
-      handleChangeEnd(value)
+    ({ target: { value } }) => {
+      setEndVal(value)
     },
-    [start]
+    []
   )
 
   useEffect(() => {
     if (maxValRef.current) {
-      const minPercent = getPercent(start)
+      const minPercent = getPercent(startVal)
       const maxPercent = getPercent(+maxValRef.current.value)
 
       if (range.current) {
@@ -72,18 +87,26 @@ const RangeFilter = (props: Props) => {
         range.current.style.width = `${maxPercent - minPercent}%`
       }
     }
-  }, [start, getPercent])
+  }, [startVal, getPercent])
 
   useEffect(() => {
     if (minValRef.current) {
       const minPercent = getPercent(+minValRef.current.value)
-      const maxPercent = getPercent(end)
+      const maxPercent = getPercent(endVal)
 
       if (range.current) {
         range.current.style.width = `${maxPercent - minPercent}%`
       }
     }
-  }, [end, getPercent])
+  }, [endVal, getPercent])
+
+  useEffect(() => {
+    setStartVal(start)
+  }, [start])
+
+  useEffect(() => {
+    setEndVal(end)
+  }, [end])
 
   useEffect(() => {
     if (max && prevValue && prevValue.max !== max && end === prevValue.max) {
@@ -117,9 +140,10 @@ const RangeFilter = (props: Props) => {
           type="range"
           min={min}
           max={max}
-          value={start}
+          value={startVal}
           ref={minValRef}
           onChange={onChangeStart}
+          onMouseUp={onMouseUpStart}
           className={cx(styles.thumb, styles.thumbZindex3)}
           data-testid="range-start-input"
         />
@@ -127,9 +151,10 @@ const RangeFilter = (props: Props) => {
           type="range"
           min={min}
           max={max}
-          value={end}
+          value={endVal}
           ref={maxValRef}
           onChange={onChangeEnd}
+          onMouseUp={onMouseUpEnd}
           className={cx(styles.thumb, styles.thumbZindex4)}
           data-testid="range-end-input"
         />

@@ -24,7 +24,9 @@ function usePrevious(value: any) {
   return ref.current
 }
 
-const RangeFilter = ({ max, min, start, end, handleChangeStart, handleChangeEnd }: Props) => {
+const RangeFilter = (props: Props) => {
+  const { max, min, start, end, handleChangeStart, handleChangeEnd } = props
+
   const getPercent = useCallback(
     (value) => Math.round(((value - min) / (max - min)) * 100),
     [min, max]
@@ -42,6 +44,22 @@ const RangeFilter = ({ max, min, start, end, handleChangeStart, handleChangeEnd 
       handleChangeEnd(max)
     },
     [min, max]
+  )
+
+  const onChangeStart = useCallback(
+    (event) => {
+      const value = Math.min(+event.target.value, end - 1)
+      handleChangeStart(value)
+    },
+    [end]
+  )
+
+  const onChangeEnd = useCallback(
+    (event) => {
+      const value = Math.max(+event.target.value, start + 1)
+      handleChangeEnd(value)
+    },
+    [start]
   )
 
   useEffect(() => {
@@ -101,11 +119,7 @@ const RangeFilter = ({ max, min, start, end, handleChangeStart, handleChangeEnd 
           max={max}
           value={start}
           ref={minValRef}
-          onChange={(event) => {
-            const value = Math.min(+event.target.value, end - 1)
-            handleChangeStart(value)
-            event.target.value = value.toString()
-          }}
+          onChange={onChangeStart}
           className={cx(styles.thumb, styles.thumbZindex3)}
           data-testid="range-start-input"
         />
@@ -115,11 +129,7 @@ const RangeFilter = ({ max, min, start, end, handleChangeStart, handleChangeEnd 
           max={max}
           value={end}
           ref={maxValRef}
-          onChange={(event) => {
-            const value = Math.max(+event.target.value, start + 1)
-            handleChangeEnd(value)
-            event.target.value = value.toString()
-          }}
+          onChange={onChangeEnd}
           className={cx(styles.thumb, styles.thumbZindex4)}
           data-testid="range-end-input"
         />

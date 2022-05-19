@@ -129,6 +129,7 @@ export class SlowLogService {
     try {
       const commands = [];
       const config = await this.getConfig(clientOptions);
+      const { slowlogLogSlowerThan, slowlogMaxLen } = config;
 
       if (dto.slowlogLogSlowerThan !== undefined) {
         commands.push({
@@ -136,7 +137,7 @@ export class SlowLogService {
           args: [SlowLogArguments.Set, 'slowlog-log-slower-than', dto.slowlogLogSlowerThan],
           analytics: () => this.analyticsService.slowlogLogSlowerThanUpdated(
             clientOptions.instanceId,
-            config.slowlogLogSlowerThan,
+            slowlogLogSlowerThan,
             dto.slowlogLogSlowerThan,
           ),
         });
@@ -150,7 +151,7 @@ export class SlowLogService {
           args: [SlowLogArguments.Set, 'slowlog-max-len', dto.slowlogMaxLen],
           analytics: () => this.analyticsService.slowlogMaxLenUpdated(
             clientOptions.instanceId,
-            config.slowlogMaxLen,
+            slowlogMaxLen,
             dto.slowlogMaxLen,
           ),
         });

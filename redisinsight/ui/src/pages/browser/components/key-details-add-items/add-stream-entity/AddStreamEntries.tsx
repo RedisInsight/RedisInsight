@@ -45,7 +45,10 @@ const AddStreamEntries = (props: Props) => {
       return
     }
 
-    if (!lastEntry.id) return
+    if (!lastEntry?.id) {
+      setEntryIdError('')
+      return
+    }
 
     if (entryID === '*') {
       setEntryIdError('')

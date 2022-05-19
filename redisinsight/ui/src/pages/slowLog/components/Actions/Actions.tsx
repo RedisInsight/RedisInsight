@@ -120,7 +120,6 @@ const Actions = (props: Props) => {
         />
       </EuiFlexItem>
       <EuiFlexItem>
-
         <EuiPopover
           ownFocus
           anchorPosition="downRight"
@@ -153,14 +152,19 @@ const Actions = (props: Props) => {
           closePopover={closePopoverClear}
           panelPaddingSize="m"
           button={(
-            <EuiButtonIcon
-              iconType="eraser"
-              className={styles.icon}
-              color="primary"
-              aria-label="Clear Slow Log"
-              onClick={() => showClearPopover()}
-              data-testid="clear-btn"
-            />
+            <EuiToolTip
+              position="left"
+              anchorClassName={styles.icon}
+              content="Clear Slow Log"
+            >
+              <EuiButtonIcon
+                iconType="eraser"
+                color="primary"
+                aria-label="Clear Slow Log"
+                onClick={() => showClearPopover()}
+                data-testid="clear-btn"
+              />
+            </EuiToolTip>
           )}
         >
           {ToolTipContent}

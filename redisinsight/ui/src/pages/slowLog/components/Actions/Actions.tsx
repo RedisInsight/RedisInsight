@@ -19,8 +19,8 @@ import { slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
 import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import styles from './styles.module.scss'
 import SlowLogConfig from '../SlowLogConfig'
+import styles from './styles.module.scss'
 
 export interface Props {
   width: number
@@ -68,9 +68,23 @@ const Actions = (props: Props) => {
         : TelemetryEvent.SLOWLOG_AUTO_REFRESH_DISABLED,
       eventData: {
         databaseId: instanceId,
-        refreshRate: enableAutoRefresh ? refreshRate : undefined
+        refreshRate: enableAutoRefresh ? +refreshRate : undefined
       }
     })
+  }
+
+  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+    if (enableAutoRefresh) {
+      sendEventTelemetry({
+        event: enableAutoRefresh
+          ? TelemetryEvent.SLOWLOG_AUTO_REFRESH_ENABLED
+          : TelemetryEvent.SLOWLOG_AUTO_REFRESH_DISABLED,
+        eventData: {
+          databaseId: instanceId,
+          refreshRate: +refreshRate
+        }
+      })
+    }
   }
 
   const ToolTipContent = (
@@ -116,6 +130,7 @@ const Actions = (props: Props) => {
           containerClassName={styles.refreshContainer}
           onRefresh={onRefresh}
           onEnableAutoRefresh={handleEnableAutoRefresh}
+          onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
           testid="refresh-slowlog-btn"
         />
       </EuiFlexItem>

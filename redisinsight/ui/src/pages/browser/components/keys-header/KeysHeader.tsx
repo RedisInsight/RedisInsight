@@ -107,17 +107,19 @@ const KeysHeader = (props: Props) => {
     height: '36px !important',
   }
 
-  const handleRefreshKeys = () => {
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId
-      }
-    })
+  const handleRefreshKeys = (enableAutoRefresh: boolean) => {
+    if (!enableAutoRefresh) {
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
+          TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED
+        ),
+        eventData: {
+          databaseId: instanceId
+        }
+      })
+    }
     dispatch(fetchKeys(
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,

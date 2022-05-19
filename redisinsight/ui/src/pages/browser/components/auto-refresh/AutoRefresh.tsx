@@ -29,8 +29,9 @@ export interface Props {
   testid?: string
   containerClassName?: string
   turnOffAutoRefresh?: boolean
-  onRefresh: () => void
+  onRefresh: (enableAutoRefresh?: boolean) => void
   onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
+  onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
@@ -45,6 +46,7 @@ const AutoRefresh = ({
   turnOffAutoRefresh,
   onRefresh,
   onEnableAutoRefresh,
+  onChangeAutoRefreshRate,
 }: Props) => {
   let intervalText: NodeJS.Timeout
   let timeoutRefresh: NodeJS.Timeout
@@ -126,10 +128,12 @@ const AutoRefresh = ({
     )
   }
 
-  const handleApplyAutoRefreshRate = (value: string) => {
-    setRefreshRate(+value > MIN_REFRESH_RATE ? value : `${MIN_REFRESH_RATE}`)
+  const handleApplyAutoRefreshRate = (initValue: string) => {
+    const value = +initValue >= MIN_REFRESH_RATE ? initValue : `${MIN_REFRESH_RATE}`
+    setRefreshRate(value)
     setEditingRate(false)
     localStorageService.set(BrowserStorageItem.autoRefreshRate + postfix, value)
+    onChangeAutoRefreshRate?.(enableAutoRefresh, value)
   }
 
   const handleDeclineAutoRefreshRate = () => {
@@ -137,7 +141,7 @@ const AutoRefresh = ({
   }
 
   const handleRefresh = () => {
-    onRefresh()
+    onRefresh(enableAutoRefresh)
   }
 
   const onChangeEnableAutoRefresh = (value: boolean) => {
@@ -207,7 +211,7 @@ const AutoRefresh = ({
           {!editingRate && (
             <EuiTextColor
               color="subdued"
-              style={{ cursor: 'pointer' }}
+              className={styles.refreshRateText}
               onClick={() => setEditingRate(true)}
               data-testid="refresh-rate"
             >

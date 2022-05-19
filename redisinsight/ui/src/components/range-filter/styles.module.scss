@@ -92,7 +92,7 @@
   height: 12px;
   background-color: var(--euiColorPrimary);
   border: none;
-  cursor: pointer;
+  cursor: ew-resize;
   margin-top: 4px;
   pointer-events: all;
   position: relative;
@@ -111,7 +111,7 @@ input[type='range']::-webkit-slider-thumb {
   height: 12px;
   background-color: var(--euiColorPrimary);
   border: none;
-  cursor: pointer;
+  cursor: ew-resize;
   margin-top: 4px;
   pointer-events: all;
   position: relative;

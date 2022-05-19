@@ -26,7 +26,7 @@ describe('RangeFilter', () => {
     )
     const startRangeInput = screen.getByTestId(startRangeTestId)
 
-    fireEvent.change(
+    fireEvent.mouseUp(
       startRangeInput,
       { target: { value: 123 } }
     )
@@ -45,7 +45,7 @@ describe('RangeFilter', () => {
     )
     const endRangeInput = screen.getByTestId(endRangeTestId)
 
-    fireEvent.change(
+    fireEvent.mouseUp(
       endRangeInput,
       { target: { value: 15 } }
     )

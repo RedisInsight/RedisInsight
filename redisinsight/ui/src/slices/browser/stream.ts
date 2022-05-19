@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { AxiosError } from 'axios'
+import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { fetchKeyInfo, refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { getStreamRangeStart, getStreamRangeEnd } from 'uiSrc/utils/streamUtils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -159,6 +159,9 @@ export const streamRangeSelector = (state: RootState) => state.browser.stream?.r
 // The reducer
 export default streamSlice.reducer
 
+// eslint-disable-next-line import/no-mutable-exports
+export let sourceStreamFetch: Nullable<CancelTokenSource> = null
+
 // Asynchronous thunk action
 export function fetchStreamEntries(
   key: string,
@@ -171,6 +174,11 @@ export function fetchStreamEntries(
     dispatch(loadEntries(resetData))
 
     try {
+      sourceStreamFetch?.cancel?.()
+
+      const { CancelToken } = axios
+      sourceStreamFetch = CancelToken.source()
+
       const state = stateInit()
       const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
       const end = getStreamRangeEnd(state.browser.stream.range.end, state.browser.stream.data.lastEntry?.id)
@@ -185,18 +193,22 @@ export function fetchStreamEntries(
           end,
           count,
           sortOrder
-        }
+        },
+        { cancelToken: sourceStreamFetch.token }
       )
 
+      sourceStreamFetch = null
       if (isStatusSuccessful(status)) {
         dispatch(loadEntriesSuccess([data, sortOrder]))
         onSuccess?.(data)
       }
     } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(loadEntriesFailure(errorMessage))
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadEntriesFailure(errorMessage))
+      }
     }
   }
 }
@@ -210,6 +222,11 @@ export function refreshStreamEntries(
     dispatch(loadEntries(resetData))
 
     try {
+      sourceStreamFetch?.cancel?.()
+
+      const { CancelToken } = axios
+      sourceStreamFetch = CancelToken.source()
+
       const state = stateInit()
       const { sortOrder } = state.browser.stream
       const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
@@ -225,17 +242,21 @@ export function refreshStreamEntries(
           end,
           sortOrder,
           count: SCAN_COUNT_DEFAULT,
-        }
+        },
+        { cancelToken: sourceStreamFetch.token }
       )
 
+      sourceStreamFetch = null
       if (isStatusSuccessful(status)) {
         dispatch(loadEntriesSuccess([data, sortOrder]))
       }
     } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(loadEntriesFailure(errorMessage))
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadEntriesFailure(errorMessage))
+      }
     }
   }
 }
@@ -253,6 +274,10 @@ export function fetchMoreStreamEntries(
     dispatch(loadMoreEntries())
 
     try {
+      sourceStreamFetch?.cancel?.()
+
+      const { CancelToken } = axios
+      sourceStreamFetch = CancelToken.source()
       const state = stateInit()
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
@@ -265,18 +290,22 @@ export function fetchMoreStreamEntries(
           end,
           count,
           sortOrder
-        }
+        },
+        { cancelToken: sourceStreamFetch.token }
       )
 
+      sourceStreamFetch = null
       if (isStatusSuccessful(status)) {
         dispatch(loadMoreEntriesSuccess(data))
         onSuccess?.(data)
       }
     } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(loadMoreEntriesFailure(errorMessage))
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadMoreEntriesFailure(errorMessage))
+      }
     }
   }
 }

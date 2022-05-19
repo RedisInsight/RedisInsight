@@ -94,7 +94,7 @@ const StreamDetails = (props: Props) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
 
-    dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, order))
+    dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, order, false))
   }
 
   const handleChangeStartFilter = useCallback(

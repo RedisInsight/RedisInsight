@@ -178,18 +178,20 @@ const KeyDetailsHeader = ({
     })
   }
 
-  const handleRefreshKey = () => {
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId,
-        keyType: type
-      }
-    })
+  const handleRefreshKey = (enableAutoRefresh: boolean) => {
+    if (!enableAutoRefresh) {
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
+          TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: type
+        }
+      })
+    }
     onRefresh(key, type)
   }
 

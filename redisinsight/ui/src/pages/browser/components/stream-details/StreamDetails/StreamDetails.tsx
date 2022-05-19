@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last, isNull } from 'lodash'
 import cx from 'classnames'
@@ -7,18 +7,20 @@ import { EuiButtonIcon, EuiProgress } from '@elastic/eui'
 import {
   fetchMoreStreamEntries,
   fetchStreamEntries,
+  updateStart,
+  updateEnd,
   streamDataSelector,
   streamSelector,
   streamRangeSelector,
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
+import RangeFilter from 'uiSrc/components/range-filter/RangeFilter'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
 import { getTimestampFromId } from 'uiSrc/utils/streamUtils'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
-import StreamRangeFilter from './StreamRangeFilter'
 
 import styles from './styles.module.scss'
 
@@ -95,10 +97,60 @@ const StreamDetails = (props: Props) => {
     dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, order))
   }
 
+  const handleChangeStartFilter = useCallback(
+    (value: number) => {
+      dispatch(updateStart(value.toString()))
+    },
+    []
+  )
+
+  const handleChangeEndFilter = useCallback(
+    (value: number) => {
+      dispatch(updateEnd(value.toString()))
+    },
+    []
+  )
+
+  const firstEntryTimeStamp = useMemo(() => getTimestampFromId(firstEntry?.id), [firstEntry?.id])
+  const lastEntryTimeStamp = useMemo(() => getTimestampFromId(lastEntry?.id), [lastEntry?.id])
+
+  const startNumber = useMemo(() => (start === '' ? 0 : parseInt(start, 10)), [start])
+  const endNumber = useMemo(() => (end === '' ? 0 : parseInt(end, 10)), [end])
+
+  useEffect(() => {
+    if (start === '' && firstEntry?.id !== '') {
+      dispatch(updateStart(firstEntryTimeStamp.toString()))
+    }
+  }, [firstEntryTimeStamp])
+
+  useEffect(() => {
+    if (end === '' && lastEntry?.id !== '') {
+      dispatch(updateEnd(lastEntryTimeStamp.toString()))
+    }
+  }, [lastEntryTimeStamp])
+
+  useEffect(() => {
+    if (start !== '' && end !== '') {
+      dispatch(fetchStreamEntries(
+        key,
+        SCAN_COUNT_DEFAULT,
+        sortedColumnOrder,
+        false
+      ))
+    }
+  }, [start, end])
+
   return (
     <>
       {shouldFilterRender ? (
-        <StreamRangeFilter sortedColumnOrder={sortedColumnOrder} />
+        <RangeFilter
+          max={lastEntryTimeStamp}
+          min={firstEntryTimeStamp}
+          start={startNumber}
+          end={endNumber}
+          handleChangeStart={handleChangeStartFilter}
+          handleChangeEnd={handleChangeEndFilter}
+        />
       )
         : (
           <div className={styles.rangeWrapper}>

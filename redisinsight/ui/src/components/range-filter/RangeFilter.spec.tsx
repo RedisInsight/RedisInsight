@@ -51,15 +51,13 @@ describe('RangeFilter', () => {
     )
     expect(handleChangeEnd).toBeCalledTimes(1)
   })
-  it('should reset start and end values on press Reset buttons', () => {
-    const handleChangeEnd = jest.fn()
-    const handleChangeStart = jest.fn()
+  it('should call handleResetFilter onClick reset button', () => {
+    const handleResetFilter = jest.fn()
 
     render(
       <RangeFilter
         {...instance(mockedProps)}
-        handleChangeStart={handleChangeStart}
-        handleChangeEnd={handleChangeEnd}
+        handleResetFilter={handleResetFilter}
         start={1}
         end={100}
         min={1}
@@ -70,7 +68,6 @@ describe('RangeFilter', () => {
 
     fireEvent.click(resetBtn)
 
-    expect(handleChangeEnd).toBeCalledWith(120)
-    expect(handleChangeStart).toBeCalledWith(1)
+    expect(handleResetFilter).toBeCalledTimes(1)
   })
 })

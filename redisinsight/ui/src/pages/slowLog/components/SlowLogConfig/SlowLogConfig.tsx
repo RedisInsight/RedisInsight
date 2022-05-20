@@ -11,7 +11,7 @@ import {
 import { toNumber } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 import {
   DEFAULT_SLOWLOG_DURATION_UNIT,
@@ -20,7 +20,6 @@ import {
   DurationUnits,
   DURATION_UNITS,
   MINUS_ONE,
-  Pages
 } from 'uiSrc/constants'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
@@ -28,7 +27,6 @@ import { setDBConfigStorageField } from 'uiSrc/services'
 import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { openCli } from 'uiSrc/slices/cli/cli-settings'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
@@ -40,7 +38,6 @@ export interface Props {
 
 const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   const options = DURATION_UNITS
-  const history = useHistory()
   const { instanceId } = useParams<{ instanceId: string }>()
   const { connectionType } = useSelector(connectedInstanceSelector)
   const { loading, durationUnit: durationUnitStore } = useSelector(slowLogSelector)
@@ -99,46 +96,18 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
     closePopover()
   }
 
-  const handleGoWorkbenchPage = (e: React.MouseEvent) => {
-    e.preventDefault()
-    history.push(Pages.workbench(instanceId))
-  }
-
-  const handleOpenCli = (e: React.MouseEvent) => {
-    e.preventDefault()
-    dispatch(openCli())
-  }
-
-  const disabledApplyBtn = () => errorValidateNegativeInteger(`${slowerThan}`)
+  const disabledApplyBtn = () => errorValidateNegativeInteger(`${slowerThan}`) || loading
 
   const clusterContent = () => (
     <>
       <EuiText color="subdued" className={styles.clusterText}>
-        {'Each node can have different Slow Log configuration in a clustered database. Use '}
-        <a
-          tabIndex={0}
-          onClick={handleOpenCli}
-          className={styles.link}
-          data-testid="internal-cli-link"
-          onKeyDown={() => ({})}
-          role="link"
-          rel="noreferrer"
-        >
-          CLI
-        </a>
+        Each node can have different Slow Log configuration in a clustered database.
+        <EuiSpacer size="s" />
+        {'Use '}
+        <code>CONFIG SET slowlog-log-slower-than</code>
         {' or '}
-        <a
-          tabIndex={0}
-          onClick={handleGoWorkbenchPage}
-          className={styles.link}
-          data-testid="internal-workbench-link"
-          onKeyDown={() => ({})}
-          role="link"
-          rel="noreferrer"
-        >
-          Workbench
-        </a>
-        {' to configure it.'}
+        <code>CONFIG SET slowlog-max-len</code>
+        {' specific node in redis-cli to configure it.'}
       </EuiText>
 
       <EuiSpacer size="xs" />
@@ -186,7 +155,6 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     setSlowerThan(validateNumber(e.target.value.trim(), Infinity, -1))
                   }}
-                  isLoading={loading}
                   autoComplete="off"
                   data-testid="slower-than-input"
                 />
@@ -219,12 +187,11 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   placeholder={`${slowlogMaxLen}`}
                   value={maxLen}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => { setMaxLen(validateNumber(e.target.value.trim())) }}
-                  isLoading={loading}
                   autoComplete="off"
                   data-testid="max-len-input"
                 />
                 <div className={styles.helpText}>
-                  The length of the Slow Log.When a new command is logged the oldest
+                  The length of the Slow Log. When a new command is logged the oldest
                   <br />
                   one is removed from the queue of logged commands.
                 </div>

@@ -1,5 +1,6 @@
 .container {
   position: relative;
+  white-space: nowrap;
 }
 
 .btn {
@@ -116,6 +117,21 @@
   }
 }
 
+.refreshRatePencil {
+  display: none;
+  right: 61px;
+  margin-bottom: 3px;
+  background-color: var(--browserTableRowEven);
+  width: 26px !important;
+  height: 28px !important;
+  padding: 5px;
+  position: absolute;
+
+  svg {
+    margin-top: -16px !important;
+  }
+}
+
 .refreshRateText {
   display: inline-block;
   width: 80px;
@@ -126,5 +142,9 @@
   &:hover {
     padding-left: 5px;
     border-color: var(--controlsBorderColor);
+
+    .refreshRatePencil {
+      display: inline-block !important;
+    }
   }
 }

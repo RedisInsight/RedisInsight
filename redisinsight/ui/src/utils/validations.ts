@@ -91,7 +91,7 @@ export const validateRefreshRateNumber = (initValue: string) => {
     return MAX_REFRESH_RATE.toString()
   }
 
-  if (+value < 0 || (+value === 0 && initValue !== '0')) {
+  if (+value < 0) {
     return ''
   }
 

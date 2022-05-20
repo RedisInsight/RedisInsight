@@ -107,7 +107,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
         <code>CONFIG SET slowlog-log-slower-than</code>
         {' or '}
         <code>CONFIG SET slowlog-max-len</code>
-        {' specific node in redis-cli to configure it.'}
+        {' for a specific node in redis-cli to configure it.'}
       </EuiText>
 
       <EuiSpacer size="xs" />

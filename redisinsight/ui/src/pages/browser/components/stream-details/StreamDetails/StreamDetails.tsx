@@ -28,11 +28,23 @@ const headerHeight = 60
 const rowHeight = 54
 const actionsWidth = 54
 const minColumnWidth = 190
-const xrangeIdPrefix = '('
-const noItemsMessageString = 'There are no Entries in the Stream.'
+const noItemsMessageInEmptyStream = 'There are no Entries in the Stream.'
+const noItemsMessageInRange = 'No results found.'
 
 interface IStreamEntry extends StreamEntryDto {
   editing: boolean
+}
+
+const getNextId = (id: string, sortOrder: SortOrder): string => {
+  const splittedId = id.split('-')
+  // if we don't have prefix
+  if (splittedId.length === 1) {
+    return `${id}-1`
+  }
+  if (sortOrder === SortOrder.DESC) {
+    return splittedId[1] === '0' ? `${parseInt(splittedId[0], 10) - 1}` : `${splittedId[0]}-${+splittedId[1] - 1}`
+  }
+  return `${splittedId[0]}-${+splittedId[1] + 1}`
 }
 
 export interface Props {
@@ -72,22 +84,31 @@ const StreamDetails = (props: Props) => {
         return false
       }
       return sortedColumnOrder === SortOrder.ASC
-        ? lastLoadedEntryTimeStamp > lastRangeEntryTimestamp
-        : lastLoadedEntryTimeStamp < firstRangeEntryTimestamp
+        ? lastLoadedEntryTimeStamp <= lastRangeEntryTimestamp
+        : lastLoadedEntryTimeStamp >= firstRangeEntryTimestamp
     }
-    const previousLoadedString = `${xrangeIdPrefix + lastLoadedEntryId}`
+    const nextId = getNextId(lastLoadedEntryId, sortedColumnOrder)
 
     if (shouldLoadMore()) {
       dispatch(
         fetchMoreStreamEntries(
           key,
-          sortedColumnOrder === SortOrder.DESC ? start : previousLoadedString,
-          sortedColumnOrder === SortOrder.DESC ? previousLoadedString : end,
+          sortedColumnOrder === SortOrder.DESC ? start : nextId,
+          sortedColumnOrder === SortOrder.DESC ? nextId : end,
           SCAN_COUNT_DEFAULT,
           sortedColumnOrder,
         )
       )
     }
+  }
+
+  const loadEntries = () => {
+    dispatch(fetchStreamEntries(
+      key,
+      SCAN_COUNT_DEFAULT,
+      sortedColumnOrder,
+      false
+    ))
   }
 
   const onChangeSorting = (column: any, order: SortOrder) => {
@@ -100,6 +121,7 @@ const StreamDetails = (props: Props) => {
   const handleChangeStartFilter = useCallback(
     (value: number) => {
       dispatch(updateStart(value.toString()))
+      loadEntries()
     },
     []
   )
@@ -107,6 +129,7 @@ const StreamDetails = (props: Props) => {
   const handleChangeEndFilter = useCallback(
     (value: number) => {
       dispatch(updateEnd(value.toString()))
+      loadEntries()
     },
     []
   )
@@ -116,6 +139,15 @@ const StreamDetails = (props: Props) => {
 
   const startNumber = useMemo(() => (start === '' ? 0 : parseInt(start, 10)), [start])
   const endNumber = useMemo(() => (end === '' ? 0 : parseInt(end, 10)), [end])
+
+  const handleResetFilter = useCallback(
+    () => {
+      dispatch(updateStart(firstEntryTimeStamp.toString()))
+      dispatch(updateEnd(lastEntryTimeStamp.toString()))
+      loadEntries()
+    },
+    [lastEntryTimeStamp, firstEntryTimeStamp]
+  )
 
   useEffect(() => {
     if (start === '' && firstEntry?.id !== '') {
@@ -129,17 +161,6 @@ const StreamDetails = (props: Props) => {
     }
   }, [lastEntryTimeStamp])
 
-  useEffect(() => {
-    if (start !== '' && end !== '') {
-      dispatch(fetchStreamEntries(
-        key,
-        SCAN_COUNT_DEFAULT,
-        sortedColumnOrder,
-        false
-      ))
-    }
-  }, [start, end])
-
   return (
     <>
       {shouldFilterRender ? (
@@ -150,6 +171,7 @@ const StreamDetails = (props: Props) => {
           end={endNumber}
           handleChangeStart={handleChangeStartFilter}
           handleChangeEnd={handleChangeEndFilter}
+          handleResetFilter={handleResetFilter}
         />
       )
         : (
@@ -191,7 +213,7 @@ const StreamDetails = (props: Props) => {
           totalItemsCount={total}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
-          noItemsMessage={noItemsMessageString}
+          noItemsMessage={isNull(firstEntry) && isNull(lastEntry) ? noItemsMessageInEmptyStream : noItemsMessageInRange}
           tableWidth={columns.length * minColumnWidth - actionsWidth}
           sortedColumn={entries?.length ? {
             column: sortedColumnName,

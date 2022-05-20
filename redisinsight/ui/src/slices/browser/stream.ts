@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
-import { remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
-import { fetchKeyInfo, refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
+import { refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { getStreamRangeStart, getStreamRangeEnd } from 'uiSrc/utils/streamUtils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -13,7 +12,6 @@ import {
   AddStreamEntriesDto,
   AddStreamEntriesResponse,
   GetStreamEntriesResponse,
-  StreamEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateStream } from '../interfaces/stream'
@@ -108,14 +106,6 @@ const streamSlice = createSlice({
       state.loading = false
       state.error = payload
     },
-    removeEntriesFromList: (state, { payload }: PayloadAction<string[]>) => {
-      remove(state.data?.entries, (entry: StreamEntryDto) => payload.includes(entry.id))
-
-      state.data = {
-        ...state.data,
-        total: state.data.total - 1,
-      }
-    },
     updateStart: (state, { payload }: PayloadAction<string>) => {
       state.range.start = payload
     },
@@ -145,7 +135,6 @@ export const {
   removeStreamEntries,
   removeStreamEntriesSuccess,
   removeStreamEntriesFailure,
-  removeEntriesFromList,
   updateStart,
   updateEnd,
   cleanRangeFilter
@@ -364,7 +353,7 @@ export function deleteStreamEntry(key: string, entries: string[]) {
       )
       if (isStatusSuccessful(status)) {
         dispatch(removeStreamEntriesSuccess())
-        dispatch(removeEntriesFromList(entries))
+        dispatch<any>(refreshStreamEntries(key, false))
         dispatch<any>(refreshKeyInfoAction(key))
         dispatch(addMessageNotification(
           successMessages.REMOVED_KEY_VALUE(

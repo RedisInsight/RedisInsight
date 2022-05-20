@@ -90,7 +90,7 @@ const streamSlice = createSlice({
       state.error = ''
     },
     addNewEntriesSuccess: (state) => {
-      state.loading = true
+      state.loading = false
     },
     addNewEntriesFailure: (state, { payload }) => {
       state.loading = false

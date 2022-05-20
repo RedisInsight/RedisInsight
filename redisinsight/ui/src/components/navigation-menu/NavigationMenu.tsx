@@ -120,7 +120,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
       },
     },
     {
-      tooltipText: 'SlowLog',
+      tooltipText: 'Slow Log',
       ariaLabel: 'SlowLog page button',
       onClick: handleGoSlowLogPage,
       dataTestId: 'slowlog-page-btn',

@@ -16,20 +16,6 @@
   &.rolling svg {
     color: var(--euiColorPrimary) !important;
   }
-
-  &.rolling:focus,
-  &.rolling {
-    animation: refresh 2s 0s infinite linear;
-  }
-}
-
-@keyframes refresh {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .time {

@@ -7,7 +7,7 @@
 
 .containerCluster {
   width: 394px;
-  height: 88px;
+  height: 150px;
 }
 
 .selectWrapper {
@@ -104,6 +104,18 @@
 
   a {
     color: var(--euiColorFullShade) !important;
+  }
+
+  code {
+    font-size: 13px;
+    line-height: 18px;
+    padding-left: 4px;
+    padding-right: 4px;
+    color: var(--inputTextColor);
+
+    &:last-of-type {
+      padding-left: 0 !important;
+    }
   }
 }
 

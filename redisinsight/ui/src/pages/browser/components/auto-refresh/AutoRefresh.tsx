@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiButtonIcon, EuiPopover, EuiSwitch, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiIcon, EuiPopover, EuiSwitch, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import {
@@ -216,6 +216,7 @@ const AutoRefresh = ({
               data-testid="refresh-rate"
             >
               {`${refreshRate} s`}
+              <div className={styles.refreshRatePencil}><EuiIcon type="pencil" /></div>
             </EuiTextColor>
           )}
           {editingRate && (

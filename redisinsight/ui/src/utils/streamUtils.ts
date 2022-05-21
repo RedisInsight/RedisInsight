@@ -8,14 +8,14 @@ export const getTimestampFromId = (id: string = ''): number =>
   parseInt(id.split('-')[0], 10)
 
 export const getStreamRangeStart = (start: string, firstEntryId: string) => {
-  if (start === '' || firstEntryId === '' || start === getTimestampFromId(firstEntryId).toString()) {
+  if (start === '' || !firstEntryId || start === getTimestampFromId(firstEntryId).toString()) {
     return SCAN_STREAM_START_DEFAULT
   }
   return start
 }
 
 export const getStreamRangeEnd = (end: string, endEtryId: string) => {
-  if (end === '' || endEtryId === '' || end === getTimestampFromId(endEtryId).toString()) {
+  if (end === '' || !endEtryId || end === getTimestampFromId(endEtryId).toString()) {
     return SCAN_STREAM_END_DEFAULT
   }
   return end

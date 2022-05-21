@@ -56,6 +56,14 @@
   margin-top: -30px;
 }
 
+.sliderLeftValue.leftPosition {
+  transform: translateX(-100%);
+}
+
+.sliderRightValue.rightPosition {
+  transform: translateX(100%);
+}
+
 .sliderRightValue {
   right: -4px;
 }

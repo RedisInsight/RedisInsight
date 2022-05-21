@@ -157,8 +157,8 @@ const RangeFilter = (props: Props) => {
         <div className={styles.slider}>
           <div className={styles.sliderTrack} />
           <div ref={range} className={styles.sliderRange}>
-            <div className={styles.sliderLeftValue}>{getFormatTime(start?.toString())}</div>
-            <div className={styles.sliderRightValue}>{getFormatTime(end?.toString())}</div>
+            <div className={`${styles.sliderLeftValue} ${max - startVal > (max - min) / 2 ? '' : styles.leftPosition}`}>{getFormatTime(startVal?.toString())}</div>
+            <div className={`${styles.sliderRightValue} ${max - endVal < (max - min) / 2 ? '' : styles.rightPosition}`}>{getFormatTime(endVal?.toString())}</div>
           </div>
         </div>
       </div>

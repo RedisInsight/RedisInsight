@@ -150,12 +150,18 @@ const StreamDetails = (props: Props) => {
   )
 
   useEffect(() => {
+    if (isNull(firstEntry)) {
+      dispatch(updateStart(''))
+    }
     if (start === '' && firstEntry?.id !== '') {
       dispatch(updateStart(firstEntryTimeStamp.toString()))
     }
   }, [firstEntryTimeStamp])
 
   useEffect(() => {
+    if (isNull(lastEntry)) {
+      dispatch(updateEnd(''))
+    }
     if (end === '' && lastEntry?.id !== '') {
       dispatch(updateEnd(lastEntryTimeStamp.toString()))
     }

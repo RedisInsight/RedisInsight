@@ -318,37 +318,6 @@ describe('stream slice', () => {
     })
   })
 
-  describe('removeEntriesFromList', () => {
-    it('should properly remove entries from list', () => {
-      // Arrange
-      const startState = {
-        ...initialState,
-        data: {
-          ...mockedData
-        }
-      }
-
-      const endState = {
-        ...initialState,
-        loading: false,
-        data: {
-          ...mockedData,
-          entries: [],
-          total: 0
-        }
-      }
-
-      // Act
-      const nextState = reducer(startState, removeEntriesFromList([mockedData.entries[0].id]))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        browser: { stream: nextState },
-      })
-      expect(streamSelector(rootState)).toEqual(endState)
-    })
-  })
-
   describe('updateStart', () => {
     it('should properly set the state', () => {
       // Arrange

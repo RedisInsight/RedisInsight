@@ -72,8 +72,23 @@ const StreamDetailsWrapper = (props: Props) => {
     setDeleting(`${entry + suffix}`)
   }, [])
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Stream,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteEntry = (entryId = '') => {
-    dispatch(deleteStreamEntry(key, [entryId]))
+    dispatch(deleteStreamEntry(key, [entryId], onSuccessRemoved))
     closePopover()
   }
 

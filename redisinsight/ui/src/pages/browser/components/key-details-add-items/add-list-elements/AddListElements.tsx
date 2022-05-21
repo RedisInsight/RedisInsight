@@ -13,8 +13,11 @@ import {
   EuiSuperSelectOption,
 } from '@elastic/eui'
 
-import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { insertListElementsAction } from 'uiSrc/slices/browser/list'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { KeyTypes } from 'uiSrc/constants'
 import { PushElementToListDto } from 'apiSrc/modules/browser/dto'
 
 import { AddListFormConfig as config } from '../../add-key/constants/fields-config'
@@ -50,6 +53,8 @@ const AddListElements = (props: Props) => {
   const [element, setElement] = useState<string>('')
   const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { viewType } = useSelector(keysSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const elementInput = useRef<HTMLInputElement>(null)
 
@@ -60,13 +65,29 @@ const AddListElements = (props: Props) => {
     elementInput.current?.focus()
   }, [])
 
+  const onSuccessAdded = () => {
+    onCancel()
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.List,
+        numberOfAdded: 1,
+      }
+    })
+  }
+
   const submitData = (): void => {
     const data: PushElementToListDto = {
       keyName: selectedKey,
       element,
       destination,
     }
-    dispatch(insertListElementsAction(data, props.onCancel))
+    dispatch(insertListElementsAction(data, onSuccessAdded))
   }
 
   return (

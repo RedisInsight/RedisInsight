@@ -332,7 +332,7 @@ export function fetchAddZSetMembers(
   }
 }
 
-export function deleteZSetMembers(key: string, members: string[]) {
+export function deleteZSetMembers(key: string, members: string[], onSuccessAction?: () => void,) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeZsetMembers())
     try {
@@ -350,18 +350,7 @@ export function deleteZSetMembers(key: string, members: string[]) {
         }
       )
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.ZSet,
-            numberOfRemoved: members.length,
-          }
-        })
+        onSuccessAction?.()
         const newTotalValue = state.browser.zset.data.total - data.affected
         dispatch(removeZsetMembersSuccess())
         dispatch(removeMembersFromList(members))

@@ -396,18 +396,6 @@ export function insertListElementsAction(
         onSuccessAction?.()
         dispatch(insertListElementsSuccess())
         dispatch<any>(fetchKeyInfo(data.keyName))
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.List,
-            numberOfAdded: 1,
-          }
-        })
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -437,18 +425,6 @@ export function deleteListElementsAction(
         { data }
       )
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.List,
-            numberOfRemoved: data.count,
-          }
-        })
         onSuccessAction?.()
         dispatch(deleteListElementsSuccess())
         if (state.browser.list.data?.total - data.count > 0) {

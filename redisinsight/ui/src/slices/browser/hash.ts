@@ -295,7 +295,7 @@ export function fetchMoreHashFields(
 }
 
 // Asynchronous thunk actions
-export function deleteHashFields(key: string, fields: string[]) {
+export function deleteHashFields(key: string, fields: string[], onSuccessAction?: () => void,) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeHashFields())
     try {
@@ -314,18 +314,7 @@ export function deleteHashFields(key: string, fields: string[]) {
       )
       const newTotalValue = state.browser.hash.data.total - data.affected
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.Hash,
-            numberOfRemoved: fields.length,
-          }
-        })
+        onSuccessAction?.()
         dispatch(removeHashFieldsSuccess())
         dispatch(removeFieldsFromList(fields))
         if (newTotalValue > 0) {
@@ -369,18 +358,6 @@ export function addHashFieldsAction(
         data
       )
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.Hash,
-            numberOfAdded: data.fields.length,
-          }
-        })
         if (onSuccessAction) {
           onSuccessAction()
         }

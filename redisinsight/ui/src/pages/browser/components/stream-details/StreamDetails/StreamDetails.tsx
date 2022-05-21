@@ -20,7 +20,9 @@ import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
 import { getTimestampFromId } from 'uiSrc/utils/streamUtils'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { StreamEntryDto, GetStreamEntriesResponse } from 'apiSrc/modules/browser/dto/stream.dto'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
 
@@ -67,6 +69,7 @@ const StreamDetails = (props: Props) => {
     lastEntry,
   } = useSelector(streamDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const shouldFilterRender = !isNull(firstEntry) && (firstEntry.id !== '') && !isNull(lastEntry) && lastEntry.id !== ''
 
@@ -102,12 +105,33 @@ const StreamDetails = (props: Props) => {
     }
   }
 
-  const loadEntries = () => {
+  const filterTelementry = (data: GetStreamEntriesResponse) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_DATA_FILTERED,
+      eventData: {
+        databaseId: instanceId,
+        total: data.total,
+      }
+    })
+  }
+
+  const resetFilterTelementry = (data: GetStreamEntriesResponse) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_DATA_FILTER_RESET,
+      eventData: {
+        databaseId: instanceId,
+        total: data.total,
+      }
+    })
+  }
+
+  const loadEntries = (telemetryAction?: (data: GetStreamEntriesResponse) => void) => {
     dispatch(fetchStreamEntries(
       key,
       SCAN_COUNT_DEFAULT,
       sortedColumnOrder,
-      false
+      false,
+      telemetryAction
     ))
   }
 
@@ -119,17 +143,17 @@ const StreamDetails = (props: Props) => {
   }
 
   const handleChangeStartFilter = useCallback(
-    (value: number) => {
+    (value: number, shouldSentEventTelemetry: boolean) => {
       dispatch(updateStart(value.toString()))
-      loadEntries()
+      loadEntries(shouldSentEventTelemetry ? filterTelementry : undefined)
     },
     []
   )
 
   const handleChangeEndFilter = useCallback(
-    (value: number) => {
+    (value: number, shouldSentEventTelemetry: boolean) => {
       dispatch(updateEnd(value.toString()))
-      loadEntries()
+      loadEntries(shouldSentEventTelemetry ? filterTelementry : undefined)
     },
     []
   )
@@ -144,7 +168,7 @@ const StreamDetails = (props: Props) => {
     () => {
       dispatch(updateStart(firstEntryTimeStamp.toString()))
       dispatch(updateEnd(lastEntryTimeStamp.toString()))
-      loadEntries()
+      loadEntries(resetFilterTelementry)
     },
     [lastEntryTimeStamp, firstEntryTimeStamp]
   )

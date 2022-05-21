@@ -60,8 +60,23 @@ const SetDetails = (props: Props) => {
     setDeleting(`${member + suffix}`)
   }
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Set,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteSetMembers(key, [member]))
+    dispatch(deleteSetMembers(key, [member], onSuccessRemoved))
     closePopover()
   }
 

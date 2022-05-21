@@ -74,8 +74,23 @@ const ZSetDetails = (props: Props) => {
     setDeleting(`${member + suffix}`)
   }, [])
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.ZSet,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteZSetMembers(key, [member]))
+    dispatch(deleteZSetMembers(key, [member], onSuccessRemoved))
     closePopover()
   }
 

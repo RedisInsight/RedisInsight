@@ -119,6 +119,22 @@ const RemoveListElements = (props: Props) => {
     setIsPopoverOpen(false)
   }
 
+  const onSuccessRemoved = () => {
+    onCancel()
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.List,
+        numberOfRemoved: toNumber(count),
+      }
+    })
+  }
+
   const submitData = (): void => {
     const data: DeleteListElementsDto = {
       keyName: selectedKey,
@@ -126,7 +142,7 @@ const RemoveListElements = (props: Props) => {
       destination,
     }
     closePopover()
-    dispatch(deleteListElementsAction(data, props.onCancel))
+    dispatch(deleteListElementsAction(data, onSuccessRemoved))
   }
 
   const RemoveButton = () => (

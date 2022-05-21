@@ -4,12 +4,14 @@ import { keyBy, mapValues, toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { entryIdRegex } from 'uiSrc/utils'
-import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { addNewEntriesAction, streamDataSelector } from 'uiSrc/slices/browser/stream'
-
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { StreamEntryFields } from 'uiSrc/pages/browser/components/key-details-add-items'
+import { KeyTypes } from 'uiSrc/constants'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AddStreamEntriesDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
@@ -22,6 +24,8 @@ const AddStreamEntries = (props: Props) => {
   const { onCancel } = props
   const { lastEntry } = useSelector(streamDataSelector)
   const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { viewType } = useSelector(keysSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const [entryID, setEntryID] = useState<string>('*')
   const [entryIdError, setEntryIdError] = useState('')
@@ -70,6 +74,22 @@ const AddStreamEntries = (props: Props) => {
     setEntryIdError('Must be greater than the last ID')
   }
 
+  const onSuccessAdded = () => {
+    onCancel()
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Stream,
+        numberOfAdded: fields.length,
+      }
+    })
+  }
+
   const submitData = (): void => {
     if (isFormValid) {
       const data: AddStreamEntriesDto = {
@@ -79,7 +99,7 @@ const AddStreamEntries = (props: Props) => {
           fields: mapValues(keyBy(fields, 'fieldName'), 'fieldValue')
         }]
       }
-      dispatch(addNewEntriesAction(data, onCancel))
+      dispatch(addNewEntriesAction(data, onSuccessAdded))
     }
   }
 

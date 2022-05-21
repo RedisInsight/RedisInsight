@@ -81,8 +81,23 @@ const HashDetails = (props: Props) => {
     setDeleting(`${field + suffix}`)
   }, [])
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Hash,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteField = (field = '') => {
-    dispatch(deleteHashFields(key, [field]))
+    dispatch(deleteHashFields(key, [field], onSuccessRemoved))
     closePopover()
   }
 

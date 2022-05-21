@@ -277,18 +277,6 @@ export function addSetMembersAction(
       )
 
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.Set,
-            numberOfAdded: data.members.length,
-          }
-        })
         dispatch(addSetMembersSuccess())
         dispatch<any>(fetchKeyInfo(data.keyName))
         onSuccessAction?.()
@@ -303,7 +291,7 @@ export function addSetMembersAction(
 }
 
 // Asynchronous thunk actions
-export function deleteSetMembers(key: string, members: string[]) {
+export function deleteSetMembers(key: string, members: string[], onSuccessAction?: () => void,) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeSetMembers())
 
@@ -323,18 +311,7 @@ export function deleteSetMembers(key: string, members: string[]) {
       )
 
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.Set,
-            numberOfRemoved: members.length,
-          }
-        })
+        onSuccessAction?.()
         const newTotalValue = state.browser.set.data.total - data.affected
         dispatch(removeSetMembersSuccess())
         dispatch(removeMembersFromList(members))

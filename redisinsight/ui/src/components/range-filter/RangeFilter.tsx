@@ -12,8 +12,8 @@ export interface Props {
   min: number
   start: number
   end: number
-  handleChangeStart: (value: number) => void
-  handleChangeEnd: (value: number) => void
+  handleChangeStart: (value: number, shouldSentEventTelemetry: boolean) => void
+  handleChangeEnd: (value: number, shouldSentEventTelemetry: boolean) => void
   handleResetFilter: () => void
 }
 
@@ -51,14 +51,14 @@ const RangeFilter = (props: Props) => {
 
   const onMouseUpStart = useCallback(
     ({ target: { value } }) => {
-      handleChangeStart(value)
+      handleChangeStart(value, true)
     },
     []
   )
 
   const onMouseUpEnd = useCallback(
     ({ target: { value } }) => {
-      handleChangeEnd(value)
+      handleChangeEnd(value, true)
     },
     []
   )
@@ -103,10 +103,10 @@ const RangeFilter = (props: Props) => {
 
   useEffect(() => {
     if (max && prevValue && prevValue.max !== max && end === prevValue.max) {
-      handleChangeEnd(max)
+      handleChangeEnd(max, false)
     }
     if (min && prevValue && prevValue.min !== min && start === prevValue.min) {
-      handleChangeStart(min)
+      handleChangeStart(min, false)
     }
   }, [prevValue])
 

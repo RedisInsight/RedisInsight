@@ -152,6 +152,12 @@ const getAdditionalAddedEventData = (endpoint: ApiEndpoints, data: any) => {
         keyType: KeyTypes.ReJSON,
         TTL: -1
       }
+    case ApiEndpoints.STREAMS:
+      return {
+        keyType: KeyTypes.Stream,
+        length: 1,
+        TTL: data.expire || -1
+      }
     default:
       return {}
   }

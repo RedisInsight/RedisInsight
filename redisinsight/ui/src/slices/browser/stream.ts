@@ -334,7 +334,7 @@ export function addNewEntriesAction(
   }
 }
 // Asynchronous thunk actions
-export function deleteStreamEntry(key: string, entries: string[]) {
+export function deleteStreamEntry(key: string, entries: string[], onSuccessAction?: () => void,) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeStreamEntries())
     try {
@@ -352,6 +352,7 @@ export function deleteStreamEntry(key: string, entries: string[]) {
         }
       )
       if (isStatusSuccessful(status)) {
+        onSuccessAction?.()
         dispatch(removeStreamEntriesSuccess())
         dispatch<any>(refreshStreamEntries(key, false))
         dispatch<any>(refreshKeyInfoAction(key))

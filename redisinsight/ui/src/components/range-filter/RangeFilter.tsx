@@ -14,6 +14,8 @@ export interface Props {
   end: number
   handleChangeStart: (value: number, shouldSentEventTelemetry: boolean) => void
   handleChangeEnd: (value: number, shouldSentEventTelemetry: boolean) => void
+  handleUpdateRangeMax: (value: number) => void
+  handleUpdateRangeMin: (value: number) => void
   handleResetFilter: () => void
 }
 
@@ -26,7 +28,17 @@ function usePrevious(value: any) {
 }
 
 const RangeFilter = (props: Props) => {
-  const { max, min, start, end, handleChangeStart, handleChangeEnd, handleResetFilter } = props
+  const {
+    max,
+    min,
+    start,
+    end,
+    handleChangeStart,
+    handleChangeEnd,
+    handleUpdateRangeMax,
+    handleUpdateRangeMin,
+    handleResetFilter
+  } = props
 
   const [startVal, setStartVal] = useState(start)
   const [endVal, setEndVal] = useState(end)
@@ -44,9 +56,10 @@ const RangeFilter = (props: Props) => {
 
   const onChangeStart = useCallback(
     ({ target: { value } }) => {
-      setStartVal(value)
+      const newValue = Math.min(+value, endVal - 1)
+      setStartVal(newValue)
     },
-    []
+    [endVal]
   )
 
   const onMouseUpStart = useCallback(
@@ -65,9 +78,10 @@ const RangeFilter = (props: Props) => {
 
   const onChangeEnd = useCallback(
     ({ target: { value } }) => {
-      setEndVal(value)
+      const newValue = Math.max(+value, startVal + 1)
+      setEndVal(newValue)
     },
-    []
+    [startVal]
   )
 
   useEffect(() => {
@@ -103,10 +117,10 @@ const RangeFilter = (props: Props) => {
 
   useEffect(() => {
     if (max && prevValue && prevValue.max !== max && end === prevValue.max) {
-      handleChangeEnd(max, false)
+      handleUpdateRangeMax(max)
     }
     if (min && prevValue && prevValue.min !== min && start === prevValue.min) {
-      handleChangeStart(min, false)
+      handleUpdateRangeMin(min)
     }
   }, [prevValue])
 
@@ -137,6 +151,7 @@ const RangeFilter = (props: Props) => {
           min={min}
           max={max}
           value={startVal}
+          // step={100}
           ref={minValRef}
           onChange={onChangeStart}
           onMouseUp={onMouseUpStart}
@@ -148,6 +163,7 @@ const RangeFilter = (props: Props) => {
           min={min}
           max={max}
           value={endVal}
+          // step={100}
           ref={maxValRef}
           onChange={onChangeEnd}
           onMouseUp={onMouseUpEnd}

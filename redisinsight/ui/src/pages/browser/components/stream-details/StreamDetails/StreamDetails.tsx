@@ -173,6 +173,20 @@ const StreamDetails = (props: Props) => {
     [lastEntryTimeStamp, firstEntryTimeStamp]
   )
 
+  const handleUpdateRangeMin = useCallback(
+    (min: number) => {
+      dispatch(updateStart(min.toString()))
+    },
+    []
+  )
+
+  const handleUpdateRangeMax = useCallback(
+    (max: number) => {
+      dispatch(updateEnd(max.toString()))
+    },
+    []
+  )
+
   useEffect(() => {
     if (isNull(firstEntry)) {
       dispatch(updateStart(''))
@@ -193,6 +207,14 @@ const StreamDetails = (props: Props) => {
 
   return (
     <>
+      {loading && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-stream"
+        />
+      )}
       {shouldFilterRender ? (
         <RangeFilter
           max={lastEntryTimeStamp}
@@ -202,6 +224,8 @@ const StreamDetails = (props: Props) => {
           handleChangeStart={handleChangeStartFilter}
           handleChangeEnd={handleChangeEndFilter}
           handleResetFilter={handleResetFilter}
+          handleUpdateRangeMax={handleUpdateRangeMax}
+          handleUpdateRangeMin={handleUpdateRangeMin}
         />
       )
         : (
@@ -218,14 +242,6 @@ const StreamDetails = (props: Props) => {
         )}
         data-test-id="stream-entries-container"
       >
-        {loading && (
-          <EuiProgress
-            color="primary"
-            size="xs"
-            position="absolute"
-            data-testid="progress-key-stream"
-          />
-        )}
         {/* <div className={styles.columnManager}>
           <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />
         </div> */}

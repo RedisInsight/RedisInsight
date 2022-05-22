@@ -37,10 +37,16 @@
   z-index: 1;
 }
 
-.sliderRange {
-  height: 5px;
+.rangeWrapper .sliderRange {
+  height: 1px;
   background-color: var(--euiColorPrimary);
   z-index: 2;
+  transform: translateY(2px);
+}
+
+.rangeWrapper:hover .sliderRange {
+  height: 5px;
+  transform: translateY(0px);
 }
 
 .sliderLeftValue,
@@ -54,6 +60,14 @@
 .sliderLeftValue {
   left: 0;
   margin-top: -30px;
+}
+
+.rangeWrapper:hover .sliderLeftValue {
+  margin-top: -28px;
+}
+
+.rangeWrapper:hover .sliderRightValue {
+  margin-top: 22px;
 }
 
 .sliderLeftValue.leftPosition {
@@ -96,14 +110,21 @@
 }
 
 .thumb::-moz-range-thumb {
-  width: 2px;
+  width: 24px;
   height: 12px;
-  background-color: var(--euiColorPrimary);
   border: none;
+  border-radius: 0;
   cursor: ew-resize;
   margin-top: 4px;
   pointer-events: all;
   position: relative;
+  background: transparent;
+  border-bottom: 1px solid var(--euiColorPrimary);
+  border-left: 1px solid var(--euiColorPrimary);
+}
+
+.rangeWrapper:hover .thumb::-moz-range-thumb {
+  border-bottom: 5px solid var(--euiColorPrimary);
 }
 
 .thumbZindex3::-moz-range-thumb {
@@ -111,24 +132,40 @@
 }
 
 .thumbZindex4::-moz-range-thumb {
-  transform: translateY(8px);
+  transform: translateY(8px) rotate(180deg);
 }
 
 input[type='range']::-webkit-slider-thumb {
-  width: 2px;
+  width: 24px;
   height: 12px;
-  background-color: var(--euiColorPrimary);
   border: none;
+  border-radius: 0;
   cursor: ew-resize;
   margin-top: 4px;
   pointer-events: all;
   position: relative;
+  background: transparent;
+  border-bottom: 1px solid var(--euiColorPrimary);
+  border-left: 1px solid var(--euiColorPrimary);
+}
+
+.rangeWrapper:hover input[type='range']::-webkit-slider-thumb{
+  border-bottom: 5px solid var(--euiColorPrimary);
+  margin-top: 2px;
 }
 
 input[type='range']:first-child::-webkit-slider-thumb {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
 }
 
 input[type='range']:last-of-type::-webkit-slider-thumb {
-  transform: translateY(8px);
+  transform: translateY(6px) rotate(180deg);
+}
+
+.rangeWrapper:hover input[type='range']:first-child::-webkit-slider-thumb {
+  transform: translateY(-2px);
+}
+
+.rangeWrapper:hover input[type='range']:last-of-type::-webkit-slider-thumb {
+  transform: translateY(5px) rotate(180deg);
 }

@@ -85,20 +85,20 @@
   width: max-content;
   color: var(--euiColorMediumShade);
   font: normal normal normal 12px/18px Graphik;
-  margin-top: 20px;
+  margin-top: 8px;
 }
 
 .sliderLeftValue {
   left: 0;
-  margin-top: -30px;
+  margin-top: -25px;
 }
 
 .rangeWrapper:hover .sliderLeftValue {
-  margin-top: -28px;
+  margin-top: -23px;
 }
 
 .rangeWrapper:hover .sliderRightValue {
-  margin-top: 22px;
+  margin-top: 10px;
 }
 
 .sliderLeftValue.leftPosition {

@@ -12,6 +12,7 @@ import {
   AddStreamEntriesDto,
   AddStreamEntriesResponse,
   GetStreamEntriesResponse,
+  StreamEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateStream, StreamViewType } from '../interfaces/stream'
@@ -22,6 +23,8 @@ export const initialState: StateStream = {
   error: '',
   sortOrder: SortOrder.DESC,
   range: { start: '', end: '' },
+  viewType: StreamViewType.Data,
+  // viewType: StreamViewType.Groups,
   data: {
     total: 0,
     entries: [],
@@ -36,7 +39,12 @@ export const initialState: StateStream = {
       fields: {}
     },
   },
-  viewType: StreamViewType.Groups
+  groups: {
+    loading: false,
+    error: '',
+    data: [],
+    selectedGroup: null,
+  }
 }
 
 // A slice for recipes
@@ -130,6 +138,67 @@ const streamSlice = createSlice({
         end: '',
       }
     },
+
+    setStreamViewType: (state, { payload }: PayloadAction<StreamViewType>) => {
+      state.viewType = payload
+    },
+
+    // load stream consumer groups entries
+    loadConsumerGroups: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
+      state.groups.loading = true
+      state.groups.error = ''
+
+      if (resetData) {
+        state.groups.data = initialState.groups.data
+      }
+    },
+    loadConsumerGroupsSuccess: (state, { payload }: PayloadAction<StreamEntryDto[]>) => {
+      state.groups.loading = false
+      state.groups.data = payload
+    },
+    loadConsumerGroupsFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+    setSelectedGroup: (state, { payload }) => {
+      state.groups.selectedGroup = payload
+    },
+
+    setSelectedConsumer: (state, { payload }) => {
+      state.groups.selectedGroup = {
+        ...state.groups.selectedGroup,
+        selectedConsumer: payload
+      }
+    },
+
+    loadConsumersSuccess: (state, { payload }: PayloadAction<StreamEntryDto[]>) => {
+      state.groups.loading = false
+
+      state.groups.selectedGroup = {
+        ...state.groups.selectedGroup,
+        data: payload
+      }
+    },
+
+    loadConsumerMessagesSuccess: (state, { payload }: PayloadAction<StreamEntryDto[]>) => {
+      state.groups.loading = false
+
+      state.groups.selectedGroup = {
+        ...state.groups.selectedGroup,
+        selectedConsumer: {
+          ...state.groups.selectedGroup.selectedConsumer,
+          data: payload
+        }
+      }
+    },
+
+    setConsumerGroupsSortOrder: (state, { payload }: PayloadAction<SortOrder>) => {
+      state.groups.sortOrder = payload
+    },
+    loadMoreConsumerGroupsFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
   },
 })
 
@@ -152,13 +221,26 @@ export const {
   removeStreamEntriesFailure,
   updateStart,
   updateEnd,
-  cleanRangeFilter
+  cleanRangeFilter,
+  setStreamViewType,
+  loadConsumerGroups,
+  loadConsumerGroupsSuccess,
+  loadConsumerGroupsFailure,
+  loadConsumersSuccess,
+  loadConsumerMessagesSuccess,
+  setSelectedGroup,
+  setSelectedConsumer,
 } = streamSlice.actions
 
 // A selector
 export const streamSelector = (state: RootState) => state.browser.stream
 export const streamDataSelector = (state: RootState) => state.browser.stream?.data
 export const streamRangeSelector = (state: RootState) => state.browser.stream?.range
+export const streamGroupsSelector = (state: RootState) => state.browser.stream?.groups
+export const streamGroupsDataSelector = (state: RootState) => state.browser.stream?.groups?.data || []
+export const selectedGroupSelector = (state: RootState) => state.browser.stream?.groups?.selectedGroup
+export const selectedConsumerSelector = (state: RootState) =>
+  state.browser.stream?.groups?.selectedGroup?.selectedConsumer || {}
 
 // The reducer
 export default streamSlice.reducer
@@ -318,7 +400,7 @@ export function fetchMoreStreamEntries(
 export function addNewEntriesAction(
   data: AddStreamEntriesDto,
   onSuccess?: () => void,
-  onFail?: () => void
+  onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(addNewEntries())
@@ -344,7 +426,7 @@ export function addNewEntriesAction(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(addNewEntriesFailure(errorMessage))
-      onFail?.()
+      onFailed?.()
     }
   }
 }
@@ -419,6 +501,154 @@ export function addNewGroupAction(
       dispatch(addErrorNotification(error))
       dispatch(addNewGroupFailure(errorMessage))
       onFail?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchConsumerGroups(
+  resetData?: boolean,
+  onSuccess?: (data: GetStreamEntriesResponse) => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadConsumerGroups(resetData))
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post<GetStreamEntriesResponse>(
+        getUrl(
+          state.app.context.contextInstanceId,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        {
+          keyName: state.app.context.browser.keyList.selectedKey,
+          count: 500,
+          sortOrder: SortOrder.ASC
+        },
+      )
+
+      const data = []
+
+      for (let i = 0; i < 1000; i++) {
+        data.push({
+          name: `group ${i}`,
+          consumers: Math.floor(Math.random() * 10),
+          pending: Math.floor(Math.random() * 10),
+          lastDeliveredId: `${Date.now()}-0`
+        },)
+      }
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadConsumerGroupsSuccess(data))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadConsumerGroupsFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchConsumers(
+  resetData?: boolean,
+  onSuccess?: (data: GetStreamEntriesResponse) => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadConsumerGroups(resetData))
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post<GetStreamEntriesResponse>(
+        getUrl(
+          state.app.context.contextInstanceId,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        {
+          keyName: state.app.context.browser.keyList.selectedKey,
+          count: 500,
+          sortOrder: SortOrder.ASC
+        },
+      )
+
+      const data = []
+
+      for (let i = 0; i < 1000; i++) {
+        data.push({
+          name: `consumer ${i}`,
+          pending: Math.floor(Math.random() * 10),
+          time: Date.now()
+        })
+      }
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadConsumersSuccess(data))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadConsumerGroupsFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchConsumerMessages(
+  resetData?: boolean,
+  onSuccess?: (data: GetStreamEntriesResponse) => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadConsumerGroups(resetData))
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post<GetStreamEntriesResponse>(
+        getUrl(
+          state.app.context.contextInstanceId,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        {
+          keyName: state.app.context.browser.keyList.selectedKey,
+          count: 500,
+          sortOrder: SortOrder.ASC
+        },
+      )
+
+      const data = []
+
+      for (let i = 0; i < 1000; i++) {
+        data.push({
+          entryId: `${Date.now()}-0`,
+          lastMessage: Date.now(),
+          timesDelivered: Math.floor(Math.random() * 10),
+        })
+      }
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadConsumerMessagesSuccess(data))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadConsumerGroupsFailure(errorMessage))
+        onFailed?.()
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import {
   Body,
   Controller,
-  Param,
+  Param, Patch,
   Post,
   UsePipes,
   ValidationPipe,
@@ -9,8 +9,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import {
-  ConsumerGroupDto, CreateConsumerGroupsDto,
-  GetStreamEntriesResponse,
+  ConsumerGroupDto, CreateConsumerGroupsDto, UpdateConsumerGroupDto,
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
 import { KeyDto } from 'src/modules/browser/dto';
@@ -28,8 +27,9 @@ export class ConsumerGroupController {
     responses: [
       {
         status: 200,
-        description: 'Returns ordered stream entries in defined range.',
-        type: GetStreamEntriesResponse,
+        description: 'Returns stream consumer groups.',
+        type: ConsumerGroupDto,
+        isArray: true,
       },
     ],
   })
@@ -50,5 +50,17 @@ export class ConsumerGroupController {
       @Body() dto: CreateConsumerGroupsDto,
   ): Promise<void> {
     return this.service.createGroups({ instanceId }, dto);
+  }
+
+  @Patch('')
+  @ApiRedisInstanceOperation({
+    description: 'Modify last delivered ID of the Consumer Group',
+    statusCode: 200,
+  })
+  async updateGroup(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: UpdateConsumerGroupDto,
+  ): Promise<void> {
+    return this.service.updateGroup({ instanceId }, dto);
   }
 }

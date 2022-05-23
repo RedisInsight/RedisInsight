@@ -11,7 +11,7 @@ import {
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { KeyDto } from 'src/modules/browser/dto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ConsumerGroupDto, CreateConsumerGroupsDto } from 'src/modules/browser/dto/stream.dto';
+import {ConsumerGroupDto, CreateConsumerGroupsDto, UpdateConsumerGroupDto} from 'src/modules/browser/dto/stream.dto';
 
 @Injectable()
 export class ConsumerGroupService {
@@ -146,6 +146,50 @@ export class ConsumerGroupService {
 
       if (error?.message.includes(RedisErrorCodes.BusyGroup)) {
         throw new ConflictException(error.message);
+      }
+
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Updates last delivered id for Consumer Group
+   * @param clientOptions
+   * @param dto
+   */
+  async updateGroup(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: UpdateConsumerGroupDto,
+  ): Promise<void> {
+    try {
+      this.logger.log('Updating consumer group.');
+
+      const exists = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [dto.keyName],
+      );
+
+      if (!exists) {
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      }
+
+      await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolStreamCommands.XGroupSetId,
+        [dto.keyName, dto.name, dto.lastDeliveredId],
+      );
+
+      this.logger.log('Consumer group was updated.');
+
+      return undefined;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
       }
 
       throw catchAclError(error);

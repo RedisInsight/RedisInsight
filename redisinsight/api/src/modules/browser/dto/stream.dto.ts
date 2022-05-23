@@ -1,5 +1,5 @@
 import {
-  ApiProperty, ApiPropertyOptional, IntersectionType
+  ApiProperty, ApiPropertyOptional, IntersectionType,
 } from '@nestjs/swagger';
 import {
   ArrayNotEmpty,
@@ -261,3 +261,8 @@ export class CreateConsumerGroupsDto extends KeyDto {
   @Type(() => CreateConsumerGroupDto)
   consumerGroups: CreateConsumerGroupDto[];
 }
+
+export class UpdateConsumerGroupDto extends IntersectionType(
+  KeyDto,
+  CreateConsumerGroupDto,
+) {}

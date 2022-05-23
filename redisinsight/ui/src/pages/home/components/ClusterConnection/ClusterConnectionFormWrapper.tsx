@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom'
 import {
   clusterSelector,
   fetchInstancesRedisCluster,
-} from 'uiSrc/slices/cluster'
+} from 'uiSrc/slices/instances/cluster'
 import { REDIS_URI_SCHEMES, Pages } from 'uiSrc/constants'
 import { useResizableFormField } from 'uiSrc/services'
 import { resetErrors } from 'uiSrc/slices/app/notifications'

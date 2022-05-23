@@ -6,8 +6,8 @@ import SetDetails, { Props } from './SetDetails'
 const members = ['member1', 'member2', 'member3']
 const mockedProps = mock<Props>()
 
-jest.mock('uiSrc/slices/set', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/set').initialState
+jest.mock('uiSrc/slices/browser/set', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/browser/set').initialState
   return ({
     setSelector: jest.fn().mockReturnValue(defaultState),
     setDataSelector: jest.fn().mockReturnValue({

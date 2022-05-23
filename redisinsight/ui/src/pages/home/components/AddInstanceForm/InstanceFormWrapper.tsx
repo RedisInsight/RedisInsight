@@ -9,11 +9,11 @@ import {
   createInstanceStandaloneAction,
   updateInstanceAction,
   instancesSelector,
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import {
   clientCertsSelector,
   fetchClientCerts,
-} from 'uiSrc/slices/clientCerts'
+} from 'uiSrc/slices/instances/clientCerts'
 import { Nullable, removeEmpty } from 'uiSrc/utils'
 import {
   ConnectionType,
@@ -21,12 +21,12 @@ import {
   InstanceType,
 } from 'uiSrc/slices/interfaces'
 import { localStorageService } from 'uiSrc/services'
-import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/caCerts'
+import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { DbType, BrowserStorageItem, REDIS_URI_SCHEMES, Pages } from 'uiSrc/constants'
 import {
   fetchMastersSentinelAction,
   sentinelSelector,
-} from 'uiSrc/slices/sentinel'
+} from 'uiSrc/slices/instances/sentinel'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import InstanceForm, {

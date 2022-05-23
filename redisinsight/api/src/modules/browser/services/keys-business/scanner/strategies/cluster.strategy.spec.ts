@@ -104,8 +104,9 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           expect.anything(),
+          null,
         )
-        .mockResolvedValue({ result: [0, [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: [0, [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -168,6 +169,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
         mockClusterNodes[0],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         5,
@@ -175,6 +177,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
         mockClusterNodes[1],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         6,
@@ -182,6 +185,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
         mockClusterNodes[2],
+        null,
       );
     });
     it('should call scan 3,2,1 times per nodes and return appropriate value', async () => {
@@ -200,24 +204,27 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
+          null,
         )
-        .mockResolvedValue({ result: ['1', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
+          null,
         )
-        .mockResolvedValue({ result: ['2', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['2', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           ['2', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
+          null,
         )
-        .mockResolvedValue({ result: ['0', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -232,16 +239,18 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
+          null,
         )
-        .mockResolvedValue({ result: ['1', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
+          null,
         )
-        .mockResolvedValue({ result: ['0', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -256,8 +265,9 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           mockClusterNodes[2],
+          null,
         )
-        .mockResolvedValue({ result: ['0', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
@@ -312,6 +322,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         5,
@@ -319,6 +330,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         6,
@@ -326,6 +338,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         7,
@@ -333,6 +346,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         8,
@@ -340,6 +354,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         9,
@@ -347,6 +362,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['2', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
+        null,
       );
     });
     it('should call scan 3,2,N times per nodes until threshold exceeds', async () => {
@@ -365,24 +381,27 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
+          null,
         )
-        .mockResolvedValue({ result: ['1', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
+          null,
         )
-        .mockResolvedValue({ result: ['2', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['2', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           ['2', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
+          null,
         )
-        .mockResolvedValue({ result: ['0', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -397,16 +416,18 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
+          null,
         )
-        .mockResolvedValue({ result: ['1', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
+          null,
         )
-        .mockResolvedValue({ result: ['0', [getKeyInfoResponse.name]] });
+        .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -421,6 +442,7 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           mockClusterNodes[2],
+          null,
         )
         .mockResolvedValue({ result: ['1', []] });
 
@@ -483,6 +505,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         5,
@@ -490,6 +513,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         6,
@@ -497,6 +521,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         7,
@@ -504,6 +529,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         8,
@@ -511,6 +537,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         9,
@@ -518,6 +545,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         10,
@@ -525,6 +553,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['2', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         11,
@@ -532,6 +561,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
+        null,
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         12,
@@ -539,6 +569,7 @@ describe('Cluster Scanner Strategy', () => {
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
+        null,
       );
     });
     it('should not call scan when total is 0', async () => {
@@ -758,6 +789,7 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           expect.anything(),
+          null,
         )
         .mockRejectedValue(replyError);
 

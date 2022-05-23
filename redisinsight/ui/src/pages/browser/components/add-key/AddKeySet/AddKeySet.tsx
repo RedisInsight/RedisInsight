@@ -14,13 +14,11 @@ import {
 import { Maybe } from 'uiSrc/utils'
 import {
   addSetKey, addKeyStateSelector,
-} from 'uiSrc/slices/keys'
-import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCommonFields/AddKeyCommonFields'
+} from 'uiSrc/slices/browser/keys'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/dto/set.dto'
 
 import {
-  AddCommonFieldsFormConfig as defaultConfig,
   AddSetFormConfig as config
 } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
@@ -33,13 +31,14 @@ import {
 import styles from '../../key-details-add-items/styles.module.scss'
 
 export interface Props {
+  keyName: string
+  keyTTL: Maybe<number>
   onCancel: (isCancelled?: boolean) => void;
 }
 
 const AddKeySet = (props: Props) => {
+  const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
-  const [keyName, setKeyName] = useState<string>('')
-  const [keyTTL, setKeyTTL] = useState<Maybe<number>>(undefined)
   const [members, setMembers] = useState<ISetMemberState[]>([{ ...INITIAL_SET_MEMBER_STATE }])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const lastAddedMemberName = useRef<HTMLInputElement>(null)
@@ -116,21 +115,13 @@ const AddKeySet = (props: Props) => {
     if (keyTTL !== undefined) {
       data.expire = keyTTL
     }
-    dispatch(addSetKey(data, props.onCancel))
+    dispatch(addSetKey(data, onCancel))
   }
 
   const isClearDisabled = (item: ISetMemberState): boolean => members.length === 1 && !item.name.length
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <AddKeyCommonFields
-        config={defaultConfig}
-        loading={loading}
-        keyName={keyName}
-        setKeyName={setKeyName}
-        keyTTL={keyTTL}
-        setKeyTTL={setKeyTTL}
-      />
       <EuiFormRow label="Members" fullWidth>
         <EuiFlexItem grow>
           {
@@ -172,7 +163,6 @@ const AddKeySet = (props: Props) => {
                     length={members.length}
                     addItem={addMember}
                     removeItem={removeMember}
-                    removeCanClear
                     clearIsDisabled={isClearDisabled(item)}
                     clearItemValues={clearMemberValues}
                     loading={loading}
@@ -199,7 +189,7 @@ const AddKeySet = (props: Props) => {
             <EuiFlexItem grow={false}>
               <EuiButton
                 color="secondary"
-                onClick={() => props.onCancel(true)}
+                onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
                 <EuiTextColor>Cancel</EuiTextColor>

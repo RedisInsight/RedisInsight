@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -13,8 +13,8 @@ import {
   updateListElementAction,
   updateListValueStateSelector,
   fetchSearchingListElementAction,
-} from 'uiSrc/slices/list'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/browser/list'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { KeyTypes } from 'uiSrc/constants'
 import {
@@ -22,7 +22,7 @@ import {
   IColumnSearchState,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { formatLongName, validateListIndex } from 'uiSrc/utils'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -253,7 +253,16 @@ const ListDetails = (props: Props) => {
         },
       )}
     >
+      {loading && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-list"
+        />
+      )}
       <VirtualTable
+        hideProgress
         keyName={key}
         headerHeight={headerHeight}
         rowHeight={rowHeight}

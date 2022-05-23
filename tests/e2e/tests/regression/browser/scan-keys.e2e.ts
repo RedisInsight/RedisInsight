@@ -11,24 +11,23 @@ const explicitErrorHandler = (): void => {
         if(e.message === 'ResizeObserver loop limit exceeded') {
             e.stopImmediatePropagation();
         }
-    })
-}
+    });
+};
 
 fixture `Browser - Specify Keys to Scan`
     .meta({type: 'regression'})
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTerms();
-    })
+    });
 test
-    .meta({ rte: rte.none })
-    ('Verify that the user not enter the value less than 500 - the system automatically applies min value if user enters less than min', async t => {
+    .meta({ rte: rte.none })('Verify that the user not enter the value less than 500 - the system automatically applies min value if user enters less than min', async t => {
         //Go to Settings page
         await t.click(myRedisDatabasePage.settingsButton);
         //Specify keys to scan less than 500
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('100');
-        //Verify the applyed scan value
+        //Verify the applied scan value
         await t.expect(await settingsPage.keysToScanValue.textContent).eql('500', 'The system automatically applies min value 500');
     });

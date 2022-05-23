@@ -40,19 +40,19 @@ export class AddRedisDatabasePage {
      * @param parameters the parameters of the database
      */
     async addRedisDataBase(parameters: AddNewDatabaseParameters): Promise<void> {
-        const addDatabaseButtonElement = await this.addDatabaseButton.with({ visibilityCheck: true, timeout: 30000 })();
+        await this.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
         await t
             .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually)
+            .click(this.addDatabaseManually);
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
-            .typeText(this.databaseAliasInput, parameters.databaseName, { replace: true, paste: true })
+            .typeText(this.databaseAliasInput, parameters.databaseName, { replace: true, paste: true });
         if (!!parameters.databaseUsername) {
-            await t.typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true })
+            await t.typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true });
         }
         if (!!parameters.databasePassword) {
-            await t.typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true })
+            await t.typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true });
         }
     }
 
@@ -64,16 +64,16 @@ export class AddRedisDatabasePage {
     async addLogicalRedisDatabase(parameters: AddNewDatabaseParameters, index: string): Promise<void> {
         await t
             .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually)
+            .click(this.addDatabaseManually);
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
-            .typeText(this.databaseAliasInput, parameters.databaseName, { replace: true, paste: true })
+            .typeText(this.databaseAliasInput, parameters.databaseName, { replace: true, paste: true });
         if (!!parameters.databaseUsername) {
-            await t.typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true })
+            await t.typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true });
         }
         if (!!parameters.databasePassword) {
-            await t.typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true })
+            await t.typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true });
         }
         //Enter logical index
         await t.click(this.databaseIndexCheckbox);
@@ -90,15 +90,15 @@ export class AddRedisDatabasePage {
         await t
             .click(this.addDatabaseButton)
             .click(this.addAutoDiscoverDatabase)
-            .click(this.redisSentinelType)
+            .click(this.redisSentinelType);
         if (!!parameters.sentinelHost) {
-            await t.typeText(this.hostInput, parameters.sentinelHost, { replace: true, paste: true })
+            await t.typeText(this.hostInput, parameters.sentinelHost, { replace: true, paste: true });
         }
         if (!!parameters.sentinelPort) {
-            await t.typeText(this.portInput, parameters.sentinelPort, { replace: true, paste: true })
+            await t.typeText(this.portInput, parameters.sentinelPort, { replace: true, paste: true });
         }
         if (!!parameters.sentinelPassword) {
-            await t.typeText(this.passwordInput, parameters.sentinelPassword, { replace: true, paste: true })
+            await t.typeText(this.passwordInput, parameters.sentinelPassword, { replace: true, paste: true });
         }
     }
 
@@ -110,12 +110,12 @@ export class AddRedisDatabasePage {
         await t
             .click(this.addDatabaseButton)
             .click(this.addAutoDiscoverDatabase)
-            .click(this.redisClusterType)
+            .click(this.redisClusterType);
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
             .typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true })
-            .typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true })
+            .typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true });
     }
 
     /**
@@ -126,10 +126,10 @@ export class AddRedisDatabasePage {
         await t
             .click(this.addDatabaseButton)
             .click(this.addAutoDiscoverDatabase)
-            .click(this.redisCloudProType)
+            .click(this.redisCloudProType);
         await t
             .typeText(this.accessKeyInput, cloudAPIAccessKey, { replace: true, paste: true })
-            .typeText(this.secretKeyInput, cloudAPISecretKey, { replace: true, paste: true })
+            .typeText(this.secretKeyInput, cloudAPISecretKey, { replace: true, paste: true });
     }
 
     /**
@@ -139,15 +139,15 @@ export class AddRedisDatabasePage {
     async addOssClusterDatabase(parameters: OSSClusterParameters): Promise<void> {
         await t
             .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually)
+            .click(this.addDatabaseManually);
         if (!!parameters.ossClusterHost) {
-            await t.typeText(this.hostInput, parameters.ossClusterHost, { replace: true, paste: true })
+            await t.typeText(this.hostInput, parameters.ossClusterHost, { replace: true, paste: true });
         }
         if (!!parameters.ossClusterPort) {
-            await t.typeText(this.portInput, parameters.ossClusterPort, { replace: true, paste: true })
+            await t.typeText(this.portInput, parameters.ossClusterPort, { replace: true, paste: true });
         }
         if (!!parameters.ossClusterDatabaseName) {
-            await t.typeText(this.databaseAliasInput, parameters.ossClusterDatabaseName, { replace: true, paste: true })
+            await t.typeText(this.databaseAliasInput, parameters.ossClusterDatabaseName, { replace: true, paste: true });
         }
     }
 }
@@ -166,7 +166,7 @@ export type AddNewDatabaseParameters = {
     databaseName?: string,
     databaseUsername?: string,
     databasePassword?: string
-}
+};
 
 /**
  * Add new database parameters
@@ -178,7 +178,7 @@ export type SentinelParameters = {
     sentinelHost: string,
     sentinelPort: string,
     sentinelPassword?: string
-}
+};
 
 /**
  * Add new database parameters
@@ -191,4 +191,4 @@ export type OSSClusterParameters = {
     ossClusterHost: string,
     ossClusterPort: string,
     ossClusterDatabaseName: string
-}
+};

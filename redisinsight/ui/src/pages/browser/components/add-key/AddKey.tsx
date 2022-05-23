@@ -4,19 +4,19 @@ import cx from 'classnames'
 import {
   EuiFlexGroup,
   EuiFlexItem,
-  EuiSuperSelect,
   EuiHealth,
   EuiTitle,
-  EuiFormFieldset,
-  EuiFormRow,
   EuiToolTip,
   EuiButtonIcon,
 } from '@elastic/eui'
+import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes } from 'uiSrc/constants'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { addKeyStateSelector, resetAddKey, keysSelector } from 'uiSrc/slices/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCommonFields/AddKeyCommonFields'
+import { addKeyStateSelector, resetAddKey, keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import { Maybe } from 'uiSrc/utils'
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash/AddKeyHash'
 import AddKeyZset from './AddKeyZset/AddKeyZset'
@@ -24,12 +24,13 @@ import AddKeyString from './AddKeyString/AddKeyString'
 import AddKeySet from './AddKeySet/AddKeySet'
 import AddKeyList from './AddKeyList/AddKeyList'
 import AddKeyReJSON from './AddKeyReJSON/AddKeyReJSON'
+import AddKeyStream from './AddKeyStream/AddKeyStream'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  handleAddKeyPanel: (value: boolean) => void;
-  handleCloseKey: () => void;
+  handleAddKeyPanel: (value: boolean, keyName?: string) => void
+  handleCloseKey: () => void
 }
 const AddKey = (props: Props) => {
   const { handleAddKeyPanel, handleCloseKey } = props
@@ -58,6 +59,8 @@ const AddKey = (props: Props) => {
     }
   })
   const [typeSelected, setTypeSelected] = useState<string>(options[0].value)
+  const [keyName, setKeyName] = useState<string>('')
+  const [keyTTL, setKeyTTL] = useState<Maybe<number>>(undefined)
 
   const onChangeType = (value: string) => {
     setTypeSelected(value)
@@ -82,10 +85,16 @@ const AddKey = (props: Props) => {
   }
 
   const closeAddKeyPanel = (isCancelled?: boolean) => {
-    handleAddKeyPanel(false)
+    handleAddKeyPanel(false, keyName)
     if (isCancelled) {
+      handleCloseKey()
       closeKeyTelemetry()
     }
+  }
+
+  const defaultFields = {
+    keyName,
+    keyTTL
   }
 
   return (
@@ -95,79 +104,74 @@ const AddKey = (props: Props) => {
         className={cx(styles.contentWrapper, 'relative')}
         gutterSize="none"
       >
-        <div className={cx(styles.content, 'eui-yScroll')}>
-          <EuiFlexGroup
-            gutterSize="none"
-            direction="column"
-            justifyContent="center"
-          >
-            <EuiFlexItem grow style={{ marginBottom: '36px' }}>
-              <EuiTitle size="s">
-                <h4>
-                  <b>Add key</b>
-                </h4>
-              </EuiTitle>
-              <EuiToolTip
-                content="Close"
-                position="left"
-                anchorClassName={styles.closeKeyTooltip}
-              >
-                <EuiButtonIcon
-                  iconType="cross"
-                  color="primary"
-                  aria-label="Close key"
-                  className={styles.closeBtn}
-                  onClick={() => closeKey()}
-                />
-              </EuiToolTip>
-            </EuiFlexItem>
-            <EuiFormFieldset
-              legend={{ children: 'Select key type', display: 'hidden' }}
-              style={{ marginBottom: '16px' }}
+        <EuiFlexGroup
+          gutterSize="none"
+          direction="column"
+          justifyContent="center"
+          className={styles.content}
+        >
+          <EuiFlexItem grow style={{ marginBottom: '36px' }}>
+            <EuiTitle size="xs">
+              <h4>New Key</h4>
+            </EuiTitle>
+            <EuiToolTip
+              content="Close"
+              position="left"
+              anchorClassName={styles.closeKeyTooltip}
             >
-              <EuiFormRow
-                label="Key Type*"
-                helpText={
-                  typeSelected === KeyTypes.ReJSON
-                    ? (
-                      <span style={{ color: '#b5b6c0' }}>
-                        {HelpTexts.REJSON_SHOULD_BE_LOADED}
-                      </span>
-                    )
-                    : null
-                }
-                fullWidth
-              >
-                <EuiSuperSelect
-                  itemClassName="withColorDefinition"
-                  fullWidth
-                  disabled={loading}
-                  options={options}
-                  valueOfSelected={typeSelected}
-                  onChange={(value: string) => onChangeType(value)}
-                />
-              </EuiFormRow>
-            </EuiFormFieldset>
-            {typeSelected === KeyTypes.Hash && (
-              <AddKeyHash onCancel={closeAddKeyPanel} />
-            )}
-            {typeSelected === KeyTypes.ZSet && (
-              <AddKeyZset onCancel={closeAddKeyPanel} />
-            )}
-            {typeSelected === KeyTypes.Set && (
-              <AddKeySet onCancel={closeAddKeyPanel} />
-            )}
-            {typeSelected === KeyTypes.String && (
-              <AddKeyString onCancel={closeAddKeyPanel} />
-            )}
-            {typeSelected === KeyTypes.List && (
-              <AddKeyList onCancel={closeAddKeyPanel} />
-            )}
-            {typeSelected === KeyTypes.ReJSON && (
-              <AddKeyReJSON onCancel={closeAddKeyPanel} />
-            )}
-          </EuiFlexGroup>
-        </div>
+              <EuiButtonIcon
+                iconType="cross"
+                color="primary"
+                aria-label="Close key"
+                className={styles.closeBtn}
+                onClick={() => closeKey()}
+              />
+            </EuiToolTip>
+          </EuiFlexItem>
+          <div className="eui-yScroll">
+            <div className={styles.contentFields}>
+              <AddKeyCommonFields
+                typeSelected={typeSelected}
+                onChangeType={onChangeType}
+                options={options}
+                loading={loading}
+                keyName={keyName}
+                setKeyName={setKeyName}
+                keyTTL={keyTTL}
+                setKeyTTL={setKeyTTL}
+              />
+
+              <Divider colorVariable="separatorColor" className={styles.divider} />
+
+              {typeSelected === KeyTypes.Hash && (
+                <AddKeyHash onCancel={closeAddKeyPanel} {...defaultFields} />
+              )}
+              {typeSelected === KeyTypes.ZSet && (
+                <AddKeyZset onCancel={closeAddKeyPanel} {...defaultFields} />
+              )}
+              {typeSelected === KeyTypes.Set && (
+                <AddKeySet onCancel={closeAddKeyPanel} {...defaultFields} />
+              )}
+              {typeSelected === KeyTypes.String && (
+                <AddKeyString onCancel={closeAddKeyPanel} {...defaultFields} />
+              )}
+              {typeSelected === KeyTypes.List && (
+                <AddKeyList onCancel={closeAddKeyPanel} {...defaultFields} />
+              )}
+              {typeSelected === KeyTypes.ReJSON && (
+                <>
+                  <span className={styles.helpText}>
+                    {HelpTexts.REJSON_SHOULD_BE_LOADED}
+                  </span>
+                  <AddKeyReJSON onCancel={closeAddKeyPanel} {...defaultFields} />
+                </>
+              )}
+              {typeSelected === KeyTypes.Stream && (
+                <AddKeyStream onCancel={closeAddKeyPanel} {...defaultFields} />
+              )}
+            </div>
+          </div>
+        </EuiFlexGroup>
         <div id="formFooterBar" className="formFooterBar" />
       </EuiFlexGroup>
     </div>

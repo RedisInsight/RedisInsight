@@ -1,0 +1,113 @@
+.container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  padding: 16px 18px;
+  background-color: var(--euiColorEmptyShade);
+
+  :global {
+    .ReactVirtualized__Grid__innerScrollContainer {
+      .ReactVirtualized__Table__rowColumn {
+        border-right: 1px solid var(--tableDarkestBorderColor) !important;
+
+        &:last-of-type,
+        &:nth-last-of-type(2) {
+          border-right: none !important;
+        }
+      }
+
+      .ReactVirtualized__Table__row {
+        border-bottom: 1px solid var(--tableDarkestBorderColor) !important;
+        &:last-of-type {
+          border-bottom: none !important;
+        }
+      }
+
+      & > div:hover {
+        background: var(--euiColorLightestShade);
+
+        .value-table-actions {
+          background-color: var(--euiColorLightestShade) !important;
+        }
+
+        .streamEntry {
+          color: var(--inputTextColor) !important;
+        }
+
+        .streamEntryId {
+          color: var(--euiTextSubduedColor) !important;
+        }
+      }
+    }
+
+    .ReactVirtualized__Table__headerRow {
+      border: none !important;
+    }
+
+    .ReactVirtualized__Table__Grid {
+      border: 1px solid var(--tableDarkestBorderColor) !important;
+    }
+  }
+
+  .cellHeader {
+    border: none !important;
+  }
+}
+
+:global(.streamEntry) {
+  color: var(--euiTextSubduedColor) !important;
+  white-space: normal;
+  max-width: 100%;
+  word-break: break-all;
+}
+
+:global(.streamEntryId) {
+  color: var(--euiColorMediumShade) !important;
+  display: flex;
+}
+
+:global(.stream-entry-actions) {
+  margin-left: -5px;
+}
+
+.actions,
+.actionsHeader {
+  width: 54px;
+}
+
+.actions {
+  :global(.value-table-actions) {
+    background-color: var(--euiColorEmptyShade) !important;
+  }
+}
+
+.columnManager {
+  z-index: 11;
+  position: absolute;
+  right: 18px;
+  margin-top: 20px;
+  width: 40px;
+  button {
+    width: 40px;
+    background-color: var(--euiColorEmptyShade) !important;
+  }
+}
+
+.rangeWrapper {
+  margin: 30px 30px 26px;
+  padding: 12px 0;
+}
+
+.sliderTrack.mockRange {
+  left: 18px;
+  width: calc(100% - 36px);
+}
+
+.sliderTrack {
+  position: absolute;
+  background-color: var(--separatorColor);
+  width: 100%;
+  height: 1px;
+  margin-top: 2px;
+  z-index: 1;
+}

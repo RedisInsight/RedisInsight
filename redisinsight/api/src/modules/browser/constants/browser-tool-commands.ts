@@ -75,6 +75,11 @@ export enum BrowserToolGraphCommands {
 }
 export enum BrowserToolStreamCommands {
   XLen = 'xlen',
+  XInfoStream = 'xinfo stream',
+  XRange = 'xrange',
+  XRevRange = 'xrevrange',
+  XAdd = 'xadd',
+  XDel = 'xdel',
 }
 
 export enum BrowserToolTSCommands {

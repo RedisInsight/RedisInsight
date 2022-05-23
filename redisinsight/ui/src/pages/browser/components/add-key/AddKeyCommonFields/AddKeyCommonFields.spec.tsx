@@ -6,6 +6,7 @@ import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-ke
 import AddKeyCommonFields, { Props } from './AddKeyCommonFields'
 
 const mockedProps = mock<Props>()
+const options = ['one', 'two']
 
 describe('AddKeyCommonFields', () => {
   it('should render', () => {
@@ -13,7 +14,7 @@ describe('AddKeyCommonFields', () => {
       render(
         <AddKeyCommonFields
           {...instance(mockedProps)}
-          config={AddCommonFieldsFormConfig}
+          options={options}
         />
       )
     ).toBeTruthy()
@@ -25,7 +26,7 @@ describe('AddKeyCommonFields', () => {
       <AddKeyCommonFields
         {...instance(mockedProps)}
         setKeyName={setKeyName}
-        config={AddCommonFieldsFormConfig}
+        options={options}
       />
     )
     const ttlInput = screen.getByPlaceholderText(AddCommonFieldsFormConfig.keyName.placeholder)
@@ -43,7 +44,7 @@ describe('AddKeyCommonFields', () => {
       <AddKeyCommonFields
         {...instance(mockedProps)}
         setKeyTTL={setKeyTTL}
-        config={AddCommonFieldsFormConfig}
+        options={options}
       />
     )
     const ttlInput = screen.getByPlaceholderText(AddCommonFieldsFormConfig.keyTTL.placeholder)
@@ -65,7 +66,7 @@ describe('AddKeyCommonFields', () => {
         {...instance(mockedProps)}
         // @ts-ignore
         setKeyTTL={setKeyTTL}
-        config={AddCommonFieldsFormConfig}
+        options={options}
       />
     )
     const ttlInput = screen.getByPlaceholderText(AddCommonFieldsFormConfig.keyTTL.placeholder)

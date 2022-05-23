@@ -19,7 +19,7 @@ import {
   resetLoadedSentinel,
   sentinelSelector,
   updateMastersSentinel,
-} from 'uiSrc/slices/sentinel'
+} from 'uiSrc/slices/instances/sentinel'
 import {
   LoadedSentinel,
   ModifiedSentinelMaster,

@@ -81,17 +81,19 @@ const Monitor = (props: Props) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </div>
-      <div className={styles.saveLogContainer}>
+      <div className={styles.saveLogContainer} data-testid="save-log-container">
         <EuiToolTip
           title="Allows you to download the generated log file after pausing the Profiler"
           content="Profiler log is saved to a file on your local machine with no size limitation.
           The temporary log file will be automatically rewritten when the Profiler is reset."
+          data-testid="save-log-tooltip"
         >
           <EuiSwitch
             compressed
             label={<span>Save Log</span>}
             checked={saveLogValue}
             onChange={(e) => setSaveLogValue(e.target.checked)}
+            data-testid="save-log-switch"
           />
         </EuiToolTip>
       </div>

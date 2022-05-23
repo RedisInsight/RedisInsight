@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -13,10 +13,10 @@ let keyNameAfter = chance.word({ length: 10 });
 fixture `Edit Key names verification`
     .meta({ type: 'smoke' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyNameAfter);
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -99,7 +99,7 @@ test
         const keyTTL = '2147476121';
         const keyValue = '{"name":"xyz"}';
 
-        await browserPage.addJsonKey(keyNameBefore, keyTTL, keyValue);
+        await browserPage.addJsonKey(keyNameBefore, keyValue, keyTTL);
         let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
         await t.expect(keyNameFromDetails).contains(keyNameBefore, 'The Key Name');
         await browserPage.editKeyName(keyNameAfter);

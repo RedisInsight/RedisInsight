@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,8 +10,8 @@ import {
   fetchMoreHashFields,
   updateHashValueStateSelector,
   updateHashFieldsAction,
-} from 'uiSrc/slices/hash'
-import { formatLongName, Nullable } from 'uiSrc/utils'
+} from 'uiSrc/slices/browser/hash'
+import { formatLongName, createDeleteFieldHeader, createDeleteFieldMessage, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -20,8 +20,8 @@ import {
   ITableColumn,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import {
@@ -81,8 +81,23 @@ const HashDetails = (props: Props) => {
     setDeleting(`${field + suffix}`)
   }, [])
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Hash,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteField = (field = '') => {
-    dispatch(deleteHashFields(key, [field]))
+    dispatch(deleteHashFields(key, [field], onSuccessRemoved))
     closePopover()
   }
 
@@ -244,8 +259,9 @@ const HashDetails = (props: Props) => {
               data-testid={`edit-hash-button-${field}`}
             />
             <PopoverDelete
+              header={createDeleteFieldHeader(key)}
+              text={createDeleteFieldMessage(field)}
               item={field}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
@@ -285,7 +301,16 @@ const HashDetails = (props: Props) => {
           { footerOpened: isFooterOpen }
         )}
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-hash"
+          />
+        )}
         <VirtualTable
+          hideProgress
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}

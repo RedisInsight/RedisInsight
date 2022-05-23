@@ -31,4 +31,9 @@ export const ADD_KEY_TYPE_OPTIONS = [
     value: KeyTypes.ReJSON,
     color: GROUP_TYPES_COLORS[KeyTypes.ReJSON],
   },
+  {
+    text: 'Stream',
+    value: KeyTypes.Stream,
+    color: GROUP_TYPES_COLORS[KeyTypes.Stream],
+  },
 ]

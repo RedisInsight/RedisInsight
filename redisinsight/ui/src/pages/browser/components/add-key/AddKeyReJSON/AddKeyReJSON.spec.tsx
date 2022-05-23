@@ -43,13 +43,8 @@ describe('AddKeyReJSON', () => {
   })
 
   it('should render add button disabled with wrong json', () => {
-    render(<AddKeyReJSON {...instance(mockedProps)} />)
+    render(<AddKeyReJSON {...instance(mockedProps)} keyName="name" />)
     const valueArea = screen.getByTestId('json-value')
-    const keyNameInput = screen.getByTestId('key')
-    fireEvent.change(
-      keyNameInput,
-      { target: { value: 'keyName' } }
-    )
     fireEvent.change(
       valueArea,
       { target: { value: '{"12' } }
@@ -58,13 +53,8 @@ describe('AddKeyReJSON', () => {
   })
 
   it('should render add button not disabled', () => {
-    render(<AddKeyReJSON {...instance(mockedProps)} />)
+    render(<AddKeyReJSON {...instance(mockedProps)} keyName="name" />)
     const valueArea = screen.getByTestId('json-value')
-    const keyNameInput = screen.getByTestId('key')
-    fireEvent.change(
-      keyNameInput,
-      { target: { value: 'keyName' } }
-    )
     fireEvent.change(
       valueArea,
       { target: { value: '{}' } }

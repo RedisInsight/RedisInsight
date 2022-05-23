@@ -1,0 +1,185 @@
+import { ApiProperty, ApiPropertyOptional, IntersectionType } from '@nestjs/swagger';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDefined,
+  IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested, isString,
+} from 'class-validator';
+import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
+import { SortOrder } from 'src/constants';
+import { Type } from 'class-transformer';
+import { IsObjectWithValues } from 'src/validators/isObjectWithValues.validator';
+
+export class StreamEntryDto {
+  @ApiProperty({
+    type: String,
+    description: 'Entry ID',
+    example: '*',
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @ApiProperty({
+    type: Object,
+    description: 'Entry fields',
+    example: { field1: 'value1', field2: 'value2' },
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsObjectWithValues([isString], { message: '$property must be an object with string values' })
+  fields: Record<string, string>;
+}
+
+export class GetStreamEntriesDto extends KeyDto {
+  @ApiPropertyOptional({
+    description: 'Specifying the start id',
+    type: String,
+    default: '-',
+  })
+  @IsString()
+  start?: string = '-';
+
+  @ApiPropertyOptional({
+    description: 'Specifying the end id',
+    type: String,
+    default: '+',
+  })
+  @IsString()
+  end?: string = '+';
+
+  @ApiPropertyOptional({
+    description:
+      'Specifying the number of entries to return.',
+    type: Number,
+    minimum: 1,
+    default: 500,
+  })
+  @IsInt()
+  @Min(1)
+  count?: number = 500;
+
+  @ApiProperty({
+    description: 'Get entries sort by IDs order.',
+    default: SortOrder.Desc,
+    enum: SortOrder,
+  })
+  @IsEnum(SortOrder, {
+    message: `sortOrder must be a valid enum value. Valid values: ${Object.values(
+      SortOrder,
+    )}.`,
+  })
+  sortOrder?: SortOrder = SortOrder.Desc;
+}
+
+export class GetStreamEntriesResponse {
+  @ApiProperty({
+    type: String,
+    description: 'Key Name',
+  })
+  keyName: string;
+
+  @ApiProperty({
+    type: Number,
+    description: 'Total number of entries',
+  })
+  total: number;
+
+  @ApiProperty({
+    type: String,
+    description: 'Last generated id in the stream',
+  })
+  lastGeneratedId: string;
+
+  @ApiProperty({
+    description: 'First stream entry',
+    type: StreamEntryDto,
+  })
+  firstEntry: StreamEntryDto;
+
+  @ApiProperty({
+    description: 'Last stream entry',
+    type: StreamEntryDto,
+  })
+  lastEntry: StreamEntryDto;
+
+  @ApiProperty({
+    description: 'Stream entries',
+    type: StreamEntryDto,
+    isArray: true,
+  })
+  entries: StreamEntryDto[];
+}
+
+export class AddStreamEntriesDto extends KeyDto {
+  @ApiProperty({
+    description: 'Entries to push',
+    type: StreamEntryDto,
+    isArray: true,
+    example: [
+      {
+        id: '*',
+        fields: {
+          field1: 'value1',
+          field2: 'value2',
+        },
+      },
+      {
+        id: '*',
+        fields: {
+          field1: 'value1',
+          field2: 'value2',
+        },
+      },
+    ],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => StreamEntryDto)
+  entries: StreamEntryDto[];
+}
+
+export class AddStreamEntriesResponse {
+  @ApiProperty({
+    type: String,
+    description: 'Key Name',
+  })
+  keyName: string;
+
+  @ApiProperty({
+    description: 'Entries IDs',
+    type: String,
+    isArray: true,
+  })
+  entries: string[];
+}
+
+export class DeleteStreamEntriesDto extends KeyDto {
+  @ApiProperty({
+    description: 'Entries IDs',
+    type: String,
+    isArray: true,
+    example: ['1650985323741-0', '1650985323770-0'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => String)
+  entries: string[];
+}
+
+export class DeleteStreamEntriesResponse {
+  @ApiProperty({
+    description: 'Number of deleted entries',
+    type: Number,
+  })
+  affected: number;
+}
+
+export class CreateStreamDto extends IntersectionType(
+  AddStreamEntriesDto,
+  KeyWithExpireDto,
+) {}

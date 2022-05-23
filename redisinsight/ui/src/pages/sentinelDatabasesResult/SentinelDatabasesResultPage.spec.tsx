@@ -3,7 +3,7 @@ import { render } from 'uiSrc/utils/test-utils'
 
 import SentinelDatabasesResultPage from './SentinelDatabasesResultPage'
 
-jest.mock('uiSrc/slices/sentinel', () => ({
+jest.mock('uiSrc/slices/instances/sentinel', () => ({
   sentinelSelector: jest.fn().mockReturnValue({
     data: [{
       status: 'success',

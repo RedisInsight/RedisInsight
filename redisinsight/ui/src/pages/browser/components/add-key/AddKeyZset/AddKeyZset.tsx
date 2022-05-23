@@ -14,33 +14,29 @@ import {
 } from '@elastic/eui'
 import { Maybe, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
-import {
-  addZsetKey, addKeyStateSelector,
-} from 'uiSrc/slices/keys'
+import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
 import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
 
-import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCommonFields/AddKeyCommonFields'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import styles from 'uiSrc/pages/browser/components/key-details-add-items/styles.module.scss'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-import {
-  AddCommonFieldsFormConfig as defaultConfig,
-  AddZsetFormConfig as config
-} from '../constants/fields-config'
+import { AddZsetFormConfig as config } from '../constants/fields-config'
 
 import {
-  INITIAL_ZSET_MEMBER_STATE, IZsetMemberState
+  INITIAL_ZSET_MEMBER_STATE,
+  IZsetMemberState
 } from '../../key-details-add-items/add-zset-members/AddZsetMembers'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  keyName: string
+  keyTTL: Maybe<number>
+  onCancel: (isCancelled?: boolean) => void
 }
 
 const AddKeyZset = (props: Props) => {
+  const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
-  const [keyName, setKeyName] = useState<string>('')
-  const [keyTTL, setKeyTTL] = useState<Maybe<number>>(undefined)
   const [members, setMembers] = useState<IZsetMemberState[]>([{ ...INITIAL_ZSET_MEMBER_STATE }])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const lastAddedMemberName = useRef<HTMLInputElement>(null)
@@ -166,7 +162,7 @@ const AddKeyZset = (props: Props) => {
     if (keyTTL !== undefined) {
       data.expire = keyTTL
     }
-    dispatch(addZsetKey(data, props.onCancel))
+    dispatch(addZsetKey(data, onCancel))
   }
 
   const isClearDisabled = (item: IZsetMemberState): boolean =>
@@ -174,14 +170,6 @@ const AddKeyZset = (props: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <AddKeyCommonFields
-        config={defaultConfig}
-        loading={loading}
-        keyName={keyName}
-        setKeyName={setKeyName}
-        keyTTL={keyTTL}
-        setKeyTTL={setKeyTTL}
-      />
       {
         members.map((item, index) => (
           <EuiFlexItem
@@ -242,7 +230,6 @@ const AddKeyZset = (props: Props) => {
                 length={members.length}
                 addItem={addMember}
                 removeItem={removeMember}
-                removeCanClear
                 clearIsDisabled={isClearDisabled(item)}
                 addItemIsDisabled={(members.some((item) => !item.score.length))}
                 clearItemValues={clearMemberValues}
@@ -269,7 +256,7 @@ const AddKeyZset = (props: Props) => {
               <div>
                 <EuiButton
                   color="secondary"
-                  onClick={() => props.onCancel(true)}
+                  onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
                   <EuiTextColor>Cancel</EuiTextColor>

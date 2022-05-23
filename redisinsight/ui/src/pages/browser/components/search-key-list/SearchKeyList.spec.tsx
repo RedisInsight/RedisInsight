@@ -9,7 +9,7 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { setSearchMatch } from 'uiSrc/slices/keys'
+import { setSearchMatch } from 'uiSrc/slices/browser/keys'
 import SearchKeyList, { Props } from './SearchKeyList'
 
 const mockedProps = mock<Props>()

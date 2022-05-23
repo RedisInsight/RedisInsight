@@ -1,9 +1,10 @@
-import { t, Selector } from 'testcafe';
+import { t, Selector, ClientFunction } from 'testcafe';
 import { Common } from '../helpers/common';
 import { BrowserPage } from '../pageObjects';
 
 const common = new Common();
 const browserPage = new BrowserPage();
+const getPageUrl = ClientFunction(() => window.location.href);
 
 export class CliPage {
     //-------------------------------------------------------------------------------------------
@@ -48,67 +49,91 @@ export class CliPage {
     cliEndpoint = Selector('[data-testid^=cli-endpoint]');
     cliDbIndex = Selector('[data-testid=cli-db-index]');
 
-  /**
+    /**
   * Select filter group type
   * @param groupName The group name
   */
-  async selectFilterGroupType(groupName: string): Promise<void>{
-      await t.click(this.filterGroupTypeButton);
-      await t.click(this.filterOptionGroupType.withExactText(groupName));
-  }
+    async selectFilterGroupType(groupName: string): Promise<void>{
+        await t.click(this.filterGroupTypeButton);
+        await t.click(this.filterOptionGroupType.withExactText(groupName));
+    }
 
-  /**
+    /**
    * Add keys from CLI
    * @param keyCommand The command from cli to add key
    * @param amount The amount of the keys
    * @param keyName The name of the keys. The default value is keyName
    */
-  async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void>{
-      //Open CLI
-      await t.click(this.cliExpandButton);
-      //Add keys
-      const keyValueArray = await common.createArrayWithKeyValueAndKeyname(amount, keyName);
-      await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
-      await t.pressKey('enter');
-      await t.click(this.cliCollapseButton);
-  }
+    async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void>{
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        //Add keys
+        const keyValueArray = await common.createArrayWithKeyValueAndKeyname(amount, keyName);
+        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
+    }
 
-  /**
+    /**
    * Send command in Cli
    * @param command The command to send
    */
-  async sendCommandInCli(command: string): Promise<void>{
-      //Open CLI
-      await t.click(this.cliExpandButton);
-      await t.typeText(this.cliCommandInput, command, { paste: true });
-      await t.pressKey('enter');
-      await t.click(this.cliCollapseButton);
-  }
+    async sendCommandInCli(command: string): Promise<void>{
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        await t.typeText(this.cliCommandInput, command, { paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
+    }
 
-  /**
+    /**
    * Get command result execution
    * @param command The command for send in CLI
    */
-  async getSuccessCommandResultFromCli(command: string): Promise<string>{
-      //Open CLI
-      await t.click(this.cliExpandButton);
-      //Add keys
-      await t.typeText(this.cliCommandInput, command, { paste: true });
-      await t.pressKey('enter');
-      const commandResult = await this.cliOutputResponseSuccess.innerText;
-      await t.click(this.cliCollapseButton);
-      return commandResult;
-  }
+    async getSuccessCommandResultFromCli(command: string): Promise<string>{
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        //Add keys
+        await t.typeText(this.cliCommandInput, command, { paste: true });
+        await t.pressKey('enter');
+        const commandResult = await this.cliOutputResponseSuccess.innerText;
+        await t.click(this.cliCollapseButton);
+        return commandResult;
+    }
 
-  /**
+    /**
    * Send command in Cli and wait for total keys after 5 seconds
    * @param command The command to send
    */
-  async sendCliCommandAndWaitForTotalKeys(command: string): Promise<string> {
-      await this.sendCommandInCli(command);
-      //Wait 5 seconds and return total keys
-      await t.wait(5000);
-      const totalKeys = await browserPage.overviewTotalKeys.innerText;
-      return totalKeys;
-  }
+    async sendCliCommandAndWaitForTotalKeys(command: string): Promise<string> {
+        await this.sendCommandInCli(command);
+        //Wait 5 seconds and return total keys
+        await t.wait(5000);
+        return await browserPage.overviewTotalKeys.innerText;
+    }
+
+    /**
+     * Check URL of command opened from command helper
+     * @param command The command for which to open Read more link
+     * @param url Command URL for external resourse
+     */
+    async checkURLCommand(command: string, url: string): Promise<void> {
+        await t.click(this.cliHelperOutputTitles.withExactText(command));
+        await t.click(this.readMoreButton);
+        await t.expect(getPageUrl()).eql(url, 'The opened page');
+    }
+
+    /**
+     * Check URL of command opened from command helper
+     * @param searchedCommand Searched command in Command Helper
+     * @param listToCompare The list with commands to compare with opened in Command Helper
+     */
+    async checkSearchedCommandInCommandHelper(searchedCommand: string, listToCompare: string[]): Promise<void> {
+        await t.typeText(this.cliHelperSearch, searchedCommand, { speed: 0.5 });
+        //Verify results in the output
+        const commandsCount = await this.cliHelperOutputTitles.count;
+        for (let i = 0; i < commandsCount; i++) {
+            await t.expect(this.cliHelperOutputTitles.nth(i).textContent).eql(listToCompare[i], 'Results in the output contains searched value');
+        }
+    }
 }

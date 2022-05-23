@@ -1,6 +1,6 @@
 import {RequestMock, t} from 'testcafe';
-import {commonUrl} from "./conf";
 import { Chance } from 'chance';
+import {commonUrl} from './conf';
 
 const settingsApiUrl = `${commonUrl}/api/settings`;
 const chance = new Chance();
@@ -10,15 +10,15 @@ const mockedSettingsResponse = {
         version: '0',
         eula: false,
         analytics: false
-    }}
+    }};
 
 export class Common {
     mock = RequestMock()
-            .onRequestTo(settingsApiUrl)
-            .respond(mockedSettingsResponse, 200);
+        .onRequestTo(settingsApiUrl)
+        .respond(mockedSettingsResponse, 200);
 
-    async waitForElementNotVisible(elm): Promise<void> {
-        await t.expect(elm.exists).notOk({ timeout: 20000 });
+    async waitForElementNotVisible(elm: Selector): Promise<void> {
+        await t.expect(elm.exists).notOk({ timeout: 10000 });
     }
 
     /**
@@ -26,7 +26,7 @@ export class Common {
      * @param length The amount of array elements
      */
     createArrayWithKeys(length: number): string[] {
-        return Array.from({length}, (_, i) => `key${i}`)
+        return Array.from({length}, (_, i) => `key${i}`);
     }
 
     /**
@@ -48,7 +48,7 @@ export class Common {
     * @param length The amount of array elements
     * @param keyName The name of the key
     */
-     async createArrayWithKeyValueAndKeyname(length: number, keyName: string): Promise<string[]> {
+    async createArrayWithKeyValueAndKeyname(length: number, keyName: string): Promise<string[]> {
         const keyNameArray = [];
         for(let i = 1; i <= length; i++) {
             const key = `${keyName}${i}`;
@@ -63,7 +63,7 @@ export class Common {
      * @param length The amount of array elements
      */
     createArrayPairsWithKeyValue(length: number): [string, number][] {
-        return Array.from({ length }, (_, i) => [`key${i}`, i])
+        return Array.from({ length }, (_, i) => [`key${i}`, i]);
     }
 
     /**
@@ -82,7 +82,7 @@ export class Common {
     * Get background colour of element
     * @param element The selector of the element
     */
-     async getBackgroundColour(element: Selector): Promise<string> {
+    async getBackgroundColour(element: Selector): Promise<string> {
         return element.getStyleProperty('background-color');
     }
 }

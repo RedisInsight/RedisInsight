@@ -28,9 +28,9 @@ $selectDelimiterHeight: 18px;
   height: 84px;
   width: 182px;
   padding: 12px 18px !important;
-  margin-top: -18px;
   border: 1px solid var(--euiColorPrimary) !important;
   background-color: var(--euiColorLightestShade) !important;
+  margin-top: -18px;
 
   :global(.euiPopover__panelArrow) {
     &::before,

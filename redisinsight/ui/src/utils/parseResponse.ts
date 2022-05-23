@@ -1,6 +1,6 @@
 import { find, map, sortBy, omit, forEach } from 'lodash'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
-import { initialStateSentinelStatus } from 'uiSrc/slices/sentinel'
+import { initialStateSentinelStatus } from 'uiSrc/slices/instances/sentinel'
 
 import { AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
 import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel'

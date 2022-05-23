@@ -128,6 +128,11 @@ export class KeysBusinessService {
       );
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientOptions, dto);
+
+      result.forEach((nodeResult, nodeIndex) => nodeResult.keys.forEach((key, i) => {
+        result[nodeIndex].keys[i].name = key.name.toString();
+      }));
+
       return result;
     } catch (error) {
       this.logger.error(

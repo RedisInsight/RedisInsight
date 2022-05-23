@@ -73,7 +73,7 @@ const TableColumnSearchTrigger = (props: Props) => {
   }
 
   return (
-    <div>
+    <div style={{ paddingRight: 10 }}>
       <EuiButtonIcon
         iconType="search"
         aria-label={`Search ${fieldName}`}

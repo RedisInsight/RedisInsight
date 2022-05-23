@@ -19,20 +19,36 @@
   height: 1px !important;
   width: 100%;
   position: relative;
-  padding: 20px 55px 80px 55px;
-  max-width: 708px;
+  padding: 24px 18px 96px 18px;
   scroll-padding-bottom: 80px;
 
   @media screen and (max-width: 767px) {
-    padding: 20px 15px 96px 15px;
     scroll-padding-bottom: 96px;
   }
 }
 
+.contentFields {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.divider {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.helpText {
+  color: var(--euiTextSubduedColor);
+  display: block;
+  margin-bottom: 12px;
+  font: normal normal normal 14px/24px Graphik;
+}
+
 .closeKeyTooltip {
   position: absolute;
-  top: 8px;
-  right: 10px;
+  top: 22px;
+  right: 18px;
 
   svg {
     width: 20px;

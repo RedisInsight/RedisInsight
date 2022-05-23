@@ -9,6 +9,13 @@ const KEY_INPUT_TEST_ID = 'edit-key-input'
 const KEY_BTN_TEST_ID = 'edit-key-btn'
 const TTL_INPUT_TEST_ID = 'edit-ttl-input'
 
+jest.mock('uiSrc/slices/browser/keys', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/keys'),
+  selectedKeyDataSelector: jest.fn().mockReturnValue({
+    name: 'test',
+  }),
+}))
+
 describe('KeyDetailsHeader', () => {
   global.navigator.clipboard = {
     writeText: jest.fn()
@@ -70,7 +77,7 @@ describe('KeyDetailsHeader', () => {
     const onRefresh = jest.fn()
     render(<KeyDetailsHeader {...mockedProps} onRefresh={onRefresh} />)
 
-    fireEvent.click(screen.getByLabelText(/Refresh key/i))
+    fireEvent.click(screen.getByTestId('refresh-key-btn'))
     expect(onRefresh).toBeCalled()
   })
 

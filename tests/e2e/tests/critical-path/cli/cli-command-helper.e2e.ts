@@ -1,9 +1,7 @@
-import { rte } from '../../../helpers/constants';
+import {env, rte} from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { ClientFunction } from 'testcafe';
-import { lowerCase } from 'lodash';
 
 const cliPage = new CliPage();
 
@@ -12,21 +10,19 @@ const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
 const COMMAND_GROUP_TIMESERIES = 'TimeSeries';
 const COMMAND_GROUP_GRAPH = 'Graph';
-const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `CLI Command helper`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see relevant search results in Command Helper per every entered symbol', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see relevant search results in Command Helper per every entered symbol', async t => {
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Start search from 1 symbol
@@ -41,8 +37,7 @@ test
         await t.expect(countCommandsOfOneLetterSearch).gt(countCommandsOfTwoLettersSearch, 'Count of commands with 1 letter more than 2');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user clears the input in the Search of CLI Helper (via x icon), he can see the default screen with proper the text', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user clears the input in the Search of CLI Helper (via x icon), he can see the default screen with proper the text', async t => {
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Verify default text
@@ -57,8 +52,7 @@ test
         await t.expect(cliPage.cliHelperText.textContent).eql(defaultHelperText, 'Default text for CLI Helper is shown');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user enters command in CLI, Helper displays additional info about the command', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user enters command in CLI, Helper displays additional info about the command', async t => {
         //Open CLI and Helper
         await t.click(cliPage.cliExpandButton);
         await t.click(cliPage.expandCommandHelperButton);
@@ -70,8 +64,7 @@ test
         await t.expect(cliPage.cliHelperSummary.innerText).contains('Append a value to a key', 'Command summary');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that Command helper cleared when user runs the command in CLI', async t => {
+    .meta({ rte: rte.standalone })('Verify that Command helper cleared when user runs the command in CLI', async t => {
         const searchText = 'sa';
         //Open CLI and Helper
         await t.click(cliPage.cliExpandButton);
@@ -87,8 +80,7 @@ test
         await t.expect(cliPage.cliHelperSearch.value).eql('', 'Search was cleared');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can unselect the command filtered to remove filters', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can unselect the command filtered to remove filters', async t => {
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
         //Select one command from list
@@ -102,8 +94,7 @@ test
         await t.expect(cliPage.cliHelperText.textContent).eql(defaultHelperText, 'Default text for CLI Helper is shown');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that when user has used search and apply filters, search results include only commands from the filter group applied', async t => {
+    .meta({ rte: rte.standalone })('Verify that when user has used search and apply filters, search results include only commands from the filter group applied', async t => {
         const searchText = 'sa';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
@@ -117,12 +108,11 @@ test
         await t.expect(cliPage.cliHelperOutputTitles.withText('SADD').exists).ok('Proper command was found');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {
         const commandForSearch = 'TS.';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
-        //Select group from list and remeber commands
+        //Select group from list and remember commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
         const timeSeriesCommands = [];
@@ -131,27 +121,19 @@ test
         }
         //Unselect group from list
         await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
-        //Search per command
-        await t.typeText(cliPage.cliHelperSearch, commandForSearch);
-        //Verify results in the output
-        const commandsCount = await cliPage.cliHelperOutputTitles.count;
-        for(let i = 0; i < commandsCount; i++){
-            await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(timeSeriesCommands[i], 'Results in the output contains searched value');
-        }
-        //Check first command documentation url
-        await t.click(cliPage.cliHelperOutputTitles.withExactText(timeSeriesCommands[0]));
-        await t.click(cliPage.readMoreButton);        
-        await t.expect(getPageUrl()).eql(`https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`, 'The opened page');
+        //Search per part of command and check all opened commands
+        await cliPage.checkSearchedCommandInCommandHelper(commandForSearch, timeSeriesCommands);
+        //Check the first command documentation url
+        await cliPage.checkURLCommand(timeSeriesCommands[0], `https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`);
         await t.switchToParentWindow();
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
+    .meta({ env: env.web, rte: rte.standalone })('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
         const commandForSearch = 'GRAPH.';
         const externalPageLink = 'https://redis.io/commands/graph.config-get/';
         //Open Command Helper
         await t.click(cliPage.expandCommandHelperButton);
-        //Select group from list and remeber commands
+        //Select group from list and remember commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
         const graphCommands = [];
@@ -160,16 +142,9 @@ test
         }
         //Unselect group from list
         await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
-        //Search per command
-        await t.typeText(cliPage.cliHelperSearch, commandForSearch);
-        //Verify results in the output
-        const commandsCount = await cliPage.cliHelperOutputTitles.count;
-        for(let i = 0; i < commandsCount; i++){
-            await t.expect(cliPage.cliHelperOutputTitles.nth(i).textContent).eql(graphCommands[i], 'Results in the output contains searched value');
-        }
-        //Check first command documentation url
-        await t.click(cliPage.cliHelperOutputTitles.withExactText(graphCommands[0]));
-        await t.click(cliPage.readMoreButton);
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        //Search per part of command and check all opened commands
+        await cliPage.checkSearchedCommandInCommandHelper(commandForSearch, graphCommands);
+        //Check the first command documentation url
+        await cliPage.checkURLCommand(graphCommands[0], externalPageLink);
         await t.switchToParentWindow();
     });

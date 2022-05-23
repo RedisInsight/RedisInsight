@@ -2,7 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 
 import RemoveListElements, { Props } from './RemoveListElements'
 import { HEAD_DESTINATION } from '../../key-details-add-items/add-list-elements/AddListElements'
@@ -11,7 +11,7 @@ const COUNT_INPUT = 'count-input'
 
 const mockedProps = mock<Props>()
 
-jest.mock('uiSrc/slices/instances', () => ({
+jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceOverviewSelector: jest.fn().mockReturnValue({
     version: '6.2.1',
   }),

@@ -21,6 +21,7 @@ import styles from './styles.module.scss'
 
 const VirtualTable = (props: IProps) => {
   const {
+    selectable = true,
     headerHeight = 44,
     rowHeight = 40,
     scanned = 0,
@@ -42,6 +43,8 @@ const VirtualTable = (props: IProps) => {
     setScrollTopPosition = () => {},
     scrollTopProp = 0,
     hideFooter = false,
+    tableWidth = 0,
+    hideProgress,
   } = props
   const scrollTopRef = useRef<number>(0)
   const [selectedRowIndex, setSelectedRowIndex] = useState<Nullable<number>>(null)
@@ -89,7 +92,7 @@ const VirtualTable = (props: IProps) => {
     const isRowSelectable = checkIfRowSelectable(data.rowData)
 
     onRowClick(data)
-    if (isRowSelectable) {
+    if (isRowSelectable && selectable) {
       setSelectedRowIndex(data.index)
     }
   }
@@ -139,7 +142,7 @@ const VirtualTable = (props: IProps) => {
     )
   }
 
-  const headerRenderer = ({ columnIndex }: any) => {
+  const headerRenderer = ({ columnIndex, cellClass = '' }: any) => {
     const column = columns[columnIndex]
     const isColumnSorted = sortedColumn && sortedColumn.column === column.id
 
@@ -151,18 +154,19 @@ const VirtualTable = (props: IProps) => {
               type="button"
               onClick={() => changeSorting(column.id)}
               className={cx(
+                cellClass,
                 styles.headerButton,
                 isColumnSorted ? styles.headerButtonSorted : null,
               )}
               data-testid="score-button"
               style={{ justifyContent: column.alignment }}
             >
-              <EuiText size="m">{column.label}</EuiText>
+              <EuiText size="m" className={cellClass}><span>{column.label}</span></EuiText>
             </button>
           </div>
         )}
         {(!column.isSortable || (column.isSortable && searching)) && (
-          <div className={cx(styles.headerCell, 'relative')} style={{ flex: '1' }}>
+          <div className={cx(styles.headerCell, cellClass, 'relative')} style={{ flex: '1' }}>
             <div
               style={{
                 justifyContent: column.alignment,
@@ -170,7 +174,7 @@ const VirtualTable = (props: IProps) => {
                 flex: '1',
               }}
             >
-              <EuiText size="m">{column.label}</EuiText>
+              <EuiText size="m" className={cellClass}><span>{column.label}</span></EuiText>
             </div>
             {column.isSearchable && searchRenderer(column)}
           </div>
@@ -288,7 +292,7 @@ const VirtualTable = (props: IProps) => {
           onWheel={onWheel}
           data-testid="virtual-table-container"
         >
-          {loading ? (
+          {loading && !hideProgress ? (
             <EuiProgress
               color="primary"
               size="xs"
@@ -312,11 +316,11 @@ const VirtualTable = (props: IProps) => {
                 onRowsRendered={onRowsRendered}
                 headerHeight={headerHeight}
                 rowHeight={rowHeight}
-                width={width}
+                width={tableWidth > width ? tableWidth : width}
                 noRowsRenderer={noRowsRenderer}
                 height={height}
                 className={styles.table}
-                gridClassName={cx(styles.customScroll, {
+                gridClassName={cx(styles.customScroll, styles.grid, {
                   [`${styles.disableScroll}`]: disableScroll,
                 })}
                 rowClassName={({ index }) =>
@@ -349,6 +353,7 @@ const VirtualTable = (props: IProps) => {
                       headerRenderer({
                         ...headerProps,
                         columnIndex: index,
+                        cellClass: column.headerCellClassName,
                       })}
                     cellRenderer={cellRenderer}
                     headerClassName={column.headerClassName ?? ''}

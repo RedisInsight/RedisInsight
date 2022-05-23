@@ -1,12 +1,11 @@
 /* eslint-disable react/no-this-in-sfc */
-import React, { Ref, useEffect, useRef, useState, FC, SVGProps } from 'react'
+import React, { Ref, useRef, FC, SVGProps } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { formatDistanceToNow } from 'date-fns'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 
@@ -15,12 +14,13 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
-} from 'uiSrc/slices/keys'
+  resetKeysData,
+} from 'uiSrc/slices/browser/keys'
 import {
   resetBrowserTree,
   setBrowserKeyListDataLoaded,
 } from 'uiSrc/slices/app/context'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
@@ -31,11 +31,12 @@ import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.
 
 import FilterKeyType from '../filter-key-type'
 import SearchKeyList from '../search-key-list'
+import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
 
-const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * 60 // once a minute
-const HIDE_REFRESH_LABEL_WIDTH = 700
+const HIDE_REFRESH_LABEL_WIDTH = 600
+const FULL_SCREEN_RESOLUTION = 1260
 
 interface IViewType {
   tooltipText: string
@@ -50,22 +51,24 @@ interface IViewType {
 export interface Props {
   loading: boolean
   keysState: KeysStoreData
-  sizes: any
   loadKeys: (type?: KeyViewType) => void
   loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
 }
 
 const KeysHeader = (props: Props) => {
-  let interval: NodeJS.Timeout
-  const { loading, keysState, sizes, loadKeys, loadMoreItems, handleAddKeyPanel } = props
+  const {
+    loading,
+    keysState,
+    loadKeys,
+    loadMoreItems,
+    handleAddKeyPanel,
+  } = props
 
   const { lastRefreshTime } = useSelector(keysDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType, isSearched, isFiltered } = useSelector(keysSelector)
 
-  const [lastRefreshMessage, setLastRefreshMessage] = useState('')
-  const [showRefreshLabel, setShowRefreshLabel] = useState(true)
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
   const dispatch = useDispatch()
@@ -104,52 +107,25 @@ const KeysHeader = (props: Props) => {
     height: '36px !important',
   }
 
-  useEffect(() => {
-    globalThis.addEventListener('resize', updateSizes)
-
-    return () => {
-      globalThis.removeEventListener('resize', updateSizes)
+  const handleRefreshKeys = (enableAutoRefresh: boolean) => {
+    if (!enableAutoRefresh) {
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
+          TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED
+        ),
+        eventData: {
+          databaseId: instanceId
+        }
+      })
     }
-  }, [])
-
-  useEffect(() => {
-    updateSizes()
-  }, [sizes])
-
-  useEffect(() => {
-    updateLastRefresh()
-
-    interval = setInterval(() => {
-      if (document.hidden) return
-
-      updateLastRefresh()
-    }, TIMEOUT_TO_UPDATE_REFRESH_TIME)
-    return () => clearInterval(interval)
-  }, [lastRefreshTime])
-
-  const updateSizes = () => {
-    const isShowRefreshLabel = (rootDivRef?.current?.offsetWidth || 0) > HIDE_REFRESH_LABEL_WIDTH
-    setShowRefreshLabel(isShowRefreshLabel)
-  }
-
-  const handleRefreshKeys = () => {
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId
-      }
-    })
     dispatch(fetchKeys(
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       () => dispatch(setBrowserKeyListDataLoaded(true)),
       () => dispatch(setBrowserKeyListDataLoaded(false)),
     ))
-    dispatch(resetBrowserTree())
   }
 
   const handleScanMore = (config: any) => {
@@ -157,12 +133,6 @@ const KeysHeader = (props: Props) => {
       ...config,
       stopIndex: (viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT) - 1,
     })
-  }
-
-  const updateLastRefresh = () => {
-    lastRefreshTime && setLastRefreshMessage(
-      `${formatDistanceToNow(lastRefreshTime, { addSuffix: true })}`
-    )
   }
 
   const openAddKeyPanel = () => {
@@ -191,6 +161,7 @@ const KeysHeader = (props: Props) => {
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
+    dispatch(resetKeysData())
     loadKeys(type)
   }
 
@@ -207,8 +178,16 @@ const KeysHeader = (props: Props) => {
     </EuiButton>
   )
 
-  const ViewSwitch = (
-    <div className={styles.viewTypeSwitch} data-testid="view-type-switcher">
+  const ViewSwitch = (width: number) => (
+    <div
+      className={
+        cx(styles.viewTypeSwitch, {
+          [styles.middleScreen]: width > HIDE_REFRESH_LABEL_WIDTH,
+          [styles.fullScreen]: width > FULL_SCREEN_RESOLUTION
+        })
+      }
+      data-testid="view-type-switcher"
+    >
       {viewTypes.map((view) => (
         <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
           <EuiButtonIcon
@@ -224,57 +203,42 @@ const KeysHeader = (props: Props) => {
     </div>
   )
 
-  const RefreshBtn = (
-    <div className={styles.refresh}>
-      {showRefreshLabel && (
-        <EuiTextColor className={styles.refreshSummary} style={{ verticalAlign: 'middle' }}>
-          Last refresh:
-          <span className={styles.refreshTime}>
-            {` ${lastRefreshMessage}`}
-          </span>
-        </EuiTextColor>
-      )}
-
-      <EuiToolTip
-        title="Last Refresh"
-        className={styles.tooltip}
-        position="top"
-        content={lastRefreshMessage}
-      >
-        <EuiButtonIcon
-          iconType="refresh"
-          color="primary"
-          disabled={loading}
-          onClick={handleRefreshKeys}
-          onMouseEnter={updateLastRefresh}
-          className={styles.btnRefresh}
-          aria-labelledby="Refresh keys"
-          data-testid="refresh-keys-btn"
-        />
-      </EuiToolTip>
-    </div>
-  )
-
   return (
     <div className={styles.content} ref={rootDivRef}>
-      <div className={styles.top}>
-        <FilterKeyType />
-        <SearchKeyList />
-        {ViewSwitch}
-        {AddKeyBtn}
-      </div>
+      <AutoSizer disableHeight>
+        {({ width }) => (
+          <div style={{ width }}>
+            <div className={styles.top}>
+              <FilterKeyType />
+              <SearchKeyList />
+              {ViewSwitch(width)}
+              <div>
+                {AddKeyBtn}
+              </div>
+            </div>
 
-      <div className={styles.bottom}>
-        <KeysSummary
-          items={keysState.keys}
-          totalItemsCount={keysState.total}
-          scanned={isSearched || isFiltered || viewType === KeyViewType.Tree ? keysState.scanned : 0}
-          loading={loading}
-          scanMoreStyle={scanMoreStyle}
-          loadMoreItems={handleScanMore}
-        />
-        {RefreshBtn}
-      </div>
+            <div className={styles.bottom}>
+              <KeysSummary
+                items={keysState.keys}
+                totalItemsCount={keysState.total}
+                scanned={isSearched || isFiltered || viewType === KeyViewType.Tree ? keysState.scanned : 0}
+                loading={loading}
+                scanMoreStyle={scanMoreStyle}
+                loadMoreItems={handleScanMore}
+              />
+              <AutoRefresh
+                postfix="keys"
+                loading={loading}
+                lastRefreshTime={lastRefreshTime}
+                displayText={width > HIDE_REFRESH_LABEL_WIDTH}
+                containerClassName={styles.refreshContainer}
+                onRefresh={handleRefreshKeys}
+                testid="refresh-keys-btn"
+              />
+            </div>
+          </div>
+        )}
+      </AutoSizer>
     </div>
   )
 }

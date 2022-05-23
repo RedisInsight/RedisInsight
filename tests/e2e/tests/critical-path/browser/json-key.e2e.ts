@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -14,20 +14,21 @@ const value = '{"name":"xyz"}';
 fixture `JSON Key verification`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-test
+//skipped due the issue https://redislabs.atlassian.net/browse/RI-2866
+test.skip
     .meta({ rte: rte.standalone })
     ('Verify that user can not add invalid JSON structure inside of created JSON', async t => {
         keyName = chance.word({ length: 10 });
         //Add Json key with json object
-        await browserPage.addJsonKey(keyName, keyTTL, value);
+        await browserPage.addJsonKey(keyName, value, keyTTL);
         //Check the notification message
         const notofication = await browserPage.getMessageText();
         await t.expect(notofication).contains('Key has been added', 'The notification');

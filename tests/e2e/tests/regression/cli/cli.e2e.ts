@@ -109,7 +109,7 @@ test
         keyName = chance.word({ length: 20 });
         const jsonValueCli = '"{\\"name\\":\\"xyz\\"}"';
         //Add Json key with json object
-        await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
+        await browserPage.addJsonKey(keyName, jsonValue, keyTTL);
         const command = `JSON.GET ${keyName}`;
         //Open CLI and run command
         await t.click(cliPage.cliExpandButton);

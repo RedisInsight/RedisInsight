@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import MultiSearch from 'uiSrc/components/multi-search/MultiSearch'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { replaceSpaces } from 'uiSrc/utils'
-import { fetchKeys, keysSelector, setFilter, setSearchMatch } from 'uiSrc/slices/keys'
+import { fetchKeys, keysSelector, setFilter, setSearchMatch } from 'uiSrc/slices/browser/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 
@@ -20,10 +20,10 @@ const SearchKeyList = () => {
   }, [filter])
 
   const handleApply = () => {
-    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
-
     // reset browser tree context
     dispatch(resetBrowserTree())
+
+    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
   }
 
   const handleChangeValue = (initValue: string) => {

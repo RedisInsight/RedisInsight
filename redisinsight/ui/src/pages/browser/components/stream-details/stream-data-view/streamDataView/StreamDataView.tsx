@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last, isNull } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiProgress } from '@elastic/eui'
 
 import {
   fetchMoreStreamEntries,
@@ -57,7 +56,7 @@ export interface Props {
   isFooterOpen?: boolean
 }
 
-const StreamDetails = (props: Props) => {
+const StreamDataView = (props: Props) => {
   const { data: entries = [], columns = [], onClosePopover, isFooterOpen } = props
   const dispatch = useDispatch()
 
@@ -207,14 +206,6 @@ const StreamDetails = (props: Props) => {
 
   return (
     <>
-      {loading && (
-        <EuiProgress
-          color="primary"
-          size="xs"
-          position="absolute"
-          data-testid="progress-key-stream"
-        />
-      )}
       {shouldFilterRender ? (
         <RangeFilter
           max={lastEntryTimeStamp}
@@ -271,4 +262,4 @@ const StreamDetails = (props: Props) => {
   )
 }
 
-export default StreamDetails
+export default StreamDataView

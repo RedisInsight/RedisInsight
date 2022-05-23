@@ -35,6 +35,7 @@ enum ApiEndpoints {
   REJSON_ARRAPPEND = 'rejson-rl/arrappend',
   STREAMS_ENTRIES = 'streams/entries',
   STREAMS_ENTRIES_GET = 'streams/entries/get',
+  STREAMS_CONSUMER_GROUPS = 'streams/entries/get',
   STREAMS = 'streams',
   CLI = 'cli',
   CLI_BLOCKING_COMMANDS = 'info/cli-blocking-commands',

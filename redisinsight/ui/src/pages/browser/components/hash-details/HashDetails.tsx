@@ -159,7 +159,7 @@ const HashDetails = (props: Props) => {
         })
       }
       setMatch(match)
-      dispatch(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, onSuccess))
+      dispatch(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
     }
   }
 

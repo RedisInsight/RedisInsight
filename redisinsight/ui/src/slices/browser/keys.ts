@@ -30,10 +30,11 @@ import { fetchSetMembers } from './set'
 import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
-import { fetchStreamEntries } from './stream'
+import { fetchConsumerGroups, fetchStreamEntries } from './stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
+import { StreamViewType } from '../interfaces/stream'
 
 export const initialState: KeysStore = {
   loading: false,
@@ -545,12 +546,23 @@ export function fetchKeyInfo(key: string, resetData?: boolean) {
         dispatch<any>(fetchReJSON(key, '.', resetData))
       }
       if (data.type === KeyTypes.Stream) {
-        dispatch<any>(fetchStreamEntries(
-          key,
-          SCAN_COUNT_DEFAULT,
-          SortOrder.DESC,
-          resetData
-        ))
+        const { viewType } = state.browser.stream
+
+        if (viewType === StreamViewType.Data) {
+          dispatch<any>(fetchStreamEntries(
+            key,
+            SCAN_COUNT_DEFAULT,
+            SortOrder.DESC,
+            resetData
+          ))
+        } else if (viewType === StreamViewType.Groups) {
+          dispatch<any>(fetchConsumerGroups(
+            // key,
+            // SCAN_COUNT_DEFAULT,
+            // SortOrder.DESC,
+            // resetData
+          ))
+        }
       }
     } catch (_err) {
       const error = _err as AxiosError

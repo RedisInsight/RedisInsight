@@ -48,7 +48,8 @@
     width: 1px;
     height: 6px;
     position: absolute;
-    top: -6px;
+    top: -5px;
+    left: -1px;
     background-color: var(--euiColorPrimary);
   }
 
@@ -57,7 +58,7 @@
     width: 1px;
     height: 6px;
     position: absolute;
-    right: 0;
+    right: -1px;
     background-color: var(--euiColorPrimary);
   }
 }
@@ -70,13 +71,12 @@
 
     width: 2px;
     height: 12px;
-    top: -12px;
+    top: -7px;
   }
 
   &:after {
     width: 2px;
     height: 12px;
-    top: 5px;
   }
 }
 

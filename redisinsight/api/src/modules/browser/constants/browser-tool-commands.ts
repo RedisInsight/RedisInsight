@@ -80,6 +80,10 @@ export enum BrowserToolStreamCommands {
   XRevRange = 'xrevrange',
   XAdd = 'xadd',
   XDel = 'xdel',
+  XInfoGroups = 'xinfo groups',
+  XPending = 'xpending',
+  XGroupCreate = 'xgroup create',
+  XGroupSetId = 'xgroup setid',
 }
 
 export enum BrowserToolTSCommands {

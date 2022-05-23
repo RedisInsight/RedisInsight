@@ -20,7 +20,7 @@ const values = [
     '27'
 ];
 
-fixture `Stream key`
+fixture `Stream key entry deletion`
     .meta({
         type: 'critical_path',
         rte: rte.standalone

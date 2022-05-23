@@ -1,3 +1,4 @@
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { CommandGroup } from './commands'
 
 export enum KeyTypes {
@@ -114,11 +115,15 @@ export const KEY_TYPES_ACTIONS: KeyTypesActions = Object.freeze({
       name: 'Edit Value',
     },
   },
-  [KeyTypes.ReJSON]: {},
-  [KeyTypes.Stream]: {
-    addItems: {
-      name: 'New Entry',
-    },
+  [KeyTypes.ReJSON]: {}
+})
+
+export const STREAM_ADD_ACTION = Object.freeze({
+  [StreamViewType.Streams]: {
+    name: 'New Entry'
+  },
+  [StreamViewType.Groups]: {
+    name: 'New Group'
   }
 })
 

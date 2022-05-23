@@ -6,10 +6,16 @@ type Range = {
   end: string,
 }
 
+export enum StreamViewType {
+  Streams = 'Streams',
+  Groups = 'Groups'
+}
+
 export interface StateStream {
   loading: boolean
   error: string
   sortOrder: SortOrder
   range: Range,
-  data: GetStreamEntriesResponse
+  data: GetStreamEntriesResponse,
+  viewType: StreamViewType
 }

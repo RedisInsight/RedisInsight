@@ -14,7 +14,7 @@ import {
   GetStreamEntriesResponse,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
-import { StateStream } from '../interfaces/stream'
+import { StateStream, StreamViewType } from '../interfaces/stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: StateStream = {
@@ -36,6 +36,7 @@ export const initialState: StateStream = {
       fields: {}
     },
   },
+  viewType: StreamViewType.Groups
 }
 
 // A slice for recipes
@@ -94,6 +95,17 @@ const streamSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    addNewGroup: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    addNewGroupSuccess: (state) => {
+      state.loading = true
+    },
+    addNewGroupFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
     // delete Stream entries
     removeStreamEntries: (state) => {
       state.loading = true
@@ -132,6 +144,9 @@ export const {
   addNewEntries,
   addNewEntriesSuccess,
   addNewEntriesFailure,
+  addNewGroup,
+  addNewGroupSuccess,
+  addNewGroupFailure,
   removeStreamEntries,
   removeStreamEntriesSuccess,
   removeStreamEntriesFailure,
@@ -368,6 +383,42 @@ export function deleteStreamEntry(key: string, entries: string[], onSuccessActio
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(removeStreamEntriesFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function addNewGroupAction(
+  data: any,
+  onSuccess?: () => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(addNewGroup())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post<any>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        data
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(addNewGroupSuccess())
+        // TODO refreshStreamGroups
+        //dispatch<any>(refreshStreamEntries(data.keyName, false))
+        dispatch<any>(refreshKeyInfoAction(data.keyName))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(addNewGroupFailure(errorMessage))
+      onFail?.()
     }
   }
 }

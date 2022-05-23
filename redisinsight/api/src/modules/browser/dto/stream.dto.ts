@@ -258,6 +258,7 @@ export class CreateConsumerGroupsDto extends KeyDto {
   })
   @ValidateNested()
   @IsArray()
+  @ArrayNotEmpty()
   @Type(() => CreateConsumerGroupDto)
   consumerGroups: CreateConsumerGroupDto[];
 }
@@ -266,3 +267,25 @@ export class UpdateConsumerGroupDto extends IntersectionType(
   KeyDto,
   CreateConsumerGroupDto,
 ) {}
+
+export class DeleteConsumerGroupsDto extends KeyDto {
+  @ApiProperty({
+    description: 'Consumer group names',
+    type: String,
+    isArray: true,
+    example: ['Group-1', 'Group-1'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => String)
+  consumerGroups: string[];
+}
+
+export class DeleteConsumerGroupsResponse {
+  @ApiProperty({
+    description: 'Number of deleted consumer groups',
+    type: Number,
+  })
+  affected: number;
+}

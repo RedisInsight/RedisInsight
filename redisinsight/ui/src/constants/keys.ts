@@ -118,11 +118,23 @@ export const KEY_TYPES_ACTIONS: KeyTypesActions = Object.freeze({
   [KeyTypes.ReJSON]: {}
 })
 
+export const STREAM_ADD_GROUP_VIEW_TYPES = [
+  StreamViewType.Groups,
+  StreamViewType.Consumers,
+  StreamViewType.Messages
+]
+
 export const STREAM_ADD_ACTION = Object.freeze({
-  [StreamViewType.Streams]: {
+  [StreamViewType.Data]: {
     name: 'New Entry'
   },
   [StreamViewType.Groups]: {
+    name: 'New Group'
+  },
+  [StreamViewType.Consumers]: {
+    name: 'New Group'
+  },
+  [StreamViewType.Messages]: {
     name: 'New Group'
   }
 })

@@ -490,8 +490,7 @@ export function addNewGroupAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(addNewGroupSuccess())
-        // TODO refreshStreamGroups
-        //dispatch<any>(refreshStreamEntries(data.keyName, false))
+        dispatch<any>(fetchConsumerGroups(false))
         dispatch<any>(refreshKeyInfoAction(data.keyName))
         onSuccess?.()
       }

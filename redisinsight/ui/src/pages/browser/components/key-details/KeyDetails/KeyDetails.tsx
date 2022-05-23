@@ -23,7 +23,7 @@ import {
   keysSelector,
 } from 'uiSrc/slices/browser/keys'
 import { cleanRangeFilter, streamSelector } from 'uiSrc/slices/browser/stream'
-import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
+import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES, STREAM_ADD_GROUP_VIEW_TYPES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
@@ -207,10 +207,10 @@ const KeyDetails = ({ ...props }: Props) => {
                     )}
                     {selectedKeyType === KeyTypes.Stream && (
                       <>
-                        {streamViewType === StreamViewType.Streams && (
+                        {streamViewType === StreamViewType.Data && (
                           <AddStreamEntries onCancel={closeAddItemPanel} />
                         )}
-                        {streamViewType === StreamViewType.Groups && (
+                        {STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType) && (
                           <AddStreamGroup onCancel={closeAddItemPanel} />
                         )}
                       </>

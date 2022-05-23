@@ -101,6 +101,12 @@
   outline: none;
 }
 
+@-moz-document url-prefix() {
+  .thumb {
+    margin-top: 0.33px;
+  }
+}
+
 .thumbZindex3 {
   z-index: 3;
 }

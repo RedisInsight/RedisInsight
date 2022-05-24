@@ -11,7 +11,7 @@ import { BrowserToolService } from 'src/modules/browser/services/browser-tool/br
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   ConsumerDto,
-  GetConsumersDto, GetPendingMessagesDto, PendingMessageDto,
+  GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
 
 @Injectable()
@@ -67,8 +67,8 @@ export class ConsumerService {
    */
   async getPendingMessages(
     clientOptions: IFindRedisClientInstanceByOptions,
-    dto: GetPendingMessagesDto,
-  ): Promise<PendingMessageDto[]> {
+    dto: GetPendingEntriesDto,
+  ): Promise<PendingEntryDto[]> {
     try {
       this.logger.log('Getting pending messages list.');
 
@@ -167,7 +167,7 @@ export class ConsumerService {
    * ]
    * @param reply
    */
-  static formatReplyToPendingMessagesDto(reply: Array<Array<string | number>>): PendingMessageDto[] {
+  static formatReplyToPendingMessagesDto(reply: Array<Array<string | number>>): PendingEntryDto[] {
     return reply.map(ConsumerService.formatArrayToPendingMessageDto);
   }
 
@@ -175,7 +175,7 @@ export class ConsumerService {
    * Format single reply entry to DTO
    * @param entry
    */
-  static formatArrayToPendingMessageDto(entry: Array<string | number>): PendingMessageDto {
+  static formatArrayToPendingMessageDto(entry: Array<string | number>): PendingEntryDto {
     if (!entry?.length) {
       return null;
     }

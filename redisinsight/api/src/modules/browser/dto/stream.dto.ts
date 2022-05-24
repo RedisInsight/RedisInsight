@@ -325,7 +325,7 @@ export class GetConsumersDto extends KeyDto {
   groupName: string;
 }
 
-export class PendingMessageDto {
+export class PendingEntryDto {
   @ApiProperty({
     type: String,
     description: 'Entry ID',
@@ -356,7 +356,7 @@ export class PendingMessageDto {
   delivered: number = 0;
 }
 
-export class GetPendingMessagesDto extends IntersectionType(
+export class GetPendingEntriesDto extends IntersectionType(
   KeyDto,
   GetConsumersDto,
 ) {

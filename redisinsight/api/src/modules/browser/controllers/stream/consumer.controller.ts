@@ -11,7 +11,7 @@ import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-ope
 import {
   ConsumerDto,
   ConsumerGroupDto,
-  GetConsumersDto, GetPendingMessagesDto, PendingMessageDto,
+  GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
 
@@ -47,15 +47,15 @@ export class ConsumerController {
     responses: [
       {
         status: 200,
-        type: PendingMessageDto,
+        type: PendingEntryDto,
         isArray: true,
       },
     ],
   })
   async getPendingMessages(
     @Param('dbInstance') instanceId: string,
-      @Body() dto: GetPendingMessagesDto,
-  ): Promise<PendingMessageDto[]> {
+      @Body() dto: GetPendingEntriesDto,
+  ): Promise<PendingEntryDto[]> {
     return this.service.getPendingMessages({ instanceId }, dto);
   }
 }

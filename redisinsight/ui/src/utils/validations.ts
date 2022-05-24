@@ -1,6 +1,5 @@
 export const MAX_TTL_NUMBER = 2147483647
 export const MAX_PORT_NUMBER = 65535
-export const MAX_DATABASE_INDEX_NUMBER = 99
 export const MAX_SCORE_DECIMAL_LENGTH = 15
 
 export const entryIdRegex = /^(\*)$|^(([0-9]+)(-)((\*)$|([0-9]+$)))/

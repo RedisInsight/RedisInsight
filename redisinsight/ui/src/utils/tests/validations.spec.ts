@@ -8,7 +8,6 @@ import {
   validateCountNumber,
   validateScoreNumber,
   validateTTLNumberForAddKey,
-  MAX_DATABASE_INDEX_NUMBER,
   validateCertName
 } from '../validations'
 

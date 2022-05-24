@@ -24,8 +24,7 @@ fixture `Different JSON types creation`
         await cliPage.sendCommandInCli(commandString);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-// skipped due the issue https://redislabs.atlassian.net/browse/RI-2966
-test.skip('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
+test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
     for (let i = 0; i < jsonKeys.length; i++) {
         await browserPage.addJsonKey(jsonKeys[i][0], jsonKeys[i][1]);
         await t.click(browserPage.toastCloseButton);

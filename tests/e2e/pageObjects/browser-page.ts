@@ -232,7 +232,6 @@ export class BrowserPage {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
         }
-        await t.debug();
         await t.click(this.addKeyButton);
     }
 

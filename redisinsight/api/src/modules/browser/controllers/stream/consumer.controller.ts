@@ -9,7 +9,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import {
-  AckPendingEntriesDto, AckPendingEntriesResponse,
+  AckPendingEntriesDto, AckPendingEntriesResponse, ClaimPendingEntriesResponse, ClaimPendingEntryDto,
   ConsumerDto,
   ConsumerGroupDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
@@ -24,7 +24,7 @@ export class ConsumerController {
 
   @Post('/get')
   @ApiRedisInstanceOperation({
-    description: 'Get group consumers',
+    description: 'Get consumers list in the group',
     statusCode: 200,
     responses: [
       {
@@ -43,7 +43,7 @@ export class ConsumerController {
 
   @Post('/pending-messages/get')
   @ApiRedisInstanceOperation({
-    description: 'Get pending messages list',
+    description: 'Get pending entries list',
     statusCode: 200,
     responses: [
       {
@@ -62,20 +62,37 @@ export class ConsumerController {
 
   @Post('/pending-messages/ack')
   @ApiRedisInstanceOperation({
-    description: 'Get pending messages list',
+    description: 'Ack pending entries',
     statusCode: 200,
     responses: [
       {
         status: 200,
-        type: PendingEntryDto,
-        isArray: true,
+        type: AckPendingEntriesResponse,
       },
     ],
   })
-  async ackPendingEntriers(
+  async ackPendingEntries(
     @Param('dbInstance') instanceId: string,
       @Body() dto: AckPendingEntriesDto,
   ): Promise<AckPendingEntriesResponse> {
     return this.service.ackPendingEntries({ instanceId }, dto);
+  }
+
+  @Post('/pending-messages/claim')
+  @ApiRedisInstanceOperation({
+    description: 'Claim pending entries',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        type: ClaimPendingEntriesResponse,
+      },
+    ],
+  })
+  async claimPendingEntries(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: ClaimPendingEntryDto,
+  ): Promise<ClaimPendingEntriesResponse> {
+    return this.service.claimPendingEntries({ instanceId }, dto);
   }
 }

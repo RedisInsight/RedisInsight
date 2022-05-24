@@ -10,7 +10,7 @@ import {
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
-  AckPendingEntriesDto, AckPendingEntriesResponse,
+  AckPendingEntriesDto, AckPendingEntriesResponse, ClaimPendingEntriesResponse, ClaimPendingEntryDto,
   ConsumerDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
@@ -102,7 +102,7 @@ export class ConsumerService {
   }
 
   /**
-   * Get list of pending entries info for particular consumer
+   * Acknowledge pending entries
    * @param clientOptions
    * @param dto
    */
@@ -130,6 +130,71 @@ export class ConsumerService {
       );
 
       this.logger.log('Successfully acknowledged pending entries.');
+
+      return {
+        affected,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Claim pending entries with additional parameters
+   * @param clientOptions
+   * @param dto
+   */
+  async claimPendingEntries(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: ClaimPendingEntryDto,
+  ): Promise<ClaimPendingEntriesResponse> {
+    try {
+      this.logger.log('Claiming pending entries.');
+
+      const exists = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [dto.keyName],
+      );
+
+      if (!exists) {
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      }
+
+      const args = [dto.keyName, dto.groupName, dto.consumerName, dto.minIdleTime, ...dto.entries];
+
+      if (dto.idle !== undefined) {
+        args.push('idle', dto.idle);
+      } else if (dto.time !== undefined) {
+        args.push('time', dto.time);
+      }
+
+      if (dto.retryCount !== undefined) {
+        args.push('retrycount', dto.retryCount);
+      }
+
+      if (dto.force) {
+        args.push('force');
+      }
+
+      // Return just an array of IDs of messages successfully claimed, without returning the actual message.
+      args.push('justid');
+
+      const affected = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolStreamCommands.XClaim,
+        args,
+      );
+
+      this.logger.log('Successfully claimed pending entries.');
 
       return {
         affected,

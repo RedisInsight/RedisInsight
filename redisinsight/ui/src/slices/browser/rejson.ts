@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { cloneDeep } from 'lodash'
 import axios, { CancelTokenSource } from 'axios'
 import * as jsonpath from 'jsonpath'
 
@@ -20,8 +19,8 @@ import {
   RemoveRejsonRlResponse,
 } from 'apiSrc/modules/browser/dto/rejson-rl.dto'
 
-import { InitialStateRejson } from '../interfaces'
 import { refreshKeyInfoAction } from './keys'
+import { InitialStateRejson } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 
@@ -30,7 +29,7 @@ export const initialState: InitialStateRejson = {
   error: '',
   data: {
     downloaded: false,
-    data: null,
+    data: undefined,
     type: '',
   },
 }

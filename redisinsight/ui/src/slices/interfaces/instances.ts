@@ -45,6 +45,16 @@ export enum ConnectionType {
   Sentinel = 'SENTINEL',
 }
 
+export enum ConnectionProvider {
+  UNKNOWN = 'UNKNOWN',
+  LOCALHOST = 'LOCALHOST',
+  RE_CLUSTER = 'RE_CLUSTER',
+  RE_CLOUD = 'RE_CLOUD',
+  AZURE = 'AZURE',
+  AWS = 'AWS',
+  GOOGLE = 'GOOGLE',
+}
+
 export const CONNECTION_TYPE_DISPLAY = Object.freeze({
   [ConnectionType.Standalone]: 'Standalone',
   [ConnectionType.Cluster]: 'OSS Cluster',

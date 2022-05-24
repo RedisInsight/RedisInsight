@@ -110,7 +110,8 @@ const KeyDetailsWrapper = (props: Props) => {
   }
 
   const handleClosePanel = () => {
-    dispatch(toggleBrowserFullScreen())
+    dispatch(toggleBrowserFullScreen(true))
+    keyProp && onCloseKey()
   }
 
   return (

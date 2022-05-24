@@ -33,7 +33,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   closePopover: () => void
-  onRefresh: () => void
+  onRefresh: (maxLen?: number) => void
 }
 
 const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
@@ -98,7 +98,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   const onSuccess = () => {
     setDBConfigStorageField(instanceId, ConfigDBStorageItem.slowLogDurationUnit, durationUnit)
 
-    onRefresh()
+    onRefresh(maxLen ? toNumber(maxLen) : DEFAULT_SLOWLOG_MAX_LEN)
     closePopover()
   }
 

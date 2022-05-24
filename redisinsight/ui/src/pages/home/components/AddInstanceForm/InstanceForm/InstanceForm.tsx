@@ -33,6 +33,7 @@ import { FormikErrors, useFormik } from 'formik'
 import cx from 'classnames'
 import {
   MAX_PORT_NUMBER,
+  validateNumber,
   validateCertName,
   validateField,
   validatePortNumber,
@@ -763,7 +764,7 @@ const AddStandaloneForm = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    e.target.value.trim()
+                    validateNumber(e.target.value.trim())
                   )
                 }}
                 type="text"

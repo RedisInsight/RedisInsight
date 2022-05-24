@@ -19,3 +19,9 @@ a[target="_blank"], a.euiLink[target="_blank"] {
     color: var(--externalLinkTooltipColor) !important;
   }
 }
+
+.euiToast {
+  a, a.euiLink {
+    color: var(--linkToastColor) !important;
+  }
+}

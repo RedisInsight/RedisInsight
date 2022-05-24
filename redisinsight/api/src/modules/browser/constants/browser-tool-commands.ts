@@ -88,6 +88,7 @@ export enum BrowserToolStreamCommands {
   XGroupCreate = 'xgroup create',
   XGroupSetId = 'xgroup setid',
   XGroupDestroy = 'xgroup destroy',
+  XGroupDelConsumer = 'xgroup delconsumer',
 }
 
 export enum BrowserToolTSCommands {

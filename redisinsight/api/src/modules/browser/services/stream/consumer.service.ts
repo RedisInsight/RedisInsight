@@ -3,15 +3,16 @@ import {
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
-import { catchAclError, convertStringsArrayToObject } from 'src/utils';
+import {catchAclError, catchTransactionError, convertStringsArrayToObject} from 'src/utils';
 import {
+  BrowserToolCommands,
   BrowserToolKeysCommands, BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   AckPendingEntriesDto, AckPendingEntriesResponse, ClaimPendingEntriesResponse, ClaimPendingEntryDto,
-  ConsumerDto,
+  ConsumerDto, DeleteConsumersDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
 
@@ -48,6 +49,60 @@ export class ConsumerService {
         BrowserToolStreamCommands.XInfoConsumers,
         [dto.keyName, dto.groupName],
       ));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Get consumers list inside particular group
+   * @param clientOptions
+   * @param dto
+   */
+  async deleteConsumers(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: DeleteConsumersDto,
+  ): Promise<void> {
+    try {
+      this.logger.log('Deleting consumers from the group.');
+
+      const exists = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [dto.keyName],
+      );
+
+      if (!exists) {
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      }
+
+      const toolCommands: Array<[
+        toolCommand: BrowserToolCommands,
+        ...args: Array<string | number>,
+      ]> = dto.consumerNames.map((consumerName) => (
+        [
+          BrowserToolStreamCommands.XGroupDelConsumer,
+          dto.keyName,
+          dto.groupName,
+          consumerName,
+        ]
+      ));
+
+      const [
+        transactionError,
+        transactionResults,
+      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      catchTransactionError(transactionError, transactionResults);
+
+      return undefined;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

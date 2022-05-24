@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Param,
   Post,
   UsePipes,
@@ -11,7 +11,7 @@ import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-ope
 import {
   AckPendingEntriesDto, AckPendingEntriesResponse, ClaimPendingEntriesResponse, ClaimPendingEntryDto,
   ConsumerDto,
-  ConsumerGroupDto,
+  ConsumerGroupDto, DeleteConsumersDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
@@ -39,6 +39,18 @@ export class ConsumerController {
       @Body() dto: GetConsumersDto,
   ): Promise<ConsumerDto[]> {
     return this.service.getConsumers({ instanceId }, dto);
+  }
+
+  @Delete('')
+  @ApiRedisInstanceOperation({
+    description: 'Delete Consumer(s) from the Consumer Group',
+    statusCode: 200,
+  })
+  async deleteConsumers(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: DeleteConsumersDto,
+  ): Promise<void> {
+    return this.service.deleteConsumers({ instanceId }, dto);
   }
 
   @Post('/pending-messages/get')

@@ -325,6 +325,20 @@ export class GetConsumersDto extends KeyDto {
   groupName: string;
 }
 
+export class DeleteConsumersDto extends GetConsumersDto {
+  @ApiProperty({
+    description: 'Names of consumers to delete',
+    type: String,
+    isArray: true,
+    example: ['consumer-1', 'consumer-2'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => String)
+  consumerNames: string[];
+}
+
 export class PendingEntryDto {
   @ApiProperty({
     type: String,

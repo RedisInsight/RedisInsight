@@ -36,7 +36,8 @@ $euiButtonIconSecondary: $euiColorSecondary;
 $htmlColor: #dfe5ef;
 $navBackgroundColor: #0f1633;
 $externalLinkColor: #8ba2ff;
-$externalLinkTooltipColor: #8ba2ff;
+$externalLinkTooltipColor: $externalLinkColor;
+$linkToastColor: $externalLinkColor;
 
 $tableRowHoverColor: #070707;
 $tableRowSelectedColor: #212536;

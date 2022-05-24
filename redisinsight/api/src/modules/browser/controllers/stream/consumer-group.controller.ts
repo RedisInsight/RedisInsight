@@ -26,7 +26,7 @@ export class ConsumerGroupController {
 
   @Post('/get')
   @ApiRedisInstanceOperation({
-    description: 'Get stream entries',
+    description: 'Get consumer groups list',
     statusCode: 200,
     responses: [
       {

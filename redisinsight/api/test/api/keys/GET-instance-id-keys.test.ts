@@ -5,6 +5,7 @@ import {
   before,
   deps,
   Joi,
+  _,
   requirements,
   validateApiCall,
 } from '../deps';
@@ -805,6 +806,30 @@ describe('GET /instance/:instanceId/keys', () => {
           },
         ].map(mainCheckFn);
       });
+    });
+    describe('non-ASCII keyName', () => {
+      before(async () => await rte.data.generateKeys(true));
+
+      [
+        {
+          name: 'check keyname with non-ASCII symbols should be properly listed',
+          query: {
+            cursor: '0',
+            count: 200,
+          },
+          responseSchema,
+          checkFn: async ({ body }) => {
+            const [stringNonASCIIKey] = _.filter(body.map(
+              nodeResult => nodeResult.keys.find((key) => key.name === constants.TEST_STRING_KEY_ASCII_UNICODE),
+            ), array => !!array);
+
+            expect(stringNonASCIIKey.name).to.eq(constants.TEST_STRING_KEY_ASCII_UNICODE)
+            expect(stringNonASCIIKey.type).to.eq(constants.TEST_STRING_TYPE)
+            expect(stringNonASCIIKey.ttl).to.eq(-1)
+            expect(stringNonASCIIKey.size).to.gt(constants.TEST_STRING_KEY_ASCII_BUFFER.length)
+          }
+        },
+      ].map(mainCheckFn);
     });
   });
   describe('Big data', () => {

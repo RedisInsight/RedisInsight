@@ -72,8 +72,23 @@ const StreamDetailsWrapper = (props: Props) => {
     setDeleting(`${entry + suffix}`)
   }, [])
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Stream,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteEntry = (entryId = '') => {
-    dispatch(deleteStreamEntry(key, [entryId]))
+    dispatch(deleteStreamEntry(key, [entryId], onSuccessRemoved))
     closePopover()
   }
 
@@ -169,15 +184,18 @@ const StreamDetailsWrapper = (props: Props) => {
       headerClassName: styles.actionsHeader,
       textAlignment: TableCellTextAlignment.Left,
       absoluteWidth: actionsWidth,
+      maxWidth: actionsWidth,
+      minWidth: actionsWidth,
       render: function Actions(_act: any, { id }: StreamEntryDto) {
         return (
           <div>
             <PopoverDelete
+              header={id}
               text={(
                 <>
-                  This Entry will be removed from
-                  <br />
-                  {key}
+                  will be removed from
+                  {' '}
+                  <b>{key}</b>
                 </>
               )}
               item={id}

@@ -9,6 +9,7 @@ import {
   Nullable,
   getApiErrorMessage,
   isStatusSuccessful,
+  Maybe,
 } from 'uiSrc/utils'
 import {
   SetListElementDto,
@@ -57,10 +58,13 @@ const listSlice = createSlice({
   reducers: {
     setListInitialState: () => initialState,
     // load List elements
-    loadListElements: (state) => {
+    loadListElements: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
       state.error = ''
-      state.data = initialState.data
+
+      if (resetData) {
+        state.data = initialState.data
+      }
     },
     loadListElementsSuccess: (
       state,
@@ -215,9 +219,9 @@ export const updateListValueStateSelector = (state: RootState) =>
 export default listSlice.reducer
 
 // Asynchronous thunk actions
-export function fetchListElements(key: string, offset: number, count: number) {
+export function fetchListElements(key: string, offset: number, count: number, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadListElements())
+    dispatch(loadListElements(resetData))
 
     try {
       const state = stateInit()
@@ -314,13 +318,13 @@ export function fetchSearchingListElementAction(
 }
 
 // Asynchronous thunk actions
-export function refreshListElementsAction(key: string = '') {
+export function refreshListElementsAction(key: string = '', resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { searchedIndex } = state.browser.list.data
 
     if (isNull(searchedIndex)) {
-      dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT))
+      dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT, resetData))
     } else {
       dispatch<any>(fetchSearchingListElementAction(key, searchedIndex))
     }
@@ -392,18 +396,6 @@ export function insertListElementsAction(
         onSuccessAction?.()
         dispatch(insertListElementsSuccess())
         dispatch<any>(fetchKeyInfo(data.keyName))
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.List,
-            numberOfAdded: 1,
-          }
-        })
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -433,18 +425,6 @@ export function deleteListElementsAction(
         { data }
       )
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.List,
-            numberOfRemoved: data.count,
-          }
-        })
         onSuccessAction?.()
         dispatch(deleteListElementsSuccess())
         if (state.browser.list.data?.total - data.count > 0) {

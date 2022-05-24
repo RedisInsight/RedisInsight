@@ -1,9 +1,9 @@
 import { cloneDeep, isNull, remove } from 'lodash'
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, SortOrder, KeyTypes } from 'uiSrc/constants'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { StateZset } from 'uiSrc/slices/interfaces/zset'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -49,13 +49,17 @@ const zsetSlice = createSlice({
   reducers: {
     setZsetInitialState: () => initialState,
     // load ZSet members
-    loadZSetMembers: (state, { payload }) => {
+    loadZSetMembers: (state, { payload: [sortOrder, resetData = true] }:PayloadAction<[SortOrder, Maybe<boolean>]>) => {
       state.loading = true
       state.searching = false
       state.error = ''
+
+      if (resetData) {
+        state.data = initialState.data
+      }
       state.data = {
-        ...initialState.data,
-        sortOrder: payload,
+        ...state.data,
+        sortOrder,
       }
     },
     loadZSetMembersSuccess: (state, { payload }) => {
@@ -217,10 +221,11 @@ export function fetchZSetMembers(
   key: string,
   offset: number,
   count: number,
-  sortOrder: SortOrder
+  sortOrder: SortOrder,
+  resetData?: boolean
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadZSetMembers(sortOrder))
+    dispatch(loadZSetMembers([sortOrder, resetData]))
 
     try {
       const state = stateInit()
@@ -327,7 +332,7 @@ export function fetchAddZSetMembers(
   }
 }
 
-export function deleteZSetMembers(key: string, members: string[]) {
+export function deleteZSetMembers(key: string, members: string[], onSuccessAction?: () => void,) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeZsetMembers())
     try {
@@ -345,18 +350,7 @@ export function deleteZSetMembers(key: string, members: string[]) {
         }
       )
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.ZSet,
-            numberOfRemoved: members.length,
-          }
-        })
+        onSuccessAction?.()
         const newTotalValue = state.browser.zset.data.total - data.affected
         dispatch(removeZsetMembersSuccess())
         dispatch(removeMembersFromList(members))
@@ -494,7 +488,7 @@ export function fetchSearchMoreZSetMembers(
   }
 }
 
-export function refreshZsetMembersAction(key: string = '') {
+export function refreshZsetMembersAction(key: string = '', resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { searching } = state.browser.zset
@@ -530,7 +524,7 @@ export function refreshZsetMembersAction(key: string = '') {
       return
     }
     const { sortOrder } = state.browser.zset.data
-    dispatch(loadZSetMembers(sortOrder))
+    dispatch(loadZSetMembers([sortOrder, resetData]))
 
     try {
       const state = stateInit()

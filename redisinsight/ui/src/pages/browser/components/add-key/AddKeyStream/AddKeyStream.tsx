@@ -41,9 +41,7 @@ const AddKeyStream = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const isValid = isRequiredStringsValid(keyName)
-      && !entryIdError
-      && fields.every((f) => isRequiredStringsValid(f.fieldName, f.fieldValue))
+    const isValid = isRequiredStringsValid(keyName) && !entryIdError
     setIsFormValid(isValid)
   }, [keyName, fields, entryIdError])
 

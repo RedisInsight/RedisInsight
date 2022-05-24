@@ -29,7 +29,7 @@ import AddKeyStream from './AddKeyStream/AddKeyStream'
 import styles from './styles.module.scss'
 
 export interface Props {
-  handleAddKeyPanel: (value: boolean) => void
+  handleAddKeyPanel: (value: boolean, keyName?: string) => void
   handleCloseKey: () => void
 }
 const AddKey = (props: Props) => {
@@ -85,8 +85,9 @@ const AddKey = (props: Props) => {
   }
 
   const closeAddKeyPanel = (isCancelled?: boolean) => {
-    handleAddKeyPanel(false)
+    handleAddKeyPanel(false, keyName)
     if (isCancelled) {
+      handleCloseKey()
       closeKeyTelemetry()
     }
   }
@@ -103,30 +104,31 @@ const AddKey = (props: Props) => {
         className={cx(styles.contentWrapper, 'relative')}
         gutterSize="none"
       >
-        <div className={cx(styles.content, 'eui-yScroll')}>
-          <EuiFlexGroup
-            gutterSize="none"
-            direction="column"
-            justifyContent="center"
-          >
-            <EuiFlexItem grow style={{ marginBottom: '36px' }}>
-              <EuiTitle size="xs">
-                <h4>New Key</h4>
-              </EuiTitle>
-              <EuiToolTip
-                content="Close"
-                position="left"
-                anchorClassName={styles.closeKeyTooltip}
-              >
-                <EuiButtonIcon
-                  iconType="cross"
-                  color="primary"
-                  aria-label="Close key"
-                  className={styles.closeBtn}
-                  onClick={() => closeKey()}
-                />
-              </EuiToolTip>
-            </EuiFlexItem>
+        <EuiFlexGroup
+          gutterSize="none"
+          direction="column"
+          justifyContent="center"
+          className={styles.content}
+        >
+          <EuiFlexItem grow style={{ marginBottom: '36px' }}>
+            <EuiTitle size="xs">
+              <h4>New Key</h4>
+            </EuiTitle>
+            <EuiToolTip
+              content="Close"
+              position="left"
+              anchorClassName={styles.closeKeyTooltip}
+            >
+              <EuiButtonIcon
+                iconType="cross"
+                color="primary"
+                aria-label="Close key"
+                className={styles.closeBtn}
+                onClick={() => closeKey()}
+              />
+            </EuiToolTip>
+          </EuiFlexItem>
+          <div className="eui-yScroll">
             <div className={styles.contentFields}>
               <AddKeyCommonFields
                 typeSelected={typeSelected}
@@ -168,9 +170,8 @@ const AddKey = (props: Props) => {
                 <AddKeyStream onCancel={closeAddKeyPanel} {...defaultFields} />
               )}
             </div>
-
-          </EuiFlexGroup>
-        </div>
+          </div>
+        </EuiFlexGroup>
         <div id="formFooterBar" className="formFooterBar" />
       </EuiFlexGroup>
     </div>

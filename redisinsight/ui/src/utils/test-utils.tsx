@@ -35,6 +35,7 @@ import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb
 import { initialState as initialStateWBEGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
+import { initialState as initialStateSlowLog } from 'uiSrc/slices/slowlog/slowlog'
 
 interface Options {
   initialState?: RootState;
@@ -85,7 +86,8 @@ const initialStateDefault: RootState = {
   },
   content: {
     createRedisButtons: cloneDeep(initialStateCreateRedisButtons)
-  }
+  },
+  slowlog: cloneDeep(initialStateSlowLog)
 }
 
 // mocked store

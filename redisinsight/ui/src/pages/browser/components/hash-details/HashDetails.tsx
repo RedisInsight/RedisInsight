@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -81,8 +81,23 @@ const HashDetails = (props: Props) => {
     setDeleting(`${field + suffix}`)
   }, [])
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Hash,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteField = (field = '') => {
-    dispatch(deleteHashFields(key, [field]))
+    dispatch(deleteHashFields(key, [field], onSuccessRemoved))
     closePopover()
   }
 
@@ -244,8 +259,8 @@ const HashDetails = (props: Props) => {
               data-testid={`edit-hash-button-${field}`}
             />
             <PopoverDelete
-              header={createDeleteFieldHeader(key)}
-              text={createDeleteFieldMessage(field)}
+              header={createDeleteFieldHeader(field)}
+              text={createDeleteFieldMessage(key)}
               item={field}
               suffix={suffix}
               deleting={deleting}
@@ -286,7 +301,16 @@ const HashDetails = (props: Props) => {
           { footerOpened: isFooterOpen }
         )}
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-hash"
+          />
+        )}
         <VirtualTable
+          hideProgress
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}

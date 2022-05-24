@@ -1,14 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { cloneDeep } from 'lodash'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { refreshKeyInfoAction } from './keys'
 import { addErrorNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
-import { StringState } from './interfaces/string'
+import { StringState } from '../interfaces/string'
 
 export const initialState: StringState = {
   loading: false,
@@ -25,10 +24,13 @@ const stringSlice = createSlice({
   initialState,
   reducers: {
     // load String value
-    getString: (state) => {
+    getString: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
       state.error = ''
-      state.data = cloneDeep(initialState.data)
+
+      if (resetData) {
+        state.data = initialState.data
+      }
     },
     getStringSuccess: (state, { payload }) => {
       state.data.key = payload.keyName
@@ -78,9 +80,9 @@ export const stringDataSelector = (state: RootState) =>
 export default stringSlice.reducer
 
 // Asynchronous thunk action
-export function fetchString(key: string) {
+export function fetchString(key: string, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(getString())
+    dispatch(getString(resetData))
 
     try {
       const state = stateInit()

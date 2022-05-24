@@ -24,7 +24,6 @@ import {
   CreateSetWithExpireDto,
 } from 'apiSrc/modules/browser/dto'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
-import { AppDispatch, RootState } from '../store'
 import { fetchString } from './string'
 import { setZsetInitialState, fetchZSetMembers } from './zset'
 import { fetchSetMembers } from './set'
@@ -34,6 +33,7 @@ import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries } from './stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType } from '../interfaces/keys'
+import { AppDispatch, RootState } from '../store'
 
 export const initialState: KeysStore = {
   loading: false,
@@ -74,7 +74,6 @@ const keysSlice = createSlice({
   reducers: {
     // load Keys
     loadKeys: (state) => {
-      state.data = initialState.data
       state.loading = true
       state.error = ''
     },
@@ -503,7 +502,7 @@ export function fetchMoreKeys(cursor: string, count: number) {
 }
 
 // Asynchronous thunk action
-export function fetchKeyInfo(key: string) {
+export function fetchKeyInfo(key: string, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultSelectedKeyAction())
 
@@ -526,27 +525,32 @@ export function fetchKeyInfo(key: string) {
       }
 
       if (data.type === KeyTypes.Hash) {
-        dispatch<any>(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, '*'))
+        dispatch<any>(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.List) {
-        dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT))
+        dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT, resetData))
       }
       if (data.type === KeyTypes.String) {
-        dispatch<any>(fetchString(key))
+        dispatch<any>(fetchString(key, resetData))
       }
       if (data.type === KeyTypes.ZSet) {
         dispatch<any>(
-          fetchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, SortOrder.ASC)
+          fetchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, SortOrder.ASC, resetData)
         )
       }
       if (data.type === KeyTypes.Set) {
-        dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*'))
+        dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.ReJSON) {
-        dispatch<any>(fetchReJSON(key, '.'))
+        dispatch<any>(fetchReJSON(key, '.', resetData))
       }
       if (data.type === KeyTypes.Stream) {
-        dispatch<any>(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SortOrder.DESC))
+        dispatch<any>(fetchStreamEntries(
+          key,
+          SCAN_COUNT_DEFAULT,
+          SortOrder.DESC,
+          resetData
+        ))
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -608,7 +612,6 @@ function addTypedKey(
           onSuccessAction()
         }
         dispatch(addKeySuccess())
-        dispatch<any>(fetchKeyInfo(data.keyName))
         dispatch(
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
         )

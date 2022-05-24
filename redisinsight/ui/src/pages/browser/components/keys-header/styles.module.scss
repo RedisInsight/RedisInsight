@@ -14,7 +14,7 @@
     width: 78px !important;
 
     :global(.euiButton__text) {
-      font: normal normal 500 15px/24px 'Graphik', sans-serif !important;
+      font: normal normal 500 15px/24px "Graphik", sans-serif !important;
     }
   }
 }
@@ -37,33 +37,6 @@
 
 .exitFullScreenBtn {
   margin-left: 18px;
-}
-
-.refresh {
-  right: 18px;
-  position: absolute;
-}
-
-.btnRefresh {
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-.refreshTime {
-  color: var(--euiColorWarningLight);
-  padding-right: 6px;
-}
-
-.refreshSummary {
-  vertical-align: middle;
-  font: normal normal normal 12px/18px 'Graphik', sans-serif !important;
-  letter-spacing: -0.12px;
-}
-
-.tooltip {
-  max-width: 372px !important;
 }
 
 .viewTypeSwitch {
@@ -101,4 +74,9 @@
       fill: var(--euiColorPrimary) !important;
     }
   }
+}
+
+.refreshContainer {
+  right: 18px;
+  position: absolute;
 }

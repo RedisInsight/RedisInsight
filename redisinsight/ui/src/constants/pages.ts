@@ -12,7 +12,8 @@ export interface IRoute {
 
 export enum PageNames {
   workbench = 'workbench',
-  browser = 'browser'
+  browser = 'browser',
+  slowLog = 'slowlog'
 }
 
 const redisCloud = '/redis-cloud'
@@ -31,5 +32,6 @@ export const Pages = {
   sentinelDatabases: `${sentinel}/databases`,
   sentinelDatabasesResult: `${sentinel}/databases-result`,
   browser: (instanceId: string) => `/${instanceId}/${PageNames.browser}`,
-  workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`
+  workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`,
+  slowLog: (instanceId: string) => `/${instanceId}/${PageNames.slowLog}`,
 }

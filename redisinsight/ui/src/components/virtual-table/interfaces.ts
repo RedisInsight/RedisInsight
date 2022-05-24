@@ -68,6 +68,7 @@ export interface IProps {
   scrollTopProp?: number
   hideFooter?: boolean
   tableWidth?: number
+  hideProgress?: boolean
 }
 
 export interface ISortedColumn {

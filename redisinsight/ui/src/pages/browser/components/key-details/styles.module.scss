@@ -43,6 +43,7 @@
 }
 
 :global(.key-details-body) {
+  position: relative;
   height: calc(100% - 105px);
   //min-height: 300px;
 }

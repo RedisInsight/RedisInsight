@@ -52,8 +52,9 @@ const MonitorLog = () => {
           <div
             className={styles.container}
             style={{ width, paddingLeft: getPaddingByWidth(width), paddingRight: getPaddingByWidth(width) }}
+            data-testid="download-log-panel"
           >
-            <EuiText size="xs" color="subdued" className={styles.time}>
+            <EuiText size="xs" color="subdued" className={styles.time} data-testid="profiler-running-time">
               <EuiIcon type="clock" />
               {format(timestamp.start, 'hh:mm:ss')}
               &nbsp;&#8211;&nbsp;

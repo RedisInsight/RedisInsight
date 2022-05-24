@@ -35,6 +35,10 @@ const cliSettingsSlice = createSlice({
   reducers: {
     setCliSettingsInitialState: () => initialState,
     // collapse / uncollapse CLI
+    openCli: (state) => {
+      state.isShowCli = true
+    },
+
     toggleCli: (state) => {
       state.isShowCli = !state.isShowCli
     },
@@ -140,6 +144,7 @@ const cliSettingsSlice = createSlice({
 // Actions generated from the slice
 export const {
   setCliSettingsInitialState,
+  openCli,
   toggleCli,
   toggleCliHelper,
   toggleHideCliHelper,

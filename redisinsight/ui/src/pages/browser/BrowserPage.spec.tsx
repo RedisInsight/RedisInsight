@@ -2,7 +2,7 @@
 import React from 'react'
 import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
-import { loadKeys, resetKeyInfo } from 'uiSrc/slices/browser/keys'
+import { loadKeys, resetKeyInfo, toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { cloneDeep } from 'lodash'
 import BrowserPage from './BrowserPage'
@@ -100,7 +100,7 @@ describe('BrowserPage', () => {
 
     fireEvent.click(screen.getByTestId('handleAddKeyPanel-btn'))
 
-    const expectedActions = [resetKeyInfo()]
+    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
@@ -119,6 +119,6 @@ describe('BrowserPage', () => {
 
     fireEvent.click(screen.getByTestId('onCloseKey-btn'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, resetKeyInfo()])
+    expect(store.getActions()).toEqual([...afterRenderActions, resetKeyInfo(), toggleBrowserFullScreen(true)])
   })
 })

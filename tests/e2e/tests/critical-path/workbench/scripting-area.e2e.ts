@@ -1,8 +1,8 @@
+import { Chance } from 'chance';
 import { rte, env } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -25,10 +25,9 @@ fixture `Scripting area at Workbench`
         //Drop index, documents and database
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can run any script from CLI in Workbench and see the results', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can run any script from CLI in Workbench and see the results', async t => {
         const commandForSend = 'info';
         //Send command
         await workbenchPage.sendCommandInWorkbench(commandForSend);
@@ -38,17 +37,14 @@ test
         await t.expect(sentCommandText.exists).ok('Result of sent command exists');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can resize scripting area in Workbench', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can resize scripting area in Workbench', async t => {
         const offsetY = 200;
         const inputHeightStart = await workbenchPage.queryInput.clientHeight;
         await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
         await t.expect(await workbenchPage.queryInput.clientHeight).eql(inputHeightStart + offsetY, 'Scripting area after resize has proper size');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
+test
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSendInCli = [
@@ -63,7 +59,7 @@ test.skip
             `HMSET product:9 name "${keyName}"`,
             `HMSET product:10 name "${keyName}"`,
             `HMSET product:11 name "${keyName}"`,
-            `HMSET product:12 name "${keyName}"`,
+            `HMSET product:12 name "${keyName}"`
         ];
         const commandToCreateSchema = `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`;
         const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
@@ -79,19 +75,13 @@ test.skip
         await workbenchPage.sendCommandInWorkbench(commandToCreateSchema);
         //Send search command
         await workbenchPage.sendCommandInWorkbench(searchCommand);
-        //Get needed container
-        const containerOfCommand = await workbenchPage.getCardContainerByCommand(searchCommand);
         //Verify that we have pagination buttons
         await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonPrevious).exists)
-            .ok('Pagination previous button exists');
-        await t.expect(containerOfCommand.find(workbenchPage.cssSelectorPaginationButtonNext).exists)
-            .ok('Pagination next button exists'); 
+        await t.expect(workbenchPage.paginationButtonPrevious.exists).ok('Pagination previous button exists');
+        await t.expect(workbenchPage.paginationButtonNext.exists).ok('Pagination next button exists');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
+test
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -114,8 +104,7 @@ test.skip
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can run one command in multiple lines in Workbench page', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can run one command in multiple lines in Workbench page', async t => {
         indexName = chance.word({ length: 5 });
         const multipleLinesCommand = [
             `FT.CREATE ${indexName}`,
@@ -131,8 +120,7 @@ test
         }
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can use one indent to indicate command in several lines in Workbench page', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can use one indent to indicate command in several lines in Workbench page', async t => {
         indexName = chance.word({ length: 5 });
         const multipleLinesCommand = [
             `FT.CREATE ${indexName}`,

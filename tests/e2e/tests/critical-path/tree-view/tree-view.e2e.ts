@@ -26,7 +26,7 @@ test
     .meta({ rte: rte.standalone })('Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)', async t => {
         //Verify that Browser view is selected by default and Tree view is disabled
         await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(41, 47, 71)', 'The Browser is selected by default');
-        await t.expect(browserPage.treeViewArea.visible).notOk('The tree view is not displayed', { timeout: 20000 });
+        await t.expect(browserPage.treeViewArea.visible).notOk('The tree view is not displayed', { timeout: 10000 });
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
@@ -44,7 +44,7 @@ test
             await t.expect(browserPage.progressKeyList.exists).notOk('Progress Bar', { timeout: 30000 });
             const scannedValueText = await browserPage.scannedValue.textContent;
             const regExp = new RegExp(`${i} 00` + '.');
-            await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${i} 000 keys`, { timeout: 30000 });
+            await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${i} 000 keys`);
             await t.click(browserPage.scanMoreButton);
         }
     });
@@ -61,7 +61,7 @@ test
         const percentage = await browserPage.treeViewPercentage.textContent;
         //Set filter by key name
         await browserPage.searchByKeyName(keyNameFilter);
-        await t.expect(browserPage.treeViewKeysItem.visible).ok('The key appears after the filtering', { timeout: 60000 });
+        await t.expect(browserPage.treeViewKeysItem.visible).ok('The key appears after the filtering', { timeout: 10000 });
         await t.click(browserPage.treeViewKeysItem);
         //Verify the results
         await t.expect(browserPage.treeViewKeysNumber.textContent).notEql(numberOfKeys, 'The number of keys is recalculated');

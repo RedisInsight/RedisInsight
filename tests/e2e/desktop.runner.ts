@@ -27,8 +27,8 @@ import testcafe from 'testcafe';
                     speed: 1
                 });
         })
-        .then(() => {
-            process.exit(0);
+        .then((failedCount) => {
+            process.exit(failedCount);
         })
         .catch((e) => {
             console.error(e)

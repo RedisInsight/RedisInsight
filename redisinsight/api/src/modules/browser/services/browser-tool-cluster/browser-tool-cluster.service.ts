@@ -63,7 +63,6 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     args: Array<string | number>,
     nodeRole: NodeRole = 'all',
   ): Promise<IExecCommandFromClusterNode[]> {
-
     const client = await this.getRedisClient(clientOptions);
     const nodes: Redis[] = client.nodes(nodeRole);
     this.logger.log(`Execute command '${toolCommand}' from nodes, connectionName: ${getConnectionName(client)}`);
@@ -91,6 +90,7 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
     exactNode: EndpointDto,
+    replyEncoding: string = 'utf8',
   ): Promise<IExecCommandFromClusterNode> {
     const client = await this.getRedisClient(clientOptions);
     this.logger.log(`Execute command '${toolCommand}' from node, connectionName: ${getConnectionName(client)}`);
@@ -112,10 +112,16 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
         ),
       );
     }
-    const result = await node.send_command(command, [
-      ...commandArgs,
-      ...args,
-    ]);
+
+    // @ts-ignore
+    // There are issues with ioredis types. Here and below
+    const result = await node.sendCommand(
+      // @ts-ignore
+      new IORedis.Command(command, [...commandArgs, ...args], {
+        replyEncoding,
+      }),
+    );
+
     return {
       host,
       port,

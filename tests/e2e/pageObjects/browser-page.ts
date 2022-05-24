@@ -66,8 +66,11 @@ export class BrowserPage {
     treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
     treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
     fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
-    disableFullScreenModeButton = Selector('[data-testid=toggle-full-screen]').withAttribute('aria-label', 'Exit full screen');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
+    addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
+    removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
+    confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
+    clearStreamEntryInputs = Selector('[data-testid=remove-item]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -77,6 +80,7 @@ export class BrowserPage {
     zsetOption = Selector('#zset');
     listOption = Selector('#list');
     hashOption = Selector('#hash');
+    streamOption = Selector('#stream');
     removeFromHeadSelection = Selector('#HEAD');
     selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
@@ -104,6 +108,10 @@ export class BrowserPage {
     jsonValueInput = Selector('[data-testid=json-value]');
     countInput = Selector('[data-testid=count-input]');
     treeViewDelimiterInput = Selector('[data-testid=tree-view-delimiter-input]');
+    streamEntryId = Selector('[data-testid=entryId]');
+    streamField = Selector('[data-testid=field-name]');
+    streamValue = Selector('[data-testid=field-value]');
+    addStreamRow = Selector('[data-testid=add-new-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
@@ -161,9 +169,29 @@ export class BrowserPage {
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
+    streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
+    streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
-    streamFields = Selector('[data-testid=column-label].truncateText span');
+    streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
+    confirmationMessagePopover = Selector('div.euiPopover__panel');
+
+    /**
+     * Common part for Add any new key
+     * @param keyName The name of the key
+     * @param TTL The Time to live value of the key
+     */
+    async commonAddNewKey(keyName: string, TTL?: string): Promise<void> {
+        await common.waitForElementNotVisible(this.progressLine);
+        await t.click(this.plusAddKeyButton);
+        await t.click(this.addKeyNameInput);
+        await t.typeText(this.addKeyNameInput, keyName);
+        if (TTL !== undefined) {
+            await t.click(this.keyTTLInput);
+            await t.typeText(this.keyTTLInput, TTL);
+        }
+        await t.click(this.keyTypeDropDown);
+    }
 
     /**
      * Adding a new String key
@@ -177,7 +205,7 @@ export class BrowserPage {
         await t.click(this.stringOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
-        if (TTL) {
+        if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
         }
@@ -192,15 +220,15 @@ export class BrowserPage {
      * @param value The key value
      * @param TTL The Time to live value of the key (optional parameter)
      */
-    async addJsonKey(keyName: string, value = ' ', TTL?: string): Promise<void> {
+    async addJsonKey(keyName: string, value: string, TTL?: string): Promise<void> {
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.jsonOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
         await t.click(this.jsonKeyValueInput);
-        await t.typeText(this.jsonKeyValueInput, value);
-        if (TTL) {
+        await t.typeText(this.jsonKeyValueInput, value, { paste: true });
+        if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
         }
@@ -286,6 +314,73 @@ export class BrowserPage {
         await t.typeText(this.hashFieldNameInput, field);
         await t.typeText(this.hashFieldValueInput, value);
         await t.click(this.addKeyButton);
+    }
+
+    /**
+     * Adding a new Stream key
+     * @param keyName The name of the key
+     * @param field The field name of the key
+     * @param value The value of the key
+     * @param TTL The Time to live value of the key
+     */
+    async addStreamKey(keyName: string, field = ' ', value = ' ', TTL?: string): Promise<void> {
+        await this.commonAddNewKey(keyName, TTL);
+        await t.click(this.streamOption);
+        // Verify that user can see Entity ID filled by * by default on add Stream key form
+        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field');
+        await t.typeText(this.streamField, field);
+        await t.typeText(this.streamValue, value);
+        await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
+        await t.click(this.addKeyButton);
+        await t.click(this.toastCloseButton);
+    }
+
+    /**
+     * Adding a new Entry to a Stream key
+     * @param field The field name of the key
+     * @param value The value of the key
+     * @param entryId The identification of specific entry of the Stream Key
+     */
+    async addEntryToStream(field: string, value: string, entryId?: string): Promise<void> {
+        await t.click(this.addNewStreamEntry);
+        // Specify field, value and add new entry
+        await t.typeText(this.streamField, field);
+        await t.typeText(this.streamValue, value);
+        if (entryId !== undefined) {
+            await t.typeText(this.streamEntryId, entryId);
+        }
+        await t.click(this.saveElementButton);
+        // Validate that new entry is added
+        await t.expect(this.streamEntriesContainer.textContent).contains(field, 'Field parameter');
+        await t.expect(this.streamEntriesContainer.textContent).contains(value, 'Value parameter');
+    }
+
+    /**
+     * Adding a new Entry to a Stream key
+     * @param fields The field name of the key
+     * @param values The value of the key
+     * @param entryId The identification of specific entry of the Stream Key
+     */
+    async fulfillSeveralStreamFields(fields: string[], values: string[], entryId?: string): Promise<void> {
+        for (let i = 0; i < fields.length; i++) {
+            await t.typeText(this.streamField.nth(-1), fields[i]);
+            await t.typeText(this.streamValue.nth(-1), values[i]);
+            if (i < fields.length - 1) {
+                await t.click(this.addStreamRow);
+            }
+        }
+        if (entryId !== undefined) {
+            await t.typeText(this.streamEntryId, entryId);
+        }
+    }
+
+    /**
+     * Get number of existed columns and rows of Stream key
+     */
+    async getStreamRowColumnNumber(): Promise<string[]> {
+        const columnStreamNumber = await this.streamEntriesContainer.find('[aria-colcount]').getAttribute('aria-colcount');
+        const rowStreamNumber = await this.streamEntriesContainer.find('[aria-rowcount]').getAttribute('aria-rowcount');
+        return [columnStreamNumber, rowStreamNumber];
     }
 
     /**
@@ -623,6 +718,20 @@ export class BrowserPage {
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
         // Click on save button
         await t.click(this.treeViewDelimiterValueSave);
+    }
+
+    //Delete entry from Stream key
+    async deleteStreamEntry(): Promise<void> {
+        await t.click(this.removeEntryButton);
+        await t.click(this.confirmRemoveEntryButton);
+    }
+
+    /**
+     * Get key length from opened key details
+     */
+    async getKeyLength(): Promise<string> {
+        const rawValue = await this.keyLengthDetails.textContent;
+        return rawValue.split(' ')[rawValue.split(' ').length - 1];
     }
 }
 

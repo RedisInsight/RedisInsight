@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import * as IORedis from 'ioredis';
 import * as Redis from 'ioredis-mock';
 import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
 import {
@@ -55,7 +56,7 @@ describe('BrowserToolService', () => {
       service,
       'execMultiFromClient',
     );
-    mockClient.send_command = jest.fn();
+    mockClient.sendCommand = jest.fn();
   });
 
   describe('execCommand', () => {
@@ -69,10 +70,16 @@ describe('BrowserToolService', () => {
         [keyName],
       );
 
-      expect(mockClient.send_command).toHaveBeenCalledWith('memory', [
-        'usage',
-        keyName,
-      ]);
+      expect(
+        JSON.parse(JSON.stringify(mockClient.sendCommand.mock.calls[0])),
+      ).toStrictEqual(JSON.parse(JSON.stringify(([
+        new IORedis.Command('memory', [
+          'usage',
+          keyName,
+        ], {
+          replyEncoding: 'utf8',
+        }),
+      ]))));
     });
     it('should throw error for execCommand', async () => {
       const error = new InternalServerErrorException(
@@ -87,7 +94,7 @@ describe('BrowserToolService', () => {
           [keyName],
         ),
       ).rejects.toThrow(InternalServerErrorException);
-      expect(mockClient.send_command).not.toHaveBeenCalled();
+      expect(mockClient.sendCommand).not.toHaveBeenCalled();
     });
   });
 

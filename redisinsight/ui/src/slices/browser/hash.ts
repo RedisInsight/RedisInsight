@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, isNull } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -46,12 +46,17 @@ const hashSlice = createSlice({
   reducers: {
     setHashInitialState: () => initialState,
     // load Hash fields
-    loadHashFields: (state, { payload }: PayloadAction<string>) => {
+    loadHashFields: (state, { payload: [match = '', resetData = true] }: PayloadAction<[string, Maybe<boolean>]>) => {
       state.loading = true
       state.error = ''
+
+      if (resetData) {
+        state.data = initialState.data
+      }
+
       state.data = {
-        ...initialState.data,
-        match: payload || '*',
+        ...state.data,
+        match: match || '*'
       }
     },
     loadHashFieldsSuccess: (
@@ -192,7 +197,7 @@ export function fetchHashFields(
   onSuccess?: (data: GetHashFieldsResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadHashFields(isNull(match) ? '*' : match))
+    dispatch(loadHashFields([isNull(match) ? '*' : match, true]))
 
     try {
       const state = stateInit()
@@ -223,11 +228,11 @@ export function fetchHashFields(
 }
 
 // Asynchronous thunk actions
-export function refreshHashFieldsAction(key: string = '') {
+export function refreshHashFieldsAction(key: string = '', resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { match } = state.browser.hash.data
-    dispatch(loadHashFields(match || '*'))
+    dispatch(loadHashFields([match || '*', resetData]))
 
     try {
       const { data, status } = await apiService.post<GetHashFieldsResponse>(
@@ -290,7 +295,7 @@ export function fetchMoreHashFields(
 }
 
 // Asynchronous thunk actions
-export function deleteHashFields(key: string, fields: string[]) {
+export function deleteHashFields(key: string, fields: string[], onSuccessAction?: () => void,) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeHashFields())
     try {
@@ -309,18 +314,7 @@ export function deleteHashFields(key: string, fields: string[]) {
       )
       const newTotalValue = state.browser.hash.data.total - data.affected
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.Hash,
-            numberOfRemoved: fields.length,
-          }
-        })
+        onSuccessAction?.()
         dispatch(removeHashFieldsSuccess())
         dispatch(removeFieldsFromList(fields))
         if (newTotalValue > 0) {
@@ -364,18 +358,6 @@ export function addHashFieldsAction(
         data
       )
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            keyType: KeyTypes.Hash,
-            numberOfAdded: data.fields.length,
-          }
-        })
         if (onSuccessAction) {
           onSuccessAction()
         }

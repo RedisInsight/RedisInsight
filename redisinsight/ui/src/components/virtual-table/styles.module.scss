@@ -162,7 +162,8 @@ $footerHeight: 38px;
 }
 
 :global(.key-details-table) {
-  height: calc(100% - 38px);
+  height: calc(100% - 94px);
+  position: relative;
   &:global(.footerOpened) {
     :global(.ReactVirtualized__Table__Grid) {
       padding-bottom: 254px;

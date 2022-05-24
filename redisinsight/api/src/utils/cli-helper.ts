@@ -260,3 +260,28 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
   });
   return result;
 };
+
+/**
+ * Generates a Buffer from escaped string representation
+ * An opposite for getASCIISafeStringFromBuffer
+ * @param str
+ */
+export const getBufferFromSafeASCIIString = (str: string): Buffer => {
+  const bytes = [];
+
+  for (let i = 0; i < str.length; i += 1) {
+    if (str[i] === '\\' && str[i + 1] === 'x') {
+      const hexString = str.substr(i + 2, 2);
+      if (isHex(hexString)) {
+        bytes.push(Buffer.from(hexString, 'hex'));
+        i += 3;
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+    }
+
+    bytes.push(Buffer.from(str[i]));
+  }
+
+  return Buffer.concat(bytes);
+};

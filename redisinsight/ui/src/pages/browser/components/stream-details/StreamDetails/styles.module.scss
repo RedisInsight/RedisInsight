@@ -1,5 +1,3 @@
-$maxWidthCell: 190px;
-
 .container {
   display: flex;
   flex: 1;
@@ -59,7 +57,8 @@ $maxWidthCell: 190px;
 :global(.streamEntry) {
   color: var(--euiTextSubduedColor) !important;
   white-space: normal;
-  max-width: $maxWidthCell;
+  max-width: 100%;
+  word-break: break-all;
 }
 
 :global(.streamEntryId) {
@@ -92,4 +91,23 @@ $maxWidthCell: 190px;
     width: 40px;
     background-color: var(--euiColorEmptyShade) !important;
   }
+}
+
+.rangeWrapper {
+  margin: 30px 30px 26px;
+  padding: 12px 0;
+}
+
+.sliderTrack.mockRange {
+  left: 18px;
+  width: calc(100% - 36px);
+}
+
+.sliderTrack {
+  position: absolute;
+  background-color: var(--separatorColor);
+  width: 100%;
+  height: 1px;
+  margin-top: 2px;
+  z-index: 1;
 }

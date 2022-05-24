@@ -33,11 +33,10 @@ import { FormikErrors, useFormik } from 'formik'
 import cx from 'classnames'
 import {
   MAX_PORT_NUMBER,
-  MAX_DATABASE_INDEX_NUMBER,
+  validateNumber,
   validateCertName,
   validateField,
   validatePortNumber,
-  validateDatabaseNumber,
 } from 'uiSrc/utils/validations'
 import {
   ConnectionType,
@@ -753,7 +752,7 @@ const AddStandaloneForm = (props: Props) => {
               { [styles.dbInputBig]: !flexItemClassName }
             )}
           >
-            <EuiFormRow label="Database Index" helpText="Should not exceed 15.">
+            <EuiFormRow label="Database Index">
               <EuiFieldNumber
                 name="db"
                 id="db"
@@ -765,12 +764,11 @@ const AddStandaloneForm = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    validateDatabaseNumber(e.target.value.trim())
+                    validateNumber(e.target.value.trim())
                   )
                 }}
                 type="text"
                 min={0}
-                max={MAX_DATABASE_INDEX_NUMBER}
               />
             </EuiFormRow>
           </EuiFlexItem>

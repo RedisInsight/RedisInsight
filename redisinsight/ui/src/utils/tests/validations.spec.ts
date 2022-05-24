@@ -8,8 +8,6 @@ import {
   validateCountNumber,
   validateScoreNumber,
   validateTTLNumberForAddKey,
-  MAX_DATABASE_INDEX_NUMBER,
-  validateDatabaseNumber,
   validateCertName,
   validateRefreshRateNumber,
   MAX_REFRESH_RATE,
@@ -131,28 +129,6 @@ describe('Validations utils', () => {
       expect(validatePortNumber(text6)).toEqual(expectedResponse6)
       expect(validatePortNumber(text7)).toEqual(expectedResponse7)
       expect(validatePortNumber(text8)).toEqual(expectedResponse8)
-    })
-  })
-
-  describe('validateDatabaseNumber', () => {
-    it('validateDatabaseNumber should return only numbers between 0 and MAX_DATABASE_INDEX_NUMBER', () => {
-      const expectedResponse1 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse2 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse4 = ''
-      const expectedResponse5 = ''
-      const expectedResponse6 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse7 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse8 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse13 = '5'
-
-      expect(validateDatabaseNumber(text1)).toEqual(expectedResponse1)
-      expect(validateDatabaseNumber(text2)).toEqual(expectedResponse2)
-      expect(validateDatabaseNumber(text4)).toEqual(expectedResponse4)
-      expect(validateDatabaseNumber(text5)).toEqual(expectedResponse5)
-      expect(validateDatabaseNumber(text6)).toEqual(expectedResponse6)
-      expect(validateDatabaseNumber(text7)).toEqual(expectedResponse7)
-      expect(validateDatabaseNumber(text8)).toEqual(expectedResponse8)
-      expect(validateDatabaseNumber(text13)).toEqual(expectedResponse13)
     })
   })
 

@@ -25,7 +25,7 @@ import {
   createMastersSentinelAction,
   resetDataSentinel,
 } from 'uiSrc/slices/instances/sentinel'
-import { MAX_DATABASE_INDEX_NUMBER, removeEmpty, setTitle } from 'uiSrc/utils'
+import { removeEmpty, setTitle } from 'uiSrc/utils'
 import { ApiStatusCode, Pages } from 'uiSrc/constants'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import { InputFieldSentinel } from 'uiSrc/components'
@@ -299,7 +299,6 @@ const SentinelDatabasesResultPage = () => {
             <InputFieldSentinel
               min={0}
               disabled={loading}
-              max={MAX_DATABASE_INDEX_NUMBER}
               className={styles.dbInfo}
               value={`${db}` || '0'}
               name={`db-${id}`}

@@ -2,7 +2,6 @@ import { floor } from 'lodash'
 
 export const MAX_TTL_NUMBER = 2147483647
 export const MAX_PORT_NUMBER = 65535
-export const MAX_DATABASE_INDEX_NUMBER = 99
 export const MAX_SCORE_DECIMAL_LENGTH = 15
 export const MAX_REFRESH_RATE = 999.9
 export const MIN_REFRESH_RATE = 1.0
@@ -61,8 +60,6 @@ export const validateEmail = (email: string) => {
 }
 
 export const validatePortNumber = (initValue: string) => validateNumber(initValue, MAX_PORT_NUMBER)
-export const validateDatabaseNumber = (initValue: string) =>
-  validateNumber(initValue, MAX_DATABASE_INDEX_NUMBER)
 
 export const validateNumber = (initValue: string, maxNumber: number = Infinity, minNumber: number = 0) => {
   const positiveNumbers = /[^0-9]+/gi

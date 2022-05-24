@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Pages } from 'uiSrc/constants'
-import { MAX_DATABASE_INDEX_NUMBER, setTitle } from 'uiSrc/utils'
+import { setTitle } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   createMastersSentinelAction,
@@ -235,7 +235,6 @@ const SentinelDatabasesPage = () => {
           <div role="presentation">
             <InputFieldSentinel
               min={0}
-              max={MAX_DATABASE_INDEX_NUMBER}
               className={styles.dbInfo}
               value={`${db}` || '0'}
               name={`db-${id}`}

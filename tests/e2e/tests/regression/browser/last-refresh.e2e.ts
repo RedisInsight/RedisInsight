@@ -30,7 +30,7 @@ test
         //Hover on the refresh icon
         await t.hover(browserPage.refreshKeysButton);
         //Verify the last update info
-        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nnow', 'tooltip text');
     });
 test
     .meta({ rte: rte.standalone })
@@ -43,11 +43,11 @@ test
         await t.wait(120000);
         //Hover on the refresh icon
         await t.hover(browserPage.refreshKeyButton);
-        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\n2 minutes ago', 'tooltip text');
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\n2 min', 'tooltip text');
         //Click on Refresh and check last refresh
         await t.click(browserPage.refreshKeyButton);
         await t.hover(browserPage.refreshKeyButton);
-        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nnow', 'tooltip text');
     });
 test
     .meta({ rte: rte.standalone })
@@ -59,7 +59,7 @@ test
         //Hover on the refresh icon
         await t.hover(browserPage.refreshKeyButton);
         //Verify the last update info
-        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nnow', 'tooltip text');
     });
 test
     .meta({ rte: rte.standalone })
@@ -71,9 +71,9 @@ test
         //Hover on the keys refresh icon
         await t.hover(browserPage.refreshKeysButton);
         //Verify the last update info
-        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nnow', 'tooltip text');
         //Hover on the key in details refresh icon
         await t.hover(browserPage.refreshKeyButton);
         //Verify the last update info
-        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nless than a minute ago', 'tooltip text');
+        await t.expect(browserPage.tooltip.innerText).contains('Last Refresh\nnow', 'tooltip text');
     });

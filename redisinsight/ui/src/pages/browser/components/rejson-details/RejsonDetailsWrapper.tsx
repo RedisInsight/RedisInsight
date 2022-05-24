@@ -68,33 +68,34 @@ const RejsonDetailsWrapper = () => {
 
   return (
     <div className={`${[styles.container].join(' ')}`}>
-      {loading && (
+      {loading ? (
         <EuiProgress
           color="primary"
           size="xs"
           position="absolute"
           data-testid="progress-key-json"
         />
+      ) : (
+        <RejsonDetails
+          selectedKey={selectedKey}
+          dbNumber={0}
+          dataType={type || ''}
+          deleteMsg=""
+          instanceId={123}
+          resultTableKeyMap={{}}
+          handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+          onJSONPropertyDeleted={reportJSONPropertyDeleted}
+          data={data}
+          onJSONKeyExpandAndCollapse={reportJSONKeyExpandAndCollapse}
+          onJSONPropertyAdded={reportJSONPropertyAdded}
+          onJSONPropertyEdited={reportJSONPropertyEdited}
+          shouldRejsonDataBeDownloaded={!downloaded}
+          handleSubmitUpdateValue={handleEditValueUpdate}
+          handleDeleteKeyDialogOpen={() => {}}
+          handleOpenExpiryDialog={() => {}}
+          keyProperty={{}}
+        />
       )}
-      <RejsonDetails
-        selectedKey={selectedKey}
-        dbNumber={0}
-        dataType={type || ''}
-        deleteMsg=""
-        instanceId={123}
-        resultTableKeyMap={{}}
-        handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-        onJSONPropertyDeleted={reportJSONPropertyDeleted}
-        data={data}
-        onJSONKeyExpandAndCollapse={reportJSONKeyExpandAndCollapse}
-        onJSONPropertyAdded={reportJSONPropertyAdded}
-        onJSONPropertyEdited={reportJSONPropertyEdited}
-        shouldRejsonDataBeDownloaded={!downloaded}
-        handleSubmitUpdateValue={handleEditValueUpdate}
-        handleDeleteKeyDialogOpen={() => {}}
-        handleOpenExpiryDialog={() => {}}
-        keyProperty={{}}
-      />
     </div>
   )
 }

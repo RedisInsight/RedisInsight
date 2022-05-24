@@ -1015,7 +1015,6 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          defaultSelectedKeyAction(),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1040,7 +1039,6 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          defaultSelectedKeyAction(),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1065,7 +1063,6 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          defaultSelectedKeyAction(),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1090,7 +1087,6 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          defaultSelectedKeyAction(),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1116,7 +1112,6 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          defaultSelectedKeyAction(),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1141,7 +1136,6 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          defaultSelectedKeyAction(),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)

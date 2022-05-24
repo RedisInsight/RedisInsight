@@ -33,13 +33,14 @@ import { EmptySlowLog, SlowLogTable, Actions } from './components'
 
 import styles from './styles.module.scss'
 
+const HIDE_TIMESTAMP_FROM_WIDTH = 850
 const DEFAULT_COUNT_VALUE = '50'
 const countOptions: EuiSuperSelectOption<string>[] = [
   { value: '10', inputDisplay: '10' },
   { value: '25', inputDisplay: '25' },
   { value: '50', inputDisplay: '50' },
   { value: '100', inputDisplay: '100' },
-  { value: '-1', inputDisplay: 'Max' },
+  { value: '-1', inputDisplay: 'Max available' },
 ]
 
 const SlowLogPage = () => {
@@ -124,7 +125,7 @@ const SlowLogPage = () => {
                   <EuiFlexGroup responsive={false} alignItems="center" gutterSize="xs">
                     <EuiFlexItem grow={false}>
                       <EuiText color="subdued">
-                        {connectionType === ConnectionType.Cluster ? 'Display per node:' : 'Display:'}
+                        {connectionType === ConnectionType.Cluster ? 'Display per node:' : 'Display up to:'}
                       </EuiText>
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
@@ -137,12 +138,14 @@ const SlowLogPage = () => {
                         data-testid="count-select"
                       />
                     </EuiFlexItem>
-                    <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
-                      <EuiText size="xs" color="subdued" data-testid="entries-from-timestamp">
-                        ({data.length} entries
-                        {lastTimestamp && (<>&nbsp;from {format(lastTimestamp * 1000, DATE_FORMAT)}</>)})
-                      </EuiText>
-                    </EuiFlexItem>
+                    {width > HIDE_TIMESTAMP_FROM_WIDTH && (
+                      <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+                        <EuiText size="xs" color="subdued" data-testid="entries-from-timestamp">
+                          ({data.length} entries
+                          {lastTimestamp && (<>&nbsp;from {format(lastTimestamp * 1000, DATE_FORMAT)}</>)})
+                        </EuiText>
+                      </EuiFlexItem>
+                    )}
                   </EuiFlexGroup>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>

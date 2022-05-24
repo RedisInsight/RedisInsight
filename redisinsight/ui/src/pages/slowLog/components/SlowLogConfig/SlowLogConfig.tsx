@@ -70,6 +70,12 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   }
 
   const calculateSlowlogLogSlowerThan = (initSlowerThan: string) => {
+    if (initSlowerThan === '') {
+      return DEFAULT_SLOWLOG_SLOWER_THAN
+    }
+    if (initSlowerThan === `${MINUS_ONE}`) {
+      return MINUS_ONE
+    }
     if (initSlowerThan === `${MINUS_ONE}`) {
       return MINUS_ONE
     }
@@ -81,7 +87,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
     dispatch(patchSlowLogConfigAction(
       instanceId,
       {
-        slowlogMaxLen: +maxLen,
+        slowlogMaxLen: maxLen ? toNumber(maxLen) : DEFAULT_SLOWLOG_MAX_LEN,
         slowlogLogSlowerThan,
       },
       durationUnit,
@@ -96,7 +102,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
     closePopover()
   }
 
-  const disabledApplyBtn = () => errorValidateNegativeInteger(`${slowerThan}`) || loading
+  const disabledApplyBtn = () => (errorValidateNegativeInteger(`${slowerThan}`) && !!slowerThan) || loading
 
   const clusterContent = () => (
     <>
@@ -124,6 +130,14 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   )
 
   const unitConverter = () => {
+    if (Number.isNaN(toNumber(slowerThan))) {
+      return `- ${DurationUnits.milliSeconds}`
+    }
+
+    if (slowerThan === `${MINUS_ONE}`) {
+      return `-1 ${DurationUnits.milliSeconds}`
+    }
+
     if (durationUnit === DurationUnits.microSeconds) {
       const value = numberWithSpaces(convertNumberByUnits(toNumber(slowerThan), DurationUnits.milliSeconds))
       return `${value} ${DurationUnits.milliSeconds}`
@@ -150,11 +164,11 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   name="slowerThan"
                   id="slowerThan"
                   className={styles.input}
-                  placeholder={`${slowlogLogSlowerThan}`}
                   value={slowerThan}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     setSlowerThan(validateNumber(e.target.value.trim(), Infinity, -1))
                   }}
+                  placeholder={`${convertNumberByUnits(DEFAULT_SLOWLOG_SLOWER_THAN, durationUnit)}`}
                   autoComplete="off"
                   data-testid="slower-than-input"
                 />
@@ -184,7 +198,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   name="maxLen"
                   id="maxLen"
                   className={styles.input}
-                  placeholder={`${slowlogMaxLen}`}
+                  placeholder={`${DEFAULT_SLOWLOG_MAX_LEN}`}
                   value={maxLen}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => { setMaxLen(validateNumber(e.target.value.trim())) }}
                   autoComplete="off"

@@ -1,7 +1,7 @@
-import { Nullable } from 'uiSrc/utils'
+import { Maybe, Nullable } from 'uiSrc/utils'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/dto/hash.dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
-import { GetRejsonRlResponseDto } from 'apiSrc/modules/browser/dto/rejson-rl.dto'
+import { GetRejsonRlResponseDto, SafeRejsonRlDataDtO } from 'apiSrc/modules/browser/dto/rejson-rl.dto'
 import {
   GetListElementsDto,
   GetListElementsResponse,
@@ -15,28 +15,28 @@ import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import { AddSentinelMasterDto, AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
 
 export interface Instance extends DatabaseInstanceResponse {
-  host: string;
-  port: number;
-  nameFromProvider?: Nullable<string>;
-  provider?: string;
-  id: string;
-  endpoints?: Nullable<Endpoints[]>;
-  connectionType?: ConnectionType;
-  lastConnection?: Date;
-  password?: Nullable<string>;
-  username?: Nullable<string>;
-  name?: string;
-  tls?: TlsSettings;
-  tlsClientAuthRequired?: boolean;
-  tlsClientCertId?: number | undefined;
-  verifyServerCert?: boolean;
-  caCertName?: string;
-  authUsername?: Nullable<string>;
-  authPass?: Nullable<string>;
-  isDeleting?: boolean;
-  sentinelMaster?: SentinelMasterDto;
-  modules: RedisModuleDto[];
-  isRediStack?: boolean;
+  host: string
+  port: number
+  nameFromProvider?: Nullable<string>
+  provider?: string
+  id: string
+  endpoints?: Nullable<Endpoints[]>
+  connectionType?: ConnectionType
+  lastConnection?: Date
+  password?: Nullable<string>
+  username?: Nullable<string>
+  name?: string
+  tls?: TlsSettings
+  tlsClientAuthRequired?: boolean
+  tlsClientCertId?: number | undefined
+  verifyServerCert?: boolean
+  caCertName?: string
+  authUsername?: Nullable<string>
+  authPass?: Nullable<string>
+  isDeleting?: boolean
+  sentinelMaster?: SentinelMasterDto
+  modules: RedisModuleDto[]
+  isRediStack?: boolean
 }
 
 export enum ConnectionType {
@@ -52,55 +52,55 @@ export const CONNECTION_TYPE_DISPLAY = Object.freeze({
 })
 
 export interface Endpoints {
-  host: string;
-  port: number;
+  host: string
+  port: number
 }
 
 export interface InstanceRedisCluster {
-  host: string;
-  port: number;
-  uid: number;
-  name: string;
-  id?: number;
-  dnsName: string;
-  address: string;
-  status: InstanceRedisClusterStatus;
-  modules: RedisDefaultModules[];
-  tls: boolean;
-  options: any;
-  message?: string;
-  uidAdded?: number;
-  statusAdded?: AddRedisDatabaseStatus;
-  messageAdded?: string;
-  databaseDetails?: InstanceRedisCluster;
+  host: string
+  port: number
+  uid: number
+  name: string
+  id?: number
+  dnsName: string
+  address: string
+  status: InstanceRedisClusterStatus
+  modules: RedisDefaultModules[]
+  tls: boolean
+  options: any
+  message?: string
+  uidAdded?: number
+  statusAdded?: AddRedisDatabaseStatus
+  messageAdded?: string
+  databaseDetails?: InstanceRedisCluster
 }
 
 export interface InstanceRedisCloud {
-  accessKey: string;
-  secretKey: string;
-  credentials: Nullable<ICredentialsRedisCluster>;
-  account: Nullable<RedisCloudAccount>;
-  host: string;
-  port: number;
+  accessKey: string
+  secretKey: string
+  credentials: Nullable<ICredentialsRedisCluster>
+  account: Nullable<RedisCloudAccount>
+  host: string
+  port: number
   uid: number;
-  name: string;
-  id?: number;
-  dnsName: string;
-  address: string;
-  status: InstanceRedisClusterStatus;
-  modules: RedisDefaultModules[];
-  tls: boolean;
-  options: any;
-  message?: string;
-  publicEndpoint?: string;
-  databaseId: number;
-  databaseIdAdded?: number;
-  subscriptionId?: number;
-  subscriptionName: string;
-  subscriptionIdAdded?: number;
-  statusAdded?: AddRedisDatabaseStatus;
-  messageAdded?: string;
-  databaseDetails?: InstanceRedisCluster;
+  name: string
+  id?: number
+  dnsName: string
+  address: string
+  status: InstanceRedisClusterStatus
+  modules: RedisDefaultModules[]
+  tls: boolean
+  options: any
+  message?: string
+  publicEndpoint?: string
+  databaseId: number
+  databaseIdAdded?: number
+  subscriptionId?: number
+  subscriptionName: string
+  subscriptionIdAdded?: number
+  statusAdded?: AddRedisDatabaseStatus
+  messageAdded?: string
+  databaseDetails?: InstanceRedisCluster
 }
 
 export interface IBulkOperationResult {
@@ -185,16 +185,16 @@ export enum InstanceRedisClusterStatus {
 }
 
 export interface TlsSettings {
-  caCertId?: string;
-  clientCertPairId?: string;
-  verifyServerCert?: boolean;
+  caCertId?: string
+  clientCertPairId?: string
+  verifyServerCert?: boolean
 }
 
 export interface ClusterNode {
-  host: string;
-  port: number;
-  role?: 'slave' | 'master';
-  slot?: number;
+  host: string
+  port: number
+  role?: 'slave' | 'master'
+  slot?: number
 }
 
 export enum RedisCloudSubscriptionStatus {
@@ -214,66 +214,66 @@ export const RedisCloudSubscriptionStatusText = Object.freeze({
 })
 
 export interface RedisCloudSubscription {
-  id: number;
-  name: string;
-  numberOfDatabases: number;
-  provider: string;
-  region: string;
-  status: RedisCloudSubscriptionStatus;
+  id: number
+  name: string
+  numberOfDatabases: number
+  provider: string
+  region: string
+  status: RedisCloudSubscriptionStatus
 }
 
 export interface DatabaseConfigInfo {
-  version: string;
-  totalKeys?: Nullable<number>;
-  usedMemory?: Nullable<number>;
-  connectedClients?: Nullable<number>;
-  opsPerSecond?: Nullable<number>;
-  networkInKbps?: Nullable<number>;
-  networkOutKbps?: Nullable<number>;
-  cpuUsagePercentage?: Nullable<number>;
+  version: string
+  totalKeys?: Nullable<number>
+  usedMemory?: Nullable<number>
+  connectedClients?: Nullable<number>
+  opsPerSecond?: Nullable<number>
+  networkInKbps?: Nullable<number>
+  networkOutKbps?: Nullable<number>
+  cpuUsagePercentage?: Nullable<number>
 }
 
 export interface InitialStateInstances {
-  loading: boolean;
-  error: string;
-  data: Instance[];
-  loadingChanging: boolean;
-  errorChanging: string;
-  changedSuccessfully: boolean;
-  deletedSuccessfully: boolean;
-  connectedInstance: Instance;
-  instanceOverview: DatabaseConfigInfo;
+  loading: boolean
+  error: string
+  data: Instance[]
+  loadingChanging: boolean
+  errorChanging: string
+  changedSuccessfully: boolean
+  deletedSuccessfully: boolean
+  connectedInstance: Instance
+  instanceOverview: DatabaseConfigInfo
 }
 
 export interface InitialStateCluster {
-  loading: boolean;
-  data: Nullable<InstanceRedisCluster[]>;
-  dataAdded: InstanceRedisCluster[];
-  error: string;
-  credentials: Nullable<ICredentialsRedisCluster>;
+  loading: boolean
+  data: Nullable<InstanceRedisCluster[]>
+  dataAdded: InstanceRedisCluster[]
+  error: string
+  credentials: Nullable<ICredentialsRedisCluster>
 }
 
 export interface InitialStateCloud {
-  loading: boolean;
-  data: Nullable<InstanceRedisCloud[]>;
-  dataAdded: InstanceRedisCloud[];
-  error: string;
-  credentials: Nullable<ICredentialsRedisCloud>;
-  subscriptions: Nullable<RedisCloudSubscription[]>;
+  loading: boolean
+  data: Nullable<InstanceRedisCloud[]>
+  dataAdded: InstanceRedisCloud[]
+  error: string
+  credentials: Nullable<ICredentialsRedisCloud>
+  subscriptions: Nullable<RedisCloudSubscription[]>
   account: {
-    data: Nullable<RedisCloudAccount>;
-    error: string;
-  };
-  loaded: ILoadedCloud;
+    data: Nullable<RedisCloudAccount>
+    error: string
+  }
+  loaded: ILoadedCloud
 }
 
 export interface InitialStateSentinel {
-  loading: boolean;
-  instance: Nullable<Instance>;
-  data: ModifiedSentinelMaster[];
-  statuses: AddSentinelMasterResponse[];
-  error: string;
-  loaded: ILoadedSentinel;
+  loading: boolean
+  instance: Nullable<Instance>
+  data: ModifiedSentinelMaster[]
+  statuses: AddSentinelMasterResponse[]
+  error: string
+  loaded: ILoadedSentinel
 }
 
 export enum LoadedCloud {
@@ -288,42 +288,42 @@ export enum LoadedSentinel {
 }
 
 export interface ILoadedCloud {
-  [LoadedCloud.Subscriptions]?: boolean;
-  [LoadedCloud.Instances]?: boolean;
-  [LoadedCloud.InstancesAdded]?: boolean;
+  [LoadedCloud.Subscriptions]?: boolean
+  [LoadedCloud.Instances]?: boolean
+  [LoadedCloud.InstancesAdded]?: boolean
 }
 
 export interface ILoadedSentinel {
-  [LoadedSentinel.Masters]?: boolean;
-  [LoadedSentinel.MastersAdded]?: boolean;
+  [LoadedSentinel.Masters]?: boolean
+  [LoadedSentinel.MastersAdded]?: boolean
 }
 
 export interface ModifiedGetSetMembersResponse extends GetSetMembersResponse {
-  key?: string;
-  match?: string;
+  key?: string
+  match?: string
 }
 
 export interface ModifiedZsetMembersResponse extends SearchZSetMembersResponse {
-  key?: string;
-  match?: string;
+  key?: string
+  match?: string
 }
 
 export interface ModifiedGetHashMembersResponse extends GetHashFieldsResponse {
-  key?: string;
-  match?: string;
+  key?: string
+  match?: string
 }
 
 export interface ModifiedSentinelMaster extends AddSentinelMasterDto {
-  id?: string;
-  alias?: string;
-  host?: string;
-  port?: string;
-  username?: string;
-  password?: string;
-  loading?: boolean;
-  message?: string;
-  status?: AddRedisDatabaseStatus;
-  error?: string | object;
+  id?: string
+  alias?: string
+  host?: string
+  port?: string
+  username?: string
+  password?: string
+  loading?: boolean
+  message?: string
+  status?: AddRedisDatabaseStatus
+  error?: string | object
 }
 
 export interface ModifiedGetListElementsResponse
@@ -339,29 +339,33 @@ export interface InitialStateSet {
   data: ModifiedGetSetMembersResponse;
 }
 
+export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {
+  data: Maybe<SafeRejsonRlDataDtO[] | string | number | boolean | null>
+}
+
 export interface InitialStateRejson {
-  loading: boolean;
-  error: string;
-  data: GetRejsonRlResponseDto;
+  loading: boolean
+  error: string
+  data: GetRejsonRlResponse
 }
 
 export interface ICredentialsRedisCluster {
-  host: string;
-  port: number;
-  username: string;
-  password: string;
+  host: string
+  port: number
+  username: string
+  password: string
 }
 
 export interface RedisCloudAccount {
-  accountId: Nullable<number>;
-  accountName: Nullable<string>;
-  ownerEmail: Nullable<string>;
-  ownerName: Nullable<string>;
+  accountId: Nullable<number>
+  accountName: Nullable<string>
+  ownerEmail: Nullable<string>
+  ownerName: Nullable<string>
 }
 
 export interface ICredentialsRedisCloud {
-  accessKey: Nullable<string>;
-  secretKey: Nullable<string>;
+  accessKey: Nullable<string>
+  secretKey: Nullable<string>
 }
 
 export enum InstanceType {

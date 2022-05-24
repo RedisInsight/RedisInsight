@@ -22,7 +22,9 @@ export const ipcCheckUpdates = async (serverInfo: GetServerInfoResponse, dispatc
 
   if (isUpdateDownloaded && !isUpdateAvailable) {
     if (serverInfo.appVersion === updateDownloadedVersion) {
-      dispatch(addMessageNotification(successMessages.INSTALLED_NEW_UPDATE(updateDownloadedVersion)))
+      dispatch(addMessageNotification(
+        successMessages.INSTALLED_NEW_UPDATE(updateDownloadedVersion, () => dispatch(setReleaseNotesViewed(true)))
+      ))
     }
 
     await ipcRenderer.invoke(IpcEvent.deleteStoreValue, ElectronStorageItem.updateDownloaded)

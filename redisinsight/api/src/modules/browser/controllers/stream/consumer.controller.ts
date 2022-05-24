@@ -11,7 +11,7 @@ import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-ope
 import {
   ConsumerDto,
   ConsumerGroupDto,
-  GetConsumersDto,
+  GetConsumersDto, GetPendingMessagesDto, PendingMessageDto,
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
 
@@ -23,12 +23,11 @@ export class ConsumerController {
 
   @Post('/get')
   @ApiRedisInstanceOperation({
-    description: 'Get stream entries',
+    description: 'Get group consumers',
     statusCode: 200,
     responses: [
       {
         status: 200,
-        description: 'Returns stream consumer groups.',
         type: ConsumerGroupDto,
         isArray: true,
       },
@@ -39,5 +38,24 @@ export class ConsumerController {
       @Body() dto: GetConsumersDto,
   ): Promise<ConsumerDto[]> {
     return this.service.getConsumers({ instanceId }, dto);
+  }
+
+  @Post('/pending-messages/get')
+  @ApiRedisInstanceOperation({
+    description: 'Get pending messages list',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        type: PendingMessageDto,
+        isArray: true,
+      },
+    ],
+  })
+  async getPendingMessages(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: GetPendingMessagesDto,
+  ): Promise<PendingMessageDto[]> {
+    return this.service.getPendingMessages({ instanceId }, dto);
   }
 }

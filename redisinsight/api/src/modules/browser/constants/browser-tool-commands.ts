@@ -83,6 +83,7 @@ export enum BrowserToolStreamCommands {
   XInfoGroups = 'xinfo groups',
   XInfoConsumers = 'xinfo consumers',
   XPending = 'xpending',
+  XAck = 'xack',
   XGroupCreate = 'xgroup create',
   XGroupSetId = 'xgroup setid',
   XGroupDestroy = 'xgroup destroy',

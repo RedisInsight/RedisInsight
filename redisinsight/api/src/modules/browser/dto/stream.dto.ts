@@ -189,7 +189,7 @@ export class CreateStreamDto extends IntersectionType(
 export class ConsumerGroupDto {
   @ApiProperty({
     type: String,
-    description: 'Consumer group name',
+    description: 'Consumer Group name',
     example: 'group',
   })
   name: string;
@@ -294,7 +294,7 @@ export class ConsumerDto {
   @ApiProperty({
     type: String,
     description: 'The consumer\'s name',
-    example: 'consumer-1',
+    example: 'consumer-2',
   })
   name: string;
 
@@ -395,4 +395,26 @@ export class GetPendingEntriesDto extends IntersectionType(
   @IsInt()
   @Min(1)
   count?: number = 500;
+}
+
+export class AckPendingEntriesDto extends GetConsumersDto {
+  @ApiProperty({
+    description: 'Entries IDs',
+    type: String,
+    isArray: true,
+    example: ['1650985323741-0', '1650985323770-0'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => String)
+  entries: string[];
+}
+
+export class AckPendingEntriesResponse {
+  @ApiProperty({
+    description: 'Number of affected entries',
+    type: Number,
+  })
+  affected: number;
 }

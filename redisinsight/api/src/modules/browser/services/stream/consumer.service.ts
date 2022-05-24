@@ -10,6 +10,7 @@ import {
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
+  AckPendingEntriesDto, AckPendingEntriesResponse,
   ConsumerDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
@@ -61,16 +62,16 @@ export class ConsumerService {
   }
 
   /**
-   * Get list of pending messages info for particular consumer
+   * Get list of pending entries info for particular consumer
    * @param clientOptions
    * @param dto
    */
-  async getPendingMessages(
+  async getPendingEntries(
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: GetPendingEntriesDto,
   ): Promise<PendingEntryDto[]> {
     try {
-      this.logger.log('Getting pending messages list.');
+      this.logger.log('Getting pending entries list.');
 
       const exists = await this.browserTool.execCommand(
         clientOptions,
@@ -82,11 +83,57 @@ export class ConsumerService {
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
 
-      return ConsumerService.formatReplyToPendingMessagesDto(await this.browserTool.execCommand(
+      return ConsumerService.formatReplyToPendingEntriesDto(await this.browserTool.execCommand(
         clientOptions,
         BrowserToolStreamCommands.XPending,
         [dto.keyName, dto.groupName, dto.start, dto.end, dto.count, dto.consumerName],
       ));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Get list of pending entries info for particular consumer
+   * @param clientOptions
+   * @param dto
+   */
+  async ackPendingEntries(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: AckPendingEntriesDto,
+  ): Promise<AckPendingEntriesResponse> {
+    try {
+      this.logger.log('Acknowledging pending entries.');
+
+      const exists = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [dto.keyName],
+      );
+
+      if (!exists) {
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      }
+
+      const affected = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolStreamCommands.XAck,
+        [dto.keyName, dto.groupName, ...dto.entries],
+      );
+
+      this.logger.log('Successfully acknowledged pending entries.');
+
+      return {
+        affected,
+      };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -167,15 +214,15 @@ export class ConsumerService {
    * ]
    * @param reply
    */
-  static formatReplyToPendingMessagesDto(reply: Array<Array<string | number>>): PendingEntryDto[] {
-    return reply.map(ConsumerService.formatArrayToPendingMessageDto);
+  static formatReplyToPendingEntriesDto(reply: Array<Array<string | number>>): PendingEntryDto[] {
+    return reply.map(ConsumerService.formatArrayToPendingEntryDto);
   }
 
   /**
    * Format single reply entry to DTO
    * @param entry
    */
-  static formatArrayToPendingMessageDto(entry: Array<string | number>): PendingEntryDto {
+  static formatArrayToPendingEntryDto(entry: Array<string | number>): PendingEntryDto {
     if (!entry?.length) {
       return null;
     }

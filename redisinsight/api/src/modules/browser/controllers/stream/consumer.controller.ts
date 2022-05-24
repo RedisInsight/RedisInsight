@@ -9,6 +9,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import {
+  AckPendingEntriesDto, AckPendingEntriesResponse,
   ConsumerDto,
   ConsumerGroupDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
@@ -52,10 +53,29 @@ export class ConsumerController {
       },
     ],
   })
-  async getPendingMessages(
+  async getPendingEntries(
     @Param('dbInstance') instanceId: string,
       @Body() dto: GetPendingEntriesDto,
   ): Promise<PendingEntryDto[]> {
-    return this.service.getPendingMessages({ instanceId }, dto);
+    return this.service.getPendingEntries({ instanceId }, dto);
+  }
+
+  @Post('/pending-messages/ack')
+  @ApiRedisInstanceOperation({
+    description: 'Get pending messages list',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        type: PendingEntryDto,
+        isArray: true,
+      },
+    ],
+  })
+  async ackPendingEntriers(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: AckPendingEntriesDto,
+  ): Promise<AckPendingEntriesResponse> {
+    return this.service.ackPendingEntries({ instanceId }, dto);
   }
 }

@@ -68,14 +68,15 @@ const RejsonDetailsWrapper = () => {
 
   return (
     <div className={`${[styles.container].join(' ')}`}>
-      {loading ? (
+      {loading && (
         <EuiProgress
           color="primary"
           size="xs"
           position="absolute"
           data-testid="progress-key-json"
         />
-      ) : (
+      )}
+      {!(loading && data === undefined) && (
         <RejsonDetails
           selectedKey={selectedKey}
           dbNumber={0}

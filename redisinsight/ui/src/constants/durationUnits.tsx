@@ -18,7 +18,7 @@ export const DURATION_UNITS: EuiSuperSelectOption<DurationUnits>[] = [
 
 export const MINUS_ONE = -1
 export const DEFAULT_SLOWLOG_MAX_LEN = 128
-export const DEFAULT_SLOWLOG_SLOWER_THAN = 10000
+export const DEFAULT_SLOWLOG_SLOWER_THAN = 10_000
 export const DEFAULT_SLOWLOG_DURATION_UNIT = DurationUnits.microSeconds
 
 export default DURATION_UNITS

@@ -12,7 +12,7 @@ import {
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-const keyName = chance.word({ length: 20 });
+let keyName = chance.word({ length: 20 });
 const keyField = chance.word({ length: 20 });
 const keyValue = chance.word({ length: 20 });
 
@@ -28,6 +28,7 @@ fixture `Stream Key`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can create Stream key via Add New Key form', async t => {
+    keyName = chance.word({ length: 20 });
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     // Verify that user can see Stream details opened after key creation
@@ -64,6 +65,7 @@ test('Verify that user can add several fields and values during Stream key creat
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).visible).ok('Stream Key Name');
 });
 test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
+    keyName = chance.word({ length: 20 });
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
@@ -81,6 +83,7 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
+    keyName = chance.word({ length: 20 });
     // Generate data for stream
     const fields = [keyField, chance.word({ length: 20 })];
     const values = [keyValue, chance.word({ length: 20 })];
@@ -107,6 +110,7 @@ test('Verify that during new entry adding to existing Stream, user can clear the
     await t.expect(browserPage.streamField.count).eql(fieldsNumberAfterDeletion, 'Number of fields after deletion');
 });
 test('Verify that user can add several fields and values to the existing Stream Key', async t => {
+    keyName = chance.word({ length: 20 });
     // Generate field value data
     const entryQuantity = 10;
     const fields: string[] = [];

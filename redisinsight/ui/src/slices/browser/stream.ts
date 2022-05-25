@@ -470,11 +470,11 @@ export function fetchConsumerGroups(
       const state = stateInit()
       const { data, status } = await apiService.post<ConsumerGroupDto[]>(
         getUrl(
-          state.app.context.contextInstanceId,
+          state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
         ),
         {
-          keyName: state.app.context.browser.keyList.selectedKey,
+          keyName: state.browser.keys.selectedKey.data?.name,
         },
       )
 
@@ -507,11 +507,11 @@ export function fetchConsumers(
       const state = stateInit()
       const { data, status } = await apiService.post<ConsumerDto[]>(
         getUrl(
-          state.app.context.contextInstanceId,
+          state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAMS_CONSUMERS_GET
         ),
         {
-          keyName: state.app.context.browser.keyList.selectedKey,
+          keyName: state.browser.keys.selectedKey.data?.name,
           groupName: state.browser.stream.groups.selectedGroup?.name,
         },
       )
@@ -545,11 +545,11 @@ export function fetchConsumerMessages(
       const state = stateInit()
       const { status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
-          state.app.context.contextInstanceId,
+          state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
         ),
         {
-          keyName: state.app.context.browser.keyList.selectedKey,
+          keyName: state.browser.keys.selectedKey.data?.name,
           count: 500,
           sortOrder: SortOrder.ASC
         },

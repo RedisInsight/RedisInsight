@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
 
-import { setReJSONDataAction } from 'uiSrc/slices/rejson'
+import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { JSONErrors } from '../constants'
 import { JSONScalarValue, IJSONObject } from '../JSONInterfaces'
@@ -57,17 +58,17 @@ const JSONScalar = (props: Props) => {
       path = keyName.includes('"') ? `${parentPath}['${keyName}']` : `${parentPath}["${keyName}"]`
     }
 
-    let changedValue = value
+    let val = value
     if (value === null) {
-      changedValue = JSON.stringify(value)
+      val = JSON.stringify(value)
     }
     if (typeof value === 'string') {
-      changedValue = `"${value}"`
+      val = `"${value}"`
     }
 
-    setChangedValue(changedValue)
+    setChangedValue(val)
     setPath(path)
-  }, [parentPath, keyName])
+  }, [parentPath, keyName, value])
 
   const validateJSONValue = (value: JSONScalarValue) => {
     let error: string = ''
@@ -198,8 +199,9 @@ const JSONScalar = (props: Props) => {
             </div>
             <div className={styles.deleteBtn}>
               <PopoverDelete
+                header={createDeleteFieldHeader(selectedKey)}
+                text={createDeleteFieldMessage(keyName.toString())}
                 item={keyName.toString()}
-                keyName={selectedKey}
                 suffix="scalar"
                 deleting={deleting}
                 closePopover={() => setDeleting('')}

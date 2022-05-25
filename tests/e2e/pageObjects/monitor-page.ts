@@ -15,6 +15,9 @@ export class MonitorPage {
     hideMonitor = Selector('[data-testid=hide-monitor]');
     closeMonitor = Selector('[data-testid=close-monitor]');
     resetProfilerButton = Selector('[data-testid=reset-profiler-btn]');
+    saveLogContainer = Selector('[data-testid=save-log-container]');
+    saveLogSwitchButton = Selector('[data-testid=save-log-switch]');
+    downloadLogButton = Selector('[data-testid=download-log-btn]');
     //TEXT ELEMENTS
     monitorIsStoppedText = Selector('[data-testid=monitor-stopped]');
     monitorIsStartedText = Selector('[data-testid=monitor-started]');
@@ -23,6 +26,10 @@ export class MonitorPage {
     monitorCommandLinePart = Selector('[data-testid=monitor] span');
     monitorCommandLineTimestamp = Selector('[data-testid=monitor] span').withText(/[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}/);
     monitorNoPermissionsMessage = Selector('[data-testid=monitor-error-message]');
+    saveLogToolTip = Selector('[data-testid=save-log-tooltip]');
+    monitorNotStartedElement = Selector('[data-testid=monitor-not-started]');
+    profilerRunningTime = Selector('[data-testid=profiler-running-time]');
+    downloadLogPanel = Selector('[data-testid=download-log-panel]');
 
     /**
      * Check specific command in Monitor
@@ -50,10 +57,26 @@ export class MonitorPage {
         await this.checkCommandInMonitorResults('info');
     }
     /**
+     * Start monitor with Save log function
+     */
+    async startMonitorWithSaveLog(): Promise<void> {
+        await t.click(this.expandMonitor);
+        await t.click(this.saveLogSwitchButton);
+        await t.click(this.startMonitorButton);
+        //Check for "info" command that is sent automatically every 5 seconds from BE side
+        await this.checkCommandInMonitorResults('info');
+    }
+    /**
      * Stop monitor function
      */
     async stopMonitor(): Promise<void> {
         await t.click(this.runMonitorToggle);
         await t.expect(this.resetProfilerButton.visible).ok('Reset profiler button appeared');
+    }
+
+    //Reset profiler
+    async resetProfiler(): Promise<void> {
+        await t.click(this.runMonitorToggle);
+        await t.click(this.resetProfilerButton);
     }
 }

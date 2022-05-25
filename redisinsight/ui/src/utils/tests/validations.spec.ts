@@ -8,9 +8,11 @@ import {
   validateCountNumber,
   validateScoreNumber,
   validateTTLNumberForAddKey,
-  MAX_DATABASE_INDEX_NUMBER,
-  validateDatabaseNumber,
-  validateCertName
+  validateCertName,
+  validateRefreshRateNumber,
+  MAX_REFRESH_RATE,
+  errorValidateRefreshRateNumber,
+  errorValidateNegativeInteger,
 } from '../validations'
 
 const text1 = '123 123 123'
@@ -114,8 +116,8 @@ describe('Validations utils', () => {
     it('validatePortNumber should return only numbers between 0 and MAX_PORT_NUMBER', () => {
       const expectedResponse1 = `${MAX_PORT_NUMBER}`
       const expectedResponse2 = '12312'
-      const expectedResponse4 = '0'
-      const expectedResponse5 = '0'
+      const expectedResponse4 = ''
+      const expectedResponse5 = ''
       const expectedResponse6 = '2323'
       const expectedResponse7 = `${MAX_PORT_NUMBER}`
       const expectedResponse8 = `${MAX_PORT_NUMBER}`
@@ -127,28 +129,6 @@ describe('Validations utils', () => {
       expect(validatePortNumber(text6)).toEqual(expectedResponse6)
       expect(validatePortNumber(text7)).toEqual(expectedResponse7)
       expect(validatePortNumber(text8)).toEqual(expectedResponse8)
-    })
-  })
-
-  describe('validateDatabaseNumber', () => {
-    it('validateDatabaseNumber should return only numbers between 0 and MAX_DATABASE_INDEX_NUMBER', () => {
-      const expectedResponse1 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse2 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse4 = '0'
-      const expectedResponse5 = '0'
-      const expectedResponse6 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse7 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse8 = `${MAX_DATABASE_INDEX_NUMBER}`
-      const expectedResponse13 = '5'
-
-      expect(validateDatabaseNumber(text1)).toEqual(expectedResponse1)
-      expect(validateDatabaseNumber(text2)).toEqual(expectedResponse2)
-      expect(validateDatabaseNumber(text4)).toEqual(expectedResponse4)
-      expect(validateDatabaseNumber(text5)).toEqual(expectedResponse5)
-      expect(validateDatabaseNumber(text6)).toEqual(expectedResponse6)
-      expect(validateDatabaseNumber(text7)).toEqual(expectedResponse7)
-      expect(validateDatabaseNumber(text8)).toEqual(expectedResponse8)
-      expect(validateDatabaseNumber(text13)).toEqual(expectedResponse13)
     })
   })
 
@@ -175,6 +155,72 @@ describe('Validations utils', () => {
     ])('for input: %s (input), should be output: %s',
       (input, expected) => {
         const result = validateCertName(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('validateRefreshRateNumber', () => {
+    it.each([
+      [text1, `${MAX_REFRESH_RATE}`],
+      [text2, `${MAX_REFRESH_RATE}`],
+      [text3, ''],
+      [text4, '.'],
+      [text5, '.'],
+      [text6, `${MAX_REFRESH_RATE}`],
+      [text7, `${MAX_REFRESH_RATE}`],
+      [text8, `${MAX_REFRESH_RATE}`],
+      [text9, `${MAX_REFRESH_RATE}`],
+      [text10, '348.3'],
+      [text12, '32'],
+      [text13, '5'],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = validateRefreshRateNumber(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('errorValidateRefreshRateNumber', () => {
+    it.each([
+      [validateRefreshRateNumber(text1), false],
+      [validateRefreshRateNumber(text2), false],
+      [validateRefreshRateNumber(text3), true],
+      [validateRefreshRateNumber(text4), true],
+      [validateRefreshRateNumber(text5), true],
+      [validateRefreshRateNumber(text6), false],
+      [validateRefreshRateNumber(text7), false],
+      [validateRefreshRateNumber(text8), false],
+      [validateRefreshRateNumber(text9), false],
+      [validateRefreshRateNumber(text10), false],
+      [validateRefreshRateNumber(text12), false],
+      [validateRefreshRateNumber(text13), false],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = errorValidateRefreshRateNumber(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('errorValidateNegativeInteger', () => {
+    it.each([
+      [validateRefreshRateNumber(text1), true],
+      [validateRefreshRateNumber(text2), true],
+      [validateRefreshRateNumber(text3), true],
+      [validateRefreshRateNumber(text4), true],
+      [validateRefreshRateNumber(text5), true],
+      [validateRefreshRateNumber(text6), true],
+      [validateRefreshRateNumber(text7), true],
+      [validateRefreshRateNumber(text8), true],
+      [validateRefreshRateNumber(text9), true],
+      [validateRefreshRateNumber(text10), true],
+      [validateRefreshRateNumber(text12), false],
+      [validateRefreshRateNumber(text13), false],
+
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = errorValidateNegativeInteger(input)
         expect(result).toBe(expected)
       })
   })

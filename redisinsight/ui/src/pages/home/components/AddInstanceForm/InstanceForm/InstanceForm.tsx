@@ -33,11 +33,10 @@ import { FormikErrors, useFormik } from 'formik'
 import cx from 'classnames'
 import {
   MAX_PORT_NUMBER,
-  MAX_DATABASE_INDEX_NUMBER,
+  validateNumber,
   validateCertName,
   validateField,
   validatePortNumber,
-  validateDatabaseNumber,
 } from 'uiSrc/utils/validations'
 import {
   ConnectionType,
@@ -49,13 +48,13 @@ import {
   checkConnectToInstanceAction,
   resetInstanceUpdateAction,
   setConnectedInstanceId,
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import { handlePasteHostName } from 'uiSrc/utils'
 import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
 import { useResizableFormField } from 'uiSrc/services'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { resetKeys } from 'uiSrc/slices/keys'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
 import { DatabaseListModules } from 'uiSrc/components'
@@ -753,7 +752,7 @@ const AddStandaloneForm = (props: Props) => {
               { [styles.dbInputBig]: !flexItemClassName }
             )}
           >
-            <EuiFormRow label="Database Index" helpText="Should not exceed 15.">
+            <EuiFormRow label="Database Index">
               <EuiFieldNumber
                 name="db"
                 id="db"
@@ -765,12 +764,11 @@ const AddStandaloneForm = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    validateDatabaseNumber(e.target.value.trim())
+                    validateNumber(e.target.value.trim())
                   )
                 }}
                 type="text"
                 min={0}
-                max={MAX_DATABASE_INDEX_NUMBER}
               />
             </EuiFormRow>
           </EuiFlexItem>

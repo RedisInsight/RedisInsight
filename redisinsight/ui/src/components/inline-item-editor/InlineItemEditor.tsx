@@ -92,20 +92,17 @@ const InlineItemEditor = (props: Props) => {
   }, [])
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
+    let newValue = e.target.value
 
+    if (validation) {
+      newValue = validation(newValue)
+    }
     if (disableByValidation) {
       setIsError(disableByValidation(newValue))
     }
 
-    if (validation) {
-      const validatedValue = validation(newValue)
-      setValue(validatedValue)
-      onChange?.(validatedValue)
-    } else {
-      setValue(newValue)
-      onChange?.(newValue)
-    }
+    setValue(newValue)
+    onChange?.(newValue)
   }
 
   const handleClickOutside = (event: any) => {
@@ -187,7 +184,7 @@ const InlineItemEditor = (props: Props) => {
                       aria-label="Cancel editing"
                       className={cx(styles.btn, styles.declineBtn)}
                       onClick={onDecline}
-                      disabled={isLoading}
+                      isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
                     <EuiButtonIcon
@@ -197,7 +194,7 @@ const InlineItemEditor = (props: Props) => {
                       type="submit"
                       aria-label="Apply"
                       className={cx(styles.btn, styles.applyBtn)}
-                      disabled={isDisabledApply()}
+                      isDisabled={isDisabledApply()}
                       data-testid="apply-btn"
                     />
                   </div>

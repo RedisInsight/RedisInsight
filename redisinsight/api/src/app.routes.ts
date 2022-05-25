@@ -5,6 +5,7 @@ import { RedisEnterpriseModule } from 'src/modules/redis-enterprise/redis-enterp
 import { RedisSentinelModule } from 'src/modules/redis-sentinel/redis-sentinel.module';
 import { CliModule } from 'src/modules/cli/cli.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
+import { SlowLogModule } from 'src/modules/slow-log/slow-log.module';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,10 @@ export const routes: Routes = [
       {
         path: '/:dbInstance',
         module: WorkbenchModule,
+      },
+      {
+        path: '/:dbInstance',
+        module: SlowLogModule,
       },
     ],
   },

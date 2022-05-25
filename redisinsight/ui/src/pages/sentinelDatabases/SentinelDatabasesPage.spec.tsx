@@ -6,7 +6,7 @@ import SentinelDatabasesPage from './SentinelDatabasesPage'
 import SentinelDatabases from './components'
 import { Props as SentinelDatabasesProps } from './components/SentinelDatabases/SentinelDatabases'
 
-jest.mock('uiSrc/slices/sentinel', () => ({
+jest.mock('uiSrc/slices/instances/sentinel', () => ({
   sentinelSelector: jest.fn().mockReturnValue({
     data: [{
       status: 'success',

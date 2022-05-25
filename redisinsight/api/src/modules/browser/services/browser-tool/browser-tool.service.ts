@@ -1,3 +1,4 @@
+import * as Redis from 'ioredis';
 import { Injectable, Logger } from '@nestjs/common';
 import { AppTool, ReplyError } from 'src/models';
 import {
@@ -25,12 +26,16 @@ export class BrowserToolService extends RedisConsumerAbstractService {
     clientOptions: IFindRedisClientInstanceByOptions,
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
+    replyEncoding: string = 'utf8',
   ): Promise<any> {
     const client = await this.getRedisClient(clientOptions);
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
     const [command, ...commandArgs] = toolCommand.split(' ');
-    // TODO: use sendCommand method
-    return client.send_command(command, [...commandArgs, ...args]);
+    return client.sendCommand(
+      new Redis.Command(command, [...commandArgs, ...args], {
+        replyEncoding,
+      }),
+    );
   }
 
   async execPipeline(

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
+import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
 
 const TEST_RUN_ID = `=${uuidv4()}`;
 const KEY_TTL = 100;
@@ -108,6 +109,10 @@ export const constants = {
   TEST_STRING_KEY_2: TEST_RUN_ID + '_string_2' + CLUSTER_HASH_SLOT,
   TEST_STRING_VALUE_2: TEST_RUN_ID + '_value_2',
   TEST_STRING_EXPIRE_2: KEY_TTL,
+  TEST_STRING_KEY_ASCII: getASCIISafeStringFromBuffer(getBufferFromSafeASCIIString(TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT)),
+  TEST_STRING_KEY_ASCII_BUFFER: getBufferFromSafeASCIIString(TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT),
+  TEST_STRING_KEY_ASCII_UNICODE: TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT,
+  TEST_STRING_KEY_ASCII_VALUE: TEST_RUN_ID + '_value_ascii',
 
   // Redis List
   TEST_LIST_TYPE: 'list',
@@ -162,6 +167,14 @@ export const constants = {
   TEST_STREAM_KEY_1: TEST_RUN_ID + '_stream_1' + CLUSTER_HASH_SLOT,
   TEST_STREAM_DATA_1: TEST_RUN_ID + '_stream_data_1',
   TEST_STREAM_DATA_2: TEST_RUN_ID + '_stream_data_2',
+  TEST_STREAM_ID_1: '100-0',
+  TEST_STREAM_FIELD_1: TEST_RUN_ID + '_stream_field_1',
+  TEST_STREAM_VALUE_1: TEST_RUN_ID + '_stream_value_1',
+  TEST_STREAM_ID_2: '200-0',
+  TEST_STREAM_FIELD_2: TEST_RUN_ID + '_stream_field_2',
+  TEST_STREAM_VALUE_2: TEST_RUN_ID + '_stream_value_2',
+  TEST_STREAM_EXPIRE_1: KEY_TTL,
+  TEST_STREAM_HUGE_KEY: TEST_RUN_ID + '_stream_huge' + CLUSTER_HASH_SLOT,
 
   // ReJSON-RL
   TEST_REJSON_TYPE: 'ReJSON-RL',

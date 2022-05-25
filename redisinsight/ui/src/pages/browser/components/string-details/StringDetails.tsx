@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLoadingSpinner, EuiText, EuiTextArea } from '@elastic/eui'
+import { EuiProgress, EuiText, EuiTextArea } from '@elastic/eui'
 
 import { Nullable } from 'uiSrc/utils'
 import {
@@ -15,7 +15,7 @@ import {
   stringDataSelector,
   stringSelector,
   updateStringValueAction,
-} from 'uiSrc/slices/string'
+} from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 
@@ -99,11 +99,14 @@ const StringDetails = (props: Props) => {
   return (
     <div className={styles.container}>
       {isLoading && (
-        <div className={styles.spinnerWrapper}>
-          <EuiLoadingSpinner size="xl" />
-        </div>
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-string"
+        />
       )}
-      {!isEditItem && !isLoading && (
+      {!isEditItem && (
         <EuiText
           onClick={() => setIsEdit(true)}
         >

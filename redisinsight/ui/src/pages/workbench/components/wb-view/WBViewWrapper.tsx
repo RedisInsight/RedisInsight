@@ -21,7 +21,7 @@ import {
   fetchWBCommandAction,
 } from 'uiSrc/slices/workbench/wb-results'
 import { ConnectionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'

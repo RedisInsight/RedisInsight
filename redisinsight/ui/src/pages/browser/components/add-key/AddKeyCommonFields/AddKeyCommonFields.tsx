@@ -1,22 +1,35 @@
 import React, { ChangeEvent } from 'react'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiFormRow } from '@elastic/eui'
-
+import {
+  EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFormFieldset,
+  EuiFormRow,
+  EuiSuperSelect
+} from '@elastic/eui'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
-import { IAddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+
+import { AddCommonFieldsFormConfig as config } from '../constants/fields-config'
+
+import styles from './styles.module.scss'
 
 export interface Props {
-  config: IAddCommonFieldsFormConfig,
-  loading: boolean,
-  keyName: string,
-  setKeyName: React.Dispatch<React.SetStateAction<string>>,
-  keyTTL: Maybe<number>,
+  typeSelected: string
+  onChangeType: (type: string) => void
+  options: any
+  loading: boolean
+  keyName: string
+  setKeyName: React.Dispatch<React.SetStateAction<string>>
+  keyTTL: Maybe<number>
   setKeyTTL: React.Dispatch<React.SetStateAction<Maybe<number>>>
 }
 
 const AddKeyCommonFields = (props: Props) => {
   const {
-    config,
+    typeSelected,
+    onChangeType = () => {},
+    options,
     loading,
     keyName,
     setKeyName,
@@ -36,7 +49,46 @@ const AddKeyCommonFields = (props: Props) => {
   }
 
   return (
-    <>
+    <div className={styles.wrapper}>
+      <EuiFlexGroup className={styles.container} responsive={false}>
+        <EuiFlexItem>
+          <EuiFormFieldset
+            legend={{ children: 'Select key type', display: 'hidden' }}
+          >
+            <EuiFormRow
+              label="Key Type*"
+              fullWidth
+            >
+              <EuiSuperSelect
+                itemClassName="withColorDefinition"
+                fullWidth
+                disabled={loading}
+                options={options}
+                valueOfSelected={typeSelected}
+                onChange={(value: string) => onChangeType(value)}
+              />
+            </EuiFormRow>
+          </EuiFormFieldset>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiFormRow label={config.keyTTL.label} fullWidth>
+            <EuiFieldText
+              fullWidth
+              name={config.keyTTL.name}
+              id={config.keyTTL.name}
+              maxLength={200}
+              min={0}
+              max={MAX_TTL_NUMBER}
+              placeholder={config.keyTTL.placeholder}
+              value={`${keyTTL ?? ''}`}
+              onChange={handleTTLChange}
+              disabled={loading}
+              autoComplete="off"
+              data-testid="ttl"
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGroup>
       <EuiFormRow label={config.keyName.label} fullWidth>
         <EuiFieldText
           fullWidth
@@ -47,25 +99,11 @@ const AddKeyCommonFields = (props: Props) => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setKeyName(e.target.value)}
           disabled={loading}
+          autoComplete="off"
           data-testid="key"
         />
       </EuiFormRow>
-      <EuiFormRow label={config.keyTTL.label} fullWidth>
-        <EuiFieldText
-          fullWidth
-          name={config.keyTTL.name}
-          id={config.keyTTL.name}
-          maxLength={200}
-          min={0}
-          max={MAX_TTL_NUMBER}
-          placeholder={config.keyTTL.placeholder}
-          value={`${keyTTL ?? ''}`}
-          onChange={handleTTLChange}
-          disabled={loading}
-          data-testid="ttl"
-        />
-      </EuiFormRow>
-    </>
+    </div>
   )
 }
 

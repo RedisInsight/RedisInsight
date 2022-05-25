@@ -24,9 +24,9 @@ import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiS
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { deleteListElementsAction } from 'uiSrc/slices/list'
-import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
+import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
 
@@ -119,6 +119,22 @@ const RemoveListElements = (props: Props) => {
     setIsPopoverOpen(false)
   }
 
+  const onSuccessRemoved = () => {
+    onCancel()
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.List,
+        numberOfRemoved: toNumber(count),
+      }
+    })
+  }
+
   const submitData = (): void => {
     const data: DeleteListElementsDto = {
       keyName: selectedKey,
@@ -126,7 +142,7 @@ const RemoveListElements = (props: Props) => {
       destination,
     }
     closePopover()
-    dispatch(deleteListElementsAction(data, props.onCancel))
+    dispatch(deleteListElementsAction(data, onSuccessRemoved))
   }
 
   const RemoveButton = () => (

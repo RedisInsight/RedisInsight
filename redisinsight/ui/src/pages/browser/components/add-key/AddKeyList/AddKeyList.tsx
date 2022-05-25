@@ -13,23 +13,22 @@ import {
 } from '@elastic/eui'
 
 import { Maybe } from 'uiSrc/utils'
-import { addKeyStateSelector, addListKey } from 'uiSrc/slices/keys'
+import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
 import { CreateListWithExpireDto } from 'apiSrc/modules/browser/dto'
 
 import {
   AddListFormConfig as config,
-  AddCommonFieldsFormConfig as defaultConfig,
 } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-import AddKeyCommonFields from '../AddKeyCommonFields/AddKeyCommonFields'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  keyName: string
+  keyTTL: Maybe<number>
+  onCancel: (isCancelled?: boolean) => void
 }
 
 const AddKeyList = (props: Props) => {
-  const [keyName, setKeyName] = useState<string>('')
-  const [keyTTL, setKeyTTL] = useState<Maybe<number>>(undefined)
+  const { keyName = '', keyTTL, onCancel } = props
   const [element, setElement] = useState<string>('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
@@ -56,19 +55,11 @@ const AddKeyList = (props: Props) => {
     if (keyTTL !== undefined) {
       data.expire = keyTTL
     }
-    dispatch(addListKey(data, props.onCancel))
+    dispatch(addListKey(data, onCancel))
   }
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <AddKeyCommonFields
-        config={defaultConfig}
-        loading={loading}
-        keyName={keyName}
-        setKeyName={setKeyName}
-        keyTTL={keyTTL}
-        setKeyTTL={setKeyTTL}
-      />
       <EuiFormRow label={config.element.label} fullWidth>
         <EuiFieldText
           fullWidth
@@ -96,7 +87,7 @@ const AddKeyList = (props: Props) => {
             <EuiFlexItem grow={false}>
               <EuiButton
                 color="secondary"
-                onClick={() => props.onCancel(true)}
+                onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
                 <EuiTextColor>Cancel</EuiTextColor>

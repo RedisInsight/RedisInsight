@@ -45,7 +45,7 @@ export const validateApiCall = async function ({
 
   // data to send with POST, PUT etc
   if (data) {
-    request.send(data);
+    request.send(typeof data === 'function' ? data() : data);
   }
 
   // data to send with url query string

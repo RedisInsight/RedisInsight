@@ -8,19 +8,20 @@ import configureMockStore from 'redux-mock-store'
 import { render as rtlRender } from '@testing-library/react'
 
 import rootStore, { RootState } from 'uiSrc/slices/store'
-import { initialState as initialStateInstances } from 'uiSrc/slices/instances'
-import { initialState as initialStateCaCerts } from 'uiSrc/slices/caCerts'
-import { initialState as initialStateClientCerts } from 'uiSrc/slices/clientCerts'
-import { initialState as initialStateCluster } from 'uiSrc/slices/cluster'
-import { initialState as initialStateCloud } from 'uiSrc/slices/cloud'
-import { initialState as initialStateSentinel } from 'uiSrc/slices/sentinel'
-import { initialState as initialStateKeys } from 'uiSrc/slices/keys'
-import { initialState as initialStateString } from 'uiSrc/slices/string'
-import { initialState as initialStateZSet } from 'uiSrc/slices/zset'
-import { initialState as initialStateSet } from 'uiSrc/slices/set'
-import { initialState as initialStateHash } from 'uiSrc/slices/hash'
-import { initialState as initialStateList } from 'uiSrc/slices/list'
-import { initialState as initialStateRejson } from 'uiSrc/slices/rejson'
+import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
+import { initialState as initialStateCaCerts } from 'uiSrc/slices/instances/caCerts'
+import { initialState as initialStateClientCerts } from 'uiSrc/slices/instances/clientCerts'
+import { initialState as initialStateCluster } from 'uiSrc/slices/instances/cluster'
+import { initialState as initialStateCloud } from 'uiSrc/slices/instances/cloud'
+import { initialState as initialStateSentinel } from 'uiSrc/slices/instances/sentinel'
+import { initialState as initialStateKeys } from 'uiSrc/slices/browser/keys'
+import { initialState as initialStateString } from 'uiSrc/slices/browser/string'
+import { initialState as initialStateZSet } from 'uiSrc/slices/browser/zset'
+import { initialState as initialStateSet } from 'uiSrc/slices/browser/set'
+import { initialState as initialStateHash } from 'uiSrc/slices/browser/hash'
+import { initialState as initialStateList } from 'uiSrc/slices/browser/list'
+import { initialState as initialStateRejson } from 'uiSrc/slices/browser/rejson'
+import { initialState as initialStateStream } from 'uiSrc/slices/browser/stream'
 import { initialState as initialStateNotifications } from 'uiSrc/slices/app/notifications'
 import { initialState as initialStateAppInfo } from 'uiSrc/slices/app/info'
 import { initialState as initialStateAppContext } from 'uiSrc/slices/app/context'
@@ -34,6 +35,7 @@ import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb
 import { initialState as initialStateWBEGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
+import { initialState as initialStateSlowLog } from 'uiSrc/slices/slowlog/slowlog'
 
 interface Options {
   initialState?: RootState;
@@ -67,6 +69,7 @@ const initialStateDefault: RootState = {
     hash: cloneDeep(initialStateHash),
     list: cloneDeep(initialStateList),
     rejson: cloneDeep(initialStateRejson),
+    stream: cloneDeep(initialStateStream),
   },
   cli: {
     settings: cloneDeep(initialStateCliSettings),
@@ -83,7 +86,8 @@ const initialStateDefault: RootState = {
   },
   content: {
     createRedisButtons: cloneDeep(initialStateCreateRedisButtons)
-  }
+  },
+  slowlog: cloneDeep(initialStateSlowLog)
 }
 
 // mocked store

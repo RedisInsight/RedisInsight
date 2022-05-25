@@ -1,12 +1,16 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
 
 $headerHeight: 44px;
 $footerHeight: 38px;
 
 .customScroll {
   @include euiScrollBar;
+}
+
+.grid {
+  overflow: auto !important;
 }
 
 .disableScroll {
@@ -29,6 +33,10 @@ $footerHeight: 38px;
 }
 
 .table {
+  @include euiScrollBar;
+  overflow-x: auto;
+  overflow-y: hidden;
+
   :global {
     .ReactVirtualized__Table__headerRow {
       cursor: initial !important;
@@ -64,6 +72,10 @@ $footerHeight: 38px;
 
   .tableRowEven {
     background: var(--browserTableRowEven);
+
+    :global(.stream-entry-actions) {
+      background-color: var(--browserTableRowEven) !important;
+    }
   }
 
   :global(.table-row-selected) {
@@ -139,7 +151,6 @@ $footerHeight: 38px;
   white-space: pre-wrap;
 }
 
-
 :global(.key-details-table) {
   :global(.ReactVirtualized__Table__row) {
     font-size: 13px;
@@ -150,9 +161,9 @@ $footerHeight: 38px;
   height: calc(100% - 58px);
 }
 
-
 :global(.key-details-table) {
-  height: calc(100% - 38px);
+  height: calc(100% - 94px);
+  position: relative;
   &:global(.footerOpened) {
     :global(.ReactVirtualized__Table__Grid) {
       padding-bottom: 254px;
@@ -186,7 +197,7 @@ $footerHeight: 38px;
   }
 
   .headerCell {
-    padding: 18px 20px;
+    padding: 18px 4px 18px 20px;
   }
 
   .tableRowCell {
@@ -232,26 +243,25 @@ $footerHeight: 38px;
 }
 
 .loading:after {
-  content: ' .';
+  content: " .";
   animation: dots 1s steps(5, end) infinite;
 }
 
 @keyframes dots {
-  0%, 20% {
-    color: rgba(0,0,0,0);
-    text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   40% {
     color: white;
-    text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   60% {
-    text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 rgba(0,0,0,0);}
-  80%, 100% {
-    text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 white;}}
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
+  }
+}

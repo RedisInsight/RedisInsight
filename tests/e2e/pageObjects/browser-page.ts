@@ -22,7 +22,7 @@ export class BrowserPage {
     closeEditTTL = Selector('[data-testid=cancel-btn]');
     saveTTLValue = Selector('[data-testid=apply-btn]');
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
-    refreshKeyButton = Selector('[data-testid=refresh-key-btn]')
+    refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
@@ -54,9 +54,6 @@ export class BrowserPage {
     scanMoreButton = Selector('[data-testid=scan-more]');
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
     modulesButton = Selector('[data-testid$=_module]');
-    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
-    overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
-    overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
     databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     treeViewButton = Selector('[data-testid=view-type-list-btn]');
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');
@@ -68,6 +65,12 @@ export class BrowserPage {
     treeViewDelimiterButton = Selector('[data-testid=tree-view-delimiter-btn]');
     treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
     treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
+    fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
+    closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
+    addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
+    removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
+    confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
+    clearStreamEntryInputs = Selector('[data-testid=remove-item]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -77,6 +80,7 @@ export class BrowserPage {
     zsetOption = Selector('#zset');
     listOption = Selector('#list');
     hashOption = Selector('#hash');
+    streamOption = Selector('#stream');
     removeFromHeadSelection = Selector('#HEAD');
     selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
@@ -87,7 +91,7 @@ export class BrowserPage {
     keyNameInput = Selector('[data-testid=edit-key-input]');
     keyTTLInput = Selector('[data-testid=ttl]');
     editKeyTTLInput = Selector('[data-testid=edit-ttl-input]');
-    ttlText = Selector('[data-testid=key-ttl-text] span')
+    ttlText = Selector('[data-testid=key-ttl-text] span');
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
     listKeyElementInput = Selector('[data-testid=element]');
@@ -104,6 +108,11 @@ export class BrowserPage {
     jsonValueInput = Selector('[data-testid=json-value]');
     countInput = Selector('[data-testid=count-input]');
     treeViewDelimiterInput = Selector('[data-testid=tree-view-delimiter-input]');
+    streamEntryId = Selector('[data-testid=entryId]');
+    streamField = Selector('[data-testid=field-name]');
+    streamValue = Selector('[data-testid=field-value]');
+    addStreamRow = Selector('[data-testid=add-new-item]');
+    streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -151,9 +160,39 @@ export class BrowserPage {
     multiSearchArea = Selector(this.cssFilteringLabel);
     keyDetailsHeader = Selector('[data-testid=key-details-header]');
     keyListTable = Selector('[data-testid=keyList-table]');
+    keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
     progressLine = Selector('div.euiProgress');
+    progressKeyList = Selector('[data-testid=progress-key-list]');
+    jsonScalarValue = Selector('[data-testid=json-scalar-value]');
+    noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
+    virtualTableContainer = Selector('[data-testid=virtual-table-container]');
+    streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
+    streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
+    streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
+    streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
+    streamEntryIdValue = Selector('.streamEntryId[data-testid*=stream-entry]');
+    streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
+    streamEntryFields = Selector('[data-testid^=stream-entry-field]');
+    confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
+
+    /**
+     * Common part for Add any new key
+     * @param keyName The name of the key
+     * @param TTL The Time to live value of the key
+     */
+    async commonAddNewKey(keyName: string, TTL?: string): Promise<void> {
+        await common.waitForElementNotVisible(this.progressLine);
+        await t.click(this.plusAddKeyButton);
+        await t.click(this.addKeyNameInput);
+        await t.typeText(this.addKeyNameInput, keyName);
+        if (TTL !== undefined) {
+            await t.click(this.keyTTLInput);
+            await t.typeText(this.keyTTLInput, TTL);
+        }
+        await t.click(this.keyTypeDropDown);
+    }
 
     /**
      * Adding a new String key
@@ -167,7 +206,7 @@ export class BrowserPage {
         await t.click(this.stringOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
-        if (TTL) {
+        if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
         }
@@ -179,19 +218,21 @@ export class BrowserPage {
     /**
      *Adding a new Json key
      * @param keyName The name of the key
-     * @param TTL The Time to live value of the key
      * @param value The key value
+     * @param TTL The Time to live value of the key (optional parameter)
      */
-    async addJsonKey(keyName: string, TTL = ' ', value = ' '): Promise<void> {
+    async addJsonKey(keyName: string, value: string, TTL?: string): Promise<void> {
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.jsonOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
-        await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
         await t.click(this.jsonKeyValueInput);
-        await t.typeText(this.jsonKeyValueInput, value);
+        await t.typeText(this.jsonKeyValueInput, value, { paste: true });
+        if (TTL !== undefined) {
+            await t.click(this.keyTTLInput);
+            await t.typeText(this.keyTTLInput, TTL);
+        }
         await t.click(this.addKeyButton);
     }
 
@@ -277,6 +318,73 @@ export class BrowserPage {
     }
 
     /**
+     * Adding a new Stream key
+     * @param keyName The name of the key
+     * @param field The field name of the key
+     * @param value The value of the key
+     * @param TTL The Time to live value of the key
+     */
+    async addStreamKey(keyName: string, field = ' ', value = ' ', TTL?: string): Promise<void> {
+        await this.commonAddNewKey(keyName, TTL);
+        await t.click(this.streamOption);
+        // Verify that user can see Entity ID filled by * by default on add Stream key form
+        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field');
+        await t.typeText(this.streamField, field);
+        await t.typeText(this.streamValue, value);
+        await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
+        await t.click(this.addKeyButton);
+        await t.click(this.toastCloseButton);
+    }
+
+    /**
+     * Adding a new Entry to a Stream key
+     * @param field The field name of the key
+     * @param value The value of the key
+     * @param entryId The identification of specific entry of the Stream Key
+     */
+    async addEntryToStream(field: string, value: string, entryId?: string): Promise<void> {
+        await t.click(this.addNewStreamEntry);
+        // Specify field, value and add new entry
+        await t.typeText(this.streamField, field);
+        await t.typeText(this.streamValue, value);
+        if (entryId !== undefined) {
+            await t.typeText(this.streamEntryId, entryId);
+        }
+        await t.click(this.saveElementButton);
+        // Validate that new entry is added
+        await t.expect(this.streamEntriesContainer.textContent).contains(field, 'Field parameter');
+        await t.expect(this.streamEntriesContainer.textContent).contains(value, 'Value parameter');
+    }
+
+    /**
+     * Adding a new Entry to a Stream key
+     * @param fields The field name of the key
+     * @param values The value of the key
+     * @param entryId The identification of specific entry of the Stream Key
+     */
+    async fulfillSeveralStreamFields(fields: string[], values: string[], entryId?: string): Promise<void> {
+        for (let i = 0; i < fields.length; i++) {
+            await t.typeText(this.streamField.nth(-1), fields[i]);
+            await t.typeText(this.streamValue.nth(-1), values[i]);
+            if (i < fields.length - 1) {
+                await t.click(this.addStreamRow);
+            }
+        }
+        if (entryId !== undefined) {
+            await t.typeText(this.streamEntryId, entryId);
+        }
+    }
+
+    /**
+     * Get number of existed columns and rows of Stream key
+     */
+    async getStreamRowColumnNumber(): Promise<string[]> {
+        const columnStreamNumber = await this.streamEntriesContainer.find('[aria-colcount]').getAttribute('aria-colcount');
+        const rowStreamNumber = await this.streamEntriesContainer.find('[aria-rowcount]').getAttribute('aria-rowcount');
+        return [columnStreamNumber, rowStreamNumber];
+    }
+
+    /**
      * Select keys filter group type
      * @param groupName The group name
      */
@@ -296,7 +404,7 @@ export class BrowserPage {
         await t.click(this.filterByPatterSearchInput);
         await t.pressKey('ctrl+a delete');
         await t.typeText(this.filterByPatterSearchInput, keyName);
-        await t.pressKey('enter')
+        await t.pressKey('enter');
     }
 
     /**
@@ -305,14 +413,12 @@ export class BrowserPage {
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
         const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
-        const res = keyNameInTheList.exists;
-        return res;
+        return keyNameInTheList.exists;
     }
 
     //Getting the text of the Notification message
     async getMessageText(): Promise<string> {
-        const text = this.notificationMessage.textContent;
-        return text;
+        return this.notificationMessage.textContent;
     }
 
     //Delete key from details
@@ -365,8 +471,7 @@ export class BrowserPage {
 
     //Get string key value from details
     async getStringKeyValue(): Promise<string> {
-        const value = this.stringKeyValue.textContent;
-        return value;
+        return this.stringKeyValue.textContent;
     }
 
     /**
@@ -436,8 +541,7 @@ export class BrowserPage {
 
     //Get databases name
     async getDatabasesName(): Promise<string> {
-        const text = this.databaseNames.textContent;
-        return text;
+        return this.databaseNames.textContent;
     }
 
     //Open key details
@@ -462,6 +566,7 @@ export class BrowserPage {
     //Remove List element from tail for Redis databases less then v. 6.2.
     async removeListElementFromTailOld(): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
+        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
         await t.click(this.removeElementFromListButton);
         await t.click(this.confirmRemoveListElementButton);
     }
@@ -469,6 +574,7 @@ export class BrowserPage {
     //Remove List element from head for Redis databases less then v. 6.2.
     async removeListElementFromHeadOld(): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
+        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
         //Select Remove from head selection
         await t.click(this.removeElementFromListSelect);
         await t.click(this.removeFromHeadSelection);
@@ -545,7 +651,7 @@ export class BrowserPage {
      * Get Values list of the key
      * @param element Selector of the element with list
      */
-    async getValuesListByElement(element): Promise<string[]> {
+    async getValuesListByElement(element: any): Promise<string[]> {
         const keyValues = [];
         const count = await element.count;
         for (let i = 0; i < count; i++) {
@@ -592,13 +698,14 @@ export class BrowserPage {
             }
             // Verify that the last folder level contains required keys
             const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
-            const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`
+            const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`;
             await t.click(await Selector(folderSelector));
             const foundKeyName = `${folders[i].join(delimiter)}`;
             await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).visible).ok('Specific key');
             await t.click(array[0]);
         }
     }
+
     /**
      * Change delimiter value
      * @delimiter string with delimiter value
@@ -612,6 +719,20 @@ export class BrowserPage {
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
         // Click on save button
         await t.click(this.treeViewDelimiterValueSave);
+    }
+
+    //Delete entry from Stream key
+    async deleteStreamEntry(): Promise<void> {
+        await t.click(this.removeEntryButton);
+        await t.click(this.confirmRemoveEntryButton);
+    }
+
+    /**
+     * Get key length from opened key details
+     */
+    async getKeyLength(): Promise<string> {
+        const rawValue = await this.keyLengthDetails.textContent;
+        return rawValue.split(' ')[rawValue.split(' ').length - 1];
     }
 }
 
@@ -631,4 +752,4 @@ export type AddNewKeyParameters = {
     members?: string,
     scores?: string,
     field?: string
-}
+};

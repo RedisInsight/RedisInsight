@@ -96,6 +96,7 @@ export class StandaloneStrategy extends AbstractStrategy {
         clientOptions,
         BrowserToolKeysCommands.Scan,
         [...commandArgs],
+        null,
       );
 
       const [nextCursor, keys] = execResult;

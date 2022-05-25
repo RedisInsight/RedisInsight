@@ -15,6 +15,16 @@ export const initDataHelper = (rte) => {
     })) : client.send_command(args.shift(), ...args);
   };
 
+  const executeCommandAll = async (...args: string[]): Promise<any> => {
+    return client.nodes ? Promise.all(client.nodes().map(async (node) => {
+      try {
+        return node.send_command(...args);
+      } catch (e) {
+        return null;
+      }
+    })) : client.send_command(args.shift(), ...args);
+  };
+
   const setAclUserRules = async (
     rules: string,
   ): Promise<any> => {
@@ -63,6 +73,7 @@ export const initDataHelper = (rte) => {
     await generateZSets();
     await generateHashes();
     await generateReJSONs();
+    await generateStreams();
   };
 
   const insertKeysBasedOnEnv = async (pipeline, forcePipeline: boolean = false) => {
@@ -102,6 +113,7 @@ export const initDataHelper = (rte) => {
 
     await client.set(constants.TEST_STRING_KEY_1, constants.TEST_STRING_VALUE_1);
     await client.set(constants.TEST_STRING_KEY_2, constants.TEST_STRING_VALUE_2, 'EX', constants.TEST_STRING_EXPIRE_2);
+    await client.set(constants.TEST_STRING_KEY_ASCII_BUFFER, constants.TEST_STRING_KEY_ASCII_VALUE);
   };
 
   // List
@@ -210,6 +222,33 @@ export const initDataHelper = (rte) => {
     await executeCommand('json.set', constants.TEST_REJSON_KEY_3, '.', JSON.stringify(constants.TEST_REJSON_VALUE_3));
   };
 
+  // Streams
+  const generateStreams = async (clean: boolean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    await client.xadd(constants.TEST_STREAM_KEY_1, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+  };
+
+  const generateHugeStream = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['xadd', `${constants.TEST_STREAM_HUGE_KEY}`, '*', `f_${inserted}`, `v_${inserted}`]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline);
+    } while (inserted < number)
+  };
+
   const generateHugeNumberOfFieldsForHashKey = async (number: number = 100000, clean: boolean) => {
     if (clean) {
       await truncate();
@@ -281,17 +320,28 @@ export const initDataHelper = (rte) => {
     ], number, clean);
   };
 
+  const getClientNodes = () => {
+    if (client.nodes) {
+      return client.nodes();
+    } else {
+      return [client];
+    }
+  }
+
   return {
     executeCommand,
+    executeCommandAll,
     setAclUserRules,
     truncate,
     generateKeys,
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,
+    generateHugeStream,
     generateNKeys,
     generateNReJSONs,
     generateNTimeSeries,
     generateNStreams,
     generateNGraphs,
+    getClientNodes,
   }
 }

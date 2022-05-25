@@ -2,7 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen, mockedStore } from 'uiSrc/utils/test-utils'
 
-import { fetchVisualisationResults, setReJSONDataAction } from 'uiSrc/slices/rejson'
+import { fetchVisualisationResults, setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import JSONObject, { Props } from './JSONObject'
 
 const EXPAND_OBJECT = 'expand-object'
@@ -20,8 +20,8 @@ const mockedDownloadedObjectWithArray = {
   a: [1, null, 'aaa']
 }
 
-jest.mock('uiSrc/slices/rejson', () => ({
-  ...jest.requireActual('uiSrc/slices/rejson'),
+jest.mock('uiSrc/slices/browser/rejson', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/rejson'),
   setReJSONDataAction: jest.fn,
   fetchVisualisationResults: jest.fn().mockReturnValue(
     Promise.resolve({ data: mockedSimpleJSONObject })

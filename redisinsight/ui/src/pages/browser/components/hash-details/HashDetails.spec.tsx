@@ -10,8 +10,8 @@ const fields = [
   { field: 'field3', value: '5' },
 ]
 
-jest.mock('uiSrc/slices/hash', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/hash').initialState
+jest.mock('uiSrc/slices/browser/hash', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
   return ({
     hashSelector: jest.fn().mockReturnValue(defaultState),
     updateHashValueStateSelector: jest.fn().mockReturnValue(defaultState.updateValue),

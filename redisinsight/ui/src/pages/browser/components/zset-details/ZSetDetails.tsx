@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 
 import {
   zsetSelector,
@@ -14,15 +14,15 @@ import {
   updateZSetMembers,
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
-} from 'uiSrc/slices/zset'
+} from 'uiSrc/slices/browser/zset'
 import { KeyTypes, SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/keys'
-import { formatLongName, validateScoreNumber } from 'uiSrc/utils'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName, validateScoreNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
@@ -74,8 +74,23 @@ const ZSetDetails = (props: Props) => {
     setDeleting(`${member + suffix}`)
   }, [])
 
+  const onSuccessRemoved = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.ZSet,
+        numberOfRemoved: 1,
+      }
+    })
+  }
+
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteZSetMembers(key, [member]))
+    dispatch(deleteZSetMembers(key, [member], onSuccessRemoved))
     closePopover()
   }
 
@@ -249,8 +264,9 @@ const ZSetDetails = (props: Props) => {
               data-testid={`zset-edit-button-${name}`}
             />
             <PopoverDelete
+              header={createDeleteFieldHeader(name)}
+              text={createDeleteFieldMessage(key)}
               item={name}
-              keyName={key}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
@@ -313,7 +329,16 @@ const ZSetDetails = (props: Props) => {
           { footerOpened: isFooterOpen }
         )}
       >
+        {loading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-zset"
+          />
+        )}
         <VirtualTable
+          hideProgress
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}

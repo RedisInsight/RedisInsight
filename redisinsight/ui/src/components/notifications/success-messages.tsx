@@ -1,4 +1,5 @@
 import React from 'react'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { formatNameShort, Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -108,10 +109,14 @@ export default {
       ),
     }
   },
-  INSTALLED_NEW_UPDATE: (updateDownloadedVersion: string) => ({
+  INSTALLED_NEW_UPDATE: (updateDownloadedVersion: string, onClickLink?: () => void) => ({
     title: 'Application updated',
-    message: `Your application has been updated to ${updateDownloadedVersion}. Find more
-    information in Release Notes.`,
+    message: (
+      <>
+        <span>{`Your application has been updated to ${updateDownloadedVersion}. Find more information in `}</span>
+        <a href={EXTERNAL_LINKS.releaseNotes} onClick={() => onClickLink?.()} className="link-underline" target="_blank" rel="noreferrer">Release Notes.</a>
+      </>
+    ),
     group: 'upgrade'
   }),
 }

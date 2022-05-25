@@ -2,7 +2,6 @@ import {
   GROUP_TYPES_COLORS,
   KeyTypes,
   ModulesKeyTypes,
-  UnsupportedKeyTypes,
 } from 'uiSrc/constants'
 
 export const FILTER_KEY_TYPE_OPTIONS = [
@@ -38,8 +37,8 @@ export const FILTER_KEY_TYPE_OPTIONS = [
   },
   {
     text: 'STREAM',
-    value: UnsupportedKeyTypes.Stream,
-    color: GROUP_TYPES_COLORS[UnsupportedKeyTypes.Stream],
+    value: KeyTypes.Stream,
+    color: GROUP_TYPES_COLORS[KeyTypes.Stream],
   },
   {
     text: 'GRAPH',

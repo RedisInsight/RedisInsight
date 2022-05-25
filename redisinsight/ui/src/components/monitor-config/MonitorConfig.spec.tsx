@@ -36,8 +36,8 @@ jest.mock('uiSrc/slices/cli/monitor', () => ({
   }),
 }))
 
-jest.mock('uiSrc/slices/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances'),
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: '1'
   }),

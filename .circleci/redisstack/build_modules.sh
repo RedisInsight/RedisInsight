@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 PLATFORM=${PLATFORM:-'linux'}
 ELECTRON_VERSION=$(cat electron/version)

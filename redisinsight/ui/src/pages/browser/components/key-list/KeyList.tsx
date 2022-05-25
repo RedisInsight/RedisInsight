@@ -12,7 +12,7 @@ import {
   formatLongName,
   replaceSpaces,
   truncateTTLToDuration,
-  truncateTTLToFirstUnit,
+  truncateNumberToFirstUnit,
   truncateTTLToSeconds,
 } from 'uiSrc/utils'
 import {
@@ -26,7 +26,7 @@ import {
   keysSelector,
   selectedKeySelector,
   sourceKeysFetch,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import {
   appContextBrowser,
   setBrowserKeyListScrollPosition
@@ -154,7 +154,7 @@ const KeyList = (props: Props) => {
                   </>
                 )}
               >
-                <>{truncateTTLToFirstUnit(cellData)}</>
+                <>{truncateNumberToFirstUnit(cellData)}</>
               </EuiToolTip>
             </div>
           </EuiText>
@@ -209,7 +209,6 @@ const KeyList = (props: Props) => {
               headerHeight={0}
               rowHeight={43}
               columns={columns}
-              isRowSelectable
               loadMoreItems={loadMoreItems}
               onWheel={onWheelSearched}
               loading={loading}

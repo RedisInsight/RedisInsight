@@ -19,7 +19,7 @@ import {
 import { getBaseApiUrl } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'

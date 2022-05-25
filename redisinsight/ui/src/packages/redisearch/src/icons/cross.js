@@ -11,21 +11,24 @@ var EuiIconCross = function EuiIconCross(_ref) {
       titleId = _ref.titleId,
       props = _objectWithoutProperties(_ref, ["title", "titleId"]);
 
-  // For e2e tests. TestCafe is failing for default icons
-  if(process.env.E2E) {
+  // For e2e tests. Hammerhead cannot create svg throw createElementNS
+  try {
+    document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    return /*#__PURE__*/React.createElement("svg", _extends({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      xmlns: "http://www.w3.org/2000/svg",
+      "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/React.createElement("title", {
+      id: titleId
+    }, title) : null, /*#__PURE__*/React.createElement("path", {
+      d: "M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
+    }));
+  } catch (e) {
     return <span>&#10539;</span>
   }
-  return /*#__PURE__*/React.createElement("svg", _extends({
-    width: 16,
-    height: 16,
-    viewBox: "0 0 16 16",
-    xmlns: "http://www.w3.org/2000/svg",
-    "aria-labelledby": titleId
-  }, props), title ? /*#__PURE__*/React.createElement("title", {
-    id: titleId
-  }, title) : null, /*#__PURE__*/React.createElement("path", {
-    d: "M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
-  }));
 };
 
 export var icon = EuiIconCross;

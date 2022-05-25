@@ -23,6 +23,15 @@
   justify-content: space-between;
 }
 
+.line-clamp-2 {
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box !important;
+}
+
 .relative {
   position: relative;
 }
@@ -73,5 +82,16 @@
   &:hover .copy-btn,
   &:hover .copy-near-btn {
     opacity: 1;
+  }
+}
+
+.popover-without-top-tail {
+  margin-top: -8px;
+
+  .euiPopover__panelArrow {
+    &::before,
+    &::after {
+      content: none !important;
+    }
   }
 }

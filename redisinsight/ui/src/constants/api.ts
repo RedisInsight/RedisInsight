@@ -33,6 +33,9 @@ enum ApiEndpoints {
   REJSON_GET = 'rejson-rl/get',
   REJSON_SET = 'rejson-rl/set',
   REJSON_ARRAPPEND = 'rejson-rl/arrappend',
+  STREAMS_ENTRIES = 'streams/entries',
+  STREAMS_ENTRIES_GET = 'streams/entries/get',
+  STREAMS = 'streams',
   CLI = 'cli',
   CLI_BLOCKING_COMMANDS = 'info/cli-blocking-commands',
   CLI_UNSUPPORTED_COMMANDS = 'info/cli-unsupported-commands',
@@ -55,6 +58,9 @@ enum ApiEndpoints {
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
   GUIDES_PATH = 'static/guides',
   TUTORIALS_PATH = 'static/tutorials',
+
+  SLOW_LOGS = 'slow-logs',
+  SLOW_LOGS_CONFIG = 'slow-logs/config',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'
@@ -64,5 +70,7 @@ const SCAN_TREE_COUNT_DEFAULT_ENV = process.env.SCAN_TREE_COUNT_DEFAULT || '1000
 
 export const SCAN_COUNT_DEFAULT = parseInt(SCAN_COUNT_DEFAULT_ENV, 10)
 export const SCAN_TREE_COUNT_DEFAULT = parseInt(SCAN_TREE_COUNT_DEFAULT_ENV, 10)
+export const SCAN_STREAM_START_DEFAULT = '-'
+export const SCAN_STREAM_END_DEFAULT = '+'
 
 export default ApiEndpoints

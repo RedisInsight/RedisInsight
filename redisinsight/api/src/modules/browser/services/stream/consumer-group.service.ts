@@ -11,7 +11,12 @@ import {
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { KeyDto } from 'src/modules/browser/dto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import {ConsumerGroupDto, CreateConsumerGroupsDto, UpdateConsumerGroupDto} from 'src/modules/browser/dto/stream.dto';
+import {
+  ConsumerGroupDto,
+  CreateConsumerGroupsDto,
+  DeleteConsumerGroupsDto, DeleteConsumerGroupsResponse,
+  UpdateConsumerGroupDto
+} from 'src/modules/browser/dto/stream.dto';
 
 @Injectable()
 export class ConsumerGroupService {
@@ -183,6 +188,63 @@ export class ConsumerGroupService {
       this.logger.log('Consumer group was updated.');
 
       return undefined;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Delete consumer groups in batch
+   * @param clientOptions
+   * @param dto
+   */
+  async deleteGroup(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: DeleteConsumerGroupsDto,
+  ): Promise<DeleteConsumerGroupsResponse> {
+    try {
+      this.logger.log('Deleting consumer group.');
+
+      const exists = await this.browserTool.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.Exists,
+        [dto.keyName],
+      );
+
+      if (!exists) {
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      }
+
+      const toolCommands: Array<[
+        toolCommand: BrowserToolCommands,
+        ...args: Array<string | number>,
+      ]> = dto.consumerGroups.map((group) => (
+        [
+          BrowserToolStreamCommands.XGroupDestroy,
+          dto.keyName,
+          group,
+        ]
+      ));
+
+      const [
+        transactionError,
+        transactionResults,
+      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      catchTransactionError(transactionError, transactionResults);
+
+      this.logger.log('Consumer group(s) successfully deleted.');
+
+      return {
+        affected: toolCommands.length,
+      };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

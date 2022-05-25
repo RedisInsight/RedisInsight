@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Param, Patch,
   Post,
   UsePipes,
@@ -9,7 +9,11 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import {
-  ConsumerGroupDto, CreateConsumerGroupsDto, UpdateConsumerGroupDto,
+  ConsumerGroupDto,
+  CreateConsumerGroupsDto,
+  DeleteConsumerGroupsDto,
+  DeleteConsumerGroupsResponse,
+  UpdateConsumerGroupDto,
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
 import { KeyDto } from 'src/modules/browser/dto';
@@ -22,7 +26,7 @@ export class ConsumerGroupController {
 
   @Post('/get')
   @ApiRedisInstanceOperation({
-    description: 'Get stream entries',
+    description: 'Get consumer groups list',
     statusCode: 200,
     responses: [
       {
@@ -62,5 +66,24 @@ export class ConsumerGroupController {
       @Body() dto: UpdateConsumerGroupDto,
   ): Promise<void> {
     return this.service.updateGroup({ instanceId }, dto);
+  }
+
+  @Delete('')
+  @ApiRedisInstanceOperation({
+    description: 'Delete Consumer Group',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Returns number of affected consumer groups.',
+        type: DeleteConsumerGroupsResponse,
+      },
+    ],
+  })
+  async deleteGroup(
+    @Param('dbInstance') instanceId: string,
+      @Body() dto: DeleteConsumerGroupsDto,
+  ): Promise<DeleteConsumerGroupsResponse> {
+    return this.service.deleteGroup({ instanceId }, dto);
   }
 }

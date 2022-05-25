@@ -32,7 +32,11 @@ export class SegmentTelemetryService implements ITelemetryService {
 
     if (!isWebApp) {
       pageObject.page = {
-        path: '', url: '', title: globalThis.document.title
+        path: '', url: '', title: ''
+      }
+    } else {
+      pageObject.page = {
+        ...pageObject.page, title: ''
       }
     }
 

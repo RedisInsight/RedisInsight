@@ -19,7 +19,7 @@ import { DATE_FORMAT } from 'uiSrc/pages/slowLog/components/SlowLogTable/SlowLog
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { ConnectionProvider, ConnectionType } from 'uiSrc/slices/interfaces'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import {
   clearSlowLogAction,
   fetchSlowLogsAction,
@@ -47,7 +47,7 @@ const countOptions: EuiSuperSelectOption<string>[] = [
 ]
 
 const SlowLogPage = () => {
-  const { connectionType, provider, name: connectedInstanceName } = useSelector(connectedInstanceSelector)
+  const { connectionType, name: connectedInstanceName } = useSelector(connectedInstanceSelector)
   const { data, loading, durationUnit, config } = useSelector(slowLogSelector)
   const { slowlogLogSlowerThan = 0, slowlogMaxLen } = useSelector(slowLogConfigSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
@@ -83,7 +83,7 @@ const SlowLogPage = () => {
   }
 
   const getSlowLogs = (maxLen?: number) => {
-    const countToSend = (provider === ConnectionProvider.RE_CLOUD && count === MAX_COUNT_VALUE)
+    const countToSend = count === MAX_COUNT_VALUE
       ? (maxLen || slowlogMaxLen || DEFAULT_SLOWLOG_MAX_LEN)
       : toNumber(count)
 

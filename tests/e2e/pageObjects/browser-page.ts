@@ -172,9 +172,10 @@ export class BrowserPage {
     streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
+    streamEntryIdValue = Selector('.streamEntryId[data-testid*=stream-entry]');
     streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
-    confirmationMessagePopover = Selector('div.euiPopover__panel');
+    confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
 
     /**
      * Common part for Add any new key

@@ -17,8 +17,9 @@ import InstanceHeader from 'uiSrc/components/instance-header'
 import { DEFAULT_SLOWLOG_MAX_LEN } from 'uiSrc/constants'
 import { DATE_FORMAT } from 'uiSrc/pages/slowLog/components/SlowLogTable/SlowLogTable'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
+import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { ConnectionProvider, ConnectionType } from 'uiSrc/slices/interfaces'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import {
   clearSlowLogAction,
   fetchSlowLogsAction,
@@ -26,7 +27,7 @@ import {
   slowLogConfigSelector,
   slowLogSelector
 } from 'uiSrc/slices/slowlog/slowlog'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendPageViewTelemetry, sendEventTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
@@ -46,12 +47,14 @@ const countOptions: EuiSuperSelectOption<string>[] = [
 ]
 
 const SlowLogPage = () => {
-  const { connectionType, provider } = useSelector(connectedInstanceSelector)
+  const { connectionType, name: connectedInstanceName } = useSelector(connectedInstanceSelector)
   const { data, loading, durationUnit, config } = useSelector(slowLogSelector)
   const { slowlogLogSlowerThan = 0, slowlogMaxLen } = useSelector(slowLogConfigSelector)
+  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const [count, setCount] = useState<string>(DEFAULT_COUNT_VALUE)
+  const [isPageViewSent, setIsPageViewSent] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -65,8 +68,22 @@ const SlowLogPage = () => {
     getSlowLogs()
   }, [count])
 
+  useEffect(() => {
+    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+      sendPageView(instanceId)
+    }
+  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+
+  const sendPageView = (instanceId: string) => {
+    sendPageViewTelemetry({
+      name: TelemetryPageView.SLOWLOG_PAGE,
+      databaseId: instanceId
+    })
+    setIsPageViewSent(true)
+  }
+
   const getSlowLogs = (maxLen?: number) => {
-    const countToSend = (provider === ConnectionProvider.RE_CLOUD && count === MAX_COUNT_VALUE)
+    const countToSend = count === MAX_COUNT_VALUE
       ? (maxLen || slowlogMaxLen || DEFAULT_SLOWLOG_MAX_LEN)
       : toNumber(count)
 

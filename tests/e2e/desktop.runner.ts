@@ -22,7 +22,6 @@ import testcafe from 'testcafe';
                     }
                 ])
                 .run({
-                    disableScreenshots: true,
                     skipJsErrors: true,
                     browserInitTimeout: 60000,
                     speed: 1

@@ -1,4 +1,8 @@
-import { GetStreamEntriesResponse, StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import {
+  ConsumerGroupDto,
+  GetStreamEntriesResponse,
+  StreamEntryDto,
+} from 'apiSrc/modules/browser/dto/stream.dto'
 import { SortOrder } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
 
@@ -27,7 +31,7 @@ export interface StateStream {
 export interface StateConsumerGroups {
   loading: boolean
   error: string
-  data: StreamEntryDto[]
+  data: ConsumerGroupDto[]
   selectedGroup: Nullable<StateSelectedGroup>
 }
 

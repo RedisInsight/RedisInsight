@@ -11,6 +11,8 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   AddStreamEntriesDto,
   AddStreamEntriesResponse,
+  ConsumerDto,
+  ConsumerGroupDto,
   GetStreamEntriesResponse,
   StreamEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
@@ -141,7 +143,7 @@ const streamSlice = createSlice({
         state.groups.data = initialState.groups.data
       }
     },
-    loadConsumerGroupsSuccess: (state, { payload }: PayloadAction<StreamEntryDto[]>) => {
+    loadConsumerGroupsSuccess: (state, { payload }: PayloadAction<ConsumerGroupDto[]>) => {
       state.groups.loading = false
       state.groups.data = payload
     },
@@ -160,7 +162,7 @@ const streamSlice = createSlice({
       }
     },
 
-    loadConsumersSuccess: (state, { payload }: PayloadAction<StreamEntryDto[]>) => {
+    loadConsumersSuccess: (state, { payload }: PayloadAction<ConsumerDto[]>) => {
       state.groups.loading = false
 
       state.groups.selectedGroup = {
@@ -466,28 +468,15 @@ export function fetchConsumerGroups(
 
     try {
       const state = stateInit()
-      const { status } = await apiService.post<GetStreamEntriesResponse>(
+      const { data, status } = await apiService.post<ConsumerGroupDto[]>(
         getUrl(
           state.app.context.contextInstanceId,
-          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
         ),
         {
           keyName: state.app.context.browser.keyList.selectedKey,
-          count: 500,
-          sortOrder: SortOrder.ASC
         },
       )
-
-      const data = []
-
-      for (let i = 0; i < 1000; i++) {
-        data.push({
-          name: `group ${i}`,
-          consumers: Math.floor(Math.random() * 10),
-          pending: Math.floor(Math.random() * 10),
-          lastDeliveredId: `${Date.now()}-0`
-        },)
-      }
 
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumerGroupsSuccess(data))
@@ -516,27 +505,16 @@ export function fetchConsumers(
 
     try {
       const state = stateInit()
-      const { status } = await apiService.post<GetStreamEntriesResponse>(
+      const { data, status } = await apiService.post<ConsumerDto[]>(
         getUrl(
           state.app.context.contextInstanceId,
-          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+          ApiEndpoints.STREAMS_CONSUMERS_GET
         ),
         {
           keyName: state.app.context.browser.keyList.selectedKey,
-          count: 500,
-          sortOrder: SortOrder.ASC
+          groupName: state.browser.stream.groups.selectedGroup?.name,
         },
       )
-
-      const data = []
-
-      for (let i = 0; i < 1000; i++) {
-        data.push({
-          name: `consumer ${i}`,
-          pending: Math.floor(Math.random() * 10),
-          time: Date.now()
-        })
-      }
 
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumersSuccess(data))
@@ -568,7 +546,7 @@ export function fetchConsumerMessages(
       const { status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.app.context.contextInstanceId,
-          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
         ),
         {
           keyName: state.app.context.browser.keyList.selectedKey,

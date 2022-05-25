@@ -116,15 +116,15 @@ const RangeFilter = (props: Props) => {
   }, [end])
 
   useEffect(() => {
-    if (max && prevValue && prevValue.max !== max && end === prevValue.max) {
+    if (prevValue.max !== max && end === prevValue.max) {
       handleUpdateRangeMax(max)
     }
-    if (min && prevValue && prevValue.min !== min && start === prevValue.min) {
+    if (prevValue.min !== min && start === prevValue.min) {
       handleUpdateRangeMin(min)
     }
   }, [prevValue])
 
-  if (start === 0 && end === 0) {
+  if (start === 0 && max !== 0 && end === 0 && min !== 0) {
     return (
       <div data-testid="mock-blank-range" className={styles.rangeWrapper}>
         <div className={cx(styles.sliderTrack, styles.mockRange)} />

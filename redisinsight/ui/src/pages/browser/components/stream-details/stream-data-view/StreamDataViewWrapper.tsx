@@ -14,7 +14,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
-import StreamDataView from './StreamDataView'
+import StreamDataView from './StreamDataView12'
 import styles from './StreamDataView/styles.module.scss'
 
 export interface IStreamEntry extends StreamEntryDto {

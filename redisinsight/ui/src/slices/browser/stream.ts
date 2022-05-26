@@ -169,10 +169,8 @@ const streamSlice = createSlice({
 
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
-        data: {
-          ...payload,
-          lastRefreshTime: Date.now()
-        }
+        lastRefreshTime: Date.now(),
+        data: payload,
       }
     },
 
@@ -183,10 +181,8 @@ const streamSlice = createSlice({
         ...state.groups.selectedGroup,
         selectedConsumer: {
           ...state.groups.selectedGroup.selectedConsumer,
-          data: {
-            ...payload,
-            lastRefreshTime: Date.now()
-          }
+          lastRefreshTime: Date.now(),
+          data: payload,
         }
       }
     },

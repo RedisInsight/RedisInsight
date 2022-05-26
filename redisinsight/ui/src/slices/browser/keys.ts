@@ -556,12 +556,7 @@ export function fetchKeyInfo(key: string, resetData?: boolean) {
             resetData
           ))
         } else if (viewType === StreamViewType.Groups) {
-          dispatch<any>(fetchConsumerGroups(
-            // key,
-            // SCAN_COUNT_DEFAULT,
-            // SortOrder.DESC,
-            // resetData
-          ))
+          // dispatch<any>(fetchConsumerGroups())
         }
       }
     } catch (_err) {

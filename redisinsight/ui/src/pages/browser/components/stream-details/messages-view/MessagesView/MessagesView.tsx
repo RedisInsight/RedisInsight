@@ -10,44 +10,37 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SortOrder } from 'uiSrc/constants'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 
 const headerHeight = 60
 const rowHeight = 54
-const actionsWidth = 54
-const minColumnWidth = 190
-const noItemsMessageString = 'Your Key has no Consumer Groups available.'
 
-interface IConsumerGroup extends ConsumerGroupDto {
-  editing: boolean
-}
+const noItemsMessageString = 'There are no Messages in the Consumer Group.'
 
 export interface Props {
-  data: IConsumerGroup[]
+  data: PendingEntryDto[]
   columns: ITableColumn[]
-  onEditGroup: (groupId:string, editing: boolean) => void
   onClosePopover: () => void
-  onSelectGroup: ({ rowData }: { rowData: any }) => void
   isFooterOpen?: boolean
 }
 
-const ConsumerGroups = (props: Props) => {
-  const { data = [], columns = [], onClosePopover, onSelectGroup, isFooterOpen } = props
+const MessagesView = (props: Props) => {
+  const { data = [], columns = [], onClosePopover, isFooterOpen } = props
 
   const { loading } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }
 
-  const [groups, setGroups] = useState(data)
-  const [sortedColumnName, setSortedColumnName] = useState<string>('name')
+  const [messages, setMessages] = useState(data)
+  const [sortedColumnName, setSortedColumnName] = useState<string>('id')
   const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
 
   const onChangeSorting = (column: any, order: SortOrder) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
 
-    setGroups(orderBy(groups, 'name', order?.toLowerCase()))
+    setMessages(orderBy(messages, 'name', order?.toLowerCase()))
   }
 
   return (
@@ -59,11 +52,10 @@ const ConsumerGroups = (props: Props) => {
           styles.container,
           { footerOpened: isFooterOpen }
         )}
-        data-test-id="stream-groups-container"
+        data-test-id="stream-messages-container"
       >
         <VirtualTable
           hideProgress
-          onRowClick={onSelectGroup}
           selectable={false}
           keyName={key}
           totalItemsCount={data.length}
@@ -86,4 +78,4 @@ const ConsumerGroups = (props: Props) => {
   )
 }
 
-export default ConsumerGroups
+export default MessagesView

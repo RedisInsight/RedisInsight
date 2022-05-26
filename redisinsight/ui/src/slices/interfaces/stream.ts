@@ -1,10 +1,11 @@
-import {
-  ConsumerGroupDto,
-  GetStreamEntriesResponse,
-  StreamEntryDto,
-} from 'apiSrc/modules/browser/dto/stream.dto'
 import { SortOrder } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
+import {
+  ConsumerDto,
+  ConsumerGroupDto,
+  GetStreamEntriesResponse,
+  PendingEntryDto,
+} from 'apiSrc/modules/browser/dto/stream.dto'
 
 type Range = {
   start: string
@@ -33,24 +34,20 @@ export interface StateConsumerGroups {
   error: string
   data: ConsumerGroupDto[]
   selectedGroup: Nullable<StateSelectedGroup>
+  lastRefreshTime: Nullable<number>
 }
 
 export interface StateSelectedGroup {
   loading: boolean
   name: string
-  data: StreamEntryDto[]
+  data: ConsumerDto[]
   selectedConsumer: Nullable<StateSelectedConsumer>
+  lastRefreshTime: Nullable<number>
 }
 
 export interface StateSelectedConsumer {
   loading: boolean
   name: string
-  data: StreamEntryDto[]
-  selectedMsg: Nullable<StateSelectedMessage>
-}
-
-export interface StateSelectedMessage {
-  loading: boolean
-  name: string
-  data: StreamEntryDto[]
+  data: PendingEntryDto[]
+  lastRefreshTime: Nullable<number>
 }

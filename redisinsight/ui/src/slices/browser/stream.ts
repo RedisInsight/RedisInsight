@@ -14,7 +14,7 @@ import {
   ConsumerDto,
   ConsumerGroupDto,
   GetStreamEntriesResponse,
-  StreamEntryDto,
+  PendingEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateStream, StreamViewType } from '../interfaces/stream'
@@ -46,6 +46,7 @@ export const initialState: StateStream = {
     error: '',
     data: [],
     selectedGroup: null,
+    lastRefreshTime: null,
   }
 }
 
@@ -146,6 +147,7 @@ const streamSlice = createSlice({
     loadConsumerGroupsSuccess: (state, { payload }: PayloadAction<ConsumerGroupDto[]>) => {
       state.groups.loading = false
       state.groups.data = payload
+      state.groups.data.lastRefreshTime = Date.now()
     },
     loadConsumerGroupsFailure: (state, { payload }) => {
       state.groups.loading = false
@@ -167,18 +169,24 @@ const streamSlice = createSlice({
 
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
-        data: payload
+        data: {
+          ...payload,
+          lastRefreshTime: Date.now()
+        }
       }
     },
 
-    loadConsumerMessagesSuccess: (state, { payload }: PayloadAction<StreamEntryDto[]>) => {
+    loadConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
       state.groups.loading = false
 
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
         selectedConsumer: {
           ...state.groups.selectedGroup.selectedConsumer,
-          data: payload
+          data: {
+            ...payload,
+            lastRefreshTime: Date.now()
+          }
         }
       }
     },
@@ -228,7 +236,7 @@ export const streamGroupsSelector = (state: RootState) => state.browser.stream?.
 export const streamGroupsDataSelector = (state: RootState) => state.browser.stream?.groups?.data || []
 export const selectedGroupSelector = (state: RootState) => state.browser.stream?.groups?.selectedGroup
 export const selectedConsumerSelector = (state: RootState) =>
-  state.browser.stream?.groups?.selectedGroup?.selectedConsumer || {}
+  state.browser.stream?.groups?.selectedGroup?.selectedConsumer
 
 // The reducer
 export default streamSlice.reducer
@@ -535,7 +543,7 @@ export function fetchConsumers(
 // Asynchronous thunk action
 export function fetchConsumerMessages(
   resetData?: boolean,
-  onSuccess?: (data: GetStreamEntriesResponse) => void,
+  onSuccess?: (data: PendingEntryDto[]) => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -543,28 +551,17 @@ export function fetchConsumerMessages(
 
     try {
       const state = stateInit()
-      const { status } = await apiService.post<GetStreamEntriesResponse>(
+      const { data, status } = await apiService.post<PendingEntryDto[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
+          ApiEndpoints.STREAMS_CONSUMERS_MESSAGES_GET
         ),
         {
           keyName: state.browser.keys.selectedKey.data?.name,
-          count: 500,
-          sortOrder: SortOrder.ASC
+          groupName: state.browser.stream.groups.selectedGroup?.name,
+          consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
         },
       )
-
-      const data = []
-
-      for (let i = 0; i < 1000; i++) {
-        data.push({
-          entryId: `${Date.now()}-0`,
-          lastMessage: Date.now(),
-          timesDelivered: Math.floor(Math.random() * 10),
-        })
-      }
-
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumerMessagesSuccess(data))
         onSuccess?.(data)

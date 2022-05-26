@@ -816,6 +816,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         if (typeof options.onNodeClick === 'function') {
           options.onNodeClick(this, d, event)
         }
+
+        if (info) {
+          updateInfo(d)
+        }
       })
       .on('dblclick', function onNodeDoubleClick(event, d) {
         stickNode(this, event, d)
@@ -843,10 +847,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                            .call(zoom.translateTo as any, d.x, d.y), 10)
       })
       .on('mouseenter', function onNodeMouseEnter(event, d) {
-        if (info) {
-          updateInfo(d)
-        }
-
         if (typeof options.onNodeMouseEnter === 'function') {
           options.onNodeMouseEnter(this, d, event)
         }
@@ -892,6 +892,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       .on('click', function onNodeInfoClick(event, d) {
         if (typeof options.onNodeInfoClick === 'function') {
           options.onNodeInfoClick(this, d, event)
+        }
+
+        if (info) {
+          updateInfo(d)
         }
       })
 
@@ -985,7 +989,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
           options.onRelationshipDoubleClick(this, d, event)
         }
       })
-      .on('mouseenter', (event, d) => {
+      .on('click', (event, d) => {
         if (info) {
           updateInfo(d)
         }

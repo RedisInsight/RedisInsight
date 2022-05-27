@@ -1,12 +1,12 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
-import StreamDetails, { Props } from './StreamDetails'
+import StreamDataView, { Props } from './StreamDataView'
 
 const mockedProps = mock<Props>()
 
-describe('StreamDetails', () => {
+describe('StreamDataView', () => {
   it('should render', () => {
-    expect(render(<StreamDetails {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<StreamDataView {...instance(mockedProps)} />)).toBeTruthy()
   })
 })

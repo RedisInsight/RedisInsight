@@ -4,6 +4,10 @@ import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { StreamController } from 'src/modules/browser/controllers/stream/stream.controller';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
+import { ConsumerGroupController } from 'src/modules/browser/controllers/stream/consumer-group.controller';
+import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
+import { ConsumerController } from 'src/modules/browser/controllers/stream/consumer.controller';
+import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
 import { HashController } from './controllers/hash/hash.controller';
 import { KeysController } from './controllers/keys/keys.controller';
 import { KeysBusinessService } from './services/keys-business/keys-business.service';
@@ -32,6 +36,8 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     RejsonRlController,
     HashController,
     StreamController,
+    ConsumerGroupController,
+    ConsumerController,
   ],
   providers: [
     KeysBusinessService,
@@ -42,6 +48,8 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     RejsonRlBusinessService,
     HashBusinessService,
     StreamService,
+    ConsumerGroupService,
+    ConsumerService,
     BrowserToolService,
     BrowserToolClusterService,
   ],
@@ -58,6 +66,9 @@ export class BrowserModule implements NestModule {
         RouterModule.resolvePath(SetController),
         RouterModule.resolvePath(ZSetController),
         RouterModule.resolvePath(RejsonRlController),
+        RouterModule.resolvePath(StreamController),
+        RouterModule.resolvePath(ConsumerGroupController),
+        RouterModule.resolvePath(ConsumerController),
       );
   }
 }

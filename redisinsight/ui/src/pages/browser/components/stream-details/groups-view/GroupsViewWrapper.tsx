@@ -7,29 +7,28 @@ import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import {
   streamGroupsSelector,
   deleteStreamEntry,
-  fetchConsumerGroups,
   setSelectedGroup,
   fetchConsumers,
   setStreamViewType,
-  modifyLastDeliveredIdAction
+  modifyLastDeliveredIdAction,
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { ConsumerGroupDto, StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import GroupsView from './GroupsView'
 
 import styles from './GroupsView/styles.module.scss'
 
-export interface IStreamEntry extends StreamEntryDto {
+export interface IConsumerGroup extends ConsumerGroupDto {
   editing: boolean
 }
 
-const suffix = '_stream_groups'
+const suffix = '_stream_group'
 const actionsWidth = 80
 const minColumnWidth = 190
 
@@ -46,16 +45,12 @@ const GroupsViewWrapper = (props: Props) => {
 
   const dispatch = useDispatch()
 
-  const [groups, setGroups] = useState<ConsumerGroupDto[]>([])
+  const [groups, setGroups] = useState<IConsumerGroup[]>([])
   const [deleting, setDeleting] = useState<string>('')
   const [editValue, setEditValue] = useState<string>('')
 
   useEffect(() => {
-    dispatch(fetchConsumerGroups())
-  }, [])
-
-  useEffect(() => {
-    const streamGroups: ConsumerGroupDto[] = loadedGroups?.map((item) => ({
+    const streamGroups: IConsumerGroup[] = loadedGroups?.map((item) => ({
       ...item,
       editing: false,
     }))
@@ -67,12 +62,12 @@ const GroupsViewWrapper = (props: Props) => {
     setDeleting('')
   }, [])
 
-  const showPopover = useCallback((entry = '') => {
-    setDeleting(`${entry + suffix}`)
+  const showPopover = useCallback((groupName = '') => {
+    setDeleting(`${groupName + suffix}`)
   }, [])
 
-  const handleDeleteGroup = (entryId = '') => {
-    dispatch(deleteStreamEntry(key, [entryId]))
+  const handleDeleteGroup = (groupName = '') => {
+    // dispatch(deleteStreamEntry(key, [groupName]))
     closePopover()
   }
 
@@ -93,7 +88,7 @@ const GroupsViewWrapper = (props: Props) => {
   const handleSelectGroup = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedGroup(rowData))
     dispatch(fetchConsumers(
-      true,
+      false,
       () => dispatch(setStreamViewType(StreamViewType.Consumers))
     ))
   }
@@ -133,10 +128,33 @@ const GroupsViewWrapper = (props: Props) => {
       label: 'Pending',
       minWidth: 106,
       absoluteWidth: 106,
-      truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      className: styles.cell,
+      headerClassName: styles.cellHeader,
+      render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: ConsumerGroupDto) {
+        const smallestTimestamp = smallestPendingId?.split('-')?.[0]
+        const greatestTimestamp = greatestPendingId?.split('-')?.[0]
+
+        const tooltipContent = `${getFormatTime(smallestTimestamp)}-${getFormatTime(greatestTimestamp)}`
+        return (
+          <EuiText size="s" style={{ maxWidth: '100%' }}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`group-pending-${name}`}>
+              {!!pending && (
+                <EuiToolTip
+                  title={`${pending} Pending Messages`}
+                  className={styles.tooltip}
+                  anchorClassName="truncateText"
+                  position="bottom"
+                  content={tooltipContent}
+                >
+                  <>{pending}</>
+                </EuiToolTip>
+              )}
+              {!pending && pending}
+            </div>
+          </EuiText>
+        )
+      },
     },
     {
       id: 'lastDeliveredId',
@@ -214,18 +232,18 @@ const GroupsViewWrapper = (props: Props) => {
             <PopoverDelete
               text={(
                 <>
-                  Groups will be removed from
+                  Group will be removed from
                   <br />
                   {key}
                 </>
               )}
-              item={lastDeliveredId}
+              item={name}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
               updateLoading={false}
               showPopover={showPopover}
-              testid={`remove-groups-button-${lastDeliveredId}`}
+              testid={`remove-groups-button-${name}`}
               handleDeleteItem={handleDeleteGroup}
               handleButtonClick={handleRemoveIconClick}
             />

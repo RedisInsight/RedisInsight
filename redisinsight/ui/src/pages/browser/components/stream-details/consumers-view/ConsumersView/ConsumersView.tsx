@@ -10,7 +10,7 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SortOrder } from 'uiSrc/constants'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 
@@ -18,16 +18,11 @@ const headerHeight = 60
 const rowHeight = 54
 const actionsWidth = 54
 const minColumnWidth = 190
-const noItemsMessageString = 'There are no Consumers in the Group.'
-
-interface IStreamEntry extends StreamEntryDto {
-  editing: boolean
-}
+const noItemsMessageString = 'Your Consumer Group has no Consumers available.'
 
 export interface Props {
-  data: IStreamEntry[]
+  data: ConsumerDto[]
   columns: ITableColumn[]
-  onEditConsumer: (consumerId:string, editing: boolean) => void
   onClosePopover: () => void
   onSelectConsumer: ({ rowData }: { rowData: any }) => void
   isFooterOpen?: boolean
@@ -55,7 +50,7 @@ const ConsumersView = (props: Props) => {
       <div
         className={cx(
           'key-details-table',
-          'stream-consumers-container',
+          'stream-details-table',
           styles.container,
           { footerOpened: isFooterOpen }
         )}

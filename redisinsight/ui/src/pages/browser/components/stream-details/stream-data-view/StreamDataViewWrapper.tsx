@@ -27,6 +27,7 @@ const minColumnWidth = 190
 
 export interface Props {
   isFooterOpen: boolean
+  loadMoreItems: () => void
 }
 
 const StreamDataViewWrapper = (props: Props) => {

@@ -1,0 +1,28 @@
+.container {
+  padding: 0 18px;
+  height: 100%;
+  position: relative;
+
+  :global(.stream-details-table) {
+    height: calc(100% - 125px);
+  }
+}
+
+.rangeWrapper {
+  margin: 30px 30px 26px;
+  padding: 12px 0;
+}
+
+.sliderTrack.mockRange {
+  left: 18px;
+  width: calc(100% - 36px);
+}
+
+.sliderTrack {
+  position: absolute;
+  background-color: var(--separatorColor);
+  width: 100%;
+  height: 1px;
+  margin-top: 2px;
+  z-index: 1;
+}

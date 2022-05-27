@@ -151,12 +151,6 @@ $footerHeight: 38px;
   white-space: pre-wrap;
 }
 
-:global(.key-details-table) {
-  :global(.ReactVirtualized__Table__row) {
-    font-size: 13px;
-  }
-}
-
 :global(.key-list-table) {
   height: calc(100% - 58px);
 }
@@ -175,6 +169,9 @@ $footerHeight: 38px;
         overflow-y: auto !important;
       }
     }
+  }
+  :global(.ReactVirtualized__Table__row) {
+    font-size: 13px;
   }
   :global(.ReactVirtualized__Table__headerRow) {
     border: 1px solid var(--tableLightestBorderColor) !important;

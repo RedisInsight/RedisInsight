@@ -111,6 +111,8 @@ const mockMessages: PendingEntryDto[] = [{
   delivered: 1321,
 }]
 
+Date.now = jest.fn(() => Date.parse('2021-05-27'))
+
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
@@ -507,6 +509,9 @@ describe('stream slice', () => {
   describe('loadConsumerGroupsSuccess', () => {
     it('should properly set groups.data = payload', () => {
       // Arrange
+
+      console.log('Date.now()', Date.now())
+
       const data: ConsumerGroupDto[] = [{
         name: '123',
         consumers: 123,

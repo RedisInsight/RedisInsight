@@ -481,7 +481,7 @@ export function deleteStreamEntry(key: string, entries: string[], onSuccessActio
 // Asynchronous thunk action
 export function fetchConsumerGroups(
   resetData?: boolean,
-  onSuccess?: (data: GetStreamEntriesResponse) => void,
+  onSuccess?: () => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -501,7 +501,7 @@ export function fetchConsumerGroups(
 
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumerGroupsSuccess(data))
-        onSuccess?.(data)
+        onSuccess?.()
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {
@@ -518,7 +518,7 @@ export function fetchConsumerGroups(
 // Asynchronous thunk action
 export function fetchConsumers(
   resetData?: boolean,
-  onSuccess?: (data: GetStreamEntriesResponse) => void,
+  onSuccess?: () => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -556,7 +556,7 @@ export function fetchConsumers(
 // Asynchronous thunk action
 export function fetchConsumerMessages(
   resetData?: boolean,
-  onSuccess?: (data: PendingEntryDto[]) => void,
+  onSuccess?: () => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -577,7 +577,7 @@ export function fetchConsumerMessages(
       )
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumerMessagesSuccess(data))
-        onSuccess?.(data)
+        onSuccess?.()
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {

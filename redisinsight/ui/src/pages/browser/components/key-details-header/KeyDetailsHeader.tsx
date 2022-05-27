@@ -6,25 +6,26 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
+  EuiLoadingContent,
   EuiPopover,
   EuiText,
   EuiToolTip,
-  EuiLoadingContent,
 } from '@elastic/eui'
+import cx from 'classnames'
+import { isNull } from 'lodash'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { isNull } from 'lodash'
-import cx from 'classnames'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge } from 'uiSrc/components'
-import { KeyTypes, KEY_TYPES_ACTIONS, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes } from 'uiSrc/constants'
-import { selectedKeyDataSelector, selectedKeySelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION } from 'uiSrc/constants'
+import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { streamSelector } from 'uiSrc/slices/browser/stream'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
 import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
@@ -75,6 +76,7 @@ const KeyDetailsHeader = ({
   const { ttl: ttlProp, name: keyProp = '', type, size, length } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
+  const { viewType: streamViewType } = useSelector(streamSelector)
 
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState(false)
 
@@ -93,7 +95,7 @@ const KeyDetailsHeader = ({
 
   const keyNameRef = useRef<HTMLInputElement>(null)
 
-  const tooltipContent = formatNameShort(keyProp)
+  const tooltipContent = formatNameShort(keyProp || '')
 
   const onMouseEnterKey = () => {
     setKeyIsHovering(true)
@@ -266,7 +268,7 @@ const KeyDetailsHeader = ({
 
   const Actions = (width: number) => (
     <>
-      {'addItems' in KEY_TYPES_ACTIONS[keyType] && (
+      {KEY_TYPES_ACTIONS[keyType] && 'addItems' in KEY_TYPES_ACTIONS[keyType] && (
         <EuiToolTip
           content={width > MIDDLE_SCREEN_RESOLUTION ? '' : KEY_TYPES_ACTIONS[keyType].addItems?.name}
           position="left"
@@ -296,7 +298,37 @@ const KeyDetailsHeader = ({
           </>
         </EuiToolTip>
       )}
-      {'removeItems' in KEY_TYPES_ACTIONS[keyType] && (
+      {keyType === KeyTypes.Stream && (
+        <EuiToolTip
+          content={width > MIDDLE_SCREEN_RESOLUTION ? '' : STREAM_ADD_ACTION[streamViewType].name}
+          position="left"
+          anchorClassName={cx(styles.actionBtn, { [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION })}
+        >
+          <>
+            {width > MIDDLE_SCREEN_RESOLUTION ? (
+              <EuiButton
+                size="s"
+                iconType="plusInCircle"
+                color="secondary"
+                aria-label={STREAM_ADD_ACTION[streamViewType].name}
+                onClick={onAddItem}
+                data-testid="add-key-value-items-btn"
+              >
+                {STREAM_ADD_ACTION[streamViewType].name}
+              </EuiButton>
+            ) : (
+              <EuiButtonIcon
+                iconType="plusInCircle"
+                color="primary"
+                aria-label={STREAM_ADD_ACTION[streamViewType].name}
+                onClick={onAddItem}
+                data-testid="add-key-value-items-btn"
+              />
+            )}
+          </>
+        </EuiToolTip>
+      )}
+      {KEY_TYPES_ACTIONS[keyType] && 'removeItems' in KEY_TYPES_ACTIONS[keyType] && (
         <EuiToolTip
           content={KEY_TYPES_ACTIONS[keyType].removeItems?.name}
           position="left"
@@ -311,7 +343,7 @@ const KeyDetailsHeader = ({
           />
         </EuiToolTip>
       )}
-      {'editItem' in KEY_TYPES_ACTIONS[keyType] && (
+      {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
         <div className={styles.actionBtn}>
           <EuiButtonIcon
             iconType="pencil"
@@ -570,7 +602,7 @@ const KeyDetailsHeader = ({
                       containerClassName={styles.actionBtn}
                       testid="refresh-key-btn"
                     />
-                    {(keyType && KEY_TYPES_ACTIONS[keyType]) && Actions(width)}
+                    {keyType && Actions(width)}
 
                     <EuiPopover
                       key={keyProp}

@@ -13,6 +13,7 @@ import {
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewGroupAction } from 'uiSrc/slices/browser/stream'
@@ -111,14 +112,7 @@ const AddStreamGroup = (props: Props) => {
                           className={styles.entryIdTooltip}
                           position="left"
                           title="Enter Valid ID, 0 or $"
-                          content={(
-                            <>
-                              Specify the ID of the last delivered entry in the stream from the new group's perspective.
-                              <EuiSpacer size="xs" />
-                              Otherwise, <b>$</b> represents the ID of the last entry in the stream,&nbsp;
-                              <b>0</b> fetches the entire stream from the beginning.
-                            </>
-                          )}
+                          content={lastDeliveredIDTooltipText}
                         >
                           <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
                         </EuiToolTip>

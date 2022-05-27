@@ -16,6 +16,7 @@ import {
   CreateConsumerGroupsDto,
   GetStreamEntriesResponse,
   PendingEntryDto,
+  UpdateConsumerGroupDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateStream, StreamViewType } from '../interfaces/stream'
@@ -171,6 +172,19 @@ const streamSlice = createSlice({
       state.groups.selectedGroup = payload
     },
 
+    modifyLastDeliveredId: (state) => {
+      state.groups.loading = true
+    },
+
+    modifyLastDeliveredIdSuccess: (state) => {
+      state.groups.loading = false
+    },
+
+    modifyLastDeliveredIdFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+
     setSelectedConsumer: (state, { payload }) => {
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
@@ -248,6 +262,9 @@ export const {
   loadConsumerGroups,
   loadConsumerGroupsSuccess,
   loadConsumerGroupsFailure,
+  modifyLastDeliveredId,
+  modifyLastDeliveredIdSuccess,
+  modifyLastDeliveredIdFailure,
   loadConsumersSuccess,
   loadConsumersFailure,
   loadConsumerMessagesSuccess,
@@ -643,12 +660,12 @@ export function fetchConsumerMessages(
 
 // Asynchronous thunk action
 export function modifyLastDeliveredIdAction(
-  data: any,
+  data: UpdateConsumerGroupDto,
   onSuccess?: () => void,
   onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    //dispatch(addNewEntries())
+    dispatch(modifyLastDeliveredId())
 
     try {
       const state = stateInit()
@@ -662,7 +679,7 @@ export function modifyLastDeliveredIdAction(
       )
 
       if (isStatusSuccessful(status)) {
-        //dispatch(addNewEntriesSuccess())
+        dispatch(modifyLastDeliveredIdSuccess())
         dispatch<any>(fetchConsumerGroups(false))
         keyName && dispatch<any>(refreshKeyInfoAction(keyName))
         onSuccess?.()
@@ -671,7 +688,7 @@ export function modifyLastDeliveredIdAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      //dispatch(addNewEntriesFailure(errorMessage))
+      dispatch(modifyLastDeliveredIdFailure(errorMessage))
       onFailed?.()
     }
   }

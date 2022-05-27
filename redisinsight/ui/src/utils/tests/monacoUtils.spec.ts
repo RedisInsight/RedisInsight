@@ -106,7 +106,7 @@ describe('splitMonacoValuePerLines', () => {
   )
 })
 
-describe.only('findArgIndexByCursor', () => {
+describe('findArgIndexByCursor', () => {
   const cases = [
     [
       ['get', 'foo', 'bar'],

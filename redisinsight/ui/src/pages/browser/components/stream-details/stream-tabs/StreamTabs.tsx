@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { EuiTab, EuiTabs } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -7,55 +7,60 @@ import {
   setStreamViewType,
   fetchConsumerGroups,
   streamGroupsSelector,
+  selectedGroupSelector,
+  selectedConsumerSelector,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 
 import { streamViewTypeTabs } from '../constants'
 
 const StreamTabs = () => {
-  const { viewType, data: { entries = [] } } = useSelector(streamSelector)
+  const { viewType } = useSelector(streamSelector)
   const { data: groups = [] } = useSelector(streamGroupsSelector)
+  const { name: selectedGroupName = '' } = useSelector(selectedGroupSelector) ?? {}
+  const { name: selectedConsumerName = '' } = useSelector(selectedConsumerSelector) ?? {}
 
   const dispatch = useDispatch()
 
   const onSelectedTabChanged = (id: StreamViewType) => {
-    dispatch(setStreamViewType(id))
-
-    if (id === StreamViewType.Data && entries?.length === 0) {
-      // dispatch(fetchConsumerGroups())
-    }
     if (id === StreamViewType.Groups && groups.length === 0) {
       dispatch(fetchConsumerGroups())
     }
+    dispatch(setStreamViewType(id))
   }
 
-  const getSelectedTab = (id:StreamViewType) => {
-    if (id === StreamViewType.Data && viewType === id) {
-      return true
+  const renderTabs = useCallback(() => {
+    const tabs = [...streamViewTypeTabs]
+
+    if (selectedGroupName && (viewType === StreamViewType.Consumers || viewType === StreamViewType.Messages)) {
+      tabs.push({
+        id: StreamViewType.Consumers,
+        label: selectedGroupName,
+      })
     }
 
-    if (id === StreamViewType.Groups
-        && (viewType === id || viewType === StreamViewType.Consumers || viewType === StreamViewType.Messages)) {
-      return true
+    if (selectedConsumerName && viewType === StreamViewType.Messages) {
+      tabs.push({
+        id: StreamViewType.Messages,
+        label: selectedConsumerName
+      })
     }
 
-    return false
-  }
-
-  const renderTabs = () =>
-    streamViewTypeTabs.map(({ id, label }, i) => (
+    return tabs.map(({ id, label }) => (
       <EuiTab
-        isSelected={getSelectedTab(id)}
+        isSelected={viewType === id}
         onClick={() => onSelectedTabChanged(id)}
-      // eslint-disable-next-line react/no-array-index-key
-        key={i}
+        key={id}
       >
         {label}
       </EuiTab>
     ))
+  }, [viewType, selectedGroupName, selectedConsumerName])
 
   return (
-    <EuiTabs>{renderTabs()}</EuiTabs>
+    <>
+      <EuiTabs data-test-subj="stream-tabs">{renderTabs()}</EuiTabs>
+    </>
   )
 }
 

@@ -69,7 +69,7 @@ const StreamDataView = (props: Props) => {
           styles.container,
           { footerOpened: isFooterOpen }
         )}
-        data-test-id="stream-entries-container"
+        data-testid="stream-entries-container"
       >
         {/* <div className={styles.columnManager}>
           <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />

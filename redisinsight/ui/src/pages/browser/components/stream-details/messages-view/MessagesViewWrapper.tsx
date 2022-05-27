@@ -1,11 +1,12 @@
 import { EuiText } from '@elastic/eui'
-import React, { useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
+import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import MessagesView from './MessagesView'
@@ -16,17 +17,23 @@ const actionsWidth = 50
 const minColumnWidth = 190
 const suffix = '_stream_messages'
 
-interface Props {
+export interface Props {
   isFooterOpen: boolean
 }
 
 const MessagesViewWrapper = (props: Props) => {
   const {
-    data: loadedMessages = [],
+    lastRefreshTime,
+    data: loadedMessages = []
   } = useSelector(selectedConsumerSelector) ?? {}
 
-  const [messages, setMessages] = useState<PendingEntryDto[]>(loadedMessages)
   const [claiming, setClaiming] = useState<string>('')
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
+  }, [])
 
   const closePopover = useCallback(() => {
     setClaiming('')
@@ -44,18 +51,18 @@ const MessagesViewWrapper = (props: Props) => {
       minWidth: minColumnWidth,
       isSortable: true,
       className: styles.cell,
-      headerClassName: styles.cellHeader,
+      headerClassName: 'streamItemHeader',
       render: function Id(_name: string, { id }: PendingEntryDto) {
         const timestamp = id.split('-')?.[0]
         return (
           <div>
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamEntry" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
+              <div className="truncateText streamItem" style={{ display: 'flex' }} data-testid={`stream-message-${id}-date`}>
                 {getFormatTime(timestamp)}
               </div>
             </EuiText>
             <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamEntryId" data-testid={`stream-entry-${id}`}>
+              <div className="streamItemId" data-testid={`stream-message-${id}`}>
                 {id}
               </div>
             </EuiText>
@@ -70,8 +77,7 @@ const MessagesViewWrapper = (props: Props) => {
       absoluteWidth: 106,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'delivered',
@@ -80,13 +86,12 @@ const MessagesViewWrapper = (props: Props) => {
       absoluteWidth: 106,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'actions',
       label: '',
-      headerClassName: styles.actionsHeader,
+      headerClassName: 'streamItemHeader',
       textAlignment: TableCellTextAlignment.Left,
       absoluteWidth: actionsWidth,
       maxWidth: actionsWidth,
@@ -102,7 +107,7 @@ const MessagesViewWrapper = (props: Props) => {
   return (
     <>
       <MessagesView
-        data={messages}
+        data={loadedMessages}
         columns={columns}
         onClosePopover={closePopover}
         {...props}

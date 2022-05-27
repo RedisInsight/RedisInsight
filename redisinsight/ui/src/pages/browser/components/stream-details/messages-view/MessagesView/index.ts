@@ -1,3 +1,5 @@
-import GroupsView from './MessagesView'
+import MessagesView from './MessagesView'
 
-export default GroupsView
+export * from './MessagesView'
+
+export default MessagesView

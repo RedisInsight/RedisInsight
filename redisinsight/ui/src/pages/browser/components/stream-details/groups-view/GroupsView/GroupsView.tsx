@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { orderBy } from 'lodash'
@@ -16,11 +16,9 @@ import styles from './styles.module.scss'
 
 const headerHeight = 60
 const rowHeight = 54
-const actionsWidth = 54
-const minColumnWidth = 190
 const noItemsMessageString = 'Your Key has no Consumer Groups available.'
 
-interface IConsumerGroup extends ConsumerGroupDto {
+export interface IConsumerGroup extends ConsumerGroupDto {
   editing: boolean
 }
 
@@ -39,16 +37,22 @@ const ConsumerGroups = (props: Props) => {
   const { loading } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }
 
-  const [groups, setGroups] = useState(data)
+  const [groups, setGroups] = useState<IConsumerGroup[]>([])
   const [sortedColumnName, setSortedColumnName] = useState<string>('name')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
+  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.ASC)
 
-  const onChangeSorting = (column: any, order: SortOrder) => {
-    setSortedColumnName(column)
-    setSortedColumnOrder(order)
+  useEffect(() => {
+    setGroups(orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()))
+  }, [data])
 
-    setGroups(orderBy(groups, 'name', order?.toLowerCase()))
-  }
+  const onChangeSorting = useCallback(
+    (column: any, order: SortOrder) => {
+      setSortedColumnName(column)
+      setSortedColumnOrder(order)
+
+      setGroups(orderBy(data, column, order?.toLowerCase()))
+    }, [groups]
+  )
 
   return (
     <>
@@ -59,24 +63,24 @@ const ConsumerGroups = (props: Props) => {
           styles.container,
           { footerOpened: isFooterOpen }
         )}
-        data-test-id="stream-groups-container"
+        data-testid="stream-groups-container"
       >
         <VirtualTable
           hideProgress
           onRowClick={onSelectGroup}
           selectable={false}
           keyName={key}
-          totalItemsCount={data.length}
-          headerHeight={data?.length ? headerHeight : 0}
+          totalItemsCount={groups.length}
+          headerHeight={groups?.length ? headerHeight : 0}
           rowHeight={rowHeight}
           columns={columns}
           footerHeight={0}
           loading={loading}
-          items={data}
+          items={groups}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={noItemsMessageString}
-          sortedColumn={data?.length ? {
+          sortedColumn={groups?.length ? {
             column: sortedColumnName,
             order: sortedColumnOrder,
           } : undefined}

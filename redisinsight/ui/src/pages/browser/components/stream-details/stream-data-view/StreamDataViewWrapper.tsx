@@ -1,4 +1,4 @@
-import {  EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { keyBy } from 'lodash'
@@ -11,7 +11,7 @@ import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { keysSelector } from 'uiSrc/slices/browser/keys'
+import { keysSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import StreamDataView from './StreamDataView'
@@ -33,17 +33,23 @@ export interface Props {
 const StreamDataViewWrapper = (props: Props) => {
   const {
     entries: loadedEntries = [],
-    keyName: key
+    keyName: key,
+    lastRefreshTime
   } = useSelector(streamDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType: browserViewType } = useSelector(keysSelector)
 
   const dispatch = useDispatch()
 
-  const [uniqFields, setUniqFields] = useState({})
+  // for Manager columns
+  // const [uniqFields, setUniqFields] = useState({})
   const [entries, setEntries] = useState<IStreamEntry[]>([])
   const [columns, setColumns] = useState<ITableColumn[]>([])
   const [deleting, setDeleting] = useState<string>('')
+
+  useEffect(() => {
+    dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
+  }, [])
 
   useEffect(() => {
     let fields = {}
@@ -59,7 +65,8 @@ const StreamDataViewWrapper = (props: Props) => {
       }
     })
 
-    setUniqFields(fields)
+    // for Manager columns
+    // setUniqFields(fields)
     setEntries(streamEntries)
     setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
   }, [loadedEntries, deleting])
@@ -122,7 +129,7 @@ const StreamDataViewWrapper = (props: Props) => {
     minWidth: minColumnWidth,
     isSortable: false,
     className: styles.cell,
-    headerClassName: styles.cellHeader,
+    headerClassName: 'streamItemHeader',
     headerCellClassName: 'truncateText',
     render: function Id(_name: string, { id, fields }: StreamEntryDto) {
       const value = fields[label] ?? ''
@@ -133,13 +140,13 @@ const StreamDataViewWrapper = (props: Props) => {
         <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
           <div
             style={{ display: 'flex' }}
-            className="streamEntry"
+            className="streamItem"
             data-testid={`stream-entry-field-${id}`}
           >
             <EuiToolTip
               title="Value"
               className={styles.tooltip}
-              anchorClassName="streamEntry line-clamp-2"
+              anchorClassName="streamItem line-clamp-2"
               position="bottom"
               content={tooltipContent}
             >
@@ -159,18 +166,18 @@ const StreamDataViewWrapper = (props: Props) => {
       minWidth: minColumnWidth,
       isSortable: true,
       className: styles.cell,
-      headerClassName: styles.cellHeader,
+      headerClassName: 'streamItemHeader',
       render: function Id(_name: string, { id }: StreamEntryDto) {
         const timestamp = id.split('-')?.[0]
         return (
           <div>
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamEntry" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
+              <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
                 {getFormatTime(timestamp)}
               </div>
             </EuiText>
             <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamEntryId" data-testid={`stream-entry-${id}`}>
+              <div className="streamItemId" data-testid={`stream-entry-${id}`}>
                 {id}
               </div>
             </EuiText>

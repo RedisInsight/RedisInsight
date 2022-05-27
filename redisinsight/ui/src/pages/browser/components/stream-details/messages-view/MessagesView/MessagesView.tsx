@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { orderBy } from 'lodash'
@@ -34,13 +34,17 @@ const MessagesView = (props: Props) => {
 
   const [messages, setMessages] = useState(data)
   const [sortedColumnName, setSortedColumnName] = useState<string>('id')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
+  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.ASC)
+
+  useEffect(() => {
+    setMessages(orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()))
+  }, [data])
 
   const onChangeSorting = (column: any, order: SortOrder) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
 
-    setMessages(orderBy(messages, 'name', order?.toLowerCase()))
+    setMessages(orderBy(messages, column, order?.toLowerCase()))
   }
 
   return (
@@ -52,23 +56,23 @@ const MessagesView = (props: Props) => {
           styles.container,
           { footerOpened: isFooterOpen }
         )}
-        data-test-id="stream-messages-container"
+        data-testid="stream-messages-container"
       >
         <VirtualTable
           hideProgress
           selectable={false}
           keyName={key}
           totalItemsCount={data.length}
-          headerHeight={data?.length ? headerHeight : 0}
+          headerHeight={messages?.length ? headerHeight : 0}
           rowHeight={rowHeight}
           columns={columns}
           footerHeight={0}
           loading={loading}
-          items={data}
+          items={messages}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={noItemsMessageString}
-          sortedColumn={data?.length ? {
+          sortedColumn={messages?.length ? {
             column: sortedColumnName,
             order: sortedColumnOrder,
           } : undefined}

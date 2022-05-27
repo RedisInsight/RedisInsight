@@ -25,7 +25,6 @@ export interface IConsumerGroup extends ConsumerGroupDto {
 export interface Props {
   data: IConsumerGroup[]
   columns: ITableColumn[]
-  onEditGroup: (groupId:string, editing: boolean) => void
   onClosePopover: () => void
   onSelectGroup: ({ rowData }: { rowData: any }) => void
   isFooterOpen?: boolean

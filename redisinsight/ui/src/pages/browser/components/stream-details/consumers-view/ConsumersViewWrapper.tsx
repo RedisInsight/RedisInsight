@@ -1,72 +1,58 @@
-import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
   deleteStreamEntry,
-  fetchConsumers,
   setStreamViewType,
   selectedGroupSelector,
-  setSelectedConsumer
+  setSelectedConsumer,
+  fetchConsumerMessages
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { getFormatTime } from 'uiSrc/utils/streamUtils'
-import { TableCellTextAlignment } from 'uiSrc/constants'
+import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
-
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+
+import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import ConsumersView from './ConsumersView'
 
 import styles from './ConsumersView/styles.module.scss'
 
-export interface IStreamEntry extends StreamEntryDto {
-  editing: boolean
-}
-
-const suffix = '_stream_consumers'
+const suffix = '_stream_consumer'
 const actionsWidth = 50
-const minColumnWidth = 190
 
-interface Props {
+export interface Props {
   isFooterOpen: boolean
 }
 
 const ConsumersViewWrapper = (props: Props) => {
+  const { name: key = '' } = useSelector(connectedInstanceSelector)
   const {
+    lastRefreshTime,
     data: loadedConsumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
-  const { id: instanceId, name: key = '' } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
 
-  const [consumers, setConsumers] = useState<IStreamEntry[]>([])
   const [deleting, setDeleting] = useState<string>('')
 
   useEffect(() => {
-    dispatch(fetchConsumers())
+    dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [])
-
-  useEffect(() => {
-    const streamConsumers: IStreamEntry[] = loadedConsumers?.map((item) => ({
-      ...item,
-      editing: false,
-    }))
-
-    setConsumers(streamConsumers)
-  }, [loadedConsumers, deleting])
 
   const closePopover = useCallback(() => {
     setDeleting('')
   }, [])
 
-  const showPopover = useCallback((entry = '') => {
-    setDeleting(`${entry + suffix}`)
+  const showPopover = useCallback((consumer = '') => {
+    setDeleting(`${consumer + suffix}`)
   }, [])
 
-  const handleDeleteConsumer = (entryId = '') => {
-    dispatch(deleteStreamEntry(key, [entryId]))
+  const handleDeleteConsumer = (consumerName = '') => {
+    dispatch(deleteStreamEntry(key, [consumerName]))
     closePopover()
   }
 
@@ -84,21 +70,11 @@ const ConsumersViewWrapper = (props: Props) => {
     // })
   }
 
-  const handleEditConsumer = (consumerId = '', editing: boolean) => {
-    const newConsumersState = consumers.map((item) => {
-      if (item.id === consumerId) {
-        return { ...item, editing }
-      }
-      return item
-    })
-    setConsumers(newConsumersState)
-  }
-
   const handleSelectConsumer = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedConsumer(rowData))
-    dispatch(fetchConsumers(
-      true,
-      () => dispatch(setStreamViewType(StreamViewType.Groups))
+    dispatch(fetchConsumerMessages(
+      false,
+      () => dispatch(setStreamViewType(StreamViewType.Messages))
     ))
   }
 
@@ -107,74 +83,57 @@ const ConsumersViewWrapper = (props: Props) => {
     {
       id: 'name',
       label: 'Consumer Name',
-      // minWidth: 180,
+      relativeWidth: 0.59,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'pending',
       label: 'Pending',
       minWidth: 106,
-      absoluteWidth: 106,
+      relativeWidth: 0.12,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      headerClassName: 'streamItemHeader',
     },
     {
-      id: 'time',
+      id: 'idle',
       label: 'Idle time, ms',
-      absoluteWidth: 190,
       minWidth: 190,
+      relativeWidth: 0.27,
       isSortable: true,
+      alignment: TableCellAlignment.Right,
       className: styles.cell,
-      headerClassName: styles.cellHeader,
-      render: function Id(_name: string, { lastDeliveredId: id }: StreamEntryDto) {
-        const timestamp = id?.split('-')?.[0]
-        return (
-          <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamConsumer" style={{ display: 'flex' }} data-testid={`stream-consumer-${id}-date`}>
-                {getFormatTime(timestamp)}
-              </div>
-            </EuiText>
-            <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamConsumerId" data-testid={`stream-consumer-${id}`}>
-                {id}
-              </div>
-            </EuiText>
-          </div>
-        )
-      },
+      headerClassName: 'streamItemHeader',
+      render: (cellData: number) => numberWithSpaces(cellData),
     },
     {
       id: 'actions',
       label: '',
-      headerClassName: styles.actionsHeader,
+      headerClassName: 'streamItemHeader',
       textAlignment: TableCellTextAlignment.Left,
       absoluteWidth: actionsWidth,
       maxWidth: actionsWidth,
       minWidth: actionsWidth,
-      render: function Actions(_act: any, { id }: StreamEntryDto) {
+      render: function Actions(_act: any, { name }: ConsumerDto) {
         return (
           <div>
             <PopoverDelete
               text={(
                 <>
-                  Consumers will be removed from
+                  Consumer will be removed from
                   <br />
                   {key}
                 </>
               )}
-              item={id}
+              item={name}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
               updateLoading={false}
               showPopover={showPopover}
-              testid={`remove-consumers-button-${id}`}
+              testid={`remove-consumer-button-${name}`}
               handleDeleteItem={handleDeleteConsumer}
               handleButtonClick={handleRemoveIconClick}
             />
@@ -187,9 +146,8 @@ const ConsumersViewWrapper = (props: Props) => {
   return (
     <>
       <ConsumersView
-        data={consumers}
+        data={loadedConsumers}
         columns={columns}
-        onEditConsumer={handleEditConsumer}
         onClosePopover={closePopover}
         onSelectConsumer={handleSelectConsumer}
         {...props}

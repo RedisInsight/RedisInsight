@@ -1,0 +1,51 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.euiTabs {
+  &::before {
+    display: none !important;
+  }
+}
+
+.euiTab__content {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: normal;
+}
+
+.euiTab {
+  padding: 6px !important;
+  border-radius: 4px;
+
+  &::before {
+    display: none !important;
+  }
+
+  &:focus {
+    text-decoration: none !important;
+  }
+}
+
+.euiTab.euiTab-isSelected {
+  background-color: var(--tableRowSelectedColor) !important;
+  &::after {
+    display: none !important;
+  }
+}
+
+.euiTabs .euiTab + .euiTab {
+  margin-left: 18px;
+
+  &::after {
+    display: block !important;
+    position: absolute;
+    animation: euiTab 150ms cubic-bezier(0.694, 0.0482, 0.335, 1);
+    background-color: var(--tableLightestBorderColor);
+    top: 7px;
+    content: " ";
+    height: 18px;
+    left: -10px;
+    width: 2px;
+  }
+}

@@ -1,66 +1,72 @@
-import { EuiText } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { streamGroupsSelector, deleteStreamEntry, fetchConsumerGroups, setSelectedGroup, fetchConsumers, setStreamViewType } from 'uiSrc/slices/browser/stream'
+import {
+  streamGroupsSelector,
+  setSelectedGroup,
+  fetchConsumers,
+  setStreamViewType,
+} from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
-
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+
 import GroupsView from './GroupsView'
 
 import styles from './GroupsView/styles.module.scss'
 
-export interface IStreamEntry extends StreamEntryDto {
+export interface IConsumerGroup extends ConsumerGroupDto {
   editing: boolean
 }
 
-const suffix = '_stream_groups'
+const suffix = '_stream_group'
 const actionsWidth = 50
-const minColumnWidth = 190
 
-interface Props {
+export interface Props {
   isFooterOpen: boolean
 }
 
 const GroupsViewWrapper = (props: Props) => {
   const {
+    lastRefreshTime,
     data: loadedGroups = [],
   } = useSelector(streamGroupsSelector)
-  const { id: instanceId, name: key = '' } = useSelector(connectedInstanceSelector)
+  const { name: key = '' } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
 
-  const [groups, setGroups] = useState<IStreamEntry[]>([])
+  const [groups, setGroups] = useState<IConsumerGroup[]>([])
   const [deleting, setDeleting] = useState<string>('')
 
   useEffect(() => {
-    dispatch(fetchConsumerGroups())
-  }, [])
+    dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
+  }, [lastRefreshTime])
 
   useEffect(() => {
-    const streamGroups: IStreamEntry[] = loadedGroups?.map((item) => ({
+    const streamItem: IConsumerGroup[] = loadedGroups?.map((item) => ({
       ...item,
       editing: false,
     }))
 
-    setGroups(streamGroups)
+    setGroups(streamItem)
   }, [loadedGroups, deleting])
 
   const closePopover = useCallback(() => {
     setDeleting('')
   }, [])
 
-  const showPopover = useCallback((entry = '') => {
-    setDeleting(`${entry + suffix}`)
+  const showPopover = useCallback((groupName = '') => {
+    setDeleting(`${groupName + suffix}`)
   }, [])
 
-  const handleDeleteGroup = (entryId = '') => {
-    dispatch(deleteStreamEntry(key, [entryId]))
+  const handleDeleteGroup = () => {
+    // dispatch(deleteStreamEntry(key, [groupName]))
     closePopover()
   }
 
@@ -80,7 +86,7 @@ const GroupsViewWrapper = (props: Props) => {
 
   const handleEditGroup = (groupId = '', editing: boolean) => {
     const newGroupsState = groups.map((item) => {
-      if (item.id === groupId) {
+      if (item.name === groupId) {
         return { ...item, editing }
       }
       return item
@@ -91,7 +97,7 @@ const GroupsViewWrapper = (props: Props) => {
   const handleSelectGroup = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedGroup(rowData))
     dispatch(fetchConsumers(
-      true,
+      false,
       () => dispatch(setStreamViewType(StreamViewType.Consumers))
     ))
   }
@@ -101,51 +107,72 @@ const GroupsViewWrapper = (props: Props) => {
     {
       id: 'name',
       label: 'Group Name',
-      // minWidth: 180,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      relativeWidth: 0.44,
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'consumers',
       label: 'Consumers',
       minWidth: 130,
-      absoluteWidth: 130,
+      relativeWidth: 0.15,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'pending',
       label: 'Pending',
       minWidth: 106,
-      absoluteWidth: 106,
-      truncateText: true,
+      relativeWidth: 0.12,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      className: styles.cell,
+      headerClassName: 'streamItemHeader',
+      render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: ConsumerGroupDto) {
+        const smallestTimestamp = smallestPendingId?.split('-')?.[0]
+        const greatestTimestamp = greatestPendingId?.split('-')?.[0]
+
+        const tooltipContent = `${getFormatTime(smallestTimestamp)} – ${getFormatTime(greatestTimestamp)}`
+        return (
+          <EuiText size="s" style={{ maxWidth: '100%' }}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`group-pending-${name}`}>
+              {!!pending && (
+                <EuiToolTip
+                  title={`${pending} Pending Messages`}
+                  className={styles.tooltip}
+                  anchorClassName="truncateText"
+                  position="bottom"
+                  content={tooltipContent}
+                >
+                  <>{pending}</>
+                </EuiToolTip>
+              )}
+              {!pending && pending}
+            </div>
+          </EuiText>
+        )
+      },
     },
     {
       id: 'lastDeliveredId',
       label: 'Last Delivered ID',
-      absoluteWidth: 190,
+      relativeWidth: 0.25,
       minWidth: 190,
       isSortable: true,
       className: styles.cell,
-      headerClassName: styles.cellHeader,
-      render: function Id(_name: string, { lastDeliveredId: id }: StreamEntryDto) {
+      headerClassName: 'streamItemHeader',
+      render: function Id(_name: string, { lastDeliveredId: id }: ConsumerGroupDto) {
         const timestamp = id?.split('-')?.[0]
         return (
           <div>
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamGroup" style={{ display: 'flex' }} data-testid={`stream-group-${id}-date`}>
+              <div className="truncateText streamItem" style={{ display: 'flex' }} data-testid={`stream-group-${id}-date`}>
                 {getFormatTime(timestamp)}
               </div>
             </EuiText>
             <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamGroupId" data-testid={`stream-group-${id}`}>
+              <div className="streamItemId" data-testid={`stream-group-${id}`}>
                 {id}
               </div>
             </EuiText>
@@ -161,24 +188,24 @@ const GroupsViewWrapper = (props: Props) => {
       absoluteWidth: actionsWidth,
       maxWidth: actionsWidth,
       minWidth: actionsWidth,
-      render: function Actions(_act: any, { id }: StreamEntryDto) {
+      render: function Actions(_act: any, { name }: ConsumerGroupDto) {
         return (
           <div>
             <PopoverDelete
               text={(
                 <>
-                  Groups will be removed from
+                  Group will be removed from
                   <br />
                   {key}
                 </>
               )}
-              item={id}
+              item={name}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
               updateLoading={false}
               showPopover={showPopover}
-              testid={`remove-groups-button-${id}`}
+              testid={`remove-groups-button-${name}`}
               handleDeleteItem={handleDeleteGroup}
               handleButtonClick={handleRemoveIconClick}
             />

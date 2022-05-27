@@ -30,7 +30,7 @@ import { fetchSetMembers } from './set'
 import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
-import { fetchConsumerGroups, fetchStreamEntries } from './stream'
+import { fetchStreamEntries, setStreamInitialState } from './stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
@@ -366,6 +366,9 @@ export function setInitialStateByType(type: string) {
     if (type === KeyTypes.ZSet) {
       dispatch(setZsetInitialState())
     }
+    if (type === KeyTypes.Stream) {
+      dispatch(setStreamInitialState())
+    }
   }
 }
 // Asynchronous thunk action
@@ -556,12 +559,7 @@ export function fetchKeyInfo(key: string, resetData?: boolean) {
             resetData
           ))
         } else if (viewType === StreamViewType.Groups) {
-          dispatch<any>(fetchConsumerGroups(
-            // key,
-            // SCAN_COUNT_DEFAULT,
-            // SortOrder.DESC,
-            // resetData
-          ))
+          // dispatch<any>(fetchConsumerGroups())
         }
       }
     } catch (_err) {

@@ -1,21 +1,26 @@
-import { EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import PopoverItemEditor from 'uiSrc/components/popover-item-editor'
+import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
+import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 
 import {
   streamGroupsSelector,
   setSelectedGroup,
   fetchConsumers,
   setStreamViewType,
+  modifyLastDeliveredIdAction,
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { consumerGroupIdRegex } from 'uiSrc/utils'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
-import { TableCellTextAlignment } from 'uiSrc/constants'
+import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
-import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+
+import { ConsumerGroupDto, UpdateConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import GroupsView from './GroupsView'
 
@@ -26,7 +31,7 @@ export interface IConsumerGroup extends ConsumerGroupDto {
 }
 
 const suffix = '_stream_group'
-const actionsWidth = 50
+const actionsWidth = 80
 
 export interface Props {
   isFooterOpen: boolean
@@ -36,13 +41,18 @@ const GroupsViewWrapper = (props: Props) => {
   const {
     lastRefreshTime,
     data: loadedGroups = [],
+    loading
   } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(connectedInstanceSelector)
+  const { name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {}
 
   const dispatch = useDispatch()
 
   const [groups, setGroups] = useState<IConsumerGroup[]>([])
   const [deleting, setDeleting] = useState<string>('')
+  const [editValue, setEditValue] = useState<string>('')
+  const [idError, setIdError] = useState<string>('')
+  const [isIdFocused, setIsIdFocused] = useState<boolean>(false)
 
   useEffect(() => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
@@ -56,6 +66,14 @@ const GroupsViewWrapper = (props: Props) => {
 
     setGroups(streamItem)
   }, [loadedGroups, deleting])
+
+  useEffect(() => {
+    if (!consumerGroupIdRegex.test(editValue)) {
+      setIdError('ID format is not correct')
+      return
+    }
+    setIdError('')
+  }, [editValue])
 
   const closePopover = useCallback(() => {
     setDeleting('')
@@ -84,22 +102,23 @@ const GroupsViewWrapper = (props: Props) => {
     // })
   }
 
-  const handleEditGroup = (groupId = '', editing: boolean) => {
-    const newGroupsState = groups.map((item) => {
-      if (item.name === groupId) {
-        return { ...item, editing }
-      }
-      return item
-    })
-    setGroups(newGroupsState)
-  }
-
   const handleSelectGroup = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedGroup(rowData))
     dispatch(fetchConsumers(
       false,
       () => dispatch(setStreamViewType(StreamViewType.Consumers))
     ))
+  }
+
+  const handleApplyEditId = (groupName: string) => {
+    if (!!groupName.length && !idError && selectedKey) {
+      const data: UpdateConsumerGroupDto = {
+        keyName: selectedKey,
+        name: groupName,
+        lastDeliveredId: editValue
+      }
+      dispatch(modifyLastDeliveredIdAction(data))
+    }
   }
 
   const columns: ITableColumn[] = [
@@ -188,9 +207,46 @@ const GroupsViewWrapper = (props: Props) => {
       absoluteWidth: actionsWidth,
       maxWidth: actionsWidth,
       minWidth: actionsWidth,
-      render: function Actions(_act: any, { name }: ConsumerGroupDto) {
+      render: function Actions(_act: any, { lastDeliveredId, name }: ConsumerGroupDto) {
+        const showIdError = !isIdFocused && idError
         return (
           <div>
+            <PopoverItemEditor
+              btnTestId={`edit-stream-last-id-${lastDeliveredId}`}
+              onOpen={() => setEditValue(lastDeliveredId)}
+              onApply={() => handleApplyEditId(name)}
+              className={styles.editLastId}
+              isDisabled={!editValue.length || !!idError}
+              isLoading={loading}
+            >
+              <>
+                <EuiFieldText
+                  fullWidth
+                  name="id"
+                  id="id"
+                  placeholder="ID*"
+                  value={editValue}
+                  onChange={(e: any) => setEditValue(e.target.value)}
+                  onBlur={() => setIsIdFocused(false)}
+                  onFocus={() => setIsIdFocused(true)}
+                  append={(
+                    <EuiToolTip
+                      anchorClassName="inputAppendIcon"
+                      position="left"
+                      title="Enter Valid ID, 0 or $"
+                      content={lastDeliveredIDTooltipText}
+                    >
+                      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                    </EuiToolTip>
+                  )}
+                  style={{ width: 240 }}
+                  autoComplete="off"
+                  data-testid="last-id-field"
+                />
+                {!showIdError && <span className={styles.idText} data-testid="id-help-text">Timestamp - Sequence Number or $</span>}
+                {showIdError && <span className={styles.error} data-testid="id-error">{idError}</span>}
+              </>
+            </PopoverItemEditor>
             <PopoverDelete
               text={(
                 <>
@@ -220,7 +276,6 @@ const GroupsViewWrapper = (props: Props) => {
       <GroupsView
         data={groups}
         columns={columns}
-        onEditGroup={handleEditGroup}
         onClosePopover={closePopover}
         onSelectGroup={handleSelectGroup}
         {...props}

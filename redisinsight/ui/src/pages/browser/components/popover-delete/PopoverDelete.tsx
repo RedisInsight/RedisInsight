@@ -34,7 +34,8 @@ const PopoverDelete = (props: Props) => {
     testid = '',
   } = props
 
-  const onButtonClick = () => {
+  const onButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
     if (item + suffix !== deleting) {
       showPopover(item)
       handleButtonClick?.()

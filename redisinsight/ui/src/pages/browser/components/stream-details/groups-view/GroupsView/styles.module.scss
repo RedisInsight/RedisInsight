@@ -14,3 +14,19 @@
 .tooltip {
   min-width: 325px;
 }
+
+.editLastId {
+  margin-right: 4px;
+}
+
+.idText, .error {
+  display: inline-block;
+  color: var(--euiColorMediumShade);
+  font: normal normal normal 12px/18px Graphik;
+  margin-top: 6px;
+  padding-right: 6px;
+}
+
+.error {
+  color: var(--euiColorDangerText);
+}

@@ -16,6 +16,7 @@ import {
   CreateConsumerGroupsDto,
   GetStreamEntriesResponse,
   PendingEntryDto,
+  UpdateConsumerGroupDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateStream, StreamViewType } from '../interfaces/stream'
@@ -171,6 +172,19 @@ const streamSlice = createSlice({
       state.groups.selectedGroup = payload
     },
 
+    modifyLastDeliveredId: (state) => {
+      state.groups.loading = true
+    },
+
+    modifyLastDeliveredIdSuccess: (state) => {
+      state.groups.loading = false
+    },
+
+    modifyLastDeliveredIdFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+
     setSelectedConsumer: (state, { payload }) => {
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
@@ -248,6 +262,9 @@ export const {
   loadConsumerGroups,
   loadConsumerGroupsSuccess,
   loadConsumerGroupsFailure,
+  modifyLastDeliveredId,
+  modifyLastDeliveredIdSuccess,
+  modifyLastDeliveredIdFailure,
   loadConsumersSuccess,
   loadConsumersFailure,
   loadConsumerMessagesSuccess,
@@ -661,6 +678,42 @@ export function fetchConsumerMessages(
         dispatch(loadConsumerMessagesFailure(errorMessage))
         onFailed?.()
       }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function modifyLastDeliveredIdAction(
+  data: UpdateConsumerGroupDto,
+  onSuccess?: () => void,
+  onFailed?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(modifyLastDeliveredId())
+
+    try {
+      const state = stateInit()
+      const keyName = state.browser.keys.selectedKey.data?.name
+      const { status } = await apiService.patch<any>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        data
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(modifyLastDeliveredIdSuccess())
+        dispatch<any>(fetchConsumerGroups(false))
+        keyName && dispatch<any>(refreshKeyInfoAction(keyName))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(modifyLastDeliveredIdFailure(errorMessage))
+      onFailed?.()
     }
   }
 }

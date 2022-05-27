@@ -25,3 +25,12 @@ export const ScanNoResultsFoundText = (
     </EuiText>
   </>
 )
+
+export const lastDeliveredIDTooltipText = (
+  <>
+    Specify the ID of the last delivered entry in the stream from the new group's perspective.
+    <EuiSpacer size="xs" />
+    Otherwise, <b>$</b> represents the ID of the last entry in the stream,&nbsp;
+    <b>0</b> fetches the entire stream from the beginning.
+  </>
+)

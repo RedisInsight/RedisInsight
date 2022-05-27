@@ -14,9 +14,9 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { consumerGroupIdRegex } from 'uiSrc/utils'
+import { consumerGroupIdRegex, validateConsumerGroupId } from 'uiSrc/utils'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
-import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
+import { TableCellTextAlignment } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 
@@ -226,7 +226,7 @@ const GroupsViewWrapper = (props: Props) => {
                   id="id"
                   placeholder="ID*"
                   value={editValue}
-                  onChange={(e: any) => setEditValue(e.target.value)}
+                  onChange={(e: any) => setEditValue(validateConsumerGroupId(e.target.value))}
                   onBlur={() => setIsIdFocused(false)}
                   onFocus={() => setIsIdFocused(true)}
                   append={(

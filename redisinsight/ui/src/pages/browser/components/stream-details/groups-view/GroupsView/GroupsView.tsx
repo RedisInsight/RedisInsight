@@ -28,7 +28,6 @@ interface IStreamEntry extends StreamEntryDto {
 export interface Props {
   data: IStreamEntry[]
   columns: ITableColumn[]
-  onEditGroup: (groupId:string, editing: boolean) => void
   onClosePopover: () => void
   onSelectGroup: ({ rowData }: { rowData: any }) => void
   isFooterOpen?: boolean

@@ -75,6 +75,10 @@
   width: 54px;
 }
 
+.editLastId {
+  margin-right: 4px;
+}
+
 .actions {
   :global(.value-table-actions) {
     background-color: var(--euiColorEmptyShade) !important;

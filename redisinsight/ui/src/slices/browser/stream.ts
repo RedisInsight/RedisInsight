@@ -580,3 +580,39 @@ export function fetchConsumerMessages(
     }
   }
 }
+
+// Asynchronous thunk action
+export function modifyLastDeliveredIdAction(
+  data: any,
+  onSuccess?: () => void,
+  onFailed?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    //dispatch(addNewEntries())
+
+    try {
+      const state = stateInit()
+      const keyName = state.browser.keys.selectedKey.data?.name
+      const { status } = await apiService.patch<any>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        data
+      )
+
+      if (isStatusSuccessful(status)) {
+        //dispatch(addNewEntriesSuccess())
+        dispatch<any>(fetchConsumerGroups(false))
+        keyName && dispatch<any>(refreshKeyInfoAction(keyName))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      //dispatch(addNewEntriesFailure(errorMessage))
+      onFailed?.()
+    }
+  }
+}

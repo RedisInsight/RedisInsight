@@ -10,10 +10,11 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { TableCellTextAlignment } from 'uiSrc/constants'
+import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 
 import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import ConsumersView from './ConsumersView'
@@ -22,22 +23,25 @@ import styles from './ConsumersView/styles.module.scss'
 
 const suffix = '_stream_consumer'
 const actionsWidth = 50
-const minColumnWidth = 190
 
-interface Props {
+export interface Props {
   isFooterOpen: boolean
 }
 
 const ConsumersViewWrapper = (props: Props) => {
+  const { name: key = '' } = useSelector(connectedInstanceSelector)
   const {
+    lastRefreshTime,
     data: loadedConsumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
-  const { id: instanceId, name: key = '' } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
 
-  const [consumers, setConsumers] = useState<ConsumerDto[]>(loadedConsumers)
   const [deleting, setDeleting] = useState<string>('')
+
+  useEffect(() => {
+    dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
+  }, [])
 
   const closePopover = useCallback(() => {
     setDeleting('')
@@ -79,32 +83,35 @@ const ConsumersViewWrapper = (props: Props) => {
     {
       id: 'name',
       label: 'Consumer Name',
-      // minWidth: 180,
+      relativeWidth: 0.59,
       truncateText: true,
       isSortable: true,
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'pending',
       label: 'Pending',
       minWidth: 106,
-      absoluteWidth: 106,
+      relativeWidth: 0.12,
       truncateText: true,
       isSortable: true,
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'idle',
       label: 'Idle time, ms',
-      absoluteWidth: 190,
       minWidth: 190,
+      relativeWidth: 0.27,
       isSortable: true,
+      alignment: TableCellAlignment.Right,
       className: styles.cell,
-      headerClassName: styles.cellHeader,
+      headerClassName: 'streamItemHeader',
       render: (cellData: number) => numberWithSpaces(cellData),
     },
     {
       id: 'actions',
       label: '',
-      headerClassName: styles.actionsHeader,
+      headerClassName: 'streamItemHeader',
       textAlignment: TableCellTextAlignment.Left,
       absoluteWidth: actionsWidth,
       maxWidth: actionsWidth,
@@ -139,7 +146,7 @@ const ConsumersViewWrapper = (props: Props) => {
   return (
     <>
       <ConsumersView
-        data={consumers}
+        data={loadedConsumers}
         columns={columns}
         onClosePopover={closePopover}
         onSelectConsumer={handleSelectConsumer}

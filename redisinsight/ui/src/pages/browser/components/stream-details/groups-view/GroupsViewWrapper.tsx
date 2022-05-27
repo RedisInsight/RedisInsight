@@ -6,7 +6,6 @@ import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 
 import {
   streamGroupsSelector,
-  deleteStreamEntry,
   setSelectedGroup,
   fetchConsumers,
   setStreamViewType,
@@ -17,9 +16,10 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
-import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import GroupsView from './GroupsView'
 
 import styles from './GroupsView/styles.module.scss'
@@ -30,17 +30,17 @@ export interface IConsumerGroup extends ConsumerGroupDto {
 
 const suffix = '_stream_group'
 const actionsWidth = 80
-const minColumnWidth = 190
 
-interface Props {
+export interface Props {
   isFooterOpen: boolean
 }
 
 const GroupsViewWrapper = (props: Props) => {
   const {
+    lastRefreshTime,
     data: loadedGroups = [],
   } = useSelector(streamGroupsSelector)
-  const { id: instanceId, name: key = '' } = useSelector(connectedInstanceSelector)
+  const { name: key = '' } = useSelector(connectedInstanceSelector)
   const { name: selectedKey } = useSelector(selectedKeyDataSelector)
 
   const dispatch = useDispatch()
@@ -50,12 +50,16 @@ const GroupsViewWrapper = (props: Props) => {
   const [editValue, setEditValue] = useState<string>('')
 
   useEffect(() => {
-    const streamGroups: IConsumerGroup[] = loadedGroups?.map((item) => ({
+    dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
+  }, [lastRefreshTime])
+
+  useEffect(() => {
+    const streamItem: IConsumerGroup[] = loadedGroups?.map((item) => ({
       ...item,
       editing: false,
     }))
 
-    setGroups(streamGroups)
+    setGroups(streamItem)
   }, [loadedGroups, deleting])
 
   const closePopover = useCallback(() => {
@@ -66,7 +70,7 @@ const GroupsViewWrapper = (props: Props) => {
     setDeleting(`${groupName + suffix}`)
   }, [])
 
-  const handleDeleteGroup = (groupName = '') => {
+  const handleDeleteGroup = () => {
     // dispatch(deleteStreamEntry(key, [groupName]))
     closePopover()
   }
@@ -107,35 +111,33 @@ const GroupsViewWrapper = (props: Props) => {
     {
       id: 'name',
       label: 'Group Name',
-      // minWidth: 180,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      relativeWidth: 0.44,
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'consumers',
       label: 'Consumers',
       minWidth: 130,
-      absoluteWidth: 130,
+      relativeWidth: 0.15,
       truncateText: true,
       isSortable: true,
-      // render: (cellData: ConnectionType) =>
-      //   capitalize(cellData),
+      headerClassName: 'streamItemHeader',
     },
     {
       id: 'pending',
       label: 'Pending',
       minWidth: 106,
-      absoluteWidth: 106,
+      relativeWidth: 0.12,
       isSortable: true,
       className: styles.cell,
-      headerClassName: styles.cellHeader,
+      headerClassName: 'streamItemHeader',
       render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: ConsumerGroupDto) {
         const smallestTimestamp = smallestPendingId?.split('-')?.[0]
         const greatestTimestamp = greatestPendingId?.split('-')?.[0]
 
-        const tooltipContent = `${getFormatTime(smallestTimestamp)}-${getFormatTime(greatestTimestamp)}`
+        const tooltipContent = `${getFormatTime(smallestTimestamp)} – ${getFormatTime(greatestTimestamp)}`
         return (
           <EuiText size="s" style={{ maxWidth: '100%' }}>
             <div style={{ display: 'flex' }} className="truncateText" data-testid={`group-pending-${name}`}>
@@ -159,22 +161,22 @@ const GroupsViewWrapper = (props: Props) => {
     {
       id: 'lastDeliveredId',
       label: 'Last Delivered ID',
-      absoluteWidth: 190,
+      relativeWidth: 0.25,
       minWidth: 190,
       isSortable: true,
       className: styles.cell,
-      headerClassName: styles.cellHeader,
+      headerClassName: 'streamItemHeader',
       render: function Id(_name: string, { lastDeliveredId: id }: ConsumerGroupDto) {
         const timestamp = id?.split('-')?.[0]
         return (
           <div>
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamGroup" style={{ display: 'flex' }} data-testid={`stream-group-${id}-date`}>
+              <div className="truncateText streamItem" style={{ display: 'flex' }} data-testid={`stream-group-${id}-date`}>
                 {getFormatTime(timestamp)}
               </div>
             </EuiText>
             <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamGroupId" data-testid={`stream-group-${id}`}>
+              <div className="streamItemId" data-testid={`stream-group-${id}`}>
                 {id}
               </div>
             </EuiText>

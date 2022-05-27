@@ -1,30 +1,53 @@
+import { ConsumerDto, ConsumerGroupDto, PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AxiosError } from 'axios'
-import { cloneDeep } from 'lodash'
-import { DEFAULT_SLOWLOG_DURATION_UNIT, SortOrder } from 'uiSrc/constants'
+import { cloneDeep, omit } from 'lodash'
+import { SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import reducer, {
-  addNewEntries,
-  addNewEntriesFailure,
-  addNewEntriesSuccess,
-  cleanRangeFilter,
-  fetchStreamEntries,
   initialState,
+  setStreamInitialState,
   loadEntries,
-  loadEntriesFailure,
   loadEntriesSuccess,
+  loadEntriesFailure,
   loadMoreEntries,
+  loadMoreEntriesSuccess,
   loadMoreEntriesFailure,
-  loadMoreEntriesSuccess, refreshStreamEntries,
-  removeEntriesFromList,
+  addNewEntries,
+  addNewEntriesSuccess,
+  addNewEntriesFailure,
   removeStreamEntries,
-  removeStreamEntriesFailure,
   removeStreamEntriesSuccess,
-  streamRangeSelector,
-  streamSelector,
+  removeStreamEntriesFailure,
+  updateStart,
   updateEnd,
-  updateStart
+  cleanRangeFilter,
+  streamSelector,
+  streamRangeSelector,
+  fetchStreamEntries,
+  refreshStreamEntries,
+  setStreamViewType,
+  loadConsumerGroups,
+  loadConsumerGroupsSuccess,
+  loadConsumerGroupsFailure,
+  loadConsumersSuccess,
+  loadConsumersFailure,
+  loadConsumerMessagesSuccess,
+  loadConsumerMessagesFailure,
+  setSelectedGroup,
+  setSelectedConsumer,
+  streamDataSelector,
+  streamGroupsSelector,
+  streamGroupsDataSelector,
+  selectedGroupSelector,
+  selectedConsumerSelector,
+  fetchMoreStreamEntries,
+  addNewEntriesAction,
+  deleteStreamEntry,
+  fetchConsumerGroups,
+  fetchConsumers,
+  fetchConsumerMessages,
 } from 'uiSrc/slices/browser/stream'
-import { fetchSlowLogsAction, getSlowLogs, getSlowLogsError, getSlowLogsSuccess } from 'uiSrc/slices/slowlog/slowlog'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from '../../app/notifications'
 
@@ -32,7 +55,7 @@ jest.mock('uiSrc/services')
 
 let store: typeof mockedStore
 
-const mockedData = {
+const mockedEntryData = {
   keyName: 'stream_example',
   total: 1,
   lastGeneratedId: '1652942518810-0',
@@ -49,6 +72,44 @@ const mockedData = {
     fields: { 1: '2' }
   }]
 }
+
+const mockGroups: ConsumerGroupDto[] = [{
+  name: 'test',
+  consumers: 123,
+  pending: 321,
+  smallestPendingId: '123',
+  greatestPendingId: '123',
+  lastDeliveredId: '123'
+}, {
+  name: 'test2',
+  consumers: 13,
+  pending: 31,
+  smallestPendingId: '3',
+  greatestPendingId: '23',
+  lastDeliveredId: '12'
+}]
+
+const mockConsumers: ConsumerDto[] = [{
+  name: 'test',
+  idle: 123,
+  pending: 321,
+}, {
+  name: 'test2',
+  idle: 13,
+  pending: 31,
+}]
+
+const mockMessages: PendingEntryDto[] = [{
+  id: '123',
+  consumerName: 'test',
+  idle: 321,
+  delivered: 321,
+}, {
+  id: '1234',
+  consumerName: 'test2',
+  idle: 3213,
+  delivered: 1321,
+}]
 
 beforeEach(() => {
   cleanup()
@@ -67,6 +128,16 @@ describe('stream slice', () => {
 
       // Assert
       expect(result).toEqual(nextState)
+    })
+  })
+
+  describe('setStreamInitialState', () => {
+    it('should properly set initial state', () => {
+      const nextState = reducer(initialState, setStreamInitialState())
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(initialState)
     })
   })
 
@@ -98,12 +169,14 @@ describe('stream slice', () => {
         loading: false,
         error: '',
         data: {
-          ...mockedData,
+          ...mockedEntryData,
         },
       }
 
       // Act
-      const nextState = reducer(initialState, loadEntriesSuccess([mockedData, SortOrder.DESC]))
+      const tempState = reducer(initialState, loadEntriesSuccess([mockedEntryData, SortOrder.DESC]))
+
+      const nextState = omit({ ...tempState }, 'data.lastRefreshTime')
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -143,7 +216,7 @@ describe('stream slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, loadMoreEntries(true))
+      const nextState = reducer(initialState, loadMoreEntries())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -162,12 +235,13 @@ describe('stream slice', () => {
         loading: false,
         error: '',
         data: {
-          ...mockedData,
+          ...mockedEntryData,
         },
       }
 
       // Act
-      const nextState = reducer(initialState, loadMoreEntriesSuccess(mockedData))
+      const tempState = reducer(initialState, loadMoreEntriesSuccess(mockedEntryData))
+      const nextState = omit({ ...tempState }, 'data.lastRefreshTime')
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -388,17 +462,277 @@ describe('stream slice', () => {
     })
   })
 
+  describe('setStreamViewType', () => {
+    it('should properly set stream view type', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        viewType: StreamViewType.Messages,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setStreamViewType(StreamViewType.Messages))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadConsumerGroups', () => {
+    it('should properly set groups.loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        loading: false,
+        groups: {
+          ...initialState.groups,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadConsumerGroups())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadConsumerGroupsSuccess', () => {
+    it('should properly set groups.data = payload', () => {
+      // Arrange
+      const data: ConsumerGroupDto[] = [{
+        name: '123',
+        consumers: 123,
+        pending: 123,
+        smallestPendingId: '123',
+        greatestPendingId: '123',
+        lastDeliveredId: '123',
+      }]
+      const state = {
+        ...initialState,
+        loading: false,
+        groups: {
+          ...initialState.groups,
+          data,
+          lastRefreshTime: Date.now(),
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadConsumerGroupsSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadConsumersSuccess', () => {
+    it('should properly set groups.selectedGroup.data = payload', () => {
+      // Arrange
+      const data: ConsumerDto[] = [{
+        name: '123',
+        pending: 123,
+        idle: 123,
+      }]
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          selectedGroup: {
+            data,
+            lastRefreshTime: Date.now(),
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadConsumersSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadConsumerMessagesSuccess', () => {
+    it('should properly set groups.selectedGroup.selectedConsumer.data = payload', () => {
+      // Arrange
+      const data: PendingEntryDto[] = [{
+        id: '123',
+        consumerName: '123',
+        idle: 123,
+        delivered: 123,
+      }]
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          selectedGroup: {
+            selectedConsumer: {
+              data,
+              lastRefreshTime: Date.now(),
+            }
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadConsumerMessagesSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadConsumerMessagesFailure', () => {
+    it('should properly set error to groups and set viewType = Consumers payload', () => {
+      // Arrange
+      const error = 'Some error'
+      const state = {
+        ...initialState,
+        viewType: StreamViewType.Consumers,
+        groups: {
+          ...initialState.groups,
+          loading: false,
+          error,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadConsumerMessagesFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadConsumersFailure', () => {
+    it('should properly set error to groups and set viewType = Groups payload', () => {
+      // Arrange
+      const error = 'Some error'
+      const state = {
+        ...initialState,
+        viewType: StreamViewType.Groups,
+        groups: {
+          ...initialState.groups,
+          loading: false,
+          error,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadConsumersFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadConsumerGroupsFailure', () => {
+    it('should properly set error to groups payload', () => {
+      // Arrange
+      const error = 'Some error'
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          loading: false,
+          error,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadConsumerGroupsFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSelectedGroup', () => {
+    it('should properly set selectedGroups', () => {
+      // Arrange
+      const group = { name: 'group name' }
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          selectedGroup: group,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSelectedGroup(group))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSelectedConsumer', () => {
+    it('should properly set selectedConsumer', () => {
+      // Arrange
+      const consumer = { name: 'consumer name' }
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          selectedGroup: {
+            selectedConsumer: consumer
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSelectedConsumer(consumer))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchStreamEntries', () => {
       it('succeed to fetch data', async () => {
         // Arrange
-        const responsePayload = { data: mockedData, status: 200 }
+        const responsePayload = { data: mockedEntryData, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchStreamEntries(
-          mockedData.keyName,
+          mockedEntryData.keyName,
           500,
           SortOrder.DESC,
           true
@@ -407,7 +741,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadEntries(true),
-          loadEntriesSuccess([mockedData, SortOrder.DESC]),
+          loadEntriesSuccess([mockedEntryData, SortOrder.DESC]),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -426,7 +760,7 @@ describe('stream slice', () => {
 
         // Act
         await store.dispatch<any>(fetchStreamEntries(
-          mockedData.keyName,
+          mockedEntryData.keyName,
           500,
           SortOrder.DESC,
           true
@@ -446,20 +780,20 @@ describe('stream slice', () => {
     describe('refreshStreamEntries', () => {
       it('succeed to fetch data', async () => {
         // Arrange
-        const responsePayload = { data: mockedData, status: 200 }
+        const responsePayload = { data: mockedEntryData, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(refreshStreamEntries(
-          mockedData.keyName,
+          mockedEntryData.keyName,
           true
         ))
 
         // Assert
         const expectedActions = [
           loadEntries(true),
-          loadEntriesSuccess([mockedData, SortOrder.DESC]),
+          loadEntriesSuccess([mockedEntryData, SortOrder.DESC]),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -478,7 +812,7 @@ describe('stream slice', () => {
 
         // Act
         await store.dispatch<any>(refreshStreamEntries(
-          mockedData.keyName,
+          mockedEntryData.keyName,
           true
         ))
 
@@ -487,6 +821,138 @@ describe('stream slice', () => {
           loadEntries(true),
           addErrorNotification(responsePayload as AxiosError),
           loadEntriesFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchConsumerGroups', () => {
+      it('succeed to fetch data', async () => {
+        // Arrange
+        const responsePayload = { data: mockGroups, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchConsumerGroups())
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          loadConsumerGroupsSuccess(mockGroups),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchConsumerGroups())
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          addErrorNotification(responsePayload as AxiosError),
+          loadConsumerGroupsFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchConsumers', () => {
+      it('succeed to fetch data', async () => {
+        // Arrange
+        const responsePayload = { data: mockConsumers, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchConsumers())
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          loadConsumersSuccess(mockConsumers),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchConsumers())
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          addErrorNotification(responsePayload as AxiosError),
+          loadConsumersFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchConsumerMessages', () => {
+      it('succeed to fetch data', async () => {
+        // Arrange
+        const responsePayload = { data: mockMessages, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchConsumerMessages())
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          loadConsumerMessagesSuccess(mockMessages),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchConsumerMessages())
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          addErrorNotification(responsePayload as AxiosError),
+          loadConsumerMessagesFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

@@ -1,12 +1,22 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
-import GroupsView, { Props } from './ConsumersView'
+import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import ConsumersView, { Props } from './ConsumersView'
 
 const mockedProps = mock<Props>()
+const mockConsumers: ConsumerDto[] = [{
+  name: 'test',
+  idle: 123,
+  pending: 321,
+}, {
+  name: 'test2',
+  idle: 13,
+  pending: 31,
+}]
 
-describe('GroupsView', () => {
+describe('ConsumersView', () => {
   it('should render', () => {
-    expect(render(<GroupsView {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<ConsumersView {...instance(mockedProps)} data={mockConsumers} />)).toBeTruthy()
   })
 })

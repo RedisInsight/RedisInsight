@@ -26,7 +26,6 @@ export const initialState: StateStream = {
   sortOrder: SortOrder.DESC,
   range: { start: '', end: '' },
   viewType: StreamViewType.Data,
-  // viewType: StreamViewType.Groups,
   data: {
     total: 0,
     entries: [],
@@ -40,6 +39,7 @@ export const initialState: StateStream = {
       id: '',
       fields: {}
     },
+    lastRefreshTime: null,
   },
   groups: {
     loading: false,
@@ -55,6 +55,7 @@ const streamSlice = createSlice({
   name: 'stream',
   initialState,
   reducers: {
+    setStreamInitialState: () => initialState,
     // load stream entries
     loadEntries: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
@@ -71,6 +72,7 @@ const streamSlice = createSlice({
         ...data,
       }
       state.data.keyName = data?.keyName
+      state.data.lastRefreshTime = Date.now()
       state.sortOrder = sortOrder
       state.loading = false
     },
@@ -147,7 +149,7 @@ const streamSlice = createSlice({
     loadConsumerGroupsSuccess: (state, { payload }: PayloadAction<ConsumerGroupDto[]>) => {
       state.groups.loading = false
       state.groups.data = payload
-      state.groups.data.lastRefreshTime = Date.now()
+      state.groups.lastRefreshTime = Date.now()
     },
     loadConsumerGroupsFailure: (state, { payload }) => {
       state.groups.loading = false
@@ -174,17 +176,29 @@ const streamSlice = createSlice({
       }
     },
 
+    loadConsumersFailure: (state, { payload }: PayloadAction<string>) => {
+      state.groups.loading = false
+      state.groups.error = payload
+      state.viewType = StreamViewType.Groups
+    },
+
     loadConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
       state.groups.loading = false
 
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
         selectedConsumer: {
-          ...state.groups.selectedGroup.selectedConsumer,
+          ...state.groups.selectedGroup?.selectedConsumer,
           lastRefreshTime: Date.now(),
           data: payload,
         }
       }
+    },
+
+    loadConsumerMessagesFailure: (state, { payload }: PayloadAction<string>) => {
+      state.groups.loading = false
+      state.groups.error = payload
+      state.viewType = StreamViewType.Consumers
     },
 
     setConsumerGroupsSortOrder: (state, { payload }: PayloadAction<SortOrder>) => {
@@ -199,6 +213,7 @@ const streamSlice = createSlice({
 
 // Actions generated from the slice
 export const {
+  setStreamInitialState,
   loadEntries,
   loadEntriesSuccess,
   loadEntriesFailure,
@@ -219,7 +234,9 @@ export const {
   loadConsumerGroupsSuccess,
   loadConsumerGroupsFailure,
   loadConsumersSuccess,
+  loadConsumersFailure,
   loadConsumerMessagesSuccess,
+  loadConsumerMessagesFailure,
   setSelectedGroup,
   setSelectedConsumer,
 } = streamSlice.actions
@@ -478,7 +495,7 @@ export function fetchConsumerGroups(
           ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
         ),
         {
-          keyName: state.browser.keys.selectedKey.data?.name,
+          keyName: state.browser.keys?.selectedKey?.data?.name,
         },
       )
 
@@ -515,7 +532,7 @@ export function fetchConsumers(
           ApiEndpoints.STREAMS_CONSUMERS_GET
         ),
         {
-          keyName: state.browser.keys.selectedKey.data?.name,
+          keyName: state.browser.keys?.selectedKey?.data?.name,
           groupName: state.browser.stream.groups.selectedGroup?.name,
         },
       )
@@ -529,7 +546,7 @@ export function fetchConsumers(
         const error = _err as AxiosError
         const errorMessage = getApiErrorMessage(error)
         dispatch(addErrorNotification(error))
-        dispatch(loadConsumerGroupsFailure(errorMessage))
+        dispatch(loadConsumersFailure(errorMessage))
         onFailed?.()
       }
     }
@@ -553,7 +570,7 @@ export function fetchConsumerMessages(
           ApiEndpoints.STREAMS_CONSUMERS_MESSAGES_GET
         ),
         {
-          keyName: state.browser.keys.selectedKey.data?.name,
+          keyName: state.browser.keys?.selectedKey?.data?.name,
           groupName: state.browser.stream.groups.selectedGroup?.name,
           consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
         },
@@ -567,7 +584,7 @@ export function fetchConsumerMessages(
         const error = _err as AxiosError
         const errorMessage = getApiErrorMessage(error)
         dispatch(addErrorNotification(error))
-        dispatch(loadConsumerGroupsFailure(errorMessage))
+        dispatch(loadConsumerMessagesFailure(errorMessage))
         onFailed?.()
       }
     }

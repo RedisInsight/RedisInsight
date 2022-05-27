@@ -1,3 +1,5 @@
-import GroupsView from './ConsumersView'
+import ConsumersView from './ConsumersView'
 
-export default GroupsView
+export * from './ConsumersView'
+
+export default ConsumersView

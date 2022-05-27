@@ -359,7 +359,7 @@ describe('workbench results slice', () => {
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
 
-      it.only('call both sendWBCommandClusterAction and processWBCommandFailure when fetch is fail', async () => {
+      it('call both sendWBCommandClusterAction and processWBCommandFailure when fetch is fail', async () => {
         // Arrange
         const command = 'keys *'
         const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'

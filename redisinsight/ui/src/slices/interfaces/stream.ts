@@ -24,9 +24,13 @@ export interface StateStream {
   error: string
   sortOrder: SortOrder
   range: Range
-  data: GetStreamEntriesResponse
+  data: StateStreamData
   viewType: StreamViewType
   groups: StateConsumerGroups
+}
+
+export interface StateStreamData extends GetStreamEntriesResponse {
+  lastRefreshTime: Nullable<number>
 }
 
 export interface StateConsumerGroups {

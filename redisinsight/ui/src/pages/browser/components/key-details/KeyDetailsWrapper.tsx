@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   deleteKeyAction,
   editKey,
@@ -15,7 +15,14 @@ import { fetchString, resetStringValue } from 'uiSrc/slices/browser/string'
 import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
 import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
-import { refreshStreamEntries } from 'uiSrc/slices/browser/stream'
+import {
+  fetchConsumerGroups,
+  fetchConsumerMessages,
+  fetchConsumers,
+  refreshStreamEntries,
+  streamSelector,
+} from 'uiSrc/slices/browser/stream'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -38,6 +45,8 @@ const KeyDetailsWrapper = (props: Props) => {
     onDeleteKey,
     keyProp
   } = props
+
+  const { viewType: streamViewType } = useSelector(streamSelector)
 
   const dispatch = useDispatch()
 
@@ -90,7 +99,18 @@ const KeyDetailsWrapper = (props: Props) => {
         break
       }
       case KeyTypes.Stream: {
-        dispatch(refreshStreamEntries(key, resetData))
+        if (streamViewType === StreamViewType.Data) {
+          dispatch(refreshStreamEntries(key, resetData))
+        }
+        if (streamViewType === StreamViewType.Groups) {
+          dispatch<any>(fetchConsumerGroups(resetData))
+        }
+        if (streamViewType === StreamViewType.Consumers) {
+          dispatch<any>(fetchConsumers(resetData))
+        }
+        if (streamViewType === StreamViewType.Messages) {
+          dispatch<any>(fetchConsumerMessages(resetData))
+        }
         break
       }
       default:

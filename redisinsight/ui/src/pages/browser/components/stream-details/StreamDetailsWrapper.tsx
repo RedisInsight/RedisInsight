@@ -15,15 +15,15 @@ import {
   fetchStreamEntries
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
-
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getNextId, getTimestampFromId } from 'uiSrc/utils/streamUtils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/dto/stream.dto'
 import RangeFilter from 'uiSrc/components/range-filter'
+import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/dto/stream.dto'
+
 import ConsumersViewWrapper from './consumers-view'
 import GroupsViewWrapper from './groups-view'
 import MessagesViewWrapper from './messages-view'
@@ -40,11 +40,7 @@ const StreamDetailsWrapper = (props: Props) => {
   const { viewType, loading, sortOrder: entryColumnSortOrder } = useSelector(streamSelector)
   const { loading: loadingGroups } = useSelector(streamGroupsSelector)
   const { start, end } = useSelector(streamRangeSelector)
-  const {
-    firstEntry,
-    lastEntry,
-    entries,
-  } = useSelector(streamDataSelector)
+  const { firstEntry, lastEntry, entries, } = useSelector(streamDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { id: instanceId } = useSelector(connectedInstanceSelector)
 
@@ -80,7 +76,7 @@ const StreamDetailsWrapper = (props: Props) => {
   }, [lastEntryTimeStamp])
 
   const loadMoreItems = () => {
-    const lastLoadedEntryId = last(entries)?.id
+    const lastLoadedEntryId = last(entries)?.id ?? ''
     const lastLoadedEntryTimeStamp = getTimestampFromId(lastLoadedEntryId)
 
     const lastRangeEntryTimestamp = end ? parseInt(end, 10) : getTimestampFromId(lastEntry?.id)
@@ -189,6 +185,7 @@ const StreamDetailsWrapper = (props: Props) => {
       )}
       {shouldFilterRender ? (
         <RangeFilter
+          disabled={viewType !== StreamViewType.Data}
           max={lastEntryTimeStamp}
           min={firstEntryTimeStamp}
           start={startNumber}

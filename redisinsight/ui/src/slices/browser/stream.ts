@@ -13,6 +13,7 @@ import {
   AddStreamEntriesResponse,
   ConsumerDto,
   ConsumerGroupDto,
+  CreateConsumerGroupsDto,
   GetStreamEntriesResponse,
   PendingEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
@@ -105,6 +106,17 @@ const streamSlice = createSlice({
       state.loading = false
     },
     addNewEntriesFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
+    addNewGroup: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    addNewGroupSuccess: (state) => {
+      state.loading = false
+    },
+    addNewGroupFailure: (state, { payload }) => {
       state.loading = false
       state.error = payload
     },
@@ -223,6 +235,9 @@ export const {
   addNewEntries,
   addNewEntriesSuccess,
   addNewEntriesFailure,
+  addNewGroup,
+  addNewGroupSuccess,
+  addNewGroupFailure,
   removeStreamEntries,
   removeStreamEntriesSuccess,
   removeStreamEntriesFailure,
@@ -474,6 +489,41 @@ export function deleteStreamEntry(key: string, entries: string[], onSuccessActio
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(removeStreamEntriesFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function addNewGroupAction(
+  data: CreateConsumerGroupsDto,
+  onSuccess?: () => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(addNewGroup())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        data
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(addNewGroupSuccess())
+        dispatch<any>(fetchConsumerGroups(false))
+        dispatch<any>(refreshKeyInfoAction(data.keyName))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(addNewGroupFailure(errorMessage))
+      onFail?.()
     }
   }
 }

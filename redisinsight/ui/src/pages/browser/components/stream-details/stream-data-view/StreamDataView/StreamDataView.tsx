@@ -24,14 +24,9 @@ const minColumnWidth = 190
 const noItemsMessageInEmptyStream = 'There are no Entries in the Stream.'
 const noItemsMessageInRange = 'No results found.'
 
-interface IStreamEntry extends StreamEntryDto {
-  editing: boolean
-}
-
 export interface Props {
-  data: IStreamEntry[]
+  data: StreamEntryDto[]
   columns: ITableColumn[]
-  onEditEntry: (entryId:string, editing: boolean) => void
   onClosePopover: () => void
   loadMoreItems: () => void
   isFooterOpen?: boolean

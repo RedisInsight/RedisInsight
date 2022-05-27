@@ -17,10 +17,6 @@ import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 
-export interface IStreamEntry extends StreamEntryDto {
-  editing: boolean
-}
-
 const suffix = '_stream'
 const actionsWidth = 50
 const minColumnWidth = 190
@@ -43,7 +39,7 @@ const StreamDataViewWrapper = (props: Props) => {
 
   // for Manager columns
   // const [uniqFields, setUniqFields] = useState({})
-  const [entries, setEntries] = useState<IStreamEntry[]>([])
+  const [entries, setEntries] = useState<StreamEntryDto[]>([])
   const [columns, setColumns] = useState<ITableColumn[]>([])
   const [deleting, setDeleting] = useState<string>('')
 
@@ -53,21 +49,16 @@ const StreamDataViewWrapper = (props: Props) => {
 
   useEffect(() => {
     let fields = {}
-    const streamEntries: IStreamEntry[] = loadedEntries?.map((item) => {
+    loadedEntries?.forEach((item) => {
       fields = {
         ...fields,
         ...keyBy(Object.keys(item.fields))
-      }
-
-      return {
-        ...item,
-        editing: false,
       }
     })
 
     // for Manager columns
     // setUniqFields(fields)
-    setEntries(streamEntries)
+    setEntries(loadedEntries)
     setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
   }, [loadedEntries, deleting])
 
@@ -111,16 +102,6 @@ const StreamDataViewWrapper = (props: Props) => {
         keyType: KeyTypes.Stream
       }
     })
-  }
-
-  const handleEditEntry = (entryId = '', editing: boolean) => {
-    const newFieldsState = entries.map((item) => {
-      if (item.id === entryId) {
-        return { ...item, editing }
-      }
-      return item
-    })
-    setEntries(newFieldsState)
   }
 
   const getTemplateColumn = (label: string) : ITableColumn => ({
@@ -225,7 +206,6 @@ const StreamDataViewWrapper = (props: Props) => {
       <StreamDataView
         data={entries}
         columns={columns}
-        onEditEntry={handleEditEntry}
         onClosePopover={closePopover}
         {...props}
       />

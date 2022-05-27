@@ -324,6 +324,30 @@ export function fetchStreamEntries(
 }
 
 // Asynchronous thunk action
+export function refreshStream(
+  key: string,
+  resetData: boolean = false,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const streamViewType = state.browser.stream.viewType
+
+    if (streamViewType === StreamViewType.Data) {
+      dispatch(refreshStreamEntries(key, resetData))
+    }
+    if (streamViewType === StreamViewType.Groups) {
+      dispatch<any>(fetchConsumerGroups(resetData))
+    }
+    if (streamViewType === StreamViewType.Consumers) {
+      dispatch<any>(fetchConsumers(resetData))
+    }
+    if (streamViewType === StreamViewType.Messages) {
+      dispatch<any>(fetchConsumerMessages(resetData))
+    }
+  }
+}
+
+// Asynchronous thunk action
 export function refreshStreamEntries(
   key: string,
   resetData?: boolean,

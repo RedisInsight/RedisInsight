@@ -558,8 +558,6 @@ export function fetchKeyInfo(key: string, resetData?: boolean) {
             SortOrder.DESC,
             resetData
           ))
-        } else if (viewType === StreamViewType.Groups) {
-          // dispatch<any>(fetchConsumerGroups())
         }
       }
     } catch (_err) {

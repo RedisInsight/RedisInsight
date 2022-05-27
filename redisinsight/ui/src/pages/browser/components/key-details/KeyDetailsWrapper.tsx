@@ -16,13 +16,9 @@ import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
 import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
 import {
-  fetchConsumerGroups,
-  fetchConsumerMessages,
-  fetchConsumers,
-  refreshStreamEntries,
+  refreshStream,
   streamSelector,
 } from 'uiSrc/slices/browser/stream'
-import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -99,18 +95,7 @@ const KeyDetailsWrapper = (props: Props) => {
         break
       }
       case KeyTypes.Stream: {
-        if (streamViewType === StreamViewType.Data) {
-          dispatch(refreshStreamEntries(key, resetData))
-        }
-        if (streamViewType === StreamViewType.Groups) {
-          dispatch<any>(fetchConsumerGroups(resetData))
-        }
-        if (streamViewType === StreamViewType.Consumers) {
-          dispatch<any>(fetchConsumers(resetData))
-        }
-        if (streamViewType === StreamViewType.Messages) {
-          dispatch<any>(fetchConsumerMessages(resetData))
-        }
+        dispatch(refreshStream(key, resetData))
         break
       }
       default:

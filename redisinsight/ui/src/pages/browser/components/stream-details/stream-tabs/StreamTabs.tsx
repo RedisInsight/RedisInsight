@@ -51,6 +51,7 @@ const StreamTabs = () => {
         isSelected={viewType === id}
         onClick={() => onSelectedTabChanged(id)}
         key={id}
+        data-testid={`stream-tab-${id}`}
       >
         {label}
       </EuiTab>

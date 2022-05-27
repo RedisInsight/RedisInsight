@@ -180,9 +180,9 @@ const StreamDataViewWrapper = (props: Props) => {
             <PopoverDelete
               text={(
                 <>
-                  Entry {id} will be removed from
-                  <br />
-                  {key}
+                  will be removed from
+                  {' '}
+                  <b>{key}</b>
                 </>
               )}
               item={id}

@@ -13,6 +13,7 @@ import {
   AddStreamEntriesResponse,
   ConsumerDto,
   ConsumerGroupDto,
+  CreateConsumerGroupsDto,
   GetStreamEntriesResponse,
   PendingEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
@@ -113,7 +114,7 @@ const streamSlice = createSlice({
       state.error = ''
     },
     addNewGroupSuccess: (state) => {
-      state.loading = true
+      state.loading = false
     },
     addNewGroupFailure: (state, { payload }) => {
       state.loading = false
@@ -494,7 +495,7 @@ export function deleteStreamEntry(key: string, entries: string[], onSuccessActio
 
 // Asynchronous thunk action
 export function addNewGroupAction(
-  data: any,
+  data: CreateConsumerGroupsDto,
   onSuccess?: () => void,
   onFail?: () => void
 ) {
@@ -503,7 +504,7 @@ export function addNewGroupAction(
 
     try {
       const state = stateInit()
-      const { status } = await apiService.post<any>(
+      const { status } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAMS_CONSUMER_GROUPS

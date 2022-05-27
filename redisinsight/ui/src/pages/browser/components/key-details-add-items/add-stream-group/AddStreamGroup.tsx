@@ -13,9 +13,11 @@ import {
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewGroupAction } from 'uiSrc/slices/browser/stream'
 import { consumerGroupIdRegex, validateConsumerGroupId } from 'uiSrc/utils'
+import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 
@@ -50,7 +52,7 @@ const AddStreamGroup = (props: Props) => {
 
   const submitData = () => {
     if (isFormValid) {
-      const data: any = {
+      const data: CreateConsumerGroupsDto = {
         keyName,
         consumerGroups: [{
           name: groupName,

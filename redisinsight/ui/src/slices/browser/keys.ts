@@ -620,7 +620,6 @@ function addTypedKey(
           onSuccessAction()
         }
         dispatch(addKeySuccess())
-        dispatch<any>(fetchKeyInfo(data.keyName))
         dispatch(
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
         )

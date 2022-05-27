@@ -161,8 +161,8 @@ const SetDetails = (props: Props) => {
         return (
           <div className="value-table-actions">
             <PopoverDelete
-              header={createDeleteFieldHeader(key)}
-              text={createDeleteFieldMessage(cellData)}
+              header={createDeleteFieldHeader(cellData)}
+              text={createDeleteFieldMessage(key)}
               item={cellData}
               suffix={suffix}
               deleting={deleting}

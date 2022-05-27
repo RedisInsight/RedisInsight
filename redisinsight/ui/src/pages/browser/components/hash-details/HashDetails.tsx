@@ -259,8 +259,8 @@ const HashDetails = (props: Props) => {
               data-testid={`edit-hash-button-${field}`}
             />
             <PopoverDelete
-              header={createDeleteFieldHeader(key)}
-              text={createDeleteFieldMessage(field)}
+              header={createDeleteFieldHeader(field)}
+              text={createDeleteFieldMessage(key)}
               item={field}
               suffix={suffix}
               deleting={deleting}

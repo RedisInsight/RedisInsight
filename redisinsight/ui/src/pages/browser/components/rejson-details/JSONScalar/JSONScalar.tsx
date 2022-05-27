@@ -58,17 +58,17 @@ const JSONScalar = (props: Props) => {
       path = keyName.includes('"') ? `${parentPath}['${keyName}']` : `${parentPath}["${keyName}"]`
     }
 
-    let changedValue = value
+    let val = value
     if (value === null) {
-      changedValue = JSON.stringify(value)
+      val = JSON.stringify(value)
     }
     if (typeof value === 'string') {
-      changedValue = `"${value}"`
+      val = `"${value}"`
     }
 
-    setChangedValue(changedValue)
+    setChangedValue(val)
     setPath(path)
-  }, [parentPath, keyName])
+  }, [parentPath, keyName, value])
 
   const validateJSONValue = (value: JSONScalarValue) => {
     let error: string = ''
@@ -208,7 +208,7 @@ const JSONScalar = (props: Props) => {
                 updateLoading={false}
                 showPopover={(item) => setDeleting(`${item}scalar`)}
                 handleDeleteItem={() => handleSubmitRemoveKey(path, keyName.toString())}
-                />
+              />
             </div>
           </div>
         </div>

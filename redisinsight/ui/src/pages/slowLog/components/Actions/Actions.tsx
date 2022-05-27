@@ -27,7 +27,7 @@ export interface Props {
   isEmptySlowLog: boolean
   durationUnit: Nullable<DurationUnits>
   onClear: () => void
-  onRefresh: () => void
+  onRefresh: (maxLen?: number) => void
 }
 
 const HIDE_REFRESH_LABEL_WIDTH = 850
@@ -126,7 +126,7 @@ const Actions = (props: Props) => {
           displayText={width > HIDE_REFRESH_LABEL_WIDTH}
           lastRefreshTime={lastRefreshTime}
           containerClassName={styles.refreshContainer}
-          onRefresh={onRefresh}
+          onRefresh={() => onRefresh()}
           onEnableAutoRefresh={handleEnableAutoRefresh}
           onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
           testid="refresh-slowlog-btn"

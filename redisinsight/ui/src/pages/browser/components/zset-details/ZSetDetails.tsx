@@ -264,8 +264,8 @@ const ZSetDetails = (props: Props) => {
               data-testid={`zset-edit-button-${name}`}
             />
             <PopoverDelete
-              header={createDeleteFieldHeader(key)}
-              text={createDeleteFieldMessage(name)}
+              header={createDeleteFieldHeader(name)}
+              text={createDeleteFieldMessage(key)}
               item={name}
               suffix={suffix}
               deleting={deleting}

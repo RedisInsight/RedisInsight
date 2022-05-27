@@ -14,8 +14,10 @@ import { useParams } from 'react-router-dom'
 import { AutoSizer } from 'react-virtualized'
 
 import InstanceHeader from 'uiSrc/components/instance-header'
+import { DEFAULT_SLOWLOG_MAX_LEN } from 'uiSrc/constants'
 import { DATE_FORMAT } from 'uiSrc/pages/slowLog/components/SlowLogTable/SlowLogTable'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
+import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import {
@@ -25,7 +27,7 @@ import {
   slowLogConfigSelector,
   slowLogSelector
 } from 'uiSrc/slices/slowlog/slowlog'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendPageViewTelemetry, sendEventTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
@@ -35,21 +37,24 @@ import styles from './styles.module.scss'
 
 const HIDE_TIMESTAMP_FROM_WIDTH = 850
 const DEFAULT_COUNT_VALUE = '50'
+const MAX_COUNT_VALUE = '-1'
 const countOptions: EuiSuperSelectOption<string>[] = [
   { value: '10', inputDisplay: '10' },
   { value: '25', inputDisplay: '25' },
   { value: '50', inputDisplay: '50' },
   { value: '100', inputDisplay: '100' },
-  { value: '-1', inputDisplay: 'Max available' },
+  { value: MAX_COUNT_VALUE, inputDisplay: 'Max available' },
 ]
 
 const SlowLogPage = () => {
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const { connectionType, name: connectedInstanceName } = useSelector(connectedInstanceSelector)
   const { data, loading, durationUnit, config } = useSelector(slowLogSelector)
-  const { slowlogLogSlowerThan = 0 } = useSelector(slowLogConfigSelector)
+  const { slowlogLogSlowerThan = 0, slowlogMaxLen } = useSelector(slowLogConfigSelector)
+  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const [count, setCount] = useState<string>(DEFAULT_COUNT_VALUE)
+  const [isPageViewSent, setIsPageViewSent] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -63,9 +68,27 @@ const SlowLogPage = () => {
     getSlowLogs()
   }, [count])
 
-  const getSlowLogs = () => {
+  useEffect(() => {
+    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+      sendPageView(instanceId)
+    }
+  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+
+  const sendPageView = (instanceId: string) => {
+    sendPageViewTelemetry({
+      name: TelemetryPageView.SLOWLOG_PAGE,
+      databaseId: instanceId
+    })
+    setIsPageViewSent(true)
+  }
+
+  const getSlowLogs = (maxLen?: number) => {
+    const countToSend = count === MAX_COUNT_VALUE
+      ? (maxLen || slowlogMaxLen || DEFAULT_SLOWLOG_MAX_LEN)
+      : toNumber(count)
+
     dispatch(
-      fetchSlowLogsAction(instanceId, toNumber(count), (data: SlowLog[]) => {
+      fetchSlowLogsAction(instanceId, countToSend, (data: SlowLog[]) => {
         sendEventTelemetry({
           event: TelemetryEvent.SLOWLOG_LOADED,
           eventData: {
@@ -111,7 +134,7 @@ const SlowLogPage = () => {
               Execution time: {numberWithSpaces(convertNumberByUnits(slowlogLogSlowerThan, durationUnit))}
                 &nbsp;
               {durationUnit},
-              Max length: {numberWithSpaces(config.slowlogMaxLen)}
+              Max length: {numberWithSpaces(slowlogMaxLen)}
             </EuiText>
             )}
           </EuiFlexItem>

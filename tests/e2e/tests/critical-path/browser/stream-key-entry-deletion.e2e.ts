@@ -20,7 +20,7 @@ const values = [
     '27'
 ];
 
-fixture `Stream key`
+fixture `Stream key entry deletion`
     .meta({
         type: 'critical_path',
         rte: rte.standalone
@@ -55,7 +55,7 @@ test('Verify that the Stream information is refreshed and the deleted entry is r
         const fieldName = await browserPage.streamFields.nth(i).textContent;
         await t.expect(fieldName).notEql(fieldForDeletion, 'The deleted entry is removed from the Stream');
     }
-    await t.click(browserPage.fullScreenModeButton.nth(1));
+    await t.click(browserPage.fullScreenModeButton);
 });
 test('Verify that when user delete the last Entry from the Stream the Stream key is not deleted', async t => {
     keyName = chance.word({length: 20});

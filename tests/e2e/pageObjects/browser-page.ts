@@ -70,6 +70,7 @@ export class BrowserPage {
     addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
     removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
     confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
+    clearStreamEntryInputs = Selector('[data-testid=remove-item]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -110,7 +111,7 @@ export class BrowserPage {
     streamEntryId = Selector('[data-testid=entryId]');
     streamField = Selector('[data-testid=field-name]');
     streamValue = Selector('[data-testid=field-value]');
-    addStreamRow = Selector('[data-testid=add-new-row]');
+    addStreamRow = Selector('[data-testid=add-new-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
@@ -171,9 +172,10 @@ export class BrowserPage {
     streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
+    streamEntryIdValue = Selector('.streamEntryId[data-testid*=stream-entry]');
     streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
-    confirmationMessagePopover = Selector('div.euiPopover__panel');
+    confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
 
     /**
      * Common part for Add any new key
@@ -219,14 +221,14 @@ export class BrowserPage {
      * @param value The key value
      * @param TTL The Time to live value of the key (optional parameter)
      */
-    async addJsonKey(keyName: string, value = ' ', TTL?: string): Promise<void> {
+    async addJsonKey(keyName: string, value: string, TTL?: string): Promise<void> {
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.jsonOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName);
         await t.click(this.jsonKeyValueInput);
-        await t.typeText(this.jsonKeyValueInput, value);
+        await t.typeText(this.jsonKeyValueInput, value, { paste: true });
         if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);

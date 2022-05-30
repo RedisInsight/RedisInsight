@@ -48,6 +48,8 @@ import reducer, {
   deleteConsumers,
   deleteConsumersSuccess,
   deleteConsumersFailure,
+  fetchMoreConsumerMessages,
+  loadMoreConsumerMessagesSuccess,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
@@ -726,6 +728,42 @@ describe('stream slice', () => {
     })
   })
 
+  describe('loadMoreConsumerMessagesSuccess', () => {
+    it('should properly concat more messages', () => {
+      // Arrange
+      const data: PendingEntryDto[] = [{
+        id: '123',
+        consumerName: '123',
+        idle: 123,
+        delivered: 123,
+      }]
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          selectedGroup: {
+            selectedConsumer: {
+              lastRefreshTime: Date.now(),
+              data: [
+                ...initialState.groups.selectedGroup?.selectedConsumer?.data ?? [],
+                ...data
+              ],
+            }
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadMoreConsumerMessagesSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchStreamEntries', () => {
       it('succeed to fetch data', async () => {
@@ -1081,6 +1119,60 @@ describe('stream slice', () => {
           deleteConsumers(),
           addErrorNotification(responsePayload as AxiosError),
           deleteConsumersFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchMoreConsumerMessages', () => {
+      it('succeed to fetch more data', async () => {
+        // Arrange
+        const pendingMessages = [{
+          idle: 123,
+          id: '123',
+          consumerName: 'name',
+          delivered: 1
+        }]
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        const responsePayloadPost = { data: pendingMessages, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
+
+        // Act
+        await store.dispatch<any>(fetchMoreConsumerMessages(500))
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          loadMoreConsumerMessagesSuccess(pendingMessages)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch more data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchMoreConsumerMessages(500))
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          addErrorNotification(responsePayload as AxiosError),
+          loadConsumerMessagesFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

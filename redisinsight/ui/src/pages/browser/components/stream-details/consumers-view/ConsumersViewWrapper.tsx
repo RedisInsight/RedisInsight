@@ -87,6 +87,7 @@ const ConsumersViewWrapper = (props: Props) => {
       truncateText: true,
       isSortable: true,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'pending',
@@ -96,16 +97,18 @@ const ConsumersViewWrapper = (props: Props) => {
       truncateText: true,
       isSortable: true,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'idle',
-      label: 'Idle time, ms',
+      label: 'Idle Time, ms',
       minWidth: 190,
       relativeWidth: 0.27,
       isSortable: true,
       alignment: TableCellAlignment.Right,
       className: styles.cell,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
       render: (cellData: number) => numberWithSpaces(cellData),
     },
     {

@@ -128,25 +128,29 @@ const GroupsViewWrapper = (props: Props) => {
       truncateText: true,
       isSortable: true,
       relativeWidth: 0.44,
+      minWidth: 90,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'consumers',
       label: 'Consumers',
-      minWidth: 130,
+      minWidth: 120,
       relativeWidth: 0.15,
       truncateText: true,
       isSortable: true,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'pending',
       label: 'Pending',
-      minWidth: 106,
+      minWidth: 95,
       relativeWidth: 0.12,
       isSortable: true,
       className: styles.cell,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
       render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: ConsumerGroupDto) {
         const smallestTimestamp = smallestPendingId?.split('-')?.[0]
         const greatestTimestamp = greatestPendingId?.split('-')?.[0]
@@ -180,6 +184,7 @@ const GroupsViewWrapper = (props: Props) => {
       isSortable: true,
       className: styles.cell,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
       render: function Id(_name: string, { lastDeliveredId: id }: ConsumerGroupDto) {
         const timestamp = id?.split('-')?.[0]
         return (

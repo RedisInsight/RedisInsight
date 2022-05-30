@@ -17,6 +17,8 @@ import {
   GetStreamEntriesResponse,
   PendingEntryDto,
   UpdateConsumerGroupDto,
+  ClaimPendingEntriesResponse,
+  AckPendingEntriesResponse,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateStream, StreamViewType } from '../interfaces/stream'
@@ -237,34 +239,23 @@ const streamSlice = createSlice({
 
     claimConsumerMessages: (state) => {
       state.groups.loading = true
-      state.groups.error = ''
     },
-    claimConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
+    claimConsumerMessagesSuccess: (state) => {
       state.groups.loading = false
-
-      // state.groups.selectedGroup = {
-      //   ...state.groups.selectedGroup,
-      //   selectedConsumer: {
-      //     ...state.groups.selectedGroup.selectedConsumer,
-      //     lastRefreshTime: Date.now(),
-      //     data: payload,
-      //   }
-      // }
     },
     claimConsumerMessagesFailure: (state, { payload }) => {
-      state.loading = false
-      state.error = payload
+      state.groups.loading
+      state.groups.error = payload
     },
     ackPendingEntries: (state) => {
-      state.loading = true
-      state.error = ''
+      state.groups.loading = true
     },
     ackPendingEntriesSuccess: (state) => {
-      state.loading = false
+      state.groups.loading = false
     },
     ackPendingEntriesFailure: (state, { payload }) => {
-      state.loading = false
-      state.error = payload
+      state.groups.loading = false
+      state.groups.error = payload
     },
   },
 })
@@ -564,7 +555,8 @@ export function deleteStreamEntry(key: string, entries: string[], onSuccessActio
           )
         ))
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(removeStreamEntriesFailure(errorMessage))
@@ -668,7 +660,7 @@ export function fetchConsumers(
 
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumersSuccess(data))
-        onSuccess?.(data)
+        onSuccess?.()
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {
@@ -758,8 +750,8 @@ export function modifyLastDeliveredIdAction(
 
 // Asynchronous thunk action
 export function claimPendingMessages(
-  payload: boolean,
-  onSuccess?: (data: PendingEntryDto[]) => void,
+  payload: any,
+  onSuccess?: (data: ClaimPendingEntriesResponse) => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -767,7 +759,7 @@ export function claimPendingMessages(
 
     try {
       const state = stateInit()
-      const { data, status } = await apiService.post<PendingEntryDto[]>(
+      const { data, status } = await apiService.post<ClaimPendingEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAM_CLAIM_PENDING_MESSAGES
@@ -780,8 +772,11 @@ export function claimPendingMessages(
         },
       )
       if (isStatusSuccessful(status)) {
-        dispatch(claimConsumerMessagesSuccess(data))
+        dispatch(claimConsumerMessagesSuccess())
         dispatch<any>(fetchConsumerMessages())
+        dispatch(addMessageNotification(
+          successMessages.MESSAGE_ACTION(data.affected[0], 'claimed')
+        ))
         onSuccess?.(data)
       }
     } catch (_err) {
@@ -808,7 +803,7 @@ export function ackPendingEntriesAction(
     dispatch(removeStreamEntries())
     try {
       const state = stateInit()
-      const { status } = await apiService.post(
+      const { status } = await apiService.post<AckPendingEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAM_ACK_PENDING_ENTRIES
@@ -822,6 +817,9 @@ export function ackPendingEntriesAction(
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(ackPendingEntriesSuccess())
+        dispatch(addMessageNotification(
+          successMessages.MESSAGE_ACTION(entries[0], 'acknowledged')
+        ))
         dispatch<any>(fetchConsumerMessages())
       }
     } catch (_err) {

@@ -2,23 +2,21 @@ import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { selectedConsumerSelector, selectedGroupSelector, ackPendingEntriesAction } from 'uiSrc/slices/browser/stream'
-import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { selectedConsumerSelector, selectedGroupSelector, ackPendingEntriesAction, claimPendingMessages } from 'uiSrc/slices/browser/stream'
+import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
-import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
-import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { PendingEntryDto, ClaimPendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import MessagesView from './MessagesView'
 import MessageClaimPopover from './MessageClaimPopover'
-import MessageAchPopover from './MessageAchPopover'
+import MessageAckPopover from './MessageAckPopover'
 
 import styles from './MessagesView/styles.module.scss'
 
 const actionsWidth = 150
 const minColumnWidth = 190
-const suffix = '_stream_messages'
 
 export interface Props {
   isFooterOpen: boolean
@@ -29,11 +27,11 @@ const MessagesViewWrapper = (props: Props) => {
     lastRefreshTime,
     data: loadedMessages = []
   } = useSelector(selectedConsumerSelector) ?? {}
-  const { name: group = '' } = useSelector(selectedGroupSelector)
+  const { name: group } = useSelector(selectedGroupSelector) ?? { name: '' }
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
-  const [claiming, setClaiming] = useState<string>('')
-  const [acknowledgeId, setAcknoledgeId] = useState<string>('')
+  const [claimingId, setClaimingId] = useState<string>('')
+  const [acknowledgeId, setAcknowledgeId] = useState<string>('')
 
   const dispatch = useDispatch()
 
@@ -42,23 +40,27 @@ const MessagesViewWrapper = (props: Props) => {
   }, [])
 
   const closePopover = useCallback(() => {
-    setClaiming('')
+    setClaimingId('')
   }, [])
 
   const showPopover = useCallback((consumer = '') => {
-    setClaiming(`${consumer + suffix}`)
+    setClaimingId(consumer)
   }, [])
 
   const showAchPopover = useCallback((id) => {
-    setAcknoledgeId(id)
+    setAcknowledgeId(id)
   }, [])
 
   const closeAckPopover = useCallback(() => {
-    setAcknoledgeId('')
+    setAcknowledgeId('')
   }, [])
 
   const handleAchPendingMessage = (entry: string) => {
-    dispatch(ackPendingEntriesAction(key, group, [entry], closeAckPopover()))
+    dispatch(ackPendingEntriesAction(key, group, [entry], closeAckPopover))
+  }
+
+  const handleClaimingId = (data: ClaimPendingEntryDto, successAction: () => void) => {
+    dispatch(claimPendingMessages(data, successAction))
   }
 
   const columns: ITableColumn[] = [
@@ -117,9 +119,8 @@ const MessagesViewWrapper = (props: Props) => {
       render: function Actions(_act: any, { id }: PendingEntryDto) {
         return (
           <div>
-            <MessageAchPopover
+            <MessageAckPopover
               id={id}
-              acknowledgeId={acknowledgeId}
               isOpen={acknowledgeId === id}
               closePopover={() => closeAckPopover()}
               showPopover={() => showAchPopover(id)}
@@ -127,9 +128,10 @@ const MessagesViewWrapper = (props: Props) => {
             />
             <MessageClaimPopover
               id={id}
-              isOpen={id + suffix === claiming}
+              isOpen={claimingId === id}
               closePopover={() => closePopover()}
               showPopover={() => showPopover(id)}
+              claimMessage={handleClaimingId}
             />
           </div>
         )

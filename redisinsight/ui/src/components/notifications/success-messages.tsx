@@ -119,4 +119,23 @@ export default {
     ),
     group: 'upgrade'
   }),
+  // only one message is being processed at the moment
+  MESSAGE_ACTION: (message: string, actionName: string) => ({
+    title: (
+      <>
+        Message has been
+        {' '}
+        {actionName}
+      </>
+    ),
+    message: (
+      <>data
+        <b>{message}</b>
+        {' '}
+        has been successfully
+        {' '}
+        {actionName}.
+      </>
+    ),
+  })
 }

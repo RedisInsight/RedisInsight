@@ -16,7 +16,7 @@
   }
 }
 
-.footerBtn {
+.footer .footerBtn {
   height: 36px !important;
 
   &:last-child {
@@ -24,7 +24,9 @@
   }
 }
 
-
+.claimBtn {
+  margin-left: 25px;
+}
 
 .option {
   display: flex;

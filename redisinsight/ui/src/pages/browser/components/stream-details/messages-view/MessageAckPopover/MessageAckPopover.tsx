@@ -3,7 +3,7 @@ import { EuiText, EuiPopover, EuiButton } from '@elastic/eui'
 
 import styles from './styles.module.scss'
 
-interface Props {
+export interface Props {
   id: string
   isOpen: boolean
   closePopover: () => void
@@ -24,9 +24,9 @@ const AckPopover = ({ id, isOpen, closePopover, showPopover, acknowledge }:Props
       <EuiButton
         size="s"
         color="secondary"
-        // aria-label={KEY_TYPES_ACTIONS[keyType].addItems?.name}
+        aria-label="Acknowledge pending message"
         onClick={showPopover}
-        data-testid="add-key-valuexport default e-items-btn"
+        data-testid="acknowledge-btn"
       >
         ACK
       </EuiButton>
@@ -48,7 +48,7 @@ const AckPopover = ({ id, isOpen, closePopover, showPopover, acknowledge }:Props
           color="warning"
           iconType="trash"
           onClick={() => acknowledge(id)}
-          data-testid="remove"
+          data-testid="acknowledge"
         >
           Acknowledge
         </EuiButton>

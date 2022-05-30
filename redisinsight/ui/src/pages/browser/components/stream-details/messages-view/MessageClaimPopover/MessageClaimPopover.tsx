@@ -1,7 +1,8 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import {
   EuiSuperSelect,
+  EuiSuperSelectOption,
   EuiPopover,
   EuiButton,
   EuiForm,
@@ -15,11 +16,16 @@ import {
 import { useFormik } from 'formik'
 import { orderBy } from 'lodash'
 
-import { selectedGroupSelector, claimPendingMessages } from 'uiSrc/slices/browser/stream'
+import { selectedGroupSelector } from 'uiSrc/slices/browser/stream'
+import { validateNumber } from 'uiSrc/utils'
+import {
+  ClaimPendingEntryDto,
+  ConsumerDto
+} from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 
-const getConsumersOptions = (consumers: any[]) => (
+const getConsumersOptions = (consumers: ConsumerDto[]) => (
   consumers.map((consumer) => ({
     value: consumer.name,
     inputDisplay: (
@@ -33,7 +39,7 @@ const getConsumersOptions = (consumers: any[]) => (
   }))
 )
 
-const getDefaultConsumer = (consumers) => {
+const getDefaultConsumer = (consumers: ConsumerDto[]): ConsumerDto => {
   const sortedConsumers = orderBy(consumers, ['pending', 'name'], ['asc', 'asc'])
   return sortedConsumers[0]
 }
@@ -43,6 +49,7 @@ export interface Props {
   isOpen: boolean
   closePopover: () => void
   showPopover: () => void
+  claimMessage: (data: ClaimPendingEntryDto, successAction: () => void) => void
 }
 
 const MessageClaimPopover = (props: Props) => {
@@ -51,32 +58,33 @@ const MessageClaimPopover = (props: Props) => {
     isOpen,
     closePopover,
     showPopover,
+    claimMessage
   } = props
 
   const {
     data: consumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
 
-  const [initialValues, setInitialValues] = useState({
+  const [initialValues] = useState({
     consumerName: getDefaultConsumer(consumers)?.name,
     minIdleTime: 0,
-    idle: 0,
-    time: 0,
-    retryCount: 0,
-    force: false,
   })
-  const [isOptionalShow, setIsOptionalShow] = useState<boolean>(false)
-  const [consumerOptions, setConsumerOptions] = useState([])
 
-  const dispatch = useDispatch()
+  const [isOptionalShow, setIsOptionalShow] = useState<boolean>(false)
+  const [consumerOptions, setConsumerOptions] = useState<EuiSuperSelectOption<string>[]>([])
+
+  const handleClosePopover = () => {
+    closePopover()
+    setIsOptionalShow(false)
+    formik.resetForm()
+  }
 
   const formik = useFormik({
     initialValues,
-    // validate,
     enableReinitialize: true,
     validateOnBlur: false,
     onSubmit: (values) => {
-      dispatch(claimPendingMessages({ ...values, entries: [id] }, closePopover()))
+      claimMessage({ ...values, entries: [id] }, handleClosePopover)
     },
   })
 
@@ -91,7 +99,7 @@ const MessageClaimPopover = (props: Props) => {
       anchorPosition="leftCenter"
       ownFocus
       isOpen={isOpen}
-      closePopover={() => closePopover()}
+      closePopover={handleClosePopover}
       panelPaddingSize="m"
       anchorClassName="claimPendingMessage"
       button={(
@@ -101,6 +109,7 @@ const MessageClaimPopover = (props: Props) => {
           aria-label="Claim pending message"
           onClick={showPopover}
           data-testid="claim-pending-message"
+          className={styles.claimBtn}
         >
           CLAIM
         </EuiButton>
@@ -135,8 +144,7 @@ const MessageClaimPopover = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    e.target.value.trim()
-                    // validatePortNumber(e.target.value.trim())
+                    validateNumber(e.target.value.trim())
                   )
                 }}
                 type="text"
@@ -160,7 +168,7 @@ const MessageClaimPopover = (props: Props) => {
             <EuiButton
               color="secondary"
               className={styles.footerBtn}
-              onClick={closePopover}
+              onClick={handleClosePopover}
             >
               Cancel
             </EuiButton>
@@ -171,7 +179,6 @@ const MessageClaimPopover = (props: Props) => {
               size="m"
               type="submit"
               onClick={() => formik.handleSubmit()}
-              // isLoading={loading}
               data-testid="btn-submit"
             >
               Claim

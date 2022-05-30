@@ -5,7 +5,16 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsDefined,
-  IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested, isString, IsOptional, NotEquals, ValidateIf, IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  Min,
+  ValidateNested,
+  isString,
+  NotEquals,
+  ValidateIf,
+  IsBoolean,
 } from 'class-validator';
 import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
@@ -278,7 +287,8 @@ export class DeleteConsumerGroupsDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
   consumerGroups: string[];
 }
 
@@ -335,7 +345,8 @@ export class DeleteConsumersDto extends GetConsumersDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
   consumerNames: string[];
 }
 
@@ -421,7 +432,8 @@ export class AckPendingEntriesDto extends GetConsumersDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
   entries: string[];
 }
 
@@ -471,7 +483,8 @@ export class ClaimPendingEntryDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
   entries: string[];
 
   @ApiPropertyOptional({

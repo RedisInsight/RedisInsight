@@ -15,7 +15,7 @@ import {
   ConsumerGroupDto,
   CreateConsumerGroupsDto,
   DeleteConsumerGroupsDto, DeleteConsumerGroupsResponse,
-  UpdateConsumerGroupDto
+  UpdateConsumerGroupDto,
 } from 'src/modules/browser/dto/stream.dto';
 
 @Injectable()
@@ -195,6 +195,10 @@ export class ConsumerGroupService {
 
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
+      }
+
+      if (error?.message.includes(RedisErrorCodes.NoGroup)) {
+        throw new NotFoundException(ERROR_MESSAGES.CONSUMER_GROUP_NOT_FOUND);
       }
 
       throw catchAclError(error);

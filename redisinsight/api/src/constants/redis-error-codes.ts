@@ -11,6 +11,7 @@ export enum RedisErrorCodes {
   Timeout = 'ETIMEDOUT',
   CommandSyntaxError = 'syntax error',
   BusyGroup = 'BUSYGROUP',
+  NoGroup = 'NOGROUP',
   UnknownCommand = 'unknown command',
 }
 

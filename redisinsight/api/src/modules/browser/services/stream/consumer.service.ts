@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
-import {catchAclError, catchTransactionError, convertStringsArrayToObject} from 'src/utils';
+import { catchAclError, catchTransactionError, convertStringsArrayToObject } from 'src/utils';
 import {
   BrowserToolCommands,
   BrowserToolKeysCommands, BrowserToolStreamCommands,
@@ -52,6 +52,10 @@ export class ConsumerService {
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.NoGroup)) {
+        throw new NotFoundException(ERROR_MESSAGES.CONSUMER_GROUP_NOT_FOUND);
       }
 
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -108,6 +112,10 @@ export class ConsumerService {
         throw error;
       }
 
+      if (error?.message.includes(RedisErrorCodes.NoGroup)) {
+        throw new NotFoundException(ERROR_MESSAGES.CONSUMER_GROUP_NOT_FOUND);
+      }
+
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -146,6 +154,10 @@ export class ConsumerService {
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.NoGroup)) {
+        throw new NotFoundException(ERROR_MESSAGES.CONSUMER_GROUP_NOT_FOUND);
       }
 
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -257,6 +269,10 @@ export class ConsumerService {
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
+      }
+
+      if (error?.message.includes(RedisErrorCodes.NoGroup)) {
+        throw new NotFoundException(ERROR_MESSAGES.CONSUMER_GROUP_NOT_FOUND);
       }
 
       if (error?.message.includes(RedisErrorCodes.WrongType)) {

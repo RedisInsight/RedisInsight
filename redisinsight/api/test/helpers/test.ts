@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as chai from 'chai';
 import * as Joi from 'joi';
 import * as diff from 'object-diff';
-import { cloneDeep, isMatch, isObject, set } from 'lodash';
+import { cloneDeep, isMatch, isObject, set, isArray } from 'lodash';
 import { generateInvalidDataArray } from './test/dataGenerator';
 
 export { _, fs }
@@ -84,6 +84,10 @@ export const validateApiCall = async function ({
  */
 export const checkResponseBody = (body, expected) => {
   try {
+    if (isArray(expected)) {
+      return expect(body).to.deep.eq(expected);
+    }
+
     if (isObject(expected)) {
       return expect(isMatch(body, expected)).to.eql(true);
     }

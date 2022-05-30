@@ -235,6 +235,27 @@ export const initDataHelper = (rte) => {
       await truncate();
     }
 
+    await client.xadd(constants.TEST_STREAM_KEY_1, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_1,
+      constants.TEST_STREAM_ID_1
+    ])
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_2,
+      constants.TEST_STREAM_ID_1
+    ])
+    await client.xadd(constants.TEST_STREAM_KEY_2, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+  };
+
+  const generateStreamsWithoutStrictMode = async (clean: boolean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
     await client.xadd(constants.TEST_STREAM_KEY_1, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
     await sendCommand('xgroup', [
       'create',
@@ -361,7 +382,9 @@ export const initDataHelper = (rte) => {
     generateNKeys,
     generateNReJSONs,
     generateNTimeSeries,
+    generateStrings,
     generateStreams,
+    generateStreamsWithoutStrictMode,
     generateNStreams,
     generateNGraphs,
     getClientNodes,

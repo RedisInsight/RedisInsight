@@ -185,6 +185,7 @@ export const initRTE = async () => {
     cloud: !!constants.TEST_CLOUD_RTE,
     sharedData: constants.TEST_RTE_SHARED_DATA,
     bigData: constants.TEST_RTE_BIG_DATA,
+    crdt: constants.TEST_RTE_CRDT,
     nodes: [],
   };
 

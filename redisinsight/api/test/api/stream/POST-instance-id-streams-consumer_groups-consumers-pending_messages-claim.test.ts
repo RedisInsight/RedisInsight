@@ -67,7 +67,12 @@ const mainCheckFn = async (testCase) => {
 };
 
 describe('POST /instance/:instanceId/streams/consumer-groups/consumers/pending-messages/claim', () => {
-  beforeEach(async () => await rte.data.generateKeys(true));
+  requirements('!rte.crdt');
+
+  beforeEach(async () => {
+    await rte.data.generateStrings(true);
+    await rte.data.generateStreamsWithoutStrictMode();
+  });
 
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(

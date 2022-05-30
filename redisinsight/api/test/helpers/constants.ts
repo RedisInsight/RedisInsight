@@ -55,6 +55,7 @@ export const constants = {
   TEST_RTE_ON_PREMISE: process.env.TEST_RTE_ON_PREMISE ? process.env.TEST_RTE_ON_PREMISE === 'true' : true,
   TEST_RTE_SHARED_DATA: process.env.TEST_RTE_SHARED_DATA ? process.env.TEST_RTE_SHARED_DATA === 'true' : false,
   TEST_RTE_BIG_DATA: process.env.TEST_RTE_BIG_DATA ? process.env.TEST_RTE_BIG_DATA === 'true' : false,
+  TEST_RTE_CRDT: process.env.TEST_RTE_CRDT ? process.env.TEST_RTE_CRDT === 'true' : false,
   TEST_RTE_TYPE: process.env.TEST_RTE_DISCOVERY_TYPE || 'STANDALONE',
   TEST_RTE_HOST: process.env.TEST_RTE_DISCOVERY_HOST,
   TEST_RTE_PORT: process.env.TEST_RTE_DISCOVERY_PORT,

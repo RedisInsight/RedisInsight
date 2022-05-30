@@ -63,6 +63,7 @@ const PopoverDelete = (props: Props) => {
           data-testid={testid ? `${testid}-icon` : 'remove-icon'}
         />
       )}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className={styles.popover}>
         <EuiText size="m">

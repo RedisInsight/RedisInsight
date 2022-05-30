@@ -6,13 +6,11 @@ import { BrowserToolService } from 'src/modules/browser/services/browser-tool/br
 import {
   BrowserToolKeysCommands, BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { AddStreamEntriesDto, StreamEntryDto } from 'src/modules/browser/dto/stream.dto';
 import {
-  BadRequestException, ConflictException, InternalServerErrorException, NotFoundException,
+  BadRequestException, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
-import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
@@ -20,17 +18,6 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
 };
 const mockKeyDto = {
   keyName: 'keyName',
-};
-
-const mockStreamEntry: StreamEntryDto = {
-  id: '*',
-  fields: {
-    field1: 'value1',
-  },
-};
-const mockAddStreamEntriesDto: AddStreamEntriesDto = {
-  keyName: 'testList',
-  entries: [mockStreamEntry],
 };
 
 const mockConsumerGroup = {

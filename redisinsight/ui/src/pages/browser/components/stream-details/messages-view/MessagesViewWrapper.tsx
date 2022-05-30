@@ -2,7 +2,8 @@ import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
+import { selectedConsumerSelector, selectedGroupSelector, ackPendingEntriesAction } from 'uiSrc/slices/browser/stream'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
@@ -10,10 +11,12 @@ import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import MessagesView from './MessagesView'
+import MessageClaimPopover from './MessageClaimPopover'
+import MessageAchPopover from './MessageAchPopover'
 
 import styles from './MessagesView/styles.module.scss'
 
-const actionsWidth = 50
+const actionsWidth = 150
 const minColumnWidth = 190
 const suffix = '_stream_messages'
 
@@ -26,8 +29,11 @@ const MessagesViewWrapper = (props: Props) => {
     lastRefreshTime,
     data: loadedMessages = []
   } = useSelector(selectedConsumerSelector) ?? {}
+  const { name: group = '' } = useSelector(selectedGroupSelector)
+  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
   const [claiming, setClaiming] = useState<string>('')
+  const [acknowledgeId, setAcknoledgeId] = useState<string>('')
 
   const dispatch = useDispatch()
 
@@ -42,6 +48,18 @@ const MessagesViewWrapper = (props: Props) => {
   const showPopover = useCallback((consumer = '') => {
     setClaiming(`${consumer + suffix}`)
   }, [])
+
+  const showAchPopover = useCallback((id) => {
+    setAcknoledgeId(id)
+  }, [])
+
+  const closeAckPopover = useCallback(() => {
+    setAcknoledgeId('')
+  }, [])
+
+  const handleAchPendingMessage = (entry: string) => {
+    dispatch(ackPendingEntriesAction(key, group, [entry], closeAckPopover()))
+  }
 
   const columns: ITableColumn[] = [
     {
@@ -98,7 +116,22 @@ const MessagesViewWrapper = (props: Props) => {
       minWidth: actionsWidth,
       render: function Actions(_act: any, { id }: PendingEntryDto) {
         return (
-          <div />
+          <div>
+            <MessageAchPopover
+              id={id}
+              acknowledgeId={acknowledgeId}
+              isOpen={acknowledgeId === id}
+              closePopover={() => closeAckPopover()}
+              showPopover={() => showAchPopover(id)}
+              acknowledge={handleAchPendingMessage}
+            />
+            <MessageClaimPopover
+              id={id}
+              isOpen={id + suffix === claiming}
+              closePopover={() => closePopover()}
+              showPopover={() => showPopover(id)}
+            />
+          </div>
         )
       },
     },

@@ -234,6 +234,38 @@ const streamSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+
+    claimConsumerMessages: (state) => {
+      state.groups.loading = true
+      state.groups.error = ''
+    },
+    claimConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
+      state.groups.loading = false
+
+      // state.groups.selectedGroup = {
+      //   ...state.groups.selectedGroup,
+      //   selectedConsumer: {
+      //     ...state.groups.selectedGroup.selectedConsumer,
+      //     lastRefreshTime: Date.now(),
+      //     data: payload,
+      //   }
+      // }
+    },
+    claimConsumerMessagesFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
+    ackPendingEntries: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    ackPendingEntriesSuccess: (state) => {
+      state.loading = false
+    },
+    ackPendingEntriesFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
   },
 })
 
@@ -271,6 +303,12 @@ export const {
   loadConsumerMessagesFailure,
   setSelectedGroup,
   setSelectedConsumer,
+  claimConsumerMessages,
+  claimConsumerMessagesSuccess,
+  claimConsumerMessagesFailure,
+  ackPendingEntries,
+  ackPendingEntriesSuccess,
+  ackPendingEntriesFailure,
 } = streamSlice.actions
 
 // A selector
@@ -714,6 +752,86 @@ export function modifyLastDeliveredIdAction(
       dispatch(addErrorNotification(error))
       dispatch(modifyLastDeliveredIdFailure(errorMessage))
       onFailed?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function claimPendingMessages(
+  payload: boolean,
+  onSuccess?: (data: PendingEntryDto[]) => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(claimConsumerMessages())
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post<PendingEntryDto[]>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAM_CLAIM_PENDING_MESSAGES
+        ),
+        {
+          keyName: state.browser.keys.selectedKey.data?.name,
+          groupName: state.browser.stream.groups.selectedGroup?.name,
+          consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name,
+          ...payload
+        },
+      )
+      if (isStatusSuccessful(status)) {
+        dispatch(claimConsumerMessagesSuccess(data))
+        dispatch<any>(fetchConsumerMessages())
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(claimConsumerMessagesFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+// Asynchronous thunk actions
+export function ackPendingEntriesAction(
+  key: string,
+  group: string,
+  entries: string[],
+  onSuccessAction?: () => void,
+  onFailed?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(removeStreamEntries())
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAM_ACK_PENDING_ENTRIES
+        ),
+        {
+          keyName: key,
+          groupName: group,
+          entries,
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.()
+        dispatch(ackPendingEntriesSuccess())
+        dispatch<any>(fetchConsumerMessages())
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(ackPendingEntriesFailure(errorMessage))
+        onFailed?.()
+      }
     }
   }
 }

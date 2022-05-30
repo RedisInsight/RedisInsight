@@ -168,6 +168,21 @@ const streamSlice = createSlice({
       state.groups.loading = false
       state.groups.error = payload
     },
+
+    deleteConsumerGroups: (state) => {
+      state.groups.loading = true
+      state.groups.error = ''
+    },
+
+    deleteConsumerGroupsSuccess: (state) => {
+      state.groups.loading = false
+    },
+
+    deleteConsumerGroupsFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+
     setSelectedGroup: (state, { payload }) => {
       state.groups.selectedGroup = payload
     },
@@ -206,6 +221,20 @@ const streamSlice = createSlice({
       state.groups.loading = false
       state.groups.error = payload
       state.viewType = StreamViewType.Groups
+    },
+
+    deleteConsumers: (state) => {
+      state.groups.loading = true
+      state.groups.error = ''
+    },
+
+    deleteConsumersSuccess: (state) => {
+      state.groups.loading = false
+    },
+
+    deleteConsumersFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
     },
 
     loadConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
@@ -262,11 +291,17 @@ export const {
   loadConsumerGroups,
   loadConsumerGroupsSuccess,
   loadConsumerGroupsFailure,
+  deleteConsumerGroups,
+  deleteConsumerGroupsSuccess,
+  deleteConsumerGroupsFailure,
   modifyLastDeliveredId,
   modifyLastDeliveredIdSuccess,
   modifyLastDeliveredIdFailure,
   loadConsumersSuccess,
   loadConsumersFailure,
+  deleteConsumers,
+  deleteConsumersSuccess,
+  deleteConsumersFailure,
   loadConsumerMessagesSuccess,
   loadConsumerMessagesFailure,
   setSelectedGroup,
@@ -606,6 +641,44 @@ export function fetchConsumerGroups(
   }
 }
 
+export function deleteConsumerGroupsAction(keyName: string, consumerGroups: string[], onSuccessAction?: () => void) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteConsumerGroups())
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        {
+          data: {
+            keyName,
+            consumerGroups,
+          },
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.()
+        dispatch(deleteConsumerGroupsSuccess())
+        dispatch<any>(fetchConsumerGroups(false))
+        dispatch<any>(refreshKeyInfoAction(keyName))
+        dispatch(addMessageNotification(
+          successMessages.REMOVED_KEY_VALUE(
+            keyName,
+            consumerGroups.join(''),
+            'Group'
+          )
+        ))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(deleteConsumerGroupsFailure(errorMessage))
+    }
+  }
+}
+
 // Asynchronous thunk action
 export function fetchConsumers(
   resetData?: boolean,
@@ -630,7 +703,7 @@ export function fetchConsumers(
 
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumersSuccess(data))
-        onSuccess?.(data)
+        onSuccess?.()
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {
@@ -640,6 +713,51 @@ export function fetchConsumers(
         dispatch(loadConsumersFailure(errorMessage))
         onFailed?.()
       }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function deleteConsumersAction(
+  keyName: string,
+  groupName: string,
+  consumerNames: string[],
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteConsumers())
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMERS
+        ),
+        {
+          data: {
+            keyName,
+            groupName,
+            consumerNames,
+          },
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.()
+        dispatch(deleteConsumersSuccess())
+        dispatch<any>(fetchConsumers(false))
+        dispatch<any>(refreshKeyInfoAction(keyName))
+        dispatch(addMessageNotification(
+          successMessages.REMOVED_KEY_VALUE(
+            keyName,
+            consumerNames.join(''),
+            'Consumer'
+          )
+        ))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(deleteConsumersFailure(errorMessage))
     }
   }
 }

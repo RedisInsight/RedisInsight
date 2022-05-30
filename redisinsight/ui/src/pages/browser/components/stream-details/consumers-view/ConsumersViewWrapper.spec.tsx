@@ -2,7 +2,11 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { loadConsumerGroups, setSelectedConsumer } from 'uiSrc/slices/browser/stream'
+import {
+  deleteConsumers,
+  loadConsumerGroups,
+  setSelectedConsumer
+} from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import ConsumersView, { Props as ConsumersViewProps } from './ConsumersView'
@@ -76,5 +80,16 @@ describe('ConsumersViewWrapper', () => {
     fireEvent.click(screen.getByTestId('select-consumer-btn'))
 
     expect(store.getActions()).toEqual([...afterRenderActions, setSelectedConsumer(), loadConsumerGroups(false)])
+  })
+
+  it('should delete Consumer', () => {
+    render(<ConsumersViewWrapper {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('remove-consumer-button-test-icon'))
+    fireEvent.click(screen.getByTestId('remove-consumer-button-test'))
+
+    expect(store.getActions()).toEqual([...afterRenderActions, deleteConsumers()])
   })
 })

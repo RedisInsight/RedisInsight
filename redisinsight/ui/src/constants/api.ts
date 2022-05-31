@@ -41,6 +41,8 @@ enum ApiEndpoints {
   STREAMS_CONSUMERS_GET = 'streams/consumer-groups/consumers/get',
   STREAMS_CONSUMERS_MESSAGES_GET = 'streams/consumer-groups/consumers/pending-messages/get',
   STREAMS = 'streams',
+  STREAM_CLAIM_PENDING_MESSAGES = 'streams/consumer-groups/consumers/pending-messages/claim',
+  STREAM_ACK_PENDING_ENTRIES = 'streams/consumer-groups/consumers/pending-messages/ack',
   CLI = 'cli',
   CLI_BLOCKING_COMMANDS = 'info/cli-blocking-commands',
   CLI_UNSUPPORTED_COMMANDS = 'info/cli-unsupported-commands',

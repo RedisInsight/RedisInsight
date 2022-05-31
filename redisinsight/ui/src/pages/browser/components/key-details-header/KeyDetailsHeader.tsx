@@ -197,6 +197,24 @@ const KeyDetailsHeader = ({
     onRefresh(key, type)
   }
 
+  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+    const browserViewEvent = enableAutoRefresh
+      ? TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_DISABLED
+    const treeViewEvent = enableAutoRefresh
+      ? TelemetryEvent.TREE_VIEW_KEY_DETAILS_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.TREE_VIEW_KEY_DETAILS_AUTO_REFRESH_DISABLED
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        databaseId: instanceId,
+        keyType: type,
+        length: enableAutoRefresh ? length : undefined,
+        refreshRate: enableAutoRefresh ? +refreshRate : undefined
+      }
+    })
+  }
+
   const onMouseEnterTTL = () => {
     setTTLIsHovering(true)
   }
@@ -387,7 +405,7 @@ const KeyDetailsHeader = ({
                   )}
                   data-testid="edit-key-btn"
                 >
-                  {keyIsEditing || keyIsHovering ? (
+                  {(keyIsEditing || keyIsHovering) && (
                     <EuiFlexGrid
                       columns={1}
                       responsive={false}
@@ -456,13 +474,12 @@ const KeyDetailsHeader = ({
                         )}
                       </EuiFlexItem>
                     </EuiFlexGrid>
-                  ) : (
-                    <EuiText className={styles.key} data-testid="key-name-text">
-                      <b className="truncateText">
-                        {replaceSpaces(keyProp?.substring(0, 200))}
-                      </b>
-                    </EuiText>
                   )}
+                  <EuiText className={cx(styles.key, { [styles.hidden]: keyIsEditing || keyIsHovering })} data-testid="key-name-text">
+                    <b className="truncateText">
+                      {replaceSpaces(keyProp?.substring(0, 200))}
+                    </b>
+                  </EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem />
                 {!arePanelsCollapsed && (
@@ -528,60 +545,61 @@ const KeyDetailsHeader = ({
                   className={styles.flexItemTTL}
                   data-testid="edit-ttl-btn"
                 >
-                  {ttlIsEditing || ttlIsHovering ? (
-                    <EuiFlexGrid
-                      columns={2}
-                      responsive={false}
-                      gutterSize="none"
-                      className={styles.ttlGridComponent}
-                    >
-                      <EuiFlexItem grow={false}>
-                        <EuiText
-                          grow
-                          color="subdued"
-                          size="s"
-                          className={styles.subtitleText}
-                        >
-                          TTL:
-                        </EuiText>
-                      </EuiFlexItem>
-                      <EuiFlexItem grow component="span">
-                        <InlineItemEditor
-                          onApply={() => applyEditTTL()}
-                          onDecline={(event) => cancelEditTTl(event)}
-                          viewChildrenMode={!ttlIsEditing}
-                          isLoading={loading}
-                          declineOnUnmount={false}
-                        >
-                          <EuiFieldText
-                            name="ttl"
-                            id="ttl"
-                            className={cx(
-                              styles.ttlInput,
-                              ttlIsEditing && styles.editing,
-                            )}
-                            maxLength={200}
-                            placeholder="No limit"
-                            value={ttl === '-1' ? '' : ttl}
-                            fullWidth={false}
-                            compressed
-                            min={0}
-                            max={MAX_TTL_NUMBER}
+                  <>
+                    {(ttlIsEditing || ttlIsHovering) && (
+                      <EuiFlexGrid
+                        columns={2}
+                        responsive={false}
+                        gutterSize="none"
+                        className={styles.ttlGridComponent}
+                      >
+                        <EuiFlexItem grow={false}>
+                          <EuiText
+                            grow
+                            color="subdued"
+                            size="s"
+                            className={styles.subtitleText}
+                          >
+                            TTL:
+                          </EuiText>
+                        </EuiFlexItem>
+                        <EuiFlexItem grow component="span">
+                          <InlineItemEditor
+                            onApply={() => applyEditTTL()}
+                            onDecline={(event) => cancelEditTTl(event)}
+                            viewChildrenMode={!ttlIsEditing}
                             isLoading={loading}
-                            onChange={onChangeTtl}
-                            append={appendTTLEditing()}
-                            autoComplete="off"
-                            data-testid="edit-ttl-input"
-                          />
-                        </InlineItemEditor>
-                      </EuiFlexItem>
-                    </EuiFlexGrid>
-                  ) : (
+                            declineOnUnmount={false}
+                          >
+                            <EuiFieldText
+                              name="ttl"
+                              id="ttl"
+                              className={cx(
+                                styles.ttlInput,
+                                ttlIsEditing && styles.editing,
+                              )}
+                              maxLength={200}
+                              placeholder="No limit"
+                              value={ttl === '-1' ? '' : ttl}
+                              fullWidth={false}
+                              compressed
+                              min={0}
+                              max={MAX_TTL_NUMBER}
+                              isLoading={loading}
+                              onChange={onChangeTtl}
+                              append={appendTTLEditing()}
+                              autoComplete="off"
+                              data-testid="edit-ttl-input"
+                            />
+                          </InlineItemEditor>
+                        </EuiFlexItem>
+                      </EuiFlexGrid>
+                    )}
                     <EuiText
                       grow
                       color="subdued"
                       size="s"
-                      className={styles.subtitleText}
+                      className={cx(styles.subtitleText, { [styles.hidden]: ttlIsEditing || ttlIsHovering })}
                       data-testid="key-ttl-text"
                     >
                       TTL:
@@ -589,7 +607,7 @@ const KeyDetailsHeader = ({
                         {ttl === '-1' ? 'No limit' : ttl}
                       </span>
                     </EuiText>
-                  )}
+                  </>
                 </EuiFlexItem>
                 <EuiFlexItem>
                   <div className={styles.subtitleActionBtns}>
@@ -598,8 +616,9 @@ const KeyDetailsHeader = ({
                       loading={loading}
                       lastRefreshTime={lastRefreshTime}
                       displayText={width > HIDE_LAST_REFRESH}
-                      onRefresh={handleRefreshKey}
                       containerClassName={styles.actionBtn}
+                      onRefresh={handleRefreshKey}
+                      onEnableAutoRefresh={handleEnableAutoRefresh}
                       testid="refresh-key-btn"
                     />
                     {keyType && Actions(width)}

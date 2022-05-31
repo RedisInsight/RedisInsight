@@ -1,3 +1,6 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/global_styling/index';
+
 .euiFormRow {
   .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
   .euiSelect:not(.euiSelect--compressed),
@@ -60,6 +63,12 @@
   border-color: var(--euiColorLightShade);
   border-top-width: 1px;
   width: 100%;
+
+  z-index: 2;
+
+  max-height: 100%;
+  @include euiScrollBar;
+  overflow-y: auto;
 }
 
 .euiRadio .euiRadio__circle,

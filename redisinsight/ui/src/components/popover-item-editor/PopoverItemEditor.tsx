@@ -14,6 +14,7 @@ import styles from './styles.module.scss'
 export interface Props {
   children: React.ReactElement
   className?: string
+  isOpen?: boolean
   onOpen: () => void
   onApply: () => void
   onDecline?: () => void
@@ -26,6 +27,7 @@ export interface Props {
 
 const PopoverItemEditor = (props: Props) => {
   const {
+    isOpen = false,
     onOpen,
     onDecline,
     onApply,
@@ -37,14 +39,18 @@ const PopoverItemEditor = (props: Props) => {
     btnIconType,
     className
   } = props
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(isOpen)
 
   useEffect(() =>
     // componentWillUnmount
     () => {
-      declineOnUnmount && onDecline?.()
+      declineOnUnmount && handleDecline()
     },
   [])
+
+  useEffect(() => {
+    setIsPopoverOpen(isOpen)
+  }, [isOpen])
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -74,7 +80,6 @@ const PopoverItemEditor = (props: Props) => {
       iconType={btnIconType || 'pencil'}
       aria-label="Edit field"
       color="primary"
-      disabled={isLoading}
       onClick={handleButtonClick}
       data-testid={btnTestId || 'popover-edit-bnt'}
     />

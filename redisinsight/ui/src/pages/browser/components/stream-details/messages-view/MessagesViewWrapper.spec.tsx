@@ -55,11 +55,11 @@ describe('MessagesViewWrapper', () => {
     expect(render(<MessagesViewWrapper {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should render Messages container', () => {
-    render(<MessagesViewWrapper {...instance(mockedProps)} />)
+  // it('should render Messages container', () => {
+  //   render(<MessagesViewWrapper {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('stream-messages-container')).toBeInTheDocument()
-  })
+  //   expect(screen.getByTestId('stream-messages-container')).toBeInTheDocument()
+  // })
 
   it.skip('should claim Message', () => {
     render(<MessagesViewWrapper {...instance(mockedProps)} />)

@@ -9,4 +9,11 @@
 .actions,
 .actionsHeader {
   width: 54px;
+
+}
+
+.actionCell {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }

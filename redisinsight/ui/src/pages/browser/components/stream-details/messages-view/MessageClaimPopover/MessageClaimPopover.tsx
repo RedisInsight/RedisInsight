@@ -73,12 +73,6 @@ const MessageClaimPopover = (props: Props) => {
     force: false
   })
 
-  const handleClosePopover = () => {
-    closePopover()
-    setIsOptionalShow(false)
-    formik.resetForm()
-  }
-
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
@@ -89,14 +83,22 @@ const MessageClaimPopover = (props: Props) => {
     },
   })
 
+  const handleClosePopover = () => {
+    closePopover()
+    setIsOptionalShow(false)
+    formik.resetForm()
+  }
+
   useEffect(() => {
     const consumersWithoutCurrent = filter(consumers, (consumer) => consumer.name !== currentConsumerName)
     const sortedConsumers = orderBy(getConsumersOptions(consumersWithoutCurrent), ['name'], ['asc'])
-    setConsumerOptions(sortedConsumers)
-    setInitialValues({
-      ...initialValues,
-      consumerName: getDefaultConsumer(consumersWithoutCurrent)?.name
-    })
+    if (sortedConsumers.length) {
+      setConsumerOptions(sortedConsumers)
+      setInitialValues({
+        ...initialValues,
+        consumerName: getDefaultConsumer(consumersWithoutCurrent)?.name
+      })
+    }
   }, [consumers, currentConsumerName])
 
   return (

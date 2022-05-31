@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
-import { getFormatTime, } from 'uiSrc/utils/streamUtils'
+import { getFormatTime } from 'uiSrc/utils/streamUtils'
 
 import styles from './styles.module.scss'
 

@@ -3,21 +3,30 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { last, toNumber } from 'lodash'
 
-import { fetchMoreConsumerMessages, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
+import {
+  fetchMoreConsumerMessages,
+  selectedConsumerSelector,
+  selectedGroupSelector,
+  ackPendingEntriesAction,
+  claimPendingMessages
+} from 'uiSrc/slices/browser/stream'
+import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime, getNextId } from 'uiSrc/utils/streamUtils'
+import { SortOrder } from 'uiSrc/constants'
+import { PendingEntryDto, ClaimPendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { SortOrder, TableCellTextAlignment } from 'uiSrc/constants'
-import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
-import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import MessagesView from './MessagesView'
+import MessageClaimPopover from './MessageClaimPopover'
+import MessageAckPopover from './MessageAckPopover'
 
 import styles from './MessagesView/styles.module.scss'
 
-const actionsWidth = 50
+const actionsWidth = 150
 const minColumnWidth = 195
-const suffix = '_stream_messages'
+const claimPrefix = '-claim'
+const ackPrefix = '-ack'
 
 export interface Props {
   isFooterOpen: boolean
@@ -29,8 +38,10 @@ const MessagesViewWrapper = (props: Props) => {
     data: loadedMessages = [],
     pending = 0
   } = useSelector(selectedConsumerSelector) ?? {}
+  const { name: group } = useSelector(selectedGroupSelector) ?? { name: '' }
+  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
-  const [claiming, setClaiming] = useState<string>('')
+  const [openPopover, setOpenPopover] = useState<string>('')
 
   const dispatch = useDispatch()
 
@@ -38,14 +49,25 @@ const MessagesViewWrapper = (props: Props) => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [])
 
+  const showAchPopover = useCallback((id) => {
+    setOpenPopover(id + ackPrefix)
+  }, [])
+
   const closePopover = useCallback(() => {
-    setClaiming('')
+    setOpenPopover('')
   }, [])
 
-  const showPopover = useCallback((consumer = '') => {
-    setClaiming(`${consumer + suffix}`)
+  const showClaimPopover = useCallback((id :string) => {
+    setOpenPopover(id + claimPrefix)
   }, [])
 
+  const handleAchPendingMessage = (entry: string) => {
+    dispatch(ackPendingEntriesAction(key, group, [entry], closePopover))
+  }
+
+  const handleClaimingId = (data: Partial<ClaimPendingEntryDto>, successAction: () => void) => {
+    dispatch(claimPendingMessages(data, successAction))
+  }
   const loadMoreItems = useCallback(() => {
     const lastLoadedEntryId = last(loadedMessages)?.id ?? '-'
     const nextId = `(${getNextId(lastLoadedEntryId, SortOrder.ASC)}`
@@ -116,13 +138,27 @@ const MessagesViewWrapper = (props: Props) => {
       id: 'actions',
       label: '',
       headerClassName: 'streamItemHeader',
-      textAlignment: TableCellTextAlignment.Left,
-      absoluteWidth: actionsWidth,
-      maxWidth: actionsWidth,
+      className: styles.actionCell,
       minWidth: actionsWidth,
+      absoluteWidth: actionsWidth,
       render: function Actions(_act: any, { id }: PendingEntryDto) {
         return (
-          <div />
+          <div>
+            <MessageAckPopover
+              id={id}
+              isOpen={openPopover === id + ackPrefix}
+              closePopover={() => closePopover()}
+              showPopover={() => showAchPopover(id)}
+              acknowledge={handleAchPendingMessage}
+            />
+            <MessageClaimPopover
+              id={id}
+              isOpen={openPopover === id + claimPrefix}
+              closePopover={() => closePopover()}
+              showPopover={() => showClaimPopover(id)}
+              claimMessage={handleClaimingId}
+            />
+          </div>
         )
       },
     },

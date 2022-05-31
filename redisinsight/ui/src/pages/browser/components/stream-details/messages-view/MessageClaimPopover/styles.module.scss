@@ -1,0 +1,76 @@
+.popoverWrapper.popoverWrapper.popoverWrapper {
+  background-color: var(--euiColorLightestShade);
+  border: 1px solid var(--externalLinkColor);
+
+  :before {
+    border-left: 12px solid var(--externalLinkColor) !important;
+  }
+
+  :after {
+    border-left: 13px solid var(--euiColorLightestShade) !important;
+  }
+}
+
+.popoverWrapper :global(.euiFormControlLayout__append.euiFormLabel) {
+  position: absolute;
+  right: 20px;
+  height: 36px !important;
+  padding: 9px 12px !important;
+  background-color: transparent !important;
+  color: var(--inputPlaceholderColor) !important;
+}
+
+.footer {
+  width: 100%;
+  justify-content:space-between;
+  margin: 30px 0 7px !important;
+
+  &:global(.euiFlexGroup--gutterLarge) > :global(.euiFlexItem) {
+    margin-left: 0;
+  }
+  
+  :global(.euiSwitch) :global(.euiSwitch__button) {
+    width: 30px;
+  }
+}
+
+.footer .footerBtn {
+  height: 36px !important;
+
+  &:last-child {
+    margin-left: 18px
+  }
+}
+
+.claimBtn:global(.euiButton.euiButton--secondary) {
+  margin-left: 12px;
+  min-width: initial !important;
+  color: var(--textColorShade) !important;
+}
+
+.claimBtn :global(.euiButtonContent .euiButton__text) {
+  font: normal normal normal 12px/18px Graphik !important;
+}
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 36px;
+}
+
+.option .pendingCount {
+  font: normal normal normal 13px/24px Graphik;
+  letter-spacing: -0.13px;
+  color: var(--inputPlaceholderColor) !important;
+}
+
+.consumerOption :global(.euiContextMenu__itemLayout) .pendingCount {
+  padding-right: 13px;
+}
+
+.consumerOption :global(.euiContextMenu__itemLayout) {
+  margin-right: 20px;
+  height: 20px;
+}

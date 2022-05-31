@@ -50,7 +50,6 @@ export const getDefaultConsumer = (consumers: ConsumerDto[]): ConsumerDto => {
   return sortedConsumers[0]
 }
 
-// blue highlight
 export const prepareDataForClaimRequest = (
   values: IForm,
   entries: string[],

@@ -17,6 +17,7 @@ import {
   GetStreamEntriesResponse,
   PendingEntryDto,
   UpdateConsumerGroupDto,
+  ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
   AckPendingEntriesResponse,
 } from 'apiSrc/modules/browser/dto/stream.dto'
@@ -244,17 +245,17 @@ const streamSlice = createSlice({
       state.groups.loading = false
     },
     claimConsumerMessagesFailure: (state, { payload }) => {
-      state.groups.loading
+      state.groups.loading = false
       state.groups.error = payload
     },
     ackPendingEntries: (state) => {
-      state.groups.loading = true
+      state.loading = true
     },
     ackPendingEntriesSuccess: (state) => {
-      state.groups.loading = false
+      state.loading = false
     },
     ackPendingEntriesFailure: (state, { payload }) => {
-      state.groups.loading = false
+      state.loading = false
       state.groups.error = payload
     },
   },
@@ -750,7 +751,7 @@ export function modifyLastDeliveredIdAction(
 
 // Asynchronous thunk action
 export function claimPendingMessages(
-  payload: any,
+  payload: Partial<ClaimPendingEntryDto>,
   onSuccess?: (data: ClaimPendingEntriesResponse) => void,
   onFailed?: () => void,
 ) {
@@ -774,6 +775,7 @@ export function claimPendingMessages(
       if (isStatusSuccessful(status)) {
         dispatch(claimConsumerMessagesSuccess())
         dispatch<any>(fetchConsumerMessages())
+        dispatch<any>(fetchConsumers())
         dispatch(addMessageNotification(
           successMessages.MESSAGE_ACTION(data.affected[0], 'claimed')
         ))
@@ -817,10 +819,11 @@ export function ackPendingEntriesAction(
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(ackPendingEntriesSuccess())
+        dispatch<any>(fetchConsumerMessages())
+        dispatch<any>(fetchConsumers())
         dispatch(addMessageNotification(
           successMessages.MESSAGE_ACTION(entries[0], 'acknowledged')
         ))
-        dispatch<any>(fetchConsumerMessages())
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {

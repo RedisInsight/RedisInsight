@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
+import cx from 'classnames'
 import {
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -11,17 +12,16 @@ import {
   EuiFormRow,
   EuiFieldNumber,
   EuiSwitch,
-  EuiText
+  EuiText,
+  // EuiCheckbox
 } from '@elastic/eui'
 import { useFormik } from 'formik'
-import { orderBy } from 'lodash'
+import { orderBy, filter } from 'lodash'
 
-import { selectedGroupSelector } from 'uiSrc/slices/browser/stream'
+import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
 import { validateNumber } from 'uiSrc/utils'
-import {
-  ClaimPendingEntryDto,
-  ConsumerDto
-} from 'apiSrc/modules/browser/dto/stream.dto'
+import { prepareDataForClaimRequest, getDefaultConsumer } from 'uiSrc/utils/streamUtils'
+import { ClaimPendingEntryDto, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 
@@ -30,7 +30,7 @@ const getConsumersOptions = (consumers: ConsumerDto[]) => (
     value: consumer.name,
     inputDisplay: (
       <EuiText size="m" className={styles.option}>
-        {consumer.name}
+        <EuiText className={styles.consumerName}>{consumer.name}</EuiText>
         <EuiText size="s" className={styles.pendingCount} data-testid="pending-count">
           {`pending: ${consumer.pending}`}
         </EuiText>
@@ -39,17 +39,12 @@ const getConsumersOptions = (consumers: ConsumerDto[]) => (
   }))
 )
 
-const getDefaultConsumer = (consumers: ConsumerDto[]): ConsumerDto => {
-  const sortedConsumers = orderBy(consumers, ['pending', 'name'], ['asc', 'asc'])
-  return sortedConsumers[0]
-}
-
 export interface Props {
   id: string
   isOpen: boolean
   closePopover: () => void
   showPopover: () => void
-  claimMessage: (data: ClaimPendingEntryDto, successAction: () => void) => void
+  claimMessage: (data: Partial<ClaimPendingEntryDto>, successAction: () => void) => void
 }
 
 const MessageClaimPopover = (props: Props) => {
@@ -64,14 +59,19 @@ const MessageClaimPopover = (props: Props) => {
   const {
     data: consumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
-
-  const [initialValues] = useState({
-    consumerName: getDefaultConsumer(consumers)?.name,
-    minIdleTime: 0,
-  })
+  const { name: currentConsumerName } = useSelector(selectedConsumerSelector) ?? { name: '' }
 
   const [isOptionalShow, setIsOptionalShow] = useState<boolean>(false)
   const [consumerOptions, setConsumerOptions] = useState<EuiSuperSelectOption<string>[]>([])
+
+  const [initialValues, setInitialValues] = useState({
+    consumerName: '',
+    minIdleTime: '0',
+    idle: '0',
+    time: '0',
+    retryCount: '0',
+    force: false
+  })
 
   const handleClosePopover = () => {
     closePopover()
@@ -84,14 +84,20 @@ const MessageClaimPopover = (props: Props) => {
     enableReinitialize: true,
     validateOnBlur: false,
     onSubmit: (values) => {
-      claimMessage({ ...values, entries: [id] }, handleClosePopover)
+      const data = prepareDataForClaimRequest(values, [id], isOptionalShow)
+      claimMessage(data, handleClosePopover)
     },
   })
 
   useEffect(() => {
-    const sortedConsumers = orderBy(getConsumersOptions(consumers), ['name'], ['asc'])
+    const consumersWithoutCurrent = filter(consumers, (consumer) => consumer.name !== currentConsumerName)
+    const sortedConsumers = orderBy(getConsumersOptions(consumersWithoutCurrent), ['name'], ['asc'])
     setConsumerOptions(sortedConsumers)
-  }, [consumers])
+    setInitialValues({
+      ...initialValues,
+      consumerName: getDefaultConsumer(consumersWithoutCurrent)?.name
+    })
+  }, [consumers, currentConsumerName])
 
   return (
     <EuiPopover
@@ -99,9 +105,11 @@ const MessageClaimPopover = (props: Props) => {
       anchorPosition="leftCenter"
       ownFocus
       isOpen={isOpen}
-      closePopover={handleClosePopover}
+      className="popover"
       panelPaddingSize="m"
       anchorClassName="claimPendingMessage"
+      panelClassName={styles.popoverWrapper}
+      closePopover={() => {}}
       button={(
         <EuiButton
           size="s"
@@ -120,6 +128,7 @@ const MessageClaimPopover = (props: Props) => {
           <EuiFlexItem>
             <EuiFormRow label="Consumer">
               <EuiSuperSelect
+                itemClassName={styles.consumerOption}
                 valueOfSelected={formik.values.consumerName}
                 options={consumerOptions}
                 style={{ width: '389px' }}
@@ -135,10 +144,11 @@ const MessageClaimPopover = (props: Props) => {
             >
               <EuiFieldNumber
                 name="minIdleTime"
-                id="port"
+                id="minIdleTime"
                 data-testid="port"
-                style={{ width: '162px', height: '36px' }}
-                placeholder="Min Idle Time"
+                style={{ width: '162px', height: '36px', paddingRight: '40px' }}
+                placeholder="0"
+                className={styles.minIdleTime}
                 value={formik.values.minIdleTime}
                 append="ms"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -153,6 +163,76 @@ const MessageClaimPopover = (props: Props) => {
             </EuiFormRow>
           </EuiFlexItem>
         </EuiFlexGroup>
+        {/* {isOptionalShow && (
+          <EuiFlexGroup>
+            <EuiFlexItem>
+              <EuiFormRow label="Idle Time">
+                <EuiFieldNumber
+                  name="minIdleTime"
+                  id="port"
+                  data-testid="port"
+                  style={{ width: '162px', height: '36px' }}
+                  placeholder="Min Idle Time"
+                  className={styles.minIdleTime}
+                  value={formik.values.minIdleTime}
+                  append="ms"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(
+                      e.target.name,
+                      validateNumber(e.target.value.trim())
+                    )
+                  }}
+                  type="text"
+                  min={0}
+                />
+              </EuiFormRow>
+              <EuiSuperSelect
+                valueOfSelected={formik.values.consumerName}
+                options={consumerOptions}
+                style={{ width: '120px' }}
+                name="consumerName"
+                onChange={(value) => formik.setFieldValue('consumerName', value)}
+                data-testid="destination-select"
+              />
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiFormRow label="Retry Count">
+                <EuiFieldNumber
+                  name="minIdleTime"
+                  id="port"
+                  data-testid="port"
+                  style={{ width: '162px', height: '36px' }}
+                  placeholder="Min Idle Time"
+                  className={styles.minIdleTime}
+                  value={formik.values.minIdleTime}
+                  append="ms"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(
+                      e.target.name,
+                      validateNumber(e.target.value.trim())
+                    )
+                  }}
+                  type="text"
+                  min={0}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiFormRow>
+                <EuiCheckbox
+                  id="force_claim"
+                  name="force"
+                  label="Force Claim"
+                  checked={formik.values.force}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(e.target.name, !formik.values.force)
+                  }}
+                  data-testid="showDb"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        )} */}
         <EuiFlexGroup className={styles.footer}>
           <EuiFlexItem grow={false}>
             <EuiSwitch

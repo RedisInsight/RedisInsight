@@ -129,7 +129,7 @@ export default {
       </>
     ),
     message: (
-      <>data
+      <>
         <b>{message}</b>
         {' '}
         has been successfully

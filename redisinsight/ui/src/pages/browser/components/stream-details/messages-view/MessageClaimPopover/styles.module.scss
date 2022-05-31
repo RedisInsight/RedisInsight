@@ -1,5 +1,24 @@
-:global(.euiFormControlLayout--group) :global(.euiFormLabel) {
-  padding: 9px 12px;
+.popoverWrapper.popoverWrapper.popoverWrapper {
+  background-color: var(--euiColorLightestShade);
+  border: 1px solid var(--externalLinkColor);
+
+  :before {
+    border-left: 12px solid var(--externalLinkColor) !important;
+  }
+
+  :after {
+    border-left: 13px solid var(--euiColorLightestShade) !important;
+  }
+}
+
+.popoverWrapper :global(.euiFormControlLayout__append.euiFormLabel) {
+  position: absolute;
+  right: 20px;
+  height: 36px !important;
+  width: 40px !important;
+  padding: 9px 12px !important;
+  background-color: transparent !important;
+  color: var(--inputPlaceholderColor) !important;
 }
 
 .footer {
@@ -25,12 +44,12 @@
 }
 
 .claimBtn {
-  margin-left: 25px;
+  margin-left: 12px;
 }
 
 .option {
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 36px;
@@ -40,4 +59,13 @@
   font: normal normal normal 13px/24px Graphik;
   letter-spacing: -0.13px;
   color: var(--inputPlaceholderColor) !important;
+}
+
+.consumerOption :global(.euiContextMenu__itemLayout) .pendingCount {
+  padding-right: 13px;
+}
+
+.consumerOption :global(.euiContextMenu__itemLayout) {
+  margin-right: 20px;
+  height: 20px;
 }

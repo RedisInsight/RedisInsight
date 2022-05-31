@@ -19,7 +19,8 @@ const AckPopover = ({ id, isOpen, closePopover, showPopover, acknowledge }:Props
     isOpen={isOpen}
     closePopover={closePopover}
     panelPaddingSize="m"
-    anchorClassName="deleteFieldPopover"
+    anchorClassName="ackMessagePopover"
+    panelClassName={styles.popoverWrapper}
     button={(
       <EuiButton
         size="s"
@@ -36,6 +37,7 @@ const AckPopover = ({ id, isOpen, closePopover, showPopover, acknowledge }:Props
       <EuiText size="m">
         <EuiText size="s">
           Are you sure to acknowledge
+          {' '}
           <b>{id}</b>
           ?
         </EuiText>

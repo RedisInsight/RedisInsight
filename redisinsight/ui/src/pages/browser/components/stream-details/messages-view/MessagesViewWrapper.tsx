@@ -59,7 +59,7 @@ const MessagesViewWrapper = (props: Props) => {
     dispatch(ackPendingEntriesAction(key, group, [entry], closeAckPopover))
   }
 
-  const handleClaimingId = (data: ClaimPendingEntryDto, successAction: () => void) => {
+  const handleClaimingId = (data: Partial<ClaimPendingEntryDto>, successAction: () => void) => {
     dispatch(claimPendingMessages(data, successAction))
   }
 

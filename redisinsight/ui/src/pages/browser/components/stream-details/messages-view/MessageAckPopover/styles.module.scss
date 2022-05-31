@@ -1,3 +1,14 @@
+.popoverWrapper.popoverWrapper.popoverWrapper {
+  border: 1px solid var(--externalLinkColor);
+
+  :before {
+    border-left: 12px solid var(--externalLinkColor) !important;
+  }
+  :after {
+    border-left-width: 13px !important;
+  }
+}
+
 :global {
   .euiPanel--paddingMedium {
     padding: 18px !important;

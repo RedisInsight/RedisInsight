@@ -16,7 +16,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development parcel serve src/index.html",
     "build": "rimraf dist .parcel-cache && cross-env NODE_ENV=production yarn build:js && yarn build:css && yarn build:assets",
-    "build:js": "esbuild src/main.tsx --bundle --minify --outfile=dist/index.js",
+    "build:js": "esbuild src/main.tsx --bundle --minify --format=esm --outfile=dist/index.js",
     "build:css": "parcel build src/styles/styles.less  --dist-dir dist",
     "build:assets": "parcel build src/assets/**/* --dist-dir dist",
     "test": "jest"

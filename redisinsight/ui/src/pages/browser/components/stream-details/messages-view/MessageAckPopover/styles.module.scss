@@ -25,3 +25,12 @@
   justify-content: flex-end;
   margin-top: 12px;
 }
+
+.ackBtn:global(.euiButton.euiButton--secondary) {
+  min-width: initial !important;
+  color: var(--textColorShade) !important;
+}
+
+.ackBtn :global(.euiButtonContent .euiButton__text) {
+  font: normal normal normal 12px/18px Graphik !important;
+}

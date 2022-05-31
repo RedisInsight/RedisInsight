@@ -136,6 +136,7 @@ const MessagesViewWrapper = (props: Props) => {
     {
       id: 'delivered',
       label: 'Times Message Delivered',
+      minWidth: 106,
       absoluteWidth: 106,
       truncateText: true,
       headerClassName: 'streamItemHeader',
@@ -145,10 +146,9 @@ const MessagesViewWrapper = (props: Props) => {
       id: 'actions',
       label: '',
       headerClassName: 'streamItemHeader',
-      textAlignment: TableCellTextAlignment.Left,
-      absoluteWidth: actionsWidth,
-      maxWidth: actionsWidth,
+      className: styles.actionCell,
       minWidth: actionsWidth,
+      absoluteWidth: actionsWidth,
       render: function Actions(_act: any, { id }: PendingEntryDto) {
         return (
           <div>

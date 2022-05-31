@@ -27,6 +27,7 @@ const AckPopover = ({ id, isOpen, closePopover, showPopover, acknowledge }:Props
         color="secondary"
         aria-label="Acknowledge pending message"
         onClick={showPopover}
+        className={styles.ackBtn}
         data-testid="acknowledge-btn"
       >
         ACK

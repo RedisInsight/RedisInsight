@@ -15,7 +15,6 @@
   position: absolute;
   right: 20px;
   height: 36px !important;
-  width: 40px !important;
   padding: 9px 12px !important;
   background-color: transparent !important;
   color: var(--inputPlaceholderColor) !important;
@@ -43,8 +42,14 @@
   }
 }
 
-.claimBtn {
+.claimBtn:global(.euiButton.euiButton--secondary) {
   margin-left: 12px;
+  min-width: initial !important;
+  color: var(--textColorShade) !important;
+}
+
+.claimBtn :global(.euiButtonContent .euiButton__text) {
+  font: normal normal normal 12px/18px Graphik !important;
 }
 
 .option {

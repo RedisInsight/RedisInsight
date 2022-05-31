@@ -1,3 +1,5 @@
+$cellPaddingWidth: 12px;
+
 .container {
   padding: 0 18px;
   height: 100%;
@@ -8,13 +10,40 @@
   }
 
   :global {
+    .euiTabs {
+      .euiTab:not(:first-of-type) + .euiTab {
+        margin-left: 18px;
+        position: relative;
+
+        &::after {
+          content: "\00FE3F" !important;
+          font-family: serif !important;
+          position: absolute !important;
+          background-color: initial;
+          top: 0px;
+          left: -2px;
+          color: var(--euiTextSubduedColor);
+          transform: rotate(90deg);
+          font-weight: bold;
+          font-size: 15px;
+        }
+      }
+
+      .euiTab:nth-child(3),
+      .euiTab:nth-child(4) {
+        max-width: calc(50% - 140px);
+      }
+    }
+
     .ReactVirtualized__Grid__innerScrollContainer {
       .ReactVirtualized__Table__rowColumn {
         padding-right: 6px !important;
         border-right: 1px solid var(--tableDarkestBorderColor) !important;
+        border-left: none !important;
 
         > div {
           min-height: 54px !important;
+          padding: $cellPaddingWidth !important;
         }
 
         &:last-of-type,
@@ -51,8 +80,12 @@
       border: none !important;
 
       .streamItemHeader {
-        padding-right: 6px !important;
+        padding-right: 4px !important;
         border: none !important;
+
+        > div > div:first-of-type {
+          padding: 18px 0 18px $cellPaddingWidth !important;
+        }
       }
     }
 

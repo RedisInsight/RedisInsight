@@ -35,6 +35,7 @@
 
   &::after {
     display: block !important;
+    animation: none !important;
     position: absolute;
     background-color: var(--tableLightestBorderColor);
     top: 7px;

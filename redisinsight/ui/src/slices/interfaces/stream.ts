@@ -42,7 +42,6 @@ export interface StateConsumerGroups {
 }
 
 export interface StateSelectedGroup {
-  loading: boolean
   name: string
   data: ConsumerDto[]
   selectedConsumer: Nullable<StateSelectedConsumer>
@@ -50,8 +49,9 @@ export interface StateSelectedGroup {
 }
 
 export interface StateSelectedConsumer {
-  loading: boolean
   name: string
+  pending: number
+  idle: number
   data: PendingEntryDto[]
   lastRefreshTime: Nullable<number>
 }

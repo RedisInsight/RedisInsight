@@ -76,6 +76,7 @@ const ConsumerGroups = (props: Props) => {
           footerHeight={0}
           loading={loading}
           items={groups}
+          tableWidth={columns.reduce((a, b) => a + (b.minWidth ?? 0), 0)}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={noItemsMessageString}

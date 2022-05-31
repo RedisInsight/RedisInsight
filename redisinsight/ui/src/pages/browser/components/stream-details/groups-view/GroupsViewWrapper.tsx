@@ -120,6 +120,14 @@ const GroupsViewWrapper = (props: Props) => {
     }
   }
 
+  const handleEditId = (name: string, lastDeliveredId: string) => {
+    const newGroupsState: IConsumerGroup[] = groups?.map((item) =>
+      (item.name === name ? { ...item, editing: true } : item))
+
+    setGroups(newGroupsState)
+    setEditValue(lastDeliveredId)
+  }
+
   const columns: ITableColumn[] = [
 
     {
@@ -151,7 +159,7 @@ const GroupsViewWrapper = (props: Props) => {
       className: styles.cell,
       headerClassName: 'streamItemHeader',
       headerCellClassName: 'truncateText',
-      render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: ConsumerGroupDto) {
+      render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: IConsumerGroup) {
         const smallestTimestamp = smallestPendingId?.split('-')?.[0]
         const greatestTimestamp = greatestPendingId?.split('-')?.[0]
 
@@ -185,7 +193,7 @@ const GroupsViewWrapper = (props: Props) => {
       className: styles.cell,
       headerClassName: 'streamItemHeader',
       headerCellClassName: 'truncateText',
-      render: function Id(_name: string, { lastDeliveredId: id }: ConsumerGroupDto) {
+      render: function Id(_name: string, { lastDeliveredId: id }: IConsumerGroup) {
         const timestamp = id?.split('-')?.[0]
         return (
           <div>
@@ -211,13 +219,14 @@ const GroupsViewWrapper = (props: Props) => {
       absoluteWidth: actionsWidth,
       maxWidth: actionsWidth,
       minWidth: actionsWidth,
-      render: function Actions(_act: any, { lastDeliveredId, name }: ConsumerGroupDto) {
+      render: function Actions(_act: any, { lastDeliveredId, name, editing }: IConsumerGroup) {
         const showIdError = !isIdFocused && idError
         return (
           <div>
             <PopoverItemEditor
               btnTestId={`edit-stream-last-id-${lastDeliveredId}`}
-              onOpen={() => setEditValue(lastDeliveredId)}
+              isOpen={editing}
+              onOpen={() => handleEditId(name, lastDeliveredId)}
               onApply={() => handleApplyEditId(name)}
               className={styles.editLastId}
               isDisabled={!editValue.length || !!idError}

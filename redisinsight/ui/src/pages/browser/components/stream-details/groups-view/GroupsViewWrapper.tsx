@@ -15,7 +15,7 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { consumerGroupIdRegex, validateConsumerGroupId } from 'uiSrc/utils'
+import { consumerGroupIdRegex, formatLongName, validateConsumerGroupId } from 'uiSrc/utils'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
@@ -136,9 +136,28 @@ const GroupsViewWrapper = (props: Props) => {
       truncateText: true,
       isSortable: true,
       relativeWidth: 0.44,
-      minWidth: 90,
+      minWidth: 100,
       headerClassName: 'streamItemHeader',
       headerCellClassName: 'truncateText',
+      render: function Name(_name: string, { name }: IConsumerGroup) {
+        // Better to cut the long string, because it could affect virtual scroll performance
+        const cellContent = name.substring(0, 200)
+        const tooltipContent = formatLongName(name)
+        return (
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-group-${name}`}>
+              <EuiToolTip
+                className={styles.tooltipName}
+                anchorClassName="truncateText"
+                position="bottom"
+                content={tooltipContent}
+              >
+                <>{cellContent}</>
+              </EuiToolTip>
+            </div>
+          </EuiText>
+        )
+      },
     },
     {
       id: 'consumers',

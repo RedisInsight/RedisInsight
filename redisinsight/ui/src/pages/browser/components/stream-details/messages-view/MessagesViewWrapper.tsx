@@ -2,6 +2,7 @@ import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { last, toNumber } from 'lodash'
+import cx from 'classnames'
 
 import {
   fetchMoreConsumerMessages,
@@ -131,7 +132,7 @@ const MessagesViewWrapper = (props: Props) => {
       minWidth: 106,
       absoluteWidth: 106,
       truncateText: true,
-      headerClassName: 'streamItemHeader',
+      headerClassName: cx('streamItemHeader', styles.deliveredHeaderCell),
       headerCellClassName: 'truncateText',
     },
     {

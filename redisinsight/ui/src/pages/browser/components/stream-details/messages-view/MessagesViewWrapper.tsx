@@ -62,7 +62,7 @@ const MessagesViewWrapper = (props: Props) => {
   }, [])
 
   const handleAchPendingMessage = (entry: string) => {
-    dispatch(ackPendingEntriesAction(key, group, [entry], closeAckPopover))
+    dispatch(ackPendingEntriesAction(key, group, [entry], closePopover))
   }
 
   const handleClaimingId = (data: Partial<ClaimPendingEntryDto>, successAction: () => void) => {

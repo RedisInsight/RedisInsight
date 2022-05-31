@@ -145,7 +145,7 @@ const MessageClaimPopover = (props: Props) => {
               <EuiFieldNumber
                 name="minIdleTime"
                 id="minIdleTime"
-                data-testid="port"
+                data-testid="min-idle-time"
                 style={{ width: '162px', height: '36px', paddingRight: '40px' }}
                 placeholder="0"
                 className={styles.minIdleTime}

@@ -1,4 +1,9 @@
-import { ConsumerDto, ConsumerGroupDto, PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import {
+  ConsumerDto,
+  ConsumerGroupDto,
+  PendingEntryDto,
+  UpdateConsumerGroupDto
+} from 'apiSrc/modules/browser/dto/stream.dto'
 import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -48,6 +53,10 @@ import reducer, {
   deleteConsumers,
   deleteConsumersSuccess,
   deleteConsumersFailure,
+  modifyLastDeliveredIdAction,
+  modifyLastDeliveredId,
+  modifyLastDeliveredIdSuccess,
+  modifyLastDeliveredIdFailure,
   fetchMoreConsumerMessages,
   loadMoreConsumerMessagesSuccess,
 } from 'uiSrc/slices/browser/stream'
@@ -995,6 +1004,66 @@ describe('stream slice', () => {
           loadConsumerGroups(),
           addErrorNotification(responsePayload as AxiosError),
           loadConsumerMessagesFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('modifyLastDeliveredIdAction', () => {
+      it('succeed to fetch data', async () => {
+        // Arrange
+        const data: UpdateConsumerGroupDto = {
+          keyName: 'key',
+          name: 'name',
+          lastDeliveredId: '0-1'
+        }
+        const responsePayload = { data: mockMessages, status: 200 }
+
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
+
+        const responsePayloadPost = { data: mockConsumers, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
+
+        // Act
+        await store.dispatch<any>(modifyLastDeliveredIdAction(data))
+
+        // Assert
+        const expectedActions = [
+          modifyLastDeliveredId(),
+          modifyLastDeliveredIdSuccess(),
+          loadConsumerGroups(false),
+          refreshKeyInfo(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const data: UpdateConsumerGroupDto = {
+          keyName: 'key',
+          name: 'name',
+          lastDeliveredId: '0-1'
+        }
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(modifyLastDeliveredIdAction(data))
+
+        // Assert
+        const expectedActions = [
+          modifyLastDeliveredId(),
+          addErrorNotification(responsePayload as AxiosError),
+          modifyLastDeliveredIdFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

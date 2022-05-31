@@ -178,6 +178,10 @@ input[type='range']::-webkit-slider-thumb {
   background: transparent;
 }
 
+input[type='range'][disabled]::-webkit-slider-thumb {
+  cursor: auto;
+}
+
 input[type='range']:first-child::-webkit-slider-thumb {
   transform: translateY(-4px);
 }

@@ -6,7 +6,6 @@ import {
   EuiFormRow,
   EuiIcon,
   EuiPanel,
-  EuiSpacer,
   EuiTextColor,
   EuiToolTip
 } from '@elastic/eui'
@@ -87,7 +86,7 @@ const AddStreamGroup = (props: Props) => {
                       fullWidth
                       name="group-name"
                       id="group-name"
-                      placeholder="Group Name*"
+                      placeholder="Enter Group Name*"
                       value={groupName}
                       onChange={(e: ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
                       autoComplete="off"

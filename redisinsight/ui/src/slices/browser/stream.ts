@@ -877,7 +877,6 @@ export function modifyLastDeliveredIdAction(
 
     try {
       const state = stateInit()
-      const keyName = state.browser.keys.selectedKey.data?.name
       const { status } = await apiService.patch<any>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -889,7 +888,7 @@ export function modifyLastDeliveredIdAction(
       if (isStatusSuccessful(status)) {
         dispatch(modifyLastDeliveredIdSuccess())
         dispatch<any>(fetchConsumerGroups(false))
-        keyName && dispatch<any>(refreshKeyInfoAction(keyName))
+        dispatch<any>(refreshKeyInfoAction(data.keyName))
         onSuccess?.()
       }
     } catch (_err) {

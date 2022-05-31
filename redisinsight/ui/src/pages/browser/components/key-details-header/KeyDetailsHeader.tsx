@@ -197,6 +197,24 @@ const KeyDetailsHeader = ({
     onRefresh(key, type)
   }
 
+  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+    const browserViewEvent = enableAutoRefresh
+      ? TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_DISABLED
+    const treeViewEvent = enableAutoRefresh
+      ? TelemetryEvent.TREE_VIEW_KEY_DETAILS_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.TREE_VIEW_KEY_DETAILS_AUTO_REFRESH_DISABLED
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        databaseId: instanceId,
+        keyType: type,
+        length: enableAutoRefresh ? length : undefined,
+        refreshRate: enableAutoRefresh ? +refreshRate : undefined
+      }
+    })
+  }
+
   const onMouseEnterTTL = () => {
     setTTLIsHovering(true)
   }
@@ -598,8 +616,9 @@ const KeyDetailsHeader = ({
                       loading={loading}
                       lastRefreshTime={lastRefreshTime}
                       displayText={width > HIDE_LAST_REFRESH}
-                      onRefresh={handleRefreshKey}
                       containerClassName={styles.actionBtn}
+                      onRefresh={handleRefreshKey}
+                      onEnableAutoRefresh={handleEnableAutoRefresh}
                       testid="refresh-key-btn"
                     />
                     {keyType && Actions(width)}

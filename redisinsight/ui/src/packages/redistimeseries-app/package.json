@@ -16,7 +16,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development parcel serve src/index.html",
     "build": "rimraf dist .parcel-cache && cross-env NODE_ENV=production yarn build:js && yarn minify:js && yarn build:css && yarn build:assets",
-    "build:js": "parcel build src/main.tsx --dist-dir dist",
+    "build:js": "esbuild src/main.tsx --bundle --minify --outfile=dist/index.js",
     "build:css": "parcel build src/styles/styles.less  --dist-dir dist",
     "build:assets": "parcel build src/assets/**/* --dist-dir dist",
     "minify:js": "terser --compress --mangle -- dist/main.js > dist/index.js && rimraf dist/main.js",
@@ -53,6 +53,7 @@
     "@types/plotly.js-dist-min": "^2.3.0",
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
+    "esbuild": "^0.14.41",
     "jest": "^27.5.1",
     "parcel": "^2.0.0",
     "rimraf": "^3.0.2",

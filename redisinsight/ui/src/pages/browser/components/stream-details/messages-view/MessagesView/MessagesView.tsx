@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { orderBy } from 'lodash'
 
 import {
   streamGroupsSelector,
@@ -9,7 +8,6 @@ import {
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import { SortOrder } from 'uiSrc/constants'
 import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
@@ -22,30 +20,17 @@ const noItemsMessageString = 'There are no Messages in the Consumer Group.'
 export interface Props {
   data: PendingEntryDto[]
   columns: ITableColumn[]
+  total: number
   onClosePopover: () => void
+  loadMoreItems: () => void
   isFooterOpen?: boolean
 }
 
 const MessagesView = (props: Props) => {
-  const { data = [], columns = [], onClosePopover, isFooterOpen } = props
+  const { data = [], columns = [], total, onClosePopover, loadMoreItems, isFooterOpen } = props
 
-  const { loading } = useSelector(streamGroupsSelector)
+  const { loading, } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }
-
-  const [messages, setMessages] = useState(data)
-  const [sortedColumnName, setSortedColumnName] = useState<string>('id')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.ASC)
-
-  useEffect(() => {
-    setMessages(orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()))
-  }, [data])
-
-  const onChangeSorting = (column: any, order: SortOrder) => {
-    setSortedColumnName(column)
-    setSortedColumnOrder(order)
-
-    setMessages(orderBy(messages, column, order?.toLowerCase()))
-  }
 
   return (
     <>
@@ -62,20 +47,17 @@ const MessagesView = (props: Props) => {
           hideProgress
           selectable={false}
           keyName={key}
-          totalItemsCount={data.length}
-          headerHeight={messages?.length ? headerHeight : 0}
+          totalItemsCount={total}
+          headerHeight={data?.length ? headerHeight : 0}
           rowHeight={rowHeight}
           columns={columns}
           footerHeight={0}
           loading={loading}
-          items={messages}
+          items={data}
+          tableWidth={columns.reduce((a, b) => a + (b.minWidth ?? 0), 0)}
           onWheel={onClosePopover}
-          onChangeSorting={onChangeSorting}
+          loadMoreItems={loadMoreItems}
           noItemsMessage={noItemsMessageString}
-          sortedColumn={messages?.length ? {
-            column: sortedColumnName,
-            order: sortedColumnOrder,
-          } : undefined}
         />
       </div>
     </>

@@ -2,7 +2,11 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { loadConsumerGroups, setSelectedGroup } from 'uiSrc/slices/browser/stream'
+import {
+  deleteConsumerGroups,
+  loadConsumerGroups,
+  setSelectedGroup
+} from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import GroupsView, { Props as GroupsViewProps } from './GroupsView'
@@ -82,5 +86,16 @@ describe('GroupsViewWrapper', () => {
     fireEvent.click(screen.getByTestId('select-group-btn'))
 
     expect(store.getActions()).toEqual([...afterRenderActions, setSelectedGroup(), loadConsumerGroups(false)])
+  })
+
+  it('should delete Group', () => {
+    render(<GroupsViewWrapper {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('remove-groups-button-test-icon'))
+    fireEvent.click(screen.getByTestId('remove-groups-button-test'))
+
+    expect(store.getActions()).toEqual([...afterRenderActions, deleteConsumerGroups()])
   })
 })

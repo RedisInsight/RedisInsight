@@ -10,12 +10,14 @@
   --info-background: #20222B;
   --info-color: white;
   --svg-background: #010101;
+  --tooltip-background: #3E4B5E;
 }
 
 .theme_LIGHT {
   --info-background: white;
   --info-color: black;
   --svg-background: #FFFFFF;
+  --tooltip-background: white;
 }
 
 
@@ -250,4 +252,14 @@
   color: var(--info-color);
   padding: 12px !important;
   font-family: monospace !important;
+}
+
+.euiToolTip {
+  color: var(--info-color) !important;
+  background-color: var(--tooltip-background) !important;
+  font-size: 12px !important;
+}
+
+.euiToolTip__arrow {
+  background-color: var(--tooltip-background) !important;
 }

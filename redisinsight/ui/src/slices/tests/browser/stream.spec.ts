@@ -1,8 +1,10 @@
 import { ConsumerDto, ConsumerGroupDto, PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
+import { refreshKeyInfo } from 'uiSrc/slices/browser/keys'
 import reducer, {
   initialState,
   setStreamInitialState,
@@ -35,21 +37,23 @@ import reducer, {
   loadConsumerMessagesFailure,
   setSelectedGroup,
   setSelectedConsumer,
-  streamDataSelector,
-  streamGroupsSelector,
-  streamGroupsDataSelector,
-  selectedGroupSelector,
-  selectedConsumerSelector,
-  fetchMoreStreamEntries,
-  addNewEntriesAction,
-  deleteStreamEntry,
   fetchConsumerGroups,
   fetchConsumers,
   fetchConsumerMessages,
+  deleteConsumerGroups,
+  deleteConsumerGroupsAction,
+  deleteConsumerGroupsSuccess,
+  deleteConsumerGroupsFailure,
+  deleteConsumersAction,
+  deleteConsumers,
+  deleteConsumersSuccess,
+  deleteConsumersFailure,
+  fetchMoreConsumerMessages,
+  loadMoreConsumerMessagesSuccess,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
-import { addErrorNotification } from '../../app/notifications'
+import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
 
@@ -509,9 +513,6 @@ describe('stream slice', () => {
   describe('loadConsumerGroupsSuccess', () => {
     it('should properly set groups.data = payload', () => {
       // Arrange
-
-      console.log('Date.now()', Date.now())
-
       const data: ConsumerGroupDto[] = [{
         name: '123',
         consumers: 123,
@@ -718,6 +719,42 @@ describe('stream slice', () => {
 
       // Act
       const nextState = reducer(initialState, setSelectedConsumer(consumer))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadMoreConsumerMessagesSuccess', () => {
+    it('should properly concat more messages', () => {
+      // Arrange
+      const data: PendingEntryDto[] = [{
+        id: '123',
+        consumerName: '123',
+        idle: 123,
+        delivered: 123,
+      }]
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          selectedGroup: {
+            selectedConsumer: {
+              lastRefreshTime: Date.now(),
+              data: [
+                ...initialState.groups.selectedGroup?.selectedConsumer?.data ?? [],
+                ...data
+              ],
+            }
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadMoreConsumerMessagesSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -958,6 +995,184 @@ describe('stream slice', () => {
           loadConsumerGroups(),
           addErrorNotification(responsePayload as AxiosError),
           loadConsumerMessagesFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('deleteConsumerGroupsAction', () => {
+      it('succeed to delete data', async () => {
+        // Arrange
+        const keyName = 'key'
+        const groups = ['group']
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        const responsePayloadPost = { data: mockConsumers, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
+
+        // Act
+        await store.dispatch<any>(deleteConsumerGroupsAction(keyName, groups))
+
+        // Assert
+        const expectedActions = [
+          deleteConsumerGroups(),
+          deleteConsumerGroupsSuccess(),
+          loadConsumerGroups(false),
+          refreshKeyInfo(),
+          addMessageNotification(
+            successMessages.REMOVED_KEY_VALUE(
+              keyName,
+              groups.join(''),
+              'Group'
+            )
+          )
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to delete data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const keyName = 'key'
+        const groups = ['group']
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteConsumerGroupsAction(keyName, groups))
+
+        // Assert
+        const expectedActions = [
+          deleteConsumerGroups(),
+          addErrorNotification(responsePayload as AxiosError),
+          deleteConsumerGroupsFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('deleteConsumersAction', () => {
+      it('succeed to delete data', async () => {
+        // Arrange
+        const keyName = 'key'
+        const groupName = 'group'
+        const consumerNames = ['consumer']
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        const responsePayloadPost = { data: mockConsumers, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
+
+        // Act
+        await store.dispatch<any>(deleteConsumersAction(keyName, groupName, consumerNames))
+
+        // Assert
+        const expectedActions = [
+          deleteConsumers(),
+          deleteConsumersSuccess(),
+          loadConsumerGroups(false),
+          refreshKeyInfo(),
+          addMessageNotification(
+            successMessages.REMOVED_KEY_VALUE(
+              keyName,
+              consumerNames.join(''),
+              'Consumer'
+            )
+          )
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to delete data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const keyName = 'key'
+        const groupName = 'group'
+        const consumerNames = ['consumer']
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteConsumersAction(keyName, groupName, consumerNames))
+
+        // Assert
+        const expectedActions = [
+          deleteConsumers(),
+          addErrorNotification(responsePayload as AxiosError),
+          deleteConsumersFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchMoreConsumerMessages', () => {
+      it('succeed to fetch more data', async () => {
+        // Arrange
+        const pendingMessages = [{
+          idle: 123,
+          id: '123',
+          consumerName: 'name',
+          delivered: 1
+        }]
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        const responsePayloadPost = { data: pendingMessages, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
+
+        // Act
+        await store.dispatch<any>(fetchMoreConsumerMessages(500))
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          loadMoreConsumerMessagesSuccess(pendingMessages)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch more data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchMoreConsumerMessages(500))
+
+        // Assert
+        const expectedActions = [
+          loadConsumerGroups(),
+          addErrorNotification(responsePayload as AxiosError),
+          loadConsumerMessagesFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

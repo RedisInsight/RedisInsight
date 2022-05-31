@@ -37,6 +37,7 @@ enum ApiEndpoints {
   STREAMS_ENTRIES_GET = 'streams/entries/get',
   STREAMS_CONSUMER_GROUPS = 'streams/consumer-groups',
   STREAMS_CONSUMER_GROUPS_GET = 'streams/consumer-groups/get',
+  STREAMS_CONSUMERS = 'streams/consumer-groups/consumers',
   STREAMS_CONSUMERS_GET = 'streams/consumer-groups/consumers/get',
   STREAMS_CONSUMERS_MESSAGES_GET = 'streams/consumer-groups/consumers/pending-messages/get',
   STREAMS = 'streams',

@@ -2,19 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  deleteStreamEntry,
   setStreamViewType,
   selectedGroupSelector,
   setSelectedConsumer,
-  fetchConsumerMessages
+  fetchConsumerMessages,
+  deleteConsumersAction
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 
 import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import ConsumersView from './ConsumersView'
@@ -29,8 +28,9 @@ export interface Props {
 }
 
 const ConsumersViewWrapper = (props: Props) => {
-  const { name: key = '' } = useSelector(connectedInstanceSelector)
+  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const {
+    name: selectedGroupName = '',
     lastRefreshTime,
     data: loadedConsumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
@@ -52,7 +52,7 @@ const ConsumersViewWrapper = (props: Props) => {
   }, [])
 
   const handleDeleteConsumer = (consumerName = '') => {
-    dispatch(deleteStreamEntry(key, [consumerName]))
+    dispatch(deleteConsumersAction(key, selectedGroupName, [consumerName]))
     closePopover()
   }
 
@@ -87,6 +87,7 @@ const ConsumersViewWrapper = (props: Props) => {
       truncateText: true,
       isSortable: true,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'pending',
@@ -96,16 +97,18 @@ const ConsumersViewWrapper = (props: Props) => {
       truncateText: true,
       isSortable: true,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'idle',
-      label: 'Idle time, ms',
+      label: 'Idle Time, ms',
       minWidth: 190,
       relativeWidth: 0.27,
       isSortable: true,
       alignment: TableCellAlignment.Right,
       className: styles.cell,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
       render: (cellData: number) => numberWithSpaces(cellData),
     },
     {
@@ -120,11 +123,10 @@ const ConsumersViewWrapper = (props: Props) => {
         return (
           <div>
             <PopoverDelete
+              header={name}
               text={(
                 <>
-                  Consumer will be removed from
-                  <br />
-                  {key}
+                  will be removed from Consumer Group <b>{selectedGroupName}</b>
                 </>
               )}
               item={name}
@@ -134,7 +136,7 @@ const ConsumersViewWrapper = (props: Props) => {
               updateLoading={false}
               showPopover={showPopover}
               testid={`remove-consumer-button-${name}`}
-              handleDeleteItem={handleDeleteConsumer}
+              handleDeleteItem={() => handleDeleteConsumer(name)}
               handleButtonClick={handleRemoveIconClick}
             />
           </div>

@@ -11,13 +11,13 @@ import {
   fetchConsumers,
   setStreamViewType,
   modifyLastDeliveredIdAction,
+  deleteConsumerGroupsAction,
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { consumerGroupIdRegex, validateConsumerGroupId } from 'uiSrc/utils'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 
 import { ConsumerGroupDto, UpdateConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
@@ -43,8 +43,7 @@ const GroupsViewWrapper = (props: Props) => {
     data: loadedGroups = [],
     loading
   } = useSelector(streamGroupsSelector)
-  const { name: key = '' } = useSelector(connectedInstanceSelector)
-  const { name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {}
+  const { name: selectedKey } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
   const dispatch = useDispatch()
 
@@ -83,8 +82,8 @@ const GroupsViewWrapper = (props: Props) => {
     setDeleting(`${groupName + suffix}`)
   }, [])
 
-  const handleDeleteGroup = () => {
-    // dispatch(deleteStreamEntry(key, [groupName]))
+  const handleDeleteGroup = (name: string) => {
+    dispatch(deleteConsumerGroupsAction(selectedKey, [name]))
     closePopover()
   }
 
@@ -129,25 +128,29 @@ const GroupsViewWrapper = (props: Props) => {
       truncateText: true,
       isSortable: true,
       relativeWidth: 0.44,
+      minWidth: 90,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'consumers',
       label: 'Consumers',
-      minWidth: 130,
+      minWidth: 120,
       relativeWidth: 0.15,
       truncateText: true,
       isSortable: true,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
     },
     {
       id: 'pending',
       label: 'Pending',
-      minWidth: 106,
+      minWidth: 95,
       relativeWidth: 0.12,
       isSortable: true,
       className: styles.cell,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
       render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: ConsumerGroupDto) {
         const smallestTimestamp = smallestPendingId?.split('-')?.[0]
         const greatestTimestamp = greatestPendingId?.split('-')?.[0]
@@ -181,6 +184,7 @@ const GroupsViewWrapper = (props: Props) => {
       isSortable: true,
       className: styles.cell,
       headerClassName: 'streamItemHeader',
+      headerCellClassName: 'truncateText',
       render: function Id(_name: string, { lastDeliveredId: id }: ConsumerGroupDto) {
         const timestamp = id?.split('-')?.[0]
         return (
@@ -248,11 +252,10 @@ const GroupsViewWrapper = (props: Props) => {
               </>
             </PopoverItemEditor>
             <PopoverDelete
+              header={name}
               text={(
                 <>
-                  Group will be removed from
-                  <br />
-                  {key}
+                  will be removed from <b>{selectedKey}</b>
                 </>
               )}
               item={name}
@@ -262,7 +265,7 @@ const GroupsViewWrapper = (props: Props) => {
               updateLoading={false}
               showPopover={showPopover}
               testid={`remove-groups-button-${name}`}
-              handleDeleteItem={handleDeleteGroup}
+              handleDeleteItem={() => handleDeleteGroup(name)}
               handleButtonClick={handleRemoveIconClick}
             />
           </div>

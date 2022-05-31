@@ -13,7 +13,7 @@ import {
 import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime, getNextId } from 'uiSrc/utils/streamUtils'
-import { SortOrder, TableCellTextAlignment } from 'uiSrc/constants'
+import { SortOrder } from 'uiSrc/constants'
 import { PendingEntryDto, ClaimPendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
@@ -25,6 +25,8 @@ import styles from './MessagesView/styles.module.scss'
 
 const actionsWidth = 150
 const minColumnWidth = 195
+const claimPrefix = '-claim'
+const ackPrefix = '-ack'
 
 export interface Props {
   isFooterOpen: boolean
@@ -39,8 +41,7 @@ const MessagesViewWrapper = (props: Props) => {
   const { name: group } = useSelector(selectedGroupSelector) ?? { name: '' }
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
-  const [claimingId, setClaimingId] = useState<string>('')
-  const [acknowledgeId, setAcknowledgeId] = useState<string>('')
+  const [openPopover, setOpenPopover] = useState<string>('')
 
   const dispatch = useDispatch()
 
@@ -49,24 +50,15 @@ const MessagesViewWrapper = (props: Props) => {
   }, [])
 
   const showAchPopover = useCallback((id) => {
-    setAcknowledgeId(id)
+    setOpenPopover(id + ackPrefix)
   }, [])
 
-  const closeAckPopover = useCallback(() => {
-    setAcknowledgeId('')
+  const closePopover = useCallback(() => {
+    setOpenPopover('')
   }, [])
 
   const showClaimPopover = useCallback((id :string) => {
-    setClaimingId(id)
-  }, [])
-
-  const closeClaimPopover = useCallback(() => {
-    setClaimingId('')
-  }, [])
-
-  const closePopovers = useCallback(() => {
-    setClaimingId('')
-    setAcknowledgeId('')
+    setOpenPopover(id + claimPrefix)
   }, [])
 
   const handleAchPendingMessage = (entry: string) => {
@@ -154,15 +146,15 @@ const MessagesViewWrapper = (props: Props) => {
           <div>
             <MessageAckPopover
               id={id}
-              isOpen={acknowledgeId === id}
-              closePopover={() => closeAckPopover()}
+              isOpen={openPopover === id + ackPrefix}
+              closePopover={() => closePopover()}
               showPopover={() => showAchPopover(id)}
               acknowledge={handleAchPendingMessage}
             />
             <MessageClaimPopover
               id={id}
-              isOpen={claimingId === id}
-              closePopover={() => closeClaimPopover()}
+              isOpen={openPopover === id + claimPrefix}
+              closePopover={() => closePopover()}
               showPopover={() => showClaimPopover(id)}
               claimMessage={handleClaimingId}
             />
@@ -178,7 +170,7 @@ const MessagesViewWrapper = (props: Props) => {
         data={loadedMessages}
         total={pending}
         columns={columns}
-        onClosePopover={closePopovers}
+        onClosePopover={closePopover}
         loadMoreItems={loadMoreItems}
         {...props}
       />

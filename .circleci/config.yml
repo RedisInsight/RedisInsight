@@ -334,7 +334,7 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
-      # - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
+      - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
       - macos/add-uitest-permissions
       - run: bundle install
       - run: bundle exec fastlane testandbuild

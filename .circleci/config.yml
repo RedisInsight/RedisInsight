@@ -334,18 +334,21 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
-      - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
-      - macos/add-uitest-permissions
-      - run: mkdir -p release && cd release
-      - run: bundle install
-      - run: bundle exec fastlane testandbuild
+      # - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
+      # - macos/add-uitest-permissions
+      # - run: bundle install
+      # - run: bundle exec fastlane testandbuild
 #      - attach_workspace:
 #          at: .
       - run:
           name: Download build from S3
           command: |
             # brew install wget
-            curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg
+            mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg
+      - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
+      - macos/add-uitest-permissions
+      - run: bundle install
+      - run: bundle exec fastlane testandbuild
       - run:
           name: Run e2e tests
           command: .circleci/e2e/test.dmg.sh

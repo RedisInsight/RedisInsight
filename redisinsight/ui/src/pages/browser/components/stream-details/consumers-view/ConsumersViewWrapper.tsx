@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { EuiToolTip, EuiText } from '@elastic/eui'
 
 import {
   setStreamViewType,
@@ -14,6 +15,7 @@ import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import { formatLongName } from 'uiSrc/utils'
 
 import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import ConsumersView from './ConsumersView'
@@ -88,6 +90,25 @@ const ConsumersViewWrapper = (props: Props) => {
       isSortable: true,
       headerClassName: 'streamItemHeader',
       headerCellClassName: 'truncateText',
+      render: function Name(_name: string, { name }: ConsumerDto) {
+        // Better to cut the long string, because it could affect virtual scroll performance
+        const cellContent = name.substring(0, 200)
+        const tooltipContent = formatLongName(name)
+        return (
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-consumer-${name}`}>
+              <EuiToolTip
+                className={styles.tooltipName}
+                anchorClassName="truncateText"
+                position="bottom"
+                content={tooltipContent}
+              >
+                <>{cellContent}</>
+              </EuiToolTip>
+            </div>
+          </EuiText>
+        )
+      },
     },
     {
       id: 'pending',

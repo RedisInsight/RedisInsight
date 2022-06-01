@@ -4,11 +4,16 @@ import { SortOrder } from 'uiSrc/constants'
 import { SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
 import { ClaimPendingEntryDto, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
+export enum ClaimTimeOptions {
+  ABSOLUTE = 'idle',
+  RELATIVE = 'time',
+}
+
 interface IForm {
   consumerName: string
   minIdleTime: string
-  idle: string
-  time: string
+  timeCount: string,
+  timeOption: ClaimTimeOptions,
   retryCount: string
   force: boolean
 }
@@ -55,14 +60,13 @@ export const prepareDataForClaimRequest = (
   entries: string[],
   isOptionalAvailable: boolean
 ): Partial<ClaimPendingEntryDto> => {
-  const { consumerName, minIdleTime, idle, time, retryCount, force } = values
+  const { consumerName, minIdleTime, timeCount, timeOption, retryCount, force } = values
   if (isOptionalAvailable) {
     return ({
       consumerName,
       minIdleTime: minIdleTime ? parseInt(minIdleTime, 10) : 0,
-      idle: parseInt(idle, 10),
-      time: parseInt(time, 10),
-      retryCount: parseInt(retryCount, 10),
+      [timeOption]: timeCount ? parseInt(timeCount, 10) : 0,
+      retryCount: retryCount ? parseInt(retryCount, 10) : 0,
       force,
       entries,
     })

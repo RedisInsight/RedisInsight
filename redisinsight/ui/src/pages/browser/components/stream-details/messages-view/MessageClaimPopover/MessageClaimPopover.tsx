@@ -1,6 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
-import cx from 'classnames'
 import {
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -13,14 +12,15 @@ import {
   EuiFieldNumber,
   EuiSwitch,
   EuiText,
-  // EuiCheckbox
+  EuiCheckbox,
+  EuiSpacer
 } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
 
 import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
 import { validateNumber } from 'uiSrc/utils'
-import { prepareDataForClaimRequest, getDefaultConsumer } from 'uiSrc/utils/streamUtils'
+import { prepareDataForClaimRequest, getDefaultConsumer, ClaimTimeOptions } from 'uiSrc/utils/streamUtils'
 import { ClaimPendingEntryDto, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
@@ -38,6 +38,11 @@ const getConsumersOptions = (consumers: ConsumerDto[]) => (
     )
   }))
 )
+
+const timeOptions: EuiSuperSelectOption<string>[] = [
+  { value: ClaimTimeOptions.ABSOLUTE, inputDisplay: 'Timestamp' },
+  { value: ClaimTimeOptions.RELATIVE, inputDisplay: 'Relative Time' },
+]
 
 export interface Props {
   id: string
@@ -67,8 +72,8 @@ const MessageClaimPopover = (props: Props) => {
   const [initialValues, setInitialValues] = useState({
     consumerName: '',
     minIdleTime: '0',
-    idle: '0',
-    time: '0',
+    timeCount: '0',
+    timeOption: ClaimTimeOptions.ABSOLUTE,
     retryCount: '0',
     force: false
   })
@@ -130,6 +135,7 @@ const MessageClaimPopover = (props: Props) => {
           <EuiFlexItem>
             <EuiFormRow label="Consumer">
               <EuiSuperSelect
+                fullWidth
                 itemClassName={styles.consumerOption}
                 valueOfSelected={formik.values.consumerName}
                 options={consumerOptions}
@@ -140,7 +146,7 @@ const MessageClaimPopover = (props: Props) => {
               />
             </EuiFormRow>
           </EuiFlexItem>
-          <EuiFlexItem>
+          <EuiFlexItem style={{ position: 'relative' }}>
             <EuiFormRow
               label="Min Idle Time"
             >
@@ -165,76 +171,83 @@ const MessageClaimPopover = (props: Props) => {
             </EuiFormRow>
           </EuiFlexItem>
         </EuiFlexGroup>
-        {/* {isOptionalShow && (
-          <EuiFlexGroup>
-            <EuiFlexItem>
-              <EuiFormRow label="Idle Time">
-                <EuiFieldNumber
-                  name="minIdleTime"
-                  id="port"
-                  data-testid="port"
-                  style={{ width: '162px', height: '36px' }}
-                  placeholder="Min Idle Time"
-                  className={styles.minIdleTime}
-                  value={formik.values.minIdleTime}
-                  append="ms"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateNumber(e.target.value.trim())
-                    )
-                  }}
-                  type="text"
-                  min={0}
-                />
-              </EuiFormRow>
-              <EuiSuperSelect
-                valueOfSelected={formik.values.consumerName}
-                options={consumerOptions}
-                style={{ width: '120px' }}
-                name="consumerName"
-                onChange={(value) => formik.setFieldValue('consumerName', value)}
-                data-testid="destination-select"
-              />
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiFormRow label="Retry Count">
-                <EuiFieldNumber
-                  name="minIdleTime"
-                  id="port"
-                  data-testid="port"
-                  style={{ width: '162px', height: '36px' }}
-                  placeholder="Min Idle Time"
-                  className={styles.minIdleTime}
-                  value={formik.values.minIdleTime}
-                  append="ms"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateNumber(e.target.value.trim())
-                    )
-                  }}
-                  type="text"
-                  min={0}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiFormRow>
-                <EuiCheckbox
-                  id="force_claim"
-                  name="force"
-                  label="Force Claim"
-                  checked={formik.values.force}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(e.target.name, !formik.values.force)
-                  }}
-                  data-testid="showDb"
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        )} */}
+        {isOptionalShow && (
+          <>
+            <EuiSpacer size="m" />
+            <EuiFlexGroup className={styles.container} alignItems="center">
+              <EuiFlexItem className={styles.idle}>
+                <EuiFormRow label="Idle Time">
+                  <EuiFieldNumber
+                    name="timeCount"
+                    id="timeCount"
+                    data-testid="time-count"
+                    style={{ width: '162px', height: '36px', paddingRight: '40px' }}
+                    placeholder="0"
+                    className={styles.minIdleTime}
+                    value={formik.values.timeCount}
+                    append="ms"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      formik.setFieldValue(
+                        e.target.name,
+                        validateNumber(e.target.value.trim())
+                      )
+                    }}
+                    type="text"
+                    min={0}
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+              <EuiFlexItem className={styles.timeSelect}>
+                <EuiFormRow className={styles.hiddenLabel} label="time">
+                  <EuiSuperSelect
+                    itemClassName={styles.timeOption}
+                    valueOfSelected={formik.values.timeOption}
+                    options={timeOptions}
+                    style={{ width: '120px', height: '38px' }}
+                    name="consumerName"
+                    onChange={(value) => formik.setFieldValue('timeOption', value)}
+                    data-testid="time-option-select"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiFormRow label="Retry Count">
+                  <EuiFieldNumber
+                    name="retryCount"
+                    id="retryCount"
+                    data-testid="retry-count"
+                    style={{ width: '90px', height: '36px' }}
+                    placeholder="0"
+                    className={styles.minIdleTime}
+                    value={formik.values.retryCount}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      formik.setFieldValue(
+                        e.target.name,
+                        validateNumber(e.target.value.trim())
+                      )
+                    }}
+                    type="text"
+                    min={0}
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+              <EuiFlexItem style={{ flexGrow: 2 }}>
+                <EuiFormRow className={styles.hiddenLabel} label="force">
+                  <EuiCheckbox
+                    id="force_claim"
+                    name="force"
+                    label="Force Claim"
+                    checked={formik.values.force}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      formik.setFieldValue(e.target.name, !formik.values.force)
+                    }}
+                    data-testid="force-claim-checkbox"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </>
+        )}
         <EuiFlexGroup className={styles.footer}>
           <EuiFlexItem grow={false}>
             <EuiSwitch

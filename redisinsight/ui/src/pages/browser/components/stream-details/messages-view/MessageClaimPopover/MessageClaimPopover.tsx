@@ -139,14 +139,14 @@ const MessageClaimPopover = (props: Props) => {
                 itemClassName={styles.consumerOption}
                 valueOfSelected={formik.values.consumerName}
                 options={consumerOptions}
-                style={{ width: '389px' }}
+                className={styles.consumerField}
                 name="consumerName"
                 onChange={(value) => formik.setFieldValue('consumerName', value)}
                 data-testid="destination-select"
               />
             </EuiFormRow>
           </EuiFlexItem>
-          <EuiFlexItem style={{ position: 'relative' }}>
+          <EuiFlexItem className={styles.relative}>
             <EuiFormRow
               label="Min Idle Time"
             >
@@ -154,9 +154,8 @@ const MessageClaimPopover = (props: Props) => {
                 name="minIdleTime"
                 id="minIdleTime"
                 data-testid="min-idle-time"
-                style={{ width: '162px', height: '36px', paddingRight: '40px' }}
                 placeholder="0"
-                className={styles.minIdleTime}
+                className={styles.fieldWithAppend}
                 value={formik.values.minIdleTime}
                 append="ms"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -181,9 +180,8 @@ const MessageClaimPopover = (props: Props) => {
                     name="timeCount"
                     id="timeCount"
                     data-testid="time-count"
-                    style={{ width: '162px', height: '36px', paddingRight: '40px' }}
                     placeholder="0"
-                    className={styles.minIdleTime}
+                    className={styles.fieldWithAppend}
                     value={formik.values.timeCount}
                     append="ms"
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -203,7 +201,7 @@ const MessageClaimPopover = (props: Props) => {
                     itemClassName={styles.timeOption}
                     valueOfSelected={formik.values.timeOption}
                     options={timeOptions}
-                    style={{ width: '120px', height: '38px' }}
+                    className={styles.timeOptionField}
                     name="consumerName"
                     onChange={(value) => formik.setFieldValue('timeOption', value)}
                     data-testid="time-option-select"
@@ -216,9 +214,8 @@ const MessageClaimPopover = (props: Props) => {
                     name="retryCount"
                     id="retryCount"
                     data-testid="retry-count"
-                    style={{ width: '90px', height: '36px' }}
                     placeholder="0"
-                    className={styles.minIdleTime}
+                    className={styles.retryCountField}
                     value={formik.values.retryCount}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       formik.setFieldValue(
@@ -231,7 +228,7 @@ const MessageClaimPopover = (props: Props) => {
                   />
                 </EuiFormRow>
               </EuiFlexItem>
-              <EuiFlexItem style={{ flexGrow: 2 }}>
+              <EuiFlexItem className={styles.grow}>
                 <EuiFormRow className={styles.hiddenLabel} label="force">
                   <EuiCheckbox
                     id="force_claim"

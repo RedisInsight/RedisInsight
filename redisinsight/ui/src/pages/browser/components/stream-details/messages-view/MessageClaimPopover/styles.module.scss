@@ -87,3 +87,31 @@
 .popoverWrapper .hiddenLabel :global(.euiFormRow__label) {
   font-size: 0;
 }
+
+.relative {
+  position: relative;
+}
+
+.consumerField {
+  width: 389px !important;
+}
+
+.fieldWithAppend {
+  width: 162px !important;
+  height: 36px !important;
+  padding-right: 40px !important;
+}
+
+.timeOptionField {
+  width: 120px !important;
+  height: 38px !important;
+}
+
+.retryCountField {
+  width: 90px !important;
+  height: 36px !important;
+}
+
+.grow {
+  flex-grow: 2;
+}

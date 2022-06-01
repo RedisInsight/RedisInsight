@@ -6,14 +6,14 @@ import { ClaimPendingEntryDto, ConsumerDto } from 'apiSrc/modules/browser/dto/st
 
 export enum ClaimTimeOptions {
   ABSOLUTE = 'idle',
-  RELATIVE = 'time',
+  RELATIVE = 'time'
 }
 
 interface IForm {
   consumerName: string
   minIdleTime: string
-  timeCount: string,
-  timeOption: ClaimTimeOptions,
+  timeCount: string
+  timeOption: ClaimTimeOptions
   retryCount: string
   force: boolean
 }

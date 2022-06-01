@@ -124,6 +124,7 @@ orbs:
   win: circleci/windows@2.4.0
   node: circleci/node@4.4.0
   aws: circleci/aws-cli@2.0.3
+  macos: circleci/macos@1.0
 
 executors:
   linux-executor:
@@ -332,6 +333,10 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
+      - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
+      - macos/add-uitest-permissions
+      - run: bundle install
+      - run: bundle exec fastlane testandbuild
 #      - attach_workspace:
 #          at: .
       - run:

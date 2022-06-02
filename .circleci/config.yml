@@ -347,7 +347,7 @@ jobs:
             # brew install wget
             mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg
       - run: pwd
-      - run: cd ../../../ $$ cd echo 'chruby ruby-2.7' >> ~/.bash_profile
+      - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
       - run: pwd
       - macos/add-uitest-permissions
       - run: bundle install

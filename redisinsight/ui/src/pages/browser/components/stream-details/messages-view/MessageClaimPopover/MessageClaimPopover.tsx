@@ -13,7 +13,8 @@ import {
   EuiSwitch,
   EuiText,
   EuiCheckbox,
-  EuiSpacer
+  EuiSpacer,
+  EuiToolTip
 } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
@@ -106,9 +107,35 @@ const MessageClaimPopover = (props: Props) => {
     }
   }, [consumers, currentConsumerName])
 
+  const button = (
+    <EuiButton
+      size="s"
+      color="secondary"
+      aria-label="Claim pending message"
+      onClick={showPopover}
+      data-testid="claim-pending-message"
+      className={styles.claimBtn}
+      disabled={consumers.length < 2}
+    >
+      CLAIM
+    </EuiButton>
+  )
+
+  const buttonTooltip = (
+    <EuiToolTip
+      content="There is no consumer to claim the message."
+      position="top"
+      display="inlineBlock"
+      anchorClassName="flex-row"
+    >
+      {button}
+    </EuiToolTip>
+  )
+
   return (
     <EuiPopover
       key={id}
+      onWheel={(e) => e.stopPropagation()}
       anchorPosition="leftCenter"
       ownFocus
       isOpen={isOpen}
@@ -117,18 +144,7 @@ const MessageClaimPopover = (props: Props) => {
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
       closePopover={() => {}}
-      button={(
-        <EuiButton
-          size="s"
-          color="secondary"
-          aria-label="Claim pending message"
-          onClick={showPopover}
-          data-testid="claim-pending-message"
-          className={styles.claimBtn}
-        >
-          CLAIM
-        </EuiButton>
-      )}
+      button={consumers.length < 2 ? buttonTooltip : button}
     >
       <EuiForm>
         <EuiFlexGroup>

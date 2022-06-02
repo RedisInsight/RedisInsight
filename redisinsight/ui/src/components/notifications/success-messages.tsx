@@ -137,5 +137,9 @@ export default {
         {actionName}.
       </>
     ),
+  }),
+  NO_CLAIMED_MESSAGES: () => ({
+    title: 'No messages claimed',
+    message: 'No messages exceed the minimum idle time.',
   })
 }

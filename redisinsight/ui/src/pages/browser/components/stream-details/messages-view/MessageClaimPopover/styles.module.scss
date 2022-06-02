@@ -64,6 +64,7 @@
   font: normal normal normal 13px/24px Graphik;
   letter-spacing: -0.13px;
   color: var(--inputPlaceholderColor) !important;
+  white-space: nowrap;
 }
 
 .consumerOption :global(.euiContextMenu__itemLayout) .pendingCount {
@@ -118,4 +119,9 @@
 
 .popoverWrapper .container .grow {
   flex-grow: 2;
+}
+
+.consumerName {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

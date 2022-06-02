@@ -107,6 +107,31 @@ const MessageClaimPopover = (props: Props) => {
     }
   }, [consumers, currentConsumerName])
 
+  const button = (
+    <EuiButton
+      size="s"
+      color="secondary"
+      aria-label="Claim pending message"
+      onClick={showPopover}
+      data-testid="claim-pending-message"
+      className={styles.claimBtn}
+      disabled={consumers.length < 2}
+    >
+      CLAIM
+    </EuiButton>
+  )
+
+  const buttonTooltip = (
+    <EuiToolTip
+      content="There is no consumer to claim the message."
+      position="top"
+      display="inlineBlock"
+      anchorClassName="flex-row"
+    >
+      {button}
+    </EuiToolTip>
+  )
+
   return (
     <EuiPopover
       key={id}
@@ -119,39 +144,7 @@ const MessageClaimPopover = (props: Props) => {
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
       closePopover={() => {}}
-      button={
-          consumers.length < 2 ? (
-            <EuiToolTip
-              content="There is no consumer to claim the message."
-              position="top"
-              display="inlineBlock"
-              anchorClassName="flex-row"
-            >
-              <EuiButton
-                size="s"
-                color="secondary"
-                aria-label="Claim pending message"
-                onClick={showPopover}
-                data-testid="claim-pending-message"
-                className={styles.claimBtn}
-                disabled
-              >
-                CLAIM
-              </EuiButton>
-            </EuiToolTip>
-          ) : (
-            <EuiButton
-              size="s"
-              color="secondary"
-              aria-label="Claim pending message"
-              onClick={showPopover}
-              data-testid="claim-pending-message"
-              className={styles.claimBtn}
-            >
-              CLAIM
-            </EuiButton>
-          )
-      }
+      button={consumers.length < 2 ? buttonTooltip : button}
     >
       <EuiForm>
         <EuiFlexGroup>

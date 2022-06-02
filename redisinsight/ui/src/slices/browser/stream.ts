@@ -959,9 +959,15 @@ export function claimPendingMessages(
         dispatch(claimConsumerMessagesSuccess())
         dispatch<any>(fetchConsumerMessages())
         dispatch<any>(fetchConsumers())
-        dispatch(addMessageNotification(
-          successMessages.MESSAGE_ACTION(data.affected[0], 'claimed')
-        ))
+        if (data.affected.length) {
+          dispatch(addMessageNotification(
+            successMessages.MESSAGE_ACTION(data.affected[0], 'claimed')
+          ))
+        } else {
+          dispatch(addMessageNotification(
+            successMessages.NO_CLAIMED_MESSAGES()
+          ))
+        }
         onSuccess?.(data)
       }
     } catch (_err) {

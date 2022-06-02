@@ -350,7 +350,7 @@ jobs:
       - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
       - run: pwd
       - macos/add-uitest-permissions
-      - run: bundle install
+      - run: cd /usr/local/Homebrew/Library/Homebrew && bundle install
       - run: bundle exec fastlane testandbuild
       - run:
           name: Run e2e tests

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { EuiTab, EuiTabs } from '@elastic/eui'
+import { EuiIcon, EuiTab, EuiTabs } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -13,6 +13,8 @@ import {
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 
 import { streamViewTypeTabs } from '../constants'
+
+import styles from './styles.module.scss'
 
 const StreamTabs = () => {
   const { viewType } = useSelector(streamSelector)
@@ -36,25 +38,30 @@ const StreamTabs = () => {
       tabs.push({
         id: StreamViewType.Consumers,
         label: selectedGroupName,
+        separator: <EuiIcon type="arrowRight" className={styles.separator} />
       })
     }
 
     if (selectedConsumerName && viewType === StreamViewType.Messages) {
       tabs.push({
         id: StreamViewType.Messages,
-        label: selectedConsumerName
+        label: selectedConsumerName,
+        separator: <EuiIcon type="arrowRight" className={styles.separator} />
       })
     }
 
-    return tabs.map(({ id, label }) => (
-      <EuiTab
-        isSelected={viewType === id}
-        onClick={() => onSelectedTabChanged(id)}
-        key={id}
-        data-testid={`stream-tab-${id}`}
-      >
-        {label}
-      </EuiTab>
+    return tabs.map(({ id, label, separator = '' }) => (
+      <>
+        {separator}
+        <EuiTab
+          isSelected={viewType === id}
+          onClick={() => onSelectedTabChanged(id)}
+          key={id}
+          data-testid={`stream-tab-${id}`}
+        >
+          {label}
+        </EuiTab>
+      </>
     ))
   }, [viewType, selectedGroupName, selectedConsumerName])
 

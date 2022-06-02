@@ -1,11 +1,10 @@
 import React from 'react'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
-import { Maybe } from 'uiSrc/utils'
 
 interface StreamTabs {
   id: StreamViewType,
   label: string,
-  separator?: Maybe<React.ReactElement>
+  separator?: React.ReactElement
 }
 
 export const streamViewTypeTabs: StreamTabs[] = [

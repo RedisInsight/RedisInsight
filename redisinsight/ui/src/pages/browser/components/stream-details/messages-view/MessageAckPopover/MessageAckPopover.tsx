@@ -51,7 +51,6 @@ const AckPopover = (props: Props) => {
             fill
             size="s"
             color="warning"
-            iconType="trash"
             onClick={() => acknowledge(id)}
             data-testid="acknowledge-submit"
           >

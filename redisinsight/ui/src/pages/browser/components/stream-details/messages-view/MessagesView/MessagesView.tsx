@@ -15,7 +15,7 @@ import styles from './styles.module.scss'
 const headerHeight = 60
 const rowHeight = 54
 
-const noItemsMessageString = 'There are no Messages in the Consumer Group.'
+const noItemsMessageString = 'Your Consumer has no pending messages.'
 
 export interface Props {
   data: PendingEntryDto[]

@@ -38,13 +38,9 @@ const AckPopover = (props: Props) => {
     >
       <div className={styles.popover}>
         <EuiText size="m">
-          <EuiText size="s">
-            Are you sure to acknowledge
-            {' '}
-            <b>{id}</b>
-            ?
-          </EuiText>
-          This will remove entry from pending list.
+          <b>{id}</b>
+          <br />
+          will be acknowledged and removed from the pending messages list
         </EuiText>
         <div className={styles.popoverFooter}>
           <EuiButton

@@ -291,13 +291,13 @@ const streamSlice = createSlice({
       state.groups.error = payload
     },
     ackPendingEntries: (state) => {
-      state.loading = true
+      state.groups.loading = true
     },
     ackPendingEntriesSuccess: (state) => {
-      state.loading = false
+      state.groups.loading = false
     },
     ackPendingEntriesFailure: (state, { payload }) => {
-      state.loading = false
+      state.groups.loading = false
       state.groups.error = payload
     },
   },
@@ -949,7 +949,7 @@ export function claimPendingMessages(
           ApiEndpoints.STREAM_CLAIM_PENDING_MESSAGES
         ),
         {
-          keyName: state.browser.keys.selectedKey.data?.name,
+          keyName: state.browser.keys?.selectedKey?.data?.name,
           groupName: state.browser.stream.groups.selectedGroup?.name,
           consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name,
           ...payload
@@ -985,7 +985,7 @@ export function ackPendingEntriesAction(
   onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(removeStreamEntries())
+    dispatch(ackPendingEntries())
     try {
       const state = stateInit()
       const { status } = await apiService.post<AckPendingEntriesResponse>(

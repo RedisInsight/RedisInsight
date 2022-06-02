@@ -1,6 +1,7 @@
 import {
   ConsumerDto,
   ConsumerGroupDto,
+  ClaimPendingEntryDto,
   PendingEntryDto,
   UpdateConsumerGroupDto
 } from 'apiSrc/modules/browser/dto/stream.dto'
@@ -59,6 +60,14 @@ import reducer, {
   modifyLastDeliveredIdFailure,
   fetchMoreConsumerMessages,
   loadMoreConsumerMessagesSuccess,
+  ackPendingEntriesAction,
+  ackPendingEntries,
+  ackPendingEntriesSuccess,
+  ackPendingEntriesFailure,
+  claimPendingMessages,
+  claimConsumerMessages,
+  claimConsumerMessagesSuccess,
+  claimConsumerMessagesFailure
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
@@ -773,6 +782,145 @@ describe('stream slice', () => {
     })
   })
 
+  describe('ackPendingEntries', () => {
+    it('should properly set the state before the fetch data', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, ackPendingEntries())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('ackPendingEntriesSuccess', () => {
+    it('should properly set the state with fetched data', () => {
+      // Arrange
+
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, ackPendingEntriesSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('ackPendingEntriesFailure', () => {
+    it('should properly set the state after failed fetched data', () => {
+      // Arrange
+      const error = 'Some error'
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          loading: false,
+          error,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, ackPendingEntriesFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('claimConsumerMessages', () => {
+    it('should properly set the state before the fetch data', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, claimConsumerMessages())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('claimConsumerMessagesSuccess', () => {
+    it('should properly set the state with fetched data', () => {
+      // Arrange
+
+      const state = {
+        ...initialState,
+        groups: {
+          ...initialState.groups,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, claimConsumerMessagesSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('claimConsumerMessagesFailure', () => {
+    it('should properly set the state after failed fetched data', () => {
+      // Arrange
+      const error = 'Some error'
+      const state = {
+        ...initialState,
+        loading: false,
+        groups: {
+          ...initialState.groups,
+          loading: false,
+          error,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, claimConsumerMessagesFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { stream: nextState },
+      })
+      expect(streamSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchStreamEntries', () => {
       it('succeed to fetch data', async () => {
@@ -1242,6 +1390,134 @@ describe('stream slice', () => {
           loadConsumerGroups(),
           addErrorNotification(responsePayload as AxiosError),
           loadConsumerMessagesFailure(errorMessage),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+    describe('ackPendingEntriesAction', () => {
+      it('succeed to acknowledge data', async () => {
+        // Arrange
+        const keyName = 'key'
+        const groupName = 'group'
+        const entries = ['0-1']
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(ackPendingEntriesAction(keyName, groupName, entries))
+
+        // Assert
+        const expectedActions = [
+          ackPendingEntries(),
+          ackPendingEntriesSuccess(),
+          loadConsumerGroups(),
+          loadConsumerGroups(),
+          addMessageNotification(
+            successMessages.MESSAGE_ACTION(
+              entries.join(''),
+              'acknowledged'
+            )
+          )
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to acknowledge message', async () => {
+        const errorMessage = 'Something was wrong!'
+        const keyName = 'key'
+        const groupName = 'group'
+        const entries = ['0-1']
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(ackPendingEntriesAction(keyName, groupName, entries))
+
+        // Assert
+        const expectedActions = [
+          ackPendingEntries(),
+          addErrorNotification(responsePayload as AxiosError),
+          ackPendingEntriesFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('claimPendingMessagesAction', () => {
+      it('succeed to fetch data', async () => {
+        // Arrange
+        const data: Partial<ClaimPendingEntryDto> = {
+          keyName: 'key',
+          groupName: 'group',
+          consumerName: 'name',
+          minIdleTime: 0,
+          entries: ['0-1']
+        }
+
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        const responsePayloadPost = { data: { affected: ['0-1'] }, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
+
+        // Act
+        await store.dispatch<any>(claimPendingMessages(data))
+
+        // Assert
+        const expectedActions = [
+          claimConsumerMessages(),
+          claimConsumerMessagesSuccess(),
+          loadConsumerGroups(),
+          loadConsumerGroups(),
+          addMessageNotification(
+            successMessages.MESSAGE_ACTION('0-1', 'claimed')
+          )
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const data: Partial<ClaimPendingEntryDto> = {
+          keyName: 'key',
+          groupName: 'group',
+          consumerName: 'name',
+          minIdleTime: 0,
+          entries: ['0-1']
+        }
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(claimPendingMessages(data))
+
+        // Assert
+        const expectedActions = [
+          claimConsumerMessages(),
+          addErrorNotification(responsePayload as AxiosError),
+          claimConsumerMessagesFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

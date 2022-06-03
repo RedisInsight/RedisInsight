@@ -1405,7 +1405,6 @@ describe('stream slice', () => {
         const responsePayload = { status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
-        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(ackPendingEntriesAction(keyName, groupName, entries))
@@ -1415,7 +1414,6 @@ describe('stream slice', () => {
           ackPendingEntries(),
           ackPendingEntriesSuccess(),
           deleteMessageFromList('0-1'),
-          loadConsumerGroups(),
           addMessageNotification(
             successMessages.MESSAGE_ACTION(
               entries.join(''),

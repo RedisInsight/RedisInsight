@@ -40,7 +40,7 @@ const getConsumersOptions = (consumers: ConsumerDto[]) => (
   }))
 )
 
-const timeOptions: EuiSuperSelectOption<string>[] = [
+const timeOptions: EuiSuperSelectOption<ClaimTimeOptions>[] = [
   { value: ClaimTimeOptions.RELATIVE, inputDisplay: 'Relative Time' },
   { value: ClaimTimeOptions.ABSOLUTE, inputDisplay: 'Timestamp' },
 ]
@@ -93,6 +93,18 @@ const MessageClaimPopover = (props: Props) => {
     closePopover()
     setIsOptionalShow(false)
     formik.resetForm()
+  }
+
+  const handleChangeTimeFormat = (value: ClaimTimeOptions) => {
+    formik.setFieldValue('timeOption', value)
+    if (value === ClaimTimeOptions.ABSOLUTE) {
+      formik.setFieldValue(
+        'timeCount',
+        new Date().getTime()
+      )
+    } else {
+      formik.setFieldValue('timeCount', '0')
+    }
   }
 
   useEffect(() => {
@@ -219,7 +231,7 @@ const MessageClaimPopover = (props: Props) => {
                     options={timeOptions}
                     className={styles.timeOptionField}
                     name="consumerName"
-                    onChange={(value) => formik.setFieldValue('timeOption', value)}
+                    onChange={handleChangeTimeFormat}
                     data-testid="time-option-select"
                   />
                 </EuiFormRow>

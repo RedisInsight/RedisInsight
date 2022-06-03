@@ -41,8 +41,8 @@ const getConsumersOptions = (consumers: ConsumerDto[]) => (
 )
 
 const timeOptions: EuiSuperSelectOption<string>[] = [
-  { value: ClaimTimeOptions.ABSOLUTE, inputDisplay: 'Timestamp' },
   { value: ClaimTimeOptions.RELATIVE, inputDisplay: 'Relative Time' },
+  { value: ClaimTimeOptions.ABSOLUTE, inputDisplay: 'Timestamp' },
 ]
 
 export interface Props {
@@ -74,7 +74,7 @@ const MessageClaimPopover = (props: Props) => {
     consumerName: '',
     minIdleTime: '0',
     timeCount: '0',
-    timeOption: ClaimTimeOptions.ABSOLUTE,
+    timeOption: ClaimTimeOptions.RELATIVE,
     retryCount: '0',
     force: false
   })

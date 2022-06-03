@@ -5,8 +5,8 @@ import { SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/consta
 import { ClaimPendingEntryDto, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 export enum ClaimTimeOptions {
-  ABSOLUTE = 'idle',
-  RELATIVE = 'time'
+  RELATIVE = 'idle',
+  ABSOLUTE = 'time'
 }
 
 interface IForm {

@@ -1014,6 +1014,7 @@ export function ackPendingEntriesAction(
         onSuccessAction?.()
         dispatch(ackPendingEntriesSuccess())
         dispatch(deleteMessageFromList(entries[0]))
+        dispatch<any>(fetchConsumers())
         dispatch(addMessageNotification(
           successMessages.MESSAGE_ACTION(entries[0], 'acknowledged')
         ))

@@ -168,12 +168,12 @@ export class BrowserPage {
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
-    streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
+    streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
     streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
-    streamEntryIdValue = Selector('.streamEntryId[data-testid*=stream-entry]');
-    streamFields = Selector('[data-test-id=stream-entries-container] .truncateText span');
+    streamEntryIdValue = Selector('.streamItemId[data-testid*=stream-entry]');
+    streamFields = Selector('[data-testid=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
     confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
 

@@ -67,7 +67,8 @@ import reducer, {
   claimPendingMessages,
   claimConsumerMessages,
   claimConsumerMessagesSuccess,
-  claimConsumerMessagesFailure
+  claimConsumerMessagesFailure,
+  deleteMessageFromList
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
@@ -1405,7 +1406,6 @@ describe('stream slice', () => {
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
-        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(ackPendingEntriesAction(keyName, groupName, entries))
@@ -1414,7 +1414,7 @@ describe('stream slice', () => {
         const expectedActions = [
           ackPendingEntries(),
           ackPendingEntriesSuccess(),
-          loadConsumerGroups(),
+          deleteMessageFromList('0-1'),
           loadConsumerGroups(),
           addMessageNotification(
             successMessages.MESSAGE_ACTION(
@@ -1456,7 +1456,7 @@ describe('stream slice', () => {
     })
 
     describe('claimPendingMessagesAction', () => {
-      it('succeed to fetch data', async () => {
+      it('succeed to claim message', async () => {
         // Arrange
         const data: Partial<ClaimPendingEntryDto> = {
           keyName: 'key',
@@ -1468,7 +1468,6 @@ describe('stream slice', () => {
 
         const responsePayload = { status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload)
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         const responsePayloadPost = { data: { affected: ['0-1'] }, status: 200 }
@@ -1483,9 +1482,43 @@ describe('stream slice', () => {
           claimConsumerMessages(),
           claimConsumerMessagesSuccess(),
           loadConsumerGroups(),
-          loadConsumerGroups(),
+          deleteMessageFromList('0-1'),
           addMessageNotification(
             successMessages.MESSAGE_ACTION('0-1', 'claimed')
+          )
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('succeed to claim message with 0 affected', async () => {
+        // Arrange
+        const data: Partial<ClaimPendingEntryDto> = {
+          keyName: 'key',
+          groupName: 'group',
+          consumerName: 'name',
+          minIdleTime: 0,
+          entries: ['0-1']
+        }
+
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        const responsePayloadPost = { data: { affected: [] }, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
+
+        // Act
+        await store.dispatch<any>(claimPendingMessages(data))
+
+        // Assert
+        const expectedActions = [
+          claimConsumerMessages(),
+          claimConsumerMessagesSuccess(),
+          loadConsumerGroups(),
+          addMessageNotification(
+            successMessages.NO_CLAIMED_MESSAGES()
           )
         ]
 

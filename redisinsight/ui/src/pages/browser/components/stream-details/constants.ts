@@ -10,7 +10,7 @@ interface StreamTabs {
 export const streamViewTypeTabs: StreamTabs[] = [
   {
     id: StreamViewType.Data,
-    label: 'Stream data',
+    label: 'Stream Data',
   },
   {
     id: StreamViewType.Groups,

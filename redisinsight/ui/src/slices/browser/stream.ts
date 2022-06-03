@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { remove } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import { apiService } from 'uiSrc/services'
@@ -300,6 +301,9 @@ const streamSlice = createSlice({
       state.groups.loading = false
       state.groups.error = payload
     },
+    deleteMessageFromList: (state, { payload }) => {
+      remove(state.groups?.selectedGroup?.selectedConsumer?.data!, (message) => message?.id === payload)
+    },
   },
 })
 
@@ -350,6 +354,7 @@ export const {
   ackPendingEntries,
   ackPendingEntriesSuccess,
   ackPendingEntriesFailure,
+  deleteMessageFromList,
 } = streamSlice.actions
 
 // A selector
@@ -957,9 +962,9 @@ export function claimPendingMessages(
       )
       if (isStatusSuccessful(status)) {
         dispatch(claimConsumerMessagesSuccess())
-        dispatch<any>(fetchConsumerMessages())
         dispatch<any>(fetchConsumers())
         if (data.affected.length) {
+          dispatch(deleteMessageFromList(data.affected[0]))
           dispatch(addMessageNotification(
             successMessages.MESSAGE_ACTION(data.affected[0], 'claimed')
           ))
@@ -1008,7 +1013,7 @@ export function ackPendingEntriesAction(
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(ackPendingEntriesSuccess())
-        dispatch<any>(fetchConsumerMessages())
+        dispatch(deleteMessageFromList(entries[0]))
         dispatch<any>(fetchConsumers())
         dispatch(addMessageNotification(
           successMessages.MESSAGE_ACTION(entries[0], 'acknowledged')

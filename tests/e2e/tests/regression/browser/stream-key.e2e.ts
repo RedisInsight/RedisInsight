@@ -120,5 +120,5 @@ test('Verify that user can see a confirmation message when request to delete an 
     await t.click(browserPage.removeEntryButton);
     //Check the confirmation message
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(confirmationMessage, `The confirmation message ${keyName}`);
-    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(entryId, `The confirmation message for removing Entry`);
+    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(entryId, 'The confirmation message for removing Entry');
 });

@@ -124,7 +124,8 @@ orbs:
   win: circleci/windows@2.4.0
   node: circleci/node@4.4.0
   aws: circleci/aws-cli@2.0.3
-  macos: circleci/macos@1.0
+  # macos: circleci/macos@1.0
+  macos: circleci/macos@2.2.0
   # mac-permissions: circleci/macos
 
 executors:

@@ -321,7 +321,7 @@ jobs:
   e2e-dmg:
     macos:
       # xcode: 13.2.1
-      xcode: 13.2.1
+      xcode: 11.7
     #    executor: linux-executor
     parameters:
       report:

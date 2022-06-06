@@ -5,4 +5,8 @@ export class PatternSubscription extends AbstractSubscription {
   async subscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void> {
     await client.psubscribe(this.channel);
   }
+
+  async unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void> {
+    await client.punsubscribe(this.channel);
+  }
 }

@@ -3,8 +3,11 @@ import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { ISubscription } from 'src/modules/pub-sub/interfaces/subscription.interface';
 import { IMessage } from 'src/modules/pub-sub/interfaces/message.interface';
 import { RedisClientEvents } from 'src/modules/pub-sub/constants';
+import { Logger } from '@nestjs/common';
 
 export class UserSession {
+  private readonly logger: Logger = new Logger('UserSession');
+
   private readonly id: string;
 
   private readonly userClient: UserClient;
@@ -26,7 +29,7 @@ export class UserSession {
 
   getRedisClient() { return this.redisClient; }
 
-  async addSubscription(subscription: ISubscription) {
+  async subscribe(subscription: ISubscription) {
     const client = await this.redisClient?.getClient();
 
     if (!client) { throw new Error('There is no Redis client initialized'); }
@@ -34,6 +37,20 @@ export class UserSession {
     if (!this.subscriptions.has(subscription.getId())) {
       this.subscriptions.set(subscription.getId(), subscription);
       await subscription.subscribe(client);
+    }
+  }
+
+  async unsubscribe(subscription: ISubscription) {
+    this.subscriptions.delete(subscription.getId());
+
+    const client = await this.redisClient?.getClient();
+
+    if (client) {
+      await subscription.unsubscribe(client);
+
+      if (!this.subscriptions.size) {
+        client.disconnect();
+      }
     }
   }
 

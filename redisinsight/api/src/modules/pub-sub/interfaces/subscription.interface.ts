@@ -11,4 +11,6 @@ export interface ISubscription {
   pushMessage(message: IMessage): void;
 
   subscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
+
+  unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
 }

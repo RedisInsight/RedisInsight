@@ -8,11 +8,11 @@ export class RedisClient extends EventEmitter2 {
 
   private client: IORedis.Redis | IORedis.Cluster;
 
-  private databaseId: string;
+  private readonly databaseId: string;
 
   private readonly connectFn: () => Promise<IORedis.Redis | IORedis.Cluster>;
 
-  public status: RedisClientStatus;
+  private status: RedisClientStatus;
 
   constructor(
     databaseId: string,
@@ -25,6 +25,7 @@ export class RedisClient extends EventEmitter2 {
 
   async getClient(): Promise<IORedis.Redis | IORedis.Cluster> {
     try {
+      this.logger.debug(`Get client ${this}`);
       switch (this.status) {
         case RedisClientStatus.Connected:
           return this.client;
@@ -32,6 +33,7 @@ export class RedisClient extends EventEmitter2 {
           // wait until connect or error
           break;
         case RedisClientStatus.Error:
+        case RedisClientStatus.End:
         default:
           await this.connect();
           return this.client;
@@ -59,6 +61,7 @@ export class RedisClient extends EventEmitter2 {
       this.emit(RedisClientEvents.Message, `s:${channel}`, {
         channel,
         message,
+        time: Date.now(),
       });
     });
 
@@ -66,7 +69,20 @@ export class RedisClient extends EventEmitter2 {
       this.emit(RedisClientEvents.Message, `p:${pattern}`, {
         channel,
         message,
+        time: Date.now(),
       });
     });
+
+    this.client.on('end', () => {
+      this.status = RedisClientStatus.End;
+    });
+  }
+
+  toString() {
+    return `RedisClient:${JSON.stringify({
+      databaseId: this.databaseId,
+      status: this.status,
+      clientStatus: this.client?.status,
+    })}`;
   }
 }

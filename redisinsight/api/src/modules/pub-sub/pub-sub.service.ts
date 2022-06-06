@@ -16,7 +16,7 @@ export class PubSubService {
   async subscribe(userClient: UserClient, dto: SubscribeDto) {
     try {
       const session = await this.sessionProvider.getOrCreateUserSession(userClient);
-      await Promise.all(dto.subscriptions.map((subDto) => session.addSubscription(
+      await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
     } catch (e) {
@@ -28,7 +28,7 @@ export class PubSubService {
   async unsubscribe(userClient: UserClient, dto: SubscribeDto) {
     try {
       const session = await this.sessionProvider.getOrCreateUserSession(userClient);
-      await Promise.all(dto.subscriptions.map((subDto) => session.addSubscription(
+      await Promise.all(dto.subscriptions.map((subDto) => session.unsubscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
     } catch (e) {

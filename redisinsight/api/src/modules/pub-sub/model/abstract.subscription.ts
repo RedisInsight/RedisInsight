@@ -47,6 +47,10 @@ export abstract class AbstractSubscription implements ISubscription {
     throw new Error('"subscribe" method should be implemented');
   }
 
+  async unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void> {
+    throw new Error('"unsubscribe" method should be implemented');
+  }
+
   pushMessage(message: IMessage) {
     this.messages.push(message);
 

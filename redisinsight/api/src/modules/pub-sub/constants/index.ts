@@ -10,9 +10,10 @@ export enum SubscriptionType {
 }
 
 export enum RedisClientStatus {
-  Connecting,
-  Connected,
-  Error,
+  Connecting = 'connectiong',
+  Connected = 'connected',
+  Error = 'error',
+  End = 'end',
 }
 
 export enum RedisClientEvents {

@@ -42,7 +42,7 @@ export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage(PubSubClientEvents.Unsubscribe)
   async unsubscribe(@Client() client: UserClient, @Body() dto: SubscribeDto): Promise<any> {
     try {
-      await this.service.subscribe(client, dto);
+      await this.service.unsubscribe(client, dto);
       return { status: 'ok' };
     } catch (e) {
       this.logger.error('Unable to unsubscribe', e);

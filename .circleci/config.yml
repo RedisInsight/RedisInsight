@@ -124,7 +124,7 @@ orbs:
   win: circleci/windows@2.4.0
   node: circleci/node@4.4.0
   aws: circleci/aws-cli@2.0.3
-  macos: circleci/macos@1.0
+  # macos: circleci/macos@1.0
   mac-permissions: circleci/macos
 
 executors:
@@ -347,7 +347,7 @@ jobs:
           command: |
             # brew install wget
             mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg
-      - macos/add-uitest-permissions
+      - mac-permissions/add-uitest-permissions
       - mac-permissions/add-permission:
           bundle-id: "com.apple.Terminal"
           permission-type: "kTCCServiceScreenCapture"

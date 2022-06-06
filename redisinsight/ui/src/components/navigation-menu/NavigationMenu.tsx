@@ -41,6 +41,7 @@ import styles from './styles.module.scss'
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
 const slowLogPath = `/${PageNames.slowLog}`
+const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
   isActivePage: boolean;
@@ -72,18 +73,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
     setActivePage(`/${last(location.pathname.split('/'))}`)
   }, [location])
 
-  const handleGoSettingsPage = () => {
-    history.push(Pages.settings)
-  }
-  const handleGoWorkbenchPage = () => {
-    history.push(Pages.workbench(connectedInstanceId))
-  }
-  const handleGoBrowserPage = () => {
-    history.push(Pages.browser(connectedInstanceId))
-  }
-  const handleGoSlowLogPage = () => {
-    history.push(Pages.slowLog(connectedInstanceId))
-  }
+  const handleGoPage = (page: string) => history.push(page)
 
   const onKeyboardShortcutClick = () => {
     setIsHelpMenuActive(false)
@@ -95,7 +85,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
       tooltipText: 'Browser',
       isActivePage: activePage === browserPath,
       ariaLabel: 'Browser page button',
-      onClick: handleGoBrowserPage,
+      onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
       dataTestId: 'browser-page-btn',
       connectedInstanceId,
       getClassName() {
@@ -108,7 +98,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
     {
       tooltipText: 'Workbench',
       ariaLabel: 'Workbench page button',
-      onClick: handleGoWorkbenchPage,
+      onClick: () => handleGoPage(Pages.workbench(connectedInstanceId)),
       dataTestId: 'workbench-page-btn',
       connectedInstanceId,
       isActivePage: activePage === workbenchPath,
@@ -122,10 +112,24 @@ const NavigationMenu = ({ buildType }: IProps) => {
     {
       tooltipText: 'Slow Log',
       ariaLabel: 'SlowLog page button',
-      onClick: handleGoSlowLogPage,
+      onClick: () => handleGoPage(Pages.slowLog(connectedInstanceId)),
       dataTestId: 'slowlog-page-btn',
       connectedInstanceId,
       isActivePage: activePage === slowLogPath,
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
+      },
+    },
+    {
+      tooltipText: 'Pub/Sub',
+      ariaLabel: 'Pub/Sub page button',
+      onClick: () => handleGoPage(Pages.pubSub(connectedInstanceId)),
+      dataTestId: 'pub-sub-page-btn',
+      connectedInstanceId,
+      isActivePage: activePage === pubSubPath,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -139,7 +143,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
     {
       tooltipText: 'Settings',
       ariaLabel: 'Settings page button',
-      onClick: handleGoSettingsPage,
+      onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
       getClassName() {

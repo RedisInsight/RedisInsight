@@ -336,31 +336,18 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
-      # - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
-      # - macos/add-uitest-permissions
-      # - run: bundle install7
-      # - run: bundle exec fastlane testandbuild
 #      - attach_workspace:
 #          at: .
       - run:
           name: Download build from S3
           command: |
             # brew install wget
-            mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg
-
-
-  
+            mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg 
       # - run: npx browserslist@latest --update-db      
       - macos/add-uitest-permissions
       - macos/add-permission:
           bundle-id: "com.apple.Terminal"
-          permission-type: "kTCCServiceScreenCapture"
-      # - mac-permissions/add-uitest-permissions
-      # - mac-permissions/add-permission:
-      #     bundle-id: "com.apple.Terminal"
-      #     permission-type: "kTCCServiceScreenCapture"
-      
-          
+          permission-type: "kTCCServiceScreenCapture"         
       - run:
           name: Run e2e tests
           command: .circleci/e2e/test.dmg.sh

@@ -1,6 +1,7 @@
 import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import PopoverItemEditor from 'uiSrc/components/popover-item-editor'
 import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
@@ -19,8 +20,9 @@ import { consumerGroupIdRegex, formatLongName, validateConsumerGroupId } from 'u
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { ConsumerGroupDto, UpdateConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ConsumerDto, ConsumerGroupDto, UpdateConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import GroupsView from './GroupsView'
 
@@ -53,6 +55,8 @@ const GroupsViewWrapper = (props: Props) => {
   const [idError, setIdError] = useState<string>('')
   const [isIdFocused, setIsIdFocused] = useState<boolean>(false)
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+
   useEffect(() => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [lastRefreshTime])
@@ -82,8 +86,17 @@ const GroupsViewWrapper = (props: Props) => {
     setDeleting(`${groupName + suffix}`)
   }, [])
 
+  const onSuccessDeletedGroup = useCallback(() => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_GROUP_DELETED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }, [])
+
   const handleDeleteGroup = (name: string) => {
-    dispatch(deleteConsumerGroupsAction(selectedKey, [name]))
+    dispatch(deleteConsumerGroupsAction(selectedKey, [name], onSuccessDeletedGroup))
     closePopover()
   }
 
@@ -101,11 +114,31 @@ const GroupsViewWrapper = (props: Props) => {
     // })
   }
 
+  const onSuccessSelectedGroup = useCallback((data: ConsumerDto[]) => {
+    dispatch(setStreamViewType(StreamViewType.Consumers))
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMERS_LOADED,
+      eventData: {
+        databaseId: instanceId,
+        length: data.length
+      }
+    })
+  }, [instanceId])
+
+  const onSuccessApplyEditId = useCallback(() => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_GROUP_ID_SET,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }, [instanceId])
+
   const handleSelectGroup = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedGroup(rowData))
     dispatch(fetchConsumers(
       false,
-      () => dispatch(setStreamViewType(StreamViewType.Consumers))
+      onSuccessSelectedGroup,
     ))
   }
 
@@ -116,7 +149,7 @@ const GroupsViewWrapper = (props: Props) => {
         name: groupName,
         lastDeliveredId: editValue
       }
-      dispatch(modifyLastDeliveredIdAction(data))
+      dispatch(modifyLastDeliveredIdAction(data, onSuccessApplyEditId))
     }
   }
 

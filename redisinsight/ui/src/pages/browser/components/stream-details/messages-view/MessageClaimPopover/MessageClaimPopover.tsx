@@ -22,7 +22,7 @@ import { orderBy, filter } from 'lodash'
 import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
 import { validateNumber } from 'uiSrc/utils'
 import { prepareDataForClaimRequest, getDefaultConsumer, ClaimTimeOptions } from 'uiSrc/utils/streamUtils'
-import { ClaimPendingEntryDto, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ClaimPendingEntryDto, ClaimPendingEntriesResponse, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 
@@ -50,7 +50,11 @@ export interface Props {
   isOpen: boolean
   closePopover: () => void
   showPopover: () => void
-  claimMessage: (data: Partial<ClaimPendingEntryDto>, successAction: () => void) => void
+  claimMessage: (
+    data: Partial<ClaimPendingEntryDto>,
+    successAction: (data: ClaimPendingEntriesResponse) => void
+  ) => void
+  onSuccessClaimed: (data: ClaimPendingEntriesResponse) => void
 }
 
 const MessageClaimPopover = (props: Props) => {
@@ -59,7 +63,8 @@ const MessageClaimPopover = (props: Props) => {
     isOpen,
     closePopover,
     showPopover,
-    claimMessage
+    claimMessage,
+    onSuccessClaimed
   } = props
 
   const {
@@ -85,9 +90,15 @@ const MessageClaimPopover = (props: Props) => {
     validateOnBlur: false,
     onSubmit: (values) => {
       const data = prepareDataForClaimRequest(values, [id], isOptionalShow)
-      claimMessage(data, handleClosePopover)
+      claimMessage(data, onSuccessSubmit)
     },
   })
+
+  const onSuccessSubmit = (data: ClaimPendingEntriesResponse) => {
+    setIsOptionalShow(false)
+    formik.resetForm()
+    onSuccessClaimed(data)
+  }
 
   const handleClosePopover = () => {
     closePopover()

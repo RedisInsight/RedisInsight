@@ -10,14 +10,16 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import cx from 'classnames'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
+import { useParams } from 'react-router-dom'
 
+import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewGroupAction } from 'uiSrc/slices/browser/stream'
 import { consumerGroupIdRegex, validateConsumerGroupId } from 'uiSrc/utils'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
 
@@ -35,6 +37,8 @@ const AddStreamGroup = (props: Props) => {
   const [idError, setIdError] = useState<string>('')
   const [isIdFocused, setIsIdFocused] = useState<boolean>(false)
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -50,6 +54,16 @@ const AddStreamGroup = (props: Props) => {
     setIdError('')
   }, [id])
 
+  const onSuccessAdded = useCallback(() => {
+    onCancel()
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_GROUP_CREATED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }, [instanceId])
+
   const submitData = () => {
     if (isFormValid) {
       const data: CreateConsumerGroupsDto = {
@@ -59,7 +73,7 @@ const AddStreamGroup = (props: Props) => {
           lastDeliveredId: id,
         }],
       }
-      dispatch(addNewGroupAction(data, onCancel))
+      dispatch(addNewGroupAction(data, onSuccessAdded))
     }
   }
 

@@ -40,8 +40,8 @@ export class RedisClient extends EventEmitter2 {
       }
 
       return new Promise((resolve, reject) => {
-        this.on(RedisClientEvents.Connected, resolve);
-        this.on(RedisClientEvents.ConnectionError, reject);
+        this.once(RedisClientEvents.Connected, resolve);
+        this.once(RedisClientEvents.ConnectionError, reject);
       });
     } catch (e) {
       this.logger.error('Unable to connect to Redis', e);
@@ -75,7 +75,15 @@ export class RedisClient extends EventEmitter2 {
 
     this.client.on('end', () => {
       this.status = RedisClientStatus.End;
+      this.emit(RedisClientEvents.End);
     });
+  }
+
+  destroy() {
+    this.client?.removeAllListeners();
+    this.client?.disconnect();
+    this.client = null;
+    this.status = RedisClientStatus.End;
   }
 
   toString() {

@@ -2,8 +2,10 @@ import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { ISubscription } from 'src/modules/pub-sub/interfaces/subscription.interface';
 import { IMessage } from 'src/modules/pub-sub/interfaces/message.interface';
-import { RedisClientEvents } from 'src/modules/pub-sub/constants';
+import { PubSubServerEvents, RedisClientEvents } from 'src/modules/pub-sub/constants';
 import { Logger } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { PubSubWsException } from 'src/modules/pub-sub/errors/pub-sub-ws.exception';
 
 export class UserSession {
   private readonly logger: Logger = new Logger('UserSession');
@@ -21,6 +23,7 @@ export class UserSession {
     this.userClient = userClient;
     this.redisClient = redisClient;
     redisClient.on(RedisClientEvents.Message, this.handleMessage.bind(this));
+    redisClient.on(RedisClientEvents.End, this.handleDisconnect.bind(this));
   }
 
   getId() { return this.id; }
@@ -49,7 +52,7 @@ export class UserSession {
       await subscription.unsubscribe(client);
 
       if (!this.subscriptions.size) {
-        client.disconnect();
+        this.redisClient.destroy();
       }
     }
   }
@@ -62,7 +65,27 @@ export class UserSession {
     }
   }
 
+  handleDisconnect() {
+    this.userClient.getSocket().emit(
+      PubSubServerEvents.Exception,
+      new PubSubWsException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
+    );
+
+    this.destroy();
+  }
+
   destroy() {
-    // todo: redisClient destroy
+    this.logger.debug(`Destroy ${this}`);
+
+    this.subscriptions = new Map();
+    this.redisClient.destroy();
+  }
+
+  toString() {
+    return `UserSession:${JSON.stringify({
+      id: this.id,
+      subscriptionsSize: this.subscriptions.size,
+      subscriptions: [...this.subscriptions.keys()],
+    })}`;
   }
 }

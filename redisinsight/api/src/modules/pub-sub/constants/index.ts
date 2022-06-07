@@ -3,6 +3,10 @@ export enum PubSubClientEvents {
   Unsubscribe = 'unsubscribe',
 }
 
+export enum PubSubServerEvents {
+  Exception = 'exception',
+}
+
 export enum SubscriptionType {
   Subscribe = 's',
   PSubscribe = 'p',
@@ -20,4 +24,5 @@ export enum RedisClientEvents {
   Connected = 'connected',
   ConnectionError = 'connection_error',
   Message = 'message',
+  End = 'end',
 }

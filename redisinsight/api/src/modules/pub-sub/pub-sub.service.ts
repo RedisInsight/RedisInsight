@@ -35,4 +35,13 @@ export class PubSubService {
       this.logger.error('Unable to create subscriptions', e);
     }
   }
+
+  async handleDisconnect(id: string) {
+    const session = this.sessionProvider.getUserSession(id);
+
+    if (session) {
+      session.destroy();
+      this.sessionProvider.removeUserSession(id);
+    }
+  }
 }

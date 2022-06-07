@@ -1,5 +1,5 @@
 import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import PopoverItemEditor from 'uiSrc/components/popover-item-editor'
@@ -78,26 +78,26 @@ const GroupsViewWrapper = (props: Props) => {
     setIdError('')
   }, [editValue])
 
-  const closePopover = useCallback(() => {
+  const closePopover = () => {
     setDeleting('')
-  }, [])
+  }
 
-  const showPopover = useCallback((groupName = '') => {
+  const showPopover = (groupName = '') => {
     setDeleting(`${groupName + suffix}`)
-  }, [])
+  }
 
-  const onSuccessDeletedGroup = useCallback(() => {
+  const onSuccessDeletedGroup = () => {
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMER_GROUP_DELETED,
       eventData: {
         databaseId: instanceId,
       }
     })
-  }, [])
+    closePopover()
+  }
 
   const handleDeleteGroup = (name: string) => {
     dispatch(deleteConsumerGroupsAction(selectedKey, [name], onSuccessDeletedGroup))
-    closePopover()
   }
 
   const handleRemoveIconClick = () => {
@@ -114,7 +114,7 @@ const GroupsViewWrapper = (props: Props) => {
     // })
   }
 
-  const onSuccessSelectedGroup = useCallback((data: ConsumerDto[]) => {
+  const onSuccessSelectedGroup = (data: ConsumerDto[]) => {
     dispatch(setStreamViewType(StreamViewType.Consumers))
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMERS_LOADED,
@@ -123,16 +123,16 @@ const GroupsViewWrapper = (props: Props) => {
         length: data.length
       }
     })
-  }, [instanceId])
+  }
 
-  const onSuccessApplyEditId = useCallback(() => {
+  const onSuccessApplyEditId = () => {
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMER_GROUP_ID_SET,
       eventData: {
         databaseId: instanceId,
       }
     })
-  }, [instanceId])
+  }
 
   const handleSelectGroup = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedGroup(rowData))
@@ -316,7 +316,7 @@ const GroupsViewWrapper = (props: Props) => {
               header={name}
               text={(
                 <>
-                  will be removed from <b>{selectedKey}</b>
+                  and all its consumers will be removed from <b>{selectedKey}</b>
                 </>
               )}
               item={name}

@@ -10,7 +10,7 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import cx from 'classnames'
-import React, { ChangeEvent, useEffect, useState, useCallback } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -54,7 +54,7 @@ const AddStreamGroup = (props: Props) => {
     setIdError('')
   }, [id])
 
-  const onSuccessAdded = useCallback(() => {
+  const onSuccessAdded = () => {
     onCancel()
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMER_GROUP_CREATED,
@@ -62,7 +62,7 @@ const AddStreamGroup = (props: Props) => {
         databaseId: instanceId,
       }
     })
-  }, [instanceId])
+  }
 
   const submitData = () => {
     if (isFormValid) {

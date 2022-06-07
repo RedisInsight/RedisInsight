@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EuiToolTip, EuiText } from '@elastic/eui'
@@ -49,15 +49,15 @@ const ConsumersViewWrapper = (props: Props) => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [])
 
-  const closePopover = useCallback(() => {
+  const closePopover = () => {
     setDeleting('')
-  }, [])
+  }
 
-  const showPopover = useCallback((consumer = '') => {
+  const showPopover = (consumer = '') => {
     setDeleting(`${consumer + suffix}`)
-  }, [])
+  }
 
-  const onSuccessDeletedConsumer = useCallback(() => {
+  const onSuccessDeletedConsumer = () => {
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMER_DELETED,
       eventData: {
@@ -65,7 +65,7 @@ const ConsumersViewWrapper = (props: Props) => {
       }
     })
     closePopover()
-  }, [instanceId])
+  }
 
   const handleDeleteConsumer = (consumerName = '') => {
     dispatch(deleteConsumersAction(key, selectedGroupName, [consumerName], onSuccessDeletedConsumer))

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import {
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -23,6 +24,7 @@ import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/br
 import { validateNumber } from 'uiSrc/utils'
 import { prepareDataForClaimRequest, getDefaultConsumer, ClaimTimeOptions } from 'uiSrc/utils/streamUtils'
 import { ClaimPendingEntryDto, ClaimPendingEntriesResponse, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
 
@@ -54,7 +56,7 @@ export interface Props {
     data: Partial<ClaimPendingEntryDto>,
     successAction: (data: ClaimPendingEntriesResponse) => void
   ) => void
-  onSuccessClaimed: (data: ClaimPendingEntriesResponse) => void
+  handleCancelClaim: () => void
 }
 
 const MessageClaimPopover = (props: Props) => {
@@ -64,17 +66,16 @@ const MessageClaimPopover = (props: Props) => {
     closePopover,
     showPopover,
     claimMessage,
-    onSuccessClaimed
+    handleCancelClaim
   } = props
 
   const {
     data: consumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
-  const { name: currentConsumerName } = useSelector(selectedConsumerSelector) ?? { name: '' }
+  const { name: currentConsumerName, pending = 0 } = useSelector(selectedConsumerSelector) ?? { name: '' }
 
   const [isOptionalShow, setIsOptionalShow] = useState<boolean>(false)
   const [consumerOptions, setConsumerOptions] = useState<EuiSuperSelectOption<string>[]>([])
-
   const [initialValues, setInitialValues] = useState({
     consumerName: '',
     minIdleTime: '0',
@@ -83,6 +84,8 @@ const MessageClaimPopover = (props: Props) => {
     retryCount: '0',
     force: false
   })
+
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const formik = useFormik({
     initialValues,
@@ -95,9 +98,16 @@ const MessageClaimPopover = (props: Props) => {
   })
 
   const onSuccessSubmit = (data: ClaimPendingEntriesResponse) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_CLAIMED,
+      eventData: {
+        databaseId: instanceId,
+        pending: pending - data.affected.length
+      }
+    })
     setIsOptionalShow(false)
     formik.resetForm()
-    onSuccessClaimed(data)
+    closePopover()
   }
 
   const handleClosePopover = () => {
@@ -116,6 +126,11 @@ const MessageClaimPopover = (props: Props) => {
     } else {
       formik.setFieldValue('timeCount', '0')
     }
+  }
+
+  const handleCancel = () => {
+    handleCancelClaim()
+    handleClosePopover()
   }
 
   useEffect(() => {
@@ -299,7 +314,7 @@ const MessageClaimPopover = (props: Props) => {
             <EuiButton
               color="secondary"
               className={styles.footerBtn}
-              onClick={handleClosePopover}
+              onClick={handleCancel}
             >
               Cancel
             </EuiButton>

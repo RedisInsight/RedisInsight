@@ -58,37 +58,29 @@ const MessagesViewWrapper = (props: Props) => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [])
 
-  const showAchPopover = useCallback((id) => {
+  const showAchPopover = (id: string) => {
     setOpenPopover(id + ackPrefix)
-  }, [])
+  }
 
-  const closePopover = useCallback(() => {
-    if (openPopover.indexOf(ackPrefix) !== -1) {
-      sendEventTelemetry({
-        event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_ACK_CANCELED,
-        eventData: {
-          databaseId: instanceId,
-          pending
-        }
-      })
-    }
-    if (openPopover.indexOf(claimPrefix) !== -1) {
-      sendEventTelemetry({
-        event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_CLAIM_CANCELED,
-        eventData: {
-          databaseId: instanceId,
-          pending
-        }
-      })
-    }
+  const closePopover = () => {
     setOpenPopover('')
-  }, [openPopover, instanceId, pending])
+  }
 
-  const showClaimPopover = useCallback((id :string) => {
+  const handleCancelClaim = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_CLAIM_CANCELED,
+      eventData: {
+        databaseId: instanceId,
+        pending
+      }
+    })
+  }
+
+  const showClaimPopover = (id: string) => {
     setOpenPopover(id + claimPrefix)
-  }, [])
+  }
 
-  const onSuccessAck = useCallback((data :AckPendingEntriesResponse) => {
+  const onSuccessAck = (data :AckPendingEntriesResponse) => {
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_ACKNOWLEDGED,
       eventData: {
@@ -97,18 +89,7 @@ const MessagesViewWrapper = (props: Props) => {
       }
     })
     setOpenPopover('')
-  }, [instanceId, pending])
-
-  const onSuccessClaimed = useCallback((data: ClaimPendingEntriesResponse) => {
-    sendEventTelemetry({
-      event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_CLAIMED,
-      eventData: {
-        databaseId: instanceId,
-        pending: pending - data.affected.length
-      }
-    })
-    setOpenPopover('')
-  }, [instanceId, pending])
+  }
 
   const handleAchPendingMessage = (entry: string) => {
     dispatch(ackPendingEntriesAction(key, group, [entry], onSuccessAck))
@@ -209,7 +190,7 @@ const MessagesViewWrapper = (props: Props) => {
               closePopover={() => closePopover()}
               showPopover={() => showClaimPopover(id)}
               claimMessage={handleClaimingId}
-              onSuccessClaimed={onSuccessClaimed}
+              handleCancelClaim={handleCancelClaim}
             />
           </div>
         )

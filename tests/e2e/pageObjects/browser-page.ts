@@ -149,7 +149,7 @@ export class BrowserPage {
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
     overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
-    overviewCpu = Selector('[data-test-subj=overview-cpu]'); 
+    overviewCpu = Selector('[data-test-subj=overview-cpu]');
     treeViewArea = Selector('[data-test-subj=tree-view-panel]');
     scannedValue = Selector('[data-testid=keys-number-of-scanned]');
     treeViewKeysNumber = Selector('[data-testid^=count_]');
@@ -755,7 +755,7 @@ export class BrowserPage {
      * @groupName The name of the Consumer Group
      * @id The ID of the Consumer Group
      */
-     async createConsumerGroup(groupName: string, id?: string): Promise<void> {
+    async createConsumerGroup(groupName: string, id?: string): Promise<void> {
         await t.click(this.addKeyValueItemsButton);
         await t.typeText(this.groupNameInput, groupName, { replace: true, paste: true });
         if (id !== undefined) {

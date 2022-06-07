@@ -385,7 +385,7 @@ jobs:
       - macos/add-uitest-permissions
       - macos/add-permission:
           # bundle-id: "com.apple.Terminal"
-          bundle-id: "com.redislabs"
+          bundle-id: "com.devexpress.testcafe-browser-tools"
           permission-type: "kTCCServiceScreenCapture"         
       - run:
           name: Run e2e tests

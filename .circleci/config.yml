@@ -334,6 +334,103 @@ jobs:
         type: integer
         default: 1
     parallelism: << parameters.parallelism >>
+
+
+    commands:
+    add-permission:
+        description: Add a permission to the macOS permissions database
+        parameters:
+            bundle-id:
+                description: The Bundle ID of the app to grant permissions to
+                type: string
+            permission-type:
+                description: The type of permission to grant
+                type: string
+        steps:
+            - run:
+                command: |
+                    if csrutil status | grep -q 'disabled'; then
+                        epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
+                        macos_major_version=$(sw_vers -productVersion | awk -F. '{ print $1 }')
+                        if [[ $macos_major_version -le 10 ]]; then
+                            tcc_update="replace into access (service,client,client_type,allowed,prompt_count,indirect_object_identifier,flags,last_modified) values (\"<< parameters.permission-type >>\",\"<< parameters.bundle-id >>\",0,1,1,\"UNUSED\",0,$epochdate);"
+                        else
+                            tcc_update="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier,flags,last_modified) values (\"<< parameters.permission-type >>\",\"<< parameters.bundle-id >>\",0,2,1,1,\"UNUSED\",0,$epochdate);"
+                        fi
+                        sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_update"
+                        sudo sqlite3 "/Users/$USER/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_update"
+                    else
+                        echo "Unable to add permissions! System Integrity Protection is enabled on this image"
+                        echo "Please choose an image with SIP disabled. Documentation: https://circleci.com/docs/2.0/testing-macos"
+                        exit 1
+                    fi
+                name: Granting << parameters.permission-type >> permissions to << parameters.bundle-id >>
+    add-safari-permissions:
+        description: Add Safari automation permissions to the macOS permissions database and enable safaridriver testing
+        steps:
+            - run:
+                command: |
+                    if csrutil status | grep -q 'disabled'; then
+                        epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
+                        macos_major_version=$(sw_vers -productVersion | awk -F. '{ print $1 }')
+                        if [[ $macos_major_version -le 10 ]]; then
+                          defaults write com.apple.Safari AllowRemoteAutomation 1
+                        else
+                          tcc_service_accessibility="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAccessibility\",\"/usr/sbin/sshd\",1,2,4,1,0,\"UNUSED\",0,$epochdate);"
+                          tcc_service_events="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAppleEvents\",\"/usr/sbin/sshd\",1,2,4,1,0,\"com.apple.systemevents\",0,$epochdate);"
+                          sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_accessibility"
+                          sudo sqlite3 "/Users/$USER/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_accessibility"
+                          sudo sqlite3 "/Users/$USER/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_events"
+                          sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_events"
+                          osascript -e '
+                            tell application "System Events"
+                              tell application "Safari" to activate
+                              delay 5
+                              tell process "Safari"
+                                set frontmost to true
+                                click menu item "Preferences…" of menu 1 of menu bar item "Safari" of menu bar 1
+                                click button "Advanced" of toolbar 1 of window 1
+                                tell checkbox "Show Develop menu in menu bar" of group 1 of group 1 of window 1
+                                  if value is 0 then click it
+                                end tell
+                                click button 1 of window 1
+                                click menu item "Allow Remote Automation" of menu 1 of menu bar item "Develop" of menu bar 1
+                              end tell
+                            end tell'
+                        fi
+                        sudo safaridriver --enable
+                    else
+                        echo "Unable to add permissions! System Integrity Protection is enabled on this image"
+                        echo "Please choose an image with SIP disabled. Documentation: https://circleci.com/docs/2.0/testing-macos"
+                        exit 1
+                    fi
+                name: Granting Safari permissions and enabling safaridriver
+    add-uitest-permissions:
+        description: |
+            Enable common environment permissions for testing MacOS apps with Xcode.
+        steps:
+            - run:
+                command: |
+                    if csrutil status | grep -q 'disabled'; then
+                        epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
+                        macos_major_version=$(sw_vers -productVersion | awk -F. '{ print $1 }')
+                        if [[ $macos_major_version -le 10 ]]; then
+                            tcc_service_accessibility="replace into access (service,client,client_type,allowed,prompt_count,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAccessibility\",\"com.apple.dt.Xcode-Helper\",0,1,1,\"UNUSED\",0,$epochdate);"
+                            tcc_service_developer_tool="replace into access (service,client,client_type,allowed,prompt_count,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceDeveloperTool\",\"com.apple.Terminal\",0,1,1,\"UNUSED\",0,$epochdate);"
+                        else
+                            tcc_service_accessibility="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAccessibility\",\"com.apple.dt.Xcode-Helper\",0,2,1,1,\"UNUSED\",0,$epochdate);"
+                            tcc_service_developer_tool="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceDeveloperTool\",\"com.apple.Terminal\",0,2,1,1,\"UNUSED\",0,$epochdate);"
+                        fi
+                        sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_accessibility"
+                        sudo sqlite3 "/Users/$USER/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_accessibility"
+                        sudo sqlite3 "/Users/$USER/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_developer_tool"
+                        sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_developer_tool"
+                    else
+                        echo "Unable to add permissions! System Integrity Protection is enabled on this image"
+                        echo "Please choose an image with SIP disabled. Documentation: https://circleci.com/docs/2.0/testing-macos"
+                        exit 1
+                    fi
+                name: Setting up Xcode Helper and Terminal permissions    
     steps:
       - checkout
       # - run: echo 'chruby ruby-2.7' >> ~/.bash_profile
@@ -351,14 +448,15 @@ jobs:
 
   
       # - run: npx browserslist@latest --update-db      
-      - macos/add-uitest-permissions
-      - macos/add-permission:
-          bundle-id: "com.apple.Terminal"
-          permission-type: "kTCCServiceScreenCapture"
+      # - macos/add-uitest-permissions
+      # - macos/add-permission:
+      #     bundle-id: "com.apple.Terminal"
+      #     permission-type: "kTCCServiceScreenCapture"
       # - mac-permissions/add-uitest-permissions
       # - mac-permissions/add-permission:
       #     bundle-id: "com.apple.Terminal"
       #     permission-type: "kTCCServiceScreenCapture"
+      
           
       - run:
           name: Run e2e tests

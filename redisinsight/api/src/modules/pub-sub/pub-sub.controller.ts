@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller, Param, Post,
+  Controller, Param, Post, UsePipes, ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
@@ -11,6 +11,7 @@ import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
 
 @ApiTags('Pub/Sub')
 @Controller('pub-sub')
+@UsePipes(new ValidationPipe())
 export class PubSubController {
   constructor(private service: PubSubService) {}
 

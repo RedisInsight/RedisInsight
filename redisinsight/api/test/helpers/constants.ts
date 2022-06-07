@@ -222,5 +222,14 @@ export const constants = {
   // Plugins
   TEST_PLUGIN_VISUALIZATION_ID_1: uuidv4(),
 
+  // Pub/Sub
+  TEST_PUB_SUB_CHANNEL_1: 'channel-a',
+  TEST_PUB_SUB_CHANNEL_2: 'channel-b',
+  TEST_PUB_SUB_CHANNEL_3: 'channel-c',
+  TEST_PUB_SUB_P_CHANNEL_1: '*',
+  TEST_PUB_SUB_MESSAGE_1: 'message-a',
+  TEST_PUB_SUB_MESSAGE_2: 'message-b',
+  TEST_PUB_SUB_MESSAGE_3: 'message-c',
+
   // etc...
 }

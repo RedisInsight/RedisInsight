@@ -33,7 +33,12 @@ export class PubSubService {
       )));
     } catch (e) {
       this.logger.error('Unable to create subscriptions', e);
-      throw e;
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
     }
   }
 
@@ -49,7 +54,13 @@ export class PubSubService {
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
     } catch (e) {
-      this.logger.error('Unable to create subscriptions', e);
+      this.logger.error('Unable to unsubscribe', e);
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
     }
   }
 

@@ -31,24 +31,14 @@ export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage(PubSubClientEvents.Subscribe)
   async subscribe(@Client() client: UserClient, @Body() dto: SubscribeDto): Promise<any> {
-    try {
-      await this.service.subscribe(client, dto);
-      return { status: 'ok' };
-    } catch (e) {
-      this.logger.error('Unable to subscribe', e);
-      throw e;
-    }
+    await this.service.subscribe(client, dto);
+    return { status: 'ok' };
   }
 
   @SubscribeMessage(PubSubClientEvents.Unsubscribe)
   async unsubscribe(@Client() client: UserClient, @Body() dto: SubscribeDto): Promise<any> {
-    try {
-      await this.service.unsubscribe(client, dto);
-      return { status: 'ok' };
-    } catch (e) {
-      this.logger.error('Unable to unsubscribe', e);
-      throw e;
-    }
+    await this.service.unsubscribe(client, dto);
+    return { status: 'ok' };
   }
 
   async handleConnection(client: Socket): Promise<void> {

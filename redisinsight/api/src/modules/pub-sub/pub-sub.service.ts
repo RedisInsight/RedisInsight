@@ -1,8 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscribeDto } from 'src/modules/pub-sub/dto';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
+import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
+import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
+import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
+import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { catchAclError } from 'src/utils';
 
 @Injectable()
 export class PubSubService {
@@ -11,8 +16,15 @@ export class PubSubService {
   constructor(
     private readonly sessionProvider: UserSessionProvider,
     private readonly subscriptionProvider: SubscriptionProvider,
+    private redisService: RedisService,
+    private instancesBusinessService: InstancesBusinessService,
   ) {}
 
+  /**
+   * Subscribe to multiple channels
+   * @param userClient
+   * @param dto
+   */
   async subscribe(userClient: UserClient, dto: SubscribeDto) {
     try {
       const session = await this.sessionProvider.getOrCreateUserSession(userClient);
@@ -25,6 +37,11 @@ export class PubSubService {
     }
   }
 
+  /**
+   * Unsubscribe from multiple channels
+   * @param userClient
+   * @param dto
+   */
   async unsubscribe(userClient: UserClient, dto: SubscribeDto) {
     try {
       const session = await this.sessionProvider.getOrCreateUserSession(userClient);
@@ -36,6 +53,61 @@ export class PubSubService {
     }
   }
 
+  /**
+   * Publish a message to a particular channel
+   * @param clientOptions
+   * @param dto
+   */
+  async publish(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: PublishDto,
+  ): Promise<PublishResponse> {
+    try {
+      this.logger.log('Publishing message.');
+
+      const client = await this.getClient(clientOptions);
+
+      return {
+        affected: await client.publish(dto.channel, dto.message),
+      };
+    } catch (e) {
+      this.logger.error('Unable to publish a message', e);
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
+    }
+  }
+
+  /**
+   * Get or create redis "common" client
+   *
+   * @param clientOptions
+   * @private
+   */
+  private async getClient(clientOptions: IFindRedisClientInstanceByOptions) {
+    const { tool, instanceId } = clientOptions;
+
+    const commonClient = this.redisService.getClientInstance({ instanceId, tool })?.client;
+
+    if (commonClient && this.redisService.isClientConnected(commonClient)) {
+      return commonClient;
+    }
+
+    return this.instancesBusinessService.connectToInstance(
+      clientOptions.instanceId,
+      clientOptions.tool,
+      true,
+    );
+  }
+
+  /**
+   * Handle Socket disconnection event
+   * Basically destroy the UserSession to remove Redis connection
+   * @param id
+   */
   async handleDisconnect(id: string) {
     const session = this.sessionProvider.getUserSession(id);
 

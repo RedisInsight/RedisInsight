@@ -27,13 +27,13 @@ export abstract class AbstractSubscription implements ISubscription {
     this.debounce = debounce(() => {
       if (this.messages.length) {
         this.userClient.getSocket().emit(this.id, {
-          messages: this.messages,
+          messages: this.messages.slice(0, 5000),
           count: this.messages.length,
         } as MessagesResponse);
         this.messages = [];
       }
-    }, 10, {
-      maxWait: 50,
+    }, 30, {
+      maxWait: 100,
     });
   }
 

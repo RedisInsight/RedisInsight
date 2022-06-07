@@ -100,6 +100,7 @@ describe('pub-sub', function () {
           expect(ack).to.eql({ status: 'ok' });
 
           client.on('s:channel-a', (data) => {
+            console.log('___data', data);
             expect(data.count).to.be.eql(1);
             expect(data.messages.length).to.be.eql(1);
             const [message] = data.messages;
@@ -113,8 +114,8 @@ describe('pub-sub', function () {
             reject(new Error('Should not receive message-a in this listener-b'))
           });
 
-          await rte.data.executeCommand('publish', 'channel-c', 'message-c');
-          await rte.data.executeCommand('publish', 'channel-a', 'message-a');
+          await rte.data.sendCommand('publish', ['channel-c', 'message-c']);
+          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
         })
       });
     });

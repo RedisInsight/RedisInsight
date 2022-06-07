@@ -9,8 +9,7 @@ import {
   validateInvalidDataTestCase,
   validateApiCall
 } from '../deps';
-import { Socket } from 'socket.io-client';
-const { server, request, constants, rte, getSocket } = deps;
+const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
@@ -51,19 +50,6 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-const getClient = async (instanceId): Promise<Socket> => {
-  return getSocket('pub-sub', {
-    query: { instanceId },
-  });
-};
-
-const pSubscription = {
-  channel: '*',
-  type: 'p',
-};
-
-let client;
-
 describe('POST /instance/:instanceId/pub-sub/messages', () => {
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
@@ -72,17 +58,6 @@ describe('POST /instance/:instanceId/pub-sub/messages', () => {
   });
 
   describe('Common', () => {
-    beforeEach(async () => {
-      client = await getClient(constants.TEST_INSTANCE_ID);
-      await new Promise((res) => {
-        client.emit('subscribe', { subscriptions: [pSubscription] }, res);
-      });
-    });
-
-    afterEach(async () => {
-      client.close();
-    });
-
     [
       {
         name: 'Should send message',
@@ -91,9 +66,6 @@ describe('POST /instance/:instanceId/pub-sub/messages', () => {
         },
         responseSchema,
         statusCode: 201,
-        responseBody: {
-          affected: 1,
-        },
       },
       {
         name: 'Should return NotFound error if instance id does not exists',

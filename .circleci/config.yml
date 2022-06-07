@@ -337,7 +337,7 @@ jobs:
 
 
     commands:
-    add-permission:
+      add-permission:
         description: Add a permission to the macOS permissions database
         parameters:
             bundle-id:
@@ -365,7 +365,7 @@ jobs:
                         exit 1
                     fi
                 name: Granting << parameters.permission-type >> permissions to << parameters.bundle-id >>
-    add-safari-permissions:
+      add-safari-permissions:
         description: Add Safari automation permissions to the macOS permissions database and enable safaridriver testing
         steps:
             - run:
@@ -405,7 +405,7 @@ jobs:
                         exit 1
                     fi
                 name: Granting Safari permissions and enabling safaridriver
-    add-uitest-permissions:
+      add-uitest-permissions:
         description: |
             Enable common environment permissions for testing MacOS apps with Xcode.
         steps:

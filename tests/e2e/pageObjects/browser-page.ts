@@ -71,6 +71,12 @@ export class BrowserPage {
     removeEntryButton = Selector('[data-testid^=remove-entry-button-]');
     confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
     clearStreamEntryInputs = Selector('[data-testid=remove-item]');
+    saveGroupsButton = Selector('[data-testid=save-groups-btn]');
+    //CONTAINERS
+    streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
+    breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
+    virtualTableContainer = Selector('[data-testid=virtual-table-container]');
+    streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -86,6 +92,8 @@ export class BrowserPage {
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
     filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
+    //TABS
+    streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     //TEXT INPUTS (also referred to as 'Text fields')
     addKeyNameInput = Selector('[data-testid=key]');
     keyNameInput = Selector('[data-testid=edit-key-input]');
@@ -113,6 +121,10 @@ export class BrowserPage {
     streamValue = Selector('[data-testid=field-value]');
     addStreamRow = Selector('[data-testid=add-new-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
+    streamRangeStartInput = Selector('._3MW0_WsJsq1s4bsuMNXOaV');
+    streamRangeEndInput = Selector('[data-testid=range-end-input]');
+    groupNameInput = Selector('[data-testid=group-name-field]');
+    consumerIdInput = Selector('[data-testid=id-field]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -137,8 +149,7 @@ export class BrowserPage {
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
     overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
-    overviewCpu = Selector('[data-test-subj=overview-cpu]');
-    breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
+    overviewCpu = Selector('[data-test-subj=overview-cpu]'); 
     treeViewArea = Selector('[data-test-subj=tree-view-panel]');
     scannedValue = Selector('[data-testid=keys-number-of-scanned]');
     treeViewKeysNumber = Selector('[data-testid^=count_]');
@@ -167,8 +178,6 @@ export class BrowserPage {
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
-    virtualTableContainer = Selector('[data-testid=virtual-table-container]');
-    streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
     streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
@@ -176,6 +185,12 @@ export class BrowserPage {
     streamFields = Selector('[data-testid=stream-entries-container] .truncateText span');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
     confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
+    streamRangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
+    streamRangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
+    streamGroupId = Selector('.streamItemId[data-testid^=stream-group-]');
+    entryIdInfoIcon = Selector('[data-testid=entry-id-info-icon]');
+    errorMessage = Selector('[data-test-subj=toast-error]');
+    entryIdError = Selector('[data-testid=id-error]');
 
     /**
      * Common part for Add any new key
@@ -733,6 +748,20 @@ export class BrowserPage {
     async getKeyLength(): Promise<string> {
         const rawValue = await this.keyLengthDetails.textContent;
         return rawValue.split(' ')[rawValue.split(' ').length - 1];
+    }
+
+    /**
+     * Create new consumer group in Stream key
+     * @groupName The name of the Consumer Group
+     * @id The ID of the Consumer Group
+     */
+     async createConsumerGroup(groupName: string, id?: string): Promise<void> {
+        await t.click(this.addKeyValueItemsButton);
+        await t.typeText(this.groupNameInput, groupName, { replace: true, paste: true });
+        if (id !== undefined) {
+            await t.typeText(this.consumerIdInput, id, { replace: true, paste: true });
+        }
+        await t.click(this.saveGroupsButton);
     }
 }
 

@@ -380,7 +380,8 @@ jobs:
                 echo "Unable to add permissions! System Integrity Protection is enabled on this image"
                 echo "Please choose an image with SIP disabled. Documentation: https://circleci.com/docs/2.0/testing-macos"
                 exit 1
-            fi      
+            fi
+                  
       - macos/add-uitest-permissions
       - macos/add-permission:
           bundle-id: "com.apple.Terminal"

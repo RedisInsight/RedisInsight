@@ -571,6 +571,10 @@ interface INode extends d3.SimulationNodeDatum {
   properties: { [key: string]: string | number | object }
   labels: string[]
   color: string
+  angleX: number
+  angleY: number
+  links: string[]
+  targetLabels: {[label: string]: number}
 }
 
 interface IRelationship extends d3.SimulationLinkDatum<INode>{
@@ -592,6 +596,7 @@ interface IRelationship extends d3.SimulationLinkDatum<INode>{
     shaftLength: number
     midShaftPoint: Point
   }
+  fetchedAutomatically?: boolean
 }
 
 interface IGraph {
@@ -615,11 +620,13 @@ export interface IGraphD3 {
   updateWithD3Data: (d3Data: any) => void
   updateWithGraphData: (graphData: any) => void
   zoomFuncs: IZoomFuncs
+  toggleShowAutomaticEdges: () => void
 }
 
 function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   let info: any
   let nodes: INode[]
+  let shouldShowAutomaticEdges = true;
   let relationship: d3.Selection<SVGGElement, IRelationship, SVGGElement, any>
   let labelCounter = 0;
   let labels: { [key: string]: number } = { }
@@ -983,7 +990,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   function appendRelationship() {
     return relationship.enter()
       .append('g')
-      .attr('class', 'relationship')
+      .attr('class', r => `relationship relationship-${r.id}`)
       .on('dblclick', function onRelationshipDoubleClick(event, d) {
         if (typeof options.onRelationshipDoubleClick === 'function') {
           options.onRelationshipDoubleClick(this, d, event)
@@ -1046,7 +1053,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
   function updateRelationships(r: IRelationship) {
     Array.prototype.push.apply(relationships, r)
-
     let a = svgRelationships.selectAll('.relationship')
     relationship = svgRelationships
       .selectAll('.relationship')
@@ -1071,7 +1077,18 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     n = n.filter(k => !nodeIds.includes(k.id))
 
     let edgeIds = relationships.map(e => e.id)
+    const previousEdges = [...r]
     r = r.filter(k => !edgeIds.includes(k.id))
+
+    if (relationship !== undefined) {
+      relationship.each(r => {
+        // If an edge is being fetchedAutomatically and is now added
+        // in new data, mark fetchedAutomatically to false.
+        if (r.fetchedAutomatically && previousEdges.map(k => k.id).includes(r.id)) {
+          r.fetchedAutomatically = false;
+        }
+      })
+    }
 
     updateRelationships(r)
     updateNodes(n)
@@ -1079,6 +1096,12 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     simulation.nodes(nodes)
     simulation.force('link', d3.forceLink(relationships).id((d: IRelationship) => d.id))
 
+    // Every time the function is run, do check whether automatically fetched edges must be rendered.
+    d3.selectAll('.relationship').each((r: IRelationship) => {
+      if (!shouldShowAutomaticEdges && r.fetchedAutomatically) {
+        d3.selectAll(`.relationship-${r.id}`).remove()
+      }
+    })
   }
 
   function graphDataToD3Data(data) {
@@ -1643,12 +1666,20 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
   resize()
 
+  function toggleShowAutomaticEdges() {
+    // Simply re-run the function. `updateNodesAndRelationships` internally checks for `shouldShowAutomaticEdges` prop to render edges that were fetched automatically.
+    shouldShowAutomaticEdges = !shouldShowAutomaticEdges;
+    updateNodesAndRelationships([], [])
+    simulation.restart()
+  }
+
   return {
     graphDataToD3Data,
     size,
     updateWithD3Data,
     updateWithGraphData,
     zoomFuncs,
+    toggleShowAutomaticEdges,
   }
 }
 

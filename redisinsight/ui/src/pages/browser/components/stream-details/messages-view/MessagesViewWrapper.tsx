@@ -1,6 +1,7 @@
 import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { last, toNumber } from 'lodash'
 import cx from 'classnames'
 
@@ -15,8 +16,14 @@ import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/sli
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime, getNextId } from 'uiSrc/utils/streamUtils'
 import { SortOrder } from 'uiSrc/constants'
-import { PendingEntryDto, ClaimPendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import {
+  AckPendingEntriesResponse,
+  PendingEntryDto,
+  ClaimPendingEntryDto,
+  ClaimPendingEntriesResponse
+} from 'apiSrc/modules/browser/dto/stream.dto'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import MessagesView from './MessagesView'
 import MessageClaimPopover from './MessageClaimPopover'
@@ -41,6 +48,7 @@ const MessagesViewWrapper = (props: Props) => {
   } = useSelector(selectedConsumerSelector) ?? {}
   const { name: group } = useSelector(selectedGroupSelector) ?? { name: '' }
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const [openPopover, setOpenPopover] = useState<string>('')
 
@@ -50,24 +58,48 @@ const MessagesViewWrapper = (props: Props) => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [])
 
-  const showAchPopover = useCallback((id) => {
+  const showAchPopover = (id: string) => {
     setOpenPopover(id + ackPrefix)
-  }, [])
-
-  const closePopover = useCallback(() => {
-    setOpenPopover('')
-  }, [])
-
-  const showClaimPopover = useCallback((id :string) => {
-    setOpenPopover(id + claimPrefix)
-  }, [])
-
-  const handleAchPendingMessage = (entry: string) => {
-    dispatch(ackPendingEntriesAction(key, group, [entry], closePopover))
   }
 
-  const handleClaimingId = (data: Partial<ClaimPendingEntryDto>, successAction: () => void) => {
-    dispatch(claimPendingMessages(data, successAction))
+  const closePopover = () => {
+    setOpenPopover('')
+  }
+
+  const handleCancelClaim = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_CLAIM_CANCELED,
+      eventData: {
+        databaseId: instanceId,
+        pending
+      }
+    })
+  }
+
+  const showClaimPopover = (id: string) => {
+    setOpenPopover(id + claimPrefix)
+  }
+
+  const onSuccessAck = (data :AckPendingEntriesResponse) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_ACKNOWLEDGED,
+      eventData: {
+        databaseId: instanceId,
+        pending: pending - data.affected
+      }
+    })
+    setOpenPopover('')
+  }
+
+  const handleAchPendingMessage = (entry: string) => {
+    dispatch(ackPendingEntriesAction(key, group, [entry], onSuccessAck))
+  }
+
+  const handleClaimingId = (
+    data: Partial<ClaimPendingEntryDto>,
+    onSuccess: (data: ClaimPendingEntriesResponse) => void
+  ) => {
+    dispatch(claimPendingMessages(data, onSuccess))
   }
   const loadMoreItems = useCallback(() => {
     const lastLoadedEntryId = last(loadedMessages)?.id ?? '-'
@@ -158,6 +190,7 @@ const MessagesViewWrapper = (props: Props) => {
               closePopover={() => closePopover()}
               showPopover={() => showClaimPopover(id)}
               claimMessage={handleClaimingId}
+              handleCancelClaim={handleCancelClaim}
             />
           </div>
         )

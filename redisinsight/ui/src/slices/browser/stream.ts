@@ -665,7 +665,7 @@ export function addNewGroupAction(
 // Asynchronous thunk action
 export function fetchConsumerGroups(
   resetData?: boolean,
-  onSuccess?: () => void,
+  onSuccess?: (data: ConsumerGroupDto[]) => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -685,7 +685,7 @@ export function fetchConsumerGroups(
 
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumerGroupsSuccess(data))
-        onSuccess?.()
+        onSuccess?.(data)
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {
@@ -740,7 +740,7 @@ export function deleteConsumerGroupsAction(keyName: string, consumerGroups: stri
 // Asynchronous thunk action
 export function fetchConsumers(
   resetData?: boolean,
-  onSuccess?: () => void,
+  onSuccess?: (data: ConsumerDto[]) => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -761,7 +761,7 @@ export function fetchConsumers(
 
       if (isStatusSuccessful(status)) {
         dispatch(loadConsumersSuccess(data))
-        onSuccess?.()
+        onSuccess?.(data)
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {
@@ -992,14 +992,14 @@ export function ackPendingEntriesAction(
   key: string,
   group: string,
   entries: string[],
-  onSuccessAction?: () => void,
+  onSuccess?: (data: AckPendingEntriesResponse) => void,
   onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(ackPendingEntries())
     try {
       const state = stateInit()
-      const { status } = await apiService.post<AckPendingEntriesResponse>(
+      const { data, status } = await apiService.post<AckPendingEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAM_ACK_PENDING_ENTRIES
@@ -1011,13 +1011,13 @@ export function ackPendingEntriesAction(
         }
       )
       if (isStatusSuccessful(status)) {
-        onSuccessAction?.()
         dispatch(ackPendingEntriesSuccess())
         dispatch(deleteMessageFromList(entries[0]))
         dispatch<any>(fetchConsumers())
         dispatch(addMessageNotification(
           successMessages.MESSAGE_ACTION(entries[0], 'acknowledged')
         ))
+        onSuccess?.(data)
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {

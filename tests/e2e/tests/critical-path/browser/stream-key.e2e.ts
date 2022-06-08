@@ -68,6 +68,7 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     keyName = chance.word({ length: 20 });
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
+    await t.click(browserPage.fullScreenModeButton);
     // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
     const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
     await browserPage.addEntryToStream(chance.word({ length: 20 }), chance.word({ length: 20 }));

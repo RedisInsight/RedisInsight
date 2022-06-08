@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { EuiIcon, EuiTab, EuiTabs } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
 import {
   streamSelector,
@@ -11,6 +12,8 @@ import {
   selectedConsumerSelector,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { streamViewTypeTabs } from '../constants'
 
@@ -22,11 +25,26 @@ const StreamTabs = () => {
   const { name: selectedGroupName = '' } = useSelector(selectedGroupSelector) ?? {}
   const { name: selectedConsumerName = '' } = useSelector(selectedConsumerSelector) ?? {}
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+
   const dispatch = useDispatch()
+
+  const onSuccessLoadedConsumerGroups = (data: ConsumerGroupDto[]) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_GROUPS_LOADED,
+      eventData: {
+        databaseId: instanceId,
+        length: data.length
+      }
+    })
+  }
 
   const onSelectedTabChanged = (id: StreamViewType) => {
     if (id === StreamViewType.Groups && groups.length === 0) {
-      dispatch(fetchConsumerGroups())
+      dispatch(fetchConsumerGroups(
+        true,
+        onSuccessLoadedConsumerGroups,
+      ))
     }
     dispatch(setStreamViewType(id))
   }

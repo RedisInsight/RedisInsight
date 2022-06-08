@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { EuiToolTip, EuiText } from '@elastic/eui'
 
 import {
@@ -16,6 +17,7 @@ import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { formatLongName } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import ConsumersView from './ConsumersView'
@@ -37,6 +39,8 @@ const ConsumersViewWrapper = (props: Props) => {
     data: loadedConsumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+
   const dispatch = useDispatch()
 
   const [deleting, setDeleting] = useState<string>('')
@@ -45,17 +49,26 @@ const ConsumersViewWrapper = (props: Props) => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [])
 
-  const closePopover = useCallback(() => {
+  const closePopover = () => {
     setDeleting('')
-  }, [])
+  }
 
-  const showPopover = useCallback((consumer = '') => {
+  const showPopover = (consumer = '') => {
     setDeleting(`${consumer + suffix}`)
-  }, [])
+  }
+
+  const onSuccessDeletedConsumer = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_CONSUMER_DELETED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+    closePopover()
+  }
 
   const handleDeleteConsumer = (consumerName = '') => {
-    dispatch(deleteConsumersAction(key, selectedGroupName, [consumerName]))
-    closePopover()
+    dispatch(deleteConsumersAction(key, selectedGroupName, [consumerName], onSuccessDeletedConsumer))
   }
 
   const handleRemoveIconClick = () => {

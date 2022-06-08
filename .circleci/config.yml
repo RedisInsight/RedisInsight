@@ -124,9 +124,7 @@ orbs:
   win: circleci/windows@2.4.0
   node: circleci/node@4.4.0
   aws: circleci/aws-cli@2.0.3
-  # macos: circleci/macos@1.0
-  macos: circleci/macos@2.2.0
-  # mac-permissions: circleci/macos
+  macos: circleci/macos@2.2.0  
 
 executors:
   linux-executor:
@@ -318,12 +316,9 @@ jobs:
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
-
   e2e-dmg:
     macos:
       xcode: 13.2.1
-      # xcode: 11.7
-    #    executor: linux-executor
     parameters:
       report:
         description: Send report for test run to slack
@@ -341,55 +336,14 @@ jobs:
       - run:
           name: Download build from S3
           command: |
-            # brew install wget
-            mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg 
-      # - run: npx browserslist@latest --update-db  
-      # - run:
-      #     name: Set safari permissions
-      #     command: |
-      #       if csrutil status | grep -q 'disabled'; then
-      #           epochdate=$(($(date +'%s * 1000 + %-N / 1000000')))
-      #           macos_major_version=$(sw_vers -productVersion | awk -F. '{ print $1 }')
-      #           if [[ $macos_major_version -le 10 ]]; then
-      #             defaults write com.apple.Safari AllowRemoteAutomation 1
-      #           else
-      #             tcc_service_accessibility="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAccessibility\",\"/usr/sbin/sshd\",1,2,4,1,0,\"UNUSED\",0,$epochdate);"
-      #             tcc_service_events="replace into access (service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,indirect_object_identifier,flags,last_modified) values (\"kTCCServiceAppleEvents\",\"/usr/sbin/sshd\",1,2,4,1,0,\"com.apple.systemevents\",0,$epochdate);"
-      #             sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_accessibility"
-      #             sudo sqlite3 "/Users/$USER/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_accessibility"
-      #             sudo sqlite3 "/Users/$USER/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_events"
-      #             sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "$tcc_service_events"
-      #             osascript -e '
-      #               tell application "System Events"
-      #                tell application "Safari" to activate
-      #                 delay 5
-      #                 tell process "Safari"
-      #                   set frontmost to true
-      #                   click menu item "Preferences…" of menu 1 of menu bar item "Safari" of menu bar 1
-      #                   click button "Advanced" of toolbar 1 of window 1
-      #                   tell checkbox "Show Develop menu in menu bar" of group 1 of group 1 of window 1
-      #                     if value is 0 then click it
-      #                   end tell
-      #                   click button 1 of window 1
-      #                   click menu item "Allow Remote Automation" of menu 1 of menu bar item "Develop" of menu bar 1
-      #                 end tell
-      #               end tell'
-      #           fi
-      #           sudo safaridriver --enable
-      #       else
-      #           echo "Unable to add permissions! System Integrity Protection is enabled on this image"
-      #           echo "Please choose an image with SIP disabled. Documentation: https://circleci.com/docs/2.0/testing-macos"
-      #           exit 1
-      #       fi
-                  
-      # - macos/add-uitest-permissions
+            mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg                   
+      - macos/add-uitest-permissions
       - macos/add-permission:
-          # bundle-id: "com.apple.Terminal"
           bundle-id: "com.devexpress.testcafe-browser-tools"
           permission-type: "kTCCServiceScreenCapture"         
       - run:
           name: Run e2e tests
-          command: .circleci/e2e/test.dmg.sh
+          command: .circleci/e2e/test.dmg.sh          
   e2e-exe:
     executor:
       name: win/default
@@ -622,6 +576,7 @@ jobs:
         enum: ['stage', 'prod', 'dev']
     steps:
       - checkout
+      - macos/add-uitest-permissions        
       - node/install:
           node-version: '15.14.0'
       - attach_workspace:
@@ -950,298 +905,296 @@ jobs:
             done
 
 workflows:
-#  build:
-#    jobs:
-#      # unit tests (on any commit)
-#      - unit-tests-ui:
-#          name: UTest - UI
-#      - unit-tests-api:
-#          name: UTest - API
-#
-#      # integration tests run in parallel (on any commit)
-#      # target server runs locally to calculate code coverage
-#      - integration-tests-run:
-#          matrix:
-#            alias: itest-code
-#            parameters:
-#              rte: *iTestsNames
-#          name: ITest - << matrix.rte >> (code)
-#      - integration-tests-coverage:
-#          name: ITest - Final coverage
-#          requires:
-#            - itest-code
-#        # e2e tests (doesn't affect pipeline even if fail)
-#      - docker:
-#          name: Build docker image
-#          filters: &e2eFilter
-#            branches:
-#              only:
-#                - /^release.*/
-#                - /^e2e.*/
-#                - /^feature/e2e.*/
-#                - main
-#                - latest
-#      - e2e-tests:
-#          name: E2ETest
-#          build: docker
-#          parallelism: 4
-#          filters: *e2eFilter
-#          requires:
-#            - Build docker image
-#
-#      # build and release electron app (dev)
-#      - dev-build-approve:
-#          name: Build dev app
-#          type: approval
-#          requires:
-#            - UTest - UI
-#            - UTest - API
-#            - ITest - Final coverage
-#          <<: *devFilter
-#      - setup-sign-certificates:
-#          name: Setup sign certificates (dev)
-#          requires:
-#            - Build dev app
-#          <<: *devFilter
-#      - setup-build:
-#          name: Setup build (dev)
-#          env: dev
-#          requires:
-#            - Setup sign certificates (dev)
-#          <<: *devFilter
-#      - linux:
-#          name: Build app - Linux (dev)
-#          env: dev
-#          requires: &stageElectronBuildRequires
-#            - Setup build (dev)
-#          <<: *devFilter
-#      - macosx:
-#          name: Build app - MacOS (dev)
-#          env: dev
-#          requires: *stageElectronBuildRequires
-#          <<: *devFilter
-#      - windows:
-#          name: Build app - Windows (dev)
-#          env: dev
-#          requires: *stageElectronBuildRequires
-#          <<: *devFilter
-#      - store-build-artifacts:
-#          name: Store build artifacts (dev)
-#          requires:
-#            - Build app - Linux (dev)
-#            - Build app - MacOS (dev)
-#            - Build app - Windows (dev)
-#
-#      - release-aws-test:
-#          name: Release AWS test
-#          requires:
-#            - Build app - Linux (dev)
-#            - Build app - MacOS (dev)
-#            - Build app - Windows (dev)
-#
-#      # build and release electron app (stage)
-#      - setup-sign-certificates:
-#          name: Setup sign certificates (stage)
-#          requires:
-#            - UTest - UI
-#            - UTest - API
-#            - ITest - Final coverage
-#          <<: *stageFilter
-#      - setup-build:
-#          name: Setup build (stage)
-#          requires:
-#            - Setup sign certificates (stage)
-#          <<: *stageFilter
-#      - linux:
-#          name: Build app - Linux (stage)
-#          requires: &stageElectronBuildRequires
-#            - Setup build (stage)
-#          <<: *stageFilter
-#      - macosx:
-#          name: Build app - MacOS (stage)
-#          requires: *stageElectronBuildRequires
-#          <<: *stageFilter
-#      - windows:
-#          name: Build app - Windows (stage)
-#          requires: *stageElectronBuildRequires
-#          <<: *stageFilter
-#
-#      - release-aws-test:
-#          name: Release AWS test
-#          requires:
-#            - Build app - Linux (stage)
-#            - Build app - MacOS (stage)
-#            - Build app - Windows (stage)
-#
-#      # Needs approval from QA team that build was tested before merging to latest
-#      - qa-approve:
-#          name: Approved by QA team
-#          type: approval
-#          requires:
-#            - Build app - Linux (stage)
-#            - Build app - MacOS (stage)
-#            - Build app - Windows (stage)
-#
-#      # build and release electron app (prod)
-#      - setup-sign-certificates:
-#          name: Setup sign certificates (prod)
-#          requires:
-#            - UTest - UI
-#            - UTest - API
-#            - ITest - Final coverage
-#          <<: *prodFilter
-#      - setup-build:
-#          name: Setup build (prod)
-#          env: prod
-#          requires:
-#            - Setup sign certificates (prod)
-#          <<: *prodFilter
-#      - linux:
-#          name: Build app - Linux (prod)
-#          env: prod
-#          requires: &prodElectronBuildRequires
-#            - Setup build (prod)
-#          <<: *prodFilter
-#      - macosx:
-#          name: Build app - MacOS (prod)
-#          env: prod
-#          requires: *prodElectronBuildRequires
-#          <<: *prodFilter
-#      - windows:
-#          name: Build app - Windows (prod)
-#          env: prod
-#          requires: *prodElectronBuildRequires
-#          <<: *prodFilter
-#      # virus check all electron apps (prod only)
-#      - virustotal:
-#          name: Virus check - AppImage (prod)
-#          ext: .AppImage
-#          requires:
-#            - Build app - Linux (prod)
-#      - virustotal:
-#          name: Virus check - deb (prod)
-#          ext: .deb
-#          requires:
-#            - Build app - Linux (prod)
-#      - virustotal:
-#          name: Virus check x64 - dmg (prod)
-#          ext: -x64.dmg
-#          requires:
-#            - Build app - MacOS (prod)
-#      - virustotal:
-#          name: Virus check arm64 - dmg (prod)
-#          ext: -arm64.dmg
-#          requires:
-#            - Build app - MacOS (prod)
-#      - virustotal:
-#          name: Virus check - exe (prod)
-#          ext: .exe
-#          requires:
-#            - Build app - Windows (prod)
-#
-#      # upload release to AWS and GitHub
-#      - release-aws-private:
-#          name: Release AWS S3 Private (prod)
-#          requires:
-#            - Virus check - AppImage (prod)
-#            - Virus check - deb (prod)
-#            - Virus check x64 - dmg (prod)
-#            - Virus check arm64 - dmg (prod)
-#            - Virus check - exe (prod)
-#
-#      - release-github:
-#          name: Release Github (prod)
-#          env: prod
-#          requires:
-#            - Virus check - AppImage (prod)
-#            - Virus check - deb (prod)
-#            - Virus check x64 - dmg (prod)
-#            - Virus check arm64 - dmg (prod)
-#            - Virus check - exe (prod)
-#
-#      # Manual approve for publish release
-#      - approve-publish:
-#          name: Approve Publish Release (prod)
-#          type: approval
-#          requires:
-#            - Release AWS S3 Private (prod)
-#            - Release Github (prod)
-#          <<: *prodFilter # double check for "latest"
-#
-#      # Publish release
-#      - publish-prod-aws:
-#          name: Publish AWS S3
-#          requires:
-#            - Approve Publish Release (prod)
-#          <<: *prodFilter # double check for "latest"
+  build:
+    jobs:
+      # unit tests (on any commit)
+      - unit-tests-ui:
+          name: UTest - UI
+      - unit-tests-api:
+          name: UTest - API
+
+      # integration tests run in parallel (on any commit)
+      # target server runs locally to calculate code coverage
+      - integration-tests-run:
+          matrix:
+            alias: itest-code
+            parameters:
+              rte: *iTestsNames
+          name: ITest - << matrix.rte >> (code)
+      - integration-tests-coverage:
+          name: ITest - Final coverage
+          requires:
+            - itest-code
+        # e2e tests (doesn't affect pipeline even if fail)
+      - docker:
+          name: Build docker image
+          filters: &e2eFilter
+            branches:
+              only:
+                - /^release.*/
+                - /^e2e.*/
+                - /^feature/e2e.*/
+                - main
+                - latest
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          filters: *e2eFilter
+          requires:
+            - Build docker image
+
+      # build and release electron app (dev)
+      - dev-build-approve:
+          name: Build dev app
+          type: approval
+          requires:
+            - UTest - UI
+            - UTest - API
+            - ITest - Final coverage
+          <<: *devFilter
+      - setup-sign-certificates:
+          name: Setup sign certificates (dev)
+          requires:
+            - Build dev app
+          <<: *devFilter
+      - setup-build:
+          name: Setup build (dev)
+          env: dev
+          requires:
+            - Setup sign certificates (dev)
+          <<: *devFilter
+      - linux:
+          name: Build app - Linux (dev)
+          env: dev
+          requires: &stageElectronBuildRequires
+            - Setup build (dev)
+          <<: *devFilter
+      - macosx:
+          name: Build app - MacOS (dev)
+          env: dev
+          requires: *stageElectronBuildRequires
+          <<: *devFilter
+      - windows:
+          name: Build app - Windows (dev)
+          env: dev
+          requires: *stageElectronBuildRequires
+          <<: *devFilter
+      - store-build-artifacts:
+          name: Store build artifacts (dev)
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+
+      # build and release electron app (stage)
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+          requires:
+            - UTest - UI
+            - UTest - API
+            - ITest - Final coverage
+          <<: *stageFilter
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+          <<: *stageFilter
+      - linux:
+          name: Build app - Linux (stage)
+          requires: &stageElectronBuildRequires
+            - Setup build (stage)
+          <<: *stageFilter
+      - macosx:
+          name: Build app - MacOS (stage)
+          requires: *stageElectronBuildRequires
+          <<: *stageFilter
+      - windows:
+          name: Build app - Windows (stage)
+          requires: *stageElectronBuildRequires
+          <<: *stageFilter
+
+      - release-aws-test:
+          name: Release AWS test
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
+
+      # Needs approval from QA team that build was tested before merging to latest
+      - qa-approve:
+          name: Approved by QA team
+          type: approval
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
+
+      # build and release electron app (prod)
+      - setup-sign-certificates:
+          name: Setup sign certificates (prod)
+          requires:
+            - UTest - UI
+            - UTest - API
+            - ITest - Final coverage
+          <<: *prodFilter
+      - setup-build:
+          name: Setup build (prod)
+          env: prod
+          requires:
+            - Setup sign certificates (prod)
+          <<: *prodFilter
+      - linux:
+          name: Build app - Linux (prod)
+          env: prod
+          requires: &prodElectronBuildRequires
+            - Setup build (prod)
+          <<: *prodFilter
+      - macosx:
+          name: Build app - MacOS (prod)
+          env: prod
+          requires: *prodElectronBuildRequires
+          <<: *prodFilter
+      - windows:
+          name: Build app - Windows (prod)
+          env: prod
+          requires: *prodElectronBuildRequires
+          <<: *prodFilter
+      # virus check all electron apps (prod only)
+      - virustotal:
+          name: Virus check - AppImage (prod)
+          ext: .AppImage
+          requires:
+            - Build app - Linux (prod)
+      - virustotal:
+          name: Virus check - deb (prod)
+          ext: .deb
+          requires:
+            - Build app - Linux (prod)
+      - virustotal:
+          name: Virus check x64 - dmg (prod)
+          ext: -x64.dmg
+          requires:
+            - Build app - MacOS (prod)
+      - virustotal:
+          name: Virus check arm64 - dmg (prod)
+          ext: -arm64.dmg
+          requires:
+            - Build app - MacOS (prod)
+      - virustotal:
+          name: Virus check - exe (prod)
+          ext: .exe
+          requires:
+            - Build app - Windows (prod)
+
+      # upload release to AWS and GitHub
+      - release-aws-private:
+          name: Release AWS S3 Private (prod)
+          requires:
+            - Virus check - AppImage (prod)
+            - Virus check - deb (prod)
+            - Virus check x64 - dmg (prod)
+            - Virus check arm64 - dmg (prod)
+            - Virus check - exe (prod)
+
+      - release-github:
+          name: Release Github (prod)
+          env: prod
+          requires:
+            - Virus check - AppImage (prod)
+            - Virus check - deb (prod)
+            - Virus check x64 - dmg (prod)
+            - Virus check arm64 - dmg (prod)
+            - Virus check - exe (prod)
+
+      # Manual approve for publish release
+      - approve-publish:
+          name: Approve Publish Release (prod)
+          type: approval
+          requires:
+            - Release AWS S3 Private (prod)
+            - Release Github (prod)
+          <<: *prodFilter # double check for "latest"
+
+      # Publish release
+      - publish-prod-aws:
+          name: Publish AWS S3
+          requires:
+            - Approve Publish Release (prod)
+          <<: *prodFilter # double check for "latest"
 
   # Nightly tests
-#  nightly:
-#    triggers:
-#      - schedule:
-#          cron: '0 0 * * *'
-#          filters:
-#            branches:
-#              only:
-#                - main
-#    jobs:
-#      # build docker image
-#      - docker:
-#          name: Build docker image
-#      # build desktop app
-#      - setup-sign-certificates:
-#          name: Setup sign certificates (stage)
-#      - setup-build:
-#          name: Setup build (stage)
-#          requires:
-#            - Setup sign certificates (stage)
-#      - linux:
-#          name: Build app - Linux (stage)
-#          requires:
-#            - Setup build (stage)
-#      - windows:
-#          name: Build app - Windows (stage)
-#          requires:
-#            - Setup build (stage)
-#      # integration tests on docker image build
-#      - integration-tests-run:
-#          matrix:
-#            alias: itest-docker
-#            parameters:
-#              rte: *iTestsNames
-#              build: ['docker']
-#              report: [true]
-#          name: ITest - << matrix.rte >> (docker)
-#          requires:
-#            - Build docker image
-#      # e2e web tests on docker image build
-#      - e2e-tests:
-#          name: E2ETest - Nightly
-#          parallelism: 4
-#          build: docker
-#          report: true
-#          requires:
-#            - Build docker image
-#      # e2e desktop tests on AppImage build
-#      - e2e-app-image:
-#          name: E2ETest (AppImage) - Nightly
-#          parallelism: 4
-#          report: true
-#          requires:
-#            - Build app - Linux (stage)
-#      # e2e desktop tests on exe build
-#      - e2e-exe:
-#          name: E2ETest (exe) - Nightly
-#          parallelism: 4
-#          report: true
-#          requires:
-#            - Build app - Windows (stage)
-  test:
+  nightly:
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only:
+                - main
     jobs:
+      # build docker image
+      - docker:
+          name: Build docker image
+      # build desktop app
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
+      - windows:
+          name: Build app - Windows (stage)
+          requires:
+            - Setup build (stage)
+      # integration tests on docker image build
+      - integration-tests-run:
+          matrix:
+            alias: itest-docker
+            parameters:
+              rte: *iTestsNames
+              build: ['docker']
+              report: [true]
+          name: ITest - << matrix.rte >> (docker)
+          requires:
+            - Build docker image
+      # e2e web tests on docker image build
+      - e2e-tests:
+          name: E2ETest - Nightly
+          parallelism: 4
+          build: docker
+          report: true
+          requires:
+            - Build docker image
       # e2e desktop tests on AppImage build
+      - e2e-app-image:
+          name: E2ETest (AppImage) - Nightly
+          parallelism: 4
+          report: true
+          requires:
+            - Build app - Linux (stage)
+      # e2e desktop tests on exe build
+      - e2e-exe:
+          name: E2ETest (exe) - Nightly
+          parallelism: 4
+          report: true
+          requires:
+            - Build app - Windows (stage)
+      # e2e desktop tests on dmg build
       - e2e-dmg:
-          name: E2ETest (dmg) - Nightly
-#          parallelism: 1
-#          report: true
-#          requires:
-#            - Build app - Linux (stage)
+         name: E2ETest (dmg) - Nightly
+         parallelism: 4
+         report: true
+         requires:
+           - Build app - macosx (stage)

@@ -113,7 +113,7 @@ const AddStreamGroup = (props: Props) => {
                           title="Enter Valid ID, 0 or $"
                           content={lastDeliveredIDTooltipText}
                         >
-                          <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                          <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} data-testid="entry-id-info-icon" />
                         </EuiToolTip>
                       )}
                       autoComplete="off"

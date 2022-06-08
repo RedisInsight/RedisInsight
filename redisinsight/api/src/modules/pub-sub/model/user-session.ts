@@ -32,6 +32,11 @@ export class UserSession {
 
   getRedisClient() { return this.redisClient; }
 
+  /**
+   * Subscribe to a Pub/Sub channel and create Redis client connection if needed
+   * Also add subscription to the subscriptions list
+   * @param subscription
+   */
   async subscribe(subscription: ISubscription) {
     const client = await this.redisClient?.getClient();
 
@@ -43,6 +48,11 @@ export class UserSession {
     }
   }
 
+  /**
+   * Unsubscribe from a channel and remove from the list of subscriptions
+   * Also destroy redis client when no subscriptions left
+   * @param subscription
+   */
   async unsubscribe(subscription: ISubscription) {
     this.subscriptions.delete(subscription.getId());
 
@@ -57,6 +67,13 @@ export class UserSession {
     }
   }
 
+  /**
+   * Redirect message to a proper subscription from the list using id
+   * ID is generated in this way: "p:channelName" where "p" - is a type of subscription
+   * Subscription types: s - "subscribe", p - "psubscribe", ss - "ssubscribe"
+   * @param id
+   * @param message
+   */
   handleMessage(id: string, message: IMessage) {
     const subscription = this.subscriptions.get(id);
 
@@ -65,6 +82,11 @@ export class UserSession {
     }
   }
 
+  /**
+   * Handle socket disconnection
+   * In this case we need to destroy entire session and cascade destroy other models inside
+   * to be sure that there is no open connections left
+   */
   handleDisconnect() {
     this.userClient.getSocket().emit(
       PubSubServerEvents.Exception,
@@ -74,6 +96,9 @@ export class UserSession {
     this.destroy();
   }
 
+  /**
+   * Reset subscriptions map and call and destroy Redis client
+   */
   destroy() {
     this.logger.debug(`Destroy ${this}`);
 

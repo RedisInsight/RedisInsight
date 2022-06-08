@@ -34,7 +34,7 @@ const pSubscription = {
 let client;
 
 describe('pub-sub', function () {
-  this.timeout(4000);
+  this.timeout(10000);
   beforeEach(async () => {
     client = await getClient(constants.TEST_INSTANCE_ID);
   });

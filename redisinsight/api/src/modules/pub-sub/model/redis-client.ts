@@ -23,6 +23,10 @@ export class RedisClient extends EventEmitter2 {
     this.connectFn = connectFn;
   }
 
+  /**
+   * Get existing client or wait until previous attempt fulfill or initiate new connection attempt
+   * based on current status
+   */
   async getClient(): Promise<IORedis.Redis | IORedis.Cluster> {
     try {
       this.logger.debug(`Get client ${this}`);
@@ -51,6 +55,12 @@ export class RedisClient extends EventEmitter2 {
     }
   }
 
+  /**
+   * Connects to redis and change current status to Connected
+   * Also emit Connected event after success
+   * Also subscribe to needed channels
+   * @private
+   */
   private async connect() {
     this.status = RedisClientStatus.Connecting;
     this.client = await this.connectFn();
@@ -79,6 +89,10 @@ export class RedisClient extends EventEmitter2 {
     });
   }
 
+  /**
+   * Unsubscribe all listeners and disconnect
+   * Remove client and set current state to End
+   */
   destroy() {
     this.client?.removeAllListeners();
     this.client?.disconnect();

@@ -14,7 +14,7 @@ export enum SubscriptionType {
 }
 
 export enum RedisClientStatus {
-  Connecting = 'connectiong',
+  Connecting = 'connecting',
   Connected = 'connected',
   Error = 'error',
   End = 'end',

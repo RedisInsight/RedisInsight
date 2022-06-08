@@ -187,7 +187,8 @@ export class BrowserPage {
     confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
     streamRangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
     streamRangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
-    streamGroupId = Selector('.streamItemId[data-testid^=stream-group-]');
+    streamGroupId = Selector('.streamItemId[data-testid^=stream-group-id]');
+    streamGroupName = Selector('[data-testid^=stream-group-name]');
     entryIdInfoIcon = Selector('[data-testid=entry-id-info-icon]');
     errorMessage = Selector('[data-test-subj=toast-error]');
     entryIdError = Selector('[data-testid=id-error]');

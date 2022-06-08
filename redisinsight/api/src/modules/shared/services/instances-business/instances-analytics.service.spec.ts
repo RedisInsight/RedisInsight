@@ -275,6 +275,7 @@ describe('InstancesAnalytics', () => {
         TelemetryEvents.RedisInstanceDeleted,
         {
           databaseId: mockDatabaseInstanceDto.id,
+          provider: mockDatabaseInstanceDto.provider,
         },
       );
     });

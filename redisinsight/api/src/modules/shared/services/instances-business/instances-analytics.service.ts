@@ -109,6 +109,7 @@ export class InstancesAnalyticsService extends TelemetryBaseService {
       TelemetryEvents.RedisInstanceDeleted,
       {
         databaseId: instance.id,
+        provider: instance.provider,
       },
     );
   }

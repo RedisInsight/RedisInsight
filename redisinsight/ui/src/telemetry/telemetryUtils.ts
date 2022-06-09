@@ -2,14 +2,13 @@
  * Telemetry and analytics module.
  * This module abstracts the exact service/framework used for tracking usage.
  */
-import { get } from 'lodash'
 import isGlob from 'is-glob'
 import * as jsonpath from 'jsonpath'
 import { Nullable } from 'uiSrc/utils'
-import store from 'uiSrc/slices/store'
 import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { checkIsAnalyticsGranted } from 'uiSrc/telemetry/checkAnalytics'
 import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService, MatchType } from './interfaces'
 import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
@@ -28,10 +27,6 @@ const getTelemetryService = (apiKey: string): ITelemetryService => {
   }
   return telemetryService
 }
-
-// Check is user give access to collect his events
-const checkIsAnalyticsGranted = () =>
-  !!get(store.getState(), 'user.settings.config.agreements.analytics', false)
 
 // Telemetry doesn't watch on sending anonymousId like arg of function. Only look at localStorage
 const setAnonymousId = (isAnalyticsGranted: boolean) => {

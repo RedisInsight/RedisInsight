@@ -7,6 +7,7 @@ import {
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
+import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
@@ -71,7 +72,6 @@ import reducer, {
   deleteMessageFromList
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
-import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')

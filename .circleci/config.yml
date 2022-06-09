@@ -778,6 +778,12 @@ jobs:
       - run:
           name: Publish AWS S3
           command: |
+            # remove previous build from the latest directory /public/latest
+            aws s3 rm s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive
+
+            # remove previous build from the upgrade directory /public/upgrades
+            aws s3 rm s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
+
             # copy current version apps for download to /public/latest
             aws s3 cp s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
               s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive  --exclude "*.zip"

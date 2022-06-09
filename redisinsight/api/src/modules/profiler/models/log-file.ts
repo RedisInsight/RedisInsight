@@ -124,7 +124,7 @@ export class LogFile {
       this.writeStream?.close();
       this.writeStream = null;
       const size = this.getFileSize();
-      fs.unlink(this.filePath);
+      fs.unlinkSync(this.filePath);
 
       this.analyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)(this.instanceId, size);
     } catch (e) {

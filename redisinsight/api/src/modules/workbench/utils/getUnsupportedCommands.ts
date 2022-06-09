@@ -6,6 +6,7 @@ export enum WorkbenchToolUnsupportedCommands {
   Monitor = 'monitor',
   Subscribe = 'subscribe',
   PSubscribe = 'psubscribe',
+  SSubscribe = 'ssubscribe',
   Sync = 'sync',
   PSync = 'psync',
   ScriptDebug = 'script debug',

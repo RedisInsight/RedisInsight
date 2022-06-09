@@ -14,7 +14,7 @@ export enum PageNames {
   workbench = 'workbench',
   browser = 'browser',
   slowLog = 'slowlog',
-  pubSub = 'pubSub',
+  pubSub = 'pub-sub',
 }
 
 const redisCloud = '/redis-cloud'

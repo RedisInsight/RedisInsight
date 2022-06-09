@@ -22,7 +22,12 @@ import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { appElectronInfoSelector, setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
+import {
+  appElectronInfoSelector,
+  appInfoSelector,
+  setReleaseNotesViewed,
+  setShortcutsFlyoutState
+} from 'uiSrc/slices/app/info'
 import LogoSVG from 'uiSrc/assets/img/logo.svg'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
@@ -32,6 +37,8 @@ import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
 import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
 import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
 import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
+import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
+import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 
@@ -54,11 +61,7 @@ interface INavigations {
   getIconType: () => string;
 }
 
-interface IProps {
-  buildType: BuildType
-}
-
-const NavigationMenu = ({ buildType }: IProps) => {
+const NavigationMenu = () => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
@@ -68,6 +71,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
 
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
   const { isReleaseNotesViewed } = useSelector(appElectronInfoSelector)
+  const { server } = useSelector(appInfoSelector)
 
   useEffect(() => {
     setActivePage(`/${last(location.pathname.split('/'))}`)
@@ -134,7 +138,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
+        return this.isActivePage ? PubSubActiveSVG : PubSubSVG
       },
     },
   ]
@@ -259,7 +263,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
         <EuiToolTip
-          content={buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
           position="right"
         >
           <span className={cx(styles.iconNavItem, styles.homeIcon)}>

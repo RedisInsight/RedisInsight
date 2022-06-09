@@ -755,11 +755,13 @@ jobs:
             latestYmlFileName="latest.yml"
             downloadLatestFolderPath="public/latest"
             upgradeLatestFolderPath="public/upgrades"
+            releasesFolderPath="public/releases"
             appName=$(jq -r '.productName' electron-builder.json)
             appVersion=$(jq -r '.version' redisinsight/package.json)
 
             echo "export downloadLatestFolderPath=${downloadLatestFolderPath}" >> $BASH_ENV
             echo "export upgradeLatestFolderPath=${upgradeLatestFolderPath}" >> $BASH_ENV
+            echo "export releasesFolderPath=${releasesFolderPath}" >> $BASH_ENV
             echo "export applicationName=${appName}" >> $BASH_ENV
             echo "export applicationVersion=${appVersion}" >> $BASH_ENV
             echo "export appFileName=RedisInsight" >> $BASH_ENV
@@ -776,21 +778,23 @@ jobs:
       - run:
           name: Publish AWS S3
           command: |
-            # move last public version apps for download to /private/{last public version}
-            aws s3 mv s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} \
-              s3://${AWS_BUCKET_NAME}/private/${previousApplicationVersion}/ --recursive
+            # remove previous build from the latest directory /public/latest
+            aws s3 rm s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive
 
-            # move last public version apps for upgrades to /private/{last public version}
-            aws s3 mv s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} \
-              s3://${AWS_BUCKET_NAME}/private/${previousApplicationVersion}/ --recursive
+            # remove previous build from the upgrade directory /public/upgrades
+            aws s3 rm s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
 
-            # move current version apps for download to /public/latest
+            # copy current version apps for download to /public/latest
             aws s3 cp s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
               s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive  --exclude "*.zip"
 
             # copy current version apps for upgrades to /public/upgrades
-            aws s3 mv s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
+            aws s3 cp s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
               s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
+
+            # !MOVE current version apps to releases folder /public/releases
+            aws s3 mv s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
+              s3://${AWS_BUCKET_NAME}/${releasesFolderPath}/${applicationVersion} --recursive
 
             # invalidate cloudfront cash
             aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"

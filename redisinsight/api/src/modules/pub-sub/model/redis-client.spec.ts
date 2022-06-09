@@ -45,7 +45,7 @@ describe('RedisClient', () => {
     it('should wait until first attempt of connection finish with error', async () => {
       try {
         getRedisClientFn.mockRejectedValueOnce(new Error('Connection error'));
-        redisClient.getClient().then().catch();
+        redisClient.getClient().then().catch(() => {});
         expect(redisClient['status']).toEqual(RedisClientStatus.Connecting);
         expect(await redisClient.getClient()).toEqual(nodeClient);
         fail();

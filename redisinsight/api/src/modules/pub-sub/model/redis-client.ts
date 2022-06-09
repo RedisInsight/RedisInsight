@@ -95,7 +95,7 @@ export class RedisClient extends EventEmitter2 {
    */
   destroy() {
     this.client?.removeAllListeners();
-    this.client?.disconnect();
+    this.client?.disconnect(false);
     this.client = null;
     this.status = RedisClientStatus.End;
   }

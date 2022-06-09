@@ -6,6 +6,10 @@ import { ISubscription } from 'src/modules/pub-sub/interfaces/subscription.inter
 import { IMessage } from 'src/modules/pub-sub/interfaces/message.interface';
 import * as IORedis from 'ioredis';
 
+const EMIT_WAIT = 30;
+const EMIT_MAX_WAIT = 100;
+const MESSAGES_MAX = 5000;
+
 export abstract class AbstractSubscription implements ISubscription {
   protected readonly id: string;
 
@@ -26,34 +30,44 @@ export abstract class AbstractSubscription implements ISubscription {
     this.id = `${this.type}:${this.channel}`;
     this.debounce = debounce(() => {
       if (this.messages.length) {
-        this.userClient.getSocket().emit(this.id, {
-          messages: this.messages.slice(0, 5000),
-          count: this.messages.length,
-        } as MessagesResponse);
+        this.userClient.getSocket()
+          .emit(this.id, {
+            messages: this.messages.slice(0, MESSAGES_MAX),
+            count: this.messages.length,
+          } as MessagesResponse);
         this.messages = [];
       }
-    }, 30, {
-      maxWait: 100,
+    }, EMIT_WAIT, {
+      maxWait: EMIT_MAX_WAIT,
     });
   }
 
-  getId() { return this.id; }
-
-  getChannel() { return this.channel; }
-
-  getType() { return this.type; }
-
-  async subscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void> {
-    throw new Error('"subscribe" method should be implemented');
+  getId() {
+    return this.id;
   }
 
-  async unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void> {
-    throw new Error('"unsubscribe" method should be implemented');
+  getChannel() {
+    return this.channel;
   }
+
+  getType() {
+    return this.type;
+  }
+
+  abstract subscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
+
+  abstract unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
 
   pushMessage(message: IMessage) {
     this.messages.push(message);
 
     this.debounce();
+  }
+
+  toString() {
+    return `${this.constructor.name}:${JSON.stringify({
+      id: this.id,
+      mL: this.messages.length,
+    })}`;
   }
 }

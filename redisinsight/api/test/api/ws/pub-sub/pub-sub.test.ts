@@ -100,7 +100,6 @@ describe('pub-sub', function () {
           expect(ack).to.eql({ status: 'ok' });
 
           client.on('s:channel-a', (data) => {
-            console.log('___data', data);
             expect(data.count).to.be.eql(1);
             expect(data.messages.length).to.be.eql(1);
             const [message] = data.messages;

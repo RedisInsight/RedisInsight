@@ -27,6 +27,8 @@ export class PubSubService {
    */
   async subscribe(userClient: UserClient, dto: SubscribeDto) {
     try {
+      this.logger.log('Subscribing to channels(s)');
+
       const session = await this.sessionProvider.getOrCreateUserSession(userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
@@ -49,6 +51,8 @@ export class PubSubService {
    */
   async unsubscribe(userClient: UserClient, dto: SubscribeDto) {
     try {
+      this.logger.log('Unsubscribing from channels(s)');
+
       const session = await this.sessionProvider.getOrCreateUserSession(userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.unsubscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
@@ -120,6 +124,7 @@ export class PubSubService {
    * @param id
    */
   async handleDisconnect(id: string) {
+    this.logger.log(`Handle disconnect event: ${id}`);
     const session = this.sessionProvider.getUserSession(id);
 
     if (session) {

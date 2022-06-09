@@ -38,12 +38,15 @@ export class UserSession {
    * @param subscription
    */
   async subscribe(subscription: ISubscription) {
+    this.logger.debug(`Subscribe ${subscription} ${this}. Getting Redis client...`);
+
     const client = await this.redisClient?.getClient();
 
     if (!client) { throw new Error('There is no Redis client initialized'); }
 
     if (!this.subscriptions.has(subscription.getId())) {
       this.subscriptions.set(subscription.getId(), subscription);
+      this.logger.debug(`Subscribe to Redis ${subscription} ${this}`);
       await subscription.subscribe(client);
     }
   }
@@ -54,14 +57,18 @@ export class UserSession {
    * @param subscription
    */
   async unsubscribe(subscription: ISubscription) {
+    this.logger.debug(`Unsubscribe ${subscription} ${this}`);
+
     this.subscriptions.delete(subscription.getId());
 
     const client = await this.redisClient?.getClient();
 
     if (client) {
+      this.logger.debug(`Unsubscribe from Redis ${subscription} ${this}`);
       await subscription.unsubscribe(client);
 
       if (!this.subscriptions.size) {
+        this.logger.debug(`Unsubscribe: Destroy RedisClient ${this}`);
         this.redisClient.destroy();
       }
     }
@@ -88,6 +95,8 @@ export class UserSession {
    * to be sure that there is no open connections left
    */
   handleDisconnect() {
+    this.logger.debug(`Handle disconnect ${this}`);
+
     this.userClient.getSocket().emit(
       PubSubServerEvents.Exception,
       new PubSubWsException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
@@ -104,6 +113,8 @@ export class UserSession {
 
     this.subscriptions = new Map();
     this.redisClient.destroy();
+
+    this.logger.debug(`Destroyed ${this}`);
   }
 
   toString() {

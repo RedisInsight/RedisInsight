@@ -16,6 +16,7 @@ nodeClient.unsubscribe = jest.fn();
 nodeClient.punsubscribe = jest.fn();
 nodeClient.status = 'ready';
 nodeClient.disconnect = jest.fn();
+nodeClient.quit = jest.fn();
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
@@ -119,7 +120,7 @@ describe('UserSession', () => {
     it('should handle message by particular subscription', async () => {
       userSession.handleDisconnect();
       expect(userSession['subscriptions'].size).toEqual(0);
-      expect(nodeClient.disconnect).toHaveBeenCalled();
+      expect(nodeClient.quit).toHaveBeenCalled();
     });
   });
 });

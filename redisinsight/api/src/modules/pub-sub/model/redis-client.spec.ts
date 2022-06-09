@@ -11,6 +11,7 @@ nodeClient.unsubscribe = jest.fn();
 nodeClient.punsubscribe = jest.fn();
 nodeClient.status = 'ready';
 nodeClient.disconnect = jest.fn();
+nodeClient.quit = jest.fn();
 
 describe('RedisClient', () => {
   let redisClient: RedisClient;
@@ -126,7 +127,7 @@ describe('RedisClient', () => {
       expect(redisClient['client']).toEqual(null);
       expect(redisClient['status']).toEqual(RedisClientStatus.End);
       expect(removeAllListenersSpy).toHaveBeenCalled();
-      expect(nodeClient.disconnect).toHaveBeenCalled();
+      expect(nodeClient.quit).toHaveBeenCalled();
     });
   });
 });

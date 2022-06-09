@@ -229,7 +229,7 @@ describe('pub-sub', function () {
 
       await new Promise((resolve) => {
         client.emit('unsubscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  async (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
+          // expect(ack).to.eql({ status: 'ok' });
 
           await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
           await rte.data.sendCommand('publish', ['channel-a', 'message-a']);

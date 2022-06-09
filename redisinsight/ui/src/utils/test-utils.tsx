@@ -160,6 +160,13 @@ jest.mock(
   () => ({ children }) => children({ height: 600, width: 600 })
 )
 
+jest.mock(
+  'uiSrc/telemetry/checkAnalytics',
+  () => ({
+    checkIsAnalyticsGranted: jest.fn()
+  })
+)
+
 export const localStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),

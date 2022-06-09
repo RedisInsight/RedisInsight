@@ -8,6 +8,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 const responseSchema = Joi.object().keys({
   version: Joi.string().required(),
   totalKeys: Joi.number().integer().allow(null),
+  totalKeysPerDb: Joi.object().allow(null),
   usedMemory: Joi.number().integer().allow(null),
   connectedClients: Joi.number().allow(null),
   opsPerSecond: Joi.number().allow(null),
@@ -68,6 +69,7 @@ describe('GET /instance/:instanceId/overview', () => {
           expect(body.version).to.eql(rte.env.version);
           expect(body.cpuUsagePercentage).to.eql(undefined)
           expect(body.totalKeys).to.not.eql(undefined)
+          expect(body.totalKeysPerDb).to.not.eql(undefined)
           expect(body.connectedClients).to.not.eql(undefined)
           expect(body.opsPerSecond).to.not.eql(undefined)
           expect(body.networkInKbps).to.not.eql(undefined)

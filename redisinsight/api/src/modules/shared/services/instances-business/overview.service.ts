@@ -34,9 +34,11 @@ export class OverviewService {
       nodesInfo = [await this.getNodeInfo(client)];
     }
 
+    const [totalKeys, totalKeysPerDb] = this.calculateTotalKeys(nodesInfo);
     return {
       version: this.getVersion(nodesInfo),
-      totalKeys: this.calculateTotalKeys(nodesInfo),
+      totalKeys,
+      totalKeysPerDb,
       usedMemory: this.calculateUsedMemory(nodesInfo),
       connectedClients: this.calculateConnectedClients(nodesInfo),
       opsPerSecond: this.calculateOpsPerSec(nodesInfo),
@@ -192,9 +194,9 @@ export class OverviewService {
    * @param nodes
    * @private
    */
-  private calculateTotalKeys(nodes = []): number {
+  private calculateTotalKeys(nodes = []): [number, Record<string, number>] {
     if (!this.isMetricsAvailable(nodes, 'keyspace', [undefined])) {
-      return undefined;
+      return [undefined, undefined];
     }
 
     try {
@@ -202,17 +204,34 @@ export class OverviewService {
         get(node, 'replication.role'),
       ));
 
-      return sumBy(masterNodes, (node) => sum(
+      const totalKeysPerDb = {};
+
+      masterNodes.forEach((node) => {
         map(
           get(node, 'keyspace', {}),
-          (dbKeys): number => {
+          (dbKeys, dbNumber): void => {
             const { keys } = convertBulkStringsToObject(dbKeys, ',', '=');
-            return parseInt(keys, 10);
+
+            if (!totalKeysPerDb[dbNumber]) {
+              totalKeysPerDb[dbNumber] = 0;
+            }
+
+            totalKeysPerDb[dbNumber] += parseInt(keys, 10);
           },
-        ),
-      ));
+        );
+      });
+
+      // filter 0 values
+      Object.keys(totalKeysPerDb).forEach((key) => {
+        if (!totalKeysPerDb[key]) {
+          delete totalKeysPerDb[key];
+        }
+      });
+
+      const totalKeys = totalKeysPerDb ? sum(Object.values(totalKeysPerDb)) : undefined;
+      return [totalKeys, Object.keys(totalKeysPerDb).length > 1 ? totalKeysPerDb : undefined];
     } catch (e) {
-      return null;
+      return [null, null];
     }
   }
 

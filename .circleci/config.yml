@@ -710,7 +710,7 @@ jobs:
           command: |
             applicationVersion=$(jq -r '.version' electron/package.json)
             echo "APP VERSION $applicationVersion"
-            ghr -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${applicationVersion}
+            ghr -n ${applicationVersion} -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${applicationVersion}
 
   release-aws-test:
     executor: linux-executor

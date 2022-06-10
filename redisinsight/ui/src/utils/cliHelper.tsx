@@ -1,5 +1,6 @@
 import React from 'react'
 import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
+import parse from 'html-react-parser'
 
 import { localStorageService } from 'uiSrc/services'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
@@ -42,7 +43,8 @@ const cliParseTextResponse = (
   text: string = '',
   command: string = '',
   status: CommandExecutionStatus = CommandExecutionStatus.Success,
-  prefix: CliPrefix = CliPrefix.Cli
+  prefix: CliPrefix = CliPrefix.Cli,
+  isParse: boolean = false
 ) => (
   <span
     key={Math.random()}
@@ -57,7 +59,7 @@ const cliParseTextResponse = (
         : `${prefix}-output-response-fail`
     }
   >
-    {formatToText(text, command)}
+    {isParse ? parse(formatToText(text, command)) : formatToText(text, command)}
   </span>
 )
 

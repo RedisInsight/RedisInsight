@@ -1,6 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { StatePubSub } from 'uiSrc/slices/interfaces/pubsub'
 import { RootState } from 'uiSrc/slices/store'
+import { SubscriptionDto } from 'apiSrc/modules/pub-sub/dto/subscription.dto'
+import { MessagesResponse } from 'apiSrc/modules/pub-sub/dto/messages.response'
 
 export const initialState: StatePubSub = {
   loading: false,
@@ -20,10 +22,10 @@ const pubSubSlice = createSlice({
   initialState,
   reducers: {
     setInitialPubSubState: () => initialState,
-    setPubSubConnected: (state, { payload }) => {
+    setPubSubConnected: (state, { payload }: PayloadAction<boolean>) => {
       state.isConnected = payload
     },
-    toggleSubscribeTriggerPubSub: (state, { payload }) => {
+    toggleSubscribeTriggerPubSub: (state, { payload }: PayloadAction<SubscriptionDto[]>) => {
       state.isSubscribeTriggered = !state.isSubscribeTriggered
       state.subscriptions = payload
     },
@@ -33,7 +35,7 @@ const pubSubSlice = createSlice({
     setIsPubSubUnSubscribed: (state) => {
       state.isSubscribed = false
     },
-    concatPubSubMessages: (state, { payload }) => {
+    concatPubSubMessages: (state, { payload }: PayloadAction<MessagesResponse>) => {
       state.count += payload.count
       if (payload.messages.length >= PUB_SUB_ITEMS_MAX_COUNT) {
         state.messages = [...payload.messages.slice(-PUB_SUB_ITEMS_MAX_COUNT)]
@@ -48,7 +50,7 @@ const pubSubSlice = createSlice({
 
       state.messages = newItems
     },
-    setLoading: (state, { payload }) => {
+    setLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.loading = payload
     },
     disconnectPubSub: (state) => {

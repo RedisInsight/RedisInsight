@@ -38,6 +38,7 @@ export * from './plugins'
 export * from './redistack'
 export * from './polyfills'
 export * from './tree'
+export * from './pubSubUtils'
 
 export {
   Maybe,

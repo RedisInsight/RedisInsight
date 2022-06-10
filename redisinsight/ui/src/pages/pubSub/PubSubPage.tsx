@@ -3,7 +3,7 @@ import React from 'react'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { SubscriptionType } from 'uiSrc/constants/pubSub'
 
-import { MessagesList, SubscriptionPanel } from './components'
+import { MessagesListWrapper, SubscriptionPanel } from './components'
 
 import styles from './styles.module.scss'
 
@@ -23,7 +23,7 @@ const PubSubPage = () => {
             <SubscriptionPanel />
           </div>
           <div className={styles.tableWrapper}>
-            <MessagesList />
+            <MessagesListWrapper />
           </div>
         </div>
         <div className={styles.footerPanel}>

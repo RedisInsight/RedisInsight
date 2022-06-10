@@ -10,7 +10,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
-const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 100000
+const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 10000000
 
 interface IProps { windowDimensions: number }
 

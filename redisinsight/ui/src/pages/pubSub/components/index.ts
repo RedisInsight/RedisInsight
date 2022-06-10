@@ -1,7 +1,7 @@
-import SubscriptionPanel from './SubscriptionPanel'
-import MessagesList from './MessagesList'
+import SubscriptionPanel from './subscription-panel'
+import MessagesListWrapper from './messages-list'
 
 export {
   SubscriptionPanel,
-  MessagesList
+  MessagesListWrapper,
 }

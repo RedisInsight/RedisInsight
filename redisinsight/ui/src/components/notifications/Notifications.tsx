@@ -22,7 +22,7 @@ import errorMessages from './error-messages'
 
 import styles from './styles.module.scss'
 
-export const DEFAULT_TEXT = 'Something went wrong.'
+export const DEFAULT_ERROR_TEXT = 'Something went wrong.'
 
 const Notifications = () => {
   const messagesData = useSelector(messagesSelector)
@@ -82,7 +82,7 @@ const Notifications = () => {
     })
 
   const getErrorsToasts = (errors: IError[]) =>
-    errors.map(({ id = '', message = DEFAULT_TEXT, instanceId = '', name }) => {
+    errors.map(({ id = '', message = DEFAULT_ERROR_TEXT, instanceId = '', name }) => {
       if (ApiEncryptionErrors.includes(name)) {
         return errorMessages.ENCRYPTION(id, () => removeToast({ id }), instanceId)
       }

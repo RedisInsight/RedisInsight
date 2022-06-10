@@ -1,0 +1,40 @@
+.time,
+.channel,
+.message {
+  display: inline-block !important;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.13px;
+  padding-bottom: 10px;
+  vertical-align: text-top;
+}
+
+.time {
+  color: var(--monitorTimeColor);
+  width: 150px;
+}
+
+.channel {
+  color: var(--euiColorMediumShade);
+  padding-right: 12px;
+  width: 220px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.message {
+  width: calc(100% - 372px);
+  color: var(--htmlColor);
+  word-break: break-all;
+}
+
+.header {
+  .time,
+  .channel,
+  .message {
+    font-size: 14px;
+    line-height: 24px;
+    color: var(--htmlColor);
+  }
+}

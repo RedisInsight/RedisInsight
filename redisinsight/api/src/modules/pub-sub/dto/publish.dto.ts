@@ -1,5 +1,6 @@
 import {
-  IsNotEmpty, IsString,
+  IsDefined,
+  IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -9,7 +10,7 @@ export class PublishDto {
     description: 'Message to send',
     example: '{"hello":"world"}',
   })
-  @IsNotEmpty()
+  @IsDefined()
   @IsString()
   message: string;
 
@@ -18,7 +19,7 @@ export class PublishDto {
     description: 'Chanel name',
     example: 'channel-1',
   })
-  @IsNotEmpty()
+  @IsDefined()
   @IsString()
   channel: string;
 }

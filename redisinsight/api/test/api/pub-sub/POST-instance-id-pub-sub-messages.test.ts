@@ -16,10 +16,8 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
   request(server).post(`/instance/${instanceId}/pub-sub/messages`);
 
 const dataSchema = Joi.object({
-  channel: Joi.string().required(),
-  message: Joi.string().required(),
-}).messages({
-  'any.required': '{#label} should not be empty',
+  channel: Joi.string().allow('').required(),
+  message: Joi.string().allow('').required(),
 }).strict();
 
 const validInputData = {

@@ -25,6 +25,7 @@ jest.mock('ioredis');
 
 const mockTlsConfigResult: ConnectionOptions = {
   rejectUnauthorized: true,
+  servername: mockStandaloneDatabaseEntity.tlsServername,
   checkServerIdentity: () => undefined,
   ca: [mockCaCertDto.cert],
   key: mockClientCertDto.key,

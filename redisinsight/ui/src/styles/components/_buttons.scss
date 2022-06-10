@@ -12,13 +12,15 @@
     color: var(--buttonSecondaryTextColor) !important;
     border-color: var(--euiColorSecondary);
     &:not([class*='isDisabled']) {
-      &:hover,
-      &:focus,
-      &:focus-within {
+      &:hover {
         background-color: var(--buttonSecondaryHoverColor);
         border-color: var(--buttonSecondaryHoverColor);
         color: var(--euiColorPrimaryText) !important;
       }
+    }
+    &:focus,
+    &:focus-within {
+      border: 2px solid var(--euiColorPrimary);
     }
     .euiTextColor--default {
       color: currentColor;
@@ -34,6 +36,10 @@
     &:hover {
       color: var(--euiColorPrimaryText) !important;
     }
+    &:focus,
+    &:focus-within {
+      border: 2px solid var(--euiColorPrimary);
+    }
   }
 }
 .euiButton.euiButton--fill {
@@ -42,12 +48,14 @@
     background-color: var(--euiColorSecondary);
 
     &:not([class*='isDisabled']) {
-      &:hover,
-      &:focus,
-      &:focus-within {
+      &:hover {
         background-color: var(--buttonSecondaryHoverColor);
         border-color: var(--buttonSecondaryHoverColor);
       }
+      &:focus,
+      &:focus-within {
+        border: 2px solid var(--euiColorPrimary);
+      }   
     }
   }
 }

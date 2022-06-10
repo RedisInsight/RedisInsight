@@ -20,6 +20,12 @@ export class DatabaseOverview {
   totalKeys?: number;
 
   @ApiPropertyOptional({
+    description: 'Nested object with total number of keys per logical database',
+    type: Number,
+  })
+  totalKeysPerDb?: Record<string, number>;
+
+  @ApiPropertyOptional({
     description: 'Median for connected clients in the all shards',
     type: Number,
   })

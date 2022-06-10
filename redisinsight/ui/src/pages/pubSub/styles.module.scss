@@ -1,10 +1,15 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
 .main {
   margin: 0 16px 0;
   height: calc(100% - 70px);
   display: flex;
   flex-direction: column;
 
-  .contentPanel, .footerPanel {
+  .contentPanel,
+  .footerPanel {
     background-color: var(--euiColorEmptyShade);
   }
 
@@ -29,6 +34,12 @@
   }
 
   .tableWrapper {
-    padding: 18px;
+    width: 100%;
+    height: calc(100% - 135px);
+    padding: 18px 0 18px 18px;
+
+    :global(.ReactVirtualized__Grid) {
+      @include euiScrollBar;
+    }
   }
 }

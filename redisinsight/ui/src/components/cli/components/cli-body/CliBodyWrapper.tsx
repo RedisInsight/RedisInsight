@@ -18,8 +18,9 @@ import {
   processUnsupportedCommand,
   processUnrepeatableNumber,
   processMonitorCommand,
+  processPSubscribeCommand,
 } from 'uiSrc/slices/cli/cli-output'
-import { CommandMonitor } from 'uiSrc/constants'
+import { CommandMonitor, CommandPSubscribe } from 'uiSrc/constants'
 import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
@@ -78,9 +79,17 @@ const CliBodyWrapper = () => {
       return
     }
 
-    // Flow if monitor command was executed
+    // Flow if MONITOR command was executed
     if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
       dispatch(processMonitorCommand(commandLine, resetCommand))
+      return
+    }
+
+    // Flow if PSUBSCRIBE command was executed
+    if (checkUnsupportedCommand([CommandPSubscribe.toLowerCase()], commandLine)) {
+      dispatch(processPSubscribeCommand(commandLine, () => {
+        resetCommand()
+      }))
       return
     }
 

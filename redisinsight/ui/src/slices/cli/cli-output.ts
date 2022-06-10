@@ -283,6 +283,25 @@ export function processMonitorCommand(
   }
 }
 
+export function processPSubscribeCommand(
+  command: string = '',
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          cliTexts.PSUBSCRIBE_COMMAND(),
+          command,
+          CommandExecutionStatus.Fail
+        )
+      )
+    )
+
+    onSuccessAction?.()
+  }
+}
+
 function handleRecreateClient(dispatch: AppDispatch, stateInit: () => RootState, command = ''): void {
   const state = stateInit()
   const { cliClientUuid } = state.cli.settings

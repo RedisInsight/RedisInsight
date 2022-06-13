@@ -127,7 +127,7 @@ test
     })
     ('Verify that user can not run "Select" command in Workbench', async() => {
         const command = 'select 13';
-        const result = '"select is not supported by the Workbench. The list of all unsupported commands: blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup, select, monitor, subscribe, psubscribe, sync, psync, script debug, blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup"';
+        const result = '"select is not supported by the Workbench. The list of all unsupported commands: blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup, select, monitor, subscribe, psubscribe, ssubscribe, sync, psync, script debug, blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup"';
         //Run Select command in Workbench
         await workbenchPage.sendCommandInWorkbench(command);
         //Check the command result

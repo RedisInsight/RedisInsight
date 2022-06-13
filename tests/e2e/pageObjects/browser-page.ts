@@ -76,7 +76,7 @@ export class BrowserPage {
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
-    streamEntriesContainer = Selector('[data-test-id=stream-entries-container]');
+    streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS

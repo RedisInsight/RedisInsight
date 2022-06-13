@@ -11,6 +11,7 @@ const browserPage = new BrowserPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 20 });
+let consumerGroupName = chance.word({ length: 20 });
 const keyField = chance.word({ length: 20 });
 const keyValue = chance.word({ length: 20 });
 
@@ -39,7 +40,7 @@ test('Verify that user can create a new Consumer Group in the current Stream', a
         'fetches the entire stream from the beginning.'
     ];
     keyName = chance.word({ length: 20 });
-    const consumerGroupName = `qwerty123456${chance.word({ length: 20 })}!@#$%^&*()_+=`;
+    consumerGroupName = `qwerty123456${chance.word({ length: 20 })}!@#$%^&*()_+=`;
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     await t.click(browserPage.fullScreenModeButton);
@@ -56,7 +57,7 @@ test('Verify that user can create a new Consumer Group in the current Stream', a
 });
 test('Verify that user can input the 0, $ and Valid Entry ID in the ID field', async t => {
     keyName = chance.word({ length: 20 });
-    const consumerGroupName = chance.word({ length: 20 });
+    consumerGroupName = chance.word({ length: 20 });
     const entryIds = [
         '0',
         '$',
@@ -70,5 +71,24 @@ test('Verify that user can input the 0, $ and Valid Entry ID in the ID field', a
     for(const entryId of entryIds){
         await browserPage.createConsumerGroup(`${consumerGroupName}${entryId}`, entryId);
         await t.expect(browserPage.streamGroupsContainer.textContent).contains(`${consumerGroupName}${entryId}`, 'The new Consumer Group is added');
+    }
+});
+test('Verify that user can see the Consumer group columns (Group Name, Consumers, Pending, Last Delivered ID)', async t => {
+    keyName = chance.word({ length: 20 });
+    consumerGroupName = chance.word({ length: 20 });
+    const groupColumns = [
+        'Group Name',
+        'Consumers',
+        'Pending',
+        'Last Delivered ID'
+    ];
+    // Add New Stream Key
+    await browserPage.addStreamKey(keyName, keyField, keyValue);
+    await t.click(browserPage.fullScreenModeButton);
+    // Open Stream consumer groups and add group with different IDs
+    await t.click(browserPage.streamTabGroups);
+    await browserPage.createConsumerGroup(consumerGroupName);
+    for(let i = 0; i < groupColumns.length; i++){
+        await t.expect(browserPage.scoreButton.nth(i).textContent).eql(groupColumns[i], `The ${i} Consumer group column name`);
     }
 });

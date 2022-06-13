@@ -178,7 +178,7 @@ const GroupsViewWrapper = (props: Props) => {
         const tooltipContent = formatLongName(name)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-group-${name}`}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-group-name-${name}`}>
               <EuiToolTip
                 className={styles.tooltipName}
                 anchorClassName="truncateText"
@@ -250,12 +250,12 @@ const GroupsViewWrapper = (props: Props) => {
         return (
           <div>
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamItem" style={{ display: 'flex' }} data-testid={`stream-group-${id}-date`}>
+              <div className="truncateText streamItem" style={{ display: 'flex' }} data-testid={`stream-group-date-${id}`}>
                 {getFormatTime(timestamp)}
               </div>
             </EuiText>
             <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItemId" data-testid={`stream-group-${id}`}>
+              <div className="streamItemId" data-testid={`stream-group-id-${id}`}>
                 {id}
               </div>
             </EuiText>

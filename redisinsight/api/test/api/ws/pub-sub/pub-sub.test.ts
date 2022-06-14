@@ -5,7 +5,7 @@ import {
   deps,
   expect,
   requirements,
-  _,
+  _, sleep
 } from '../../deps';
 import { Socket } from "socket.io-client";
 const { getSocket, constants, rte } = deps;
@@ -142,6 +142,8 @@ describe('pub-sub', function () {
           await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
         })
       });
+
+      sleep(3000);
 
       expect(messages['channel-a'].length).to.eql(4);
       messages['channel-a'].forEach(message => {

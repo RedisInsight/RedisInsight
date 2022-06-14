@@ -99,11 +99,15 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
   const onChannelsSubscribe = () => {
     dispatch(setLoading(false))
     dispatch(setIsPubSubSubscribed())
-
     subscriptions.forEach(({ channel, type }: PubSubSubscription) => {
-      socketRef.current?.on(`${type}:${channel}`, (data) => {
-        dispatch(concatPubSubMessages(data))
-      })
+      const subscription = `${type}:${channel}`
+      const isListenerExist = !!socketRef.current?.listeners(subscription).length
+
+      if (!isListenerExist) {
+        socketRef.current?.on(subscription, (data) => {
+          dispatch(concatPubSubMessages(data))
+        })
+      }
     })
   }
 

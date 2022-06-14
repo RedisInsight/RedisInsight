@@ -127,12 +127,11 @@ test
     })
     ('Verify that user can not run "Select" command in Workbench', async t => {
         const command = 'select 13';
-        const result = '"select is not supported by the Workbench. The list of all unsupported commands';
+        const result = '"select is not supported by the Workbench.';
         //Run Select command in Workbench
         await workbenchPage.sendCommandInWorkbench(command);
         //Check the command result
-        const actualCommandResult = await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryCardCommandResult).textContent;
-        await t.expect(actualCommandResult).contains(result);
+        await t.expect(workbenchPage.commandExecutionResultFailed.textContent).contains(result, 'The select command unsupported message');
     });
 test
     .meta({ rte: rte.standalone })

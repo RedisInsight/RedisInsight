@@ -5,7 +5,7 @@ import { DatabasesProvider } from 'src/modules/shared/services/instances-busines
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { AppTool } from 'src/models';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-import { getAvailableEndpoints, getRunningProcesses, getTCP4Endpoints } from 'src/utils/auto-discovery-helper';
+import { getAvailableEndpoints, getRunningProcesses, getTCPEndpoints } from 'src/utils/auto-discovery-helper';
 import { convertRedisInfoReplyToObject } from 'src/utils';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import config from 'src/utils/config';
@@ -56,7 +56,7 @@ export class AutoDiscoveryService implements OnModuleInit {
    * @private
    */
   private async discoverDatabases() {
-    const endpoints = await getAvailableEndpoints(getTCP4Endpoints(await getRunningProcesses()));
+    const endpoints = await getAvailableEndpoints(getTCPEndpoints(await getRunningProcesses()));
 
     // Add redis databases or resolve after 1s to not block app startup for a long time
     await Promise.race([

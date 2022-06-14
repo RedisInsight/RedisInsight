@@ -14,6 +14,7 @@ export interface PubSubMessage {
 
 export interface StatePubSub {
   loading: boolean
+  publishing: boolean
   error: string
   subscriptions: SubscriptionDto[]
   isSubscribeTriggered: boolean

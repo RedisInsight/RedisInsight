@@ -68,6 +68,9 @@ enum ApiEndpoints {
 
   SLOW_LOGS = 'slow-logs',
   SLOW_LOGS_CONFIG = 'slow-logs/config',
+
+  PUB_SUB = 'pub-sub',
+  PUB_SUB_MESSAGES = 'pub-sub/messages'
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

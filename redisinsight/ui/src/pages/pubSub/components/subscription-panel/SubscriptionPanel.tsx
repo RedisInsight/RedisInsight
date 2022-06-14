@@ -30,44 +30,44 @@ const SubscriptionPanel = () => {
   const displayMessages = count !== 0 || isSubscribed
 
   return (
-    <div>
-      <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" gutterSize="s">
-        <EuiFlexItem grow={false}>
-          <EuiFlexGroup alignItems="center" gutterSize="none">
-            <EuiFlexItem grow={false} className={styles.iconSubscribe}>
-              <EuiIcon
-                className={styles.iconUser}
-                type={isSubscribed ? subscribedIcon : notSubscribedIcon}
-              />
+    <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" gutterSize="s" responsive={false}>
+      <EuiFlexItem grow={false}>
+        <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
+          <EuiFlexItem grow={false} className={styles.iconSubscribe}>
+            <EuiIcon
+              className={styles.iconUser}
+              type={isSubscribed ? subscribedIcon : notSubscribedIcon}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiText color="subdued" size="s" data-testid="subscribe-status-text">
+              You are { !isSubscribed && 'not' } subscribed
+            </EuiText>
+          </EuiFlexItem>
+          {displayMessages && (
+            <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+              <EuiText color="subdued" size="s" data-testid="messages-count">Messages: {count}</EuiText>
             </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiText color="subdued" size="s">You are { !isSubscribed && 'not' } subscribed</EuiText>
-            </EuiFlexItem>
-            {displayMessages && (
-              <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
-                <EuiText color="subdued" size="s" data-testid="messages-count">Messages: {count}</EuiText>
-              </EuiFlexItem>
-            )}
-          </EuiFlexGroup>
+          )}
+        </EuiFlexGroup>
 
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButton
-            fill
-            size="s"
-            color="secondary"
-            className={styles.buttonSubscribe}
-            type="submit"
-            onClick={toggleSubscribe}
-            iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
-            data-testid="btn-submit"
-            disabled={loading}
-          >
-            { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </div>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiButton
+          fill={!isSubscribed}
+          size="s"
+          color="secondary"
+          className={styles.buttonSubscribe}
+          type="submit"
+          onClick={toggleSubscribe}
+          iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
+          data-testid="btn-submit"
+          disabled={loading}
+        >
+          { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   )
 }
 

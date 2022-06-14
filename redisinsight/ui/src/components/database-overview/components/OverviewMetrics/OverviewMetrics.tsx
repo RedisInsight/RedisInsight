@@ -164,7 +164,7 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     },
   }
 
-  if (isUndefined(opsPerSecond)) {
+  if (!isUndefined(opsPerSecond)) {
     opsPerSecItem.children = [
       {
         id: 'commands-per-sec-tip',

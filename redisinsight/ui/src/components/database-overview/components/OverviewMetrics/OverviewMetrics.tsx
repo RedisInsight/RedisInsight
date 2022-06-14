@@ -164,7 +164,7 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     },
   }
 
-  if (opsPerSecond !== undefined && (networkInKbps !== undefined || networkOutKbps !== undefined)) {
+  if (opsPerSecond !== undefined) {
     opsPerSecItem.children = [
       {
         id: 'commands-per-sec-tip',

@@ -57,6 +57,10 @@ const pubSubSlice = createSlice({
 
       state.messages = newItems
     },
+    clearPubSubMessages: (state) => {
+      state.messages = []
+      state.count = 0
+    },
     setLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.loading = payload
     },
@@ -87,6 +91,7 @@ export const {
   setIsPubSubSubscribed,
   setIsPubSubUnSubscribed,
   concatPubSubMessages,
+  clearPubSubMessages,
   setLoading,
   disconnectPubSub,
   publishMessage,

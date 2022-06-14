@@ -1,10 +1,11 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import cx from 'classnames'
 import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { PUB_SUB_DEFAULT_CHANNEL } from 'uiSrc/pages/pubSub/PubSubPage'
-import { pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
+import { clearPubSubMessages, pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
 
 import { ReactComponent as UserInCircle } from 'uiSrc/assets/img/icons/user_in_circle.svg'
 import SubscribedIconDark from 'uiSrc/assets/img/pub-sub/subscribed.svg'
@@ -15,13 +16,17 @@ import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.s
 import styles from './styles.module.scss'
 
 const SubscriptionPanel = () => {
-  const { isSubscribed, loading, count } = useSelector(pubSubSelector)
+  const { messages, isSubscribed, loading, count } = useSelector(pubSubSelector)
 
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
 
   const toggleSubscribe = () => {
     dispatch(toggleSubscribeTriggerPubSub([PUB_SUB_DEFAULT_CHANNEL]))
+  }
+
+  const onClickClear = () => {
+    dispatch(clearPubSubMessages())
   }
 
   const subscribedIcon = theme === Theme.Dark ? SubscribedIconDark : SubscribedIconLight
@@ -53,19 +58,38 @@ const SubscriptionPanel = () => {
 
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiButton
-          fill={!isSubscribed}
-          size="s"
-          color="secondary"
-          className={styles.buttonSubscribe}
-          type="submit"
-          onClick={toggleSubscribe}
-          iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
-          data-testid="btn-submit"
-          disabled={loading}
-        >
-          { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
-        </EuiButton>
+        <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
+          {!!messages.length && (
+            <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
+              <EuiToolTip
+                content="Clear Messages"
+                anchorClassName={cx('inline-flex')}
+              >
+                <EuiButtonIcon
+                  iconType="eraser"
+                  onClick={onClickClear}
+                  aria-label="clear pub sub"
+                  data-testid="clear-pubsub-btn"
+                />
+              </EuiToolTip>
+            </EuiFlexItem>
+          )}
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill={!isSubscribed}
+              size="s"
+              color="secondary"
+              className={styles.buttonSubscribe}
+              type="submit"
+              onClick={toggleSubscribe}
+              iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
+              data-testid="btn-submit"
+              disabled={loading}
+            >
+              { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       </EuiFlexItem>
     </EuiFlexGroup>
   )

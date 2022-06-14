@@ -1,11 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { AxiosError } from 'axios'
+import { ApiEndpoints } from 'uiSrc/constants'
+import { apiService } from 'uiSrc/services'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { StatePubSub } from 'uiSrc/slices/interfaces/pubsub'
-import { RootState } from 'uiSrc/slices/store'
+import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { SubscriptionDto } from 'apiSrc/modules/pub-sub/dto/subscription.dto'
 import { MessagesResponse } from 'apiSrc/modules/pub-sub/dto/messages.response'
+import { PublishResponse } from 'apiSrc/modules/pub-sub/dto/publish.response'
+import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 
 export const initialState: StatePubSub = {
   loading: false,
+  publishing: false,
   error: '',
   subscriptions: [],
   isSubscribeTriggered: false,
@@ -58,6 +65,17 @@ const pubSubSlice = createSlice({
       state.isSubscribed = false
       state.isSubscribeTriggered = false
       state.isConnected = false
+    },
+    publishMessage: (state) => {
+      state.publishing = true
+    },
+    publishMessageSuccess: (state) => {
+      state.publishing = false
+      state.error = ''
+    },
+    publishMessageError: (state, { payload }) => {
+      state.publishing = false
+      state.error = payload
     }
   }
 })
@@ -70,9 +88,48 @@ export const {
   setIsPubSubUnSubscribed,
   concatPubSubMessages,
   setLoading,
-  disconnectPubSub
+  disconnectPubSub,
+  publishMessage,
+  publishMessageSuccess,
+  publishMessageError
 } = pubSubSlice.actions
 
 export const pubSubSelector = (state: RootState) => state.pubsub
 
 export default pubSubSlice.reducer
+
+// Asynchronous thunk action
+export function publishMessageAction(
+  instanceId: string,
+  channel: string,
+  message: string,
+  onSuccessAction?: (affected: number) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(publishMessage())
+      const { data, status } = await apiService.post<PublishResponse>(
+        getUrl(
+          instanceId,
+          ApiEndpoints.PUB_SUB_MESSAGES
+        ),
+        {
+          channel,
+          message
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(publishMessageSuccess())
+        onSuccessAction?.(data.affected)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(publishMessageError(errorMessage))
+      onFailAction?.()
+    }
+  }
+}

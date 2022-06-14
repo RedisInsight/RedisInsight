@@ -31,6 +31,10 @@ export const initialState: StateAppContext = {
     panelSizes: {
       vertical: {}
     }
+  },
+  pubsub: {
+    channel: '',
+    message: ''
   }
 }
 
@@ -118,6 +122,10 @@ const appContextSlice = createSlice({
     resetBrowserTree: (state) => {
       state.browser.tree.selectedLeaf = {}
       state.browser.tree.openNodes = {}
+    },
+    setPubSubFieldsContext: (state, { payload }: { payload: { channel: string, message: string } }) => {
+      state.pubsub.channel = payload.channel
+      state.pubsub.message = payload.message
     }
   },
 })
@@ -142,6 +150,7 @@ export const {
   setWorkbenchEAItem,
   resetWorkbenchEAItem,
   setWorkbenchEAItemScrollTop,
+  setPubSubFieldsContext
 } = appContextSlice.actions
 
 // Selectors
@@ -157,6 +166,8 @@ export const appContextSelectedKey = (state: RootState) =>
   state.app.context.browser.keyList.selectedKey
 export const appContextWorkbenchEA = (state: RootState) =>
   state.app.context.workbench.enablementArea
+export const appContextPubSub = (state: RootState) =>
+  state.app.context.pubsub
 
 // The reducer
 export default appContextSlice.reducer

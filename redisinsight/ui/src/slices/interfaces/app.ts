@@ -70,6 +70,10 @@ export interface StateAppContext {
         [key: string]: number
       }
     }
+  },
+  pubsub: {
+    channel: string
+    message: string
   }
 }
 

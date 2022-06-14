@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { EuiLoadingSpinner } from '@elastic/eui'
-import { isArray } from 'lodash'
+import { isArray, isUndefined } from 'lodash'
 
 import { formatBytes, Nullable, truncateNumberToRange, truncatePercentage } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
@@ -164,7 +164,7 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     },
   }
 
-  if (opsPerSecond !== undefined) {
+  if (isUndefined(opsPerSecond)) {
     opsPerSecItem.children = [
       {
         id: 'commands-per-sec-tip',

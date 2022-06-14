@@ -1,13 +1,14 @@
 import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { BrowserPage } from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
+const cliPage = new CliPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 20 });
@@ -23,7 +24,7 @@ fixture `Consumer group`
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (t.expect(browserPage.closeKeyButton.visible).ok){
+        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
@@ -96,5 +97,33 @@ test('Verify that user can sort Consumer Group column: A>Z / Z>A(A>Z is default 
     await t.click(browserPage.scoreButton.nth(0));
     for(let i = 0; i < groupsCount; i++){
         await t.expect(browserPage.streamGroupName.nth(i).textContent).contains(consumerGroupNames[groupsCount - 1 - i], 'The Consumer Groups Z>A sorting');
+    }
+});
+test('Verify that A>Z is default table sorting in Consumer column', async t => {
+    keyName = chance.word({ length: 20 });
+    consumerGroupName = chance.word({ length: 20 });
+    const consumerNames = [
+        'Alice',
+        'Zalice'
+    ];
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XADD ${keyName} * message orange`,
+        `XREADGROUP GROUP ${consumerGroupName} ${consumerNames[0]} COUNT 1 STREAMS ${keyName} >`,
+        `XREADGROUP GROUP ${consumerGroupName} ${consumerNames[1]} COUNT 1 STREAMS ${keyName} >`
+    ];
+    //Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    //Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    await t.click(browserPage.consumerGroup);
+    //Verify default sorting
+    const consumerCount = await browserPage.streamConsumerName.count;
+    for(let i = 0; i < consumerCount; i++){
+        await t.expect(browserPage.streamConsumerName.nth(i).textContent).contains(consumerNames[i], 'The Consumers default sorting');
     }
 });

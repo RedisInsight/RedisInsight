@@ -1,13 +1,14 @@
 import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { BrowserPage } from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
+const cliPage = new CliPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 20 });
@@ -23,7 +24,7 @@ fixture `Consumer group`
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (t.expect(browserPage.closeKeyButton.visible).ok){
+        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
@@ -91,4 +92,62 @@ test('Verify that user can see the Consumer group columns (Group Name, Consumers
     for(let i = 0; i < groupColumns.length; i++){
         await t.expect(browserPage.scoreButton.nth(i).textContent).eql(groupColumns[i], `The ${i} Consumer group column name`);
     }
+});
+test('Verify that user can see the message when there are no Consumers in the Consumer Group', async t => {
+    keyName = chance.word({ length: 20 });
+    consumerGroupName = chance.word({ length: 20 });
+    const message = 'Your Consumer Group has no Consumers available.';
+    // Add New Stream Key
+    await browserPage.addStreamKey(keyName, keyField, keyValue);
+    // Open Stream consumer group and check message
+    await t.click(browserPage.streamTabGroups);
+    await browserPage.createConsumerGroup(consumerGroupName);
+    await t.click(browserPage.consumerGroup);
+    await t.expect(browserPage.streamConsumersContainer.textContent).contains(message, 'The message for empty Consumer Group');
+});
+test('Verify that user can see the Consumer information columns (Consumer Name, Pendings, Idle Time,ms)', async t => {
+    keyName = chance.word({ length: 20 });
+    consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
+    ];
+    const consumerColumns = [
+        'Consumer Name',
+        'Pending',
+        'Idle Time, ms'
+    ];
+    // Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    await t.click(browserPage.consumerGroup);
+    for(let i = 0; i < consumerColumns.length; i++){
+        await t.expect(browserPage.scoreButton.nth(i).textContent).eql(consumerColumns[i], `The ${i} Consumers info column name`);
+    }
+});
+test('Verify that user can navigate to Consumer Groups screen using the link in the breadcrumbs', async t => {
+    keyName = chance.word({ length: 20 });
+    consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
+    ];
+    // Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    await t.click(browserPage.consumerGroup);
+    // Check navigation
+    await t.expect(browserPage.streamTabs.visible).ok('Stream navigation tabs visibility');
+    await t.click(browserPage.streamTabGroups);
+    await t.expect(browserPage.streamTabGroups.withAttribute('aria-selected', 'true').exists).ok('The Consumer Groups screen is opened');
 });

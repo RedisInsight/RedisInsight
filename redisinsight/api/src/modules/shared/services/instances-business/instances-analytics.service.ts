@@ -49,6 +49,9 @@ export class InstancesAnalyticsService extends TelemetryBaseService {
           useTLSAuthClients: instance?.tls?.clientCertPairId
             ? 'enabled'
             : 'disabled',
+          useSNI: instance?.tls?.servername
+            ? 'enabled'
+            : 'disabled',
           version: additionalInfo.version,
           numberOfKeys: additionalInfo.totalKeys,
           numberOfKeysRange: getRangeForNumber(additionalInfo.totalKeys, TOTAL_KEYS_BREAKPOINTS),

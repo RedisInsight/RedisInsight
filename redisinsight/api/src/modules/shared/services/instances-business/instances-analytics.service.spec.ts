@@ -26,6 +26,7 @@ const mockDatabaseInstanceDto: DatabaseInstanceResponse = {
     verifyServerCert: true,
     caCertId: mockCaCertEntity.id,
     clientCertPairId: mockClientCertEntity.id,
+    servername: mockStandaloneDatabaseEntity.tlsServername,
   },
   modules: [],
 };
@@ -100,7 +101,7 @@ describe('InstancesAnalytics', () => {
   });
 
   describe('sendInstanceAddedEvent', () => {
-    it('should emit event with enabled tls', () => {
+    it('should emit event with enabled tls and sni', () => {
       const instance = mockDatabaseInstanceDto;
       service.sendInstanceAddedEvent(instance, mockRedisGeneralInfo);
 
@@ -113,6 +114,7 @@ describe('InstancesAnalytics', () => {
           useTLS: 'enabled',
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
+          useSNI: 'enabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: mockRedisGeneralInfo.totalKeys,
           numberOfKeysRange: '0 - 500 000',
@@ -123,7 +125,7 @@ describe('InstancesAnalytics', () => {
         },
       );
     });
-    it('should emit event with disabled tls', () => {
+    it('should emit event with disabled tls and sni', () => {
       const instance = {
         ...mockDatabaseInstanceDto,
         tls: undefined,
@@ -139,6 +141,7 @@ describe('InstancesAnalytics', () => {
           useTLS: 'disabled',
           verifyTLSCertificate: 'disabled',
           useTLSAuthClients: 'disabled',
+          useSNI: 'disabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: mockRedisGeneralInfo.totalKeys,
           numberOfKeysRange: '0 - 500 000',
@@ -167,6 +170,7 @@ describe('InstancesAnalytics', () => {
           useTLS: 'enabled',
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
+          useSNI: 'enabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: undefined,
           numberOfKeysRange: undefined,

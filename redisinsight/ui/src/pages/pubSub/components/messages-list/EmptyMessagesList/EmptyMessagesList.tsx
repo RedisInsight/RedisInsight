@@ -8,9 +8,10 @@ import styles from './styles.module.scss'
 
 export interface Props {
   connectionType?: ConnectionType
+  isSpublishNotSupported: boolean
 }
 
-const EmptyMessagesList = ({ connectionType }: Props) => (
+const EmptyMessagesList = ({ connectionType, isSpublishNotSupported }: Props) => (
   <div className={styles.container} data-testid="empty-messages-list">
     <div className={cx(styles.content, { [styles.contentCluster]: connectionType === ConnectionType.Cluster })}>
       <EuiText className={styles.title}>No messages to display</EuiText>
@@ -21,7 +22,7 @@ const EmptyMessagesList = ({ connectionType }: Props) => (
         <EuiIcon type="alert" className={styles.alertIcon} />
         Running in production may decrease performance and memory available
       </EuiText>
-      {connectionType === ConnectionType.Cluster && (
+      {(connectionType === ConnectionType.Cluster || isSpublishNotSupported) && (
         <>
           <div className={styles.separator} />
           <EuiText className={styles.cluster} data-testid="empty-messages-list-cluster">

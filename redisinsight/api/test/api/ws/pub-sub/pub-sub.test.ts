@@ -130,20 +130,20 @@ describe('pub-sub', function () {
       client.on('p:*', (data) => messages['*'].push(...data.messages));
 
       await new Promise((resolve) => {
-        client.emit('subscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  async (ack) => {
+        client.emit('subscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  (ack) => {
           expect(ack).to.eql({ status: 'ok' });
 
           client.on('s:channel-b', resolve);
 
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
+          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+          rte.data.sendCommand('publish', ['channel-b', 'message-b']);
         })
       });
 
-      sleep(3000);
+      await sleep(3000);
 
       expect(messages['channel-a'].length).to.eql(4);
       messages['channel-a'].forEach(message => {

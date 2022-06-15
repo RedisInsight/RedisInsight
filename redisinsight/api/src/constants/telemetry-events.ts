@@ -45,4 +45,9 @@ export enum TelemetryEvents {
   // Slowlog
   SlowlogSetLogSlowerThan = 'SLOWLOG_SET_LOG_SLOWER_THAN',
   SlowlogSetMaxLen = 'SLOWLOG_SET_MAX_LEN',
+
+  // Pub/Sub
+  PubSubMessagePublished = 'PUBSUB_MESSAGE_PUBLISHED',
+  PubSubChannelSubscribed = 'PUBSUB_CHANNEL_SUBSCRIBED',
+  PubSubChannelUnsubscribed = 'PUBSUB_CHANNEL_UNSUBSCRIBED',
 }

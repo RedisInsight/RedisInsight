@@ -6,12 +6,14 @@ import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
 import { PubSubController } from 'src/modules/pub-sub/pub-sub.controller';
+import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 
 @Module({
   imports: [SharedModule],
   providers: [
     PubSubGateway,
     PubSubService,
+    PubSubAnalyticsService,
     UserSessionProvider,
     SubscriptionProvider,
     RedisClientProvider,

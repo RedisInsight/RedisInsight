@@ -73,21 +73,14 @@
   z-index: 10;
   bottom: 10px;
   right: 28px;
-  width: 149px !important;
+  background-color: var(--euiColorSecondary) !important;
+  width: 36px !important;
   height: 36px !important;
 
   box-shadow: 0px 3px 6px #00000099 !important;
   border-radius: 18px !important;
 
-  :global(.euiButton__text) {
-    padding-left: 6px;
-    font-size: 12px !important;
-    font-weight: normal !important;
-  }
-
   svg {
-    margin-left: 4px;
-    margin-bottom: 1px;
     width: 20px;
     height: 20px;
   }

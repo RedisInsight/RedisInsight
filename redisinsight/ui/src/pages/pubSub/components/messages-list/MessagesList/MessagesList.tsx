@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ListChildComponentProps, ListOnScrollProps, VariableSizeList as List } from 'react-window'
 import { useParams } from 'react-router-dom'
-import { EuiButton, EuiIcon } from '@elastic/eui'
+import { EuiButtonIcon } from '@elastic/eui'
 
 import { getFormatDateTime } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -153,16 +153,13 @@ const MessagesList = (props: Props) => {
         {Row}
       </List>
       {showAnchor && (
-        <EuiButton
-          fill
-          color="secondary"
+        <EuiButtonIcon
+          iconType="arrowDown"
           className={styles.anchorBtn}
           onClick={handleAnchorClick}
           data-testid="messages-list-anchor-btn"
-        >
-          New messages
-          <EuiIcon type="sortDown" />
-        </EuiButton>
+          aria-label="button scroll down"
+        />
       )}
     </>
   )

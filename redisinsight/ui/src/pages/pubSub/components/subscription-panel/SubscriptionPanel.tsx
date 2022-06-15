@@ -2,10 +2,12 @@ import { EuiButton, EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, 
 import cx from 'classnames'
 import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { PUB_SUB_DEFAULT_CHANNEL } from 'uiSrc/pages/pubSub/PubSubPage'
 import { clearPubSubMessages, pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { ReactComponent as UserInCircle } from 'uiSrc/assets/img/icons/user_in_circle.svg'
 import SubscribedIconDark from 'uiSrc/assets/img/pub-sub/subscribed.svg'
@@ -21,12 +23,21 @@ const SubscriptionPanel = () => {
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
 
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+
   const toggleSubscribe = () => {
     dispatch(toggleSubscribeTriggerPubSub([PUB_SUB_DEFAULT_CHANNEL]))
   }
 
   const onClickClear = () => {
     dispatch(clearPubSubMessages())
+    sendEventTelemetry({
+      event: TelemetryEvent.PUBSUB_MESSAGES_CLEARED,
+      eventData: {
+        databaseId: instanceId,
+        messages: count
+      }
+    })
   }
 
   const subscribedIcon = theme === Theme.Dark ? SubscribedIconDark : SubscribedIconLight

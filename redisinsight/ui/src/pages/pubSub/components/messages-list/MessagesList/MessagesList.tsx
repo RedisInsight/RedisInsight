@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ListChildComponentProps, ListOnScrollProps, VariableSizeList as List } from 'react-window'
+import { useParams } from 'react-router-dom'
 import { EuiButtonIcon } from '@elastic/eui'
 
 import { getFormatDateTime } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { IMessage } from 'apiSrc/modules/pub-sub/interfaces/message.interface'
 
 import styles from './styles.module.scss'
@@ -25,6 +27,8 @@ const MessagesList = (props: Props) => {
   const hasMountedRef = useRef<boolean>(false)
   const rowHeights = useRef<{ [key: number]: number }>({})
   const outerRef = useRef<HTMLDivElement>(null)
+
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   useEffect(() => {
     scrollToBottom()
@@ -83,6 +87,14 @@ const MessagesList = (props: Props) => {
     }
 
     if (e.scrollUpdateWasRequested === false) {
+      if (followRef.current && items.length) {
+        sendEventTelemetry({
+          event: TelemetryEvent.PUBSUB_AUTOSCROLL_PAUSED,
+          eventData: {
+            databaseId: instanceId
+          }
+        })
+      }
       followRef.current = false
       setShowAnchor(true)
     }
@@ -92,6 +104,14 @@ const MessagesList = (props: Props) => {
     }
 
     if (e.scrollOffset + outerRef.current.offsetHeight === outerRef.current.scrollHeight) {
+      if (!followRef.current && items.length) {
+        sendEventTelemetry({
+          event: TelemetryEvent.PUBSUB_AUTOSCROLL_RESUMED,
+          eventData: {
+            databaseId: instanceId,
+          }
+        })
+      }
       followRef.current = true
       setShowAnchor(false)
     }

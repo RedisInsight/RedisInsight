@@ -5,7 +5,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { connectedInstanceSelector, connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { pubSubSelector } from 'uiSrc/slices/pubsub/pubsub'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
-import { RedisVersions } from 'uiSrc/constants/redisVersions'
+import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import EmptyMessagesList from './EmptyMessagesList'
 import MessagesList from './MessagesList'
 
@@ -22,7 +22,7 @@ const MessagesListWrapper = () => {
     setIsSpublishNotSupported(
       isVersionHigherOrEquals(
         version,
-        RedisVersions.SPUBLISH_NOT_SUPPORTED.since
+        CommandsVersions.SPUBLISH_NOT_SUPPORTED.since
       )
     )
   }, [version])

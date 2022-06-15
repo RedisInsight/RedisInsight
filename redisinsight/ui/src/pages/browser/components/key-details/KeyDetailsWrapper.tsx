@@ -65,8 +65,8 @@ const KeyDetailsWrapper = (props: Props) => {
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
-        TelemetryEvent.BROWSER_KEY_INFO_VIEWED,
-        TelemetryEvent.TREE_VIEW_KEY_INFO_VIEWED
+        TelemetryEvent.BROWSER_KEY_VALUE_VIEWED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_VIEWED
       ),
       eventData: {
         keyType,

@@ -34,8 +34,8 @@
 
   .tableWrapper {
     width: 100%;
-    height: calc(100% - 135px);
-    padding: 18px 0 18px 18px;
+    height: calc(100% - 125px);
+    padding: 18px 0 0 18px;
 
     :global(.ReactVirtualized__Grid) {
       @include euiScrollBar;

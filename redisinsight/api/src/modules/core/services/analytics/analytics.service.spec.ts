@@ -6,6 +6,7 @@ import {
   AnalyticsService,
   NON_TRACKING_ANONYMOUS_ID,
 } from './analytics.service';
+import { AppType } from 'src/modules/core/models/server-provider.interface';
 
 let mockAnalyticsTrack;
 jest.mock(
@@ -59,7 +60,7 @@ describe('AnalyticsService', () => {
 
   describe('initialize', () => {
     it('should set anonymousId', () => {
-      service.initialize({ anonymousId: mockAnonymousId, sessionId });
+      service.initialize({ anonymousId: mockAnonymousId, sessionId, appType: AppType.Electron });
 
       const anonymousId = service.getAnonymousId();
 
@@ -70,7 +71,7 @@ describe('AnalyticsService', () => {
   describe('sendEvent', () => {
     beforeEach(() => {
       mockAnalyticsTrack = jest.fn();
-      service.initialize({ anonymousId: mockAnonymousId, sessionId });
+      service.initialize({ anonymousId: mockAnonymousId, sessionId, appType: AppType.Electron });
     });
     it('should send event with anonymousId if permission are granted', async () => {
       settingsService.getSettings = jest
@@ -87,7 +88,9 @@ describe('AnalyticsService', () => {
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
-        properties: {},
+        properties: {
+          buildType: AppType.Electron,
+        },
       });
     });
     it('should not send event if permission are not granted', async () => {
@@ -118,7 +121,9 @@ describe('AnalyticsService', () => {
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
-        properties: {},
+        properties: {
+          buildType: AppType.Electron,
+        },
       });
     });
   });

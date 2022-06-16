@@ -221,13 +221,6 @@ export class OverviewService {
         );
       });
 
-      // filter 0 values
-      Object.keys(totalKeysPerDb).forEach((key) => {
-        if (!totalKeysPerDb[key]) {
-          delete totalKeysPerDb[key];
-        }
-      });
-
       const totalKeys = totalKeysPerDb ? sum(Object.values(totalKeysPerDb)) : undefined;
       return [totalKeys, Object.keys(totalKeysPerDb).length > 1 ? totalKeysPerDb : undefined];
     } catch (e) {

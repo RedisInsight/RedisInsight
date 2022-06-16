@@ -13,6 +13,8 @@ import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'reac
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { appContextPubSub, setPubSubFieldsContext } from 'uiSrc/slices/app/context'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { publishMessageAction } from 'uiSrc/slices/pubsub/pubsub'
 import { ReactComponent as UserIcon } from 'uiSrc/assets/img/icons/user.svg'
 
@@ -22,6 +24,8 @@ const HIDE_BADGE_TIMER = 3000
 
 const PublishMessage = () => {
   const { channel: channelContext, message: messageContext } = useSelector(appContextPubSub)
+  const { connectionType } = useSelector(connectedInstanceSelector)
+
   const [channel, setChannel] = useState<string>(channelContext)
   const [message, setMessage] = useState<string>(messageContext)
   const [isShowBadge, setIsShowBadge] = useState<boolean>(false)
@@ -100,8 +104,12 @@ const PublishMessage = () => {
                 />
                 <EuiBadge className={cx(styles.badge, { [styles.show]: isShowBadge })} data-testid="affected-clients-badge">
                   <EuiIcon className={styles.iconCheckBadge} type="check" />
-                  <span data-testid="affected-clients">{affectedClients}</span>
-                  <EuiIcon className={styles.iconUserBadge} type={UserIcon || 'user'} />
+                  {connectionType !== ConnectionType.Cluster && (
+                    <>
+                      <span className={styles.affectedClients} data-testid="affected-clients">{affectedClients}</span>
+                      <EuiIcon className={styles.iconUserBadge} type={UserIcon || 'user'} />
+                    </>
+                  )}
                 </EuiBadge>
               </>
             </EuiFormRow>

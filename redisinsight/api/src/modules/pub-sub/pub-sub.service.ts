@@ -6,6 +6,7 @@ import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription
 import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
 import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
 import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
+import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { catchAclError } from 'src/utils';
 
@@ -18,6 +19,7 @@ export class PubSubService {
     private readonly subscriptionProvider: SubscriptionProvider,
     private redisService: RedisService,
     private instancesBusinessService: InstancesBusinessService,
+    private analyticsService: PubSubAnalyticsService,
   ) {}
 
   /**
@@ -33,6 +35,7 @@ export class PubSubService {
       await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
+      this.analyticsService.sendChannelSubscribeEvent(userClient.getDatabaseId());
     } catch (e) {
       this.logger.error('Unable to create subscriptions', e);
 
@@ -57,6 +60,7 @@ export class PubSubService {
       await Promise.all(dto.subscriptions.map((subDto) => session.unsubscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
+      this.analyticsService.sendChannelUnsubscribeEvent(userClient.getDatabaseId());
     } catch (e) {
       this.logger.error('Unable to unsubscribe', e);
 
@@ -81,9 +85,12 @@ export class PubSubService {
       this.logger.log('Publishing message.');
 
       const client = await this.getClient(clientOptions);
+      const affected = await client.publish(dto.channel, dto.message);
+
+      this.analyticsService.sendMessagePublishedEvent(clientOptions.instanceId, affected);
 
       return {
-        affected: await client.publish(dto.channel, dto.message),
+        affected,
       };
     } catch (e) {
       this.logger.error('Unable to publish a message', e);

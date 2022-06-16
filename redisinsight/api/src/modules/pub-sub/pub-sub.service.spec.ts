@@ -1,22 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as Redis from 'ioredis';
 import {
-  mockLogFile, mockRedisShardObserver, mockSocket, mockStandaloneDatabaseEntity,
-  MockType
+  // mockLogFile,
+  // mockRedisShardObserver,
+  mockSocket,
+  mockStandaloneDatabaseEntity,
+  MockType,
+  mockPubSubAnalyticsService
 } from 'src/__mocks__';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
+// import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
 import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
 import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
-import { RedisObserverStatus } from 'src/modules/profiler/constants';
+// import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscriptionType } from 'src/modules/pub-sub/constants';
-import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
+// import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
 import { UserSession } from 'src/modules/pub-sub/model/user-session';
 import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
+import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 
 const nodeClient = Object.create(Redis.prototype);
@@ -80,6 +85,10 @@ describe('PubSubService', () => {
             getUserSession: jest.fn(),
             removeUserSession: jest.fn(),
           }),
+        },
+        {
+          provide: PubSubAnalyticsService,
+          useFactory: mockPubSubAnalyticsService,
         },
         {
           provide: RedisService,

@@ -1,0 +1,153 @@
+@import "@elastic/eui/src/global_styling/index";
+.container {
+  height: 50px;
+}
+
+.separator {
+  width: 0;
+  height: 64px;
+  border: solid 0 var(--separatorColor);
+  border-right-width: 1px;
+}
+
+.addInstanceBtn {
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 43px;
+  margin: 0 auto;
+  text-decoration: none !important;
+
+  :global(.euiButton__text) {
+    font-weight: 500 !important;
+  }
+}
+.followText {
+  padding-top: 7px;
+  font-size: 12px !important;
+  text-align: left;
+  color: var(--euiTextColor) !important;
+  opacity: 0.7;
+}
+
+.clearMarginFlexItem {
+  margin-bottom: 0 !important;
+}
+
+.links {
+  font-size: 14px;
+  a {
+    color: var(--euiTextColor);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.containerDl {
+  padding: 0 18px;
+  @include euiBreakpoint("m", "l", "xl") {
+    padding: 0 12px;
+  }
+
+  .links {
+    margin-left: 10px;
+    position: relative;
+    min-width: 235px;
+    top: -8px;
+
+    :global(.euiFlexItem) {
+      margin-left: 0px !important;
+      margin-right: 12px !important;
+
+      &:last-of-type {
+        margin-right: 0 !important;
+      }
+    }
+  }
+}
+
+.contentDL {
+  @include euiBreakpoint("xs", "s") {
+    & > div:first-of-type {
+      margin-left: 0 !important;
+    }
+    & > div:last-of-type {
+      margin-right: 0 !important;
+    }
+  }
+}
+
+.spacerDl {
+  @include euiBreakpoint("xs", "s") {
+    height: 6px !important;
+  }
+  @include euiBreakpoint("m", "l", "xl") {
+    height: 26px !important;
+  }
+}
+
+.containerWelc {
+  .separator {
+    width: 150px;
+    height: 0;
+    border-top-width: 1px;
+    margin: 25px auto 20px;
+  }
+  .otherGuides {
+    flex-wrap: wrap;
+    & > div {
+      min-width: 20%;
+      &:nth-of-type(3n + 1) {
+        a {
+          text-align: left;
+        }
+      }
+      &:nth-of-type(3n + 3) {
+        a {
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+
+.searchContainer {
+  max-width: 320px;
+}
+
+.separatorContainer {
+  display: none !important;
+  @media (min-width: 1300px) {
+    display: flex !important;
+  }
+}
+
+.promo {
+  display: flex !important;
+  @media only screen and(max-width: 1100px) {
+    display: none !important;
+  }
+}
+
+.linkGuides {
+  display: none !important;
+  @media (min-width: 1250px) {
+    display: flex !important;
+  }
+}
+
+.fullGuides {
+  display: none !important;
+  @media only screen and(max-width: 1100px) {
+    display: flex !important;
+  }
+}
+
+.smallGuides {
+  display: none !important;
+  @media (min-width: 1101px) and (max-width: 1251px) {
+    display: flex !important;
+  }
+}

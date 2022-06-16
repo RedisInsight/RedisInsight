@@ -6,7 +6,6 @@ import {
   EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
-import { formatDistanceToNow } from 'date-fns'
 import { capitalize } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -29,7 +28,7 @@ import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
+import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
@@ -182,18 +181,21 @@ const DatabasesListWrapper = ({
               className={styles.tooltipColumnName}
               content={`${formatLongName(name)} ${getDbIndex(db)}`}
             >
-              <span className={styles.tooltipAnchorColumnName} data-testid={`instance-name-${id}`}>
+              <EuiText
+                className={styles.tooltipAnchorColumnName}
+                data-testid={`instance-name-${id}`}
+                onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, id)}
+                onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, id)}
+              >
                 <EuiTextColor
                   className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}
-                  onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, id)}
-                  onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, id)}
                 >
                   {cellContent}
                 </EuiTextColor>
                 <EuiTextColor>
                   {` ${getDbIndex(db)}`}
                 </EuiTextColor>
-              </span>
+              </EuiText>
             </EuiToolTip>
           </div>
         )
@@ -286,10 +288,7 @@ const DatabasesListWrapper = ({
       width: '170px',
       sortable: ({ lastConnection }) =>
         (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
-      render: (date: Date) =>
-        (date
-          ? `${formatDistanceToNow(new Date(date), { addSuffix: true })}`
-          : 'Never'),
+      render: (date: Date) => lastConnectionFormat(date),
     },
     {
       field: 'controls',

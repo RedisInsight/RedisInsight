@@ -41,7 +41,7 @@ const PageHeader = ({ title, subtitle, children }: Props) => {
     <div className={styles.pageHeader}>
       <div className={styles.pageHeaderTop}>
         <div>
-          <EuiTitle size="s">
+          <EuiTitle size="s" className={styles.title}>
             <h1>
               <b>{title}</b>
             </h1>

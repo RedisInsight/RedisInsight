@@ -37,6 +37,7 @@ export interface Instance extends DatabaseInstanceResponse {
   sentinelMaster?: SentinelMasterDto
   modules: RedisModuleDto[]
   isRediStack?: boolean
+  visible?: boolean
 }
 
 export enum ConnectionType {

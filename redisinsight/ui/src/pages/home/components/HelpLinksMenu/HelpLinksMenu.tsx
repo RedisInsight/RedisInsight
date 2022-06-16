@@ -1,5 +1,13 @@
 import React, { useState } from 'react'
-import { EuiContextMenuItem, EuiContextMenuPanel, EuiIcon, EuiInputPopover, EuiLink, EuiText, } from '@elastic/eui'
+import {
+  EuiContextMenuItem,
+  EuiContextMenuPanel,
+  EuiIcon,
+  EuiInputPopover,
+  EuiLink,
+  EuiText,
+} from '@elastic/eui'
+import cx from 'classnames'
 
 import { IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 
@@ -8,9 +16,11 @@ import styles from './styles.module.scss'
 export interface Props {
   onLinkClick?: (link: string) => void
   items: IHelpGuide[]
+  buttonText: string
+  emptyAnchor?: boolean
 }
 
-const HelpLinksMenu = ({ onLinkClick, items }: Props) => {
+const HelpLinksMenu = ({ emptyAnchor, onLinkClick, items, buttonText }: Props) => {
   const [isPopoverOpen, setPopover] = useState(false)
 
   const onButtonClick = () => {
@@ -29,7 +39,7 @@ const HelpLinksMenu = ({ onLinkClick, items }: Props) => {
   }
 
   const menuItems = items?.map(({ id, url, title, primary }) => (
-    <EuiContextMenuItem className={styles.item} key={id}>
+    <EuiContextMenuItem className={cx(styles.item, { [styles.itemEmpty]: emptyAnchor })} key={id}>
       <EuiLink
         external={false}
         href={url}
@@ -47,23 +57,29 @@ const HelpLinksMenu = ({ onLinkClick, items }: Props) => {
     <button
       type="button"
       onClick={onButtonClick}
-      className={[styles.button, isPopoverOpen ? styles.buttonOpen : ''].join(' ')}
+      className={cx(
+        styles.button,
+        {
+          [styles.buttonEmpty]: emptyAnchor,
+          [styles.buttonOpen]: isPopoverOpen,
+        }
+      )}
     >
-      <EuiText size="m">CREATE DATABASE</EuiText>
+      <EuiText size="m">{buttonText}</EuiText>
       <EuiIcon type="arrowDown" className={styles.arrowIcon} />
     </button>
   )
 
   return (
     <EuiInputPopover
-      style={{ width: '245px' }}
       display="block"
       id="databasesMenu"
       input={button}
       isOpen={isPopoverOpen}
       closePopover={closePopover}
       panelPaddingSize="none"
-      panelClassName={styles.popover}
+      anchorClassName={cx(styles.anchor, { [styles.anchorEmpty]: emptyAnchor })}
+      panelClassName={cx(styles.popover, { [styles.popoverEmpty]: emptyAnchor })}
     >
       <EuiContextMenuPanel size="s" items={menuItems} />
     </EuiInputPopover>

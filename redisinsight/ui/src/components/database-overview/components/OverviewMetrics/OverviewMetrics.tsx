@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { EuiLoadingSpinner } from '@elastic/eui'
-import { isArray, isUndefined } from 'lodash'
+import { isArray, isUndefined, toNumber } from 'lodash'
 
 import { formatBytes, Nullable, truncateNumberToRange, truncatePercentage } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
@@ -25,38 +25,40 @@ import {
 import styles from './styles.module.scss'
 
 interface Props {
-  theme: string;
+  theme: string
+  db?: number
   items: {
     version: string,
-    usedMemory?: Nullable<number>;
-    totalKeys?: Nullable<number>;
-    connectedClients?: Nullable<number>;
-    opsPerSecond?: Nullable<number>;
-    networkInKbps?: Nullable<number>;
-    networkOutKbps?: Nullable<number>;
-    cpuUsagePercentage?: Nullable<number>;
-  };
+    usedMemory?: Nullable<number>
+    totalKeys?: Nullable<number>
+    connectedClients?: Nullable<number>
+    opsPerSecond?: Nullable<number>
+    networkInKbps?: Nullable<number>
+    networkOutKbps?: Nullable<number>
+    cpuUsagePercentage?: Nullable<number>
+    totalKeysPerDb?: Nullable<{ [key: string]: number }>
+  }
 }
 
 export interface IMetric {
-  id: string;
-  content: ReactNode;
-  value: any;
-  unavailableText: string;
-  title: string;
+  id: string
+  content: ReactNode
+  value: any
+  unavailableText: string
+  title: string
   tooltip: {
-    title?: string;
-    icon: Nullable<string>;
-    content: ReactNode | string;
-  };
-  loading?: boolean;
-  groupId?: string;
-  icon?: Nullable<string>;
-  className?: string;
+    title?: string
+    icon: Nullable<string>
+    content: ReactNode | string
+  }
+  loading?: boolean
+  groupId?: string
+  icon?: Nullable<string>
+  className?: string
   children?: Array<IMetric>
 }
 
-export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
+export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetric> => {
   const {
     usedMemory,
     totalKeys,
@@ -64,7 +66,8 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     cpuUsagePercentage,
     opsPerSecond,
     networkInKbps,
-    networkOutKbps
+    networkOutKbps,
+    totalKeysPerDb = {},
   } = items
 
   const availableItems: Array<IMetric> = []
@@ -208,7 +211,7 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
   })
 
   // Total keys
-  availableItems.push({
+  const totalKeysItem: any = {
     id: 'overview-total-keys',
     value: totalKeys,
     unavailableText: 'Total Keys are not available',
@@ -220,7 +223,38 @@ export const getOverviewMetrics = ({ theme, items }: Props): Array<IMetric> => {
     },
     icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
     content: truncateNumberToRange(totalKeys || 0),
-  })
+  }
+
+  // keys in the logical database
+  const dbKeysCount = totalKeysPerDb?.[`db${db || 0}`]
+  if (!isUndefined(dbKeysCount) && dbKeysCount < toNumber(totalKeys)) {
+    totalKeysItem.children = [
+      {
+        id: 'total-keys-tip',
+        value: totalKeys,
+        unavailableText: 'Total Keys are not available',
+        title: 'Total Keys',
+        tooltip: {
+          title: 'Total Keys',
+          content: (<b>{numberWithSpaces(totalKeys || 0)}</b>),
+        },
+        content: truncateNumberToRange(totalKeys || 0),
+      },
+      {
+        id: 'overview-db-total-keys',
+        title: 'Keys',
+        value: dbKeysCount,
+        content: (
+          <>
+            <span style={{ fontWeight: 200, paddingRight: 1 }}>db{db || 0}:</span>
+            <b>{numberWithSpaces(dbKeysCount || 0)}</b>
+          </>
+        ),
+      },
+    ]
+  }
+
+  availableItems.push(totalKeysItem)
 
   const getConnectedClient = (connectedClients: number = 0) =>
     (Number.isInteger(connectedClients) ? connectedClients : `~${Math.round(connectedClients)}`)

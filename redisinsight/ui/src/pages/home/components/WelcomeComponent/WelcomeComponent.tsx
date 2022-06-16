@@ -10,7 +10,7 @@ import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
-import AddInstanceControls from '../AddInstanceControls/AddInstanceControls'
+import HomeHeader from '../HomeHeader/HomeHeader'
 
 import styles from './styles.module.scss'
 
@@ -66,7 +66,7 @@ const Welcome = ({ onAddInstance }: Props) => {
         <EuiText className={styles.text}>{underSubTitle}</EuiText>
 
         <div className={styles.controls}>
-          <AddInstanceControls
+          <HomeHeader
             welcomePage
             onAddInstance={onAddInstance}
             direction="column"

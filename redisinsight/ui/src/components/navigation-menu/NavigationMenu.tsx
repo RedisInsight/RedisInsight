@@ -267,7 +267,7 @@ const NavigationMenu = () => {
           position="right"
         >
           <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-            <EuiLink {...getRouterLinkProps(Pages.home)} data-test-subj="home-page-btn">
+            <EuiLink {...getRouterLinkProps(Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
               <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
             </EuiLink>
           </span>

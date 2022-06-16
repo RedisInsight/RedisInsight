@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
-import AddInstanceControls, { Props } from './AddInstanceControls'
+import HomeHeader, { Props } from './HomeHeader'
 
 const mockedProps = mock<Props>()
 
@@ -16,8 +16,8 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => {
   }
 })
 
-describe('AddInstanceControls', () => {
+describe('HomeHeader', () => {
   it('should render', () => {
-    expect(render(<AddInstanceControls {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<HomeHeader {...instance(mockedProps)} />)).toBeTruthy()
   })
 })

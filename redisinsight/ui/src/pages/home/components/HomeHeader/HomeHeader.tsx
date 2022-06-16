@@ -8,6 +8,7 @@ import {
 } from '@elastic/eui'
 import { isEmpty } from 'lodash'
 import { useSelector } from 'react-redux'
+import cx from 'classnames'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/HelpLinksMenu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
@@ -16,6 +17,8 @@ import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
+import { instancesSelector } from 'uiSrc/slices/instances/instances'
+import SearchDatabasesList from '../SearchDatabasesList'
 
 import styles from './styles.module.scss'
 
@@ -25,11 +28,15 @@ export interface Props {
   welcomePage?: boolean
 }
 
-const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: Props) => {
+const CREATE_DATABASE = 'CREATE DATABASE'
+const THE_GUIDES = 'THE GUIDES'
+
+const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) => {
+  const { theme } = useContext(ThemeContext)
+  const { data: instances } = useSelector(instancesSelector)
+  const { loading, data } = useSelector(contentSelector)
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
-  const { loading, data } = useSelector(contentSelector)
-  const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {
@@ -68,15 +75,26 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
   }
 
   const AddInstanceBtn = () => (
-    <EuiButton
-      fill
-      color="secondary"
-      onClick={handleOnAddDatabase}
-      className={styles.addInstanceBtn}
-      data-testid="add-redis-database"
-    >
-      + ADD REDIS DATABASE
-    </EuiButton>
+    <>
+      <EuiButton
+        fill
+        color="secondary"
+        onClick={handleOnAddDatabase}
+        className={cx(styles.addInstanceBtn, 'eui-showFor--s', 'eui-showFor--xs')}
+        data-testid="add-redis-database"
+      >
+        + ADD DATABASE
+      </EuiButton>
+      <EuiButton
+        fill
+        color="secondary"
+        onClick={handleOnAddDatabase}
+        className={cx(styles.addInstanceBtn, 'eui-hideFor--s', 'eui-hideFor--xs')}
+        data-testid="add-redis-database"
+      >
+        + ADD REDIS DATABASE
+      </EuiButton>
+    </>
   )
 
   const Guides = () => (
@@ -165,30 +183,44 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
           <EuiFlexItem grow={false}>
             <AddInstanceBtn />
           </EuiFlexItem>
-          <EuiFlexItem className="eui-hideFor--xs" grow={false}>
+          <EuiFlexItem className={cx(styles.separatorContainer)} grow={false}>
             <div className={styles.separator} />
           </EuiFlexItem>
           { !loading && !isEmpty(data) && (
             <>
-              <EuiFlexItem grow className="eui-showFor--xl">
+              <EuiFlexItem grow className={cx(styles.promo)}>
                 <EuiFlexGroup alignItems="center">
                   {promoData && (
                     <EuiFlexItem grow={false}>
                       <CreateBtn content={promoData} />
                     </EuiFlexItem>
                   )}
-                  <EuiFlexItem>
+                  <EuiFlexItem className={styles.linkGuides}>
                     <Guides />
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </EuiFlexItem>
-              <EuiFlexItem grow={false} className="eui-showFor--xs eui-showFor--s eui-showFor--m eui-showFor--l">
+              <EuiFlexItem grow={false} className={styles.fullGuides}>
                 <HelpLinksMenu
                   items={guides}
+                  buttonText={CREATE_DATABASE}
+                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+                />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false} className={styles.smallGuides}>
+                <HelpLinksMenu
+                  emptyAnchor
+                  items={guides.slice(1)}
+                  buttonText={THE_GUIDES}
                   onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
                 />
               </EuiFlexItem>
             </>
+          )}
+          {instances.length > 0 && (
+            <EuiFlexItem className={styles.searchContainer}>
+              <SearchDatabasesList />
+            </EuiFlexItem>
           )}
         </EuiFlexGroup>
         <EuiSpacer className={styles.spacerDl} />
@@ -196,4 +228,4 @@ const AddInstanceControls = ({ onAddInstance, direction, welcomePage = false }: 
     )
 }
 
-export default AddInstanceControls
+export default HomeHeader

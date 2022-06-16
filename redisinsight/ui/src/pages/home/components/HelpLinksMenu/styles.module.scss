@@ -1,4 +1,4 @@
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/index";
 
 $borderWidth: 2px;
 
@@ -12,8 +12,17 @@ $borderWidth: 2px;
   border: $borderWidth solid var(--euiColorSecondary);
   padding: 0 20px;
   color: var(--inputTextColor);
-  font: normal normal bold 14px/17px Graphik, sans-serif;
+  font: normal normal bold 14px/17px Graphik, sans-serif !important;
   letter-spacing: -0.14px;
+
+  &Empty {
+    padding-left: 0;
+    padding-right: 0px !important;
+    min-width: 105px;
+    border: none !important;
+    background-color: transparent !important;
+    font-weight: normal !important;
+  }
 }
 
 .buttonOpen {
@@ -26,6 +35,12 @@ $borderWidth: 2px;
   border: $borderWidth solid var(--euiColorSecondary) !important;
   background-color: var(--euiPageBackgroundColor) !important;
   border-top-width: 0 !important;
+
+  &Empty {
+    width: 138px !important;
+    border: 1px solid var(--separatorColor) !important;
+    background-color: var(--euiColorEmptyShade) !important;
+  }
 }
 
 .item {
@@ -38,6 +53,10 @@ $borderWidth: 2px;
     background-color: var(--hoverInListColorLight) !important;
     text-decoration: none !important;
   }
+  &Empty {
+    padding-left: 12px !important;
+    padding-right: 6px !important;
+  }
   a {
     text-decoration: none !important;
   }
@@ -47,3 +66,9 @@ $borderWidth: 2px;
   fill: var(--iconsDefaultColor) !important;
 }
 
+.anchor {
+  width: 245px;
+  &Empty {
+    width: 108px;
+  }
+}

@@ -40,7 +40,7 @@ const cliParseTextResponseWithOffset = (
 ) => [cliParseTextResponse(text, command, status), '\n']
 
 const cliParseTextResponse = (
-  text: string = '',
+  text: string | JSX.Element = '',
   command: string = '',
   status: CommandExecutionStatus = CommandExecutionStatus.Success,
   prefix: CliPrefix = CliPrefix.Cli,

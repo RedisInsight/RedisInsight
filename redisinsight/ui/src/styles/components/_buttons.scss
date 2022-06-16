@@ -1,4 +1,4 @@
-@import '../../../../../node_modules/@elastic/eui/src/global_styling/index';
+@import "../../../../../node_modules/@elastic/eui/src/global_styling/index";
 
 .euiButton {
   text-decoration: none !important;
@@ -11,7 +11,7 @@
   &.euiButton--secondary {
     color: var(--buttonSecondaryTextColor) !important;
     border-color: var(--euiColorSecondary);
-    &:not([class*='isDisabled']) {
+    &:not([class*="isDisabled"]) {
       &:hover {
         background-color: var(--buttonSecondaryHoverColor);
         border-color: var(--buttonSecondaryHoverColor);
@@ -27,7 +27,7 @@
     }
   }
   &.euiButton--primary {
-    &:not([class*='isDisabled']) {
+    &:not([class*="isDisabled"]) {
       box-shadow: none;
     }
   }
@@ -47,7 +47,7 @@
     border-color: var(--euiColorSecondary);
     background-color: var(--euiColorSecondary);
 
-    &:not([class*='isDisabled']) {
+    &:not([class*="isDisabled"]) {
       &:hover {
         background-color: var(--buttonSecondaryHoverColor);
         border-color: var(--buttonSecondaryHoverColor);
@@ -55,7 +55,7 @@
       &:focus:not(:hover),
       &:focus-within:not(:hover) {
         border: 2px solid var(--euiColorPrimary);
-      }   
+      }
     }
   }
 }
@@ -109,7 +109,7 @@
 }
 
 .euiButton {
-  &.euiButton--warning.euiButton--fill:not([class*='isDisabled']) {
+  &.euiButton--warning.euiButton--fill:not([class*="isDisabled"]) {
     background-color: var(--buttonWarningColor);
     border-color: var(--buttonWarningColor);
 
@@ -128,18 +128,25 @@
   background-color: transparent;
   transition: color ease 0.3s, background-color ease 0.3s;
 
-  .euiButtonEmpty__text, .euiText {
+  .euiButtonEmpty__text,
+  .euiText {
     transition: color ease 0.3s;
     color: var(--euiTextSubduedColor) !important;
   }
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     text-decoration: none !important;
     background-color: var(--hoverInListColorDarken);
     color: var(--htmlColor);
 
-    .euiButtonEmpty__text, .euiText {
+    .euiButtonEmpty__text,
+    .euiText {
       color: var(--htmlColor) !important;
     }
   }
+}
+
+.btnLikeLink {
+  font: inherit !important;
 }

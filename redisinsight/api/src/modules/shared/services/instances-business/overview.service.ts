@@ -28,13 +28,17 @@ export class OverviewService {
     client: IORedis.Redis | IORedis.Cluster,
   ): Promise<DatabaseOverview> {
     let nodesInfo = [];
+    let currentDbIndex = 0;
+
     if (client instanceof IORedis.Cluster) {
+      currentDbIndex = get(client, ['options', 'db'], 0);
       nodesInfo = await this.getNodesInfo(client);
     } else {
+      currentDbIndex = get(client, ['options', 'db'], 0);
       nodesInfo = [await this.getNodeInfo(client)];
     }
 
-    const [totalKeys, totalKeysPerDb] = this.calculateTotalKeys(nodesInfo);
+    const [totalKeys, totalKeysPerDb] = this.calculateTotalKeys(nodesInfo, currentDbIndex);
     return {
       version: this.getVersion(nodesInfo),
       totalKeys,
@@ -192,9 +196,10 @@ export class OverviewService {
    * Sum of keys for primary shards
    * In case when shard has multiple logical databases shard total keys = sum of all dbs keys
    * @param nodes
+   * @param index
    * @private
    */
-  private calculateTotalKeys(nodes = []): [number, Record<string, number>] {
+  private calculateTotalKeys(nodes = [], index: number): [number, Record<string, number>] {
     if (!this.isMetricsAvailable(nodes, 'keyspace', [undefined])) {
       return [undefined, undefined];
     }
@@ -221,15 +226,9 @@ export class OverviewService {
         );
       });
 
-      // filter 0 values
-      Object.keys(totalKeysPerDb).forEach((key) => {
-        if (!totalKeysPerDb[key]) {
-          delete totalKeysPerDb[key];
-        }
-      });
-
       const totalKeys = totalKeysPerDb ? sum(Object.values(totalKeysPerDb)) : undefined;
-      return [totalKeys, Object.keys(totalKeysPerDb).length > 1 ? totalKeysPerDb : undefined];
+      const dbIndexKeys = totalKeysPerDb[`db${index}`] || 0;
+      return [totalKeys, dbIndexKeys === totalKeys ? undefined : { [`db${index}`]: dbIndexKeys }];
     } catch (e) {
       return [null, null];
     }

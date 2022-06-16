@@ -94,7 +94,7 @@ describe('ServerOnPremiseService', () => {
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         1,
         AppAnalyticsEvents.Initialize,
-        { anonymousId: mockServerEntity.id, sessionId },
+        { anonymousId: mockServerEntity.id, sessionId, appType: SERVER_CONFIG.buildType },
       );
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         2,
@@ -113,7 +113,7 @@ describe('ServerOnPremiseService', () => {
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         1,
         AppAnalyticsEvents.Initialize,
-        { anonymousId: mockServerEntity.id, sessionId },
+        { anonymousId: mockServerEntity.id, sessionId, appType: SERVER_CONFIG.buildType },
       );
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         2,
@@ -140,6 +140,7 @@ describe('ServerOnPremiseService', () => {
         appVersion: SERVER_CONFIG.appVersion,
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,
+        appType: SERVER_CONFIG.buildType,
         encryptionStrategies: [
           EncryptionStrategy.PLAIN,
           EncryptionStrategy.KEYTAR,

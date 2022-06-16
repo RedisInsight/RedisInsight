@@ -18,6 +18,7 @@ export interface ITelemetryEvent {
 export interface ITelemetryInitEvent {
   anonymousId: string;
   sessionId: number;
+  appType: string;
 }
 
 @Injectable()
@@ -25,6 +26,8 @@ export class AnalyticsService {
   private anonymousId: string = NON_TRACKING_ANONYMOUS_ID;
 
   private sessionId: number = -1;
+
+  private appType: string = 'unknown';
 
   private analytics;
 
@@ -39,9 +42,10 @@ export class AnalyticsService {
 
   @OnEvent(AppAnalyticsEvents.Initialize)
   public initialize(payload: ITelemetryInitEvent) {
-    const { anonymousId, sessionId } = payload;
+    const { anonymousId, sessionId, appType } = payload;
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
+    this.appType = appType;
     this.analytics = new Analytics(ANALYTICS_CONFIG.writeKey);
   }
 
@@ -68,6 +72,7 @@ export class AnalyticsService {
           event,
           properties: {
             ...eventData,
+            buildType: this.appType,
           },
         });
       }

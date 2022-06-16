@@ -238,7 +238,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
           title: 'Total Keys',
           content: (<b>{numberWithSpaces(totalKeys || 0)}</b>),
         },
-        content: truncateNumberToRange(totalKeys || 0),
+        content: (<b>{numberWithSpaces(totalKeys || 0)}</b>),
       },
       {
         id: 'overview-db-total-keys',

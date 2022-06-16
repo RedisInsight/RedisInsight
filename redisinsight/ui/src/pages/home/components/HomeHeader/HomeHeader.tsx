@@ -81,7 +81,7 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
         color="secondary"
         onClick={handleOnAddDatabase}
         className={cx(styles.addInstanceBtn, 'eui-showFor--s', 'eui-showFor--xs')}
-        data-testid="add-redis-database"
+        data-testid="add-redis-database-short"
       >
         + ADD DATABASE
       </EuiButton>

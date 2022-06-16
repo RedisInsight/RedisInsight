@@ -1,5 +1,6 @@
-import { EuiTextColor } from '@elastic/eui'
+import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React from 'react'
+import { getRouterLinkProps } from 'uiSrc/services'
 
 export const ClearCommand = 'clear'
 export const SelectCommand = 'select'
@@ -36,14 +37,41 @@ export const cliTexts = {
     commandLine + unsupportedCommandTextWorkbench + commands,
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
   CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.',
-  MONITOR_COMMAND: 'Use the "Profiler" tool to see all the requests processed by the server.',
-  PSUBSCRIBE_COMMAND: (href: string = '') =>
-    'Use Pub/Sub to see the messages published to all channels in your database.',
   UNABLE_TO_DECRYPT: 'Unable to decrypt. Check the system keychain or re-run the command.',
+  PSUBSCRIBE_COMMAND: (path: string = '') => (
+    <EuiTextColor color="danger" key={Date.now()}>
+      {'Use '}
+      <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
+        Pub/Sub
+      </EuiLink>
+      {' to see the messages published to all channels in your database.'}
+    </EuiTextColor>
+  ),
+  PSUBSCRIBE_COMMAND_CLI: (path: string = '') => (
+    [
+      cliTexts.PSUBSCRIBE_COMMAND(path),
+      '\n',
+    ]
+  ),
+  MONITOR_COMMAND: (onClick: () => void) => (
+    <EuiTextColor color="danger" key={Date.now()}>
+      {'Use '}
+      <EuiLink onClick={onClick} className="btnLikeLink" color="text" data-test-subj="monitor-btn">
+        Profiler
+      </EuiLink>
+      {' tool to see all the requests processed by the server.'}
+    </EuiTextColor>
+  ),
+  MONITOR_COMMAND_CLI: (onClick: () => void) => (
+    [
+      cliTexts.MONITOR_COMMAND(onClick),
+      '\n',
+    ]
+  ),
   CLI_ERROR_MESSAGE: (message: string) => (
     [
       '\n',
-      <EuiTextColor color="warning" key={Date.now()}>
+      <EuiTextColor color="danger" key={Date.now()}>
         {message}
       </EuiTextColor>,
       '\n\n',

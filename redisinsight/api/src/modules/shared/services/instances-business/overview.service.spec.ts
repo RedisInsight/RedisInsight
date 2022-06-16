@@ -62,8 +62,6 @@ export const mockDatabaseOverview: DatabaseOverview = {
   totalKeys: 2,
   totalKeysPerDb: {
     db0: 1,
-    db1: 0,
-    db2: 1,
   },
   connectedClients: 1,
   opsPerSecond: 1,
@@ -228,8 +226,6 @@ describe('OverviewService', () => {
           totalKeys: 6,
           totalKeysPerDb: {
             db0: 3,
-            db1: 0,
-            db2: 3,
           },
           usedMemory: 3,
           networkInKbps: 6,
@@ -284,8 +280,6 @@ describe('OverviewService', () => {
           totalKeys: 6,
           totalKeysPerDb: {
             db0: 3,
-            db1: 0,
-            db2: 3,
           },
           usedMemory: 3,
           networkInKbps: 6,

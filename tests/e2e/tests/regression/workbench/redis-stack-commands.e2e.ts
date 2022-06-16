@@ -24,8 +24,7 @@ fixture `Redis Stack command in Workbench`
         await workbenchPage.sendCommandInWorkbench(`GRAPH.DELETE ${keyNameGraph}`);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-//skipped due the inaccessibility of the iframe
-test.skip
+test
     .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can switches between Graph and Text for GRAPH command and see results corresponding to their views', async t => {
         //Send Graph command
         await t.click(workbenchPage.redisStackTutorialsButton);

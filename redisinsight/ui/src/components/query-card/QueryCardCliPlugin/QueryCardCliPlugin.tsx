@@ -238,6 +238,7 @@ const QueryCardCliPlugin = (props: Props) => {
           className={cx('pluginIframe', styles.pluginIframe, { [styles.hidden]: !currentPlugin || !isPluginLoaded || !!error })}
           title={id}
           ref={pluginIframeRef}
+          src="about:blank"
           referrerPolicy="no-referrer"
           sandbox="allow-same-origin allow-scripts"
           data-testid="pluginIframe"

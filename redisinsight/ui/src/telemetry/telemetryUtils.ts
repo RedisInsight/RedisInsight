@@ -8,7 +8,8 @@ import { Nullable } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { checkIsAnalyticsGranted } from 'uiSrc/telemetry/checkAnalytics'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
 import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService, MatchType } from './interfaces'
 import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
@@ -50,10 +51,13 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
+  const appType = getAppType()
+
   if (isAnalyticsGranted || nonTracking) {
     telemetryService?.event({
       event,
       properties: {
+        buildType: appType,
         ...eventData,
       },
     })
@@ -72,9 +76,10 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
 
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
+  const appType = getAppType()
 
   if (isAnalyticsGranted || nonTracking) {
-    telemetryService?.pageView(name, databaseId)
+    telemetryService?.pageView(name, appType, databaseId)
   }
 }
 
@@ -163,6 +168,36 @@ const getMatchType = (match: string): MatchType => (
     ? MatchType.EXACT_VALUE_NAME
     : MatchType.PATTERN
 )
+
+export const getRefreshEventData = (eventData: any, type: string, streamViewType?: StreamViewType) => {
+  if (type === 'stream') {
+    switch (streamViewType) {
+      case StreamViewType.Data:
+        return {
+          ...eventData,
+          streamView: 'entries'
+        }
+      case StreamViewType.Groups:
+        return {
+          ...eventData,
+          streamView: 'consumer_groups'
+        }
+      case StreamViewType.Consumers:
+        return {
+          ...eventData,
+          streamView: 'consumers'
+        }
+      case StreamViewType.Messages:
+        return {
+          ...eventData,
+          streamView: 'pending_messages_list'
+        }
+      default:
+        return eventData
+    }
+  }
+  return eventData
+}
 
 export {
   getTelemetryService,

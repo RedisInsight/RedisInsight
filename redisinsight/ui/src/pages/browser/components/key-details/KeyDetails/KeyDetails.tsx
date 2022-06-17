@@ -79,17 +79,19 @@ const KeyDetails = ({ ...props }: Props) => {
   const openAddItemPanel = () => {
     setIsRemoveItemPanelOpen(false)
     setIsAddItemPanelOpen(true)
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_ADD_VALUE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId,
-        keyType: selectedKeyType
-      }
-    })
+    if (!STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)) {
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_ADD_VALUE_CLICKED,
+          TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CLICKED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: selectedKeyType
+        }
+      })
+    }
   }
 
   const openRemoveItemPanel = () => {
@@ -98,7 +100,7 @@ const KeyDetails = ({ ...props }: Props) => {
   }
 
   const closeAddItemPanel = (isCancelled?: boolean) => {
-    if (isCancelled && isAddItemPanelOpen) {
+    if (isCancelled && isAddItemPanelOpen && !STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)) {
       sendEventTelemetry({
         event: getBasedOnViewTypeEvent(
           viewType,

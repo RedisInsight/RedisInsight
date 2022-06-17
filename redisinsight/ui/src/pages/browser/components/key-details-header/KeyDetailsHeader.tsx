@@ -24,7 +24,7 @@ import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-ke
 import { keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
 import AutoRefresh from '../auto-refresh'
 
@@ -182,16 +182,21 @@ const KeyDetailsHeader = ({
 
   const handleRefreshKey = (enableAutoRefresh: boolean) => {
     if (!enableAutoRefresh) {
+      const eventData = getRefreshEventData(
+        {
+          databaseId: instanceId,
+          keyType: type
+        },
+        type,
+        streamViewType
+      )
       sendEventTelemetry({
         event: getBasedOnViewTypeEvent(
           viewType,
           TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
           TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED
         ),
-        eventData: {
-          databaseId: instanceId,
-          keyType: type
-        }
+        eventData
       })
     }
     onRefresh(key, type)

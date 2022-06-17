@@ -163,7 +163,8 @@ jest.mock(
 jest.mock(
   'uiSrc/telemetry/checkAnalytics',
   () => ({
-    checkIsAnalyticsGranted: jest.fn()
+    checkIsAnalyticsGranted: jest.fn(),
+    getAppType: jest.fn()
   })
 )
 

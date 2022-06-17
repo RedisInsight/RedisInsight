@@ -22,7 +22,7 @@ const EmptyMessagesList = ({ connectionType, isSpublishNotSupported }: Props) =>
         <EuiIcon type="alert" className={styles.alertIcon} />
         Running in production may decrease performance and memory available
       </EuiText>
-      {(connectionType === ConnectionType.Cluster || isSpublishNotSupported) && (
+      {(connectionType === ConnectionType.Cluster && isSpublishNotSupported) && (
         <>
           <div className={styles.separator} />
           <EuiText className={styles.cluster} data-testid="empty-messages-list-cluster">

@@ -19,17 +19,17 @@ describe('EmptyMessagesList', () => {
     expect(queryByTestId('empty-messages-list-cluster')).toBeInTheDocument()
   })
 
-  it('should render cluster info for Cluster connection type', () => {
+  it(' not render cluster info for Cluster connection type', () => {
     const { queryByTestId } = render(
-      <EmptyMessagesList isSpublishNotSupported />
+      <EmptyMessagesList connectionType={ConnectionType.Cluster} isSpublishNotSupported={false} />
     )
 
-    expect(queryByTestId('empty-messages-list-cluster')).toBeInTheDocument()
+    expect(queryByTestId('empty-messages-list-cluster')).not.toBeInTheDocument()
   })
 
   it('should not render cluster info for Cluster connection type', () => {
     const { queryByTestId } = render(
-      <EmptyMessagesList isSpublishNotSupported={false} />
+      <EmptyMessagesList connectionType={ConnectionType.Standalone} isSpublishNotSupported />
     )
 
     expect(queryByTestId('empty-messages-list-cluster')).not.toBeInTheDocument()

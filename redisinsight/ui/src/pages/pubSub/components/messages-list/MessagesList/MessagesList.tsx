@@ -136,9 +136,8 @@ const MessagesList = (props: Props) => {
             content={channel}
             position="bottom"
             display="inlineBlock"
-            anchorClassName={styles.channelAnchor}
           >
-            <div>{channel}</div>
+            <div className={styles.channelAnchor}>{channel}</div>
           </EuiToolTip>
         </div>
         <div className={styles.message} ref={rowRef}>{message}</div>

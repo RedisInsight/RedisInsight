@@ -20,8 +20,15 @@
 
 .channel {
   color: var(--euiColorMediumShade);
-  padding-right: 12px;
   width: 220px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.channelAnchor > div {
+  max-width: 220px;
+  padding-right: 12px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

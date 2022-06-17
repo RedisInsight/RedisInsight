@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ListChildComponentProps, ListOnScrollProps, VariableSizeList as List } from 'react-window'
 import { useParams } from 'react-router-dom'
-import { EuiButtonIcon } from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
 import { getFormatDateTime } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -131,7 +131,16 @@ const MessagesList = (props: Props) => {
     return (
       <div style={style} className={styles.item} data-testid={`row-${index}`}>
         <div className={styles.time}>{getFormatDateTime(time)}</div>
-        <div className={styles.channel}>{channel}</div>
+        <div className={styles.channel}>
+          <EuiToolTip
+            content={channel}
+            position="bottom"
+            display="inlineBlock"
+            anchorClassName={styles.channelAnchor}
+          >
+            <div>{channel}</div>
+          </EuiToolTip>
+        </div>
         <div className={styles.message} ref={rowRef}>{message}</div>
       </div>
     )

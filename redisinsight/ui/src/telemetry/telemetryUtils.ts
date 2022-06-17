@@ -6,7 +6,7 @@ import isGlob from 'is-glob'
 import * as jsonpath from 'jsonpath'
 import { Nullable } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, KeyTypes } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
@@ -170,30 +170,10 @@ const getMatchType = (match: string): MatchType => (
 )
 
 export const getRefreshEventData = (eventData: any, type: string, streamViewType?: StreamViewType) => {
-  if (type === 'stream') {
-    switch (streamViewType) {
-      case StreamViewType.Data:
-        return {
-          ...eventData,
-          streamView: 'entries'
-        }
-      case StreamViewType.Groups:
-        return {
-          ...eventData,
-          streamView: 'consumer_groups'
-        }
-      case StreamViewType.Consumers:
-        return {
-          ...eventData,
-          streamView: 'consumers'
-        }
-      case StreamViewType.Messages:
-        return {
-          ...eventData,
-          streamView: 'pending_messages_list'
-        }
-      default:
-        return eventData
+  if (type === KeyTypes.Stream) {
+    return {
+      ...eventData,
+      streamView: StreamViews[streamViewType!]
     }
   }
   return eventData

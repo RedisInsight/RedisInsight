@@ -74,6 +74,7 @@ export class BrowserPage {
     saveGroupsButton = Selector('[data-testid=save-groups-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
+    streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
     breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
@@ -94,6 +95,7 @@ export class BrowserPage {
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
+    streamTabs = Selector('[data-test-subj=stream-tabs]');
     //TEXT INPUTS (also referred to as 'Text fields')
     addKeyNameInput = Selector('[data-testid=key]');
     keyNameInput = Selector('[data-testid=edit-key-input]');
@@ -189,6 +191,9 @@ export class BrowserPage {
     streamRangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
     streamGroupId = Selector('.streamItemId[data-testid^=stream-group-id]');
     streamGroupName = Selector('[data-testid^=stream-group-name]');
+    streamMessage = Selector('[data-testid^=stream-message]');
+    streamConsumerName = Selector('[data-testid^=stream-consumer-]');
+    consumerGroup = Selector('[data-testid^=stream-group-]');
     entryIdInfoIcon = Selector('[data-testid=entry-id-info-icon]');
     errorMessage = Selector('[data-test-subj=toast-error]');
     entryIdError = Selector('[data-testid=id-error]');

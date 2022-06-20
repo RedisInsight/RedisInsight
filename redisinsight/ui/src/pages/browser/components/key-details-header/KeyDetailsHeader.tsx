@@ -212,12 +212,18 @@ const KeyDetailsHeader = ({
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
       eventData: {
+        length,
         databaseId: instanceId,
         keyType: type,
-        length: enableAutoRefresh ? length : undefined,
-        refreshRate: enableAutoRefresh ? +refreshRate : undefined
+        refreshRate: +refreshRate
       }
     })
+  }
+
+  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+    if (enableAutoRefresh) {
+      handleEnableAutoRefresh(enableAutoRefresh, refreshRate)
+    }
   }
 
   const onMouseEnterTTL = () => {
@@ -624,6 +630,7 @@ const KeyDetailsHeader = ({
                       containerClassName={styles.actionBtn}
                       onRefresh={handleRefreshKey}
                       onEnableAutoRefresh={handleEnableAutoRefresh}
+                      onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                       testid="refresh-key-btn"
                     />
                     {keyType && Actions(width)}

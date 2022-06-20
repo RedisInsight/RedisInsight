@@ -139,9 +139,15 @@ const KeysHeader = (props: Props) => {
       event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
       eventData: {
         databaseId: instanceId,
-        refreshRate: enableAutoRefresh ? +refreshRate : undefined
+        refreshRate: +refreshRate,
       }
     })
+  }
+
+  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+    if (enableAutoRefresh) {
+      handleEnableAutoRefresh(enableAutoRefresh, refreshRate)
+    }
   }
 
   const handleScanMore = (config: any) => {
@@ -250,6 +256,7 @@ const KeysHeader = (props: Props) => {
                 containerClassName={styles.refreshContainer}
                 onRefresh={handleRefreshKeys}
                 onEnableAutoRefresh={handleEnableAutoRefresh}
+                onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                 testid="refresh-keys-btn"
               />
             </div>

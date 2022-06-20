@@ -126,7 +126,7 @@ export class RedisEnterpriseBusinessService {
   public getDatabaseExternalEndpoint(
     database: IRedisEnterpriseDatabase,
   ): IRedisEnterpriseEndpoint {
-    return database.endpoints.filter((endpoint: { addr_type: string }) => endpoint.addr_type === 'external')[0];
+    return database.endpoints?.filter((endpoint: { addr_type: string }) => endpoint.addr_type === 'external')[0];
   }
 
   private getDatabasePersistencePolicy(

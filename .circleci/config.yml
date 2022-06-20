@@ -298,6 +298,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run: sudo apt-get install net-tools
       - run:
           name: .AppImage tests
           command: |

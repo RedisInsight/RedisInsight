@@ -963,6 +963,7 @@ export function claimPendingMessages(
       if (isStatusSuccessful(status)) {
         dispatch(claimConsumerMessagesSuccess())
         dispatch<any>(fetchConsumers())
+        dispatch<any>(fetchConsumerGroups())
         if (data.affected.length) {
           dispatch(deleteMessageFromList(data.affected[0]))
           dispatch(addMessageNotification(
@@ -1014,6 +1015,7 @@ export function ackPendingEntriesAction(
         dispatch(ackPendingEntriesSuccess())
         dispatch(deleteMessageFromList(entries[0]))
         dispatch<any>(fetchConsumers())
+        dispatch<any>(fetchConsumerGroups())
         dispatch(addMessageNotification(
           successMessages.MESSAGE_ACTION(entries[0], 'acknowledged')
         ))

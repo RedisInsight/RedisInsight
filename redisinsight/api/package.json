@@ -34,7 +34,7 @@
     "test:api": "ts-mocha --paths -p test/api/api.tsconfig.json -require test/api/api.deps.init.ts test/**/*.test.ts --exit --timeout=60000",
     "test:api:cov": "nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
     "test:api:ci:cov": "nyc -r text -r text-summary yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json",
-    "typeorm:migrate": "cross-env NODE_ENV=production yarn typeorm migration:generate -- -n notification",
+    "typeorm:migrate": "cross-env NODE_ENV=production yarn typeorm migration:generate -- -n migration",
     "typeorm:run": "yarn typeorm migration:run"
   },
   "dependencies": {

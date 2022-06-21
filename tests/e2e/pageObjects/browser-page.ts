@@ -72,12 +72,18 @@ export class BrowserPage {
     confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
     clearStreamEntryInputs = Selector('[data-testid=remove-item]');
     saveGroupsButton = Selector('[data-testid=save-groups-btn]');
+    acknowledgeButton = Selector('[data-testid=acknowledge-btn]');
+    confirmAcknowledgeButton = Selector('[data-testid=acknowledge-submit]');
+    claimPendingMessageButton = Selector('[data-testid=claim-pending-message]');
+    submitButton = Selector('[data-testid=btn-submit]');
+    consumerDestinationSelect = Selector('[data-testid=destination-select]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
     breadcrumbsContainer = Selector('[data-testid=breadcrumbs-container]');
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
+    streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     //OPTION ELEMENTS
@@ -93,8 +99,10 @@ export class BrowserPage {
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
     filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
+    consumerOption = Selector('[data-testid=consumer-option]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
+    streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
     streamTabs = Selector('[data-test-subj=stream-tabs]');
     //TEXT INPUTS (also referred to as 'Text fields')
     addKeyNameInput = Selector('[data-testid=key]');
@@ -123,10 +131,10 @@ export class BrowserPage {
     streamValue = Selector('[data-testid=field-value]');
     addStreamRow = Selector('[data-testid=add-new-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
-    streamRangeStartInput = Selector('._3MW0_WsJsq1s4bsuMNXOaV');
     streamRangeEndInput = Selector('[data-testid=range-end-input]');
     groupNameInput = Selector('[data-testid=group-name-field]');
     consumerIdInput = Selector('[data-testid=id-field]');
+    streamMinIdleTimeInput = Selector('[data-testid=min-idle-time]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -191,12 +199,13 @@ export class BrowserPage {
     streamRangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
     streamGroupId = Selector('.streamItemId[data-testid^=stream-group-id]');
     streamGroupName = Selector('[data-testid^=stream-group-name]');
-    streamMessage = Selector('[data-testid^=stream-message]');
+    streamMessage = Selector('[data-testid*=-date][data-testid^=stream-message]');
     streamConsumerName = Selector('[data-testid^=stream-consumer-]');
     consumerGroup = Selector('[data-testid^=stream-group-]');
     entryIdInfoIcon = Selector('[data-testid=entry-id-info-icon]');
     errorMessage = Selector('[data-test-subj=toast-error]');
     entryIdError = Selector('[data-testid=id-error]');
+    pendingCount = Selector('[data-testid=pending-count]');
 
     /**
      * Common part for Add any new key
@@ -768,6 +777,17 @@ export class BrowserPage {
             await t.typeText(this.consumerIdInput, id, { replace: true, paste: true });
         }
         await t.click(this.saveGroupsButton);
+    }
+
+    /**
+     * Open pendings view in Stream key
+     * @keyName The name of the Stream Key
+     */
+    async openStreamPendingsView(keyName: string): Promise<void> {
+        await this.openKeyDetails(keyName);
+        await t.click(this.streamTabGroups);
+        await t.click(this.consumerGroup);
+        await t.click(this.streamConsumerName);
     }
 }
 

@@ -174,7 +174,6 @@ test('Verify that user can delete the Consumer from the Consumer Group', async t
     await t.click(browserPage.removeConsumerButton);
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(`will be removed from Consumer Group ${consumerGroupName}`, 'The confirmation message');
     await t.click(browserPage.removeConsumerButton.nth(2));
-    await t.debug();
     await t.expect(browserPage.streamConsumerName.count).eql(consumerCountBefore - 1, 'The Consumers number after deletion');
 });
 test('Verify that user can delete a Consumer Group', async t => {

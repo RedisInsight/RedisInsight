@@ -13,6 +13,7 @@ import { encryption1634557312500 } from './1634557312500-encryption';
 import { commandExecution1641795882696 } from './1641795882696-command-execution';
 import { pluginState1641805606399 } from './1641805606399-plugin-state';
 import { sni1650278664000 } from "./1650278664000-sni";
+import { notification1655821010349 } from './1655821010349-notification';
 
 export default [
   initialMigration1614164490968,
@@ -30,4 +31,5 @@ export default [
   commandExecution1641795882696,
   pluginState1641805606399,
   sni1650278664000,
+  notification1655821010349,
 ];

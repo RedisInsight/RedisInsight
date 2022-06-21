@@ -129,6 +129,8 @@ export default {
   notifications: {
     updateUrl: process.env.NOTIFICATION_UPDATE_URL
       || 'https://s3.amazonaws.com/redisinsight.test/public/notifications.json',
+    syncInterval: parseInt(process.env.NOTIFICATION_SYNC_INTERVAL, 10) || 60 * 1000,
+    // syncInterval: parseInt(process.env.NOTIFICATION_SYNC_INTERVAL, 10) || 60 * 60 * 1000,
     devMode: !!process.env.NOTIFICATION_DEV_PATH,
   },
   workbench: {

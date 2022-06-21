@@ -9,10 +9,10 @@ import {
   Logger,
 } from '@nestjs/common';
 import config from 'src/utils/config';
-import { NotificationService } from 'src/modules/notification/notification.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { NotificationServerEvents } from 'src/modules/notification/constants';
 import { NotificationsDto } from 'src/modules/notification/dto';
+import { GlobalNotificationProvider } from 'src/modules/notification/providers/global-notification.provider';
 
 const SOCKETS_CONFIG = config.get('sockets');
 
@@ -22,10 +22,13 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
   private logger: Logger = new Logger('NotificationGateway');
 
-  constructor(private service: NotificationService) {}
+  constructor(
+    private globalNotificationsProvider: GlobalNotificationProvider,
+  ) {}
 
   async handleConnection(client: Socket): Promise<void> {
     this.logger.log(`Client connected: ${client.id}`);
+    this.globalNotificationsProvider.init();
   }
 
   async handleDisconnect(client: Socket): Promise<void> {

@@ -2,7 +2,7 @@ import config from 'src/utils/config';
 import {
   keyBy, values, forEach, orderBy,
 } from 'lodash';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { getFile } from 'src/utils';
 import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
@@ -16,10 +16,12 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 const NOTIFICATIONS_CONFIG = config.get('notifications');
 
 @Injectable()
-export class GlobalNotificationProvider implements OnModuleInit {
+export class GlobalNotificationProvider {
   private logger: Logger = new Logger('GlobalNotificationProvider');
 
   private validator = new Validator();
+
+  private interval;
 
   constructor(
     @InjectRepository(NotificationEntity)
@@ -27,14 +29,16 @@ export class GlobalNotificationProvider implements OnModuleInit {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  /**
-   * Initiate sync on startup
-   */
-  onModuleInit() {
-    // async operation to not wait for it and not block user in case when no internet connection
-    setInterval(() => {
+  init() {
+    if (this.interval) {
+      return;
+    }
+
+    this.interval = setInterval(() => {
       this.sync().catch();
-    }, 5000);
+    }, NOTIFICATIONS_CONFIG.syncInterval);
+
+    this.sync().catch();
   }
 
   async sync() {

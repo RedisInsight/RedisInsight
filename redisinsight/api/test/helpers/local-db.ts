@@ -15,7 +15,8 @@ export const repositories = {
   AGREEMENTS: 'AgreementsEntity',
   COMMAND_EXECUTION: 'CommandExecutionEntity',
   PLUGIN_STATE: 'PluginStateEntity',
-  SETTINGS: 'SettingsEntity'
+  SETTINGS: 'SettingsEntity',
+  NOTIFICATION: 'NotificationEntity',
 }
 
 let localDbConnection;

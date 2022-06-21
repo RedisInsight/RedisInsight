@@ -5,10 +5,10 @@ import { NotificationType } from 'src/modules/notification/constants';
 
 @Entity('notification')
 export class NotificationEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ nullable: false, type: 'varchar', enum: NotificationType })
   type: NotificationType;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ nullable: false })
   timestamp: number;
 
   @Column({ nullable: false })

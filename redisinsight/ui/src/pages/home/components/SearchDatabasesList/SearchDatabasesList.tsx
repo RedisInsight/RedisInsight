@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { EuiFieldSearch } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -15,23 +15,12 @@ export interface Props {
 }
 
 const SearchDatabasesList = () => {
-  const [focused, setFocused] = useState(false)
   const { data: instances } = useSelector(instancesSelector)
 
   const dispatch = useDispatch()
 
   const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value?.toLowerCase()
-
-    if (focused) {
-      sendEventTelemetry({
-        event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SEARCHED,
-        eventData: {
-          instancesCount: instances.length
-        }
-      })
-      setFocused(false)
-    }
 
     const itemsTemp = instances.map(
       (item: Instance) => ({
@@ -45,6 +34,14 @@ const SearchDatabasesList = () => {
       })
     )
 
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SEARCHED,
+      eventData: {
+        instancesFullCount: instances.length,
+        instancesSearchedCount: itemsTemp.filter(({ visible }) => (visible))?.length,
+      }
+    })
+
     dispatch(loadInstancesSuccess(itemsTemp))
   }
 
@@ -54,7 +51,6 @@ const SearchDatabasesList = () => {
       placeholder="Database List Search"
       className={styles.search}
       onChange={onQueryChange}
-      onFocus={() => setFocused(true)}
       aria-label="Search database list"
       data-testid="search-database-list"
     />

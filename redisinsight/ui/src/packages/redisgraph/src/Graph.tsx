@@ -50,7 +50,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
   const [container, setContainer] = useState<IGraphD3>(null)
   const [selectedEntity, setSelectedEntity] = useState<ISelectedEntityProps | null>(null)
   const [start, setStart] = useState<boolean>(false)
-  const [showAutomaticEdges, setShowAutomaticEdges] = useState(true);
+  const [showAutomaticEdges, setShowAutomaticEdges] = useState(false);
 
   const parsedResponse = responseParser(props.data)
   let nodeIds = new Set(parsedResponse.nodes.map(n => n.id))

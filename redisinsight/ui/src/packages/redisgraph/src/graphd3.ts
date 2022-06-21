@@ -626,7 +626,7 @@ export interface IGraphD3 {
 function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   let info: any
   let nodes: INode[]
-  let shouldShowAutomaticEdges = true;
+  let shouldShowAutomaticEdges = false;
   let relationship: d3.Selection<SVGGElement, IRelationship, SVGGElement, any>
   let labelCounter = 0;
   let labels: { [key: string]: number } = { }

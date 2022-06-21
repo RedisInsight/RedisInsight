@@ -21,6 +21,7 @@
 .channel {
   color: var(--euiColorMediumShade);
   width: 220px;
+  max-height: 26px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

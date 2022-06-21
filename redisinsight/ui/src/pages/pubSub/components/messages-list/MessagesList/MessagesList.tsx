@@ -87,7 +87,7 @@ const MessagesList = (props: Props) => {
     }
 
     if (e.scrollUpdateWasRequested === false) {
-      if (followRef.current && items.length) {
+      if (followRef.current && outerRef.current.scrollHeight !== outerRef.current.offsetHeight) {
         sendEventTelemetry({
           event: TelemetryEvent.PUBSUB_AUTOSCROLL_PAUSED,
           eventData: {
@@ -104,7 +104,7 @@ const MessagesList = (props: Props) => {
     }
 
     if (e.scrollOffset + outerRef.current.offsetHeight === outerRef.current.scrollHeight) {
-      if (!followRef.current && items.length) {
+      if (!followRef.current && outerRef.current.scrollHeight !== outerRef.current.offsetHeight) {
         sendEventTelemetry({
           event: TelemetryEvent.PUBSUB_AUTOSCROLL_RESUMED,
           eventData: {

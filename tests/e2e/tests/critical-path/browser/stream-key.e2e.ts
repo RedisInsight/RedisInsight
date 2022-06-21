@@ -68,9 +68,10 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     keyName = chance.word({ length: 20 });
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
+    console.log(`keyField: ${keyField}`);
     // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
     const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
+    console.log(`paramsBeforeEntryAdding: ${paramsBeforeEntryAdding}`);
     await browserPage.addEntryToStream(chance.word({ length: 20 }), chance.word({ length: 20 }));
     // Compare that after adding new entry, new column and row were added
     const paramsAfterEntryAdding = await browserPage.getStreamRowColumnNumber();
@@ -78,10 +79,13 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     await t.expect(paramsAfterEntryAdding[1]).eql(toString(toNumber(paramsBeforeEntryAdding[1]) + 1), 'Increased number of rows after adding');
     // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
     const paramsBeforeExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
+    console.log(`paramsBeforeExistedFieldAdding: ${paramsBeforeExistedFieldAdding}`);
     await browserPage.addEntryToStream(keyField, chance.word({ length: 20 }));
+    console.log(`keyField: ${keyField}`);
     const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
+    console.log(`paramsAfterExistedFieldAdding: ${paramsAfterExistedFieldAdding}`);
     await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
+    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
     keyName = chance.word({ length: 20 });

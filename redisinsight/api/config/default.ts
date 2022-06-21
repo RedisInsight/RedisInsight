@@ -126,6 +126,11 @@ export default {
     buildInfo: process.env.CONTENT_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.CONTENT_DEV_PATH,
   },
+  notifications: {
+    updateUrl: process.env.NOTIFICATION_UPDATE_URL
+      || 'https://s3.amazonaws.com/redisinsight.test/public/notifications.json',
+    devMode: !!process.env.NOTIFICATION_DEV_PATH,
+  },
   workbench: {
     maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,
     maxItemsPerDb: parseInt(process.env.COMMAND_EXECUTION_MAX_ITEMS_PER_DB, 10) || 30,

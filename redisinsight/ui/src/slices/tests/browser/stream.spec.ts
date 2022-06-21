@@ -1416,6 +1416,7 @@ describe('stream slice', () => {
           ackPendingEntriesSuccess(),
           deleteMessageFromList('0-1'),
           loadConsumerGroups(),
+          loadConsumerGroups(),
           addMessageNotification(
             successMessages.MESSAGE_ACTION(
               entries.join(''),
@@ -1482,6 +1483,7 @@ describe('stream slice', () => {
           claimConsumerMessages(),
           claimConsumerMessagesSuccess(),
           loadConsumerGroups(),
+          loadConsumerGroups(),
           deleteMessageFromList('0-1'),
           addMessageNotification(
             successMessages.MESSAGE_ACTION('0-1', 'claimed')
@@ -1516,6 +1518,7 @@ describe('stream slice', () => {
         const expectedActions = [
           claimConsumerMessages(),
           claimConsumerMessagesSuccess(),
+          loadConsumerGroups(),
           loadConsumerGroups(),
           addMessageNotification(
             successMessages.NO_CLAIMED_MESSAGES()

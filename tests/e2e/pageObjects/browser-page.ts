@@ -77,6 +77,8 @@ export class BrowserPage {
     claimPendingMessageButton = Selector('[data-testid=claim-pending-message]');
     submitButton = Selector('[data-testid=btn-submit]');
     consumerDestinationSelect = Selector('[data-testid=destination-select]');
+    removeConsumerButton = Selector('[data-testid^=remove-consumer-button]');
+    removeConsumerGroupButton = Selector('[data-testid^=remove-groups-button]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -206,6 +208,7 @@ export class BrowserPage {
     errorMessage = Selector('[data-test-subj=toast-error]');
     entryIdError = Selector('[data-testid=id-error]');
     pendingCount = Selector('[data-testid=pending-count]');
+    lastRefreshMessage = Selector('[data-testid=refresh-message]');
 
     /**
      * Common part for Add any new key

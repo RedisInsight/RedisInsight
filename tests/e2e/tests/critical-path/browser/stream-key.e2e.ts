@@ -64,7 +64,7 @@ test('Verify that user can add several fields and values during Stream key creat
     await t.click(browserPage.addKeyButton);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).visible).ok('Stream Key Name');
 });
-test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
+test.only('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
     keyName = chance.word({ length: 20 });
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);

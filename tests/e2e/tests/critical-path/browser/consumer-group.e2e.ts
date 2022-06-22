@@ -151,3 +151,49 @@ test('Verify that user can navigate to Consumer Groups screen using the link in 
     await t.click(browserPage.streamTabGroups);
     await t.expect(browserPage.streamTabGroups.withAttribute('aria-selected', 'true').exists).ok('The Consumer Groups screen is opened');
 });
+test('Verify that user can delete the Consumer from the Consumer Group', async t => {
+    keyName = chance.word({ length: 20 });
+    let consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XADD ${keyName} * message orange`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`,
+        `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
+    ];
+    // Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    await t.click(browserPage.consumerGroup);
+    // Delete consumer and check results
+    const consumerCountBefore = await browserPage.streamConsumerName.count;
+    await t.click(browserPage.removeConsumerButton);
+    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(`will be removed from Consumer Group ${consumerGroupName}`, 'The confirmation message');
+    await t.click(browserPage.removeConsumerButton.nth(2));
+    await t.expect(browserPage.streamConsumerName.count).eql(consumerCountBefore - 1, 'The Consumers number after deletion');
+});
+test('Verify that user can delete a Consumer Group', async t => {
+    keyName = chance.word({ length: 20 });
+    let consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
+    ];
+    // Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    // Delete consumer group and check results
+    await t.click(browserPage.removeConsumerGroupButton);
+    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(`${consumerGroupName}and all its consumers will be removed from ${keyName}`, 'The confirmation message');
+    await t.click(browserPage.removeConsumerGroupButton.nth(1));
+    await t.expect(browserPage.streamGroupsContainer.textContent).contains('Your Key has no Consumer Groups available.', 'The Consumer Group is removed from the table');
+});

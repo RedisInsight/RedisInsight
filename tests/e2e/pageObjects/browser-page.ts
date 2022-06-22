@@ -72,6 +72,8 @@ export class BrowserPage {
     confirmRemoveEntryButton = Selector('[data-testid^=remove-entry-button-]').withExactText('Remove');
     clearStreamEntryInputs = Selector('[data-testid=remove-item]');
     saveGroupsButton = Selector('[data-testid=save-groups-btn]');
+    removeConsumerButton = Selector('[data-testid^=remove-consumer-button]');
+    removeConsumerGroupButton = Selector('[data-testid^=remove-groups-button]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -197,6 +199,7 @@ export class BrowserPage {
     entryIdInfoIcon = Selector('[data-testid=entry-id-info-icon]');
     errorMessage = Selector('[data-test-subj=toast-error]');
     entryIdError = Selector('[data-testid=id-error]');
+    lastRefreshMessage = Selector('[data-testid=refresh-message]');
 
     /**
      * Common part for Add any new key

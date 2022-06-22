@@ -15,7 +15,8 @@ import {
   setAnalyticsIdentified,
 } from 'uiSrc/slices/app/info'
 
-import { checkIsAnalyticsGranted, getTelemetryService } from 'uiSrc/telemetry'
+import { getTelemetryService } from 'uiSrc/telemetry'
+import { checkIsAnalyticsGranted } from 'uiSrc/telemetry/checkAnalytics'
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'

@@ -34,7 +34,8 @@ const PopoverDelete = (props: Props) => {
     testid = '',
   } = props
 
-  const onButtonClick = () => {
+  const onButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
     if (item + suffix !== deleting) {
       showPopover(item)
       handleButtonClick?.()
@@ -62,6 +63,7 @@ const PopoverDelete = (props: Props) => {
           data-testid={testid ? `${testid}-icon` : 'remove-icon'}
         />
       )}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className={styles.popover}>
         <EuiText size="m">

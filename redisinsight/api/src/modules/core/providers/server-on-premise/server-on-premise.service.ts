@@ -1,16 +1,11 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  OnApplicationBootstrap,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import config from 'src/utils/config';
 import { AppAnalyticsEvents } from 'src/constants/app-events';
 import { TelemetryEvents } from 'src/constants/telemetry-events';
 import { GetServerInfoResponse } from 'src/dto/server.dto';
 import { ServerRepository } from 'src/modules/core/repositories/server.repository';
-import { IServerProvider } from 'src/modules/core/models/server-provider.interface';
+import { AppType, BuildType, IServerProvider } from 'src/modules/core/models/server-provider.interface';
 import { ServerInfoNotFoundException } from 'src/constants/exceptions';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 
@@ -49,7 +44,11 @@ implements OnApplicationBootstrap, IServerProvider {
       // Create default server info on first application launch
       serverInfo = this.repository.create({});
       await this.repository.save(serverInfo);
-      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, { anonymousId: serverInfo.id, sessionId: this.sessionId });
+      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, {
+        anonymousId: serverInfo.id,
+        sessionId: this.sessionId,
+        appType: this.getAppType(SERVER_CONFIG.buildType),
+      });
       this.eventEmitter.emit(AppAnalyticsEvents.Track, {
         event: TelemetryEvents.ApplicationFirstStart,
         eventData: {
@@ -61,7 +60,11 @@ implements OnApplicationBootstrap, IServerProvider {
       });
     } else {
       this.logger.log('Application started.');
-      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, { anonymousId: serverInfo.id, sessionId: this.sessionId });
+      this.eventEmitter.emit(AppAnalyticsEvents.Initialize, {
+        anonymousId: serverInfo.id,
+        sessionId: this.sessionId,
+        appType: this.getAppType(SERVER_CONFIG.buildType),
+      });
       this.eventEmitter.emit(AppAnalyticsEvents.Track, {
         event: TelemetryEvents.ApplicationStarted,
         eventData: {
@@ -90,6 +93,7 @@ implements OnApplicationBootstrap, IServerProvider {
         appVersion: SERVER_CONFIG.appVersion,
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,
+        appType: this.getAppType(SERVER_CONFIG.buildType),
         encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
         fixedDatabaseId: REDIS_STACK_CONFIG?.id,
       };
@@ -98,6 +102,19 @@ implements OnApplicationBootstrap, IServerProvider {
     } catch (error) {
       this.logger.error('Failed to get application settings.', error);
       throw new InternalServerErrorException();
+    }
+  }
+
+  getAppType(buildType: string): AppType {
+    switch (buildType) {
+      case BuildType.DockerOnPremise:
+        return AppType.Docker;
+      case BuildType.Electron:
+        return AppType.Electron;
+      case BuildType.RedisStack:
+        return AppType.RedisStackWeb;
+      default:
+        return AppType.Unknown;
     }
   }
 }

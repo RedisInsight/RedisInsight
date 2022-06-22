@@ -6,25 +6,26 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
+  EuiLoadingContent,
   EuiPopover,
   EuiText,
   EuiToolTip,
-  EuiLoadingContent,
 } from '@elastic/eui'
+import cx from 'classnames'
+import { isNull } from 'lodash'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { isNull } from 'lodash'
-import cx from 'classnames'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge } from 'uiSrc/components'
-import { KeyTypes, KEY_TYPES_ACTIONS, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes } from 'uiSrc/constants'
-import { selectedKeyDataSelector, selectedKeySelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION } from 'uiSrc/constants'
+import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { streamSelector } from 'uiSrc/slices/browser/stream'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
 import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
@@ -75,6 +76,7 @@ const KeyDetailsHeader = ({
   const { ttl: ttlProp, name: keyProp = '', type, size, length } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
+  const { viewType: streamViewType } = useSelector(streamSelector)
 
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState(false)
 
@@ -93,7 +95,7 @@ const KeyDetailsHeader = ({
 
   const keyNameRef = useRef<HTMLInputElement>(null)
 
-  const tooltipContent = formatNameShort(keyProp)
+  const tooltipContent = formatNameShort(keyProp || '')
 
   const onMouseEnterKey = () => {
     setKeyIsHovering(true)
@@ -180,19 +182,48 @@ const KeyDetailsHeader = ({
 
   const handleRefreshKey = (enableAutoRefresh: boolean) => {
     if (!enableAutoRefresh) {
+      const eventData = getRefreshEventData(
+        {
+          databaseId: instanceId,
+          keyType: type
+        },
+        type,
+        streamViewType
+      )
       sendEventTelemetry({
         event: getBasedOnViewTypeEvent(
           viewType,
           TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
           TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED
         ),
-        eventData: {
-          databaseId: instanceId,
-          keyType: type
-        }
+        eventData
       })
     }
     onRefresh(key, type)
+  }
+
+  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+    const browserViewEvent = enableAutoRefresh
+      ? TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_DISABLED
+    const treeViewEvent = enableAutoRefresh
+      ? TelemetryEvent.TREE_VIEW_KEY_DETAILS_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.TREE_VIEW_KEY_DETAILS_AUTO_REFRESH_DISABLED
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        length,
+        databaseId: instanceId,
+        keyType: type,
+        refreshRate: +refreshRate
+      }
+    })
+  }
+
+  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+    if (enableAutoRefresh) {
+      handleEnableAutoRefresh(enableAutoRefresh, refreshRate)
+    }
   }
 
   const onMouseEnterTTL = () => {
@@ -266,7 +297,7 @@ const KeyDetailsHeader = ({
 
   const Actions = (width: number) => (
     <>
-      {'addItems' in KEY_TYPES_ACTIONS[keyType] && (
+      {KEY_TYPES_ACTIONS[keyType] && 'addItems' in KEY_TYPES_ACTIONS[keyType] && (
         <EuiToolTip
           content={width > MIDDLE_SCREEN_RESOLUTION ? '' : KEY_TYPES_ACTIONS[keyType].addItems?.name}
           position="left"
@@ -296,7 +327,37 @@ const KeyDetailsHeader = ({
           </>
         </EuiToolTip>
       )}
-      {'removeItems' in KEY_TYPES_ACTIONS[keyType] && (
+      {keyType === KeyTypes.Stream && (
+        <EuiToolTip
+          content={width > MIDDLE_SCREEN_RESOLUTION ? '' : STREAM_ADD_ACTION[streamViewType].name}
+          position="left"
+          anchorClassName={cx(styles.actionBtn, { [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION })}
+        >
+          <>
+            {width > MIDDLE_SCREEN_RESOLUTION ? (
+              <EuiButton
+                size="s"
+                iconType="plusInCircle"
+                color="secondary"
+                aria-label={STREAM_ADD_ACTION[streamViewType].name}
+                onClick={onAddItem}
+                data-testid="add-key-value-items-btn"
+              >
+                {STREAM_ADD_ACTION[streamViewType].name}
+              </EuiButton>
+            ) : (
+              <EuiButtonIcon
+                iconType="plusInCircle"
+                color="primary"
+                aria-label={STREAM_ADD_ACTION[streamViewType].name}
+                onClick={onAddItem}
+                data-testid="add-key-value-items-btn"
+              />
+            )}
+          </>
+        </EuiToolTip>
+      )}
+      {KEY_TYPES_ACTIONS[keyType] && 'removeItems' in KEY_TYPES_ACTIONS[keyType] && (
         <EuiToolTip
           content={KEY_TYPES_ACTIONS[keyType].removeItems?.name}
           position="left"
@@ -311,7 +372,7 @@ const KeyDetailsHeader = ({
           />
         </EuiToolTip>
       )}
-      {'editItem' in KEY_TYPES_ACTIONS[keyType] && (
+      {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
         <div className={styles.actionBtn}>
           <EuiButtonIcon
             iconType="pencil"
@@ -355,7 +416,7 @@ const KeyDetailsHeader = ({
                   )}
                   data-testid="edit-key-btn"
                 >
-                  {keyIsEditing || keyIsHovering ? (
+                  {(keyIsEditing || keyIsHovering) && (
                     <EuiFlexGrid
                       columns={1}
                       responsive={false}
@@ -424,13 +485,12 @@ const KeyDetailsHeader = ({
                         )}
                       </EuiFlexItem>
                     </EuiFlexGrid>
-                  ) : (
-                    <EuiText className={styles.key} data-testid="key-name-text">
-                      <b className="truncateText">
-                        {replaceSpaces(keyProp?.substring(0, 200))}
-                      </b>
-                    </EuiText>
                   )}
+                  <EuiText className={cx(styles.key, { [styles.hidden]: keyIsEditing || keyIsHovering })} data-testid="key-name-text">
+                    <b className="truncateText">
+                      {replaceSpaces(keyProp?.substring(0, 200))}
+                    </b>
+                  </EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem />
                 {!arePanelsCollapsed && (
@@ -496,60 +556,61 @@ const KeyDetailsHeader = ({
                   className={styles.flexItemTTL}
                   data-testid="edit-ttl-btn"
                 >
-                  {ttlIsEditing || ttlIsHovering ? (
-                    <EuiFlexGrid
-                      columns={2}
-                      responsive={false}
-                      gutterSize="none"
-                      className={styles.ttlGridComponent}
-                    >
-                      <EuiFlexItem grow={false}>
-                        <EuiText
-                          grow
-                          color="subdued"
-                          size="s"
-                          className={styles.subtitleText}
-                        >
-                          TTL:
-                        </EuiText>
-                      </EuiFlexItem>
-                      <EuiFlexItem grow component="span">
-                        <InlineItemEditor
-                          onApply={() => applyEditTTL()}
-                          onDecline={(event) => cancelEditTTl(event)}
-                          viewChildrenMode={!ttlIsEditing}
-                          isLoading={loading}
-                          declineOnUnmount={false}
-                        >
-                          <EuiFieldText
-                            name="ttl"
-                            id="ttl"
-                            className={cx(
-                              styles.ttlInput,
-                              ttlIsEditing && styles.editing,
-                            )}
-                            maxLength={200}
-                            placeholder="No limit"
-                            value={ttl === '-1' ? '' : ttl}
-                            fullWidth={false}
-                            compressed
-                            min={0}
-                            max={MAX_TTL_NUMBER}
+                  <>
+                    {(ttlIsEditing || ttlIsHovering) && (
+                      <EuiFlexGrid
+                        columns={2}
+                        responsive={false}
+                        gutterSize="none"
+                        className={styles.ttlGridComponent}
+                      >
+                        <EuiFlexItem grow={false}>
+                          <EuiText
+                            grow
+                            color="subdued"
+                            size="s"
+                            className={styles.subtitleText}
+                          >
+                            TTL:
+                          </EuiText>
+                        </EuiFlexItem>
+                        <EuiFlexItem grow component="span">
+                          <InlineItemEditor
+                            onApply={() => applyEditTTL()}
+                            onDecline={(event) => cancelEditTTl(event)}
+                            viewChildrenMode={!ttlIsEditing}
                             isLoading={loading}
-                            onChange={onChangeTtl}
-                            append={appendTTLEditing()}
-                            autoComplete="off"
-                            data-testid="edit-ttl-input"
-                          />
-                        </InlineItemEditor>
-                      </EuiFlexItem>
-                    </EuiFlexGrid>
-                  ) : (
+                            declineOnUnmount={false}
+                          >
+                            <EuiFieldText
+                              name="ttl"
+                              id="ttl"
+                              className={cx(
+                                styles.ttlInput,
+                                ttlIsEditing && styles.editing,
+                              )}
+                              maxLength={200}
+                              placeholder="No limit"
+                              value={ttl === '-1' ? '' : ttl}
+                              fullWidth={false}
+                              compressed
+                              min={0}
+                              max={MAX_TTL_NUMBER}
+                              isLoading={loading}
+                              onChange={onChangeTtl}
+                              append={appendTTLEditing()}
+                              autoComplete="off"
+                              data-testid="edit-ttl-input"
+                            />
+                          </InlineItemEditor>
+                        </EuiFlexItem>
+                      </EuiFlexGrid>
+                    )}
                     <EuiText
                       grow
                       color="subdued"
                       size="s"
-                      className={styles.subtitleText}
+                      className={cx(styles.subtitleText, { [styles.hidden]: ttlIsEditing || ttlIsHovering })}
                       data-testid="key-ttl-text"
                     >
                       TTL:
@@ -557,7 +618,7 @@ const KeyDetailsHeader = ({
                         {ttl === '-1' ? 'No limit' : ttl}
                       </span>
                     </EuiText>
-                  )}
+                  </>
                 </EuiFlexItem>
                 <EuiFlexItem>
                   <div className={styles.subtitleActionBtns}>
@@ -566,11 +627,13 @@ const KeyDetailsHeader = ({
                       loading={loading}
                       lastRefreshTime={lastRefreshTime}
                       displayText={width > HIDE_LAST_REFRESH}
-                      onRefresh={handleRefreshKey}
                       containerClassName={styles.actionBtn}
+                      onRefresh={handleRefreshKey}
+                      onEnableAutoRefresh={handleEnableAutoRefresh}
+                      onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                       testid="refresh-key-btn"
                     />
-                    {(keyType && KEY_TYPES_ACTIONS[keyType]) && Actions(width)}
+                    {keyType && Actions(width)}
 
                     <EuiPopover
                       key={keyProp}

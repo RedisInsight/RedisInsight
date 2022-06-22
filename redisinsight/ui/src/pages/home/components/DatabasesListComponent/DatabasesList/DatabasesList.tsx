@@ -198,14 +198,21 @@ function DatabasesList({
     </EuiPopover>
   )
 
+  const noSearchResultsMsg = (
+    <div className={styles.noSearchResults}>
+      <div className={styles.tableMsgTitle}>No results found</div>
+      <div>No databases matched your search. Try reducing the criteria.</div>
+    </div>
+  )
+
   return (
     <div className="databaseList" ref={containerTableRef}>
       <EuiInMemoryTable
         ref={tableRef}
-        items={instances}
+        items={instances.filter(({ visible = true }) => visible)}
         itemId="id"
         loading={loading}
-        message={loadingMsg}
+        message={instances.length ? noSearchResultsMsg : loadingMsg}
         columns={columns}
         rowProps={toggleSelectedRow}
         sorting={{ sort }}

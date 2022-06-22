@@ -194,10 +194,11 @@ export function fetchHashFields(
   cursor: number,
   count: number,
   match: string,
+  resetData: boolean = true,
   onSuccess?: (data: GetHashFieldsResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(loadHashFields([isNull(match) ? '*' : match, true]))
+    dispatch(loadHashFields([isNull(match) ? '*' : match, resetData]))
 
     try {
       const state = stateInit()

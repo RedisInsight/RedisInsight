@@ -5,4 +5,7 @@ export const CommandsVersions = {
   FILTER_PER_KEY_TYPES: {
     since: '6.0',
   },
+  SPUBLISH_NOT_SUPPORTED: {
+    since: '7.0',
+  },
 }

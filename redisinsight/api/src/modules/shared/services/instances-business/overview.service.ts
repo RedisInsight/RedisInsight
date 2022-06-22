@@ -28,15 +28,21 @@ export class OverviewService {
     client: IORedis.Redis | IORedis.Cluster,
   ): Promise<DatabaseOverview> {
     let nodesInfo = [];
+    let currentDbIndex = 0;
+
     if (client instanceof IORedis.Cluster) {
+      currentDbIndex = get(client, ['options', 'db'], 0);
       nodesInfo = await this.getNodesInfo(client);
     } else {
+      currentDbIndex = get(client, ['options', 'db'], 0);
       nodesInfo = [await this.getNodeInfo(client)];
     }
 
+    const [totalKeys, totalKeysPerDb] = this.calculateTotalKeys(nodesInfo, currentDbIndex);
     return {
       version: this.getVersion(nodesInfo),
-      totalKeys: this.calculateTotalKeys(nodesInfo),
+      totalKeys,
+      totalKeysPerDb,
       usedMemory: this.calculateUsedMemory(nodesInfo),
       connectedClients: this.calculateConnectedClients(nodesInfo),
       opsPerSecond: this.calculateOpsPerSec(nodesInfo),
@@ -190,11 +196,12 @@ export class OverviewService {
    * Sum of keys for primary shards
    * In case when shard has multiple logical databases shard total keys = sum of all dbs keys
    * @param nodes
+   * @param index
    * @private
    */
-  private calculateTotalKeys(nodes = []): number {
+  private calculateTotalKeys(nodes = [], index: number): [number, Record<string, number>] {
     if (!this.isMetricsAvailable(nodes, 'keyspace', [undefined])) {
-      return undefined;
+      return [undefined, undefined];
     }
 
     try {
@@ -202,17 +209,28 @@ export class OverviewService {
         get(node, 'replication.role'),
       ));
 
-      return sumBy(masterNodes, (node) => sum(
+      const totalKeysPerDb = {};
+
+      masterNodes.forEach((node) => {
         map(
           get(node, 'keyspace', {}),
-          (dbKeys): number => {
+          (dbKeys, dbNumber): void => {
             const { keys } = convertBulkStringsToObject(dbKeys, ',', '=');
-            return parseInt(keys, 10);
+
+            if (!totalKeysPerDb[dbNumber]) {
+              totalKeysPerDb[dbNumber] = 0;
+            }
+
+            totalKeysPerDb[dbNumber] += parseInt(keys, 10);
           },
-        ),
-      ));
+        );
+      });
+
+      const totalKeys = totalKeysPerDb ? sum(Object.values(totalKeysPerDb)) : undefined;
+      const dbIndexKeys = totalKeysPerDb[`db${index}`] || 0;
+      return [totalKeys, dbIndexKeys === totalKeys ? undefined : { [`db${index}`]: dbIndexKeys }];
     } catch (e) {
-      return null;
+      return [null, null];
     }
   }
 

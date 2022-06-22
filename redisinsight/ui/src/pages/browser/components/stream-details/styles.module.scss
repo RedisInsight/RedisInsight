@@ -1,0 +1,131 @@
+$cellPaddingWidth: 12px;
+
+.container {
+  padding: 0 18px;
+  height: 100%;
+  position: relative;
+
+  :global(.stream-details-table) {
+    height: calc(100% - 125px);
+  }
+
+  :global {
+    .euiTabs {
+      .euiTab:not(:first-of-type) + .euiTab {
+        margin-left: 18px;
+        position: relative;
+
+        &::after {
+          content: "\00FE3F" !important;
+          font-family: serif !important;
+          position: absolute !important;
+          background-color: initial;
+          top: 0px;
+          left: -2px;
+          color: var(--euiTextSubduedColor);
+          transform: rotate(90deg);
+          font-weight: bold;
+          font-size: 15px;
+        }
+      }
+
+      .euiTab:nth-child(3),
+      .euiTab:nth-child(4) {
+        max-width: calc(50% - 140px);
+      }
+    }
+
+    .ReactVirtualized__Grid__innerScrollContainer {
+      .ReactVirtualized__Table__rowColumn {
+        padding-right: 6px !important;
+        border-right: 1px solid var(--tableDarkestBorderColor) !important;
+        border-left: none !important;
+
+        > div {
+          min-height: 54px !important;
+          padding: $cellPaddingWidth !important;
+        }
+
+        &:last-of-type,
+        &:nth-last-of-type(2) {
+          border-right: none !important;
+        }
+      }
+
+      .ReactVirtualized__Table__row {
+        border-bottom: 1px solid var(--tableDarkestBorderColor) !important;
+        &:last-of-type {
+          border-bottom: none !important;
+        }
+      }
+
+      & > div:hover {
+        background: var(--euiColorLightestShade);
+
+        .value-table-actions {
+          background-color: var(--euiColorLightestShade) !important;
+        }
+
+        .streamItem {
+          color: var(--inputTextColor) !important;
+        }
+
+        .streamItemId {
+          color: var(--euiTextSubduedColor) !important;
+        }
+      }
+    }
+
+    .ReactVirtualized__Table__headerRow {
+      border: none !important;
+
+      .streamItemHeader {
+        padding-right: 4px !important;
+        border: none !important;
+
+        > div > div:first-of-type {
+          padding: 18px 0 18px $cellPaddingWidth !important;
+        }
+      }
+    }
+
+    .ReactVirtualized__Table__Grid {
+      border: 1px solid var(--tableDarkestBorderColor) !important;
+    }
+  }
+}
+
+.rangeWrapper {
+  margin: 30px 30px 26px;
+  padding: 12px 0;
+}
+
+.sliderTrack.mockRange {
+  left: 18px;
+  width: calc(100% - 36px);
+}
+
+.sliderTrack {
+  position: absolute;
+  background-color: var(--separatorColor);
+  width: 100%;
+  height: 1px;
+  margin-top: 2px;
+  z-index: 1;
+}
+
+:global(.streamItem) {
+  color: var(--euiTextSubduedColor) !important;
+  white-space: normal;
+  max-width: 100%;
+  word-break: break-all;
+}
+
+:global(.streamItemId) {
+  color: var(--euiColorMediumShade) !important;
+  display: flex;
+}
+
+:global(.stream-entry-actions) {
+  margin-left: -5px;
+}

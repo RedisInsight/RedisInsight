@@ -1,5 +1,5 @@
 import {
-  getTCP4Endpoints,
+  getTCPEndpoints,
 } from 'src/utils/auto-discovery-helper';
 
 const winNetstat = ''
@@ -12,6 +12,7 @@ const winNetstat = ''
   + 'TCP    [::]:445               [::]:0                 LISTENING       4\n'
   + 'TCP    [::]:808               [::]:0                 LISTENING       6084\n'
   + 'TCP    [::]:2701              [::]:0                 LISTENING       6056\n'
+  + 'TCP    [::]:5000              [::]:0                 LISTENING       6056\n'
   + 'TCP                           *:*                    LISTENING       6056';
 
 const linuxNetstat = ''
@@ -39,7 +40,7 @@ const macNetstat = ''
   + 'tcp6       0      0  ::1.52167              ::1.5002               ESTABLISHED 406172 146808  31200      0 0x0102 0x00000008\n';
 /* eslint-enable max-len */
 
-const getTCP4EndpointsTests = [
+const getTCPEndpointsTests = [
   {
     name: 'win output',
     input: winNetstat.split('\n'),
@@ -47,6 +48,10 @@ const getTCP4EndpointsTests = [
       { host: 'localhost', port: 5000 },
       { host: 'localhost', port: 6379 },
       { host: 'localhost', port: 6380 },
+      { host: 'localhost', port: 135 },
+      { host: 'localhost', port: 445 },
+      { host: 'localhost', port: 808 },
+      { host: 'localhost', port: 2701 },
     ],
   },
   {
@@ -56,6 +61,12 @@ const getTCP4EndpointsTests = [
       { host: 'localhost', port: 5000 },
       { host: 'localhost', port: 6379 },
       { host: 'localhost', port: 6380 },
+      { host: 'localhost', port: 28100 },
+      { host: 'localhost', port: 8100 },
+      { host: 'localhost', port: 8101 },
+      { host: 'localhost', port: 8102 },
+      { host: 'localhost', port: 8103 },
+      { host: 'localhost', port: 8200 },
     ],
   },
   {
@@ -65,14 +76,16 @@ const getTCP4EndpointsTests = [
       { host: 'localhost', port: 5000 },
       { host: 'localhost', port: 6379 },
       { host: 'localhost', port: 6380 },
+      { host: 'localhost', port: 5002 },
+      { host: 'localhost', port: 52167 },
     ],
   },
 ];
 
 describe('getTCP4Endpoints', () => {
-  getTCP4EndpointsTests.forEach((test) => {
+  getTCPEndpointsTests.forEach((test) => {
     it(`Should return endpoints to test ${test.name}`, async () => {
-      const result = getTCP4Endpoints(test.input);
+      const result = getTCPEndpoints(test.input);
 
       expect(result).toEqual(test.output);
     });

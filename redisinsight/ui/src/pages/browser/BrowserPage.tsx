@@ -6,7 +6,7 @@ import { EuiResizableContainer } from '@elastic/eui'
 
 import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import {
   fetchKeys,
   fetchMoreKeys,
@@ -54,7 +54,7 @@ const BrowserPage = () => {
   } = useSelector(appContextBrowser)
   const keysState = useSelector(keysDataSelector)
   const { loading, viewType, isBrowserFullScreen } = useSelector(keysSelector)
-  const { type } = useSelector(selectedKeyDataSelector) ?? { type: '' }
+  const { type, length } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
@@ -114,6 +114,21 @@ const BrowserPage = () => {
 
   const handleToggleFullScreen = () => {
     dispatch(toggleBrowserFullScreen())
+
+    const browserViewEvent = !isBrowserFullScreen
+      ? TelemetryEvent.BROWSER_KEY_DETAILS_FULL_SCREEN_ENABLED
+      : TelemetryEvent.BROWSER_KEY_DETAILS_FULL_SCREEN_DISABLED
+    const treeViewEvent = !isBrowserFullScreen
+      ? TelemetryEvent.TREE_VIEW_KEY_DETAILS_FULL_SCREEN_ENABLED
+      : TelemetryEvent.TREE_VIEW_KEY_DETAILS_FULL_SCREEN_DISABLED
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        databaseId: instanceId,
+        keyType: type,
+        length,
+      }
+    })
   }
 
   const sendPageView = (instanceId: string) => {

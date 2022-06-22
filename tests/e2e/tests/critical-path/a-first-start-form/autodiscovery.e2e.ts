@@ -14,17 +14,15 @@ fixture `Autodiscovery`
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTerms();
-    })
-// Marking as skipped due to the issue on Circle CI https://redislabs.atlassian.net/browse/RI-2691
-test.skip
+    });
+test
     .meta({ env: env.desktop, rte: rte.none })
     .after(async() => {
         // Delete all auto-discovered databases
         for(let i = 0; i < standalonePorts.length; i++) {
-            await myRedisDatabasePage.deleteDatabaseByName(`localhost:${standalonePorts[i]}`)
+            await myRedisDatabasePage.deleteDatabaseByName(`localhost:${standalonePorts[i]}`);
         }
-    })
-    ('Verify that when users open application for the first time, they can see all auto-discovered Standalone DBs', async t => {
+    })('Verify that when users open application for the first time, they can see all auto-discovered Standalone DBs', async t => {
         // Check that standalone DBs have been added into the application
         const n = await myRedisDatabasePage.dbNameList.count;
         for(let k = 0; k < n; k++) {

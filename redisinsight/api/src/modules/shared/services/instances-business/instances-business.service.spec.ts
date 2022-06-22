@@ -71,6 +71,7 @@ const addDatabaseDto: AddDatabaseInstanceDto = {
     verifyServerCert: true,
     caCertId: mockCaCertEntity.id,
     clientCertPairId: mockClientCertEntity.id,
+    servername: mockStandaloneDatabaseEntity.tlsServername,
   },
 };
 

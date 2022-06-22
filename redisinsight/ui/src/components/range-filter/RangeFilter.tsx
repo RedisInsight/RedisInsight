@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
-import { getFormatTime, } from 'uiSrc/utils/streamUtils'
+import { getFormatTime } from 'uiSrc/utils/streamUtils'
 
 import styles from './styles.module.scss'
 
@@ -12,6 +12,7 @@ export interface Props {
   min: number
   start: number
   end: number
+  disabled?: boolean
   handleChangeStart: (value: number, shouldSentEventTelemetry: boolean) => void
   handleChangeEnd: (value: number, shouldSentEventTelemetry: boolean) => void
   handleUpdateRangeMax: (value: number) => void
@@ -33,6 +34,7 @@ const RangeFilter = (props: Props) => {
     min,
     start,
     end,
+    disabled = false,
     handleChangeStart,
     handleChangeEnd,
     handleUpdateRangeMax,
@@ -152,6 +154,7 @@ const RangeFilter = (props: Props) => {
           max={max}
           value={startVal}
           ref={minValRef}
+          disabled={disabled}
           onChange={onChangeStart}
           onMouseUp={onMouseUpStart}
           className={cx(styles.thumb, styles.thumbZindex3)}
@@ -163,6 +166,7 @@ const RangeFilter = (props: Props) => {
           max={max}
           value={endVal}
           ref={maxValRef}
+          disabled={disabled}
           onChange={onChangeEnd}
           onMouseUp={onMouseUpEnd}
           className={cx(styles.thumb, styles.thumbZindex4)}
@@ -170,11 +174,21 @@ const RangeFilter = (props: Props) => {
         />
         <div className={styles.slider}>
           <div className={styles.sliderTrack} />
-          <div ref={range} className={styles.sliderRange}>
+          <div
+            ref={range}
+            className={
+              cx(styles.sliderRange,
+                {
+                  [styles.leftPosition]: max - startVal < (max - min) / 2,
+                  [styles.disabled]: disabled
+                })
+            }
+          >
             <div className={
               cx(styles.sliderLeftValue,
                 {
-                  [styles.leftPosition]: max - startVal < (max - min) / 2
+                  [styles.leftPosition]: max - startVal < (max - min) / 2,
+                  [styles.disabled]: disabled
                 })
               }
             >
@@ -183,7 +197,8 @@ const RangeFilter = (props: Props) => {
             <div className={
               cx(styles.sliderRightValue,
                 {
-                  [styles.rightPosition]: max - endVal > (max - min) / 2
+                  [styles.rightPosition]: max - endVal > (max - min) / 2,
+                  [styles.disabled]: disabled
                 })
               }
             >

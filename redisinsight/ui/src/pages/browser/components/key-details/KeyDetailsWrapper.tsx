@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+
 import {
   deleteKeyAction,
   editKey,
   editKeyTTL,
   fetchKeyInfo,
+  keysSelector,
   refreshKeyInfoAction,
+  selectedKeyDataSelector,
   toggleBrowserFullScreen,
 } from 'uiSrc/slices/browser/keys'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
@@ -15,7 +19,8 @@ import { fetchString, resetStringValue } from 'uiSrc/slices/browser/string'
 import { refreshSetMembersAction } from 'uiSrc/slices/browser/set'
 import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
-import { refreshStreamEntries } from 'uiSrc/slices/browser/stream'
+import { refreshStream } from 'uiSrc/slices/browser/stream'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -39,6 +44,12 @@ const KeyDetailsWrapper = (props: Props) => {
     keyProp
   } = props
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+  const { viewType } = useSelector(keysSelector)
+  const { type: keyType, name: keyName, length: keyLength } = useSelector(selectedKeyDataSelector) ?? {
+    type: KeyTypes.String,
+  }
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -49,6 +60,21 @@ const KeyDetailsWrapper = (props: Props) => {
     // (selectedKey.data?.name !== keyProp)
     dispatch(fetchKeyInfo(keyProp))
   }, [keyProp])
+
+  useEffect(() => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_VIEWED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_VIEWED
+      ),
+      eventData: {
+        keyType,
+        databaseId: instanceId,
+        length: keyLength,
+      }
+    })
+  }, [keyName])
 
   const handleDeleteKey = (key: string, type: string) => {
     if (type === KeyTypes.String) {
@@ -90,7 +116,7 @@ const KeyDetailsWrapper = (props: Props) => {
         break
       }
       case KeyTypes.Stream: {
-        dispatch(refreshStreamEntries(key, resetData))
+        dispatch(refreshStream(key, resetData))
         break
       }
       default:

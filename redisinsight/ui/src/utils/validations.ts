@@ -7,10 +7,12 @@ export const MAX_REFRESH_RATE = 999.9
 export const MIN_REFRESH_RATE = 1.0
 
 export const entryIdRegex = /^(\*)$|^(([0-9]+)(-)((\*)$|([0-9]+$)))/
+export const consumerGroupIdRegex = /^(\$)$|^0$|^(([0-9]+)(-)([0-9]+$))/
 
 export const validateField = (text: string) => text.replace(/\s/g, '')
 
 export const validateEntryId = (initValue: string) => initValue.replace(/[^0-9-*]+/gi, '')
+export const validateConsumerGroupId = (initValue: string) => initValue.replace(/[^0-9-$]+/gi, '')
 
 export const validateCountNumber = (initValue: string) => {
   const value = initValue.replace(/[^0-9]+/gi, '')

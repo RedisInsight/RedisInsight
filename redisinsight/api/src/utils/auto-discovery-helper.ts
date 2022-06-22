@@ -52,17 +52,17 @@ export const getRunningProcesses = async (): Promise<string[]> => new Promise((r
  * Return list of unique endpoints (host is hardcoded) to test
  * @param processes
  */
-export const getTCP4Endpoints = (processes: string[]): Endpoint[] => {
-  const regExp = /(\d+\.\d+\.\d+\.\d+|\*)[:.](\d+)/;
+export const getTCPEndpoints = (processes: string[]): Endpoint[] => {
+  const regExp = /\s((\d+\.\d+\.\d+\.\d+|\*)[:.]|([0-9a-fA-F\][]{0,4}[.:]){1,8})(\d+)\s/;
   const endpoints = new Map();
 
   processes.forEach((line) => {
     const match = line.match(regExp);
 
     if (match) {
-      endpoints.set(match[2], {
+      endpoints.set(match[4], {
         host: 'localhost',
-        port: parseInt(match[2], 10),
+        port: parseInt(match[4], 10),
       });
     }
   });

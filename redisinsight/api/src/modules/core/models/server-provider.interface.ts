@@ -6,6 +6,14 @@ export enum BuildType {
   DockerOnPremise = 'DOCKER_ON_PREMISE',
 }
 
+export enum AppType {
+  RedisStackWeb = 'REDIS_STACK_WEB',
+  RedisStackApp = 'REDIS_STACK_ELECTRON',
+  Electron = 'ELECTRON',
+  Docker = 'DOCKER',
+  Unknown = 'UNKNOWN',
+}
+
 export interface IServerProvider {
   getInfo(): Promise<GetServerInfoResponse>;
 }

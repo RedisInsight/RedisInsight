@@ -2,10 +2,11 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { CliOutputFormatterType, cliTexts, ConnectionSuccessOutputText, SelectCommand } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, CommandMonitor } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, CommandMonitor, } from 'uiSrc/constants'
 import {
   cliParseTextResponseWithOffset,
-  cliParseTextResponseWithRedirect, getDbIndexFromSelectQuery,
+  cliParseTextResponseWithRedirect,
+  getDbIndexFromSelectQuery,
 } from 'uiSrc/utils/cliHelper'
 import { getApiErrorMessage, getApiErrorName, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { cliUnsupportedCommandsSelector, updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
@@ -13,7 +14,6 @@ import ApiErrors from 'uiSrc/constants/apiErrors'
 
 import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
 
-import { showMonitor } from './monitor'
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
 
@@ -252,27 +252,6 @@ export function processUnrepeatableNumber(
       concatToOutput(
         cliParseTextResponseWithOffset(
           cliTexts.REPEAT_COUNT_INVALID,
-          command,
-          CommandExecutionStatus.Fail
-        )
-      )
-    )
-
-    onSuccessAction?.()
-  }
-}
-
-export function processMonitorCommand(
-  command: string = '',
-  onSuccessAction?: () => void
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(showMonitor())
-
-    dispatch(
-      concatToOutput(
-        cliParseTextResponseWithOffset(
-          cliTexts.MONITOR_COMMAND,
           command,
           CommandExecutionStatus.Fail
         )

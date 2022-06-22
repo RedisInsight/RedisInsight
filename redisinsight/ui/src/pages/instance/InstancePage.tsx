@@ -20,6 +20,7 @@ import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
 import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
+import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -79,11 +80,13 @@ const InstancePage = ({ routes = [] }: Props) => {
         // partially fix elastic resizable issue with zooming
         [secondPanelId]: 100 - prevSizes[firstPanelId],
       })
+      return prevSizes
     })
   }, [])
 
   const resetContext = () => {
     dispatch(setMonitorInitialState())
+    dispatch(setInitialPubSubState())
     dispatch(setAppContextInitialState())
     dispatch(resetKeysData())
     setTimeout(() => {

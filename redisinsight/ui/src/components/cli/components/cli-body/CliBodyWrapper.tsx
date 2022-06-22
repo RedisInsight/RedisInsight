@@ -17,15 +17,16 @@ import {
   sendCliClusterCommandAction,
   processUnsupportedCommand,
   processUnrepeatableNumber,
-  processMonitorCommand,
 } from 'uiSrc/slices/cli/cli-output'
-import { CommandMonitor } from 'uiSrc/constants'
+import { CommandMonitor, CommandPSubscribe, Pages } from 'uiSrc/constants'
 import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
+import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { showMonitor } from 'uiSrc/slices/cli/monitor'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import CliBody from './CliBody'
@@ -78,9 +79,17 @@ const CliBodyWrapper = () => {
       return
     }
 
-    // Flow if monitor command was executed
+    // Flow if MONITOR command was executed
     if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
-      dispatch(processMonitorCommand(commandLine, resetCommand))
+      dispatch(concatToOutput(cliTexts.MONITOR_COMMAND_CLI(() => { dispatch(showMonitor()) })))
+      resetCommand()
+      return
+    }
+
+    // Flow if PSUBSCRIBE command was executed
+    if (checkUnsupportedCommand([CommandPSubscribe.toLowerCase()], commandLine)) {
+      dispatch(concatToOutput(cliTexts.PSUBSCRIBE_COMMAND_CLI(Pages.pubSub(instanceId))))
+      resetCommand()
       return
     }
 

@@ -10,12 +10,14 @@
   --info-background: #20222B;
   --info-color: white;
   --svg-background: #010101;
+  --tooltip-background: #3E4B5E;
 }
 
 .theme_LIGHT {
   --info-background: white;
   --info-color: black;
   --svg-background: #FFFFFF;
+  --tooltip-background: white;
 }
 
 
@@ -250,4 +252,28 @@
   color: var(--info-color);
   padding: 12px !important;
   font-family: monospace !important;
+}
+
+.euiToolTip {
+  color: var(--info-color) !important;
+  background-color: var(--tooltip-background) !important;
+  font-size: 12px !important;
+}
+
+.euiToolTip__arrow {
+  background-color: var(--tooltip-background) !important;
+}
+
+
+.automatic-edges-switch {
+  border-radius: 4px;
+  right: 4px;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  color: var(--info-color);
+  margin-top: 12px !important;
+  margin-left: 24px !important;
+  font-size: 12px;
+  line-height: 18px;
 }

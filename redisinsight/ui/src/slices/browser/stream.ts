@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { remove } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import { apiService } from 'uiSrc/services'
@@ -11,10 +12,18 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   AddStreamEntriesDto,
   AddStreamEntriesResponse,
+  ConsumerDto,
+  ConsumerGroupDto,
+  CreateConsumerGroupsDto,
   GetStreamEntriesResponse,
+  PendingEntryDto,
+  UpdateConsumerGroupDto,
+  ClaimPendingEntryDto,
+  ClaimPendingEntriesResponse,
+  AckPendingEntriesResponse,
 } from 'apiSrc/modules/browser/dto/stream.dto'
 import { AppDispatch, RootState } from '../store'
-import { StateStream } from '../interfaces/stream'
+import { StateStream, StreamViewType } from '../interfaces/stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: StateStream = {
@@ -22,6 +31,7 @@ export const initialState: StateStream = {
   error: '',
   sortOrder: SortOrder.DESC,
   range: { start: '', end: '' },
+  viewType: StreamViewType.Data,
   data: {
     total: 0,
     entries: [],
@@ -35,7 +45,15 @@ export const initialState: StateStream = {
       id: '',
       fields: {}
     },
+    lastRefreshTime: null,
   },
+  groups: {
+    loading: false,
+    error: '',
+    data: [],
+    selectedGroup: null,
+    lastRefreshTime: null,
+  }
 }
 
 // A slice for recipes
@@ -43,6 +61,7 @@ const streamSlice = createSlice({
   name: 'stream',
   initialState,
   reducers: {
+    setStreamInitialState: () => initialState,
     // load stream entries
     loadEntries: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
@@ -59,6 +78,7 @@ const streamSlice = createSlice({
         ...data,
       }
       state.data.keyName = data?.keyName
+      state.data.lastRefreshTime = Date.now()
       state.sortOrder = sortOrder
       state.loading = false
     },
@@ -94,6 +114,17 @@ const streamSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    addNewGroup: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    addNewGroupSuccess: (state) => {
+      state.loading = false
+    },
+    addNewGroupFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
     // delete Stream entries
     removeStreamEntries: (state) => {
       state.loading = true
@@ -118,11 +149,167 @@ const streamSlice = createSlice({
         end: '',
       }
     },
+
+    setStreamViewType: (state, { payload }: PayloadAction<StreamViewType>) => {
+      state.viewType = payload
+    },
+
+    // load stream consumer groups entries
+    loadConsumerGroups: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
+      state.groups.loading = true
+      state.groups.error = ''
+
+      if (resetData) {
+        state.groups.data = initialState.groups.data
+      }
+    },
+    loadConsumerGroupsSuccess: (state, { payload }: PayloadAction<ConsumerGroupDto[]>) => {
+      state.groups.loading = false
+      state.groups.data = payload
+      state.groups.lastRefreshTime = Date.now()
+    },
+    loadConsumerGroupsFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+
+    deleteConsumerGroups: (state) => {
+      state.groups.loading = true
+      state.groups.error = ''
+    },
+
+    deleteConsumerGroupsSuccess: (state) => {
+      state.groups.loading = false
+    },
+
+    deleteConsumerGroupsFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+
+    setSelectedGroup: (state, { payload }) => {
+      state.groups.selectedGroup = payload
+    },
+
+    modifyLastDeliveredId: (state) => {
+      state.groups.loading = true
+    },
+
+    modifyLastDeliveredIdSuccess: (state) => {
+      state.groups.loading = false
+    },
+
+    modifyLastDeliveredIdFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+
+    setSelectedConsumer: (state, { payload }) => {
+      state.groups.selectedGroup = {
+        ...state.groups.selectedGroup,
+        selectedConsumer: payload
+      }
+    },
+
+    loadConsumersSuccess: (state, { payload }: PayloadAction<ConsumerDto[]>) => {
+      state.groups.loading = false
+
+      state.groups.selectedGroup = {
+        ...state.groups.selectedGroup,
+        lastRefreshTime: Date.now(),
+        data: payload,
+      }
+    },
+
+    loadConsumersFailure: (state, { payload }: PayloadAction<string>) => {
+      state.groups.loading = false
+      state.groups.error = payload
+      state.viewType = StreamViewType.Groups
+    },
+
+    deleteConsumers: (state) => {
+      state.groups.loading = true
+      state.groups.error = ''
+    },
+
+    deleteConsumersSuccess: (state) => {
+      state.groups.loading = false
+    },
+
+    deleteConsumersFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+
+    loadConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
+      state.groups.loading = false
+
+      state.groups.selectedGroup = {
+        ...state.groups.selectedGroup,
+        selectedConsumer: {
+          ...state.groups.selectedGroup?.selectedConsumer,
+          lastRefreshTime: Date.now(),
+          data: payload,
+        }
+      }
+    },
+
+    loadConsumerMessagesFailure: (state, { payload }: PayloadAction<string>) => {
+      state.groups.loading = false
+      state.groups.error = payload
+      state.viewType = StreamViewType.Consumers
+    },
+
+    loadMoreConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
+      state.groups.loading = false
+
+      state.groups.selectedGroup = {
+        ...state.groups.selectedGroup,
+        selectedConsumer: {
+          ...state.groups.selectedGroup?.selectedConsumer,
+          lastRefreshTime: Date.now(),
+          data: (state.groups.selectedGroup?.selectedConsumer?.data ?? []).concat(payload),
+        }
+      }
+    },
+
+    setConsumerGroupsSortOrder: (state, { payload }: PayloadAction<SortOrder>) => {
+      state.groups.sortOrder = payload
+    },
+    loadMoreConsumerGroupsFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
+
+    claimConsumerMessages: (state) => {
+      state.groups.loading = true
+    },
+    claimConsumerMessagesSuccess: (state) => {
+      state.groups.loading = false
+    },
+    claimConsumerMessagesFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+    ackPendingEntries: (state) => {
+      state.groups.loading = true
+    },
+    ackPendingEntriesSuccess: (state) => {
+      state.groups.loading = false
+    },
+    ackPendingEntriesFailure: (state, { payload }) => {
+      state.groups.loading = false
+      state.groups.error = payload
+    },
+    deleteMessageFromList: (state, { payload }) => {
+      remove(state.groups?.selectedGroup?.selectedConsumer?.data!, (message) => message?.id === payload)
+    },
   },
 })
 
 // Actions generated from the slice
 export const {
+  setStreamInitialState,
   loadEntries,
   loadEntriesSuccess,
   loadEntriesFailure,
@@ -132,18 +319,53 @@ export const {
   addNewEntries,
   addNewEntriesSuccess,
   addNewEntriesFailure,
+  addNewGroup,
+  addNewGroupSuccess,
+  addNewGroupFailure,
   removeStreamEntries,
   removeStreamEntriesSuccess,
   removeStreamEntriesFailure,
   updateStart,
   updateEnd,
-  cleanRangeFilter
+  cleanRangeFilter,
+  setStreamViewType,
+  loadConsumerGroups,
+  loadConsumerGroupsSuccess,
+  loadConsumerGroupsFailure,
+  deleteConsumerGroups,
+  deleteConsumerGroupsSuccess,
+  deleteConsumerGroupsFailure,
+  modifyLastDeliveredId,
+  modifyLastDeliveredIdSuccess,
+  modifyLastDeliveredIdFailure,
+  loadConsumersSuccess,
+  loadConsumersFailure,
+  deleteConsumers,
+  deleteConsumersSuccess,
+  deleteConsumersFailure,
+  loadConsumerMessagesSuccess,
+  loadConsumerMessagesFailure,
+  loadMoreConsumerMessagesSuccess,
+  setSelectedGroup,
+  setSelectedConsumer,
+  claimConsumerMessages,
+  claimConsumerMessagesSuccess,
+  claimConsumerMessagesFailure,
+  ackPendingEntries,
+  ackPendingEntriesSuccess,
+  ackPendingEntriesFailure,
+  deleteMessageFromList,
 } = streamSlice.actions
 
 // A selector
 export const streamSelector = (state: RootState) => state.browser.stream
 export const streamDataSelector = (state: RootState) => state.browser.stream?.data
 export const streamRangeSelector = (state: RootState) => state.browser.stream?.range
+export const streamGroupsSelector = (state: RootState) => state.browser.stream?.groups
+export const streamGroupsDataSelector = (state: RootState) => state.browser.stream?.groups?.data || []
+export const selectedGroupSelector = (state: RootState) => state.browser.stream?.groups?.selectedGroup
+export const selectedConsumerSelector = (state: RootState) =>
+  state.browser.stream?.groups?.selectedGroup?.selectedConsumer
 
 // The reducer
 export default streamSlice.reducer
@@ -198,6 +420,38 @@ export function fetchStreamEntries(
         dispatch(addErrorNotification(error))
         dispatch(loadEntriesFailure(errorMessage))
       }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function refreshStream(
+  key: string,
+  resetData: boolean = false,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const streamViewType = state.browser.stream.viewType
+
+    if (streamViewType === StreamViewType.Data) {
+      dispatch(refreshStreamEntries(key, resetData))
+    }
+    if (streamViewType === StreamViewType.Groups) {
+      dispatch<any>(fetchConsumerGroups(resetData))
+    }
+    if (streamViewType === StreamViewType.Consumers) {
+      dispatch<any>(fetchConsumers(
+        resetData,
+        () => {},
+        () => dispatch(setStreamViewType(StreamViewType.Groups)),
+      ))
+    }
+    if (streamViewType === StreamViewType.Messages) {
+      dispatch<any>(fetchConsumerMessages(
+        resetData,
+        () => {},
+        () => dispatch(setStreamViewType(StreamViewType.Consumers)),
+      ))
     }
   }
 }
@@ -303,7 +557,7 @@ export function fetchMoreStreamEntries(
 export function addNewEntriesAction(
   data: AddStreamEntriesDto,
   onSuccess?: () => void,
-  onFail?: () => void
+  onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(addNewEntries())
@@ -329,7 +583,7 @@ export function addNewEntriesAction(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(addNewEntriesFailure(errorMessage))
-      onFail?.()
+      onFailed?.()
     }
   }
 }
@@ -364,10 +618,417 @@ export function deleteStreamEntry(key: string, entries: string[], onSuccessActio
           )
         ))
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(removeStreamEntriesFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function addNewGroupAction(
+  data: CreateConsumerGroupsDto,
+  onSuccess?: () => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(addNewGroup())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.post(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        data
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(addNewGroupSuccess())
+        dispatch<any>(fetchConsumerGroups(false))
+        dispatch<any>(refreshKeyInfoAction(data.keyName))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(addNewGroupFailure(errorMessage))
+      onFail?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchConsumerGroups(
+  resetData?: boolean,
+  onSuccess?: (data: ConsumerGroupDto[]) => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadConsumerGroups(resetData))
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post<ConsumerGroupDto[]>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
+        ),
+        {
+          keyName: state.browser.keys?.selectedKey?.data?.name,
+        },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadConsumerGroupsSuccess(data))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadConsumerGroupsFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+export function deleteConsumerGroupsAction(keyName: string, consumerGroups: string[], onSuccessAction?: () => void) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteConsumerGroups())
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        {
+          data: {
+            keyName,
+            consumerGroups,
+          },
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.()
+        dispatch(deleteConsumerGroupsSuccess())
+        dispatch<any>(fetchConsumerGroups(false))
+        dispatch<any>(refreshKeyInfoAction(keyName))
+        dispatch(addMessageNotification(
+          successMessages.REMOVED_KEY_VALUE(
+            keyName,
+            consumerGroups.join(''),
+            'Group'
+          )
+        ))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(deleteConsumerGroupsFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchConsumers(
+  resetData?: boolean,
+  onSuccess?: (data: ConsumerDto[]) => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadConsumerGroups(resetData))
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post<ConsumerDto[]>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMERS_GET
+        ),
+        {
+          keyName: state.browser.keys?.selectedKey?.data?.name,
+          groupName: state.browser.stream.groups.selectedGroup?.name,
+        },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadConsumersSuccess(data))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadConsumersFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function deleteConsumersAction(
+  keyName: string,
+  groupName: string,
+  consumerNames: string[],
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteConsumers())
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMERS
+        ),
+        {
+          data: {
+            keyName,
+            groupName,
+            consumerNames,
+          },
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.()
+        dispatch(deleteConsumersSuccess())
+        dispatch<any>(fetchConsumers(false))
+        dispatch<any>(refreshKeyInfoAction(keyName))
+        dispatch(addMessageNotification(
+          successMessages.REMOVED_KEY_VALUE(
+            keyName,
+            consumerNames.join(''),
+            'Consumer'
+          )
+        ))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(deleteConsumersFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchConsumerMessages(
+  resetData?: boolean,
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadConsumerGroups(resetData))
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post<PendingEntryDto[]>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMERS_MESSAGES_GET
+        ),
+        {
+          keyName: state.browser.keys?.selectedKey?.data?.name,
+          groupName: state.browser.stream.groups.selectedGroup?.name,
+          consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
+        },
+      )
+      if (isStatusSuccessful(status)) {
+        dispatch(loadConsumerMessagesSuccess(data))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadConsumerMessagesFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchMoreConsumerMessages(
+  count: number,
+  start: string = '-',
+  end: string = '+',
+  resetData?: boolean,
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadConsumerGroups(resetData))
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post<PendingEntryDto[]>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMERS_MESSAGES_GET
+        ),
+        {
+          start,
+          end,
+          count,
+          keyName: state.browser.keys?.selectedKey?.data?.name,
+          groupName: state.browser.stream.groups.selectedGroup?.name,
+          consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
+        },
+      )
+      if (isStatusSuccessful(status)) {
+        dispatch(loadMoreConsumerMessagesSuccess(data))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadConsumerMessagesFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function modifyLastDeliveredIdAction(
+  data: UpdateConsumerGroupDto,
+  onSuccess?: () => void,
+  onFailed?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(modifyLastDeliveredId())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.patch<any>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAMS_CONSUMER_GROUPS
+        ),
+        data
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(modifyLastDeliveredIdSuccess())
+        dispatch<any>(fetchConsumerGroups(false))
+        dispatch<any>(refreshKeyInfoAction(data.keyName))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(modifyLastDeliveredIdFailure(errorMessage))
+      onFailed?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function claimPendingMessages(
+  payload: Partial<ClaimPendingEntryDto>,
+  onSuccess?: (data: ClaimPendingEntriesResponse) => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(claimConsumerMessages())
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post<ClaimPendingEntriesResponse>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAM_CLAIM_PENDING_MESSAGES
+        ),
+        {
+          keyName: state.browser.keys?.selectedKey?.data?.name,
+          groupName: state.browser.stream.groups.selectedGroup?.name,
+          consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name,
+          ...payload
+        },
+      )
+      if (isStatusSuccessful(status)) {
+        dispatch(claimConsumerMessagesSuccess())
+        dispatch<any>(fetchConsumers())
+        dispatch<any>(fetchConsumerGroups())
+        if (data.affected.length) {
+          dispatch(deleteMessageFromList(data.affected[0]))
+          dispatch(addMessageNotification(
+            successMessages.MESSAGE_ACTION(data.affected[0], 'claimed')
+          ))
+        } else {
+          dispatch(addMessageNotification(
+            successMessages.NO_CLAIMED_MESSAGES()
+          ))
+        }
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(claimConsumerMessagesFailure(errorMessage))
+        onFailed?.()
+      }
+    }
+  }
+}
+
+// Asynchronous thunk actions
+export function ackPendingEntriesAction(
+  key: string,
+  group: string,
+  entries: string[],
+  onSuccess?: (data: AckPendingEntriesResponse) => void,
+  onFailed?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(ackPendingEntries())
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post<AckPendingEntriesResponse>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.STREAM_ACK_PENDING_ENTRIES
+        ),
+        {
+          keyName: key,
+          groupName: group,
+          entries,
+        }
+      )
+      if (isStatusSuccessful(status)) {
+        dispatch(ackPendingEntriesSuccess())
+        dispatch(deleteMessageFromList(entries[0]))
+        dispatch<any>(fetchConsumers())
+        dispatch<any>(fetchConsumerGroups())
+        dispatch(addMessageNotification(
+          successMessages.MESSAGE_ACTION(entries[0], 'acknowledged')
+        ))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(ackPendingEntriesFailure(errorMessage))
+        onFailed?.()
+      }
     }
   }
 }

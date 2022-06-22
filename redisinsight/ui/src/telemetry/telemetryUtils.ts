@@ -2,14 +2,14 @@
  * Telemetry and analytics module.
  * This module abstracts the exact service/framework used for tracking usage.
  */
-import { get } from 'lodash'
 import isGlob from 'is-glob'
 import * as jsonpath from 'jsonpath'
 import { Nullable } from 'uiSrc/utils'
-import store from 'uiSrc/slices/store'
 import { localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, KeyTypes } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
 import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService, MatchType } from './interfaces'
 import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
@@ -28,10 +28,6 @@ const getTelemetryService = (apiKey: string): ITelemetryService => {
   }
   return telemetryService
 }
-
-// Check is user give access to collect his events
-const checkIsAnalyticsGranted = () =>
-  !!get(store.getState(), 'user.settings.config.agreements.analytics', false)
 
 // Telemetry doesn't watch on sending anonymousId like arg of function. Only look at localStorage
 const setAnonymousId = (isAnalyticsGranted: boolean) => {
@@ -55,10 +51,13 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
+  const appType = getAppType()
+
   if (isAnalyticsGranted || nonTracking) {
     telemetryService?.event({
       event,
       properties: {
+        buildType: appType,
         ...eventData,
       },
     })
@@ -77,9 +76,10 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
 
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
+  const appType = getAppType()
 
   if (isAnalyticsGranted || nonTracking) {
-    telemetryService?.pageView(name, databaseId)
+    telemetryService?.pageView(name, appType, databaseId)
   }
 }
 
@@ -168,6 +168,16 @@ const getMatchType = (match: string): MatchType => (
     ? MatchType.EXACT_VALUE_NAME
     : MatchType.PATTERN
 )
+
+export const getRefreshEventData = (eventData: any, type: string, streamViewType?: StreamViewType) => {
+  if (type === KeyTypes.Stream) {
+    return {
+      ...eventData,
+      streamView: StreamViews[streamViewType!]
+    }
+  }
+  return eventData
+}
 
 export {
   getTelemetryService,

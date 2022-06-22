@@ -1,8 +1,6 @@
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/index";
 
 .pageHeader {
-  background-color: var(--euiColorEmptyShade);
-  border-bottom: 1px solid var(--euiColorLightShade);
 }
 
 .pageHeaderTop {
@@ -10,16 +8,17 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 8px 16px;
-  @include euiBreakpoint('s', 'xs') {
-    flex-direction: column-reverse;
-    > div {
-      width: 100%;
-    }
-    .pageHeaderLogo {
-      display: flex;
-      justify-content: center;
-    }
+  padding: 12px 4px 4px 18px;
+
+  @include euiBreakpoint("m", "l", "xl") {
+    padding: 8px 14px;
+  }
+}
+
+.title {
+  font-size: 24px;
+  @include euiBreakpoint("m", "l", "xl") {
+    padding-left: 12px;
   }
 }
 

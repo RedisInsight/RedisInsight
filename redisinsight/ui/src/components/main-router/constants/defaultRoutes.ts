@@ -11,6 +11,7 @@ import {
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import SlowLogPage from 'uiSrc/pages/slowLog'
+import PubSubPage from 'uiSrc/pages/pubSub'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -29,6 +30,11 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.slowLog,
     path: Pages.slowLog(':instanceId'),
     component: SlowLogPage,
+  },
+  {
+    pageName: PageNames.pubSub,
+    path: Pages.pubSub(':instanceId'),
+    component: PubSubPage,
   },
 ]
 

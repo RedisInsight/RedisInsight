@@ -1,9 +1,20 @@
-import { ApiProperty, ApiPropertyOptional, IntersectionType } from '@nestjs/swagger';
+import {
+  ApiProperty, ApiPropertyOptional, IntersectionType,
+} from '@nestjs/swagger';
 import {
   ArrayNotEmpty,
   IsArray,
   IsDefined,
-  IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested, isString,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  Min,
+  ValidateNested,
+  isString,
+  NotEquals,
+  ValidateIf,
+  IsBoolean,
 } from 'class-validator';
 import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
@@ -183,3 +194,356 @@ export class CreateStreamDto extends IntersectionType(
   AddStreamEntriesDto,
   KeyWithExpireDto,
 ) {}
+
+export class ConsumerGroupDto {
+  @ApiProperty({
+    type: String,
+    description: 'Consumer Group name',
+    example: 'group',
+  })
+  name: string;
+
+  @ApiProperty({
+    type: Number,
+    description: 'Number of consumers',
+    example: 2,
+  })
+  consumers: number = 0;
+
+  @ApiProperty({
+    type: Number,
+    description: 'Number of pending messages',
+    example: 2,
+  })
+  pending: number = 0;
+
+  @ApiProperty({
+    type: String,
+    description: 'Smallest Id of the message that is pending in the group',
+    example: '1657892649-0',
+  })
+  smallestPendingId: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Greatest Id of the message that is pending in the group',
+    example: '1657892680-0',
+  })
+  greatestPendingId: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Id of last delivered message',
+    example: '1657892648-0',
+  })
+  lastDeliveredId: string;
+}
+
+export class CreateConsumerGroupDto {
+  @ApiProperty({
+    type: String,
+    description: 'Consumer group name',
+    example: 'group',
+  })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Id of last delivered message',
+    example: '1657892648-0',
+  })
+  @IsNotEmpty()
+  @IsString()
+  lastDeliveredId: string;
+}
+
+export class CreateConsumerGroupsDto extends KeyDto {
+  @ApiProperty({
+    type: () => CreateConsumerGroupDto,
+    isArray: true,
+    description: 'List of consumer groups to create',
+  })
+  @ValidateNested()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => CreateConsumerGroupDto)
+  consumerGroups: CreateConsumerGroupDto[];
+}
+
+export class UpdateConsumerGroupDto extends IntersectionType(
+  KeyDto,
+  CreateConsumerGroupDto,
+) {}
+
+export class DeleteConsumerGroupsDto extends KeyDto {
+  @ApiProperty({
+    description: 'Consumer group names',
+    type: String,
+    isArray: true,
+    example: ['Group-1', 'Group-1'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  consumerGroups: string[];
+}
+
+export class DeleteConsumerGroupsResponse {
+  @ApiProperty({
+    description: 'Number of deleted consumer groups',
+    type: Number,
+  })
+  affected: number;
+}
+
+export class ConsumerDto {
+  @ApiProperty({
+    type: String,
+    description: 'The consumer\'s name',
+    example: 'consumer-2',
+  })
+  name: string;
+
+  @ApiProperty({
+    type: Number,
+    description: 'The number of pending messages for the client, '
+      + 'which are messages that were delivered but are yet to be acknowledged',
+    example: 2,
+  })
+  pending: number = 0;
+
+  @ApiProperty({
+    type: Number,
+    description: 'The number of milliseconds that have passed since the consumer last interacted with the server',
+    example: 22442,
+  })
+  idle: number = 0;
+}
+
+export class GetConsumersDto extends KeyDto {
+  @ApiProperty({
+    type: String,
+    description: 'Consumer group name',
+    example: 'group-1',
+  })
+  @IsNotEmpty()
+  @IsString()
+  groupName: string;
+}
+
+export class DeleteConsumersDto extends GetConsumersDto {
+  @ApiProperty({
+    description: 'Names of consumers to delete',
+    type: String,
+    isArray: true,
+    example: ['consumer-1', 'consumer-2'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  consumerNames: string[];
+}
+
+export class PendingEntryDto {
+  @ApiProperty({
+    type: String,
+    description: 'Entry ID',
+    example: '*',
+  })
+  id: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Consumer name',
+    example: 'consumer-1',
+  })
+  consumerName: string;
+
+  @ApiProperty({
+    type: Number,
+    description: 'The number of milliseconds that elapsed since the last time '
+      + 'this message was delivered to this consumer',
+    example: 22442,
+  })
+  idle: number = 0;
+
+  @ApiProperty({
+    type: Number,
+    description: 'The number of times this message was delivered',
+    example: 2,
+  })
+  delivered: number = 0;
+}
+
+export class GetPendingEntriesDto extends IntersectionType(
+  KeyDto,
+  GetConsumersDto,
+) {
+  @ApiProperty({
+    type: String,
+    description: 'Consumer name',
+    example: 'consumer-1',
+  })
+  @IsNotEmpty()
+  @IsString()
+  consumerName: string;
+
+  @ApiPropertyOptional({
+    description: 'Specifying the start id',
+    type: String,
+    default: '-',
+  })
+  @IsString()
+  start?: string = '-';
+
+  @ApiPropertyOptional({
+    description: 'Specifying the end id',
+    type: String,
+    default: '+',
+  })
+  @IsString()
+  end?: string = '+';
+
+  @ApiPropertyOptional({
+    description:
+      'Specifying the number of pending messages to return.',
+    type: Number,
+    minimum: 1,
+    default: 500,
+  })
+  @IsInt()
+  @Min(1)
+  count?: number = 500;
+}
+
+export class AckPendingEntriesDto extends GetConsumersDto {
+  @ApiProperty({
+    description: 'Entries IDs',
+    type: String,
+    isArray: true,
+    example: ['1650985323741-0', '1650985323770-0'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  entries: string[];
+}
+
+export class AckPendingEntriesResponse {
+  @ApiProperty({
+    description: 'Number of affected entries',
+    type: Number,
+  })
+  affected: number;
+}
+
+export class ClaimPendingEntryDto extends KeyDto {
+  @ApiProperty({
+    type: String,
+    description: 'Consumer group name',
+    example: 'group-1',
+  })
+  @IsNotEmpty()
+  @IsString()
+  groupName: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Consumer name',
+    example: 'consumer-1',
+  })
+  @IsNotEmpty()
+  @IsString()
+  consumerName: string;
+
+  @ApiProperty({
+    description: 'Claim only if its idle time is greater the minimum idle time ',
+    type: Number,
+    minimum: 0,
+    default: 0,
+  })
+  @IsInt()
+  @Min(0)
+  minIdleTime: number = 0;
+
+  @ApiProperty({
+    description: 'Entries IDs',
+    type: String,
+    isArray: true,
+    example: ['1650985323741-0', '1650985323770-0'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  entries: string[];
+
+  @ApiPropertyOptional({
+    description: 'Set the idle time (last time it was delivered) of the message',
+    type: Number,
+    minimum: 0,
+  })
+  @NotEquals(null)
+  @ValidateIf((object, value) => value !== undefined)
+  @IsInt()
+  @Min(0)
+  idle?: number;
+
+  @ApiPropertyOptional({
+    description: 'This is the same as IDLE but instead of a relative amount of milliseconds, '
+      + 'it sets the idle time to a specific Unix time (in milliseconds)',
+    type: Number,
+  })
+  @NotEquals(null)
+  @ValidateIf((object, value) => value !== undefined)
+  @IsInt()
+  time?: number;
+
+  @ApiPropertyOptional({
+    description: 'Set the retry counter to the specified value. '
+      + 'This counter is incremented every time a message is delivered again. '
+      + 'Normally XCLAIM does not alter this counter, which is just served to clients when the XPENDING command '
+      + 'is called: this way clients can detect anomalies, like messages that are never processed '
+      + 'for some reason after a big number of delivery attempts',
+    type: Number,
+    minimum: 0,
+  })
+  @NotEquals(null)
+  @ValidateIf((object, value) => value !== undefined)
+  @IsInt()
+  @Min(0)
+  retryCount?: number;
+
+  @ApiPropertyOptional({
+    description: 'Creates the pending message entry in the PEL even if certain specified IDs are not already '
+      + 'in the PEL assigned to a different client',
+    type: Boolean,
+  })
+  @NotEquals(null)
+  @ValidateIf((object, value) => value !== undefined)
+  @IsBoolean()
+  force?: boolean;
+}
+
+export class ClaimPendingEntriesResponse {
+  @ApiProperty({
+    description: 'Entries IDs were affected by claim command',
+    type: String,
+    isArray: true,
+    example: ['1650985323741-0', '1650985323770-0'],
+  })
+  @IsDefined()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => String)
+  affected: string[];
+}

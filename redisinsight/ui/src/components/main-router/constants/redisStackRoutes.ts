@@ -4,6 +4,7 @@ import {
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import SlowLogPage from 'uiSrc/pages/slowLog'
+import PubSubPage from 'uiSrc/pages/pubSub'
 import EditConnection from 'uiSrc/pages/redisStack/components/edit-connection'
 import COMMON_ROUTES from './commonRoutes'
 
@@ -25,6 +26,12 @@ const INSTANCE_ROUTES: IRoute[] = [
     protected: true,
     path: Pages.slowLog(':instanceId'),
     component: SlowLogPage,
+  },
+  {
+    pageName: PageNames.pubSub,
+    protected: true,
+    path: Pages.pubSub(':instanceId'),
+    component: PubSubPage,
   },
 ]
 

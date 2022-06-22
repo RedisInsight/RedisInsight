@@ -1,7 +1,7 @@
 import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { keyBy } from 'lodash'
+import { mergeWith, toNumber } from 'lodash'
 
 import { formatLongName } from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
@@ -48,18 +48,32 @@ const StreamDataViewWrapper = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    let fields = {}
-    loadedEntries?.forEach((item) => {
-      fields = {
-        ...fields,
-        ...keyBy(Object.keys(item.fields))
+    const fieldsNames = loadedEntries?.reduce((acc, entry) => {
+      const namesInEntry = entry.fields.reduce(
+        (acc, field) => ({ ...acc, [field[0]]: acc[field[0]] ? acc[field[0]] + 1 : 1 }),
+        {}
+      )
+      const mergeByCount = (accCount: number, newCount: number) => (newCount > accCount ? newCount : accCount)
+      return mergeWith(acc, namesInEntry, mergeByCount)
+    }, {})
+
+    const columnsNames = Object.keys(fieldsNames).reduce((acc, field) => {
+      let names = {}
+      // add index to each field name
+      for (let i = 0; i < fieldsNames[field]; i++) {
+        names = { ...names, [`${field}-${i}`]: field }
       }
-    })
+      return { ...acc, ...names }
+    }, {})
 
     // for Manager columns
     // setUniqFields(fields)
     setEntries(loadedEntries)
-    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
+    setColumns([
+      idColumn,
+      ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field])),
+      actionsColumn
+    ])
   }, [loadedEntries, deleting])
 
   const closePopover = useCallback(() => {
@@ -104,16 +118,18 @@ const StreamDataViewWrapper = (props: Props) => {
     })
   }
 
-  const getTemplateColumn = (label: string) : ITableColumn => ({
+  const getTemplateColumn = (label: string, name: string) : ITableColumn => ({
     id: label,
-    label,
+    label: name,
     minWidth: minColumnWidth,
     isSortable: false,
     className: styles.cell,
     headerClassName: 'streamItemHeader',
     headerCellClassName: 'truncateText',
     render: function Id(_name: string, { id, fields }: StreamEntryDto) {
-      const value = fields[label] ?? ''
+      const index = toNumber(label.split('-')[1])
+      const values = fields.filter((field) => field[0] === name)
+      const value = values[index] ? values[index][1] : ''
       const cellContent = value.substring(0, 200)
       const tooltipContent = formatLongName(value)
 

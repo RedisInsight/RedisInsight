@@ -73,6 +73,8 @@ export class StreamService {
 
       this.logger.log('Succeed to get entries from the stream.');
 
+      this.logger.log(entries);
+
       return {
         keyName,
         total: info.length,
@@ -172,7 +174,7 @@ export class StreamService {
 
       const entriesArray = entries.map((entry) => [
         entry.id,
-        ...flatMap(map(entry.fields, (value, field) => [field, value])),
+        ...flatMap(map(entry.fields, (field) => [field[0], field[1]])),
       ]);
 
       const toolCommands: Array<[
@@ -240,11 +242,14 @@ export class StreamService {
       if (!exists) {
         throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
       }
+      // const fields = [["field_name", "value_1"], ["field_name", "value_2"] ]
 
       const entriesArray = entries.map((entry) => [
         entry.id,
-        ...flatMap(map(entry.fields, (value, field) => [field, value])),
+        // ...flatMap(map(entry.fields, (value, field) => [field, value])),
+        ...flatMap(map(entry.fields, (field) => [field[0], field[1]])),
       ]);
+
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
@@ -340,8 +345,8 @@ export class StreamService {
    * to DTO
    *
    * [
-   *   { id: '1650985323741-0', fields: { field: 'value' } },
-   *   { id: '1650985351882-0', fields: { field: 'value2' } },
+   *   { id: '1650985323741-0', fields: [ ['field', 'value'] ] },
+   *   { id: '1650985351882-0', fields: [ ['field', 'value2 ] },
    *   ...
    * ]
    * @param reply
@@ -359,12 +364,7 @@ export class StreamService {
       return null;
     }
 
-    const dto = { id: entry[0], fields: {} };
-
-    chunk(entry[1] || [], 2).forEach((keyFieldPair) => {
-      // eslint-disable-next-line prefer-destructuring
-      dto.fields[keyFieldPair[0]] = keyFieldPair[1];
-    });
+    const dto = { id: entry[0], fields: chunk(entry[1] || [], 2) };
 
     return dto;
   }

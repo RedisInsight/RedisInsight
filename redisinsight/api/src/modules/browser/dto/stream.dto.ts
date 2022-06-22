@@ -39,8 +39,8 @@ export class StreamEntryDto {
   })
   @IsDefined()
   @IsNotEmpty()
-  @IsObjectWithValues([isString], { message: '$property must be an object with string values' })
-  fields: Record<string, string>;
+  // @IsObjectWithValues([isString], { message: '$property must be an object with string values' })
+  fields: Array<Array<string>>;
 }
 
 export class GetStreamEntriesDto extends KeyDto {
@@ -131,17 +131,17 @@ export class AddStreamEntriesDto extends KeyDto {
     example: [
       {
         id: '*',
-        fields: {
-          field1: 'value1',
-          field2: 'value2',
-        },
+        fields: [
+          ["field1", 'value1'],
+          ["field2", 'value2'],
+        ],
       },
       {
         id: '*',
-        fields: {
-          field1: 'value1',
-          field2: 'value2',
-        },
+        fields: [
+          ["field1", 'value1'],
+          ["field2", 'value2'],
+        ],
       },
     ],
   })

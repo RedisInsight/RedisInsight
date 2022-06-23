@@ -370,13 +370,13 @@ export class BrowserPage {
      * @param value The value of the key
      * @param TTL The Time to live value of the key
      */
-    async addStreamKey(keyName: string, field = ' ', value = ' ', TTL?: string): Promise<void> {
+    async addStreamKey(keyName: string, field: string, value: string, TTL?: string): Promise<void> {
         await this.commonAddNewKey(keyName, TTL);
         await t.click(this.streamOption);
         // Verify that user can see Entity ID filled by * by default on add Stream key form
         await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field');
-        await t.typeText(this.streamField, field);
-        await t.typeText(this.streamValue, value);
+        await t.typeText(this.streamField, field, { replace: true });
+        await t.typeText(this.streamValue, value, { replace: true });
         await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
         await t.click(this.addKeyButton);
         await t.click(this.toastCloseButton);

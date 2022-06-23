@@ -75,3 +75,32 @@ test('Verify that user can claim any message in the list of pending messages', a
     await t.click(browserPage.streamConsumerName.nth(1));
     await t.expect(browserPage.streamMessage.count).eql(2, 'The claimed messages is in the selected Consumer');
 });
+test('Verify that claim with optional parameters, the message removed from this Consumer and appeared in the selected Consumer', async t => {
+    keyName = chance.word({ length: 20 });
+    consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XADD ${keyName} * message orange`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`,
+        `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
+    ];
+    // Add New Stream Key with pending message
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream pendings view
+    await browserPage.openStreamPendingsView(keyName);
+    await t.click(browserPage.fullScreenModeButton);
+    // Claim message with optional parameters and check result
+    await t.click(browserPage.claimPendingMessageButton);
+    await t.expect(browserPage.optionalParametersSwitcher.withAttribute('aria-checked', 'false').exists).ok('By default toggle for optional parameters is off');
+    await t.click(browserPage.optionalParametersSwitcher);
+    await t.typeText(browserPage.claimIdleTimeInput, '100');
+    await t.click(browserPage.forceClaimCheckbox);
+    await t.click(browserPage.submitButton);
+    await t.expect(browserPage.streamMessagesContainer.textContent).contains('Your Consumer has no pending messages.', 'The messages is claimed and removed from the table');
+    await t.click(browserPage.streamTabConsumers);
+    await t.click(browserPage.streamConsumerName.nth(1));
+    await t.expect(browserPage.streamMessage.count).eql(2, 'The claimed messages is in the selected Consumer');
+});

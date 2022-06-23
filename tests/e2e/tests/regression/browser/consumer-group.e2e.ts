@@ -127,3 +127,33 @@ test('Verify that A>Z is default table sorting in Consumer column', async t => {
         await t.expect(browserPage.streamConsumerName.nth(i).textContent).contains(consumerNames[i], 'The Consumers default sorting');
     }
 });
+test('Verify that user can see error message if enter invalid last delivered ID', async t => {
+    keyName = chance.word({ length: 20 });
+    let consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
+    ];
+    const invalidEntryIds = [
+        '!@#%^&*()_',
+        '12345678901242532366121324'
+    ];
+    const errorMessage = 'ID format is not correct';
+    // Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    // Change the ID set for the Consumer Group
+    for(const id of invalidEntryIds){
+        const idBefore = await browserPage.streamGroupId.textContent;
+        await t.click(browserPage.editStreamLastIdButton);
+        await t.typeText(browserPage.lastIdInput, id, { replace: true });
+        await t.click(browserPage.saveButton);
+        await t.expect(browserPage.streamGroupId.textContent).eql(idBefore, 'The last delivered ID is not modified');
+        await t.expect(browserPage.entryIdError.textContent).eql(errorMessage, 'The error message');
+    }
+});

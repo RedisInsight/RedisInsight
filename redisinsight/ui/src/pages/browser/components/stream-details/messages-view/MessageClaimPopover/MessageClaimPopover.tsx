@@ -32,7 +32,7 @@ const getConsumersOptions = (consumers: ConsumerDto[]) => (
   consumers.map((consumer) => ({
     value: consumer.name,
     inputDisplay: (
-      <EuiText size="m" className={styles.option}>
+      <EuiText size="m" className={styles.option} data-testid="consumer-option">
         <EuiText className={styles.consumerName}>{consumer.name}</EuiText>
         <EuiText size="s" className={styles.pendingCount} data-testid="pending-count">
           {`pending: ${consumer.pending}`}

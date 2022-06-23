@@ -15,6 +15,11 @@ let keyName = chance.word({ length: 20 });
 let consumerGroupName = chance.word({ length: 20 });
 const keyField = chance.word({ length: 20 });
 const keyValue = chance.word({ length: 20 });
+const entryIds = [
+    '0',
+    '$',
+    '1654594146318-0'
+];
 
 fixture `Consumer group`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -59,11 +64,6 @@ test('Verify that user can create a new Consumer Group in the current Stream', a
 test('Verify that user can input the 0, $ and Valid Entry ID in the ID field', async t => {
     keyName = chance.word({ length: 20 });
     consumerGroupName = chance.word({ length: 20 });
-    const entryIds = [
-        '0',
-        '$',
-        '1654594146318-0'
-    ];
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     await t.click(browserPage.fullScreenModeButton);
@@ -196,4 +196,28 @@ test('Verify that user can delete a Consumer Group', async t => {
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(`${consumerGroupName}and all its consumers will be removed from ${keyName}`, 'The confirmation message');
     await t.click(browserPage.removeConsumerGroupButton.nth(1));
     await t.expect(browserPage.streamGroupsContainer.textContent).contains('Your Key has no Consumer Groups available.', 'The Consumer Group is removed from the table');
+});
+test('Verify that user can change the ID set for the Consumer Group when click on the Pencil button', async t => {
+    keyName = chance.word({ length: 20 });
+    let consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
+    ];
+    // Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    // Change the ID set for the Consumer Group
+    for(const id of entryIds){
+        const idBefore = await browserPage.streamGroupId.textContent;
+        await t.click(browserPage.editStreamLastIdButton);
+        await t.typeText(browserPage.lastIdInput, id, { replace: true });
+        await t.click(browserPage.saveButton);
+        await t.expect(browserPage.streamGroupId.textContent).notEql(idBefore, 'The last delivered ID is modified and the table is reloaded');
+    }
 });

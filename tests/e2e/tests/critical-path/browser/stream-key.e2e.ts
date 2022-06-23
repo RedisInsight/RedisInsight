@@ -3,13 +3,14 @@ import { Selector } from 'testcafe';
 import { toNumber, toString } from 'lodash';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { BrowserPage } from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
+const cliPage = new CliPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 20 });
@@ -66,22 +67,21 @@ test('Verify that user can add several fields and values during Stream key creat
 });
 test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
     keyName = chance.word({ length: 20 });
+    const newField = chance.word({ length: 20 });
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
     // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
     const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
-    await browserPage.addEntryToStream(chance.word({ length: 20 }), chance.word({ length: 20 }));
+    await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
     // Compare that after adding new entry, new column and row were added
     const paramsAfterEntryAdding = await browserPage.getStreamRowColumnNumber();
     await t.expect(paramsAfterEntryAdding[0]).eql(toString(toNumber(paramsBeforeEntryAdding[0]) + 1), 'Increased number of columns after adding');
     await t.expect(paramsAfterEntryAdding[1]).eql(toString(toNumber(paramsBeforeEntryAdding[1]) + 1), 'Increased number of rows after adding');
     // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
-    const paramsBeforeExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    await browserPage.addEntryToStream(keyField, chance.word({ length: 20 }));
+    await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
     const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
-    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
+    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsAfterEntryAdding[1]) + 1), 'Increased number of rows after adding');
+    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsAfterEntryAdding[0], 'The same number of columns after adding');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
     keyName = chance.word({ length: 20 });
@@ -135,4 +135,15 @@ test('Verify that user can add several fields and values to the existing Stream 
     // Check Stream length
     const streamLength = await browserPage.getKeyLength();
     await t.expect(streamLength).eql('2', 'Stream length after adding new entry');
+});
+test('Verify that user can see the Stream range filter', async t => {
+    keyName = chance.word({length: 20});
+    //Add new Stream key with 1 field
+    await cliPage.sendCommandInCli(`XADD ${keyName} * fields values`);
+    //Open key details and check filter
+    await browserPage.openKeyDetails(keyName);
+    await t.debug();
+    await t.expect(browserPage.rangeLeftTimestamp.visible).ok('The stream range start timestamp visibility');
+    await t.expect(browserPage.rangeRightTimestamp.visible).ok('The stream range end timestamp visibility');
+    await t.expect(browserPage.streamRangeBar.visible).ok('The stream range bar visibility');
 });

@@ -14,7 +14,7 @@ const chance = new Chance();
 let keyName = chance.word({ length: 20 });
 let consumerGroupName = chance.word({ length: 20 });
 
-fixture `Pending messages`
+fixture `Acknowledge and Claim of Pending messages`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

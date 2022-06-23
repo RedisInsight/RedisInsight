@@ -64,137 +64,23 @@ test('Verify that user can add several fields and values during Stream key creat
     await t.click(browserPage.addKeyButton);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).visible).ok('Stream Key Name');
 });
-test.only('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
+test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
     keyName = chance.word({ length: 20 });
+    const newField = chance.word({ length: 20 });
     // Add New Stream Key
-    await browserPage.addStreamKey(keyName, 'Field1', 'Value1');
-
-    // Print fields after adding
-    const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
-    console.log(`paramsBeforeEntryAdding: ${paramsBeforeEntryAdding}`);
-    console.log('Printed fields and values after stream creation');
-    let allColumns = await browserPage.streamEntriesContainer.find('span');
-    let allColumnsLength = await allColumns.count;
-    for (let i = 0; i < allColumnsLength; i++) {
-        const col = await allColumns.nth(i).textContent;
-        console.log(`column from span: ${i}, ${col}`);
-    }
+    await browserPage.addStreamKey(keyName, keyField, keyValue);
     // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
-    await browserPage.addEntryToStream('Field2', 'Value2');
+    const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
+    await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
     // Compare that after adding new entry, new column and row were added
     const paramsAfterEntryAdding = await browserPage.getStreamRowColumnNumber();
     await t.expect(paramsAfterEntryAdding[0]).eql(toString(toNumber(paramsBeforeEntryAdding[0]) + 1), 'Increased number of columns after adding');
     await t.expect(paramsAfterEntryAdding[1]).eql(toString(toNumber(paramsBeforeEntryAdding[1]) + 1), 'Increased number of rows after adding');
-    // Print all columns name in Stream
-    allColumns = await browserPage.streamEntriesContainer.find('span');
-    allColumnsLength = await allColumns.count;
-    for (let i = 0; i < allColumnsLength; i++) {
-        const col = await allColumns.nth(i).textContent;
-        console.log(`column from span: ${i}, ${col}`);
-    }
-    // const allOtherColumns = await browserPage.streamEntriesContainer.find('[aria-colcount]').find('span');
-    // const allOtherColumnsLength = await allOtherColumns.count;
-    // for (let i = 0; i < allOtherColumnsLength; i++) {
-    //     const columns2 = await allOtherColumns.nth(i).textContent;
-    //     console.log(`column from entries container: ${i}, ${columns2}`);
-    // }
     // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
-    // const paramsBeforeExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    // console.log(`paramsBeforeExistedFieldAdding: ${paramsBeforeExistedFieldAdding}`);
-    // await browserPage.addEntryToStream('Field1', 'Value3');
-    // const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    // console.log(`paramsAfterExistedFieldAdding: ${paramsAfterExistedFieldAdding}`);
-    // allColumns = await browserPage.streamEntriesContainer.find('span');
-    // allColumnsLength = await allColumns.count;
-    // for (let i = 0; i < allColumnsLength; i++) {
-    //     const col = await allColumns.nth(i).textContent;
-    //     console.log(`column from span: ${i}, ${col}`);
-    // }
-    // await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
-    // await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
-});
-test.only('Stream for existed fields', async t => {
-    keyName = chance.word({ length: 20 });
-    // Add New Stream Key
-    await browserPage.addStreamKey(keyName, 'Field1', 'Value1');
-
-    // Print number and all fields and values
-    const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
-    console.log(`paramsBeforeEntryAdding: ${paramsBeforeEntryAdding}`);
-    // Print all columns name in Stream
-    let allColumns = await browserPage.streamEntriesContainer.find('span');
-    let allColumnsLength = await allColumns.count;
-    for (let i = 0; i < allColumnsLength; i++) {
-        const col = await allColumns.nth(i).textContent;
-        console.log(`column from span: ${i}, ${col}`);
-    }
-    // const allOtherColumns = await browserPage.streamEntriesContainer.find('[aria-colcount]').find('span');
-    // const allOtherColumnsLength = await allOtherColumns.count;
-    // for (let i = 0; i < allOtherColumnsLength; i++) {
-    //     const columns2 = await allOtherColumns.nth(i).textContent;
-    //     console.log(`column from entries container: ${i}, ${columns2}`);
-    // }
-    // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
-    const paramsBeforeExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-
-    // Add entry with existed field
-    await browserPage.addEntryToStream('Field1', 'Value3');
-
-    // Print number and fields with values after adding
+    await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
     const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    console.log(`paramsAfterExistedFieldAdding: ${paramsAfterExistedFieldAdding}`);
-
-    allColumns = await browserPage.streamEntriesContainer.find('span');
-    allColumnsLength = await allColumns.count;
-    for (let i = 0; i < allColumnsLength; i++) {
-        const col = await allColumns.nth(i).textContent;
-        console.log(`column from span: ${i}, ${col}`);
-    }
-
-    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
-    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
-});
-test.only('Stream for existed fields with another function', async t => {
-    keyName = chance.word({ length: 20 });
-    // Add New Stream Key
-    await browserPage.addStreamKey(keyName, 'Field1', 'Value1');
-    await browserPage.addEntryToStream('Field2', 'Value2');
-
-    // Print number and all fields and values
-    const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
-    console.log(`paramsBeforeEntryAdding: ${paramsBeforeEntryAdding}`);
-    // Print all columns name in Stream
-    let allColumns = await browserPage.streamEntriesContainer.find('span');
-    let allColumnsLength = await allColumns.count;
-    for (let i = 0; i < allColumnsLength; i++) {
-        const col = await allColumns.nth(i).textContent;
-        console.log(`column from span: ${i}, ${col}`);
-    }
-    // const allOtherColumns = await browserPage.streamEntriesContainer.find('[aria-colcount]').find('span');
-    // const allOtherColumnsLength = await allOtherColumns.count;
-    // for (let i = 0; i < allOtherColumnsLength; i++) {
-    //     const columns2 = await allOtherColumns.nth(i).textContent;
-    //     console.log(`column from entries container: ${i}, ${columns2}`);
-    // }
-    // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
-    const paramsBeforeExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-
-    // Add entry with existed field
-    await browserPage.addEntryToStream('Field2', 'Value3');
-
-    // Print number and fields with values after adding
-    const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    console.log(`paramsAfterExistedFieldAdding: ${paramsAfterExistedFieldAdding}`);
-
-    allColumns = await browserPage.streamEntriesContainer.find('span');
-    allColumnsLength = await allColumns.count;
-    for (let i = 0; i < allColumnsLength; i++) {
-        const col = await allColumns.nth(i).textContent;
-        console.log(`column from span: ${i}, ${col}`);
-    }
-
-    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
-    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
+    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsAfterEntryAdding[1]) + 1), 'Increased number of rows after adding');
+    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsAfterEntryAdding[0], 'The same number of columns after adding');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
     keyName = chance.word({ length: 20 });

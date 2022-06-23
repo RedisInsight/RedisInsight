@@ -185,15 +185,15 @@ describe('POST /instance/:instanceId/streams/entries', () => {
               id: '*',
               fields: [
                 [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_FIELD_1],
-                [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_FIELD_2]
+                [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_FIELD_2],
               ],
             },
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_VALUE_1]: constants.TEST_STREAM_VALUE_1,
-                [constants.TEST_STREAM_VALUE_2]: constants.TEST_STREAM_VALUE_2,
-              }
+              fields: [
+                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_FIELD_1],
+                [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_FIELD_2]
+              ],
             },
           ]
         },

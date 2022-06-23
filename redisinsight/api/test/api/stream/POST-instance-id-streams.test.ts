@@ -18,7 +18,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 
 const entrySchema = Joi.object().keys({
   id: Joi.string().label('entries.0.id').required(),
-  fields: Joi.object().label('entries.0.fields').required()
+  fields: Joi.array().label('entries.0.fields').required()
     .messages({
       'object.base': '{#label} must be an array',
     }),
@@ -28,7 +28,7 @@ const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   entries: Joi.array().items(entrySchema).required().messages({
     'array.sparse': 'entries must be either object or array',
-    'array.base': 'property {#label} must be either object or array',
+    'array.base': 'property {#label} must be an array',
   }),
   expire: Joi.number().integer().allow(null).min(1).max(2147483647),
 }).strict();

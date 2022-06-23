@@ -33,7 +33,7 @@ export class StreamEntryDto {
   @ApiProperty({
     type: Object,
     description: 'Entry fields',
-    example: { field1: 'value1', field2: 'value2' },
+    example: [['field1', 'value1'], ['field2', 'value2']],
   })
   @IsDefined()
   @IsNotEmpty()

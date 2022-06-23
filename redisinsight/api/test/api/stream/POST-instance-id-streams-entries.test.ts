@@ -16,21 +16,20 @@ const { server, request, constants, rte } = deps;
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
   request(server).post(`/instance/${instanceId}/streams/entries`);
 
-const entrySchema = Joi.object().keys({
-  id: Joi.string().label('entries.0.id').required(),
-  fields: Joi.object().label('entries.0.fields').required()
-    .messages({
-      'object.base': '{#label} must be an array',
+  const entrySchema = Joi.object().keys({
+    id: Joi.string().label('entries.0.id').required(),  
+    fields: Joi.array().label('entries.0.fields').items(Joi.any()).required().messages({
+      'array.base': '{#label} must be an array',
     }),
-});
-
-const dataSchema = Joi.object({
-  keyName: Joi.string().allow('').required(),
-  entries: Joi.array().items(entrySchema).required().messages({
-    'array.sparse': 'entries must be either object or array',
-    'array.base': 'property {#label} must be either object or array',
-  }),
-}).strict();
+  });
+  
+  const dataSchema = Joi.object({
+    keyName: Joi.string().allow('').required(),
+    entries: Joi.array().items(entrySchema).required().messages({
+      'array.sparse': 'entries must be either object or array',
+      'array.base': '{#label} must be either object or array',
+    }),
+  }).strict();
 
 const responseSchema = Joi.object().keys({
   keyName: Joi.string().required(),
@@ -191,8 +190,8 @@ describe('POST /instance/:instanceId/streams/entries', () => {
             {
               id: '*',
               fields: [
-                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_FIELD_1],
-                [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_FIELD_2]
+                [constants.TEST_STREAM_VALUE_1, constants.TEST_STREAM_VALUE_1],
+                [constants.TEST_STREAM_VALUE_2, constants.TEST_STREAM_VALUE_2]
               ],
             },
           ]

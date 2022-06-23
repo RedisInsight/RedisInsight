@@ -73,8 +73,6 @@ export class StreamService {
 
       this.logger.log('Succeed to get entries from the stream.');
 
-      this.logger.log(entries);
-
       return {
         keyName,
         total: info.length,

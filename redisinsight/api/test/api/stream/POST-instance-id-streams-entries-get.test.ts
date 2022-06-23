@@ -92,7 +92,7 @@ describe('POST /instance/:instanceId/streams/entries/get', () => {
           body.entries.forEach((entry, i) => {
             expect(entry.id).to.be.a('string');
             expect(entry.fields).to.eql([
-              [ `f_${9999 - i}`, `v_${9999 - i}`],
+              [`f_${9999 - i}`, `v_${9999 - i}`],
             ]);
           });
         },
@@ -113,7 +113,7 @@ describe('POST /instance/:instanceId/streams/entries/get', () => {
           body.entries.forEach((entry, i) => {
             expect(entry.id).to.be.a('string');
             expect(entry.fields).to.eql([
-              [ `f_${9900 - i}`, `v_${9900 - i}`],
+              [`f_${9900 - i}`, `v_${9900 - i}`],
             ]);
           });
         },

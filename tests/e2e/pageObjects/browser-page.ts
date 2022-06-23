@@ -348,7 +348,7 @@ export class BrowserPage {
      * @param value The value of the key
      * @param TTL The Time to live value of the key
      */
-    async addStreamKey(keyName: string, field = ' ', value = ' ', TTL?: string): Promise<void> {
+    async addStreamKey(keyName: string, field: string, value: string, TTL?: string): Promise<void> {
         await this.commonAddNewKey(keyName, TTL);
         await t.click(this.streamOption);
         // Verify that user can see Entity ID filled by * by default on add Stream key form

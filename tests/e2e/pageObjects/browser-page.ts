@@ -79,6 +79,10 @@ export class BrowserPage {
     consumerDestinationSelect = Selector('[data-testid=destination-select]');
     removeConsumerButton = Selector('[data-testid^=remove-consumer-button]');
     removeConsumerGroupButton = Selector('[data-testid^=remove-groups-button]');
+    optionalParametersSwitcher = Selector('[data-testid=optional-parameters-switcher]');
+    forceClaimCheckbox = Selector('[data-testid=force-claim-checkbox]').sibling();
+    editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
+    saveButton = Selector('[data-testid=save-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -102,6 +106,9 @@ export class BrowserPage {
     filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     consumerOption = Selector('[data-testid=consumer-option]');
+    claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
+    relativeTimeOption = Selector('#idle');
+    timestampOption = Selector('#time');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -137,6 +144,9 @@ export class BrowserPage {
     groupNameInput = Selector('[data-testid=group-name-field]');
     consumerIdInput = Selector('[data-testid=id-field]');
     streamMinIdleTimeInput = Selector('[data-testid=min-idle-time]');
+    claimIdleTimeInput = Selector('[data-testid=time-count]');
+    claimRetryCountInput = Selector('[data-testid=retry-count]');
+    lastIdInput = Selector('[data-testid=last-id-field]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -209,6 +219,9 @@ export class BrowserPage {
     entryIdError = Selector('[data-testid=id-error]');
     pendingCount = Selector('[data-testid=pending-count]');
     lastRefreshMessage = Selector('[data-testid=refresh-message]');
+    streamRangeBar = Selector('[data-testid=mock-fill-range]');
+    rangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
+    rangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
 
     /**
      * Common part for Add any new key

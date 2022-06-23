@@ -3,13 +3,14 @@ import { Selector } from 'testcafe';
 import { toNumber, toString } from 'lodash';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { BrowserPage } from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
+const cliPage = new CliPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 20 });
@@ -135,4 +136,15 @@ test('Verify that user can add several fields and values to the existing Stream 
     // Check Stream length
     const streamLength = await browserPage.getKeyLength();
     await t.expect(streamLength).eql('2', 'Stream length after adding new entry');
+});
+test('Verify that user can see the Stream range filter', async t => {
+    keyName = chance.word({length: 20});
+    //Add new Stream key with 1 field
+    await cliPage.sendCommandInCli(`XADD ${keyName} * fields values`);
+    //Open key details and check filter
+    await browserPage.openKeyDetails(keyName);
+    await t.debug();
+    await t.expect(browserPage.rangeLeftTimestamp.visible).ok('The stream range start timestamp visibility');
+    await t.expect(browserPage.rangeRightTimestamp.visible).ok('The stream range end timestamp visibility');
+    await t.expect(browserPage.streamRangeBar.visible).ok('The stream range bar visibility');
 });

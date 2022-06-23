@@ -353,8 +353,8 @@ export class BrowserPage {
         await t.click(this.streamOption);
         // Verify that user can see Entity ID filled by * by default on add Stream key form
         await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field');
-        await t.typeText(this.streamField, field);
-        await t.typeText(this.streamValue, value);
+        await t.typeText(this.streamField, field, {replace: true});
+        await t.typeText(this.streamValue, value, {replace: true});
         await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
         await t.click(this.addKeyButton);
         await t.click(this.toastCloseButton);

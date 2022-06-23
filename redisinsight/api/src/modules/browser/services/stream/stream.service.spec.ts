@@ -18,9 +18,9 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
 
 const mockStreamEntry: StreamEntryDto = {
   id: '*',
-  fields: {
-    field1: 'value1',
-  },
+  fields: [
+    ['field1', 'value1'],
+  ],
 };
 const mockAddStreamEntriesDto: AddStreamEntriesDto = {
   keyName: 'testList',
@@ -74,11 +74,11 @@ const mockStreamInfo = {
   lastGeneratedId: '1651130346487-1',
   firstEntry: {
     id: '1651130346487-0',
-    fields: { field1: 'value1', field2: 'value2' },
+    fields: [ ['field1', 'value1'], ['field2', 'value2'] ],
   },
   lastEntry: {
     id: '1651130346487-1',
-    fields: { field1: 'value1', field2: 'value2' },
+    fields: [ ['field1', 'value1'], ['field2', 'value2'] ],
   },
 };
 const mockStreamEntriesReply = [
@@ -87,8 +87,8 @@ const mockStreamEntriesReply = [
 ];
 const mockEmptyStreamEntriesReply = [];
 const mockStreamEntries = [
-  { id: '1651130346487-1', fields: { field1: 'value1', field2: 'value2' } },
-  { id: '1651130346487-0', fields: { field1: 'value1', field2: 'value2' } },
+  { id: '1651130346487-1', fields: [ ['field1', 'value1'], ['field2', 'value2'] ] },
+  { id: '1651130346487-0', fields: [ ['field1', 'value1'], ['field2', 'value2'] ] },
 ];
 
 const mockGetStreamEntriesDto: GetStreamEntriesDto = {
@@ -133,7 +133,7 @@ describe('StreamService', () => {
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
         [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          ...Object.keys(mockStreamEntry.fields), ...Object.values(mockStreamEntry.fields)],
+        ...mockStreamEntry.fields[0]],
         [BrowserToolKeysCommands.Expire, mockAddStreamEntriesDto.keyName, 1000],
       ]);
     });
@@ -145,7 +145,7 @@ describe('StreamService', () => {
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
         [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          ...Object.keys(mockStreamEntry.fields), ...Object.values(mockStreamEntry.fields)],
+          ...mockStreamEntry.fields[0]],
       ]);
     });
     it('should throw error key exists', async () => {
@@ -239,7 +239,7 @@ describe('StreamService', () => {
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
         [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          ...Object.keys(mockStreamEntry.fields), ...Object.values(mockStreamEntry.fields)],
+          ...mockStreamEntry.fields[0]],
       ]);
     });
     it('should throw Not Found when key does not exists', async () => {

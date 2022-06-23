@@ -1,4 +1,4 @@
-import { keyBy, mapValues } from 'lodash'
+import { map } from 'lodash'
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import {
@@ -65,7 +65,7 @@ const AddKeyStream = (props: Props) => {
       keyName,
       entries: [{
         id: entryID,
-        fields: mapValues(keyBy(fields, 'fieldName'), 'fieldValue')
+        fields: [...map(fields, (field) => [field.fieldName, field.fieldValue])]
       }]
     }
     if (keyTTL !== undefined) {

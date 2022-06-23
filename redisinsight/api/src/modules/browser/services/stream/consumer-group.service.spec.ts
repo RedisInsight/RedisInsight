@@ -23,9 +23,9 @@ const mockKeyDto = {
 
 const mockStreamEntry: StreamEntryDto = {
   id: '*',
-  fields: {
-    field1: 'value1',
-  },
+  fields: [
+    ['field1', 'value1']
+  ]
 };
 const mockAddStreamEntriesDto: AddStreamEntriesDto = {
   keyName: 'testList',

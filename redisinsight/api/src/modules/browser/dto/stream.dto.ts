@@ -11,7 +11,6 @@ import {
   IsString,
   Min,
   ValidateNested,
-  isString,
   NotEquals,
   ValidateIf,
   IsBoolean,
@@ -19,7 +18,6 @@ import {
 import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
 import { Type } from 'class-transformer';
-import { IsObjectWithValues } from 'src/validators/isObjectWithValues.validator';
 
 export class StreamEntryDto {
   @ApiProperty({
@@ -39,7 +37,8 @@ export class StreamEntryDto {
   })
   @IsDefined()
   @IsNotEmpty()
-  // @IsObjectWithValues([isString], { message: '$property must be an object with string values' })
+  @IsArray()
+  @ArrayNotEmpty()
   fields: Array<Array<string>>;
 }
 
@@ -132,15 +131,15 @@ export class AddStreamEntriesDto extends KeyDto {
       {
         id: '*',
         fields: [
-          ["field1", 'value1'],
-          ["field2", 'value2'],
+          ['field1', 'value1'],
+          ['field2', 'value2'],
         ],
       },
       {
         id: '*',
         fields: [
-          ["field1", 'value1'],
-          ["field2", 'value2'],
+          ['field1', 'value1'],
+          ['field2', 'value2'],
         ],
       },
     ],

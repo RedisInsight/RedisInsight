@@ -34,7 +34,7 @@ const validInputData = {
 
 const entrySchema = Joi.object().keys({
   id: Joi.string().required(),
-  fields: Joi.object().required(),
+  fields: Joi.array().required(),
 });
 
 const responseSchema = Joi.object().keys({
@@ -91,9 +91,9 @@ describe('POST /instance/:instanceId/streams/entries/get', () => {
           expect(body.entries.length).to.eql(500);
           body.entries.forEach((entry, i) => {
             expect(entry.id).to.be.a('string');
-            expect(entry.fields).to.eql({
-              [`f_${9999 - i}`]: `v_${9999 - i}`,
-            });
+            expect(entry.fields).to.eql([
+              [ `f_${9999 - i}`, `v_${9999 - i}`],
+            ]);
           });
         },
       },
@@ -112,9 +112,9 @@ describe('POST /instance/:instanceId/streams/entries/get', () => {
           expect(body.entries.length).to.eql(10);
           body.entries.forEach((entry, i) => {
             expect(entry.id).to.be.a('string');
-            expect(entry.fields).to.eql({
-              [`f_${9900 - i}`]: `v_${9900 - i}`,
-            });
+            expect(entry.fields).to.eql([
+              [ `f_${9900 - i}`, `v_${9900 - i}`],
+            ]);
           });
         },
       },
@@ -132,9 +132,9 @@ describe('POST /instance/:instanceId/streams/entries/get', () => {
           expect(body.entries.length).to.eql(500);
           body.entries.forEach((entry, i) => {
             expect(entry.id).to.be.a('string');
-            expect(entry.fields).to.eql({
-              [`f_${i}`]: `v_${i}`,
-            });
+            expect(entry.fields).to.eql([
+              [`f_${i}`, `v_${i}`],
+            ]);
           });
         },
       },
@@ -154,9 +154,9 @@ describe('POST /instance/:instanceId/streams/entries/get', () => {
           expect(body.entries.length).to.eql(10);
           body.entries.forEach((entry, i) => {
             expect(entry.id).to.be.a('string');
-            expect(entry.fields).to.eql({
-              [`f_${99 + i}`]: `v_${99 + i}`,
-            });
+            expect(entry.fields).to.eql([
+              [`f_${99 + i}`, `v_${99 + i}`]
+            ]);
           });
         },
       },

@@ -20,7 +20,7 @@ const entrySchema = Joi.object().keys({
   id: Joi.string().label('entries.0.id').required(),
   fields: Joi.object().label('entries.0.fields').required()
     .messages({
-      'object.base': '{#label} must be an object',
+      'object.base': '{#label} must be an array',
     }),
 });
 
@@ -38,10 +38,10 @@ const validInputData = {
   entries: [
     {
       id: constants.TEST_STREAM_ID_1,
-      fields: {
-        [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
-        [constants.TEST_STREAM_FIELD_2]: constants.TEST_STREAM_VALUE_2,
-      }
+      fields: [
+        [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1],
+        [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_VALUE_2],
+      ]
     }
   ],
   expire: constants.TEST_STREAM_EXPIRE_1,
@@ -88,9 +88,9 @@ describe('POST /instance/:instanceId/streams', () => {
           entries: [
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
-              }
+              fields: [
+                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1],
+              ],
             }
           ]
         },
@@ -107,9 +107,9 @@ describe('POST /instance/:instanceId/streams', () => {
           entries: [
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
-              },
+              fields: [
+                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1],
+              ],
             },
           ],
           expire: constants.TEST_STREAM_EXPIRE_1,
@@ -131,17 +131,17 @@ describe('POST /instance/:instanceId/streams', () => {
           entries: [
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
-                [constants.TEST_STREAM_FIELD_2]: constants.TEST_STREAM_VALUE_2,
-              }
+              fields: [
+                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1],
+                [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_VALUE_2],
+              ]
             },
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
-                [constants.TEST_STREAM_FIELD_2]: constants.TEST_STREAM_VALUE_2,
-              }
+              fields: [
+                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1],
+                [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_VALUE_2],
+              ]
             },
           ]
         },

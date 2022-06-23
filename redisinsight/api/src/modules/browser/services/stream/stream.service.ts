@@ -242,14 +242,11 @@ export class StreamService {
       if (!exists) {
         throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
       }
-      // const fields = [["field_name", "value_1"], ["field_name", "value_2"] ]
 
       const entriesArray = entries.map((entry) => [
         entry.id,
-        // ...flatMap(map(entry.fields, (value, field) => [field, value])),
         ...flatMap(map(entry.fields, (field) => [field[0], field[1]])),
       ]);
-
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
@@ -364,8 +361,6 @@ export class StreamService {
       return null;
     }
 
-    const dto = { id: entry[0], fields: chunk(entry[1] || [], 2) };
-
-    return dto;
+    return { id: entry[0], fields: chunk(entry[1] || [], 2) };
   }
 }

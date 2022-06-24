@@ -29,7 +29,7 @@ export interface Props {
   testid?: string
   containerClassName?: string
   turnOffAutoRefresh?: boolean
-  onRefresh: (enableAutoRefresh?: boolean) => void
+  onRefresh: (enableAutoRefresh: boolean) => void
   onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
   onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
@@ -49,7 +49,7 @@ const AutoRefresh = ({
   onChangeAutoRefreshRate,
 }: Props) => {
   let intervalText: NodeJS.Timeout
-  let timeoutRefresh: NodeJS.Timeout
+  let intervalRefresh: NodeJS.Timeout
 
   const [refreshMessage, setRefreshMessage] = useState(NOW)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
@@ -74,7 +74,7 @@ const AutoRefresh = ({
   useEffect(() => {
     if (turnOffAutoRefresh && enableAutoRefresh) {
       setEnableAutoRefresh(false)
-      clearInterval(timeoutRefresh)
+      clearInterval(intervalRefresh)
     }
   }, [turnOffAutoRefresh])
 
@@ -96,20 +96,20 @@ const AutoRefresh = ({
     updateLastRefresh()
 
     if (enableAutoRefresh && !loading) {
-      timeoutRefresh = setInterval(() => {
+      intervalRefresh = setInterval(() => {
         if (document.hidden) return
 
         handleRefresh()
       }, +refreshRate * 1_000)
     } else {
-      clearInterval(timeoutRefresh)
+      clearInterval(intervalRefresh)
     }
 
     if (enableAutoRefresh) {
       updateAutoRefreshText(refreshRate)
     }
 
-    return () => clearInterval(timeoutRefresh)
+    return () => clearInterval(intervalRefresh)
   }, [enableAutoRefresh, refreshRate, loading, lastRefreshTime])
 
   const getLastRefreshDelta = (time:Nullable<number>) => (Date.now() - (time || 0)) / 1_000

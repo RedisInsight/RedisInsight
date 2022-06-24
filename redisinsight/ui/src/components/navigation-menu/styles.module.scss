@@ -196,3 +196,12 @@ $sideBarWidth: 60px;
   font-size: 13px !important;
   line-height: 1.35 !important;
 }
+
+.logo {
+  &:hover {
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+}

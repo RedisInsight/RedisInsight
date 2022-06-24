@@ -1,229 +1,226 @@
-import { EuiText, EuiToolTip } from '@elastic/eui'
-import React, { useCallback, useEffect, useState } from 'react'
+import { EuiProgress } from '@elastic/eui'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { keyBy } from 'lodash'
+import { isNull, last } from 'lodash'
+import cx from 'classnames'
 
-import { formatLongName } from 'uiSrc/utils'
-import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
-import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { getFormatTime } from 'uiSrc/utils/streamUtils'
-import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  streamSelector,
+  streamGroupsSelector,
+  streamRangeSelector,
+  streamDataSelector,
+  fetchMoreStreamEntries,
+  updateStart,
+  updateEnd,
+  fetchStreamEntries
+} from 'uiSrc/slices/browser/stream'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { keysSelector } from 'uiSrc/slices/browser/keys'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { getNextId, getTimestampFromId } from 'uiSrc/utils/streamUtils'
+import { SortOrder } from 'uiSrc/constants'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import RangeFilter from 'uiSrc/components/range-filter'
+import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/dto/stream.dto'
 
-import StreamDetails from './StreamDetails'
+import ConsumersViewWrapper from './consumers-view'
+import GroupsViewWrapper from './groups-view'
+import MessagesViewWrapper from './messages-view'
+import StreamDataViewWrapper from './stream-data-view'
+import StreamTabs from './stream-tabs'
 
-import styles from './StreamDetails/styles.module.scss'
+import styles from './styles.module.scss'
 
-export interface IStreamEntry extends StreamEntryDto {
-  editing: boolean
-}
-
-const suffix = '_stream'
-const actionsWidth = 50
-const minColumnWidth = 190
-
-interface Props {
+export interface Props {
   isFooterOpen: boolean
 }
 
 const StreamDetailsWrapper = (props: Props) => {
-  const {
-    entries: loadedEntries = [],
-    keyName: key
-  } = useSelector(streamDataSelector)
+  const { viewType, loading, sortOrder: entryColumnSortOrder } = useSelector(streamSelector)
+  const { loading: loadingGroups } = useSelector(streamGroupsSelector)
+  const { start, end } = useSelector(streamRangeSelector)
+  const { firstEntry, lastEntry, entries, } = useSelector(streamDataSelector)
+  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { id: instanceId } = useSelector(connectedInstanceSelector)
-  const { viewType } = useSelector(keysSelector)
 
   const dispatch = useDispatch()
 
-  const [uniqFields, setUniqFields] = useState({})
-  const [entries, setEntries] = useState<IStreamEntry[]>([])
-  const [columns, setColumns] = useState<ITableColumn[]>([])
-  const [deleting, setDeleting] = useState<string>('')
+  const firstEntryTimeStamp = useMemo(() => getTimestampFromId(firstEntry?.id), [firstEntry?.id])
+  const lastEntryTimeStamp = useMemo(() => getTimestampFromId(lastEntry?.id), [lastEntry?.id])
+
+  const startNumber = useMemo(() => (start === '' ? 0 : parseInt(start, 10)), [start])
+  const endNumber = useMemo(() => (end === '' ? 0 : parseInt(end, 10)), [end])
+
+  const shouldFilterRender = !isNull(firstEntry)
+    && (firstEntry.id !== '')
+    && !isNull(lastEntry)
+    && lastEntry.id !== ''
+
+  useEffect(() =>
+    () => {
+      dispatch(setStreamInitialState())
+    }, [])
 
   useEffect(() => {
-    let fields = {}
-    const streamEntries: IStreamEntry[] = loadedEntries?.map((item) => {
-      fields = {
-        ...fields,
-        ...keyBy(Object.keys(item.fields))
+    if (isNull(firstEntry)) {
+      dispatch(updateStart(''))
+    }
+    if (start === '' && firstEntry?.id !== '') {
+      dispatch(updateStart(firstEntryTimeStamp.toString()))
+    }
+  }, [firstEntryTimeStamp])
+
+  useEffect(() => {
+    if (isNull(lastEntry)) {
+      dispatch(updateEnd(''))
+    }
+    if (end === '' && lastEntry?.id !== '') {
+      dispatch(updateEnd(lastEntryTimeStamp.toString()))
+    }
+  }, [lastEntryTimeStamp])
+
+  const loadMoreItems = () => {
+    const lastLoadedEntryId = last(entries)?.id ?? ''
+    const lastLoadedEntryTimeStamp = getTimestampFromId(lastLoadedEntryId)
+
+    const lastRangeEntryTimestamp = end ? parseInt(end, 10) : getTimestampFromId(lastEntry?.id)
+    const firstRangeEntryTimestamp = start ? parseInt(start, 10) : getTimestampFromId(firstEntry?.id)
+    const shouldLoadMore = () => {
+      if (!lastLoadedEntryTimeStamp) {
+        return false
       }
+      return entryColumnSortOrder === SortOrder.ASC
+        ? lastLoadedEntryTimeStamp <= lastRangeEntryTimestamp
+        : lastLoadedEntryTimeStamp >= firstRangeEntryTimestamp
+    }
+    const nextId = getNextId(lastLoadedEntryId, entryColumnSortOrder)
 
-      return {
-        ...item,
-        editing: false,
-      }
-    })
-
-    setUniqFields(fields)
-    setEntries(streamEntries)
-    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
-  }, [loadedEntries, deleting])
-
-  const closePopover = useCallback(() => {
-    setDeleting('')
-  }, [])
-
-  const showPopover = useCallback((entry = '') => {
-    setDeleting(`${entry + suffix}`)
-  }, [])
-
-  const onSuccessRemoved = () => {
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
-      ),
-      eventData: {
-        databaseId: instanceId,
-        keyType: KeyTypes.Stream,
-        numberOfRemoved: 1,
-      }
-    })
-  }
-
-  const handleDeleteEntry = (entryId = '') => {
-    dispatch(deleteStreamEntry(key, [entryId], onSuccessRemoved))
-    closePopover()
-  }
-
-  const handleRemoveIconClick = () => {
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId,
-        keyType: KeyTypes.Stream
-      }
-    })
-  }
-
-  const handleEditEntry = (entryId = '', editing: boolean) => {
-    const newFieldsState = entries.map((item) => {
-      if (item.id === entryId) {
-        return { ...item, editing }
-      }
-      return item
-    })
-    setEntries(newFieldsState)
-  }
-
-  const getTemplateColumn = (label: string) : ITableColumn => ({
-    id: label,
-    label,
-    minWidth: minColumnWidth,
-    isSortable: false,
-    className: styles.cell,
-    headerClassName: styles.cellHeader,
-    headerCellClassName: 'truncateText',
-    render: function Id(_name: string, { id, fields }: StreamEntryDto) {
-      const value = fields[label] ?? ''
-      const cellContent = value.substring(0, 200)
-      const tooltipContent = formatLongName(value)
-
-      return (
-        <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
-          <div
-            style={{ display: 'flex' }}
-            className="streamEntry"
-            data-testid={`stream-entry-field-${id}`}
-          >
-            <EuiToolTip
-              title="Value"
-              className={styles.tooltip}
-              anchorClassName="streamEntry line-clamp-2"
-              position="bottom"
-              content={tooltipContent}
-            >
-              <>{cellContent}</>
-            </EuiToolTip>
-          </div>
-        </EuiText>
+    if (shouldLoadMore()) {
+      dispatch(
+        fetchMoreStreamEntries(
+          key,
+          entryColumnSortOrder === SortOrder.DESC ? start : nextId,
+          entryColumnSortOrder === SortOrder.DESC ? nextId : end,
+          SCAN_COUNT_DEFAULT,
+          entryColumnSortOrder,
+        )
       )
     }
-  })
+  }
 
-  const [idColumn, actionsColumn]: ITableColumn[] = [
-    {
-      id: 'id',
-      label: 'Entry ID',
-      absoluteWidth: minColumnWidth,
-      minWidth: minColumnWidth,
-      isSortable: true,
-      className: styles.cell,
-      headerClassName: styles.cellHeader,
-      render: function Id(_name: string, { id }: StreamEntryDto) {
-        const timestamp = id.split('-')?.[0]
-        return (
-          <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamEntry" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
-                {getFormatTime(timestamp)}
-              </div>
-            </EuiText>
-            <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamEntryId" data-testid={`stream-entry-${id}`}>
-                {id}
-              </div>
-            </EuiText>
-          </div>
-        )
-      },
+  const filterTelemetry = (data: GetStreamEntriesResponse) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_DATA_FILTERED,
+      eventData: {
+        databaseId: instanceId,
+        total: data.total,
+      }
+    })
+  }
+
+  const resetFilterTelemetry = (data: GetStreamEntriesResponse) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.STREAM_DATA_FILTER_RESET,
+      eventData: {
+        databaseId: instanceId,
+        total: data.total,
+      }
+    })
+  }
+
+  const loadEntries = (telemetryAction?: (data: GetStreamEntriesResponse) => void) => {
+    dispatch(fetchStreamEntries(
+      key,
+      SCAN_COUNT_DEFAULT,
+      entryColumnSortOrder,
+      false,
+      telemetryAction
+    ))
+  }
+
+  const handleChangeStartFilter = useCallback(
+    (value: number, shouldSentEventTelemetry: boolean) => {
+      dispatch(updateStart(value.toString()))
+      loadEntries(shouldSentEventTelemetry ? filterTelemetry : undefined)
     },
-    {
-      id: 'actions',
-      label: '',
-      headerClassName: styles.actionsHeader,
-      textAlignment: TableCellTextAlignment.Left,
-      absoluteWidth: actionsWidth,
-      maxWidth: actionsWidth,
-      minWidth: actionsWidth,
-      render: function Actions(_act: any, { id }: StreamEntryDto) {
-        return (
-          <div>
-            <PopoverDelete
-              header={id}
-              text={(
-                <>
-                  will be removed from
-                  {' '}
-                  <b>{key}</b>
-                </>
-              )}
-              item={id}
-              suffix={suffix}
-              deleting={deleting}
-              closePopover={closePopover}
-              updateLoading={false}
-              showPopover={showPopover}
-              testid={`remove-entry-button-${id}`}
-              handleDeleteItem={handleDeleteEntry}
-              handleButtonClick={handleRemoveIconClick}
-            />
-          </div>
-        )
-      },
+    []
+  )
+
+  const handleChangeEndFilter = useCallback(
+    (value: number, shouldSentEventTelemetry: boolean) => {
+      dispatch(updateEnd(value.toString()))
+      loadEntries(shouldSentEventTelemetry ? filterTelemetry : undefined)
     },
-  ]
+    []
+  )
+
+  const handleResetFilter = useCallback(
+    () => {
+      dispatch(updateStart(firstEntryTimeStamp.toString()))
+      dispatch(updateEnd(lastEntryTimeStamp.toString()))
+      loadEntries(resetFilterTelemetry)
+    },
+    [lastEntryTimeStamp, firstEntryTimeStamp]
+  )
+
+  const handleUpdateRangeMin = useCallback(
+    (min: number) => {
+      dispatch(updateStart(min.toString()))
+    },
+    []
+  )
+
+  const handleUpdateRangeMax = useCallback(
+    (max: number) => {
+      dispatch(updateEnd(max.toString()))
+    },
+    []
+  )
 
   return (
-    <>
-      <StreamDetails
-        data={entries}
-        columns={columns}
-        onEditEntry={handleEditEntry}
-        onClosePopover={closePopover}
-        {...props}
-      />
-    </>
+    <div className={styles.container}>
+      {(loading || loadingGroups) && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-stream"
+        />
+      )}
+      {shouldFilterRender ? (
+        <RangeFilter
+          disabled={viewType !== StreamViewType.Data}
+          max={lastEntryTimeStamp}
+          min={firstEntryTimeStamp}
+          start={startNumber}
+          end={endNumber}
+          handleChangeStart={handleChangeStartFilter}
+          handleChangeEnd={handleChangeEndFilter}
+          handleResetFilter={handleResetFilter}
+          handleUpdateRangeMax={handleUpdateRangeMax}
+          handleUpdateRangeMin={handleUpdateRangeMin}
+        />
+      )
+        : (
+          <div className={styles.rangeWrapper}>
+            <div className={cx(styles.sliderTrack, styles.mockRange)} />
+          </div>
+        )}
+      <StreamTabs />
+      {viewType === StreamViewType.Data && (
+        <StreamDataViewWrapper loadMoreItems={loadMoreItems} {...props} />
+      )}
+      {viewType === StreamViewType.Groups && (
+        <GroupsViewWrapper {...props} />
+      )}
+      {viewType === StreamViewType.Consumers && (
+        <ConsumersViewWrapper {...props} />
+      )}
+      {viewType === StreamViewType.Messages && (
+        <MessagesViewWrapper {...props} />
+      )}
+    </div>
   )
 }
 

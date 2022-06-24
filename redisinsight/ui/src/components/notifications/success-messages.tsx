@@ -119,4 +119,27 @@ export default {
     ),
     group: 'upgrade'
   }),
+  // only one message is being processed at the moment
+  MESSAGE_ACTION: (message: string, actionName: string) => ({
+    title: (
+      <>
+        Message has been
+        {' '}
+        {actionName}
+      </>
+    ),
+    message: (
+      <>
+        <b>{message}</b>
+        {' '}
+        has been successfully
+        {' '}
+        {actionName}.
+      </>
+    ),
+  }),
+  NO_CLAIMED_MESSAGES: () => ({
+    title: 'No messages claimed',
+    message: 'No messages exceed the minimum idle time.',
+  })
 }

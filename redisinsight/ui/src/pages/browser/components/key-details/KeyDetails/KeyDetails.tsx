@@ -13,7 +13,8 @@ import {
   AddListElements,
   AddSetMembers,
   AddZsetMembers,
-  AddHashFields
+  AddHashFields,
+  AddStreamGroup
 } from 'uiSrc/pages/browser/components/key-details-add-items'
 
 import {
@@ -21,9 +22,10 @@ import {
   selectedKeySelector,
   keysSelector,
 } from 'uiSrc/slices/browser/keys'
-import { cleanRangeFilter } from 'uiSrc/slices/browser/stream'
-import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES } from 'uiSrc/constants'
+import { cleanRangeFilter, streamSelector } from 'uiSrc/slices/browser/stream'
+import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES, STREAM_ADD_GROUP_VIEW_TYPES } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
@@ -61,6 +63,7 @@ const KeyDetails = ({ ...props }: Props) => {
   const isKeySelected = !isNull(useSelector(selectedKeyDataSelector))
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
+  const { viewType: streamViewType } = useSelector(streamSelector)
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
   const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] = useState<boolean>(false)
   const [editItem, setEditItem] = useState<boolean>(false)
@@ -76,17 +79,19 @@ const KeyDetails = ({ ...props }: Props) => {
   const openAddItemPanel = () => {
     setIsRemoveItemPanelOpen(false)
     setIsAddItemPanelOpen(true)
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_ADD_VALUE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId,
-        keyType: selectedKeyType
-      }
-    })
+    if (!STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)) {
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_ADD_VALUE_CLICKED,
+          TelemetryEvent.TREE_VIEW_KEY_ADD_VALUE_CLICKED
+        ),
+        eventData: {
+          databaseId: instanceId,
+          keyType: selectedKeyType
+        }
+      })
+    }
   }
 
   const openRemoveItemPanel = () => {
@@ -95,7 +100,7 @@ const KeyDetails = ({ ...props }: Props) => {
   }
 
   const closeAddItemPanel = (isCancelled?: boolean) => {
-    if (isCancelled && isAddItemPanelOpen) {
+    if (isCancelled && isAddItemPanelOpen && !STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)) {
       sendEventTelemetry({
         event: getBasedOnViewTypeEvent(
           viewType,
@@ -203,7 +208,14 @@ const KeyDetails = ({ ...props }: Props) => {
                       <AddListElements onCancel={closeAddItemPanel} />
                     )}
                     {selectedKeyType === KeyTypes.Stream && (
-                      <AddStreamEntries onCancel={closeAddItemPanel} />
+                      <>
+                        {streamViewType === StreamViewType.Data && (
+                          <AddStreamEntries onCancel={closeAddItemPanel} />
+                        )}
+                        {STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType) && (
+                          <AddStreamGroup onCancel={closeAddItemPanel} />
+                        )}
+                      </>
                     )}
                   </div>
                 )}

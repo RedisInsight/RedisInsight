@@ -1,9 +1,16 @@
 import { get } from 'lodash';
 import { constants } from '../constants';
 import * as _ from 'lodash';
+import * as IORedis from 'ioredis';
 
 export const initDataHelper = (rte) => {
   const client = rte.client;
+
+  const sendCommand = async (command: string, args: string[], replyEncoding = 'utf8'): Promise<any> => {
+    return client.sendCommand(new IORedis.Command(command, args, {
+      replyEncoding,
+    }));
+  };
 
   const executeCommand = async (...args: string[]): Promise<any> => {
     return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
@@ -229,6 +236,40 @@ export const initDataHelper = (rte) => {
     }
 
     await client.xadd(constants.TEST_STREAM_KEY_1, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_1,
+      constants.TEST_STREAM_ID_1
+    ])
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_2,
+      constants.TEST_STREAM_ID_1
+    ])
+    await client.xadd(constants.TEST_STREAM_KEY_2, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+  };
+
+  const generateStreamsWithoutStrictMode = async (clean: boolean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    await client.xadd(constants.TEST_STREAM_KEY_1, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_1,
+      constants.TEST_STREAM_ID_1
+    ])
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_2,
+      constants.TEST_STREAM_ID_1
+    ])
+    await client.xadd(constants.TEST_STREAM_KEY_2, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
   };
 
   const generateHugeStream = async (number: number = 100000, clean: boolean) => {
@@ -329,6 +370,7 @@ export const initDataHelper = (rte) => {
   }
 
   return {
+    sendCommand,
     executeCommand,
     executeCommandAll,
     setAclUserRules,
@@ -340,6 +382,9 @@ export const initDataHelper = (rte) => {
     generateNKeys,
     generateNReJSONs,
     generateNTimeSeries,
+    generateStrings,
+    generateStreams,
+    generateStreamsWithoutStrictMode,
     generateNStreams,
     generateNGraphs,
     getClientNodes,

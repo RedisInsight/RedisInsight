@@ -6,6 +6,7 @@ import cx from 'classnames'
 import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
+import { useParams } from 'react-router-dom'
 
 import {
   Theme,
@@ -34,6 +35,7 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
@@ -76,6 +78,8 @@ const Query = (props: Props) => {
   const { items: execHistoryItems } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
@@ -125,7 +129,7 @@ const Query = (props: Props) => {
   const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
     const position = editor.getPosition()
     isDedicatedEditorOpenRef.current = false
-    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 }})
+    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 } })
     editor.trigger('mouse', '_moveTo', { position })
     editor.focus()
   }
@@ -137,6 +141,13 @@ const Query = (props: Props) => {
     setIsDedicatedEditorOpen(true)
     editor.updateOptions({ readOnly: true })
     hideSyntaxWidget(editor)
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_NON_REDIS_EDITOR_OPENED,
+      eventData: {
+        databaseId: instanceId,
+        lang: syntaxCommand.current.lang,
+      }
+    })
   }
 
   const onChange = (value: string = '') => {
@@ -305,6 +316,14 @@ const Query = (props: Props) => {
 
     editor.updateOptions({ readOnly: false })
     triggerUpdateCursorPosition(editor)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_NON_REDIS_EDITOR_CANCELLED,
+      eventData: {
+        databaseId: instanceId,
+        lang: syntaxCommand.current.lang,
+      }
+    })
   }
 
   const updateArgFromDedicatedEditor = (value: string = '') => {
@@ -333,6 +352,13 @@ const Query = (props: Props) => {
     ])
     setIsDedicatedEditorOpen(false)
     triggerUpdateCursorPosition(editor)
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_NON_REDIS_EDITOR_SAVED,
+      eventData: {
+        databaseId: instanceId,
+        lang: syntaxCommand.current.lang,
+      }
+    })
   }
 
   const editorDidMount = (

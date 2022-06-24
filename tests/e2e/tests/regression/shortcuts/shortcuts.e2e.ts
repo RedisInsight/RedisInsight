@@ -2,10 +2,12 @@ import { rte, env } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage, HelpCenterPage, ShortcutsPage } from '../../../pageObjects';
 import { commonUrl } from '../../../helpers/conf';
+import { ClientFunction } from 'testcafe';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const helpCenterPage = new HelpCenterPage();
 const shortcutsPage = new ShortcutsPage();
+const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Shortcuts`
     .meta({ type: 'regression' })
@@ -79,4 +81,14 @@ test
         for(const element of description) {
             await t.expect(shortcutsPage.shortcutsPanel.textContent).contains(element, 'The user can see description of the “Shift+Space” shortcut');
         }
+    })
+test
+    .meta({ env: env.web, rte: rte.none })
+    ('Verify redirected link opening Release Notes in Help Center', async t => {
+        const link = 'https://github.com/RedisInsight/RedisInsight/releases';
+        //Click on the Release Notes in Help Center
+        await t.click(myRedisDatabasePage.helpCenterButton);
+        await t.click(helpCenterPage.helpCenterReleaseNotesButton);
+        //Verify the opened link
+        await t.expect(getPageUrl()).eql(link, 'The Release Notes link');
     })

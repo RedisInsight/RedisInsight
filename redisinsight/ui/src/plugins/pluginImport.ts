@@ -123,6 +123,13 @@ export const prepareIframeHtml = (config) => {
         <meta http-equiv="Content-Security-Policy" content="connect-src 'none';">
       </head>
       <body class="${bodyClass}" style="height: fit-content">
+        <script>
+          try {
+            document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          } catch {
+            document.createElementNS = window.parent.document.createElementNS
+          }
+        </script>
         <div id="app"></div>
         <script>
           globalThis.plugin = {}

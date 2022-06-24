@@ -27,6 +27,7 @@ export const mockStandaloneDatabaseEntity: DatabaseInstanceEntity = {
   provider: HostingProvider.LOCALHOST,
   modules: '[]',
   encryption: null,
+  tlsServername: 'server-name',
 };
 
 export const mockOSSClusterDatabaseEntity: DatabaseInstanceEntity = {

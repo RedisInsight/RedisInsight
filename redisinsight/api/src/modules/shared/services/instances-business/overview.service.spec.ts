@@ -41,7 +41,7 @@ const mockClientsInfo = {
 const mockKeyspace = {
   db0: 'keys=1,expires=0,avg_ttl=0',
   db1: 'keys=0,expires=0,avg_ttl=0',
-  db2: 'keys=0,expires=0,avg_ttl=0',
+  db2: 'keys=1,expires=0,avg_ttl=0',
 };
 const mockNodeInfo = {
   host: 'localhost',
@@ -59,7 +59,10 @@ const databaseId = mockStandaloneDatabaseEntity.id;
 export const mockDatabaseOverview: DatabaseOverview = {
   version: mockServerInfo.redis_version,
   usedMemory: 1,
-  totalKeys: 1,
+  totalKeys: 2,
+  totalKeysPerDb: {
+    db0: 1,
+  },
   connectedClients: 1,
   opsPerSecond: 1,
   networkInKbps: 1,
@@ -94,11 +97,26 @@ describe('OverviewService', () => {
           version: '6.0.5',
           connectedClients: 1,
           totalKeys: 1,
+          totalKeysPerDb: undefined,
           usedMemory: 1000000,
           cpuUsagePercentage: undefined,
           opsPerSecond: undefined,
           networkInKbps: undefined,
           networkOutKbps: undefined,
+        });
+      });
+      it('should return total 0 and empty total per db object', async () => {
+        spyGetNodeInfo.mockResolvedValueOnce({
+          ...mockNodeInfo,
+          keyspace: {
+            db0: 'keys=0,expires=0,avg_ttl=0',
+          },
+        });
+
+        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+          ...mockDatabaseOverview,
+          totalKeys: 0,
+          totalKeysPerDb: undefined,
         });
       });
       it('check for cpu on second attempt', async () => {
@@ -205,7 +223,10 @@ describe('OverviewService', () => {
         expect(await service.getOverview(databaseId, mockCluster)).toEqual({
           ...mockDatabaseOverview,
           connectedClients: 1,
-          totalKeys: 3,
+          totalKeys: 6,
+          totalKeysPerDb: {
+            db0: 3,
+          },
           usedMemory: 3,
           networkInKbps: 6,
           networkOutKbps: 6,
@@ -256,7 +277,10 @@ describe('OverviewService', () => {
         expect(await service.getOverview(databaseId, mockCluster)).toEqual({
           ...mockDatabaseOverview,
           connectedClients: 1,
-          totalKeys: 3,
+          totalKeys: 6,
+          totalKeysPerDb: {
+            db0: 3,
+          },
           usedMemory: 3,
           networkInKbps: 6,
           networkOutKbps: 6,

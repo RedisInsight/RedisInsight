@@ -21,7 +21,7 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import AddDatabaseContainer from './components/AddDatabases/AddDatabasesContainer'
 import DatabasesList from './components/DatabasesListComponent/DatabasesListWrapper'
 import WelcomeComponent from './components/WelcomeComponent/WelcomeComponent'
-import AddInstanceControls from './components/AddInstanceControls/AddInstanceControls'
+import HomeHeader from './components/HomeHeader'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -180,9 +180,9 @@ const HomePage = () => {
       <div />
       <EuiResizeObserver onResize={onResize}>
         {(resizeRef) => (
-          <EuiPage>
+          <EuiPage className={styles.page}>
             <EuiPageBody component="div">
-              <AddInstanceControls
+              <HomeHeader
                 key="instance-controls"
                 onAddInstance={handleAddInstance}
                 direction="row"

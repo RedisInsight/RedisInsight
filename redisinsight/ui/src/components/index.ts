@@ -15,6 +15,8 @@ import { ConsentsSettings, ConsentsSettingsPopup } from './consents-settings'
 import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
 import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
 import MonitorConfig from './monitor-config'
+import PubSubConfig from './pub-sub-config'
+import GlobalSubscriptions from './global-subscriptions'
 import MonitorWrapper from './monitor'
 import PagePlaceholder from './page-placeholder'
 
@@ -36,6 +38,8 @@ export {
   AdvancedSettings,
   KeyboardShortcut,
   MonitorConfig,
+  PubSubConfig,
+  GlobalSubscriptions,
   MonitorWrapper,
   ShortcutsFlyout,
   PagePlaceholder,

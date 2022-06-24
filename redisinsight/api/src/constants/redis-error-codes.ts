@@ -10,6 +10,8 @@ export enum RedisErrorCodes {
   ConnectionReset = 'ECONNRESET',
   Timeout = 'ETIMEDOUT',
   CommandSyntaxError = 'syntax error',
+  BusyGroup = 'BUSYGROUP',
+  NoGroup = 'NOGROUP',
   UnknownCommand = 'unknown command',
 }
 

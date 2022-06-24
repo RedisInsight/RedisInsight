@@ -125,13 +125,13 @@ test
         //Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })
-    ('Verify that user can not run "Select" command in Workbench', async() => {
+    ('Verify that user can not run "Select" command in Workbench', async t => {
         const command = 'select 13';
-        const result = '"select is not supported by the Workbench. The list of all unsupported commands: blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup, select, monitor, subscribe, psubscribe, sync, psync, script debug, blpop, brpop, blmove, brpoplpush, bzpopmin, bzpopmax, xread, xreadgroup"';
+        const result = '"select is not supported by the Workbench.';
         //Run Select command in Workbench
         await workbenchPage.sendCommandInWorkbench(command);
         //Check the command result
-        await workbenchPage.checkWorkbenchCommandResult(command, result);
+        await t.expect(workbenchPage.commandExecutionResultFailed.textContent).contains(result, 'The select command unsupported message');
     });
 test
     .meta({ rte: rte.standalone })

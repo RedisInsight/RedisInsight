@@ -27,3 +27,9 @@ export const mockSettingsAnalyticsService = () => ({
   sendAnalyticsAgreementChange: jest.fn(),
   sendSettingsUpdatedEvent: jest.fn(),
 });
+
+export const mockPubSubAnalyticsService = () => ({
+  sendMessagePublishedEvent: jest.fn(),
+  sendChannelSubscribeEvent: jest.fn(),
+  sendChannelUnsubscribeEvent: jest.fn(),
+});

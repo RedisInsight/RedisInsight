@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 export interface IRoute {
   path: any;
@@ -13,7 +13,8 @@ export interface IRoute {
 export enum PageNames {
   workbench = 'workbench',
   browser = 'browser',
-  slowLog = 'slowlog'
+  slowLog = 'slowlog',
+  pubSub = 'pub-sub',
 }
 
 const redisCloud = '/redis-cloud'
@@ -34,4 +35,5 @@ export const Pages = {
   browser: (instanceId: string) => `/${instanceId}/${PageNames.browser}`,
   workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`,
   slowLog: (instanceId: string) => `/${instanceId}/${PageNames.slowLog}`,
+  pubSub: (instanceId: string) => `/${instanceId}/${PageNames.pubSub}`,
 }

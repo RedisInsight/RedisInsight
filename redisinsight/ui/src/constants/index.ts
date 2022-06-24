@@ -21,4 +21,5 @@ export * from './mocks/mock-tutorials'
 export * from './socketErrors'
 export * from './browser'
 export * from './durationUnits'
+export * from './streamViews'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

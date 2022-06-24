@@ -128,6 +128,28 @@ const KeysHeader = (props: Props) => {
     ))
   }
 
+  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+    const browserViewEvent = enableAutoRefresh
+      ? TelemetryEvent.BROWSER_KEY_LIST_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.BROWSER_KEY_LIST_AUTO_REFRESH_DISABLED
+    const treeViewEvent = enableAutoRefresh
+      ? TelemetryEvent.TREE_VIEW_KEY_LIST_AUTO_REFRESH_ENABLED
+      : TelemetryEvent.TREE_VIEW_KEY_LIST_AUTO_REFRESH_DISABLED
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        databaseId: instanceId,
+        refreshRate: +refreshRate,
+      }
+    })
+  }
+
+  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+    if (enableAutoRefresh) {
+      handleEnableAutoRefresh(enableAutoRefresh, refreshRate)
+    }
+  }
+
   const handleScanMore = (config: any) => {
     loadMoreItems?.({
       ...config,
@@ -233,6 +255,8 @@ const KeysHeader = (props: Props) => {
                 displayText={width > HIDE_REFRESH_LABEL_WIDTH}
                 containerClassName={styles.refreshContainer}
                 onRefresh={handleRefreshKeys}
+                onEnableAutoRefresh={handleEnableAutoRefresh}
+                onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                 testid="refresh-keys-btn"
               />
             </div>

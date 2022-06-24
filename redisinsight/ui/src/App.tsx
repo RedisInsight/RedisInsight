@@ -4,13 +4,12 @@ import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
 
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { BuildType } from 'uiSrc/constants/env'
 import { PagePlaceholder } from 'uiSrc/components'
 import Router from './Router'
 import store from './slices/store'
 import { Theme } from './constants'
 import { themeService } from './services'
-import { Config, MonitorConfig, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
+import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 
@@ -33,15 +32,15 @@ const AppWrapper = ({ children }: { children?: ReactElement }) => (
   </Provider>
 )
 const App = () => {
-  const { loading: serverLoading, server } = useSelector(appInfoSelector)
+  const { loading: serverLoading } = useSelector(appInfoSelector)
   return (
     <div className="main-container">
       { serverLoading
         ? <PagePlaceholder />
         : (
           <EuiPage className="main">
-            <MonitorConfig />
-            <NavigationMenu buildType={server?.buildType as BuildType} />
+            <GlobalSubscriptions />
+            <NavigationMenu />
             <EuiPageBody component="main">
               <MainComponent />
             </EuiPageBody>

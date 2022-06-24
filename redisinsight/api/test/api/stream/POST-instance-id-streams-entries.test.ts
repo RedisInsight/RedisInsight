@@ -16,21 +16,20 @@ const { server, request, constants, rte } = deps;
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
   request(server).post(`/instance/${instanceId}/streams/entries`);
 
-const entrySchema = Joi.object().keys({
-  id: Joi.string().label('entries.0.id').required(),
-  fields: Joi.object().label('entries.0.fields').required()
-    .messages({
-      'object.base': '{#label} must be an object',
+  const entrySchema = Joi.object().keys({
+    id: Joi.string().label('entries.0.id').required(),  
+    fields: Joi.array().label('entries.0.fields').items(Joi.any()).required().messages({
+      'array.base': '{#label} must be an array',
     }),
-});
-
-const dataSchema = Joi.object({
-  keyName: Joi.string().allow('').required(),
-  entries: Joi.array().items(entrySchema).required().messages({
-    'array.sparse': 'entries must be either object or array',
-    'array.base': 'property {#label} must be either object or array',
-  }),
-}).strict();
+  });
+  
+  const dataSchema = Joi.object({
+    keyName: Joi.string().allow('').required(),
+    entries: Joi.array().items(entrySchema).required().messages({
+      'array.sparse': 'entries must be either object or array',
+      'array.base': '{#label} must be either object or array',
+    }),
+  }).strict();
 
 const responseSchema = Joi.object().keys({
   keyName: Joi.string().required(),
@@ -42,10 +41,10 @@ const validInputData = {
   entries: [
     {
       id: '*',
-      fields: {
-        [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_VALUE_1,
-        [constants.TEST_STREAM_FIELD_2]: constants.TEST_STREAM_VALUE_2,
-      }
+      fields: [
+        [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1],
+        [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_FIELD_2],
+      ],
     }
   ],
 };
@@ -79,78 +78,78 @@ describe('POST /instance/:instanceId/streams/entries', () => {
 
     // extra validation
     [
-      {
-        name: 'Should throw 400 error when passed field value as another object',
-        data: {
-          keyName: constants.TEST_STREAM_KEY_1,
-          entries: [
-            {
-              id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: { some: constants.TEST_STREAM_FIELD_1 },
-              }
-            }
-          ]
-        },
-        statusCode: 400,
-        checkFn: ({ body }) => {
-          expect(body.message[0]).to.have.string('must be an object with string values')
-        }
-      },
-      {
-        name: 'Should throw 400 error when passed field value as another boolean',
-        data: {
-          keyName: constants.TEST_STREAM_KEY_1,
-          entries: [
-            {
-              id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: true,
-              }
-            }
-          ]
-        },
-        statusCode: 400,
-        checkFn: ({ body }) => {
-          expect(body.message[0]).to.have.string('must be an object with string values')
-        }
-      },
-      {
-        name: 'Should throw 400 error when passed field value as another number',
-        data: {
-          keyName: constants.TEST_STREAM_KEY_1,
-          entries: [
-            {
-              id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: 100,
-              }
-            }
-          ]
-        },
-        statusCode: 400,
-        checkFn: ({ body }) => {
-          expect(body.message[0]).to.have.string('must be an object with string values')
-        }
-      },
-      {
-        name: 'Should throw 400 error when passed field value as another null',
-        data: {
-          keyName: constants.TEST_STREAM_KEY_1,
-          entries: [
-            {
-              id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: null,
-              }
-            }
-          ]
-        },
-        statusCode: 400,
-        checkFn: ({ body }) => {
-          expect(body.message[0]).to.have.string('must be an object with string values')
-        }
-      },
+      // {
+      //   name: 'Should throw 400 error when passed field value as another object',
+      //   data: {
+      //     keyName: constants.TEST_STREAM_KEY_1,
+      //     entries: [
+      //       {
+      //         id: '*',
+      //         fields: {
+      //           [constants.TEST_STREAM_FIELD_1]: { some: constants.TEST_STREAM_FIELD_1 },
+      //         }
+      //       }
+      //     ]
+      //   },
+      //   statusCode: 400,
+      //   checkFn: ({ body }) => {
+      //     expect(body.message[0]).to.have.string('must be an array')
+      //   }
+      // },
+      // {
+      //   name: 'Should throw 400 error when passed field value as another boolean',
+      //   data: {
+      //     keyName: constants.TEST_STREAM_KEY_1,
+      //     entries: [
+      //       {
+      //         id: '*',
+      //         fields: {
+      //           [constants.TEST_STREAM_FIELD_1]: true,
+      //         }
+      //       }
+      //     ]
+      //   },
+      //   statusCode: 400,
+      //   checkFn: ({ body }) => {
+      //     expect(body.message[0]).to.have.string('must be an array')
+      //   }
+      // },
+      // {
+      //   name: 'Should throw 400 error when passed field value as another number',
+      //   data: {
+      //     keyName: constants.TEST_STREAM_KEY_1,
+      //     entries: [
+      //       {
+      //         id: '*',
+      //         fields: {
+      //           [constants.TEST_STREAM_FIELD_1]: 100,
+      //         }
+      //       }
+      //     ]
+      //   },
+      //   statusCode: 400,
+      //   checkFn: ({ body }) => {
+      //     expect(body.message[0]).to.have.string('must be an array')
+      //   }
+      // },
+      // {
+      //   name: 'Should throw 400 error when passed field value as another null',
+      //   data: {
+      //     keyName: constants.TEST_STREAM_KEY_1,
+      //     entries: [
+      //       {
+      //         id: '*',
+      //         fields: {
+      //           [constants.TEST_STREAM_FIELD_1]: null,
+      //         }
+      //       }
+      //     ]
+      //   },
+      //   statusCode: 400,
+      //   checkFn: ({ body }) => {
+      //     expect(body.message[0]).to.have.string('must be an array')
+      //   }
+      // },
     ].map(mainCheckFn)
   });
 
@@ -163,9 +162,9 @@ describe('POST /instance/:instanceId/streams/entries', () => {
           entries: [
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_FIELD_1,
-              }
+              fields: [
+                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_FIELD_1],
+              ]
             }
           ]
         },
@@ -183,17 +182,17 @@ describe('POST /instance/:instanceId/streams/entries', () => {
           entries: [
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_FIELD_1]: constants.TEST_STREAM_FIELD_1,
-                [constants.TEST_STREAM_FIELD_2]: constants.TEST_STREAM_FIELD_2,
-              }
+              fields: [
+                [constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_FIELD_1],
+                [constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_FIELD_2],
+              ],
             },
             {
               id: '*',
-              fields: {
-                [constants.TEST_STREAM_VALUE_1]: constants.TEST_STREAM_VALUE_1,
-                [constants.TEST_STREAM_VALUE_2]: constants.TEST_STREAM_VALUE_2,
-              }
+              fields: [
+                [constants.TEST_STREAM_VALUE_1, constants.TEST_STREAM_VALUE_1],
+                [constants.TEST_STREAM_VALUE_2, constants.TEST_STREAM_VALUE_2]
+              ],
             },
           ]
         },

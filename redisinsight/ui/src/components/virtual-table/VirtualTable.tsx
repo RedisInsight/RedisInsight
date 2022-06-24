@@ -188,6 +188,7 @@ const VirtualTable = (props: IProps) => {
                 styles.headerButton,
                 isColumnSorted ? styles.headerButtonSorted : null,
               )}
+              data-testid="header-sorting-button"
             >
               <EuiIcon
                 style={{ marginLeft: '4px' }}

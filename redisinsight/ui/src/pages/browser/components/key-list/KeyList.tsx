@@ -108,7 +108,7 @@ const KeyList = (props: Props) => {
         const tooltipContent = formatLongName(cellData)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText'" data-testid={`key-${name}`}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`key-${name}`}>
               <EuiToolTip
                 title="Key Name"
                 className={styles.tooltip}

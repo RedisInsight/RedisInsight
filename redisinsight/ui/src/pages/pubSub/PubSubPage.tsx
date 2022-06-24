@@ -7,6 +7,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { SubscriptionType } from 'uiSrc/constants/pubSub'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
 import { MessagesListWrapper, PublishMessage, SubscriptionPanel } from './components'
 
@@ -16,10 +17,13 @@ export const PUB_SUB_DEFAULT_CHANNEL = { channel: '*', type: SubscriptionType.PS
 
 const PubSubPage = () => {
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
-  const { name: connectedInstanceName } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
+
+  const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
+  setTitle(`${dbName} - Pub/Sub`)
 
   useEffect(() => {
     if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {

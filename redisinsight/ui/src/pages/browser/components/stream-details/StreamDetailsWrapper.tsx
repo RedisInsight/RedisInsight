@@ -57,6 +57,11 @@ const StreamDetailsWrapper = (props: Props) => {
     && !isNull(lastEntry)
     && lastEntry.id !== ''
 
+  useEffect(() =>
+    () => {
+      dispatch(setStreamInitialState())
+    }, [])
+
   useEffect(() => {
     if (isNull(firstEntry)) {
       dispatch(updateStart(''))

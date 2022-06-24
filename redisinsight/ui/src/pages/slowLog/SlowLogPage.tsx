@@ -28,6 +28,7 @@ import {
   slowLogSelector
 } from 'uiSrc/slices/slowlog/slowlog'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
+import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
@@ -47,7 +48,7 @@ const countOptions: EuiSuperSelectOption<string>[] = [
 ]
 
 const SlowLogPage = () => {
-  const { connectionType, name: connectedInstanceName } = useSelector(connectedInstanceSelector)
+  const { connectionType, name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
   const { data, loading, durationUnit, config } = useSelector(slowLogSelector)
   const { slowlogLogSlowerThan = 0, slowlogMaxLen } = useSelector(slowLogConfigSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
@@ -59,6 +60,8 @@ const SlowLogPage = () => {
   const dispatch = useDispatch()
 
   const lastTimestamp = minBy(data, 'time')?.time
+  const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
+  setTitle(`${dbName} - Slow Log`)
 
   useEffect(() => {
     getConfig()

@@ -117,3 +117,28 @@ export interface StateAppPlugins {
   plugins: IPlugin[]
   visualizations: IPluginVisualization[]
 }
+
+export interface StateAppSocketConnection {
+  isConnected: boolean
+}
+
+export interface IGlobalNotification {
+  type?: string
+  timestamp: number
+  title: string
+  body: string
+  read: boolean
+}
+
+export interface StateAppNotifications {
+  errors: IError[]
+  messages: IMessage[]
+  notificationCenter: {
+    loading: boolean
+    lastReceivedNotification: Nullable<IGlobalNotification>
+    notifications: IGlobalNotification[]
+    isNotificationOpen: boolean
+    isCenterOpen: boolean
+    totalUnread: number
+  }
+}

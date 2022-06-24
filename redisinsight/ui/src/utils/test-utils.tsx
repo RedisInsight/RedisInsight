@@ -27,6 +27,7 @@ import { initialState as initialStateAppInfo } from 'uiSrc/slices/app/info'
 import { initialState as initialStateAppContext } from 'uiSrc/slices/app/context'
 import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
+import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -52,7 +53,8 @@ const initialStateDefault: RootState = {
     notifications: cloneDeep(initialStateNotifications),
     context: cloneDeep(initialStateAppContext),
     redisCommands: cloneDeep(initialStateAppRedisCommands),
-    plugins: cloneDeep(initialStateAppPluginsReducer)
+    plugins: cloneDeep(initialStateAppPluginsReducer),
+    socketConnection: cloneDeep(initialStateAppSocketConnectionReducer)
   },
   connections: {
     instances: cloneDeep(initialStateInstances),

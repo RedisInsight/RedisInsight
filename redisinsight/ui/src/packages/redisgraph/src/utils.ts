@@ -184,16 +184,19 @@ export function wrapText(s: string, w: number) {
 }
 
 
-export function getFetchNodesByIdQuery(graphKey: string, nodeIds: Array<string>): string {
-  return `graph.ro_query ${graphKey} "MATCH (n) WHERE id(n) IN [${nodeIds}] RETURN n"`
+export function getFetchNodesByIdQuery(graphKey: string, nodeIds: string[]): string {
+  return `graph.ro_query ${graphKey} "MATCH (n) WHERE id(n) IN [${nodeIds}] RETURN DISTINCT n"`
 }
 
+export function getFetchEdgesByIdQuery(graphKey: string, edgeIds: string[]): string {
+    return `graph.ro_query ${graphKey} "MATCH ()-[t]->() WHERE id(t) IN [${edgeIds}] RETURN DISTINCT t"`
+}
 
 export function getFetchDirectNeighboursOfNodeQuery(graphKey: string, nodeId: string): string {
   return `graph.ro_query "${graphKey}" "MATCH (n)-[t]-(m) WHERE id(n)=${nodeId} RETURN t, m"`
 }
 
 
-export function getFetchNodeRelationshipsQuery(graphKey: string, sourceNodeIds: string[], destNodeIds: string[]): string {
-  return `graph.ro_query ${graphKey} "MATCH (n)-[t]->(m) WHERE ID(n) IN [${sourceNodeIds}] OR ID(m) IN [${destNodeIds}] RETURN DISTINCT t"`
+export function getFetchNodeRelationshipsQuery(graphKey: string, sourceNodeIds: string[], destNodeIds: string[], existingEdgeIds: string[]): string {
+  return `graph.ro_query ${graphKey} "MATCH (n)-[t]->(m) WHERE (ID(n) IN [${sourceNodeIds}] OR ID(m) IN [${destNodeIds}]) AND NOT ID(t) IN [${existingEdgeIds}] RETURN DISTINCT t"`
 }

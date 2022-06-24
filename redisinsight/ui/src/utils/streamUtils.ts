@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import { orderBy } from 'lodash'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
-import { ClaimPendingEntryDto, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ClaimPendingEntryDto, ConsumerDto, ConsumerGroupDto, PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 export enum ClaimTimeOptions {
   RELATIVE = 'idle',
@@ -77,3 +77,20 @@ export const prepareDataForClaimRequest = (
     entries
   })
 }
+
+export const updateConsumerGroups = (groups: ConsumerGroupDto[], groupName: string, consumers: ConsumerDto[]) =>
+  groups?.map((group: ConsumerGroupDto) => {
+    if (group.name === groupName) {
+      group.consumers = consumers?.length
+      group.pending = consumers?.reduce(((a, { pending }) => a + pending), 0)
+    }
+    return group
+  })
+
+export const updateConsumers = (consumers: ConsumerDto[], consumerName: string, messages: PendingEntryDto[]) =>
+  consumers?.map((consumer: ConsumerDto) => {
+    if (consumer.name === consumerName) {
+      consumer.pending = messages?.length
+    }
+    return consumer
+  })

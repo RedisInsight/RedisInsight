@@ -14,4 +14,8 @@ export class CreateNotificationDto {
   @IsNotEmpty()
   @IsString()
   body: string;
+
+  constructor(dto: Partial<CreateNotificationDto>) {
+    Object.assign(this, dto);
+  }
 }

@@ -36,4 +36,8 @@ export class NotificationDto {
     description: 'Determines if notification was shown to user in the Notification Center',
   })
   read: boolean;
+
+  constructor(dto: Partial<NotificationDto>) {
+    Object.assign(this, dto);
+  }
 }

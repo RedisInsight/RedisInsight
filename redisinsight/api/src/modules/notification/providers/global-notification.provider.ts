@@ -2,7 +2,9 @@ import config from 'src/utils/config';
 import {
   keyBy, values, forEach, orderBy,
 } from 'lodash';
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException, Injectable, InternalServerErrorException, Logger,
+} from '@nestjs/common';
 import { getFile } from 'src/utils';
 import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
@@ -25,8 +27,8 @@ export class GlobalNotificationProvider {
 
   constructor(
     @InjectRepository(NotificationEntity)
-    private readonly repository: Repository<NotificationEntity>,
-    private readonly eventEmitter: EventEmitter2,
+    private repository: Repository<NotificationEntity>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   init() {
@@ -104,7 +106,7 @@ export class GlobalNotificationProvider {
       });
     } catch (e) {
       this.logger.error(`Invalid notification(s) found. ${e.message}`, e);
-      throw e;
+      throw new BadRequestException(e);
     }
   }
 
@@ -118,7 +120,7 @@ export class GlobalNotificationProvider {
       return plainToClass(CreateNotificationsDto, json);
     } catch (e) {
       this.logger.error(`Unable to download or parse notifications json. ${e.message}`, e);
-      throw e;
+      throw new InternalServerErrorException('Unable to get and parse file from remote');
     }
   }
 }

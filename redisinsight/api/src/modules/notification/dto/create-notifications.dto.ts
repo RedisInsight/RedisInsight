@@ -1,5 +1,4 @@
 import {
-  ArrayNotEmpty,
   IsArray,
   ValidateNested,
 } from 'class-validator';
@@ -8,8 +7,11 @@ import { CreateNotificationDto } from 'src/modules/notification/dto/create-notif
 
 export class CreateNotificationsDto {
   @IsArray()
-  @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => CreateNotificationDto)
   notifications: CreateNotificationDto[];
+
+  constructor(dto: Partial<CreateNotificationsDto>) {
+    Object.assign(this, dto);
+  }
 }

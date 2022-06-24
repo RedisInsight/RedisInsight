@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { NotificationsDto } from 'src/modules/notification/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
@@ -34,7 +34,7 @@ export class NotificationService {
       });
     } catch (e) {
       this.logger.error('Unable to get notifications list', e);
-      throw e;
+      throw new InternalServerErrorException('Unable to get notifications list');
     }
   }
 
@@ -49,7 +49,7 @@ export class NotificationService {
         .execute();
     } catch (e) {
       this.logger.error('Unable to "read" notifications', e);
-      throw e;
+      throw new InternalServerErrorException('Unable to "read" notifications');
     }
   }
 }

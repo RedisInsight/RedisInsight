@@ -388,3 +388,23 @@ export const initLocalDb = async (rte, server) => {
     await createAclInstance(rte, server);
   }
 }
+
+export const createNotifications = async (notifications: object[], truncate: boolean) => {
+  const rep = await getRepository(repositories.NOTIFICATION);
+
+  if(truncate) {
+    await rep.createQueryBuilder().delete().execute();
+  }
+
+  await rep.insert(notifications);
+}
+
+export const createDefaultNotifications = async (truncate: boolean = false) => {
+  const notifications = [
+    constants.TEST_NOTIFICATION_1,
+    constants.TEST_NOTIFICATION_2,
+    constants.TEST_NOTIFICATION_3,
+  ];
+
+  await createNotifications(notifications, truncate);
+}

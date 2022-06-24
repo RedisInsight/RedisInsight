@@ -37,13 +37,16 @@ function responseParser(data: any) {
 
   const headers = data[0]
   let nodes: INode[] = []
-  let nodeIds: string[] = []
-  let edgeIds: string[] = []
+  let nodeIds = new Set<string>()
+  let edgeIds = new Set<string>()
   let edges: IEdge[] = []
   let types: {[key: string]: number} = {}
   let labels: {[key: string]: number} = {}
+  let hasNamedPathItem = false
+  let npNodeIds: string[] = []
+  let npEdgeIds: string[] = []
   if (data.length < 2) return {
-    nodes, edges, types, labels, headers, nodeIds, edgeIds,
+    nodes, edges, types, labels, headers, nodeIds, edgeIds, hasNamedPathItem,
   }
 
   const entries = data[1].map((entry: any) => {
@@ -79,16 +82,22 @@ function responseParser(data: any) {
             const v = resolveProps(x)
             edge['properties'][v.key] = v.value
           })
-          edges.push(edge)
+          if (!edgeIds.has(edge.id)) {
+            edges.push(edge)
+            edgeIds.add(edge.id)
+          }
         } else {
           // unknown item?
         }
       } else if (typeof(item) === 'string'){
         try {
           // If named path response, try to parse it
-          let [nIds, eIds] = ParseEntitesFromNamedPathResponse(item)
-          nodeIds = Array.from(new Set(nodeIds.concat(nIds)))
-          edgeIds = Array.from(new Set(edgeIds.concat(eIds)))
+          hasNamedPathItem = true
+          let[nIds, eIds] = ParseEntitesFromNamedPathResponse(item)
+          nodeIds = new Set([...nodeIds, ...nIds])
+          edgeIds = new Set([...edgeIds, ...eIds])
+          npNodeIds = [...nodeIds]
+          npEdgeIds = [...edgeIds]
         } catch {
           // maybe just a normal string
         }
@@ -104,6 +113,9 @@ function responseParser(data: any) {
     labels,
     nodeIds,
     edgeIds,
+    hasNamedPathItem,
+    npNodeIds,
+    npEdgeIds,
   }
 }
 

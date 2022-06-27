@@ -92,7 +92,6 @@ export class GlobalNotificationProvider {
       ));
     } catch (e) {
       this.logger.error('Unable to sync notifications with remote', e);
-      throw e;
     }
   }
 

@@ -12,7 +12,8 @@ import {
   fetchMoreStreamEntries,
   updateStart,
   updateEnd,
-  fetchStreamEntries
+  fetchStreamEntries,
+  setStreamInitialState,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'

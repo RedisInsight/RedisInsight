@@ -13,6 +13,7 @@ import { CommandsModule } from 'src/modules/commands/commands.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
 import { SlowLogModule } from 'src/modules/slow-log/slow-log.module';
 import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
+import { NotificationModule } from 'src/modules/notification/notification.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -46,6 +47,7 @@ const PATH_CONFIG = config.get('dir_path');
     ProfilerModule,
     PubSubModule,
     SlowLogModule,
+    NotificationModule,
     EventEmitterModule.forRoot(),
     ...(SERVER_CONFIG.staticContent
       ? [

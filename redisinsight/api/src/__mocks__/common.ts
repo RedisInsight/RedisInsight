@@ -7,6 +7,8 @@ export type MockType<T> = {
 export const mockRedisConsumer = () => ({
   execCommand: jest.fn(),
   execPipeline: jest.fn(),
+  execPipelineFromClient: jest.fn(),
+  getRedisClient: jest.fn(),
   execMulti: jest.fn(),
 });
 
@@ -16,6 +18,7 @@ export const mockRedisClusterConsumer = () => ({
   execCommandFromNode: jest.fn(),
   execPipeline: jest.fn(),
   getNodes: jest.fn(),
+  getRedisClient: jest.fn(),
 });
 
 export const mockQueryBuilderGetOne = jest.fn();

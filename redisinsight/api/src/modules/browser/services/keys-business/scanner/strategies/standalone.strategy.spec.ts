@@ -15,12 +15,17 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import * as Redis from 'ioredis';
 import { StandaloneStrategy } from './standalone.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
+
+const nodeClient = Object.create(Redis.prototype);
+nodeClient.sendCommand = jest.fn();
+
 const getKeyInfoResponse = {
   name: 'testString',
   type: 'string',
@@ -60,6 +65,7 @@ describe('Standalone Scanner Strategy', () => {
       scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
     });
     strategy = new StandaloneStrategy(browserTool, settingsProvider);
+    browserTool.getRedisClient.mockResolvedValue(nodeClient);
   });
   describe('getKeys', () => {
     const getKeysDto: GetKeysDto = { cursor: '0', count: 15 };
@@ -422,7 +428,7 @@ describe('Standalone Scanner Strategy', () => {
             keys: [getKeyInfoResponse],
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClientOptions, [
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [
           key,
         ]);
         expect(strategy.scan).not.toHaveBeenCalled();
@@ -444,7 +450,7 @@ describe('Standalone Scanner Strategy', () => {
             keys: [{ ...getKeyInfoResponse, name: mockSearchPattern }],
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClientOptions, [mockSearchPattern]);
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [mockSearchPattern]);
         expect(strategy.scan).not.toHaveBeenCalled();
       });
       it('should find exact key with correct type', async () => {

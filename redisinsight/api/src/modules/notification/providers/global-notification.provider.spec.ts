@@ -127,21 +127,6 @@ describe('GlobalNotificationProvider', () => {
         mockNotificationEntity2,
       ]);
     });
-    it('should throw an error on invalid json data', async () => {
-      getNotificationsFromRemoteSpy.mockResolvedValueOnce({
-        notificationss: [
-          mockNotification1UPD,
-          mockNotification2,
-        ],
-      });
-
-      try {
-        await service.sync();
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(BadRequestException);
-      }
-    });
   });
 
   describe('getNotificationsFromRemote', () => {

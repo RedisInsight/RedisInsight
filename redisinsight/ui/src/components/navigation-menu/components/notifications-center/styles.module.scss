@@ -4,7 +4,8 @@
 .wrapper {
   position: relative;
   display: flex;
-  @media screen and (max-width: 767px) {
+
+  @include euiBreakpoint("xs", "s") {
     flex-direction: column;
   }
 

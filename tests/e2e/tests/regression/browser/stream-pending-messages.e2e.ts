@@ -46,9 +46,8 @@ test('Verify that user can\'t select currently selected Consumer to Claim messag
     for(const command of cliCommands){
         await cliPage.sendCommandInCli(command);
     }
-    // Open Stream pendings view
+    // Open Stream pending view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Click on Claim message and check result
     await t.click(browserPage.claimPendingMessageButton);
     await t.click(browserPage.consumerDestinationSelect);

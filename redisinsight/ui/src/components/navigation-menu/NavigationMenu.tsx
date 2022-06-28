@@ -43,6 +43,8 @@ import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 
 import { BuildType } from 'uiSrc/constants/env'
+import NotificationMenu from './components/notifications-center'
+
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
@@ -288,6 +290,7 @@ const NavigationMenu = () => {
         )}
       </div>
       <div className={styles.bottomContainer}>
+        <NotificationMenu />
         {HelpMenu()}
         {publicRoutes.map((nav) => (
           <EuiToolTip content={nav.tooltipText} position="right" key={nav.tooltipText}>

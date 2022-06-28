@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
+import { fetchNotificationsAction } from 'uiSrc/slices/app/notifications'
 
 import {
   fetchUserConfigSettings,
@@ -37,6 +38,7 @@ const Config = () => {
     dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
+    dispatch(fetchNotificationsAction())
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {

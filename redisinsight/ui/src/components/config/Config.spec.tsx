@@ -1,5 +1,6 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import { getNotifications } from 'uiSrc/slices/app/notifications'
 import { render, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 
 import {
@@ -38,6 +39,7 @@ describe('Config', () => {
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
+      getNotifications(),
       getUserConfigSettings()
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
@@ -67,6 +69,7 @@ describe('Config', () => {
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
+      getNotifications(),
       getUserConfigSettings(),
       setSettingsPopupState(true),
     ]

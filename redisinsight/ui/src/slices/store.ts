@@ -24,6 +24,7 @@ import appInfoReducer from './app/info'
 import appContextReducer from './app/context'
 import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
+import appsSocketConnectionReducer from './app/socket-connection'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchGuidesReducer from './workbench/wb-guides'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
@@ -39,7 +40,8 @@ export const rootReducer = combineReducers({
     notifications: notificationsReducer,
     context: appContextReducer,
     redisCommands: appRedisCommandsReducer,
-    plugins: appPluginsReducer
+    plugins: appPluginsReducer,
+    socketConnection: appsSocketConnectionReducer
   }),
   connections: combineReducers({
     instances: instancesReducer,

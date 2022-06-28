@@ -122,6 +122,10 @@ export interface StateAppSocketConnection {
   isConnected: boolean
 }
 
+export enum NotificationType {
+  Global = 'global'
+}
+
 export interface IGlobalNotification {
   type?: string
   timestamp: number

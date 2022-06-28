@@ -136,7 +136,10 @@ export const notificationCenterSelector = (state: RootState) =>
 // The reducer
 export default notificationsSlice.reducer
 
-export function fetchNotificationsAction(onSuccessAction?: (totalCount: number) => void, onFailAction?: () => void) {
+export function fetchNotificationsAction(
+  onSuccessAction?: (totalCount: number, numberOfNotifications: number) => void,
+  onFailAction?: () => void
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getNotifications())
 
@@ -147,7 +150,7 @@ export function fetchNotificationsAction(onSuccessAction?: (totalCount: number) 
 
       if (isStatusSuccessful(status)) {
         dispatch(getNotificationsSuccess(data))
-        onSuccessAction?.(data.totalUnread)
+        onSuccessAction?.(data.totalUnread, data.notifications?.length)
       }
     } catch (error) {
       dispatch(getNotificationsFailed())

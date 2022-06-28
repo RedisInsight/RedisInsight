@@ -29,7 +29,7 @@ const NavButton = () => {
         onMouseDownCapture={onClickIcon}
         data-testid="notification-menu-button"
       />
-      {(totalUnread > 0 && !isCenterOpen) && (<div className={styles.badgeUnreadCount} data-testid="total-undread-badge">{totalUnread}</div>)}
+      {(totalUnread > 0 && !isCenterOpen) && (<div className={styles.badgeUnreadCount} data-testid="total-unread-badge">{totalUnread}</div>)}
     </div>
   )
 }

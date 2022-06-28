@@ -10,6 +10,7 @@ import {
   setIsCenterOpen,
   unreadNotificationsAction
 } from 'uiSrc/slices/app/notifications'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
 
@@ -21,8 +22,16 @@ const NotificationCenter = () => {
   useEffect(() => {
     if (isCenterOpen) {
       dispatch(fetchNotificationsAction(
-        (totalUnread) => {
+        (totalUnread, length) => {
           totalUnread && dispatch(unreadNotificationsAction())
+
+          sendEventTelemetry({
+            event: TelemetryEvent.NOTIFICATIONS_HISTORY_OPENED,
+            eventData: {
+              notifications: length,
+              unreadNotifications: totalUnread
+            }
+          })
         }
       ))
     }

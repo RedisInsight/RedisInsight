@@ -5,15 +5,16 @@ import parse from 'html-react-parser'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { notificationCenterSelector, setIsCenterOpen, setIsNotificationOpen } from 'uiSrc/slices/app/notifications'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import styles from './styles.module.scss'
+import styles from '../styles.module.scss'
 
 const CLOSE_NOTIFICATION_TIME = 6000
 
 const PopoverNotification = () => {
   const { isNotificationOpen, isCenterOpen, lastReceivedNotification } = useSelector(notificationCenterSelector)
   const [isHovering, setIsHovering] = useState(false)
-  const [isShowNotification, setIsShowNotification] = useState(false)
+  const [isShowNotification, setIsShowNotification] = useState(isNotificationOpen)
 
   const timeOutRef = useRef<NodeJS.Timeout>()
 
@@ -49,6 +50,17 @@ const PopoverNotification = () => {
     dispatch(setIsNotificationOpen(false))
   }
 
+  const handleClickClose = () => {
+    onCloseNotification()
+
+    sendEventTelemetry({
+      event: TelemetryEvent.NOTIFICATIONS_MESSAGE_CLOSED,
+      eventData: {
+        notificationID: lastReceivedNotification?.timestamp
+      }
+    })
+  }
+
   const onMouseUpPopover = () => {
     if (!window.getSelection()?.toString()) {
       dispatch(setIsCenterOpen())
@@ -80,7 +92,7 @@ const PopoverNotification = () => {
               aria-label="Close notification"
               className={styles.closeBtn}
               onMouseUp={(e: React.MouseEvent) => e.stopPropagation()}
-              onClick={onCloseNotification}
+              onClick={handleClickClose}
               data-testid="close-notification-btn"
             />
 

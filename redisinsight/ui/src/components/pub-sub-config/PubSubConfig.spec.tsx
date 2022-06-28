@@ -83,7 +83,7 @@ describe('PubSubConfig', () => {
     socket.socketClient.emit(PubSubEvent.Subscribe, subscriptionsMock)
   })
 
-  it('monitor should catch disconnect', () => {
+  it('should catch disconnect', () => {
     const pubSubSelectorMock = jest.fn().mockReturnValue({
       isSubscribeTriggered: true,
       isConnected: true,

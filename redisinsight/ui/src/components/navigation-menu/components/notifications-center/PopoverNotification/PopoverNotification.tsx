@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import parse from 'html-react-parser'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
 import { notificationCenterSelector, setIsCenterOpen, setIsNotificationOpen } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -105,7 +106,7 @@ const PopoverNotification = () => {
             </EuiText>
 
             <EuiText size="xs" color="subdued" textAlign="right" className={styles.notificationDate} data-testid="notification-date">
-              {format(lastReceivedNotification.timestamp, 'dd MMM yyyy')}
+              {format(lastReceivedNotification.timestamp, NOTIFICATION_DATE_FORMAT)}
             </EuiText>
           </div>
         </EuiPopover>

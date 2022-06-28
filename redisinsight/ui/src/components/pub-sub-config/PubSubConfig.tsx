@@ -41,7 +41,6 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {
-      // Trigger Monitor event
       clearTimeout(retryTimer)
       dispatch(setPubSubConnected(true))
       subscribeForChannels()

@@ -29,7 +29,6 @@ const CommonAppSubscription = ({ retryDelay = 60000 } : IProps) => {
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {
-      // Trigger Monitor event
       clearTimeout(retryTimer)
       dispatch(setIsConnected(true))
     })

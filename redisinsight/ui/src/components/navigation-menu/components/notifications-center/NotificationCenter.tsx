@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import parse from 'html-react-parser'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
 import {
   fetchNotificationsAction,
   notificationCenterSelector,
@@ -55,7 +56,7 @@ const NotificationCenter = () => {
         </EuiTitle>
         {!hasNotifications && (
           <div className={styles.noItemsText}>
-            <EuiText color="subdued" data-testud="no-notifications-text">No notifications to display.</EuiText>
+            <EuiText color="subdued" data-testid="no-notifications-text">No notifications to display.</EuiText>
           </div>
         )}
         {hasNotifications && (
@@ -64,7 +65,7 @@ const NotificationCenter = () => {
               <div
                 key={notification.timestamp}
                 className={cx(styles.notificationItem, { [styles.unread]: !notification.read })}
-                data-testid={`notification-item-${notification.read ? 'read' : 'unread'}`}
+                data-testid={`notification-item-${notification.read ? 'read' : 'unread'}_${notification.timestamp}`}
               >
                 <EuiText size="m" className={styles.notificationTitle} data-testid="notification-title">{notification.title}</EuiText>
                 <EuiText
@@ -82,7 +83,7 @@ const NotificationCenter = () => {
                   className={styles.notificationDate}
                   data-testid="notification-date"
                 >
-                  {format(notification.timestamp, 'dd MMM yyyy')}
+                  {format(notification.timestamp, NOTIFICATION_DATE_FORMAT)}
                 </EuiText>
               </div>
             ))}

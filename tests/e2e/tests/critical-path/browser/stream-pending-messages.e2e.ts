@@ -40,9 +40,8 @@ test('Verify that user can acknowledge any message in the list of pending messag
     for(const command of cliCommands){
         await cliPage.sendCommandInCli(command);
     }
-    // Open Stream pendings view
+    // Open Stream pending view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Acknowledge message and check result
     await t.click(browserPage.acknowledgeButton);
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains('will be acknowledged and removed from the pending messages list', 'The confirmation message');

@@ -142,7 +142,6 @@ test('Verify that user can see the Stream range filter', async t => {
     await cliPage.sendCommandInCli(`XADD ${keyName} * fields values`);
     //Open key details and check filter
     await browserPage.openKeyDetails(keyName);
-    await t.debug();
     await t.expect(browserPage.rangeLeftTimestamp.visible).ok('The stream range start timestamp visibility');
     await t.expect(browserPage.rangeRightTimestamp.visible).ok('The stream range end timestamp visibility');
     await t.expect(browserPage.streamRangeBar.visible).ok('The stream range bar visibility');

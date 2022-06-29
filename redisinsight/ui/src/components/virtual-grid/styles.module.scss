@@ -1,0 +1,78 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+$paddingCell: 12px;
+
+.customScroll {
+  @include euiScrollBar;
+}
+
+.grid {
+  @include euiScrollBar;
+  position: relative;
+}
+
+.gridItem {
+  z-index: 1;
+  padding: $paddingCell;
+  border: 1px solid var(--tableDarkestBorderColor);
+  border-left-width: 0;
+  border-top-width: 0;
+}
+
+.gridItemLast {
+  z-index: 6;
+  margin-top: -50px;
+  padding-top: 16px;
+  border-right-width: 0;
+}
+
+.gridHeaderItem {
+  overflow: hidden;
+  align-items: center;
+  line-height: 44px;
+  height: 60px;
+  text-transform: none;
+  z-index: 5;
+  padding: $paddingCell;
+  background-color: var(--euiColorEmptyShade);
+  border-bottom: 1px solid var(--tableDarkestBorderColor);
+
+  &Sortable {
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
+
+.gridItemOdd {
+  background-color: var(--browserTableRowEven);
+}
+.gridItemEven {
+  background-color: var(--euiColorEmptyShade);
+}
+
+.disableScroll {
+  overflow-y: hidden !important;
+}
+
+.progress {
+  z-index: 2;
+}
+
+.container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.noItems {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--tableDarkestBorderColor);
+}

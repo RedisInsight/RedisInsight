@@ -2407,7 +2407,15 @@
     "@types/prop-types" "*"
     "@types/react" "*"
 
-"@types/react-window@^1.8.2":
+"@types/react-window-infinite-loader@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@types/react-window-infinite-loader/-/react-window-infinite-loader-1.0.6.tgz#d7b23b4afaa1e0e2050876b766c3ea19f748f549"
+  integrity sha512-V8g8sBDLVeJJAfEENJS7VXZK+DRJ+jzPNtk8jpj2G+obhf+iqGNUDGwNWCbBhLiD+KpHhf3kWQlKBRi0tAeU4Q==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-window" "*"
+
+"@types/react-window@*", "@types/react-window@^1.8.2":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-1.8.5.tgz#285fcc5cea703eef78d90f499e1457e9b5c02fc1"
   integrity sha512-V9q3CvhC9Jk9bWBOysPGaWy/Z0lxYcTXLtLipkt2cnRj1JOSFNF7wqGpkScSXMgBwC+fnVRg/7shwgddBG5ICw==
@@ -8275,6 +8283,11 @@ ip@^1.1.0, ip@^1.1.5:
   resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.5.tgz#bdded70114290828c0a039e72ef25f5aaec4354a"
   integrity sha1-vd7XARQpCCjAoDnnLvJfWq7ENUo=
 
+ip@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.8.tgz#ae05948f6b075435ed3307acce04629da8cdbf48"
+  integrity sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==
+
 ipaddr.js@1.9.1, ipaddr.js@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.9.1.tgz#bff38543eeb8984825079ff3a2a8e6cbd46781b3"
@@ -12598,6 +12611,11 @@ react-vtree@^3.0.0-beta.3:
   dependencies:
     "@babel/runtime" "^7.11.0"
     react-merge-refs "^1.1.0"
+
+react-window-infinite-loader@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-window-infinite-loader/-/react-window-infinite-loader-1.0.8.tgz#f88b1444829e732a3f4c5ae861644815329ddd88"
+  integrity sha512-907ZLAiZZfBHuZyiY0V7uiSL4P/rI6UQyCF9wES1cDWTeyNLgGLaxu+BZkcUW3R5tSCQcbCcWBl0jVIpYzrKGQ==
 
 react-window@^1.8.5, react-window@^1.8.6:
   version "1.8.6"

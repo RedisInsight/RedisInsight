@@ -155,4 +155,4 @@ const KeyDetailsWrapper = (props: Props) => {
   )
 }
 
-export default KeyDetailsWrapper
+export default React.memo(KeyDetailsWrapper)

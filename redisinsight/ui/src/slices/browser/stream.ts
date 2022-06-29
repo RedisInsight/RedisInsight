@@ -109,6 +109,7 @@ const streamSlice = createSlice({
     },
     addNewEntriesSuccess: (state) => {
       state.loading = false
+      state.data.entries = []
     },
     addNewEntriesFailure: (state, { payload }) => {
       state.loading = false
@@ -132,6 +133,7 @@ const streamSlice = createSlice({
     },
     removeStreamEntriesSuccess: (state) => {
       state.loading = false
+      state.data.entries = []
     },
     removeStreamEntriesFailure: (state, { payload }) => {
       state.loading = false

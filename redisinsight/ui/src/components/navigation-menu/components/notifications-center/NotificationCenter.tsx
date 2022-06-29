@@ -83,7 +83,7 @@ const NotificationCenter = () => {
                   className={styles.notificationDate}
                   data-testid="notification-date"
                 >
-                  {format(notification.timestamp, NOTIFICATION_DATE_FORMAT)}
+                  {format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}
                 </EuiText>
               </div>
             ))}

@@ -106,7 +106,7 @@ const PopoverNotification = () => {
             </EuiText>
 
             <EuiText size="xs" color="subdued" textAlign="right" className={styles.notificationDate} data-testid="notification-date">
-              {format(lastReceivedNotification.timestamp, NOTIFICATION_DATE_FORMAT)}
+              {format(lastReceivedNotification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}
             </EuiText>
           </div>
         </EuiPopover>

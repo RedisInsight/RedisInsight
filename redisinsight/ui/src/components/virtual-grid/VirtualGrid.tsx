@@ -200,7 +200,7 @@ const VirtualGrid = (props: IProps) => {
       onWheel={onWheel}
       data-testid="virtual-grid-container"
     >
-      {loading && !hideProgress ? (
+      {(loading && !hideProgress) && (
         <EuiProgress
           color="primary"
           size="xs"
@@ -208,7 +208,7 @@ const VirtualGrid = (props: IProps) => {
           className={styles.progress}
           data-testid="progress-entry-list"
         />
-      ) : null}
+      )}
       {items.length > 1 && (
         <AutoSizer onResize={onResize}>
           {() => (

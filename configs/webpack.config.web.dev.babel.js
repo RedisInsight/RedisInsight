@@ -7,6 +7,7 @@
 
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
+import ip from 'ip';
 import commonConfig from './webpack.config.web.common.babel';
 
 function employCache(loaders) {
@@ -22,7 +23,7 @@ export default merge(commonConfig, {
 
   entry: [
     'regenerator-runtime/runtime',
-    'webpack-dev-server/client?http://localhost:8080',
+    `webpack-dev-server/client?http://${ip.address()}:8080`,
     'webpack/hot/only-dev-server',
     require.resolve('../redisinsight/ui/index.tsx'),
   ],
@@ -156,6 +157,8 @@ export default merge(commonConfig, {
   },
 
   devServer: {
+    host: ip.address(),
+    disableHostCheck: true,
     port: 8080,
     hot: true, // enable HMR on the server
     historyApiFallback: true,
@@ -184,8 +187,8 @@ export default merge(commonConfig, {
       APP_ENV: 'web',
       API_PREFIX: 'api',
       API_PORT: '5000',
-      BASE_API_URL: `http://${require('os').hostname()}`,
-      RESOURCES_BASE_URL: `http://${require('os').hostname()}`,
+      BASE_API_URL: `http://${ip.address()}`,
+      RESOURCES_BASE_URL: `http://${ip.address()}`,
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
       SEGMENT_WRITE_KEY:

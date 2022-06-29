@@ -68,7 +68,15 @@ const StreamDataViewWrapper = (props: Props) => {
 
     // for Manager columns
     // setUniqFields(fields)
-    setEntries(loadedEntries)
+    const headerRow = { id: {
+      id: 'id',
+      label: 'Entry ID',
+      sortable: true
+    },
+    ...columnsNames,
+    actions: '',
+    }
+    setEntries([headerRow, ...loadedEntries])
     setColumns([
       idColumn,
       ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field])),
@@ -126,7 +134,7 @@ const StreamDataViewWrapper = (props: Props) => {
     className: styles.cell,
     headerClassName: 'streamItemHeader',
     headerCellClassName: 'truncateText',
-    render: function Id(_name: string, { id, fields }: StreamEntryDto) {
+    render: function Id({ id, fields }: StreamEntryDto) {
       const index = toNumber(label.split('-')[1])
       const values = fields.filter((field) => field[0] === name)
       const value = values[index] ? values[index][1] : ''
@@ -155,68 +163,66 @@ const StreamDataViewWrapper = (props: Props) => {
     }
   })
 
-  const [idColumn, actionsColumn]: ITableColumn[] = [
-    {
-      id: 'id',
-      label: 'Entry ID',
-      absoluteWidth: minColumnWidth,
-      minWidth: minColumnWidth,
-      isSortable: true,
-      className: styles.cell,
-      headerClassName: 'streamItemHeader',
-      render: function Id(_name: string, { id }: StreamEntryDto) {
-        const timestamp = id.split('-')?.[0]
-        return (
-          <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
-                {getFormatTime(timestamp)}
-              </div>
-            </EuiText>
-            <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItemId" data-testid={`stream-entry-${id}`}>
-                {id}
-              </div>
-            </EuiText>
-          </div>
-        )
-      },
+  const idColumn: ITableColumn = {
+    id: 'id',
+    label: 'Entry ID',
+    maxWidth: minColumnWidth,
+    minWidth: minColumnWidth,
+    isSortable: true,
+    className: styles.cell,
+    headerClassName: 'streamItemHeader',
+    render: function Id({ id }: StreamEntryDto) {
+      const timestamp = id.split('-')?.[0]
+      return (
+        <div>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+            <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
+              {getFormatTime(timestamp)}
+            </div>
+          </EuiText>
+          <EuiText size="s" style={{ maxWidth: '100%' }}>
+            <div className="streamItemId" data-testid={`stream-entry-${id}`}>
+              {id}
+            </div>
+          </EuiText>
+        </div>
+      )
     },
-    {
-      id: 'actions',
-      label: '',
-      headerClassName: styles.actionsHeader,
-      textAlignment: TableCellTextAlignment.Left,
-      absoluteWidth: actionsWidth,
-      maxWidth: actionsWidth,
-      minWidth: actionsWidth,
-      render: function Actions(_act: any, { id }: StreamEntryDto) {
-        return (
-          <div>
-            <PopoverDelete
-              header={id}
-              text={(
-                <>
-                  will be removed from
-                  {' '}
-                  <b>{key}</b>
-                </>
+  }
+  const actionsColumn: ITableColumn = {
+    id: 'actions',
+    label: '',
+    headerClassName: styles.actionsHeader,
+    textAlignment: TableCellTextAlignment.Left,
+    absoluteWidth: actionsWidth,
+    maxWidth: actionsWidth,
+    minWidth: actionsWidth,
+    render: function Actions({ id }: StreamEntryDto) {
+      return (
+        <div>
+          <PopoverDelete
+            header={id}
+            text={(
+              <>
+                will be removed from
+                {' '}
+                <b>{key}</b>
+              </>
               )}
-              item={id}
-              suffix={suffix}
-              deleting={deleting}
-              closePopover={closePopover}
-              updateLoading={false}
-              showPopover={showPopover}
-              testid={`remove-entry-button-${id}`}
-              handleDeleteItem={handleDeleteEntry}
-              handleButtonClick={handleRemoveIconClick}
-            />
-          </div>
-        )
-      },
+            item={id}
+            suffix={suffix}
+            deleting={deleting}
+            closePopover={closePopover}
+            updateLoading={false}
+            showPopover={showPopover}
+            testid={`remove-entry-button-${id}`}
+            handleDeleteItem={handleDeleteEntry}
+            handleButtonClick={handleRemoveIconClick}
+          />
+        </div>
+      )
     },
-  ]
+  }
 
   return (
     <>

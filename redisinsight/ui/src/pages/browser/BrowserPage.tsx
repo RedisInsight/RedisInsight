@@ -193,12 +193,22 @@ const BrowserPage = () => {
 
   const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen
 
+  const onEditKey = useCallback(
+    (key: string, newKey: string) => handleEditKey(key, newKey),
+    [],
+  )
+
+  const onSelectKey = useCallback(
+    () => setSelectedKey(null),
+    [],
+  )
+
   return (
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader />
       <div className={styles.main}>
         <div className={styles.resizableContainer}>
-          <EuiResizableContainer onPanelWidthChange={onPanelWidthChange} style={{ height: '100%' }}>
+          <EuiResizableContainer style={{ height: '100%' }}>
             {(EuiResizablePanel, EuiResizableButton) => (
               <>
                 <EuiResizablePanel
@@ -263,20 +273,21 @@ const BrowserPage = () => {
                     }),
                   }}
                 >
-                  {isAddKeyPanelOpen ? (
+                  {isAddKeyPanelOpen && (
                     <AddKey
                       handleAddKeyPanel={handleAddKeyPanel}
                       handleCloseKey={closeKey}
                     />
-                  ) : (
+                  )}
+                  {!isAddKeyPanelOpen && (
                     <KeyDetailsWrapper
                       isFullScreen={isBrowserFullScreen}
                       arePanelsCollapsed={arePanelsCollapsed}
                       onToggleFullScreen={handleToggleFullScreen}
                       keyProp={selectedKey}
                       onCloseKey={closeKey}
-                      onEditKey={(key: string, newKey: string) => handleEditKey(key, newKey)}
-                      onDeleteKey={() => setSelectedKey(null)}
+                      onEditKey={onEditKey}
+                      onDeleteKey={onSelectKey}
                     />
                   )}
                 </EuiResizablePanel>

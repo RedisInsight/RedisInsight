@@ -90,7 +90,7 @@ describe('NotificationCenter', () => {
         .toHaveTextContent(notification.title)
 
       expect(within(notificationContainer).getByTestId('notification-date'))
-        .toHaveTextContent(format(notification.timestamp, NOTIFICATION_DATE_FORMAT))
+        .toHaveTextContent(format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT))
     })
   })
 })

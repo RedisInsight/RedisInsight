@@ -11,7 +11,7 @@ export enum ClusterNodeRole {
   Slave = 'SLAVE',
 }
 
-export class createBunchCommandsExecutionDto {
+export class CreateBunchCommandsExecutionDto {
   @ApiProperty({
     isArray: true,
     description: 'Redis commands',

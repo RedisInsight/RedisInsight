@@ -20,6 +20,7 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CreateBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { RawFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/raw-formatter.strategy';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';

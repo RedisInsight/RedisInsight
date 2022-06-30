@@ -5,7 +5,6 @@ import { RouterModule } from 'nest-router';
 import { SharedModule } from 'src/modules/shared/shared.module';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { WorkbenchBunchCommandsExecutor } from 'src/modules/workbench/providers/workbench-bunch-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CoreModule } from 'src/modules/core/core.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -36,7 +35,6 @@ import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbe
   providers: [
     WorkbenchService,
     WorkbenchCommandsExecutor,
-    WorkbenchBunchCommandsExecutor,
     CommandExecutionProvider,
     {
       provide: RedisToolService,

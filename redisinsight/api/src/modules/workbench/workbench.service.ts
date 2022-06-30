@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { WorkbenchBunchCommandsExecutor } from 'src/modules/workbench/providers/workbench-bunch-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { createBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
+import { CreateBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
 import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
@@ -17,7 +16,6 @@ import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbe
 export class WorkbenchService {
   constructor(
     private commandsExecutor: WorkbenchCommandsExecutor,
-    private bunchCommandsExecutor: WorkbenchBunchCommandsExecutor,
     private commandExecutionProvider: CommandExecutionProvider,
     private analyticsService: WorkbenchAnalyticsService,
   ) {}
@@ -61,33 +59,14 @@ export class WorkbenchService {
    */
      async createBunchCommandsExecution(
       clientOptions: IFindRedisClientInstanceByOptions,
-      dto: createBunchCommandsExecutionDto,
+      dto: CreateBunchCommandsExecutionDto,
     ): Promise<CommandExecution[]> {
-      const commandExecution: Partial<CommandExecution> = {
-        ...dto,
-        databaseId: clientOptions.instanceId,
-      };
-       let results: CommandExecution[] = [];
-       
-      for (let i = 0; i < dto.commands.length; i+= 1) {
-        const command = multilineCommandToOneLine(dto.commands[i]);
-        const deprecatedCommand = this.findCommandInBlackList(command);
-        if (deprecatedCommand) {
-          commandExecution.result = [
-            {
-              response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
-              status: CommandExecutionStatus.Fail,
-            },
-          ];
-        } else {  
-          commandExecution.result = await this.bunchCommandsExecutor.sendCommand(clientOptions, { ...dto, commands: [command] });
-          commandExecution.command = dto.commands[i]
-          
-          results.push(await this.commandExecutionProvider.create(commandExecution));
-        }
-       }
 
-      return results;
+       return Promise.all(
+        dto.commands.map(async (command) => {
+          return await this.createCommandExecution(clientOptions, { ...dto, command });
+      })
+      );
     }
 
   /**

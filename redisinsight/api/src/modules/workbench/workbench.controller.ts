@@ -8,7 +8,7 @@ import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { AppTool } from 'src/models';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { createBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
+import { CreateBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 
 @ApiTags('Workbench')
@@ -31,7 +31,7 @@ export class WorkbenchController {
   @ApiRedisParams()
   async sendCommands(
     @Param('dbInstance') dbInstance: string,
-      @Body() dto: createBunchCommandsExecutionDto,
+      @Body() dto: CreateBunchCommandsExecutionDto,
   ): Promise<CommandExecution[]> {
     return this.service.createBunchCommandsExecution(
       {

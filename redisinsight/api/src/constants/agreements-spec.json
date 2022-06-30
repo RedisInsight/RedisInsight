@@ -10,7 +10,7 @@
       "since": "1.0.1",
       "title": "Analytics",
       "label": "Analytics",
-      "description": "We will store data in an aggregate form about user's experience with RedisInsight. We use these data to fix bugs and improve the experience for all users."
+      "description": "Select to help us make RedisInsight better. We aggregate anonymized user experience data and use it to fix bugs and improve experience for all users."
     },
     "encryption": {
       "conditional": true,
@@ -26,7 +26,7 @@
           "since": "1.0.3",
           "title": "Encryption",
           "label": "Encrypt sensitive information",
-          "description": "We will encrypt your sensitive information added to the application using the system keychain. Otherwise, this information will be stored locally in plain text and may lead to security risks."
+          "description": "Select to encrypt sensitive information using system keychain. Otherwise, this information is stored locally in plain text, which may incur security risk."
         },
         "false": {
           "defaultValue": false,

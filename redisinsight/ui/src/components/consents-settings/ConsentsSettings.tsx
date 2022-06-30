@@ -157,9 +157,8 @@ const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
           <>
             <EuiSpacer size="s" />
             <EuiText size="s" color="subdued">
-              To improve your experience, we use third party tools in RedisInsight. All data collected
-              are completely anonymized, but we will not use these data for any purpose that you do
-              not consent to.
+              To optimize your experience, RedisInsight uses third-party tools.
+              All data collected is anonymized and will not be used for any purpose without your consent.
             </EuiText>
             <EuiSpacer size="xl" />
           </>
@@ -173,8 +172,8 @@ const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
           <>
             <EuiCallOut>
               <EuiText size="s" data-testid="plugin-section">
-                While adding new visualization plugins, use files only from trusted authors
-                to avoid automatic execution of malicious code.
+                To avoid automatic execution of malicious code, when adding new Workbench plugins,
+                use files from trusted authors only.
               </EuiText>
             </EuiCallOut>
             <EuiHorizontalRule margin="l" className={cx({ [styles.pluginWarningHR]: !!requiredConsents.length })} />

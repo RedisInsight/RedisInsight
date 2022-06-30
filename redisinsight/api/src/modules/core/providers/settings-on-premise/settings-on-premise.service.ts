@@ -8,6 +8,7 @@ import {
 import {
   difference,
   isEmpty,
+  isNumber,
   map,
   cloneDeep,
 } from 'lodash';
@@ -80,7 +81,7 @@ implements OnModuleInit, ISettingsProvider {
       return {
         ...settings,
         scanThreshold: settings.scanThreshold || REDIS_SCAN_CONFIG.countThreshold,
-        batchSize: typeof(settings.batchSize) === "number" ? settings.batchSize : WORKBENCH_CONFIG.countBatch,
+        batchSize: isNumber(settings.batchSize) ? settings.batchSize : WORKBENCH_CONFIG.countBatch,
         agreements: agreements.version ? agreements : null,
       };
     } catch (error) {

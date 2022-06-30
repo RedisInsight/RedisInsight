@@ -101,8 +101,16 @@ describe('SettingsAnalyticsService', () => {
           previousValue: 10000,
           previousValueRange: '5 001 - 10 000',
         },
+      );   
+    }); 
+    it('should not emit [SETTINGS_KEYS_TO_SCAN_CHANGED] for the same value', async () => {
+      await service.sendSettingsUpdatedEvent(
+        { ...defaultSettings, scanThreshold: 10000 },
+        { ...defaultSettings, scanThreshold: 10000 },
       );
-    });    
+
+      expect(sendEventMethod).not.toHaveBeenCalled();
+    });
     it('should not emit event on error', async () => {
       await service.sendSettingsUpdatedEvent(
         { ...defaultSettings, scanThreshold: 10000 },

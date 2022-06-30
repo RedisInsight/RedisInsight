@@ -56,7 +56,6 @@ const mockCommandExecutionProvider = () => ({
 describe('WorkbenchService', () => {
   let service: WorkbenchService;
   let workbenchCommandsExecutor;
-  let workbenchBunchCommandsExecutor;
   let commandExecutionProvider;
 
   beforeEach(async () => {

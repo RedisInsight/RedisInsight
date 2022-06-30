@@ -7,6 +7,7 @@ const KEY_TTL = 100;
 const CLUSTER_HASH_SLOT = '{slot1}';
 const APP_DEFAULT_SETTINGS = {
   scanThreshold: 10000,
+  pipelineBunch: 5,
   theme: null,
   agreements: null,
 }

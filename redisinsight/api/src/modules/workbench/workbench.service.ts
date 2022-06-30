@@ -20,7 +20,7 @@ export class WorkbenchService {
     private bunchCommandsExecutor: WorkbenchBunchCommandsExecutor,
     private commandExecutionProvider: CommandExecutionProvider,
     private analyticsService: WorkbenchAnalyticsService,
-  ) { }
+  ) {}
 
   /**
    * Send redis command from workbench and save history

@@ -107,7 +107,7 @@ export class UpdateSettingsDto {
   scanThreshold?: number;
 
   @ApiPropertyOptional({
-    description: 'Threshold for scan operation.',
+    description: 'Batch for workbench pipeline.',
     type: Number,
     example: 5,
   })

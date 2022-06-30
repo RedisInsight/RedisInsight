@@ -131,6 +131,7 @@ export default {
       || process.env.NOTIFICATION_UPDATE_URL
       || 'https://github.com/RedisInsight/Notifications/releases/download/latest/notifications.json',
     syncInterval: parseInt(process.env.NOTIFICATION_SYNC_INTERVAL, 10) || 60 * 60 * 1000,
+    queryLimit: parseInt(process.env.NOTIFICATION_QUERY_LIMIT, 10) || 20,
     devMode: !!process.env.NOTIFICATION_DEV_PATH,
   },
   workbench: {

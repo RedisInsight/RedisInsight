@@ -10,7 +10,7 @@ import { updateUserConfigSettingsAction, userSettingsConfigSelector } from 'uiSr
 import AdvancedSettingsItem from './AdvancedSettingsItem'
 
 const AdvancedSettings = () => {
-  const { scanThreshold = '', pipelineBunch = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+  const { scanThreshold = '', batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
 
   const dispatch = useDispatch()
 
@@ -28,7 +28,7 @@ const AdvancedSettings = () => {
   const handleApplyPipelineCountChanges = (value: string) => {
     dispatch(
       updateUserConfigSettingsAction(
-        { pipelineBunch: toNumber(value) },
+        { batchSize: toNumber(value) },
       )
     )
   }
@@ -46,7 +46,7 @@ const AdvancedSettings = () => {
         label="Keys to Scan:"
       />
       <AdvancedSettingsItem
-        initValue={pipelineBunch.toString()}
+        initValue={batchSize.toString()}
         onApply={handleApplyPipelineCountChanges}
         validation={(value) => validateNumber(value)}
         title="Pipeline mode"

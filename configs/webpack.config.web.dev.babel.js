@@ -188,7 +188,7 @@ export default merge(commonConfig, {
       NODE_ENV: 'development',
       APP_ENV: 'web',
       API_PREFIX: 'api',
-      API_PORT: '5000',
+      API_PORT: '5001',
       BASE_API_URL: `http://${HOST}`,
       RESOURCES_BASE_URL: `http://${HOST}`,
       PIPELINE_COUNT_DEFAULT: '5',

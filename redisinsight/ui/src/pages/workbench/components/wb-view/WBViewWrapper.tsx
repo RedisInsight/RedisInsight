@@ -56,7 +56,7 @@ const WBViewWrapper = () => {
 
   const { loading, items } = useSelector(workbenchResultsSelector)
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
-  const { pipelineBunch = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+  const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
   const [script, setScript] = useState(scriptContext)
@@ -109,7 +109,7 @@ const WBViewWrapper = () => {
   ) => {
     const { loading } = state
     const isNewCommand = () => !commandId
-    const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), pipelineBunch > 1 ? pipelineBunch : 1)
+    const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), batchSize > 1 ? batchSize : 1)
     const multiCommands = rest.map((command) => getMultiCommands(command))
     const commandLine = commands.map((command) => removeMonacoComments(decode(command).trim()))
 

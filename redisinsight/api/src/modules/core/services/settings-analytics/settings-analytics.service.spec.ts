@@ -111,6 +111,30 @@ describe('SettingsAnalyticsService', () => {
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
+    it('should not emit [SETTINGS_WORKBENCH_PIPELINE_CHANGED] for the same value', async () => {
+      await service.sendSettingsUpdatedEvent(
+        { ...defaultSettings, batchSize: 5 },
+        { ...defaultSettings, batchSize: 5 },
+      );
+
+      expect(sendEventMethod).not.toHaveBeenCalled();
+    });
+    it('should emit [SETTINGS_WORKBENCH_PIPELINE_CHANGED] event', async () => {
+      await service.sendSettingsUpdatedEvent(
+        { ...defaultSettings, batchSize: 5 },
+        { ...defaultSettings, batchSize: 10 },
+      );
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.SettingsWorkbenchPipelineChanged,
+        {
+          newValue: true,
+          newValueSize: 5,
+          currentValue: true,
+          currentValueSize: 10,
+        },
+      );
+    });
     it('should not emit event on error', async () => {
       await service.sendSettingsUpdatedEvent(
         { ...defaultSettings, scanThreshold: 10000 },

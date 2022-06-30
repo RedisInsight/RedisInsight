@@ -113,7 +113,7 @@ export class UpdateSettingsDto {
   })
   @IsOptional()
   @IsInt({ always: true })
-  @Min(-1)
+  @Min(0)
   batchSize?: number;
 
   @ApiPropertyOptional({

@@ -16,7 +16,7 @@ const endpoint = () => request(server).get('/settings');
 const responseSchema = Joi.object().keys({
   theme: Joi.string().allow(null).required(),
   scanThreshold: Joi.number().required(),
-  pipelineBunch: Joi.number().required(),
+  batchSize: Joi.number().required(),
   agreements: Joi.object().keys({
     version: Joi.string().required(),
     eula: Joi.bool().required(),

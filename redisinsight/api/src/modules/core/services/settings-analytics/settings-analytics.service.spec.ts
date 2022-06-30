@@ -84,7 +84,7 @@ describe('SettingsAnalyticsService', () => {
     const defaultSettings: GetAppSettingsResponse = {
       agreements: null,
       scanThreshold: 10000,
-      pipelineBunch: 5,
+      batchSize: 5,
       theme: null,
     };
     it('should emit [SETTINGS_KEYS_TO_SCAN_CHANGED] event', async () => {
@@ -101,8 +101,8 @@ describe('SettingsAnalyticsService', () => {
           previousValue: 10000,
           previousValueRange: '5 001 - 10 000',
         },
-      );   
-    }); 
+      );
+    });
     it('should not emit [SETTINGS_KEYS_TO_SCAN_CHANGED] for the same value', async () => {
       await service.sendSettingsUpdatedEvent(
         { ...defaultSettings, scanThreshold: 10000 },

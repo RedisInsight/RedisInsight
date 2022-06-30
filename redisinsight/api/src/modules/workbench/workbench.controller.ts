@@ -7,7 +7,7 @@ import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { AppTool } from 'src/models';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
-import { CreateBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
+import { createCommandExecutionsDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 
 @ApiTags('Workbench')
@@ -17,7 +17,7 @@ export class WorkbenchController {
   constructor(private service: WorkbenchService) { }
 
   @ApiEndpoint({
-    description: 'Send Redis Bunch Commands from the Workbench',
+    description: 'Send Redis Batch Commands from the Workbench',
     statusCode: 200,
     responses: [
       {
@@ -31,12 +31,13 @@ export class WorkbenchController {
   @ApiRedisParams()
   async sendCommands(
     @Param('dbInstance') dbInstance: string,
-      @Body() dto: CreateBunchCommandsExecutionDto,
+      @Body() dto: createCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
-    return this.service.createBunchCommandsExecution(
+    return this.service.createCommandExecutions(
       {
         instanceId: dbInstance,
         tool: AppTool.Workbench,
+  
       },
       dto,
     );

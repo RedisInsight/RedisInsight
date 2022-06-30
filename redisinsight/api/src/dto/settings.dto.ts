@@ -67,11 +67,11 @@ export class GetAppSettingsResponse {
   scanThreshold: number;
 
   @ApiProperty({
-    description: 'Applied the bunch of the commands for workbench.',
+    description: 'Applied the batch of the commands for workbench.',
     type: Number,
     example: 5,
   })
-  pipelineBunch: number;
+  batchSize: number;
 
   @ApiProperty({
     description: 'Agreements set by the user.',
@@ -114,7 +114,7 @@ export class UpdateSettingsDto {
   @IsOptional()
   @IsInt({ always: true })
   @Min(-1)
-  pipelineBunch?: number;
+  batchSize?: number;
 
   @ApiPropertyOptional({
     description: 'Agreements',

@@ -4,13 +4,13 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export interface ISettingsJSON {
   theme: string;
   scanThreshold: number;
-  pipelineBunch: Number;
+  batchSize: number;
 }
 
 const defaultData: ISettingsJSON = {
   theme: null,
   scanThreshold: null,
-  pipelineBunch: null,
+  batchSize: null,
 };
 
 @Entity('settings')

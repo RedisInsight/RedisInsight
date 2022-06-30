@@ -71,3 +71,13 @@ describe('calculateRedisHitRatio', () => {
     });
   });
 });
+
+describe('getRangeForNumber', () => {
+  getRangeForNumberTests.forEach((test) => {
+    it(`should be output: ${test.output} for input: ${test.input} `, async () => {
+      const result = getRangeForNumber(test.input);
+
+      expect(result).toEqual(test.output);
+    });
+  });
+});

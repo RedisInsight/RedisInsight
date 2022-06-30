@@ -118,7 +118,7 @@ describe('pub-sub', function () {
         })
       });
     });
-    it('Should receive bunch of logs for many subscriptions', async () => {
+    it('Should receive batch of logs for many subscriptions', async () => {
       const messages = {
         'channel-a': [],
         'channel-b': [],
@@ -203,7 +203,7 @@ describe('pub-sub', function () {
       expect(messages['*'].length).to.eql(5);
     });
 
-    it('Should receive bunch of messages when subscribed only', async () => {
+    it('Should receive batch of messages when subscribed only', async () => {
       const messages = {
         'channel-a': [],
         'channel-b': [],

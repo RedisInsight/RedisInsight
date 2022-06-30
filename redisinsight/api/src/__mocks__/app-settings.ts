@@ -33,6 +33,7 @@ export const mockAgreementsEntity: AgreementsEntity = {
 export const mockSettingsJSON: ISettingsJSON = {
   theme: null,
   scanThreshold: null,
+  batchSize: null,
 };
 
 export const mockSettingsEntity: SettingsEntity = {

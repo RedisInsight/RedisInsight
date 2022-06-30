@@ -80,7 +80,7 @@ implements OnModuleInit, ISettingsProvider {
       return {
         ...settings,
         scanThreshold: settings.scanThreshold || REDIS_SCAN_CONFIG.countThreshold,
-        pipelineBunch: typeof(settings.pipelineBunch) === "number" ? settings.pipelineBunch : WORKBENCH_CONFIG.countBunch,
+        batchSize: typeof(settings.batchSize) === "number" ? settings.batchSize : WORKBENCH_CONFIG.countBatch,
         agreements: agreements.version ? agreements : null,
       };
     } catch (error) {

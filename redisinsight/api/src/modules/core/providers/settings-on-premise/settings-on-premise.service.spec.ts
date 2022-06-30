@@ -126,7 +126,7 @@ describe('SettingsOnPremiseService', () => {
       expect(result).toEqual({
         theme: null,
         scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
-        pipelineBunch: WORKBENCH_CONFIG.countBunch,
+        batchSize: WORKBENCH_CONFIG.countBatch,
         agreements: null,
       });
     });
@@ -135,7 +135,7 @@ describe('SettingsOnPremiseService', () => {
         ...mockSettingsJSON,
         theme: 'DARK',
         scanThreshold: 500,
-        pipelineBunch: 10,
+        batchSize: 10,
         encryptionStrategy: EncryptionStrategy.KEYTAR,
       });
       agreementsEntity.toJSON = jest.fn().mockReturnValue({
@@ -152,7 +152,7 @@ describe('SettingsOnPremiseService', () => {
         ...mockSettingsJSON,
         theme: 'DARK',
         scanThreshold: 500,
-        pipelineBunch: 10,
+        batchSize: 10,
         encryptionStrategy: EncryptionStrategy.KEYTAR,
         agreements: {
           version: '1.0.0',
@@ -187,7 +187,7 @@ describe('SettingsOnPremiseService', () => {
     it('should update agreements and settings', async () => {
       const dto: UpdateSettingsDto = {
         scanThreshold: 1000,
-        pipelineBunch: 10,
+        batchSize: 10,
         agreements: mockAgreementsMap,
       };
       const mockUpdatedAgreements = {
@@ -203,7 +203,7 @@ describe('SettingsOnPremiseService', () => {
       );
       expect(settingsRepository.save).toHaveBeenCalledWith({
         ...settingsEntity,
-        data: JSON.stringify({ ...mockSettingsJSON, scanThreshold: 1000, pipelineBunch: 10 }),
+        data: JSON.stringify({ ...mockSettingsJSON, scanThreshold: 1000, batchSize: 10 }),
       });
       expect(service.getSettings).toHaveBeenCalled();
       expect(analyticsService.sendAnalyticsAgreementChange).toHaveBeenCalled();
@@ -211,7 +211,7 @@ describe('SettingsOnPremiseService', () => {
     it('should update only settings', async () => {
       const dto: UpdateSettingsDto = {
         scanThreshold: 1000,
-        pipelineBunch: 10,
+        batchSize: 10,
       };
 
       await service.updateSettings(dto);
@@ -221,7 +221,7 @@ describe('SettingsOnPremiseService', () => {
         data: JSON.stringify({
           ...mockSettingsJSON,
           scanThreshold: 1000,
-          pipelineBunch: 10,
+          batchSize: 10,
         }),
       });
       expect(service.getSettings).toHaveBeenCalled();

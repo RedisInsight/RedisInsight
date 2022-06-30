@@ -90,7 +90,7 @@ describe('monitor', function () {
         })
       });
     });
-    it('Should receive bunch of logs for many clients', async () => {
+    it('Should receive batch of logs for many clients', async () => {
       const clients = await Promise.all(new Array(3)
         .fill(1).map(() => getMonitorClient(constants.TEST_INSTANCE_ID)));
 

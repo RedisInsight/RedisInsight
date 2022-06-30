@@ -4,7 +4,6 @@ import { mockStandaloneDatabaseEntity, mockWorkbenchAnalyticsService } from 'src
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { WorkbenchBunchCommandsExecutor } from 'src/modules/workbench/providers/workbench-bunch-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
@@ -57,7 +56,6 @@ const mockCommandExecutionProvider = () => ({
 describe('WorkbenchService', () => {
   let service: WorkbenchService;
   let workbenchCommandsExecutor;
-  let WorkbenchBunchCommandsExecutor;
   let commandExecutionProvider;
 
   beforeEach(async () => {
@@ -75,12 +73,6 @@ describe('WorkbenchService', () => {
           }),
         },
         {
-          provide: WorkbenchBunchCommandsExecutor,
-          useFactory: () => ({
-            sendCommand: jest.fn(),
-          }),
-        },
-        {
           provide: CommandExecutionProvider,
           useFactory: mockCommandExecutionProvider,
         },
@@ -89,7 +81,6 @@ describe('WorkbenchService', () => {
 
     service = module.get<WorkbenchService>(WorkbenchService);
     workbenchCommandsExecutor = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
-    // workbenchBunchCommandsExecutor = module.get<WorkbenchBunchCommandsExecutor>(WorkbenchBunchCommandsExecutor);
     commandExecutionProvider = module.get<CommandExecutionProvider>(CommandExecutionProvider);
   });
 

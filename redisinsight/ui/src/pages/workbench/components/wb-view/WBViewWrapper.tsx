@@ -98,7 +98,7 @@ const WBViewWrapper = () => {
   }, [blockingCommands])
 
   useEffect(() => {
-    if (multiCommands.length) {
+    if (multiCommands?.length) {
       handleSubmit(multiCommands.join('\n'))
     }
   }, [multiCommands])
@@ -182,7 +182,7 @@ const WBViewWrapper = () => {
   }
 
   const sourceValueSubmit = (value?: string, commandId?: Nullable<string>) => {
-    if (state.loading) return
+    if (state.loading || !value) return
 
     handleSubmit(value, commandId)
     setTimeout(() => {

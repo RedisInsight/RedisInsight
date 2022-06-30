@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export interface ISettingsJSON {
   theme: string;
   scanThreshold: number;
-  pipelineBunch: Number;
+  pipelineBunch: number;
 }
 
 const defaultData: ISettingsJSON = {

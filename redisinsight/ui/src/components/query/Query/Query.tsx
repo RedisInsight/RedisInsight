@@ -3,7 +3,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
@@ -44,7 +44,6 @@ import styles from './styles.module.scss'
 
 export interface Props {
   query: string
-  loading: boolean
   setQueryEl: Function
   setQuery: (script: string) => void
   setIsCodeBtnDisabled: (value: boolean) => void
@@ -75,7 +74,7 @@ const Query = (props: Props) => {
   let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
-  const { items: execHistoryItems } = useSelector(workbenchResultsSelector)
+  const { items: execHistoryItems, loading } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
@@ -84,15 +83,13 @@ const Query = (props: Props) => {
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
 
-  useEffect(() => {
+  useEffect(() =>
     // componentWillUnmount
-    return () => {
+    () => {
       contribution?.dispose?.()
       disposeCompletionItemProvider()
       disposeSignatureHelpProvider()
-    }
-  }, [])
-
+    }, [])
 
   useEffect(() => {
     // HACK: The Monaco editor memoize the state and ignores updates to it
@@ -201,10 +198,10 @@ const Query = (props: Props) => {
 
     const position = editor.getPosition()
     if (
-      position?.column !== 1 ||
-      position?.lineNumber !== 1 ||
+      position?.column !== 1
+      || position?.lineNumber !== 1
       // @ts-ignore
-      editor.getContribution('editor.contrib.suggestController')?.model?.state
+      || editor.getContribution('editor.contrib.suggestController')?.model?.state
     ) return
 
     if (execHistory[execHistoryPos]) {
@@ -478,13 +475,19 @@ const Query = (props: Props) => {
             }
             data-testid="run-query-tooltip"
           >
-            <EuiButtonIcon
-              onClick={() => handleSubmit()}
-              iconType="playFilled"
-              className={cx(styles.submitButton)}
-              aria-label="submit"
-              data-testid="btn-submit"
-            />
+            <>
+              {loading && (
+                <EuiLoadingSpinner size="l" />
+              )}
+              <EuiButtonIcon
+                onClick={() => handleSubmit()}
+                disabled={loading}
+                iconType="playFilled"
+                className={cx(styles.submitButton, { [styles.submitButtonLoading]: loading })}
+                aria-label="submit"
+                data-testid="btn-submit"
+              />
+            </>
           </EuiToolTip>
         </div>
       </div>

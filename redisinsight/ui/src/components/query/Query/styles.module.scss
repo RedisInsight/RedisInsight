@@ -66,6 +66,7 @@
 
 .actions {
   width: 44px;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,6 +76,16 @@
   color: var(--rsSubmitBtn) !important;
   width: 44px !important;
   height: 44px !important;
+
+  &Loading {
+    position: absolute;
+    left: 0;
+    margin-top: -10px;
+    svg {
+      width: 17px !important;
+      height: 17px !important;
+    }
+  }
 
   svg {
     width: 24px;

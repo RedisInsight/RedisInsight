@@ -13,7 +13,8 @@ import {
   MAX_REFRESH_RATE,
   errorValidateRefreshRateNumber,
   errorValidateNegativeInteger,
-  validateConsumerGroupId
+  validateConsumerGroupId,
+  validateNumber,
 } from 'uiSrc/utils'
 
 const text1 = '123 123 123'
@@ -235,6 +236,23 @@ describe('Validations utils', () => {
     ])('for input: %s (input), should be output: %s',
       (input, expected) => {
         const result = validateConsumerGroupId(input)
+        expect(result).toBe(expected)
+      })
+  })
+
+  describe('validateNumber', () => {
+    it.each([
+      ['123', '123'],
+      ['123-1', '1231'],
+      ['$', ''],
+      ['11.zx-1', '111'],
+      ['1ueooeu1', '11'],
+      ['euiejk', ''],
+      ['0', '0'],
+      ['31231231231', '31231231231'],
+    ])('for input: %s (input), should be output: %s',
+      (input, expected) => {
+        const result = validateNumber(input)
         expect(result).toBe(expected)
       })
   })

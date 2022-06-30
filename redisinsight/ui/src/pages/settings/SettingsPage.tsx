@@ -71,7 +71,7 @@ const SettingsPage = () => {
 
   const Appearance = () => (
     <EuiForm component="form">
-      <EuiSpacer size="m" />
+      <EuiSpacer size="s" />
       <EuiTitle size="xs">
         <h4>Color Theme</h4>
       </EuiTitle>
@@ -117,7 +117,7 @@ const SettingsPage = () => {
             <h1 className={styles.title}>Settings</h1>
           </EuiTitle>
         </EuiPageHeader>
-        <EuiPageContentBody style={{ maxWidth: 840 }}>
+        <EuiPageContentBody style={{ maxWidth: 792 }}>
           <EuiCollapsibleNavGroup
             isCollapsible
             className={styles.accordion}

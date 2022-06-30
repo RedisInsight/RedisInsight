@@ -1,125 +1,74 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
-import {
-  EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiSpacer,
-  EuiText,
-  EuiTitle
-} from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
+import { toNumber } from 'lodash'
 
-import { validateCountNumber } from 'uiSrc/utils'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
-import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+import { validateCountNumber, validateNumber } from 'uiSrc/utils'
+import { SCAN_COUNT_DEFAULT, PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { updateUserConfigSettingsAction, userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 
-import styles from './styles.module.scss'
+import AdvancedSettingsItem from './AdvancedSettingsItem'
 
 const AdvancedSettings = () => {
-  const [keysToScan, setKeysToScan] = useState<string | undefined>('')
-  const [keysToScanInitial, setKeysToScanInitial] = useState<string | undefined>('')
-  const [isKeysToScanEditing, setIsKeysToScanEditing] = useState<boolean>(false)
-  const [isKeysToScanHovering, setIsKeysToScanHovering] = useState<boolean>(false)
-
-  const { config } = useSelector(userSettingsSelector)
+  const { scanThreshold = '', pipelineBunch = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    setKeysToScan(config?.scanThreshold.toString())
-    setKeysToScanInitial(config?.scanThreshold.toString())
-  }, [config])
-
-  const handleApplyChanges = () => {
-    setIsKeysToScanEditing(false)
-    setIsKeysToScanHovering(false)
-
+  const handleApplyKeysToScanChanges = (value: string) => {
     // eslint-disable-next-line no-nested-ternary
-    const data = keysToScan ? (+keysToScan < SCAN_COUNT_DEFAULT ? SCAN_COUNT_DEFAULT : +keysToScan) : null
+    const data = value ? (+value < SCAN_COUNT_DEFAULT ? SCAN_COUNT_DEFAULT : +value) : null
 
     dispatch(
       updateUserConfigSettingsAction(
         { scanThreshold: data },
-        () => {},
-        () => setKeysToScan(keysToScanInitial)
       )
     )
   }
 
-  const handleDeclineChanges = (event?: React.MouseEvent<HTMLElement>) => {
-    event?.stopPropagation()
-    setKeysToScan(keysToScanInitial)
-    setIsKeysToScanEditing(false)
-    setIsKeysToScanHovering(false)
+  const handleApplyPipelineCountChanges = (value: string) => {
+    dispatch(
+      updateUserConfigSettingsAction(
+        { pipelineBunch: toNumber(value) },
+      )
+    )
   }
-
-  const onChange = ({ currentTarget: { value } }: ChangeEvent<HTMLInputElement>) => {
-    isKeysToScanEditing && setKeysToScan(validateCountNumber(value))
-  }
-
-  const appendKeysToScanEditing = () =>
-    (!isKeysToScanEditing ? <EuiIcon type="pencil" color="subdued" /> : '')
 
   return (
     <>
-      <EuiSpacer size="s" />
-      <EuiTitle size="xxs">
-        <span>Filter by Key Type or Pattern</span>
-      </EuiTitle>
-      <EuiText size="s" color="subdued">
-        Filtering by pattern per a large number of keys may decrease performance. Clear
-        the control to restore the default value.
-      </EuiText>
-      <EuiSpacer size="m" />
-      <EuiFlexGroup alignItems="center" gutterSize="none" className={styles.keysToScanWrapper}>
-        <EuiFlexItem grow={false} style={{ marginRight: '4px' }}>
-          <EuiText size="xs" color="subdued" className={styles.inputLabel}>Keys to Scan:</EuiText>
-        </EuiFlexItem>
-
-        <EuiFlexItem
-          onMouseEnter={() => setIsKeysToScanHovering(true)}
-          onMouseLeave={() => setIsKeysToScanHovering(false)}
-          onClick={() => setIsKeysToScanEditing(true)}
-          grow={false}
-          component="span"
-          style={{ paddingBottom: '1px' }}
-        >
-          {isKeysToScanEditing || isKeysToScanHovering ? (
-            <InlineItemEditor
-              controlsPosition="right"
-              viewChildrenMode={!isKeysToScanEditing}
-              onApply={handleApplyChanges}
-              onDecline={handleDeclineChanges}
-              declineOnUnmount={false}
+      <AdvancedSettingsItem
+        initValue={scanThreshold.toString()}
+        onApply={handleApplyKeysToScanChanges}
+        validation={validateCountNumber}
+        title="Keys to Scan in Browser"
+        summary="Sets the amount of keys to scan per one iteration. Filtering by pattern per a large number of keys may decrease performance."
+        testid="keys-to-scan"
+        placeholder="10 000"
+        label="Keys to Scan:"
+      />
+      <AdvancedSettingsItem
+        initValue={pipelineBunch.toString()}
+        onApply={handleApplyPipelineCountChanges}
+        validation={(value) => validateNumber(value)}
+        title="Pipeline mode"
+        testid="pipeline-bunch"
+        placeholder={`${PIPELINE_COUNT_DEFAULT}`}
+        label="Commands in pipeline:"
+        summary={(
+          <>
+            {`Sets the size of a command batch for the pipeline mode.
+              0 or 1 would pipeline every command. Learn more about `}
+            <EuiLink
+              color="text"
+              external={false}
+              href="https://redis.io/docs/manual/pipelining/"
+              target="_blank"
+              data-testid="pipelining-link"
             >
-              <EuiFieldNumber
-                onChange={onChange}
-                value={keysToScan}
-                placeholder="10 000"
-                name="keysToScan"
-                aria-label="Filter by Key Name or Pattern"
-                className={
-                  cx(styles.keysToScanInput, { [styles.keysToScanInputEditing]: isKeysToScanEditing })
-                }
-                append={appendKeysToScanEditing()}
-                fullWidth={false}
-                compressed
-                autoComplete="off"
-                type="text"
-                readOnly={!isKeysToScanEditing}
-                data-testid="keys-to-scan-input"
-              />
-            </InlineItemEditor>
-          ) : (
-            <EuiText className={styles.keysToScanValue} data-testid="keys-to-scan-value">
-              {keysToScan}
-            </EuiText>
-          )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+              pipelining.
+            </EuiLink>
+          </>
+        )}
+      />
     </>
   )
 }

@@ -67,6 +67,13 @@ export class GetAppSettingsResponse {
   scanThreshold: number;
 
   @ApiProperty({
+    description: 'Applied the bunch of the commands for workbench.',
+    type: Number,
+    example: 5,
+  })
+  pipelineBunch: number;
+
+  @ApiProperty({
     description: 'Agreements set by the user.',
     type: GetUserAgreementsResponse,
     example: {
@@ -98,6 +105,16 @@ export class UpdateSettingsDto {
   @IsInt({ always: true })
   @Min(500)
   scanThreshold?: number;
+
+  @ApiPropertyOptional({
+    description: 'Threshold for scan operation.',
+    type: Number,
+    example: 5,
+  })
+  @IsOptional()
+  @IsInt({ always: true })
+  @Min(-1)
+  pipelineBunch?: number;
 
   @ApiPropertyOptional({
     description: 'Agreements',

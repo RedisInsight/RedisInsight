@@ -8,6 +8,7 @@ import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { AppTool } from 'src/models';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { createBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 
 @ApiTags('Workbench')
@@ -15,9 +16,8 @@ import { ShortCommandExecution } from 'src/modules/workbench/models/short-comman
 @Controller('workbench')
 export class WorkbenchController {
   constructor(private service: WorkbenchService) {}
-
   @ApiEndpoint({
-    description: 'Send Redis Command from the Workbench',
+    description: 'Send Redis Bunch Commands from the Workbench',
     statusCode: 200,
     responses: [
       {
@@ -26,14 +26,14 @@ export class WorkbenchController {
       },
     ],
   })
-  @Post('/command-executions')
+  @Post('/commands-execution')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
-  async sendCommand(
+  async sendCommands(
     @Param('dbInstance') dbInstance: string,
-      @Body() dto: CreateCommandExecutionDto,
-  ): Promise<CommandExecution> {
-    return this.service.createCommandExecution(
+      @Body() dto: createBunchCommandsExecutionDto,
+  ): Promise<CommandExecution[]> {
+    return this.service.createBunchCommandsExecution(
       {
         instanceId: dbInstance,
         tool: AppTool.Workbench,
@@ -41,6 +41,7 @@ export class WorkbenchController {
       dto,
     );
   }
+
 
   @ApiEndpoint({
     description: 'List of command executions',

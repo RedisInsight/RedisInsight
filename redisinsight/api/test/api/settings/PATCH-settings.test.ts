@@ -20,6 +20,7 @@ const endpoint = () => request(server).patch('/settings');
 const responseSchema = Joi.object().keys({
   theme: Joi.string().allow(null).required(),
   scanThreshold: Joi.number().required(),
+  batchSize: Joi.number().required(),
   agreements: Joi.object().keys({
     version: Joi.string().required(),
     eula: Joi.bool().required(),
@@ -43,6 +44,7 @@ const dataSchema = Joi.object({
 const validInputData = {
   theme: 'DARK',
   scanThreshold: 100000,
+  batchSize: 5,
   agreements: {
     eula: true,
     analytics: false,
@@ -75,12 +77,13 @@ describe('PATCH /settings', () => {
       {
         name: 'Should update only scanThreshold value',
         statusCode: 200,
-        data: { scanThreshold: 10000000 },
+        data: { scanThreshold: 10000000, batchSize: 5 },
         responseSchema,
         checkFn: ({ body }) => {
           expect(body).to.include({
             ...constants.APP_DEFAULT_SETTINGS,
-            scanThreshold: 10000000
+            scanThreshold: 10000000,
+            batchSize: 5
           });
         },
       },
@@ -99,7 +102,7 @@ describe('PATCH /settings', () => {
       {
         name: 'Should set default settings',
         statusCode: 200,
-        data: { scanThreshold: null, theme: null },
+        data: { scanThreshold: null, theme: null, batchSize: null },
         responseSchema,
         checkFn: ({ body }) => {
           const { agreements, ...defaultSettings } = constants.APP_DEFAULT_SETTINGS;

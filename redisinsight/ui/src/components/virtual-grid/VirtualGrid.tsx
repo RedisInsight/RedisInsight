@@ -81,13 +81,14 @@ const VirtualGrid = (props: IProps) => {
       const growingColumnsWidth = columns
         .filter(({ maxWidth = 0 }) => maxWidth)
         .map(({ maxWidth }) => maxWidth)
+      const scrollOffset = height < rowHeight * items.length ? scrollWidth : 0
 
       const growingColumnsCount = columns.length - growingColumnsWidth.length
       const maxWidthTable = growingColumnsWidth?.reduce((a = 0, b = 0) => a + b, 0) ?? 0
       const newColumns = columns.map((column) => {
         const { minWidth, maxWidth = 0 } = column
 
-        const newMinWidth = ((width - maxWidthTable - scrollWidth) / growingColumnsCount)
+        const newMinWidth = ((width - maxWidthTable - scrollOffset) / growingColumnsCount)
 
         return {
           ...column,
@@ -145,6 +146,8 @@ const VirtualGrid = (props: IProps) => {
     }
     if (columnIndex === 0) {
       const lastColumn = columns[columns.length - 1]
+      const hasHorizontalScrollOffset = height < rowHeight * items.length
+
       return (
         <div
           className={cx(styles.gridItem,
@@ -164,7 +167,7 @@ const VirtualGrid = (props: IProps) => {
             style={{
               width: lastColumn?.minWidth,
               height: rowHeight,
-              marginLeft: width - lastColumn?.minWidth - 29
+              marginLeft: width - lastColumn?.minWidth - (hasHorizontalScrollOffset ? 29 : 13)
             }}
           >
             {lastColumn?.render && isObject(rowData) && lastColumn?.render(rowData) }
@@ -236,7 +239,6 @@ const VirtualGrid = (props: IProps) => {
                   rowCount={items.length}
                   rowHeight={() => rowHeight}
                   width={width}
-                  // eslint-disable-next-line react-hooks/rules-of-hooks
                   innerElementType={innerElementType}
                   onScroll={onScroll}
                   initialScrollTop={forceScrollTop}

@@ -57,7 +57,7 @@ const mockCommandExecutionProvider = () => ({
 describe('WorkbenchService', () => {
   let service: WorkbenchService;
   let workbenchCommandsExecutor;
-  let WorkbenchBunchCommandsExecutor;
+  let workbenchBunchCommandsExecutor;
   let commandExecutionProvider;
 
   beforeEach(async () => {
@@ -89,7 +89,7 @@ describe('WorkbenchService', () => {
 
     service = module.get<WorkbenchService>(WorkbenchService);
     workbenchCommandsExecutor = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
-    // workbenchBunchCommandsExecutor = module.get<WorkbenchBunchCommandsExecutor>(WorkbenchBunchCommandsExecutor);
+    workbenchBunchCommandsExecutor = module.get<WorkbenchBunchCommandsExecutor>(WorkbenchBunchCommandsExecutor);
     commandExecutionProvider = module.get<CommandExecutionProvider>(CommandExecutionProvider);
   });
 

@@ -210,6 +210,7 @@ export default merge(baseConfig, {
       RESOURCES_BASE_URL: 'http://localhost',
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
+      PIPELINE_COUNT_DEFAULT: '5',
       BUILD_TYPE: 'ELECTRON',
       APP_VERSION: version,
       SEGMENT_WRITE_KEY:

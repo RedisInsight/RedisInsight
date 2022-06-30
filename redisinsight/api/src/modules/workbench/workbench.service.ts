@@ -51,23 +51,20 @@ export class WorkbenchService {
     return this.commandExecutionProvider.create(commandExecution);
   }
 
-    /**
+  /**
    * Send redis command from workbench and save history
    *
    * @param clientOptions
    * @param dto
    */
-     async createBunchCommandsExecution(
-      clientOptions: IFindRedisClientInstanceByOptions,
-      dto: CreateBunchCommandsExecutionDto,
-    ): Promise<CommandExecution[]> {
-
-       return Promise.all(
-        dto.commands.map(async (command) => {
-          return await this.createCommandExecution(clientOptions, { ...dto, command });
-      })
-      );
-    }
+  async createBunchCommandsExecution(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: CreateBunchCommandsExecutionDto,
+  ): Promise<CommandExecution[]> {
+    return Promise.all(
+      dto.commands.map(async (command) => await this.createCommandExecution(clientOptions, { ...dto, command })),
+    );
+  }
 
   /**
    * Get list command execution history per instance (last 30 items)

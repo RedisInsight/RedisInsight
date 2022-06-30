@@ -7,7 +7,6 @@ import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { AppTool } from 'src/models';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
-import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CreateBunchCommandsExecutionDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 
@@ -15,7 +14,8 @@ import { ShortCommandExecution } from 'src/modules/workbench/models/short-comman
 @UsePipes(new ValidationPipe({ transform: true }))
 @Controller('workbench')
 export class WorkbenchController {
-  constructor(private service: WorkbenchService) {}
+  constructor(private service: WorkbenchService) { }
+
   @ApiEndpoint({
     description: 'Send Redis Bunch Commands from the Workbench',
     statusCode: 200,
@@ -41,7 +41,6 @@ export class WorkbenchController {
       dto,
     );
   }
-
 
   @ApiEndpoint({
     description: 'List of command executions',

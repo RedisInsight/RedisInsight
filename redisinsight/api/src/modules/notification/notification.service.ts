@@ -24,7 +24,7 @@ export class NotificationService {
       const notifications = await this.repository
         .createQueryBuilder('n')
         .orderBy('timestamp', 'DESC')
-        .limit(NOTIFICATIONS_CONFIG.queryLimit)
+        // .limit(NOTIFICATIONS_CONFIG.queryLimit) // todo: do not forget when introduce "local" notifications
         .getMany();
 
       const totalUnread = await this.repository

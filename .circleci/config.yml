@@ -122,7 +122,7 @@ aliases:
 
 orbs:
   win: circleci/windows@2.4.0
-  node: circleci/node@4.4.0
+  node: circleci/node@5.0.2
   aws: circleci/aws-cli@2.0.3
 
 executors:
@@ -134,7 +134,7 @@ jobs:
   # Test jobs
   unit-tests-ui:
     docker:
-      - image: circleci/node:15.14.0
+      - image: circleci/node:16.15.1
     steps:
       - checkout
       - restore_cache:
@@ -178,7 +178,7 @@ jobs:
             - ./node_modules
   unit-tests-api:
     docker:
-      - image: circleci/node:15.14.0
+      - image: circleci/node:16.15.1
     steps:
       - checkout
       - restore_cache:

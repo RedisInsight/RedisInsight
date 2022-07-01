@@ -333,7 +333,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: choco install nodejs --version=15.14.0
+      - run: choco install nodejs --version=16.15.1
       - run:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
@@ -483,7 +483,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '14.17'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -549,7 +549,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '15.14.0'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -614,7 +614,7 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=15.14.0
+            choco install nodejs --version=16.15.1
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install

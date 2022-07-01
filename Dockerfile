@@ -1,7 +1,7 @@
 FROM node:16.15.1-alpine as front
 RUN apk update
 RUN apk add --no-cache --virtual .gyp \
-        python \
+        python3 \
         make \
         g++
 WORKDIR /usr/src/app

@@ -55,8 +55,7 @@ const AdvancedSettings = () => {
         label="Commands in pipeline:"
         summary={(
           <>
-            {`Sets the size of a command batch for the pipeline mode.
-              0 or 1 would pipeline every command. Learn more about `}
+            {'Sets the size of a command batch for the '}
             <EuiLink
               color="text"
               external={false}
@@ -64,8 +63,9 @@ const AdvancedSettings = () => {
               target="_blank"
               data-testid="pipelining-link"
             >
-              pipelining.
+              pipeline
             </EuiLink>
+            {' mode in Workbench. 0 or 1 pipelines every command.'}
           </>
         )}
       />

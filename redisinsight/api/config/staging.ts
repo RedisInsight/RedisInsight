@@ -25,9 +25,6 @@ export default {
   db: {
     database: join(homedir, 'redisinsight.db'),
   },
-  analytics: {
-    writeKey: process.env.SEGMENT_WRITE_KEY || 'Ba1YuGnxzsQN9zjqTSvzPc6f3AvmH1mj',
-  },
   logger: {
     stdout: process.env.STDOUT_LOGGER ? process.env.STDOUT_LOGGER === 'true' : true, // enabled by default
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : false,

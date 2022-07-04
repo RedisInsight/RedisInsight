@@ -22,9 +22,6 @@ export default {
   server: {
     env: 'production',
   },
-  analytics: {
-    writeKey: process.env.SEGMENT_WRITE_KEY || 'lK5MNZgHbxj6vQwFgqZxygA0BiDQb32n',
-  },
   db: {
     database: join(homedir, 'redisinsight.db'),
   },

@@ -47,6 +47,8 @@ export class MyRedisDatabasePage {
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
     hostPort = Selector('[data-testid=host-port]');
+    noResultsFoundMessage = Selector('div').withExactText('No results found');
+    noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
 
     /**
      * Click on the database by name

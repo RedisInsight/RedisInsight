@@ -49,6 +49,7 @@ export class BrowserPage {
     expandJsonObject = Selector('[data-testid=expand-object]');
     toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
     scoreButton = Selector('[data-testid=score-button]');
+    sortingButton = Selector('[data-testid=header-sorting-button]');
     editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
     applyEditButton = Selector('[data-testid=apply-edit-btn]');
     scanMoreButton = Selector('[data-testid=scan-more]');

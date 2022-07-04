@@ -20,7 +20,7 @@ services:
       TEST_REDIS_HOST: "redis"
   # dummy service to prevent docker validation errors
   app:
-    image: node:14.17-alpine
+    image: node:16.15.1-alpine
 
 networks:
   default:

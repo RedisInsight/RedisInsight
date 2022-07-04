@@ -39,6 +39,7 @@ export class MyRedisDatabasePage {
     tooltipRedisStackLogo = Selector('[data-testid=tooltip-redis-stack-icon]');
     //TEXT INPUTS (also referred to as 'Text fields')
     aliasInput = Selector('[data-testid=alias-input]');
+    searchInput = Selector('[data-testid=search-database-list]');
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');

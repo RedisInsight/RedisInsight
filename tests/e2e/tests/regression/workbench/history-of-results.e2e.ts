@@ -66,12 +66,8 @@ test
         await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(firstCommand, 'The first executed command is in the workbench history');
         //Send 30 commands and check the results
         await workbenchPage.sendCommandInWorkbench(`${numberOfCommands} ${command}`);
-        for(let i = 0; i < numberOfCommands; i++) {
-            await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(command, 'The command executed after the first command is displayed');
-            await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The command executed after the first command is displayed', { timeout: 10000 });
-            await t.click(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssDeleteCommandButton));
-        }
-        await t.expect(workbenchPage.noCommandHistoryTitle.visible).ok('The first command is deleted when user executes 31 command');
+        await t.expect(workbenchPage.queryCardCommand.find('span').withExactText(`${firstCommand}`)).notOk('The first command is not in the history result');
+        await t.expect(workbenchPage.queryCardCommand.count).eql(30, { timeout: 5000 });
     });
 test
     .meta({ rte: rte.none })('Verify that user can see cursor is at the first character when Editor is empty', async t => {

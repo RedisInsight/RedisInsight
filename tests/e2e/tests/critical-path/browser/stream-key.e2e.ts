@@ -113,7 +113,7 @@ test('Verify that during new entry adding to existing Stream, user can clear the
 test('Verify that user can add several fields and values to the existing Stream Key', async t => {
     keyName = chance.word({ length: 20 });
     // Generate field value data
-    const entryQuantity = 10;
+    const entryQuantity = 5;
     const fields: string[] = [];
     const values: string[] = [];
     for (let i = 0; i < entryQuantity; i++) {
@@ -128,13 +128,15 @@ test('Verify that user can add several fields and values to the existing Stream 
     await browserPage.fulfillSeveralStreamFields(fields, values);
     await t.click(browserPage.saveElementButton);
     // Check that all data is saved in Stream
+    await t.click(browserPage.fullScreenModeButton);
     for (let i = 0; i < fields.length; i++) {
-        await t.expect(browserPage.streamEntriesContainer.find('span').withExactText(fields[i]).exists).ok('Added Field');
         await t.expect(browserPage.streamFieldsValues.find('span').withExactText(values[i]).exists).ok('Added Value');
+        await t.expect(browserPage.streamEntriesContainer.find('div').withExactText(fields[i]).exists).ok('Added Field');
     }
     // Check Stream length
     const streamLength = await browserPage.getKeyLength();
     await t.expect(streamLength).eql('2', 'Stream length after adding new entry');
+    await t.click(browserPage.fullScreenModeButton);
 });
 test('Verify that user can see the Stream range filter', async t => {
     keyName = chance.word({length: 20});

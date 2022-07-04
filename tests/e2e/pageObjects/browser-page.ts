@@ -205,7 +205,7 @@ export class BrowserPage {
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
     streamEntryIdValue = Selector('.streamItemId[data-testid*=stream-entry]');
-    streamFields = Selector('[data-testid=stream-entries-container] .truncateText span');
+    streamFields = Selector('[data-testid=stream-entries-container] .truncateText');
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
     confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
     streamRangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');

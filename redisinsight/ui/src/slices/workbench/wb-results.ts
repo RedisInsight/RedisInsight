@@ -83,7 +83,7 @@ const workbenchResultsSlice = createSlice({
       ]
 
       if (newItems?.length > WORKBENCH_HISTORY_MAX_LENGTH) {
-        newItems = newItems.slice(0, WORKBENCH_HISTORY_MAX_LENGTH - 1)
+        newItems = newItems.slice(0, WORKBENCH_HISTORY_MAX_LENGTH)
       }
 
       state.items = newItems

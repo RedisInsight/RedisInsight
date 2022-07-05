@@ -1,6 +1,5 @@
 import { Chance } from 'chance';
 import { Selector } from 'testcafe';
-import { toNumber, toString } from 'lodash';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
@@ -68,20 +67,21 @@ test('Verify that user can add several fields and values during Stream key creat
 test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
     keyName = chance.word({ length: 20 });
     const newField = chance.word({ length: 20 });
-    // Add New Stream Key
+    // Add New Stream Key and check columns and rows
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
-    const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
+    await t.expect(browserPage.streamEntryIDDateValue.count).eql(1, 'One Entry ID');
+    await t.expect(browserPage.streamFields.count).eql(4, 'One field in table');
+    await t.expect(browserPage.streamEntryFields.count).eql(1, 'One value in table');
+    // Create new field and value and check that new column is added
     await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
-    // Compare that after adding new entry, new column and row were added
-    const paramsAfterEntryAdding = await browserPage.getStreamRowColumnNumber();
-    await t.expect(paramsAfterEntryAdding[0]).eql(toString(toNumber(paramsBeforeEntryAdding[0]) + 1), 'Increased number of columns after adding');
-    await t.expect(paramsAfterEntryAdding[1]).eql(toString(toNumber(paramsBeforeEntryAdding[1]) + 1), 'Increased number of rows after adding');
-    // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
+    await t.expect(browserPage.streamEntryIDDateValue.count).eql(2, 'Two Entries ID');
+    await t.expect(browserPage.streamFields.count).eql(6, 'Two fields in table');
+    await t.expect(browserPage.streamEntryFields.count).eql(4, 'Four values in table');
+    // Create value to existed filed and check that new column was not added
     await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
-    const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsAfterEntryAdding[1]) + 1), 'Increased number of rows after adding');
-    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsAfterEntryAdding[0], 'The same number of columns after adding');
+    await t.expect(browserPage.streamEntryIDDateValue.count).eql(3, 'Three Entries ID');
+    await t.expect(browserPage.streamFields.count).eql(7, 'Still two fields in table');
+    await t.expect(browserPage.streamEntryFields.count).eql(6, 'Six values in table');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
     keyName = chance.word({ length: 20 });

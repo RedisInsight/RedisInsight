@@ -141,6 +141,7 @@ export class BrowserPage {
     streamValue = Selector('[data-testid=field-value]');
     addStreamRow = Selector('[data-testid=add-new-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
+    streamEntryIDDateValue = Selector('[data-testid^=stream-entry-][data-testid$=date]');
     streamRangeEndInput = Selector('[data-testid=range-end-input]');
     groupNameInput = Selector('[data-testid=group-name-field]');
     consumerIdInput = Selector('[data-testid=id-field]');
@@ -420,15 +421,6 @@ export class BrowserPage {
         if (entryId !== undefined) {
             await t.typeText(this.streamEntryId, entryId);
         }
-    }
-
-    /**
-     * Get number of existed columns and rows of Stream key
-     */
-    async getStreamRowColumnNumber(): Promise<string[]> {
-        const columnStreamNumber = await this.streamEntriesContainer.find('[aria-colcount]').getAttribute('aria-colcount');
-        const rowStreamNumber = await this.streamEntriesContainer.find('[aria-rowcount]').getAttribute('aria-rowcount');
-        return [columnStreamNumber, rowStreamNumber];
     }
 
     /**

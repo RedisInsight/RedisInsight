@@ -2,7 +2,7 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper'
-import { AddNewDatabaseParameters, SentinelParameters, OSSClusterParameters } from '../../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters, OSSClusterParameters } from '../../pageObjects/add-redis-database-page';
 import { apiUrl } from '../../helpers/conf';
 
 const endpoint = apiUrl;
@@ -14,7 +14,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate
  */
 export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const response = await request(endpoint).post(`/instance`)
-        .send({ "name": databaseParameters.databaseName, "host": databaseParameters.host, "port": databaseParameters.port }).set('Accept', 'application/json');
+        .send({ "name": databaseParameters.databaseName, "host": databaseParameters.host, "port": databaseParameters.port })
+        .set('Accept', 'application/json');
 
     await t.expect(await response.status).eql(201);
     await t.expect(await response.body.name).eql(databaseParameters.databaseName);
@@ -24,9 +25,10 @@ export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabas
  * Adda new database from OSS Cluster through api using host and port
  * @param databaseParameters The database parameters
  */
- export async function addNewOSSClusterDatabase(databaseParameters: OSSClusterParameters): Promise<void> {
+export async function addNewOSSClusterDatabase(databaseParameters: OSSClusterParameters): Promise<void> {
     const response = await request(endpoint).post(`/instance`)
-        .send({ "name": databaseParameters.ossClusterDatabaseName, "host": databaseParameters.ossClusterHost, "port": databaseParameters.ossClusterPort }).set('Accept', 'application/json');
+        .send({ "name": databaseParameters.ossClusterDatabaseName, "host": databaseParameters.ossClusterHost, "port": databaseParameters.ossClusterPort })
+        .set('Accept', 'application/json');
 
     await t.expect(await response.status).eql(201);
     await t.expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName);

@@ -42,8 +42,7 @@ test('Verify that the Stream information is refreshed and the deleted entry is r
     }
     //Open key details and remember the Stream information
     await browserPage.openKeyDetails(keyName);
-    await t.click(browserPage.fullScreenModeButton);
-    await t.expect(browserPage.streamFields.nth(0).textContent).eql(fieldForDeletion, 'The first field entry name');
+    await t.expect(browserPage.streamFields.nth(1).textContent).eql(fieldForDeletion, 'The first field entry name');
     const entriesCountBefore = (await browserPage.keyLengthDetails.textContent).split(': ')[1];
     //Delete entry from the Stream
     await browserPage.deleteStreamEntry();
@@ -55,7 +54,6 @@ test('Verify that the Stream information is refreshed and the deleted entry is r
         const fieldName = await browserPage.streamFields.nth(i).textContent;
         await t.expect(fieldName).notEql(fieldForDeletion, 'The deleted entry is removed from the Stream');
     }
-    await t.click(browserPage.fullScreenModeButton);
 });
 test('Verify that when user delete the last Entry from the Stream the Stream key is not deleted', async t => {
     keyName = chance.word({length: 20});

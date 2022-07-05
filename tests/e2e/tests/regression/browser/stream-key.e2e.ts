@@ -60,7 +60,7 @@ test('Verify that user can sort ASC/DESC by Entry ID', async t => {
         await t.expect(entryDateFirstAsc).gt(entryDateSecondAsc, 'By default the table is sorted by Entry ID');
     }
     //Check the DESC sorting
-    await t.click(browserPage.scoreButton);
+    await t.click(browserPage.sortingButton);
     for(let i = 0; i < entryCount - 1; i++){
         const entryDateFirstDesc = Date.parse(await browserPage.streamEntryDate.nth(i).textContent);
         const entryDateSecondDesc = Date.parse(await browserPage.streamEntryDate.nth(i + 1).textContent);

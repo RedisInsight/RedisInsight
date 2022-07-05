@@ -1,12 +1,12 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { NotificationsDto } from 'src/modules/notification/dto';
+import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
-import config from 'src/utils/config';
+// import config from 'src/utils/config';
 
-const NOTIFICATIONS_CONFIG = config.get('notifications');
+// const NOTIFICATIONS_CONFIG = config.get('notifications');
 
 @Injectable()
 export class NotificationService {
@@ -42,18 +42,36 @@ export class NotificationService {
     }
   }
 
-  async readAllNotifications(): Promise<void> {
-    this.logger.debug('Updating "read=true" status for all notifications.');
-
+  /**
+   * Change read=true to notification(s) based on filter type and timestamp.
+   * When "type" and "timestamp" defined a single notification will be modified
+   * since we guarantee uniqueness by these fields
+   * If no filters - all notifications
+   * @param dto
+   */
+  async readNotifications(dto: ReadNotificationsDto): Promise<void> {
     try {
+      this.logger.debug('Updating "read=true" status for notification(s).');
+      const { type, timestamp } = dto;
+      const query: Record<string, any> = {};
+
+      if (type) {
+        query.type = type;
+      }
+
+      if (timestamp) {
+        query.timestamp = timestamp;
+      }
+
       await this.repository
         .createQueryBuilder('n')
         .update()
+        .where(query)
         .set({ read: true })
         .execute();
     } catch (e) {
-      this.logger.error('Unable to "read" notifications', e);
-      throw new InternalServerErrorException('Unable to "read" notifications');
+      this.logger.error('Unable to "read" notification(s)', e);
+      throw new InternalServerErrorException('Unable to "read" notification(s)');
     }
   }
 }

@@ -408,3 +408,13 @@ export const createDefaultNotifications = async (truncate: boolean = false) => {
 
   await createNotifications(notifications, truncate);
 }
+
+export const createNotExistingNotifications = async (truncate: boolean = false) => {
+  const notifications = [
+    constants.TEST_NOTIFICATION_NE_1,
+    constants.TEST_NOTIFICATION_NE_2,
+    constants.TEST_NOTIFICATION_NE_3,
+  ];
+
+  await createNotifications(notifications, truncate);
+}

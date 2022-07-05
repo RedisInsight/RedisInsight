@@ -1,12 +1,14 @@
 import {
-  Controller, Get, HttpCode, Patch,
+  Body,
+  Controller, Get, HttpCode, Patch, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { NotificationService } from 'src/modules/notification/notification.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { NotificationsDto } from 'src/modules/notification/dto';
+import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
 
 @ApiTags('Notifications')
 @Controller('notifications')
+@UsePipes(new ValidationPipe({ transform: true }))
 export class NotificationController {
   constructor(
     private readonly service: NotificationService,
@@ -25,7 +27,7 @@ export class NotificationController {
   @HttpCode(200)
   @ApiOperation({ description: 'Mark all notifications as read' })
   @Patch('/read')
-  readAllNotifications(): Promise<void> {
-    return this.service.readAllNotifications();
+  readNotifications(@Body() dto: ReadNotificationsDto): Promise<void> {
+    return this.service.readNotifications(dto);
   }
 }

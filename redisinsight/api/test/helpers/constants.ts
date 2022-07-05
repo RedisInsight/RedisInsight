@@ -253,6 +253,27 @@ export const constants = {
     body: 'Body-3',
     read: true,
     type: 'global',
-  }
+  },
+  TEST_NOTIFICATION_NE_1: {
+    timestamp: 1656054101,
+    title: 'Title-1',
+    body: 'Body-1',
+    read: false,
+    type: 'global',
+  },
+  TEST_NOTIFICATION_NE_2: {
+    timestamp: 1656054201,
+    title: 'Title-2',
+    body: 'Body-2',
+    read: false,
+    type: 'global',
+  },
+  TEST_NOTIFICATION_NE_3: {
+    timestamp: 1656054303,
+    title: 'Title-3',
+    body: 'Body-3',
+    read: true,
+    type: 'global',
+  },
   // etc...
 }

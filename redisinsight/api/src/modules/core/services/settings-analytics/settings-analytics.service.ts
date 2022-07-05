@@ -6,7 +6,7 @@ import {
   has,
 } from 'lodash';
 import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
-import { getRangeForNumber, SCAN_THRESHOLD_BREAKPOINTS } from 'src/utils';
+import { getRangeForNumber, getIsPipelineEnable, SCAN_THRESHOLD_BREAKPOINTS } from 'src/utils';
 import { GetAppSettingsResponse } from 'src/dto/settings.dto';
 import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
 
@@ -27,6 +27,9 @@ export class SettingsAnalyticsService extends TelemetryBaseService {
       );
       if (has(dif, 'scanThreshold')) {
         this.sendScanThresholdChanged(dif.scanThreshold, oldSettings.scanThreshold);
+      }
+      if (has(dif, 'batchSize')) {
+        this.sendWorkbenchPipelineChanged(dif.batchSize, oldSettings.batchSize);
       }
     } catch (e) {
       // continue regardless of error
@@ -63,6 +66,18 @@ export class SettingsAnalyticsService extends TelemetryBaseService {
         currentValueRange: getRangeForNumber(currentValue, SCAN_THRESHOLD_BREAKPOINTS),
         previousValue,
         previousValueRange: getRangeForNumber(previousValue, SCAN_THRESHOLD_BREAKPOINTS),
+      },
+    );
+  }
+
+  private sendWorkbenchPipelineChanged(newValue: number, currentValue: number): void {
+    this.sendEvent(
+      TelemetryEvents.SettingsWorkbenchPipelineChanged,
+      {
+        newValue: getIsPipelineEnable(newValue),
+        newValueSize: newValue,
+        currentValue: getIsPipelineEnable(currentValue),
+        currentValueSize: currentValue,
       },
     );
   }

@@ -1,8 +1,7 @@
 .euiAccordion__triggerWrapper {
   background-color: var(--browserTableRowEven);
-  border: 2px solid var(--tableDarkestBorderColor);
   h3 {
-    font: normal normal 500 15px/24px Graphik, sans-serif !important;
+    font: normal normal 500 18px/24px Graphik, sans-serif !important;
     letter-spacing: normal;
   }
 }
@@ -36,15 +35,9 @@
   margin-top: 20px;
 }
 
-.euiAccordion-isOpen {
-  .euiAccordion__childWrapper {
-    border-width: 1px !important;
-  }
-}
-
 .euiAccordion__childWrapper {
   background-color: var(--euiColorLightestShade);
-  border-width: 0 !important;
+  border: none !important;
 
   .euiFieldText,
   .euiFieldNumber,

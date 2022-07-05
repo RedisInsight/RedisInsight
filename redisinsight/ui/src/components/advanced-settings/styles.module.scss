@@ -1,13 +1,13 @@
-.keysToScanInput {
+.input {
   height: 31px !important;
   font-family: 'Graphik', sans-serif !important;
 }
 
-.keysToScanInputEditing {
-  height: 33px !important;
+.inputEditing {
+  height: 32px !important;
 }
 
-.keysToScanWrapper {
+.container {
   height: 40px;
 
   :global(.euiFormControlLayout--group.euiFormControlLayout--readOnly) {
@@ -20,11 +20,11 @@
   font-weight: 500 !important;
 }
 
-.keysToScanValue {
+.value {
   color: var(--inputTextColor) !important;
   font-size: 13px !important;
   padding: 0 9px;
-  line-height: 33px !important;
-  height: 33px !important;
+  line-height: 32px !important;
+  height: 32px !important;
   min-width: 150px;
 }

@@ -61,9 +61,9 @@ export const validateEmail = (email: string) => {
   return re.test(String(email).toLowerCase())
 }
 
-export const validatePortNumber = (initValue: string) => validateNumber(initValue, MAX_PORT_NUMBER)
+export const validatePortNumber = (initValue: string) => validateNumber(initValue, 0, MAX_PORT_NUMBER)
 
-export const validateNumber = (initValue: string, maxNumber: number = Infinity, minNumber: number = 0) => {
+export const validateNumber = (initValue: string, minNumber: number = 0, maxNumber: number = Infinity) => {
   const positiveNumbers = /[^0-9]+/gi
   const negativeNumbers = /[^0-9-]+/gi
   const value = initValue ? initValue.replace(minNumber < 0 ? negativeNumbers : positiveNumbers, '') : ''

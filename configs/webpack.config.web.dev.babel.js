@@ -191,6 +191,7 @@ export default merge(commonConfig, {
       API_PORT: '5000',
       BASE_API_URL: `http://${HOST}`,
       RESOURCES_BASE_URL: `http://${HOST}`,
+      PIPELINE_COUNT_DEFAULT: '5',
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
       SEGMENT_WRITE_KEY:

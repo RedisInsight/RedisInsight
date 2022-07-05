@@ -4,6 +4,7 @@ export enum TelemetryEvents {
   ApplicationStarted = 'APPLICATION_STARTED',
   AnalyticsPermission = 'ANALYTICS_PERMISSION',
   SettingsScanThresholdChanged = 'SETTINGS_KEYS_TO_SCAN_CHANGED',
+  SettingsWorkbenchPipelineChanged = 'SETTINGS_WORKBENCH_PIPELINE_CHANGED',
 
   // Events for redis instances
   RedisInstanceAdded = 'CONFIG_DATABASES_DATABASE_ADDED',

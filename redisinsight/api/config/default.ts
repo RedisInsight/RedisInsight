@@ -131,12 +131,14 @@ export default {
       || process.env.NOTIFICATION_UPDATE_URL
       || 'https://github.com/RedisInsight/Notifications/releases/download/latest/notifications.json',
     syncInterval: parseInt(process.env.NOTIFICATION_SYNC_INTERVAL, 10) || 60 * 60 * 1000,
+    queryLimit: parseInt(process.env.NOTIFICATION_QUERY_LIMIT, 10) || 20,
     devMode: !!process.env.NOTIFICATION_DEV_PATH,
   },
   workbench: {
     maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,
     maxItemsPerDb: parseInt(process.env.COMMAND_EXECUTION_MAX_ITEMS_PER_DB, 10) || 30,
     unsupportedCommands: JSON.parse(process.env.WORKBENCH_UNSUPPORTED_COMMANDS || '[]'),
+    countBatch: parseInt(process.env.WORKBENCH_BATCH_SIZE, 10) || 5,
   },
   commands: [
     {

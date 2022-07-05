@@ -4,6 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import config from 'src/utils/config';
+
+const NOTIFICATIONS_CONFIG = config.get('notifications');
 
 @Injectable()
 export class NotificationService {
@@ -21,6 +24,7 @@ export class NotificationService {
       const notifications = await this.repository
         .createQueryBuilder('n')
         .orderBy('timestamp', 'DESC')
+        // .limit(NOTIFICATIONS_CONFIG.queryLimit) // todo: do not forget when introduce "local" notifications
         .getMany();
 
       const totalUnread = await this.repository

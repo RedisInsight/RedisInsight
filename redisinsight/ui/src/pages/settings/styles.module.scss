@@ -1,6 +1,6 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
 
 .cover {
   position: absolute;
@@ -23,12 +23,17 @@
 
 .accordion {
   margin-top: 0 !important;
+
+  :global(.euiCollapsibleNavGroup__children) {
+    padding: 14px 36px !important;
+  }
 }
 
 .accordionWithSubTitle {
   :global(.euiAccordion__triggerWrapper) {
     padding: 8px 16px !important;
-    min-height: 64px;
+    height: 60px;
+    max-height: 60px;
   }
   :global(.euiCollapsibleNavGroup__title) {
     height: auto;
@@ -36,7 +41,7 @@
 
   .subtitle {
     font-size: 12px !important;
-    margin-top: -4px;
+    margin-top: -2px;
   }
 }
 

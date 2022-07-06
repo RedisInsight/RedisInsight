@@ -66,7 +66,7 @@ test
         await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(firstCommand, 'The first executed command is in the workbench history');
         //Send 30 commands and check the results
         await workbenchPage.sendCommandInWorkbench(`${numberOfCommands} ${command}`);
-        await t.expect(workbenchPage.queryCardCommand.find('span').withExactText(`${firstCommand}`)).notOk('The first command is not in the history result');
+        await t.expect(workbenchPage.queryCardCommand.find('span').withExactText(`${firstCommand}`).exists).notOk('The first command is not in the history result');
         await t.expect(workbenchPage.queryCardCommand.count).eql(30, { timeout: 5000 });
     });
 test

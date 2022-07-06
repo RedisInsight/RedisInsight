@@ -94,12 +94,7 @@ describe('VirtualTable', () => {
     const searchInput = screen.getByTestId('search')
     expect(searchInput).not.toBeVisible()
     const searchButton = screen.getByTestId('search-button')
-    fireEvent(
-      searchButton,
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
+    fireEvent.click(searchButton)
     expect(searchInput).toBeVisible()
   })
 
@@ -125,12 +120,7 @@ describe('VirtualTable', () => {
       />
     )
 
-    fireEvent(
-      container.querySelector('.headerButtonSorted') as Element,
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
+    fireEvent.click(container.querySelector('.headerButtonSorted') as Element)
 
     expect(onChangeSorting).toBeCalled()
   })
@@ -149,12 +139,7 @@ describe('VirtualTable', () => {
       />
     )
     const firstRow = screen.getAllByLabelText(/row/)[0]
-    fireEvent(
-      firstRow,
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
+    fireEvent.click(firstRow)
 
     expect(onRowClick).toBeCalled()
   })
@@ -212,12 +197,7 @@ describe('VirtualTable', () => {
       )
       const scanMoreBtn = screen.getByTestId(scanMoreBtnId)
 
-      fireEvent(
-        scanMoreBtn,
-        new MouseEvent('click', {
-          bubbles: true,
-        })
-      )
+      fireEvent.click(scanMoreBtn)
 
       expect(scanMoreBtn).toBeInTheDocument()
       expect(onLoadMoreItems).toBeCalledWith(argMock)

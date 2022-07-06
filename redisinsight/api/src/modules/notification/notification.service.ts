@@ -49,7 +49,7 @@ export class NotificationService {
    * If no filters - all notifications
    * @param dto
    */
-  async readNotifications(dto: ReadNotificationsDto): Promise<void> {
+  async readNotifications(dto: ReadNotificationsDto): Promise<NotificationsDto> {
     try {
       this.logger.debug('Updating "read=true" status for notification(s).');
       const { type, timestamp } = dto;
@@ -69,6 +69,16 @@ export class NotificationService {
         .where(query)
         .set({ read: true })
         .execute();
+
+      const totalUnread = await this.repository
+        .createQueryBuilder()
+        .where({ read: false })
+        .getCount();
+
+      return new NotificationsDto({
+        notifications: [],
+        totalUnread,
+      });
     } catch (e) {
       this.logger.error('Unable to "read" notification(s)', e);
       throw new InternalServerErrorException('Unable to "read" notification(s)');

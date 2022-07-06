@@ -10,6 +10,11 @@ import testcafe from 'testcafe';
                 .filter((_testName, _fixtureName, _fixturePath, testMeta): boolean => {
                     return testMeta.env !== 'web'
                 })
+                .screenshots({
+                    path: 'report/screenshots/',
+                    takeOnFails: true,
+                    pathPattern: '${DATE}_${TIME}/test-${TEST_INDEX}/${USERAGENT}/${FILE_INDEX}.png',
+                })
                 .reporter([
                     'spec',
                     {
@@ -24,7 +29,7 @@ import testcafe from 'testcafe';
                 .run({
                     skipJsErrors: true,
                     browserInitTimeout: 60000,
-                    speed: 1
+                    speed: 1,
                 });
         })
         .then((failedCount) => {

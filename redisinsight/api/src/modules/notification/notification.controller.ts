@@ -26,8 +26,11 @@ export class NotificationController {
 
   @HttpCode(200)
   @ApiOperation({ description: 'Mark all notifications as read' })
+  @ApiOkResponse({
+    type: NotificationsDto,
+  })
   @Patch('/read')
-  readNotifications(@Body() dto: ReadNotificationsDto): Promise<void> {
+  readNotifications(@Body() dto: ReadNotificationsDto): Promise<NotificationsDto> {
     return this.service.readNotifications(dto);
   }
 }

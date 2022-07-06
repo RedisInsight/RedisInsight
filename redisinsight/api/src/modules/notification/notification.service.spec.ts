@@ -92,8 +92,13 @@ describe('NotificationService', () => {
 
   describe('readNotifications', () => {
     it('should update all notifications', async () => {
+      repository.createQueryBuilder().getCount.mockResolvedValueOnce(2);
       repository.createQueryBuilder().execute.mockResolvedValueOnce('ok');
-      expect(await service.readNotifications({})).toEqual(undefined);
+
+      expect(await service.readNotifications({})).toEqual({
+        totalUnread: 2,
+        notifications: [],
+      });
     });
     it('should throw an error if any', async () => {
       repository.createQueryBuilder().execute.mockRejectedValue(new Error('some error'));

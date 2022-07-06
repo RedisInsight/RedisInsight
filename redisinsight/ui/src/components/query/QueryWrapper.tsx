@@ -27,7 +27,7 @@ const QueryWrapper = (props: Props) => {
     loading: isCommandsLoading,
     commandsArray: REDIS_COMMANDS_ARRAY,
   } = useSelector(appRedisCommandsSelector)
-  const { scanThreshold: pipelineBunch = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+  const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
     const eventData = (() => {
@@ -47,7 +47,7 @@ const QueryWrapper = (props: Props) => {
         command,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
-        pipeline: pipelineBunch > 1
+        pipeline: batchSize > 1
       }
     })()
 

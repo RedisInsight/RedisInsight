@@ -24,7 +24,7 @@ const databasesForAdding = [
     databasesForSearch[2]
 ]
 
-fixture`Database list search`
+fixture `Database list search`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async () => {

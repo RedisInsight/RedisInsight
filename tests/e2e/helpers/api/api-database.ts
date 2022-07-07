@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper'
-import { AddNewDatabaseParameters, OSSClusterParameters } from '../../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters } from '../../pageObjects/add-redis-database-page';
 import { apiUrl } from '../../helpers/conf';
 
 const endpoint = apiUrl;
@@ -50,7 +50,7 @@ export async function addNewOSSClusterDatabase(databaseParameters: OSSClusterPar
  */
 export async function getAllDatabases(): Promise<string[]> {
     const response = await request(endpoint).get(`/instance`)
-        .set('Accept', 'application/json').expect(200, 'getAllDatabases request failed');
+        .set('Accept', 'application/json').expect(200);
     return await response.body;
 }
 
@@ -58,15 +58,15 @@ export async function getAllDatabases(): Promise<string[]> {
  * Get database through api using database name
  * @param databaseName The database name
  */
-export async function getDatabaseByName(databaseName?: string): Promise<void> {
+export async function getDatabaseByName(databaseName?: string): Promise<string> {
     if (!databaseName) {
         throw new Error("Error: Missing databaseName");
-    }
+    };
     const allDataBases = await getAllDatabases();
     let response: object = {};
-    response = await asyncFilter(allDataBases, async (item: AddNewDatabaseParameters) => {
+    response = await asyncFilter(allDataBases, async (item: databaseParameters) => {
         await doAsyncStuff();
-        return await item.databaseName == databaseName;
+        return await item.name == databaseName;
     });
 
     return await response[0].id;

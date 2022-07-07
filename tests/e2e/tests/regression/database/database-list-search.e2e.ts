@@ -40,7 +40,7 @@ fixture`Database list search`
         await deleteStandaloneDatabases(databasesForAdding);
         await deleteOSSClusterDatabase(ossClusterConfig);
     });
-test.only
+test
     .meta({ rte: rte.standalone })('Verify that user can search DB by database name on the List of databases', async t => {
         //Search for DB by name
         const searchedDBName = 'Search';

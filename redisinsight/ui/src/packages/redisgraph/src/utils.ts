@@ -184,8 +184,17 @@ export function wrapText(s: string, w: number) {
 }
 
 
+export function commandIsSuccess(resp: [{ response: any, status: string }]) {
+  return Array.isArray(resp) && resp.length >= 1 || resp[0].status === 'success'
+}
+
+
 export function getFetchNodesByIdQuery(graphKey: string, nodeIds: string[]): string {
   return `graph.ro_query ${graphKey} "MATCH (n) WHERE id(n) IN [${nodeIds}] RETURN DISTINCT n"`
+}
+
+export function getFetchNodesByEdgeIdQuery(graphKey: string, edgeIds: string[], existingNodeIds: string[]): string {
+  return `graph.ro_query ${graphKey} "MATCH (n)-[t]->(m) WHERE id(t) IN [${edgeIds}] AND NOT id(n) IN [${existingNodeIds}] AND NOT id(m) IN [${existingNodeIds}] RETURN n, m"`
 }
 
 export function getFetchEdgesByIdQuery(graphKey: string, edgeIds: string[]): string {

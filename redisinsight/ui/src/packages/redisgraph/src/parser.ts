@@ -19,21 +19,36 @@ function resolveProps(d: Object | Array<unknown>): any {
 }
 
 
-function responseParser(data: any) {
+interface INode {
+  id: string
+  labels: string[]
+  properties: {[key: string]: string | number | object }
+}
 
-  interface INode {
-    id: string
-    labels: string[]
-    properties: {[key: string]: string | number | object }
-  }
+interface IEdge {
+  id: string
+  type: string
+  source: string
+  target: string
+  properties: {[key: string]: string | number | object }
+}
 
-  interface IEdge {
-    id: string
-    type: string
-    source: string
-    target: string
-    properties: {[key: string]: string | number | object }
-  }
+
+interface IResponseParser {
+  nodes: INode[]
+  edges: IEdge[]
+  nodeIds: Set<string>
+  edgeIds: Set<string>
+  labels: {[key: string]: number}
+  types: {[key: string]: number}
+  headers: any
+  hasNamedPathItem: boolean
+  npNodeIds: string[]
+  npEdgeIds: string[]
+  danglingEdgeIds: Set<string>
+}
+
+function responseParser(data: any): IResponseParser {
 
   const headers = data[0]
   let nodes: INode[] = []
@@ -45,8 +60,9 @@ function responseParser(data: any) {
   let hasNamedPathItem = false
   let npNodeIds: string[] = []
   let npEdgeIds: string[] = []
+  let danglingEdgeIds = new Set<string>()
   if (data.length < 2) return {
-    nodes, edges, types, labels, headers, nodeIds, edgeIds, hasNamedPathItem,
+    nodes, edges, types, labels, headers, nodeIds, edgeIds, hasNamedPathItem, npNodeIds, npEdgeIds, danglingEdgeIds,
   }
 
   const entries = data[1].map((entry: any) => {
@@ -96,14 +112,18 @@ function responseParser(data: any) {
           let[nIds, eIds] = ParseEntitesFromNamedPathResponse(item)
           nodeIds = new Set([...nodeIds, ...nIds])
           edgeIds = new Set([...edgeIds, ...eIds])
-          npNodeIds = [...nodeIds]
-          npEdgeIds = [...edgeIds]
+
+          npNodeIds = Array.from(new Set([...npNodeIds, ...nIds]))
+          npEdgeIds = Array.from(new Set([...npEdgeIds, ...eIds]))
         } catch {
           // maybe just a normal string
         }
       }
     })
   })
+
+
+  danglingEdgeIds = new Set([...edgeIds].filter(eId => !nodeIds.has(eId)))
 
   return {
     headers,
@@ -116,6 +136,7 @@ function responseParser(data: any) {
     hasNamedPathItem,
     npNodeIds,
     npEdgeIds,
+    danglingEdgeIds,
   }
 }
 

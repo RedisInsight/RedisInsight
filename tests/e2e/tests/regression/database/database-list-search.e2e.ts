@@ -40,10 +40,10 @@ fixture`Database list search`
         await deleteStandaloneDatabases(databasesForAdding);
         await deleteOSSClusterDatabase(ossClusterConfig);
     });
-test
+test.only
     .meta({ rte: rte.standalone })('Verify that user can search DB by database name on the List of databases', async t => {
         //Search for DB by name
-        const searchedDBName = 'Search'
+        const searchedDBName = 'Search';
         await t.typeText(myRedisDatabasePage.searchInput, searchedDBName, { replace: true });
         //Verify that database found on the list search by name
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[0].databaseName).exists).ok('The database with alias is found', { timeout: 10000 });
@@ -102,7 +102,7 @@ test
 test
     .meta({ rte: rte.standalone })('Verify that user sees "No results found" message when pattern doesn`t match any database', async t => {
         //Search for DB by Invalid search
-        const searchedDBHost = 'invalid'
+        const searchedDBHost = 'invalid';
         await t.typeText(myRedisDatabasePage.searchInput, searchedDBHost, { replace: true });
         //Verify that "No results found" message is displayed in case of invalid search
         await t.expect(myRedisDatabasePage.noResultsFoundMessage.exists).ok('"No results found message" not displayed');

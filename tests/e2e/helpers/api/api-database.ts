@@ -1,4 +1,3 @@
-
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper'
@@ -17,15 +16,15 @@ export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabas
         .send({ "name": databaseParameters.databaseName, "host": databaseParameters.host, "port": databaseParameters.port })
         .set('Accept', 'application/json');
 
-    await t.expect(await response.status).eql(201);
-    await t.expect(await response.body.name).eql(databaseParameters.databaseName);
+    await t.expect(await response.status).eql(201, 'addNewStandaloneDatabase request failed');
+    await t.expect(await response.body.name).eql(databaseParameters.databaseName, `databaseName is not equal to ${databaseParameters.databaseName} in response`);
 }
 
 /**
  * Add a new Standalone databases through api using host and port
  * @param databasesParameters The databases parameters array
  */
-export async function addNewStandaloneDatabases(databasesParameters: any): Promise<void> {
+export async function addNewStandaloneDatabases(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
     if (await databasesParameters.length) {
         await databasesParameters.forEach(async parameter => {
             await addNewStandaloneDatabase(parameter);
@@ -42,16 +41,16 @@ export async function addNewOSSClusterDatabase(databaseParameters: OSSClusterPar
         .send({ "name": databaseParameters.ossClusterDatabaseName, "host": databaseParameters.ossClusterHost, "port": databaseParameters.ossClusterPort })
         .set('Accept', 'application/json');
 
-    await t.expect(await response.status).eql(201);
-    await t.expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName);
+    await t.expect(await response.status).eql(201, 'addNewOSSClusterDatabase request failed');
+    await t.expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName, `databaseName is not equal to ${databaseParameters.ossClusterDatabaseName} in response`);
 }
 
 /**
  * Get all databases through api
  */
-export async function getAllDatabases(): Promise<void> {
+export async function getAllDatabases(): Promise<string[]> {
     const response = await request(endpoint).get(`/instance`)
-        .set('Accept', 'application/json').expect(200);
+        .set('Accept', 'application/json').expect(200, 'getAllDatabases request failed');
     return await response.body;
 }
 
@@ -59,12 +58,15 @@ export async function getAllDatabases(): Promise<void> {
  * Get database through api using database name
  * @param databaseName The database name
  */
-export async function getDatabaseByName(databaseName: any): Promise<void> {
+export async function getDatabaseByName(databaseName?: string): Promise<void> {
+    if (!databaseName) {
+        throw new Error("Error: Missing databaseName");
+    }
     const allDataBases = await getAllDatabases();
     let response: object = {};
-    response = await asyncFilter(allDataBases, async item => {
+    response = await asyncFilter(allDataBases, async (item: AddNewDatabaseParameters) => {
         await doAsyncStuff();
-        return await item.name == databaseName;
+        return await item.databaseName == databaseName;
     });
 
     return await response[0].id;
@@ -76,7 +78,7 @@ export async function getDatabaseByName(databaseName: any): Promise<void> {
  */
 export async function deleteStandaloneDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).delete(`/instance`)
+    await request(endpoint).delete(`/instance`)
         .send({ "ids": [`${databaseId}`] })
         .set('Accept', 'application/json')
         .expect(200);
@@ -98,7 +100,7 @@ export async function deleteOSSClusterDatabase(databaseParameters: OSSClusterPar
  * Delete Standalone databases through api
  * @param databasesParameters The databases parameters as array
  */
-export async function deleteStandaloneDatabases(databasesParameters: any): Promise<void> {
+export async function deleteStandaloneDatabases(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
     if (await databasesParameters.length) {
         await databasesParameters.forEach(async parameter => {
             await deleteStandaloneDatabase(parameter);

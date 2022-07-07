@@ -3,7 +3,7 @@
  * @param array The array
  * @param callback The callback function need to be processed
  */
-async function asyncFilter(array: any, callback: any) {
+async function asyncFilter(array: string[], callback: (item: any) => Promise<boolean>): Promise<any[]> {
     const fail = Symbol();
     return (await Promise.all(array.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail);
 };
@@ -13,7 +13,7 @@ async function asyncFilter(array: any, callback: any) {
  * @param array The array
  * @param asyncCallback The callback function need to be processed
  */
-async function asyncFind(array: any, asyncCallback: any) {
+async function asyncFind(array: string[], asyncCallback: (item: any) => Promise<boolean>): Promise<string> {
     const index = (await Promise.all(array.map(asyncCallback))).findIndex(result => result);
     return array[index];
 }
@@ -21,7 +21,7 @@ async function asyncFind(array: any, asyncCallback: any) {
 /**
  * Helper function for waiting until promise be resolved
  */
-function doAsyncStuff() {
+function doAsyncStuff(): Promise<void> {
     return Promise.resolve();
 };
 

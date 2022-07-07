@@ -16,14 +16,13 @@ fixture `Agreements Verification`
         await t.maximizeWindow();
     });
 test
-    .meta({ env: env.web, rte: rte.none })
-    ('Verify that user should accept User Agreements to continue working with the application, the Welcome page is opened after user agrees, the encryption enabled by default and specific message', async t => {
+    .meta({ env: env.web, rte: rte.none })('Verify that user should accept User Agreements to continue working with the application, the Welcome page is opened after user agrees, the encryption enabled by default and specific message', async t => {
         await t.expect(userAgreementPage.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
         //Verify that section with plugin warning is displayed
         await t.expect(userAgreementPage.pluginSectionWithText.visible).ok('Plugin text is displayed');
         //Verify that text that is displayed in window is 'While adding new visualization plugins, use files only from trusted authors to avoid automatic execution of malicious code.'
         const pluginText = userAgreementPage.pluginSectionWithText.innerText;
-        await t.expect(pluginText).eql('While adding new visualization plugins, use files only from trusted authors to avoid automatic execution of malicious code.');
+        await t.expect(pluginText).eql('To avoid automatic execution of malicious code, when adding new Workbench plugins, use files from trusted authors only.');
         // Verify that encryption enabled by default
         await t.expect(userAgreementPage.switchOptionEncryption.withAttribute('aria-checked', 'true').exists).ok('Encryption enabled by default');
         await t.click(addRedisDatabasePage.addDatabaseButton);

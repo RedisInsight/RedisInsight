@@ -68,12 +68,12 @@ export class WorkbenchPage {
     iframe = Selector('[data-testid=pluginIframe]');
     //TEXT ELEMENTS
     queryPluginResult = Selector('[data-testid=query-plugin-result]');
-    resposeInfo = Selector('[class="responseInfo"]');
+    responseInfo = Selector('[class="responseInfo"]');
     scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
     queryCardContainer = Selector('[data-testid^=query-card-container]');
     queryCardCommand = Selector('[data-testid=query-card-command]');
     queryTableResult = Selector('[data-testid^=query-table-result-]');
-    mainEditorArea = Selector('[data-testid=main-input-container-area]')
+    mainEditorArea = Selector('[data-testid=main-input-container-area]');
     queryTextResult = Selector(this.cssQueryTextResult);
     queryColumns = Selector('[data-testid*=query-column-]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');

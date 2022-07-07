@@ -7,7 +7,7 @@ import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { AppTool } from 'src/models';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
-import { createCommandExecutionsDto } from 'src/modules/workbench/dto/create-commands-execution.dto';
+import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 
 @ApiTags('Workbench')
@@ -31,7 +31,7 @@ export class WorkbenchController {
   @ApiRedisParams()
   async sendCommands(
     @Param('dbInstance') dbInstance: string,
-      @Body() dto: createCommandExecutionsDto,
+      @Body() dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
     return this.service.createCommandExecutions(
       {

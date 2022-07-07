@@ -10,7 +10,7 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   userSettingsSelector: jest.fn().mockReturnValue({
     config: {
       scanThreshold: 10000,
-      pipelineBunch: 5,
+      batchSize: 5,
     },
   }),
   updateUserConfigSettingsAction: () => jest.fn

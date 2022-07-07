@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { RedisDefaultModules, DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
-import { fireEvent, render, waitFor } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, act } from 'uiSrc/utils/test-utils'
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import DatabaseListModules, { Props } from './DatabaseListModules'
 
@@ -31,7 +31,7 @@ describe('DatabaseListModules', () => {
 
     const module = queryByTestId(`${term}_module`)
 
-    await waitFor(() => {
+    await act(() => {
       module && fireEvent.click(module)
     })
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
 import { loadInstancesSuccess } from 'uiSrc/slices/instances/instances'
 import store, { RootState } from 'uiSrc/slices/store'
 import { Instance } from 'uiSrc/slices/interfaces'
@@ -72,7 +72,7 @@ describe('SearchDatabasesList', () => {
     ]
     render(<SearchDatabasesList />)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(
         screen.getByTestId('search-database-list'),
         { target: { value: 'test' } }

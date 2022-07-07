@@ -7,7 +7,7 @@ import {
   mockedStore,
   cleanup,
   clearStoreActions,
-  waitFor,
+  act,
 } from 'uiSrc/utils/test-utils'
 import { updateUserConfigSettings } from 'uiSrc/slices/user/user-settings'
 import ConsentsSettings from './ConsentsSettings'
@@ -100,7 +100,7 @@ describe('ConsentsSettings', () => {
     it('option change should call "updateUserConfigSettingsAction"', async () => {
       const { queryByTestId } = render(<ConsentsSettings liveEditMode />)
 
-      await waitFor(() => {
+      await act(() => {
         screen.getAllByTestId(/switch-option/).forEach(async (el) => {
           fireEvent.click(el)
         })

@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen, fireEvent, waitFor } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import InstanceForm, {
   ADD_NEW_CA_CERT,
@@ -120,14 +120,14 @@ describe('InstanceForm', () => {
       </div>
     )
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('sentinel-mater-username'), {
         target: { value: 'user' },
       })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
     expect(handleSubmit).toBeCalledWith(
@@ -156,7 +156,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('tls'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -185,7 +185,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('showDb'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -213,14 +213,14 @@ describe('InstanceForm', () => {
 
     fireEvent.click(screen.getByTestId('showDb'))
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('db'), {
         target: { value: '12' },
       })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -251,7 +251,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('sni'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -281,14 +281,14 @@ describe('InstanceForm', () => {
     )
     fireEvent.click(screen.getByTestId('sni'))
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('sni-servername'), {
         target: { value: '12' },
       })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -319,7 +319,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('verify-tls-cert'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -346,29 +346,29 @@ describe('InstanceForm', () => {
         />
       </div>
     )
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId('select-ca-cert'))
     })
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(queryByText('Add new CA certificate') || document)
     })
 
     expect(screen.getByTestId(NEW_CA_CERT)).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId(NEW_CA_CERT), {
         target: { value: '123' },
       })
     })
 
     expect(screen.getByTestId(QA_CA_CERT)).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId(QA_CA_CERT), {
         target: { value: '321' },
       })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -411,7 +411,7 @@ describe('InstanceForm', () => {
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -442,7 +442,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('tls-required-checkbox'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -475,32 +475,32 @@ describe('InstanceForm', () => {
 
     expect(screen.getByTestId('select-cert')).toBeInTheDocument()
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId('select-cert'))
     })
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(
         container.querySelectorAll('.euiContextMenuItem__text')[0] || document
       )
     })
 
     expect(screen.getByTestId('new-tsl-cert-pair-name')).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('new-tsl-cert-pair-name'), {
         target: { value: '123' },
       })
     })
 
     expect(screen.getByTestId('new-tls-client-cert')).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('new-tls-client-cert'), {
         target: { value: '321' },
       })
     })
 
     expect(screen.getByTestId('new-tls-client-cert-key')).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('new-tls-client-cert-key'), {
         target: { value: '231' },
       })
@@ -508,7 +508,7 @@ describe('InstanceForm', () => {
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 

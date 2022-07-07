@@ -63,13 +63,7 @@ describe('AddKeyZset', () => {
       scoreInput,
       { target: { value: '100q' } }
     )
-    fireEvent(
-      screen.getByTestId('add-new-item'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId('add-new-item'))
 
     expect(screen.getAllByTestId(MEMBER_NAME)).toHaveLength(2)
     expect(screen.getAllByTestId(MEMBER_SCORE)).toHaveLength(2)
@@ -87,13 +81,7 @@ describe('AddKeyZset', () => {
       scoreInput,
       { target: { value: '100q' } }
     )
-    fireEvent.click(
-      screen.getByLabelText(/clear item/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByLabelText(/clear item/i))
 
     expect(memberInput).toHaveValue('')
     expect(scoreInput).toHaveValue('')

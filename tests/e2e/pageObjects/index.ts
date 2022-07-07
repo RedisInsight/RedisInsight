@@ -10,6 +10,7 @@ import { DatabaseOverviewPage } from './database-overview-page';
 import { HelpCenterPage } from './help-center-page';
 import { ShortcutsPage } from './shortcuts-page';
 import { MonitorPage } from './monitor-page';
+import { PubSubPage } from './pub-sub-page';
 
 export {
     AddRedisDatabasePage,
@@ -23,5 +24,6 @@ export {
     DatabaseOverviewPage,
     HelpCenterPage,
     ShortcutsPage,
-    MonitorPage
+    MonitorPage,
+    PubSubPage
 }

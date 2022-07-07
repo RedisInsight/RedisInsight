@@ -429,16 +429,17 @@ describe('slices', () => {
     describe('unreadNotificationsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
-        const responsePayload = { status: 200 }
+        const data = notificationsResponse
+        const responsePayload = { data, status: 200 }
 
         apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(unreadNotificationsAction())
+        await store.dispatch<any>(unreadNotificationsAction(data.totalUnread))
 
         // Assert
         const expectedActions = [
-          unreadNotifications(),
+          unreadNotifications(data.totalUnread),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

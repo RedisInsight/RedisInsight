@@ -102,8 +102,8 @@ const notificationsSlice = createSlice({
     getNotificationsFailed: (state) => {
       state.notificationCenter.loading = false
     },
-    unreadNotifications: (state) => {
-      state.notificationCenter.totalUnread = 0
+    unreadNotifications: (state, { payload }) => {
+      state.notificationCenter.totalUnread = payload
     }
   },
 })
@@ -159,15 +159,16 @@ export function fetchNotificationsAction(
   }
 }
 
-export function unreadNotificationsAction() {
+export function unreadNotificationsAction(notification?: { timestamp: number, type: string }) {
   return async (dispatch: AppDispatch) => {
     try {
-      const { status } = await apiService.patch(
-        ApiEndpoints.NOTIFICATIONS_READ
+      const { data, status } = await apiService.patch(
+        ApiEndpoints.NOTIFICATIONS_READ,
+        notification
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(unreadNotifications())
+        dispatch(unreadNotifications(data.totalUnread))
       }
     } catch (error) {
       //

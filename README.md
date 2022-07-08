@@ -12,7 +12,7 @@ Query, analyse and interact with your Redis data. [Download it here](https://red
 
 ![RedisInsight Browser screenshot](/.github/redisinsight_browser.png)
 
-Built with love using [Electron](https://www.electronjs.org/), [Elastic UI](https://elastic.github.io/eui/#/), [Monaco Editor](https://microsoft.github.io/monaco-editor/) and NodeJS.
+Built with love using [Electron](https://www.electronjs.org/), [Monaco Editor](https://microsoft.github.io/monaco-editor/) and NodeJS.
 
 ## Overview
 

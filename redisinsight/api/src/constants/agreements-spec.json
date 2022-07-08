@@ -7,15 +7,29 @@
       "required": false,
       "editable": true,
       "disabled": false,
+      "category": "privacy",
       "since": "1.0.1",
       "title": "Analytics",
-      "label": "Analytics",
+      "label": "Enable Analytics",
       "description": "Select to help us make RedisInsight better. We aggregate anonymized user experience data and use it to fix bugs and improve experience for all users."
+    },
+    "notifications": {
+      "defaultValue": false,
+      "displayInSetting": true,
+      "required": false,
+      "editable": true,
+      "disabled": false,
+      "category": "notifications",
+      "since": "1.0.5",
+      "title": "Notification",
+      "label": "Show notification",
+      "description": "Select to display notification. Otherwise, notifications are shown in the Notification Center."
     },
     "encryption": {
       "conditional": true,
       "checker": "KEYTAR",
       "defaultOption": "false",
+      
       "options": {
         "true": {
           "defaultValue": true,
@@ -23,6 +37,7 @@
           "required": false,
           "editable": true,
           "disabled": false,
+          "category": "privacy",
           "since": "1.0.3",
           "title": "Encryption",
           "label": "Encrypt sensitive information",
@@ -34,6 +49,7 @@
           "required": false,
           "editable": true,
           "disabled": true,
+          "category": "privacy",
           "since": "1.0.3",
           "title": "Encryption",
           "label": "Encrypt sensitive information",
@@ -45,6 +61,7 @@
           "required": false,
           "editable": true,
           "disabled": true,
+          "category": "privacy",
           "since": "1.0.5",
           "title": "Encryption",
           "label": "Encrypt sensitive information",

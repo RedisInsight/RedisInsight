@@ -44,7 +44,6 @@ export class SlowLogPage {
         await t.click(this.slowLogConfigureButton);
         await t.typeText(this.slowLogSlowerThanConfig, slowerThan.toString(), { replace: true });
         if (unit !== undefined) {
-            // await t.debug();
             await t.click(this.slowLogConfigureUnitButton);
             await t.click(unit);
         }
@@ -62,31 +61,13 @@ export class SlowLogPage {
     }
 
     /**
-     * Compare command displayed in the table with specified slowlog-log-slower-than parameter
-     * @param command command for comparing
-     * @param slowerThan time to compare
-     */
-    async compareCommandExecutionWithSlowerThan(command: string, slowerThan: number): Promise<void> {
-        // Get duration of specified command
-        const duration = await this.slowLogCommandValue.withExactText(command).parent(3).find(this.cssSelectorDurationValue).textContent;
-        await t.expect(parseInt(duration)).gte(slowerThan, 'Displayed command time execution is more than specified');
-    }
-
-    /**
      * Change Display Up To parameter in Slow Log
      * @param number number of commands to display
      */
     async changeDisplayUpToParameter(number: number): Promise<void> {
         await t.click(this.slowLogNumberOfCommandsDropdown);
-        // console.log(`button[id='${number}']`);
         const dropdownSelector = Selector('button').withAttribute('id', `${number}`);
         await t.click(dropdownSelector);
-        if (number === -1) {
-            await t.expect(this.slowLogNumberOfCommandsDropdown.withExactText('Max available').exists).ok('Value is applied');
-        }
-        else {
-            await t.expect(this.slowLogNumberOfCommandsDropdown.withExactText(number.toString()).exists).ok('Value is applied');
-        }
     }
 
     /**
@@ -95,9 +76,6 @@ export class SlowLogPage {
     async resetToDefaultConfig(): Promise<void> {
         await t.click(this.slowLogConfigureButton);
         await t.click(this.slowLogDefaultConfigureButton);
-        await t.expect(this.slowLogSlowerThanConfig.withAttribute('value', '10000').exists).ok('Default Slower Than');
-        await t.expect(this.slowLogMaxLengthConfig.withAttribute('value', '128').exists).ok('Default Max Length');
-        await t.expect(this.slowLogConfigureUnitButton.withExactText('µs').exists).ok('Default Slower Than');
         await t.click(this.slowLogSaveConfigureButton);
     }
 }

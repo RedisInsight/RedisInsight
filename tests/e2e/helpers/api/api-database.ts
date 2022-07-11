@@ -16,8 +16,8 @@ export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabas
         .send({ "name": databaseParameters.databaseName, "host": databaseParameters.host, "port": databaseParameters.port })
         .set('Accept', 'application/json');
 
-    await t.expect(await response.status).eql(201, 'addNewStandaloneDatabase request failed');
-    await t.expect(await response.body.name).eql(databaseParameters.databaseName, `databaseName is not equal to ${databaseParameters.databaseName} in response`);
+    await t.expect(await response.status).eql(201, 'The creation of new standalone database request failed');
+    await t.expect(await response.body.name).eql(databaseParameters.databaseName, `Database Name is not equal to ${databaseParameters.databaseName} in response`);
 }
 
 /**
@@ -41,8 +41,8 @@ export async function addNewOSSClusterDatabase(databaseParameters: OSSClusterPar
         .send({ "name": databaseParameters.ossClusterDatabaseName, "host": databaseParameters.ossClusterHost, "port": databaseParameters.ossClusterPort })
         .set('Accept', 'application/json');
 
-    await t.expect(await response.status).eql(201, 'addNewOSSClusterDatabase request failed');
-    await t.expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName, `databaseName is not equal to ${databaseParameters.ossClusterDatabaseName} in response`);
+    await t.expect(await response.status).eql(201, 'The creation of new oss cluster database request failed');
+    await t.expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName, `Database Name is not equal to ${databaseParameters.ossClusterDatabaseName} in response`);
 }
 
 /**
@@ -93,7 +93,7 @@ export async function deleteOSSClusterDatabase(databaseParameters: OSSClusterPar
     const response = await request(endpoint).delete(`/instance`)
         .send({ "ids": [`${databaseId}`] }).set('Accept', 'application/json');
 
-    await t.expect(response.status).eql(200, 'deleteDatabaseByName request failed');
+    await t.expect(response.status).eql(200, 'Delete OSS cluster database request failed');
 }
 
 /**

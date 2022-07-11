@@ -45,7 +45,7 @@ const SlowLogTable = (props: Props) => {
       absoluteWidth: 190,
       minWidth: 190,
       isSortable: true,
-      render: (timestamp) => <EuiText size="s" color="subdued">{format(timestamp * 1000, DATE_FORMAT)}</EuiText>
+      render: (timestamp) => <EuiText size="s" color="subdued" data-testid="timestamp-value">{format(timestamp * 1000, DATE_FORMAT)}</EuiText>
     },
     {
       id: 'durationUs',
@@ -54,7 +54,7 @@ const SlowLogTable = (props: Props) => {
       absoluteWidth: 'auto',
       textAlignment: TableCellTextAlignment.Right,
       alignment: TableCellAlignment.Right,
-      render: (duration) => <EuiText size="s" color="subdued">{numberWithSpaces(convertNumberByUnits(duration, durationUnit))}</EuiText>
+      render: (duration) => <EuiText size="s" color="subdued" data-testid="duration-value">{numberWithSpaces(convertNumberByUnits(duration, durationUnit))}</EuiText>
     },
     {
       id: 'args',
@@ -66,7 +66,7 @@ const SlowLogTable = (props: Props) => {
           content={command}
           anchorClassName={styles.commandTooltip}
         >
-          <span className={styles.commandText}>{command}</span>
+          <span className={styles.commandText} data-testid="command-value">{command}</span>
         </EuiToolTip>
       )
     },

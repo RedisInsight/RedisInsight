@@ -9,10 +9,12 @@ export const DURATION_UNITS: EuiSuperSelectOption<DurationUnits>[] = [
   {
     inputDisplay: DurationUnits.microSeconds,
     value: DurationUnits.microSeconds,
+    'data-test-subj': 'unit-micro-second',
   },
   {
     inputDisplay: DurationUnits.milliSeconds,
     value: DurationUnits.milliSeconds,
+    'data-test-subj': 'unit-milli-second',
   },
 ]
 

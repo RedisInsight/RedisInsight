@@ -2,15 +2,18 @@ import IORedis from 'ioredis';
 import { debounce } from 'lodash';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
-import { IBulkAction } from 'src/modules/bulk-actions/models/bulk-action.interface';
-import { BulkActionRunner } from 'src/modules/bulk-actions/models/bulk-action.runner';
 import { Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { IBulkAction, IBulkActionRunner } from 'src/modules/bulk-actions/interfaces';
 
 export class BulkAction implements IBulkAction {
   private logger: Logger = new Logger('BulkAction');
 
   private readonly id: string;
+
+  private startTime: number = Date.now();
+
+  private endTime: number;
 
   private readonly socket: Socket;
 
@@ -20,7 +23,7 @@ export class BulkAction implements IBulkAction {
 
   private readonly filter: BulkActionFilter;
 
-  private runners: BulkActionRunner[];
+  private runners: IBulkActionRunner[];
 
   private readonly debounce: Function;
 
@@ -36,8 +39,9 @@ export class BulkAction implements IBulkAction {
   /**
    * Setup runners and fetch total keys once before run
    * @param redisClient
+   * @param RunnerClassName
    */
-  async prepare(redisClient: IORedis.Redis | IORedis.Cluster) {
+  async prepare(redisClient: IORedis.Redis | IORedis.Cluster, RunnerClassName) {
     if (this.status !== BulkActionStatus.Initialized) {
       throw new Error(`Unable to prepare bulk action with "${this.status}" status`);
     }
@@ -45,13 +49,13 @@ export class BulkAction implements IBulkAction {
     this.status = BulkActionStatus.Preparing;
 
     if (redisClient instanceof IORedis.Cluster) {
-      this.runners = redisClient.nodes('master').map((node) => new BulkActionRunner(
+      this.runners = redisClient.nodes('master').map((node) => new RunnerClassName(
         this,
         node,
       ));
     } else {
       this.runners = [
-        new BulkActionRunner(
+        new RunnerClassName(
           this,
           redisClient,
         ),
@@ -82,11 +86,11 @@ export class BulkAction implements IBulkAction {
    */
   private async run() {
     try {
-      this.status = BulkActionStatus.Running;
+      this.setStatus(BulkActionStatus.Running);
 
       await Promise.all(this.runners.map((runner) => runner.run()));
 
-      this.status = BulkActionStatus.Completed;
+      this.setStatus(BulkActionStatus.Completed);
     } catch (e) {
       this.logger.error('Error on BulkAction Runner', e);
       this.setStatus(BulkActionStatus.Failed);
@@ -121,15 +125,14 @@ export class BulkAction implements IBulkAction {
 
     summary.errors?.slice(0, 500);
 
-    summary.errors = summary.errors.map((error) => {
-      return {
-        key: error.key.toString(),
-        error: error.error.toString(),
-      };
-    });
+    summary.errors = summary.errors.map((error) => ({
+      key: error.key.toString(),
+      error: error.error.toString(),
+    }));
 
     return {
       id: this.id,
+      duration: (this.endTime || Date.now()) - this.startTime,
       status: this.status,
       filter: this.filter,
       progress,
@@ -147,6 +150,18 @@ export class BulkAction implements IBulkAction {
 
   setStatus(status) {
     this.status = status;
+
+    switch (status) {
+      case BulkActionStatus.Aborted:
+      case BulkActionStatus.Failed:
+      case BulkActionStatus.Completed:
+        if (!this.endTime) {
+          this.endTime = Date.now();
+        }
+      // eslint-disable-next-line no-fallthrough
+      default:
+        this.changeState();
+    }
   }
 
   getFilter(): BulkActionFilter {

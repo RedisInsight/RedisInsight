@@ -1,11 +1,16 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException, Injectable, Logger, NotFoundException,
+} from '@nestjs/common';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { AppTool } from 'src/models';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { Socket } from 'socket.io';
-import { BulkActionStatus } from 'src/modules/bulk-actions/contants';
+import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
+import {
+  DeleteBulkActionSimpleRunner,
+} from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 
 @Injectable()
 export class BulkActionsProvider {
@@ -34,11 +39,25 @@ export class BulkActionsProvider {
 
     const client = await this.getClient(dto.databaseId);
 
-    await bulkAction.prepare(client);
+    await bulkAction.prepare(client, BulkActionsProvider.getSimpleRunnerClass(dto));
 
     bulkAction.start().catch();
 
     return bulkAction;
+  }
+
+  /**
+   * Return class name for simple (implemented on BE) bulk runners
+   * @param dto
+   */
+  static getSimpleRunnerClass(dto: CreateBulkActionDto) {
+    // eslint-disable-next-line sonarjs/no-small-switch
+    switch (dto.type) {
+      case BulkActionType.Delete:
+        return DeleteBulkActionSimpleRunner;
+      default:
+        throw new BadRequestException(`Unsupported type: ${dto.type} for Bulk Actions`);
+    }
   }
 
   /**

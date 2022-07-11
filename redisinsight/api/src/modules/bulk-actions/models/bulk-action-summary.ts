@@ -5,7 +5,7 @@ export class BulkActionSummary {
 
   private failed: number = 0;
 
-  private errors: Map<string, number> = new Map();
+  private errors: Array<Record<string, string>> = [];
 
   addProcessed(count: number) {
     this.processed += count;
@@ -15,22 +15,24 @@ export class BulkActionSummary {
     this.succeed += count;
   }
 
-  addErrors(err: string[]) {
-    this.failed += err.length;
-    err.forEach((error) => {
-      if (!this.errors.get(error)) {
-        this.errors.set(error, 0);
-      }
+  addErrors(err: Array<Record<string, string>>) {
+    if (err.length) {
+      this.failed += err.length;
 
-      this.errors.set(error, this.errors.get(error) + 1);
-    });
+      this.errors = err.concat(this.errors).slice(0, 500);
+    }
   }
 
   getOverview() {
-    return {
+    const overview = {
       processed: this.processed,
       succeed: this.succeed,
       failed: this.failed,
+      errors: this.errors,
     };
+
+    this.errors = [];
+
+    return overview;
   }
 }

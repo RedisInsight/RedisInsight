@@ -5,6 +5,7 @@ import { AppTool } from 'src/models';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { Socket } from 'socket.io';
+import { BulkActionStatus } from 'src/modules/bulk-actions/contants';
 
 @Injectable()
 export class BulkActionsProvider {
@@ -61,7 +62,7 @@ export class BulkActionsProvider {
   abort(id: string): BulkAction {
     const bulkAction = this.get(id);
 
-    bulkAction.abort();
+    bulkAction.setStatus(BulkActionStatus.Aborted);
 
     this.bulkActions.delete(id);
 

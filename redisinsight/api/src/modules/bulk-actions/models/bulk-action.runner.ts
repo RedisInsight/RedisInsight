@@ -40,7 +40,7 @@ export class BulkActionRunner {
       'expire',
       [
         key,
-        999999,
+        99999999,
       ],
     ]);
   }
@@ -51,22 +51,25 @@ export class BulkActionRunner {
       const commands = this.prepareCommands(keys) as string[][];
       const res = await this.node.pipeline(commands).exec();
 
-      this.processIterationResults(res);
+      this.processIterationResults(keys, res);
     }
   }
 
-  processIterationResults(res: (string | number | null)[][]) {
+  processIterationResults(keys, res: (string | number | null)[][]) {
     this.progress.addScanned(this.bulkAction.getFilter().getCount());
     this.summary.addProcessed(res.length);
 
-    res.forEach((commandResult) => {
+    const errors = [];
+
+    res.forEach((commandResult, i) => {
       if (commandResult[0]) {
-        this.summary.addErrors([commandResult[0] as string]);
+        errors.push({ key: keys[i], error: commandResult[0] as string });
       } else {
         this.summary.addSuccess(1);
       }
     });
 
+    this.summary.addErrors(errors);
     this.bulkAction.changeState();
   }
 

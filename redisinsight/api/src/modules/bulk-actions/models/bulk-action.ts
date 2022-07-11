@@ -5,8 +5,11 @@ import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-fi
 import { IBulkAction } from 'src/modules/bulk-actions/models/bulk-action.interface';
 import { BulkActionRunner } from 'src/modules/bulk-actions/models/bulk-action.runner';
 import { Socket } from 'socket.io';
+import { Logger } from '@nestjs/common';
 
 export class BulkAction implements IBulkAction {
+  private logger: Logger = new Logger('BulkAction');
+
   private readonly id: string;
 
   private readonly socket: Socket;
@@ -26,7 +29,7 @@ export class BulkAction implements IBulkAction {
     this.type = type;
     this.filter = filter;
     this.socket = socket;
-    this.debounce = debounce(this.sendOverview.bind(this), 1000, { maxWait: 2000 });
+    this.debounce = debounce(this.sendOverview.bind(this), 1000, { maxWait: 1000 });
     this.status = BulkActionStatus.Initialized;
   }
 
@@ -85,17 +88,14 @@ export class BulkAction implements IBulkAction {
 
       this.status = BulkActionStatus.Completed;
     } catch (e) {
-      this.catchRunnerError(e);
+      this.logger.error('Error on BulkAction Runner', e);
+      this.setStatus(BulkActionStatus.Failed);
     }
   }
 
-  private catchRunnerError(e: Error) {
-    // todo: logger
-    console.log('___e', e);
-    this.setStatus(BulkActionStatus.Failed);
-    // todo: exception
-  }
-
+  /**
+   * Get overview for BulkAction with progress details and summary
+   */
   getOverview() {
     const progress = this.runners.map((runner) => runner.getProgress().getOverview())
       .reduce((cur, prev) => ({
@@ -111,11 +111,22 @@ export class BulkAction implements IBulkAction {
         processed: prev.processed + cur.processed,
         succeed: prev.succeed + cur.succeed,
         failed: prev.failed + cur.failed,
+        errors: prev.errors.concat(cur.errors),
       }), {
         processed: 0,
         succeed: 0,
         failed: 0,
+        errors: [],
       });
+
+    summary.errors?.slice(0, 500);
+
+    summary.errors = summary.errors.map((error) => {
+      return {
+        key: error.key.toString(),
+        error: error.error.toString(),
+      };
+    });
 
     return {
       id: this.id,
@@ -150,17 +161,16 @@ export class BulkAction implements IBulkAction {
     this.debounce();
   }
 
+  /**
+   * Send overview to a client
+   */
   sendOverview() {
     const overview = this.getOverview();
 
     try {
       this.socket.emit('overview', overview);
     } catch (e) {
-      // todo: log error
+      this.logger.error('Unable to send overview', e);
     }
-  }
-
-  abort() {
-    this.status = BulkActionStatus.Aborted;
   }
 }

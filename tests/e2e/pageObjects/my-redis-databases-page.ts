@@ -1,4 +1,4 @@
-import {t, Selector} from 'testcafe';
+import { t, Selector } from 'testcafe';
 
 export class MyRedisDatabasePage {
     //-------------------------------------------------------------------------------------------

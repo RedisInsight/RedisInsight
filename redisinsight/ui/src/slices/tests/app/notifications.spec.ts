@@ -483,8 +483,3 @@ describe('slices', () => {
     })
   })
 })
-
-
-// const rootState = Object.assign(initialStateDefault, {
-//   browser: { stream: nextState },
-// })

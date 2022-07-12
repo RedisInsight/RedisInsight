@@ -2,6 +2,7 @@ import { RedisDataType } from 'src/modules/browser/dto';
 import {
   IsEnum, IsInt, IsOptional, IsString,
 } from 'class-validator';
+import { IBulkActionFilterOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-filter-overview.interface';
 
 export class BulkActionFilter {
   @IsOptional()
@@ -31,5 +32,12 @@ export class BulkActionFilter {
 
   getCount(): number {
     return this.count;
+  }
+
+  getOverview(): IBulkActionFilterOverview {
+    return {
+      match: this.match,
+      type: this.type,
+    };
   }
 }

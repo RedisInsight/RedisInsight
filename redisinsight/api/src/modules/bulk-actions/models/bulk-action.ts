@@ -5,6 +5,7 @@ import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-fi
 import { Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { IBulkAction, IBulkActionRunner } from 'src/modules/bulk-actions/interfaces';
+import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 
 export class BulkAction implements IBulkAction {
   private logger: Logger = new Logger('BulkAction');
@@ -23,7 +24,7 @@ export class BulkAction implements IBulkAction {
 
   private readonly filter: BulkActionFilter;
 
-  private runners: IBulkActionRunner[];
+  private runners: IBulkActionRunner[] = [];
 
   private readonly debounce: Function;
 
@@ -81,7 +82,7 @@ export class BulkAction implements IBulkAction {
   }
 
   /**
-   * Run bulk action
+   * Run bulk action on each runner
    * @private
    */
   private async run() {
@@ -100,7 +101,7 @@ export class BulkAction implements IBulkAction {
   /**
    * Get overview for BulkAction with progress details and summary
    */
-  getOverview() {
+  getOverview(): IBulkActionOverview {
     const progress = this.runners.map((runner) => runner.getProgress().getOverview())
       .reduce((cur, prev) => ({
         total: prev.total + cur.total,
@@ -132,9 +133,10 @@ export class BulkAction implements IBulkAction {
 
     return {
       id: this.id,
+      type: this.type,
       duration: (this.endTime || Date.now()) - this.startTime,
       status: this.status,
-      filter: this.filter,
+      filter: this.filter.getOverview(),
       progress,
       summary,
     };

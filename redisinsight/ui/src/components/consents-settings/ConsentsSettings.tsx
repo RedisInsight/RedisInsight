@@ -144,7 +144,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             use files from trusted authors only.
           </EuiText>
         </EuiCallOut>
-        <EuiSpacer size="m" />
+        <EuiSpacer size="l" />
         <EuiFlexItem>
           <EuiFlexGroup gutterSize="s">
             <EuiFlexItem grow={false}>
@@ -211,6 +211,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       </div>
       {!!requiredConsents.length && (
         <>
+          <EuiHorizontalRule margin="l" className={cx({ [styles.pluginWarningHR]: !!requiredConsents.length })} />
           <EuiSpacer size="l" />
           <EuiText color="subdued" size="s">
             To use RedisInsight, please accept the terms and conditions:

@@ -319,7 +319,6 @@ describe('slices', () => {
         ...initialState,
         notificationCenter: {
           ...initialState.notificationCenter,
-          lastReceivedNotification: notificationsResponse.notifications[0],
           totalUnread: notificationsResponse.totalUnread,
           isNotificationOpen: true
         }

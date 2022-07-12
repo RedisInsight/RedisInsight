@@ -91,7 +91,7 @@ const notificationsSlice = createSlice({
       state.notificationCenter.totalUnread = payload.totalUnread
       state.notificationCenter.isNotificationOpen = true
     },
-    setLastReceivedNotification: (state, { payload }: { payload: NotificationDto }) => {
+    setLastReceivedNotification: (state, { payload }: { payload: NotificationDto | null }) => {
       state.notificationCenter.lastReceivedNotification = payload
     },
     getNotifications: (state) => {

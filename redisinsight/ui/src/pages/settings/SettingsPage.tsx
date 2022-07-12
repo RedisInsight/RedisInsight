@@ -84,7 +84,7 @@ const SettingsPage = () => {
             data-test-subj="select-theme"
           />
         </EuiFormRow>
-        <EuiSpacer size="m" />
+        <EuiSpacer size="xl" />
       </EuiForm>
       <ConsentsNotifications />
     </>

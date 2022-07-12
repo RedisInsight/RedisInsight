@@ -5,7 +5,7 @@ import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
 import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
-import { setNewNotificationReceived } from 'uiSrc/slices/app/notifications'
+import { setNewNotificationReceived, setLastReceivedNotification } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { NotificationType } from 'uiSrc/slices/interfaces'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
@@ -66,7 +66,8 @@ describe('CommonAppSubscription', () => {
     socket.socketClient.emit(NotificationEvent.Notification, mockData)
 
     const afterRenderActions = [
-      setNewNotificationReceived(mockData as NotificationsDto)
+      setNewNotificationReceived(mockData as NotificationsDto),
+      setLastReceivedNotification(null)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

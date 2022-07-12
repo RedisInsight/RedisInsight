@@ -2,7 +2,7 @@ export interface IAgreement {
   defaultValue: boolean;
   displayInSetting: boolean;
   required: boolean;
-  category: string;
+  category?: string;
   since: string;
   editable: boolean;
   disabled: boolean;

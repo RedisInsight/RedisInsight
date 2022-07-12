@@ -69,7 +69,6 @@ test('Verify that the message is claimed only if its idle time is greater than t
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     const streamMessageBefore = await browserPage.streamMessage.count;
     // Claim message and check result when Min Idle Time is greater than the idle time
     await t.click(browserPage.claimPendingMessageButton);

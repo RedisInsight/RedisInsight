@@ -7,7 +7,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
 const cliPage = new CliPage();
 
-fixture `PubSub debug mode`
+fixture.only `PubSub debug mode`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -32,9 +32,9 @@ test
         await pubSubPage.publishMessage('test', 'message sent in the background');
         await t.expect(pubSubPage.totalMessagesCount.textContent).contains('31', 'Total counter value is incorrect');
         //Verify that when user scroll away from the newest message the auto-scroll is stopped
-        await cliPage.sendCommandInCli('20 publish chanel additionalMessages');
-        await pubSubPage.publishMessage('test', 'new message to with no scroll');
-        await t.expect(pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText('new message to with no scroll').visible).notOk('Message is still visible');
+        await cliPage.sendCommandInCli('30 publish chanel additionalMessages');
+        await pubSubPage.publishMessage('test', 'new message with no scroll');
+        await t.expect(pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText('new message with no scroll').visible).notOk('Message is still visible');
         //Go to Browser Page
         await t.click(myRedisDatabasePage.myRedisDBButton);
         //Go to PubSub page

@@ -6,7 +6,7 @@ import { EuiProgress, EuiIcon, EuiText } from '@elastic/eui'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { VariableSizeGrid as Grid, GridChildComponentProps } from 'react-window'
 
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { IProps } from './interfaces'
@@ -42,18 +42,17 @@ const VirtualGrid = (props: IProps) => {
   const [width, setWidth] = useState<number>(100)
   const [height, setHeight] = useState<number>(100)
   const [forceScrollTop, setForceScrollTop] = useState<Maybe<number>>(scrollTopProp)
-
   const [expandedRows, setExpandedRows] = useState<number[]>([])
 
-  const gridRef = useRef()
-  const sizeMap = useRef({})
+  const gridRef = useRef<Nullable<Grid>>()
+  const sizeMap = useRef<{ [key: number]: number }>({})
   const setSize = useCallback((index, size) => {
     sizeMap.current = { ...sizeMap.current, [index]: size }
 
-    gridRef.current?._listRef?.resetAfterRowIndex?.(index)
+    gridRef.current?.resetAfterRowIndex?.(index)
   }, [])
-  const getSize = (index) =>
-    sizeMap.current[index] || rowHeight
+  const getSize = (index: number) =>
+    (expandedRows.indexOf(index) !== -1 ? sizeMap.current[index] : rowHeight)
 
   useEffect(() =>
     () => {
@@ -70,8 +69,7 @@ const VirtualGrid = (props: IProps) => {
   const onScroll = useCallback(
     ({ scrollTop }) => {
       scrollTopRef.current = scrollTop
-    },
-    [scrollTopRef],
+    }, [scrollTopRef]
   )
 
   const changeSorting = (column: any) => {
@@ -79,6 +77,7 @@ const VirtualGrid = (props: IProps) => {
       onChangeSorting(column, SortOrder.DESC)
       return
     }
+    setExpandedRows([])
     onChangeSorting(column, sortedColumn.order === SortOrder.DESC ? SortOrder.ASC : SortOrder.DESC)
   }
 
@@ -96,7 +95,7 @@ const VirtualGrid = (props: IProps) => {
     setWidth(width)
   }
 
-  const onRowClick = (event: MouseEvent, rowIndex: number) => {
+  const onRowClick = (event: React.MouseEvent, rowIndex: number) => {
     selectTimer = window.setTimeout(() => {
       const textSelected = window.getSelection()?.toString()
       if (!preventSelect && !textSelected) {
@@ -116,22 +115,24 @@ const VirtualGrid = (props: IProps) => {
     preventSelect = true
   }
 
-  const Cell = ({ columnIndex, rowIndex, style, expandedRows = [] }: GridChildComponentProps<null>) => {
+  const Cell = ({ columnIndex, rowIndex, style }: GridChildComponentProps<null>) => {
     const rowData = items[rowIndex]
     const column = columns[columnIndex]
     const content: any = rowData?.[column?.id] || ''
-    const cellRef = useRef()
+    const cellRef = useRef<HTMLDivElement>(null)
 
     const expanded = expandedRows.indexOf(rowIndex) !== -1
 
     React.useEffect(() => {
-      const paddingSize = 24
-      const cellHeight = cellRef.current?.children?.[0]?.getBoundingClientRect?.().height + paddingSize
+      if (cellRef.current) {
+        const paddingSize = 24
+        const cellHeight = cellRef.current?.children?.[0]?.getBoundingClientRect?.().height + paddingSize
 
-      if ((!getSize(rowIndex) && rowIndex !== 0)) {
-        setSize(rowIndex, cellHeight)
+        if (cellHeight > getSize(rowIndex) && rowIndex !== 0) {
+          setSize(rowIndex, cellHeight)
+        }
       }
-    }, [setSize, rowIndex, expanded])
+    }, [setSize, rowIndex, expanded, width])
 
     if (rowIndex === 0) {
       return (
@@ -243,7 +244,6 @@ const VirtualGrid = (props: IProps) => {
         <AutoSizer onResize={onResize}>
           {() => (
             <InfiniteLoader
-              ref={gridRef}
               isItemLoaded={(index) => index < items.length}
               loadMoreItems={loadMoreRows}
               minimumBatchSize={SCAN_COUNT_DEFAULT}
@@ -252,7 +252,10 @@ const VirtualGrid = (props: IProps) => {
             >
               {({ onItemsRendered, ref }) => (
                 <Grid
-                  ref={ref}
+                  ref={(list) => {
+                    ref(list)
+                    gridRef.current = list
+                  }}
                   onItemsRendered={(props) =>
                     onItemsRendered({
                       visibleStartIndex: props.visibleRowStartIndex || 0,
@@ -279,7 +282,6 @@ const VirtualGrid = (props: IProps) => {
                         data={data}
                         columnIndex={columnIndex}
                         rowIndex={rowIndex}
-                        expandedRows={expandedRows}
                       />
                     </div>
                   )}

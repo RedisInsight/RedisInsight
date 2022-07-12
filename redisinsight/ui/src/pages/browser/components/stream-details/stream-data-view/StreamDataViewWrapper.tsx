@@ -138,7 +138,7 @@ const StreamDataViewWrapper = (props: Props) => {
       const index = toNumber(label.split('-')[1])
       const values = fields.filter((field) => field[0] === name)
       const value = values[index] ? values[index][1] : ''
-      const cellContent = value.substring(0, 200)
+      const cellContent = value.substring(0, 650)
       const tooltipContent = formatLongName(value)
 
       return (

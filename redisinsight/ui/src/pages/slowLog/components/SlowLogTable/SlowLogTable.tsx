@@ -59,7 +59,6 @@ const SlowLogTable = (props: Props) => {
     {
       id: 'args',
       label: 'Command',
-      absoluteWidth: 'auto',
       render: (command) => (
         <EuiToolTip
           position="bottom"

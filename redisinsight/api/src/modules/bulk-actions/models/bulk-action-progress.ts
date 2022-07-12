@@ -1,3 +1,5 @@
+import { IBulkActionProgressOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-progress-overview.interface';
+
 export class BulkActionProgress {
   private total: number = 0;
 
@@ -30,7 +32,7 @@ export class BulkActionProgress {
     }
   }
 
-  getOverview() {
+  getOverview(): IBulkActionProgressOverview {
     return {
       total: this.total,
       scanned: this.scanned,

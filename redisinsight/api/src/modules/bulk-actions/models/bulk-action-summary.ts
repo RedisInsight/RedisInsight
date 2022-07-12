@@ -1,3 +1,5 @@
+import { IBulkActionSummaryOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-summary-overview.interface';
+
 export class BulkActionSummary {
   private processed: number = 0;
 
@@ -23,7 +25,7 @@ export class BulkActionSummary {
     }
   }
 
-  getOverview() {
+  getOverview(): IBulkActionSummaryOverview {
     const overview = {
       processed: this.processed,
       succeed: this.succeed,

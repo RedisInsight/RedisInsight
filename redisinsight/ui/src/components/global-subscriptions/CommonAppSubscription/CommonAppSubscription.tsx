@@ -49,17 +49,6 @@ const CommonAppSubscription = ({ retryDelay = 60000 } : IProps) => {
     })
   }, [])
 
-  // TODO just remove it
-  useEffect(() => {
-    setTimeout(() => {
-      const data = {
-        notifications: [{ type: "global", timestamp: 1655738357, title: "title", body: 'Some valid <a href="">link</a>', read: false }],
-        totalUnread: 1,
-      }
-      dispatch(setNewNotificationAction(data))
-    }, 3000)
-  }, [])
-
   useEffect(() => {
     config?.agreements?.notifications
   }, [config])

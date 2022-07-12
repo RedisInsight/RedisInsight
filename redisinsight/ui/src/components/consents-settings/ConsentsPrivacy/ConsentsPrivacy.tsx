@@ -12,7 +12,8 @@ import {
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import ConsentOption from '../ConsentOption'
-import { IConsent } from '../ConsentsSettings'
+import { IConsent, ConsentCategories } from '../ConsentsSettings'
+
 import styles from '../styles.module.scss'
 
 const ConsentsPrivacy = () => {
@@ -40,7 +41,9 @@ const ConsentsPrivacy = () => {
 
   useEffect(() => {
     setPrivacyConsents(consents.filter(
-      (consent: IConsent) => !consent.required && consent.category === 'privacy' && consent.displayInSetting
+      (consent: IConsent) => !consent.required
+        && consent.category === ConsentCategories.Privacy
+        && consent.displayInSetting
     ))
     if (consents.length) {
       const values = consents.reduce(

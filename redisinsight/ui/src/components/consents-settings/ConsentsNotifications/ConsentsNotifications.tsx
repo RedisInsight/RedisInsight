@@ -2,33 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import { has } from 'lodash'
-import {
-  EuiText,
-  EuiForm,
-  EuiTitle,
-  EuiSpacer,
-} from '@elastic/eui'
+import { EuiForm, EuiTitle } from '@elastic/eui'
 
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ConsentOption from '../ConsentOption'
+import { IConsent, ConsentCategories } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'
-
-export interface IConsent {
-  defaultValue: boolean
-  displayInSetting: boolean
-  required: boolean
-  editable: boolean
-  disabled: boolean
-  category?: string
-  since: string
-  title: string
-  label: string
-  agreementName: string
-  description?: string
-}
 
 export interface Props {
   onSubmitted?: () => void
@@ -58,9 +40,10 @@ const ConsentsNotifications = () => {
   }, [spec, config])
 
   useEffect(() => {
-    console.log(consents)
     setNotificationConsents(consents.filter(
-      (consent: IConsent) => !consent.required && consent.category === 'notifications' && consent.displayInSetting
+      (consent: IConsent) => !consent.required
+        && consent.category === ConsentCategories.Notifications
+        && consent.displayInSetting
     ))
     if (consents.length) {
       const values = consents.reduce(

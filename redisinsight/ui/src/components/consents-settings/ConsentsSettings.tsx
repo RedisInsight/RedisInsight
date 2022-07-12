@@ -42,6 +42,11 @@ export interface IConsent {
   description?: string
 }
 
+export enum ConsentCategories {
+  Notifications = 'notifications',
+  Privacy = 'privacy'
+}
+
 export interface Props {
   onSubmitted?: () => void
 }
@@ -102,10 +107,10 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       (consent: IConsent) => consent.required
     ))
     setPrivacyConsents(consents.filter(
-      (consent: IConsent) => !consent.required && consent.category === 'privacy'
+      (consent: IConsent) => !consent.required && consent.category === ConsentCategories.Privacy
     ))
     setNotificationConsents(consents.filter(
-      (consent: IConsent) => !consent.required && consent.category === 'notifications'
+      (consent: IConsent) => !consent.required && consent.category === ConsentCategories.Notifications
     ))
     if (consents.length) {
       const values = consents.reduce(

@@ -38,6 +38,7 @@ const VirtualTable = (props: IProps) => {
     onRowClick = () => {},
     onSearch = () => {},
     onChangeSorting = () => {},
+    onRowToggleViewClick = () => {},
     sortedColumn = null,
     selectedKey = null,
     noItemsMessage = 'No keys to display.',
@@ -122,6 +123,7 @@ const VirtualTable = (props: IProps) => {
         const textSelected = window.getSelection()?.toString()
         if (!preventSelect && !textSelected) {
           setExpandedRows(xor(expandedRows, [data.index]))
+          onRowToggleViewClick?.(expandedRows.indexOf(data.index) === -1, data.index)
         }
         preventSelect = false
       }, selectTimerDelay, cellCache)

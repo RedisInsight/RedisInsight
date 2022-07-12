@@ -139,6 +139,24 @@ const ListDetails = (props: Props) => {
     }
   }
 
+  const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
+    const browserViewEvent = expanded
+      ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.BROWSER_KEY_FIELD_VALUE_COLLAPSED
+    const treeViewEvent = expanded
+      ? TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_COLLAPSED
+
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        keyType: KeyTypes.List,
+        databaseId: instanceId,
+        largestCellLength: elements[rowIndex]?.element?.length || 0,
+      }
+    })
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'index',
@@ -303,6 +321,7 @@ const ListDetails = (props: Props) => {
         noItemsMessage={NoResultsFoundText}
         onSearch={handleSearch}
         cellCache={cellCache}
+        onRowToggleViewClick={handleRowToggleViewClick}
       />
     </div>
   )

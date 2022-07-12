@@ -57,6 +57,7 @@ export interface IProps {
   headerHeight?: number
   searching?: boolean
   onRowClick?: (rowData: any) => void
+  onRowToggleViewClick?: (expanded: boolean, rowIndex: number) => void
   onSearch?: (newState: any) => void
   onWheel?: (event: React.WheelEvent) => void
   onChangeSorting?: (cellData?: any, columnItem?: any) => void

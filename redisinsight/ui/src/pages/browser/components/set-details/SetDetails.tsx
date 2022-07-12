@@ -126,6 +126,24 @@ const SetDetails = (props: Props) => {
     dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
   }
 
+  const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
+    const browserViewEvent = expanded
+      ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.BROWSER_KEY_FIELD_VALUE_COLLAPSED
+    const treeViewEvent = expanded
+      ? TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_COLLAPSED
+
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        keyType: KeyTypes.Set,
+        databaseId: instanceId,
+        largestCellLength: members[rowIndex]?.length || 0,
+      }
+    })
+  }
+
   const columns:ITableColumn[] = [
     {
       id: 'name',
@@ -241,6 +259,7 @@ const SetDetails = (props: Props) => {
         }))}
         onChangeWidth={setWidth}
         cellCache={cellCache}
+        onRowToggleViewClick={handleRowToggleViewClick}
       />
 
     </div>

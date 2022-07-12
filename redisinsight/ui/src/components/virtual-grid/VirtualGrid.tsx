@@ -24,6 +24,7 @@ const VirtualGrid = (props: IProps) => {
     rowHeight = 40,
     totalItemsCount = 0,
     onChangeSorting = () => {},
+    onRowToggleViewClick = () => {},
     sortedColumn = null,
     noItemsMessage = 'No items to display.',
     loading,
@@ -95,11 +96,13 @@ const VirtualGrid = (props: IProps) => {
     setWidth(width)
   }
 
-  const onRowClick = (event: React.MouseEvent, rowIndex: number) => {
+  const onCellClick = (event: React.MouseEvent, rowIndex: number) => {
     selectTimer = window.setTimeout(() => {
       const textSelected = window.getSelection()?.toString()
       if (!preventSelect && !textSelected) {
         setExpandedRows(xor(expandedRows, [rowIndex]))
+
+        onRowToggleViewClick?.(expandedRows.indexOf(rowIndex) === -1, rowIndex)
       }
       preventSelect = false
     }, selectTimerDelay)
@@ -276,7 +279,7 @@ const VirtualGrid = (props: IProps) => {
                   itemData={items}
                 >
                   {({ data, rowIndex, columnIndex, style }) => (
-                    <div onClick={(e) => onRowClick(e, rowIndex)} role="presentation">
+                    <div onClick={(e) => onCellClick(e, rowIndex)} role="presentation">
                       <Cell
                         style={style}
                         data={data}

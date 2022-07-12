@@ -180,6 +180,24 @@ const ZSetDetails = (props: Props) => {
     )
   }
 
+  const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
+    const browserViewEvent = expanded
+      ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.BROWSER_KEY_FIELD_VALUE_COLLAPSED
+    const treeViewEvent = expanded
+      ? TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_COLLAPSED
+
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        keyType: KeyTypes.ZSet,
+        databaseId: instanceId,
+        largestCellLength: members[rowIndex]?.name?.length || 0,
+      }
+    })
+  }
+
   const columns:ITableColumn[] = [
     {
       id: 'name',
@@ -384,6 +402,7 @@ const ZSetDetails = (props: Props) => {
           onWheel={closePopover}
           onSearch={handleSearch}
           cellCache={cellCache}
+          onRowToggleViewClick={handleRowToggleViewClick}
         />
       </div>
     </>

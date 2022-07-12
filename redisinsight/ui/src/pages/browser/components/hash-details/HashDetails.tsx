@@ -3,6 +3,7 @@ import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
+import { max } from 'lodash'
 
 import {
   hashSelector,
@@ -167,6 +168,24 @@ const HashDetails = (props: Props) => {
       setMatch(match)
       dispatch(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
     }
+  }
+
+  const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
+    const browserViewEvent = expanded
+      ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.BROWSER_KEY_FIELD_VALUE_COLLAPSED
+    const treeViewEvent = expanded
+      ? TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_COLLAPSED
+
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        keyType: KeyTypes.Hash,
+        databaseId: instanceId,
+        largestCellLength: max(Object.values(fields[rowIndex]))?.length || 0,
+      }
+    })
   }
 
   const columns: ITableColumn[] = [
@@ -349,6 +368,7 @@ const HashDetails = (props: Props) => {
           onWheel={closePopover}
           onSearch={handleSearch}
           cellCache={cellCache}
+          onRowToggleViewClick={handleRowToggleViewClick}
         />
       </div>
     </>

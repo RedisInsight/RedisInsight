@@ -23,12 +23,14 @@ import reducer, {
   notificationCenterSelector,
   setIsNotificationOpen,
   setNewNotificationReceived,
+  setLastReceivedNotification,
   getNotifications,
   getNotificationsSuccess,
   fetchNotificationsAction,
   getNotificationsFailed,
   unreadNotificationsAction,
-  unreadNotifications
+  unreadNotifications,
+  setNewNotificationAction
 } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
@@ -319,13 +321,33 @@ describe('slices', () => {
         ...initialState,
         notificationCenter: {
           ...initialState.notificationCenter,
-          lastReceivedNotification: notificationsResponse.notifications[0],
           totalUnread: notificationsResponse.totalUnread,
           isNotificationOpen: true
         }
       }
       // Act
       const nextState = reducer(initialState, setNewNotificationReceived(notificationsResponse))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { notifications: nextState },
+      })
+
+      expect(notificationCenterSelector(rootState)).toEqual(state.notificationCenter)
+    })
+  })
+
+  describe('setLastReceivedNotification', () => {
+    it('should properly set lastReceivedNotification', () => {
+      const state = {
+        ...initialState,
+        notificationCenter: {
+          ...initialState.notificationCenter,
+          lastReceivedNotification: notificationsResponse.notifications[0],
+        }
+      }
+      // Act
+      const nextState = reducer(initialState, setLastReceivedNotification(notificationsResponse.notifications[0]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -429,16 +451,31 @@ describe('slices', () => {
     describe('unreadNotificationsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
-        const responsePayload = { status: 200 }
+        const data = notificationsResponse
+        const responsePayload = { data, status: 200 }
 
         apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(unreadNotificationsAction())
+        await store.dispatch<any>(unreadNotificationsAction(data.totalUnread))
 
         // Assert
         const expectedActions = [
-          unreadNotifications(),
+          unreadNotifications(data.totalUnread),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('setNewNotificationAction', () => {
+      it('succeed to update notificationsCenter', () => {
+        const data = notificationsResponse
+        store.dispatch<any>(setNewNotificationAction(data))
+
+        const expectedActions = [
+          setNewNotificationReceived(data),
+          setLastReceivedNotification(null)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

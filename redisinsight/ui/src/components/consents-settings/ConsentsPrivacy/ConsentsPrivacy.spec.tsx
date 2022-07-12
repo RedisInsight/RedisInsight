@@ -6,10 +6,11 @@ import {
   fireEvent,
   mockedStore,
   cleanup,
+  clearStoreActions,
+  waitFor,
 } from 'uiSrc/utils/test-utils'
-import ConsentsSettings from './ConsentsSettings'
-
-const BTN_SUBMIT = 'btn-submit'
+import { updateUserConfigSettings } from 'uiSrc/slices/user/user-settings'
+import ConsentsPrivacy from './ConsentsPrivacy'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -70,26 +71,29 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   }),
 }))
 
-describe('ConsentsSettings', () => {
+describe('ConsentsPrivacy', () => {
   it('should render', () => {
-    expect(render(<ConsentsSettings />)).toBeTruthy()
+    expect(render(<ConsentsPrivacy />)).toBeTruthy()
   })
 
   it('should render proper elements', () => {
-    render(<ConsentsSettings />)
-    expect(screen.getAllByTestId(/switch-option/)).toHaveLength(4)
+    render(<ConsentsPrivacy />)
+    expect(screen.getAllByTestId(/switch-option/)).toHaveLength(1)
   })
 
-  it('should be disabled submit button with required options with false value', () => {
-    render(<ConsentsSettings />)
-    expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
-  })
+  describe('update settings', () => {
+    it('option change should call "updateUserConfigSettingsAction"', async () => {
+      await waitFor(() => {
+        render(<ConsentsPrivacy />)
+        screen.getAllByTestId(/switch-option/).forEach(async (el) => {
+          fireEvent.click(el)
+        })
+      })
 
-  it('should be able to submit with required options with true value', () => {
-    render(<ConsentsSettings />)
-    screen.getAllByTestId(/switch-option/).forEach((el) => {
-      fireEvent.click(el)
+      const expectedActions = [{}].fill(updateUserConfigSettings(), 0)
+      expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
+        clearStoreActions(expectedActions)
+      )
     })
-    expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
   })
 })

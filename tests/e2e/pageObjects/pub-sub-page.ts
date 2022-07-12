@@ -28,25 +28,25 @@ export class PubSubPage {
 
     /**
      * Publish message in pubsub
-     * @param chanel The name of chanel
+     * @param channel The name of channel
      * @param message The message
      */
-    async publishMessage(chanel: string, message: string): Promise<void> {
+    async publishMessage(channel: string, message: string): Promise<void> {
         await t.click(this.channelNameInput);
-        await t.typeText(this.channelNameInput, chanel, { replace: true });
+        await t.typeText(this.channelNameInput, channel, { replace: true });
         await t.click(this.messageInput);
         await t.typeText(this.messageInput, message, { replace: true });
         await t.click(this.publishButton);
     }
 
     /**
-     * Subscribe to chanel and publish message in pubsub
-     * @param chanel The name of chanel
+     * Subscribe to channel and publish message in pubsub
+     * @param channel The name of channel
      * @param message The message
      */
-    async subsribeToChanelAndPublishMessage(chanel: string, message: string): Promise<void> {
+    async subsribeToChannelAndPublishMessage(channel: string, message: string): Promise<void> {
         await t.click(this.subscribeButton);
-        await this.publishMessage(chanel, message);
+        await this.publishMessage(channel, message);
         await t.expect(this.pubSubPageContainer.find('[data-testid^=row]').withText('message').exists).ok('Message is not displayed');
     }
 }

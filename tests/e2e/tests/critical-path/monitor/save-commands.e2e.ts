@@ -14,7 +14,7 @@ const tempDir = os.tmpdir();
 const downloadsDir = `C:*****\\Downloads`;
 
 fixture `Save commands`
-    .meta({ type: 'regression' })
+    .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);

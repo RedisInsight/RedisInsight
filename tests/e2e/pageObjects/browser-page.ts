@@ -758,6 +758,7 @@ export class BrowserPage {
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
         // Click on save button
         await t.click(this.treeViewDelimiterValueSave);
+        await t.expect(this.treeViewDelimiterButton.withExactText(delimiter).exists).ok('Delimiter is not changed');
     }
 
     //Delete entry from Stream key

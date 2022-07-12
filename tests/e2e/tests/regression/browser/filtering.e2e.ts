@@ -12,7 +12,7 @@ let keyName2 = chance.word({ length: 20 });
 const COMMAND_GROUP_SET = 'Set';
 
 fixture `Filtering per key name in Browser page`
-    .meta({type: 'critical_path', rte: rte.standalone})
+    .meta({type: 'regression', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);

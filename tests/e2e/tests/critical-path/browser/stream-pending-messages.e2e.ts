@@ -64,7 +64,6 @@ test('Verify that user can claim any message in the list of pending messages', a
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Claim message and check result
     await t.click(browserPage.claimPendingMessageButton);
     await t.expect(browserPage.pendingCount.textContent).eql('pending: 1', 'The number of pending messages for selected consumer');

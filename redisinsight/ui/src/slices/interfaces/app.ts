@@ -144,5 +144,6 @@ export interface StateAppNotifications {
     isNotificationOpen: boolean
     isCenterOpen: boolean
     totalUnread: number
+    shouldDisplayToast: boolean
   }
 }

@@ -66,7 +66,7 @@ describe('CommonAppSubscription', () => {
     socket.socketClient.emit(NotificationEvent.Notification, mockData)
 
     const afterRenderActions = [
-      setNewNotificationReceived(mockData as NotificationsDto)
+      setNewNotificationReceived(mockData as NotificationsDto),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

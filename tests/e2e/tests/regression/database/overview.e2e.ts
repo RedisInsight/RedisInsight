@@ -20,7 +20,7 @@ fixture `Overview`
         //Increase timeout to add Cloud DB (due to RI-1993 issue)
         await t.wait(5000);
         //Refresh the page
-        await t.eval(() => location.reload(true));
+        await t.eval(() => location.reload());
         //Wait for database to be exist
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(cloudDatabaseConfig.databaseName).exists).ok('The existence of the database', { timeout: 5000 });
         await myRedisDatabasePage.clickOnDBByName(cloudDatabaseConfig.databaseName);

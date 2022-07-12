@@ -5,7 +5,13 @@ import parse from 'html-react-parser'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
-import { notificationCenterSelector, setIsCenterOpen, setIsNotificationOpen } from 'uiSrc/slices/app/notifications'
+import {
+  notificationCenterSelector,
+  setIsCenterOpen,
+  setIsNotificationOpen,
+  unreadNotificationsAction
+} from 'uiSrc/slices/app/notifications'
+import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from '../styles.module.scss'
@@ -51,8 +57,9 @@ const PopoverNotification = () => {
     dispatch(setIsNotificationOpen(false))
   }
 
-  const handleClickClose = () => {
+  const handleClickClose = (notification: IGlobalNotification) => {
     onCloseNotification()
+    dispatch(unreadNotificationsAction({ timestamp: notification.timestamp, type: notification.type }))
 
     sendEventTelemetry({
       event: TelemetryEvent.NOTIFICATIONS_MESSAGE_CLOSED,
@@ -93,7 +100,7 @@ const PopoverNotification = () => {
               aria-label="Close notification"
               className={styles.closeBtn}
               onMouseUp={(e: React.MouseEvent) => e.stopPropagation()}
-              onClick={handleClickClose}
+              onClick={() => handleClickClose(lastReceivedNotification)}
               data-testid="close-notification-btn"
             />
 

@@ -127,7 +127,7 @@ export enum NotificationType {
 }
 
 export interface IGlobalNotification {
-  type?: string
+  type: string
   timestamp: number
   title: string
   body: string

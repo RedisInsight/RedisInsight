@@ -18,15 +18,28 @@ export class SettingsPage {
     //TEXT INPUTS (also referred to as 'Text fields')
     keysToScanValue = Selector('[data-testid=keys-to-scan-value]');
     keysToScanInput = Selector('[data-testid=keys-to-scan-input]');
+    commandsInPipelineValue = Selector('[data-testid=pipeline-bunch-value]');
+    commandsInPipelineInput = Selector('[data-testid=pipeline-bunch-input]');
 
     /**
      * Change Keys to Scan value
      * @param value Value for scan
      */
-    async changeKeysToScanValue(value: string): Promise<void>{
+    async changeKeysToScanValue(value: string): Promise<void> {
         await t.hover(this.keysToScanValue);
         await t.click(this.keysToScanInput);
         await t.typeText(this.keysToScanInput, value, { replace: true });
+        await t.click(this.applyButton);
+    }
+
+    /**
+ * Change Commands In Pipeline value
+ * @param value Value for pipeline
+ */
+    async changeCommandsInPipeline(value: string): Promise<void> {
+        await t.hover(this.commandsInPipelineValue);
+        await t.click(this.commandsInPipelineInput);
+        await t.typeText(this.commandsInPipelineInput, value, { replace: true });
         await t.click(this.applyButton);
     }
 

@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  mockRepository,
-  MockType,
-} from 'src/__mocks__';
+import { mockRepository, MockType } from 'src/__mocks__';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
 import { Repository } from 'typeorm';
@@ -93,20 +90,25 @@ describe('NotificationService', () => {
     });
   });
 
-  describe('readAllNotifications', () => {
+  describe('readNotifications', () => {
     it('should update all notifications', async () => {
+      repository.createQueryBuilder().getCount.mockResolvedValueOnce(2);
       repository.createQueryBuilder().execute.mockResolvedValueOnce('ok');
-      expect(await service.readAllNotifications()).toEqual(undefined);
+
+      expect(await service.readNotifications({})).toEqual({
+        totalUnread: 2,
+        notifications: [],
+      });
     });
     it('should throw an error if any', async () => {
       repository.createQueryBuilder().execute.mockRejectedValue(new Error('some error'));
 
       try {
-        await service.readAllNotifications();
+        await service.readNotifications({ timestamp: 1, type: NotificationType.Global });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
-        expect(e.message).toEqual('Unable to "read" notifications');
+        expect(e.message).toEqual('Unable to "read" notification(s)');
       }
     });
   });

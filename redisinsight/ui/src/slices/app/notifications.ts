@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash'
 import { NotificationsDto, NotificationDto } from 'apiSrc/modules/notification/dto'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getApiErrorName, isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { getApiErrorMessage, getApiErrorName, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { StateAppNotifications } from '../interfaces'
 
 import { AppDispatch, RootState } from '../store'
@@ -91,7 +91,7 @@ const notificationsSlice = createSlice({
       state.notificationCenter.totalUnread = payload.totalUnread
       state.notificationCenter.isNotificationOpen = true
     },
-    setLastReceivedNotification: (state, { payload }: { payload: NotificationDto | null }) => {
+    setLastReceivedNotification: (state, { payload }: { payload: Nullable<NotificationDto> }) => {
       state.notificationCenter.lastReceivedNotification = payload
     },
     getNotifications: (state) => {
@@ -105,8 +105,8 @@ const notificationsSlice = createSlice({
     getNotificationsFailed: (state) => {
       state.notificationCenter.loading = false
     },
-    unreadNotifications: (state) => {
-      state.notificationCenter.totalUnread = 0
+    unreadNotifications: (state, { payload }) => {
+      state.notificationCenter.totalUnread = payload
     }
   },
 })
@@ -163,15 +163,16 @@ export function fetchNotificationsAction(
   }
 }
 
-export function unreadNotificationsAction() {
+export function unreadNotificationsAction(notification?: { timestamp: number, type: string }) {
   return async (dispatch: AppDispatch) => {
     try {
-      const { status } = await apiService.patch(
-        ApiEndpoints.NOTIFICATIONS_READ
+      const { data, status } = await apiService.patch(
+        ApiEndpoints.NOTIFICATIONS_READ,
+        notification
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(unreadNotifications())
+        dispatch(unreadNotifications(data.totalUnread))
       }
     } catch (error) {
       //

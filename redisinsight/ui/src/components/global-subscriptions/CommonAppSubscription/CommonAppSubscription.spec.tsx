@@ -73,17 +73,4 @@ describe('CommonAppSubscription', () => {
 
     unmount()
   })
-
-  it('should connect disconnect', () => {
-    const { unmount } = render(<CommonAppSubscription retryDelay={0} />)
-
-    socket.socketClient.emit(SocketEvent.Disconnect)
-
-    const afterRenderActions = [
-      setIsConnected(false)
-    ]
-    expect(store.getActions()).toEqual([...afterRenderActions])
-
-    unmount()
-  })
 })

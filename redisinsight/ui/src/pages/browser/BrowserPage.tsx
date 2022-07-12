@@ -208,7 +208,7 @@ const BrowserPage = () => {
       <InstanceHeader />
       <div className={styles.main}>
         <div className={styles.resizableContainer}>
-          <EuiResizableContainer style={{ height: '100%' }}>
+          <EuiResizableContainer onPanelWidthChange={onPanelWidthChange} style={{ height: '100%' }}>
             {(EuiResizablePanel, EuiResizableButton) => (
               <>
                 <EuiResizablePanel

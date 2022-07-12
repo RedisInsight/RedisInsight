@@ -49,7 +49,7 @@ test
         await t.click(workbenchPage.submitCommandButton);
         //Check result
         await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(workbenchPage.resposeInfo.textContent).eql('No data to visualize. Switch to Text view to see raw information.', 'The info message is displayed for Graph');
+        await t.expect(workbenchPage.responseInfo.textContent).eql('No data to visualize. Switch to Text view to see raw information.', 'The info message is displayed for Graph');
         //Switch to Text view and check result
         await t.switchToMainWindow();
         await workbenchPage.selectViewTypeText();

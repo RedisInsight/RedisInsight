@@ -1,5 +1,5 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "agreements": {
     "analytics": {
       "defaultValue": false,
@@ -20,7 +20,7 @@
       "editable": true,
       "disabled": false,
       "category": "notifications",
-      "since": "1.0.5",
+      "since": "1.0.6",
       "title": "Notification",
       "label": "Show notification",
       "description": "Select to display notification. Otherwise, notifications are shown in the Notification Center."

@@ -47,6 +47,8 @@ export class GetUserAgreementsResponse {
 
   analytics?: boolean;
 
+  notifications?: boolean;
+
   @Exclude()
   encryption?: boolean;
 }
@@ -81,6 +83,7 @@ export class GetAppSettingsResponse {
       eula: true,
       analytics: true,
       encryption: true,
+      notifications: true,
     },
   })
   agreements: GetUserAgreementsResponse;

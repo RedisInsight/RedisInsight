@@ -15,10 +15,6 @@ import ConsentOption from '../ConsentOption'
 import { IConsent } from '../ConsentsSettings'
 import styles from '../styles.module.scss'
 
-// interface Values {
-//   [key: string]: string;
-// }
-
 const ConsentsPrivacy = () => {
   const [consents, setConsents] = useState<IConsent[]>([])
   const [privacyConsents, setPrivacyConsents] = useState<IConsent[]>([])
@@ -71,7 +67,6 @@ const ConsentsPrivacy = () => {
   const submitForm = (values: any) => {
     dispatch(updateUserConfigSettingsAction({ agreements: values }))
   }
-  // console.log(privacyConsents)
 
   return (
     <EuiForm component="form" onSubmit={formik.handleSubmit} data-testid="consents-settings-form">
@@ -91,7 +86,7 @@ const ConsentsPrivacy = () => {
                 consent={consent}
                 checked={formik.values[consent.agreementName] ?? false}
                 onChangeAgreement={onChangeAgreement}
-                settingsPage
+                isSettingsPage
                 key={consent.agreementName}
               />
             ))

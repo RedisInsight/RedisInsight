@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
-import { has, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -121,7 +121,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
     formik.validateForm(initialValues)
   }, [requiredConsents])
 
-  const onChangeAgreement = (checked: boolean, name: string, independent: boolean) => {
+  const onChangeAgreement = (checked: boolean, name: string, independent?: boolean) => {
     formik.setFieldValue(name, checked)
     if (!independent) {
       setIsRecommended(false)

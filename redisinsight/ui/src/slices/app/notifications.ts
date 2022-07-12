@@ -1,7 +1,7 @@
 import { createSlice, current } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { isUndefined } from 'lodash'
-import { NotificationsDto } from 'apiSrc/modules/notification/dto'
+import { NotificationsDto, NotificationDto } from 'apiSrc/modules/notification/dto'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getApiErrorName, isStatusSuccessful, Maybe } from 'uiSrc/utils'
@@ -18,7 +18,8 @@ export const initialState: StateAppNotifications = {
     notifications: [],
     isNotificationOpen: false,
     isCenterOpen: false,
-    totalUnread: 0
+    totalUnread: 0,
+    shouldDisplayToast: false,
   }
 }
 
@@ -87,9 +88,11 @@ const notificationsSlice = createSlice({
       state.notificationCenter.isNotificationOpen = payload
     },
     setNewNotificationReceived: (state, { payload }: { payload: NotificationsDto }) => {
-      state.notificationCenter.lastReceivedNotification = { ...payload.notifications[0] }
       state.notificationCenter.totalUnread = payload.totalUnread
       state.notificationCenter.isNotificationOpen = true
+    },
+    setLastReceivedNotification: (state, { payload }: { payload: NotificationDto }) => {
+      state.notificationCenter.lastReceivedNotification = payload
     },
     getNotifications: (state) => {
       state.notificationCenter.loading = true
@@ -119,6 +122,7 @@ export const {
   setIsCenterOpen,
   setIsNotificationOpen,
   setNewNotificationReceived,
+  setLastReceivedNotification,
   getNotifications,
   getNotificationsSuccess,
   getNotificationsFailed,
@@ -172,5 +176,18 @@ export function unreadNotificationsAction() {
     } catch (error) {
       //
     }
+  }
+}
+
+export function setNewNotificationAction(
+  data: NotificationsDto,
+) {
+  return (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    dispatch(setNewNotificationReceived(data))
+    const toastNotification = state.user.settings.config?.agreements?.notifications
+      ? data.notifications[0]
+      : null
+    dispatch(setLastReceivedNotification(toastNotification))
   }
 }

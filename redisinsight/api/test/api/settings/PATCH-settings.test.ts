@@ -49,6 +49,7 @@ const validInputData = {
     eula: true,
     analytics: false,
     encryption: false,
+    notifications: false,
   },
 };
 

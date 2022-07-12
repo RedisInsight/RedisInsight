@@ -128,7 +128,7 @@ const SettingsPage = () => {
             initialIsOpen={false}
             data-test-subj="accordion-appearance"
           >
-            <Appearance />
+            {Appearance()}
           </EuiCollapsibleNavGroup>
           <EuiCollapsibleNavGroup
             isCollapsible

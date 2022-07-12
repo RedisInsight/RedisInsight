@@ -16,15 +16,15 @@ interface Props {
   consent: IConsent
   onChangeAgreement: (checked: boolean, name: string, independent?: boolean) => void
   checked: boolean
-  settingsPage?: boolean
+  isSettingsPage?: boolean
   independent?: boolean
 }
 
 const ConsentOption = (props: Props) => {
-  const { consent, onChangeAgreement, checked, settingsPage = false, independent = false } = props
+  const { consent, onChangeAgreement, checked, isSettingsPage = false, independent = false } = props
   return (
     <EuiFlexItem key={consent.agreementName}>
-      {settingsPage && consent.description && (
+      {isSettingsPage && consent.description && (
         <>
           <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
             {parse(consent.description)}
@@ -46,7 +46,7 @@ const ConsentOption = (props: Props) => {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiText className={styles.label}>{parse(consent.label)}</EuiText>
-          {!settingsPage && consent.description && (
+          {!isSettingsPage && consent.description && (
             <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
               {parse(consent.description)}
             </EuiText>

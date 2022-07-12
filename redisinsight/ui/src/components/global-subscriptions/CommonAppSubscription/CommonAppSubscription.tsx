@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
 import { SocketEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
-import { setNewNotificationReceived } from 'uiSrc/slices/app/notifications'
+import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
+import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 
 interface IProps {
@@ -14,6 +15,7 @@ interface IProps {
 
 const CommonAppSubscription = ({ retryDelay = 60000 } : IProps) => {
   const socketRef = useRef<Nullable<Socket>>(null)
+  const { config } = useSelector(userSettingsSelector)
 
   const dispatch = useDispatch()
 
@@ -34,7 +36,7 @@ const CommonAppSubscription = ({ retryDelay = 60000 } : IProps) => {
     })
 
     socketRef.current.on(NotificationEvent.Notification, (data) => {
-      dispatch(setNewNotificationReceived(data))
+      dispatch(setNewNotificationAction(data))
     })
 
     // Catch disconnect
@@ -46,6 +48,21 @@ const CommonAppSubscription = ({ retryDelay = 60000 } : IProps) => {
       }
     })
   }, [])
+
+  // TODO just remove it
+  useEffect(() => {
+    setTimeout(() => {
+      const data = {
+        notifications: [{ type: "global", timestamp: 1655738357, title: "title", body: 'Some valid <a href="">link</a>', read: false }],
+        totalUnread: 1,
+      }
+      dispatch(setNewNotificationAction(data))
+    }, 3000)
+  }, [])
+
+  useEffect(() => {
+    config?.agreements?.notifications
+  }, [config])
 
   const handleDisconnect = () => {
     dispatch(setIsConnected(false))

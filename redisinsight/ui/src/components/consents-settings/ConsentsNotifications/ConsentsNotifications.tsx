@@ -11,13 +11,10 @@ import {
 
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ConsentOption from '../ConsentOption'
 
 import styles from '../styles.module.scss'
-
-// interface Values {
-//   [key: string]: string;
-// }
 
 export interface IConsent {
   defaultValue: boolean
@@ -81,14 +78,17 @@ const ConsentsNotifications = () => {
       setInitialValues(values)
     }
   }, [consents])
-  // console.log(notificationConsents)
 
   const onChangeAgreement = (checked: boolean, name: string) => {
     formik.setFieldValue(name, checked)
     formik.submitForm()
+    sendEventTelemetry({
+      event: checked
+        ? TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_ENABLED
+        : TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_DISABLED,
+    })
   }
 
-  console.log(notificationConsents)
   const submitForm = (values: any) => {
     dispatch(updateUserConfigSettingsAction({ agreements: values }))
   }
@@ -106,7 +106,7 @@ const ConsentsNotifications = () => {
                 consent={consent}
                 checked={formik.values[consent.agreementName] ?? false}
                 onChangeAgreement={onChangeAgreement}
-                settingsPage
+                isSettingsPage
                 key={consent.agreementName}
               />
             ))

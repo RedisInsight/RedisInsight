@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { isNull } from 'lodash'
+import { flatMap, isNull, max } from 'lodash'
 import cx from 'classnames'
+import { useParams } from 'react-router-dom'
 
 import {
   fetchStreamEntries,
@@ -9,10 +10,11 @@ import {
   streamSelector,
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-grid/interfaces'
-import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { keysSelector, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { SortOrder } from 'uiSrc/constants'
+import { KeyTypes, SortOrder } from 'uiSrc/constants'
 import VirtualGrid from 'uiSrc/components/virtual-grid'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
@@ -41,6 +43,8 @@ const StreamDataView = (props: Props) => {
   } = props
   const dispatch = useDispatch()
 
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { viewType } = useSelector(keysSelector)
   const { loading } = useSelector(streamSelector)
   const {
     total,
@@ -57,6 +61,24 @@ const StreamDataView = (props: Props) => {
     setSortedColumnOrder(order)
 
     dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, order, false))
+  }
+
+  const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
+    const browserViewEvent = expanded
+      ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.BROWSER_KEY_FIELD_VALUE_COLLAPSED
+    const treeViewEvent = expanded
+      ? TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_COLLAPSED
+
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        keyType: KeyTypes.Stream,
+        databaseId: instanceId,
+        largestCellLength: max(flatMap(entries[rowIndex]?.fields))?.length || 0,
+      }
+    })
   }
 
   return (
@@ -88,6 +110,7 @@ const StreamDataView = (props: Props) => {
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={isNull(firstEntry) && isNull(lastEntry) ? noItemsMessageInEmptyStream : noItemsMessageInRange}
+          onRowToggleViewClick={handleRowToggleViewClick}
           maxTableWidth={columns.reduce((a, { maxWidth = minColumnWidth }) => a + maxWidth, 0)}
           sortedColumn={entries?.length ? {
             column: sortedColumnName,

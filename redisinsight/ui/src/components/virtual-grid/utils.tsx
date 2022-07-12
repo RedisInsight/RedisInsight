@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { GridChildComponentProps } from 'react-window'
+import { ITableColumn } from './interfaces'
 
 export const getCellIndicies = (child: React.ReactChild) =>
   ({ row: child.props.rowIndex, column: child.props.columnIndex })
@@ -35,9 +36,10 @@ export const useInnerElementType = (
   columnWidth:(index: number) => number,
   rowHeight:(index: number) => number,
   columnCount: number,
+  width: number,
 ) => React.useMemo(
   () =>
-    React.forwardRef((props, ref) => {
+    React.forwardRef((props:ReactNode, ref) => {
       const sumRowsHeights = (index: number) => {
         let sum = 0
 
@@ -153,5 +155,40 @@ export const useInnerElementType = (
         </div>
       )
     }),
-  [Cell, columnWidth, rowHeight, columnCount]
+  [Cell, columnWidth, rowHeight, columnCount, width]
 )
+
+export const columnWidth = (i: number, width: number, columns: ITableColumn[], minColumnWidth: number = 190) => {
+  const scrollWidth = 16
+  const maxTableWidth = columns.reduce((a, { maxWidth = minColumnWidth }) => a + maxWidth, 0)
+
+  if (maxTableWidth < width) {
+    const growingColumnsWidth = columns
+      .filter(({ maxWidth = 0 }) => maxWidth)
+      .map(({ maxWidth }) => maxWidth)
+
+    const growingColumnsCount = columns.length - growingColumnsWidth.length
+    const maxWidthTable = growingColumnsWidth?.reduce((a = 0, b = 0) => a + b, 0) ?? 0
+    const newColumns = columns.map((column) => {
+      const { minWidth, maxWidth = 0 } = column
+      const newMinWidth = ((width - maxWidthTable) / growingColumnsCount)
+
+      // return {
+      //   ...column,
+      //   minWidth: maxWidth
+      //     ? minWidth
+      //     : newMinWidth
+      // }
+
+      return {
+        ...column,
+        width: maxWidth
+          ? minWidth
+          : newMinWidth
+      }
+    })
+
+    return newColumns[i].width
+  }
+  return columns[i].minWidth
+}

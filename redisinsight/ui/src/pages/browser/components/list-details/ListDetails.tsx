@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { isEqual, isNull } from 'lodash'
+import { CellMeasurerCache } from 'react-virtualized'
 
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
@@ -16,7 +17,7 @@ import {
 } from 'uiSrc/slices/browser/list'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, TableCellAlignment } from 'uiSrc/constants'
 import {
   ITableColumn,
   IColumnSearchState,
@@ -26,6 +27,8 @@ import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+import { StopPropagation } from 'uiSrc/components/virtual-table'
+import { columnWidth } from 'uiSrc/components/virtual-grid'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -36,6 +39,11 @@ const headerHeight = 60
 const rowHeight = 43
 const footerHeight = 0
 const initSearchingIndex = null
+
+const cellCache = new CellMeasurerCache({
+  fixedWidth: true,
+  minHeight: rowHeight,
+})
 
 interface IListElement extends SetListElementResponse {
   editing: boolean;
@@ -48,6 +56,7 @@ interface Props {
 const ListDetails = (props: Props) => {
   const { isFooterOpen } = props
   const [elements, setElements] = useState<IListElement[]>([])
+  const [width, setWidth] = useState(100)
 
   const { loading } = useSelector(listSelector)
   const { loading: updateLoading } = useSelector(updateListValueStateSelector)
@@ -81,6 +90,8 @@ const ListDetails = (props: Props) => {
     if (!isEqual(elements, newElemsState)) {
       setElements(newElemsState)
     }
+
+    cellCache.clearAll()
   }
 
   const handleApplyEditElement = (index = 0, element: string) => {
@@ -128,11 +139,30 @@ const ListDetails = (props: Props) => {
     }
   }
 
+  const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
+    const browserViewEvent = expanded
+      ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.BROWSER_KEY_FIELD_VALUE_COLLAPSED
+    const treeViewEvent = expanded
+      ? TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_COLLAPSED
+
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        keyType: KeyTypes.List,
+        databaseId: instanceId,
+        largestCellLength: elements[rowIndex]?.element?.length || 0,
+      }
+    })
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'index',
       label: 'Index',
       minWidth: 220,
+      maxWidth: 220,
       absoluteWidth: 220,
       truncateText: true,
       isSearchable: true,
@@ -166,9 +196,11 @@ const ListDetails = (props: Props) => {
       id: 'element',
       label: 'Element',
       truncateText: true,
+      alignment: TableCellAlignment.Left,
       render: function Element(
         _element: string,
-        { element, index, editing }: IListElement
+        { element, index, editing }: IListElement,
+        expanded: boolean = false
       ) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const cellContent = element.substring(0, 200)
@@ -176,36 +208,40 @@ const ListDetails = (props: Props) => {
 
         if (editing) {
           return (
-            <div className={styles.inlineItemEditor}>
-              <InlineItemEditor
-                initialValue={element}
-                controlsPosition="right"
-                placeholder="Enter Element"
-                fieldName="elementValue"
-                expandable
-                isLoading={updateLoading}
-                onDecline={() => handleEditElement(index, false)}
-                onApply={(value) => handleApplyEditElement(index, value)}
-              />
-            </div>
+            <StopPropagation>
+              <div className={styles.inlineItemEditor}>
+                <InlineItemEditor
+                  initialValue={element}
+                  controlsPosition="right"
+                  placeholder="Enter Element"
+                  fieldName="elementValue"
+                  expandable
+                  isLoading={updateLoading}
+                  onDecline={() => handleEditElement(index, false)}
+                  onApply={(value) => handleApplyEditElement(index, value)}
+                />
+              </div>
+            </StopPropagation>
           )
         }
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div
               style={{ display: 'flex' }}
-              className="truncateText"
               data-testid={`list-element-value-${index}`}
             >
-              <EuiToolTip
-                title="Element"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
+              {!expanded && (
+                <EuiToolTip
+                  title="Element"
+                  className={styles.tooltip}
+                  position="bottom"
+                  content={tooltipContent}
+                  anchorClassName="truncateText"
+                >
+                  <>{cellContent}</>
+                </EuiToolTip>
+              )}
+              {expanded && element}
             </div>
           </EuiText>
         )
@@ -216,19 +252,23 @@ const ListDetails = (props: Props) => {
       label: '',
       headerClassName: 'value-table-header-actions',
       className: 'actions',
-      absoluteWidth: 100,
+      minWidth: 60,
+      maxWidth: 60,
+      absoluteWidth: 60,
       render: function Actions(_element: any, { index }: IListElement) {
         return (
-          <div className="value-table-actions">
-            <EuiButtonIcon
-              iconType="pencil"
-              aria-label="Edit element"
-              className="editFieldBtn"
-              color="primary"
-              onClick={() => handleEditElement(index, true)}
-              data-testid={`edit-list-button-${index}`}
-            />
-          </div>
+          <StopPropagation>
+            <div className="value-table-actions">
+              <EuiButtonIcon
+                iconType="pencil"
+                aria-label="Edit element"
+                className="editFieldBtn"
+                color="primary"
+                onClick={() => handleEditElement(index, true)}
+                data-testid={`edit-list-button-${index}`}
+              />
+            </div>
+          </StopPropagation>
         )
       },
     },
@@ -263,17 +303,25 @@ const ListDetails = (props: Props) => {
       )}
       <VirtualTable
         hideProgress
+        expandable
+        selectable={false}
         keyName={key}
         headerHeight={headerHeight}
         rowHeight={rowHeight}
         footerHeight={footerHeight}
-        columns={columns}
+        onChangeWidth={setWidth}
+        columns={columns.map((column, i, arr) => ({
+          ...column,
+          width: columnWidth(i, width, arr)
+        }))}
         loadMoreItems={loadMoreItems}
         loading={loading}
         items={elements}
         totalItemsCount={total}
         noItemsMessage={NoResultsFoundText}
         onSearch={handleSearch}
+        cellCache={cellCache}
+        onRowToggleViewClick={handleRowToggleViewClick}
       />
     </div>
   )

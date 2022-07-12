@@ -1,6 +1,5 @@
 import React, {
   ChangeEvent,
-  FormEvent,
   Ref,
   useEffect,
   useRef,
@@ -25,7 +24,7 @@ type Design = 'default' | 'separate'
 
 export interface Props {
   onDecline: (event?: React.MouseEvent<HTMLElement>) => void
-  onApply: (value: string) => void
+  onApply: (value: string, event: React.MouseEvent<HTMLFormElement, MouseEvent>) => void
   onChange?: (value: string) => void
   fieldName?: string
   initialValue?: string
@@ -123,9 +122,9 @@ const InlineItemEditor = (props: Props) => {
     }
   }
 
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const handleFormSubmit = (event: React.MouseEvent<HTMLFormElement, MouseEvent>): void => {
     event.preventDefault()
-    onApply(value)
+    onApply(value, event)
   }
 
   const isDisabledApply = (): boolean =>

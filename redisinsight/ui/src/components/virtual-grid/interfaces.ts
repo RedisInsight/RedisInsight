@@ -31,7 +31,7 @@ export interface ITableColumn {
   absoluteWidth?: number | string
   alignment?: TableCellAlignment
   textAlignment?: TableCellTextAlignment
-  render?: (cellData?: any, columnItem?: any) => any
+  render?: (cellData?: any, rowIndex?: any) => any
   className?: string
   prependSearchName?: string
   staySearchAlwaysOpen?: boolean

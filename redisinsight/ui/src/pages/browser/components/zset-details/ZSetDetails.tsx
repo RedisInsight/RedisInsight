@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
+import { CellMeasurerCache } from 'react-virtualized'
 
 import {
   zsetSelector,
@@ -15,7 +16,7 @@ import {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
 } from 'uiSrc/slices/browser/zset'
-import { KeyTypes, SortOrder } from 'uiSrc/constants'
+import { KeyTypes, SortOrder, TableCellAlignment } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -26,6 +27,8 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
+import { StopPropagation } from 'uiSrc/components/virtual-table'
+import { columnWidth } from 'uiSrc/components/virtual-grid'
 import { AddMembersToZSetDto, SearchZSetMembersResponse, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
@@ -34,6 +37,11 @@ import styles from './styles.module.scss'
 const suffix = '_zset'
 const headerHeight = 60
 const rowHeight = 43
+
+const cellCache = new CellMeasurerCache({
+  fixedWidth: true,
+  minHeight: rowHeight,
+})
 
 interface IZsetMember extends ZSetMemberDto {
   editing: boolean;
@@ -45,18 +53,22 @@ export interface Props {
 
 const ZSetDetails = (props: Props) => {
   const { isFooterOpen } = props
-  const dispatch = useDispatch()
-  const [match, setMatch] = useState<string>('')
-  const [deleting, setDeleting] = useState('')
-  const [members, setMembers] = useState<IZsetMember[]>([])
-  const { loading: updateLoading } = useSelector(updateZsetScoreStateSelector)
+
   const { loading, searching } = useSelector(zsetSelector)
-  const [sortedColumnName, setSortedColumnName] = useState('score')
+  const { loading: updateLoading } = useSelector(updateZsetScoreStateSelector)
   const [sortedColumnOrder, setSortedColumnOrder] = useState(SortOrder.ASC)
   const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { total, nextCursor, members: loadedMembers } = useSelector(zsetDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
+
+  const [match, setMatch] = useState<string>('')
+  const [deleting, setDeleting] = useState('')
+  const [members, setMembers] = useState<IZsetMember[]>([])
+  const [sortedColumnName, setSortedColumnName] = useState('score')
+  const [width, setWidth] = useState(100)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const zsetMembers: IZsetMember[] = loadedMembers.map((item) => ({
@@ -102,6 +114,7 @@ const ZSetDetails = (props: Props) => {
       return item
     })
     setMembers(newMemberState)
+    cellCache.clearAll()
   }
 
   const handleApplyEditScore = (name = '', score: string) => {
@@ -175,28 +188,31 @@ const ZSetDetails = (props: Props) => {
       prependSearchName: 'Member:',
       initialSearchValue: '',
       truncateText: true,
+      alignment: TableCellAlignment.Left,
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
-      render: function Name(_name: string, { name }: IZsetMember) {
+      render: function Name(_name: string, { name }: IZsetMember, expanded?: boolean) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const cellContent = name.substring(0, 200)
         const tooltipContent = formatLongName(name)
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div
               style={{ display: 'flex' }}
-              className="truncateText'"
               data-testid={`zset-member-value-${name}`}
             >
-              <EuiToolTip
-                title="Member"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
+              {!expanded && (
+                <EuiToolTip
+                  title="Member"
+                  className={styles.tooltip}
+                  anchorClassName="truncateText"
+                  position="bottom"
+                  content={tooltipContent}
+                >
+                  <>{cellContent}</>
+                </EuiToolTip>
+              )}
+              {expanded && name}
             </div>
           </EuiText>
         )
@@ -207,39 +223,43 @@ const ZSetDetails = (props: Props) => {
       label: 'Score',
       isSortable: true,
       truncateText: true,
-      render: function Score(_name: string, { name, score, editing }: IZsetMember) {
+      render: function Score(_name: string, { name, score, editing }: IZsetMember, expanded?: boolean) {
         const cellContent = score.toString().substring(0, 200)
         const tooltipContent = formatLongName(score.toString())
         if (editing) {
           return (
-            <InlineItemEditor
-              initialValue={score.toString()}
-              controlsPosition="right"
-              placeholder="Enter Score"
-              fieldName="score"
-              expandable
-              onDecline={() => handleEditMember(name, false)}
-              onApply={(value) => handleApplyEditScore(name, value)}
-              validation={validateScoreNumber}
-            />
+            <StopPropagation>
+              <InlineItemEditor
+                initialValue={score.toString()}
+                controlsPosition="right"
+                placeholder="Enter Score"
+                fieldName="score"
+                expandable
+                onDecline={() => handleEditMember(name, false)}
+                onApply={(value) => handleApplyEditScore(name, value)}
+                validation={validateScoreNumber}
+              />
+            </StopPropagation>
           )
         }
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div
               style={{ display: 'flex' }}
-              className="truncateText"
               data-testid={`zset-score-value-${score}`}
             >
-              <EuiToolTip
-                title="Score"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
+              {!expanded && (
+                <EuiToolTip
+                  title="Score"
+                  className={styles.tooltip}
+                  anchorClassName="truncateText"
+                  position="bottom"
+                  content={tooltipContent}
+                >
+                  <>{cellContent}</>
+                </EuiToolTip>
+              )}
+              {expanded && score}
             </div>
           </EuiText>
         )
@@ -250,34 +270,38 @@ const ZSetDetails = (props: Props) => {
       label: '',
       headerClassName: 'value-table-header-actions',
       className: 'actions',
+      minWidth: 100,
+      maxWidth: 100,
       absoluteWidth: 100,
       render: function Actions(_act: any, { name }: IZsetMember) {
         return (
-          <div className="value-table-actions">
-            <EuiButtonIcon
-              iconType="pencil"
-              aria-label="Edit field"
-              className="editFieldBtn"
-              color="primary"
-              disabled={updateLoading}
-              onClick={() => handleEditMember(name, true)}
-              data-testid={`zset-edit-button-${name}`}
-            />
-            <PopoverDelete
-              header={createDeleteFieldHeader(name)}
-              text={createDeleteFieldMessage(key)}
-              item={name}
-              suffix={suffix}
-              deleting={deleting}
-              closePopover={closePopover}
-              updateLoading={false}
-              showPopover={showPopover}
-              handleDeleteItem={handleDeleteMember}
-              handleButtonClick={handleRemoveIconClick}
-              testid={`zset-remove-button-${name}`}
-              appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null}
-            />
-          </div>
+          <StopPropagation>
+            <div className="value-table-actions">
+              <EuiButtonIcon
+                iconType="pencil"
+                aria-label="Edit field"
+                className="editFieldBtn"
+                color="primary"
+                disabled={updateLoading}
+                onClick={() => handleEditMember(name, true)}
+                data-testid={`zset-edit-button-${name}`}
+              />
+              <PopoverDelete
+                header={createDeleteFieldHeader(name)}
+                text={createDeleteFieldMessage(key)}
+                item={name}
+                suffix={suffix}
+                deleting={deleting}
+                closePopover={closePopover}
+                updateLoading={false}
+                showPopover={showPopover}
+                handleDeleteItem={handleDeleteMember}
+                handleButtonClick={handleRemoveIconClick}
+                testid={`zset-remove-button-${name}`}
+                appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null}
+              />
+            </div>
+          </StopPropagation>
         )
       },
     },
@@ -339,10 +363,15 @@ const ZSetDetails = (props: Props) => {
         )}
         <VirtualTable
           hideProgress
+          expandable
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}
-          columns={columns}
+          onChangeWidth={setWidth}
+          columns={columns.map((column, i, arr) => ({
+            ...column,
+            width: columnWidth(i, width, arr)
+          }))}
           footerHeight={0}
           loadMoreItems={loadMoreItems}
           loading={loading}
@@ -354,6 +383,7 @@ const ZSetDetails = (props: Props) => {
           noItemsMessage={NoResultsFoundText}
           onWheel={closePopover}
           onSearch={handleSearch}
+          cellCache={cellCache}
         />
       </div>
     </>

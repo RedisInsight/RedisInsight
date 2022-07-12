@@ -2,6 +2,8 @@ import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { CellMeasurerCache } from 'react-virtualized'
+
 import {
   hashSelector,
   hashDataSelector,
@@ -24,12 +26,14 @@ import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
+import { KeyTypes, TableCellAlignment } from 'uiSrc/constants'
+import { columnWidth } from 'uiSrc/components/virtual-grid'
+import { StopPropagation } from 'uiSrc/components/virtual-table'
 import {
   GetHashFieldsResponse,
   AddFieldsToHashDto,
   HashFieldDto,
 } from 'apiSrc/modules/browser/dto/hash.dto'
-import { KeyTypes } from 'uiSrc/constants'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -38,6 +42,11 @@ const suffix = '_hash'
 const matchAllValue = '*'
 const headerHeight = 60
 const rowHeight = 43
+
+const cellCache = new CellMeasurerCache({
+  fixedWidth: true,
+  minHeight: rowHeight,
+})
 
 interface IHashField extends HashFieldDto {
   editing: boolean;
@@ -53,6 +62,7 @@ const HashDetails = (props: Props) => {
   const [match, setMatch] = useState<Nullable<string>>(matchAllValue)
   const [deleting, setDeleting] = useState('')
   const [fields, setFields] = useState<IHashField[]>([])
+  const [width, setWidth] = useState(100)
 
   const { loading } = useSelector(hashSelector)
   const { loading: updateLoading } = useSelector(updateHashValueStateSelector)
@@ -109,17 +119,13 @@ const HashDetails = (props: Props) => {
       return item
     })
     setFields(newFieldsState)
+    cellCache.clearAll()
   }
 
   const handleApplyEditField = (field = '', value: string) => {
     const data: AddFieldsToHashDto = {
       keyName: key,
-      fields: [
-        {
-          field,
-          value,
-        },
-      ],
+      fields: [{ field, value }],
     }
     dispatch(updateHashFieldsAction(data, () => handleEditField(field, false)))
   }
@@ -171,24 +177,28 @@ const HashDetails = (props: Props) => {
       prependSearchName: 'Field:',
       initialSearchValue: '',
       truncateText: true,
+      alignment: TableCellAlignment.Left,
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
-      render: function Field(_name: string, { field }: HashFieldDto) {
+      render: function Field(_name: string, { field }: HashFieldDto, expanded?: boolean) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const cellContent = field.substring(0, 200)
         const tooltipContent = formatLongName(field)
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`hash-field-${field}`}>
-              <EuiToolTip
-                title="Field"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
+            <div style={{ display: 'flex' }} data-testid={`hash-field-${field}`}>
+              {!expanded && (
+                <EuiToolTip
+                  title="Field"
+                  className={styles.tooltip}
+                  anchorClassName="truncateText"
+                  position="bottom"
+                  content={tooltipContent}
+                >
+                  <>{cellContent}</>
+                </EuiToolTip>
+              )}
+              {expanded && field}
             </div>
           </EuiText>
         )
@@ -198,43 +208,49 @@ const HashDetails = (props: Props) => {
       id: 'value',
       label: 'Value',
       truncateText: true,
+      alignment: TableCellAlignment.Left,
       render: function Value(
         _name: string,
-        { field, value, editing }: IHashField
+        { field, value, editing }: IHashField,
+        expanded?: boolean,
       ) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const cellContent = value.substring(0, 200)
         const tooltipContent = formatLongName(value)
         if (editing) {
           return (
-            <InlineItemEditor
-              initialValue={value}
-              controlsPosition="right"
-              placeholder="Enter Value"
-              fieldName="fieldValue"
-              expandable
-              isLoading={updateLoading}
-              onDecline={() => handleEditField(field, false)}
-              onApply={(value) => handleApplyEditField(field, value)}
-            />
+            <StopPropagation>
+              <InlineItemEditor
+                initialValue={value}
+                controlsPosition="right"
+                placeholder="Enter Value"
+                fieldName="fieldValue"
+                expandable
+                isLoading={updateLoading}
+                onDecline={() => handleEditField(field, false)}
+                onApply={(value) => handleApplyEditField(field, value)}
+              />
+            </StopPropagation>
           )
         }
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div
               style={{ display: 'flex' }}
-              className="truncateText"
               data-testid={`hash-field-value-${field}`}
             >
-              <EuiToolTip
-                title="Value"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
+              {!expanded && (
+                <EuiToolTip
+                  title="Value"
+                  className={styles.tooltip}
+                  position="bottom"
+                  content={tooltipContent}
+                  anchorClassName="truncateText"
+                >
+                  <>{cellContent}</>
+                </EuiToolTip>
+              )}
+              {expanded && value}
             </div>
           </EuiText>
         )
@@ -245,34 +261,38 @@ const HashDetails = (props: Props) => {
       label: '',
       headerClassName: 'value-table-header-actions',
       className: 'actions',
-      absoluteWidth: 100,
+      absoluteWidth: 95,
+      minWidth: 95,
+      maxWidth: 95,
       render: function Actions(_act: any, { field }: HashFieldDto) {
         return (
-          <div className="value-table-actions">
-            <EuiButtonIcon
-              iconType="pencil"
-              aria-label="Edit field"
-              className="editFieldBtn"
-              color="primary"
-              disabled={updateLoading}
-              onClick={() => handleEditField(field, true)}
-              data-testid={`edit-hash-button-${field}`}
-            />
-            <PopoverDelete
-              header={createDeleteFieldHeader(field)}
-              text={createDeleteFieldMessage(key)}
-              item={field}
-              suffix={suffix}
-              deleting={deleting}
-              closePopover={closePopover}
-              updateLoading={updateLoading}
-              showPopover={showPopover}
-              testid={`remove-hash-button-${field}`}
-              handleDeleteItem={handleDeleteField}
-              handleButtonClick={handleRemoveIconClick}
-              appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Field') : null}
-            />
-          </div>
+          <StopPropagation>
+            <div className="value-table-actions">
+              <EuiButtonIcon
+                iconType="pencil"
+                aria-label="Edit field"
+                className="editFieldBtn"
+                color="primary"
+                disabled={updateLoading}
+                onClick={() => handleEditField(field, true)}
+                data-testid={`edit-hash-button-${field}`}
+              />
+              <PopoverDelete
+                header={createDeleteFieldHeader(field)}
+                text={createDeleteFieldMessage(key)}
+                item={field}
+                suffix={suffix}
+                deleting={deleting}
+                closePopover={closePopover}
+                updateLoading={updateLoading}
+                showPopover={showPopover}
+                testid={`remove-hash-button-${field}`}
+                handleDeleteItem={handleDeleteField}
+                handleButtonClick={handleRemoveIconClick}
+                appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Field') : null}
+              />
+            </div>
+          </StopPropagation>
         )
       },
     },
@@ -311,10 +331,15 @@ const HashDetails = (props: Props) => {
         )}
         <VirtualTable
           hideProgress
+          expandable
           keyName={key}
           headerHeight={headerHeight}
           rowHeight={rowHeight}
-          columns={columns}
+          onChangeWidth={setWidth}
+          columns={columns.map((column, i, arr) => ({
+            ...column,
+            width: columnWidth(i, width, arr)
+          }))}
           footerHeight={0}
           loadMoreItems={loadMoreItems}
           loading={loading}
@@ -323,6 +348,7 @@ const HashDetails = (props: Props) => {
           noItemsMessage={NoResultsFoundText}
           onWheel={closePopover}
           onSearch={handleSearch}
+          cellCache={cellCache}
         />
       </div>
     </>

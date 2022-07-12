@@ -96,7 +96,7 @@ const DatabasesListWrapper = ({
   }, [width])
 
   const handleCopy = (text = '', databaseId?: string) => {
-    navigator.clipboard.writeText(text)
+    navigator.clipboard?.writeText(text)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_HOST_PORT_COPIED,
       eventData: {

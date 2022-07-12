@@ -134,7 +134,7 @@ const StreamDataViewWrapper = (props: Props) => {
     className: styles.cell,
     headerClassName: 'streamItemHeader',
     headerCellClassName: 'truncateText',
-    render: function Id({ id, fields }: StreamEntryDto) {
+    render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(label.split('-')[1])
       const values = fields.filter((field) => field[0] === name)
       const value = values[index] ? values[index][1] : ''
@@ -144,19 +144,22 @@ const StreamDataViewWrapper = (props: Props) => {
       return (
         <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
           <div
-            style={{ display: 'flex' }}
+            style={{ display: 'flex', whiteSpace: 'break-spaces' }}
             className="streamItem"
             data-testid={`stream-entry-field-${id}`}
           >
-            <EuiToolTip
-              title="Value"
-              className={styles.tooltip}
-              anchorClassName="streamItem line-clamp-2"
-              position="bottom"
-              content={tooltipContent}
-            >
-              <>{cellContent}</>
-            </EuiToolTip>
+            {!expanded && (
+              <EuiToolTip
+                title="Value"
+                className={styles.tooltip}
+                anchorClassName="streamItem line-clamp-2"
+                position="bottom"
+                content={tooltipContent}
+              >
+                <>{cellContent}</>
+              </EuiToolTip>
+            )}
+            {expanded && value}
           </div>
         </EuiText>
       )

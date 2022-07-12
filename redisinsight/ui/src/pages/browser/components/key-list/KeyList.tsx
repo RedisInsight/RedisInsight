@@ -126,8 +126,8 @@ const KeyList = (props: Props) => {
     {
       id: 'ttl',
       label: 'TTL',
-      absoluteWidth: 65,
-      minWidth: 65,
+      absoluteWidth: 70,
+      minWidth: 70,
       truncateText: true,
       alignment: TableCellAlignment.Right,
       render: (cellData: number, { name }: any) => {
@@ -205,6 +205,7 @@ const KeyList = (props: Props) => {
         <div className={cx(styles.table, { [styles.table__withoutFooter]: hideFooter })}>
           <div className="key-list-table" data-testid="keyList-table">
             <VirtualTable
+              selectable
               onRowClick={selectKey}
               headerHeight={0}
               rowHeight={43}

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { CellMeasurerCache } from 'react-virtualized'
 import {
   SortOrder,
   TableCellAlignment,
@@ -36,7 +37,7 @@ export interface ITableColumn {
   absoluteWidth?: number | string
   alignment?: TableCellAlignment
   textAlignment?: TableCellTextAlignment
-  render?: (cellData?: any, columnItem?: any) => any
+  render?: (cellData?: any, columnItem?: any, expanded?: boolean) => any
   className?: string
   prependSearchName?: string
   staySearchAlwaysOpen?: boolean
@@ -51,6 +52,7 @@ export interface IProps {
   rowHeight?: number
   footerHeight?: number
   selectable?: boolean
+  expandable?: boolean
   keyName?: string
   headerHeight?: number
   searching?: boolean
@@ -69,6 +71,8 @@ export interface IProps {
   hideFooter?: boolean
   tableWidth?: number
   hideProgress?: boolean
+  onChangeWidth?: (width: number) => void
+  cellCache?: CellMeasurerCache
 }
 
 export interface ISortedColumn {

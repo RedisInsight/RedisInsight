@@ -6,6 +6,7 @@ import {
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
+import { CellMeasurerCache } from 'react-virtualized'
 
 import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
 import { KeyTypes } from 'uiSrc/constants'
@@ -22,11 +23,11 @@ import {
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
+import VirtualTable from 'uiSrc/components/virtual-table'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { columnWidth } from 'uiSrc/components/virtual-grid'
+import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
-
 import styles from './styles.module.scss'
 
 const suffix = '_set'
@@ -34,6 +35,11 @@ const headerHeight = 60
 const rowHeight = 43
 const footerHeight = 0
 const matchAllValue = '*'
+
+const cellCache = new CellMeasurerCache({
+  fixedWidth: true,
+  minHeight: rowHeight,
+})
 
 export interface Props {
   isFooterOpen: boolean
@@ -43,6 +49,7 @@ const SetDetails = (props: Props) => {
   const { isFooterOpen } = props
   const [match, setMatch] = useState('*')
   const [deleting, setDeleting] = useState('')
+  const [width, setWidth] = useState(100)
 
   const { loading } = useSelector(setSelector)
   const { key = '', members, total, nextCursor } = useSelector(setDataSelector)
@@ -127,26 +134,29 @@ const SetDetails = (props: Props) => {
       staySearchAlwaysOpen: true,
       initialSearchValue: '',
       truncateText: true,
-      render: function Name(_name: string, member: string) {
+      render: function Name(_name: string, member: string, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const cellContent = member.substring(0, 200)
         const tooltipContent = formatLongName(member)
+
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div
               style={{ display: 'flex' }}
-              className="truncateText'"
-              data-testid={`set-member-value-${member}`}
+              data-testid={`set-member-value-${cellContent}`}
             >
-              <EuiToolTip
-                title="Member"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
+              {!expanded && (
+                <EuiToolTip
+                  title="Member"
+                  className={styles.tooltip}
+                  anchorClassName="truncateText"
+                  position="left"
+                  content={tooltipContent}
+                >
+                  <>{cellContent}</>
+                </EuiToolTip>
+              )}
+              {expanded && member}
             </div>
           </EuiText>
         )
@@ -155,7 +165,9 @@ const SetDetails = (props: Props) => {
     {
       id: 'actions',
       label: '',
-      absoluteWidth: 20,
+      relativeWidth: 60,
+      minWidth: 60,
+      maxWidth: 60,
       headerClassName: 'hidden',
       render: function Actions(_act: any, cellData: string) {
         return (
@@ -207,13 +219,15 @@ const SetDetails = (props: Props) => {
           data-testid="progress-key-set"
         />
       )}
+
       <VirtualTable
         hideProgress
+        expandable
+        selectable={false}
         keyName={key}
         headerHeight={headerHeight}
         rowHeight={rowHeight}
         footerHeight={footerHeight}
-        columns={columns}
         loadMoreItems={loadMoreItems}
         loading={loading}
         items={members}
@@ -221,7 +235,14 @@ const SetDetails = (props: Props) => {
         noItemsMessage={NoResultsFoundText}
         onWheel={closePopover}
         onSearch={handleSearch}
+        columns={columns.map((column, i, arr) => ({
+          ...column,
+          width: columnWidth(i, width, arr)
+        }))}
+        onChangeWidth={setWidth}
+        cellCache={cellCache}
       />
+
     </div>
   )
 }

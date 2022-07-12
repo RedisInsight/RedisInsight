@@ -7,8 +7,8 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
 const cliPage = new CliPage();
 
-fixture.only `PubSub debug mode`
-    .meta({ type: 'critical_path' })
+fixture `PubSub debug mode`
+    .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);

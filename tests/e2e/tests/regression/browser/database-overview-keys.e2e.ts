@@ -5,7 +5,8 @@ import {
     CliPage,
     WorkbenchPage,
     BrowserPage,
-    AddRedisDatabasePage
+    AddRedisDatabasePage,
+    DatabaseOverviewPage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { cloudDatabaseConfig, commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -18,6 +19,7 @@ const common = new Common();
 const browserPage = new BrowserPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const chance = new Chance();
+const databaseOverviewPage = new DatabaseOverviewPage();
 
 let keys: string[];
 const keyName = chance.word({ length: 10 });
@@ -33,38 +35,38 @@ fixture `Database overview`
         await browserPage.addStringKey(keyName);
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
-        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [${index}]`);
         keys = await common.createArrayWithKeyValue(keysAmount);
         await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
     })
     .afterEach(async t => {
         //Clear and delete databases
         await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [${index}]`);
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteDatabase(`${ossStandaloneConfig.databaseName  } [${index}]`);
+        await deleteDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test('Verify that user can hover over keys icon in Overview and sees total number of keys and number of keys in current logical database (if there are any keys in other logical DBs)', async t => {
+test('Verify that user can see total and current logical database number of keys (if there are any keys in other logical DBs)', async t => {
     //Wait for Total Keys number refreshed
     await t.expect(browserPage.overviewTotalKeys.withText(`${keysAmount + 1}`).exists).ok('Total keys are not changed', { timeout: 10000 });
     await t.hover(workbenchPage.overviewTotalKeys);
     //Verify that user can see total number of keys and number of keys in current logical database
     await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-    await t.expect(browserPage.tooltip.textContent).contains(`${keysAmount + 1}Total Keys`, 'Total keys text is incorrect');
-    await t.expect(browserPage.tooltip.textContent).contains(`db1:${keysAmount}Keys`, 'Local DB keys text is incorrect');
+    await databaseOverviewPage.verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
+    await databaseOverviewPage.verifyTooltipContainsText(`db1:${keysAmount}Keys`, false);
 });
-test('Verify that user can hover over keys icon in Overview and sees total number of keys and do not see number of keys in current logical database (if there are no any keys in other logical DBs)', async t => {
+test('Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)', async t => {
     //Open Database
     await t.click(myRedisDatabasePage.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.hover(workbenchPage.overviewTotalKeys);
     //Verify that user can see only total number of keys
     await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-    await t.expect(browserPage.tooltip.textContent).contains(`${keysAmount + 1}Total Keys`, 'Total keys text is incorrect');
-    await t.expect(browserPage.tooltip.textContent).notContains('db1', 'Local DB keys text is displayed');
+    await databaseOverviewPage.verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
+    await databaseOverviewPage.verifyTooltipContainsText('db1', false);
 });
 test
     .before(async t => {
@@ -82,6 +84,6 @@ test
         await t.hover(workbenchPage.overviewTotalKeys);
         //Verify that user can see only total number of keys
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-        await t.expect(browserPage.tooltip.textContent).contains('Total Keys', 'Total keys text is incorrect');
-        await t.expect(browserPage.tooltip.textContent).notContains('db1', 'Local DB keys text is displayed');
+        await databaseOverviewPage.verifyTooltipContainsText('Total Keys', true);
+        await databaseOverviewPage.verifyTooltipContainsText('db1', false);
     });

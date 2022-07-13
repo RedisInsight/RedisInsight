@@ -5950,10 +5950,10 @@ electron-updater@4.6.5:
     lodash.isequal "^4.5.0"
     semver "^7.3.5"
 
-electron@^16.0.8:
-  version "16.0.8"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-16.0.8.tgz#7ebd3e23c4883c239f53d8b7af1100f455ac8a02"
-  integrity sha512-znTVkl8LaGcPNdfc6SRr+6LYg2GtSCKXln/nW/PC+urBfAFnOYIuDock8QyGVFfzr5PuAa+g8YQQAboHV77D7g==
+electron@^16.2.6:
+  version "16.2.6"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-16.2.6.tgz#2d22077edb5361ab52034bb3b19405380921931b"
+  integrity sha512-FJLnIu318WNh1WigMmWqSidOPwipwym2Qi3Hs/YY6znquztf6ZJuaq/TdJJyHIJHld+znG0hSmq3VbyW5KUr9A==
   dependencies:
     "@electron/get" "^1.13.0"
     "@types/node" "^14.6.2"
@@ -8278,12 +8278,7 @@ ip-regex@^2.1.0:
   resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-2.1.0.tgz#fa78bf5d2e6913c911ce9f819ee5146bb6d844e9"
   integrity sha1-+ni/XS5pE8kRzp+BnuUUa7bYROk=
 
-ip@^1.1.0, ip@^1.1.5:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.8.tgz#ae05948f6b075435ed3307acce04629da8cdbf48"
-  integrity sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==
-
-ip@^1.1.8:
+ip@^1.1.0, ip@^1.1.5, ip@^1.1.8:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.8.tgz#ae05948f6b075435ed3307acce04629da8cdbf48"
   integrity sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==

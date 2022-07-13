@@ -17,6 +17,17 @@
       font: normal normal 500 15px/24px "Graphik", sans-serif !important;
     }
   }
+
+  .bulkActions {
+    height: 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    margin-left: 6px;
+
+    :global(.euiButtonContent) {
+      padding: 0 !important;
+    }
+  }
 }
 
 .top,

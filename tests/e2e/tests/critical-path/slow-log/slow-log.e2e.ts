@@ -1,7 +1,8 @@
 import { SlowLogPage, MyRedisDatabasePage, BrowserPage, CliPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const slowLogPage = new SlowLogPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -15,12 +16,12 @@ fixture `Slow Log`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         await t.click(slowLogPage.slowLogPageButton);
     })
     .afterEach(async() => {
         await slowLogPage.resetToDefaultConfig();
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Verify that user can open new Slow Log page using new icon on left app panel', async t => {
     // Verify that user can configure slowlog-max-len for Slow Log and see whole set of commands according to the setting

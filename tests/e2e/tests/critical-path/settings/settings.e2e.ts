@@ -1,4 +1,4 @@
-import { MyRedisDatabasePage, UserAgreementPage, SettingsPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import { commonUrl } from '../../../helpers/conf';

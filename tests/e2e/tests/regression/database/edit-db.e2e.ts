@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -19,7 +19,7 @@ fixture `List of Databases`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(database, database.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(database, database.databaseName);
         console.log(`Newly added database name is ${database.databaseName}`);
     });
 test

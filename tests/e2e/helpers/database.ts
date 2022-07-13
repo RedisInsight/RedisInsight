@@ -9,6 +9,7 @@ import {
     UserAgreementPage,
     CliPage
 } from '../pageObjects';
+import { addNewStandaloneDatabaseApi } from './api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -112,6 +113,20 @@ export async function addNewRECloudDatabase(cloudAPIAccessKey: string, cloudAPIS
 export async function acceptLicenseTermsAndAddDatabase(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
     await acceptLicenseTerms();
     await addNewStandaloneDatabase(databaseParameters);
+    //Connect to DB
+    await myRedisDatabasePage.clickOnDBByName(databaseName);
+}
+
+/**
+ * Accept License terms and add database using api
+ * @param databaseParameters The database parameters
+ * @param databaseName The database name
+*/
+export async function acceptLicenseTermsAndAddDatabaseApi(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+    await acceptLicenseTerms();
+    await addNewStandaloneDatabaseApi(databaseParameters);
+    // Reload Page
+    await t.eval(() => location.reload());
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);
 }

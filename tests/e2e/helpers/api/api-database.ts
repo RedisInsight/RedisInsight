@@ -11,7 +11,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate
  * Add a new Standalone database through api using host and port
  * @param databaseParameters The database parameters
  */
-export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const response = await request(endpoint).post('/instance')
         .send({ 'name': databaseParameters.databaseName, 'host': databaseParameters.host, 'port': databaseParameters.port })
         .set('Accept', 'application/json');
@@ -24,10 +24,10 @@ export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabas
  * Add a new Standalone databases through api using host and port
  * @param databasesParameters The databases parameters array
  */
-export async function addNewStandaloneDatabases(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
+export async function addNewStandaloneDatabasesApi(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
     if (await databasesParameters.length) {
         await databasesParameters.forEach(async parameter => {
-            await addNewStandaloneDatabase(parameter);
+            await addNewStandaloneDatabaseApi(parameter);
         });
     }
 }
@@ -36,7 +36,7 @@ export async function addNewStandaloneDatabases(databasesParameters: AddNewDatab
  * Adda new database from OSS Cluster through api using host and port
  * @param databaseParameters The database parameters
  */
-export async function addNewOSSClusterDatabase(databaseParameters: OSSClusterParameters): Promise<void> {
+export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSClusterParameters): Promise<void> {
     const response = await request(endpoint).post('/instance')
         .send({ 'name': databaseParameters.ossClusterDatabaseName, 'host': databaseParameters.ossClusterHost, 'port': databaseParameters.ossClusterPort })
         .set('Accept', 'application/json');
@@ -76,7 +76,7 @@ export async function getDatabaseByName(databaseName?: string): Promise<string> 
  * Delete Standalone database through api
  * @param databaseParameters The database parameters
  */
-export async function deleteStandaloneDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
     await request(endpoint).delete('/instance')
         .send({ 'ids': [`${databaseId}`] })
@@ -88,7 +88,7 @@ export async function deleteStandaloneDatabase(databaseParameters: AddNewDatabas
  * Delete database from OSS Cluster through api
  * @param databaseParameters The database parameters
  */
-export async function deleteOSSClusterDatabase(databaseParameters: OSSClusterParameters): Promise<void> {
+export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSClusterParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
     const response = await request(endpoint).delete('/instance')
         .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
@@ -100,10 +100,10 @@ export async function deleteOSSClusterDatabase(databaseParameters: OSSClusterPar
  * Delete Standalone databases through api
  * @param databasesParameters The databases parameters as array
  */
-export async function deleteStandaloneDatabases(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
+export async function deleteStandaloneDatabasesApi(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
     if (await databasesParameters.length) {
         await databasesParameters.forEach(async parameter => {
-            await deleteStandaloneDatabase(parameter);
+            await deleteStandaloneDatabaseApi(parameter);
         });
     }
 }

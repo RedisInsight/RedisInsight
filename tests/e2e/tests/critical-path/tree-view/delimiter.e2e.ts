@@ -1,4 +1,4 @@
-import {acceptLicenseTermsAndAddDatabase, deleteDatabase} from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     BrowserPage
 } from '../../../pageObjects';
@@ -7,6 +7,7 @@ import {
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
 import {rte} from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 
@@ -17,10 +18,10 @@ fixture `Delimiter tests`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
     .afterEach(async() => {
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })
 test('Verify that when user changes the delimiter and clicks on Save button delimiter is applied', async t => {
     // Switch to tree view

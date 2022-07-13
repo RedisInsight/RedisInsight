@@ -1,10 +1,10 @@
 import { t } from 'testcafe';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import {
-    addNewStandaloneDatabases,
-    addNewOSSClusterDatabase,
-    deleteStandaloneDatabases,
-    deleteOSSClusterDatabase
+    addNewStandaloneDatabasesApi,
+    addNewOSSClusterDatabaseApi,
+    deleteStandaloneDatabasesApi,
+    deleteOSSClusterDatabaseApi
 } from '../../../helpers/api/api-database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
@@ -30,15 +30,15 @@ fixture `Database list search`
     .beforeEach(async() => {
         // Add new databases using API
         await acceptLicenseTerms();
-        await addNewStandaloneDatabases(databasesForAdding);
-        await addNewOSSClusterDatabase(ossClusterConfig);
+        await addNewStandaloneDatabasesApi(databasesForAdding);
+        await addNewOSSClusterDatabaseApi(ossClusterConfig);
         // Reload Page
         await t.eval(() => location.reload());
     })
     .afterEach(async() => {
         //Clear and delete databases
-        await deleteStandaloneDatabases(databasesForAdding);
-        await deleteOSSClusterDatabase(ossClusterConfig);
+        await deleteStandaloneDatabasesApi(databasesForAdding);
+        await deleteOSSClusterDatabaseApi(ossClusterConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can search DB by database name on the List of databases', async t => {

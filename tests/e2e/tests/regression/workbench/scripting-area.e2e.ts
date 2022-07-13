@@ -1,9 +1,10 @@
 import { Chance } from 'chance';
 import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, CliPage, SettingsPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -18,14 +19,14 @@ fixture`Scripting area at Workbench`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async () => {
         //Clear and delete database
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.standalone })
@@ -56,7 +57,7 @@ test
     .after(async () => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
         keyName = chance.word({ length: 10 });
@@ -83,7 +84,7 @@ test
     .meta({ rte: rte.standalone })
     .after(async () => {
         //Clear and delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         //Open Working with Hashes page
@@ -104,7 +105,7 @@ test
     .after(async () => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
         keyName = chance.word({ length: 10 });
@@ -138,7 +139,7 @@ test
     .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can not run "Select" command in Workbench', async t => {
         const command = 'select 13';
@@ -152,7 +153,7 @@ test
     .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can use Ctrl + Enter to run the query in Workbench', async t => {
         const command = 'FT._LIST';

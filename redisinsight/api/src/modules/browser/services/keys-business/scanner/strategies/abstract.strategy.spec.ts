@@ -73,7 +73,7 @@ describe('RedisScannerAbstract', () => {
         ])
         .mockResolvedValue([
           null,
-          [[null, -1], ...Array(keys.length).fill([null, 50])],
+          Array(keys.length).fill([null, 50]),
         ]);
       when(browserTool.execPipelineFromClient)
         .calledWith(

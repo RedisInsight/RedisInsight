@@ -202,7 +202,7 @@ export type OSSClusterParameters = {
  * @param connectionType The connection type of the database
  * @param lastConnection The last connection time of the database
  */
- export type databaseParameters = {
+export type databaseParameters = {
     id: string,
     host?: string,
     port?: string,

@@ -6,7 +6,7 @@
 async function asyncFilter(array: string[], callback: (item: any) => Promise<boolean>): Promise<any[]> {
     const fail = Symbol();
     return (await Promise.all(array.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail);
-};
+}
 
 /**
  * Helper function to work with arr.find() method with async functions
@@ -23,6 +23,6 @@ async function asyncFind(array: string[], asyncCallback: (item: any) => Promise<
  */
 function doAsyncStuff(): Promise<void> {
     return Promise.resolve();
-};
+}
 
 export { asyncFilter, asyncFind, doAsyncStuff };

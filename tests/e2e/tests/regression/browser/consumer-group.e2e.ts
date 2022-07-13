@@ -36,7 +36,6 @@ test('Verify that when user enter invalid Group Name the error message appears',
     const error = 'BUSYGROUP Consumer Group name already exists';
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
     // Open Stream consumer groups and add group
     await t.click(browserPage.streamTabGroups);
     await browserPage.createConsumerGroup(consumerGroupName);
@@ -55,7 +54,6 @@ test('Verify that when user enter invalid format ID the error message appears', 
     ];
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
     // Open Stream consumer groups and enter invalid EntryIds
     await t.click(browserPage.streamTabGroups);
     await t.click(browserPage.addKeyValueItemsButton);

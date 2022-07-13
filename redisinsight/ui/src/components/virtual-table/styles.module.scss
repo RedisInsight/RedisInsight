@@ -172,6 +172,7 @@ $footerHeight: 38px;
   }
   :global(.ReactVirtualized__Table__row) {
     font-size: 13px;
+    align-items: normal;
   }
   :global(.ReactVirtualized__Table__headerRow) {
     border: 1px solid var(--tableLightestBorderColor) !important;
@@ -207,11 +208,6 @@ $footerHeight: 38px;
   }
 
   :global {
-    .value-table-header-actions {
-      width: 88px !important;
-      max-width: 88px !important;
-      min-width: 88px !important;
-    }
     .value-table-actions {
       margin-right: 5px;
 

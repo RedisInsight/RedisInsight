@@ -32,14 +32,13 @@ const mockCreateBulkActionDto = {
   type: BulkActionType.Delete,
 };
 
-let bulkAction, mockRunner, mockSummary, mockProgress;
+let bulkAction;
+let mockRunner;
+let mockSummary;
+let mockProgress;
 
 const mockKey = 'mockedKey';
 const mockKeyBuffer = Buffer.from(mockKey);
-const mockCursorString = '12345';
-const mockCursorNumber = parseInt(mockCursorString, 10);
-const mockCursorBuffer = Buffer.from(mockCursorString);
-const mockZeroCursorBuffer = Buffer.from('0');
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
 
@@ -73,8 +72,6 @@ const generateSummary = () => {
 };
 
 describe('AbstractBulkActionSimpleRunner', () => {
-  let deleteRunner: DeleteBulkActionSimpleRunner;
-
   beforeEach(() => {
     jest.clearAllMocks();
 

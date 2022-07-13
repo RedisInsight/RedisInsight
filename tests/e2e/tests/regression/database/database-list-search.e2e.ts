@@ -16,18 +16,18 @@ const databasesForSearch = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testSecondSearch' },
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: 'testV5' },
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'lastConnection' }
-]
+];
 const databasesForAdding = [
     ossStandaloneConfig,
     databasesForSearch[0],
     databasesForSearch[1],
     databasesForSearch[2]
-]
+];
 
 fixture `Database list search`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         // Add new databases using API
         await acceptLicenseTerms();
         await addNewStandaloneDatabases(databasesForAdding);
@@ -35,7 +35,7 @@ fixture `Database list search`
         // Reload Page
         await t.eval(() => location.reload());
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete databases
         await deleteStandaloneDatabases(databasesForAdding);
         await deleteOSSClusterDatabase(ossClusterConfig);
@@ -73,7 +73,7 @@ test
 test
     .meta({ rte: rte.standalone })('Verify that user can search DB by Connection Type on the List of databases', async t => {
         //Search for DB by connection type
-        const searchedDBConType = 'Standalone'
+        const searchedDBConType = 'Standalone';
         await t.typeText(myRedisDatabasePage.searchInput, searchedDBConType, { replace: true });
         //Verify that database found on the list search by connection type
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[0].databaseName).exists).ok('The database with connection type is found', { timeout: 10000 });

@@ -119,9 +119,9 @@ export class MyRedisDatabasePage {
      * Check module inside of tooltip
      * @param moduleNameList Array with modules list
      */
-    async checkModulesInTooltip(moduleNameList: Array<string>): Promise<void> {
+    async checkModulesInTooltip(moduleNameList: string[]): Promise<void> {
         for (const item of moduleNameList) {
-            await t.expect(this.moduleTooltip.find('span').withText(`${item} v.`).exists).ok(item)
+            await t.expect(this.moduleTooltip.find('span').withText(`${item} v.`).exists).ok(item);
         }
     }
 
@@ -129,9 +129,9 @@ export class MyRedisDatabasePage {
      * Check module icons on the page
      * @param moduleList Array with modules list
      */
-    async checkModulesOnPage(moduleList: Array<Selector>): Promise<void> {
+    async checkModulesOnPage(moduleList: Selector[]): Promise<void> {
         for (const item of moduleList) {
-            await t.expect(item.visible).ok(`${item} icon`)
+            await t.expect(item.visible).ok(`${item} icon`);
         }
     }
 }

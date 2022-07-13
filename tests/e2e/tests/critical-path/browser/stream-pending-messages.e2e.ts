@@ -22,7 +22,7 @@ fixture `Acknowledge and Claim of Pending messages`
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
+        if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
@@ -93,7 +93,7 @@ test('Verify that claim with optional parameters, the message removed from this 
     await t.click(browserPage.claimPendingMessageButton);
     await t.expect(browserPage.optionalParametersSwitcher.withAttribute('aria-checked', 'false').exists).ok('By default toggle for optional parameters is off');
     await t.click(browserPage.optionalParametersSwitcher);
-    await t.typeText(browserPage.claimIdleTimeInput, '100');
+    await t.typeText(browserPage.claimIdleTimeInput, '100', { replace: true });
     await t.click(browserPage.forceClaimCheckbox);
     await t.click(browserPage.submitButton);
     await t.expect(browserPage.streamMessagesContainer.textContent).contains('Your Consumer has no pending messages.', 'The messages is claimed and removed from the table');

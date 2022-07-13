@@ -66,11 +66,6 @@ const mainCheckFn = async (testCase) => {
 describe('POST /instance/:instanceId/streams/consumer-groups/consumers/pending-messages/get', () => {
   requirements('!rte.crdt');
 
-  beforeEach(async () => {
-    await rte.data.generateStrings(true);
-    await rte.data.generateStreamsWithoutStrictMode();
-  });
-
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
@@ -78,6 +73,11 @@ describe('POST /instance/:instanceId/streams/consumer-groups/consumers/pending-m
   });
 
   describe('Common', () => {
+    beforeEach(async () => {
+      await rte.data.generateStrings(true);
+      await rte.data.generateStreamsWithoutStrictMode();
+    });
+
     beforeEach(async () => {
       await rte.data.sendCommand('xadd', [
         constants.TEST_STREAM_KEY_1,

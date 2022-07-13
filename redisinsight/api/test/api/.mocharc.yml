@@ -1,0 +1,7 @@
+spec:
+#  - 'test/**/*.test.ts'
+  - 'test/api/notifications/**/*.test.ts'
+#  - 'test/api/stream/**/*.test.ts'
+require: 'test/api/api.deps.init.ts'
+timeout: 60000
+exit: true

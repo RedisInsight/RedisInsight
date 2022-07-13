@@ -22,7 +22,6 @@ export const mockSocket2 = new MockedSocket();
 mockSocket2.id = '2';
 mockSocket2['emit'] = jest.fn();
 
-// const mockedSocket2 =
 const nodeClient = Object.create(Redis.prototype);
 nodeClient.sendCommand = jest.fn();
 

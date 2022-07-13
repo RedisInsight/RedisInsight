@@ -89,7 +89,6 @@ test('Verify that claim with optional parameters, the message removed from this 
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Claim message with optional parameters and check result
     await t.click(browserPage.claimPendingMessageButton);
     await t.expect(browserPage.optionalParametersSwitcher.withAttribute('aria-checked', 'false').exists).ok('By default toggle for optional parameters is off');

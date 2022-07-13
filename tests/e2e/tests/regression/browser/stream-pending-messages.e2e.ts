@@ -93,7 +93,6 @@ test('Verify that when user toggle optional parameters on, he can see optional f
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Click Claim message with optional parameters and check fields
     await t.click(browserPage.claimPendingMessageButton);
     await t.click(browserPage.optionalParametersSwitcher);

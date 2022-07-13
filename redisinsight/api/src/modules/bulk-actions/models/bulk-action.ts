@@ -151,7 +151,14 @@ export class BulkAction implements IBulkAction {
   }
 
   setStatus(status) {
-    this.status = status;
+    switch (this.status) {
+      case BulkActionStatus.Completed:
+      case BulkActionStatus.Failed:
+      case BulkActionStatus.Aborted:
+        return;
+      default:
+        this.status = status;
+    }
 
     switch (status) {
       case BulkActionStatus.Aborted:

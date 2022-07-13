@@ -22,7 +22,7 @@ fixture `Pending messages`
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
+        if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
@@ -93,7 +93,6 @@ test('Verify that when user toggle optional parameters on, he can see optional f
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Click Claim message with optional parameters and check fields
     await t.click(browserPage.claimPendingMessageButton);
     await t.click(browserPage.optionalParametersSwitcher);

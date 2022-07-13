@@ -22,6 +22,7 @@ import { initialState as initialStateHash } from 'uiSrc/slices/browser/hash'
 import { initialState as initialStateList } from 'uiSrc/slices/browser/list'
 import { initialState as initialStateRejson } from 'uiSrc/slices/browser/rejson'
 import { initialState as initialStateStream } from 'uiSrc/slices/browser/stream'
+import { initialState as initialStateBulkActions } from 'uiSrc/slices/browser/bulkActions'
 import { initialState as initialStateNotifications } from 'uiSrc/slices/app/notifications'
 import { initialState as initialStateAppInfo } from 'uiSrc/slices/app/info'
 import { initialState as initialStateAppContext } from 'uiSrc/slices/app/context'
@@ -73,6 +74,7 @@ const initialStateDefault: RootState = {
     list: cloneDeep(initialStateList),
     rejson: cloneDeep(initialStateRejson),
     stream: cloneDeep(initialStateStream),
+    bulkActions: cloneDeep(initialStateBulkActions),
   },
   cli: {
     settings: cloneDeep(initialStateCliSettings),

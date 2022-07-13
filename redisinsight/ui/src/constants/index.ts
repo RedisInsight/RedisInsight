@@ -22,4 +22,5 @@ export * from './socketErrors'
 export * from './browser'
 export * from './durationUnits'
 export * from './streamViews'
+export * from './bulkActions'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

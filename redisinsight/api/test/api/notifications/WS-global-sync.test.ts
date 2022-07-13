@@ -1,4 +1,4 @@
-import { describe, it, expect, sleep, _ } from '../deps';
+    import { describe, it, expect, _ } from '../deps';
 import {
   createNotExistingNotifications,
   getRepository,
@@ -29,12 +29,16 @@ describe('WS sync', () => {
       .to.not.eq(undefined);
 
     // Initialize sync by connecting
-    await getClient();
+    const client = await getClient();
 
-    // todo: check new notifications
     // todo: check states of notifications
 
-    await sleep(4000);
+    const notificationsAlert: any = await new Promise((res) => {
+      client.on('notification', res);
+    });
+
+    expect(notificationsAlert.notifications.length).to.eq(3);
+    expect(notificationsAlert.totalUnread).to.eq(3);
 
     const newNotifications = await repo.createQueryBuilder().where({ type: 'global' }).getMany();
     expect(_.find(newNotifications, { timestamp: constants.TEST_NOTIFICATION_NE_1.timestamp }))

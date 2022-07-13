@@ -1,0 +1,37 @@
+.container {
+  background-color: var(--tableLightBorderColor);
+  border-radius: 4px;
+  margin: 18px;
+  padding: 12px;
+  min-height: 162px;
+}
+
+.title,
+.subTitle {
+  color: var(--euiTextSubduedColor);
+  width: 100%;
+  font-size: 13px !important;
+  line-height: 18px !important;
+  letter-spacing: -0.13px !important;
+}
+
+.subTitle {
+  padding: 12px 0 12px;
+}
+
+.filter,
+.search {
+  padding-top: 6px;
+  display: inline-block;
+  padding-right: 12px;
+}
+
+.search span,
+.match {
+  word-break: break-all;
+  color: var(--htmlColor);
+}
+
+.badge {
+  margin-top: -4px;
+}

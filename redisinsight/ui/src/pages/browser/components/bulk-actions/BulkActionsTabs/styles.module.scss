@@ -1,0 +1,17 @@
+.container {
+  border-bottom: 1px solid var(--euiColorLightShade);
+
+  .tabs {
+    padding: 2px 20px 12px;
+
+    .tab {
+      background-color: inherit !important;
+      color: var(--euiTextSubduedColor) !important;
+
+      svg {
+        margin-right: 6px;
+        margin-top: -3px;
+      }
+    }
+  }
+}

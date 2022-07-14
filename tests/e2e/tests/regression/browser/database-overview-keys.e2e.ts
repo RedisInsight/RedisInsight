@@ -56,7 +56,7 @@ test('Verify that user can see total and current logical database number of keys
     //Verify that user can see total number of keys and number of keys in current logical database
     await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
     await databaseOverviewPage.verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
-    await databaseOverviewPage.verifyTooltipContainsText(`db1:${keysAmount}Keys`, false);
+    await databaseOverviewPage.verifyTooltipContainsText(`db1:${keysAmount}Keys`, true);
 });
 test('Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)', async t => {
     //Open Database

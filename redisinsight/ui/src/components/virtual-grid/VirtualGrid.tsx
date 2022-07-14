@@ -1,27 +1,30 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
-import { isObject } from 'lodash'
+import { isObject, xor } from 'lodash'
 import { EuiProgress, EuiIcon, EuiText } from '@elastic/eui'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { VariableSizeGrid as Grid, GridChildComponentProps } from 'react-window'
 
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { IProps } from './interfaces'
-import { useInnerElementType } from './utils'
+import { columnWidth, useInnerElementType } from './utils'
 
 import styles from './styles.module.scss'
 
 const loadingMsg = 'loading...'
-const scrollWidth = 16
+let selectTimer: number = 0
+const selectTimerDelay = 300
+let preventSelect = false
 
 const VirtualGrid = (props: IProps) => {
   const {
     rowHeight = 40,
     totalItemsCount = 0,
     onChangeSorting = () => {},
+    onRowToggleViewClick = () => {},
     sortedColumn = null,
     noItemsMessage = 'No items to display.',
     loading,
@@ -40,11 +43,29 @@ const VirtualGrid = (props: IProps) => {
   const [width, setWidth] = useState<number>(100)
   const [height, setHeight] = useState<number>(100)
   const [forceScrollTop, setForceScrollTop] = useState<Maybe<number>>(scrollTopProp)
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
+
+  const gridRef = useRef<Nullable<Grid>>()
+  const sizeMap = useRef<{ [key: number]: number }>({})
+  const setSize = useCallback((index, size) => {
+    sizeMap.current = { ...sizeMap.current, [index]: size }
+
+    gridRef.current?.resetAfterRowIndex?.(index)
+  }, [])
+  const getSize = (index: number) =>
+    (expandedRows.indexOf(index) !== -1 ? sizeMap.current[index] : rowHeight)
 
   useEffect(() =>
     () => {
       setScrollTopPosition(scrollTopRef.current)
+      setExpandedRows([])
     }, [])
+
+  useEffect(() => {
+    setExpandedRows([])
+    sizeMap.current = {}
+    gridRef.current?.resetAfterRowIndex?.(0)
+  }, [totalItemsCount])
 
   useEffect(() => {
     if (forceScrollTop !== undefined) {
@@ -55,8 +76,7 @@ const VirtualGrid = (props: IProps) => {
   const onScroll = useCallback(
     ({ scrollTop }) => {
       scrollTopRef.current = scrollTop
-    },
-    [scrollTopRef],
+    }, [scrollTopRef]
   )
 
   const changeSorting = (column: any) => {
@@ -64,6 +84,7 @@ const VirtualGrid = (props: IProps) => {
       onChangeSorting(column, SortOrder.DESC)
       return
     }
+    setExpandedRows([])
     onChangeSorting(column, sortedColumn.order === SortOrder.DESC ? SortOrder.ASC : SortOrder.DESC)
   }
 
@@ -76,46 +97,55 @@ const VirtualGrid = (props: IProps) => {
     }
   }
 
-  const columnWidth = (i: number) => {
-    if (maxTableWidth < width) {
-      const growingColumnsWidth = columns
-        .filter(({ maxWidth = 0 }) => maxWidth)
-        .map(({ maxWidth }) => maxWidth)
-      const scrollOffset = height < rowHeight * items.length ? scrollWidth : 0
-
-      const growingColumnsCount = columns.length - growingColumnsWidth.length
-      const maxWidthTable = growingColumnsWidth?.reduce((a = 0, b = 0) => a + b, 0) ?? 0
-      const newColumns = columns.map((column) => {
-        const { minWidth, maxWidth = 0 } = column
-
-        const newMinWidth = ((width - maxWidthTable - scrollOffset) / growingColumnsCount)
-
-        return {
-          ...column,
-          minWidth: maxWidth
-            ? minWidth
-            : newMinWidth
-        }
-      })
-
-      return newColumns[i].minWidth
-    }
-    return columns[i].minWidth
-  }
-
   const onResize = ({ height, width }: Size): void => {
     setHeight(height)
     setWidth(width)
+  }
+
+  const onCellClick = (event: React.MouseEvent, rowIndex: number) => {
+    selectTimer = window.setTimeout(() => {
+      const textSelected = window.getSelection()?.toString()
+      if (!preventSelect && !textSelected) {
+        setExpandedRows(xor(expandedRows, [rowIndex]))
+
+        onRowToggleViewClick?.(expandedRows.indexOf(rowIndex) === -1, rowIndex)
+      }
+      preventSelect = false
+    }, selectTimerDelay)
+
+    if (event?.detail === 3) {
+      clearSelectTimeout(selectTimer)
+      preventSelect = false
+    }
+  }
+
+  const clearSelectTimeout = (timer: number = 0) => {
+    clearTimeout(timer || selectTimer)
+    preventSelect = true
   }
 
   const Cell = ({ columnIndex, rowIndex, style }: GridChildComponentProps<null>) => {
     const rowData = items[rowIndex]
     const column = columns[columnIndex]
     const content: any = rowData?.[column?.id] || ''
+    const cellRef = useRef<HTMLDivElement>(null)
+
+    const expanded = expandedRows.indexOf(rowIndex) !== -1
+
+    React.useEffect(() => {
+      if (cellRef.current) {
+        const paddingSize = 24
+        const cellHeight = cellRef.current?.children?.[0]?.getBoundingClientRect?.().height + paddingSize
+
+        if (cellHeight > getSize(rowIndex) && rowIndex !== 0) {
+          setSize(rowIndex, cellHeight)
+        }
+      }
+    }, [setSize, rowIndex, expanded, width])
 
     if (rowIndex === 0) {
       return (
-        <div style={style}>
+        <div ref={cellRef} style={style}>
           <div className={cx(styles.gridHeaderItem, 'truncateText')}>
             {isObject(content) && (
               <>
@@ -146,17 +176,22 @@ const VirtualGrid = (props: IProps) => {
     }
     if (columnIndex === 0) {
       const lastColumn = columns[columns.length - 1]
-      const hasHorizontalScrollOffset = height < rowHeight * items.length
+      const allDynamicRowsHeight: number[] = Object.values(sizeMap.current)
+      const allRowsHeight = allDynamicRowsHeight.reduce((a, b) => a + b, 0)
+       + (items.length - allDynamicRowsHeight.length) * rowHeight
+
+      const hasHorizontalScrollOffset = height < allRowsHeight
 
       return (
         <div
+          style={style}
+          ref={cellRef}
           className={cx(styles.gridItem,
             rowIndex % 2
               ? styles.gridItemOdd
               : styles.gridItemEven)}
-          style={style}
         >
-          {column?.render && isObject(rowData) && column?.render(rowData) }
+          {column?.render && isObject(rowData) && column?.render(rowData, expanded) }
           {!column?.render && content }
 
           <div
@@ -166,11 +201,11 @@ const VirtualGrid = (props: IProps) => {
                 : styles.gridItemEven)}
             style={{
               width: lastColumn?.minWidth,
-              height: rowHeight,
+              height: getSize(rowIndex),
               marginLeft: width - lastColumn?.minWidth - (hasHorizontalScrollOffset ? 29 : 13)
             }}
           >
-            {lastColumn?.render && isObject(rowData) && lastColumn?.render(rowData) }
+            {lastColumn?.render && isObject(rowData) && lastColumn?.render(rowData, expanded) }
           </div>
         </div>
       )
@@ -178,13 +213,14 @@ const VirtualGrid = (props: IProps) => {
 
     return (
       <div
+        ref={cellRef}
+        style={style}
         className={cx(styles.gridItem,
           rowIndex % 2
             ? styles.gridItemOdd
             : styles.gridItemEven)}
-        style={style}
       >
-        {column?.render && isObject(rowData) && column?.render(rowData) }
+        {column?.render && isObject(rowData) && column?.render(rowData, expanded) }
         {!column?.render && content }
       </div>
     )
@@ -192,9 +228,10 @@ const VirtualGrid = (props: IProps) => {
 
   const innerElementType = useInnerElementType(
     Cell,
-    columnWidth,
-    () => rowHeight,
+    (i) => columnWidth(i, width, columns),
+    getSize,
     columns.length - 1,
+    width,
   )
 
   return (
@@ -224,7 +261,10 @@ const VirtualGrid = (props: IProps) => {
             >
               {({ onItemsRendered, ref }) => (
                 <Grid
-                  ref={ref}
+                  ref={(list) => {
+                    ref(list)
+                    gridRef.current = list
+                  }}
                   onItemsRendered={(props) =>
                     onItemsRendered({
                       visibleStartIndex: props.visibleRowStartIndex || 0,
@@ -234,16 +274,26 @@ const VirtualGrid = (props: IProps) => {
                     })}
                   className={styles.grid}
                   columnCount={columns.length}
-                  columnWidth={columnWidth}
+                  columnWidth={(i) => columnWidth(i, width, columns)}
                   height={height}
                   rowCount={items.length}
-                  rowHeight={() => rowHeight}
+                  rowHeight={getSize}
                   width={width}
                   innerElementType={innerElementType}
                   onScroll={onScroll}
                   initialScrollTop={forceScrollTop}
+                  itemData={items}
                 >
-                  {Cell}
+                  {({ data, rowIndex, columnIndex, style }) => (
+                    <div onClick={(e) => onCellClick(e, rowIndex)} role="presentation">
+                      <Cell
+                        style={style}
+                        data={data}
+                        columnIndex={columnIndex}
+                        rowIndex={rowIndex}
+                      />
+                    </div>
+                  )}
                 </Grid>
               )}
             </InfiniteLoader>

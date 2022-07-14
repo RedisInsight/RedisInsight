@@ -17,6 +17,7 @@
 }
 
 .inputLabel {
+  font: normal normal normal 13px/18px Graphik !important;
   font-weight: 500 !important;
 }
 
@@ -27,4 +28,13 @@
   line-height: 32px !important;
   height: 32px !important;
   min-width: 150px;
+}
+
+.title {
+  font-size:16px !important;
+}
+
+.smallText {
+  font: normal normal normal 14px/24px Graphik !important;
+  letter-spacing: -0.14px;
 }

@@ -11,7 +11,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitFor,
+  act,
 } from 'uiSrc/utils/test-utils'
 
 import KeyTreeDelimiter, { Props } from './KeyTreeDelimiter'
@@ -50,7 +50,7 @@ describe('KeyTreeDelimiter', () => {
   it('Delimiter input should be rendered after click on button', async () => {
     render(<KeyTreeDelimiter {...instance(mockedProps)} />)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId(DELIMITER_TRIGGER_BTN))
     })
 
@@ -92,13 +92,13 @@ describe('KeyTreeDelimiter', () => {
     const value = 'val'
     render(<KeyTreeDelimiter {...instance(mockedProps)} />)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId(DELIMITER_TRIGGER_BTN))
     })
 
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value } })
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId(INLINE_EDITOR_APPLY_BTN))
     })
 
@@ -115,13 +115,13 @@ describe('KeyTreeDelimiter', () => {
     const value = ''
     render(<KeyTreeDelimiter {...instance(mockedProps)} />)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId(DELIMITER_TRIGGER_BTN))
     })
 
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value } })
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId(INLINE_EDITOR_APPLY_BTN))
     })
 

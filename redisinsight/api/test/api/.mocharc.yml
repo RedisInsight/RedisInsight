@@ -1,0 +1,5 @@
+spec:
+  - 'test/**/*.test.ts'
+require: 'test/api/api.deps.init.ts'
+timeout: 60000
+exit: true

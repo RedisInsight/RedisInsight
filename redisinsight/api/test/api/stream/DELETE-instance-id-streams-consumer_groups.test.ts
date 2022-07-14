@@ -50,8 +50,6 @@ const mainCheckFn = async (testCase) => {
 };
 
 describe('DELETE /instance/:instanceId/streams/consumer-groups', () => {
-  beforeEach(async () => await rte.data.generateKeys(true));
-
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
@@ -59,6 +57,8 @@ describe('DELETE /instance/:instanceId/streams/consumer-groups', () => {
   });
 
   describe('Common', () => {
+    beforeEach(async () => await rte.data.generateKeys(true));
+
     [
       {
         name: 'Should delete consumer group',

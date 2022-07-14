@@ -40,13 +40,7 @@ describe('AddHashFields', () => {
 
   it('should render one more field name & value inputs after click add item', () => {
     render(<AddHashFields {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getByTestId('add-new-item'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId('add-new-item'))
 
     expect(screen.getAllByTestId(HASH_FIELD)).toHaveLength(2)
     expect(screen.getAllByTestId(HASH_VALUE)).toHaveLength(2)
@@ -64,13 +58,7 @@ describe('AddHashFields', () => {
       fieldValue,
       { target: { value: 'val' } }
     )
-    fireEvent.click(
-      screen.getByLabelText(/clear item/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByLabelText(/clear item/i))
 
     expect(fieldName).toHaveValue('')
     expect(fieldValue).toHaveValue('')

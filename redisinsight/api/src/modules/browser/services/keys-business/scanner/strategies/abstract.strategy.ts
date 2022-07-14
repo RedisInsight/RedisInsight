@@ -129,8 +129,6 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      // Remove the result for TTL command and returns only results for 'MEMORY USAGE'
-      transactionResults.shift();
       return transactionResults.map((item: [ReplyError, any]) => item[1]);
     }
   }

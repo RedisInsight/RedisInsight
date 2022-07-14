@@ -40,13 +40,13 @@ describe('AdvancedSettingsItem', () => {
 
   it('should render keys to scan input after click value', () => {
     render(<AdvancedSettingsItem {...mockedProps} />)
-    screen.getByTestId(/keys-to-scan-value/).click()
+    fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
     expect(screen.getByTestId(/keys-to-scan-input/)).toBeInTheDocument()
   })
 
   it('should change keys to scan input properly', () => {
     render(<AdvancedSettingsItem {...mockedProps} />)
-    screen.getByTestId(/keys-to-scan-value/).click()
+    fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
     fireEvent.change(
       screen.getByTestId(/keys-to-scan-input/),
       {
@@ -59,20 +59,20 @@ describe('AdvancedSettingsItem', () => {
   it('should properly apply changes', () => {
     render(<AdvancedSettingsItem {...mockedProps} />)
 
-    screen.getByTestId(/keys-to-scan-value/).click()
+    fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
     fireEvent.change(
       screen.getByTestId(/keys-to-scan-input/),
       {
         target: { value: '6900' }
       }
     )
-    screen.getByTestId(/apply-btn/).click()
+    fireEvent.click(screen.getByTestId(/apply-btn/))
     expect(screen.getByTestId(/keys-to-scan-value/)).toHaveTextContent('6900')
   })
 
-  it('should properly decline changes', () => {
+  it('should properly decline changes', async () => {
     render(<AdvancedSettingsItem {...mockedProps} />)
-    screen.getByTestId(/keys-to-scan-value/).click()
+    fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
 
     fireEvent.change(
       screen.getByTestId(/keys-to-scan-input/),
@@ -80,7 +80,7 @@ describe('AdvancedSettingsItem', () => {
         target: { value: '6900' }
       }
     )
-    screen.getByTestId(/cancel-btn/).click()
+    fireEvent.click(screen.getByTestId(/cancel-btn/))
     expect(screen.getByTestId(/keys-to-scan-value/)).toHaveTextContent('10000')
   })
 })

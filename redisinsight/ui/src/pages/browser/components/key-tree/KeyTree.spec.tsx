@@ -7,7 +7,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitFor,
+  act,
 } from 'uiSrc/utils/test-utils'
 import { setSearchMatch } from 'uiSrc/slices/browser/keys'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
@@ -115,11 +115,11 @@ describe('KeyTree', () => {
     jest.useFakeTimers()
     render(<KeyTree {...propsMock} />)
 
-    await waitFor(() => {
+    await act(() => {
       jest.advanceTimersByTime(1000)
     })
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId(`node-item_${mockVirtualTreeResult?.[0]?.fullName}`))
     })
 

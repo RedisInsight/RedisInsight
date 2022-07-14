@@ -1,7 +1,8 @@
+import { act } from '@testing-library/react'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { MONACO_MANUAL } from 'uiSrc/constants'
-import { fireEvent, render, waitFor } from 'uiSrc/utils/test-utils'
+import { fireEvent, render } from 'uiSrc/utils/test-utils'
 import { resourcesService } from 'uiSrc/services'
 import { EnablementAreaProvider, defaultValue } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 
@@ -29,7 +30,7 @@ describe('LazyCodeButton', () => {
       </EnablementAreaProvider>
     )
 
-    await waitFor(() => {
+    await act(() => {
       const button = queryByTestId('preselect-script')
       fireEvent.click(button as Element)
     })
@@ -52,7 +53,7 @@ describe('LazyCodeButton', () => {
       </EnablementAreaProvider>
     )
 
-    await waitFor(() => {
+    await act(() => {
       const button = queryByTestId('preselect-script')
       fireEvent.click(button as Element)
     })

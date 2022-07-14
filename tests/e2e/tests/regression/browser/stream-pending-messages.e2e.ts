@@ -22,7 +22,7 @@ fixture `Pending messages`
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
+        if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
@@ -69,7 +69,6 @@ test('Verify that the message is claimed only if its idle time is greater than t
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     const streamMessageBefore = await browserPage.streamMessage.count;
     // Claim message and check result when Min Idle Time is greater than the idle time
     await t.click(browserPage.claimPendingMessageButton);
@@ -94,7 +93,6 @@ test('Verify that when user toggle optional parameters on, he can see optional f
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Click Claim message with optional parameters and check fields
     await t.click(browserPage.claimPendingMessageButton);
     await t.click(browserPage.optionalParametersSwitcher);

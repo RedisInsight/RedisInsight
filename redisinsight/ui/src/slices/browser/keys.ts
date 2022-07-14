@@ -68,6 +68,14 @@ export const initialState: KeysStore = {
   },
 }
 
+export const initialKeyInfo = {
+  ttl: -1,
+  name: null,
+  type: KeyTypes.String,
+  size: 1,
+  length: 0,
+}
+
 // A slice for recipes
 const keysSlice = createSlice({
   name: 'keys',

@@ -3,6 +3,7 @@ const chance = new Chance();
 
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
+export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
 
 const uniqueId = chance.string({ length: 10 });
 

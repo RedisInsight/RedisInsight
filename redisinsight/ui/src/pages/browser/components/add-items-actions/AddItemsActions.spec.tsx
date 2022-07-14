@@ -5,12 +5,6 @@ import AddItemsActions from './AddItemsActions'
 import { Props } from '../key-details-add-items/add-zset-members/AddZsetMembers'
 
 const mockedProps = mock<Props>()
-const mouseEvent = () => (
-  new MouseEvent('click', {
-    bubbles: true,
-    cancelable: true,
-  })
-)
 
 describe('AddItemsActions', () => {
   it('should render', () => {
@@ -33,7 +27,6 @@ describe('AddItemsActions', () => {
       <AddItemsActions
         {...instance(mockedProps)}
         length={1}
-        removeCanClear
       />
     )
     expect(screen.queryByLabelText(/remove item/i)).toBeNull()
@@ -58,13 +51,9 @@ describe('AddItemsActions', () => {
         {...instance(mockedProps)}
         length={1}
         clearItemValues={clearItemValues}
-        removeCanClear
       />
     )
-    fireEvent(
-      screen.getByLabelText(/clear item/i),
-      mouseEvent()
-    )
+    fireEvent.click(screen.getByLabelText(/clear item/i))
     expect(clearItemValues).toHaveBeenCalledTimes(1)
   })
 
@@ -75,13 +64,9 @@ describe('AddItemsActions', () => {
         {...instance(mockedProps)}
         length={2}
         removeItem={removeItem}
-        removeCanClear
       />
     )
-    fireEvent(
-      screen.getByLabelText(/remove item/i),
-      mouseEvent()
-    )
+    fireEvent.click(screen.getByLabelText(/remove item/i))
     expect(removeItem).toHaveBeenCalledTimes(1)
   })
 })

@@ -30,37 +30,19 @@ describe('AddZsetMembers', () => {
 
   it('should render one more member input after click add item', () => {
     render(<AddSetMembers {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getByTestId(ADD_NEW_ITEM),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(ADD_NEW_ITEM))
 
     expect(screen.getAllByTestId(MEMBER_NAME)).toHaveLength(2)
   })
 
   it('should remove one member input after add item & remove one', () => {
     render(<AddSetMembers {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getByTestId(ADD_NEW_ITEM),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(ADD_NEW_ITEM))
 
     expect(screen.getAllByTestId(MEMBER_NAME)).toHaveLength(2)
 
     const removeButtons = screen.getAllByTestId('remove-item')
-    fireEvent(
-      removeButtons[1],
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(removeButtons[1])
 
     expect(screen.getAllByTestId(MEMBER_NAME)).toHaveLength(1)
   })
@@ -72,13 +54,7 @@ describe('AddZsetMembers', () => {
       memberInput,
       { target: { value: 'member' } }
     )
-    fireEvent.click(
-      screen.getByLabelText(/clear item/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByLabelText(/clear item/i))
 
     expect(memberInput).toHaveValue('')
   })

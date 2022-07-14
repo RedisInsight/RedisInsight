@@ -1,5 +1,6 @@
+import { act } from '@testing-library/react'
 import React from 'react'
-import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { ApiEndpoints, MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 import { defaultValue, EnablementAreaProvider } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import Pagination from './Pagination'
@@ -74,7 +75,7 @@ describe('Pagination', () => {
 
     fireEvent.click(screen.getByTestId('enablement-area__pagination-popover-btn'))
     const popover = queryByTestId('enablement-area__pagination-popover')
-    await waitFor(() => {
+    await act(() => {
       popover?.querySelectorAll('.pagesItem').forEach(async (el) => {
         fireEvent.click(el)
       })

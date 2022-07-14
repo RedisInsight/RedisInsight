@@ -1,12 +1,12 @@
 import { Chance } from 'chance';
+import { ClientFunction, t } from 'testcafe';
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     CliPage,
     WorkbenchPage,
     BrowserPage,
-    AddRedisDatabasePage,
-    DatabaseOverviewPage
+    AddRedisDatabasePage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { cloudDatabaseConfig, commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -19,12 +19,16 @@ const common = new Common();
 const browserPage = new BrowserPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const chance = new Chance();
-const databaseOverviewPage = new DatabaseOverviewPage();
 
 let keys: string[];
 const keyName = chance.word({ length: 10 });
 const keysAmount = 5;
 const index = '1';
+const verifyTooltipContainsText = ClientFunction(async(text: string, contains: boolean): Promise<void> => {
+    contains
+        ? await t.expect(browserPage.tooltip.textContent).contains(text, `"${text}" Text is incorrect in tooltip`)
+        : await t.expect(browserPage.tooltip.textContent).notContains(text, `Tooltip still contains text "${text}"`);
+});
 
 fixture `Database overview`
     .meta({ rte: rte.standalone, type: 'regression' })
@@ -55,8 +59,8 @@ test('Verify that user can see total and current logical database number of keys
     await t.hover(workbenchPage.overviewTotalKeys);
     //Verify that user can see total number of keys and number of keys in current logical database
     await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-    await databaseOverviewPage.verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
-    await databaseOverviewPage.verifyTooltipContainsText(`db1:${keysAmount}Keys`, true);
+    await verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
+    await verifyTooltipContainsText(`db1:${keysAmount}Keys`, true);
 });
 test('Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)', async t => {
     //Open Database
@@ -65,8 +69,8 @@ test('Verify that user can see total number of keys and not it current logical d
     await t.hover(workbenchPage.overviewTotalKeys);
     //Verify that user can see only total number of keys
     await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-    await databaseOverviewPage.verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
-    await databaseOverviewPage.verifyTooltipContainsText('db1', false);
+    await verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
+    await verifyTooltipContainsText('db1', false);
 });
 test
     .before(async t => {
@@ -84,6 +88,6 @@ test
         await t.hover(workbenchPage.overviewTotalKeys);
         //Verify that user can see only total number of keys
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-        await databaseOverviewPage.verifyTooltipContainsText('Total Keys', true);
-        await databaseOverviewPage.verifyTooltipContainsText('db1', false);
+        await verifyTooltipContainsText('Total Keys', true);
+        await verifyTooltipContainsText('db1', false);
     });

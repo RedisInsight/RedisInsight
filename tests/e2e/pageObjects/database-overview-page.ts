@@ -20,15 +20,4 @@ export class DatabaseOverviewPage {
     overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
     //Panel
     overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
-
-    /**
-    * Verify that tooltip contains/not the text
-    * @param text The text in tooltip
-    * @param contains Boolean contains or not
-    */
-    async verifyTooltipContainsText(text: string, contains: boolean): Promise<void> {
-        contains
-            ? await t.expect(browserPage.tooltip.textContent).contains(text, `"${text}" Text is incorrect in tooltip`)
-            : await t.expect(browserPage.tooltip.textContent).notContains(text, `Tooltip still contains text "${text}"`);
-    }
 }

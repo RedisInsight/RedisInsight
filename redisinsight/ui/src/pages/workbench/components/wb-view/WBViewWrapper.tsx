@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { chunk, without } from 'lodash'
+import { chunk, reverse, without } from 'lodash'
 
 import {
   Nullable,
@@ -36,6 +36,7 @@ import WBView from './WBView'
 interface IState {
   loading: boolean,
   instance: Instance,
+  batchSize: number
   unsupportedCommands: string[],
   blockingCommands: string[],
   visualizations: IPluginVisualization[],
@@ -44,6 +45,7 @@ interface IState {
 
 let state: IState = {
   loading: false,
+  batchSize: PIPELINE_COUNT_DEFAULT,
   instance: instanceInitState.connectedInstance,
   unsupportedCommands: [],
   blockingCommands: [],
@@ -72,6 +74,7 @@ const WBViewWrapper = () => {
     blockingCommands,
     unsupportedCommands,
     visualizations,
+    batchSize,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -107,7 +110,7 @@ const WBViewWrapper = () => {
     commandInit: string = script,
     commandId?: Nullable<string>,
   ) => {
-    const { loading } = state
+    const { loading, batchSize } = state
     const isNewCommand = () => !commandId
     const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), batchSize > 1 ? batchSize : 1)
     const multiCommands = rest.map((command) => getMultiCommands(command))
@@ -123,7 +126,7 @@ const WBViewWrapper = () => {
 
     isNewCommand() && scrollResults('start')
 
-    sendCommand(commandLine, multiCommands)
+    sendCommand(reverse(commandLine), multiCommands)
   }
 
   const sendCommand = (

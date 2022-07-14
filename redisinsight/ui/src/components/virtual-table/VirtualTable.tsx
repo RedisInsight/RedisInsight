@@ -110,6 +110,11 @@ const VirtualTable = (props: IProps) => {
     setSelectedRowIndex(isNumber(selectedRowIndex) && selectedRowIndex > -1 ? selectedRowIndex : null)
   }, [selectedKey, items])
 
+  useEffect(() => {
+    setExpandedRows([])
+    cellCache?.clearAll()
+  }, [totalItemsCount])
+
   const onRowSelect = (data: RowMouseEventHandlerParams) => {
     const isRowSelectable = checkIfRowSelectable(data.rowData)
 

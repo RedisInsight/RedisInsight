@@ -116,3 +116,5 @@ const countDecimals = (value: number) => {
   if (Math.floor(value) === value) return 0
   return value.toString().split('.')?.[1]?.length || 0
 }
+
+export const getApproximateNumber = (number: number): string => (number < 1 ? '<1' : `${Math.round(number)}`)

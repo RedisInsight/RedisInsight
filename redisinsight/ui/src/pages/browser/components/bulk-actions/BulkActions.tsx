@@ -14,14 +14,18 @@ import { useParams } from 'react-router-dom'
 import {
   setBulkActionType,
   selectedBulkActionsSelector,
+  overviewBulkActionsSelector,
+  bulkActionsSelector,
+  setBulkActionsInitialState,
 } from 'uiSrc/slices/browser/bulkActions'
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
 import BulkActionsInfo from './BulkActionsInfo'
-import BulkDeleteSummary from './BulkDeleteSummary'
+import BulkDeleteSummary from './BulkDelete/BulkDeleteSummary'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -32,15 +36,17 @@ export interface Props {
   onToggleFullScreen: () => void
 }
 const BulkActions = (props: Props) => {
-  const { handleBulkActionsPanel } = props
+  const { isFullScreen, arePanelsCollapsed, handleBulkActionsPanel, onToggleFullScreen } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { type } = useSelector(selectedBulkActionsSelector)
   const { filter, search } = useSelector(keysSelector)
+  const { type } = useSelector(selectedBulkActionsSelector)
+  const { loading } = useSelector(bulkActionsSelector)
+  const { status, filter: { match, type: filterType } = {} } = useSelector(overviewBulkActionsSelector) ?? {}
 
   const [title, setTitle] = useState<string>('BULK ACTIONS')
   const [typeSelected, setTypeSelected] = useState<BulkActionsType>(type)
-  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!filter && !search)
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!filter && !search && !status)
 
   const dispatch = useDispatch()
   useEffect(() => {
@@ -61,8 +67,8 @@ const BulkActions = (props: Props) => {
   }, [type])
 
   useEffect(() => {
-    setShowPlaceholder(!filter && !search)
-  }, [filter, search])
+    setShowPlaceholder(!filter && !search && !status)
+  }, [filter, search, status])
 
   const handleChangeType = (value: BulkActionsType) => {
     setTypeSelected(value)
@@ -71,6 +77,8 @@ const BulkActions = (props: Props) => {
 
   const closePanel = () => {
     handleBulkActionsPanel(false)
+
+    dispatch(setBulkActionsInitialState())
 
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_CANCELLED,
@@ -95,17 +103,32 @@ const BulkActions = (props: Props) => {
           <EuiTitle size="xs" className={styles.title}>
             <h4>{title}</h4>
           </EuiTitle>
+          {!arePanelsCollapsed && (
+            <EuiToolTip
+              content={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
+              position="left"
+              anchorClassName={cx(styles.anchorTooltip, styles.anchorTooltipFullScreen)}
+            >
+              <EuiButtonIcon
+                iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
+                color="primary"
+                aria-label="Full screen btn"
+                onClick={onToggleFullScreen}
+                data-testid="toggle-full-screen"
+              />
+            </EuiToolTip>
+          )}
           <EuiToolTip
             content="Close"
             position="left"
-            anchorClassName={styles.closePanelTooltip}
+            anchorClassName={styles.anchorTooltip}
           >
             <EuiButtonIcon
               iconType="cross"
               color="primary"
               aria-label="Close panel"
               className={styles.closeBtn}
-              onClick={() => closePanel()}
+              onClick={closePanel}
             />
           </EuiToolTip>
         </EuiFlexItem>
@@ -113,10 +136,12 @@ const BulkActions = (props: Props) => {
           <div className={styles.contentActions} data-testid="bulk-actions-content">
             <BulkActionsTabs onChangeType={handleChangeType} />
             {!showPlaceholder && (
-              <div data-testid="bulk-actions-summary">
+              <>
                 <BulkActionsInfo
-                  filter={filter}
-                  search={search || '*'}
+                  search={match || search || '*'}
+                  loading={loading}
+                  filter={filterType || filter}
+                  status={status}
                 >
                   <>
                     {type === BulkActionsType.Delete && (
@@ -128,7 +153,7 @@ const BulkActions = (props: Props) => {
                 {typeSelected === BulkActionsType.Delete && (
                   <BulkDelete onCancel={closePanel} />
                 )}
-              </div>
+              </>
             )}
             {showPlaceholder && (
               <div className={styles.placeholder} data-testid="bulk-actions-placeholder">

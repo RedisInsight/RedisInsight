@@ -173,13 +173,6 @@ export const columnWidth = (i: number, width: number, columns: ITableColumn[], m
       const { minWidth, maxWidth = 0 } = column
       const newMinWidth = ((width - maxWidthTable) / growingColumnsCount)
 
-      // return {
-      //   ...column,
-      //   minWidth: maxWidth
-      //     ? minWidth
-      //     : newMinWidth
-      // }
-
       return {
         ...column,
         width: maxWidth
@@ -188,7 +181,7 @@ export const columnWidth = (i: number, width: number, columns: ITableColumn[], m
       }
     })
 
-    return newColumns[i].width
+    return newColumns[i]?.width
   }
-  return columns[i].minWidth
+  return columns[i]?.minWidth
 }

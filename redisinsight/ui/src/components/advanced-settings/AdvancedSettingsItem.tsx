@@ -59,12 +59,11 @@ const AdvancedSettingsItem = (props: Props) => {
 
   return (
     <>
-      <EuiSpacer size="s" />
-      <EuiTitle size="xxs">
+      <EuiTitle className={styles.title} size="xxs">
         <span>{title}</span>
       </EuiTitle>
       <EuiSpacer size="s" />
-      <EuiText size="s" color="subdued">
+      <EuiText className={styles.smallText} size="s" color="subdued">
         {summary}
       </EuiText>
       <EuiSpacer size="m" />

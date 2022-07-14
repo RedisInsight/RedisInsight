@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client'
 
 import { SocketEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
-import { setNewNotificationReceived } from 'uiSrc/slices/app/notifications'
+import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 
@@ -29,7 +29,7 @@ const CommonAppSubscription = () => {
     })
 
     socketRef.current.on(NotificationEvent.Notification, (data) => {
-      dispatch(setNewNotificationReceived(data))
+      dispatch(setNewNotificationAction(data))
     })
 
     // Catch disconnect

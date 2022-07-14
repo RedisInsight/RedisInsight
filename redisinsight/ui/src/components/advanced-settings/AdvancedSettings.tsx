@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLink } from '@elastic/eui'
+import { EuiLink, EuiSpacer } from '@elastic/eui'
 import { toNumber } from 'lodash'
 
 import { validateCountNumber, validateNumber } from 'uiSrc/utils'
@@ -45,6 +45,7 @@ const AdvancedSettings = () => {
         placeholder="10 000"
         label="Keys to Scan:"
       />
+      <EuiSpacer size="m" />
       <AdvancedSettingsItem
         initValue={batchSize.toString()}
         onApply={handleApplyPipelineCountChanges}

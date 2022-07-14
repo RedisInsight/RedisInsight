@@ -62,6 +62,12 @@ const VirtualGrid = (props: IProps) => {
     }, [])
 
   useEffect(() => {
+    setExpandedRows([])
+    sizeMap.current = {}
+    gridRef.current?.resetAfterRowIndex?.(0)
+  }, [totalItemsCount])
+
+  useEffect(() => {
     if (forceScrollTop !== undefined) {
       setForceScrollTop(undefined)
     }

@@ -147,7 +147,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
 
   useEffect(() => {
     setIsRecommended(checkIsRecommended())
-  }, formik.values)
+  }, [formik.values])
 
   const checkIsRecommended = () => {
     let recommended = true

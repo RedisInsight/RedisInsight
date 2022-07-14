@@ -30,9 +30,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const id = sessionStorageService.get(BrowserStorageItem.bulkActionId) ?? ''
-
-    if (((!isActionTriggered || !instanceId) && !id) || socketRef.current?.connected) {
+   if (!isActionTriggered || !instanceId || socketRef.current?.connected) {
       return
     }
 
@@ -48,11 +46,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
       clearTimeout(retryTimer)
       dispatch(setBulkActionConnected(true))
 
-      if (id) {
-        getBulkAction(id)
-      } else {
-        emitBulkDelete(`${Date.now()}`)
-      }
+      emitBulkDelete(`${Date.now()}`)
     })
 
     // Catch connect error

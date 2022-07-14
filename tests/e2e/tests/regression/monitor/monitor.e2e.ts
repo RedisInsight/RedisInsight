@@ -127,6 +127,7 @@ test
         await t.expect(cliPage.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was found & executed');
         await t.click(cliPage.cliCollapseButton);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await t.eval(() => location.reload());
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);

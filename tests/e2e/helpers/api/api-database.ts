@@ -3,6 +3,7 @@ import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
 import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters } from '../../pageObjects/add-redis-database-page';
 import { apiUrl } from '../../helpers/conf';
+import { parseAsync } from '@babel/core';
 
 const endpoint = apiUrl;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
@@ -13,7 +14,13 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate
  */
 export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const response = await request(endpoint).post('/instance')
-        .send({ 'name': databaseParameters.databaseName, 'host': databaseParameters.host, 'port': databaseParameters.port })
+        .send({
+            'name': databaseParameters.databaseName,
+            'host': databaseParameters.host,
+            'port': databaseParameters.port,
+            'username': databaseParameters.databaseUsername,
+            'password': databaseParameters.databasePassword
+        })
         .set('Accept', 'application/json');
 
     await t.expect(await response.status).eql(201, 'The creation of new standalone database request failed');

@@ -440,6 +440,8 @@ jobs:
         type: enum
         default: stage
         enum: [ 'dev', 'stage', 'prod' ]
+    docker:
+      - image: cibuilds/docker:19.03.5
     steps:
       - checkout
       - run:

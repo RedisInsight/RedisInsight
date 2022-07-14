@@ -2,10 +2,17 @@ import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpe
 import { MyRedisDatabasePage, PubSubPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
+import { ClientFunction, t } from 'testcafe';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
 const cliPage = new CliPage();
+const verifyMessageDisplaying = ClientFunction(async(message: string, displayed: boolean): Promise<void>  => {
+    const messageByText = pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText(message);
+    displayed
+        ? await t.expect(await messageByText.visible).ok(`"${message}" Message is not displayed`, { timeout: 5000 })
+        : await t.expect(await messageByText.visible).notOk(`"${message}" Message is still displayed`);
+});
 
 fixture `PubSub debug mode`
     .meta({ env: env.web, rte: rte.standalone, type: 'regression' })
@@ -33,13 +40,13 @@ test('Verify that when user navigating away and back to pubsub window the debug 
     //Verify that when user scroll away from the newest message the auto-scroll is stopped
     await cliPage.sendCommandInCli('30 publish channel additionalMessages');
     await pubSubPage.publishMessage('test', 'new message with no scroll');
-    await pubSubPage.verifyMessageDisplaying('new message with no scroll', false);
+    await verifyMessageDisplaying('new message with no scroll', false);
     //Go to Browser Page
     await t.click(myRedisDatabasePage.myRedisDBButton);
     //Go to PubSub page
     await t.click(myRedisDatabasePage.pubSubButton);
     //Verify that the debug mode state is reset to default auto-scroll
-    await pubSubPage.verifyMessageDisplaying('new message with no scroll', true);
+    await verifyMessageDisplaying('new message with no scroll', true);
 });
 test('Verify that when user scroll all the way to the newest available message (down), auto-scroll resumes automatically.', async t => {
     //Scroll to the first messages
@@ -48,7 +55,7 @@ test('Verify that when user scroll all the way to the newest available message (
     await t.scrollIntoView(pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText('message to scroll'));
     await cliPage.sendCommandInCli('20 publish channel fourth');
     //Verify auto-scroll resumes automatically
-    await pubSubPage.verifyMessageDisplaying('fourth', true);
+    await verifyMessageDisplaying('fourth', true);
 });
 test('Verify that user can get to the newest message in one click', async t => {
     //Scroll to the first messages
@@ -56,5 +63,5 @@ test('Verify that user can get to the newest message in one click', async t => {
     await pubSubPage.publishMessage('test', 'new message');
     await t.click(pubSubPage.scrollDownButton);
     //Verify the user scrolled to the newest message
-    await pubSubPage.verifyMessageDisplaying('new message', true);
+    await verifyMessageDisplaying('new message', true);
 });

@@ -19,6 +19,7 @@ import PubSubConfig from './pub-sub-config'
 import GlobalSubscriptions from './global-subscriptions'
 import MonitorWrapper from './monitor'
 import PagePlaceholder from './page-placeholder'
+import BulkActionsConfig from './bulk-actions-config'
 
 export {
   NavigationMenu,
@@ -45,4 +46,5 @@ export {
   MonitorWrapper,
   ShortcutsFlyout,
   PagePlaceholder,
+  BulkActionsConfig,
 }

@@ -54,7 +54,7 @@ describe('BulkActions', () => {
     render(<BulkActions {...mockedProps} />)
 
     expect(screen.queryByTestId('bulk-actions-placeholder')).toBeInTheDocument()
-    expect(screen.queryByTestId('bulk-actions-summary')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('bulk-actions-info')).not.toBeInTheDocument()
   })
 
   it('bulk actions summary should render with any search', () => {
@@ -73,7 +73,7 @@ describe('BulkActions', () => {
 
     render(<BulkActions {...mockedProps} />)
 
-    expect(screen.queryByTestId('bulk-actions-summary')).toBeInTheDocument()
+    expect(screen.queryByTestId('bulk-actions-info')).toBeInTheDocument()
     expect(screen.queryByTestId('bulk-actions-placeholder')).not.toBeInTheDocument()
   })
 
@@ -93,7 +93,7 @@ describe('BulkActions', () => {
 
     render(<BulkActions {...mockedProps} />)
 
-    expect(screen.queryByTestId('bulk-actions-summary')).toBeInTheDocument()
+    expect(screen.queryByTestId('bulk-actions-info')).toBeInTheDocument()
     expect(screen.queryByTestId('bulk-actions-placeholder')).not.toBeInTheDocument()
   })
 })

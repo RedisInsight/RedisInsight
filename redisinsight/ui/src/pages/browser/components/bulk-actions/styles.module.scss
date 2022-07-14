@@ -12,12 +12,14 @@
 }
 
 .title {
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 .contentActions {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .divider {
@@ -33,7 +35,7 @@
   line-height: 24px !important;
 }
 
-.closePanelTooltip {
+.anchorTooltip {
   position: absolute;
   top: 22px;
   right: 18px;
@@ -41,6 +43,14 @@
   svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+.anchorTooltipFullScreen {
+  right: 54px;
+  svg {
+    width: 16px;
+    height: 16px;
   }
 }
 

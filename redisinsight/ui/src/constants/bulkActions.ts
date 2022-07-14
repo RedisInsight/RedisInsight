@@ -19,3 +19,5 @@ export enum BulkActionsStatus {
   Failed = 'failed',
   Aborted = 'aborted',
 }
+
+export const MAX_BULK_ACTION_ERRORS_LENGTH = 500

@@ -16,8 +16,22 @@
   }
 }
 
-.summary {
+.summaryApproximate {
   padding-top: 6px;
   font-size: 13px !important;
   line-height: 18px;
+}
+
+.summary {
+  padding-top: 18px;
+  :global(.euiFlexItem) {
+    padding-right: 42px !important;
+  }
+}
+
+.summaryValue {
+  font-size: 18px !important;
+  line-height: 24px;
+  font-weight: 500;
+  color:var(--htmlColor) !important;
 }

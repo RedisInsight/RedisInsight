@@ -21,6 +21,7 @@ import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
 import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
+import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -87,6 +88,7 @@ const InstancePage = ({ routes = [] }: Props) => {
   const resetContext = () => {
     dispatch(setMonitorInitialState())
     dispatch(setInitialPubSubState())
+    dispatch(setBulkActionsInitialState())
     dispatch(setAppContextInitialState())
     dispatch(resetKeysData())
     setTimeout(() => {

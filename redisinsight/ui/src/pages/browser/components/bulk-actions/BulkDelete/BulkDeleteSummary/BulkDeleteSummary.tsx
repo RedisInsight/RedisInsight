@@ -18,7 +18,7 @@ const BulkDeleteSummary = () => {
 
   useEffect(() => {
     const approximateCount = scanned >= total ? keys.length : (keys.length * total) / scanned
-    setTitle(`Expected amount: ${scanned < total ? '~' : ''}${numberWithSpaces(Math.round(approximateCount))} keys`)
+    setTitle(`Expected amount: ~${numberWithSpaces(Math.round(approximateCount))} keys`)
   }, [scanned, total, keys])
 
   return (

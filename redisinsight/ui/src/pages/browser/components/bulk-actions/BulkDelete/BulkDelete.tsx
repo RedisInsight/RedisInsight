@@ -100,8 +100,7 @@ const BulkDelete = (props: Props) => {
                 color="secondary"
                 isLoading={loading}
                 disabled={loading}
-                    // onClick={() => setIsPopoverOpen(true)}
-                onClick={handleDelete}
+                onClick={() => setIsPopoverOpen(true)}
                 data-testid="bulk-action-apply-btn"
               >
                 Delete

@@ -13,7 +13,7 @@ import testcafe from 'testcafe';
                 .screenshots({
                     path: 'report/screenshots/',
                     takeOnFails: true,
-                    pathPattern: '${DATE}_${TIME}/test-${TEST_INDEX}/${USERAGENT}/${FILE_INDEX}.png',
+                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST_INDEX}.png',
                 })
                 .reporter([
                     'spec',

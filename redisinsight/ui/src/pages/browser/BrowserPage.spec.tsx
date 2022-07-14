@@ -70,6 +70,13 @@ const mockKeysHeader = (props: KeysHeaderProps) => (
     >
       handleAddKeyPanel
     </button>
+    <button
+      type="button"
+      data-testid="handleBulkActionsPanel-btn"
+      onClick={() => props?.handleBulkActionsPanel?.(true)}
+    >
+      handleBulkActionsPanel
+    </button>
   </div>
 )
 
@@ -99,6 +106,16 @@ describe('BrowserPage', () => {
     const afterRenderActions = [...store.getActions()]
 
     fireEvent.click(screen.getByTestId('handleAddKeyPanel-btn'))
+
+    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false)]
+    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
+  })
+
+  it('should call handleBulkActionsPanel', () => {
+    render(<BrowserPage />)
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('handleBulkActionsPanel-btn'))
 
     const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])

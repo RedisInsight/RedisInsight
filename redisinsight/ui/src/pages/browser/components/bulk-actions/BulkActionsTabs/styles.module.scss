@@ -1,5 +1,8 @@
 .container {
   border-bottom: 1px solid var(--euiColorLightShade);
+  flex-direction: column;
+  display: flex;
+  height: 45px;
 
   .tabs {
     padding: 2px 20px 12px;

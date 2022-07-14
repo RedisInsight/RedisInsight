@@ -12,6 +12,7 @@ enum BrowserStorageItem {
   isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
   autoRefreshRate = 'autoRefreshRate',
+  bulkActionId = 'bulkActionId',
   dbConfig = 'dbConfig_'
 }
 

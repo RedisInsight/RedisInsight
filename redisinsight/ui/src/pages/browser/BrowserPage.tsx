@@ -206,7 +206,7 @@ const BrowserPage = () => {
     }
   }
 
-  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen
+  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen
 
   const onEditKey = useCallback(
     (key: string, newKey: string) => handleEditKey(key, newKey),

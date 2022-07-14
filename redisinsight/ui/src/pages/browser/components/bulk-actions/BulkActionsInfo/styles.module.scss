@@ -1,18 +1,35 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
 .container {
+  @include euiScrollBar;
+  position: relative;
   background-color: var(--tableLightBorderColor);
   border-radius: 4px;
   margin: 18px;
   padding: 12px;
   min-height: 162px;
+  display: flex;
+  flex-direction: column;
+
+  .progressCompleted {
+    color: var(--monitorTimeColor) !important;
+  }
+}
+
+.title,
+.subTitle,
+.progress {
+  color: var(--euiTextSubduedColor);
+  font-size: 13px !important;
+  line-height: 16px !important;
+  letter-spacing: -0.13px !important;
 }
 
 .title,
 .subTitle {
-  color: var(--euiTextSubduedColor);
   width: 100%;
-  font-size: 13px !important;
-  line-height: 18px !important;
-  letter-spacing: -0.13px !important;
 }
 
 .subTitle {
@@ -34,4 +51,30 @@
 
 .badge {
   margin-top: -4px;
+}
+
+.progress {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+
+  span {
+    color: var(--htmlColor);
+  }
+
+  &Completed {
+    color: var(--monitorTimeColor) !important;
+  }
+}
+
+.progressLine {
+  height: 2px;
+  width: calc(100% - 24px);
+  margin-top: -1.5px;
+  position: absolute;
+
+  div {
+    height: 100%;
+    background-color: var(--euiColorPrimary);
+  }
 }

@@ -8,7 +8,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitFor,
+  act,
 } from 'uiSrc/utils/test-utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { processCliClient, resetCliSettings, toggleCli } from 'uiSrc/slices/cli/cli-settings'
@@ -59,7 +59,7 @@ describe('CliHeader', () => {
 
     render(<CliHeader />)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId('close-cli'))
     })
 
@@ -81,7 +81,7 @@ describe('CliHeader', () => {
 
     render(<CliHeader />)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId('hide-cli'))
     })
 
@@ -115,7 +115,7 @@ it('should "processCliClient" action be called after close cli with mocked sessi
 
   render(<CliHeader />)
 
-  await waitFor(() => {
+  await act(() => {
     fireEvent.click(screen.getByTestId('close-cli'))
   })
 

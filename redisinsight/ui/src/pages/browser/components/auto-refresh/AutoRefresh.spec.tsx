@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { fireEvent, screen, render } from 'uiSrc/utils/test-utils'
+import { fireEvent, screen, render, act } from 'uiSrc/utils/test-utils'
 import AutoRefresh, { Props } from './AutoRefresh'
 import { DEFAULT_REFRESH_RATE } from './utils'
 
@@ -71,11 +71,19 @@ describe('AutoRefresh', () => {
 
       screen.getByTestId(/apply-btn/).click()
 
-      await new Promise((r) => setTimeout(r, 1100))
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 1100))
+      })
       expect(onRefresh).toBeCalledTimes(1)
-      await new Promise((r) => setTimeout(r, 1100))
+
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 1100))
+      })
       expect(onRefresh).toBeCalledTimes(2)
-      await new Promise((r) => setTimeout(r, 1100))
+
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 1100))
+      })
       expect(onRefresh).toBeCalledTimes(3)
     })
   })

@@ -73,7 +73,7 @@ describe('bulk-actions', function () {
         client.emit('abort', { id: createDto.id }, (ack) => {
           expect(ack.id).to.eq(createDto.id);
           expect(ack.type).to.eq(createDto.type);
-          expect(ack.status).to.eq('aborted');
+          expect(['aborted', 'completed'].includes(ack.status)).to.eq(true);
           expect(ack.filter.match).to.eq(createDto.filter.match);
           expect(ack.filter.type).to.eq(null);
           expect(ack.progress.total).to.gt(0);

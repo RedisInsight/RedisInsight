@@ -118,7 +118,7 @@ const SlowLogPage = () => {
     }))
   }
 
-  const isEmptySlowLog = !data.length && !loading
+  const isEmptySlowLog = !data.length
 
   return (
     <>

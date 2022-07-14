@@ -54,26 +54,13 @@ describe('HashDetails', () => {
 
   it('should render delete popup after click remove button', () => {
     render(<HashDetails {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getAllByTestId(/remove-hash-button/)[0],
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(screen.getAllByTestId(/remove-hash-button/)[0])
     expect(screen.getByTestId(`remove-hash-button-${fields[0].field}-icon`)).toBeInTheDocument()
   })
 
   it('should render editor after click edit button', () => {
     render(<HashDetails {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getAllByTestId(/edit-hash-button/)[0],
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
+    fireEvent.click(screen.getAllByTestId(/edit-hash-button/)[0])
     expect(screen.getByTestId('inline-item-editor')).toBeInTheDocument()
   })
 })

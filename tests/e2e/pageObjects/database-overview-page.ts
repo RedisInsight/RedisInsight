@@ -1,4 +1,7 @@
-import {Selector} from 'testcafe';
+import { Selector, t } from 'testcafe';
+import { BrowserPage } from '../pageObjects';
+
+const browserPage = new BrowserPage();
 
 export class DatabaseOverviewPage {
     //-------------------------------------------------------------------------------------------

@@ -27,10 +27,7 @@ describe('MessageBar', () => {
 
     expect(screen.getByTestId(CLOSE_BUTTON)).toBeInTheDocument()
 
-    fireEvent(
-      screen.getByTestId(CLOSE_BUTTON),
-      new MouseEvent('click', { bubbles: true })
-    )
+    fireEvent.click(screen.getByTestId(CLOSE_BUTTON))
     expect(screen.queryByTestId(CLOSE_BUTTON)).toBeNull()
   })
 })

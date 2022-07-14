@@ -28,13 +28,7 @@ describe('KeyDetailsHeader', () => {
   it('should change key properly', () => {
     render(<KeyDetailsHeader {...mockedProps} />)
 
-    fireEvent(
-      screen.getByTestId(KEY_BTN_TEST_ID),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(KEY_BTN_TEST_ID))
 
     fireEvent.change(
       screen.getByTestId(KEY_INPUT_TEST_ID),
@@ -56,13 +50,7 @@ describe('KeyDetailsHeader', () => {
 
     expect(screen.getByLabelText(/Copy key name/i)).toBeInTheDocument()
 
-    fireEvent(
-      screen.getByLabelText(/Copy key name/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByLabelText(/Copy key name/i))
   })
 
   it('should call onClose', () => {
@@ -85,13 +73,7 @@ describe('KeyDetailsHeader', () => {
     const onEditKey = jest.fn()
     render(<KeyDetailsHeader {...mockedProps} onEditKey={onEditKey} />)
 
-    fireEvent(
-      screen.getByTestId(KEY_BTN_TEST_ID),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(KEY_BTN_TEST_ID))
 
     fireEvent.change(
       screen.getByTestId(KEY_INPUT_TEST_ID),

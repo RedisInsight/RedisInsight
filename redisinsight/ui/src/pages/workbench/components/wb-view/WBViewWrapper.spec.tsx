@@ -8,7 +8,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitFor,
+  act,
 } from 'uiSrc/utils/test-utils'
 import QueryWrapper, { Props as QueryProps } from 'uiSrc/components/query'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -131,7 +131,7 @@ describe('WBViewWrapper', () => {
     const { queryAllByTestId } = render(<WBViewWrapper />)
 
     // Act
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(queryAllByTestId(/preselect-/)[0])
     })
 

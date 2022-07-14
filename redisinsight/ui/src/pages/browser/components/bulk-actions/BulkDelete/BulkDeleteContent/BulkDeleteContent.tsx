@@ -47,39 +47,37 @@ const BulkDeleteContent = () => {
   }
 
   return (
-    <div className={styles.container}>
-      {errors.length > 0 && (
-        <>
-          <div className={styles.header}>
-            <EuiText className={styles.headerTitle}>Error list</EuiText>
-            {errors.length >= MAX_BULK_ACTION_ERRORS_LENGTH && (
-              <EuiText className={styles.headerSummary}>
-                last {MAX_BULK_ACTION_ERRORS_LENGTH} errors are shown
-              </EuiText>
+    errors.length > 0 && (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <EuiText className={styles.headerTitle}>Error list</EuiText>
+          {errors.length >= MAX_BULK_ACTION_ERRORS_LENGTH && (
+            <EuiText className={styles.headerSummary}>
+              last {MAX_BULK_ACTION_ERRORS_LENGTH} errors are shown
+            </EuiText>
+          )}
+        </div>
+        <div className={styles.list}>
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                ref={listRef}
+                outerRef={outerRef}
+                height={height}
+                itemCount={errors.length}
+                itemSize={getRowHeight}
+                width={width - PROTRUDING_OFFSET}
+                className={styles.listContent}
+                overscanCount={30}
+                itemData={width}
+              >
+                {Row}
+              </List>
             )}
-          </div>
-          <div className={styles.list}>
-            <AutoSizer>
-              {({ width, height }) => (
-                <List
-                  ref={listRef}
-                  outerRef={outerRef}
-                  height={height}
-                  itemCount={errors.length}
-                  itemSize={getRowHeight}
-                  width={width - PROTRUDING_OFFSET}
-                  className={styles.listContent}
-                  overscanCount={30}
-                  itemData={width}
-                >
-                  {Row}
-                </List>
-              )}
-            </AutoSizer>
-          </div>
-        </>
-      )}
-    </div>
+          </AutoSizer>
+        </div>
+      </div>
+    )
   )
 }
 

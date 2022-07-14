@@ -6,8 +6,6 @@ import {
   fireEvent,
   mockedStore,
   cleanup,
-  clearStoreActions,
-  act,
 } from 'uiSrc/utils/test-utils'
 import ConsentsSettings from './ConsentsSettings'
 
@@ -93,28 +91,5 @@ describe('ConsentsSettings', () => {
       fireEvent.click(el)
     })
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
-  })
-  describe('liveEditMode', () => {
-    it('btn submit should not render', () => {
-      const { queryByTestId } = render(<ConsentsSettings liveEditMode />)
-      expect(queryByTestId(BTN_SUBMIT)).not.toBeInTheDocument()
-    })
-
-    it('option change should call "updateUserConfigSettingsAction"', async () => {
-      const { queryByTestId } = render(<ConsentsSettings liveEditMode />)
-
-      await act(() => {
-        screen.getAllByTestId(/switch-option/).forEach(async (el) => {
-          fireEvent.click(el)
-        })
-      })
-
-      const expectedActions = [{}].fill(updateUserConfigSettings(), 0)
-      expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-        clearStoreActions(expectedActions)
-      )
-
-      expect(queryByTestId(BTN_SUBMIT)).not.toBeInTheDocument()
-    })
   })
 })

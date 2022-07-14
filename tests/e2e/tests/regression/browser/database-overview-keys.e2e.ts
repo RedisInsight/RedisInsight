@@ -24,11 +24,11 @@ let keys: string[];
 const keyName = chance.word({ length: 10 });
 const keysAmount = 5;
 const index = '1';
-const verifyTooltipContainsText = ClientFunction(async(text: string, contains: boolean): Promise<void> => {
+const verifyTooltipContainsText = async(text: string, contains: boolean): Promise<void> => {
     contains
         ? await t.expect(browserPage.tooltip.textContent).contains(text, `"${text}" Text is incorrect in tooltip`)
         : await t.expect(browserPage.tooltip.textContent).notContains(text, `Tooltip still contains text "${text}"`);
-});
+};
 
 fixture `Database overview`
     .meta({ rte: rte.standalone, type: 'regression' })

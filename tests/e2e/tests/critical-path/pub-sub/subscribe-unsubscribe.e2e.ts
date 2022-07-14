@@ -1,3 +1,4 @@
+import { ClientFunction, t } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase, addNewStandaloneDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage, PubSubPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
@@ -6,6 +7,12 @@ import { env, rte } from '../../../helpers/constants';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
 const cliPage = new CliPage();
+const verifyMessageDisplaying = ClientFunction(async(message: string, displayed: boolean): Promise<void>  => {
+    const messageByText = pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText(message);
+    displayed
+        ? await t.expect(await messageByText.visible).ok(`"${message}" Message is not displayed`, { timeout: 5000 })
+        : await t.expect(await messageByText.visible).notOk(`"${message}" Message is still displayed`);
+});
 
 fixture `Subscribe/Unsubscribe from a channel`
     .meta({ env: env.web, rte: rte.standalone, type: 'critical_path' })
@@ -33,14 +40,14 @@ test('Verify that when user subscribe to the pubsub channel he can see all the m
     await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are  subscribed', 'User is not subscribed', { timeout: 10000 });
     //Verify that user can publish a message to a channel
     await pubSubPage.publishMessage('test', 'published message');
-    await pubSubPage.verifyMessageDisplaying('published message', true);
+    await verifyMessageDisplaying('published message', true);
     await t.click(pubSubPage.unsubscribeButton);
     //Verify that when user unsubscribe from a pubsub channel he can see no new data being published to the channel from the moment he unsubscribe
     await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are not subscribed', 'User is not unsubscribed', { timeout: 10000 });
     //Verify that user can publish a message regardless of my subscription state.
     await pubSubPage.publishMessage('test', 'message in unsubscribed status');
     //Verify that message is not displayed
-    await pubSubPage.verifyMessageDisplaying('message in unsubscribed status', false);
+    await verifyMessageDisplaying('message in unsubscribed status', false);
 });
 test('Verify that my subscription state is preserved when user navigate through the app while connected to current database and in current app session', async t => {
     await pubSubPage.subsribeToChannelAndPublishMessage('test', 'message');
@@ -55,8 +62,8 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
     //Publish 100 messages
     await cliPage.sendCommandInCli('100 publish channel test100Message');
     //Verify that the first message is not visible in view port
-    await pubSubPage.verifyMessageDisplaying('first message', false);
-    await pubSubPage.verifyMessageDisplaying('test100Message', true);
+    await verifyMessageDisplaying('first message', false);
+    await verifyMessageDisplaying('test100Message', true);
 });
 test
     .before(async t => {
@@ -74,7 +81,7 @@ test
         await t.click(pubSubPage.subscribeButton);
         //Publish 10 messages
         await cliPage.sendCommandInCli('10 publish channel message');
-        await pubSubPage.verifyMessageDisplaying('message', true);
+        await verifyMessageDisplaying('message', true);
         //Verify that user can see total number of messages received
         await t.expect(pubSubPage.totalMessagesCount.textContent).contains('10', 'Total counter value is incorrect');
         //Connect to second database
@@ -83,7 +90,7 @@ test
         //Verify no subscription, messages and total messages
         await t.click(myRedisDatabasePage.pubSubButton);
         await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are not subscribed', 'User is not unsubscribed', { timeout: 10000 });
-        await pubSubPage.verifyMessageDisplaying('message', false);
+        await verifyMessageDisplaying('message', false);
         await t.expect(pubSubPage.totalMessagesCount.exists).notOk('Total counter is still displayed');
     });
 test('Verify that user can see a internal link to pubsub window under word “Pub/Sub” when he try to run PSUBSCRIBE command in CLI or Workbench', async t => {
@@ -134,6 +141,6 @@ test('Verify that user can clear all the messages from the pubsub window', async
     //Verify that the Messages counter is reset after clear messages
     await t.expect(pubSubPage.totalMessagesCount.textContent).contains('0', 'Total counter value is incorrect');
     //Verify messages are cleared
-    await pubSubPage.verifyMessageDisplaying('message', false);
-    await pubSubPage.verifyMessageDisplaying('second m', false);
+    await verifyMessageDisplaying('message', false);
+    await verifyMessageDisplaying('second m', false);
 });

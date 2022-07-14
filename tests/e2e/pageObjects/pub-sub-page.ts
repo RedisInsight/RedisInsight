@@ -49,16 +49,4 @@ export class PubSubPage {
         await this.publishMessage(channel, message);
         await t.expect(this.pubSubPageContainer.find('[data-testid^=row]').withText('message').exists).ok('Message is not displayed');
     }
-
-    /**
-     * Verify message is/not displayed
-     * @param message The text of message
-     * @param displayed True if should be displayed, false if shouldn't
-     */
-    async verifyMessageDisplaying(message: string, displayed: boolean): Promise<void> {
-        const messageByText = this.pubSubPageContainer.find(this.cssSelectorMessage).withText(message);
-        displayed
-            ? await t.expect(await messageByText.visible).ok(`"${message}" Message is not displayed`, { timeout: 5000 })
-            : await t.expect(await messageByText.visible).notOk(`"${message}" Message is still displayed`);
-    }
 }

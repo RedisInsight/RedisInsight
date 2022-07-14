@@ -124,6 +124,7 @@ orbs:
   win: circleci/windows@2.4.0
   node: circleci/node@5.0.2
   aws: circleci/aws-cli@2.0.3
+  macos: circleci/macos@2.2.0  
 
 executors:
   linux-executor:
@@ -316,6 +317,34 @@ jobs:
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
+  e2e-dmg:
+    macos:
+      xcode: 13.2.1
+    parameters:
+      report:
+        description: Send report for test run to slack
+        type: boolean
+        default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
+    steps:
+      - checkout
+#      - attach_workspace:
+#          at: .
+      - run:
+          name: Download build from S3
+          command: |
+            mkdir -p release && cd release && curl -O https://s3.amazonaws.com/redisinsight.download/public/upgrades/RedisInsight-v2-mac-x64.dmg                   
+      - macos/add-uitest-permissions
+      - macos/add-permission:
+          bundle-id: "com.devexpress.testcafe-browser-tools"
+          permission-type: "kTCCServiceScreenCapture"         
+      - run:
+          name: Run e2e tests
+          command: .circleci/e2e/test.dmg.sh          
   e2e-exe:
     executor:
       name: win/default
@@ -548,6 +577,7 @@ jobs:
         enum: ['stage', 'prod', 'dev']
     steps:
       - checkout
+      - macos/add-uitest-permissions        
       - node/install:
           node-version: '16.15.1'
       - attach_workspace:
@@ -1129,3 +1159,10 @@ workflows:
           report: true
           requires:
             - Build app - Windows (stage)
+      # e2e desktop tests on dmg build
+      - e2e-dmg:
+         name: E2ETest (dmg) - Nightly
+         parallelism: 4
+         report: true
+         requires:
+           - Build app - macosx (stage)

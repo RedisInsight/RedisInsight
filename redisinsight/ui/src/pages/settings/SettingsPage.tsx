@@ -13,6 +13,7 @@ import {
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
+  EuiCallOut,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -72,15 +73,16 @@ const SettingsPage = () => {
   const Appearance = () => (
     <>
       <EuiForm component="form">
-        <EuiSpacer size="s" />
         <EuiTitle size="xs">
           <h4>Color Theme</h4>
         </EuiTitle>
+        <EuiSpacer size="m" />
         <EuiFormRow label="Specifies the color theme to be used in RedisInsight:">
           <EuiSuperSelect
             options={options}
             valueOfSelected={themeContext.theme}
             onChange={onChange}
+            style={{ marginTop: '12px' }}
             data-test-subj="select-theme"
           />
         </EuiFormRow>
@@ -108,6 +110,11 @@ const SettingsPage = () => {
           <EuiLoadingSpinner size="xl" />
         </div>
       )}
+      <EuiCallOut className={styles.warning}>
+        <EuiText size="s" className={styles.smallText}>
+          These settings should only be changed if you understand their impact.
+        </EuiText>
+      </EuiCallOut>
       <AdvancedSettings />
     </div>
   )
@@ -142,14 +149,7 @@ const SettingsPage = () => {
           <EuiCollapsibleNavGroup
             isCollapsible
             className={cx(styles.accordion, styles.accordionWithSubTitle)}
-            title={(
-              <>
-                <span>Advanced</span>
-                <EuiText color="subdued" className={styles.subtitle}>
-                  These settings should only be changed if you understand their impact.
-                </EuiText>
-              </>
-            )}
+            title="Advanced"
             initialIsOpen={false}
             data-test-subj="accordion-advanced-settings"
           >

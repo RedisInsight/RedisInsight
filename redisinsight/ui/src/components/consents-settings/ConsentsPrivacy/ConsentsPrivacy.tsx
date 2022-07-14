@@ -74,11 +74,11 @@ const ConsentsPrivacy = () => {
   return (
     <EuiForm component="form" onSubmit={formik.handleSubmit} data-testid="consents-settings-form">
       <div className={styles.consentsWrapper}>
-        <EuiText size="s" color="subdued">
+        <EuiText size="s" className={styles.smallText} color="subdued">
           To optimize your experience, RedisInsight uses third-party tools.
           All data collected is anonymized and will not be used for any purpose without your consent.
         </EuiText>
-        <EuiSpacer size="m" />
+        <EuiSpacer size="l" />
         <EuiTitle size="xs">
           <h4>Analytics</h4>
         </EuiTitle>

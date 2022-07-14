@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
-import { isEmpty } from 'lodash'
+import { isEmpty, forEach } from 'lodash'
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -14,6 +14,7 @@ import {
   EuiForm,
   EuiHorizontalRule,
   EuiCallOut,
+  EuiLink,
 } from '@elastic/eui'
 import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
 import cx from 'classnames'
@@ -59,6 +60,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   const [initialValues, setInitialValues] = useState<any>({})
   const [errors, setErrors] = useState<FormikErrors<Values>>({})
   const [isRecommended, setIsRecommended] = useState<boolean>(false)
+  const [valuesBuffer, setValuesBuffer] = useState<Values>({})
 
   const { config, spec } = useSelector(userSettingsSelector)
 
@@ -80,11 +82,22 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   const selectAll = (e: EuiSwitchEvent) => {
     setIsRecommended(e.target.checked)
 
-    consents.forEach((consent) => {
-      if (!consent.required) {
-        formik.setFieldValue(consent.agreementName, true)
-      }
-    })
+    if (e.target.checked) {
+      const newBufferValues:Values = {}
+      consents.forEach((consent) => {
+        if (!consent.required) {
+          newBufferValues[consent.agreementName] = formik.values[consent.agreementName]
+          formik.setFieldValue(consent.agreementName, true)
+        }
+        setValuesBuffer(newBufferValues)
+      })
+    } else {
+      consents.forEach((consent) => {
+        if (!consent.required) {
+          formik.setFieldValue(consent.agreementName, valuesBuffer[consent.agreementName])
+        }
+      })
+    }
   }
 
   const formik = useFormik({
@@ -101,6 +114,12 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       setConsents(compareConsents(spec?.agreements, config?.agreements))
     }
   }, [spec, config])
+
+  useEffect(() => {
+    if (!isRecommended) {
+      setValuesBuffer({})
+    }
+  }, [isRecommended])
 
   useEffect(() => {
     setRequiredConsents(consents.filter(
@@ -126,11 +145,31 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
     formik.validateForm(initialValues)
   }, [requiredConsents])
 
-  const onChangeAgreement = (checked: boolean, name: string, independent?: boolean) => {
+  useEffect(() => {
+    setIsRecommended(checkIsRecommended())
+  }, formik.values)
+
+  const checkIsRecommended = () => {
+    let recommended = true
+    forEach(privacyConsents, (consent) => {
+      if (!formik.values[consent.agreementName]) {
+        recommended = false
+        return false
+      }
+    })
+
+    forEach(notificationConsents, (consent) => {
+      if (!formik.values[consent.agreementName]) {
+        recommended = false
+        return false
+      }
+    })
+
+    return recommended
+  }
+
+  const onChangeAgreement = (checked: boolean, name: string) => {
     formik.setFieldValue(name, checked)
-    if (!independent) {
-      setIsRecommended(false)
-    }
   }
 
   const submitForm = (values: any) => {
@@ -143,46 +182,51 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   return (
     <EuiForm component="form" onSubmit={formik.handleSubmit} data-testid="consents-settings-form">
       <div className={styles.consentsWrapper}>
-        <EuiCallOut>
-          <EuiText size="s" data-testid="plugin-section">
-            To avoid automatic execution of malicious code, when adding new Workbench plugins,
-            use files from trusted authors only.
-          </EuiText>
-        </EuiCallOut>
-        <EuiSpacer size="l" />
-        <EuiFlexItem>
-          <EuiFlexGroup gutterSize="s">
-            <EuiFlexItem grow={false}>
-              <EuiSwitch
-                showLabel={false}
-                label=""
-                checked={isRecommended}
-                onChange={selectAll}
-                className={styles.switchOption}
-                data-testid="switch-option-recommended"
-              />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiText className={styles.label}>Use recommended settings</EuiText>
-              <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
-                Select to activate all listed options.
+        <EuiSpacer size="m" />
+        {consents.length > 1 && (
+          <>
+            <EuiCallOut>
+              <EuiText size="s" className={styles.smallText} data-testid="plugin-section">
+                To avoid automatic execution of malicious code, when adding new Workbench plugins,
+                use files from trusted authors only.
               </EuiText>
+            </EuiCallOut>
+            <EuiSpacer size="l" />
+            <EuiFlexItem>
+              <EuiFlexGroup gutterSize="s">
+                <EuiFlexItem grow={false}>
+                  <EuiSwitch
+                    showLabel={false}
+                    label=""
+                    checked={isRecommended}
+                    onChange={selectAll}
+                    className={styles.switchOption}
+                    data-testid="switch-option-recommended"
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText className={styles.label}>Use recommended settings</EuiText>
+                  <EuiText size="s" className={styles.smallText} color="subdued" style={{ marginTop: '12px' }}>
+                    Select to activate all listed options.
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
             </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-        <EuiHorizontalRule margin="l" className={cx({ [styles.pluginWarningHR]: !!requiredConsents.length })} />
+            <EuiHorizontalRule margin="l" className={cx({ [styles.pluginWarningHR]: !!requiredConsents.length })} />
+          </>
+        )}
         {!!privacyConsents.length && (
           <>
             <EuiSpacer size="l" />
             <EuiTitle size="m">
               <h1 className={styles.title}>Privacy Settings</h1>
             </EuiTitle>
-            <EuiSpacer size="s" />
+            <EuiSpacer size="m" />
             <EuiText size="s" color="subdued">
               To optimize your experience, RedisInsight uses third-party tools.
               All data collected is anonymized and will not be used for any purpose without your consent.
             </EuiText>
-            <EuiSpacer size="xl" />
+            <EuiSpacer size="l" />
           </>
         )}
         {
@@ -192,15 +236,17 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                 consent={consent}
                 checked={formik.values[consent.agreementName] ?? false}
                 onChangeAgreement={onChangeAgreement}
+                key={consent.agreementName}
               />
             ))
         }
         {!!notificationConsents.length && (
           <>
+            <EuiSpacer size="m" />
             <EuiTitle size="m">
               <h1 className={styles.title}>Notifications</h1>
             </EuiTitle>
-            <EuiSpacer size="xl" />
+            <EuiSpacer size="m" />
           </>
         )}
         {
@@ -210,16 +256,24 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                 consent={consent}
                 checked={formik.values[consent.agreementName] ?? false}
                 onChangeAgreement={onChangeAgreement}
+                key={consent.agreementName}
               />
             ))
         }
       </div>
       {!!requiredConsents.length && (
         <>
-          <EuiHorizontalRule margin="l" className={cx({ [styles.pluginWarningHR]: !!requiredConsents.length })} />
-          <EuiSpacer size="l" />
-          <EuiText color="subdued" size="s">
-            To use RedisInsight, please accept the terms and conditions:
+          <EuiHorizontalRule margin="l" className={styles.requiredHR} />
+          <EuiSpacer size="m" />
+          <EuiText color="subdued" size="s" className={styles.smallText}>
+            To use RedisInsight, please accept the terms and conditions:{' '}
+            <EuiLink
+              external={false}
+              target="_blank"
+              href="https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE"
+            >
+              Server Side Public License
+            </EuiLink>
           </EuiText>
           <EuiSpacer size="m" />
         </>
@@ -230,7 +284,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           consent={consent}
           checked={formik.values[consent.agreementName] ?? false}
           onChangeAgreement={onChangeAgreement}
-          independent
+          key={consent.agreementName}
         />
       ))}
       {!requiredConsents.length && (<EuiSpacer size="l" />)}

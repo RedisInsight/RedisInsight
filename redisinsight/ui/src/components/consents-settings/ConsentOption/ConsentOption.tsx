@@ -14,19 +14,18 @@ import styles from '../styles.module.scss'
 
 interface Props {
   consent: IConsent
-  onChangeAgreement: (checked: boolean, name: string, independent?: boolean) => void
+  onChangeAgreement: (checked: boolean, name: string) => void
   checked: boolean
   isSettingsPage?: boolean
-  independent?: boolean
 }
 
 const ConsentOption = (props: Props) => {
-  const { consent, onChangeAgreement, checked, isSettingsPage = false, independent = false } = props
+  const { consent, onChangeAgreement, checked, isSettingsPage = false } = props
   return (
     <EuiFlexItem key={consent.agreementName}>
       {isSettingsPage && consent.description && (
         <>
-          <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
+          <EuiText size="s" className={styles.smallText} color="subdued" style={{ marginTop: '12px' }}>
             {parse(consent.description)}
           </EuiText>
           <EuiSpacer size="m" />
@@ -38,7 +37,7 @@ const ConsentOption = (props: Props) => {
             showLabel={false}
             label=""
             checked={checked}
-            onChange={(e) => onChangeAgreement(e.target.checked, consent.agreementName, independent)}
+            onChange={(e) => onChangeAgreement(e.target.checked, consent.agreementName)}
             className={styles.switchOption}
             data-testid={`switch-option-${consent.agreementName}`}
             disabled={consent?.disabled}
@@ -47,13 +46,13 @@ const ConsentOption = (props: Props) => {
         <EuiFlexItem grow={false}>
           <EuiText className={styles.label}>{parse(consent.label)}</EuiText>
           {!isSettingsPage && consent.description && (
-            <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
+            <EuiText size="s" className={styles.smallText} color="subdued" style={{ marginTop: '12px' }}>
               {parse(consent.description)}
             </EuiText>
           )}
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiSpacer size="xl" />
+      <EuiSpacer size="l" />
     </EuiFlexItem>
   )
 }

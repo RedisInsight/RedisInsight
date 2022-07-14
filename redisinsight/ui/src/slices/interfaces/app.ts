@@ -127,7 +127,7 @@ export enum NotificationType {
 }
 
 export interface IGlobalNotification {
-  type?: string
+  type: string
   timestamp: number
   title: string
   body: string
@@ -144,5 +144,6 @@ export interface StateAppNotifications {
     isNotificationOpen: boolean
     isCenterOpen: boolean
     totalUnread: number
+    shouldDisplayToast: boolean
   }
 }

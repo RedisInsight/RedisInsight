@@ -39,6 +39,7 @@ export class MyRedisDatabasePage {
     tooltipRedisStackLogo = Selector('[data-testid=tooltip-redis-stack-icon]');
     //TEXT INPUTS (also referred to as 'Text fields')
     aliasInput = Selector('[data-testid=alias-input]');
+    searchInput = Selector('[data-testid=search-database-list]');
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
@@ -46,6 +47,8 @@ export class MyRedisDatabasePage {
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
     hostPort = Selector('[data-testid=host-port]');
+    noResultsFoundMessage = Selector('div').withExactText('No results found');
+    noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
 
     /**
      * Click on the database by name
@@ -116,9 +119,9 @@ export class MyRedisDatabasePage {
      * Check module inside of tooltip
      * @param moduleNameList Array with modules list
      */
-    async checkModulesInTooltip(moduleNameList: Array<string>): Promise<void> {
+    async checkModulesInTooltip(moduleNameList: string[]): Promise<void> {
         for (const item of moduleNameList) {
-            await t.expect(this.moduleTooltip.find('span').withText(`${item} v.`).exists).ok(item)
+            await t.expect(this.moduleTooltip.find('span').withText(`${item} v.`).exists).ok(item);
         }
     }
 
@@ -126,9 +129,9 @@ export class MyRedisDatabasePage {
      * Check module icons on the page
      * @param moduleList Array with modules list
      */
-    async checkModulesOnPage(moduleList: Array<Selector>): Promise<void> {
+    async checkModulesOnPage(moduleList: Selector[]): Promise<void> {
         for (const item of moduleList) {
-            await t.expect(item.visible).ok(`${item} icon`)
+            await t.expect(item.visible).ok(`${item} icon`);
         }
     }
 }

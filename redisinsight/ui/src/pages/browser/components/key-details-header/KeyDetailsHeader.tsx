@@ -21,7 +21,7 @@ import { GroupBadge } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION } from 'uiSrc/constants'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -46,13 +46,6 @@ export interface Props {
 }
 
 const COPY_KEY_NAME_ICON = 'copyKeyNameIcon'
-const initialKeyInfo = {
-  ttl: -1,
-  name: null,
-  type: KeyTypes.String,
-  size: 1,
-  length: 0,
-}
 
 const PADDING_WRAPPER_SIZE = 36
 const HIDE_LAST_REFRESH = 750 - PADDING_WRAPPER_SIZE

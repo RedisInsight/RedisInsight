@@ -13,13 +13,14 @@ import {
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
+  EuiCallOut,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
 import { THEMES } from 'uiSrc/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { ConsentsSettings, AdvancedSettings } from 'uiSrc/components'
+import { ConsentsNotifications, ConsentsPrivacy, AdvancedSettings } from 'uiSrc/components'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -70,21 +71,25 @@ const SettingsPage = () => {
   }
 
   const Appearance = () => (
-    <EuiForm component="form">
-      <EuiSpacer size="s" />
-      <EuiTitle size="xs">
-        <h4>Color Theme</h4>
-      </EuiTitle>
-      <EuiFormRow label="Specifies the color theme to be used in RedisInsight:">
-        <EuiSuperSelect
-          options={options}
-          valueOfSelected={themeContext.theme}
-          onChange={onChange}
-          data-test-subj="select-theme"
-        />
-      </EuiFormRow>
-      <EuiSpacer size="m" />
-    </EuiForm>
+    <>
+      <EuiForm component="form">
+        <EuiTitle size="xs">
+          <h4>Color Theme</h4>
+        </EuiTitle>
+        <EuiSpacer size="m" />
+        <EuiFormRow label="Specifies the color theme to be used in RedisInsight:">
+          <EuiSuperSelect
+            options={options}
+            valueOfSelected={themeContext.theme}
+            onChange={onChange}
+            style={{ marginTop: '12px' }}
+            data-test-subj="select-theme"
+          />
+        </EuiFormRow>
+        <EuiSpacer size="xl" />
+      </EuiForm>
+      <ConsentsNotifications />
+    </>
   )
 
   const PrivacySettings = () => (
@@ -94,7 +99,7 @@ const SettingsPage = () => {
           <EuiLoadingSpinner size="xl" />
         </div>
       )}
-      <ConsentsSettings liveEditMode />
+      <ConsentsPrivacy />
     </div>
   )
 
@@ -105,6 +110,11 @@ const SettingsPage = () => {
           <EuiLoadingSpinner size="xl" />
         </div>
       )}
+      <EuiCallOut className={styles.warning}>
+        <EuiText size="s" className={styles.smallText}>
+          These settings should only be changed if you understand their impact.
+        </EuiText>
+      </EuiCallOut>
       <AdvancedSettings />
     </div>
   )
@@ -121,16 +131,16 @@ const SettingsPage = () => {
           <EuiCollapsibleNavGroup
             isCollapsible
             className={styles.accordion}
-            title="Appearance"
+            title="General"
             initialIsOpen={false}
             data-test-subj="accordion-appearance"
           >
-            <Appearance />
+            {Appearance()}
           </EuiCollapsibleNavGroup>
           <EuiCollapsibleNavGroup
             isCollapsible
             className={styles.accordion}
-            title="Privacy Settings"
+            title="Privacy"
             initialIsOpen={false}
             data-test-subj="accordion-privacy-settings"
           >
@@ -139,14 +149,7 @@ const SettingsPage = () => {
           <EuiCollapsibleNavGroup
             isCollapsible
             className={cx(styles.accordion, styles.accordionWithSubTitle)}
-            title={(
-              <>
-                <span>Advanced Settings</span>
-                <EuiText color="subdued" className={styles.subtitle}>
-                  These settings should only be changed if you understand their impact.
-                </EuiText>
-              </>
-            )}
+            title="Advanced"
             initialIsOpen={false}
             data-test-subj="accordion-advanced-settings"
           >

@@ -60,7 +60,7 @@ const ConsentsSettingsPopup = () => {
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiModalHeader>
-        <EuiModalBody>
+        <EuiModalBody className={styles.modalBody}>
           <ConsentsSettings onSubmitted={handleSubmitted} />
         </EuiModalBody>
       </EuiModal>

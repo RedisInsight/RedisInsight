@@ -31,7 +31,7 @@ export interface ITableColumn {
   absoluteWidth?: number | string
   alignment?: TableCellAlignment
   textAlignment?: TableCellTextAlignment
-  render?: (cellData?: any, columnItem?: any) => any
+  render?: (cellData?: any, rowIndex?: any) => any
   className?: string
   prependSearchName?: string
   staySearchAlwaysOpen?: boolean
@@ -49,7 +49,7 @@ export interface IProps {
   keyName?: string
   headerHeight?: number
   searching?: boolean
-  onRowClick?: (rowData: any) => void
+  onRowToggleViewClick?: (expanded: boolean, rowIndex: number) => void
   onSearch?: (newState: any) => void
   onWheel?: (event: React.WheelEvent) => void
   onChangeSorting?: (cellData?: any, columnItem?: any) => void

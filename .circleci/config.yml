@@ -436,12 +436,12 @@ jobs:
   setup-build:
     parameters:
       env:
-        description: Build environemtnt (stage || prod)
+        description: Build environment (stage || prod)
         type: enum
         default: stage
         enum: [ 'dev', 'stage', 'prod' ]
     docker:
-      - image: cibuilds/github:0.13
+      - image: cibuilds/docker:19.03.5
     steps:
       - checkout
       - run:
@@ -686,32 +686,6 @@ jobs:
       - store_artifacts:
           path: release
           destination: release
-  release-github:
-    parameters:
-      env:
-        description: Release environment (stage || prod)
-        type: enum
-        default: stage
-        enum: [ 'stage', 'prod' ]
-    docker:
-      - image: cibuilds/github:0.13
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - store_artifacts:
-          path: release
-          destination: release
-      - run:
-          name: prepare release
-          command: |
-            rm release/._* ||:
-      - run:
-          name: publish to prerelease Github
-          command: |
-            applicationVersion=$(jq -r '.version' electron/package.json)
-            echo "APP VERSION $applicationVersion"
-            ghr -n ${applicationVersion} -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${applicationVersion}
 
   release-aws-test:
     executor: linux-executor
@@ -1069,19 +1043,9 @@ workflows:
           requires:
             - Build app - Windows (prod)
 
-      # upload release to AWS and GitHub
+      # upload release to AWS
       - release-aws-private:
           name: Release AWS S3 Private (prod)
-          requires:
-            - Virus check - AppImage (prod)
-            - Virus check - deb (prod)
-            - Virus check x64 - dmg (prod)
-            - Virus check arm64 - dmg (prod)
-            - Virus check - exe (prod)
-
-      - release-github:
-          name: Release Github (prod)
-          env: prod
           requires:
             - Virus check - AppImage (prod)
             - Virus check - deb (prod)
@@ -1095,7 +1059,6 @@ workflows:
           type: approval
           requires:
             - Release AWS S3 Private (prod)
-            - Release Github (prod)
           <<: *prodFilter # double check for "latest"
 
       # Publish release

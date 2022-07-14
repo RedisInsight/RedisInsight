@@ -55,8 +55,8 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
     //Publish 100 messages
     await cliPage.sendCommandInCli('100 publish channel test100Message');
     //Verify that the first message is not visible in view port
-    await pubSubPage.verifyMessageDisplaying('first message', true);
-    await pubSubPage.verifyMessageDisplaying('test100Message', false);
+    await pubSubPage.verifyMessageDisplaying('first message', false);
+    await pubSubPage.verifyMessageDisplaying('test100Message', true);
 });
 test
     .before(async t => {

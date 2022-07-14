@@ -7,12 +7,12 @@ import { env, rte } from '../../../helpers/constants';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
 const cliPage = new CliPage();
-const verifyMessageDisplaying = ClientFunction(async(message: string, displayed: boolean): Promise<void>  => {
+const verifyMessageDisplaying = async(message: string, displayed: boolean): Promise<void>  => {
     const messageByText = pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText(message);
     displayed
         ? await t.expect(await messageByText.visible).ok(`"${message}" Message is not displayed`, { timeout: 5000 })
         : await t.expect(await messageByText.visible).notOk(`"${message}" Message is still displayed`);
-});
+};
 
 fixture `Subscribe/Unsubscribe from a channel`
     .meta({ env: env.web, rte: rte.standalone, type: 'critical_path' })

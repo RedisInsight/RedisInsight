@@ -7,7 +7,7 @@ import {
   mockedStore,
   cleanup,
   clearStoreActions,
-  waitFor,
+  act,
 } from 'uiSrc/utils/test-utils'
 import { updateUserConfigSettings } from 'uiSrc/slices/user/user-settings'
 import ConsentsNotifications from './ConsentsNotifications'
@@ -83,8 +83,9 @@ describe('ConsentsNotifications', () => {
 
   describe('update settings', () => {
     it('option change should call "updateUserConfigSettingsAction"', async () => {
-      await waitFor(() => {
-        render(<ConsentsNotifications />)
+      render(<ConsentsNotifications />)
+
+      await act(() => {
         screen.getAllByTestId(/switch-option/).forEach(async (el) => {
           fireEvent.click(el)
         })

@@ -51,12 +51,7 @@ describe('ListDetails', () => {
 
   it('should render editor after click edit button', () => {
     render(<ListDetails />)
-    fireEvent(
-      screen.getAllByTestId(/edit-list-button/)[0],
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
+    fireEvent.click(screen.getAllByTestId(/edit-list-button/)[0])
     expect(screen.getByTestId('inline-item-editor')).toBeInTheDocument()
   })
 })

@@ -122,7 +122,7 @@ aliases:
 
 orbs:
   win: circleci/windows@2.4.0
-  node: circleci/node@4.4.0
+  node: circleci/node@5.0.2
   aws: circleci/aws-cli@2.0.3
 
 executors:
@@ -134,7 +134,7 @@ jobs:
   # Test jobs
   unit-tests-ui:
     docker:
-      - image: circleci/node:15.14.0
+      - image: cimg/node:16.15.1
     steps:
       - checkout
       - restore_cache:
@@ -178,7 +178,7 @@ jobs:
             - ./node_modules
   unit-tests-api:
     docker:
-      - image: circleci/node:15.14.0
+      - image: cimg/node:16.15.1
     steps:
       - checkout
       - restore_cache:
@@ -333,7 +333,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: choco install nodejs --version=15.14.0
+      - run: choco install nodejs --version=16.15.1
       - run:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
@@ -483,7 +483,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '14.17'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -549,7 +549,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '15.14.0'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -614,7 +614,7 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=15.14.0
+            choco install nodejs --version=16.15.1
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install

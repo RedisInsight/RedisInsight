@@ -77,7 +77,7 @@ export class AddRedisDatabasePage {
         }
         //Enter logical index
         await t.click(this.databaseIndexCheckbox);
-        await t.typeText(this.databaseIndexInput, index, {paste: true});
+        await t.typeText(this.databaseIndexInput, index, { replace: true, paste: true});
         //Click for saving
         await t.click(this.addRedisDatabaseButton);
     }

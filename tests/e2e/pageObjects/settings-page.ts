@@ -20,6 +20,7 @@ export class SettingsPage {
     keysToScanInput = Selector('[data-testid=keys-to-scan-input]');
     commandsInPipelineValue = Selector('[data-testid=pipeline-bunch-value]');
     commandsInPipelineInput = Selector('[data-testid=pipeline-bunch-input]');
+    pipelineLink = Selector('[data-testid=pipelining-link]');
 
     /**
      * Change Keys to Scan value

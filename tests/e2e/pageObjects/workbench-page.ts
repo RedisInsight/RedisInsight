@@ -93,6 +93,8 @@ export class WorkbenchPage {
     commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
     chartViewTypeOptionSelected = Selector('[data-testid=view-type-selected-Plugin-redistimeseries__redistimeseries-chart]');
     runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
+    loadedCommand = Selector('[class=euiLoadingContent__singleLine]');
+    runButtonSpinner = Selector('[class^=euiLoadingSpinner]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoCloseCommandDetails = Selector('span.codicon-close');

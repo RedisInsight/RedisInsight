@@ -42,11 +42,15 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
    */
   async runIteration() {
     const keys = await this.getKeysToProcess();
+    this.progress.addScanned(this.bulkAction.getFilter().getCount());
+
     if (keys.length) {
       const commands = this.prepareCommands(keys) as string[][];
       const res = await this.node.pipeline(commands).exec();
       this.processIterationResults(keys, res);
     }
+
+    this.bulkAction.changeState();
   }
 
   /**
@@ -74,7 +78,6 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
    * @param res
    */
   processIterationResults(keys, res: (string | number | null)[][]) {
-    this.progress.addScanned(this.bulkAction.getFilter().getCount());
     this.summary.addProcessed(res.length);
 
     const errors = [];
@@ -88,6 +91,5 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
     });
 
     this.summary.addErrors(errors);
-    this.bulkAction.changeState();
   }
 }

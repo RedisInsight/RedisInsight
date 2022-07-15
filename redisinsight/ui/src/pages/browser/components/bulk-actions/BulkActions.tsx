@@ -20,7 +20,7 @@ import {
 } from 'uiSrc/slices/browser/bulkActions'
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -44,25 +44,29 @@ const BulkActions = (props: Props) => {
   const { loading } = useSelector(bulkActionsSelector)
   const { status, filter: { match, type: filterType } = {} } = useSelector(overviewBulkActionsSelector) ?? {}
 
-  const [title, setTitle] = useState<string>('BULK ACTIONS')
+  const [title, setTitle] = useState<string>('Bulk Actions')
   const [typeSelected, setTypeSelected] = useState<BulkActionsType>(type)
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!filter && !search && !status)
 
   const dispatch = useDispatch()
   useEffect(() => {
+    let matchValue = '*'
+    if (search !== '*' && !!search) {
+      matchValue = getMatchType(search)
+    }
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_OPENED,
       eventData: {
         databaseId: instanceId,
         filterType: filter,
-        search,
+        match: matchValue,
       }
     })
   }, [])
 
   useEffect(() => {
     if (type === BulkActionsType.Delete) {
-      setTitle('BULK ACTIONS: Delete Keys')
+      setTitle('Bulk Actions: Delete Keys')
     }
   }, [type])
 

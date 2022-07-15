@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { flatMap, isNull, max } from 'lodash'
+import { flatMap, isNull } from 'lodash'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 
@@ -76,7 +76,7 @@ const StreamDataView = (props: Props) => {
       eventData: {
         keyType: KeyTypes.Stream,
         databaseId: instanceId,
-        largestCellLength: max(flatMap(entries[rowIndex]?.fields))?.length || 0,
+        largestCellLength: Math.max(...flatMap(entries[rowIndex]?.fields).map((a) => a.toString().length)) || 0,
       }
     })
   }

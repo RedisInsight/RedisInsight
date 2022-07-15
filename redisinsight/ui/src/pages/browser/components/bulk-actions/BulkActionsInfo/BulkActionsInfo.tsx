@@ -41,10 +41,15 @@ const BulkActionsInfo = (props: Props) => {
             <span className={styles.match}>{` ${search}`}</span>
           </div>
         </EuiText>
-        {!isUndefined(status) && status !== BulkActionsStatus.Completed && (
+        {!isUndefined(status) && status !== BulkActionsStatus.Completed && status !== BulkActionsStatus.Aborted && (
           <EuiText color="subdued" className={styles.progress}>
             In progress:
             <span>{` ${getApproximateNumber((total ? scanned / total : 1) * 100)}%`}</span>
+          </EuiText>
+        )}
+        {status === BulkActionsStatus.Aborted && (
+          <EuiText color="danger" className={styles.progress}>
+            Aborted
           </EuiText>
         )}
         {status === BulkActionsStatus.Completed && (

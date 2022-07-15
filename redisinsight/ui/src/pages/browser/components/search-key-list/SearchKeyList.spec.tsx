@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { instance, mock } from 'ts-mockito'
+import { keys } from '@elastic/eui'
 import {
   cleanup,
   clearStoreActions,
@@ -9,10 +9,10 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { setSearchMatch } from 'uiSrc/slices/browser/keys'
-import SearchKeyList, { Props } from './SearchKeyList'
+import { loadKeys, setSearchMatch } from 'uiSrc/slices/browser/keys'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import SearchKeyList from './SearchKeyList'
 
-const mockedProps = mock<Props>()
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -22,7 +22,7 @@ beforeEach(() => {
 
 describe('SearchKeyList', () => {
   it('should render', () => {
-    expect(render(<SearchKeyList {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<SearchKeyList />)).toBeTruthy()
     const searchInput = screen.getByTestId('search-key')
     expect(searchInput).toBeInTheDocument()
   })
@@ -30,13 +30,15 @@ describe('SearchKeyList', () => {
   it('"setSearchMatch" should be called after "onChange"', () => {
     const searchTerm = 'a'
 
-    render(<SearchKeyList {...instance(mockedProps)} />)
+    render(<SearchKeyList />)
 
     fireEvent.change(screen.getByTestId('search-key'), {
       target: { value: searchTerm },
     })
 
-    const expectedActions = [setSearchMatch(searchTerm)]
+    fireEvent.keyDown(screen.getByTestId('search-key'), { key: keys.ENTER })
+
+    const expectedActions = [setSearchMatch(searchTerm), resetBrowserTree(), loadKeys()]
 
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

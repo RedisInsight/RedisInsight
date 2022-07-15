@@ -15,6 +15,7 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
+  resetKeys,
   resetKeysData,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -188,10 +189,11 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
+    dispatch(resetKeys())
+    dispatch(resetKeysData())
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
-    dispatch(resetKeysData())
     loadKeys(type)
   }
 

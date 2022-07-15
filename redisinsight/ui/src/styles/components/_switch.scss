@@ -5,9 +5,10 @@
 
   .euiSwitch__thumb {
     background-color: var(--euiColorPrimaryText) !important;
+    border: 1px solid var(--controlsBorderColor) !important;
   }
   .euiSwitch__button[aria-checked="false"] .euiSwitch__body {
-    background-color: #707070 !important;
+    background-color: var(--controlsBorderColor) !important;
   }
   .euiSwitch__body {
     background-color: var(--euiColorSecondary) !important;
@@ -16,10 +17,17 @@
       fill: #fff;
     }
   }
+  .euiSwitch__button:disabled {
+    opacity: 50%;
+
+    .euiSwitch__icon {
+      display: none;
+    }
+  }
 }
 
 .euiSwitch:not(.euiSwitch--compressed) {
   .euiSwitch__thumb {
-    border-color: transparent !important;
+    border-color: var(--controlsBorderColor) !important;
   }
 }

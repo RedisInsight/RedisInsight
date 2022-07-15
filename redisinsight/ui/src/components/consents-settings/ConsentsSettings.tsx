@@ -231,7 +231,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               <h1 className={styles.title}>Privacy Settings</h1>
             </EuiTitle>
             <EuiSpacer size="m" />
-            <EuiText size="s" color="subdued">
+            <EuiText className={styles.smallText} size="s" color="subdued">
               To optimize your experience, RedisInsight uses third-party tools.
               All data collected is anonymized and will not be used for any purpose without your consent.
             </EuiText>

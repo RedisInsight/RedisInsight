@@ -71,7 +71,8 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
           nodes: parsedResponse.nodes,
           relationships: parsedResponse
             .edges
-            .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
+            /* If edge is present in dangling edges, add them since we are gonna retrive them from the node by dangling edges query */
+            .filter(e => (nodeIds.has(e.source) && nodeIds.has(e.target)) || (parsedResponse.danglingEdgeIds.has(e.id)))
             .map(e => ({ ...e, startNode: e.source, endNode: e.target }))
         }
       }]

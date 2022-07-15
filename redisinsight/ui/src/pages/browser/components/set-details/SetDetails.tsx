@@ -50,6 +50,7 @@ const SetDetails = (props: Props) => {
   const [match, setMatch] = useState('*')
   const [deleting, setDeleting] = useState('')
   const [width, setWidth] = useState(100)
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
 
   const { loading } = useSelector(setSelector)
   const { key = '', members, total, nextCursor } = useSelector(setDataSelector)
@@ -260,6 +261,8 @@ const SetDetails = (props: Props) => {
         onChangeWidth={setWidth}
         cellCache={cellCache}
         onRowToggleViewClick={handleRowToggleViewClick}
+        expandedRows={expandedRows}
+        setExpandedRows={setExpandedRows}
       />
 
     </div>

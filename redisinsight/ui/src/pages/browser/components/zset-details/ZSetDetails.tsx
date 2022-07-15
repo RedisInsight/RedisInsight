@@ -67,6 +67,7 @@ const ZSetDetails = (props: Props) => {
   const [members, setMembers] = useState<IZsetMember[]>([])
   const [sortedColumnName, setSortedColumnName] = useState('score')
   const [width, setWidth] = useState(100)
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
 
   const dispatch = useDispatch()
 
@@ -403,6 +404,8 @@ const ZSetDetails = (props: Props) => {
           onSearch={handleSearch}
           cellCache={cellCache}
           onRowToggleViewClick={handleRowToggleViewClick}
+          expandedRows={expandedRows}
+          setExpandedRows={setExpandedRows}
         />
       </div>
     </>

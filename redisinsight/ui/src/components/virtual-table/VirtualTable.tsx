@@ -56,6 +56,8 @@ const VirtualTable = (props: IProps) => {
     tableWidth = 0,
     hideProgress,
     onChangeWidth = () => {},
+    expandedRows = [],
+    setExpandedRows = () => {},
     cellCache = new CellMeasurerCache({
       fixedWidth: true,
       minHeight: rowHeight,
@@ -68,7 +70,6 @@ const VirtualTable = (props: IProps) => {
   const scrollTopRef = useRef<number>(0)
   const [selectedRowIndex, setSelectedRowIndex] = useState<Nullable<number>>(null)
   const [search, setSearch] = useState<IColumnSearchState[]>([])
-  const [expandedRows, setExpandedRows] = useState<number[]>([])
   const [width, setWidth] = useState<number>(100)
   const [height, setHeight] = useState<number>(100)
   const [forceScrollTop, setForceScrollTop] = useState<Maybe<number>>(scrollTopProp)

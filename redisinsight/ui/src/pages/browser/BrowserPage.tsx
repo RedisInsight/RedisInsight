@@ -78,7 +78,7 @@ const BrowserPage = () => {
     globalThis.addEventListener('resize', updateWindowDimensions)
 
     if (!isDataLoaded || contextInstanceId !== instanceId) {
-      loadKeys()
+      loadKeys(viewType)
     }
 
     // componentWillUnmount
@@ -141,7 +141,7 @@ const BrowserPage = () => {
     setIsPageViewSent(true)
   }
 
-  const loadKeys = (keyViewType?: KeyViewType) => {
+  const loadKeys = (keyViewType: KeyViewType = KeyViewType.Browser) => {
     dispatch(setConnectedInstanceId(instanceId))
     dispatch(fetchKeys(
       '0',

@@ -3,7 +3,6 @@ import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
-import { max } from 'lodash'
 
 import {
   hashSelector,
@@ -183,7 +182,7 @@ const HashDetails = (props: Props) => {
       eventData: {
         keyType: KeyTypes.Hash,
         databaseId: instanceId,
-        largestCellLength: max(Object.values(fields[rowIndex]))?.length || 0,
+        largestCellLength: Math.max(...Object.values(fields[rowIndex]).map((a) => a.toString().length)) || 0,
       }
     })
   }

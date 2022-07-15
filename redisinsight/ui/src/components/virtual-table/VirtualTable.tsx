@@ -175,7 +175,7 @@ const VirtualTable = (props: IProps) => {
         >
           <div
             className={styles.tableRowCell}
-            style={{ justifyContent: column.alignment, wordBreak: 'break-all' }}
+            style={{ justifyContent: column.alignment, wordBreak: 'break-word' }}
             role="presentation"
           >
             {column?.render?.(cellData, rowData, expandedRows.indexOf(rowIndex) !== -1)}

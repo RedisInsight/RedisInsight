@@ -21,6 +21,7 @@ import cx from 'classnames'
 
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -175,6 +176,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   const submitForm = (values: any) => {
     if (submitIsDisabled()) {
       return
+    }
+    // have only one switcher in notificationConsents
+    if (notificationConsents.length) {
+      sendEventTelemetry({
+        event: values[notificationConsents[0].agreementName]
+          ? TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_ENABLED
+          : TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_DISABLED,
+      })
     }
     dispatch(updateUserConfigSettingsAction({ agreements: values }, onSubmitted))
   }

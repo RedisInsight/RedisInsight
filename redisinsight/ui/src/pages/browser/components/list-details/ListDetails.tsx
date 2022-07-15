@@ -107,6 +107,7 @@ const ListDetails = (props: Props) => {
     dispatch(
       updateListElementAction(data, () => onElementEditedSuccess(index))
     )
+  }
 
   const onElementEditedSuccess = (elementIndex = 0) => {
     const indexOfElement = elements.findIndex(({ index }) => index === elementIndex)

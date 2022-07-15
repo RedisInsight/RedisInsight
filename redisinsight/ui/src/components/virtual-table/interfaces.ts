@@ -74,6 +74,8 @@ export interface IProps {
   hideProgress?: boolean
   onChangeWidth?: (width: number) => void
   cellCache?: CellMeasurerCache
+  expandedRows?: number[]
+  setExpandedRows?: (rows: number[]) => void
 }
 
 export interface ISortedColumn {

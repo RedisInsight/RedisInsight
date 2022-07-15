@@ -270,7 +270,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             ))
         }
       </div>
-      {!!requiredConsents.length && (
+      {requiredConsents.length ? (
         <>
           <EuiHorizontalRule margin="l" className={styles.requiredHR} />
           <EuiSpacer size="m" />
@@ -286,18 +286,22 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           </EuiText>
           <EuiSpacer size="m" />
         </>
+      ) : (
+        <EuiSpacer size="l" />
       )}
 
-      {requiredConsents.map((consent: IConsent) => (
-        <ConsentOption
-          consent={consent}
-          checked={formik.values[consent.agreementName] ?? false}
-          onChangeAgreement={onChangeAgreement}
-          key={consent.agreementName}
-        />
-      ))}
-      {!requiredConsents.length && (<EuiSpacer size="l" />)}
-      <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
+      <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" responsive={false}>
+        <EuiFlexItem grow={false}>
+          {requiredConsents.map((consent: IConsent) => (
+            <ConsentOption
+              consent={consent}
+              checked={formik.values[consent.agreementName] ?? false}
+              onChangeAgreement={onChangeAgreement}
+              withoutSpacer
+              key={consent.agreementName}
+            />
+          ))}
+        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
             position="top"

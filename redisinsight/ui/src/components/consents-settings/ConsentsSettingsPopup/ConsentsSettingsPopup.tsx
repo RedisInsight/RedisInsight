@@ -11,6 +11,7 @@ import {
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import cx from 'classnames'
 
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
@@ -42,7 +43,14 @@ const ConsentsSettingsPopup = () => {
   }, [])
 
   return (
-    <EuiOverlayMask>
+    <EuiOverlayMask
+      className={cx(
+        styles.overlay,
+        theme === Theme.Dark
+          ? styles.overlay_dark
+          : styles.overlay_light
+      )}
+    >
       <EuiModal className={styles.consentsPopup} onClose={() => {}} data-testid="consents-settings-popup">
         <EuiModalHeader className={styles.modalHeader}>
           <EuiFlexGroup justifyContent="spaceBetween">

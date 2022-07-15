@@ -12,14 +12,17 @@ import styles from './styles.module.scss'
 
 const SearchKeyList = () => {
   const dispatch = useDispatch()
-  const { search: value = '', viewType, filter } = useSelector(keysSelector)
+  const { search = '', viewType, filter } = useSelector(keysSelector)
   const [options, setOptions] = useState<string[]>(filter ? [filter] : [])
+
+  const [value, setValue] = useState(search)
 
   useEffect(() => {
     setOptions(filter ? [filter] : [])
   }, [filter])
 
-  const handleApply = () => {
+  const handleApply = (match = value) => {
+    dispatch(setSearchMatch(match))
     // reset browser tree context
     dispatch(resetBrowserTree())
 
@@ -27,7 +30,7 @@ const SearchKeyList = () => {
   }
 
   const handleChangeValue = (initValue: string) => {
-    dispatch(setSearchMatch(initValue))
+    setValue(initValue)
   }
 
   const handleChangeOptions = (options: string[]) => {
@@ -45,7 +48,7 @@ const SearchKeyList = () => {
   const onClear = () => {
     handleChangeValue('')
     dispatch(setFilter(null))
-    handleApply()
+    handleApply('')
   }
 
   return (

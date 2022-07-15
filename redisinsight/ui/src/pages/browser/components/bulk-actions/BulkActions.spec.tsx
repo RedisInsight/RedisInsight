@@ -67,6 +67,7 @@ describe('BulkActions', () => {
         keys: {
           ...state.browser.keys,
           search: '1',
+          isSearched: true,
         }
       }
     }))
@@ -87,6 +88,7 @@ describe('BulkActions', () => {
         keys: {
           ...state.browser.keys,
           filter: KeyTypes.Hash,
+          isFiltered: true,
         }
       }
     }))

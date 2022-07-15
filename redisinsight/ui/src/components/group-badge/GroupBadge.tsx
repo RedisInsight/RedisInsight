@@ -7,7 +7,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   type: KeyTypes | CommandGroup | string
-  fill: boolean
+  fill?: boolean
   name?: string
   className?: string
   compressed?: boolean

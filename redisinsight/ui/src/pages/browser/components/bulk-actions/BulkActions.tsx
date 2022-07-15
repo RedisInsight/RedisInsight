@@ -39,14 +39,14 @@ const BulkActions = (props: Props) => {
   const { isFullScreen, arePanelsCollapsed, handleBulkActionsPanel, onToggleFullScreen } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { filter, search } = useSelector(keysSelector)
+  const { filter, search, isSearched, isFiltered } = useSelector(keysSelector)
   const { type } = useSelector(selectedBulkActionsSelector)
   const { loading } = useSelector(bulkActionsSelector)
   const { status, filter: { match, type: filterType } = {} } = useSelector(overviewBulkActionsSelector) ?? {}
 
   const [title, setTitle] = useState<string>('Bulk Actions')
   const [typeSelected, setTypeSelected] = useState<BulkActionsType>(type)
-  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!filter && !search && !status)
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!isSearched && !isFiltered)
 
   const dispatch = useDispatch()
   useEffect(() => {
@@ -71,8 +71,8 @@ const BulkActions = (props: Props) => {
   }, [type])
 
   useEffect(() => {
-    setShowPlaceholder(!filter && !search && !status)
-  }, [filter, search, status])
+    setShowPlaceholder(!status && !isSearched && !isFiltered)
+  }, [status, isSearched, isFiltered])
 
   const handleChangeType = (value: BulkActionsType) => {
     setTypeSelected(value)

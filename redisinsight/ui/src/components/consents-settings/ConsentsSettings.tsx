@@ -153,14 +153,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   const checkIsRecommended = () => {
     let recommended = true
     forEach(privacyConsents, (consent) => {
-      if (!formik.values[consent.agreementName]) {
+      if (!formik.values[consent?.agreementName]) {
         recommended = false
         return false
       }
     })
 
     forEach(notificationConsents, (consent) => {
-      if (!formik.values[consent.agreementName]) {
+      if (!formik.values[consent?.agreementName]) {
         recommended = false
         return false
       }
@@ -180,7 +180,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
     // have only one switcher in notificationConsents
     if (notificationConsents.length) {
       sendEventTelemetry({
-        event: values[notificationConsents[0].agreementName]
+        event: values[notificationConsents[0]?.agreementName]
           ? TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_ENABLED
           : TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_DISABLED,
       })

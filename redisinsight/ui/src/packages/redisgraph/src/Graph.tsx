@@ -71,7 +71,8 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
           nodes: parsedResponse.nodes,
           relationships: parsedResponse
             .edges
-            .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
+            /* If edge is present in dangling edges, add them since we are gonna retrive them from the node by dangling edges query */
+            .filter(e => (nodeIds.has(e.source) && nodeIds.has(e.target)) || (parsedResponse.danglingEdgeIds.has(e.id)))
             .map(e => ({ ...e, startNode: e.source, endNode: e.target }))
         }
       }]
@@ -91,6 +92,9 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
     let newEdgeTypes: {[key: string]: number} = edgeTypes
 
     if (parsedResponse.danglingEdgeIds.size > 0) {
+      /*
+       * Fetch dangling edges
+       */
       try {
         let resp = await executeRedisCommand(getFetchNodesByEdgeIdQuery(props.graphKey, [...parsedResponse.danglingEdgeIds], [...nodeIds]))
 
@@ -101,6 +105,8 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
               n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
           })
 
+          /* Since its obvious from the query that only nodes will be
+          returned, so putting empty array for relationships field. */
           newGraphData = {
             ...newGraphData,
             results: [
@@ -110,10 +116,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
                 data: [{
                   graph: {
                     nodes: parsedData.nodes,
-                    relationships: parsedResponse
-                      .edges
-                      .filter(e => parsedResponse.danglingEdgeIds.has(e.id))
-                      .map(e => ({...e, startNode: e.source, endNode: e.target}))
+                    relationships: []
                   }
                 }]
               }

@@ -13,7 +13,8 @@
     width: 601px;
     max-width: 94vw;
     border: 1px solid var(--euiColorPrimary) !important;
-    height: calc(100vh - 60px) !important;
+    max-height: calc(100vh - 60px) !important;
+    height: auto;
 
     .euiModal__closeIcon {
       display: none;

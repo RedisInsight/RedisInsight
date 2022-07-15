@@ -2,17 +2,19 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .redisIcon {
-  width: 140px;
+  width: 128px;
   height: auto;
 }
 
-.consentsPopup {
+.consentsPopup.consentsPopup {
   background-color: var(--tableRowHoverColor);
   border-color: var(--tableRowHoverColor);
   :global {
     width: 601px;
     max-width: 94vw;
-    border: 1px solid var(--euiColorPrimary);
+    border: 1px solid var(--euiColorPrimary) !important;
+    height: calc(100vh - 60px) !important;
+
     .euiModal__closeIcon {
       display: none;
     }
@@ -43,7 +45,7 @@
   @include euiScrollBar;
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: calc(84vh - 260px);
+  max-height: calc(100vh - 290px);
 }
 
 .pluginWarningHR {
@@ -81,4 +83,18 @@
 .title {
   line-height: 24px !important;
   font-size: 16px !important;
+}
+
+.overlay {
+  &.overlay_dark {
+    background-image: url('uiSrc/assets/img/welcome_bg_dark.jpg') !important;
+  }
+
+  &.overlay_light {
+    background-image: url('uiSrc/assets/img/welcome_bg_light.jpg') !important;
+  }
+}
+
+:global(.euiOverlayMask) {
+  background: none !important;
 }

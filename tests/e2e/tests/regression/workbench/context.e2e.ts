@@ -1,6 +1,6 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, CliPage, WorkbenchPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, CliPage, WorkbenchPage, BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -34,13 +34,14 @@ test
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved CLI size when navigates away to any other page', async t => {
-        const offsetY = 200;
+        const offsetY = 50;
 
         await t.click(cliPage.cliExpandButton);
         const cliAreaHeight = await cliPage.cliArea.clientHeight;
         const cliResizeButton = await cliPage.cliResizeButton;
-        //Resize CLI 200px up and navigate to the My Redis databases page
-        await t.drag(cliResizeButton, 0, -offsetY, { speed });
+        await t.hover(cliResizeButton);
+        //Resize CLI 50px up and navigate to the My Redis databases page
+        await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.1 });
         await t.click(myRedisDatabasePage.myRedisDBButton);
         //Navigate back to the database Workbench and check CLI size
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

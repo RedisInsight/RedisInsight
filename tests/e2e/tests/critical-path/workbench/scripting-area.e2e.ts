@@ -38,9 +38,10 @@ test
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can resize scripting area in Workbench', async t => {
-        const offsetY = 200;
+        const offsetY = 50;
         const inputHeightStart = await workbenchPage.queryInput.clientHeight;
-        await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
+        await t.hover(workbenchPage.resizeButtonForScriptingAndResults);
+        await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.1 });
         await t.expect(await workbenchPage.queryInput.clientHeight).eql(inputHeightStart + offsetY, 'Scripting area after resize has proper size');
     });
 test

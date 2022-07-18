@@ -32,13 +32,14 @@ fixture `Browser Context`
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved CLI size on Browser page when he returns back to Browser page', async t => {
-        const offsetY = 200;
+        const offsetY = 50;
 
         await t.click(cliPage.cliExpandButton);
         const cliAreaHeight = await cliPage.cliArea.clientHeight;
         const cliResizeButton = await cliPage.cliResizeButton;
-        // move resize 200px up
-        await t.drag(cliResizeButton, 0, -offsetY, { speed });
+        await t.hover(cliResizeButton);
+        // move resize 50px up
+        await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.1 });
         await t.click(myRedisDatabasePage.myRedisDBButton);
 
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

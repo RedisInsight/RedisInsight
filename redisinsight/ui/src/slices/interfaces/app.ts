@@ -57,6 +57,9 @@ export interface StateAppContext {
           [key: string]: IKeyPropTypes
         }
       },
+    },
+    bulkActions: {
+      opened: boolean
     }
   },
   workbench: {

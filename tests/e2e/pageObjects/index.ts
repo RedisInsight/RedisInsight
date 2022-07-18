@@ -10,6 +10,7 @@ import { DatabaseOverviewPage } from './database-overview-page';
 import { HelpCenterPage } from './help-center-page';
 import { ShortcutsPage } from './shortcuts-page';
 import { MonitorPage } from './monitor-page';
+import { PubSubPage } from './pub-sub-page';
 import { SlowLogPage } from './slow-log-page';
 
 export {
@@ -25,5 +26,6 @@ export {
     HelpCenterPage,
     ShortcutsPage,
     MonitorPage,
+    PubSubPage,
     SlowLogPage
 };

@@ -55,7 +55,7 @@ test
         await t.expect(workbenchPage.loadedCommand.count).eql(Number(pipelineValues[2]), 'The number of sending commands is incorrect');
     });
 test
-    .meta({ rte: rte.standalone })('Verify that user can see spinner over the disabled and shrunk Run button and grey preloader for each command in Workbench History', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can see spinner over Run button and grey preloader for each command', async t => {
         await settingsPage.changeCommandsInPipeline(pipelineValues[2]);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
@@ -77,4 +77,23 @@ test
         await t.pressKey('enter');
         // 'Verify that user can interact with the Editor
         await t.expect(workbenchPage.queryInputScriptArea.textContent).contains(valueInEditor, {timeout: 5000});
+    });
+test
+    .meta({ rte: rte.standalone })('Verify that command results are added to history in order most recent - on top', async t => {
+        const multipleCommands = [
+            'INFO',
+            'FT._LIST',
+            'FT.INFO',
+            'RANDOMKEY',
+            'CLIENT LIST'
+        ];
+        const reverseCommands = multipleCommands.slice().reverse();
+        await settingsPage.changeCommandsInPipeline(pipelineValues[2]);
+        // Go to Workbench page
+        await t.click(myRedisDatabasePage.workbenchButton);
+        await workbenchPage.sendCommandInWorkbench(multipleCommands.join('\n'));
+        //Check that the results for all commands are displayed in workbench history in reverse order (most recent - on top)
+        for (let i = 0; i < multipleCommands.length; i++) {
+            await t.expect(workbenchPage.queryCardCommand.nth(i).textContent).contains(reverseCommands[i], 'Wrong order of commands');
+        }
     });

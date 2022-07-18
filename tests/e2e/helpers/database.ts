@@ -125,7 +125,7 @@ export async function acceptLicenseTermsAndAddDatabase(databaseParameters: AddNe
 export async function acceptLicenseTermsAndAddDatabaseApi(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
     await acceptLicenseTerms();
     await addNewStandaloneDatabaseApi(databaseParameters);
-    // Reload Page
+    // Reload Page to see the new added database through api
     await t.eval(() => location.reload());
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);

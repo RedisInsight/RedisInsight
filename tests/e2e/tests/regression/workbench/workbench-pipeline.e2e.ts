@@ -12,7 +12,7 @@ const settingsPage = new SettingsPage();
 const getPageUrl = ClientFunction(() => window.location.href);
 const externalPageLink = 'https://redis.io/docs/manual/pipelining/';
 const pipelineValues = ['-5', '5', '4'];
-const commandForSend = '100 CLIENT INFO';
+const commandForSend = '100 INFO';
 
 fixture `Workbench Pipeline`
     .meta({ type: 'regression' })

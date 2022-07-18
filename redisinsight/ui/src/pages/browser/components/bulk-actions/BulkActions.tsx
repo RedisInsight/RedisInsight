@@ -21,6 +21,7 @@ import {
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { setBrowserBulkActionOpen } from 'uiSrc/slices/app/context'
 
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -31,12 +32,12 @@ import styles from './styles.module.scss'
 export interface Props {
   isFullScreen: boolean
   arePanelsCollapsed: boolean
-  handleBulkActionsPanel: (value: boolean) => void
-  handleClosePanel: () => void
+  onBulkActionsPanel: (value: boolean) => void
+  onClosePanel: () => void
   onToggleFullScreen: () => void
 }
 const BulkActions = (props: Props) => {
-  const { isFullScreen, arePanelsCollapsed, handleBulkActionsPanel, onToggleFullScreen } = props
+  const { isFullScreen, arePanelsCollapsed, onClosePanel, onBulkActionsPanel, onToggleFullScreen } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { filter, search, isSearched, isFiltered } = useSelector(keysSelector)
@@ -50,6 +51,8 @@ const BulkActions = (props: Props) => {
 
   const dispatch = useDispatch()
   useEffect(() => {
+    dispatch(setBrowserBulkActionOpen(true))
+
     let matchValue = '*'
     if (search !== '*' && !!search) {
       matchValue = getMatchType(search)
@@ -80,9 +83,11 @@ const BulkActions = (props: Props) => {
   }
 
   const closePanel = () => {
-    handleBulkActionsPanel(false)
-
+    onBulkActionsPanel(false)
     dispatch(setBulkActionsInitialState())
+    dispatch(setBrowserBulkActionOpen(false))
+
+    onClosePanel()
 
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_CANCELLED,

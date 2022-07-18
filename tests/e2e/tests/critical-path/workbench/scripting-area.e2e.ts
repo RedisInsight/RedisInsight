@@ -36,13 +36,15 @@ test
         const sentCommandText = await workbenchPage.queryCardCommand.withExactText(commandForSend);
         await t.expect(sentCommandText.exists).ok('Result of sent command exists');
     });
+// Update after resolving https://redislabs.atlassian.net/browse/RI-3299
 test
     .meta({ rte: rte.standalone })('Verify that user can resize scripting area in Workbench', async t => {
-        const offsetY = 50;
+        const offsetY = 200;
         const inputHeightStart = await workbenchPage.queryInput.clientHeight;
+        const inputHeightEnd = inputHeightStart + 150;
         await t.hover(workbenchPage.resizeButtonForScriptingAndResults);
-        await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.1 });
-        await t.expect(await workbenchPage.queryInput.clientHeight).eql(inputHeightStart + offsetY, 'Scripting area after resize has proper size');
+        await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.01 });
+        await t.expect(await workbenchPage.queryInput.clientHeight > inputHeightEnd).ok('Scripting area after resize has incorrect size');
     });
 test
     .meta({ env: env.desktop, rte: rte.standalone })('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {

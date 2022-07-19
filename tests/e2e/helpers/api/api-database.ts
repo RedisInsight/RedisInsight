@@ -3,7 +3,6 @@ import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
 import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters } from '../../pageObjects/add-redis-database-page';
 import { apiUrl } from '../../helpers/conf';
-import { parseAsync } from '@babel/core';
 
 const endpoint = apiUrl;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]

@@ -1,8 +1,9 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase, addNewStandaloneDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi, acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage, PubSubPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
@@ -12,12 +13,12 @@ fixture `Subscribe/Unsubscribe from a channel`
     .meta({ env: env.web, rte: rte.standalone, type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to PubSub page
         await t.click(myRedisDatabasePage.pubSubButton);
     })
     .afterEach(async() => {
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user is unsubscribed from the pubsub channel when he go to the pubsub window after launching application for the first time', async t => {
     //Verify that the Channel field placeholder is 'Enter Channel Name'
@@ -61,16 +62,17 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
 });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        await t.click(myRedisDatabasePage.myRedisDBButton);
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+        await acceptLicenseTerms();
+        await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await t.eval(() => location.reload());
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Go to PubSub page
         await t.click(myRedisDatabasePage.pubSubButton);
     })
     .after(async() => {
-        await deleteDatabase(ossStandaloneV5Config.databaseName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user subscription state is changed to unsubscribed, all the messages are cleared and total message counter is reset when user connect to another database', async t => {
         await t.click(pubSubPage.subscribeButton);
         //Publish 10 messages

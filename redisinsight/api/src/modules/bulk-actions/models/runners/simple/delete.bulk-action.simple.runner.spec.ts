@@ -25,6 +25,7 @@ const mockCreateBulkActionDto = {
 
 const bulkAction = new BulkAction(
   mockCreateBulkActionDto.id,
+  mockCreateBulkActionDto.databaseId,
   mockCreateBulkActionDto.type,
   mockBulkActionFilter,
   mockSocket,

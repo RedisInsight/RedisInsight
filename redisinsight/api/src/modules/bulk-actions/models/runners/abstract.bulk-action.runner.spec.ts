@@ -34,6 +34,7 @@ describe('AbstractBulkActionRunner', () => {
   beforeEach(() => {
     bulkAction = new BulkAction(
       mockCreateBulkActionDto.id,
+      mockCreateBulkActionDto.databaseId,
       mockCreateBulkActionDto.type,
       mockBulkActionFilter,
       mockSocket,

@@ -11,6 +11,7 @@ import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-ac
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { BulkActionsService } from 'src/modules/bulk-actions/bulk-actions.service';
+import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 
 export const mockSocket1 = new MockedSocket();
 mockSocket1.id = '1';
@@ -38,6 +39,7 @@ const mockCreateBulkActionDto = Object.assign(new CreateBulkActionDto(), {
 
 const mockBulkAction = new BulkAction(
   mockCreateBulkActionDto.id,
+  mockCreateBulkActionDto.databaseId,
   mockCreateBulkActionDto.type,
   mockBulkActionFilter,
   mockSocket1,
@@ -63,6 +65,13 @@ describe('BulkActionsService', () => {
             get: jest.fn().mockReturnValue(mockBulkAction),
             abort: jest.fn().mockReturnValue(mockBulkAction),
             abortUsersBulkActions: jest.fn().mockReturnValue(2),
+          }),
+        },
+        {
+          provide: BulkActionsAnalyticsService,
+          useFactory: () => ({
+            sendActionStarted: jest.fn(),
+            sendActionStopped: jest.fn(),
           }),
         },
       ],

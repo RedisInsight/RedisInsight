@@ -858,11 +858,11 @@ jobs:
 workflows:
   build:
     jobs:
-#      # unit tests (on any commit)
-#      - unit-tests-ui:
-#          name: UTest - UI
-#      - unit-tests-api:
-#          name: UTest - API
+      # unit tests (on any commit)
+      - unit-tests-ui:
+          name: UTest - UI
+      - unit-tests-api:
+          name: UTest - API
 
       # integration tests run in parallel (on any commit)
       # target server runs locally to calculate code coverage

@@ -1,8 +1,9 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import {commonUrl, ossStandaloneConfig} from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -14,21 +15,21 @@ fixture `Full Screen`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Clear and delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addStringKey(keyName, keyValue);
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .meta({ rte: rte.standalone })('Verify that user can switch to full screen from key details in Browser', async t => {
         // Save tables size before switching to full screen mode
@@ -60,13 +61,13 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addSetKey(keyName, keyValue);
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .meta({ rte: rte.standalone })('Verify that when user closes key details in full screen mode the list of keys displayed in full screen', async t => {
         // Save keys table size before switching to full screen
@@ -87,13 +88,13 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keyName, '58965422', 'filed', 'value');
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .meta({ rte: rte.standalone })('Verify that when users close key details not in full mode, they can see full key list screen', async t => {
         // Save key list table size before switching to full screen

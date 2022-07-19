@@ -1,12 +1,9 @@
 import {ClientFunction} from 'testcafe';
 import {rte, env} from '../../../helpers/constants';
-import {
-    acceptLicenseTerms,
-    addNewStandaloneDatabase,
-    deleteDatabase
-} from '../../../helpers/database';
+import { acceptLicenseTerms } from '../../../helpers/database';
 import {MyRedisDatabasePage} from '../../../pageObjects';
 import {commonUrl, ossStandaloneConfig} from '../../../helpers/conf';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const getPageUrl = ClientFunction(() => window.location.href);
@@ -14,13 +11,15 @@ const getPageUrl = ClientFunction(() => window.location.href);
 fixture `Github functionality`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async t => {
         await acceptLicenseTerms();
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        // Reload Page
+        await t.eval(() => location.reload());
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.standalone, env: env.web })

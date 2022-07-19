@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import {acceptLicenseTermsAndAddDatabase, addNewStandaloneDatabase, deleteDatabase} from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     MonitorPage,
@@ -14,6 +14,7 @@ import {
     ossStandaloneNoPermissionsConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const monitorPage = new MonitorPage();
@@ -26,11 +27,11 @@ fixture `Monitor`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that when user closes the Monitor by clicking on "Close Monitor" button Monitor stopped', async t => {
@@ -90,7 +91,7 @@ test
 test
     .meta({ rte: rte.standalone })
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         await t.click(myRedisDatabasePage.settingsButton);
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('20000000');
@@ -102,7 +103,7 @@ test
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('10000');
         //Delete database
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see monitor results in high DB load', async t => {
         //Run monitor
         await monitorPage.startMonitor();
@@ -119,21 +120,23 @@ test
 test
     .meta({ rte: rte.standalone })
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await cliPage.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor');
         //Check command result in CLI
         await t.click(cliPage.cliExpandButton);
         await t.expect(cliPage.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was found & executed');
         await t.click(cliPage.cliCollapseButton);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-        await addNewStandaloneDatabase(ossStandaloneNoPermissionsConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await t.eval(() => location.reload());
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
     .after(async() => {
         //Delete created user
         await cliPage.sendCommandInCli('acl DELUSER noperm');
         //Delete database
-        await deleteDatabase(ossStandaloneNoPermissionsConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
     })('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
         //Expand the Profiler
         await t.click(monitorPage.expandMonitor);

@@ -1,8 +1,9 @@
 import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -15,12 +16,12 @@ fixture `Filtering per key name in Browser page`
     .meta({type: 'regression', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
     keyName = chance.word({ length: 20 });
@@ -61,7 +62,7 @@ test
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         keyName2 = `KeyForFearch${chance.word({ length: 10 })}`;
@@ -80,7 +81,7 @@ test
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per pattern with [^x] (matches one symbol except x)', async t => {
         const randomValue = chance.word({ length: 5 });
         keyName = `KeyForSearch${randomValue}`;
@@ -100,7 +101,7 @@ test
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per pattern with [a-z] (matches any symbol in range from A till Z)', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         keyName2 = `KeyForFearch${chance.word({ length: 10 })}`;
@@ -117,7 +118,7 @@ test
 test
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user clicks on “clear” control with no filter per key name applied all characters and filter per key type are removed, “clear” control is disappeared', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         //Set filter by key type and type characters
@@ -132,7 +133,7 @@ test
 test
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user clicks on “clear” control and filter per key name is applied all characters and filter per key type are removed, “clear” control is disappeared', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         //Set filter by key type and filter per key name
@@ -147,7 +148,7 @@ test
 test
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user clicks on “clear” control and filter per key name is applied filter is reset and rescan initiated', async t => {
         keyName = `KeyForSearch${chance.word({ length: 50 })}`;
         //Search for not existed key name
@@ -161,7 +162,7 @@ test
 test
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user clicks "Clear selection button" in Dropdown with key data types selected data type is reseted', async t => {
         keyName = `KeyForSearch${chance.word({ length: 10 })}`;
         //Set filter by key type and type characters
@@ -176,12 +177,12 @@ test
 test
     .before(async() => {
         // Add Big standalone DB
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
     .after(async() => {
         // Delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per exact key without using any patterns in DB with 10 millions of keys', async t => {
         // Create new key
         keyName = `KeyForSearch-${chance.word({ length: 10 })}`;

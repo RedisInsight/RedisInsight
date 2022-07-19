@@ -1,5 +1,5 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -11,6 +11,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -18,7 +19,7 @@ const settingsPage = new SettingsPage();
 const cliPage = new CliPage();
 const common = new Common();
 
-let keys = [];
+let keys: string[] = [];
 
 const explicitErrorHandler = (): void => {
     window.addEventListener('error', e => {
@@ -33,12 +34,12 @@ fixture `Browser - Specify Keys to Scan`
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.standalone })

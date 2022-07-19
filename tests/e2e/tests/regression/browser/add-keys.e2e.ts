@@ -1,7 +1,8 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -14,7 +15,7 @@ fixture `Different JSON types creation`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         let commandString = 'DEL';
@@ -22,7 +23,7 @@ fixture `Different JSON types creation`
             commandString = commandString.concat(` ${key[0]}`);
         }
         await cliPage.sendCommandInCli(commandString);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
     for (let i = 0; i < jsonKeys.length; i++) {

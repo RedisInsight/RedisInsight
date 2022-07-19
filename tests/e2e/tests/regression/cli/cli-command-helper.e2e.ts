@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { CliPage } from '../../../pageObjects';
 import {
@@ -7,6 +7,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -25,11 +26,11 @@ fixture `CLI Command helper`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can open/close CLI separately from Command Helper', async t => {

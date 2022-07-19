@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     BrowserPage,
     CliPage
@@ -11,6 +11,7 @@ import {
 import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts, rte } from '../../../helpers/constants';
 import { keyTypes } from '../../../helpers/keys';
 import { Chance } from 'chance';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -22,17 +23,17 @@ fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can search a key with selected data type is filters', async t => {
         keyName = chance.word({ length: 10 });
@@ -48,7 +49,7 @@ test
 test
     .after(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can filter keys per data type in Browser page', async t => {
         keyName = chance.word({ length: 10 });
@@ -70,11 +71,11 @@ test
     });
 test
     .before(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
     .after(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })
     ('Verify that user see the key type label when filtering per key types and when removes lable the filter is removed on Browser page', async t => {        //Check filtering labes
         for (const { textType } of keyTypes) {

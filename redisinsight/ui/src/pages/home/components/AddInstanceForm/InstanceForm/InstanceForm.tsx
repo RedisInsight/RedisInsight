@@ -169,6 +169,7 @@ const AddStandaloneForm = (props: Props) => {
       sentinelMasterUsername,
       isRediStack,
       servername,
+      provider,
     },
     initialValues: initialValuesProp,
     width,
@@ -365,7 +366,9 @@ const AddStandaloneForm = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
       eventData: {
-        databaseId: id
+        databaseId: id,
+        provider,
+        modules,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))

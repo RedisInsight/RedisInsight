@@ -120,12 +120,17 @@ const DatabasesListWrapper = ({
     }
     history.push(Pages.browser(id))
   }
-  const handleCheckConnectToInstance = (event: any, id = '') => {
+  const handleCheckConnectToInstance = (
+    event: React.MouseEvent | React.KeyboardEvent,
+    { id, provider, modules }: Instance
+  ) => {
     event.preventDefault()
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
-        databaseId: id
+        databaseId: id,
+        provider,
+        modules,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))
@@ -169,7 +174,8 @@ const DatabasesListWrapper = ({
       'data-test-subj': 'database-alias-column',
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
-      render: function InstanceCell(name: string = '', { id, db }: Instance) {
+      render: function InstanceCell(name: string = '', instance: Instance) {
+        const { id, db } = instance
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div
@@ -184,8 +190,8 @@ const DatabasesListWrapper = ({
               <EuiText
                 className={styles.tooltipAnchorColumnName}
                 data-testid={`instance-name-${id}`}
-                onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, id)}
-                onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, id)}
+                onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
+                onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
               >
                 <EuiTextColor
                   className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}

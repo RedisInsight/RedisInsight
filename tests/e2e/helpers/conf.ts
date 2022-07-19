@@ -32,8 +32,8 @@ export const ossStandaloneRedisearch = {
 };
 
 export const ossClusterConfig = {
-    ossClusterHost: process.env.OSS_CLUSTER_HOST || 'oss-cluster',
-    ossClusterPort: process.env.OSS_CLUSTER_PORT || '7000',
+    ossClusterHost: process.env.OSS_CLUSTER_HOST || 'master-plain-7-1',
+    ossClusterPort: process.env.OSS_CLUSTER_PORT || '6379',
     ossClusterDatabaseName: `${process.env.OSS_CLUSTER_DATABASE_NAME || 'test_cluster'}-${uniqueId}`
 };
 

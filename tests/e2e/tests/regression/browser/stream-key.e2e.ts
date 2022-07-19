@@ -3,10 +3,12 @@ import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpe
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
+const common = new Common();
 
 const value = chance.word({length: 5});
 let field = chance.word({length: 5});
@@ -121,4 +123,21 @@ test('Verify that user can see a confirmation message when request to delete an 
     //Check the confirmation message
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(confirmationMessage, `The confirmation message ${keyName}`);
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(entryId, 'The confirmation message for removing Entry');
+});
+test('Verify that the Entry ID field, Delete button are always displayed while scrolling for Stream data', async t => {
+    keyName = chance.word({ length: 20 });
+    const fields = common.createArrayWithKeys(9);
+    const values = common.createArrayWithKeys(9);
+    //Add new Stream key with 3 fields
+    for (let i = 0; i < fields.length; i++) {
+        await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
+    }
+    //Open key details
+    await browserPage.openKeyDetails(keyName);
+    // Scroll right
+    await t.pressKey('shift').scroll(browserPage.streamVirtualContainer, 'right');
+    // Verify that Entry ID field and Delete button are always displayed
+    await t.expect(browserPage.streamFieldsValues.withText(fields[5]).visible).ok(`The Stream field ${fields[5]} is not visible`)
+        .expect(browserPage.removeEntryButton.visible).ok('Delete icon is not visible')
+        .expect(browserPage.streamEntryDate.visible).ok('Entry ID column is not visible');
 });

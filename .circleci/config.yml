@@ -129,6 +129,10 @@ executors:
   linux-executor:
     machine:
       image: ubuntu-2004:202010-01
+  linux-executor-dlc:
+    machine:
+      image: ubuntu-2004:202010-01
+      docker_layer_caching: true
 
 jobs:
   # Test jobs
@@ -274,7 +278,7 @@ jobs:
             - ./itest/results/<< parameters.rte >>.result.json
             - ./itest/coverages/<< parameters.rte >>.coverage.json
   integration-tests-coverage:
-    executor: linux-executor
+    executor: linux-executor-dlc
     steps:
       - checkout
       - attach_workspace:

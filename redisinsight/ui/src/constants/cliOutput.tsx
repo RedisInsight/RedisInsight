@@ -10,7 +10,20 @@ export enum CliOutputFormatterType {
   Raw = 'RAW',
 }
 
-export const InitOutputText = (host: string = '', port: number = 0, dbIndex: number = 0) => [
+export const InitOutputText = (host: string = '', port: number = 0, dbIndex: number = 0, onClick: () => void) => [
+  <span className="color-green" key={Math.random()}>
+    {'Try '}
+    <EuiLink
+      onClick={onClick}
+      className="color-green"
+      style={{ fontSize: 'inherit', fontFamily: 'inherit' }}
+      data-test-subj="cli-workbench-page-btn"
+    >
+      Workbench
+    </EuiLink>
+    , our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.
+  </span>,
+  '\n\n',
   'Connecting...',
   '\n\n',
   'Pinging Redis server on ',

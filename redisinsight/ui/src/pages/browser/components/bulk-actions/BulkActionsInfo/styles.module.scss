@@ -14,7 +14,7 @@
   flex-direction: column;
 
   .progressCompleted {
-    color: var(--monitorTimeColor) !important;
+    color: var(--defaultGreenColor) !important;
   }
 }
 
@@ -63,7 +63,7 @@
   }
 
   &Completed {
-    color: var(--monitorTimeColor) !important;
+    color: var(--defaultGreenColor) !important;
   }
 }
 

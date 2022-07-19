@@ -1,5 +1,6 @@
 enum BrowserStorageItem {
   instancesCount = 'instancesCount',
+  instancesSorting = 'instancesSorting',
   theme = 'theme',
   browserViewType = 'browserViewType',
   cliClientUuid = 'cliClientUuid',

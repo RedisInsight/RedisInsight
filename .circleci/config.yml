@@ -220,7 +220,7 @@ jobs:
           paths:
             - ./redisinsight/api/node_modules
   integration-tests-run:
-    executor: linux-executor
+    executor: linux-executor-dlc
 #    docker:
 #      - image: cimg/node:16.15.1
     parameters:
@@ -238,8 +238,6 @@ jobs:
         default: false
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - restore_cache:
           <<: *apiDepsCacheKey
       - when:
@@ -278,7 +276,7 @@ jobs:
             - ./itest/results/<< parameters.rte >>.result.json
             - ./itest/coverages/<< parameters.rte >>.coverage.json
   integration-tests-coverage:
-    executor: linux-executor-dlc
+    executor: linux-executor
     steps:
       - checkout
       - attach_workspace:

@@ -133,6 +133,7 @@ executors:
     machine:
       image: ubuntu-2004:202010-01
       docker_layer_caching: true
+      resource_class: medium
 
 jobs:
   # Test jobs
@@ -221,8 +222,6 @@ jobs:
             - ./redisinsight/api/node_modules
   integration-tests-run:
     executor: linux-executor-dlc
-#    docker:
-#      - image: cimg/node:16.15.1
     parameters:
       rte:
         description: Redis Test Environment name

@@ -1,9 +1,9 @@
 import { ClientFunction } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, SettingsPage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabase } from '../../../helpers/api/api-database';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -18,14 +18,14 @@ fixture `Workbench Pipeline`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to Settings page - Pipeline mode
         await t.click(myRedisDatabasePage.settingsButton);
         await t.click(settingsPage.accordionAdvancedSettings);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteStandaloneDatabase(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ env: env.web, rte: rte.standalone })('Verify that user can see the text in settings for pipeline with link', async t => {

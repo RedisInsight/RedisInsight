@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { ClientFunction, t } from 'testcafe';
+import { t } from 'testcafe';
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
@@ -11,6 +11,7 @@ import {
 import { rte } from '../../../helpers/constants';
 import { cloudDatabaseConfig, commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -51,7 +52,7 @@ fixture `Database overview`
         await deleteDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see total and current logical database number of keys (if there are any keys in other logical DBs)', async t => {
     //Wait for Total Keys number refreshed

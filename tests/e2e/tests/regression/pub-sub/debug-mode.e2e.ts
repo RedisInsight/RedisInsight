@@ -1,8 +1,9 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, PubSubPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
@@ -12,7 +13,7 @@ fixture `PubSub debug mode`
     .meta({ env: env.web, rte: rte.standalone, type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to PubSub page and subscribe to channel
         await t.click(myRedisDatabasePage.pubSubButton);
         await t.click(pubSubPage.subscribeButton);
@@ -22,7 +23,7 @@ fixture `PubSub debug mode`
         await cliPage.sendCommandInCli('10 publish channel third');
     })
     .afterEach(async() => {
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 
 test('Verify that when user navigating away and back to pubsub window the debug mode state will be reset to default auto-scroll', async t => {

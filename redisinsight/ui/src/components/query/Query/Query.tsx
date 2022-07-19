@@ -477,7 +477,7 @@ const Query = (props: Props) => {
           >
             <>
               {loading && (
-                <EuiLoadingSpinner size="l" />
+                <EuiLoadingSpinner size="l" data-testid="loading-spinner" />
               )}
               <EuiButtonIcon
                 onClick={() => handleSubmit()}

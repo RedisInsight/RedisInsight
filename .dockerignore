@@ -5,7 +5,7 @@
 
 coverage
 dll
-node_modules
+**/node_modules
 release
 
 redisinsight/dist

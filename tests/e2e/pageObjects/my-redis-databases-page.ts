@@ -1,4 +1,4 @@
-import {t, Selector} from 'testcafe';
+import { t, Selector } from 'testcafe';
 
 export class MyRedisDatabasePage {
     //-------------------------------------------------------------------------------------------
@@ -13,6 +13,7 @@ export class MyRedisDatabasePage {
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');
+    pubSubButton = Selector('[data-testid=pub-sub-page-btn]');
     myRedisDBButton = Selector('[data-test-subj=home-page-btn]');
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');

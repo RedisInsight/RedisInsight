@@ -51,7 +51,8 @@ const BrowserPage = () => {
   const { contextInstanceId } = useSelector(appContextSelector)
   const {
     keyList: { selectedKey: selectedKeyContext, isDataLoaded },
-    panelSizes
+    panelSizes,
+    bulkActions: { opened: bulkActionOpenContext },
   } = useSelector(appContextBrowser)
   const keysState = useSelector(keysDataSelector)
   const { loading, viewType, isBrowserFullScreen } = useSelector(keysSelector)
@@ -61,7 +62,7 @@ const BrowserPage = () => {
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
   const [selectedKey, setSelectedKey] = useState<Nullable<string>>(selectedKeyContext)
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
-  const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(false)
+  const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
   const [sizes, setSizes] = useState(panelSizes)
   const selectedKeyRef = useRef<Nullable<string>>(selectedKey)
   const prevSelectedType = useRef<string>(type)
@@ -78,7 +79,7 @@ const BrowserPage = () => {
     globalThis.addEventListener('resize', updateWindowDimensions)
 
     if (!isDataLoaded || contextInstanceId !== instanceId) {
-      loadKeys()
+      loadKeys(viewType)
     }
 
     // componentWillUnmount
@@ -141,7 +142,7 @@ const BrowserPage = () => {
     setIsPageViewSent(true)
   }
 
-  const loadKeys = (keyViewType?: KeyViewType) => {
+  const loadKeys = (keyViewType: KeyViewType = KeyViewType.Browser) => {
     dispatch(setConnectedInstanceId(instanceId))
     dispatch(fetchKeys(
       '0',
@@ -310,8 +311,8 @@ const BrowserPage = () => {
                     <BulkActions
                       isFullScreen={isBrowserFullScreen}
                       arePanelsCollapsed={arePanelsCollapsed}
-                      handleClosePanel={closePanel}
-                      handleBulkActionsPanel={handleBulkActionsPanel}
+                      onClosePanel={closePanel}
+                      onBulkActionsPanel={handleBulkActionsPanel}
                       onToggleFullScreen={handleToggleFullScreen}
                     />
                   )}

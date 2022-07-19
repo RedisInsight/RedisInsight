@@ -15,6 +15,7 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
+  resetKeys,
   resetKeysData,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -177,16 +178,6 @@ const KeysHeader = (props: Props) => {
 
   const openBulkActions = () => {
     handleBulkActionsPanel(true)
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_BULK_ACTIONS_BUTTON_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_BULK_ACTIONS_BUTTON_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId
-      }
-    })
   }
 
   const handleSwitchView = (type: KeyViewType) => {
@@ -198,10 +189,10 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
+    dispatch(resetKeysData())
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
-    dispatch(resetKeysData())
     loadKeys(type)
   }
 

@@ -48,6 +48,8 @@ export class CliPage {
     commandHelperArea = Selector('[data-testid=command-helper]');
     cliEndpoint = Selector('[data-testid^=cli-endpoint]');
     cliDbIndex = Selector('[data-testid=cli-db-index]');
+    cliWarningMessage = Selector('[class*=euiTextColor--danger]');
+    cliLinkToPubSub = Selector('[data-test-subj=pubsub-page-btn]');
 
     /**
   * Select filter group type

@@ -40,8 +40,10 @@ const BulkDeleteContent = () => {
 
     return (
       <div style={style} className={styles.item} data-testid={`row-${index}`}>
-        <div color="subdued" className={styles.key}>{key}</div>
-        <div ref={rowRef} className={styles.error}>{error}</div>
+        <span ref={rowRef}>
+          <span className={styles.key}>{key}</span>
+          <span className={styles.error}>{error}</span>
+        </span>
       </div>
     )
   }

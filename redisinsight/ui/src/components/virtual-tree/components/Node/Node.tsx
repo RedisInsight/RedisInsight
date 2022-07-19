@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import cx from 'classnames'
 import { EuiIcon, EuiToolTip, keys as ElasticKeys } from '@elastic/eui'
@@ -30,6 +30,12 @@ const Node = ({
     updateStatusOpen,
     updateStatusSelected,
   } = data
+
+  useEffect(() => {
+    if (isSelected && keys) {
+      updateStatusSelected?.(fullName, keys)
+    }
+  }, [keys, isSelected])
 
   const handleClick = () => {
     if (isLeaf && keys) {

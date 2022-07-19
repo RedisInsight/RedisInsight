@@ -3,7 +3,7 @@ import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
-import { max } from 'lodash'
+import { union } from 'lodash'
 
 import {
   hashSelector,
@@ -35,6 +35,7 @@ import {
   AddFieldsToHashDto,
   HashFieldDto,
 } from 'apiSrc/modules/browser/dto/hash.dto'
+
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -64,6 +65,7 @@ const HashDetails = (props: Props) => {
   const [deleting, setDeleting] = useState('')
   const [fields, setFields] = useState<IHashField[]>([])
   const [width, setWidth] = useState(100)
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
 
   const { loading } = useSelector(hashSelector)
   const { loading: updateLoading } = useSelector(updateHashValueStateSelector)
@@ -121,6 +123,9 @@ const HashDetails = (props: Props) => {
     })
     setFields(newFieldsState)
     cellCache.clearAll()
+    setTimeout(() => {
+      cellCache.clearAll()
+    }, 0)
   }
 
   const handleApplyEditField = (field = '', value: string) => {
@@ -128,7 +133,14 @@ const HashDetails = (props: Props) => {
       keyName: key,
       fields: [{ field, value }],
     }
-    dispatch(updateHashFieldsAction(data, () => handleEditField(field, false)))
+    dispatch(updateHashFieldsAction(data, () => onHashEditedSuccess(field)))
+  }
+
+  const onHashEditedSuccess = (fieldName = '') => {
+    const indexOfField = fields.findIndex(({ field }) => field === fieldName)
+    setExpandedRows((prevState) => union(prevState, [indexOfField]))
+
+    handleEditField(fieldName, false)
   }
 
   const handleRemoveIconClick = () => {
@@ -183,7 +195,7 @@ const HashDetails = (props: Props) => {
       eventData: {
         keyType: KeyTypes.Hash,
         databaseId: instanceId,
-        largestCellLength: max(Object.values(fields[rowIndex]))?.length || 0,
+        largestCellLength: Math.max(...Object.values(fields[rowIndex]).map((a) => a.toString().length)) || 0,
       }
     })
   }
@@ -369,6 +381,8 @@ const HashDetails = (props: Props) => {
           onSearch={handleSearch}
           cellCache={cellCache}
           onRowToggleViewClick={handleRowToggleViewClick}
+          expandedRows={expandedRows}
+          setExpandedRows={setExpandedRows}
         />
       </div>
     </>

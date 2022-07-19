@@ -2,7 +2,7 @@ import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { isEqual, isNull } from 'lodash'
+import { isEqual, isNull, union } from 'lodash'
 import { CellMeasurerCache } from 'react-virtualized'
 
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -57,6 +57,7 @@ const ListDetails = (props: Props) => {
   const { isFooterOpen } = props
   const [elements, setElements] = useState<IListElement[]>([])
   const [width, setWidth] = useState(100)
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
 
   const { loading } = useSelector(listSelector)
   const { loading: updateLoading } = useSelector(updateListValueStateSelector)
@@ -92,6 +93,9 @@ const ListDetails = (props: Props) => {
     }
 
     cellCache.clearAll()
+    setTimeout(() => {
+      cellCache.clearAll()
+    }, 0)
   }
 
   const handleApplyEditElement = (index = 0, element: string) => {
@@ -101,8 +105,15 @@ const ListDetails = (props: Props) => {
       index,
     }
     dispatch(
-      updateListElementAction(data, () => handleEditElement(index, false))
+      updateListElementAction(data, () => onElementEditedSuccess(index))
     )
+  }
+
+  const onElementEditedSuccess = (elementIndex = 0) => {
+    const indexOfElement = elements.findIndex(({ index }) => index === elementIndex)
+    setExpandedRows((prevState) => union(prevState, [indexOfElement]))
+
+    handleEditElement(elementIndex, false)
   }
 
   const handleSearch = (search: IColumnSearchState[]) => {
@@ -322,6 +333,8 @@ const ListDetails = (props: Props) => {
         onSearch={handleSearch}
         cellCache={cellCache}
         onRowToggleViewClick={handleRowToggleViewClick}
+        expandedRows={expandedRows}
+        setExpandedRows={setExpandedRows}
       />
     </div>
   )

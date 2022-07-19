@@ -21,6 +21,7 @@ import cx from 'classnames'
 
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -152,14 +153,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   const checkIsRecommended = () => {
     let recommended = true
     forEach(privacyConsents, (consent) => {
-      if (!formik.values[consent.agreementName]) {
+      if (!formik.values[consent?.agreementName]) {
         recommended = false
         return false
       }
     })
 
     forEach(notificationConsents, (consent) => {
-      if (!formik.values[consent.agreementName]) {
+      if (!formik.values[consent?.agreementName]) {
         recommended = false
         return false
       }
@@ -175,6 +176,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   const submitForm = (values: any) => {
     if (submitIsDisabled()) {
       return
+    }
+    // have only one switcher in notificationConsents
+    if (notificationConsents.length) {
+      sendEventTelemetry({
+        event: values[notificationConsents[0]?.agreementName]
+          ? TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_ENABLED
+          : TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_DISABLED,
+      })
     }
     dispatch(updateUserConfigSettingsAction({ agreements: values }, onSubmitted))
   }
@@ -222,7 +231,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               <h1 className={styles.title}>Privacy Settings</h1>
             </EuiTitle>
             <EuiSpacer size="m" />
-            <EuiText size="s" color="subdued">
+            <EuiText className={styles.smallText} size="s" color="subdued">
               To optimize your experience, RedisInsight uses third-party tools.
               All data collected is anonymized and will not be used for any purpose without your consent.
             </EuiText>
@@ -261,7 +270,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             ))
         }
       </div>
-      {!!requiredConsents.length && (
+      {requiredConsents.length ? (
         <>
           <EuiHorizontalRule margin="l" className={styles.requiredHR} />
           <EuiSpacer size="m" />
@@ -277,18 +286,22 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           </EuiText>
           <EuiSpacer size="m" />
         </>
+      ) : (
+        <EuiSpacer size="l" />
       )}
 
-      {requiredConsents.map((consent: IConsent) => (
-        <ConsentOption
-          consent={consent}
-          checked={formik.values[consent.agreementName] ?? false}
-          onChangeAgreement={onChangeAgreement}
-          key={consent.agreementName}
-        />
-      ))}
-      {!requiredConsents.length && (<EuiSpacer size="l" />)}
-      <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
+      <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" responsive={false}>
+        <EuiFlexItem grow={false}>
+          {requiredConsents.map((consent: IConsent) => (
+            <ConsentOption
+              consent={consent}
+              checked={formik.values[consent.agreementName] ?? false}
+              onChangeAgreement={onChangeAgreement}
+              withoutSpacer
+              key={consent.agreementName}
+            />
+          ))}
+        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
             position="top"

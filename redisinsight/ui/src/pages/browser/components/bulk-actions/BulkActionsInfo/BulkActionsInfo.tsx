@@ -33,7 +33,7 @@ const BulkActionsInfo = (props: Props) => {
           {filter && (
             <div className={styles.filter} data-testid="bulk-actions-info-filter">
               <span style={{ paddingRight: 6 }}>Key type:</span>
-              <GroupBadge fill={false} type={filter} className={styles.badge} />
+              <GroupBadge type={filter} className={styles.badge} />
             </div>
           )}
           <div className={styles.search} data-testid="bulk-actions-info-search">
@@ -41,10 +41,15 @@ const BulkActionsInfo = (props: Props) => {
             <span className={styles.match}>{` ${search}`}</span>
           </div>
         </EuiText>
-        {!isUndefined(status) && status !== BulkActionsStatus.Completed && (
+        {!isUndefined(status) && status !== BulkActionsStatus.Completed && status !== BulkActionsStatus.Aborted && (
           <EuiText color="subdued" className={styles.progress}>
             In progress:
             <span>{` ${getApproximateNumber((total ? scanned / total : 1) * 100)}%`}</span>
+          </EuiText>
+        )}
+        {status === BulkActionsStatus.Aborted && (
+          <EuiText color="danger" className={styles.progress}>
+            Aborted
           </EuiText>
         )}
         {status === BulkActionsStatus.Completed && (

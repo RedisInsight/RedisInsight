@@ -20,7 +20,8 @@ import {
 } from 'uiSrc/slices/browser/bulkActions'
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { setBrowserBulkActionOpen } from 'uiSrc/slices/app/context'
 
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -31,44 +32,50 @@ import styles from './styles.module.scss'
 export interface Props {
   isFullScreen: boolean
   arePanelsCollapsed: boolean
-  handleBulkActionsPanel: (value: boolean) => void
-  handleClosePanel: () => void
+  onBulkActionsPanel: (value: boolean) => void
+  onClosePanel: () => void
   onToggleFullScreen: () => void
 }
 const BulkActions = (props: Props) => {
-  const { isFullScreen, arePanelsCollapsed, handleBulkActionsPanel, onToggleFullScreen } = props
+  const { isFullScreen, arePanelsCollapsed, onClosePanel, onBulkActionsPanel, onToggleFullScreen } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { filter, search } = useSelector(keysSelector)
+  const { filter, search, isSearched, isFiltered } = useSelector(keysSelector)
   const { type } = useSelector(selectedBulkActionsSelector)
   const { loading } = useSelector(bulkActionsSelector)
   const { status, filter: { match, type: filterType } = {} } = useSelector(overviewBulkActionsSelector) ?? {}
 
-  const [title, setTitle] = useState<string>('BULK ACTIONS')
+  const [title, setTitle] = useState<string>('Bulk Actions')
   const [typeSelected, setTypeSelected] = useState<BulkActionsType>(type)
-  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!filter && !search && !status)
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!isSearched && !isFiltered)
 
   const dispatch = useDispatch()
   useEffect(() => {
+    dispatch(setBrowserBulkActionOpen(true))
+
+    let matchValue = '*'
+    if (search !== '*' && !!search) {
+      matchValue = getMatchType(search)
+    }
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_OPENED,
       eventData: {
         databaseId: instanceId,
         filterType: filter,
-        search,
+        match: matchValue,
       }
     })
   }, [])
 
   useEffect(() => {
     if (type === BulkActionsType.Delete) {
-      setTitle('BULK ACTIONS: Delete Keys')
+      setTitle('Bulk Actions: Delete Keys')
     }
   }, [type])
 
   useEffect(() => {
-    setShowPlaceholder(!filter && !search && !status)
-  }, [filter, search, status])
+    setShowPlaceholder(!status && !isSearched && !isFiltered)
+  }, [status, isSearched, isFiltered])
 
   const handleChangeType = (value: BulkActionsType) => {
     setTypeSelected(value)
@@ -76,9 +83,11 @@ const BulkActions = (props: Props) => {
   }
 
   const closePanel = () => {
-    handleBulkActionsPanel(false)
-
+    onBulkActionsPanel(false)
     dispatch(setBulkActionsInitialState())
+    dispatch(setBrowserBulkActionOpen(false))
+
+    onClosePanel()
 
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_CANCELLED,

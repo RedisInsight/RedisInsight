@@ -17,10 +17,17 @@ interface Props {
   onChangeAgreement: (checked: boolean, name: string) => void
   checked: boolean
   isSettingsPage?: boolean
+  withoutSpacer?: boolean
 }
 
 const ConsentOption = (props: Props) => {
-  const { consent, onChangeAgreement, checked, isSettingsPage = false } = props
+  const {
+    consent,
+    onChangeAgreement,
+    checked,
+    isSettingsPage = false,
+    withoutSpacer = false
+  } = props
   return (
     <EuiFlexItem key={consent.agreementName}>
       {isSettingsPage && consent.description && (
@@ -52,7 +59,7 @@ const ConsentOption = (props: Props) => {
           )}
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiSpacer size="l" />
+      {!withoutSpacer && (<EuiSpacer size="l" />)}
     </EuiFlexItem>
   )
 }

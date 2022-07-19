@@ -50,6 +50,7 @@ const SetDetails = (props: Props) => {
   const [match, setMatch] = useState('*')
   const [deleting, setDeleting] = useState('')
   const [width, setWidth] = useState(100)
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
 
   const { loading } = useSelector(setSelector)
   const { key = '', members, total, nextCursor } = useSelector(setDataSelector)
@@ -154,7 +155,7 @@ const SetDetails = (props: Props) => {
       truncateText: true,
       render: function Name(_name: string, member: string, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = member.substring(0, 200)
+        const cellContent = member.substring(0, 300)
         const tooltipContent = formatLongName(member)
 
         return (
@@ -260,6 +261,8 @@ const SetDetails = (props: Props) => {
         onChangeWidth={setWidth}
         cellCache={cellCache}
         onRowToggleViewClick={handleRowToggleViewClick}
+        expandedRows={expandedRows}
+        setExpandedRows={setExpandedRows}
       />
 
     </div>

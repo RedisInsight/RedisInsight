@@ -11,7 +11,7 @@ import {
   setBulkActionsInitialState,
 } from 'uiSrc/slices/browser/bulkActions'
 import { keysDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BulkActionsType } from 'uiSrc/constants'
 import BulkDeleteContent from './BulkDeleteContent'
 import { isProcessedBulkAction } from '../utils'
@@ -36,12 +36,21 @@ const BulkDelete = (props: Props) => {
   const handleDelete = () => {
     setIsPopoverOpen(false)
     dispatch(toggleBulkActionTriggered(null))
+  }
+
+  const handleDeleteWarning = () => {
+    setIsPopoverOpen(true)
+
+    let matchValue = '*'
+    if (search !== '*' && !!search) {
+      matchValue = getMatchType(search)
+    }
 
     sendEventTelemetry({
-      event: TelemetryEvent.BULK_ACTIONS_REQUESTED,
+      event: TelemetryEvent.BULK_ACTIONS_WARNING,
       eventData: {
         filterType: filter,
-        search,
+        match: matchValue,
         scanned,
         total,
         databaseId: instanceId,
@@ -88,7 +97,7 @@ const BulkDelete = (props: Props) => {
         )}
         {!isProcessedBulkAction(status) && (
           <EuiPopover
-            id="bulk-delete-apply-popover"
+            id="bulk-delete-warning-popover"
             anchorPosition="upCenter"
             isOpen={isPopoverOpen}
             closePopover={() => setIsPopoverOpen(false)}
@@ -100,8 +109,8 @@ const BulkDelete = (props: Props) => {
                 color="secondary"
                 isLoading={loading}
                 disabled={loading}
-                onClick={() => setIsPopoverOpen(true)}
-                data-testid="bulk-action-apply-btn"
+                onClick={handleDeleteWarning}
+                data-testid="bulk-action-warning-btn"
               >
                 Delete
               </EuiButton>

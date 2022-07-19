@@ -7,16 +7,15 @@ import styles from './styles.module.scss'
 
 export interface Props {
   type: KeyTypes | CommandGroup | string
-  fill: boolean
   name?: string
   className?: string
   compressed?: boolean
   onDelete?: (type: string) => void
 }
 
-const GroupBadge = ({ type, fill = true, name = '', className = '', onDelete, compressed }: Props) => (
+const GroupBadge = ({ type, name = '', className = '', onDelete, compressed }: Props) => (
   <EuiBadge
-    style={{ backgroundColor: (fill ? GROUP_TYPES_COLORS[type] : '') ?? '#14708D', borderColor: GROUP_TYPES_COLORS[type] ?? '#14708D' }}
+    style={{ backgroundColor: GROUP_TYPES_COLORS[type] ?? '#14708D' }}
     className={cx(
       styles.badgeWrapper,
       className,

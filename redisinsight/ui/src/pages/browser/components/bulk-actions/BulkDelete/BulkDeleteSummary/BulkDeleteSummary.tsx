@@ -17,8 +17,13 @@ const BulkDeleteSummary = () => {
   const { duration = 0, status } = useSelector(overviewBulkActionsSelector) ?? {}
 
   useEffect(() => {
-    const approximateCount = scanned >= total ? keys.length : (keys.length * total) / scanned
-    setTitle(`Expected amount: ~${numberWithSpaces(Math.round(approximateCount))} keys`)
+    if (scanned < total && !keys.length) {
+      setTitle('Expected amount: N/A')
+      return
+    }
+
+    const approximateCount = scanned < total ? (keys.length * total) / scanned : keys.length
+    setTitle(`Expected amount: ${scanned < total ? '~' : ''}${numberWithSpaces(Math.round(approximateCount))} keys`)
   }, [scanned, total, keys])
 
   return (

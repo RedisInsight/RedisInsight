@@ -175,6 +175,7 @@ export default cliSettingsSlice.reducer
 
 // Asynchronous thunk action
 export function createCliClientAction(
+  onWorkbenchClick: () => void,
   onSuccessAction?: () => void,
   onFailAction?: (message: string) => void
 ) {
@@ -182,7 +183,7 @@ export function createCliClientAction(
     const state = stateInit()
     const { host, port, db } = connectedInstanceSelector(state)
     dispatch(processCliClient())
-    dispatch(concatToOutput(InitOutputText(host, port, db)))
+    dispatch(concatToOutput(InitOutputText(host, port, db, onWorkbenchClick)))
 
     try {
       const { data, status } = await apiService.post<CreateCliClientResponse>(

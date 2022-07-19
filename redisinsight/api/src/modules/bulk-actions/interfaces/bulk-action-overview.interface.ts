@@ -5,6 +5,7 @@ import { IBulkActionFilterOverview } from './bulk-action-filter-overview.interfa
 
 export interface IBulkActionOverview {
   id: string,
+  databaseId: string,
   duration: number,
   type: BulkActionType,
   status: BulkActionStatus,

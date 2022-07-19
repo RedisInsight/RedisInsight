@@ -3,6 +3,7 @@ import { BulkActionsService } from 'src/modules/bulk-actions/bulk-actions.servic
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
 import { BulkActionsGateway } from 'src/modules/bulk-actions/bulk-actions.gateway';
 import { SharedModule } from 'src/modules/shared/shared.module';
+import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { SharedModule } from 'src/modules/shared/shared.module';
     BulkActionsGateway,
     BulkActionsService,
     BulkActionsProvider,
+    BulkActionsAnalyticsService,
   ],
 })
 export class BulkActionsModule {}

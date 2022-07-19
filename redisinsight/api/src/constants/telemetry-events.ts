@@ -51,4 +51,8 @@ export enum TelemetryEvents {
   PubSubMessagePublished = 'PUBSUB_MESSAGE_PUBLISHED',
   PubSubChannelSubscribed = 'PUBSUB_CHANNEL_SUBSCRIBED',
   PubSubChannelUnsubscribed = 'PUBSUB_CHANNEL_UNSUBSCRIBED',
+
+  // Bulk Actions
+  BulkActionsStarted = 'BULK_ACTIONS_STARTED',
+  BulkActionsStopped = 'BULK_ACTIONS_STOPPED',
 }

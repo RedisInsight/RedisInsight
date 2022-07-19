@@ -33,7 +33,7 @@ export class BulkActionsProvider {
       throw new Error('You already have bulk action with such id');
     }
 
-    const bulkAction = new BulkAction(dto.id, dto.type, dto.filter, socket);
+    const bulkAction = new BulkAction(dto.id, dto.databaseId, dto.type, dto.filter, socket);
 
     this.bulkActions.set(dto.id, bulkAction);
 

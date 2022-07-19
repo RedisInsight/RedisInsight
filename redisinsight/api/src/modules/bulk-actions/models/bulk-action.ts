@@ -12,6 +12,8 @@ export class BulkAction implements IBulkAction {
 
   private readonly id: string;
 
+  private readonly databaseId: string;
+
   private startTime: number = Date.now();
 
   private endTime: number;
@@ -28,8 +30,9 @@ export class BulkAction implements IBulkAction {
 
   private readonly debounce: Function;
 
-  constructor(id, type, filter, socket) {
+  constructor(id, databaseId, type, filter, socket) {
     this.id = id;
+    this.databaseId = databaseId;
     this.type = type;
     this.filter = filter;
     this.socket = socket;
@@ -133,6 +136,7 @@ export class BulkAction implements IBulkAction {
 
     return {
       id: this.id,
+      databaseId: this.databaseId,
       type: this.type,
       duration: (this.endTime || Date.now()) - this.startTime,
       status: this.status,

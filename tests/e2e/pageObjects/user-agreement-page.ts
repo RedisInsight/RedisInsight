@@ -13,7 +13,8 @@ export class UserAgreementPage {
     submitButton = Selector('[data-testid=btn-submit]');
     switchOptionEula = Selector('[data-testid=switch-option-eula]');
     switchOptionEncryption = Selector('[data-testid=switch-option-encryption]');
-    pluginSectionWithText = Selector('[data-testid=plugin-section]')
+    pluginSectionWithText = Selector('[data-testid=plugin-section]');
+    recommendedSwitcher = Selector('[data-testid=switch-option-recommended]');
 
   //Accept RedisInsight License Terms
   async acceptLicenseTerms():Promise<void> {
@@ -23,4 +24,8 @@ export class UserAgreementPage {
           await t.click(this.submitButton);
       }
   }
+
+  async getRecommendedSwitcherValue(): Promise<string> {
+    return await this.recommendedSwitcher.getAttribute('aria-checked');
+}
 }

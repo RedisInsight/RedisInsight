@@ -120,17 +120,20 @@ const DatabasesListWrapper = ({
     }
     history.push(Pages.browser(id))
   }
-  const handleCheckConnectToInstance = (event: React.MouseEvent | React.KeyboardEvent, instance: Instance) => {
+  const handleCheckConnectToInstance = (
+    event: React.MouseEvent | React.KeyboardEvent,
+    { id, provider, modules }: Instance
+  ) => {
     event.preventDefault()
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
-        databaseId: instance.id,
-        provider: instance.provider,
-        modules: instance.modules,
+        databaseId: id,
+        provider,
+        modules,
       }
     })
-    dispatch(checkConnectToInstanceAction(instance.id, connectToInstance))
+    dispatch(checkConnectToInstanceAction(id, connectToInstance))
   }
 
   const handleClickDeleteInstance = (id: string) => {

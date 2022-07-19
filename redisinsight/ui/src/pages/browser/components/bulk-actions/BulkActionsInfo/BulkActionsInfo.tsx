@@ -49,7 +49,7 @@ const BulkActionsInfo = (props: Props) => {
         )}
         {status === BulkActionsStatus.Aborted && (
           <EuiText color="danger" className={styles.progress}>
-            Aborted
+            Stopped: {getApproximateNumber((total ? scanned / total : 1) * 100)}%
           </EuiText>
         )}
         {status === BulkActionsStatus.Completed && (

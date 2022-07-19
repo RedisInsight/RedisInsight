@@ -189,7 +189,6 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
-    dispatch(resetKeys())
     dispatch(resetKeysData())
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())

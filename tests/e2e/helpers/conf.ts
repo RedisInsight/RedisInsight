@@ -40,7 +40,18 @@ export const ossClusterConfig = {
 export const ossSentinelConfig = {
     sentinelHost: process.env.OSS_SENTINEL_HOST || 'oss-sentinel',
     sentinelPort: process.env.OSS_SENTINEL_PORT || '26379',
-    sentinelPassword: process.env.OSS_SENTINEL_PASSWORD || 'password'
+    sentinelPassword: process.env.OSS_SENTINEL_PASSWORD || 'password',
+    masters: [{
+        alias: "primary-group-1",
+        db: "0",
+        name: "primary-group-1"
+    },
+    {
+        alias: "primary-group-2",
+        db: "0",
+        name: "primary-group-2"
+    }],
+    name: "primary-group-2"
 };
 
 export const redisEnterpriseClusterConfig = {

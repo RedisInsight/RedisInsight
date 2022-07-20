@@ -1097,10 +1097,10 @@ workflows:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)
-      - windows:
-          name: Build app - Windows (stage)
-          requires:
-            - Setup build (stage)
+#      - windows:
+#          name: Build app - Windows (stage)
+#          requires:
+#            - Setup build (stage)
       # integration tests on docker image build
       - integration-tests-run:
           matrix:
@@ -1127,10 +1127,10 @@ workflows:
           report: true
           requires:
             - Build app - Linux (stage)
-      # e2e desktop tests on exe build
-      - e2e-exe:
-          name: E2ETest (exe) - Nightly
-          parallelism: 4
-          report: true
-          requires:
-            - Build app - Windows (stage)
+#      # e2e desktop tests on exe build
+#      - e2e-exe:
+#          name: E2ETest (exe) - Nightly
+#          parallelism: 4
+#          report: true
+#          requires:
+#            - Build app - Windows (stage)

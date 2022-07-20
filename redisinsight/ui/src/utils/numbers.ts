@@ -9,5 +9,5 @@ export const nullableNumberWithSpaces = (number: Nullable<number> = 0) => {
   if (isNull(number)) {
     return '-'
   }
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  return numberWithSpaces(number)
 }

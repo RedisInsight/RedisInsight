@@ -1,15 +1,17 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const chance = new Chance();
 const cliPage = new CliPage();
+const common = new Common();
 
-let keyName = chance.word({ length: 20 });
+let keyName = common.generateWord(20);
+let field = common.generateWord(20);
+let value = common.generateSentence(200);
 
 fixture `Expand/Collapse large values in key details`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -23,15 +25,24 @@ fixture `Expand/Collapse large values in key details`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test('Verify that user can click on a row to expand it if any of its cells contains a value which is truncated.', async t => {
-        keyName = chance.word({length: 20});
-        let field = chance.sentence({ words: 50 });
-        let value = chance.sentence({ words: 50 });
-        //Add new Stream key with 1 field
-        await cliPage.sendCommandInCli(`XADD ${keyName} * '${field}' '${value}'`);
-        //Open key details and click on delete entry
-        await browserPage.openKeyDetails(keyName);
-        const startCellHeight = await browserPage.streamEntryFields.parent(1).clientHeight;
-        await console.log(startCellHeight);
-        await t.click(browserPage.streamEntryFields);
-        await console.log(await browserPage.streamEntryFields.parent(1).clientHeight);
-    });
+    let value1 = common.generateWord(20);
+    let cliCommands = [
+        `XADD ${keyName} * '${field}' '${value}'`,
+        `XADD ${keyName} * '${field}' '${value1}'`
+    ]
+    //Add new Stream key with 2 fields
+    for (const command of cliCommands) {
+        await cliPage.sendCommandInCli(command);
+    }
+    //Open key details
+    await browserPage.openKeyDetails(keyName);
+    // Remember height of the cell with long value
+    const startLongCellHeight = await browserPage.streamEntryFields.nth(1).parent(1).clientHeight;
+    const startSmallCellHeight = await browserPage.streamEntryFields.nth(0).parent(1).clientHeight;
+    const endLongCellHeight = startLongCellHeight + 150;
+    const endSmallCellHeight = startSmallCellHeight + 5;
+    await t.click(browserPage.streamEntryFields.nth(0).parent(1));
+    await t.expect(browserPage.streamEntryFields.nth(0).parent(1).clientHeight).lt(endSmallCellHeight, 'Cell height is expanded', { timeout: 5000 });
+    await t.click(browserPage.streamEntryFields.nth(1).parent(1));
+    await t.expect(browserPage.streamEntryFields.nth(1).parent(1).clientHeight).gt(endLongCellHeight, 'Cell height is not expanded', { timeout: 5000 });
+});

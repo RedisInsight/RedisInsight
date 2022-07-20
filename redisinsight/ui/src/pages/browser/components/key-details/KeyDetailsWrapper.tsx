@@ -112,7 +112,7 @@ const KeyDetailsWrapper = (props: Props) => {
         break
       }
       case KeyTypes.ReJSON: {
-        dispatch(fetchReJSON(key, '.', resetData))
+        dispatch(fetchReJSON(key, '.', true))
         break
       }
       case KeyTypes.Stream: {

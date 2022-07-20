@@ -10,6 +10,11 @@ import testcafe from 'testcafe';
                 .filter((_testName, _fixtureName, _fixturePath, testMeta): boolean => {
                     return testMeta.env !== 'desktop'
                 })
+                .screenshots({
+                    path: 'report/screenshots/',
+                    takeOnFails: true,
+                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST_INDEX}.png',
+                })
                 .reporter([
                     'spec',
                     {

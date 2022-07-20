@@ -15,7 +15,8 @@ export const repositories = {
   AGREEMENTS: 'AgreementsEntity',
   COMMAND_EXECUTION: 'CommandExecutionEntity',
   PLUGIN_STATE: 'PluginStateEntity',
-  SETTINGS: 'SettingsEntity'
+  SETTINGS: 'SettingsEntity',
+  NOTIFICATION: 'NotificationEntity',
 }
 
 let localDbConnection;
@@ -386,4 +387,34 @@ export const initLocalDb = async (rte, server) => {
   if (rte.env.acl) {
     await createAclInstance(rte, server);
   }
+}
+
+export const createNotifications = async (notifications: object[], truncate: boolean) => {
+  const rep = await getRepository(repositories.NOTIFICATION);
+
+  if(truncate) {
+    await rep.createQueryBuilder().delete().execute();
+  }
+
+  await rep.insert(notifications);
+}
+
+export const createDefaultNotifications = async (truncate: boolean = false) => {
+  const notifications = [
+    constants.TEST_NOTIFICATION_1,
+    constants.TEST_NOTIFICATION_2,
+    constants.TEST_NOTIFICATION_3,
+  ];
+
+  await createNotifications(notifications, truncate);
+}
+
+export const createNotExistingNotifications = async (truncate: boolean = false) => {
+  const notifications = [
+    constants.TEST_NOTIFICATION_NE_1,
+    constants.TEST_NOTIFICATION_NE_2,
+    constants.TEST_NOTIFICATION_NE_3,
+  ];
+
+  await createNotifications(notifications, truncate);
 }

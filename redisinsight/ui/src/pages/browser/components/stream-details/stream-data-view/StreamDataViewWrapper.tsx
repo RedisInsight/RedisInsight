@@ -1,7 +1,7 @@
 import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { keyBy } from 'lodash'
+import { mergeWith, toNumber } from 'lodash'
 
 import { formatLongName } from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
@@ -48,18 +48,40 @@ const StreamDataViewWrapper = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    let fields = {}
-    loadedEntries?.forEach((item) => {
-      fields = {
-        ...fields,
-        ...keyBy(Object.keys(item.fields))
+    const fieldsNames = loadedEntries?.reduce((acc, entry) => {
+      const namesInEntry = entry.fields.reduce(
+        (acc, field) => ({ ...acc, [field[0]]: acc[field[0]] ? acc[field[0]] + 1 : 1 }),
+        {}
+      )
+      const mergeByCount = (accCount: number, newCount: number) => (newCount > accCount ? newCount : accCount)
+      return mergeWith(acc, namesInEntry, mergeByCount)
+    }, {})
+
+    const columnsNames = Object.keys(fieldsNames).reduce((acc, field) => {
+      let names = {}
+      // add index to each field name
+      for (let i = 0; i < fieldsNames[field]; i++) {
+        names = { ...names, [`${field}-${i}`]: field }
       }
-    })
+      return { ...acc, ...names }
+    }, {})
 
     // for Manager columns
     // setUniqFields(fields)
-    setEntries(loadedEntries)
-    setColumns([idColumn, ...Object.keys(fields).map((field) => getTemplateColumn(field)), actionsColumn])
+    const headerRow = { id: {
+      id: 'id',
+      label: 'Entry ID',
+      sortable: true
+    },
+    ...columnsNames,
+    actions: '',
+    }
+    setEntries([headerRow, ...loadedEntries])
+    setColumns([
+      idColumn,
+      ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field])),
+      actionsColumn
+    ])
   }, [loadedEntries, deleting])
 
   const closePopover = useCallback(() => {
@@ -104,103 +126,106 @@ const StreamDataViewWrapper = (props: Props) => {
     })
   }
 
-  const getTemplateColumn = (label: string) : ITableColumn => ({
+  const getTemplateColumn = (label: string, name: string) : ITableColumn => ({
     id: label,
-    label,
+    label: name,
     minWidth: minColumnWidth,
     isSortable: false,
     className: styles.cell,
     headerClassName: 'streamItemHeader',
     headerCellClassName: 'truncateText',
-    render: function Id(_name: string, { id, fields }: StreamEntryDto) {
-      const value = fields[label] ?? ''
-      const cellContent = value.substring(0, 200)
+    render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
+      const index = toNumber(label.split('-')[1])
+      const values = fields.filter((field) => field[0] === name)
+      const value = values[index] ? values[index][1] : ''
+      const cellContent = value.substring(0, 650)
       const tooltipContent = formatLongName(value)
 
       return (
         <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
           <div
-            style={{ display: 'flex' }}
+            style={{ display: 'flex', whiteSpace: 'break-spaces' }}
             className="streamItem"
             data-testid={`stream-entry-field-${id}`}
           >
-            <EuiToolTip
-              title="Value"
-              className={styles.tooltip}
-              anchorClassName="streamItem line-clamp-2"
-              position="bottom"
-              content={tooltipContent}
-            >
-              <>{cellContent}</>
-            </EuiToolTip>
+            {!expanded && (
+              <EuiToolTip
+                title="Value"
+                className={styles.tooltip}
+                anchorClassName="streamItem line-clamp-2"
+                position="bottom"
+                content={tooltipContent}
+              >
+                <>{cellContent}</>
+              </EuiToolTip>
+            )}
+            {expanded && value}
           </div>
         </EuiText>
       )
     }
   })
 
-  const [idColumn, actionsColumn]: ITableColumn[] = [
-    {
-      id: 'id',
-      label: 'Entry ID',
-      absoluteWidth: minColumnWidth,
-      minWidth: minColumnWidth,
-      isSortable: true,
-      className: styles.cell,
-      headerClassName: 'streamItemHeader',
-      render: function Id(_name: string, { id }: StreamEntryDto) {
-        const timestamp = id.split('-')?.[0]
-        return (
-          <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
-                {getFormatTime(timestamp)}
-              </div>
-            </EuiText>
-            <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItemId" data-testid={`stream-entry-${id}`}>
-                {id}
-              </div>
-            </EuiText>
-          </div>
-        )
-      },
+  const idColumn: ITableColumn = {
+    id: 'id',
+    label: 'Entry ID',
+    maxWidth: minColumnWidth,
+    minWidth: minColumnWidth,
+    isSortable: true,
+    className: styles.cell,
+    headerClassName: 'streamItemHeader',
+    render: function Id({ id }: StreamEntryDto) {
+      const timestamp = id.split('-')?.[0]
+      return (
+        <div>
+          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+            <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
+              {getFormatTime(timestamp)}
+            </div>
+          </EuiText>
+          <EuiText size="s" style={{ maxWidth: '100%' }}>
+            <div className="streamItemId" data-testid={`stream-entry-${id}`}>
+              {id}
+            </div>
+          </EuiText>
+        </div>
+      )
     },
-    {
-      id: 'actions',
-      label: '',
-      headerClassName: styles.actionsHeader,
-      textAlignment: TableCellTextAlignment.Left,
-      absoluteWidth: actionsWidth,
-      maxWidth: actionsWidth,
-      minWidth: actionsWidth,
-      render: function Actions(_act: any, { id }: StreamEntryDto) {
-        return (
-          <div>
-            <PopoverDelete
-              header={id}
-              text={(
-                <>
-                  will be removed from
-                  {' '}
-                  <b>{key}</b>
-                </>
+  }
+  const actionsColumn: ITableColumn = {
+    id: 'actions',
+    label: '',
+    headerClassName: styles.actionsHeader,
+    textAlignment: TableCellTextAlignment.Left,
+    absoluteWidth: actionsWidth,
+    maxWidth: actionsWidth,
+    minWidth: actionsWidth,
+    render: function Actions({ id }: StreamEntryDto) {
+      return (
+        <div>
+          <PopoverDelete
+            header={id}
+            text={(
+              <>
+                will be removed from
+                {' '}
+                <b>{key}</b>
+              </>
               )}
-              item={id}
-              suffix={suffix}
-              deleting={deleting}
-              closePopover={closePopover}
-              updateLoading={false}
-              showPopover={showPopover}
-              testid={`remove-entry-button-${id}`}
-              handleDeleteItem={handleDeleteEntry}
-              handleButtonClick={handleRemoveIconClick}
-            />
-          </div>
-        )
-      },
+            item={id}
+            suffix={suffix}
+            deleting={deleting}
+            closePopover={closePopover}
+            updateLoading={false}
+            showPopover={showPopover}
+            testid={`remove-entry-button-${id}`}
+            handleDeleteItem={handleDeleteEntry}
+            handleButtonClick={handleRemoveIconClick}
+          />
+        </div>
+      )
     },
-  ]
+  }
 
   return (
     <>

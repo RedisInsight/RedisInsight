@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { getTreeLeafField, Nullable } from 'uiSrc/utils'
 import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
@@ -20,6 +20,9 @@ export const initialState: StateAppContext = {
       panelSizes: {},
       openNodes: {},
       selectedLeaf: {},
+    },
+    bulkActions: {
+      opened: false,
     }
   },
   workbench: {
@@ -126,7 +129,10 @@ const appContextSlice = createSlice({
     setPubSubFieldsContext: (state, { payload }: { payload: { channel: string, message: string } }) => {
       state.pubsub.channel = payload.channel
       state.pubsub.message = payload.message
-    }
+    },
+    setBrowserBulkActionOpen: (state, { payload }: PayloadAction<boolean>) => {
+      state.browser.bulkActions.opened = payload
+    },
   },
 })
 
@@ -150,7 +156,8 @@ export const {
   setWorkbenchEAItem,
   resetWorkbenchEAItem,
   setWorkbenchEAItemScrollTop,
-  setPubSubFieldsContext
+  setPubSubFieldsContext,
+  setBrowserBulkActionOpen,
 } = appContextSlice.actions
 
 // Selectors

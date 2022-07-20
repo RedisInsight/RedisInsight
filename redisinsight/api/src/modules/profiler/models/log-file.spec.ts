@@ -82,7 +82,7 @@ describe('LogFile', () => {
     expect(logFile['clientObservers'].size).toEqual(0);
     expect(logFile['idleSince']).toBeGreaterThan(0);
     expect(logFile.destroy).not.toHaveBeenCalled();
-    // wait until idle threshold pass (3sec for test env)
+    // wait until idle threshold pass (2sec for test env)
     await new Promise((resolve) => setTimeout(resolve, 3000));
     expect(logFile.destroy).toHaveBeenCalled();
   });

@@ -7,12 +7,13 @@ import { useParams } from 'react-router-dom'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { getMultiCommands, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
+import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import Query from './Query'
 import styles from './Query/styles.module.scss'
 
 export interface Props {
   query: string
-  loading: boolean
   setQuery: (script: string) => void
   setQueryEl: Function
   setIsCodeBtnDisabled: (value: boolean) => void
@@ -20,12 +21,13 @@ export interface Props {
   onSubmit: (value?: string) => void
 }
 const QueryWrapper = (props: Props) => {
-  const { query = '', loading, setQuery, setQueryEl, setIsCodeBtnDisabled, onKeyDown, onSubmit } = props
+  const { query = '', setQuery, setQueryEl, setIsCodeBtnDisabled, onKeyDown, onSubmit } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const {
     loading: isCommandsLoading,
     commandsArray: REDIS_COMMANDS_ARRAY,
   } = useSelector(appRedisCommandsSelector)
+  const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
     const eventData = (() => {
@@ -36,14 +38,16 @@ const QueryWrapper = (props: Props) => {
           command.toUpperCase().startsWith(commandName))
         return matchedCommand ?? command.split(' ')?.[0]
       })
-      const multiCommands = getMultiCommands(rest)
+
+      const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
 
       const command = removeMonacoComments(decode([commandLine, multiCommands].join(';')).trim())
 
       return {
         command,
         databaseId: instanceId,
-        multiple: multiCommands ? 'Multiple' : 'Single'
+        multiple: multiCommands ? 'Multiple' : 'Single',
+        pipeline: batchSize > 1
       }
     })()
 
@@ -70,7 +74,6 @@ const QueryWrapper = (props: Props) => {
   ) : (
     <Query
       query={query}
-      loading={loading}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
       setIsCodeBtnDisabled={setIsCodeBtnDisabled}

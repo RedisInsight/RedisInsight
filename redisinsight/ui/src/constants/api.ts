@@ -53,6 +53,7 @@ enum ApiEndpoints {
   SETTINGS = 'settings',
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
   WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
+  WORKBENCH_COMMANDS_EXECUTION = 'workbench/commands-execution',
   PROFILER = 'profiler',
   PROFILER_LOGS = 'profiler/logs',
 
@@ -70,15 +71,20 @@ enum ApiEndpoints {
   SLOW_LOGS_CONFIG = 'slow-logs/config',
 
   PUB_SUB = 'pub-sub',
-  PUB_SUB_MESSAGES = 'pub-sub/messages'
+  PUB_SUB_MESSAGES = 'pub-sub/messages',
+
+  NOTIFICATIONS = 'notifications',
+  NOTIFICATIONS_READ = 'notifications/read',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'
 
 const SCAN_COUNT_DEFAULT_ENV = process.env.SCAN_COUNT_DEFAULT || '500'
+const PIPELINE_COUNT_DEFAULT_ENV = process.env.PIPELINE_COUNT_DEFAULT || '5'
 const SCAN_TREE_COUNT_DEFAULT_ENV = process.env.SCAN_TREE_COUNT_DEFAULT || '10000'
 
 export const SCAN_COUNT_DEFAULT = parseInt(SCAN_COUNT_DEFAULT_ENV, 10)
+export const PIPELINE_COUNT_DEFAULT = parseInt(PIPELINE_COUNT_DEFAULT_ENV, 10)
 export const SCAN_TREE_COUNT_DEFAULT = parseInt(SCAN_TREE_COUNT_DEFAULT_ENV, 10)
 export const SCAN_STREAM_START_DEFAULT = '-'
 export const SCAN_STREAM_END_DEFAULT = '+'

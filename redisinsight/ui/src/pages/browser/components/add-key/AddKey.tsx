@@ -29,11 +29,11 @@ import AddKeyStream from './AddKeyStream/AddKeyStream'
 import styles from './styles.module.scss'
 
 export interface Props {
-  handleAddKeyPanel: (value: boolean, keyName?: string) => void
-  handleCloseKey: () => void
+  onAddKeyPanel: (value: boolean, keyName?: string) => void
+  onClosePanel: () => void
 }
 const AddKey = (props: Props) => {
-  const { handleAddKeyPanel, handleCloseKey } = props
+  const { onAddKeyPanel, onClosePanel } = props
   const dispatch = useDispatch()
 
   const { loading } = useSelector(addKeyStateSelector)
@@ -80,14 +80,14 @@ const AddKey = (props: Props) => {
   }
 
   const closeKey = () => {
-    handleCloseKey()
+    onClosePanel()
     closeKeyTelemetry()
   }
 
   const closeAddKeyPanel = (isCancelled?: boolean) => {
-    handleAddKeyPanel(false, keyName)
+    onAddKeyPanel(false, keyName)
     if (isCancelled) {
-      handleCloseKey()
+      onClosePanel()
       closeKeyTelemetry()
     }
   }

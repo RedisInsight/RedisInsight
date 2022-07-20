@@ -1,15 +1,16 @@
 import { Chance } from 'chance';
 import { Selector } from 'testcafe';
-import { toNumber, toString } from 'lodash';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { BrowserPage } from '../../../pageObjects';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const cliPage = new CliPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 20 });
@@ -20,12 +21,12 @@ fixture `Stream Key`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can create Stream key via Add New Key form', async t => {
     keyName = chance.word({ length: 20 });
@@ -66,22 +67,22 @@ test('Verify that user can add several fields and values during Stream key creat
 });
 test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
     keyName = chance.word({ length: 20 });
-    // Add New Stream Key
+    const newField = chance.word({ length: 20 });
+    // Add New Stream Key and check columns and rows
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
-    // Verify that when user adds a new Entry with not existed Field name, a new Field is added to the Stream
-    const paramsBeforeEntryAdding = await browserPage.getStreamRowColumnNumber();
-    await browserPage.addEntryToStream(chance.word({ length: 20 }), chance.word({ length: 20 }));
-    // Compare that after adding new entry, new column and row were added
-    const paramsAfterEntryAdding = await browserPage.getStreamRowColumnNumber();
-    await t.expect(paramsAfterEntryAdding[0]).eql(toString(toNumber(paramsBeforeEntryAdding[0]) + 1), 'Increased number of columns after adding');
-    await t.expect(paramsAfterEntryAdding[1]).eql(toString(toNumber(paramsBeforeEntryAdding[1]) + 1), 'Increased number of rows after adding');
-    // Verify that when user adds a new Entry with already existed Field name, a new Field is available as column in the Stream table
-    const paramsBeforeExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    await browserPage.addEntryToStream(keyField, chance.word({ length: 20 }));
-    const paramsAfterExistedFieldAdding = await browserPage.getStreamRowColumnNumber();
-    await t.expect(paramsAfterExistedFieldAdding[0]).eql(paramsBeforeExistedFieldAdding[0], 'The same number of columns after adding');
-    await t.expect(paramsAfterExistedFieldAdding[1]).eql(toString(toNumber(paramsBeforeExistedFieldAdding[1]) + 1), 'Increased number of rows after adding');
+    await t.expect(browserPage.streamEntryIDDateValue.count).eql(1, 'One Entry ID');
+    await t.expect(browserPage.streamFields.count).eql(4, 'One field in table');
+    await t.expect(browserPage.streamEntryFields.count).eql(1, 'One value in table');
+    // Create new field and value and check that new column is added
+    await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
+    await t.expect(browserPage.streamEntryIDDateValue.count).eql(2, 'Two Entries ID');
+    await t.expect(browserPage.streamFields.count).eql(6, 'Two fields in table');
+    await t.expect(browserPage.streamEntryFields.count).eql(4, 'Four values in table');
+    // Create value to existed filed and check that new column was not added
+    await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
+    await t.expect(browserPage.streamEntryIDDateValue.count).eql(3, 'Three Entries ID');
+    await t.expect(browserPage.streamFields.count).eql(7, 'Still two fields in table');
+    await t.expect(browserPage.streamEntryFields.count).eql(6, 'Six values in table');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
     keyName = chance.word({ length: 20 });
@@ -113,7 +114,7 @@ test('Verify that during new entry adding to existing Stream, user can clear the
 test('Verify that user can add several fields and values to the existing Stream Key', async t => {
     keyName = chance.word({ length: 20 });
     // Generate field value data
-    const entryQuantity = 10;
+    const entryQuantity = 5;
     const fields: string[] = [];
     const values: string[] = [];
     for (let i = 0; i < entryQuantity; i++) {
@@ -128,11 +129,23 @@ test('Verify that user can add several fields and values to the existing Stream 
     await browserPage.fulfillSeveralStreamFields(fields, values);
     await t.click(browserPage.saveElementButton);
     // Check that all data is saved in Stream
+    await t.click(browserPage.fullScreenModeButton);
     for (let i = 0; i < fields.length; i++) {
-        await t.expect(browserPage.streamEntriesContainer.find('span').withExactText(fields[i]).exists).ok('Added Field');
         await t.expect(browserPage.streamFieldsValues.find('span').withExactText(values[i]).exists).ok('Added Value');
+        await t.expect(browserPage.streamEntriesContainer.find('div').withExactText(fields[i]).exists).ok('Added Field');
     }
     // Check Stream length
     const streamLength = await browserPage.getKeyLength();
     await t.expect(streamLength).eql('2', 'Stream length after adding new entry');
+    await t.click(browserPage.fullScreenModeButton);
+});
+test('Verify that user can see the Stream range filter', async t => {
+    keyName = chance.word({length: 20});
+    //Add new Stream key with 1 field
+    await cliPage.sendCommandInCli(`XADD ${keyName} * fields values`);
+    //Open key details and check filter
+    await browserPage.openKeyDetails(keyName);
+    await t.expect(browserPage.rangeLeftTimestamp.visible).ok('The stream range start timestamp visibility');
+    await t.expect(browserPage.rangeRightTimestamp.visible).ok('The stream range end timestamp visibility');
+    await t.expect(browserPage.streamRangeBar.visible).ok('The stream range bar visibility');
 });

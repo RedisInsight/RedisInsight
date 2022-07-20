@@ -1,25 +1,26 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { isNull } from 'lodash'
+import { flatMap, isNull } from 'lodash'
 import cx from 'classnames'
+import { useParams } from 'react-router-dom'
 
 import {
   fetchStreamEntries,
   streamDataSelector,
   streamSelector,
 } from 'uiSrc/slices/browser/stream'
-import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { ITableColumn } from 'uiSrc/components/virtual-grid/interfaces'
+import { keysSelector, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { SortOrder } from 'uiSrc/constants'
+import { KeyTypes, SortOrder } from 'uiSrc/constants'
+import VirtualGrid from 'uiSrc/components/virtual-grid'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 
 const headerHeight = 60
-const rowHeight = 54
-const actionsWidth = 54
+const rowHeight = 60
 const minColumnWidth = 190
 const noItemsMessageInEmptyStream = 'There are no Entries in the Stream.'
 const noItemsMessageInRange = 'No results found.'
@@ -33,9 +34,17 @@ export interface Props {
 }
 
 const StreamDataView = (props: Props) => {
-  const { data: entries = [], columns = [], onClosePopover, loadMoreItems, isFooterOpen } = props
+  const {
+    data: entries = [],
+    columns = [],
+    onClosePopover,
+    loadMoreItems,
+    isFooterOpen
+  } = props
   const dispatch = useDispatch()
 
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { viewType } = useSelector(keysSelector)
   const { loading } = useSelector(streamSelector)
   const {
     total,
@@ -54,9 +63,26 @@ const StreamDataView = (props: Props) => {
     dispatch(fetchStreamEntries(key, SCAN_COUNT_DEFAULT, order, false))
   }
 
+  const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
+    const browserViewEvent = expanded
+      ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.BROWSER_KEY_FIELD_VALUE_COLLAPSED
+    const treeViewEvent = expanded
+      ? TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_EXPANDED
+      : TelemetryEvent.TREE_VIEW_KEY_FIELD_VALUE_COLLAPSED
+
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
+      eventData: {
+        keyType: KeyTypes.Stream,
+        databaseId: instanceId,
+        largestCellLength: Math.max(...flatMap(entries[rowIndex]?.fields).map((a) => a.toString().length)) || 0,
+      }
+    })
+  }
+
   return (
     <>
-
       <div
         className={cx(
           'key-details-table',
@@ -69,7 +95,7 @@ const StreamDataView = (props: Props) => {
         {/* <div className={styles.columnManager}>
           <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />
         </div> */}
-        <VirtualTable
+        <VirtualGrid
           hideProgress
           selectable={false}
           keyName={key}
@@ -84,7 +110,8 @@ const StreamDataView = (props: Props) => {
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={isNull(firstEntry) && isNull(lastEntry) ? noItemsMessageInEmptyStream : noItemsMessageInRange}
-          tableWidth={columns.length * minColumnWidth - actionsWidth}
+          onRowToggleViewClick={handleRowToggleViewClick}
+          maxTableWidth={columns.reduce((a, { maxWidth = minColumnWidth }) => a + maxWidth, 0)}
           sortedColumn={entries?.length ? {
             column: sortedColumnName,
             order: sortedColumnOrder,

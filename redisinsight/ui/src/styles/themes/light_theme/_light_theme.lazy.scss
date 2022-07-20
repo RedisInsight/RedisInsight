@@ -97,6 +97,7 @@
   --browserViewTypePassive: #{$browserViewTypePassive};
   --browserComponentActive: #{$browserComponentActive};
   --browserTreeNodeOpen: #{$browserTreeNodeOpen};
+  --defaultGreenColor: #{$defaultGreenColor};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
@@ -166,9 +167,6 @@
 
   // Workbench
   --wbRunResultsBg: #{$wbRunResultsBg};
-
-  // Profiler
-  --monitorTimeColor: #{$monitorTimeColor};
 
   // Pub/Sub
   --pubSubClientsBadge: #{$pubSubClientsBadge};

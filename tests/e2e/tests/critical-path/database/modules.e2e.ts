@@ -1,12 +1,9 @@
 import { Selector } from 'testcafe';
 import { rte, env } from '../../../helpers/constants';
-import {
-    acceptLicenseTerms,
-    addNewStandaloneDatabase,
-    deleteDatabase
-} from '../../../helpers/database';
+import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseOverviewPage = new DatabaseOverviewPage();
@@ -17,13 +14,15 @@ const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.mo
 fixture `Database modules`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async t => {
         await acceptLicenseTerms();
-        await addNewStandaloneDatabase(ossStandaloneRedisearch);
+        await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
+        // Reload Page
+        await t.eval(() => location.reload());
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneRedisearch.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test
     .meta({ rte: rte.standalone, env: env.web })('Verify that user can see DB modules on DB list page for Standalone DB', async t => {

@@ -1,11 +1,12 @@
 import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -20,15 +21,15 @@ fixture `Consumer group`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
+        if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user enter invalid Group Name the error message appears', async t => {
     keyName = chance.word({ length: 20 });
@@ -36,7 +37,6 @@ test('Verify that when user enter invalid Group Name the error message appears',
     const error = 'BUSYGROUP Consumer Group name already exists';
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
     // Open Stream consumer groups and add group
     await t.click(browserPage.streamTabGroups);
     await browserPage.createConsumerGroup(consumerGroupName);
@@ -55,7 +55,6 @@ test('Verify that when user enter invalid format ID the error message appears', 
     ];
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
     // Open Stream consumer groups and enter invalid EntryIds
     await t.click(browserPage.streamTabGroups);
     await t.click(browserPage.addKeyValueItemsButton);
@@ -125,5 +124,35 @@ test('Verify that A>Z is default table sorting in Consumer column', async t => {
     const consumerCount = await browserPage.streamConsumerName.count;
     for(let i = 0; i < consumerCount; i++){
         await t.expect(browserPage.streamConsumerName.nth(i).textContent).contains(consumerNames[i], 'The Consumers default sorting');
+    }
+});
+test('Verify that user can see error message if enter invalid last delivered ID', async t => {
+    keyName = chance.word({ length: 20 });
+    let consumerGroupName = chance.word({ length: 20 });
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
+    ];
+    const invalidEntryIds = [
+        '!@#%^&*()_',
+        '12345678901242532366121324'
+    ];
+    const errorMessage = 'ID format is not correct';
+    // Add New Stream Key with groups and consumers
+    for(const command of cliCommands){
+        await cliPage.sendCommandInCli(command);
+    }
+    // Open Stream consumer info view
+    await browserPage.openKeyDetails(keyName);
+    await t.click(browserPage.streamTabGroups);
+    // Change the ID set for the Consumer Group
+    for(const id of invalidEntryIds){
+        const idBefore = await browserPage.streamGroupId.textContent;
+        await t.click(browserPage.editStreamLastIdButton);
+        await t.typeText(browserPage.lastIdInput, id, { replace: true });
+        await t.click(browserPage.saveButton);
+        await t.expect(browserPage.streamGroupId.textContent).eql(idBefore, 'The last delivered ID is not modified');
+        await t.expect(browserPage.entryIdError.textContent).eql(errorMessage, 'The error message');
     }
 });

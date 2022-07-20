@@ -33,7 +33,8 @@ $htmlColor: #173369;
 $navBackgroundColor: #0f1633;
 $externalLinkColor: #3163d8;
 $externalLinkTooltipColor: #3163d8;
-$linkToastColor: #ADBEFF;
+$linkToastColor: #adbeff;
+$defaultGreenColor: #008000;
 
 $tableRowHoverColor: #fafbfd;
 $tableRowSelectedColor: #ebeffa;
@@ -122,8 +123,5 @@ $rsInputWrapperColor: #fff;
 // Workbench
 $wbRunResultsBg: #fff;
 
-// Profiler
-$monitorTimeColor: #008000;
-
 // Pub/Sub
-$pubSubClientsBadge: #B5CEA8;
+$pubSubClientsBadge: #b5cea8;

@@ -1,5 +1,5 @@
 import { AddRedisDatabasePage } from './add-redis-database-page';
-import { AutoDiscoverREDatabases } from './auto-discover-redis-enterprise-databases'
+import { AutoDiscoverREDatabases } from './auto-discover-redis-enterprise-databases';
 import { BrowserPage } from './browser-page';
 import { CliPage } from './cli-page';
 import { MyRedisDatabasePage } from './my-redis-databases-page';
@@ -10,6 +10,8 @@ import { DatabaseOverviewPage } from './database-overview-page';
 import { HelpCenterPage } from './help-center-page';
 import { ShortcutsPage } from './shortcuts-page';
 import { MonitorPage } from './monitor-page';
+import { PubSubPage } from './pub-sub-page';
+import { SlowLogPage } from './slow-log-page';
 
 export {
     AddRedisDatabasePage,
@@ -23,5 +25,7 @@ export {
     DatabaseOverviewPage,
     HelpCenterPage,
     ShortcutsPage,
-    MonitorPage
-}
+    MonitorPage,
+    PubSubPage,
+    SlowLogPage
+};

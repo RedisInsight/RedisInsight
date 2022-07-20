@@ -18,12 +18,24 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import * as Redis from 'ioredis';
 import { ClusterStrategy } from './cluster.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
+
+const nodeClient = Object.create(Redis.prototype);
+nodeClient.sendCommand = jest.fn();
+
+const mockClusterNode1 = nodeClient;
+const mockClusterNode2 = nodeClient;
+const clusterClient = Object.create(Redis.Cluster.prototype);
+clusterClient.sendCommand = jest.fn();
+mockClusterNode1.options = { ...nodeClient.options, host: 'localhost', port: 5000 };
+mockClusterNode2.options = { ...nodeClient.options, host: 'localhost', port: 5001 };
+
 const getKeyInfoResponse = {
   name: 'testString',
   type: 'string',
@@ -88,6 +100,7 @@ describe('Cluster Scanner Strategy', () => {
       scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
     });
     strategy = new ClusterStrategy(browserTool, settingsProvider);
+    browserTool.getRedisClient.mockResolvedValue(clusterClient);
     mockGetKeysInfoFn.mockClear();
   });
 
@@ -886,12 +899,15 @@ describe('Cluster Scanner Strategy', () => {
           )
           .mockResolvedValue({ result: total });
         strategy.scanNodes = jest.fn();
+        strategy.getKeyInfo = jest
+          .fn()
+          .mockResolvedValue(getKeyInfoResponse);
       });
       it('should find exact key when match is not glob patter', async () => {
         const dto: GetKeysDto = { ...getKeysDto, match: key };
-        strategy.getKeysInfo = jest
+        strategy.getKeyInfo = jest
           .fn()
-          .mockResolvedValue([getKeyInfoResponse]);
+          .mockResolvedValue(getKeyInfoResponse);
 
         const result = await strategy.getKeys(mockClientOptions, dto);
 
@@ -913,17 +929,15 @@ describe('Cluster Scanner Strategy', () => {
             scanned: total,
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClientOptions, [
-          key,
-        ]);
+        expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, key);
         expect(strategy.scanNodes).not.toHaveBeenCalled();
       });
       it('should find exact key when match is escaped glob patter', async () => {
         const dto: GetKeysDto = { ...getKeysDto, match: 'testString\\*' };
         const searchPattern = 'testString*';
-        strategy.getKeysInfo = jest
+        strategy.getKeyInfo = jest
           .fn()
-          .mockResolvedValue([{ ...getKeyInfoResponse, name: searchPattern }]);
+          .mockResolvedValue({ ...getKeyInfoResponse, name: searchPattern });
 
         const result = await strategy.getKeys(mockClientOptions, dto);
 
@@ -945,7 +959,7 @@ describe('Cluster Scanner Strategy', () => {
             scanned: total,
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClientOptions, [searchPattern]);
+        expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, searchPattern);
         expect(strategy.scanNodes).not.toHaveBeenCalled();
       });
       it('should find exact key with correct type', async () => {
@@ -981,14 +995,12 @@ describe('Cluster Scanner Strategy', () => {
       });
       it('should return empty array if key not exist', async () => {
         const dto: GetKeysDto = { ...getKeysDto, match: key };
-        strategy.getKeysInfo = jest.fn().mockResolvedValue([
-          {
-            name: 'testString',
-            type: 'none',
-            ttl: -2,
-            size: null,
-          },
-        ]);
+        strategy.getKeyInfo = jest.fn().mockResolvedValue({
+          name: 'testString',
+          type: 'none',
+          ttl: -2,
+          size: null,
+        });
 
         const result = await strategy.getKeys(mockClientOptions, dto);
 

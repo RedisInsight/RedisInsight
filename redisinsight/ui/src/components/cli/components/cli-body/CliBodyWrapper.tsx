@@ -2,13 +2,14 @@ import { decode } from 'html-entities'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import {
   cliSettingsSelector,
   createCliClientAction,
   setCliEnteringCommand,
   clearSearchingCommand,
+  toggleCli,
 } from 'uiSrc/slices/cli/cli-settings'
 import {
   concatToOutput,
@@ -36,6 +37,7 @@ import styles from './CliBody/styles.module.scss'
 const CliBodyWrapper = () => {
   const [command, setCommand] = useState('')
 
+  const history = useHistory()
   const dispatch = useDispatch()
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { data = [] } = useSelector(outputSelector)
@@ -51,7 +53,7 @@ const CliBodyWrapper = () => {
   const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
-    !cliClientUuid && dispatch(createCliClientAction())
+    !cliClientUuid && dispatch(createCliClientAction(handleWorkbenchClick))
   }, [])
 
   useEffect(() => {
@@ -65,6 +67,18 @@ const CliBodyWrapper = () => {
 
   const handleClearOutput = () => {
     clearOutput(dispatch)
+  }
+
+  const handleWorkbenchClick = () => {
+    dispatch(toggleCli())
+    history.push(Pages.workbench(instanceId))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.CLI_WORKBENCH_LINK_CLICKED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
   }
 
   const refHotkeys = useHotkeys<HTMLDivElement>('command+k,ctrl+l', handleClearOutput)

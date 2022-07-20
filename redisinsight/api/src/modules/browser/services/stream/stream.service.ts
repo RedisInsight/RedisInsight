@@ -172,7 +172,7 @@ export class StreamService {
 
       const entriesArray = entries.map((entry) => [
         entry.id,
-        ...flatMap(map(entry.fields, (value, field) => [field, value])),
+        ...flatMap(map(entry.fields, (field) => [field[0], field[1]])),
       ]);
 
       const toolCommands: Array<[
@@ -243,7 +243,7 @@ export class StreamService {
 
       const entriesArray = entries.map((entry) => [
         entry.id,
-        ...flatMap(map(entry.fields, (value, field) => [field, value])),
+        ...flatMap(map(entry.fields, (field) => [field[0], field[1]])),
       ]);
 
       const toolCommands: Array<[
@@ -340,8 +340,8 @@ export class StreamService {
    * to DTO
    *
    * [
-   *   { id: '1650985323741-0', fields: { field: 'value' } },
-   *   { id: '1650985351882-0', fields: { field: 'value2' } },
+   *   { id: '1650985323741-0', fields: [ ['field', 'value'] ] },
+   *   { id: '1650985351882-0', fields: [ ['field', 'value2 ] },
    *   ...
    * ]
    * @param reply
@@ -359,13 +359,6 @@ export class StreamService {
       return null;
     }
 
-    const dto = { id: entry[0], fields: {} };
-
-    chunk(entry[1] || [], 2).forEach((keyFieldPair) => {
-      // eslint-disable-next-line prefer-destructuring
-      dto.fields[keyFieldPair[0]] = keyFieldPair[1];
-    });
-
-    return dto;
+    return { id: entry[0], fields: chunk(entry[1] || [], 2) };
   }
 }

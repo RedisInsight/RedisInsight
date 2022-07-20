@@ -79,6 +79,7 @@ export const {
 
 // A selector
 export const userSettingsSelector = (state: RootState) => state.user.settings
+export const userSettingsConfigSelector = (state: RootState) => state.user.settings.config
 
 // The reducer
 export default userSettingsSlice.reducer

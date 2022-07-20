@@ -56,7 +56,7 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     });
   }
 
-  protected async execPipelineFromClient(
+  async execPipelineFromClient(
     client,
     toolCommands: Array<
     [toolCommand: any, ...args: Array<string | number | Buffer>]

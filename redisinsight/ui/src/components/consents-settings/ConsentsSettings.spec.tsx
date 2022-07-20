@@ -6,10 +6,7 @@ import {
   fireEvent,
   mockedStore,
   cleanup,
-  clearStoreActions,
-  waitFor,
 } from 'uiSrc/utils/test-utils'
-import { updateUserConfigSettings } from 'uiSrc/slices/user/user-settings'
 import ConsentsSettings from './ConsentsSettings'
 
 const BTN_SUBMIT = 'btn-submit'
@@ -58,6 +55,11 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
         },
         analytics: {
           ...COMMON_CONSENT_CONTENT,
+          category: 'privacy',
+        },
+        notifications: {
+          ...COMMON_CONSENT_CONTENT,
+          category: 'notifications',
         },
         disabledConsent: {
           ...COMMON_CONSENT_CONTENT,
@@ -75,7 +77,7 @@ describe('ConsentsSettings', () => {
 
   it('should render proper elements', () => {
     render(<ConsentsSettings />)
-    expect(screen.getAllByTestId(/switch-option/)).toHaveLength(3)
+    expect(screen.getAllByTestId(/switch-option/)).toHaveLength(4)
   })
 
   it('should be disabled submit button with required options with false value', () => {
@@ -89,29 +91,5 @@ describe('ConsentsSettings', () => {
       fireEvent.click(el)
     })
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
-  })
-
-  describe('liveEditMode', () => {
-    it('btn submit should not render', () => {
-      const { queryByTestId } = render(<ConsentsSettings liveEditMode />)
-      expect(queryByTestId(BTN_SUBMIT)).not.toBeInTheDocument()
-    })
-
-    it('option change should call "updateUserConfigSettingsAction"', async () => {
-      const { queryByTestId } = render(<ConsentsSettings liveEditMode />)
-
-      await waitFor(() => {
-        screen.getAllByTestId(/switch-option/).forEach(async (el) => {
-          fireEvent.click(el)
-        })
-      })
-
-      const expectedActions = [{}].fill(updateUserConfigSettings(), 0)
-      expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-        clearStoreActions(expectedActions)
-      )
-
-      expect(queryByTestId(BTN_SUBMIT)).not.toBeInTheDocument()
-    })
   })
 })

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { chunk, reverse, without } from 'lodash'
 
 import {
   Nullable,
@@ -23,17 +24,19 @@ import {
 import { ConnectionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
-
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
-import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
+import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
+import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import WBView from './WBView'
 
 interface IState {
   loading: boolean,
   instance: Instance,
+  batchSize: number
   unsupportedCommands: string[],
   blockingCommands: string[],
   visualizations: IPluginVisualization[],
@@ -42,6 +45,7 @@ interface IState {
 
 let state: IState = {
   loading: false,
+  batchSize: PIPELINE_COUNT_DEFAULT,
   instance: instanceInitState.connectedInstance,
   unsupportedCommands: [],
   blockingCommands: [],
@@ -54,10 +58,11 @@ const WBViewWrapper = () => {
 
   const { loading, items } = useSelector(workbenchResultsSelector)
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
+  const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
   const [script, setScript] = useState(scriptContext)
-  const [multiCommands, setMultiCommands] = useState('')
+  const [multiCommands, setMultiCommands] = useState<string[]>([])
   const [scriptEl, setScriptEl] = useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
 
   const instance = useSelector(connectedInstanceSelector)
@@ -69,6 +74,7 @@ const WBViewWrapper = () => {
     blockingCommands,
     unsupportedCommands,
     visualizations,
+    batchSize,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -95,54 +101,50 @@ const WBViewWrapper = () => {
   }, [blockingCommands])
 
   useEffect(() => {
-    if (multiCommands) {
-      handleSubmit(multiCommands)
+    if (multiCommands?.length) {
+      handleSubmit(multiCommands.join('\n'))
     }
   }, [multiCommands])
 
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
-    clearEditor: boolean = true,
   ) => {
-    const { loading } = state
+    const { loading, batchSize } = state
     const isNewCommand = () => !commandId
-    const [command, ...rest] = splitMonacoValuePerLines(commandInit)
+    const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), batchSize > 1 ? batchSize : 1)
+    const multiCommands = rest.map((command) => getMultiCommands(command))
+    const commandLine = without(
+      commands.map((command) => removeMonacoComments(decode(command).trim())),
+      ''
+    )
 
-    const multiCommands = getMultiCommands(rest)
-
-    let commandLine = decode(command).trim()
-
-    // remove comments
-    commandLine = removeMonacoComments(commandLine)
-
-    if (!commandLine || loading) {
+    if (!commandLine.length || loading) {
       setMultiCommands(multiCommands)
       return
     }
 
     isNewCommand() && scrollResults('start')
 
-    sendCommand(commandLine, multiCommands, clearEditor)
+    sendCommand(reverse(commandLine), multiCommands)
   }
 
   const sendCommand = (
-    command: string,
-    multiCommands = '',
-    clearEditor = true
+    commands: string[],
+    multiCommands: string[] = [],
   ) => {
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
-        command,
+        commands,
         multiCommands,
-        onSuccessAction: (multiCommands) => onSuccess(multiCommands, clearEditor),
+        onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       }))
       return
     }
 
     const options: SendClusterCommandDto = {
-      command,
+      commands,
       nodeOptions: {
         host,
         port,
@@ -152,16 +154,15 @@ const WBViewWrapper = () => {
     }
     dispatch(
       sendWBCommandClusterAction({
-        command,
+        commands,
         options,
         multiCommands,
-        onSuccessAction: (multiCommands) => onSuccess(multiCommands, clearEditor),
+        onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })
     )
   }
 
-  const onSuccess = (multiCommands = '', clearEditor = false) => {
-    clearEditor && resetCommand()
+  const onSuccess = (multiCommands: string[] = []) => {
     setMultiCommands(multiCommands)
   }
 
@@ -186,16 +187,24 @@ const WBViewWrapper = () => {
     setScript('')
   }
 
+  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>) => {
+    if (state.loading || (!value && !script)) return
+
+    handleSubmit(value, commandId)
+    setTimeout(() => {
+      resetCommand()
+    }, 0)
+  }
+
   return (
     <WBView
       items={items}
       script={script}
-      loading={loading}
       setScript={setScript}
       setScriptEl={setScriptEl}
       scriptEl={scriptEl}
       scrollDivRef={scrollDivRef}
-      onSubmit={handleSubmit}
+      onSubmit={sourceValueSubmit}
       onQueryOpen={handleQueryOpen}
       onQueryDelete={handleQueryDelete}
     />

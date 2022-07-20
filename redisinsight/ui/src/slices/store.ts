@@ -15,6 +15,7 @@ import hashReducer from './browser/hash'
 import listReducer from './browser/list'
 import rejsonReducer from './browser/rejson'
 import streamReducer from './browser/stream'
+import bulkActionsReducer from './browser/bulkActions'
 import notificationsReducer from './app/notifications'
 import cliSettingsReducer from './cli/cli-settings'
 import outputReducer from './cli/cli-output'
@@ -24,6 +25,7 @@ import appInfoReducer from './app/info'
 import appContextReducer from './app/context'
 import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
+import appsSocketConnectionReducer from './app/socket-connection'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchGuidesReducer from './workbench/wb-guides'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
@@ -39,7 +41,8 @@ export const rootReducer = combineReducers({
     notifications: notificationsReducer,
     context: appContextReducer,
     redisCommands: appRedisCommandsReducer,
-    plugins: appPluginsReducer
+    plugins: appPluginsReducer,
+    socketConnection: appsSocketConnectionReducer
   }),
   connections: combineReducers({
     instances: instancesReducer,
@@ -58,6 +61,7 @@ export const rootReducer = combineReducers({
     list: listReducer,
     rejson: rejsonReducer,
     stream: streamReducer,
+    bulkActions: bulkActionsReducer,
   }),
   cli: combineReducers({
     settings: cliSettingsReducer,

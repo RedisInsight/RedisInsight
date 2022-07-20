@@ -6,6 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import {
   EuiButton,
   EuiButtonIcon,
+  EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
 
@@ -14,6 +15,7 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
+  resetKeys,
   resetKeysData,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -28,6 +30,7 @@ import KeysSummary from 'uiSrc/components/keys-summary'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.svg'
+import { ReactComponent as BulkActionsIcon } from 'uiSrc/assets/img/icons/bulk_actions.svg'
 
 import FilterKeyType from '../filter-key-type'
 import SearchKeyList from '../search-key-list'
@@ -54,6 +57,7 @@ export interface Props {
   loadKeys: (type?: KeyViewType) => void
   loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
+  handleBulkActionsPanel: (value: boolean) => void
 }
 
 const KeysHeader = (props: Props) => {
@@ -63,6 +67,7 @@ const KeysHeader = (props: Props) => {
     loadKeys,
     loadMoreItems,
     handleAddKeyPanel,
+    handleBulkActionsPanel,
   } = props
 
   const { lastRefreshTime } = useSelector(keysDataSelector)
@@ -171,6 +176,10 @@ const KeysHeader = (props: Props) => {
     })
   }
 
+  const openBulkActions = () => {
+    handleBulkActionsPanel(true)
+  }
+
   const handleSwitchView = (type: KeyViewType) => {
     if (type === KeyViewType.Tree) {
       sendEventTelemetry({
@@ -180,10 +189,10 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
+    dispatch(resetKeysData())
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
-    dispatch(resetKeysData())
     loadKeys(type)
   }
 
@@ -198,6 +207,21 @@ const KeysHeader = (props: Props) => {
     >
       + Key
     </EuiButton>
+  )
+
+  const BulkActionsBtn = (
+    <EuiToolTip content="Bulk Actions" position="top">
+      <EuiButton
+        fill
+        size="s"
+        color="secondary"
+        onClick={openBulkActions}
+        className={styles.bulkActions}
+        data-testid="btn-bulk-actions"
+      >
+        <EuiIcon type={BulkActionsIcon} />
+      </EuiButton>
+    </EuiToolTip>
   )
 
   const ViewSwitch = (width: number) => (
@@ -234,8 +258,9 @@ const KeysHeader = (props: Props) => {
               <FilterKeyType />
               <SearchKeyList />
               {ViewSwitch(width)}
-              <div>
+              <div style={{ minWidth: '120px' }}>
                 {AddKeyBtn}
+                {BulkActionsBtn}
               </div>
             </div>
 

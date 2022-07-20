@@ -14,10 +14,13 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { StandaloneStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/standalone.strategy';
 import { AbstractStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/abstract.strategy';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import * as Redis from 'ioredis';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
+
+const nodeClient = Object.create(Redis.prototype);
 
 const mockKeyInfo: GetKeyInfoResponse = {
   name: 'testString',
@@ -53,15 +56,14 @@ describe('RedisScannerAbstract', () => {
   describe('getKeysInfo', () => {
     const keys = ['key1', 'key2'];
     beforeEach(() => {
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
         )
         .mockResolvedValue([null, Array(keys.length).fill([null, -1])]);
-      when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
-          [BrowserToolKeysCommands.Ttl, keys[0]],
+      when(browserTool.execPipelineFromClient)
+        .calledWith(nodeClient, [
           ...keys.map((key: string) => [
             BrowserToolKeysCommands.MemoryUsage,
             key,
@@ -71,11 +73,11 @@ describe('RedisScannerAbstract', () => {
         ])
         .mockResolvedValue([
           null,
-          [[null, -1], ...Array(keys.length).fill([null, 50])],
+          Array(keys.length).fill([null, 50]),
         ]);
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
         )
         .mockResolvedValue([null, Array(keys.length).fill([null, 'string'])]);
@@ -86,7 +88,7 @@ describe('RedisScannerAbstract', () => {
         name: key,
       }));
 
-      const result = await scannerInstance.getKeysInfo(mockClientOptions, keys);
+      const result = await scannerInstance.getKeysInfo(nodeClient, keys);
 
       expect(result).toEqual(mockResult);
     });
@@ -97,7 +99,7 @@ describe('RedisScannerAbstract', () => {
       }));
 
       const result = await scannerInstance.getKeysInfo(
-        mockClientOptions,
+        nodeClient,
         keys,
         RedisDataType.String,
       );
@@ -113,9 +115,8 @@ describe('RedisScannerAbstract', () => {
         ...mockRedisWrongTypeError,
         command: BrowserToolKeysCommands.MemoryUsage,
       };
-      when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
-          [BrowserToolKeysCommands.Ttl, keys[0]],
+      when(browserTool.execPipelineFromClient)
+        .calledWith(nodeClient, [
           ...keys.map((key: string) => [
             BrowserToolKeysCommands.MemoryUsage,
             key,
@@ -126,7 +127,7 @@ describe('RedisScannerAbstract', () => {
         .mockResolvedValue([transactionError, null]);
 
       await expect(
-        scannerInstance.getKeysInfo(mockClientOptions, keys),
+        scannerInstance.getKeysInfo(nodeClient, keys),
       ).rejects.toEqual(transactionError);
     });
     it('should throw transaction error for Type', async () => {
@@ -134,15 +135,15 @@ describe('RedisScannerAbstract', () => {
         ...mockRedisWrongTypeError,
         command: BrowserToolKeysCommands.Type,
       };
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
         )
         .mockResolvedValue([transactionError, null]);
 
       await expect(
-        scannerInstance.getKeysInfo(mockClientOptions, keys),
+        scannerInstance.getKeysInfo(nodeClient, keys),
       ).rejects.toEqual(transactionError);
     });
     it('should throw transaction error for TTL', async () => {
@@ -150,15 +151,15 @@ describe('RedisScannerAbstract', () => {
         ...mockRedisWrongTypeError,
         command: BrowserToolKeysCommands.Ttl,
       };
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
         )
         .mockResolvedValue([transactionError, null]);
 
       await expect(
-        scannerInstance.getKeysInfo(mockClientOptions, keys),
+        scannerInstance.getKeysInfo(nodeClient, keys),
       ).rejects.toEqual(transactionError);
     });
   });

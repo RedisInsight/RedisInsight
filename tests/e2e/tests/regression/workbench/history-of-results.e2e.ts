@@ -1,9 +1,10 @@
 import { Chance } from 'chance';
 import { getRandomParagraph } from '../../../helpers/keys';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -18,14 +19,14 @@ fixture `History of results at Workbench`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async() => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
@@ -43,7 +44,7 @@ test.skip
     .meta({ rte: rte.standalone })
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that if command result is more than 1 MB and user refreshes the page, the message "Results have been deleted since they exceed 1 MB. Re-run the command to see new results." is displayed', async t => {
         const commandToSend = 'set key';
         const commandToGet = 'get key';
@@ -66,12 +67,8 @@ test
         await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(firstCommand, 'The first executed command is in the workbench history');
         //Send 30 commands and check the results
         await workbenchPage.sendCommandInWorkbench(`${numberOfCommands} ${command}`);
-        for(let i = 0; i < numberOfCommands; i++) {
-            await t.expect(workbenchPage.queryCardContainer.nth(0).textContent).contains(command, 'The command executed after the first command is displayed');
-            await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The command executed after the first command is displayed', { timeout: 10000 });
-            await t.click(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssDeleteCommandButton));
-        }
-        await t.expect(workbenchPage.noCommandHistoryTitle.visible).ok('The first command is deleted when user executes 31 command');
+        await t.expect(workbenchPage.queryCardCommand.find('span').withExactText(`${firstCommand}`).exists).notOk('The first command is not in the history result');
+        await t.expect(workbenchPage.queryCardCommand.count).eql(30, { timeout: 5000 });
     });
 test
     .meta({ rte: rte.none })('Verify that user can see cursor is at the first character when Editor is empty', async t => {

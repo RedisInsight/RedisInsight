@@ -7,7 +7,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
-import { getStreamRangeStart, getStreamRangeEnd } from 'uiSrc/utils/streamUtils'
+import { getStreamRangeStart, getStreamRangeEnd, updateConsumerGroups, updateConsumers } from 'uiSrc/utils/streamUtils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   AddStreamEntriesDto,
@@ -109,6 +109,7 @@ const streamSlice = createSlice({
     },
     addNewEntriesSuccess: (state) => {
       state.loading = false
+      state.data.entries = []
     },
     addNewEntriesFailure: (state, { payload }) => {
       state.loading = false
@@ -132,6 +133,7 @@ const streamSlice = createSlice({
     },
     removeStreamEntriesSuccess: (state) => {
       state.loading = false
+      state.data.entries = []
     },
     removeStreamEntriesFailure: (state, { payload }) => {
       state.loading = false
@@ -214,6 +216,9 @@ const streamSlice = createSlice({
     loadConsumersSuccess: (state, { payload }: PayloadAction<ConsumerDto[]>) => {
       state.groups.loading = false
 
+      const groups = updateConsumerGroups(state.groups.data, state.groups.selectedGroup?.name, payload)
+
+      state.groups.data = groups
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
         lastRefreshTime: Date.now(),
@@ -244,8 +249,17 @@ const streamSlice = createSlice({
     loadConsumerMessagesSuccess: (state, { payload }: PayloadAction<PendingEntryDto[]>) => {
       state.groups.loading = false
 
+      const consumers = updateConsumers(
+        state.groups.selectedGroup?.data,
+        state.groups.selectedGroup?.selectedConsumer?.name,
+        payload
+      )
+      const groups = updateConsumerGroups(state.groups.data, state.groups.selectedGroup?.name, consumers)
+
+      state.groups.data = groups
       state.groups.selectedGroup = {
         ...state.groups.selectedGroup,
+        data: consumers,
         selectedConsumer: {
           ...state.groups.selectedGroup?.selectedConsumer,
           lastRefreshTime: Date.now(),

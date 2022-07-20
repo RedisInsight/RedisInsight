@@ -2,22 +2,25 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .redisIcon {
-  width: 140px;
+  width: 128px;
   height: auto;
 }
 
-.consentsPopup {
+.consentsPopup.consentsPopup {
   background-color: var(--tableRowHoverColor);
   border-color: var(--tableRowHoverColor);
   :global {
-    min-width: 744px !important;
-    width: 874px;
+    width: 601px;
     max-width: 94vw;
+    border: 1px solid var(--euiColorPrimary) !important;
+    max-height: calc(100vh - 60px) !important;
+    height: auto;
+
     .euiModal__closeIcon {
       display: none;
     }
     .euiModal__flex {
-      max-height: 84vh !important;
+      max-height: calc(100vh - 60px) !important;
     }
   }
 
@@ -31,18 +34,27 @@
 }
 
 .modalHeader {
+  padding: 30px 42px 12px !important;
   padding-bottom: 4px;
+}
+
+.modalBody :global(.euiModalBody__overflow){
+  padding: 0 42px 30px !important;
 }
 
 .consentsWrapper {
   @include euiScrollBar;
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: calc(84vh - 260px);
+  max-height: calc(100vh - 290px);
 }
 
 .pluginWarningHR {
   margin-bottom: 0 !important;
+}
+
+.requiredHR {
+  margin: 0 !important;
 }
 
 .consentsPopupTitle {
@@ -57,9 +69,33 @@
   font-weight: 500;
 }
 
+.smallText {
+  font: normal normal normal 14px/24px Graphik !important;
+  letter-spacing: -0.14px;
+}
+
 .label {
   color: var(--inputTextColor) !important;
-  line-height: 20px !important;
+  line-height: 24px !important;
   font-weight: 500 !important;
   font-size: 14px !important;
+}
+
+.title {
+  line-height: 24px !important;
+  font-size: 16px !important;
+}
+
+.overlay {
+  &.overlay_dark {
+    background-image: url('uiSrc/assets/img/welcome_bg_dark.jpg') !important;
+  }
+
+  &.overlay_light {
+    background-image: url('uiSrc/assets/img/welcome_bg_light.jpg') !important;
+  }
+}
+
+:global(.euiOverlayMask) {
+  background: none !important;
 }

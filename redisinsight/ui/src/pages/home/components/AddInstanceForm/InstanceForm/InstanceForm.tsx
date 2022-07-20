@@ -53,7 +53,7 @@ import { handlePasteHostName } from 'uiSrc/utils'
 import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
 import { useResizableFormField } from 'uiSrc/services'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getRedisModulesSummary } from 'uiSrc/telemetry'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
@@ -169,6 +169,7 @@ const AddStandaloneForm = (props: Props) => {
       sentinelMasterUsername,
       isRediStack,
       servername,
+      provider,
     },
     initialValues: initialValuesProp,
     width,
@@ -362,10 +363,13 @@ const AddStandaloneForm = (props: Props) => {
   }
 
   const handleCheckConnectToInstance = () => {
+    const modulesSummary = getRedisModulesSummary(modules)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
       eventData: {
-        databaseId: id
+        databaseId: id,
+        provider,
+        ...modulesSummary,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))

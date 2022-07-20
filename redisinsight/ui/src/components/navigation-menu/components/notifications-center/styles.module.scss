@@ -1,0 +1,163 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/global_styling/index';
+
+.wrapper {
+  position: relative;
+  display: flex;
+
+  @include euiBreakpoint("xs", "s") {
+    flex-direction: column;
+  }
+
+  .navBtnWrapper {
+    position: relative;
+
+    .badgeUnreadCount {
+      position: absolute;
+
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 16px;
+      border-radius: 22px;
+
+      background: #9E2A28;
+
+      text-align: center;
+      line-height: 14px;
+      font-size: 12px;
+      color: #fff;
+    }
+  }
+
+  .notificationIcon {
+    &:hover {
+      transform: none !important;
+    }
+
+    &.active {
+      position: relative;
+      :global(.euiIcon) {
+        color: var(--navBackgroundColor);
+      }
+
+      &:before {
+        background: var(--euiColorSuccessText);
+        display: block;
+        content: '';
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+    }
+
+    :global(.euiIcon) {
+      width: 20px;
+      height: 20px;
+      position: relative;
+      right: -1px;
+    }
+  }
+
+  .popoverAnchor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .popover {
+    padding: 5px 15px 5px;
+  }
+}
+
+.popoverNotificationTooltip {
+  min-width: 420px !important;
+}
+
+.popoverCenterWrapper {
+  min-width: 420px !important;
+
+  .noItemsText {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    align-self: center;
+  }
+}
+
+.popoverNotificationCenter {
+  display: flex;
+  flex-direction: column;
+  .title {
+    font-size: 18px;
+    font-weight: 500;
+    padding: 6px 15px 0;
+  }
+}
+
+.notificationsList {
+  margin-top: 18px;
+  max-height: 70vh;
+  @include euiScrollBar;
+  overflow: auto;
+  padding: 0 15px 0;
+  margin-bottom: 12px;
+
+  .notificationItem {
+    position: relative;
+    &.unread {
+      &:before {
+        display: block;
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--euiColorPrimary);
+        position: absolute;
+        top: 8px;
+        left: -14px;
+      }
+    }
+  }
+
+  .notificationItem:not(:last-child) {
+    margin-bottom: 24px;
+  }
+
+  .notificationTitle {
+    margin-bottom: 6px;
+  }
+
+  .notificationDate {
+    margin-top: 6px;
+  }
+}
+
+.popoverNotification {
+  padding: 6px 15px;
+  position: relative;
+
+  .closeBtn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+
+  .notificationTitle {
+    display: block;
+    margin-right: 30px;
+    margin-bottom: 12px;
+    font: normal normal 500 18px/24px Graphik;
+  }
+
+  .notificationDate {
+    margin-top: 6px;
+  }
+}

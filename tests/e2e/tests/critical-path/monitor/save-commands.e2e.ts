@@ -1,12 +1,13 @@
 import * as fs from 'fs';
 import * as os from 'os';
-import {acceptLicenseTermsAndAddDatabase, deleteDatabase} from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MonitorPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const monitorPage = new MonitorPage();
 const cliPage = new CliPage();
@@ -14,14 +15,14 @@ const tempDir = os.tmpdir();
 const downloadsDir = `C:*****\\Downloads`;
 
 fixture `Save commands`
-    .meta({ type: 'regression' })
+    .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see a tooltip and toggle that allows to save Profiler log or not in the Profiler', async t => {

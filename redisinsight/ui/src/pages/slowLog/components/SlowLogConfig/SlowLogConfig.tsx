@@ -166,7 +166,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   className={styles.input}
                   value={slowerThan}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    setSlowerThan(validateNumber(e.target.value.trim(), Infinity, -1))
+                    setSlowerThan(validateNumber(e.target.value.trim(), -1, Infinity))
                   }}
                   placeholder={`${convertNumberByUnits(DEFAULT_SLOWLOG_SLOWER_THAN, durationUnit)}`}
                   autoComplete="off"

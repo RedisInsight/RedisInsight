@@ -4,6 +4,7 @@ export enum TelemetryEvents {
   ApplicationStarted = 'APPLICATION_STARTED',
   AnalyticsPermission = 'ANALYTICS_PERMISSION',
   SettingsScanThresholdChanged = 'SETTINGS_KEYS_TO_SCAN_CHANGED',
+  SettingsWorkbenchPipelineChanged = 'SETTINGS_WORKBENCH_PIPELINE_CHANGED',
 
   // Events for redis instances
   RedisInstanceAdded = 'CONFIG_DATABASES_DATABASE_ADDED',
@@ -50,4 +51,8 @@ export enum TelemetryEvents {
   PubSubMessagePublished = 'PUBSUB_MESSAGE_PUBLISHED',
   PubSubChannelSubscribed = 'PUBSUB_CHANNEL_SUBSCRIBED',
   PubSubChannelUnsubscribed = 'PUBSUB_CHANNEL_UNSUBSCRIBED',
+
+  // Bulk Actions
+  BulkActionsStarted = 'BULK_ACTIONS_STARTED',
+  BulkActionsStopped = 'BULK_ACTIONS_STOPPED',
 }

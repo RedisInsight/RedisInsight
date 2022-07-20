@@ -37,6 +37,7 @@ import KeyList from './components/key-list/KeyList'
 import KeyTree from './components/key-tree'
 import KeysHeader from './components/keys-header'
 import KeyDetailsWrapper from './components/key-details/KeyDetailsWrapper'
+import BulkActions from './components/bulk-actions'
 
 import styles from './styles.module.scss'
 
@@ -50,7 +51,8 @@ const BrowserPage = () => {
   const { contextInstanceId } = useSelector(appContextSelector)
   const {
     keyList: { selectedKey: selectedKeyContext, isDataLoaded },
-    panelSizes
+    panelSizes,
+    bulkActions: { opened: bulkActionOpenContext },
   } = useSelector(appContextBrowser)
   const keysState = useSelector(keysDataSelector)
   const { loading, viewType, isBrowserFullScreen } = useSelector(keysSelector)
@@ -60,6 +62,7 @@ const BrowserPage = () => {
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
   const [selectedKey, setSelectedKey] = useState<Nullable<string>>(selectedKeyContext)
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
+  const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
   const [sizes, setSizes] = useState(panelSizes)
   const selectedKeyRef = useRef<Nullable<string>>(selectedKey)
   const prevSelectedType = useRef<string>(type)
@@ -76,7 +79,7 @@ const BrowserPage = () => {
     globalThis.addEventListener('resize', updateWindowDimensions)
 
     if (!isDataLoaded || contextInstanceId !== instanceId) {
-      loadKeys()
+      loadKeys(viewType)
     }
 
     // componentWillUnmount
@@ -139,7 +142,7 @@ const BrowserPage = () => {
     setIsPageViewSent(true)
   }
 
-  const loadKeys = (keyViewType?: KeyViewType) => {
+  const loadKeys = (keyViewType: KeyViewType = KeyViewType.Browser) => {
     dispatch(setConnectedInstanceId(instanceId))
     dispatch(fetchKeys(
       '0',
@@ -150,12 +153,23 @@ const BrowserPage = () => {
   }
 
   const handleAddKeyPanel = (value: boolean, keyName?: string) => {
-    if (value && !isAddKeyPanelOpen) {
+    if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen) {
       dispatch(resetKeyInfo())
     }
     setSelectedKey(keyName ?? null)
     dispatch(toggleBrowserFullScreen(false))
     setIsAddKeyPanelOpen(value)
+    setIsBulkActionsPanelOpen(false)
+  }
+
+  const handleBulkActionsPanel = (value: boolean, keyName?: string) => {
+    if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen) {
+      dispatch(resetKeyInfo())
+    }
+    setSelectedKey(keyName ?? null)
+    dispatch(toggleBrowserFullScreen(false))
+    setIsAddKeyPanelOpen(false)
+    setIsBulkActionsPanelOpen(value)
   }
 
   const selectKey = ({ rowData }: { rowData: any }) => {
@@ -165,16 +179,18 @@ const BrowserPage = () => {
       dispatch(setInitialStateByType(prevSelectedType.current))
       setSelectedKey(rowData.name)
       setIsAddKeyPanelOpen(false)
+      setIsBulkActionsPanelOpen(false)
       prevSelectedType.current = rowData.type
     }
   }
 
-  const closeKey = () => {
+  const closePanel = () => {
     dispatch(resetKeyInfo())
     dispatch(toggleBrowserFullScreen(true))
 
     setSelectedKey(null)
     setIsAddKeyPanelOpen(false)
+    setIsBulkActionsPanelOpen(false)
   }
 
   const loadMoreItems = ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => {
@@ -191,7 +207,17 @@ const BrowserPage = () => {
     }
   }
 
-  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen
+  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen
+
+  const onEditKey = useCallback(
+    (key: string, newKey: string) => handleEditKey(key, newKey),
+    [],
+  )
+
+  const onSelectKey = useCallback(
+    () => setSelectedKey(null),
+    [],
+  )
 
   return (
     <div className={`browserPage ${styles.container}`}>
@@ -220,6 +246,7 @@ const BrowserPage = () => {
                       loadKeys={loadKeys}
                       loadMoreItems={loadMoreItems}
                       handleAddKeyPanel={handleAddKeyPanel}
+                      handleBulkActionsPanel={handleBulkActionsPanel}
                     />
                     {viewType === KeyViewType.Browser && (
                       <KeyList
@@ -263,20 +290,30 @@ const BrowserPage = () => {
                     }),
                   }}
                 >
-                  {isAddKeyPanelOpen ? (
+                  {isAddKeyPanelOpen && !isBulkActionsPanelOpen && (
                     <AddKey
-                      handleAddKeyPanel={handleAddKeyPanel}
-                      handleCloseKey={closeKey}
+                      onAddKeyPanel={handleAddKeyPanel}
+                      onClosePanel={closePanel}
                     />
-                  ) : (
+                  )}
+                  {!isAddKeyPanelOpen && !isBulkActionsPanelOpen && (
                     <KeyDetailsWrapper
                       isFullScreen={isBrowserFullScreen}
                       arePanelsCollapsed={arePanelsCollapsed}
                       onToggleFullScreen={handleToggleFullScreen}
                       keyProp={selectedKey}
-                      onCloseKey={closeKey}
-                      onEditKey={(key: string, newKey: string) => handleEditKey(key, newKey)}
-                      onDeleteKey={() => setSelectedKey(null)}
+                      onCloseKey={closePanel}
+                      onEditKey={onEditKey}
+                      onDeleteKey={onSelectKey}
+                    />
+                  )}
+                  {isBulkActionsPanelOpen && !isAddKeyPanelOpen && (
+                    <BulkActions
+                      isFullScreen={isBrowserFullScreen}
+                      arePanelsCollapsed={arePanelsCollapsed}
+                      onClosePanel={closePanel}
+                      onBulkActionsPanel={handleBulkActionsPanel}
+                      onToggleFullScreen={handleToggleFullScreen}
                     />
                   )}
                 </EuiResizablePanel>

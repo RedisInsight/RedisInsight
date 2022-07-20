@@ -138,8 +138,8 @@ const RangeFilter = (props: Props) => {
     return (
       <div data-testid="mock-fill-range" className={styles.rangeWrapper}>
         <div className={cx(styles.sliderRange, styles.mockRange)}>
-          <div className={styles.sliderLeftValue}>{getFormatTime(start?.toString())}</div>
-          <div className={styles.sliderRightValue}>{getFormatTime(end?.toString())}</div>
+          <div className={styles.sliderLeftValue} data-testid="range-left-timestamp">{getFormatTime(start?.toString())}</div>
+          <div className={styles.sliderRightValue} data-testid="range-right-timestamp">{getFormatTime(end?.toString())}</div>
         </div>
       </div>
     )
@@ -147,7 +147,7 @@ const RangeFilter = (props: Props) => {
 
   return (
     <>
-      <div className={styles.rangeWrapper}>
+      <div className={styles.rangeWrapper} data-testid="range-bar">
         <input
           type="range"
           min={min}

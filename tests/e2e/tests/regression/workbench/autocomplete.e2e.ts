@@ -1,7 +1,8 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -10,13 +11,13 @@ fixture `Autocomplete for entered commands`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.standalone })

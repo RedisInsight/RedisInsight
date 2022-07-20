@@ -1,8 +1,9 @@
 import { ClientFunction } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneV5Config } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -14,13 +15,13 @@ fixture `Redisearch module not available`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async(t) => {
         //Delete database
-        await deleteDatabase(ossStandaloneV5Config.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })
 test
     .meta({ env: env.web, rte: rte.standalone })

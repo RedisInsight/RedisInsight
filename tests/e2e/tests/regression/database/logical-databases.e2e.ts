@@ -1,7 +1,8 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTerms, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage, CliPage, AddRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -15,7 +16,7 @@ fixture `Logical databases`
     })
     .afterEach(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.standalone })

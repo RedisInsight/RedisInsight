@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     BrowserPage,
@@ -8,6 +8,7 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { Chance } from 'chance';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -23,12 +24,13 @@ fixture `Browser Context`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
+// Update after resolving https://redislabs.atlassian.net/browse/RI-3299
 test
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved CLI size on Browser page when he returns back to Browser page', async t => {
@@ -36,14 +38,14 @@ test
 
         await t.click(cliPage.cliExpandButton);
         const cliAreaHeight = await cliPage.cliArea.clientHeight;
+        const cliAreaHeightEnd = cliAreaHeight + 150;
         const cliResizeButton = await cliPage.cliResizeButton;
+        await t.hover(cliResizeButton);
         // move resize 200px up
-        await t.drag(cliResizeButton, 0, -offsetY, { speed });
+        await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });
         await t.click(myRedisDatabasePage.myRedisDBButton);
-
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-
-        await t.expect(await cliPage.cliArea.clientHeight).eql(cliAreaHeight + offsetY, 'Saved context for resizable cli is proper');
+        await t.expect(await cliPage.cliArea.clientHeight > cliAreaHeightEnd).ok('Saved context for resizable cli is incorrect');
     });
 test
     .meta({ rte: rte.standalone })
@@ -106,7 +108,7 @@ test
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can see key details selected when he returns back to Browser page', async t => {
         //Add and open new key details and navigate to Settings
@@ -123,7 +125,7 @@ test
     .after(async () => {
         //Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can see list of keys viewed on Browser page when he returns back to Browser page', async t => {
         const numberOfItems = 5000;

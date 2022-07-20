@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -6,6 +6,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 
@@ -13,20 +14,20 @@ fixture `Tree view verifications`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test
     .meta({ rte: rte.standalone })
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see message "No keys to display." when there are no keys in the database', async t => {
         //Verify the message
         await t.click(browserPage.treeViewButton);

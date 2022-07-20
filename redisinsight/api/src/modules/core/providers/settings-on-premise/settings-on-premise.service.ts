@@ -8,6 +8,7 @@ import {
 import {
   difference,
   isEmpty,
+  isNumber,
   map,
   cloneDeep,
 } from 'lodash';
@@ -25,6 +26,7 @@ import { SettingsAnalyticsService } from '../../services/settings-analytics/sett
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const SERVER_CONFIG = config.get('server');
+const WORKBENCH_CONFIG = config.get('workbench');
 
 @Injectable()
 export class SettingsOnPremiseService
@@ -79,6 +81,7 @@ implements OnModuleInit, ISettingsProvider {
       return {
         ...settings,
         scanThreshold: settings.scanThreshold || REDIS_SCAN_CONFIG.countThreshold,
+        batchSize: isNumber(settings.batchSize) ? settings.batchSize : WORKBENCH_CONFIG.countBatch,
         agreements: agreements.version ? agreements : null,
       };
     } catch (error) {

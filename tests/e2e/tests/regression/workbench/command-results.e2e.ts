@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
@@ -7,6 +7,7 @@ import {
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { Chance } from 'chance';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -24,7 +25,7 @@ fixture.skip `Command results at Workbench`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Add index and data
         await t.click(myRedisDatabasePage.workbenchButton);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
@@ -32,7 +33,7 @@ fixture.skip `Command results at Workbench`
     .afterEach(async() => {
         //Drop index and database
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ env: env.web, rte: rte.standalone })

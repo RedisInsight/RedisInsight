@@ -1,11 +1,12 @@
 import { t } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -15,14 +16,14 @@ fixture `Redis Stack command in Workbench`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async() => {
         //Drop key and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`GRAPH.DELETE ${keyNameGraph}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 //skipped due the inaccessibility of the iframe
 test.skip
@@ -49,7 +50,7 @@ test
         await t.click(workbenchPage.submitCommandButton);
         //Check result
         await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(workbenchPage.resposeInfo.textContent).eql('No data to visualize. Switch to Text view to see raw information.', 'The info message is displayed for Graph');
+        await t.expect(workbenchPage.responseInfo.textContent).eql('No data to visualize. Switch to Text view to see raw information.', 'The info message is displayed for Graph');
         //Switch to Text view and check result
         await t.switchToMainWindow();
         await workbenchPage.selectViewTypeText();

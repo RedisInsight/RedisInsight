@@ -1,11 +1,12 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -16,11 +17,11 @@ fixture `Tree view verifications`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)', async t => {
@@ -52,7 +53,7 @@ test
     .after(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyNameFilter);
-        await deleteDatabase(ossStandaloneBigConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })
     .meta({ rte: rte.standalone })('Verify that when user enables filtering by key name he can see only folder with appropriate keys are displayed and the number of keys and percentage is recalculated', async t => {
         await browserPage.addHashKey(keyNameFilter);

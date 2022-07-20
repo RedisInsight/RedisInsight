@@ -162,7 +162,6 @@ const MessagesViewWrapper = (props: Props) => {
       id: 'delivered',
       label: 'Times Message Delivered',
       minWidth: 106,
-      absoluteWidth: 106,
       truncateText: true,
       headerClassName: cx('streamItemHeader', styles.deliveredHeaderCell),
       headerCellClassName: 'truncateText',

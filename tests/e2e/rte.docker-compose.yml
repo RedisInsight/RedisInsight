@@ -50,13 +50,32 @@ services:
   oss-sentinel-primary-2:
     image: redis:5
 
-  # oss cluster
-  oss-cluster:
-    image: rdbtools/redis-cluster-modules
-    networks:
-      - default
+  # oss cluster (v7)
+  cluster-plain-creator-7:
+    build:
+      context: ./rte/oss-cluster-7
+      dockerfile: creator.Dockerfile
+    depends_on:
+      - master-plain-7-1
+      - master-plain-7-2
+      - master-plain-7-3
+  master-plain-7-1:
+    build: &cluster-plain-7-build ./rte/oss-cluster-7
     ports:
-      - 8200:7000
+      - 8200:6379
+    networks:
+      default:
+        ipv4_address: 172.31.100.211
+  master-plain-7-2:
+    build: *cluster-plain-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.212
+  master-plain-7-3:
+    build: *cluster-plain-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.213
 
   # redis enterprise
   redis-enterprise:
@@ -66,3 +85,11 @@ services:
     ports:
       - 19443:9443
       - 12000:12000
+networks:
+  default:
+    name: "e2e-private-network"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.31.100.0/24
+          gateway: 172.31.100.1

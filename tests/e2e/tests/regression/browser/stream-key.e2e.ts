@@ -1,12 +1,15 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
+const common = new Common();
 
 const value = chance.word({length: 5});
 let field = chance.word({length: 5});
@@ -19,11 +22,11 @@ fixture `Stream key`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see a Stream in a table format', async t => {
     const streamFields = [
@@ -60,7 +63,7 @@ test('Verify that user can sort ASC/DESC by Entry ID', async t => {
         await t.expect(entryDateFirstAsc).gt(entryDateSecondAsc, 'By default the table is sorted by Entry ID');
     }
     //Check the DESC sorting
-    await t.click(browserPage.scoreButton);
+    await t.click(browserPage.sortingButton);
     for(let i = 0; i < entryCount - 1; i++){
         const entryDateFirstDesc = Date.parse(await browserPage.streamEntryDate.nth(i).textContent);
         const entryDateSecondDesc = Date.parse(await browserPage.streamEntryDate.nth(i + 1).textContent);
@@ -121,4 +124,21 @@ test('Verify that user can see a confirmation message when request to delete an 
     //Check the confirmation message
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(confirmationMessage, `The confirmation message ${keyName}`);
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(entryId, 'The confirmation message for removing Entry');
+});
+test('Verify that the Entry ID field, Delete button are always displayed while scrolling for Stream data', async t => {
+    keyName = chance.word({ length: 20 });
+    const fields = common.createArrayWithKeys(9);
+    const values = common.createArrayWithKeys(9);
+    //Add new Stream key with 3 fields
+    for (let i = 0; i < fields.length; i++) {
+        await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
+    }
+    //Open key details
+    await browserPage.openKeyDetails(keyName);
+    // Scroll right
+    await t.pressKey('shift').scroll(browserPage.streamVirtualContainer, 'right');
+    // Verify that Entry ID field and Delete button are always displayed
+    await t.expect(browserPage.streamFieldsValues.withText(fields[5]).visible).ok(`The Stream field ${fields[5]} is not visible`)
+        .expect(browserPage.removeEntryButton.visible).ok('Delete icon is not visible')
+        .expect(browserPage.streamEntryDate.visible).ok('Entry ID column is not visible');
 });

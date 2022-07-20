@@ -27,7 +27,6 @@ const verticalPanelIds = {
 
 export interface Props {
   script: string
-  loading: boolean
   items: CommandExecutionUI[]
   setScript: (script: string) => void
   setScriptEl: Function
@@ -42,7 +41,6 @@ const WBView = (props: Props) => {
   const {
     script = '',
     items,
-    loading,
     setScript,
     setScriptEl,
     scriptEl,
@@ -52,7 +50,7 @@ const WBView = (props: Props) => {
     scrollDivRef,
   } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
-    (localStorageService?.get(BrowserStorageItem.isGuidesMinimized) ?? 'false') === 'true'
+    (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
   )
   const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 
@@ -67,7 +65,7 @@ const WBView = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    localStorageService.set(BrowserStorageItem.isGuidesMinimized, isMinimized)
+    localStorageService.set(BrowserStorageItem.isEnablementAreaMinimized, isMinimized)
   }, [isMinimized])
 
   const onVerticalPanelWidthChange = useCallback((newSizes: any) => {
@@ -102,7 +100,6 @@ const WBView = (props: Props) => {
                 >
                   <QueryWrapper
                     query={script}
-                    loading={loading}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
                     setIsCodeBtnDisabled={setIsCodeBtnDisabled}

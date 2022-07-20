@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     CliPage,
@@ -12,6 +12,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
@@ -27,16 +28,16 @@ fixture `Monitor`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can work with Monitor', async t => {
         const command = 'set';
         //Verify that user can open Monitor

@@ -19,10 +19,7 @@ describe('PopoverDelete', () => {
         showPopover={showPopover}
       />
     )
-    fireEvent(
-      screen.getByLabelText(/remove field/i),
-      new MouseEvent('click', { bubbles: true })
-    )
+    fireEvent.click(screen.getByLabelText(/remove field/i))
 
     expect(showPopover).toBeCalledTimes(1)
   })
@@ -40,10 +37,7 @@ describe('PopoverDelete', () => {
     )
 
     const deleteBtn = screen.getByTestId('remove')
-    fireEvent(
-      deleteBtn,
-      new MouseEvent('click', { bubbles: true })
-    )
+    fireEvent.click(deleteBtn)
     expect(handleDeleteItem).toBeCalledTimes(1)
   })
 })

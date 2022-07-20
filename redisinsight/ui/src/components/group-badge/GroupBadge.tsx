@@ -6,8 +6,8 @@ import { CommandGroup, KeyTypes, GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from 
 import styles from './styles.module.scss'
 
 export interface Props {
-  type: KeyTypes | CommandGroup | string;
-  name?: string,
+  type: KeyTypes | CommandGroup | string
+  name?: string
   className?: string
   compressed?: boolean
   onDelete?: (type: string) => void

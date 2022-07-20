@@ -21,7 +21,6 @@ import styles from './styles.module.scss'
 
 const StreamTabs = () => {
   const { viewType } = useSelector(streamSelector)
-  const { data: groups = [] } = useSelector(streamGroupsSelector)
   const { name: selectedGroupName = '' } = useSelector(selectedGroupSelector) ?? {}
   const { name: selectedConsumerName = '' } = useSelector(selectedConsumerSelector) ?? {}
 
@@ -40,7 +39,7 @@ const StreamTabs = () => {
   }
 
   const onSelectedTabChanged = (id: StreamViewType) => {
-    if (id === StreamViewType.Groups && groups.length === 0) {
+    if (id === StreamViewType.Groups) {
       dispatch(fetchConsumerGroups(
         true,
         onSuccessLoadedConsumerGroups,

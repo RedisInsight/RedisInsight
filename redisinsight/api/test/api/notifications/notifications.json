@@ -1,0 +1,19 @@
+{
+  "notifications": [
+    {
+      "title": "Title-1",
+      "body": "Body-1",
+      "timestamp": 1656054100
+    },
+    {
+      "title": "Title-3",
+      "body": "Body-3",
+      "timestamp": 1656054300
+    },
+    {
+      "title": "Title-4",
+      "body": "Body-4",
+      "timestamp": 1656054400
+    }
+  ]
+}

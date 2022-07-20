@@ -4,6 +4,7 @@ import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workb
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
@@ -48,6 +49,21 @@ export class WorkbenchService {
     }
 
     return this.commandExecutionProvider.create(commandExecution);
+  }
+
+  /**
+   * Send redis command from workbench and save history
+   *
+   * @param clientOptions
+   * @param dto
+   */
+  async createCommandExecutions(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: CreateCommandExecutionsDto,
+  ): Promise<CommandExecution[]> {
+    return Promise.all(
+      dto.commands.map(async (command) => await this.createCommandExecution(clientOptions, { ...dto, command })),
+    );
   }
 
   /**

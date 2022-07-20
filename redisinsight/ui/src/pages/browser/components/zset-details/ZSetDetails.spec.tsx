@@ -48,26 +48,13 @@ describe('ZSetDetails', () => {
 
   it('should render delete popup after click remove button', () => {
     render(<ZSetDetails {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getAllByTestId(/zset-edit-button/)[0],
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
     expect(screen.getByTestId(/zset-edit-button-member1/)).toBeInTheDocument()
   })
 
   it('should render editor after click edit button and able to change value', () => {
     render(<ZSetDetails {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getAllByTestId(/zset-edit-button/)[0],
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
+    fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
     expect(screen.getByTestId('inline-item-editor')).toBeInTheDocument()
     fireEvent.change(screen.getByTestId('inline-item-editor'), { target: { value: '123' } })
     expect(screen.getByTestId('inline-item-editor')).toHaveValue('123')

@@ -1,8 +1,9 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -13,18 +14,18 @@ fixture `Last refresh`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can see the date and time of the last update of my Keys in the tooltip', async t => {
         //Hover on the refresh icon

@@ -3,7 +3,7 @@ import {
 } from '../../../helpers/database';
 import { MyRedisDatabasePage, PubSubPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossClusterConfig } from '../../../helpers/conf';
-import { rte } from '../../../helpers/constants';
+import { rte, env } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
 import {
     addNewOSSClusterDatabaseApi, addNewStandaloneDatabaseApi,
@@ -15,7 +15,7 @@ const pubSubPage = new PubSubPage();
 const cliPage = new CliPage();
 
 fixture `PubSub OSS Cluster 7 tests`
-    .meta({ type: 'regression' })
+    .meta({ env: env.web, type: 'regression' })
     .page(commonUrl);
 
 test

@@ -86,7 +86,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
     if (e.target.checked) {
       const newBufferValues:Values = {}
       consents.forEach((consent) => {
-        if (!consent.required) {
+        if (!consent.required && !consent.disabled) {
           newBufferValues[consent.agreementName] = formik.values[consent.agreementName]
           formik.setFieldValue(consent.agreementName, true)
         }
@@ -94,7 +94,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       })
     } else {
       consents.forEach((consent) => {
-        if (!consent.required) {
+        if (!consent.required && !consent.disabled) {
           formik.setFieldValue(consent.agreementName, valuesBuffer[consent.agreementName])
         }
       })
@@ -153,14 +153,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
   const checkIsRecommended = () => {
     let recommended = true
     forEach(privacyConsents, (consent) => {
-      if (!formik.values[consent?.agreementName]) {
+      if (!formik.values[consent?.agreementName] && !consent.disabled) {
         recommended = false
         return false
       }
     })
 
     forEach(notificationConsents, (consent) => {
-      if (!formik.values[consent?.agreementName]) {
+      if (!formik.values[consent?.agreementName] && !consent.disabled) {
         recommended = false
         return false
       }

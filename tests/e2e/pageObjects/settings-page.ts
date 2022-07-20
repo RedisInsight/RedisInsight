@@ -35,9 +35,9 @@ export class SettingsPage {
     }
 
     /**
- * Change Commands In Pipeline value
- * @param value Value for pipeline
- */
+    * Change Commands In Pipeline value
+    * @param value Value for pipeline
+    */
     async changeCommandsInPipeline(value: string): Promise<void> {
         await t.hover(this.commandsInPipelineValue);
         await t.click(this.commandsInPipelineInput);
@@ -45,14 +45,23 @@ export class SettingsPage {
         await t.click(this.applyButton);
     }
 
+    /**
+     * Get state of Analytics switcher
+     */
     async getAnalyticsSwitcherValue(): Promise<string> {
         return await this.switchAnalyticsOption.getAttribute('aria-checked');
     }
 
+    /**
+     * Get state of Notifications switcher
+     */
     async getNotificationsSwitcherValue(): Promise<string> {
         return await this.switchNovitifationsOption.getAttribute('aria-checked');
     }
 
+    /**
+     * Get state of Eula switcher
+     */
     async getEulaSwitcherValue(): Promise<string> {
         return await this.switchEulaOption.getAttribute('aria-checked');
     }

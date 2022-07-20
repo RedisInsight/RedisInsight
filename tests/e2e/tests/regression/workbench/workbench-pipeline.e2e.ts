@@ -53,6 +53,7 @@ test('Verify that only chosen in pipeline number of commands is loading at the s
     await t.expect(workbenchPage.loadedCommand.count).eql(Number(pipelineValues[2]), 'The number of sending commands is incorrect');
 });
 test('Verify that user can see spinner over Run button and grey preloader for each command', async t => {
+    let commandForSend = '300 scan 0 match * count 5000';
     await settingsPage.changeCommandsInPipeline(pipelineValues[2]);
     // Go to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);

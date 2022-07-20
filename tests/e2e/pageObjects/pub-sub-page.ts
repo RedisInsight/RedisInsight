@@ -16,6 +16,7 @@ export class PubSubPage {
     pubSubPageContainer = Selector('[data-testid=pub-sub-page]');
     clientBadge = Selector('[data-testid=affected-clients-badge]');
     clearButtonTooltip = Selector('.euiToolTipPopover');
+    ossClusterEmptyMessage = Selector('[data-testid=empty-messages-list-cluster]');
     //BUTTONS
     subscribeButton = Selector('[data-testid=subscribe-btn]').withText('Subscribe');
     unsubscribeButton = Selector('[data-testid=subscribe-btn]').withText('Unsubscribe');

@@ -15,7 +15,7 @@ export class UserAgreementPage {
     switchOptionEncryption = Selector('[data-testid=switch-option-encryption]');
     pluginSectionWithText = Selector('[data-testid=plugin-section]');
     recommendedSwitcher = Selector('[data-testid=switch-option-recommended]');
-
+    
     //Accept RedisInsight License Terms
     async acceptLicenseTerms(): Promise<void> {
         if (await this.switchOptionEula.exists) {
@@ -24,7 +24,7 @@ export class UserAgreementPage {
             await t.click(this.submitButton);
         }
     }
-
+    
     /**
      * Get state of Recommended switcher
      */

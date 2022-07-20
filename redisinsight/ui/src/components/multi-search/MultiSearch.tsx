@@ -78,7 +78,7 @@ const MultiSearch = (props: Props) => {
         color="primary"
         aria-label="Search"
         className={styles.searchButton}
-        onClick={onSubmit}
+        onClick={() => onSubmit()}
         data-testid="search-btn"
       />
     </div>

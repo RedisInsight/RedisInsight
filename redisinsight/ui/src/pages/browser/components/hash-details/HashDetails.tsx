@@ -28,7 +28,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { KeyTypes, TableCellAlignment } from 'uiSrc/constants'
-import { columnWidth } from 'uiSrc/components/virtual-grid'
+import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import {
   GetHashFieldsResponse,
@@ -369,7 +369,7 @@ const HashDetails = (props: Props) => {
           onChangeWidth={setWidth}
           columns={columns.map((column, i, arr) => ({
             ...column,
-            width: columnWidth(i, width, arr)
+            width: getColumnWidth(i, width, arr)
           }))}
           footerHeight={0}
           loadMoreItems={loadMoreItems}

@@ -1,5 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
+import { isNull } from 'lodash'
 import { EuiText, EuiTextColor } from '@elastic/eui'
 
 import { numberWithSpaces, nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
@@ -35,7 +36,7 @@ const KeysSummary = (props: Props) => {
 
   return (
     <>
-      {(!!totalItemsCount || totalItemsCount === null) && (
+      {(!!totalItemsCount || isNull(totalItemsCount)) && (
         <div className={styles.content} data-testid="keys-summary">
           <EuiText size="xs">
             {!!scanned && (

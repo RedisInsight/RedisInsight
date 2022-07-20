@@ -56,7 +56,7 @@ export class StandaloneStrategy extends AbstractStrategy {
 
     if (!isGlob(match, { strict: false })) {
       const keyName = unescapeGlob(match);
-      node.cursor = 0;     
+      node.cursor = 0;
       node.scanned = isNull(node.total) ? 1 : node.total;
       node.keys = await this.getKeysInfo(client, [keyName]);
       node.keys = node.keys.filter((key: GetKeyInfoResponse) => {

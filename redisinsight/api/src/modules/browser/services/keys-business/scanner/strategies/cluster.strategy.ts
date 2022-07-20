@@ -144,8 +144,10 @@ export class ClusterStrategy extends AbstractStrategy {
             [],
             { host: node.host, port: node.port },
           );
+          // eslint-disable-next-line no-param-reassign
           node.total = result.result;
         } catch (err) {
+          // eslint-disable-next-line no-param-reassign
           node.total = null;
         }
       }),

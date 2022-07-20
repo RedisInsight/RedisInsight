@@ -771,7 +771,6 @@ describe('Cluster Scanner Strategy', () => {
           expect.anything(),
           expect.anything(),
       )
-      // .mockResolvedValue({ result: 0 });
         .mockRejectedValue(replyError);
       when(browserTool.execCommandFromNode)
         .calledWith(

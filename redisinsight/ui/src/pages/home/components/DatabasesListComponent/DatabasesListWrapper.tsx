@@ -31,6 +31,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
+import { getRedisModulesSummary } from 'apiSrc/utils/redis-modules-summary's
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -125,12 +126,13 @@ const DatabasesListWrapper = ({
     { id, provider, modules }: Instance
   ) => {
     event.preventDefault()
+    const modulesSummary = getRedisModulesSummary(modules);
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
         databaseId: id,
         provider,
-        modules,
+        ...modulesSummary,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))

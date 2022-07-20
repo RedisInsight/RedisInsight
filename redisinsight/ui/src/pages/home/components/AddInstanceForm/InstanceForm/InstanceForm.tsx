@@ -58,6 +58,7 @@ import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
 import { DatabaseListModules } from 'uiSrc/components'
+import { getRedisModulesSummary } from 'apiSrc/utils/redis-modules-summary'
 import {
   LoadingInstanceText,
   SubmitBtnText,
@@ -363,12 +364,13 @@ const AddStandaloneForm = (props: Props) => {
   }
 
   const handleCheckConnectToInstance = () => {
+    const modulesSummary = getRedisModulesSummary(modules);
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
       eventData: {
         databaseId: id,
         provider,
-        modules,
+        ...modulesSummary,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))

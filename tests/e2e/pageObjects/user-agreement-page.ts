@@ -13,14 +13,14 @@ export class UserAgreementPage {
     submitButton = Selector('[data-testid=btn-submit]');
     switchOptionEula = Selector('[data-testid=switch-option-eula]');
     switchOptionEncryption = Selector('[data-testid=switch-option-encryption]');
-    pluginSectionWithText = Selector('[data-testid=plugin-section]')
+    pluginSectionWithText = Selector('[data-testid=plugin-section]');
 
-  //Accept RedisInsight License Terms
-  async acceptLicenseTerms():Promise<void> {
-      if (await this.switchOptionEula.exists) {
-          await t.click(this.switchOptionEula);
-          await t.click(this.switchOptionEncryption);
-          await t.click(this.submitButton);
-      }
-  }
+    //Accept RedisInsight License Terms
+    async acceptLicenseTerms(): Promise<void> {
+        if (await this.switchOptionEula.exists) {
+            await t.click(this.switchOptionEula);
+            await t.click(this.switchOptionEncryption);
+            await t.click(this.submitButton);
+        }
+    }
 }

@@ -25,7 +25,7 @@ import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { columnWidth } from 'uiSrc/components/virtual-grid'
+import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 import styles from './styles.module.scss'
@@ -256,7 +256,7 @@ const SetDetails = (props: Props) => {
         onSearch={handleSearch}
         columns={columns.map((column, i, arr) => ({
           ...column,
-          width: columnWidth(i, width, arr)
+          width: getColumnWidth(i, width, arr)
         }))}
         onChangeWidth={setWidth}
         cellCache={cellCache}

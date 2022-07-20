@@ -1,3 +1,4 @@
+import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { TelemetryEvent } from './events'
 
 export interface ITelemetryIdentify {
@@ -33,4 +34,23 @@ export interface ITelemetryEvent {
 export enum MatchType {
   EXACT_VALUE_NAME = 'EXACT_VALUE_NAME',
   PATTERN = 'PATTERN'
+}
+
+export enum RedisModules {
+  RedisAI = 'ai',
+  RedisGraph = 'graph',
+  RedisGears = 'rg',
+  RedisBloom = 'bf',
+  RedisJSON = 'ReJSON',
+  RediSearch = 'search',
+  RedisTimeSeries = 'timeseries',
+}
+
+interface IModuleSummary {
+  loaded: boolean;
+  version?: number;
+  semanticVersion?: number;
+}
+export interface IRedisModulesSummary extends Record<keyof typeof RedisModules, IModuleSummary> {
+  customModules: RedisModuleDto[]
 }

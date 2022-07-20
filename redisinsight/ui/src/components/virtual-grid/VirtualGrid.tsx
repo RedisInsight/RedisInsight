@@ -10,7 +10,7 @@ import { Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { IProps } from './interfaces'
-import { columnWidth, useInnerElementType } from './utils'
+import { getColumnWidth, useInnerElementType } from './utils'
 
 import styles from './styles.module.scss'
 
@@ -46,14 +46,23 @@ const VirtualGrid = (props: IProps) => {
   const [expandedRows, setExpandedRows] = useState<number[]>([])
 
   const gridRef = useRef<Nullable<Grid>>()
-  const sizeMap = useRef<{ [key: number]: number }>({})
-  const setSize = useCallback((index, size) => {
-    sizeMap.current = { ...sizeMap.current, [index]: size }
+  const rowHeightsMap = useRef<{ [key: number]: { [key: number]: number } }>({})
+  const setRowHeight = useCallback((rowIndex: number, columnIndex:number, size:number) => {
+    rowHeightsMap.current = {
+      ...rowHeightsMap.current,
+      [rowIndex]: {
+        ...(rowHeightsMap.current[rowIndex] || {}),
+        [columnIndex]: size
+      }
+    }
 
-    gridRef.current?.resetAfterRowIndex?.(index)
+    gridRef.current?.resetAfterRowIndex?.(rowIndex)
   }, [])
-  const getSize = (index: number) =>
-    (expandedRows.indexOf(index) !== -1 ? sizeMap.current[index] : rowHeight)
+
+  const getRowHeight = (index: number) =>
+    (expandedRows.indexOf(index) !== -1
+      ? Math.max(...Object.values(rowHeightsMap.current[index]))
+      : rowHeight)
 
   useEffect(() =>
     () => {
@@ -63,7 +72,7 @@ const VirtualGrid = (props: IProps) => {
 
   useEffect(() => {
     setExpandedRows([])
-    sizeMap.current = {}
+    rowHeightsMap.current = {}
     gridRef.current?.resetAfterRowIndex?.(0)
   }, [totalItemsCount])
 
@@ -137,11 +146,11 @@ const VirtualGrid = (props: IProps) => {
         const paddingSize = 24
         const cellHeight = cellRef.current?.children?.[0]?.getBoundingClientRect?.().height + paddingSize
 
-        if (cellHeight > getSize(rowIndex) && rowIndex !== 0) {
-          setSize(rowIndex, cellHeight)
+        if (rowIndex !== 0) {
+          setRowHeight(rowIndex, columnIndex, cellHeight)
         }
       }
-    }, [setSize, rowIndex, expanded, width])
+    }, [setRowHeight, rowIndex, expanded])
 
     if (rowIndex === 0) {
       return (
@@ -176,7 +185,9 @@ const VirtualGrid = (props: IProps) => {
     }
     if (columnIndex === 0) {
       const lastColumn = columns[columns.length - 1]
-      const allDynamicRowsHeight: number[] = Object.values(sizeMap.current)
+      const allDynamicRowsHeight: number[] = Object.values(rowHeightsMap.current)
+        .map((row) => Math.max(...Object.values(row)))
+
       const allRowsHeight = allDynamicRowsHeight.reduce((a, b) => a + b, 0)
        + (items.length - allDynamicRowsHeight.length) * rowHeight
 
@@ -201,7 +212,7 @@ const VirtualGrid = (props: IProps) => {
                 : styles.gridItemEven)}
             style={{
               width: lastColumn?.minWidth,
-              height: getSize(rowIndex),
+              height: getRowHeight(rowIndex),
               marginLeft: width - lastColumn?.minWidth - (hasHorizontalScrollOffset ? 29 : 13)
             }}
           >
@@ -228,10 +239,11 @@ const VirtualGrid = (props: IProps) => {
 
   const innerElementType = useInnerElementType(
     Cell,
-    (i) => columnWidth(i, width, columns),
-    getSize,
+    getColumnWidth,
+    getRowHeight,
     columns.length - 1,
-    width,
+    Math.max(maxTableWidth, width),
+    columns,
   )
 
   return (
@@ -274,10 +286,10 @@ const VirtualGrid = (props: IProps) => {
                     })}
                   className={styles.grid}
                   columnCount={columns.length}
-                  columnWidth={(i) => columnWidth(i, width, columns)}
+                  columnWidth={(i) => getColumnWidth(i, width, columns)}
                   height={height}
                   rowCount={items.length}
-                  rowHeight={getSize}
+                  rowHeight={getRowHeight}
                   width={width}
                   innerElementType={innerElementType}
                   onScroll={onScroll}

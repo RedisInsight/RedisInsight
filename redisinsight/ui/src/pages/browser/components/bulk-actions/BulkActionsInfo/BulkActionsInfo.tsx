@@ -54,7 +54,7 @@ const BulkActionsInfo = (props: Props) => {
         )}
         {status === BulkActionsStatus.Completed && (
           <EuiText className={cx(styles.progress, styles.progressCompleted)}>
-            Action complete
+            Action completed
           </EuiText>
         )}
       </div>

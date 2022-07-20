@@ -1,9 +1,9 @@
 import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { mergeWith, toNumber } from 'lodash'
+import { last, mergeWith, toNumber } from 'lodash'
 
-import { formatLongName } from 'uiSrc/utils'
+import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -135,7 +135,7 @@ const StreamDataViewWrapper = (props: Props) => {
     headerClassName: 'streamItemHeader',
     headerCellClassName: 'truncateText',
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
-      const index = toNumber(label.split('-')[1])
+      const index = toNumber(last(label.split('-')))
       const values = fields.filter((field) => field[0] === name)
       const value = values[index] ? values[index][1] : ''
       const cellContent = value.substring(0, 650)
@@ -204,14 +204,8 @@ const StreamDataViewWrapper = (props: Props) => {
       return (
         <div>
           <PopoverDelete
-            header={id}
-            text={(
-              <>
-                will be removed from
-                {' '}
-                <b>{key}</b>
-              </>
-              )}
+            header={createDeleteFieldHeader(id)}
+            text={createDeleteFieldMessage(key)}
             item={id}
             suffix={suffix}
             deleting={deleting}

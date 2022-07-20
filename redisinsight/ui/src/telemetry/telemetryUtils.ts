@@ -188,7 +188,7 @@ export const getRefreshEventData = (eventData: any, type: string, streamViewType
   return eventData
 }
 
-export const SUPPORTED_REDIS_MODULES = Object.freeze({
+const SUPPORTED_REDIS_MODULES = Object.freeze({
   ai: RedisModules.RedisAI,
   graph: RedisModules.RedisGraph,
   rg: RedisModules.RedisGears,

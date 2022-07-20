@@ -3,6 +3,7 @@
  * This module abstracts the exact service/framework used for tracking usage.
  */
 import isGlob from 'is-glob'
+import { cloneDeep } from 'lodash'
 import * as jsonpath from 'jsonpath'
 import { Nullable } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
@@ -10,7 +11,15 @@ import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/c
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
-import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService, MatchType } from './interfaces'
+import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import {
+  ITelemetrySendEvent,
+  ITelemetrySendPageView,
+  ITelemetryService,
+  IRedisModulesSummary,
+  MatchType,
+  RedisModules,
+} from './interfaces'
 import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
 
@@ -47,6 +56,7 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   // for analytics is granted or not.
   // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
   const { event, eventData = {}, nonTracking = false } = payload
+  console.log(event, eventData)
 
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
@@ -179,6 +189,56 @@ export const getRefreshEventData = (eventData: any, type: string, streamViewType
   return eventData
 }
 
+export const SUPPORTED_REDIS_MODULES = Object.freeze({
+  ai: RedisModules.RedisAI,
+  graph: RedisModules.RedisGraph,
+  rg: RedisModules.RedisGears,
+  bf: RedisModules.RedisBloom,
+  ReJSON: RedisModules.RedisJSON,
+  search: RedisModules.RediSearch,
+  timeseries: RedisModules.RedisTimeSeries,
+})
+
+const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
+  {
+    RediSearch: { loaded: false },
+    RedisAI: { loaded: false },
+    RedisGraph: { loaded: false },
+    RedisGears: { loaded: false },
+    RedisBloom: { loaded: false },
+    RedisJSON: { loaded: false },
+    RedisTimeSeries: { loaded: false },
+    customModules: [],
+  },
+)
+
+const getEnumKeyBValue = (myEnum: any, enumValue: number | string): string => {
+  const keys = Object.keys(myEnum)
+  const index = keys.findIndex((x) => myEnum[x] === enumValue)
+  return index > -1 ? keys[index] : ''
+}
+
+const getRedisModulesSummary = (modules: RedisModuleDto[] = []): IRedisModulesSummary => {
+  const summary = cloneDeep(DEFAULT_SUMMARY)
+  try {
+    modules.forEach(((module) => {
+      if (SUPPORTED_REDIS_MODULES[module.name]) {
+        const moduleName = getEnumKeyBValue(RedisModules, module.name)
+        summary[moduleName] = {
+          loaded: true,
+          version: module.version,
+          semanticVersion: module.semanticVersion,
+        }
+      } else {
+        summary.customModules.push(module)
+      }
+    }))
+  } catch (e) {
+    // continue regardless of error
+  }
+  return summary
+}
+
 export {
   getTelemetryService,
   sendEventTelemetry,
@@ -187,5 +247,6 @@ export {
   getBasedOnViewTypeEvent,
   getJsonPathLevel,
   getAdditionalAddedEventData,
-  getMatchType
+  getMatchType,
+  getRedisModulesSummary
 }

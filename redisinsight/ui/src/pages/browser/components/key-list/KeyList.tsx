@@ -214,7 +214,7 @@ const KeyList = (props: Props) => {
               onWheel={onWheelSearched}
               loading={loading}
               items={keysState.keys}
-              totalItemsCount={keysState.total}
+              totalItemsCount={keysState.total ? keysState.total : Infinity}
               scanned={isSearched || isFiltered ? keysState.scanned : 0}
               noItemsMessage={getNoItemsMessage()}
               selectedKey={selectedKey}

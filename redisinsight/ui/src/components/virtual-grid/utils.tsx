@@ -33,10 +33,11 @@ export const getShownIndicies = (children: typeof React.Children) => {
 
 export const useInnerElementType = (
   Cell: GridChildComponentProps<null>,
-  columnWidth:(index: number) => number,
+  columnWidth:(index: number, width: number, columns: ITableColumn[]) => number,
   rowHeight:(index: number) => number,
   columnCount: number,
-  width: number,
+  tableWidth: number,
+  columns: ITableColumn[],
 ) => React.useMemo(
   () =>
     React.forwardRef((props:ReactNode, ref) => {
@@ -55,7 +56,7 @@ export const useInnerElementType = (
         let sum = 0
 
         while (index > 1) {
-          sum += columnWidth(index - 1)
+          sum += columnWidth(index - 1, tableWidth, columns)
           index -= 1
         }
 
@@ -64,7 +65,7 @@ export const useInnerElementType = (
 
       const shownIndecies = getShownIndicies(props.children)
 
-      const children = React.Children.map(props.children, (child) => {
+      let children = React.Children.map(props.children, (child, index) => {
         const { column, row } = getCellIndicies(child)
 
         // do not show non-sticky cell
@@ -72,8 +73,41 @@ export const useInnerElementType = (
           return null
         }
 
-        return child
+        return {
+          ...child,
+          props: {
+            ...child.props,
+            style: {
+              ...child.props.style,
+              width: columnWidth(column, tableWidth, columns),
+            }
+          }
+        }
       })
+
+      children = React.Children.toArray(children)
+
+      for (let i = 1; i < children.length; i++) {
+        const child = children[i]
+        const prevChild = children[i - 1]
+        const { row } = getCellIndicies(child)
+        const { row: prevRow } = getCellIndicies(prevChild)
+
+        if (prevRow !== row) {
+          children[i] = child
+        } else {
+          children[i] = {
+            ...child,
+            props: {
+              ...child.props,
+              style: {
+                ...child.props.style,
+                left: prevChild.props.style.left + prevChild.props.style.width,
+              }
+            }
+          }
+        }
+      }
 
       children.push(
         React.createElement(Cell, {
@@ -82,7 +116,7 @@ export const useInnerElementType = (
           columnIndex: 0,
           style: {
             display: 'inline-flex',
-            width: columnWidth(0),
+            width: columnWidth(0, tableWidth, columns),
             height: rowHeight(0),
             position: 'sticky',
             top: 0,
@@ -98,7 +132,7 @@ export const useInnerElementType = (
       for (let i = 1; i <= shownColumnsCount; i += 1) {
         const columnIndex = i + shownIndecies.from.column
         const rowIndex = 0
-        const width = columnWidth(columnIndex)
+        const width = columnWidth(columnIndex, tableWidth, columns)
         const height = rowHeight(rowIndex)
 
         const marginLeft = i === 1 ? sumColumnWidths(columnIndex) : undefined
@@ -126,7 +160,7 @@ export const useInnerElementType = (
       for (let i = 1; i <= shownRowsCount; i += 1) {
         const columnIndex = 0
         const rowIndex = i + shownIndecies.from.row
-        const width = columnWidth(columnIndex)
+        const width = columnWidth(columnIndex, tableWidth, columns)
         const height = rowHeight(rowIndex)
 
         const marginTop = i === 1 ? sumRowsHeights(rowIndex) : undefined
@@ -150,16 +184,15 @@ export const useInnerElementType = (
       }
 
       return (
-        <div ref={ref} {...props}>
+        <div ref={ref} {...props} style={{ ...props?.style, width: tableWidth }}>
           {children}
         </div>
       )
     }),
-  [Cell, columnWidth, rowHeight, columnCount, width]
+  [Cell, columnWidth, rowHeight, columnCount, tableWidth]
 )
 
-export const columnWidth = (i: number, width: number, columns: ITableColumn[], minColumnWidth: number = 190) => {
-  const scrollWidth = 16
+export const getColumnWidth = (i: number, width: number, columns: ITableColumn[], minColumnWidth: number = 190) => {
   const maxTableWidth = columns.reduce((a, { maxWidth = minColumnWidth }) => a + maxWidth, 0)
 
   if (maxTableWidth < width) {

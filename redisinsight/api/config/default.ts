@@ -174,7 +174,7 @@ export default {
     {
       name: 'redisgears',
       url: process.env.COMMANDS_REDISGEARS_URL
-        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
+        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/v1.2.5/commands.json',
     },
     {
       name: 'redisbloom',

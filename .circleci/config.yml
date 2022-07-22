@@ -1122,10 +1122,3 @@ workflows:
           report: true
           requires:
             - Build app - Linux (stage)
-      # e2e desktop tests on exe build
-      - e2e-exe:
-          name: E2ETest (exe) - Nightly
-          parallelism: 4
-          report: true
-          requires:
-            - Build app - Windows (stage)

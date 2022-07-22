@@ -1,0 +1,21 @@
+import { RedisString } from 'src/common/constants';
+import { isArray, isObject, isString } from 'lodash';
+import { getBufferFromSafeASCIIString } from 'src/utils/cli-helper';
+
+export const AnyToRedisStringTransformer = (value: any): RedisString => {
+  if (value?.type === 'Buffer') {
+    if (isArray(value.data)) {
+      return Buffer.from(value);
+    }
+
+    if (isObject(value.data)) {
+      return Buffer.from(Object.values(value.data));
+    }
+  }
+
+  if (isString(value)) {
+    return getBufferFromSafeASCIIString(value);
+  }
+
+  return value;
+};

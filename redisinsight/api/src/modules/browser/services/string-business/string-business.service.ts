@@ -8,7 +8,6 @@ import {
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
-import { RedisDataType } from 'src/modules/browser/dto';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import {
   GetStringValueResponse,
@@ -20,6 +19,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class StringBusinessService {
@@ -74,6 +74,7 @@ export class StringBusinessService {
         clientOptions,
         BrowserToolStringCommands.Get,
         [keyName],
+        null,
       );
       result = { value, keyName };
     } catch (error) {
@@ -90,7 +91,7 @@ export class StringBusinessService {
       throw new NotFoundException();
     } else {
       this.logger.log('Succeed to get string value.');
-      return result;
+      return plainToClass(GetStringValueResponse, result);
     }
   }
 

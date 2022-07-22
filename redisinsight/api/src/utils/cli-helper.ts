@@ -239,7 +239,10 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
           result += '\\a';
           break;
         case '"':
-          result += `\\${char}`;
+          result += '\\"';
+          break;
+        case '\\':
+          result += '\\\\';
           break;
         case '\b':
           result += '\\b';

@@ -25,7 +25,7 @@ export class BrowserToolService extends RedisConsumerAbstractService {
   async execCommand(
     clientOptions: IFindRedisClientInstanceByOptions,
     toolCommand: BrowserToolCommands,
-    args: Array<string | number>,
+    args: Array<string | number | Buffer>,
     replyEncoding: string = 'utf8',
   ): Promise<any> {
     const client = await this.getRedisClient(clientOptions);

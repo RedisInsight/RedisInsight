@@ -6,7 +6,6 @@ import {
   EuiText,
   EuiSpacer,
 } from '@elastic/eui'
-import cx from 'classnames'
 import parse from 'html-react-parser'
 
 import { IConsent } from '../ConsentsSettings'
@@ -57,7 +56,7 @@ const ConsentOption = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiText className={cx({ [styles.disabled]: consent?.disabled, [styles.smallText]: true })}>
+          <EuiText className={styles.smallText}>
             {parse(consent.label)}
           </EuiText>
           {!isSettingsPage && consent.description && (

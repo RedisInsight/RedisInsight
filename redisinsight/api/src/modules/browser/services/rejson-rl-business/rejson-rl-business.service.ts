@@ -16,7 +16,6 @@ import {
   GetRejsonRlResponseDto,
   ModifyRejsonRlArrAppendDto,
   ModifyRejsonRlSetDto,
-  RedisDataType,
   RemoveRejsonRlDto,
   RemoveRejsonRlResponse,
   SafeRejsonRlDataDtO,
@@ -26,6 +25,7 @@ import {
   BrowserToolRejsonRlCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
+import { RedisString } from 'src/common/constants';
 
 @Injectable()
 export class RejsonRlBusinessService {
@@ -37,7 +37,7 @@ export class RejsonRlBusinessService {
 
   private async forceGetJson(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
     path: string,
   ): Promise<any> {
     const data = await this.browserTool.execCommand(
@@ -57,7 +57,7 @@ export class RejsonRlBusinessService {
 
   private async estimateSize(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
     path: string,
   ): Promise<number | null> {
     const size = await this.browserTool.execCommand(
@@ -77,7 +77,7 @@ export class RejsonRlBusinessService {
 
   private async getObjectKeys(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
     path: string,
   ): Promise<string[]> {
     return this.browserTool.execCommand(
@@ -89,7 +89,7 @@ export class RejsonRlBusinessService {
 
   private async getJsonDataType(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
     path: string,
   ): Promise<string> {
     return this.browserTool.execCommand(
@@ -101,7 +101,7 @@ export class RejsonRlBusinessService {
 
   private async getDetails(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
     path: string,
     key: string | number,
   ): Promise<any> {
@@ -151,7 +151,7 @@ export class RejsonRlBusinessService {
 
   private async safeGetJsonByType(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
     path: string,
     type: string,
   ): Promise<SafeRejsonRlDataDtO[]> {
@@ -341,7 +341,7 @@ export class RejsonRlBusinessService {
       if (!exists) {
         throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
       }
-      const type = await this.getJsonDataType(clientOptions, keyName, path);
+      await this.getJsonDataType(clientOptions, keyName, path);
       await this.browserTool.execCommand(
         clientOptions,
         BrowserToolRejsonRlCommands.JsonSet,

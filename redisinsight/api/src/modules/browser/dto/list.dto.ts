@@ -12,7 +12,7 @@ import {
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { KeyDto, KeyWithExpireDto } from './keys.dto';
+import { KeyDto, KeyResponse, KeyWithExpireDto } from './keys.dto';
 
 export enum ListElementDestination {
   Tail = 'TAIL',
@@ -44,13 +44,7 @@ export class PushElementToListDto extends KeyDto {
   destination: ListElementDestination = ListElementDestination.Tail;
 }
 
-export class PushListElementsResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class PushListElementsResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     description: 'The number of elements in the list after current operation.',
@@ -154,13 +148,7 @@ export class DeleteListElementsDto extends KeyDto {
   count: number;
 }
 
-export class GetListElementsResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetListElementsResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     description: 'The number of elements in the currently-selected list.',
@@ -175,13 +163,7 @@ export class GetListElementsResponse {
   elements: string[];
 }
 
-export class GetListElementResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetListElementResponse extends KeyResponse {
   @ApiProperty({
     type: () => String,
     description: 'Element value',

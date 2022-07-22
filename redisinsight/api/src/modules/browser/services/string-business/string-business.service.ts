@@ -20,6 +20,7 @@ import {
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { plainToClass } from 'class-transformer';
+import { RedisString } from 'src/common/constants';
 
 @Injectable()
 export class StringBusinessService {
@@ -65,7 +66,7 @@ export class StringBusinessService {
 
   public async getStringValue(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
   ): Promise<GetStringValueResponse> {
     this.logger.log('Getting string value.');
     let result: GetStringValueResponse;
@@ -74,7 +75,6 @@ export class StringBusinessService {
         clientOptions,
         BrowserToolStringCommands.Get,
         [keyName],
-        null,
       );
       result = { value, keyName };
     } catch (error) {

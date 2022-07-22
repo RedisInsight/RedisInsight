@@ -177,7 +177,7 @@ export class StreamService {
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
-        ...args: Array<string | number>,
+        ...args: Array<string | number | Buffer>,
       ]> = entriesArray.map((entry) => (
         [
           BrowserToolStreamCommands.XAdd,
@@ -248,7 +248,7 @@ export class StreamService {
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
-        ...args: Array<string | number>,
+        ...args: Array<string | number | Buffer>,
       ]> = entriesArray.map((entry) => (
         [
           BrowserToolStreamCommands.XAdd,

@@ -15,7 +15,7 @@ import {
   ValidateIf,
   IsBoolean,
 } from 'class-validator';
-import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
+import { KeyDto, KeyResponse, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
 import { Type } from 'class-transformer';
 
@@ -83,13 +83,7 @@ export class GetStreamEntriesDto extends KeyDto {
   sortOrder?: SortOrder = SortOrder.Desc;
 }
 
-export class GetStreamEntriesResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetStreamEntriesResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     description: 'Total number of entries',
@@ -152,13 +146,7 @@ export class AddStreamEntriesDto extends KeyDto {
   entries: StreamEntryDto[];
 }
 
-export class AddStreamEntriesResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class AddStreamEntriesResponse extends KeyResponse {
   @ApiProperty({
     description: 'Entries IDs',
     type: String,

@@ -16,6 +16,8 @@ import {
   ApiPropertyOptional,
 } from '@nestjs/swagger';
 import { MAX_TTL_NUMBER } from 'src/constants/redis-keys';
+import { RedisString } from 'src/common/constants';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
 
 export enum RedisDataType {
   String = 'string',
@@ -35,8 +37,20 @@ export class KeyDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  keyName: string;
+  @IsRedisString()
+  @RedisStringType()
+  keyName: RedisString;
+}
+
+export class KeyResponse {
+  @ApiProperty({
+    description: 'Key Name',
+    type: String,
+  })
+  @IsDefined()
+  @IsRedisString()
+  @RedisStringType()
+  keyName: RedisString;
 }
 
 export class KeyWithExpireDto extends KeyDto {

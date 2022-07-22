@@ -3,7 +3,7 @@ import {
   ArrayNotEmpty, IsArray, IsDefined, IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { KeyDto, KeyWithExpireDto, ScanDataTypeDto } from './keys.dto';
+import { KeyDto, KeyResponse, KeyWithExpireDto, ScanDataTypeDto } from './keys.dto';
 
 export class AddMembersToSetDto extends KeyDto {
   @ApiProperty({
@@ -46,13 +46,7 @@ export class DeleteMembersFromSetResponse {
 
 export class GetSetMembersDto extends ScanDataTypeDto {}
 
-export class SetScanResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class SetScanResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     minimum: 0,

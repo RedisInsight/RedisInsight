@@ -29,6 +29,7 @@ import {
 import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { RedisString } from 'src/common/constants';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
@@ -152,7 +153,7 @@ export class KeysBusinessService {
 
   public async getKeyInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log('Getting key info.');
     try {
@@ -257,10 +258,9 @@ export class KeysBusinessService {
   ): Promise<KeyTtlResponse> {
     this.logger.log('Setting a timeout on key.');
     const { keyName, ttl } = dto;
-    let currentTtl;
     let result;
     try {
-      currentTtl = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolKeysCommands.Ttl,
         [keyName],

@@ -12,12 +12,12 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import config from 'src/utils/config';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
-import { RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import {
   AddFieldsToHashDto,
   CreateHashWithExpireDto,
@@ -151,7 +151,7 @@ export class HashBusinessService {
         );
       }
       const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
-      const added = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolHashCommands.HSet,
         [keyName, ...args],
@@ -206,7 +206,7 @@ export class HashBusinessService {
 
   public async createSimpleHash(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     args: string[],
   ): Promise<void> {
     await this.browserTool.execCommand(
@@ -218,7 +218,7 @@ export class HashBusinessService {
 
   public async createHashWithExpiration(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     args: string[],
     expire,
   ): Promise<void> {

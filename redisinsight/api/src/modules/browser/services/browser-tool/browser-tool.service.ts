@@ -26,7 +26,7 @@ export class BrowserToolService extends RedisConsumerAbstractService {
     clientOptions: IFindRedisClientInstanceByOptions,
     toolCommand: BrowserToolCommands,
     args: Array<string | number | Buffer>,
-    replyEncoding: string = 'utf8',
+    replyEncoding: string = null,
   ): Promise<any> {
     const client = await this.getRedisClient(clientOptions);
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
@@ -40,7 +40,7 @@ export class BrowserToolService extends RedisConsumerAbstractService {
 
   async execPipeline(
     clientOptions: IFindRedisClientInstanceByOptions,
-    toolCommands: Array<[toolCommand: BrowserToolCommands, ...args: Array<string | number>]>,
+    toolCommands: Array<[toolCommand: BrowserToolCommands, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]> {
     const client = await this.getRedisClient(clientOptions);
     const pipelineSummery = getRedisPipelineSummary(toolCommands);
@@ -52,7 +52,7 @@ export class BrowserToolService extends RedisConsumerAbstractService {
 
   async execMulti(
     clientOptions: IFindRedisClientInstanceByOptions,
-    toolCommands: Array<[toolCommand: BrowserToolCommands, ...args: Array<string | number>]>,
+    toolCommands: Array<[toolCommand: BrowserToolCommands, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]> {
     const client = await this.getRedisClient(clientOptions);
     const pipelineSummery = getRedisPipelineSummary(toolCommands);

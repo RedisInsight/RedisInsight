@@ -8,8 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody, ApiOkResponse, ApiOperation, ApiTags,
@@ -17,6 +15,7 @@ import {
 import { KeysBusinessService } from 'src/modules/browser/services/keys-business/keys-business.service';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
 import {
   DeleteKeysDto,
   DeleteKeysResponse,
@@ -32,11 +31,13 @@ import {
 
 @ApiTags('Keys')
 @Controller('keys')
-export class KeysController {
+export class KeysController extends BaseController {
   constructor(
     private redisService: RedisService,
     private keysBusinessService: KeysBusinessService,
-  ) {}
+  ) {
+    super();
+  }
 
   @Get('')
   @ApiOperation({ description: 'Get keys by cursor position' })
@@ -45,7 +46,6 @@ export class KeysController {
     description: 'Keys list',
     type: GetKeysWithDetailsResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
   async getKeys(
     @Param('dbInstance') dbInstance: string,
       @Query() getKeysDto: GetKeysDto,
@@ -68,7 +68,6 @@ export class KeysController {
     description: 'Keys info',
     type: GetKeyInfoResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
   async getKeyInfo(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: GetKeyInfoDto,
@@ -89,7 +88,6 @@ export class KeysController {
     description: 'Number of affected keys.',
     type: DeleteKeysResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
   async deleteKey(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: DeleteKeysDto,
@@ -110,7 +108,6 @@ export class KeysController {
     description: 'New key name.',
     type: RenameKeyResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
   async renameKey(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: RenameKeyDto,
@@ -131,7 +128,6 @@ export class KeysController {
     description: 'The remaining time to live of a key.',
     type: KeyTtlResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
   async updateTtl(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: UpdateKeyTtlDto,

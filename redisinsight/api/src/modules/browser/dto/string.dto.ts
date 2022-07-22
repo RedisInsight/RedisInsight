@@ -4,7 +4,7 @@ import {
 import { IsDefined } from 'class-validator';
 import { RedisString } from 'src/common/constants';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
-import { KeyDto, KeyWithExpireDto } from './keys.dto';
+import { KeyDto, KeyResponse, KeyWithExpireDto } from './keys.dto';
 
 export class SetStringDto extends KeyDto {
   @ApiProperty({
@@ -22,14 +22,7 @@ export class SetStringWithExpireDto extends IntersectionType(
   KeyWithExpireDto,
 ) {}
 
-export class GetStringValueResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  @RedisStringType()
-  keyName: RedisString;
-
+export class GetStringValueResponse extends KeyResponse {
   @ApiProperty({
     description: 'Key value',
     type: String,

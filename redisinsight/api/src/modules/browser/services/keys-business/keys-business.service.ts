@@ -30,6 +30,7 @@ import { ConnectionType } from 'src/modules/core/models/database-instance.entity
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import { RedisString } from 'src/common/constants';
+import { plainToClass } from 'class-transformer';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
@@ -130,11 +131,7 @@ export class KeysBusinessService {
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientOptions, dto);
 
-      result.forEach((nodeResult, nodeIndex) => nodeResult.keys.forEach((key, i) => {
-        result[nodeIndex].keys[i].name = key.name.toString();
-      }));
-
-      return result;
+      return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
@@ -161,6 +158,7 @@ export class KeysBusinessService {
         clientOptions,
         BrowserToolKeysCommands.Type,
         [key],
+        'utf8',
       );
       if (type === 'none') {
         this.logger.error(`Failed to get key info. Not found key: ${key}`);
@@ -171,7 +169,7 @@ export class KeysBusinessService {
       const infoManager = this.keyInfoManager.getStrategy(type);
       const result = await infoManager.getInfo(clientOptions, key, type);
       this.logger.log('Succeed to get key info');
-      return result;
+      return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error);
       throw catchAclError(error);

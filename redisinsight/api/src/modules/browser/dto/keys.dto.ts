@@ -241,7 +241,8 @@ export class GetKeyInfoResponse {
   @ApiProperty({
     type: String,
   })
-  name: string;
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: String,
@@ -299,6 +300,8 @@ export class GetKeysWithDetailsResponse {
     description: 'Array of Keys.',
     isArray: true,
   })
+  @IsArray()
+  @Type(() => GetKeyInfoResponse)
   keys: GetKeyInfoResponse[];
 
   @ApiPropertyOptional({

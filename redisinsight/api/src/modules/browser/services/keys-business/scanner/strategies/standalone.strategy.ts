@@ -34,12 +34,15 @@ export class StandaloneStrategy extends AbstractStrategy {
   ): Promise<GetKeysWithDetailsResponse[]> {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
+    const client = await this.redisManager.getRedisClient(clientOptions);
+
     const node = {
       total: 0,
       scanned: 0,
       keys: [],
       cursor: parseInt(args.cursor, 10),
     };
+
     node.total = await this.redisManager.execCommand(
       clientOptions,
       BrowserToolKeysCommands.DbSize,
@@ -49,7 +52,7 @@ export class StandaloneStrategy extends AbstractStrategy {
       const keyName = unescapeGlob(match);
       node.cursor = 0;
       node.scanned = node.total;
-      node.keys = await this.getKeysInfo(clientOptions, [keyName]);
+      node.keys = await this.getKeysInfo(client, [keyName]);
       node.keys = node.keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;
@@ -64,7 +67,7 @@ export class StandaloneStrategy extends AbstractStrategy {
 
     await this.scan(clientOptions, node, match, count, args.type);
     if (node.keys.length) {
-      node.keys = await this.getKeysInfo(clientOptions, node.keys, args.type);
+      node.keys = await this.getKeysInfo(client, node.keys, args.type);
     }
 
     return [node];

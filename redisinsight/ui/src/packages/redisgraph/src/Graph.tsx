@@ -15,6 +15,8 @@ import {
   getFetchDirectNeighboursOfNodeQuery,
   getFetchNodeRelationshipsQuery,
   getFetchEdgesByIdQuery,
+  getFetchNodesByEdgeIdQuery,
+  commandIsSuccess,
 } from './utils'
 import {
   EDGE_COLORS,
@@ -57,7 +59,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
   let nodeIds = new Set(parsedResponse.nodes.map(n => n.id))
   let edgeIds = new Set(parsedResponse.edges.map(e => e.id))
 
-  if (nodeIds.size === 0 && parsedResponse.nodeIds.size === 0) {
+  if (nodeIds.size === 0 && parsedResponse.nodeIds.size === 0 && parsedResponse.danglingEdgeIds.size === 0) {
     return <div className="responseInfo">No data to visualize. Switch to Text view to see raw information.</div>
   }
 
@@ -69,7 +71,8 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
           nodes: parsedResponse.nodes,
           relationships: parsedResponse
             .edges
-            .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
+            /* If edge is present in dangling edges, add them since we are gonna retrive them from the node by dangling edges query */
+            .filter(e => (nodeIds.has(e.source) && nodeIds.has(e.target)) || (parsedResponse.danglingEdgeIds.has(e.id)))
             .map(e => ({ ...e, startNode: e.source, endNode: e.target }))
         }
       }]
@@ -88,22 +91,61 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
     let newNodeLabels: {[key: string]: number} = nodeLabels
     let newEdgeTypes: {[key: string]: number} = edgeTypes
 
+    if (parsedResponse.danglingEdgeIds.size > 0) {
+      /*
+       * Fetch dangling edges
+       */
+      try {
+        let resp = await executeRedisCommand(getFetchNodesByEdgeIdQuery(props.graphKey, [...parsedResponse.danglingEdgeIds], [...nodeIds]))
+
+        if (commandIsSuccess(resp)) {
+          const parsedData = responseParser(resp[0].response)
+          parsedData.nodes.forEach(n => {
+            nodeIds.add(n.id)
+              n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
+          })
+
+          /* Since its obvious from the query that only nodes will be
+          returned, so putting empty array for relationships field. */
+          newGraphData = {
+            ...newGraphData,
+            results: [
+              ...newGraphData.results,
+              {
+                columns: parsedData.headers,
+                data: [{
+                  graph: {
+                    nodes: parsedData.nodes,
+                    relationships: []
+                  }
+                }]
+              }
+            ]
+          }
+        }
+      } catch {}
+    }
+
+
     if (parsedResponse.hasNamedPathItem && parsedResponse.npNodeIds.length > 0) {
       try {
         /* Fetch named path nodes */
         let resp = await executeRedisCommand(getFetchNodesByIdQuery(props.graphKey, [...parsedResponse.npNodeIds]))
-        if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
+        if (commandIsSuccess(resp)) {
           const parsedData = responseParser(resp[0].response)
           parsedData.nodes.forEach(n => {
             nodeIds.add(n.id)
             n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
           })
 
-          resp = await executeRedisCommand(getFetchEdgesByIdQuery(props.graphKey, [...parsedResponse.npEdgeIds]))
-          if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
-            const edgeParsedData = responseParser(resp[0].response)
-            parsedData.edges = [...edgeParsedData.edges]
-            parsedData.edgeIds = edgeParsedData.edgeIds
+
+          if (parsedResponse.npEdgeIds.length > 0) {
+            resp = await executeRedisCommand(getFetchEdgesByIdQuery(props.graphKey, [...parsedResponse.npEdgeIds]))
+            if (commandIsSuccess(resp)) {
+              const edgeParsedData = responseParser(resp[0].response)
+              parsedData.edges = [...edgeParsedData.edges]
+              parsedData.edgeIds = edgeParsedData.edgeIds
+            }
           }
 
           parsedData.edges = parsedData.edges.filter(e => !edgeIds.has(e.id))
@@ -136,39 +178,44 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
 
     try {
       /* Fetch neighbours automatically */
-      const resp = await executeRedisCommand(getFetchNodeRelationshipsQuery(props.graphKey, [...nodeIds], [...nodeIds], [...edgeIds]))
+      if (nodeIds.size > 0) {
+        const resp = await executeRedisCommand(getFetchNodeRelationshipsQuery(props.graphKey, [...nodeIds], [...nodeIds], [...edgeIds]))
 
-      if (Array.isArray(resp) && (resp.length >= 1 || resp[0].status === 'success')) {
-        const parsedData = responseParser(resp[0].response)
-        parsedData.nodes.forEach(n => {
-          nodeIds.add(n.id)
-          n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
-        })
-        const filteredEdges = parsedData
-          .edges
-          .filter(e => !edgeIds.has(e.id))
-          .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
-          .map(e => {
-            edgeIds.add(e.id)
-            newEdgeTypes[e.type] = (newEdgeTypes[e.type] + 1 || 1)
-            return ({ ...e, startNode: e.source, endNode: e.target, fetchedAutomatically: true })
+        if (commandIsSuccess(resp)) {
+          const parsedData = responseParser(resp[0].response)
+
+          /* This block is not needed since only edges are retrieved. */
+          parsedData.nodes.forEach(n => {
+            nodeIds.add(n.id)
+            n.labels.forEach(l => newNodeLabels[l] = (newNodeLabels[l] + 1) || 1)
           })
 
-        setGraphData({
-          ...newGraphData,
-          results: [
-            ...newGraphData.results,
-            {
-              columns: parsedData.headers,
-              data: [{
-                graph: {
-                  nodes: parsedData.nodes,
-                  relationships: filteredEdges,
-                }
-              }]
-            }
-          ]
-        })
+          const filteredEdges = parsedData
+            .edges
+            .filter(e => !edgeIds.has(e.id))
+            .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
+            .map(e => {
+              edgeIds.add(e.id)
+              newEdgeTypes[e.type] = (newEdgeTypes[e.type] + 1 || 1)
+              return ({ ...e, startNode: e.source, endNode: e.target, fetchedAutomatically: true })
+            })
+
+          setGraphData({
+            ...newGraphData,
+            results: [
+              ...newGraphData.results,
+              {
+                columns: parsedData.headers,
+                data: [{
+                  graph: {
+                    nodes: parsedData.nodes,
+                    relationships: filteredEdges,
+                  }
+                }]
+              }
+            ]
+          })
+        }
       }
     } catch {}
 
@@ -202,8 +249,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       async onNodeDoubleClick(nodeSvg, node) {
         /* Get direct neighbours automatically */
         const data = await executeRedisCommand(getFetchDirectNeighboursOfNodeQuery(props.graphKey, node.id))
-        if (!Array.isArray(data)) return
-        if (data.length < 1 || data[0].status !== 'success') return
+        if (!commandIsSuccess(data)) return;
         const parsedData = responseParser(data[0].response)
 
         let newNodeLabels = nodeLabels

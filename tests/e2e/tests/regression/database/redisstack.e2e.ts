@@ -1,11 +1,8 @@
 import { rte } from '../../../helpers/constants';
-import {
-    acceptLicenseTerms,
-    addNewStandaloneDatabase,
-    deleteDatabase
-} from '../../../helpers/database';
+import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseOverviewPage = new DatabaseOverviewPage();
@@ -14,13 +11,16 @@ const moduleNameList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', '
 fixture `Redis Stack`
     .meta({type: 'regression'})
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async t => {
+        // Add new databases using API
         await acceptLicenseTerms();
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        // Reload Page
+        await t.eval(() => location.reload());
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({rte: rte.standalone})

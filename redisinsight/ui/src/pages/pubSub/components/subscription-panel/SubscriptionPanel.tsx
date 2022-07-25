@@ -94,7 +94,7 @@ const SubscriptionPanel = () => {
               type="submit"
               onClick={toggleSubscribe}
               iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
-              data-testid="btn-submit"
+              data-testid="subscribe-btn"
               disabled={loading}
             >
               { isSubscribed ? 'Unsubscribe' : 'Subscribe' }

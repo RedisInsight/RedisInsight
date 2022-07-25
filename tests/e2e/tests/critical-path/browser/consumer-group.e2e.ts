@@ -1,11 +1,12 @@
 import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -25,15 +26,15 @@ fixture `Consumer group`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
+        if (await browserPage.closeKeyButton.visible) {
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can create a new Consumer Group in the current Stream', async t => {
     const toolTip = [
@@ -57,7 +58,7 @@ test('Verify that user can create a new Consumer Group in the current Stream', a
     // Verify the tooltip under 'i' element
     await t.click(browserPage.addKeyValueItemsButton);
     await t.hover(browserPage.entryIdInfoIcon);
-    for(const text of toolTip){
+    for (const text of toolTip) {
         await t.expect(await browserPage.tooltip.innerText).contains(text, 'The toolTip message');
     }
 });
@@ -69,7 +70,7 @@ test('Verify that user can input the 0, $ and Valid Entry ID in the ID field', a
     await t.click(browserPage.fullScreenModeButton);
     // Open Stream consumer groups and add group with different IDs
     await t.click(browserPage.streamTabGroups);
-    for(const entryId of entryIds){
+    for (const entryId of entryIds) {
         await browserPage.createConsumerGroup(`${consumerGroupName}${entryId}`, entryId);
         await t.expect(browserPage.streamGroupsContainer.textContent).contains(`${consumerGroupName}${entryId}`, 'The new Consumer Group is added');
     }
@@ -89,7 +90,7 @@ test('Verify that user can see the Consumer group columns (Group Name, Consumers
     // Open Stream consumer groups and add group with different IDs
     await t.click(browserPage.streamTabGroups);
     await browserPage.createConsumerGroup(consumerGroupName);
-    for(let i = 0; i < groupColumns.length; i++){
+    for (let i = 0; i < groupColumns.length; i++) {
         await t.expect(browserPage.scoreButton.nth(i).textContent).eql(groupColumns[i], `The ${i} Consumer group column name`);
     }
 });
@@ -126,7 +127,7 @@ test('Verify that user can see the Consumer information columns (Consumer Name, 
     await browserPage.openKeyDetails(keyName);
     await t.click(browserPage.streamTabGroups);
     await t.click(browserPage.consumerGroup);
-    for(let i = 0; i < consumerColumns.length; i++){
+    for (let i = 0; i < consumerColumns.length; i++) {
         await t.expect(browserPage.scoreButton.nth(i).textContent).eql(consumerColumns[i], `The ${i} Consumers info column name`);
     }
 });
@@ -139,7 +140,7 @@ test('Verify that user can navigate to Consumer Groups screen using the link in 
         `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
     ];
     // Add New Stream Key with groups and consumers
-    for(const command of cliCommands){
+    for (const command of cliCommands) {
         await cliPage.sendCommandInCli(command);
     }
     // Open Stream consumer info view
@@ -162,7 +163,7 @@ test('Verify that user can delete the Consumer from the Consumer Group', async t
         `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
     ];
     // Add New Stream Key with groups and consumers
-    for(const command of cliCommands){
+    for (const command of cliCommands) {
         await cliPage.sendCommandInCli(command);
     }
     // Open Stream consumer info view
@@ -185,7 +186,7 @@ test('Verify that user can delete a Consumer Group', async t => {
         `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
     ];
     // Add New Stream Key with groups and consumers
-    for(const command of cliCommands){
+    for (const command of cliCommands) {
         await cliPage.sendCommandInCli(command);
     }
     // Open Stream consumer info view
@@ -206,14 +207,14 @@ test('Verify that user can change the ID set for the Consumer Group when click o
         `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
     ];
     // Add New Stream Key with groups and consumers
-    for(const command of cliCommands){
+    for (const command of cliCommands) {
         await cliPage.sendCommandInCli(command);
     }
     // Open Stream consumer info view
     await browserPage.openKeyDetails(keyName);
     await t.click(browserPage.streamTabGroups);
     // Change the ID set for the Consumer Group
-    for(const id of entryIds){
+    for (const id of entryIds) {
         const idBefore = await browserPage.streamGroupId.textContent;
         await t.click(browserPage.editStreamLastIdButton);
         await t.typeText(browserPage.lastIdInput, id, { replace: true });

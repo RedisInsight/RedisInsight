@@ -3,6 +3,7 @@ const chance = new Chance();
 
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
+export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
 
 const uniqueId = chance.string({ length: 10 });
 
@@ -31,15 +32,26 @@ export const ossStandaloneRedisearch = {
 };
 
 export const ossClusterConfig = {
-    ossClusterHost: process.env.OSS_CLUSTER_HOST || 'oss-cluster',
-    ossClusterPort: process.env.OSS_CLUSTER_PORT || '7000',
+    ossClusterHost: process.env.OSS_CLUSTER_HOST || 'master-plain-7-1',
+    ossClusterPort: process.env.OSS_CLUSTER_PORT || '6379',
     ossClusterDatabaseName: `${process.env.OSS_CLUSTER_DATABASE_NAME || 'test_cluster'}-${uniqueId}`
 };
 
 export const ossSentinelConfig = {
     sentinelHost: process.env.OSS_SENTINEL_HOST || 'oss-sentinel',
     sentinelPort: process.env.OSS_SENTINEL_PORT || '26379',
-    sentinelPassword: process.env.OSS_SENTINEL_PASSWORD || 'password'
+    sentinelPassword: process.env.OSS_SENTINEL_PASSWORD || 'password',
+    masters: [{
+        alias: "primary-group-1",
+        db: "0",
+        name: "primary-group-1"
+    },
+    {
+        alias: "primary-group-2",
+        db: "0",
+        name: "primary-group-2"
+    }],
+    name: "primary-group-2"
 };
 
 export const redisEnterpriseClusterConfig = {

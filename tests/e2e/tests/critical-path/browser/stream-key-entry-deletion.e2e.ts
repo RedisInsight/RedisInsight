@@ -1,8 +1,9 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -27,11 +28,11 @@ fixture `Stream key entry deletion`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that the Stream information is refreshed and the deleted entry is removed when user confirm the deletion of an entry', async t => {
     keyName = chance.word({length: 20});
@@ -42,8 +43,7 @@ test('Verify that the Stream information is refreshed and the deleted entry is r
     }
     //Open key details and remember the Stream information
     await browserPage.openKeyDetails(keyName);
-    await t.click(browserPage.fullScreenModeButton);
-    await t.expect(browserPage.streamFields.nth(0).textContent).eql(fieldForDeletion, 'The first field entry name');
+    await t.expect(browserPage.streamFields.nth(1).textContent).eql(fieldForDeletion, 'The first field entry name');
     const entriesCountBefore = (await browserPage.keyLengthDetails.textContent).split(': ')[1];
     //Delete entry from the Stream
     await browserPage.deleteStreamEntry();
@@ -55,7 +55,6 @@ test('Verify that the Stream information is refreshed and the deleted entry is r
         const fieldName = await browserPage.streamFields.nth(i).textContent;
         await t.expect(fieldName).notEql(fieldForDeletion, 'The deleted entry is removed from the Stream');
     }
-    await t.click(browserPage.fullScreenModeButton);
 });
 test('Verify that when user delete the last Entry from the Stream the Stream key is not deleted', async t => {
     keyName = chance.word({length: 20});

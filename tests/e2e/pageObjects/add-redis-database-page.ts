@@ -77,7 +77,7 @@ export class AddRedisDatabasePage {
         }
         //Enter logical index
         await t.click(this.databaseIndexCheckbox);
-        await t.typeText(this.databaseIndexInput, index, {paste: true});
+        await t.typeText(this.databaseIndexInput, index, { replace: true, paste: true});
         //Click for saving
         await t.click(this.addRedisDatabaseButton);
     }
@@ -177,7 +177,9 @@ export type AddNewDatabaseParameters = {
 export type SentinelParameters = {
     sentinelHost: string,
     sentinelPort: string,
-    sentinelPassword?: string
+    masters?: object[],
+    sentinelPassword?: string,
+    name?: string
 };
 
 /**
@@ -191,4 +193,22 @@ export type OSSClusterParameters = {
     ossClusterHost: string,
     ossClusterPort: string,
     ossClusterDatabaseName: string
+};
+
+/**
+ * Already existing database parameters
+ * @param id The id of the database
+ * @param host The host of the database
+ * @param port The port of the database
+ * @param name The name of the database
+ * @param connectionType The connection type of the database
+ * @param lastConnection The last connection time of the database
+ */
+export type databaseParameters = {
+    id: string,
+    host?: string,
+    port?: string,
+    name?: string,
+    connectionType?: string,
+    lastConnection?: string
 };

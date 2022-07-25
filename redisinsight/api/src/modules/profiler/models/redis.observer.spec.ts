@@ -53,15 +53,14 @@ describe('RedisObserver', () => {
       expect(redisObserver['status']).toEqual(RedisObserverStatus.Connected);
       expect(redisObserver['redis']).toEqual(nodeClient);
     });
-    it('init error due to redis connection', async () => {
-      try {
-        getRedisClientFn.mockRejectedValueOnce(new Error('error'));
-        await redisObserver.init(getRedisClientFn);
-        fail();
-      } catch (e) {
+    it('init error due to redis connection', (done) => {
+      getRedisClientFn.mockRejectedValueOnce(new Error('error'));
+      redisObserver.init(getRedisClientFn);
+      redisObserver.on('connect_error', () => {
         expect(redisObserver['status']).toEqual(RedisObserverStatus.Error);
         expect(redisObserver['redis']).toEqual(undefined);
-      }
+        done();
+      });
     });
   });
 
@@ -197,28 +196,26 @@ describe('RedisObserver', () => {
       expect(redisObserver['status']).toEqual(RedisObserverStatus.Ready);
     });
 
-    it('connect fail due to NOPERM', async () => {
-      try {
-        nodeClient.send_command.mockRejectedValueOnce(NO_PERM_ERROR);
-        await redisObserver.init(getRedisClientFn);
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(ForbiddenException);
+    it('connect fail due to NOPERM', (done) => {
+      nodeClient.send_command.mockRejectedValueOnce(NO_PERM_ERROR);
+      redisObserver.init(getRedisClientFn);
+      redisObserver.on('connect_error', (e) => {
         expect(redisObserver['shardsObservers']).toEqual([]);
         expect(redisObserver['status']).toEqual(RedisObserverStatus.Error);
-      }
+        expect(e).toBeInstanceOf(ForbiddenException);
+        done();
+      });
     });
 
-    it('connect fail due an error', async () => {
-      try {
-        nodeClient.send_command.mockRejectedValueOnce(new Error('some error'));
-        await redisObserver.init(getRedisClientFn);
-        fail();
-      } catch (e) {
+    it('connect fail due an error', (done) => {
+      nodeClient.send_command.mockRejectedValueOnce(new Error('some error'));
+      redisObserver.init(getRedisClientFn);
+      redisObserver.on('connect_error', (e) => {
         expect(e).toBeInstanceOf(ServiceUnavailableException);
         expect(redisObserver['shardsObservers']).toEqual([]);
         expect(redisObserver['status']).toEqual(RedisObserverStatus.Error);
-      }
+        done();
+      });
     });
 
     it('connect to cluster', async () => {

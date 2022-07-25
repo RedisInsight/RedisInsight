@@ -21,6 +21,8 @@ import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { formatLongName, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { localStorageService } from 'uiSrc/services'
+import { BrowserStorageItem } from 'uiSrc/constants'
 
 import styles from '../styles.module.scss'
 
@@ -80,7 +82,7 @@ function DatabasesList({
     }
   }, [width])
 
-  const sort: PropertySort = {
+  const sort: PropertySort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
     field: 'lastConnection',
     direction: 'asc',
   }
@@ -116,6 +118,7 @@ function DatabasesList({
   const onTableChange = ({ sort, page }: Criteria<Instance>) => {
     // calls also with page changing
     if (sort && !page) {
+      localStorageService.set(BrowserStorageItem.instancesSorting, sort)
       sendEventSortedTelemetry(sort)
     }
   }

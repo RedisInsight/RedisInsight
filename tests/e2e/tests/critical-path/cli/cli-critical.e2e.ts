@@ -2,9 +2,8 @@ import { Common } from '../../../helpers/common';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { 
-    acceptLicenseTermsAndAddDatabase, 
-    acceptLicenseTermsAndAddOSSClusterDatabase, 
-    deleteDatabase 
+    acceptLicenseTermsAndAddDatabaseApi, 
+    acceptLicenseTermsAndAddOSSClusterDatabase
 } from '../../../helpers/database';
 import {
     commonUrl,
@@ -12,6 +11,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { Chance } from 'chance';
+import { deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -27,11 +27,11 @@ fixture `CLI critical`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.ossCluster })
@@ -41,7 +41,7 @@ test
     .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
+        await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })
     ('Verify that user is redirected to another node when he works in CLI with OSS Cluster', async t => {
         keyName = chance.word({ length: 10 });

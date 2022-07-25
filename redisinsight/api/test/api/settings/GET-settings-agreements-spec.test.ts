@@ -21,6 +21,7 @@ const agreementItemSchema = Joi.object().keys({
   since: Joi.string().required(),
   title: Joi.string().required(),
   label: Joi.string().required(),
+  category: Joi.string().optional(),
   description: Joi.string().optional(),
   requiredText: Joi.string().optional(),
 });
@@ -31,6 +32,7 @@ const responseSchema = Joi.object().keys({
     eula: agreementItemSchema.required(),
     analytics: agreementItemSchema.required(),
     encryption: agreementItemSchema.required(),
+    notifications: agreementItemSchema.required(),
   }).pattern(/./, agreementItemSchema).required()
 }).required();
 

@@ -1,11 +1,12 @@
 import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -18,15 +19,15 @@ fixture `Acknowledge and Claim of Pending messages`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
+        if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can acknowledge any message in the list of pending messages', async t => {
     keyName = chance.word({ length: 20 });
@@ -40,9 +41,8 @@ test('Verify that user can acknowledge any message in the list of pending messag
     for(const command of cliCommands){
         await cliPage.sendCommandInCli(command);
     }
-    // Open Stream pendings view
+    // Open Stream pending view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Acknowledge message and check result
     await t.click(browserPage.acknowledgeButton);
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains('will be acknowledged and removed from the pending messages list', 'The confirmation message');
@@ -65,7 +65,6 @@ test('Verify that user can claim any message in the list of pending messages', a
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Claim message and check result
     await t.click(browserPage.claimPendingMessageButton);
     await t.expect(browserPage.pendingCount.textContent).eql('pending: 1', 'The number of pending messages for selected consumer');
@@ -91,12 +90,11 @@ test('Verify that claim with optional parameters, the message removed from this 
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
-    await t.click(browserPage.fullScreenModeButton);
     // Claim message with optional parameters and check result
     await t.click(browserPage.claimPendingMessageButton);
     await t.expect(browserPage.optionalParametersSwitcher.withAttribute('aria-checked', 'false').exists).ok('By default toggle for optional parameters is off');
     await t.click(browserPage.optionalParametersSwitcher);
-    await t.typeText(browserPage.claimIdleTimeInput, '100');
+    await t.typeText(browserPage.claimIdleTimeInput, '100', { replace: true });
     await t.click(browserPage.forceClaimCheckbox);
     await t.click(browserPage.submitButton);
     await t.expect(browserPage.streamMessagesContainer.textContent).contains('Your Consumer has no pending messages.', 'The messages is claimed and removed from the table');

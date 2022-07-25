@@ -11,7 +11,7 @@ import PageBreadcrumbs from './page-breadcrumbs/PageBreadcrumbs'
 import ContentEditable from './ContentEditable'
 import Config from './config'
 import AdvancedSettings from './advanced-settings/AdvancedSettings'
-import { ConsentsSettings, ConsentsSettingsPopup } from './consents-settings'
+import { ConsentsSettings, ConsentsSettingsPopup, ConsentsPrivacy, ConsentsNotifications } from './consents-settings'
 import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
 import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
 import MonitorConfig from './monitor-config'
@@ -19,6 +19,7 @@ import PubSubConfig from './pub-sub-config'
 import GlobalSubscriptions from './global-subscriptions'
 import MonitorWrapper from './monitor'
 import PagePlaceholder from './page-placeholder'
+import BulkActionsConfig from './bulk-actions-config'
 
 export {
   NavigationMenu,
@@ -35,6 +36,8 @@ export {
   ContentEditable,
   ConsentsSettings,
   ConsentsSettingsPopup,
+  ConsentsPrivacy,
+  ConsentsNotifications,
   AdvancedSettings,
   KeyboardShortcut,
   MonitorConfig,
@@ -43,4 +46,5 @@ export {
   MonitorWrapper,
   ShortcutsFlyout,
   PagePlaceholder,
+  BulkActionsConfig,
 }

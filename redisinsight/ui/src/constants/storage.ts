@@ -1,5 +1,6 @@
 enum BrowserStorageItem {
   instancesCount = 'instancesCount',
+  instancesSorting = 'instancesSorting',
   theme = 'theme',
   browserViewType = 'browserViewType',
   cliClientUuid = 'cliClientUuid',
@@ -12,6 +13,7 @@ enum BrowserStorageItem {
   isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
   autoRefreshRate = 'autoRefreshRate',
+  bulkActionId = 'bulkActionId',
   dbConfig = 'dbConfig_'
 }
 

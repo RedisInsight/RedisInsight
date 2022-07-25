@@ -63,13 +63,7 @@ describe('JSONScalar', () => {
       value="string"
       keyName="keyName"
     />)
-    fireEvent(
-      screen.getByTestId(/json-scalar-value/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(/json-scalar-value/i))
     expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toBeInTheDocument()
   })
 
@@ -79,13 +73,7 @@ describe('JSONScalar', () => {
       value="string"
       keyName="keyName"
     />)
-    fireEvent(
-      screen.getByTestId(/json-scalar-value/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(/json-scalar-value/i))
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
       target: { value: 'true' }
     })
@@ -102,24 +90,12 @@ describe('JSONScalar', () => {
       value="string"
       keyName="keyName"
     />)
-    fireEvent(
-      screen.getByTestId(/json-scalar-value/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(/json-scalar-value/i))
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
       target: { value: '{' }
     })
 
-    fireEvent(
-      screen.getByTestId('apply-btn'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId('apply-btn'))
 
     expect(handleEdit).not.toBeCalled()
   })
@@ -133,24 +109,12 @@ describe('JSONScalar', () => {
       value="string"
       keyName="keyName"
     />)
-    fireEvent(
-      screen.getByTestId(/json-scalar-value/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(/json-scalar-value/i))
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
       target: { value: '{}' }
     })
 
-    fireEvent(
-      screen.getByTestId('apply-btn'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId('apply-btn'))
 
     expect(handleEdit).toBeCalled()
   })

@@ -49,15 +49,7 @@ describe('SetDetails', () => {
 
   it('should render delete popup after click remove button', () => {
     render(<SetDetails {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getAllByTestId(/set-remove-btn/)[0],
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(screen.getAllByTestId(/set-remove-btn/)[0])
     expect(screen.getByTestId(/set-remove-btn-member1-icon/)).toBeInTheDocument()
   })
 })

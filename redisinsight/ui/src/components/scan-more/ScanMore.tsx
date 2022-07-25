@@ -49,7 +49,7 @@ const ScanMore = ({
             position="top"
             display="inlineBlock"
           >
-            <EuiIcon type="alert" />
+            <EuiIcon type="iInCircle" />
           </EuiToolTip>
         )}
         Scan more

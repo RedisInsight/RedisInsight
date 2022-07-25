@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
@@ -7,6 +7,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const cliPage = new CliPage();
 const common = new Common();
@@ -22,11 +23,11 @@ fixture `CLI`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
     .meta({ rte: rte.standalone })
@@ -85,7 +86,7 @@ test
     .after(async() => {
         //Clear database and delete
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
         keyName = chance.word({ length: 20 });
@@ -103,7 +104,7 @@ test
     .after(async() => {
         //Clear database and delete
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can run command json.get and see JSON object with escaped quotes (\" instead of ")', async t => {
         keyName = chance.word({ length: 20 });
@@ -122,7 +123,7 @@ test
     .meta({ rte: rte.standalone })
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can see DB endpoint in the header of CLI', async t => {
         const databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}`;
@@ -133,14 +134,14 @@ test
 test
     .meta({rte: rte.standalone})
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         for (const command of cliCommands) {
             await cliPage.sendCommandInCli(command);
         }
     })
     .after(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can use "Up" and "Down" keys to view previous commands in CLI in the application', async t => {
         await t.click(cliPage.cliExpandButton);

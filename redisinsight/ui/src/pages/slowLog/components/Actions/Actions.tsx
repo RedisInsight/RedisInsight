@@ -190,7 +190,7 @@ const Actions = (props: Props) => {
           position="bottom"
           anchorClassName={styles.icon}
           content={(
-            <span>
+            <span data-testid="slowlog-tooltip-text">
               Slow Log is a list of slow operations for your Redis instance. These can be used
               to troubleshoot performance issues.
               <EuiSpacer size="xs" />
@@ -200,7 +200,7 @@ const Actions = (props: Props) => {
             </span>
           )}
         >
-          <EuiIcon className={styles.infoIcon} type="iInCircle" style={{ cursor: 'pointer' }} />
+          <EuiIcon className={styles.infoIcon} type="iInCircle" style={{ cursor: 'pointer' }} data-testid="slow-log-tooltip-icon" />
         </EuiToolTip>
       </EuiFlexItem>
     </EuiFlexGroup>

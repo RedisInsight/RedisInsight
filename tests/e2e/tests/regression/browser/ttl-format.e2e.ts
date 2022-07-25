@@ -1,10 +1,11 @@
 import { Chance } from 'chance';
 import { Selector } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { keyTypes } from '../../../helpers/keys';
 import { rte, COMMANDS_TO_CREATE_KEY, keyLength } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -26,14 +27,14 @@ fixture `TTL values in Keys Table`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Clear and delete database
         for (let i = 0; i < keysData.length; i++) {
             await browserPage.deleteKey();
         }
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {
     //Create new keys with TTL
@@ -55,7 +56,7 @@ test('Verify that user can see TTL in the list of keys rounded down to the neare
 });
 test
     .after(async() => {
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that Key is deleted if TTL finishes', async t => {
         // Create new key with TTL
         const TTL = 15;

@@ -45,7 +45,7 @@ const mockItemId = '123'
 const initialStateWithItems = {
   ...initialState,
   items: [{
-    id: mockItemId
+    id: mockItemId + 0
   }]
 }
 
@@ -54,20 +54,19 @@ describe('workbench results slice', () => {
     it('should properly set loading = true, isOpen = true, error = ""', () => {
       // Arrange
       const mockPayload = {
-        command: 'command',
+        commands: ['command', 'command2'],
         commandId: '123'
       }
       const state = {
         ...initialState,
-        items: [
-          {
-            command: mockPayload.command,
-            id: mockPayload.commandId,
-            loading: true,
-            isOpen: true,
-            error: ''
-          }
-        ]
+        loading: true,
+        items: mockPayload.commands.map((command, i) => ({
+          command,
+          id: mockPayload.commandId + i,
+          loading: true,
+          isOpen: true,
+          error: ''
+        }))
       }
 
       // Act
@@ -98,7 +97,7 @@ describe('workbench results slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialStateWithItems, toggleOpenWBResult(mockItemId))
+      const nextState = reducer(initialStateWithItems, toggleOpenWBResult(mockItemId + 0))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -139,10 +138,10 @@ describe('workbench results slice', () => {
 
       const mockCommandExecution = {
         commandId: '123',
-        data: {
+        data: [{
           command: 'command',
           databaseId: '123',
-          id: mockedId,
+          id: mockedId + 0,
           createdAt: new Date(),
           isOpen: true,
           error: '',
@@ -151,12 +150,12 @@ describe('workbench results slice', () => {
             response: 'test',
             status: CommandExecutionStatus.Success
           }]
-        }
+        }]
       }
 
       const state = {
         ...initialState,
-        items: [{ ...mockCommandExecution.data }]
+        items: [...mockCommandExecution.data]
       }
 
       // Act
@@ -177,7 +176,7 @@ describe('workbench results slice', () => {
       // Arrange
       const data = 'error'
       const mockCommandExecution = {
-        id: mockItemId,
+        id: mockItemId + 0,
         error: data,
         loading: false,
       }
@@ -207,28 +206,28 @@ describe('workbench results slice', () => {
     describe('Standalone Cli command', () => {
       it('call both sendWBCommandAction and sendWBCommandSuccess when response status is successed', async () => {
         // Arrange
-        const command = 'keys *'
+        const commands = ['keys *']
         const commandId = `${Date.now()}`
-        const data = {
+        const data = [{
           command: 'command',
           databaseId: '123',
-          id: commandId,
+          id: commandId + (commands.length - 1),
           createdAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Success
           }]
-        }
+        }]
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandAction({ command, commandId }))
+        await store.dispatch<any>(sendWBCommandAction({ commands, commandId }))
 
         // Assert
         const expectedActions = [
-          sendWBCommand({ command, commandId }),
+          sendWBCommand({ commands, commandId }),
           sendWBCommandSuccess({ data, commandId })
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -305,27 +304,27 @@ describe('workbench results slice', () => {
 
       it('call both sendWBCommandClusterAction and sendWBCommandSuccess when response status is successed', async () => {
         // Arrange
-        const command = 'keys *'
-        const data = {
+        const commands = ['keys *']
+        const data = [{
           command: 'command',
           databaseId: '123',
-          id: commandId,
+          id: commandId + (commands.length - 1),
           createdAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Success
           }]
-        }
+        }]
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendWBCommandClusterAction({ command, commandId, options }))
+        await store.dispatch<any>(sendWBCommandClusterAction({ commands, commandId, options }))
 
         // Assert
         const expectedActions = [
-          sendWBCommand({ command, commandId }),
+          sendWBCommand({ commands, commandId }),
           sendWBCommandSuccess({ data, commandId })
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))

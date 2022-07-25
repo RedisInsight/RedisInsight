@@ -49,6 +49,7 @@ export class BrowserPage {
     expandJsonObject = Selector('[data-testid=expand-object]');
     toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
     scoreButton = Selector('[data-testid=score-button]');
+    sortingButton = Selector('[data-testid=header-sorting-button]');
     editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
     applyEditButton = Selector('[data-testid=apply-edit-btn]');
     scanMoreButton = Selector('[data-testid=scan-more]');
@@ -140,6 +141,7 @@ export class BrowserPage {
     streamValue = Selector('[data-testid=field-value]');
     addStreamRow = Selector('[data-testid=add-new-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
+    streamEntryIDDateValue = Selector('[data-testid^=stream-entry-][data-testid$=date]');
     streamRangeEndInput = Selector('[data-testid=range-end-input]');
     groupNameInput = Selector('[data-testid=group-name-field]');
     consumerIdInput = Selector('[data-testid=id-field]');
@@ -204,7 +206,8 @@ export class BrowserPage {
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
     streamEntryIdValue = Selector('.streamItemId[data-testid*=stream-entry]');
-    streamFields = Selector('[data-testid=stream-entries-container] .truncateText span');
+    streamFields = Selector('[data-testid=stream-entries-container] .truncateText');
+    streamVirtualContainer = Selector('[data-testid=virtual-grid-container] div div').nth(0);
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
     confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
     streamRangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
@@ -419,15 +422,6 @@ export class BrowserPage {
         if (entryId !== undefined) {
             await t.typeText(this.streamEntryId, entryId);
         }
-    }
-
-    /**
-     * Get number of existed columns and rows of Stream key
-     */
-    async getStreamRowColumnNumber(): Promise<string[]> {
-        const columnStreamNumber = await this.streamEntriesContainer.find('[aria-colcount]').getAttribute('aria-colcount');
-        const rowStreamNumber = await this.streamEntriesContainer.find('[aria-rowcount]').getAttribute('aria-rowcount');
-        return [columnStreamNumber, rowStreamNumber];
     }
 
     /**
@@ -698,7 +692,7 @@ export class BrowserPage {
      * @param element Selector of the element with list
      */
     async getValuesListByElement(element: any): Promise<string[]> {
-        const keyValues = [];
+        const keyValues: string[] = [];
         const count = await element.count;
         for (let i = 0; i < count; i++) {
             keyValues[i] = await element.nth(i).textContent;
@@ -726,10 +720,10 @@ export class BrowserPage {
         }
         // Verify that every level of tree view is clickable
         const foldersNumber = folders.length;
-        for(let i = 0; i < foldersNumber; i++) {
+        for (let i = 0; i < foldersNumber; i++) {
             const innerFoldersNumber = folders[i].length;
             const array: string[] = [];
-            for(let j = 0; j < innerFoldersNumber; j++) {
+            for (let j = 0; j < innerFoldersNumber; j++) {
                 if (j === 0) {
                     const folderSelector = `[data-testid="node-item_${folders[i][j]}${delimiter}"]`;
                     array.push(folderSelector);
@@ -765,6 +759,7 @@ export class BrowserPage {
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
         // Click on save button
         await t.click(this.treeViewDelimiterValueSave);
+        await t.expect(this.treeViewDelimiterButton.withExactText(delimiter).exists).ok('Delimiter is not changed');
     }
 
     //Delete entry from Stream key

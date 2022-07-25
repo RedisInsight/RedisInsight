@@ -5,6 +5,7 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const cliPage = new CliPage();
 const addRedisDatabasePage =  new AddRedisDatabasePage();
@@ -33,7 +34,7 @@ test
     .meta({ rte: rte.standalone })
     .after(async () => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that working with logical DBs, user can not see 0 DB index in CLI', async t => {
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);

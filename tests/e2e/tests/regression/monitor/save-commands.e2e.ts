@@ -1,12 +1,13 @@
 import * as fs from 'fs';
 import * as os from 'os';
-import {acceptLicenseTermsAndAddDatabase, deleteDatabase} from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MonitorPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const monitorPage = new MonitorPage();
 const tempDir = os.tmpdir();
@@ -15,11 +16,11 @@ fixture `Save commands`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when clicks on “Reset Profiler” button he brought back to Profiler home screen', async t => {
     //Start Monitor without Save logs

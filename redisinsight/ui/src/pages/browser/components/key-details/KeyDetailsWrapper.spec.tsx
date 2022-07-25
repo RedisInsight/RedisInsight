@@ -86,74 +86,34 @@ describe('KeyDetailsWrapper', () => {
         />
       ))
       const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
-      fireEvent(
-        screen.getByTestId('refresh-btn'),
-        new MouseEvent(
-          'click',
-          {
-            bubbles: true
-          }
-        )
-      )
+      fireEvent.click(screen.getByTestId('refresh-btn'))
       expect(component).toBeTruthy()
     })
   })
 
   it('should call onDelete', () => {
     const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getByTestId('delete-btn'),
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(screen.getByTestId('delete-btn'))
     expect(component).toBeTruthy()
   })
 
   it('should call onClose', () => {
     const onClose = jest.fn()
     const component = render(<KeyDetailsWrapper {...instance(mockedProps)} onCloseKey={onClose} />)
-    fireEvent(
-      screen.getByTestId('close-btn'),
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(screen.getByTestId('close-btn'))
     expect(component).toBeTruthy()
     expect(onClose).toBeCalled()
   })
 
   it('should call onEditKey', () => {
     const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getByTestId('edit-key-btn'),
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(screen.getByTestId('edit-key-btn'))
     expect(component).toBeTruthy()
   })
 
   it('should call onEditTtl', () => {
     const component = render(<KeyDetailsWrapper {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getByTestId('edit-ttl-btn'),
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(screen.getByTestId('edit-ttl-btn'))
     expect(component).toBeTruthy()
   })
 })

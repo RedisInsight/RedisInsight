@@ -1,11 +1,12 @@
 import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
 } from '../../../helpers/conf';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -20,15 +21,15 @@ fixture `Consumer group`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async t => {
         //Clear and delete database
-        if (await t.expect(browserPage.closeKeyButton.visible).ok()){
+        if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user enter invalid Group Name the error message appears', async t => {
     keyName = chance.word({ length: 20 });
@@ -36,7 +37,6 @@ test('Verify that when user enter invalid Group Name the error message appears',
     const error = 'BUSYGROUP Consumer Group name already exists';
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
     // Open Stream consumer groups and add group
     await t.click(browserPage.streamTabGroups);
     await browserPage.createConsumerGroup(consumerGroupName);
@@ -55,7 +55,6 @@ test('Verify that when user enter invalid format ID the error message appears', 
     ];
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
-    await t.click(browserPage.fullScreenModeButton);
     // Open Stream consumer groups and enter invalid EntryIds
     await t.click(browserPage.streamTabGroups);
     await t.click(browserPage.addKeyValueItemsButton);

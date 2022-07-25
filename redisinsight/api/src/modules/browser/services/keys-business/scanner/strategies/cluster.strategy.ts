@@ -1,4 +1,4 @@
-import { toNumber } from 'lodash';
+import { toNumber, omit } from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
 import { unescapeGlob } from 'src/utils';
@@ -39,6 +39,7 @@ export class ClusterStrategy extends AbstractStrategy {
   ): Promise<GetKeysWithDetailsResponse[]> {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
+    const client = await this.redisManager.getRedisClient(clientOptions);
     const nodes = await this.getNodesToScan(clientOptions, args.cursor);
     const settings = await this.settingsProvider.getSettings();
     await this.calculateNodesTotalKeys(clientOptions, nodes);
@@ -51,7 +52,7 @@ export class ClusterStrategy extends AbstractStrategy {
         // eslint-disable-next-line no-param-reassign
         node.scanned = node.total;
       });
-      nodes[0].keys = await this.getKeysInfo(clientOptions, [keyName]);
+      nodes[0].keys = [await this.getKeyInfo(client, keyName)];
       nodes[0].keys = nodes[0].keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;
@@ -61,7 +62,7 @@ export class ClusterStrategy extends AbstractStrategy {
         }
         return true;
       });
-      return nodes;
+      return nodes.map((node) => omit(node, 'node'));
     }
 
     let allNodesScanned = false;
@@ -86,7 +87,7 @@ export class ClusterStrategy extends AbstractStrategy {
         if (node.keys.length) {
           // eslint-disable-next-line no-param-reassign
           node.keys = await this.getKeysInfo(
-            clientOptions,
+            node.node,
             node.keys,
             args.type,
           );
@@ -94,25 +95,35 @@ export class ClusterStrategy extends AbstractStrategy {
       }),
     );
 
-    return nodes;
+    return nodes.map((node) => omit(node, 'node'));
   }
 
   private async getNodesToScan(
     clientOptions: IFindRedisClientInstanceByOptions,
     initialCursor: string,
   ): Promise<IGetNodeKeysResult[]> {
-    if (Number.isNaN(toNumber(initialCursor))) {
-      return parseClusterCursor(initialCursor);
-    }
-
-    const clusterNodes = await this.redisManager.getNodes(
+    const nodesClients = await this.redisManager.getNodes(
       clientOptions,
       'master',
     );
 
-    return clusterNodes.map(({ options: { host, port } }) => ({
-      host,
-      port,
+    if (Number.isNaN(toNumber(initialCursor))) {
+      // parse existing cursor
+      const nodes = parseClusterCursor(initialCursor);
+      // add client to each node
+      nodes.forEach((node, index) => {
+        nodes[index].node = nodesClients.find(
+          ({ options: { host, port } }) => host === node.host && port === node.port,
+        );
+      });
+
+      return nodes;
+    }
+
+    return nodesClients.map((node) => ({
+      node,
+      host: node.options.host,
+      port: node.options.port,
       cursor: 0,
       keys: [],
       total: 0,

@@ -60,3 +60,5 @@ export const calculateRedisHitRatio = (
     return undefined;
   }
 };
+
+export const getIsPipelineEnable = (size: number): boolean => size > 1;

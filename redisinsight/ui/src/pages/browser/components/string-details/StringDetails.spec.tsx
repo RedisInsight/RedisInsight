@@ -61,15 +61,7 @@ describe('StringDetails', () => {
       { target: { value: STRING_VALUE_SPACE } }
     )
     const btnACancel = screen.getByTestId('cancel-btn')
-    fireEvent(
-      btnACancel,
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(btnACancel)
     expect(textArea).toHaveValue('')
   })
 
@@ -87,15 +79,7 @@ describe('StringDetails', () => {
       { target: { value: STRING_VALUE_SPACE } }
     )
     const btnApply = screen.getByTestId('apply-btn')
-    fireEvent(
-      btnApply,
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
+    fireEvent.click(btnApply)
     expect(textArea).toHaveValue(STRING_VALUE_SPACE)
   })
 })

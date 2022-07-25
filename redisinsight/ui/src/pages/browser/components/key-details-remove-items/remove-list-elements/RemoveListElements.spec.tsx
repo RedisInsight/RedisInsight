@@ -47,12 +47,7 @@ describe('RemoveListElements', () => {
     render(<RemoveListElements {...instance(mockedProps)} />)
     const countInput = screen.getByTestId(COUNT_INPUT)
     fireEvent.change(countInput, { target: { value: '123' } })
-    fireEvent(
-      screen.getByTestId('remove-elements-btn'),
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId('remove-elements-btn'))
     expect(screen.getByTestId('remove-submit')).toBeInTheDocument()
   })
 

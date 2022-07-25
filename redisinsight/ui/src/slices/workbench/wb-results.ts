@@ -66,29 +66,43 @@ const workbenchResultsSlice = createSlice({
         }
         return item
       })
+      state.loading = false
     },
 
-    sendWBCommand: (state, { payload }: { payload: { command: string, commandId: string } }) => {
-      const newItems = [
-        { id: payload.commandId, command: payload.command, loading: true, isOpen: true, error: '' },
+    sendWBCommand: (state, { payload: { commands, commandId } }:
+    { payload: { commands: string[], commandId: string } }) => {
+      let newItems = [
+        ...commands.map((command, i) => ({
+          command,
+          id: commandId + i,
+          loading: true,
+          isOpen: true,
+          error: '',
+        })),
         ...state.items
       ]
 
       if (newItems?.length > WORKBENCH_HISTORY_MAX_LENGTH) {
-        newItems.pop()
+        newItems = newItems.slice(0, WORKBENCH_HISTORY_MAX_LENGTH)
       }
 
       state.items = newItems
+      state.loading = true
     },
 
     sendWBCommandSuccess: (state,
-      { payload }: { payload: { data: CommandExecution, commandId: string } }) => {
+      { payload: { data, commandId } }: { payload: { data: CommandExecution[], commandId: string } }) => {
       state.items = [...state.items].map((item) => {
-        if (item.id === payload.commandId) {
-          return { ...payload.data, loading: false, isOpen: true, error: '' }
-        }
-        return item
+        let newItem = item
+        data.forEach((command, i) => {
+          if (item.id === (commandId + i)) {
+            newItem = { ...command, loading: false, isOpen: true, error: '' }
+          }
+        })
+        return newItem
       })
+
+      state.loading = false
     },
 
     fetchWBCommandSuccess: (state, { payload }: { payload: CommandExecution }) => {
@@ -169,16 +183,16 @@ export function fetchWBHistoryAction(instanceId: string) {
 
 // Asynchronous thunk action
 export function sendWBCommandAction({
-  command = '',
-  multiCommands = '',
+  commands = [],
+  multiCommands = [],
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
 }: {
-  command: string
-  multiCommands?: string
+  commands: string[]
+  multiCommands?: string[]
   commandId?: string
-  onSuccessAction?: (multiCommands: string) => void
+  onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -186,15 +200,15 @@ export function sendWBCommandAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ command, commandId }))
+      dispatch(sendWBCommand({ commands, commandId }))
 
-      const { data, status } = await apiService.post<CommandExecution>(
+      const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
+          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
         ),
         {
-          command,
+          commands,
         }
       )
 
@@ -215,18 +229,18 @@ export function sendWBCommandAction({
 
 // Asynchronous thunk action
 export function sendWBCommandClusterAction({
-  command = '',
-  multiCommands = '',
+  commands = [],
+  multiCommands = [],
   options,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
 }: {
-  command: string
+  commands: string[]
   options: CreateCommandExecutionDto
   commandId?: string
-  multiCommands?: string
-  onSuccessAction?: (multiCommands: string) => void
+  multiCommands?: string[]
+  onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -234,16 +248,16 @@ export function sendWBCommandClusterAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ command, commandId }))
+      dispatch(sendWBCommand({ commands, commandId }))
 
-      const { data, status } = await apiService.post<CommandExecution>(
+      const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
+          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
         ),
         {
           ...options,
-          command,
+          commands,
           outputFormat: CliOutputFormatterType.Raw,
         }
       )

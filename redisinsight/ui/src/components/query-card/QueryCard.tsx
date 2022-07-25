@@ -163,7 +163,7 @@ const QueryCard = (props: Props) => {
                         />
                       ) : (
                         <div className={styles.loading}>
-                          <EuiLoadingContent lines={5} />
+                          <EuiLoadingContent lines={5} data-testid="loading-content" />
                         </div>
                       )}
                     </>

@@ -7,6 +7,7 @@ const KEY_TTL = 100;
 const CLUSTER_HASH_SLOT = '{slot1}';
 const APP_DEFAULT_SETTINGS = {
   scanThreshold: 10000,
+  batchSize: 5,
   theme: null,
   agreements: null,
 }
@@ -231,5 +232,48 @@ export const constants = {
   TEST_PUB_SUB_MESSAGE_2: 'message-b',
   TEST_PUB_SUB_MESSAGE_3: 'message-c',
 
+  // Notifications
+  TEST_NOTIFICATION_1: {
+    timestamp: 1656054100,
+    title: 'Title-1',
+    body: 'Body-1',
+    read: false,
+    type: 'global',
+  },
+  TEST_NOTIFICATION_2: {
+    timestamp: 1656054200,
+    title: 'Title-2',
+    body: 'Body-2',
+    read: false,
+    type: 'global',
+  },
+  TEST_NOTIFICATION_3: {
+    timestamp: 1656054300,
+    title: 'Title-3',
+    body: 'Body-3',
+    read: true,
+    type: 'global',
+  },
+  TEST_NOTIFICATION_NE_1: {
+    timestamp: 1656054101,
+    title: 'Title-1',
+    body: 'Body-1',
+    read: false,
+    type: 'global',
+  },
+  TEST_NOTIFICATION_NE_2: {
+    timestamp: 1656054201,
+    title: 'Title-2',
+    body: 'Body-2',
+    read: false,
+    type: 'global',
+  },
+  TEST_NOTIFICATION_NE_3: {
+    timestamp: 1656054303,
+    title: 'Title-3',
+    body: 'Body-3',
+    read: true,
+    type: 'global',
+  },
   // etc...
 }

@@ -41,7 +41,9 @@ export class RedisObserver extends EventEmitter2 {
       .catch((err) => {
         this.status = RedisObserverStatus.Error;
         this.emit('connect_error', err);
-        return Promise.reject(err);
+        // todo: rethink error handling for profiler
+        // prevent unhandled rejection
+        // return Promise.reject(err);
       });
   }
 

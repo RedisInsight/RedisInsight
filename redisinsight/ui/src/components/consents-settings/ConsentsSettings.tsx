@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
-import { has, isEmpty } from 'lodash'
+import { isEmpty, forEach } from 'lodash'
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -9,16 +9,20 @@ import {
   EuiSpacer,
   EuiText,
   EuiButton,
+  EuiTitle,
   EuiToolTip,
   EuiForm,
   EuiHorizontalRule,
   EuiCallOut,
+  EuiLink,
 } from '@elastic/eui'
+import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
 import cx from 'classnames'
-import parse from 'html-react-parser'
 
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
 
@@ -27,29 +31,37 @@ interface Values {
 }
 
 export interface IConsent {
-  defaultValue: boolean;
-  displayInSetting: boolean;
-  required: boolean;
-  editable: boolean;
-  disabled: boolean,
-  since: string;
-  title: string;
-  label: string;
-  agreementName: string;
-  description?: string;
+  defaultValue: boolean
+  displayInSetting: boolean
+  required: boolean
+  editable: boolean
+  disabled: boolean
+  category?: string
+  since: string
+  title: string
+  label: string
+  agreementName: string
+  description?: string
+}
+
+export enum ConsentCategories {
+  Notifications = 'notifications',
+  Privacy = 'privacy'
 }
 
 export interface Props {
-  liveEditMode?: boolean;
-  onSubmitted?: () => void;
+  onSubmitted?: () => void
 }
 
-const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
+const ConsentsSettings = ({ onSubmitted }: Props) => {
   const [consents, setConsents] = useState<IConsent[]>([])
+  const [privacyConsents, setPrivacyConsents] = useState<IConsent[]>([])
+  const [notificationConsents, setNotificationConsents] = useState<IConsent[]>([])
   const [requiredConsents, setRequiredConsents] = useState<IConsent[]>([])
-  const [nonRequiredConsents, setNonRequiredConsents] = useState<IConsent[]>([])
   const [initialValues, setInitialValues] = useState<any>({})
   const [errors, setErrors] = useState<FormikErrors<Values>>({})
+  const [isRecommended, setIsRecommended] = useState<boolean>(false)
+  const [valuesBuffer, setValuesBuffer] = useState<Values>({})
 
   const { config, spec } = useSelector(userSettingsSelector)
 
@@ -68,9 +80,30 @@ const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
     return errs
   }
 
+  const selectAll = (e: EuiSwitchEvent) => {
+    setIsRecommended(e.target.checked)
+
+    if (e.target.checked) {
+      const newBufferValues:Values = {}
+      consents.forEach((consent) => {
+        if (!consent.required && !consent.disabled) {
+          newBufferValues[consent.agreementName] = formik.values[consent.agreementName]
+          formik.setFieldValue(consent.agreementName, true)
+        }
+        setValuesBuffer(newBufferValues)
+      })
+    } else {
+      consents.forEach((consent) => {
+        if (!consent.required && !consent.disabled) {
+          formik.setFieldValue(consent.agreementName, valuesBuffer[consent.agreementName])
+        }
+      })
+    }
+  }
+
   const formik = useFormik({
     initialValues,
-    validate: !liveEditMode ? validate : undefined,
+    validate,
     enableReinitialize: true,
     onSubmit: (values) => {
       submitForm(values)
@@ -79,16 +112,25 @@ const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
 
   useEffect(() => {
     if (spec && config) {
-      setConsents(compareConsents(spec?.agreements, config?.agreements, liveEditMode))
+      setConsents(compareConsents(spec?.agreements, config?.agreements))
     }
   }, [spec, config])
 
   useEffect(() => {
+    if (!isRecommended) {
+      setValuesBuffer({})
+    }
+  }, [isRecommended])
+
+  useEffect(() => {
     setRequiredConsents(consents.filter(
-      (consent: IConsent) => consent.required && (liveEditMode ? consent.displayInSetting : true)
+      (consent: IConsent) => consent.required
     ))
-    setNonRequiredConsents(consents.filter(
-      (consent: IConsent) => !consent.required && (liveEditMode ? consent.displayInSetting : true)
+    setPrivacyConsents(consents.filter(
+      (consent: IConsent) => !consent.required && consent.category === ConsentCategories.Privacy
+    ))
+    setNotificationConsents(consents.filter(
+      (consent: IConsent) => !consent.required && consent.category === ConsentCategories.Notifications
     ))
     if (consents.length) {
       const values = consents.reduce(
@@ -96,139 +138,200 @@ const ConsentsSettings = ({ liveEditMode = false, onSubmitted }: Props) => {
         {}
       )
 
-      if (liveEditMode && config) {
-        Object.keys(values).forEach((value) => {
-          if (has(config.agreements, value)) {
-            values[value] = config?.agreements?.[value]
-          }
-        })
-      }
       setInitialValues(values)
     }
   }, [consents])
 
   useEffect(() => {
-    !liveEditMode && formik.validateForm(initialValues)
+    formik.validateForm(initialValues)
   }, [requiredConsents])
+
+  useEffect(() => {
+    setIsRecommended(checkIsRecommended())
+  }, [formik.values])
+
+  const checkIsRecommended = () => {
+    let recommended = true
+    forEach(privacyConsents, (consent) => {
+      if (!formik.values[consent?.agreementName] && !consent.disabled) {
+        recommended = false
+        return false
+      }
+    })
+
+    forEach(notificationConsents, (consent) => {
+      if (!formik.values[consent?.agreementName] && !consent.disabled) {
+        recommended = false
+        return false
+      }
+    })
+
+    return recommended
+  }
 
   const onChangeAgreement = (checked: boolean, name: string) => {
     formik.setFieldValue(name, checked)
-    liveEditMode && formik.submitForm()
   }
 
   const submitForm = (values: any) => {
     if (submitIsDisabled()) {
       return
     }
+    // have only one switcher in notificationConsents
+    if (notificationConsents.length) {
+      sendEventTelemetry({
+        event: values[notificationConsents[0]?.agreementName]
+          ? TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_ENABLED
+          : TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_DISABLED,
+      })
+    }
     dispatch(updateUserConfigSettingsAction({ agreements: values }, onSubmitted))
   }
-
-  const renderConsentOption = (consent: IConsent, withHR = false) => (
-    <EuiFlexItem key={consent.agreementName}>
-      <EuiFlexGroup gutterSize="s">
-        <EuiFlexItem grow={false}>
-          <EuiSwitch
-            showLabel={false}
-            label=""
-            checked={formik.values[consent.agreementName] ?? false}
-            onChange={(e) => onChangeAgreement(e.target.checked, consent.agreementName)}
-            className={styles.switchOption}
-            data-testid={`switch-option-${consent.agreementName}`}
-            disabled={consent?.disabled}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiText className={styles.label}>{parse(consent.label)}</EuiText>
-          {consent.description && (
-            <EuiText size="s" color="subdued" style={{ marginTop: '1em' }}>
-              {parse(consent.description)}
-            </EuiText>
-          )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      {withHR ? <EuiHorizontalRule margin="l" /> : <EuiSpacer size="xl" />}
-    </EuiFlexItem>
-  )
 
   return (
     <EuiForm component="form" onSubmit={formik.handleSubmit} data-testid="consents-settings-form">
       <div className={styles.consentsWrapper}>
-        {!!nonRequiredConsents.length && (
-          <>
-            <EuiSpacer size="s" />
-            <EuiText size="s" color="subdued">
-              To improve your experience, we use third party tools in RedisInsight. All data collected
-              are completely anonymized, but we will not use these data for any purpose that you do
-              not consent to.
-            </EuiText>
-            <EuiSpacer size="xl" />
-          </>
-        )}
-        {
-          nonRequiredConsents
-            .map((consent: IConsent) => renderConsentOption(consent, nonRequiredConsents.length > 1))
-        }
-
-        {!liveEditMode && (
+        <EuiSpacer size="m" />
+        {consents.length > 1 && (
           <>
             <EuiCallOut>
-              <EuiText size="s" data-testid="plugin-section">
-                While adding new visualization plugins, use files only from trusted authors
-                to avoid automatic execution of malicious code.
+              <EuiText size="s" className={styles.smallText} data-testid="plugin-section">
+                To avoid automatic execution of malicious code, when adding new Workbench plugins,
+                use files from trusted authors only.
               </EuiText>
             </EuiCallOut>
+            <EuiSpacer size="l" />
+            <EuiFlexItem>
+              <EuiFlexGroup gutterSize="s">
+                <EuiFlexItem grow={false}>
+                  <EuiSwitch
+                    showLabel={false}
+                    label=""
+                    checked={isRecommended}
+                    onChange={selectAll}
+                    className={styles.switchOption}
+                    data-testid="switch-option-recommended"
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText className={styles.label}>Use recommended settings</EuiText>
+                  <EuiText size="s" className={styles.smallText} color="subdued" style={{ marginTop: '12px' }}>
+                    Select to activate all listed options.
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiFlexItem>
             <EuiHorizontalRule margin="l" className={cx({ [styles.pluginWarningHR]: !!requiredConsents.length })} />
           </>
         )}
+        {!!privacyConsents.length && (
+          <>
+            <EuiSpacer size="l" />
+            <EuiTitle size="m">
+              <h1 className={styles.title}>Privacy Settings</h1>
+            </EuiTitle>
+            <EuiSpacer size="m" />
+            <EuiText className={styles.smallText} size="s" color="subdued">
+              To optimize your experience, RedisInsight uses third-party tools.
+              All data collected is anonymized and will not be used for any purpose without your consent.
+            </EuiText>
+            <EuiSpacer size="l" />
+          </>
+        )}
+        {
+          privacyConsents
+            .map((consent: IConsent) => (
+              <ConsentOption
+                consent={consent}
+                checked={formik.values[consent.agreementName] ?? false}
+                onChangeAgreement={onChangeAgreement}
+                key={consent.agreementName}
+              />
+            ))
+        }
+        {!!notificationConsents.length && (
+          <>
+            <EuiSpacer size="m" />
+            <EuiTitle size="m">
+              <h1 className={styles.title}>Notifications</h1>
+            </EuiTitle>
+            <EuiSpacer size="m" />
+          </>
+        )}
+        {
+          notificationConsents
+            .map((consent: IConsent) => (
+              <ConsentOption
+                consent={consent}
+                checked={formik.values[consent.agreementName] ?? false}
+                onChangeAgreement={onChangeAgreement}
+                key={consent.agreementName}
+              />
+            ))
+        }
       </div>
-      {!!requiredConsents.length && (
+      {requiredConsents.length ? (
         <>
-          <EuiSpacer size="l" />
-          <EuiText color="subdued" size="s">
-            To use RedisInsight, please accept the terms and conditions:
+          <EuiHorizontalRule margin="l" className={styles.requiredHR} />
+          <EuiSpacer size="m" />
+          <EuiText color="subdued" size="s" className={styles.smallText}>
+            To use RedisInsight, please accept the terms and conditions:{' '}
+            <EuiLink
+              external={false}
+              target="_blank"
+              href="https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE"
+            >
+              Server Side Public License
+            </EuiLink>
           </EuiText>
           <EuiSpacer size="m" />
         </>
+      ) : (
+        <EuiSpacer size="l" />
       )}
 
-      {requiredConsents.map((consent: IConsent) => renderConsentOption(consent))}
-
-      {!liveEditMode && (
-        <>
-          {!requiredConsents.length && (<EuiSpacer size="l" />)}
-          <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
-            <EuiFlexItem grow={false}>
-              <EuiToolTip
-                position="top"
-                anchorClassName="euiToolTip__btn-disabled"
-                content={
-                  submitIsDisabled() ? (
-                    <span className="euiToolTip__content">
-                      {Object.values(errors).map((err) => [
-                        spec?.agreements[err as string]?.requiredText,
-                        <br key={err} />,
-                      ])}
-                    </span>
-                  ) : null
-                }
-              >
-                <EuiButton
-                  fill
-                  color="secondary"
-                  className="btn-add"
-                  type="submit"
-                  onClick={() => {}}
-                  disabled={submitIsDisabled()}
-                  iconType={submitIsDisabled() ? 'iInCircle' : undefined}
-                  data-testid="btn-submit"
-                >
-                  Submit
-                </EuiButton>
-              </EuiToolTip>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </>
-      )}
+      <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" responsive={false}>
+        <EuiFlexItem grow={false}>
+          {requiredConsents.map((consent: IConsent) => (
+            <ConsentOption
+              consent={consent}
+              checked={formik.values[consent.agreementName] ?? false}
+              onChangeAgreement={onChangeAgreement}
+              withoutSpacer
+              key={consent.agreementName}
+            />
+          ))}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiToolTip
+            position="top"
+            anchorClassName="euiToolTip__btn-disabled"
+            content={
+              submitIsDisabled() ? (
+                <span className="euiToolTip__content">
+                  {Object.values(errors).map((err) => [
+                    spec?.agreements[err as string]?.requiredText,
+                    <br key={err} />,
+                  ])}
+                </span>
+              ) : null
+            }
+          >
+            <EuiButton
+              fill
+              color="secondary"
+              className="btn-add"
+              type="submit"
+              onClick={() => {}}
+              disabled={submitIsDisabled()}
+              iconType={submitIsDisabled() ? 'iInCircle' : undefined}
+              data-testid="btn-submit"
+            >
+              Submit
+            </EuiButton>
+          </EuiToolTip>
+        </EuiFlexItem>
+      </EuiFlexGroup>
     </EuiForm>
   )
 }

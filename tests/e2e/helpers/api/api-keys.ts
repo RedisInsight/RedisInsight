@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { AddNewDatabaseParameters } from '../../pageObjects/add-redis-database-page';
-import { apiUrl } from '../../helpers/conf';
+import { endpoint } from '../../helpers/conf';
 import {
     HashKeyParameters,
     ListKeyParameters,
@@ -10,9 +10,6 @@ import {
     StreamKeyParameters
 } from '../../pageObjects/browser-page';
 import { getDatabaseByName } from './api-database';
-
-const endpoint = apiUrl;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 
 /**
  * Add Hash key

@@ -2,10 +2,7 @@ import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
 import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters } from '../../pageObjects/add-redis-database-page';
-import { apiUrl } from '../../helpers/conf';
-
-const endpoint = apiUrl;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
+import { endpoint } from '../../helpers/conf';
 
 /**
  * Add a new Standalone database through api using host and port

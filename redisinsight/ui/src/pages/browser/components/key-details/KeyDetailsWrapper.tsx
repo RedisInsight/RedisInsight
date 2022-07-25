@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { isUndefined } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -62,18 +63,20 @@ const KeyDetailsWrapper = (props: Props) => {
   }, [keyProp])
 
   useEffect(() => {
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_KEY_VALUE_VIEWED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_VIEWED
-      ),
-      eventData: {
-        keyType,
-        databaseId: instanceId,
-        length: keyLength,
-      }
-    })
+    if (!isUndefined(keyName)) {
+      sendEventTelemetry({
+        event: getBasedOnViewTypeEvent(
+          viewType,
+          TelemetryEvent.BROWSER_KEY_VALUE_VIEWED,
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_VIEWED
+        ),
+        eventData: {
+          keyType,
+          databaseId: instanceId,
+          length: keyLength,
+        }
+      })
+    }
   }, [keyName])
 
   const handleDeleteKey = (key: string, type: string) => {

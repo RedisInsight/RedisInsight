@@ -32,7 +32,12 @@ const ConsentOption = (props: Props) => {
     <EuiFlexItem key={consent.agreementName}>
       {isSettingsPage && consent.description && (
         <>
-          <EuiText size="s" className={styles.smallText} color="subdued" style={{ marginTop: '12px' }}>
+          <EuiText
+            size="s"
+            className={styles.smallText}
+            color="subdued"
+            style={{ marginTop: '12px' }}
+          >
             {parse(consent.description)}
           </EuiText>
           <EuiSpacer size="m" />
@@ -51,9 +56,16 @@ const ConsentOption = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiText className={styles.label}>{parse(consent.label)}</EuiText>
+          <EuiText className={styles.smallText}>
+            {parse(consent.label)}
+          </EuiText>
           {!isSettingsPage && consent.description && (
-            <EuiText size="s" className={styles.smallText} color="subdued" style={{ marginTop: '12px' }}>
+            <EuiText
+              size="s"
+              className={styles.smallText}
+              color="subdued"
+              style={{ marginTop: '12px' }}
+            >
               {parse(consent.description)}
             </EuiText>
           )}

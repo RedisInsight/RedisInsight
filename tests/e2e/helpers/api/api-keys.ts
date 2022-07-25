@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { AddNewDatabaseParameters } from '../../pageObjects/add-redis-database-page';
-import { endpoint } from '../../helpers/conf';
+import { endpoint, NODE_TLS_REJECT_UNAUTHORIZED } from '../../helpers/conf';
 import {
     HashKeyParameters,
     ListKeyParameters,
@@ -10,6 +10,9 @@ import {
     StreamKeyParameters
 } from '../../pageObjects/browser-page';
 import { getDatabaseByName } from './api-database';
+
+
+NODE_TLS_REJECT_UNAUTHORIZED;
 
 /**
  * Add Hash key

@@ -2,7 +2,9 @@ import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
 import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters } from '../../pageObjects/add-redis-database-page';
-import { endpoint } from '../../helpers/conf';
+import { endpoint, NODE_TLS_REJECT_UNAUTHORIZED } from '../../helpers/conf';
+
+NODE_TLS_REJECT_UNAUTHORIZED;
 
 /**
  * Add a new Standalone database through api using host and port

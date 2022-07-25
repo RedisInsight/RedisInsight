@@ -56,7 +56,7 @@ describe('POST /instance/:instanceId/keys/get-info', () => {
     );
   });
 
-  xdescribe('Modes', () => {
+  describe('Modes', () => {
     requirements('!rte.bigData');
     before(rte.data.generateBinKeys);
 

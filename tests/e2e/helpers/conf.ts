@@ -4,8 +4,6 @@ const chance = new Chance();
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
 export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
-export const endpoint = apiUrl;
-export const NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 
 const uniqueId = chance.string({ length: 10 });
 

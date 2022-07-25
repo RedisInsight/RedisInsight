@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { AddNewDatabaseParameters } from '../../pageObjects/add-redis-database-page';
-import { endpoint, NODE_TLS_REJECT_UNAUTHORIZED } from '../../helpers/conf';
+import { Common } from '../../helpers/common';
 import {
     HashKeyParameters,
     ListKeyParameters,
@@ -11,8 +11,8 @@ import {
 } from '../../pageObjects/browser-page';
 import { getDatabaseByName } from './api-database';
 
-
-NODE_TLS_REJECT_UNAUTHORIZED;
+const common = new Common();
+const endpoint = common.getEndpoint();
 
 /**
  * Add Hash key

@@ -1,9 +1,10 @@
 import {RequestMock, t} from 'testcafe';
 import { Chance } from 'chance';
-import {commonUrl} from './conf';
+import {apiUrl, commonUrl} from './conf';
 
 const settingsApiUrl = `${commonUrl}/api/settings`;
 const chance = new Chance();
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 
 const mockedSettingsResponse = {
     agreements: {
@@ -100,5 +101,12 @@ export class Common {
     */
     generateSentence(number: number): string {
         return chance.sentence({ words: number });
+    }
+
+    /**
+    * Return api endpoint with disabled certificate validation
+    */
+    getEndpoint(): string {
+        return apiUrl;
     }
 }

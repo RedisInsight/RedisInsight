@@ -1,6 +1,6 @@
-import { Transform, TransformOptions } from 'class-transformer';
 import { AnyToRedisStringTransformer } from 'src/common/transformers';
+import { RedisStringTransformOptions } from 'src/common/constants';
 
 export const AnyToRedisString = (
-  opts: TransformOptions,
-) => Transform(AnyToRedisStringTransformer, opts);
+  opts: RedisStringTransformOptions,
+) => AnyToRedisStringTransformer(opts);

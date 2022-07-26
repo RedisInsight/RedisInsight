@@ -178,7 +178,7 @@ export class KeysBusinessService {
 
   public async deleteKeys(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keys: string[],
+    keys: RedisString[],
   ): Promise<DeleteKeysResponse> {
     this.logger.log('Deleting keys');
     let result;
@@ -237,7 +237,7 @@ export class KeysBusinessService {
       throw new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST);
     }
     this.logger.log('Succeed to rename key');
-    return { keyName: newKeyName };
+    return plainToClass(RenameKeyResponse, { keyName: newKeyName });
   }
 
   public async updateTtl(

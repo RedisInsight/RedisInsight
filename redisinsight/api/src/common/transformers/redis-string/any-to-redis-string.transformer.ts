@@ -1,8 +1,9 @@
-import { RedisString } from 'src/common/constants';
+import { RedisString, RedisStringTransformOptions } from 'src/common/constants';
 import { isArray, isObject, isString } from 'lodash';
 import { getBufferFromSafeASCIIString } from 'src/utils/cli-helper';
+import { Transform } from 'class-transformer';
 
-export const AnyToRedisStringTransformer = (value: any): RedisString => {
+const SingleToRedisStringTransformer = (value): RedisString => {
   if (value?.type === 'Buffer') {
     if (isArray(value.data)) {
       return Buffer.from(value);
@@ -18,4 +19,20 @@ export const AnyToRedisStringTransformer = (value: any): RedisString => {
   }
 
   return value;
+};
+
+const ArrayToRedisStringTransformer = (value) => {
+  if (isArray(value)) {
+    return value.map(SingleToRedisStringTransformer);
+  }
+
+  return value;
+};
+
+export const AnyToRedisStringTransformer = (opts?: RedisStringTransformOptions) => {
+  if (opts?.each === true) {
+    return Transform(ArrayToRedisStringTransformer, opts);
+  }
+
+  return Transform(SingleToRedisStringTransformer, opts);
 };

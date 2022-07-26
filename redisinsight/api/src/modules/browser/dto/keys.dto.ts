@@ -165,8 +165,9 @@ export class DeleteKeysDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
-  keyNames: string[];
+  @RedisStringType({ each: true })
+  @IsRedisString({ each: true })
+  keyNames: RedisString[];
 }
 
 export class DeleteKeysResponse {
@@ -177,41 +178,20 @@ export class DeleteKeysResponse {
   affected: number;
 }
 
-export class RenameKeyDto {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  @IsDefined()
-  @IsString()
-  keyName: string;
-
+export class RenameKeyDto extends KeyDto {
   @ApiProperty({
     description: 'New key name',
     type: String,
   })
   @IsDefined()
-  @IsString()
-  newKeyName: string;
+  @IsRedisString()
+  @RedisStringType()
+  newKeyName: RedisString;
 }
 
-export class RenameKeyResponse {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  keyName: string;
-}
+export class RenameKeyResponse extends KeyResponse {}
 
-export class UpdateKeyTtlDto {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  @IsDefined()
-  @IsString()
-  keyName: string;
-
+export class UpdateKeyTtlDto extends KeyDto {
   @ApiProperty({
     type: Number,
     description:

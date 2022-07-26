@@ -35,6 +35,7 @@ const BulkDeleteSummary = () => {
             <EuiToolTip
               position="right"
               anchorClassName={styles.tooltipAnchor}
+              data-testid="bulk-delete-tooltip"
               content="Expected amount is estimated based on
               the number of keys scanned and the scan percentage.
               The final number may be different."
@@ -50,7 +51,7 @@ const BulkDeleteSummary = () => {
         </>
       )}
       {!isUndefined(status) && (
-        <EuiFlexGroup alignItems="flexStart" direction="row" gutterSize="none" responsive={false} className={styles.summary}>
+        <EuiFlexGroup alignItems="flexStart" direction="row" gutterSize="none" responsive={false} className={styles.summary} data-testid="bulk-delete-completed-summary">
           <EuiFlexItem grow={false}>
             <EuiText className={styles.summaryValue}>{numberWithSpaces(processed)}</EuiText>
             <EuiText color="subdued" className={styles.summaryLabel}>Keys Processed</EuiText>

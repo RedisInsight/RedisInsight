@@ -116,7 +116,7 @@ const BulkDelete = (props: Props) => {
               </EuiButton>
             )}
           >
-            <EuiText color="subdued" className={styles.containerPopover}>
+            <EuiText color="subdued" className={styles.containerPopover} data-testid="bulk-action-tooltip">
               <EuiIcon
                 type="alert"
                 className={styles.popoverIcon}

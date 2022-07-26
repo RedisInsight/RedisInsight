@@ -137,6 +137,7 @@ const BulkActions = (props: Props) => {
               color="primary"
               aria-label="Close panel"
               className={styles.closeBtn}
+              data-testid="bulk-close-panel"
               onClick={closePanel}
             />
           </EuiToolTip>

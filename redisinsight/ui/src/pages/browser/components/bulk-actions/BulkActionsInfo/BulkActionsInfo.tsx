@@ -42,23 +42,23 @@ const BulkActionsInfo = (props: Props) => {
           </div>
         </EuiText>
         {!isUndefined(status) && status !== BulkActionsStatus.Completed && status !== BulkActionsStatus.Aborted && (
-          <EuiText color="subdued" className={styles.progress}>
+          <EuiText color="subdued" className={styles.progress} data-testid="bulk-status-progress">
             In progress:
             <span>{` ${getApproximateNumber((total ? scanned / total : 1) * 100)}%`}</span>
           </EuiText>
         )}
         {status === BulkActionsStatus.Aborted && (
-          <EuiText color="danger" className={styles.progress}>
+          <EuiText color="danger" className={styles.progress} data-testid="bulk-status-stopped">
             Stopped: {getApproximateNumber((total ? scanned / total : 1) * 100)}%
           </EuiText>
         )}
         {status === BulkActionsStatus.Completed && (
-          <EuiText className={cx(styles.progress, styles.progressCompleted)}>
+          <EuiText className={cx(styles.progress, styles.progressCompleted)} data-testid="bulk-status-completed">
             Action completed
           </EuiText>
         )}
       </div>
-      <Divider colorVariable="separatorColor" className={styles.divider} />
+      <Divider colorVariable="separatorColor" className={styles.divider} data-testid="progress-line" />
       {loading && (
         <div className={styles.progressLine}><div style={{ width: `${(total ? scanned / total : 0) * 100}%` }} /></div>
       )}

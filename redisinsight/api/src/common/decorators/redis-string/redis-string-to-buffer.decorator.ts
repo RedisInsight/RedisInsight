@@ -1,6 +1,6 @@
-import { Transform, TransformOptions } from 'class-transformer';
 import { RedisStringToBufferTransformer } from 'src/common/transformers';
+import { RedisStringTransformOptions } from 'src/common/constants';
 
 export const RedisStringToBuffer = (
-  opts: TransformOptions,
-) => Transform(RedisStringToBufferTransformer, opts);
+  opts: RedisStringTransformOptions,
+) => RedisStringToBufferTransformer(opts);

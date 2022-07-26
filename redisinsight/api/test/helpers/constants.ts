@@ -152,6 +152,32 @@ export const constants = {
   TEST_LIST_HUGE_KEY: 'big list 1M',
   TEST_LIST_HUGE_INDEX: 678900,
   TEST_LIST_HUGE_ELEMENT: ' 321099',
+  TEST_LIST_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), randomBytes(10)]),
+  get TEST_LIST_KEY_BIN_BUF_OBJ_1() {
+    return {
+      type: 'Buffer',
+      data: [...this.TEST_LIST_KEY_BIN_BUFFER_1],
+    }
+  },
+  get TEST_LIST_KEY_BIN_ASCII_1() {
+    return getASCIISafeStringFromBuffer(this.TEST_LIST_KEY_BIN_BUFFER_1);
+  },
+  get TEST_LIST_KEY_BIN_UTF8_1() {
+    return this.TEST_LIST_KEY_BIN_BUFFER_1.toString('utf-8');
+  },
+  TEST_LIST_ELEMENT_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), randomBytes(10)]),
+  get TEST_LIST_ELEMENT_BIN_ASCII_1() {
+    return getASCIISafeStringFromBuffer(this.TEST_LIST_ELEMENT_BIN_BUFFER_1);
+  },
+  get TEST_LIST_ELEMENT_BIN_UTF8_1() {
+    return this.TEST_LIST_ELEMENT_BIN_BUFFER_1.toString('utf-8');
+  },
+  get TEST_LIST_ELEMENT_BIN_BUF_OBJ_1() {
+    return {
+      type: 'Buffer',
+      data: [...this.TEST_LIST_ELEMENT_BIN_BUFFER_1],
+    }
+  },
 
   // Redis Set
   TEST_SET_TYPE: 'set',

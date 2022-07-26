@@ -1,6 +1,6 @@
-import { Transform, TransformOptions } from 'class-transformer';
 import { RedisStringToUTF8Transformer } from 'src/common/transformers';
+import { RedisStringTransformOptions } from 'src/common/constants';
 
 export const RedisStringToUTF8 = (
-  opts: TransformOptions,
-) => Transform(RedisStringToUTF8Transformer, opts);
+  opts: RedisStringTransformOptions,
+) => RedisStringToUTF8Transformer(opts);

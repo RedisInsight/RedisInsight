@@ -10,7 +10,9 @@ const APP_DEFAULT_SETTINGS = {
   batchSize: 5,
   theme: null,
   agreements: null,
-}
+};
+
+const unprintableBuf = Buffer.from('aced0005', 'hex');
 
 export const constants = {
   // common
@@ -115,32 +117,14 @@ export const constants = {
   TEST_STRING_KEY_ASCII_BUFFER: getBufferFromSafeASCIIString(TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT),
   TEST_STRING_KEY_ASCII_UNICODE: TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT,
   TEST_STRING_KEY_ASCII_VALUE: TEST_RUN_ID + '_value_ascii',
-  TEST_STRING_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), randomBytes(10)]),
-  get TEST_STRING_KEY_BIN_BUF_OBJ_1() {
-    return {
-      type: 'Buffer',
-      data: [...this.TEST_STRING_KEY_BIN_BUFFER_1],
-    }
-  },
-  get TEST_STRING_KEY_BIN_ASCII_1() {
-    return getASCIISafeStringFromBuffer(this.TEST_STRING_KEY_BIN_BUFFER_1);
-  },
-  get TEST_STRING_KEY_BIN_UTF8_1() {
-    return this.TEST_STRING_KEY_BIN_BUFFER_1.toString('utf-8');
-  },
-  TEST_STRING_VALUE_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), randomBytes(10)]),
-  get TEST_STRING_VALUE_BIN_ASCII_1() {
-    return getASCIISafeStringFromBuffer(this.TEST_STRING_VALUE_BIN_BUFFER_1);
-  },
-  get TEST_STRING_VALUE_BIN_UTF8_1() {
-    return this.TEST_STRING_VALUE_BIN_BUFFER_1.toString('utf-8');
-  },
-  get TEST_STRING_VALUE_BIN_BUF_OBJ_1() {
-    return {
-      type: 'Buffer',
-      data: [...this.TEST_STRING_VALUE_BIN_BUFFER_1],
-    }
-  },
+  TEST_STRING_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('strk'), unprintableBuf]),
+  get TEST_STRING_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STRING_KEY_BIN_BUFFER_1] } },
+  get TEST_STRING_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STRING_KEY_BIN_BUFFER_1) },
+  get TEST_STRING_KEY_BIN_UTF8_1() { return this.TEST_STRING_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_STRING_VALUE_BIN_BUFFER_1:  Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('strv'), unprintableBuf]),
+  get TEST_STRING_VALUE_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STRING_VALUE_BIN_BUFFER_1) },
+  get TEST_STRING_VALUE_BIN_UTF8_1() { return this.TEST_STRING_VALUE_BIN_BUFFER_1.toString('utf-8') },
+  get TEST_STRING_VALUE_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STRING_VALUE_BIN_BUFFER_1] } },
 
   // Redis List
   TEST_LIST_TYPE: 'list',
@@ -152,32 +136,14 @@ export const constants = {
   TEST_LIST_HUGE_KEY: 'big list 1M',
   TEST_LIST_HUGE_INDEX: 678900,
   TEST_LIST_HUGE_ELEMENT: ' 321099',
-  TEST_LIST_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), randomBytes(10)]),
-  get TEST_LIST_KEY_BIN_BUF_OBJ_1() {
-    return {
-      type: 'Buffer',
-      data: [...this.TEST_LIST_KEY_BIN_BUFFER_1],
-    }
-  },
-  get TEST_LIST_KEY_BIN_ASCII_1() {
-    return getASCIISafeStringFromBuffer(this.TEST_LIST_KEY_BIN_BUFFER_1);
-  },
-  get TEST_LIST_KEY_BIN_UTF8_1() {
-    return this.TEST_LIST_KEY_BIN_BUFFER_1.toString('utf-8');
-  },
-  TEST_LIST_ELEMENT_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), randomBytes(10)]),
-  get TEST_LIST_ELEMENT_BIN_ASCII_1() {
-    return getASCIISafeStringFromBuffer(this.TEST_LIST_ELEMENT_BIN_BUFFER_1);
-  },
-  get TEST_LIST_ELEMENT_BIN_UTF8_1() {
-    return this.TEST_LIST_ELEMENT_BIN_BUFFER_1.toString('utf-8');
-  },
-  get TEST_LIST_ELEMENT_BIN_BUF_OBJ_1() {
-    return {
-      type: 'Buffer',
-      data: [...this.TEST_LIST_ELEMENT_BIN_BUFFER_1],
-    }
-  },
+  TEST_LIST_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('listk'), unprintableBuf]),
+  get TEST_LIST_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_LIST_KEY_BIN_BUFFER_1] } },
+  get TEST_LIST_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_LIST_KEY_BIN_BUFFER_1) },
+  get TEST_LIST_KEY_BIN_UTF8_1() { return this.TEST_LIST_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_LIST_ELEMENT_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('liste'), unprintableBuf]),
+  get TEST_LIST_ELEMENT_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_LIST_ELEMENT_BIN_BUFFER_1) },
+  get TEST_LIST_ELEMENT_BIN_UTF8_1() { return this.TEST_LIST_ELEMENT_BIN_BUFFER_1.toString('utf-8') },
+  get TEST_LIST_ELEMENT_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_LIST_ELEMENT_BIN_BUFFER_1] } },
 
   // Redis Set
   TEST_SET_TYPE: 'set',
@@ -188,6 +154,14 @@ export const constants = {
   TEST_SET_KEY_2: TEST_RUN_ID + '_set_2' + CLUSTER_HASH_SLOT,
   TEST_SET_HUGE_KEY: 'big set 1M',
   TEST_SET_HUGE_ELEMENT: ' 356897',
+  TEST_SET_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('setk'), unprintableBuf]),
+  get TEST_SET_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_SET_KEY_BIN_BUFFER_1] } },
+  get TEST_SET_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_SET_KEY_BIN_BUFFER_1) },
+  get TEST_SET_KEY_BIN_UTF8_1() { return this.TEST_SET_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_SET_MEMBER_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('setm'), unprintableBuf]),
+  get TEST_SET_MEMBER_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_SET_MEMBER_BIN_BUFFER_1) },
+  get TEST_SET_MEMBER_BIN_UTF8_1() { return this.TEST_SET_MEMBER_BIN_BUFFER_1.toString('utf-8') },
+  get TEST_SET_MEMBER_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_SET_MEMBER_BIN_BUFFER_1] } },
 
   // Redis ZSet
   TEST_ZSET_TYPE: 'zset',

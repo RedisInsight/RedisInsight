@@ -1,9 +1,12 @@
 import { ApiProperty, IntersectionType } from '@nestjs/swagger';
 import {
-  ArrayNotEmpty, IsArray, IsDefined, IsString,
+  ArrayNotEmpty, IsArray, IsDefined,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { KeyDto, KeyResponse, KeyWithExpireDto, ScanDataTypeDto } from './keys.dto';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { RedisString } from 'src/common/constants';
+import {
+  KeyDto, KeyResponse, KeyWithExpireDto, ScanDataTypeDto,
+} from './keys.dto';
 
 export class AddMembersToSetDto extends KeyDto {
   @ApiProperty({
@@ -14,8 +17,9 @@ export class AddMembersToSetDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsString({ each: true })
-  members: string[];
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  members: RedisString[];
 }
 
 export class DeleteMembersFromSetDto extends KeyDto {
@@ -27,7 +31,8 @@ export class DeleteMembersFromSetDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
   members: string[];
 }
 
@@ -61,7 +66,8 @@ export class SetScanResponse extends KeyResponse {
     description: 'Array of members.',
     isArray: true,
   })
-  members: string[];
+  @RedisStringType({ each: true })
+  members: RedisString[];
 }
 
 export class GetSetMembersResponse extends SetScanResponse {

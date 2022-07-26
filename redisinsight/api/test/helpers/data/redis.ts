@@ -79,6 +79,9 @@ export const initDataHelper = (rte) => {
 
     // list
     await client.lpush(constants.TEST_LIST_KEY_BIN_BUFFER_1, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1);
+
+    // set
+    await client.sadd(constants.TEST_SET_KEY_BIN_BUFFER_1, constants.TEST_SET_MEMBER_BIN_BUFFER_1);
   };
 
   // keys

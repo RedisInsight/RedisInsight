@@ -270,21 +270,29 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
  * @param str
  */
 export const getBufferFromSafeASCIIString = (str: string): Buffer => {
-  const bytes = [];
+  const buffers = [];
+  let buf = Buffer.from('');
 
   for (let i = 0; i < str.length; i += 1) {
     if (str[i] === '\\' && str[i + 1] === 'x') {
       const hexString = str.substr(i + 2, 2);
       if (isHex(hexString)) {
-        bytes.push(Buffer.from(hexString, 'hex'));
+        buf = Buffer.concat([buf, Buffer.from(hexString, 'hex')]);
         i += 3;
         // eslint-disable-next-line no-continue
         continue;
       }
     }
 
-    bytes.push(Buffer.from(str[i]));
+    buf = Buffer.concat([buf, Buffer.from(str[i])]);
+
+    if (buf.length > 99_999) {
+      buffers.push(buf);
+      buf = Buffer.from('');
+    }
   }
 
-  return Buffer.concat(bytes);
+  buffers.push(buf);
+
+  return Buffer.concat(buffers);
 };

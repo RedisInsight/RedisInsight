@@ -135,6 +135,12 @@ export const constants = {
   get TEST_STRING_VALUE_BIN_UTF8_1() {
     return this.TEST_STRING_VALUE_BIN_BUFFER_1.toString('utf-8');
   },
+  get TEST_STRING_VALUE_BIN_BUF_OBJ_1() {
+    return {
+      type: 'Buffer',
+      data: [...this.TEST_STRING_VALUE_BIN_BUFFER_1],
+    }
+  },
 
   // Redis List
   TEST_LIST_TYPE: 'list',

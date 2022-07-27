@@ -278,7 +278,7 @@ const DatabasesListWrapper = ({
                     </>
                   ) : undefined}
                   modules={modules}
-                  maxViewModules={Math.floor((columnWidth - 12) / 28) - 1}
+                  maxViewModules={columnWidth > 40 ? (Math.floor((columnWidth - 12) / 28) - 1) : 0}
                 />
               </div>
             )}

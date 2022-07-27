@@ -12,6 +12,7 @@ import {
   parseRedirectionError,
   splitCliCommandLine,
 } from 'src/utils/cli-helper';
+import { CommandType } from 'src/constants';
 import {
   CommandNotSupportedError,
   CommandParsingError,
@@ -79,7 +80,7 @@ export class WorkbenchCommandsExecutor {
       this.logger.log('Succeed to execute workbench command.');
 
       const result = { response, status: CommandExecutionStatus.Success };
-      const commandType = await this.checkIsCoreCommand(command) ? 'core' : 'module';
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
       this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
       return result;
@@ -134,7 +135,7 @@ export class WorkbenchCommandsExecutor {
         result.slot = parseInt(slot, 10);
       }
 
-      const commandType = await this.checkIsCoreCommand(command) ? 'core' : 'module';
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
       this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
       const {
@@ -173,7 +174,7 @@ export class WorkbenchCommandsExecutor {
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
-      const commandType = await this.checkIsCoreCommand(command) ? 'core' : 'module';
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
       return (
         await this.redisTool.execCommandForNodes(clientOptions, command, args, role, replyEncoding)

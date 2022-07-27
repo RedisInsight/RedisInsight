@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
+import { CommandType } from 'src/constants';
 import {
   ClusterNodeRole,
   ClusterSingleNodeOptions,
@@ -158,7 +159,7 @@ export class CliBusinessService {
 
       this.logger.log('Succeed to execute redis CLI command.');
 
-      const commandType = await this.checkIsCoreCommand(command) ? 'core' : 'module';
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
       this.cliAnalyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,

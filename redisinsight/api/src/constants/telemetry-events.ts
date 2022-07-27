@@ -56,3 +56,7 @@ export enum TelemetryEvents {
   BulkActionsStarted = 'BULK_ACTIONS_STARTED',
   BulkActionsStopped = 'BULK_ACTIONS_STOPPED',
 }
+export enum CommandType {
+  Core = 'core',
+  Module = 'module',
+ }

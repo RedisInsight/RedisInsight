@@ -1,7 +1,7 @@
-import React, { ChangeEvent, useRef, useEffect, useState } from 'react'
 import {
   EuiButton,
   EuiButtonIcon,
+  EuiCallOut,
   EuiCheckbox,
   EuiCollapsibleNavGroup,
   EuiFieldNumber,
@@ -12,8 +12,10 @@ import {
   EuiForm,
   EuiFormRow,
   EuiIcon,
+  EuiLink,
   EuiListGroup,
   EuiListGroupItem,
+  EuiSpacer,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiText,
@@ -21,48 +23,39 @@ import {
   EuiTextColor,
   EuiToolTip,
   htmlIdGenerator,
-  EuiLink,
   keys,
-  EuiCallOut, EuiSpacer,
 } from '@elastic/eui'
-import { capitalize, isEmpty, pick } from 'lodash'
-import ReactDOM from 'react-dom'
-import { useHistory } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { FormikErrors, useFormik } from 'formik'
 import cx from 'classnames'
-import {
-  MAX_PORT_NUMBER,
-  validateNumber,
-  validateCertName,
-  validateField,
-  validatePortNumber,
-} from 'uiSrc/utils/validations'
-import {
-  ConnectionType,
-  Instance,
-  InstanceType,
-} from 'uiSrc/slices/interfaces'
+import { FormikErrors, useFormik } from 'formik'
+import { capitalize, isEmpty, pick } from 'lodash'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import ReactDOM from 'react-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router'
+import { DatabaseListModules } from 'uiSrc/components'
+import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
+import validationErrors from 'uiSrc/constants/validationErrors'
+import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
+import { useResizableFormField } from 'uiSrc/services'
+import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import {
   changeInstanceAliasAction,
   checkConnectToInstanceAction,
   resetInstanceUpdateAction,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
+import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
+import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { handlePasteHostName } from 'uiSrc/utils'
-import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
-import { useResizableFormField } from 'uiSrc/services'
-import validationErrors from 'uiSrc/constants/validationErrors'
-import { sendEventTelemetry, TelemetryEvent, getRedisModulesSummary } from 'uiSrc/telemetry'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
-import { DatabaseListModules } from 'uiSrc/components'
 import {
-  LoadingInstanceText,
-  SubmitBtnText,
-  TitleInstanceText,
-} from '../InstanceFormWrapper'
+  MAX_PORT_NUMBER,
+  validateCertName,
+  validateField,
+  validateNumber,
+  validatePortNumber,
+} from 'uiSrc/utils/validations'
+import { LoadingInstanceText, SubmitBtnText, TitleInstanceText, } from '../InstanceFormWrapper'
 import styles from './styles.module.scss'
 
 export const ADD_NEW_CA_CERT = 'ADD_NEW_CA_CERT'
@@ -294,7 +287,7 @@ const AddStandaloneForm = (props: Props) => {
       }
     }
 
-    if (isCloneMode) {
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
       if (!values.sentinelMasterName) {
         errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
       }

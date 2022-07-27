@@ -53,7 +53,7 @@ const mockRedisConsumer = () => ({
 });
 
 const mockCommandsService = () => ({
-  getCommandsObject: jest.fn(),
+  getCommandsGroups: jest.fn(),
 });
 
 const mockENotFoundMessage = 'ENOTFOUND some message';

@@ -85,7 +85,7 @@ export class WorkbenchCommandsExecutor {
       return result;
     } catch (error) {
       this.logger.error('Failed to execute workbench command.', error);
-      
+
       const result = { response: error.message, status: CommandExecutionStatus.Fail };
       if (
         error instanceof CommandParsingError
@@ -175,7 +175,6 @@ export class WorkbenchCommandsExecutor {
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       const commandType = await this.checkIsCoreCommand(command) ? 'core' : 'module';
 
-
       return (
         await this.redisTool.execCommandForNodes(clientOptions, command, args, role, replyEncoding)
       ).map((nodeExecReply) => {
@@ -187,7 +186,7 @@ export class WorkbenchCommandsExecutor {
           status,
           node: { host, port },
         };
-        
+
         this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
         return result;
       });
@@ -209,9 +208,8 @@ export class WorkbenchCommandsExecutor {
   }
 
   private async checkIsCoreCommand(command: string) {
+    const commands = await this.commandsService.getCommandsGroups();
 
-    const commands = await this.commandsService.getCommandsObject();
-
-    return !!commands?.main[command]
+    return !!commands?.main[command];
   }
 }

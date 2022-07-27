@@ -159,7 +159,7 @@ export class CliBusinessService {
       this.logger.log('Succeed to execute redis CLI command.');
 
       const commandType = await this.checkIsCoreCommand(command) ? 'core' : 'module';
-      this.logger.log(commandType)
+
       this.cliAnalyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,
         namespace,
@@ -364,9 +364,8 @@ export class CliBusinessService {
   }
 
   private async checkIsCoreCommand(command: string) {
+    const commands = await this.commandsService.getCommandsGroups();
 
-    const commands = await this.commandsService.getCommandsObject();
-
-    return !!commands?.main[command]
+    return !!commands?.main[command];
   }
 }

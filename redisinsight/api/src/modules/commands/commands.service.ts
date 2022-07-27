@@ -24,16 +24,11 @@ export class CommandsService implements OnModuleInit {
   async getAll(): Promise<any> {
     return assign(
       {},
-      ...Object.values(await this.getCommandsObject()) ,
+      ...Object.values(await this.getCommandsGroups()) ,
     )
   }
 
-  async getCommandsObject(): Promise<any> {
-    const commandsObject = await assign(
-      {},
-      ...(await Promise.all(this.commandsProviders.map((provider) => provider.getCommands()))),
-    );
-
+  async getCommandsGroups(): Promise<any> {
     return assign(
       {},
       ...(await Promise.all(this.commandsProviders.map((provider) => provider.getCommands()))),

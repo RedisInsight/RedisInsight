@@ -46,36 +46,49 @@ describe('CommandsService', () => {
 
     service = module.get(CommandsService);
 
-    // mainCommandsProvider.getCommands.mockResolvedValue(mockMainCommands);
-    // redisearchCommandsProvider.getCommands.mockResolvedValue(mockRedisearchCommands);
-    // redijsonCommandsProvider.getCommands.mockResolvedValue(mockRedijsonCommands);
-    // redistimeseriesCommandsProvider.getCommands.mockResolvedValue(mockRedistimeseriesCommands);
-    // redisaiCommandsProvider.getCommands.mockResolvedValue(mockRedisaiCommands);
-    // redisgraphCommandsProvider.getCommands.mockResolvedValue(mockRedisgraphCommands);
+    mainCommandsProvider.getCommands.mockResolvedValue({ "main": mockMainCommands });
+    redisearchCommandsProvider.getCommands.mockResolvedValue({ "search": mockRedisearchCommands });
+    redijsonCommandsProvider.getCommands.mockResolvedValue({ "json": mockRedijsonCommands });
+    redistimeseriesCommandsProvider.getCommands.mockResolvedValue({ "timeseries": mockRedistimeseriesCommands });
+    redisaiCommandsProvider.getCommands.mockResolvedValue({ "sai": mockRedisaiCommands });
+    redisgraphCommandsProvider.getCommands.mockResolvedValue({ "graph": mockRedisgraphCommands });
   });
 
   describe('onModuleInit', () => {
     it('should trigger updateLatestJson function', async () => {
       await service.onModuleInit();
 
-      // expect(mainCommandsProvider.updateLatestJson).toHaveBeenCalled();
-      // expect(redisearchCommandsProvider.updateLatestJson).toHaveBeenCalled();
-      // expect(redijsonCommandsProvider.updateLatestJson).toHaveBeenCalled();
-      // expect(redistimeseriesCommandsProvider.updateLatestJson).toHaveBeenCalled();
-      // expect(redisaiCommandsProvider.updateLatestJson).toHaveBeenCalled();
-      // expect(redisgraphCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(mainCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redisearchCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redijsonCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redistimeseriesCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redisaiCommandsProvider.updateLatestJson).toHaveBeenCalled();
+      expect(redisgraphCommandsProvider.updateLatestJson).toHaveBeenCalled();
     });
   });
 
   describe('getAll', () => {
     it('Should return merged commands into one', async () => {
       expect(await service.getAll()).toEqual({
-        // ...mockRedisearchCommands,
-        // ...mockRedijsonCommands,
-        // ...mockRedistimeseriesCommands,
-        // ...mockRedisaiCommands,
-        // ...mockRedisgraphCommands,
-        // ...mockMainCommands,
+        ...mockRedisearchCommands,
+        ...mockRedijsonCommands,
+        ...mockRedistimeseriesCommands,
+        ...mockRedisaiCommands,
+        ...mockRedisgraphCommands,
+        ...mockMainCommands,
+      });
+    });
+  });
+
+  describe('getCommandsGroups', () => {
+    it('Should return merged commands into one', async () => {
+      expect(await service.getCommandsGroups()).toEqual({
+        "search": { ...mockRedisearchCommands },
+        "json": { ...mockRedijsonCommands },
+        "timeseries": { ...mockRedistimeseriesCommands },
+        "sai": { ...mockRedisaiCommands },
+        "graph": { ...mockRedisgraphCommands },
+        "main": { ...mockMainCommands },
       });
     });
   });

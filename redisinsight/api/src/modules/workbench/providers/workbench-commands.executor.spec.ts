@@ -16,6 +16,7 @@ import {
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { CommandsService } from 'src/modules/commands/commands.service';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
@@ -28,6 +29,10 @@ const mockCliTool = () => ({
   execCommand: jest.fn(),
   execCommandForNodes: jest.fn(),
   execCommandForNode: jest.fn(),
+});
+
+const mockCommandsService = () => ({
+  getCommandsObject: jest.fn(),
 });
 
 const mockNodeEndpoint = {
@@ -61,6 +66,7 @@ const mockCommandExecutionResult: CommandExecutionResult = {
 describe('WorkbenchCommandsExecutor', () => {
   let service: WorkbenchCommandsExecutor;
   let cliTool;
+  let commandsService: CommandsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -74,11 +80,16 @@ describe('WorkbenchCommandsExecutor', () => {
           provide: WorkbenchAnalyticsService,
           useFactory: mockWorkbenchAnalyticsService,
         },
+        {
+          provide: CommandsService,
+          useFactory: mockCommandsService,
+        },
       ],
     }).compile();
 
     service = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
     cliTool = module.get<RedisToolService>(RedisToolService);
+    commandsService = module.get<CommandsService>(CommandsService);
   });
 
   describe('sendCommand', () => {

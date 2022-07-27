@@ -21,7 +21,19 @@ export class CommandsService implements OnModuleInit {
   /**
    * Get all commands merged into single object
    */
-  async getAll(): Promise<Record<string, any>> {
+  async getAll(): Promise<any> {
+    return assign(
+      {},
+      ...Object.values(await this.getCommandsObject()) ,
+    )
+  }
+
+  async getCommandsObject(): Promise<any> {
+    const commandsObject = await assign(
+      {},
+      ...(await Promise.all(this.commandsProviders.map((provider) => provider.getCommands()))),
+    );
+
     return assign(
       {},
       ...(await Promise.all(this.commandsProviders.map((provider) => provider.getCommands()))),

@@ -7,6 +7,9 @@ import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CoreModule } from 'src/modules/core/core.module';
+import { CommandsModule } from 'src/modules/commands/commands.module';
+import { CommandsService } from 'src/modules/commands/commands.service';
+import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
@@ -18,6 +21,9 @@ import { PluginsController } from 'src/modules/workbench/plugins.controller';
 import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
+import config from 'src/utils/config';
+
+const COMMANDS_CONFIGS = config.get('commands');
 
 @Module({
   imports: [
@@ -27,6 +33,7 @@ import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbe
     ]),
     CoreModule,
     SharedModule,
+    CommandsModule,
   ],
   controllers: [
     WorkbenchController,
@@ -40,6 +47,12 @@ import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbe
       provide: RedisToolService,
       useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(AppTool.Workbench),
       inject: [RedisToolFactory],
+    },
+    {
+      provide: CommandsService,
+      useFactory: () => new CommandsService(
+        COMMANDS_CONFIGS.map(({ name, url }) => new CommandsJsonProvider(name, url)),
+      ) 
     },
     PluginsService,
     PluginCommandsWhitelistProvider,

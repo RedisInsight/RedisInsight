@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep } from 'lodash'
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import {
+  defaultInstanceChanging, defaultInstanceChangingFailure,
+  defaultInstanceChangingSuccess,
+  fetchInstancesAction
+} from 'uiSrc/slices/instances/instances'
 
 import {
   getApiErrorMessage,
@@ -11,7 +17,7 @@ import {
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel'
-import { AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
+import { AddSentinelMasterResponse, AddSentinelMastersDto } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import {
   AddRedisDatabaseStatus,
@@ -21,7 +27,7 @@ import {
   ModifiedSentinelMaster,
 } from '../interfaces'
 import { AppDispatch, RootState } from '../store'
-import { addErrorNotification } from '../app/notifications'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: InitialStateSentinel = {
   loading: false,
@@ -193,6 +199,42 @@ export function createMastersSentinelAction(
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(createMastersSentinelFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function cloneMasterSentinelAction(
+  payload: AddSentinelMastersDto,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(defaultInstanceChanging())
+    try {
+      const { data, status } = await apiService.post<AddSentinelMasterResponse[]>(
+        `${ApiEndpoints.INSTANCE_SENTINEL_MASTERS}`,
+        payload,
+      )
+
+      if (isStatusSuccessful(status)) {
+        const errors = getApiErrorsFromBulkOperation(data)
+        if (errors.length) {
+          dispatch(addErrorNotification(errors[0]))
+          return
+        }
+
+        dispatch(defaultInstanceChangingSuccess())
+        dispatch<any>(fetchInstancesAction())
+        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(payload.masters[0].name ?? '')))
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(defaultInstanceChangingFailure(errorMessage))
       dispatch(addErrorNotification(error))
 
       onFailAction?.()

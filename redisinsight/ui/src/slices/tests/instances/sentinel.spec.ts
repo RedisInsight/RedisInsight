@@ -1,5 +1,11 @@
 import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import {
+  defaultInstanceChanging, defaultInstanceChangingFailure,
+  defaultInstanceChangingSuccess,
+  loadInstances,
+} from 'uiSrc/slices/instances/instances'
 
 import {
   cleanup,
@@ -7,9 +13,9 @@ import {
   mockedStore,
 } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
-import { parseAddedMastersSentinel, parseMastersSentinel } from 'uiSrc/utils'
+import { getApiErrorsFromBulkOperation, parseAddedMastersSentinel, parseMastersSentinel } from 'uiSrc/utils'
 import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel'
-import { AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
+import { AddSentinelMasterResponse, AddSentinelMastersDto } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
 
 import reducer, {
   initialState,
@@ -24,8 +30,9 @@ import reducer, {
   createMastersSentinel,
   createMastersSentinelFailure,
   updateMastersSentinel,
+  cloneMasterSentinelAction,
 } from '../../instances/sentinel'
-import { addErrorNotification } from '../../app/notifications'
+import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 import { LoadedSentinel, ModifiedSentinelMaster } from '../../interfaces'
 
 jest.mock('uiSrc/services')
@@ -456,5 +463,115 @@ describe('sentinel slice', () => {
       addErrorNotification(responsePayload as AxiosError),
     ]
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  describe('cloneMasterSentinelAction', () => {
+    it('should call proper actions when fetch is succeed', async () => {
+      // Arrange
+      const requestData: AddSentinelMastersDto = {
+        host: '11.1.1.1',
+        port: 22,
+        password: '1',
+        masters: [
+          {
+            alias: 'sent',
+            db: 0,
+            name: 'sent',
+            password: 'defaultpass',
+          }
+        ]
+      }
+
+      const responsePayload = { data: [addedMastersStatuses[0]], status: 200 }
+      const responsePayloadInstances = { data: [], status: 200 }
+
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
+      apiService.get = jest.fn().mockResolvedValue(responsePayloadInstances)
+
+      // Act
+      await store.dispatch<any>(cloneMasterSentinelAction(requestData))
+
+      // Assert
+      const expectedActions = [
+        defaultInstanceChanging(),
+        defaultInstanceChangingSuccess(),
+        loadInstances(),
+        addMessageNotification(successMessages.ADDED_NEW_INSTANCE(requestData.masters[0].name ?? ''))
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('should call proper actions when fetch is succeed with fail status', async () => {
+      // Arrange
+      const requestData: AddSentinelMastersDto = {
+        host: '11.1.1.1',
+        port: 22,
+        password: '1',
+        masters: [
+          {
+            alias: 'sent',
+            db: 0,
+            name: 'sent',
+            password: 'defaultpass',
+          }
+        ]
+      }
+
+      const responsePayload = { data: [addedMastersStatuses[1]], status: 200 }
+
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(cloneMasterSentinelAction(requestData))
+
+      const errors = getApiErrorsFromBulkOperation(responsePayload.data)
+
+      // Assert
+      const expectedActions = [
+        defaultInstanceChanging(),
+        addErrorNotification(errors[0]),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('should call proper actions when fetch is failed', async () => {
+      // Arrange
+      const requestData: AddSentinelMastersDto = {
+        host: '11.1.1.1',
+        port: 22,
+        password: '1',
+        masters: [
+          {
+            alias: 'sent',
+            db: 0,
+            name: 'sent',
+            password: 'defaultpass',
+          }
+        ]
+      }
+      const errorMessage = 'Some error'
+
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(cloneMasterSentinelAction(requestData))
+
+      // Assert
+      const expectedActions = [
+        defaultInstanceChanging(),
+        defaultInstanceChangingFailure(errorMessage),
+        addErrorNotification(responsePayload as AxiosError),
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
+    })
   })
 })

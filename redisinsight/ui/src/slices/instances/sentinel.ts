@@ -224,6 +224,7 @@ export function cloneMasterSentinelAction(
         const errors = getApiErrorsFromBulkOperation(data)
         if (errors.length) {
           dispatch(addErrorNotification(errors[0]))
+          dispatch(defaultInstanceChangingFailure(errors[0]))
           return
         }
 

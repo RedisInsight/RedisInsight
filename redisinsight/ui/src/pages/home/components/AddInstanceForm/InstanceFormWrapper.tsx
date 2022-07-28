@@ -402,6 +402,18 @@ const InstanceFormWrapper = (props: Props) => {
     }
   }
 
+  const handleOnClose = () => {
+    if (isCloneMode) {
+      sendEventTelemetry({
+        event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
+        eventData: {
+          databaseId: editedInstance?.id,
+        }
+      })
+    }
+    onClose?.()
+  }
+
   const connectionFormData = {
     ...editedInstance,
     name,
@@ -455,7 +467,7 @@ const InstanceFormWrapper = (props: Props) => {
             : TitleInstanceText.AddInstance
         }
         onSubmit={handleConnectionFormSubmit}
-        onClose={onClose}
+        onClose={handleOnClose}
         onHostNamePaste={autoFillFormDetails}
         isEditMode={editMode}
         isCloneMode={isCloneMode}

@@ -367,6 +367,6 @@ export class CliBusinessService {
   private async checkIsCoreCommand(command: string) {
     const commands = await this.commandsService.getCommandsGroups();
 
-    return !!commands?.main[command];
+    return !!commands?.main[command.toUpperCase()];
   }
 }

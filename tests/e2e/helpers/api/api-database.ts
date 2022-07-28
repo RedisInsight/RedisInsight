@@ -1,11 +1,11 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
-import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters } from '../../pageObjects/add-redis-database-page';
-import { apiUrl } from '../../helpers/conf';
+import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters } from '../../pageObjects/add-redis-database-page';
+import { Common } from '../common';
 
-const endpoint = apiUrl;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
+const common = new Common();
+const endpoint = common.getEndpoint();
 
 /**
  * Add a new Standalone database through api using host and port
@@ -39,7 +39,7 @@ export async function addNewStandaloneDatabasesApi(databasesParameters: AddNewDa
 }
 
 /**
- * Adda new database from OSS Cluster through api using host and port
+ * Add a new database from OSS Cluster through api using host and port
  * @param databaseParameters The database parameters
  */
 export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSClusterParameters): Promise<void> {
@@ -49,6 +49,23 @@ export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSCluster
 
     await t.expect(await response.status).eql(201, 'The creation of new oss cluster database request failed');
     await t.expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName, `Database Name is not equal to ${databaseParameters.ossClusterDatabaseName} in response`);
+}
+
+/**
+ * Add a Sentinel database via autodiscover through api
+ * @param databaseParameters The database parameters
+ */
+export async function discoverSentinelDatabaseApi(databaseParameters: SentinelParameters): Promise<void> {
+    const response = await request(endpoint).post('/instance/sentinel-masters')
+        .send({
+            'host': databaseParameters.sentinelHost,
+            'port': databaseParameters.sentinelPort,
+            'password': databaseParameters.sentinelPassword,
+            'masters': databaseParameters.masters
+        })
+        .set('Accept', 'application/json');
+
+    await t.expect(response.status).eql(201, 'The autodiscover of Sentinel database request failed');
 }
 
 /**
@@ -100,6 +117,18 @@ export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSCluster
         .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
 
     await t.expect(response.status).eql(200, 'Delete OSS cluster database request failed');
+}
+
+/**
+ * Delete a Sentinel database through api
+ * @param databaseParameters The database parameters
+ */
+ export async function deleteSentinelDatabaseApi(databaseParameters: SentinelParameters): Promise<void> {
+    const databaseId = await getDatabaseByName(databaseParameters.name);
+    const response = await request(endpoint).delete('/instance')
+        .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
+
+    await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');
 }
 
 /**

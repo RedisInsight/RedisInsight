@@ -26,7 +26,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { PageNames, Pages, Theme } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getRedisModulesSummary } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
@@ -125,12 +125,13 @@ const DatabasesListWrapper = ({
     { id, provider, modules }: Instance
   ) => {
     event.preventDefault()
+    const modulesSummary = getRedisModulesSummary(modules)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
         databaseId: id,
         provider,
-        modules,
+        ...modulesSummary,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))
@@ -277,7 +278,7 @@ const DatabasesListWrapper = ({
                     </>
                   ) : undefined}
                   modules={modules}
-                  maxViewModules={Math.floor((columnWidth - 12) / 28) - 1}
+                  maxViewModules={columnWidth > 40 ? (Math.floor((columnWidth - 12) / 28) - 1) : 0}
                 />
               </div>
             )}

@@ -5,6 +5,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { CommandsService } from 'src/modules/commands/commands.service';
+import { CommandType } from 'src/constants';
 import {
   ClusterNodeRole,
   ClusterSingleNodeOptions,
@@ -49,6 +51,7 @@ export class CliBusinessService {
   constructor(
     private cliTool: RedisToolService,
     private cliAnalyticsService: CliAnalyticsService,
+    private readonly commandsService: CommandsService,
   ) {
     this.outputFormatterManager = new OutputFormatterManager();
     this.outputFormatterManager.addStrategy(
@@ -143,6 +146,7 @@ export class CliBusinessService {
     this.logger.log('Executing redis CLI command.');
     const { command: commandLine } = dto;
     let namespace = AppTool.CLI.toString();
+
     const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Raw;
     try {
       const formatter = this.outputFormatterManager.getStrategy(outputFormat);
@@ -154,12 +158,16 @@ export class CliBusinessService {
       const reply = await this.cliTool.execCommand(clientOptions, command, args, replyEncoding);
 
       this.logger.log('Succeed to execute redis CLI command.');
+
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
+
       this.cliAnalyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,
         namespace,
         {
           command,
           outputFormat,
+          commandType,
         },
       );
       return {
@@ -354,5 +362,11 @@ export class CliBusinessService {
         ),
       );
     }
+  }
+
+  private async checkIsCoreCommand(command: string) {
+    const commands = await this.commandsService.getCommandsGroups();
+
+    return !!commands?.main[command];
   }
 }

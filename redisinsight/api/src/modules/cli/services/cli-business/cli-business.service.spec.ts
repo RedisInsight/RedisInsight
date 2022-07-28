@@ -27,6 +27,7 @@ import { ClusterNodeNotFoundError, WrongDatabaseTypeError } from 'src/modules/cl
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptions';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { CommandsService } from 'src/modules/commands/commands.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';
 import { CliBusinessService } from './cli-business.service';
@@ -51,6 +52,10 @@ const mockRedisConsumer = () => ({
   getRedisClientNamespace: jest.fn(),
 });
 
+const mockCommandsService = () => ({
+  getCommandsGroups: jest.fn(),
+});
+
 const mockENotFoundMessage = 'ENOTFOUND some message';
 const mockMemoryUsageCommand = 'memory usage key';
 const mockGetEscapedKeyCommand = 'get "\\\\key';
@@ -62,6 +67,7 @@ describe('CliBusinessService', () => {
   let cliTool;
   let textFormatter: IOutputFormatterStrategy;
   let rawFormatter: IOutputFormatterStrategy;
+  let commandsService: CommandsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -75,11 +81,16 @@ describe('CliBusinessService', () => {
           provide: RedisToolService,
           useFactory: mockRedisConsumer,
         },
+        {
+          provide: CommandsService,
+          useFactory: mockCommandsService,
+        },
       ],
     }).compile();
 
     service = module.get<CliBusinessService>(CliBusinessService);
     cliTool = module.get<RedisToolService>(RedisToolService);
+    commandsService = module.get<CommandsService>(CommandsService);
     const outputFormatterManager: OutputFormatterManager = get(
       service,
       'outputFormatterManager',

@@ -291,7 +291,7 @@
     background-color: var(--euiColorEmptyShade);
     overflow-y: auto;
     overflow-x: hidden;
-    height: calc(100vh - 232px);
+    height: calc(100vh - 242px);
     padding: 40px 30px 25px;
     border: 1px solid var(--euiColorPrimary);
     margin-right: 5px;
@@ -345,7 +345,7 @@
   .euiResizableContainer {
     .container {
       margin-right: 0;
-      padding: 20px 55px;
+      padding: 12px 24px;
 
       &.addDbWrapper {
         padding: 20px 30px;

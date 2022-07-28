@@ -1,56 +1,47 @@
 /* eslint-disable no-nested-ternary */
+import { ConnectionString } from 'connection-string'
+import { pick } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ConnectionString } from 'connection-string'
 import { useHistory } from 'react-router'
-import { pick } from 'lodash'
+import { BrowserStorageItem, DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
+import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
+import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
 
 import {
   createInstanceStandaloneAction,
-  updateInstanceAction,
   instancesSelector,
+  updateInstanceAction,
 } from 'uiSrc/slices/instances/instances'
 import {
-  clientCertsSelector,
-  fetchClientCerts,
-} from 'uiSrc/slices/instances/clientCerts'
-import { Nullable, removeEmpty } from 'uiSrc/utils'
-import {
-  ConnectionType,
-  Instance,
-  InstanceType,
-} from 'uiSrc/slices/interfaces'
-import { localStorageService } from 'uiSrc/services'
-import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
-import { DbType, BrowserStorageItem, REDIS_URI_SCHEMES, Pages } from 'uiSrc/constants'
-import {
+  cloneMasterSentinelAction,
   fetchMastersSentinelAction,
   sentinelSelector,
 } from 'uiSrc/slices/instances/sentinel'
+import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { Nullable, removeEmpty } from 'uiSrc/utils'
 
-import InstanceForm, {
-  ADD_NEW,
-  ADD_NEW_CA_CERT,
-  NO_CA_CERT,
-} from './InstanceForm/InstanceForm'
+import InstanceForm, { ADD_NEW, ADD_NEW_CA_CERT, NO_CA_CERT, } from './InstanceForm/InstanceForm'
 
 export interface Props {
-  width: number;
-  isResizablePanel?: boolean;
-  instanceType: InstanceType;
-  editMode: boolean;
-  editedInstance: Nullable<Instance>;
-  onDbAdded: () => void;
-  onClose?: () => void;
-  onDbEdited?: () => void;
-  onAliasEdited?: (value: string) => void;
+  width: number
+  isResizablePanel?: boolean
+  instanceType: InstanceType
+  editMode: boolean
+  editedInstance: Nullable<Instance>
+  onDbAdded: () => void
+  onClose?: () => void
+  onDbEdited?: () => void
+  onAliasEdited?: (value: string) => void
 }
 
 export enum SubmitBtnText {
   AddInstance = 'Add Redis Database',
   EditInstance = 'Apply changes',
   ConnectToSentinel = 'Discover database',
+  CloneInstance = 'Clone Database'
 }
 
 export enum LoadingInstanceText {
@@ -85,6 +76,7 @@ const InstanceFormWrapper = (props: Props) => {
     editedInstance,
   } = props
   const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
+  const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
   const { host, port, name, username, password, tls } = initialValues
 
@@ -116,6 +108,7 @@ const InstanceFormWrapper = (props: Props) => {
       ...initialValues,
       ...getInitialValues(editedInstance)
     })
+    setIsCloneMode(false)
   }, [editedInstance])
 
   const onMastersSentinelFetched = () => {
@@ -123,6 +116,11 @@ const InstanceFormWrapper = (props: Props) => {
   }
 
   const handleSubmitInstance = (payload: any) => {
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
+      dispatch(cloneMasterSentinelAction(payload))
+      return
+    }
+
     if (instanceType === InstanceType.Sentinel) {
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUBMITTED
@@ -269,15 +267,18 @@ const InstanceFormWrapper = (props: Props) => {
   }
 
   const addInstance = (tlsSettings, values) => {
-    const { name, host, port, username, password, db } = values
-    const database = {
+    const {
       name,
       host,
       port,
-      db,
       username,
       password,
-    }
+      db,
+      sentinelMasterName,
+      sentinelMasterUsername,
+      sentinelMasterPassword
+    } = values
+    const database: any = { name, host, port, db, username, password }
 
     const {
       useTls,
@@ -315,6 +316,20 @@ const InstanceFormWrapper = (props: Props) => {
           database.tls.clientCertPairId = clientCertificateKeyPair.id
         }
       }
+    }
+
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
+      delete database.db
+      delete database.name
+      database.masters = [
+        {
+          alias: name,
+          db,
+          name: sentinelMasterName,
+          username: sentinelMasterUsername,
+          password: sentinelMasterPassword
+        }
+      ]
     }
 
     handleSubmitInstance(removeEmpty(database))
@@ -380,7 +395,7 @@ const InstanceFormWrapper = (props: Props) => {
             : undefined,
     }
 
-    if (editMode) {
+    if (editMode && !isCloneMode) {
       editInstance(tlsSettings, values)
     } else {
       addInstance(tlsSettings, values)
@@ -407,14 +422,16 @@ const InstanceFormWrapper = (props: Props) => {
   }
 
   const getSubmitButtonText = () => {
-    let text = SubmitBtnText.AddInstance
     if (instanceType === InstanceType.Sentinel) {
-      text = SubmitBtnText.ConnectToSentinel
+      return SubmitBtnText.ConnectToSentinel
+    }
+    if (isCloneMode) {
+      return SubmitBtnText.CloneInstance
     }
     if (editMode) {
-      text = SubmitBtnText.EditInstance
+      return SubmitBtnText.EditInstance
     }
-    return text
+    return SubmitBtnText.AddInstance
   }
 
   return (
@@ -441,6 +458,8 @@ const InstanceFormWrapper = (props: Props) => {
         onClose={onClose}
         onHostNamePaste={autoFillFormDetails}
         isEditMode={editMode}
+        isCloneMode={isCloneMode}
+        setIsCloneMode={setIsCloneMode}
         updateEditingName={handleUpdateEditingName}
         onAliasEdited={onAliasEdited}
       />

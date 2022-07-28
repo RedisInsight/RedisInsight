@@ -42,7 +42,7 @@ test
         await t.click(myRedisDatabasePage.settingsButton);
         await t.click(settingsPage.accordionPrivacySettings);
 
-        const currentValue = await settingsPage.getAnalyticsValue();
+        const currentValue = await settingsPage.getAnalyticsSwitcherValue();
         //We sort the values so as not to be tied to the current setting
         const equalValues = ['true', 'false'].sort((_, b) => b === currentValue ? -1 : 0)
 
@@ -51,6 +51,6 @@ test
             // Reload Page
             await t.eval(() => location.reload());
             await t.click(settingsPage.accordionPrivacySettings);
-            await t.expect(await settingsPage.getAnalyticsValue()).eql(value, 'Analytics was switched properly');
+            await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql(value, 'Analytics was switched properly');
         }
     });

@@ -28,7 +28,7 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
-import { columnWidth } from 'uiSrc/components/virtual-grid'
+import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { AddMembersToZSetDto, SearchZSetMembersResponse, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
@@ -389,7 +389,7 @@ const ZSetDetails = (props: Props) => {
           onChangeWidth={setWidth}
           columns={columns.map((column, i, arr) => ({
             ...column,
-            width: columnWidth(i, width, arr)
+            width: getColumnWidth(i, width, arr)
           }))}
           footerHeight={0}
           loadMoreItems={loadMoreItems}

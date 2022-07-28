@@ -12,6 +12,7 @@ import { ShortcutsPage } from './shortcuts-page';
 import { MonitorPage } from './monitor-page';
 import { PubSubPage } from './pub-sub-page';
 import { SlowLogPage } from './slow-log-page';
+import { NotificationPage } from './notification-page';
 
 export {
     AddRedisDatabasePage,
@@ -27,5 +28,6 @@ export {
     ShortcutsPage,
     MonitorPage,
     PubSubPage,
-    SlowLogPage
+    SlowLogPage,
+    NotificationPage
 };

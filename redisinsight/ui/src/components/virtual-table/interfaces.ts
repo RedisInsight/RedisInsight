@@ -5,6 +5,7 @@ import {
   TableCellAlignment,
   TableCellTextAlignment,
 } from 'uiSrc/constants'
+import { Nullable } from 'uiSrc/utils'
 
 export interface IColumnSearchState {
   initialSearchValue?: string
@@ -63,7 +64,7 @@ export interface IProps {
   onChangeSorting?: (cellData?: any, columnItem?: any) => void
   items?: any
   noItemsMessage?: string | string[] | JSX.Element
-  totalItemsCount?: number
+  totalItemsCount?: Nullable<number>
   selectedKey?: any
   sortedColumn?: ISortedColumn
   disableScroll?: boolean

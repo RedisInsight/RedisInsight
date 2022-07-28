@@ -1,4 +1,4 @@
-import { toNumber, omit } from 'lodash';
+import { toNumber, omit, isNull } from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
 import { unescapeGlob } from 'src/utils';
@@ -50,7 +50,7 @@ export class ClusterStrategy extends AbstractStrategy {
         // eslint-disable-next-line no-param-reassign
         node.cursor = 0;
         // eslint-disable-next-line no-param-reassign
-        node.scanned = node.total;
+        node.scanned = isNull(node.total) ? 1 : node.total;
       });
       nodes[0].keys = [await this.getKeyInfo(client, keyName)];
       nodes[0].keys = nodes[0].keys.filter((key: GetKeyInfoResponse) => {
@@ -137,14 +137,19 @@ export class ClusterStrategy extends AbstractStrategy {
   ): Promise<void> {
     await Promise.all(
       nodes.map(async (node) => {
-        const result = await this.redisManager.execCommandFromNode(
-          clientOptions,
-          BrowserToolKeysCommands.DbSize,
-          [],
-          { host: node.host, port: node.port },
-        );
-        // eslint-disable-next-line no-param-reassign
-        node.total = result.result;
+        try {
+          const result = await this.redisManager.execCommandFromNode(
+            clientOptions,
+            BrowserToolKeysCommands.DbSize,
+            [],
+            { host: node.host, port: node.port },
+          );
+          // eslint-disable-next-line no-param-reassign
+          node.total = result.result;
+        } catch (err) {
+          // eslint-disable-next-line no-param-reassign
+          node.total = null;
+        }
       }),
     );
   }

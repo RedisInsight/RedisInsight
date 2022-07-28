@@ -48,6 +48,7 @@ import {
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { handlePasteHostName } from 'uiSrc/utils'
+import { getDiffKeysOfObjectValues } from 'uiSrc/utils/comparisons'
 import {
   MAX_PORT_NUMBER,
   validateCertName,
@@ -301,7 +302,16 @@ const AddStandaloneForm = (props: Props) => {
     initialValues,
     validate,
     enableReinitialize: true,
-    onSubmit: (values) => {
+    onSubmit: (values: any) => {
+      if (isCloneMode) {
+        const diffKeys = getDiffKeysOfObjectValues(formik.initialValues, values)
+        sendEventTelemetry({
+          event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CONFIRMED,
+          eventData: {
+            fieldsModified: diffKeys
+          }
+        })
+      }
       onSubmit(values)
     },
   })
@@ -378,6 +388,22 @@ const AddStandaloneForm = (props: Props) => {
 
   const handleCloneDatabase = () => {
     setIsCloneMode(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_REQUESTED,
+      eventData: {
+        databaseId: id
+      }
+    })
+  }
+
+  const handleBackCloneDatabase = () => {
+    setIsCloneMode(false)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
+      eventData: {
+        databaseId: id
+      }
+    })
   }
 
   const handleChangeDatabaseAlias = (
@@ -697,7 +723,11 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexGroup>
       )}
 
-      {!isEditMode && instanceType !== InstanceType.Sentinel && (
+      {(
+        (!isEditMode || isCloneMode)
+        && instanceType !== InstanceType.Sentinel
+        && connectionType !== ConnectionType.Sentinel
+      ) && (
         <EuiFlexGroup className={flexGroupClassName}>
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Database Alias*">
@@ -1269,7 +1299,7 @@ const AddStandaloneForm = (props: Props) => {
             isLoading={loading}
             onOpen={handleCheckConnectToInstance}
             onClone={handleCloneDatabase}
-            onCloneBack={() => setIsCloneMode(false)}
+            onCloneBack={handleBackCloneDatabase}
             onApplyChanges={handleChangeDatabaseAlias}
           />
         </div>
@@ -1365,7 +1395,6 @@ const AddStandaloneForm = (props: Props) => {
                     isCollapsible
                     initialIsOpen={false}
                   >
-                    {SentinelHostPort()}
                     {DatabaseForm()}
                   </EuiCollapsibleNavGroup>
                   <EuiSpacer size="m" />

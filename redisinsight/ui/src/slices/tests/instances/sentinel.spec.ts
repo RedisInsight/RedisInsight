@@ -2,7 +2,8 @@ import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
-  defaultInstanceChanging, defaultInstanceChangingFailure,
+  defaultInstanceChanging,
+  defaultInstanceChangingFailure,
   defaultInstanceChangingSuccess,
   loadInstances,
 } from 'uiSrc/slices/instances/instances'
@@ -531,6 +532,7 @@ describe('sentinel slice', () => {
       const expectedActions = [
         defaultInstanceChanging(),
         addErrorNotification(errors[0]),
+        defaultInstanceChangingFailure(errors[0]),
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

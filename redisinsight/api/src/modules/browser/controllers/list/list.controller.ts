@@ -7,8 +7,6 @@ import {
   Patch,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -32,19 +30,22 @@ import {
   DeleteListElementsResponse,
   PushListElementsResponse,
 } from 'src/modules/browser/dto';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
 import { ListBusinessService } from '../../services/list-business/list-business.service';
 
 @ApiTags('List')
 @Controller('list')
-@UsePipes(new ValidationPipe({ transform: true }))
-export class ListController {
-  constructor(private listBusinessService: ListBusinessService) {}
+export class ListController extends BaseController {
+  constructor(private listBusinessService: ListBusinessService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold list data type' })
   @ApiRedisParams()
   @ApiBody({ type: CreateListWithExpireDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async createList(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: CreateListWithExpireDto,
@@ -69,6 +70,7 @@ export class ListController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async pushElement(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: PushElementToListDto,
@@ -92,7 +94,7 @@ export class ListController {
     description: 'Specified elements of the list stored at key.',
     type: GetListElementsResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async getElements(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: GetListElementsDto,
@@ -111,7 +113,7 @@ export class ListController {
   })
   @ApiRedisParams()
   @ApiBody({ type: SetListElementDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async updateElement(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: SetListElementDto,
@@ -145,6 +147,7 @@ export class ListController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async getElement(
     @Param('dbInstance') dbInstance: string,
       @Param('index') index: number,
@@ -172,6 +175,7 @@ export class ListController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async deleteElement(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: DeleteListElementsDto,

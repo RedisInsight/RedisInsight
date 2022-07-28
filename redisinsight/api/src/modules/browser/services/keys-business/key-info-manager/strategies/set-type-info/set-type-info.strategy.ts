@@ -7,6 +7,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 export class SetTypeInfoStrategy implements IKeyInfoStrategy {
@@ -20,7 +21,7 @@ export class SetTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.Set} type info.`);

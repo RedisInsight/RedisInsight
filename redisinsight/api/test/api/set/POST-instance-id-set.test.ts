@@ -8,7 +8,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall, getMainCheckFn
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -20,7 +20,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   members: Joi.array().items(Joi.string().allow(null)).required().messages({
-    'string.base': 'each value in members must be a string',
+    'string.base': 'members must be a string or a Buffer',
   }),
   expire: Joi.number().integer().allow(null).min(1).max(2147483647),
 }).strict();
@@ -31,7 +31,9 @@ const validInputData = {
   expire: constants.TEST_SET_EXPIRE_1,
 };
 
-const mainCheckFn = async (testCase) => {
+const mainCheckFn = getMainCheckFn(endpoint);
+
+const createCheckFn = async (testCase) => {
   it(testCase.name, async () => {
     // additional checks before test run
     if (testCase.before) {
@@ -67,125 +69,165 @@ const mainCheckFn = async (testCase) => {
 };
 
 describe('POST /instance/:instanceId/set', () => {
-  before(rte.data.truncate);
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    beforeEach(rte.data.truncate);
 
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
     [
       {
-        name: 'Should create item with empty value',
+        name: 'Should create set from buff',
         data: {
-          keyName: constants.getRandomString(),
-          members: [''],
+          keyName: constants.TEST_SET_KEY_BIN_BUF_OBJ_1,
+          members: [constants.TEST_SET_MEMBER_BIN_BUF_OBJ_1],
         },
         statusCode: 201,
+        after: async () => {
+          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(1);
+          expect(await rte.data.sendCommand('sscan', [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100], null)).to.deep.eq([
+            Buffer.from('0'),
+            [constants.TEST_SET_MEMBER_BIN_BUFFER_1],
+          ]);
+        },
       },
       {
-        name: 'Should create item with key ttl',
+        name: 'Should create set from ascii',
         data: {
-          keyName: constants.getRandomString(),
-          members: [constants.getRandomString()],
-          expire: constants.TEST_SET_EXPIRE_1,
+          keyName: constants.TEST_SET_KEY_BIN_ASCII_1,
+          members: [constants.TEST_SET_MEMBER_BIN_ASCII_1],
         },
         statusCode: 201,
-      },
-      {
-        name: 'Should create regular item',
-        data: {
-          keyName: constants.TEST_SET_KEY_1,
-          members: [constants.TEST_SET_MEMBER_1],
+        after: async () => {
+          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(1);
+          expect(await rte.data.sendCommand('sscan', [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100], null)).to.deep.eq([
+            Buffer.from('0'),
+            [constants.TEST_SET_MEMBER_BIN_BUFFER_1],
+          ]);
         },
-        statusCode: 201,
       },
-      {
-        name: 'Should return conflict error if key already exists',
-        data: {
-          keyName: constants.TEST_SET_KEY_1,
-          members: [constants.getRandomString()],
+    ].map(mainCheckFn);
+  });
+
+  describe('Main', () => {
+    before(rte.data.truncate);
+
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+
+    describe('Common', () => {
+      [
+        {
+          name: 'Should create item with empty value',
+          data: {
+            keyName: constants.getRandomString(),
+            members: [''],
+          },
+          statusCode: 201,
         },
-        statusCode: 409,
-        responseBody: {
+        {
+          name: 'Should create item with key ttl',
+          data: {
+            keyName: constants.getRandomString(),
+            members: [constants.getRandomString()],
+            expire: constants.TEST_SET_EXPIRE_1,
+          },
+          statusCode: 201,
+        },
+        {
+          name: 'Should create regular item',
+          data: {
+            keyName: constants.TEST_SET_KEY_1,
+            members: [constants.TEST_SET_MEMBER_1],
+          },
+          statusCode: 201,
+        },
+        {
+          name: 'Should return conflict error if key already exists',
+          data: {
+            keyName: constants.TEST_SET_KEY_1,
+            members: [constants.getRandomString()],
+          },
           statusCode: 409,
-          error: 'Conflict',
-          message: 'This key name is already in use.',
+          responseBody: {
+            statusCode: 409,
+            error: 'Conflict',
+            message: 'This key name is already in use.',
+          },
+          after: async () => {
+            // check that value was not overwritten
+            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            expect(scanResult[0]).to.eql('0'); // full scan completed
+            expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
+          }
         },
-        after: async () => {
-          // check that value was not overwritten
-          const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
-          expect(scanResult[0]).to.eql('0'); // full scan completed
-          expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
-        }
-      },
-      {
-        name: 'Should return NotFound error if instance id does not exists',
-        endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          members: [constants.getRandomString()],
-        },
-        statusCode: 404,
-        responseBody: {
+        {
+          name: 'Should return NotFound error if instance id does not exists',
+          endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            members: [constants.getRandomString()],
+          },
           statusCode: 404,
-          error: 'Not Found',
-          message: 'Invalid database instance id.',
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Invalid database instance id.',
+          },
+          after: async () => {
+            // check that value was not overwritten
+            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            expect(scanResult[0]).to.eql('0'); // full scan completed
+            expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
+          },
         },
-        after: async () => {
-          // check that value was not overwritten
-          const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
-          expect(scanResult[0]).to.eql('0'); // full scan completed
-          expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
-        },
-      },
-    ].map(mainCheckFn);
-  });
+      ].map(createCheckFn);
+    });
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => rte.data.setAclUserRules('~* +@all'));
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => rte.data.setAclUserRules('~* +@all'));
 
-    [
-      {
-        name: 'Should create regular item',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.getRandomString(),
-          members: [constants.getRandomString()],
+      [
+        {
+          name: 'Should create regular item',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.getRandomString(),
+            members: [constants.getRandomString()],
+          },
+          statusCode: 201,
         },
-        statusCode: 201,
-      },
-      {
-        name: 'Should throw error if no permissions for "sadd" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.getRandomString(),
-          members: [constants.getRandomString()],
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "sadd" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.getRandomString(),
+            members: [constants.getRandomString()],
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -sadd')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -sadd')
-      },
-      {
-        name: 'Should throw error if no permissions for "exists" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.getRandomString(),
-          members: [constants.getRandomString()],
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "exists" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.getRandomString(),
+            members: [constants.getRandomString()],
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -exists')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -exists')
-      },
-    ].map(mainCheckFn);
+      ].map(createCheckFn);
+    });
   });
 });

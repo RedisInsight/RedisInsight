@@ -1,7 +1,7 @@
 import {
-  KeyDto,
+  KeyDto, KeyResponse,
   KeyWithExpireDto,
-  ScanDataTypeDto,
+  ScanDataTypeDto
 } from 'src/modules/browser/dto/keys.dto';
 import { ApiProperty, IntersectionType } from '@nestjs/swagger';
 import {
@@ -52,13 +52,7 @@ export class CreateHashWithExpireDto extends IntersectionType(
 
 export class GetHashFieldsDto extends ScanDataTypeDto {}
 
-export class HashScanResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class HashScanResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     minimum: 0,

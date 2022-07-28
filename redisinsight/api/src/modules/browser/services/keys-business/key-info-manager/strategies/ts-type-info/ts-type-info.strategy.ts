@@ -8,6 +8,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolTSCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 export class TSTypeInfoStrategy implements IKeyInfoStrategy {
@@ -21,7 +22,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.TS} type info.`);
@@ -52,7 +53,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
 
   private async getTotalSamples(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<number> {
     try {
       const info = await this.redisManager.execCommand(

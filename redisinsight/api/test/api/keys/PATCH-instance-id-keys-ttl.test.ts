@@ -1,14 +1,13 @@
 import {
   expect,
   describe,
-  it,
   before,
   deps,
   Joi,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  getMainCheckFn
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -33,22 +32,7 @@ const responseSchema = Joi.object().keys({
   ttl: Joi.number().integer().required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('PATCH /instance/:instanceId/keys/ttl', () => {
   before(async () => await rte.data.generateKeys(true));
@@ -57,6 +41,46 @@ describe('PATCH /instance/:instanceId/keys/ttl', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
     );
+  });
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    before(rte.data.generateBinKeys);
+
+    [
+      {
+        name: 'Should process ascii input',
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
+          ttl: 300,
+        },
+        responseSchema,
+        after: async () => {
+          expect(await rte.client.ttl(constants.TEST_STRING_KEY_BIN_BUFFER_1)).to.gte(300 - 5)
+        },
+      },
+      {
+        name: 'Should process buffer input',
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          ttl: 600,
+        },
+        responseSchema,
+        after: async () => {
+          expect(await rte.client.ttl(constants.TEST_STRING_KEY_BIN_BUFFER_1)).to.gte(600 - 5)
+        },
+      },
+      {
+        name: 'Should return error when send unicode with unprintable chars',
+        query: {
+          encoding: 'buffer',
+        },
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_UTF8_1,
+          ttl: 600,
+        },
+        statusCode: 404,
+      },
+    ].map(mainCheckFn);
   });
 
   describe('Common', () => {

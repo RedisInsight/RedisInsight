@@ -21,7 +21,6 @@ import {
   ListElementDestination,
   PushElementToListDto,
   PushListElementsResponse,
-  RedisDataType,
   SetListElementDto,
   SetListElementResponse,
 } from 'src/modules/browser/dto';
@@ -29,6 +28,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { plainToClass } from 'class-transformer';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 @Injectable()
@@ -97,7 +97,7 @@ export class ListBusinessService {
       this.logger.log(
         `Succeed to insert element at the ${destination} of the list data type.`,
       );
-      return { keyName, total };
+      return plainToClass(PushListElementsResponse, { keyName, total });
     } catch (error) {
       this.logger.error('Failed to inserts element to the list data type.', error);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
@@ -142,7 +142,7 @@ export class ListBusinessService {
       }
       catchAclError(error);
     }
-    return result;
+    return plainToClass(GetListElementsResponse, result);
   }
 
   /**
@@ -184,7 +184,7 @@ export class ListBusinessService {
         );
       }
       this.logger.log('Succeed to get List element by index.');
-      return { keyName, value };
+      return plainToClass(GetListElementResponse, { keyName, value });
     } catch (error) {
       this.logger.error('Failed to to get List element by index.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -230,7 +230,7 @@ export class ListBusinessService {
       this.logger.error('Failed to set the list element at index.', error);
       catchAclError(error);
     }
-    return { index, element };
+    return plainToClass(SetListElementResponse, { index, element });
   }
 
   /**
@@ -266,9 +266,9 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      return {
+      return plainToClass(DeleteListElementsResponse, {
         elements: isArray(result) ? [...result] : [result],
-      };
+      });
     } catch (error) {
       this.logger.error('Failed to delete elements from the list stored at key.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {

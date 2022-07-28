@@ -1,0 +1,26 @@
+import { isArray } from 'lodash';
+import { RedisStringTransformOptions } from 'src/common/constants';
+import { Transform } from 'class-transformer';
+
+const SingleRedisStringToBuffer = (value: any) => {
+  if (value instanceof Buffer) {
+    return value;
+  }
+
+  return Buffer.from(value);
+};
+
+const ArrayRedisStringToBuffer = (value: any) => {
+  if (isArray(value)) {
+    return value.map(SingleRedisStringToBuffer);
+  }
+
+  return Buffer.from(value);
+};
+
+export const RedisStringToBufferTransformer = (opts?: RedisStringTransformOptions) => {
+  if (opts?.each === true) {
+    return Transform(ArrayRedisStringToBuffer, opts);
+  }
+  return Transform(SingleRedisStringToBuffer, opts);
+};

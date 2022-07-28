@@ -1,14 +1,12 @@
 import {
-  expect,
   describe,
-  it,
   before,
   deps,
   Joi,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  getMainCheckFn, JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -26,189 +24,224 @@ const validInputData = {
 };
 
 const responseSchema = Joi.object().keys({
-  keyName: Joi.string().required(),
-  value: Joi.string().allow('').required(),
+  keyName: JoiRedisString.required(),
+  value: JoiRedisString.allow('').required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /instance/:instanceId/list/get-elements/:index', () => {
-  before(rte.data.truncate);
-
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
-    before(async () => await rte.data.generateKeys(true));
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    before(() => rte.data.generateBinKeys(true));
 
     [
       {
-        name: 'Should select key from position 0 (by default)',
+        name: 'Should get element by buffer (return utf8)',
+        query: {
+          encoding: 'utf8',
+        },
         data: {
-          keyName: constants.TEST_LIST_KEY_2,
+          keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
         },
         responseSchema,
         responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          value: 'element_1',
+          keyName: constants.TEST_LIST_KEY_BIN_UTF8_1,
+          value: constants.TEST_LIST_ELEMENT_BIN_UTF8_1,
         },
       },
       {
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ID, 0),
-        name: 'Should select key from position 0',
+        name: 'Should get element by buffer (return buffer)',
+        query: {
+          encoding: 'buffer',
+        },
         data: {
-          keyName: constants.TEST_LIST_KEY_2,
+          keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
         },
         responseSchema,
         responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          value: 'element_1',
+          keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
+          value: constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1,
         },
       },
       {
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ID, 1),
-        name: 'Should select key from position 1',
+        name: 'Should get element by ascii (return ascii)',
+        query: {
+          encoding: 'ascii',
+        },
         data: {
-          keyName: constants.TEST_LIST_KEY_2,
+          keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
         },
         responseSchema,
         responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          value: 'element_2',
-        },
-      },
-      {
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ID, 99),
-        name: 'Should select key from position 99',
-        data: {
-          keyName: constants.TEST_LIST_KEY_2,
-        },
-        responseSchema,
-        responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          value: 'element_100',
-        },
-      },
-      {
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ID, -1),
-        name: 'Should select key from position -1',
-        data: {
-          keyName: constants.TEST_LIST_KEY_2,
-        },
-        responseSchema,
-        responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          value: 'element_100',
-        },
-      },
-      {
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ID, -2),
-        name: 'Should select key from position -2',
-        data: {
-          keyName: constants.TEST_LIST_KEY_2,
-        },
-        responseSchema,
-        responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          value: 'element_99',
-        },
-      },
-      {
-        name: 'Should return NotFound error if key does not exists',
-        data: {
-          keyName: constants.getRandomString(),
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Key with this name does not exist.',
-        },
-      },
-      {
-        name: 'Should return NotFound error if instance id does not exists',
-        endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_2,
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Invalid database instance id.',
+          keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
+          value: constants.TEST_LIST_ELEMENT_BIN_ASCII_1,
         },
       },
     ].map(mainCheckFn);
+  });
 
-    describe('Search in huge number of elements', () => {
-      requirements('rte.bigData');
+  describe('Main', () => {
+    before(rte.data.truncate);
+
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+
+    describe('Common', () => {
+      before(async () => await rte.data.generateKeys(true));
+
       [
         {
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID, constants.TEST_LIST_HUGE_INDEX),
-          name: 'Should get element from particular position',
+          name: 'Should select key from position 0 (by default)',
           data: {
-            keyName: constants.TEST_LIST_HUGE_KEY,
+            keyName: constants.TEST_LIST_KEY_2,
           },
           responseSchema,
           responseBody: {
-            keyName: constants.TEST_LIST_HUGE_KEY,
-            value: constants.TEST_LIST_HUGE_ELEMENT,
+            keyName: constants.TEST_LIST_KEY_2,
+            value: 'element_1',
+          },
+        },
+        {
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID, 0),
+          name: 'Should select key from position 0',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            value: 'element_1',
+          },
+        },
+        {
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID, 1),
+          name: 'Should select key from position 1',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            value: 'element_2',
+          },
+        },
+        {
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID, 99),
+          name: 'Should select key from position 99',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            value: 'element_100',
+          },
+        },
+        {
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID, -1),
+          name: 'Should select key from position -1',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            value: 'element_100',
+          },
+        },
+        {
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID, -2),
+          name: 'Should select key from position -2',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            value: 'element_99',
+          },
+        },
+        {
+          name: 'Should return NotFound error if key does not exists',
+          data: {
+            keyName: constants.getRandomString(),
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Key with this name does not exist.',
+          },
+        },
+        {
+          name: 'Should return NotFound error if instance id does not exists',
+          endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Invalid database instance id.',
           },
         },
       ].map(mainCheckFn);
+
+      describe('Search in huge number of elements', () => {
+        requirements('rte.bigData');
+        [
+          {
+            endpoint: () => endpoint(constants.TEST_INSTANCE_ID, constants.TEST_LIST_HUGE_INDEX),
+            name: 'Should get element from particular position',
+            data: {
+              keyName: constants.TEST_LIST_HUGE_KEY,
+            },
+            responseSchema,
+            responseBody: {
+              keyName: constants.TEST_LIST_HUGE_KEY,
+              value: constants.TEST_LIST_HUGE_ELEMENT,
+            },
+          },
+        ].map(mainCheckFn);
+      });
     });
-  });
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => rte.data.setAclUserRules('~* +@all'));
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => rte.data.setAclUserRules('~* +@all'));
 
-    [
-      {
-        name: 'Should create regular item',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          offset: 0,
-          count: 1000,
+      [
+        {
+          name: 'Should create regular item',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            offset: 0,
+            count: 1000,
+          },
+          responseSchema,
         },
-        responseSchema,
-      },
-      {
-        name: 'Should throw error if no permissions for "lindex" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          offset: 0,
-          count: 1000,
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "lindex" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            offset: 0,
+            count: 1000,
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -lindex')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -lindex')
-      },
-    ].map(mainCheckFn);
+      ].map(mainCheckFn);
+    });
   });
 });

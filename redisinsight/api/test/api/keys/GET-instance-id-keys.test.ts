@@ -8,6 +8,7 @@ import {
   _,
   requirements,
   validateApiCall,
+  JoiRedisString,
 } from '../deps';
 import { initSettings, setAppSettings } from '../../helpers/local-db';
 const { server, request, constants, rte } = deps;
@@ -23,7 +24,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   host: Joi.string(),
   port: Joi.number().integer(),
   keys: Joi.array().items(Joi.object().keys({
-    name: Joi.string().required(),
+    name: JoiRedisString.required(),
     type: Joi.string().required(),
     ttl: Joi.number().integer().required(),
     size: Joi.number().integer(), // todo: fix size pipeline for cluster
@@ -47,9 +48,74 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
+const isKeyInResponse = (body, keyName) => _.find(
+  body,
+  nodeKeys => _.find(
+    nodeKeys.keys,
+    (key) => _.isEqual(key.name, keyName),
+  ),
+)
+
 describe('GET /instance/:instanceId/keys', () => {
   // todo: add query validation
   xdescribe('Validation', () => {});
+
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+
+    before(() => rte.data.generateBinKeys(true));
+
+    [
+      {
+        name: 'Should return all keys in utf-8 (by default)',
+        query: {
+          count: 10_000,
+          cursor: '0',
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_UTF8_1)).to.not.eq(undefined);
+        }
+      },
+      {
+        name: 'Should return all keys in utf-8',
+        query: {
+          encoding: 'utf8',
+          count: 10_000,
+          cursor: '0',
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_UTF8_1)).to.not.eq(undefined);
+        }
+      },
+      {
+        name: 'Should return all keys in ascii',
+        query: {
+          encoding: 'ascii',
+          count: 10_000,
+          cursor: '0',
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_ASCII_1)).to.not.eq(undefined);
+        }
+      },
+      {
+        name: 'Should return all keys in buffer',
+        query: {
+          encoding: 'buffer',
+          count: 10_000,
+          cursor: '0',
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_BUF_OBJ_1)).to.not.eq(undefined);
+        }
+      },
+    ].map(mainCheckFn);
+
+  });
 
   describe('Sandbox rte', () => {
     requirements('!rte.sharedData')
@@ -398,7 +464,6 @@ describe('GET /instance/:instanceId/keys', () => {
         },
       ].map(mainCheckFn);
     });
-
     describe('Standalone', () => {
       requirements('rte.type=STANDALONE');
 

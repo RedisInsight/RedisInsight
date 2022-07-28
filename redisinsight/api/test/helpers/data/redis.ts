@@ -68,6 +68,22 @@ export const initDataHelper = (rte) => {
     })) : flushTestRunData(client);
   };
 
+  // bin data
+  const generateBinKeys = async (clean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    // string
+    await client.set(constants.TEST_STRING_KEY_BIN_BUFFER_1, constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+
+    // list
+    await client.lpush(constants.TEST_LIST_KEY_BIN_BUFFER_1, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1);
+
+    // set
+    await client.sadd(constants.TEST_SET_KEY_BIN_BUFFER_1, constants.TEST_SET_MEMBER_BIN_BUFFER_1);
+  };
+
   // keys
   const generateKeys = async (clean: boolean) => {
     if (clean) {
@@ -375,6 +391,7 @@ export const initDataHelper = (rte) => {
     executeCommandAll,
     setAclUserRules,
     truncate,
+    generateBinKeys,
     generateKeys,
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,

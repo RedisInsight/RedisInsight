@@ -29,6 +29,8 @@ import {
 import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { RedisString } from 'src/common/constants';
+import { plainToClass } from 'class-transformer';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
@@ -129,11 +131,7 @@ export class KeysBusinessService {
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientOptions, dto);
 
-      result.forEach((nodeResult, nodeIndex) => nodeResult.keys.forEach((key, i) => {
-        result[nodeIndex].keys[i].name = key.name.toString();
-      }));
-
-      return result;
+      return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
@@ -152,7 +150,7 @@ export class KeysBusinessService {
 
   public async getKeyInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log('Getting key info.');
     try {
@@ -160,6 +158,7 @@ export class KeysBusinessService {
         clientOptions,
         BrowserToolKeysCommands.Type,
         [key],
+        'utf8',
       );
       if (type === 'none') {
         this.logger.error(`Failed to get key info. Not found key: ${key}`);
@@ -170,7 +169,7 @@ export class KeysBusinessService {
       const infoManager = this.keyInfoManager.getStrategy(type);
       const result = await infoManager.getInfo(clientOptions, key, type);
       this.logger.log('Succeed to get key info');
-      return result;
+      return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error);
       throw catchAclError(error);
@@ -179,7 +178,7 @@ export class KeysBusinessService {
 
   public async deleteKeys(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keys: string[],
+    keys: RedisString[],
   ): Promise<DeleteKeysResponse> {
     this.logger.log('Deleting keys');
     let result;
@@ -238,7 +237,7 @@ export class KeysBusinessService {
       throw new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST);
     }
     this.logger.log('Succeed to rename key');
-    return { keyName: newKeyName };
+    return plainToClass(RenameKeyResponse, { keyName: newKeyName });
   }
 
   public async updateTtl(
@@ -257,10 +256,9 @@ export class KeysBusinessService {
   ): Promise<KeyTtlResponse> {
     this.logger.log('Setting a timeout on key.');
     const { keyName, ttl } = dto;
-    let currentTtl;
     let result;
     try {
-      currentTtl = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolKeysCommands.Ttl,
         [keyName],

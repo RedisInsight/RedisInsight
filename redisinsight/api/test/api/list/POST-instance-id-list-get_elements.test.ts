@@ -1,14 +1,12 @@
 import {
-  expect,
   describe,
-  it,
   before,
   deps,
   Joi,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  getMainCheckFn, JoiRedisString
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -32,162 +30,212 @@ const validInputData = {
 };
 
 const responseSchema = Joi.object().keys({
-  keyName: Joi.string().required(),
+  keyName: JoiRedisString.required(),
   total: Joi.number().integer().required(),
-  elements: Joi.array().items(Joi.string()).required(),
+  elements: Joi.array().items(JoiRedisString).required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /instance/:instanceId/list/get-elements', () => {
-  before(rte.data.truncate);
-
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
-    before(async () => await rte.data.generateKeys(true));
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    before(() => rte.data.generateBinKeys(true));
 
     [
       {
-        name: 'Should select all keys',
+        name: 'Should query all keys by buffer (return utf8)',
+        query: {
+          encoding: 'utf8',
+        },
         data: {
-          keyName: constants.TEST_LIST_KEY_2,
+          keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
           offset: 0,
           count: 1000,
         },
         responseSchema,
         responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          total: 100,
-          elements: (new Array(100).fill(0)).map((item, i) => `element_${i + 1}`),
+          keyName: constants.TEST_LIST_KEY_BIN_UTF8_1,
+          total: 1,
+          elements: [
+            constants.TEST_LIST_ELEMENT_BIN_UTF8_1,
+          ],
         },
       },
       {
-        name: 'Should select last 50 keys',
+        name: 'Should query all keys by buffer (return buffer)',
+        query: {
+          encoding: 'buffer',
+        },
         data: {
-          keyName: constants.TEST_LIST_KEY_2,
-          offset: 50,
+          keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
+          offset: 0,
           count: 1000,
         },
         responseSchema,
         responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          total: 100,
-          elements: (new Array(50).fill(0)).map((item, i) => `element_${i + 51}`),
+          keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
+          total: 1,
+          elements: [
+            constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1,
+          ],
         },
       },
       {
-        name: 'Should select first 50 keys',
+        name: 'Should query all keys by ascii (return ascii)',
+        query: {
+          encoding: 'ascii',
+        },
         data: {
-          keyName: constants.TEST_LIST_KEY_2,
+          keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
           offset: 0,
-          count: 50,
+          count: 1000,
         },
         responseSchema,
         responseBody: {
-          keyName: constants.TEST_LIST_KEY_2,
-          total: 100,
-          elements: (new Array(50).fill(0)).map((item, i) => `element_${i + 1}`),
-        },
-      },
-      {
-        name: 'Should return NotFound error if key does not exists',
-        data: {
-          keyName: constants.getRandomString(),
-          offset: 0,
-          count: 1000,
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Key with this name does not exist.',
-        },
-      },
-      {
-        name: 'Should return NotFound error if instance id does not exists',
-        endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_2,
-          offset: 0,
-          count: 1000,
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Invalid database instance id.',
+          keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
+          total: 1,
+          elements: [
+            constants.TEST_LIST_ELEMENT_BIN_ASCII_1,
+          ],
         },
       },
     ].map(mainCheckFn);
   });
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => rte.data.setAclUserRules('~* +@all'));
+  describe('Main', () => {
+    before(rte.data.truncate);
 
-    [
-      {
-        name: 'Should create regular item',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          offset: 0,
-          count: 1000,
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+
+    describe('Common', () => {
+      before(async () => await rte.data.generateKeys(true));
+
+      [
+        {
+          name: 'Should select all keys',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+            offset: 0,
+            count: 1000,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            total: 100,
+            elements: (new Array(100).fill(0)).map((item, i) => `element_${i + 1}`),
+          },
         },
-        responseSchema,
-      },
-      {
-        name: 'Should throw error if no permissions for "llen" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          offset: 0,
-          count: 1000,
+        {
+          name: 'Should select last 50 keys',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+            offset: 50,
+            count: 1000,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            total: 100,
+            elements: (new Array(50).fill(0)).map((item, i) => `element_${i + 51}`),
+          },
         },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should select first 50 keys',
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+            offset: 0,
+            count: 50,
+          },
+          responseSchema,
+          responseBody: {
+            keyName: constants.TEST_LIST_KEY_2,
+            total: 100,
+            elements: (new Array(50).fill(0)).map((item, i) => `element_${i + 1}`),
+          },
+        },
+        {
+          name: 'Should return NotFound error if key does not exists',
+          data: {
+            keyName: constants.getRandomString(),
+            offset: 0,
+            count: 1000,
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Key with this name does not exist.',
+          },
+        },
+        {
+          name: 'Should return NotFound error if instance id does not exists',
+          endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+            offset: 0,
+            count: 1000,
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Invalid database instance id.',
+          },
+        },
+      ].map(mainCheckFn);
+    });
+
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => rte.data.setAclUserRules('~* +@all'));
+
+      [
+        {
+          name: 'Should create regular item',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            offset: 0,
+            count: 1000,
+          },
+          responseSchema,
+        },
+        {
+          name: 'Should throw error if no permissions for "llen" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            offset: 0,
+            count: 1000,
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -llen')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -llen')
-      },
-      {
-        name: 'Should throw error if no permissions for "lrange" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          offset: 0,
-          count: 1000,
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "lrange" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            offset: 0,
+            count: 1000,
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -lrange')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -lrange')
-      },
-    ].map(mainCheckFn);
+      ].map(mainCheckFn);
+    });
   });
 });

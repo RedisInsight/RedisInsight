@@ -121,7 +121,7 @@ export class ConsumerGroupService {
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
-        ...args: Array<string | number>,
+        ...args: Array<string | number | Buffer>,
       ]> = consumerGroups.map((group) => (
         [
           BrowserToolStreamCommands.XGroupCreate,
@@ -229,7 +229,7 @@ export class ConsumerGroupService {
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
-        ...args: Array<string | number>,
+        ...args: Array<string | number | Buffer>,
       ]> = dto.consumerGroups.map((group) => (
         [
           BrowserToolStreamCommands.XGroupDestroy,

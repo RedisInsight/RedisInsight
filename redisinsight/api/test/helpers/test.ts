@@ -200,3 +200,9 @@ export const getMainCheckFn = (endpoint) => async (testCase) => {
 };
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const JoiRedisString = Joi.alternatives()
+  .try(Joi.string(), Joi.object().keys({
+    type: Joi.string().valid('Buffer').required(),
+    data: Joi.array().items(Joi.number()).required(),
+  }));

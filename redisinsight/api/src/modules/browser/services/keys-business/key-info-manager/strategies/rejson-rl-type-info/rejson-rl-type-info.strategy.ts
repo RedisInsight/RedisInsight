@@ -7,6 +7,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolRejsonRlCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.JSON} type info.`);
@@ -52,13 +53,14 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
 
   private async getLength(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<number> {
     try {
       const objectKeyType = await this.redisManager.execCommand(
         clientOptions,
         BrowserToolRejsonRlCommands.JsonType,
         [key, '.'],
+        'utf8',
       );
 
       switch (objectKeyType) {

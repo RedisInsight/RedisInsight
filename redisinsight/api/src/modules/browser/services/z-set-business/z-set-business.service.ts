@@ -16,7 +16,6 @@ import {
   DeleteMembersFromZSetResponse,
   GetZSetMembersDto,
   GetZSetResponse,
-  RedisDataType,
   ScanZSetResponse,
   SearchZSetMembersDto,
   SearchZSetMembersResponse,
@@ -146,7 +145,7 @@ export class ZSetBusinessService {
         );
       }
       const args = this.formatMembersDtoToCommandArgs(members);
-      const added = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolZSetCommands.ZAdd,
         [keyName, ...args],

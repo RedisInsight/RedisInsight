@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -26,7 +27,7 @@ const validInputData = {
 };
 
 const responseSchema = Joi.object().keys({
-  name: Joi.string().required(),
+  name: JoiRedisString.required(),
   type: Joi.string().required(),
   ttl: Joi.number().integer().required(),
   size: Joi.number().integer().required(),
@@ -53,6 +54,73 @@ describe('POST /instance/:instanceId/keys/get-info', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
     );
+  });
+
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    before(rte.data.generateBinKeys);
+
+    [
+      {
+        name: 'Should return string info in utf8 (default)',
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.name).to.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
+        }
+      },
+      {
+        name: 'Should return string info in utf8',
+        query: {
+          encoding: 'utf8',
+        },
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.name).to.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
+        }
+      },
+      {
+        name: 'Should return string info in ASCII',
+        query: {
+          encoding: 'ascii',
+        },
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.name).to.eq(constants.TEST_STRING_KEY_BIN_ASCII_1);
+        }
+      },
+      {
+        name: 'Should return string info in Buffer',
+        query: {
+          encoding: 'buffer',
+        },
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.name).to.deep.eq(constants.TEST_STRING_KEY_BIN_BUF_OBJ_1);
+        }
+      },
+      {
+        name: 'Should return error when send unicode with unprintable chars',
+        query: {
+          encoding: 'buffer',
+        },
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_UTF8_1,
+        },
+        statusCode: 404,
+      },
+    ].map(mainCheckFn);
   });
 
   describe('Common', () => {

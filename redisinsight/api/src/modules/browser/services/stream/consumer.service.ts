@@ -90,7 +90,7 @@ export class ConsumerService {
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
-        ...args: Array<string | number>,
+        ...args: Array<string | number | Buffer>,
       ]> = dto.consumerNames.map((consumerName) => (
         [
           BrowserToolStreamCommands.XGroupDelConsumer,

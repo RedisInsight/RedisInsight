@@ -20,6 +20,7 @@ export interface StateAppInfo {
   loading: boolean
   error: string
   server: Nullable<GetServerInfoResponse>
+  encoding: RedisResponseEncoding,
   analytics: {
     segmentWriteKey: string
     identified: boolean
@@ -39,7 +40,7 @@ export interface StateAppContext {
     keyList: {
       isDataLoaded: boolean
       scrollTopPosition: number
-      selectedKey: Nullable<string>
+      selectedKey: Nullable<RedisResponseBuffer>
     },
     panelSizes: {
       [key: string]: number
@@ -150,3 +151,22 @@ export interface StateAppNotifications {
     shouldDisplayToast: boolean
   }
 }
+
+export enum RedisResponseEncoding {
+  UTF8 = 'utf8',
+  ASCII = 'ascii',
+  Buffer = 'buffer',
+}
+
+export enum RedisResponseBufferType {
+  Buffer = 'Buffer'
+}
+
+export interface RedisResponseBuffer {
+  type: RedisResponseBufferType
+  data: UintArray
+}
+
+export type RedisString = string | RedisResponseBuffer
+
+export type UintArray = number[] | Uint8Array

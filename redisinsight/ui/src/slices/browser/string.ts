@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { refreshKeyInfoAction } from './keys'
 import { addErrorNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 import { StringState } from '../interfaces/string'
+import { RedisResponseBuffer } from '../interfaces'
 
 export const initialState: StringState = {
   loading: false,
@@ -80,12 +81,13 @@ export const stringDataSelector = (state: RootState) =>
 export default stringSlice.reducer
 
 // Asynchronous thunk action
-export function fetchString(key: string, resetData?: boolean) {
+export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(getString(resetData))
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -93,11 +95,18 @@ export function fetchString(key: string, resetData?: boolean) {
         ),
         {
           keyName: key,
+          encoding,
         }
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getStringSuccess(data))
+        // TODO: REMOVE
+        const newData = {
+          ...data,
+          value: stringToBuffer(data.value)
+        }
+
+        dispatch(getStringSuccess(newData))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)

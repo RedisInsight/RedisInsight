@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
@@ -8,8 +8,8 @@ import {
 } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 
-import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
-import { KeyTypes } from 'uiSrc/constants'
+import { bufferFormatRangeItems, createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
@@ -19,6 +19,7 @@ import {
   fetchMoreSetMembers,
   setDataSelector,
   setSelector,
+  setSetMembers,
 } from 'uiSrc/slices/browser/set'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
@@ -28,6 +29,8 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
+import bufferToString, { stringToBuffer } from 'uiSrc/utils/buffer/bufferFormatters'
+import { RedisString } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 const suffix = '_set'
@@ -47,18 +50,30 @@ export interface Props {
 
 const SetDetails = (props: Props) => {
   const { isFooterOpen } = props
+
+  const { loading } = useSelector(setSelector)
+  const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
+  const { length = 0, name: key, nameString: keyString } = useSelector(selectedKeyDataSelector) ?? {}
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
+
   const [match, setMatch] = useState('*')
   const [deleting, setDeleting] = useState('')
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
+  const [members, setMembers] = useState<any[]>(loadedMembers)
 
-  const { loading } = useSelector(setSelector)
-  const { key = '', members, total, nextCursor } = useSelector(setDataSelector)
-  const { length = 0 } = useSelector(selectedKeyDataSelector) ?? {}
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
-  const { viewType } = useSelector(keysSelector)
+  const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (loadedMembers.length > 0) {
+      const newMembers = bufferFormatRangeItems(loadedMembers, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+
+      setMembers(newMembers)
+    }
+  }, [loadedMembers])
 
   const closePopover = () => {
     setDeleting('')
@@ -84,7 +99,7 @@ const SetDetails = (props: Props) => {
   }
 
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteSetMembers(key, [member], onSuccessRemoved))
+    dispatch(deleteSetMembers(key, [stringToBuffer(member)], onSuccessRemoved))
     closePopover()
   }
 
@@ -127,6 +142,23 @@ const SetDetails = (props: Props) => {
     dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
   }
 
+  const formatItem = (item: RedisString): RedisString => ({
+    ...item,
+    string: bufferToString(item)
+  })
+
+  const bufferFormatRows = (lastIndex: number) => {
+    const newMembers = bufferFormatRangeItems(members, formattedLastIndexRef.current, lastIndex, formatItem)
+
+    setMembers(newMembers)
+
+    if (lastIndex > formattedLastIndexRef.current) {
+      formattedLastIndexRef.current = lastIndex
+    }
+
+    return newMembers
+  }
+
   const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
     const browserViewEvent = expanded
       ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
@@ -153,8 +185,9 @@ const SetDetails = (props: Props) => {
       staySearchAlwaysOpen: true,
       initialSearchValue: '',
       truncateText: true,
-      render: function Name(_name: string, member: string, expanded: boolean = false) {
+      render: function Name(_name: string, memberItem: string, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
+        const member = memberItem.string ?? ''
         const cellContent = member.substring(0, 300)
         const tooltipContent = formatLongName(member)
 
@@ -188,13 +221,14 @@ const SetDetails = (props: Props) => {
       minWidth: 60,
       maxWidth: 60,
       headerClassName: 'hidden',
-      render: function Actions(_act: any, cellData: string) {
+      render: function Actions(_act: any, memberItem: string) {
+        const member = memberItem.string ?? ''
         return (
           <div className="value-table-actions">
             <PopoverDelete
-              header={createDeleteFieldHeader(cellData)}
-              text={createDeleteFieldMessage(key)}
-              item={cellData}
+              header={createDeleteFieldHeader(member)}
+              text={createDeleteFieldMessage(keyString ?? '')}
+              item={member}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
@@ -202,7 +236,7 @@ const SetDetails = (props: Props) => {
               showPopover={showPopover}
               handleDeleteItem={handleDeleteMember}
               handleButtonClick={handleRemoveIconClick}
-              testid={`set-remove-btn-${cellData}`}
+              testid={`set-remove-btn-${member}`}
               appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null}
             />
           </div>
@@ -213,6 +247,7 @@ const SetDetails = (props: Props) => {
 
   const loadMoreItems = () => {
     if (nextCursor !== 0) {
+      dispatch(setSetMembers(bufferFormatRows(members.length - 1)))
       dispatch(
         fetchMoreSetMembers(key, nextCursor, SCAN_COUNT_DEFAULT, match || matchAllValue)
       )
@@ -263,6 +298,7 @@ const SetDetails = (props: Props) => {
         onRowToggleViewClick={handleRowToggleViewClick}
         expandedRows={expandedRows}
         setExpandedRows={setExpandedRows}
+        onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
       />
 
     </div>

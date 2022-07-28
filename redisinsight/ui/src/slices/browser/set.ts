@@ -1,10 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { remove } from 'lodash'
+import { first, remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ApiEndpoints } from 'uiSrc/constants'
+import { bufferToString, getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, stringToBuffer } from 'uiSrc/utils'
 import {
   AddMembersToSetDto,
   GetSetMembersResponse,
@@ -20,7 +19,7 @@ import {
   updateSelectedKeyRefreshTime,
 } from './keys'
 import { AppDispatch, RootState } from '../store'
-import { InitialStateSet } from '../interfaces'
+import { InitialStateSet, RedisResponseBuffer, RedisString } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: InitialStateSet = {
@@ -41,6 +40,10 @@ const setSlice = createSlice({
   name: 'set',
   initialState,
   reducers: {
+
+    setSetMembers: (state, { payload }: PayloadAction<RedisString[]>) => {
+      state.data.members = payload
+    },
     // load Set members
     loadSetMembers: (state, { payload: [match, resetData = true] }: PayloadAction<[string, Maybe<boolean>]>) => {
       state.loading = true
@@ -114,8 +117,11 @@ const setSlice = createSlice({
       state.loading = false
       state.error = payload
     },
-    removeMembersFromList: (state, { payload }: { payload: string[] }) => {
-      remove(state.data?.members, (member) => payload.includes(member))
+    removeMembersFromList: (state, { payload }: { payload: RedisResponseBuffer[] }) => {
+      remove(
+        state.data?.members,
+        ({ data }: { data: any[] }) => first(payload)?.data.join('') === data.join('')
+      )
 
       state.data = {
         ...state.data,
@@ -140,6 +146,7 @@ export const {
   removeSetMembersSuccess,
   removeSetMembersFailure,
   removeMembersFromList,
+  setSetMembers,
 } = setSlice.actions
 
 // A selector
@@ -151,7 +158,7 @@ export default setSlice.reducer
 
 // Asynchronous thunk actions
 export function fetchSetMembers(
-  key: string,
+  key: RedisResponseBuffer,
   cursor: number,
   count: number,
   match: string,
@@ -163,6 +170,7 @@ export function fetchSetMembers(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post<GetSetMembersResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -173,11 +181,18 @@ export function fetchSetMembers(
           cursor,
           count,
           match,
+          encoding,
         }
       )
 
+      // TODO: REMOVE
+      const newData = {
+        ...data,
+        members: data.members.map((member) => stringToBuffer(member))
+      }
+
       if (isStatusSuccessful(status)) {
-        dispatch(loadSetMembersSuccess(data))
+        dispatch(loadSetMembersSuccess(newData))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
         onSuccess?.(data)
       }
@@ -201,7 +216,8 @@ export function fetchMoreSetMembers(
 
     try {
       const state = stateInit()
-      const { data, status } = await apiService.post(
+      const { encoding } = state.app.info
+      const { data, status } = await apiService.post<GetSetMembersResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.SET_GET_MEMBERS
@@ -211,11 +227,18 @@ export function fetchMoreSetMembers(
           cursor,
           count,
           match,
+          encoding,
         }
       )
 
+      // TODO: REMOVE
+      const newData = {
+        ...data,
+        members: data.members.map((member) => stringToBuffer(member))
+      }
+
       if (isStatusSuccessful(status)) {
-        dispatch(loadMoreSetMembersSuccess(data))
+        dispatch(loadMoreSetMembersSuccess(newData))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -226,7 +249,7 @@ export function fetchMoreSetMembers(
 }
 
 // Asynchronous thunk actions
-export function refreshSetMembersAction(key: string = '', resetData?: boolean) {
+export function refreshSetMembersAction(key: RedisResponseBuffer, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { match } = state.browser.set.data
@@ -247,7 +270,13 @@ export function refreshSetMembersAction(key: string = '', resetData?: boolean) {
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadSetMembersSuccess(data))
+        // TODO: REMOVE
+        const newData = {
+          ...data,
+          members: data.members.map((member) => stringToBuffer(member))
+        }
+
+        dispatch(loadSetMembersSuccess(newData))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -319,8 +348,8 @@ export function deleteSetMembers(key: string, members: string[], onSuccessAction
           dispatch<any>(refreshKeyInfoAction(key))
           dispatch(addMessageNotification(
             successMessages.REMOVED_KEY_VALUE(
-              key,
-              members.join(''),
+              bufferToString(key),
+              members.map((member) => bufferToString(member)).join(''),
               'Member'
             )
           ))

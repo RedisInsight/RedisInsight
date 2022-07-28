@@ -18,6 +18,8 @@ import {
 } from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import bufferToString, { stringToBuffer } from 'uiSrc/utils/buffer/bufferFormatters'
 
 import styles from './styles.module.scss'
 
@@ -33,12 +35,14 @@ export interface Props {
 const StringDetails = (props: Props) => {
   const { isEditItem, setIsEdit } = props
 
+  const { loading } = useSelector(stringSelector)
+  const { value: initialValue } = useSelector(stringDataSelector)
+
+  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+
   const [rows, setRows] = useState<number>(5)
   const [value, setValue] = useState<Nullable<string>>(null)
   const [areaValue, setAreaValue] = useState<string>('')
-
-  const { loading } = useSelector(stringSelector)
-  const { value: initialValue, key } = useSelector(stringDataSelector)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
 
@@ -49,8 +53,10 @@ const StringDetails = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    setValue(initialValue)
-    setAreaValue(initialValue || '')
+    const initialValueString = bufferToString(initialValue)
+
+    setValue(initialValueString)
+    setAreaValue(initialValueString || '')
   }, [initialValue])
 
   useEffect(() => {
@@ -86,7 +92,7 @@ const StringDetails = (props: Props) => {
       setIsEdit(false)
       setValue(areaValue)
     }
-    dispatch(updateStringValueAction(key, areaValue, onSuccess))
+    dispatch(updateStringValueAction(key, stringToBuffer(areaValue), onSuccess))
   }
 
   const onDeclineChanges = () => {

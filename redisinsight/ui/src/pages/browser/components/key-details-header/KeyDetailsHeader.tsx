@@ -24,19 +24,20 @@ import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-ke
 import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { formatBytes, formatNameShort, MAX_TTL_NUMBER, replaceSpaces, validateTTLNumber } from 'uiSrc/utils'
+import { formatBytes, formatNameShort, isEqualBuffers, MAX_TTL_NUMBER, replaceSpaces, stringToBuffer, validateTTLNumber } from 'uiSrc/utils'
 import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   keyType: KeyTypes | ModulesKeyTypes
-  onClose: (key: string) => void
-  onRefresh: (key: string, type: KeyTypes | ModulesKeyTypes) => void
-  onDelete: (key: string, type: string) => void
-  onEditTTL: (key: string, ttl: number) => void
-  onEditKey: (key: string, newKey: string, onFailure?: () => void) => void
+  onClose: (key: RedisResponseBuffer) => void
+  onRefresh: (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => void
+  onDelete: (key: RedisResponseBuffer, type: string) => void
+  onEditTTL: (key: RedisResponseBuffer, ttl: number) => void
+  onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
   onAddItem?: () => void
   onEditItem?: () => void
   onRemoveItem?: () => void
@@ -66,7 +67,14 @@ const KeyDetailsHeader = ({
   onRemoveItem = () => {},
 }: Props) => {
   const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
-  const { ttl: ttlProp, name: keyProp = '', type, size, length } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
+  const {
+    ttl: ttlProp,
+    type,
+    size,
+    length,
+    nameString: keyProp,
+    name: keyBuffer,
+  } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewType: streamViewType } = useSelector(streamSelector)
@@ -110,8 +118,12 @@ const KeyDetailsHeader = ({
     setKeyIsEditing(false)
     setKeyIsHovering(false)
 
-    if (keyProp !== key && !isNull(keyProp)) {
-      onEditKey(keyProp, key, () => setKey(keyProp))
+    const newKeyBuffer = stringToBuffer(key || '')
+
+    if (keyBuffer && !isEqualBuffers(keyBuffer, newKeyBuffer) && !isNull(keyProp)) {
+      console.log({ keyBuffer })
+
+      onEditKey(keyBuffer, newKeyBuffer, () => setKey(keyProp))
     }
   }
 
@@ -662,7 +674,7 @@ const KeyDetailsHeader = ({
                             size="s"
                             color="warning"
                             iconType="trash"
-                            onClick={() => onDelete(keyProp, type)}
+                            onClick={() => onDelete(keyBuffer, type)}
                             className={styles.popoverDeleteBtn}
                             data-testid="delete-key-confirm-btn"
                           >

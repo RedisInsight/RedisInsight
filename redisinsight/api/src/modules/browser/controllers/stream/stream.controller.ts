@@ -21,7 +21,7 @@ import { StreamService } from 'src/modules/browser/services/stream/stream.servic
 
 @ApiTags('Streams')
 @Controller('streams')
-@UsePipes(new ValidationPipe({ transform: true }))
+// @UsePipes(new ValidationPipe({ transform: true }))
 export class StreamController {
   constructor(private service: StreamService) {}
 
@@ -53,6 +53,9 @@ export class StreamController {
     @Param('dbInstance') instanceId: string,
       @Body() dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
+
+    console.log({dto});
+
     return this.service.addEntries({ instanceId }, dto);
   }
 

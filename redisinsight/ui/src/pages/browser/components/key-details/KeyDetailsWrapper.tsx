@@ -22,6 +22,7 @@ import { refreshListElementsAction } from 'uiSrc/slices/browser/list'
 import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
 import { refreshStream } from 'uiSrc/slices/browser/stream'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -29,9 +30,9 @@ export interface Props {
   arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
   onCloseKey: () => void
-  onEditKey: (key: string, newKey: string) => void
+  onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => void
   onDeleteKey: () => void
-  keyProp: string | null
+  keyProp: RedisResponseBuffer | null
 }
 
 const KeyDetailsWrapper = (props: Props) => {
@@ -79,7 +80,7 @@ const KeyDetailsWrapper = (props: Props) => {
     }
   }, [keyName])
 
-  const handleDeleteKey = (key: string, type: string) => {
+  const handleDeleteKey = (key: RedisResponseBuffer, type: string) => {
     if (type === KeyTypes.String) {
       dispatch(deleteKeyAction(key, () => {
         dispatch(resetStringValue())
@@ -90,7 +91,7 @@ const KeyDetailsWrapper = (props: Props) => {
     dispatch(deleteKeyAction(key, onDeleteKey))
   }
 
-  const handleRefreshKey = (key: string, type: KeyTypes | ModulesKeyTypes) => {
+  const handleRefreshKey = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
     const resetData = false
     dispatch(refreshKeyInfoAction(key))
     switch (type) {
@@ -130,7 +131,7 @@ const KeyDetailsWrapper = (props: Props) => {
   const handleEditTTL = (key: string, ttl: number) => {
     dispatch(editKeyTTL(key, ttl))
   }
-  const handleEditKey = (oldKey: string, newKey: string, onFailure?: () => void) => {
+  const handleEditKey = (oldKey: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => {
     dispatch(editKey(oldKey, newKey, () => onEditKey(oldKey, newKey), onFailure))
   }
 

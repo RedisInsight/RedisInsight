@@ -1,5 +1,5 @@
 import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { isEqual, isNull, union } from 'lodash'
@@ -14,15 +14,16 @@ import {
   updateListElementAction,
   updateListValueStateSelector,
   fetchSearchingListElementAction,
+  setListElements,
 } from 'uiSrc/slices/browser/list'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
 import {
   ITableColumn,
   IColumnSearchState,
 } from 'uiSrc/components/virtual-table/interfaces'
-import { formatLongName, validateListIndex } from 'uiSrc/utils'
+import { bufferFormatRangeItems, formatLongName, validateListIndex } from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -33,6 +34,7 @@ import {
   SetListElementDto,
   SetListElementResponse,
 } from 'apiSrc/modules/browser/dto'
+import bufferToString, { stringToBuffer } from 'uiSrc/utils/buffer/bufferFormatters'
 import styles from './styles.module.scss'
 
 const headerHeight = 60
@@ -69,16 +71,26 @@ const ListDetails = (props: Props) => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
+  const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
+
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const listElements: IListElement[] = loadedElements.map((item, index) => ({
-      index: searchedIndex ?? index,
-      element: item,
-      editing: false,
-    }))
-    setElements(listElements)
+    if (loadedElements.length > 0) {
+      const listElements = bufferFormatRangeItems(loadedElements, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+
+      setElements(listElements)
+    }
   }, [loadedElements])
+
+  const formatItem = ({ index, element }: IListElement): IListElement => ({
+    index: searchedIndex ?? index,
+    editing: false,
+    element: {
+      ...element,
+      string: bufferToString(element),
+    },
+  })
 
   const handleEditElement = (index = 0, editing: boolean) => {
     const newElemsState = elements.map((item) => {
@@ -101,7 +113,7 @@ const ListDetails = (props: Props) => {
   const handleApplyEditElement = (index = 0, element: string) => {
     const data: SetListElementDto = {
       keyName: key,
-      element,
+      element: stringToBuffer(element),
       index,
     }
     dispatch(
@@ -117,6 +129,7 @@ const ListDetails = (props: Props) => {
   }
 
   const handleSearch = (search: IColumnSearchState[]) => {
+    formattedLastIndexRef.current = 0
     const indexColumn = search.find((column) => column.id === 'index')
     const onSuccess = () => {
       sendEventTelemetry({
@@ -148,6 +161,16 @@ const ListDetails = (props: Props) => {
         )
       )
     }
+  }
+
+  const bufferFormatRows = (lastIndex: number) => {
+    const newElements = bufferFormatRangeItems(elements, formattedLastIndexRef.current, lastIndex, formatItem)
+    setElements(newElements)
+
+    if (lastIndex > formattedLastIndexRef.current) {
+      formattedLastIndexRef.current = lastIndex
+    }
+    return newElements
   }
 
   const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
@@ -210,9 +233,10 @@ const ListDetails = (props: Props) => {
       alignment: TableCellAlignment.Left,
       render: function Element(
         _element: string,
-        { element, index, editing }: IListElement,
+        { element: elementItem, index, editing }: IListElement,
         expanded: boolean = false
       ) {
+        const element = elementItem?.string ?? ''
         // Better to cut the long string, because it could affect virtual scroll performance
         const cellContent = element.substring(0, 200)
         const tooltipContent = formatLongName(element)
@@ -287,6 +311,7 @@ const ListDetails = (props: Props) => {
 
   const loadMoreItems = ({ startIndex, stopIndex }: any) => {
     if (isNull(searchedIndex)) {
+      dispatch(setListElements(bufferFormatRows(elements.length - 1)))
       dispatch(
         fetchMoreListElements(key, startIndex, stopIndex - startIndex + 1)
       )
@@ -335,6 +360,7 @@ const ListDetails = (props: Props) => {
         onRowToggleViewClick={handleRowToggleViewClick}
         expandedRows={expandedRows}
         setExpandedRows={setExpandedRows}
+        onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
       />
     </div>
   )

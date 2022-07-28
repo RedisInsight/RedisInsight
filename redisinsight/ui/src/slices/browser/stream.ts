@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { remove } from 'lodash'
+import { omit, remove } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import { apiService } from 'uiSrc/services'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { ApiEndpoints, SortOrder } from 'uiSrc/constants'
 import { refreshKeyInfoAction, } from 'uiSrc/slices/browser/keys'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
+import { getUrl, isStatusSuccessful, Maybe, Nullable, getApiErrorMessage } from 'uiSrc/utils'
 import { getStreamRangeStart, getStreamRangeEnd, updateConsumerGroups, updateConsumers } from 'uiSrc/utils/streamUtils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
@@ -25,6 +25,7 @@ import {
 import { AppDispatch, RootState } from '../store'
 import { StateStream, StreamViewType } from '../interfaces/stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import { RedisResponseBuffer } from '../interfaces'
 
 export const initialState: StateStream = {
   loading: false,
@@ -389,7 +390,7 @@ export let sourceStreamFetch: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
 export function fetchStreamEntries(
-  key: string,
+  key: RedisResponseBuffer,
   count: number,
   sortOrder: SortOrder,
   resetData?: boolean,
@@ -405,6 +406,7 @@ export function fetchStreamEntries(
       sourceStreamFetch = CancelToken.source()
 
       const state = stateInit()
+      const { encoding } = state.app.info
       const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
       const end = getStreamRangeEnd(state.browser.stream.range.end, state.browser.stream.data.lastEntry?.id)
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
@@ -413,11 +415,13 @@ export function fetchStreamEntries(
           ApiEndpoints.STREAMS_ENTRIES_GET
         ),
         {
+          // keyName: omit(key, ['string']),
           keyName: key,
           start,
           end,
           count,
-          sortOrder
+          sortOrder,
+          encoding,
         },
         { cancelToken: sourceStreamFetch.token }
       )
@@ -440,7 +444,7 @@ export function fetchStreamEntries(
 
 // Asynchronous thunk action
 export function refreshStream(
-  key: string,
+  key: RedisResponseBuffer,
   resetData: boolean = false,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -472,7 +476,7 @@ export function refreshStream(
 
 // Asynchronous thunk action
 export function refreshStreamEntries(
-  key: string,
+  key: RedisResponseBuffer,
   resetData?: boolean,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -485,6 +489,7 @@ export function refreshStreamEntries(
       sourceStreamFetch = CancelToken.source()
 
       const state = stateInit()
+      const { encoding } = state.app.info
       const { sortOrder } = state.browser.stream
       const start = getStreamRangeStart(state.browser.stream.range.start, state.browser.stream.data.firstEntry?.id)
       const end = getStreamRangeEnd(state.browser.stream.range.end, state.browser.stream.data.lastEntry?.id)
@@ -499,6 +504,7 @@ export function refreshStreamEntries(
           end,
           sortOrder,
           count: SCAN_COUNT_DEFAULT,
+          encoding,
         },
         { cancelToken: sourceStreamFetch.token }
       )
@@ -520,7 +526,7 @@ export function refreshStreamEntries(
 
 // Asynchronous thunk action
 export function fetchMoreStreamEntries(
-  key: string,
+  key: RedisResponseBuffer,
   start: string,
   end: string,
   count: number,
@@ -536,6 +542,7 @@ export function fetchMoreStreamEntries(
       const { CancelToken } = axios
       sourceStreamFetch = CancelToken.source()
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post<GetStreamEntriesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -546,7 +553,8 @@ export function fetchMoreStreamEntries(
           start,
           end,
           count,
-          sortOrder
+          sortOrder,
+          encoding,
         },
         { cancelToken: sourceStreamFetch.token }
       )
@@ -602,7 +610,7 @@ export function addNewEntriesAction(
   }
 }
 // Asynchronous thunk actions
-export function deleteStreamEntry(key: string, entries: string[], onSuccessAction?: () => void,) {
+export function deleteStreamEntry(key: RedisResponseBuffer, entries: string[], onSuccessAction?: () => void,) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeStreamEntries())
     try {
@@ -687,13 +695,16 @@ export function fetchConsumerGroups(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
+      const keyName = state.browser.keys?.selectedKey?.data?.name
       const { data, status } = await apiService.post<ConsumerGroupDto[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAMS_CONSUMER_GROUPS_GET
         ),
         {
-          keyName: state.browser.keys?.selectedKey?.data?.name,
+          keyName,
+          encoding,
         },
       )
 
@@ -737,7 +748,7 @@ export function deleteConsumerGroupsAction(keyName: string, consumerGroups: stri
         dispatch<any>(refreshKeyInfoAction(keyName))
         dispatch(addMessageNotification(
           successMessages.REMOVED_KEY_VALUE(
-            keyName,
+            key,
             consumerGroups.join(''),
             'Group'
           )
@@ -762,14 +773,18 @@ export function fetchConsumers(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
+      const keyName = state.browser.keys?.selectedKey?.data?.name
+      const groupName = state.browser.stream.groups.selectedGroup?.name
       const { data, status } = await apiService.post<ConsumerDto[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAMS_CONSUMERS_GET
         ),
         {
-          keyName: state.browser.keys?.selectedKey?.data?.name,
-          groupName: state.browser.stream.groups.selectedGroup?.name,
+          keyName,
+          groupName,
+          encoding,
         },
       )
 
@@ -820,7 +835,7 @@ export function deleteConsumersAction(
         dispatch<any>(refreshKeyInfoAction(keyName))
         dispatch(addMessageNotification(
           successMessages.REMOVED_KEY_VALUE(
-            keyName,
+            key,
             consumerNames.join(''),
             'Consumer'
           )
@@ -845,15 +860,20 @@ export function fetchConsumerMessages(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
+      const keyName = state.browser.keys?.selectedKey?.data?.name
+      const groupName = state.browser.stream.groups.selectedGroup?.name
+      const consumerName = state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
       const { data, status } = await apiService.post<PendingEntryDto[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.STREAMS_CONSUMERS_MESSAGES_GET
         ),
         {
-          keyName: state.browser.keys?.selectedKey?.data?.name,
-          groupName: state.browser.stream.groups.selectedGroup?.name,
-          consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
+          keyName,
+          groupName,
+          consumerName,
+          encoding,
         },
       )
       if (isStatusSuccessful(status)) {
@@ -886,6 +906,10 @@ export function fetchMoreConsumerMessages(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
+      const keyName = state.browser.keys?.selectedKey?.data?.name
+      const groupName = state.browser.stream.groups.selectedGroup?.name
+      const consumerName = state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
       const { data, status } = await apiService.post<PendingEntryDto[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -895,9 +919,10 @@ export function fetchMoreConsumerMessages(
           start,
           end,
           count,
-          keyName: state.browser.keys?.selectedKey?.data?.name,
-          groupName: state.browser.stream.groups.selectedGroup?.name,
-          consumerName: state.browser.stream.groups.selectedGroup?.selectedConsumer?.name
+          keyName,
+          groupName,
+          consumerName,
+          encoding,
         },
       )
       if (isStatusSuccessful(status)) {

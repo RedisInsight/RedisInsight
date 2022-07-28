@@ -12,7 +12,7 @@ import {
   EuiFlexItem,
   EuiPanel,
 } from '@elastic/eui'
-import { Maybe, validateScoreNumber } from 'uiSrc/utils'
+import { Maybe, stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
 import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
@@ -153,9 +153,9 @@ const AddKeyZset = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateZSetWithExpireDto = {
-      keyName,
+      keyName: stringToBuffer(keyName),
       members: members.map((item) => ({
-        name: item.name,
+        name: stringToBuffer(item.name),
         score: toNumber(item.score),
       }))
     }

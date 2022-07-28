@@ -14,6 +14,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
+import bufferToString from 'uiSrc/utils/buffer/bufferFormatters'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 
@@ -175,7 +176,8 @@ const StreamDataViewWrapper = (props: Props) => {
     className: styles.cell,
     headerClassName: 'streamItemHeader',
     render: function Id({ id }: StreamEntryDto) {
-      const timestamp = id.split('-')?.[0]
+      const idStr = bufferToString(id)
+      const timestamp = idStr.split('-')?.[0]
       return (
         <div>
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>

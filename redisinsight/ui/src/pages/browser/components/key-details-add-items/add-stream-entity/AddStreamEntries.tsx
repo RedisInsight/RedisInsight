@@ -3,7 +3,7 @@ import cx from 'classnames'
 import { toNumber, map } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { entryIdRegex } from 'uiSrc/utils'
+import { entryIdRegex, stringToBuffer } from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { addNewEntriesAction, streamDataSelector } from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -96,7 +96,7 @@ const AddStreamEntries = (props: Props) => {
         keyName,
         entries: [{
           id: entryID,
-          fields: [...map(fields, (field) => [field.fieldName, field.fieldValue])]
+          fields: [...map(fields, (field) => [stringToBuffer(field.fieldName), stringToBuffer(field.fieldValue)])]
         }]
       }
       dispatch(addNewEntriesAction(data, onSuccessAdded))

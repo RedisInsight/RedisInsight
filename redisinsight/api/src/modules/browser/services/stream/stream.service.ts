@@ -54,15 +54,18 @@ export class StreamService {
         [keyName],
       );
 
-      if (!exists) {
-        throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
-      }
+      // if (!exists) {
+      //   throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
+      // }
 
       const info = convertStringsArrayToObject(await this.browserTool.execCommand(
         clientOptions,
         BrowserToolStreamCommands.XInfoStream,
         [keyName],
       ));
+
+      console.log({info});
+
 
       let entries = [];
       if (sortOrder && sortOrder === SortOrder.Asc) {

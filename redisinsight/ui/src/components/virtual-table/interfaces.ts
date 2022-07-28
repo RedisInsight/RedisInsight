@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { CellMeasurerCache } from 'react-virtualized'
+import { CellMeasurerCache, IndexRange, OverscanIndexRange } from 'react-virtualized'
 import {
   SortOrder,
   TableCellAlignment,
@@ -37,7 +37,7 @@ export interface ITableColumn {
   absoluteWidth?: number | string
   alignment?: TableCellAlignment
   textAlignment?: TableCellTextAlignment
-  render?: (cellData?: any, columnItem?: any, expanded?: boolean) => any
+  render?: (cellData?: any, columnItem?: any, expanded?: boolean, rowIndex?: number) => any
   className?: string
   prependSearchName?: string
   staySearchAlwaysOpen?: boolean
@@ -48,12 +48,13 @@ export interface IProps {
   loading: boolean
   scanned?: number
   columns: ITableColumn[]
+  threshold?: number
   loadMoreItems?: (config: any) => void
   rowHeight?: number
   footerHeight?: number
   selectable?: boolean
   expandable?: boolean
-  keyName?: string
+  keyName?: RedisResponseBuffer
   headerHeight?: number
   searching?: boolean
   onRowClick?: (rowData: any) => void
@@ -75,7 +76,9 @@ export interface IProps {
   onChangeWidth?: (width: number) => void
   cellCache?: CellMeasurerCache
   expandedRows?: number[]
+  overscanRowCount?: number
   setExpandedRows?: (rows: number[]) => void
+  onRowsRendered?: (info: IndexRange & OverscanIndexRange) => void
 }
 
 export interface ISortedColumn {

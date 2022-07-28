@@ -27,6 +27,7 @@ import { KeyTypes, ModulesKeyTypes, MODULES_KEY_TYPES_NAMES, STREAM_ADD_GROUP_VI
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
@@ -46,12 +47,12 @@ export interface Props {
   isFullScreen: boolean
   arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
-  onClose: (key: string) => void
+  onClose: (key: RedisResponseBuffer) => void
   onClosePanel: () => void
-  onRefresh: (key: string, type: KeyTypes) => void
-  onDelete: (key: string, type: string) => void
-  onEditTTL: (key: string, ttl: number) => void
-  onEditKey: (key: string, newKey: string, onFailure?: () => void) => void
+  onRefresh: (key: RedisResponseBuffer, type: KeyTypes) => void
+  onDelete: (key: RedisResponseBuffer, type: string) => void
+  onEditTTL: (key: RedisResponseBuffer, ttl: number) => void
+  onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
 }
 
 const KeyDetails = ({ ...props }: Props) => {

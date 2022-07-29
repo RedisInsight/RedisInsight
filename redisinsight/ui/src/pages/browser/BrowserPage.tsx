@@ -247,6 +247,7 @@ const BrowserPage = () => {
                       loadMoreItems={loadMoreItems}
                       handleAddKeyPanel={handleAddKeyPanel}
                       handleBulkActionsPanel={handleBulkActionsPanel}
+                      nextCursor={keysState.nextCursor}
                     />
                     {viewType === KeyViewType.Browser && (
                       <KeyList

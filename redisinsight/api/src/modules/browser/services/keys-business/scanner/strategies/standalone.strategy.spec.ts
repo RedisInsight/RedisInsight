@@ -282,7 +282,7 @@ describe('Standalone Scanner Strategy', () => {
       expect(result).toEqual([mockNodeEmptyResult]);
       expect(strategy.getKeysInfo).toBeCalledTimes(0);
     });
-    it('should throw error on dbsize command', async () => {
+    it('should continue work when throw error on dbsize command', async () => {
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
         command: 'DBSIZE',
@@ -290,13 +290,27 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.DbSize, [])
         .mockRejectedValue(replyError);
+      when(browserTool.execCommand)
+        .calledWith(
+          mockClientOptions,
+          BrowserToolKeysCommands.Scan,
+          expect.anything(),
+          null,
+        )
+        .mockResolvedValue(['0', [getKeyInfoResponse.name]]);
+      
+      strategy.getKeysInfo = jest.fn().mockResolvedValue([getKeyInfoResponse]);
 
-      try {
-        await strategy.getKeys(mockClientOptions, getKeysDto);
-        fail('Should throw an error');
-      } catch (err) {
-        expect(err.message).toEqual(replyError.message);
-      }
+      const result = await strategy.getKeys(mockClientOptions, getKeysDto);
+
+      expect(result).toEqual([
+        {
+          ...mockNodeEmptyResult,
+          total: null,
+          scanned: getKeysDto.count,
+          keys: [getKeyInfoResponse],
+        },
+      ]);
     });
     it('should throw error on scan command', async () => {
       when(browserTool.execCommand)

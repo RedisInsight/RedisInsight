@@ -54,6 +54,7 @@ interface IViewType {
 export interface Props {
   loading: boolean
   keysState: KeysStoreData
+  nextCursor: string
   loadKeys: (type?: KeyViewType) => void
   loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
@@ -68,6 +69,7 @@ const KeysHeader = (props: Props) => {
     loadMoreItems,
     handleAddKeyPanel,
     handleBulkActionsPanel,
+    nextCursor,
   } = props
 
   const { lastRefreshTime } = useSelector(keysDataSelector)
@@ -272,6 +274,7 @@ const KeysHeader = (props: Props) => {
                 loading={loading}
                 scanMoreStyle={scanMoreStyle}
                 loadMoreItems={handleScanMore}
+                nextCursor={nextCursor}
               />
               <AutoRefresh
                 postfix="keys"

@@ -1,4 +1,4 @@
-import { find, map, sortBy, omit, forEach } from 'lodash'
+import { find, map, sortBy, omit, forEach, isNull } from 'lodash'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import { initialStateSentinelStatus } from 'uiSrc/slices/instances/sentinel'
 
@@ -53,7 +53,7 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
     })()
 
     // summarize shard values
-    if (shard.scanned > shard.total || shard.cursor === 0) {
+    if ((shard.scanned > shard.total || shard.cursor === 0) && !isNull(shard.total)) {
       shard.scanned = shard.total
     }
 
@@ -64,7 +64,12 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
   // summarize result numbers
   const nextCursor = []
   forEach(shards, (shard, id) => {
-    result.total += shard.total
+    if (shard.total === null) {
+      result.total = shard.total
+    } else {
+      // we don't know how many keys we lost in total = null shard
+      result.total = isNull(result.total) ? null : result.total + shard.total
+    }
     result.scanned += shard.scanned
 
     // ignore already scanned shards on get more call

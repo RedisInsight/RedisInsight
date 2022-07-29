@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { isUndefined } from 'lodash'
 
 import { millisecondsFormat } from 'uiSrc/utils'
-import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { numberWithSpaces, nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
 import { getApproximateNumber } from 'uiSrc/utils/validations'
 import { overviewBulkActionsSelector, summaryBulkActionsSelector } from 'uiSrc/slices/browser/bulkActions'
@@ -23,7 +23,7 @@ const BulkDeleteSummary = () => {
     }
 
     const approximateCount = scanned < total ? (keys.length * total) / scanned : keys.length
-    setTitle(`Expected amount: ${scanned < total ? '~' : ''}${numberWithSpaces(Math.round(approximateCount))} keys`)
+    setTitle(`Expected amount: ${scanned < total ? '~' : ''}${nullableNumberWithSpaces(Math.round(approximateCount))} keys`)
   }, [scanned, total, keys])
 
   return (
@@ -45,7 +45,7 @@ const BulkDeleteSummary = () => {
           </EuiText>
           <EuiText color="subdued" className={styles.summaryApproximate} data-testid="bulk-delete-summary">
             {`Scanned ${getApproximateNumber((total ? scanned / total : 1) * 100)}% `}
-            {`(${numberWithSpaces(scanned)}/${numberWithSpaces(total)}) `}
+            {`(${numberWithSpaces(scanned)}/${nullableNumberWithSpaces(total)}) `}
             {`and found ${numberWithSpaces(keys.length)} keys`}
           </EuiText>
         </>

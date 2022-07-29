@@ -520,4 +520,99 @@ describe('InstanceForm', () => {
       })
     )
   })
+
+  it('should render clone mode btn', () => {
+    render(
+      <InstanceForm
+        {...instance(mockedProps)}
+        isEditMode
+        formFields={{
+          ...formFields,
+          connectionType: ConnectionType.Standalone,
+        }}
+      />
+    )
+    expect(screen.getByTestId('clone-db-btn')).toBeTruthy()
+  })
+
+  describe('should render proper fields with Clone mode', () => {
+    it('should render proper fields for standalone db', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+          }}
+        />
+      )
+      const fieldsTestIds = ['host', 'port', 'username', 'password', 'showDb', 'tls']
+      fieldsTestIds.forEach((id) => {
+        expect(screen.getByTestId(id)).toBeTruthy()
+      })
+    })
+
+    it('should render proper fields for sentinel db', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Sentinel,
+          }}
+        />
+      )
+      const fieldsTestIds = [
+        'name',
+        'primary-group',
+        'sentinel-mater-username',
+        'sentinel-master-password',
+        'host',
+        'port',
+        'username',
+        'password',
+        'showDb',
+        'tls'
+      ]
+      fieldsTestIds.forEach((id) => {
+        expect(screen.getByTestId(id)).toBeTruthy()
+      })
+    })
+
+    it('should render selected logical database with proper db index', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+            db: 5
+          }}
+        />
+      )
+      expect(screen.getByTestId('showDb')).toBeChecked()
+      expect(screen.getByTestId('db')).toHaveValue('5')
+    })
+
+    it('should render proper database alias', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+          }}
+        />
+      )
+      expect(screen.getByTestId('db-alias')).toHaveTextContent('Clone ')
+    })
+  })
 })

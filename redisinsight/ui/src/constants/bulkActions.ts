@@ -3,6 +3,7 @@ export enum BulkActionsServerEvent {
   Get = 'get',
   Abort = 'abort',
   Overview = 'overview',
+  Error = 'error',
 }
 
 export enum BulkActionsType {

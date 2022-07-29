@@ -1,4 +1,5 @@
 import * as isGlob from 'is-glob';
+import { isNull } from 'lodash';
 import config from 'src/utils/config';
 import { unescapeGlob } from 'src/utils';
 import {
@@ -43,15 +44,20 @@ export class StandaloneStrategy extends AbstractStrategy {
       cursor: parseInt(args.cursor, 10),
     };
 
-    node.total = await this.redisManager.execCommand(
-      clientOptions,
-      BrowserToolKeysCommands.DbSize,
-      [],
-    );
+    try {
+      node.total = await this.redisManager.execCommand(
+        clientOptions,
+        BrowserToolKeysCommands.DbSize,
+        [],
+      );
+    } catch (e) {
+      node.total = null;
+    }
+
     if (!isGlob(match, { strict: false })) {
       const keyName = unescapeGlob(match);
       node.cursor = 0;
-      node.scanned = node.total;
+      node.scanned = isNull(node.total) ? 1 : node.total;
       node.keys = await this.getKeysInfo(client, [keyName]);
       node.keys = node.keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
@@ -66,6 +72,7 @@ export class StandaloneStrategy extends AbstractStrategy {
     }
 
     await this.scan(clientOptions, node, match, count, args.type);
+
     if (node.keys.length) {
       node.keys = await this.getKeysInfo(client, node.keys, args.type);
     }
@@ -83,7 +90,7 @@ export class StandaloneStrategy extends AbstractStrategy {
     let fullScanned = false;
     const settings = await this.settingsProvider.getSettings();
     while (
-      node.total > 0
+      (node.total > 0 || isNull(node.total))
       && !fullScanned
       && node.keys.length < count
       && (

@@ -82,6 +82,13 @@ export const initDataHelper = (rte) => {
 
     // set
     await client.sadd(constants.TEST_SET_KEY_BIN_BUFFER_1, constants.TEST_SET_MEMBER_BIN_BUFFER_1);
+
+    // zset
+    await client.zadd(
+      constants.TEST_ZSET_KEY_BIN_BUFFER_1,
+      constants.TEST_ZSET_MEMBER_1_SCORE,
+      constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
+    );
   };
 
   // keys

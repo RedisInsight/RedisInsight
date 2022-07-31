@@ -101,8 +101,9 @@ export class SetBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      if (dto.match && !isGlob(dto.match, { strict: false })) {
-        const member = unescapeGlob(dto.match);
+      if (dto.match && !isGlob(dto.match.toString(), { strict: false })) {
+        // const member = unescapeGlob(dto.match);
+        const member = dto.match;
         result.nextCursor = 0;
         const memberIsExist = await this.browserTool.execCommand(
           clientOptions,

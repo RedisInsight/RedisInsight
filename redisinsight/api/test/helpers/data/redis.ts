@@ -89,6 +89,13 @@ export const initDataHelper = (rte) => {
       constants.TEST_ZSET_MEMBER_1_SCORE,
       constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
     );
+
+    // hash
+    await client.hset(
+      constants.TEST_HASH_KEY_BIN_BUFFER_1,
+      constants.TEST_HASH_FIELD_BIN_BUFFER_1,
+      constants.TEST_HASH_VALUE_BIN_BUFFER_1,
+    );
   };
 
   // keys

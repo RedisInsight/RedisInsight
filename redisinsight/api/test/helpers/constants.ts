@@ -197,6 +197,18 @@ export const constants = {
   TEST_HASH_HUGE_KEY: 'big hash 1M',
   TEST_HASH_HUGE_KEY_FIELD: 'key678900',
   TEST_HASH_HUGE_KEY_VALUE: ' 678900',
+  TEST_HASH_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('hashk'), unprintableBuf]),
+  get TEST_HASH_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_HASH_KEY_BIN_BUFFER_1] } },
+  get TEST_HASH_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_HASH_KEY_BIN_BUFFER_1) },
+  get TEST_HASH_KEY_BIN_UTF8_1() { return this.TEST_HASH_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_HASH_FIELD_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('hashf'), unprintableBuf]),
+  get TEST_HASH_FIELD_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_HASH_FIELD_BIN_BUFFER_1] } },
+  get TEST_HASH_FIELD_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_HASH_FIELD_BIN_BUFFER_1) },
+  get TEST_HASH_FIELD_BIN_UTF8_1() { return this.TEST_HASH_FIELD_BIN_BUFFER_1.toString('utf-8') },
+  TEST_HASH_VALUE_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('hashv'), unprintableBuf]),
+  get TEST_HASH_VALUE_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_HASH_VALUE_BIN_BUFFER_1] } },
+  get TEST_HASH_VALUE_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_HASH_VALUE_BIN_BUFFER_1) },
+  get TEST_HASH_VALUE_BIN_UTF8_1() { return this.TEST_HASH_VALUE_BIN_BUFFER_1.toString('utf-8') },
 
   // Redis Stream
   TEST_STREAM_TYPE: 'stream',

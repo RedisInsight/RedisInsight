@@ -1,13 +1,12 @@
 import {
   expect,
   describe,
-  it,
   before,
   deps,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 import * as Joi from 'joi';
@@ -31,193 +30,209 @@ const responseSchema = Joi.object().keys({
   affected: Joi.number().required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('DELETE /instance/:instanceId/hash/fields', () => {
-  before(async () => await rte.data.generateKeys(true));
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    beforeEach(() => rte.data.generateBinKeys(true));
 
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
     [
       {
-        name: 'Should ignore not existing field',
+        name: 'Should remove hash field from buff',
         data: {
-          keyName: constants.TEST_HASH_KEY_2,
-          fields: [constants.getRandomString()],
+          keyName: constants.TEST_HASH_KEY_BIN_BUF_OBJ_1,
+          fields: [constants.TEST_HASH_FIELD_BIN_BUF_OBJ_1],
         },
-        responseSchema,
-        responseBody: {
-          affected: 0,
-        },
-        after: async () => {
-          const fields = await rte.client.hgetall(constants.TEST_HASH_KEY_2);
-          (new Array(3000).fill(0)).map((_, i) => {
-            expect(fields[`field_${i + 1}`]).to.eql(`value_${i + 1}`);
-          });
-        }
-      },
-      {
-        name: 'Should remove 1 field',
-        data: {
-          keyName: constants.TEST_HASH_KEY_2,
-          fields: ['field_3000'],
-        },
-        responseSchema,
         responseBody: {
           affected: 1,
         },
         after: async () => {
-          const fields = await rte.client.hgetall(constants.TEST_HASH_KEY_2);
-          (new Array(2999).fill(0)).map((_, i) => {
-            expect(fields[`field_${i + 1}`]).to.eql(`value_${i + 1}`);
-          });
-        }
+          expect(await rte.client.exists(constants.TEST_HASH_KEY_BIN_BUFFER_1)).to.eql(0);
+        },
       },
       {
-        name: 'Should remove multiple fields',
+        name: 'Should remove hash field from ascii',
         data: {
-          keyName: constants.TEST_HASH_KEY_2,
-          fields: ['field_2999', 'field_2998', 'field_1', 'field_2'],
+          keyName: constants.TEST_HASH_KEY_BIN_ASCII_1,
+          fields: [constants.TEST_HASH_FIELD_BIN_ASCII_1],
         },
-        responseSchema,
         responseBody: {
-          affected: 4,
+          affected: 1,
         },
         after: async () => {
-          const fields = await rte.client.hgetall(constants.TEST_HASH_KEY_2);
-          (new Array(2995).fill(0)).map((_, i) => {
-            expect(fields[`field_${i + 3}`]).to.eql(`value_${i + 3}`);
-          });
-        }
-      },
-      {
-        name: 'Should remove all fields and the key',
-        data: {
-          keyName: constants.TEST_HASH_KEY_2,
-          fields: [
-            ...(new Array(2995).fill(0)).map((_, i) => `field_${i + 3}`)
-          ],
-        },
-        responseSchema,
-        responseBody: {
-          affected: 2995,
-        },
-        after: async () => {
-          expect(await rte.client.exists(constants.TEST_HASH_KEY_2)).to.eql(0);
-        }
-      },
-      {
-        name: 'Should return BadRequest error if try to modify incorrect data type',
-        data: {
-          keyName: constants.TEST_STRING_KEY_1,
-          members: [constants.getRandomString()],
-        },
-        statusCode: 400,
-        responseBody: {
-          statusCode: 400,
-          error: 'Bad Request',
-        },
-      },
-      {
-        name: 'Should return NotFound error if key does not exists',
-        data: {
-          keyName: constants.getRandomString(),
-          fields: [constants.getRandomString()],
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Key with this name does not exist.',
-        },
-      },
-      {
-        name: 'Should return NotFound error if instance id does not exists',
-        endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
-        data: {
-          keyName: constants.TEST_HASH_KEY_1,
-          fields: [constants.getRandomString()],
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Invalid database instance id.',
+          expect(await rte.client.exists(constants.TEST_HASH_KEY_BIN_BUFFER_1)).to.eql(0);
         },
       },
     ].map(mainCheckFn);
   });
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => rte.data.setAclUserRules('~* +@all'));
+  describe('Main', () => {
+    before(async () => await rte.data.generateKeys(true));
 
-    [
-      {
-        name: 'Should not delete member',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_HASH_KEY_1,
-          fields: [constants.getRandomString()],
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+
+    describe('Common', () => {
+      [
+        {
+          name: 'Should ignore not existing field',
+          data: {
+            keyName: constants.TEST_HASH_KEY_2,
+            fields: [constants.getRandomString()],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 0,
+          },
+          after: async () => {
+            const fields = await rte.client.hgetall(constants.TEST_HASH_KEY_2);
+            (new Array(3000).fill(0)).map((_, i) => {
+              expect(fields[`field_${i + 1}`]).to.eql(`value_${i + 1}`);
+            });
+          }
         },
-        responseSchema,
-        responseBody: {
-          affected: 0,
+        {
+          name: 'Should remove 1 field',
+          data: {
+            keyName: constants.TEST_HASH_KEY_2,
+            fields: ['field_3000'],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 1,
+          },
+          after: async () => {
+            const fields = await rte.client.hgetall(constants.TEST_HASH_KEY_2);
+            (new Array(2999).fill(0)).map((_, i) => {
+              expect(fields[`field_${i + 1}`]).to.eql(`value_${i + 1}`);
+            });
+          }
         },
-      },
-      {
-        name: 'Should throw error if no permissions for "hdel" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_HASH_KEY_1,
-          fields: [constants.getRandomString()],
+        {
+          name: 'Should remove multiple fields',
+          data: {
+            keyName: constants.TEST_HASH_KEY_2,
+            fields: ['field_2999', 'field_2998', 'field_1', 'field_2'],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 4,
+          },
+          after: async () => {
+            const fields = await rte.client.hgetall(constants.TEST_HASH_KEY_2);
+            (new Array(2995).fill(0)).map((_, i) => {
+              expect(fields[`field_${i + 3}`]).to.eql(`value_${i + 3}`);
+            });
+          }
         },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should remove all fields and the key',
+          data: {
+            keyName: constants.TEST_HASH_KEY_2,
+            fields: [
+              ...(new Array(2995).fill(0)).map((_, i) => `field_${i + 3}`)
+            ],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 2995,
+          },
+          after: async () => {
+            expect(await rte.client.exists(constants.TEST_HASH_KEY_2)).to.eql(0);
+          }
+        },
+        {
+          name: 'Should return BadRequest error if try to modify incorrect data type',
+          data: {
+            keyName: constants.TEST_STRING_KEY_1,
+            members: [constants.getRandomString()],
+          },
+          statusCode: 400,
+          responseBody: {
+            statusCode: 400,
+            error: 'Bad Request',
+          },
+        },
+        {
+          name: 'Should return NotFound error if key does not exists',
+          data: {
+            keyName: constants.getRandomString(),
+            fields: [constants.getRandomString()],
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Key with this name does not exist.',
+          },
+        },
+        {
+          name: 'Should return NotFound error if instance id does not exists',
+          endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+          data: {
+            keyName: constants.TEST_HASH_KEY_1,
+            fields: [constants.getRandomString()],
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Invalid database instance id.',
+          },
+        },
+      ].map(mainCheckFn);
+    });
+
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => rte.data.setAclUserRules('~* +@all'));
+
+      [
+        {
+          name: 'Should not delete member',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_HASH_KEY_1,
+            fields: [constants.getRandomString()],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 0,
+          },
+        },
+        {
+          name: 'Should throw error if no permissions for "hdel" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_HASH_KEY_1,
+            fields: [constants.getRandomString()],
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -hdel')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -hdel')
-      },
-      {
-        name: 'Should throw error if no permissions for "exists" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_HASH_KEY_1,
-          fields: [{
-            field: constants.getRandomString(),
-            value: constants.getRandomString(),
-          }],
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "exists" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_HASH_KEY_1,
+            fields: [constants.getRandomString()],
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -exists')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -exists')
-      },
-    ].map(mainCheckFn);
+      ].map(mainCheckFn);
+    });
   });
 });

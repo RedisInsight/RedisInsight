@@ -24,8 +24,8 @@ import {
   BrowserToolKeysCommands,
   BrowserToolRejsonRlCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { BrowserToolService } from '../browser-tool/browser-tool.service';
 import { RedisString } from 'src/common/constants';
+import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 @Injectable()
 export class RejsonRlBusinessService {
@@ -84,6 +84,7 @@ export class RejsonRlBusinessService {
       clientOptions,
       BrowserToolRejsonRlCommands.JsonObjKeys,
       [keyName, path],
+      'utf8',
     );
   }
 
@@ -96,6 +97,7 @@ export class RejsonRlBusinessService {
       clientOptions,
       BrowserToolRejsonRlCommands.JsonType,
       [keyName, path],
+      'utf8',
     );
   }
 
@@ -126,6 +128,7 @@ export class RejsonRlBusinessService {
           clientOptions,
           BrowserToolRejsonRlCommands.JsonObjLen,
           [keyName, path],
+          'utf8',
         );
         break;
       case 'array':
@@ -135,6 +138,7 @@ export class RejsonRlBusinessService {
           clientOptions,
           BrowserToolRejsonRlCommands.JsonArrLen,
           [keyName, path],
+          'utf8',
         );
         break;
       default:

@@ -242,6 +242,10 @@ export const constants = {
   TEST_REJSON_KEY_3: TEST_RUN_ID + '_rejson_3' + CLUSTER_HASH_SLOT,
   TEST_REJSON_VALUE_3: { array: [{ obj: 1 }, 2, 3], object: { some: randomBytes(1024).toString('hex'), field: 'value'} },
   TEST_REJSON_EXPIRE_3: KEY_TTL,
+  TEST_REJSON_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('setk'), unprintableBuf]),
+  get TEST_REJSON_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_REJSON_KEY_BIN_BUFFER_1] } },
+  get TEST_REJSON_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_REJSON_KEY_BIN_BUFFER_1) },
+  get TEST_REJSON_KEY_BIN_UTF8_1() { return this.TEST_REJSON_KEY_BIN_BUFFER_1.toString('utf-8') },
 
   // TSDB-TYPE
   TEST_TS_TYPE: 'TSDB-TYPE',

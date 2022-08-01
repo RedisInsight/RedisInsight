@@ -8,7 +8,6 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
-  IsString,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -131,8 +130,9 @@ export class SearchZSetMembersDto extends PickType(ScanDataTypeDto, [
     default: '*',
   })
   @IsDefined()
-  @IsString()
-  match: string;
+  @IsRedisString()
+  @RedisStringType()
+  match: RedisString;
 }
 
 export class DeleteMembersFromZSetResponse extends DeleteMembersFromSetResponse {}

@@ -6,7 +6,7 @@ import * as IORedis from 'ioredis';
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
-  const sendCommand = async (command: string, args: string[], replyEncoding = 'utf8'): Promise<any> => {
+  const sendCommand = async (command: string, args: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
     return client.sendCommand(new IORedis.Command(command, args, {
       replyEncoding,
     }));
@@ -51,9 +51,13 @@ export const initDataHelper = (rte) => {
     let cursor = null;
     let keys = [];
     while (cursor !== '0') {
-      [cursor, keys] = await node.send_command('scan', [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`])
+      [cursor, keys] = await node.sendCommand(new IORedis.Command(
+        'scan',
+        [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`],
+      ));
+      cursor = cursor.toString();
       if (keys.length) {
-        await node.send_command('del', ...keys)
+        await Promise.all(keys.map((key) => node.sendCommand(new IORedis.Command('del', [key]))));
       }
     }
   }
@@ -82,6 +86,34 @@ export const initDataHelper = (rte) => {
 
     // set
     await client.sadd(constants.TEST_SET_KEY_BIN_BUFFER_1, constants.TEST_SET_MEMBER_BIN_BUFFER_1);
+
+    // zset
+    await client.zadd(
+      constants.TEST_ZSET_KEY_BIN_BUFFER_1,
+      constants.TEST_ZSET_MEMBER_1_SCORE,
+      constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
+    );
+
+    // hash
+    await client.hset(
+      constants.TEST_HASH_KEY_BIN_BUFFER_1,
+      constants.TEST_HASH_FIELD_BIN_BUFFER_1,
+      constants.TEST_HASH_VALUE_BIN_BUFFER_1,
+    );
+
+    // stream
+    await client.xadd(
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      '*',
+      constants.TEST_STREAM_FIELD_BIN_BUFFER_1,
+      constants.TEST_STREAM_VALUE_BIN_BUFFER_1,
+    );
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+      constants.TEST_STREAM_ID_1
+    ]);
   };
 
   // keys

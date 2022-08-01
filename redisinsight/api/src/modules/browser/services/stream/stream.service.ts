@@ -20,10 +20,11 @@ import {
   GetStreamEntriesResponse,
   DeleteStreamEntriesDto,
   DeleteStreamEntriesResponse,
-  StreamEntryDto,
+  StreamEntryDto, StreamEntryFieldDto,
 } from 'src/modules/browser/dto/stream.dto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class StreamService {
@@ -62,6 +63,7 @@ export class StreamService {
         clientOptions,
         BrowserToolStreamCommands.XInfoStream,
         [keyName],
+        'utf8',
       ));
 
       console.log({info});
@@ -76,14 +78,14 @@ export class StreamService {
 
       this.logger.log('Succeed to get entries from the stream.');
 
-      return {
+      return plainToClass(GetStreamEntriesResponse, {
         keyName,
         total: info.length,
         lastGeneratedId: info['last-generated-id'],
         firstEntry: StreamService.formatArrayToDto(info['first-entry']),
         lastEntry: StreamService.formatArrayToDto(info['last-entry']),
         entries,
-      };
+      });
     } catch (error) {
       this.logger.error('Failed to get entries from the stream.', error);
 
@@ -175,7 +177,7 @@ export class StreamService {
 
       const entriesArray = entries.map((entry) => [
         entry.id,
-        ...flatMap(map(entry.fields, (field) => [field[0], field[1]])),
+        ...flatMap(map(entry.fields, (field) => [field.name, field.value])),
       ]);
 
       const toolCommands: Array<[
@@ -246,7 +248,7 @@ export class StreamService {
 
       const entriesArray = entries.map((entry) => [
         entry.id,
-        ...flatMap(map(entry.fields, (field) => [field[0], field[1]])),
+        ...flatMap(map(entry.fields, (field) => [field.name, field.value])),
       ]);
 
       const toolCommands: Array<[
@@ -268,10 +270,10 @@ export class StreamService {
 
       this.logger.log('Succeed to add entries to the stream.');
 
-      return {
+      return plainToClass(AddStreamEntriesResponse, {
         keyName,
         entries: transactionResults.map((entryResult) => entryResult[1]),
-      };
+      });
     } catch (error) {
       this.logger.error('Failed to add entries to the stream.', error);
 
@@ -362,6 +364,15 @@ export class StreamService {
       return null;
     }
 
-    return { id: entry[0], fields: chunk(entry[1] || [], 2) };
+    return {
+      id: entry[0].toString(),
+      fields: chunk(entry[1] || [], 2).map((field) => plainToClass(
+        StreamEntryFieldDto,
+        {
+          name: field[0],
+          value: field[1],
+        },
+      )),
+    };
   }
 }

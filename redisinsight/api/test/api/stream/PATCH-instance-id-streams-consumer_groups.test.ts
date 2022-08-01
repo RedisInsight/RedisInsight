@@ -8,7 +8,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall, getMainCheckFn
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -32,151 +32,182 @@ const validInputData = {
   lastDeliveredId: '$',
 };
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('PATCH /instance/:instanceId/streams/consumer-groups', () => {
-  before(async () => await rte.data.generateKeys(true));
-
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
-    beforeEach(async () => {
-      await rte.client.del(constants.TEST_STREAM_KEY_2);
-      await rte.client.xadd(constants.TEST_STREAM_KEY_2, '*', 'f', 'v');
-    });
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    beforeEach(() => rte.data.generateBinKeys(true));
 
     [
       {
-        name: 'Should update lastDeliveredId',
+        name: 'Should update consumer group lastDeliveredId from buff',
         data: {
-          keyName: constants.TEST_STREAM_KEY_1,
-          name: constants.TEST_STREAM_GROUP_1,
+          keyName: constants.TEST_STREAM_KEY_BIN_BUF_OBJ_1,
+          name: constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1,
           lastDeliveredId: constants.TEST_STREAM_ID_2,
         },
-        before: async () => {
-          const [group] = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
-          expect(group[7]).to.eq(constants.TEST_STREAM_ID_1);
+        after: async () => {
+          const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+          expect(groups).to.deep.eq([
+            [
+              Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+              Buffer.from('consumers'), 0,
+              Buffer.from('pending'), 0,
+              Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
+            ]
+          ]);
+        },
+      },
+      {
+        name: 'Should update consumer group lastDeliveredId from ascii',
+        data: {
+          keyName: constants.TEST_STREAM_KEY_BIN_ASCII_1,
+          name: constants.TEST_STREAM_GROUP_BIN_ASCII_1,
+          lastDeliveredId: constants.TEST_STREAM_ID_2,
         },
         after: async () => {
-          const [group] = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
-          expect(group[7]).to.eq(constants.TEST_STREAM_ID_2);
-        },
-      },
-      {
-        name: 'Should return BadRequest error if key has another type',
-        data: {
-          ...validInputData,
-          keyName: constants.TEST_STRING_KEY_1,
-        },
-        statusCode: 400,
-        responseBody: {
-          statusCode: 400,
-          error: 'Bad Request',
-        },
-      },
-      {
-        name: 'Should return NotFound error if key does not exists',
-        data: {
-          ...validInputData,
-          keyName: constants.getRandomString(),
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Key with this name does not exist.',
-        },
-      },
-      {
-        name: 'Should return NotFound error if group does not exists',
-        data: {
-          ...validInputData,
-          keyName: constants.TEST_STREAM_KEY_2,
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Consumer Group with such name was not found.',
-        },
-      },
-      {
-        name: 'Should return NotFound error if instance id does not exists',
-        endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
-        data: {
-          ...validInputData,
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Invalid database instance id.',
+          const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+          expect(groups).to.deep.eq([
+            [
+              Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+              Buffer.from('consumers'), 0,
+              Buffer.from('pending'), 0,
+              Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
+            ]
+          ]);
         },
       },
     ].map(mainCheckFn);
   });
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-
+  describe('Main', () => {
     before(async () => await rte.data.generateKeys(true));
-    before(async () => rte.data.setAclUserRules('~* +@all'));
 
-    [
-      {
-        name: 'Should create consumer group',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          ...validInputData,
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+
+    describe('Common', () => {
+      beforeEach(async () => {
+        await rte.client.del(constants.TEST_STREAM_KEY_2);
+        await rte.client.xadd(constants.TEST_STREAM_KEY_2, '*', 'f', 'v');
+      });
+
+      [
+        {
+          name: 'Should update lastDeliveredId',
+          data: {
+            keyName: constants.TEST_STREAM_KEY_1,
+            name: constants.TEST_STREAM_GROUP_1,
+            lastDeliveredId: constants.TEST_STREAM_ID_2,
+          },
+          before: async () => {
+            const [group] = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            expect(group[7]).to.eq(constants.TEST_STREAM_ID_1);
+          },
+          after: async () => {
+            const [group] = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            expect(group[7]).to.eq(constants.TEST_STREAM_ID_2);
+          },
         },
-      },
-      {
-        name: 'Should throw error if no permissions for "exists" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          ...validInputData,
+        {
+          name: 'Should return BadRequest error if key has another type',
+          data: {
+            ...validInputData,
+            keyName: constants.TEST_STRING_KEY_1,
+          },
+          statusCode: 400,
+          responseBody: {
+            statusCode: 400,
+            error: 'Bad Request',
+          },
         },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should return NotFound error if key does not exists',
+          data: {
+            ...validInputData,
+            keyName: constants.getRandomString(),
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Key with this name does not exist.',
+          },
+        },
+        {
+          name: 'Should return NotFound error if group does not exists',
+          data: {
+            ...validInputData,
+            keyName: constants.TEST_STREAM_KEY_2,
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Consumer Group with such name was not found.',
+          },
+        },
+        {
+          name: 'Should return NotFound error if instance id does not exists',
+          endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+          data: {
+            ...validInputData,
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Invalid database instance id.',
+          },
+        },
+      ].map(mainCheckFn);
+    });
+
+    describe('ACL', () => {
+      requirements('rte.acl');
+
+      before(async () => await rte.data.generateKeys(true));
+      before(async () => rte.data.setAclUserRules('~* +@all'));
+
+      [
+        {
+          name: 'Should create consumer group',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            ...validInputData,
+          },
+        },
+        {
+          name: 'Should throw error if no permissions for "exists" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            ...validInputData,
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -exists')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -exists')
-      },
-      {
-        name: 'Should throw error if no permissions for "xgroup" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          ...validInputData,
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "xgroup" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            ...validInputData,
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -xgroup')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -xgroup')
-      },
-    ].map(mainCheckFn);
+      ].map(mainCheckFn);
+    });
   });
 });

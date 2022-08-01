@@ -101,9 +101,10 @@ export class ScanDataTypeDto extends KeyDto {
     type: String,
     default: '*',
   })
-  @IsString()
   @IsOptional()
-  match?: string;
+  @IsRedisString()
+  @RedisStringType()
+  match?: RedisString;
 }
 
 export class GetKeysDto {

@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
-import { catchAclError, catchTransactionError, convertStringsArrayToObject } from 'src/utils';
+import { catchAclError, catchTransactionError } from 'src/utils';
 import {
   BrowserToolCommands,
   BrowserToolKeysCommands, BrowserToolStreamCommands,
@@ -17,6 +17,8 @@ import {
   DeleteConsumerGroupsDto, DeleteConsumerGroupsResponse,
   UpdateConsumerGroupDto,
 } from 'src/modules/browser/dto/stream.dto';
+import { plainToClass } from 'class-transformer';
+import { RedisString } from 'src/common/constants';
 
 @Injectable()
 export class ConsumerGroupService {
@@ -89,11 +91,11 @@ export class ConsumerGroupService {
       [dto.keyName, group.name],
     );
 
-    return {
+    return plainToClass(ConsumerGroupDto, {
       ...group,
       smallestPendingId: info?.[1] || null,
       greatestPendingId: info?.[2] || null,
-    };
+    });
   }
 
   /**
@@ -297,19 +299,20 @@ export class ConsumerGroupService {
    * Format single reply entry to DTO
    * @param entry
    */
-  static formatArrayToDto(entry: Array<string | number>): ConsumerGroupDto {
+  static formatArrayToDto(entry: Array<RedisString | number>): ConsumerGroupDto {
     if (!entry?.length) {
       return null;
     }
-    const entryObj = convertStringsArrayToObject(entry as string[]);
 
-    return {
-      name: entryObj['name'],
-      consumers: entryObj['consumers'],
-      pending: entryObj['pending'],
-      lastDeliveredId: entryObj['last-delivered-id'],
+    const [,name,,consumers,,pending,,lastDeliveredId] = entry;
+
+    return plainToClass(ConsumerGroupDto, {
+      name,
+      consumers,
+      pending,
+      lastDeliveredId: lastDeliveredId.toString(),
       smallestPendingId: null,
       greatestPendingId: null,
-    };
+    });
   }
 }

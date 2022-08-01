@@ -12,7 +12,7 @@ const APP_DEFAULT_SETTINGS = {
   agreements: null,
 };
 
-const unprintableBuf = Buffer.from('aced0005', 'hex');
+const unprintableBuf = Buffer.from('acedae', 'hex');
 
 export const constants = {
   // common
@@ -176,6 +176,14 @@ export const constants = {
   TEST_ZSET_HUGE_KEY: 'big zset 1M',
   TEST_ZSET_HUGE_MEMBER: ' 356897',
   TEST_ZSET_HUGE_SCORE: '356897',
+  TEST_ZSET_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('zsetk'), unprintableBuf]),
+  get TEST_ZSET_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_ZSET_KEY_BIN_BUFFER_1] } },
+  get TEST_ZSET_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_ZSET_KEY_BIN_BUFFER_1) },
+  get TEST_ZSET_KEY_BIN_UTF8_1() { return this.TEST_ZSET_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_ZSET_MEMBER_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('zsetm'), unprintableBuf]),
+  get TEST_ZSET_MEMBER_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_ZSET_MEMBER_BIN_BUFFER_1) },
+  get TEST_ZSET_MEMBER_BIN_UTF8_1() { return this.TEST_ZSET_MEMBER_BIN_BUFFER_1.toString('utf-8') },
+  get TEST_ZSET_MEMBER_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_ZSET_MEMBER_BIN_BUFFER_1] } },
 
   // Redis Hash
   TEST_HASH_TYPE: 'hash',
@@ -189,6 +197,18 @@ export const constants = {
   TEST_HASH_HUGE_KEY: 'big hash 1M',
   TEST_HASH_HUGE_KEY_FIELD: 'key678900',
   TEST_HASH_HUGE_KEY_VALUE: ' 678900',
+  TEST_HASH_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('hashk'), unprintableBuf]),
+  get TEST_HASH_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_HASH_KEY_BIN_BUFFER_1] } },
+  get TEST_HASH_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_HASH_KEY_BIN_BUFFER_1) },
+  get TEST_HASH_KEY_BIN_UTF8_1() { return this.TEST_HASH_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_HASH_FIELD_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('hashf'), unprintableBuf]),
+  get TEST_HASH_FIELD_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_HASH_FIELD_BIN_BUFFER_1] } },
+  get TEST_HASH_FIELD_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_HASH_FIELD_BIN_BUFFER_1) },
+  get TEST_HASH_FIELD_BIN_UTF8_1() { return this.TEST_HASH_FIELD_BIN_BUFFER_1.toString('utf-8') },
+  TEST_HASH_VALUE_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('hashv'), unprintableBuf]),
+  get TEST_HASH_VALUE_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_HASH_VALUE_BIN_BUFFER_1] } },
+  get TEST_HASH_VALUE_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_HASH_VALUE_BIN_BUFFER_1) },
+  get TEST_HASH_VALUE_BIN_UTF8_1() { return this.TEST_HASH_VALUE_BIN_BUFFER_1.toString('utf-8') },
 
   // Redis Stream
   TEST_STREAM_TYPE: 'stream',
@@ -210,6 +230,26 @@ export const constants = {
   TEST_STREAM_CONSUMER_1: TEST_RUN_ID + '_stream_consumer_1',
   TEST_STREAM_GROUP_2: TEST_RUN_ID + '_stream_group_2',
   TEST_STREAM_CONSUMER_2: TEST_RUN_ID + '_stream_consumer_2',
+  TEST_STREAM_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamk'), unprintableBuf]),
+  get TEST_STREAM_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_KEY_BIN_BUFFER_1] } },
+  get TEST_STREAM_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_KEY_BIN_BUFFER_1) },
+  get TEST_STREAM_KEY_BIN_UTF8_1() { return this.TEST_STREAM_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_STREAM_FIELD_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamf'), unprintableBuf]),
+  get TEST_STREAM_FIELD_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_FIELD_BIN_BUFFER_1] } },
+  get TEST_STREAM_FIELD_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_FIELD_BIN_BUFFER_1) },
+  get TEST_STREAM_FIELD_BIN_UTF8_1() { return this.TEST_STREAM_FIELD_BIN_BUFFER_1.toString('utf-8') },
+  TEST_STREAM_VALUE_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamv'), unprintableBuf]),
+  get TEST_STREAM_VALUE_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_VALUE_BIN_BUFFER_1] } },
+  get TEST_STREAM_VALUE_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_VALUE_BIN_BUFFER_1) },
+  get TEST_STREAM_VALUE_BIN_UTF8_1() { return this.TEST_STREAM_VALUE_BIN_BUFFER_1.toString('utf-8') },
+  TEST_STREAM_GROUP_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamg'), unprintableBuf]),
+  get TEST_STREAM_GROUP_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_GROUP_BIN_BUFFER_1] } },
+  get TEST_STREAM_GROUP_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_GROUP_BIN_BUFFER_1) },
+  get TEST_STREAM_GROUP_BIN_UTF8_1() { return this.TEST_STREAM_GROUP_BIN_BUFFER_1.toString('utf-8') },
+  TEST_STREAM_CONSUMER_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamc'), unprintableBuf]),
+  get TEST_STREAM_CONSUMER_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_CONSUMER_BIN_BUFFER_1] } },
+  get TEST_STREAM_CONSUMER_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_CONSUMER_BIN_BUFFER_1) },
+  get TEST_STREAM_CONSUMER_BIN_UTF8_1() { return this.TEST_STREAM_CONSUMER_BIN_BUFFER_1.toString('utf-8') },
 
   // ReJSON-RL
   TEST_REJSON_TYPE: 'ReJSON-RL',
@@ -222,6 +262,10 @@ export const constants = {
   TEST_REJSON_KEY_3: TEST_RUN_ID + '_rejson_3' + CLUSTER_HASH_SLOT,
   TEST_REJSON_VALUE_3: { array: [{ obj: 1 }, 2, 3], object: { some: randomBytes(1024).toString('hex'), field: 'value'} },
   TEST_REJSON_EXPIRE_3: KEY_TTL,
+  TEST_REJSON_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('setk'), unprintableBuf]),
+  get TEST_REJSON_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_REJSON_KEY_BIN_BUFFER_1] } },
+  get TEST_REJSON_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_REJSON_KEY_BIN_BUFFER_1) },
+  get TEST_REJSON_KEY_BIN_UTF8_1() { return this.TEST_REJSON_KEY_BIN_BUFFER_1.toString('utf-8') },
 
   // TSDB-TYPE
   TEST_TS_TYPE: 'TSDB-TYPE',

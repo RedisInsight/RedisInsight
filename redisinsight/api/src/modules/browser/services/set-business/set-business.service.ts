@@ -9,7 +9,7 @@ import * as isGlob from 'is-glob';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
-import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
+import { catchAclError, catchTransactionError } from 'src/utils';
 import { ReplyError } from 'src/models';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import {
@@ -101,8 +101,9 @@ export class SetBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      if (dto.match && !isGlob(dto.match, { strict: false })) {
-        const member = unescapeGlob(dto.match);
+      if (dto.match && !isGlob(dto.match.toString(), { strict: false })) {
+        // const member = unescapeGlob(dto.match);
+        const member = dto.match;
         result.nextCursor = 0;
         const memberIsExist = await this.browserTool.execCommand(
           clientOptions,

@@ -4,8 +4,6 @@ import {
   Delete,
   Param,
   Post,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
@@ -18,12 +16,15 @@ import {
   DeleteStreamEntriesResponse,
 } from 'src/modules/browser/dto/stream.dto';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 
 @ApiTags('Streams')
 @Controller('streams')
-// @UsePipes(new ValidationPipe({ transform: true }))
-export class StreamController {
-  constructor(private service: StreamService) {}
+export class StreamController extends BaseController {
+  constructor(private service: StreamService) {
+    super();
+  }
 
   @Post('')
   @ApiRedisInstanceOperation({
@@ -49,6 +50,7 @@ export class StreamController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async addEntries(
     @Param('dbInstance') instanceId: string,
       @Body() dto: AddStreamEntriesDto,
@@ -71,6 +73,7 @@ export class StreamController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async getEntries(
     @Param('dbInstance') instanceId: string,
       @Body() dto: GetStreamEntriesDto,

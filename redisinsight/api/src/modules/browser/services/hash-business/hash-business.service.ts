@@ -28,6 +28,7 @@ import {
   HashFieldDto,
   HashScanResponse,
 } from '../../dto/hash.dto';
+import { plainToClass } from 'class-transformer';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -104,8 +105,9 @@ export class HashBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      if (dto.match && !isGlob(dto.match, { strict: false })) {
-        const field = unescapeGlob(dto.match);
+      if (dto.match && !isGlob(dto.match.toString(), { strict: false })) {
+        // const field = unescapeGlob(dto.match);
+        const field = dto.match;
         result.nextCursor = 0;
         const value = await this.browserTool.execCommand(
           clientOptions,
@@ -113,14 +115,14 @@ export class HashBusinessService {
           [keyName, field],
         );
         if (!isNull(value)) {
-          result.fields.push({ field, value });
+          result.fields.push(plainToClass(HashFieldDto, { field, value }));
         }
       } else {
         const scanResult = await this.scanHash(clientOptions, dto);
         result = { ...result, ...scanResult };
       }
       this.logger.log('Succeed to get fields of the Hash data type.');
-      return result;
+      return plainToClass(GetHashFieldsResponse, result);
     } catch (error) {
       this.logger.error('Failed to get fields of the Hash data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -207,7 +209,7 @@ export class HashBusinessService {
   public async createSimpleHash(
     clientOptions: IFindRedisClientInstanceByOptions,
     key: RedisString,
-    args: string[],
+    args: RedisString[],
   ): Promise<void> {
     await this.browserTool.execCommand(
       clientOptions,
@@ -219,7 +221,7 @@ export class HashBusinessService {
   public async createHashWithExpiration(
     clientOptions: IFindRedisClientInstanceByOptions,
     key: RedisString,
-    args: string[],
+    args: RedisString[],
     expire,
   ): Promise<void> {
     const [
@@ -261,7 +263,7 @@ export class HashBusinessService {
       const fields: HashFieldDto[] = chunk(
         fieldsArray,
         2,
-      ).map(([field, value]: string[]) => ({ field, value }));
+      ).map(([field, value]: string[]) => plainToClass(HashFieldDto, { field, value }));
       result = {
         ...result,
         nextCursor: parseInt(nextCursor, 10),

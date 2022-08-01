@@ -12,7 +12,10 @@ const APP_DEFAULT_SETTINGS = {
   agreements: null,
 };
 
-const unprintableBuf = Buffer.from('acedae', 'hex');
+const unprintableBuf = Buffer.concat([
+  Buffer.from('acedae', 'hex'),
+  Buffer.from(CLUSTER_HASH_SLOT),
+]);
 
 export const constants = {
   // common

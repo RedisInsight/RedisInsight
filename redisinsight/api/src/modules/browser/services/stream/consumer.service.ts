@@ -15,6 +15,7 @@ import {
   ConsumerDto, DeleteConsumersDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class ConsumerService {
@@ -259,6 +260,7 @@ export class ConsumerService {
         clientOptions,
         BrowserToolStreamCommands.XClaim,
         args,
+        'utf8',
       );
 
       this.logger.log('Successfully claimed pending entries.');
@@ -321,13 +323,13 @@ export class ConsumerService {
       return null;
     }
 
-    const entryObj = convertStringsArrayToObject(entry as string[]);
+    const [,name,,pending,,idle] = entry;
 
-    return {
-      name: entryObj['name'],
-      pending: entryObj['pending'],
-      idle: entryObj['idle'],
-    };
+    return plainToClass(ConsumerDto, {
+      name,
+      pending,
+      idle,
+    });
   }
 
   /**
@@ -363,11 +365,11 @@ export class ConsumerService {
       return null;
     }
 
-    return {
+    return plainToClass(PendingEntryDto, {
       id: `${entry[0]}`,
-      consumerName: `${entry[1]}`,
+      consumerName: entry[1],
       idle: +entry[2],
       delivered: +entry[3],
-    };
+    });
   }
 }

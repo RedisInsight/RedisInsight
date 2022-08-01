@@ -320,7 +320,8 @@ export class ConsumerDto {
     description: 'The consumer\'s name',
     example: 'consumer-2',
   })
-  name: string;
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: Number,
@@ -345,8 +346,9 @@ export class GetConsumersDto extends KeyDto {
     example: 'group-1',
   })
   @IsNotEmpty()
-  @IsString()
-  groupName: string;
+  @IsRedisString()
+  @RedisStringType()
+  groupName: RedisString;
 }
 
 export class DeleteConsumersDto extends GetConsumersDto {
@@ -359,9 +361,10 @@ export class DeleteConsumersDto extends GetConsumersDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsString({ each: true })
   @IsNotEmpty({ each: true })
-  consumerNames: string[];
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  consumerNames: RedisString[];
 }
 
 export class PendingEntryDto {
@@ -377,7 +380,8 @@ export class PendingEntryDto {
     description: 'Consumer name',
     example: 'consumer-1',
   })
-  consumerName: string;
+  @RedisStringType()
+  consumerName: RedisString;
 
   @ApiProperty({
     type: Number,
@@ -405,8 +409,9 @@ export class GetPendingEntriesDto extends IntersectionType(
     example: 'consumer-1',
   })
   @IsNotEmpty()
-  @IsString()
-  consumerName: string;
+  @IsRedisString()
+  @RedisStringType()
+  consumerName: RedisString;
 
   @ApiPropertyOptional({
     description: 'Specifying the start id',
@@ -446,9 +451,10 @@ export class AckPendingEntriesDto extends GetConsumersDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsString({ each: true })
+  @IsRedisString({ each: true })
   @IsNotEmpty({ each: true })
-  entries: string[];
+  @RedisStringType({ each: true })
+  entries: RedisString[];
 }
 
 export class AckPendingEntriesResponse {
@@ -466,8 +472,9 @@ export class ClaimPendingEntryDto extends KeyDto {
     example: 'group-1',
   })
   @IsNotEmpty()
-  @IsString()
-  groupName: string;
+  @IsRedisString()
+  @RedisStringType()
+  groupName: RedisString;
 
   @ApiProperty({
     type: String,
@@ -475,8 +482,9 @@ export class ClaimPendingEntryDto extends KeyDto {
     example: 'consumer-1',
   })
   @IsNotEmpty()
-  @IsString()
-  consumerName: string;
+  @IsRedisString()
+  @RedisStringType()
+  consumerName: RedisString;
 
   @ApiProperty({
     description: 'Claim only if its idle time is greater the minimum idle time ',
@@ -497,8 +505,9 @@ export class ClaimPendingEntryDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsString({ each: true })
   @IsNotEmpty({ each: true })
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
   entries: string[];
 
   @ApiPropertyOptional({

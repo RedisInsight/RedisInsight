@@ -1,5 +1,6 @@
 import { join } from 'path';
 import * as os from 'os';
+import { NotificationParameters } from '../pageObjects/notification-page';
 
 const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
     || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
@@ -18,11 +19,13 @@ export function deleteAllNotificationsFromDB(): void {
     db.close();
 }
 
-export function insertNotificationInDB(notifications: any[][]): void {
+export function insertNotificationInDB(notifications: NotificationParameters[]): void {
     const db = new sqlite3.Database(dbPath);
     let query = 'insert into notification ("type", "timestamp", "title", "body", "read") values';
     for (let i = 0; i < notifications.length; i++) {
-        const messageWithQuotes = `'${notifications[i].join('\',\'')  }'`;
+        const messageWithQuotes = `${notifications[i].notificationType}, ${notifications[i].notificationTimestamp},
+        ${notifications[i].notificationTitle}, ${notifications[i].notificationBody}, ${notifications[i].isNotificationRead}`;
+        console.log(`messageWithQuotes: ${messageWithQuotes}`);
         if (i === notifications.length - 1) {
             query = `${query} (${messageWithQuotes})`;
         }

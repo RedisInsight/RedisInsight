@@ -213,6 +213,7 @@ export class ConsumerGroupDto {
     description: 'Consumer Group name',
     example: 'group',
   })
+  @RedisStringType()
   name: string;
 
   @ApiProperty({
@@ -258,8 +259,9 @@ export class CreateConsumerGroupDto {
     example: 'group',
   })
   @IsNotEmpty()
-  @IsString()
-  name: string;
+  @IsRedisString()
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: String,
@@ -299,9 +301,9 @@ export class DeleteConsumerGroupsDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsNotEmpty({ each: true })
-  @IsString({ each: true })
-  consumerGroups: string[];
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  consumerGroups: RedisString[];
 }
 
 export class DeleteConsumerGroupsResponse {

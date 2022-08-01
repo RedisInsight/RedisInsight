@@ -6,7 +6,7 @@ import * as IORedis from 'ioredis';
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
-  const sendCommand = async (command: string, args: string[], replyEncoding = 'utf8'): Promise<any> => {
+  const sendCommand = async (command: string, args: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
     return client.sendCommand(new IORedis.Command(command, args, {
       replyEncoding,
     }));
@@ -104,6 +104,12 @@ export const initDataHelper = (rte) => {
       constants.TEST_STREAM_FIELD_BIN_BUFFER_1,
       constants.TEST_STREAM_VALUE_BIN_BUFFER_1,
     );
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+      constants.TEST_STREAM_ID_1
+    ]);
   };
 
   // keys

@@ -56,8 +56,6 @@ export const initDataHelper = (rte) => {
         [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`],
       ));
       cursor = cursor.toString();
-      console.log('Cursor', cursor)
-      console.log('Keys', keys)
       if (keys.length) {
         await Promise.all(keys.map((key) => node.sendCommand(new IORedis.Command('del', [key]))));
       }

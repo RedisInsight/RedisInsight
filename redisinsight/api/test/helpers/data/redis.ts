@@ -51,9 +51,15 @@ export const initDataHelper = (rte) => {
     let cursor = null;
     let keys = [];
     while (cursor !== '0') {
-      [cursor, keys] = await node.send_command('scan', [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`])
+      [cursor, keys] = await node.sendCommand(new IORedis.Command(
+        'scan',
+        [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`],
+      ));
+      cursor = cursor.toString();
+      console.log('Cursor', cursor)
+      console.log('Keys', keys)
       if (keys.length) {
-        await node.send_command('del', ...keys)
+        await Promise.all(keys.map((key) => node.sendCommand(new IORedis.Command('del', [key]))));
       }
     }
   }

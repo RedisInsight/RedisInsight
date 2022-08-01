@@ -12,7 +12,7 @@ const APP_DEFAULT_SETTINGS = {
   agreements: null,
 };
 
-const unprintableBuf = Buffer.from('aced0005', 'hex');
+const unprintableBuf = Buffer.from('acedae', 'hex');
 
 export const constants = {
   // common

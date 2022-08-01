@@ -18,6 +18,32 @@ import {
 import { KeyDto, KeyResponse, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
 import { Type } from 'class-transformer';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { RedisString } from 'src/common/constants';
+
+export class StreamEntryFieldDto {
+  @ApiProperty({
+    type: String,
+    description: 'Entry field name',
+    example: 'field1',
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsRedisString()
+  @RedisStringType()
+  name: RedisString;
+
+  @ApiProperty({
+    type: String,
+    description: 'Entry value',
+    example: 'value1',
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsRedisString()
+  @RedisStringType()
+  value: RedisString;
+}
 
 export class StreamEntryDto {
   @ApiProperty({
@@ -33,13 +59,15 @@ export class StreamEntryDto {
   @ApiProperty({
     type: Object,
     description: 'Entry fields',
-    example: [['field1', 'value1'], ['field2', 'value2']],
+    example: [{ name: 'field1', value: 'value1' }, { name: 'field2', value: 'value2' }],
   })
   @IsDefined()
   @IsNotEmpty()
-  @IsArray()
   @ArrayNotEmpty()
-  fields: Array<Array<string>>;
+  @IsArray()
+  @Type(() => StreamEntryFieldDto)
+  @ValidateNested({ each: true })
+  fields: StreamEntryFieldDto[];
 }
 
 export class GetStreamEntriesDto extends KeyDto {
@@ -100,12 +128,14 @@ export class GetStreamEntriesResponse extends KeyResponse {
     description: 'First stream entry',
     type: StreamEntryDto,
   })
+  @Type(() => StreamEntryDto)
   firstEntry: StreamEntryDto;
 
   @ApiProperty({
     description: 'Last stream entry',
     type: StreamEntryDto,
   })
+  @Type(() => StreamEntryDto)
   lastEntry: StreamEntryDto;
 
   @ApiProperty({
@@ -113,6 +143,7 @@ export class GetStreamEntriesResponse extends KeyResponse {
     type: StreamEntryDto,
     isArray: true,
   })
+  @Type(() => StreamEntryDto)
   entries: StreamEntryDto[];
 }
 
@@ -124,17 +155,11 @@ export class AddStreamEntriesDto extends KeyDto {
     example: [
       {
         id: '*',
-        fields: [
-          ['field1', 'value1'],
-          ['field2', 'value2'],
-        ],
+        fields: [{ name: 'field1', value: 'value1' }, { name: 'field2', value: 'value2' }],
       },
       {
         id: '*',
-        fields: [
-          ['field1', 'value1'],
-          ['field2', 'value2'],
-        ],
+        fields: [{ name: 'field1', value: 'value1' }, { name: 'field2', value: 'value2' }],
       },
     ],
   })

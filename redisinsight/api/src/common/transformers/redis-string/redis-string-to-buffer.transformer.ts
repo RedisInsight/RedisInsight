@@ -7,6 +7,7 @@ const SingleRedisStringToBuffer = (value: any) => {
     return value;
   }
 
+  console.log('ooooo', value);
   return Buffer.from(value);
 };
 

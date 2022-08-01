@@ -96,6 +96,14 @@ export const initDataHelper = (rte) => {
       constants.TEST_HASH_FIELD_BIN_BUFFER_1,
       constants.TEST_HASH_VALUE_BIN_BUFFER_1,
     );
+
+    // stream
+    await client.xadd(
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      '*',
+      constants.TEST_STREAM_FIELD_BIN_BUFFER_1,
+      constants.TEST_STREAM_VALUE_BIN_BUFFER_1,
+    );
   };
 
   // keys

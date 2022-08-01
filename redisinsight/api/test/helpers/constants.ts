@@ -230,6 +230,18 @@ export const constants = {
   TEST_STREAM_CONSUMER_1: TEST_RUN_ID + '_stream_consumer_1',
   TEST_STREAM_GROUP_2: TEST_RUN_ID + '_stream_group_2',
   TEST_STREAM_CONSUMER_2: TEST_RUN_ID + '_stream_consumer_2',
+  TEST_STREAM_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamk'), unprintableBuf]),
+  get TEST_STREAM_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_KEY_BIN_BUFFER_1] } },
+  get TEST_STREAM_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_KEY_BIN_BUFFER_1) },
+  get TEST_STREAM_KEY_BIN_UTF8_1() { return this.TEST_STREAM_KEY_BIN_BUFFER_1.toString('utf-8') },
+  TEST_STREAM_FIELD_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamf'), unprintableBuf]),
+  get TEST_STREAM_FIELD_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_FIELD_BIN_BUFFER_1] } },
+  get TEST_STREAM_FIELD_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_FIELD_BIN_BUFFER_1) },
+  get TEST_STREAM_FIELD_BIN_UTF8_1() { return this.TEST_STREAM_FIELD_BIN_BUFFER_1.toString('utf-8') },
+  TEST_STREAM_VALUE_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('streamv'), unprintableBuf]),
+  get TEST_STREAM_VALUE_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STREAM_VALUE_BIN_BUFFER_1] } },
+  get TEST_STREAM_VALUE_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STREAM_VALUE_BIN_BUFFER_1) },
+  get TEST_STREAM_VALUE_BIN_UTF8_1() { return this.TEST_STREAM_VALUE_BIN_BUFFER_1.toString('utf-8') },
 
   // ReJSON-RL
   TEST_REJSON_TYPE: 'ReJSON-RL',

@@ -23,7 +23,7 @@ export class NotificationPage {
     notificationDate = Selector('[data-testid=notification-date]');
     notificationList = Selector(this.cssNotificationList);
     //ICONS
-    notificationBadge = Selector('[data-testid=total-unread-badge]');
+    notificationBadge = Selector('[data-testid=total-unread-badge]', { timeout: 30000 });
 
     /**
      * Get number of unread messages from notification bell

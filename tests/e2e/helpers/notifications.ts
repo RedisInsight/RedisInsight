@@ -4,7 +4,8 @@ import { NotificationParameters } from '../pageObjects/notification-page';
 
 const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
     || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
-const dbPath = `${workingDirectory}/redisinsight.db`;
+// const dbPath = `${workingDirectory}/redisinsight.db`;
+const dbPath = 'E:\\Redis\\RedisInsight\\tests\\e2e\\.redisinsight-v2\\redisinsight.db';
 console.log(`dbPath: ${dbPath}`);
 
 const sqlite3 = require('sqlite3').verbose();

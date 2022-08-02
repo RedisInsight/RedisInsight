@@ -1,7 +1,7 @@
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, BulkActionsPage, MyRedisDatabasePage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneRedisearch, ossStandaloneRedisearchForKeysScript } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { addHashKeyApi, addSetKeyApi } from '../../../helpers/api/api-keys';
@@ -17,7 +17,7 @@ const hashKeyParameters = { keyName: keyNames[0], fields: [{ field: common.gener
 const setKeyParameters = { keyName: keyNames[1], members: [common.generateWord(20)] };
 const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
 
-fixture.only `Bulk Delete`
+fixture `Bulk Delete`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

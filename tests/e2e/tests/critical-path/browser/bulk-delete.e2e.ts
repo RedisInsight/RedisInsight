@@ -15,9 +15,9 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const keyNames = [common.generateWord(20), common.generateWord(20)];
 const hashKeyParameters = { keyName: keyNames[0], fields: [{ field: common.generateWord(20), value: common.generateWord(20) }] };
 const setKeyParameters = { keyName: keyNames[1], members: [common.generateWord(20)] };
-const dbParameters = { host: ossStandaloneRedisearchForKeysScript.host, port: ossStandaloneRedisearchForKeysScript.port };
+const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
 
-fixture `Bulk Delete`
+fixture.only `Bulk Delete`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

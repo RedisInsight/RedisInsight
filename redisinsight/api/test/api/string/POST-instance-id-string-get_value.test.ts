@@ -130,7 +130,7 @@ describe('POST /instance/:instanceId/string/get-value', () => {
           responseBody: {
             statusCode: 400,
             error: 'Bad Request',
-            message: 'WRONGTYPE Operation against a key holding the wrong kind of value',
+            // message: 'WRONGTYPE Operation against a key holding the wrong kind of value',
           },
         },
         {

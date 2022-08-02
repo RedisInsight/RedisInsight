@@ -12,7 +12,10 @@ const APP_DEFAULT_SETTINGS = {
   agreements: null,
 };
 
-const unprintableBuf = Buffer.from('acedae', 'hex');
+const unprintableBuf = Buffer.concat([
+  Buffer.from('acedae', 'hex'),
+  Buffer.from(CLUSTER_HASH_SLOT),
+]);
 
 export const constants = {
   // common
@@ -175,7 +178,7 @@ export const constants = {
   TEST_ZSET_KEY_3: TEST_RUN_ID + '_zset_3' + CLUSTER_HASH_SLOT,
   TEST_ZSET_HUGE_KEY: 'big zset 1M',
   TEST_ZSET_HUGE_MEMBER: ' 356897',
-  TEST_ZSET_HUGE_SCORE: '356897',
+  TEST_ZSET_HUGE_SCORE: 356897,
   TEST_ZSET_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('zsetk'), unprintableBuf]),
   get TEST_ZSET_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_ZSET_KEY_BIN_BUFFER_1] } },
   get TEST_ZSET_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_ZSET_KEY_BIN_BUFFER_1) },

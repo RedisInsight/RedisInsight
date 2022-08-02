@@ -132,7 +132,10 @@ export enum RedisDefaultModules {
   Bloom = 'bf',
   ReJSON = 'ReJSON',
   Search = 'search',
+  SearchLight = 'searchlight',
   TimeSeries = 'timeseries',
+  FT = 'ft',
+  FTL = 'ftl',
 }
 
 export enum RedisCustomModulesName {
@@ -148,6 +151,9 @@ export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
   [RedisDefaultModules.Bloom]: 'RedisBloom',
   [RedisDefaultModules.ReJSON]: 'RedisJSON',
   [RedisDefaultModules.Search]: 'RediSearch',
+  [RedisDefaultModules.SearchLight]: 'RediSearch Light',
+  [RedisDefaultModules.FT]: 'RediSearch',
+  [RedisDefaultModules.FTL]: 'RediSearch Light',
   [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
   [RedisCustomModulesName.Proto]: 'redis-protobuf',
   [RedisCustomModulesName.IpTables]: 'RedisPushIpTables'

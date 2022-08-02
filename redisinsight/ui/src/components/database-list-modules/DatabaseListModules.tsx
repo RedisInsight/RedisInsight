@@ -43,6 +43,11 @@ export interface Props {
   withoutStyles?: boolean
 }
 
+const rediSearchIcons = {
+  iconDark: RedisSearchDark,
+  iconLight: RedisSearchLight,
+}
+
 export const modulesDefaultInit = {
   [RedisDefaultModules.AI]: {
     iconDark: RedisAIDark,
@@ -70,9 +75,20 @@ export const modulesDefaultInit = {
     text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.ReJSON],
   },
   [RedisDefaultModules.Search]: {
-    iconDark: RedisSearchDark,
-    iconLight: RedisSearchLight,
+    ...rediSearchIcons,
     text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Search],
+  },
+  [RedisDefaultModules.SearchLight]: {
+    ...rediSearchIcons,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.SearchLight],
+  },
+  [RedisDefaultModules.FT]: {
+    ...rediSearchIcons,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.FT],
+  },
+  [RedisDefaultModules.FTL]: {
+    ...rediSearchIcons,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.FTL],
   },
   [RedisDefaultModules.TimeSeries]: {
     iconDark: RedisTimeSeriesDark,

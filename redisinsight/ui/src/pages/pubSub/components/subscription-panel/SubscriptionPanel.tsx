@@ -46,7 +46,7 @@ const SubscriptionPanel = () => {
   const displayMessages = count !== 0 || isSubscribed
 
   return (
-    <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" gutterSize="s" responsive={false}>
+    <EuiFlexGroup className={styles.container} alignItems="center" justifyContent="spaceBetween" gutterSize="s" responsive={false}>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
           <EuiFlexItem grow={false} className={styles.iconSubscribe}>

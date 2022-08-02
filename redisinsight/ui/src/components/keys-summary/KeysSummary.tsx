@@ -89,7 +89,7 @@ const KeysSummary = (props: Props) => {
           </EuiText>
         </div>
       )}
-      {loading && !totalItemsCount && (
+      {loading && !totalItemsCount && !isNull(totalItemsCount) && (
         <EuiText size="xs" data-testid="scanning-text">
           Scanning...
         </EuiText>

@@ -35,12 +35,11 @@ const BulkDeleteSummary = () => {
             <EuiToolTip
               position="right"
               anchorClassName={styles.tooltipAnchor}
-              data-testid="bulk-delete-tooltip"
               content="Expected amount is estimated based on
               the number of keys scanned and the scan percentage.
               The final number may be different."
             >
-              <EuiIcon color="subdued" type="iInCircle" />
+              <EuiIcon color="subdued" type="iInCircle" data-testid="bulk-delete-tooltip" />
             </EuiToolTip>
           </EuiText>
           <EuiText color="subdued" className={styles.summaryApproximate} data-testid="bulk-delete-summary">

@@ -11,7 +11,7 @@ export class BulkActionsPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
-    bulkDeleteTooltip = Selector('[data-testid=bulk-delete-tooltip]');
+    bulkDeleteTooltipIcon = Selector('[data-testid=bulk-delete-tooltip]');
     deleteButton = Selector('[data-testid=bulk-action-warning-btn]');
     bulkApplyButton = Selector('[data-testid=bulk-action-apply-btn]');
     bulkStopButton = Selector('[data-testid=bulk-action-stop-btn]');
@@ -36,7 +36,7 @@ export class BulkActionsPage {
     /**
    * Open Bulk Actions and confirm deletion
    */
-     async startBulkDelete(): Promise<void> {
+    async startBulkDelete(): Promise<void> {
         await t.click(browserPage.bulkActionsButton);
         await t.click(this.deleteButton);
         await t.click(this.bulkApplyButton);

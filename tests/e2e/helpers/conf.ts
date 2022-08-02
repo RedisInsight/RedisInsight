@@ -93,3 +93,8 @@ export const ossStandaloneNoPermissionsConfig = {
     databaseUsername: process.env.OSS_STANDALONE_USERNAME || 'noperm',
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };
+
+export const ossStandaloneRedisearchForKeysScript = {
+    host: 'localhost',
+    port: '8102'
+};

@@ -58,9 +58,9 @@ const BulkActionsInfo = (props: Props) => {
           </EuiText>
         )}
       </div>
-      <Divider colorVariable="separatorColor" className={styles.divider} data-testid="progress-line" />
+      <Divider colorVariable="separatorColor" className={styles.divider} />
       {loading && (
-        <div className={styles.progressLine}><div style={{ width: `${(total ? scanned / total : 0) * 100}%` }} /></div>
+        <div className={styles.progressLine} data-testid="progress-line"><div style={{ width: `${(total ? scanned / total : 0) * 100}%` }} /></div>
       )}
       <div className={styles.children}>
         {children}

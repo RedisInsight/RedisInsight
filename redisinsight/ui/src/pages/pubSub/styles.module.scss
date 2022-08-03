@@ -23,13 +23,14 @@
   }
 
   .header {
-    padding: 18px;
+    padding: 24px 18px 12px;
     border-bottom: 1px solid var(--separatorColor);
   }
 
   .title {
     font-size: 16px;
-    margin-bottom: 12px;
+    line-height: 24px;
+    margin-bottom: 18px;
   }
 
   .tableWrapper {

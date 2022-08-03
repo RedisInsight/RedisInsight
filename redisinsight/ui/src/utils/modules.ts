@@ -11,6 +11,7 @@ export interface IDatabaseModule {
 
 const PREDEFINED_MODULE_NAMES_ORDER: string[] = [
   RedisDefaultModules.Search,
+  RedisDefaultModules.SearchLight,
   RedisDefaultModules.ReJSON,
   RedisDefaultModules.Graph,
   RedisDefaultModules.TimeSeries,

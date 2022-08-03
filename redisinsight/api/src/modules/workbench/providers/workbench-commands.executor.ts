@@ -12,6 +12,7 @@ import {
   parseRedirectionError,
   splitCliCommandLine,
 } from 'src/utils/cli-helper';
+import { CommandType } from 'src/constants';
 import {
   CommandNotSupportedError,
   CommandParsingError,
@@ -19,6 +20,7 @@ import {
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
+import { CommandsService } from 'src/modules/commands/commands.service';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { RawFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/raw-formatter.strategy';
@@ -33,6 +35,7 @@ export class WorkbenchCommandsExecutor {
   constructor(
     private redisTool: RedisToolService,
     private analyticsService: WorkbenchAnalyticsService,
+    private readonly commandsService: CommandsService,
   ) {}
 
   public async sendCommand(
@@ -77,10 +80,13 @@ export class WorkbenchCommandsExecutor {
       this.logger.log('Succeed to execute workbench command.');
 
       const result = { response, status: CommandExecutionStatus.Success };
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
+
+      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
       return result;
     } catch (error) {
       this.logger.error('Failed to execute workbench command.', error);
+
       const result = { response: error.message, status: CommandExecutionStatus.Fail };
       if (
         error instanceof CommandParsingError
@@ -129,7 +135,9 @@ export class WorkbenchCommandsExecutor {
         result.slot = parseInt(slot, 10);
       }
 
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
+
+      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
       const {
         host, port, error, slot, ...rest
       } = result;
@@ -166,6 +174,7 @@ export class WorkbenchCommandsExecutor {
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
+      const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
       return (
         await this.redisTool.execCommandForNodes(clientOptions, command, args, role, replyEncoding)
@@ -178,7 +187,8 @@ export class WorkbenchCommandsExecutor {
           status,
           node: { host, port },
         };
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
+
+        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
         return result;
       });
     } catch (error) {
@@ -196,5 +206,11 @@ export class WorkbenchCommandsExecutor {
       }
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  private async checkIsCoreCommand(command: string) {
+    const commands = await this.commandsService.getCommandsGroups();
+
+    return !!commands?.main[command.toUpperCase()];
   }
 }

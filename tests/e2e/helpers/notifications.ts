@@ -4,8 +4,7 @@ import { NotificationParameters } from '../pageObjects/notification-page';
 
 const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
     || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
-// const dbPath = `${workingDirectory}/redisinsight.db`;
-const dbPath = 'E:\\Redis\\RedisInsight\\tests\\e2e\\.redisinsight-v2\\redisinsight.db';
+const dbPath = `${workingDirectory}/redisinsight.db`;
 console.log(`dbPath: ${dbPath}`);
 
 const sqlite3 = require('sqlite3').verbose();
@@ -24,8 +23,8 @@ export function insertNotificationInDB(notifications: NotificationParameters[]):
     const db = new sqlite3.Database(dbPath);
     let query = 'insert into notification ("type", "timestamp", "title", "body", "read") values';
     for (let i = 0; i < notifications.length; i++) {
-        const messageWithQuotes = `${notifications[i].notificationType}, ${notifications[i].notificationTimestamp},
-        ${notifications[i].notificationTitle}, ${notifications[i].notificationBody}, ${notifications[i].isNotificationRead}`;
+        const messageWithQuotes = `${notifications[i].type}, ${notifications[i].timestamp},
+        ${notifications[i].title}, ${notifications[i].body}, ${notifications[i].isRead}`;
         console.log(`messageWithQuotes: ${messageWithQuotes}`);
         if (i === notifications.length - 1) {
             query = `${query} (${messageWithQuotes})`;

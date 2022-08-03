@@ -1,4 +1,9 @@
-import { Selector } from 'testcafe';
+import { Selector, t } from 'testcafe';
+import { SettingsPage } from './settings-page';
+import { MyRedisDatabasePage } from './my-redis-databases-page';
+
+const settingsPage = new SettingsPage();
+const myRedisDatabasePage = new MyRedisDatabasePage();
 
 export class NotificationPage {
     //-------------------------------------------------------------------------------------------
@@ -9,6 +14,9 @@ export class NotificationPage {
     //-------------------------------------------------------------------------------------------
     // CSS Selectors
     cssNotificationList = '[data-testid=notifications-list]';
+    cssNotificationTitle = '[data-testid=notification-title]';
+    cssNotificationBody = '[data-testid=notification-body]';
+    cssNotificationDate = '[data-testid=notification-date]';
     //BUTTONS
     notificationCenterButton = Selector('[data-testid=notification-menu-button]');
     closeNotificationPopup = Selector('[data-testid=close-notification-btn]');
@@ -18,12 +26,12 @@ export class NotificationPage {
     //TEXT ELEMENTS
     emptyNotificationMessage = Selector('[data-testid=no-notifications-text]');
     unreadNotification = Selector('[data-testid^=notification-item-unread]');
-    notificationTitle = Selector('[data-testid=notification-title]');
-    notificationBody = Selector('[data-testid=notification-body]');
-    notificationDate = Selector('[data-testid=notification-date]');
+    notificationTitle = Selector(this.cssNotificationTitle);
+    notificationBody = Selector(this.cssNotificationBody);
+    notificationDate = Selector(this.cssNotificationDate);
     notificationList = Selector(this.cssNotificationList);
     //ICONS
-    notificationBadge = Selector('[data-testid=total-unread-badge]', { timeout: 30000 });
+    notificationBadge = Selector('[data-testid=total-unread-badge]', { timeout: 35000 });
 
     /**
      * Get number of unread messages from notification bell
@@ -36,8 +44,28 @@ export class NotificationPage {
      * Get number of unread messages from notification bell
      */
     async convertEpochDateToMessageDate(notification: NotificationParameters): Promise<string> {
-        const epochTimeConversion = new Date(notification.notificationTimestamp).toDateString();
-        return epochTimeConversion.substr(epochTimeConversion.indexOf(' ') + 1);
+        const epochTimeConversion = new Date(notification.timestamp * 1000).toDateString();
+        const converted = epochTimeConversion.split(' ');
+        console.log(`convertEpochDateToMessageDate: ${[converted[2], converted[1], converted[3]].join(' ')}`);
+        return [converted[2], converted[1], converted[3]].join(' ');
+    }
+
+    /**
+     * Turn on notifications in Settings
+     */
+    async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
+        await t.click(myRedisDatabasePage.settingsButton);
+        await t.click(settingsPage.accordionAppearance);
+        if (toValue === true) {
+            if (await settingsPage.getNotificationsSwitcherValue() === 'false') {
+                await t.click(settingsPage.switchNotificationsOption);
+            }
+        }
+        if (toValue === false) {
+            if (await settingsPage.getNotificationsSwitcherValue() === 'true') {
+                await t.click(settingsPage.switchNotificationsOption);
+            }
+        }
     }
 }
 /**
@@ -49,9 +77,9 @@ export class NotificationPage {
  * @param isNotificationRead Identification is message read
  */
 export type NotificationParameters = {
-    notificationType: string,
-    notificationTimestamp: number,
-    notificationTitle: string,
-    notificationBody: string,
-    isNotificationRead: boolean
+    title: string,
+    timestamp: number,
+    body: string,
+    type?: string,
+    isRead?: boolean
 };

@@ -94,7 +94,7 @@ export class StandaloneStrategy extends AbstractStrategy {
       && !fullScanned
       && node.keys.length < count
       && (
-        (node.total < settings.scanThreshold && node.cursor)
+        (!isNull(node.total) && node.total < settings.scanThreshold && node.cursor)
         || node.scanned < settings.scanThreshold
       )
     ) {

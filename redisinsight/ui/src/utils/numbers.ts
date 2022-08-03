@@ -7,7 +7,7 @@ export const numberWithSpaces = (number: number = 0) => number.toString().replac
 
 export const nullableNumberWithSpaces = (number: Nullable<number> = 0) => {
   if (isNull(number)) {
-    return '-'
+    return '—'
   }
   return numberWithSpaces(number)
 }

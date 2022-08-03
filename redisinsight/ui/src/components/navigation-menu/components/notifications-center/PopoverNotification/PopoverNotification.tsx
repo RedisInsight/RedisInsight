@@ -1,10 +1,7 @@
-import { EuiButtonIcon, EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButtonIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
-import { format } from 'date-fns'
-import parse from 'html-react-parser'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
 import {
   notificationCenterSelector,
   setIsCenterOpen,
@@ -13,6 +10,7 @@ import {
 } from 'uiSrc/slices/app/notifications'
 import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import Notification from '../Notification/Notification'
 
 import styles from '../styles.module.scss'
 
@@ -103,18 +101,7 @@ const PopoverNotification = () => {
               onClick={() => handleClickClose(lastReceivedNotification)}
               data-testid="close-notification-btn"
             />
-
-            <EuiTitle size="xs" className={styles.notificationTitle} data-testid="notification-title">
-              <span>{lastReceivedNotification.title}</span>
-            </EuiTitle>
-
-            <EuiText size="s" color="subdued" className={cx('notificationHTMLBody', styles.notificationBody)} data-testid="notification-body">
-              {parse(lastReceivedNotification.body)}
-            </EuiText>
-
-            <EuiText size="xs" color="subdued" textAlign="right" className={styles.notificationDate} data-testid="notification-date">
-              {format(lastReceivedNotification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}
-            </EuiText>
+            <Notification notification={lastReceivedNotification} />
           </div>
         </EuiPopover>
       )}

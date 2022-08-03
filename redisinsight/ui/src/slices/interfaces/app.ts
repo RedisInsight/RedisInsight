@@ -135,6 +135,10 @@ export interface IGlobalNotification {
   title: string
   body: string
   read: boolean
+  category?: {
+    name: string
+    color: string
+  }
 }
 
 export interface StateAppNotifications {

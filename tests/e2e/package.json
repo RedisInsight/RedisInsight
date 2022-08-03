@@ -38,7 +38,6 @@
     "eslint": "7.32.0",
     "eslint-plugin-import": "2.24.2",
     "redis": "^3.0.2",
-    "redis-rejson": "^1.0.0",
     "supertest": "^4.0.2",
     "testcafe": "1.14.2",
     "testcafe-browser-provider-electron": "0.0.18",

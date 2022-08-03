@@ -30,7 +30,7 @@ fixture `Bulk Delete`
         await deleteAllKeysFromDB(dbParameters.host, dbParameters.port);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test('Verify that user can access the bulk actions screen by clicking on the “Bulk Actions” button in the Browser', async t => {
+test('Verify that user can access the bulk actions screen in the Browser', async t => {
     // Filter by Hash keys
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     // Open bulk actions

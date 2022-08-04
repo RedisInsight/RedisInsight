@@ -100,17 +100,33 @@ export async function addListKeyApi(keyParameters: ListKeyParameters, databasePa
 }
 
 /**
- * Delete Key by name
- * @param keyParameters The key parameters
+ * Search Key by name
+ * @param keyName The key name
  * @param databaseParameters The database parameters
  */
-export async function deleteKeyApi(keyParameters: ListKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
+export async function searchKeyByNameApi(keyName: string, databaseParameters: AddNewDatabaseParameters): Promise<string[]> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).delete(`/instance/${databaseId}/keys`)
-        .send({ 'keyNames': [keyParameters.keyName] })
-        .set('Accept', 'application/json');
+    const response = await request(endpoint).get(`/instance/${databaseId}/keys?cursor=0&count=5000&match=${keyName}`)
+        .set('Accept', 'application/json').expect(200);
 
-    await t.expect(response.status).eql(200, 'The deletion of the key request failed');
+    return await response.body[0].keys;
+}
+
+/**
+ * Delete Key by name if it exists
+ * @param keyName The key name
+ * @param databaseParameters The database parameters
+ */
+export async function deleteKeyByNameApi(keyName: string, databaseParameters: AddNewDatabaseParameters): Promise<void> {
+    const databaseId = await getDatabaseByName(databaseParameters.databaseName);
+    const isKeyExist = await searchKeyByNameApi(keyName, databaseParameters);
+    if (isKeyExist.length > 0) {
+        const response = await request(endpoint).delete(`/instance/${databaseId}/keys`)
+            .send({ 'keyNames': [keyName] })
+            .set('Accept', 'application/json');
+
+        await t.expect(response.status).eql(200, 'The deletion of the key request failed');
+    }
 }
 
 /**

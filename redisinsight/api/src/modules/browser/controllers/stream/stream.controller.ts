@@ -55,9 +55,6 @@ export class StreamController extends BaseController {
     @Param('dbInstance') instanceId: string,
       @Body() dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
-
-    console.log({dto});
-
     return this.service.addEntries({ instanceId }, dto);
   }
 

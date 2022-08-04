@@ -55,9 +55,9 @@ export class StreamService {
         [keyName],
       );
 
-      // if (!exists) {
-      //   throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
-      // }
+      if (!exists) {
+        throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
+      }
 
       const info = convertStringsArrayToObject(await this.browserTool.execCommand(
         clientOptions,
@@ -65,9 +65,6 @@ export class StreamService {
         [keyName],
         'utf8',
       ));
-
-      console.log({info});
-
 
       let entries = [];
       if (sortOrder && sortOrder === SortOrder.Asc) {

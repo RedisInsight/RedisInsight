@@ -37,6 +37,7 @@ export class NotificationPage {
      * Get number of unread messages from notification bell
      */
     async getUnreadNotificationNumber(): Promise<number> {
+        console.log(`unreadBadge: ${await this.notificationBadge.textContent}`);
         return parseInt(await this.notificationBadge.textContent);
     }
 

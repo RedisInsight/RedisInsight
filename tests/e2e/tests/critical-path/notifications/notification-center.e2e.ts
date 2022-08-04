@@ -12,7 +12,7 @@ console.log(`jsonNotifications: ${jsonNotifications}`);
 const notificationPage = new NotificationPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
-fixture `Notification Center`
+fixture.only `Notifications`
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async t => {

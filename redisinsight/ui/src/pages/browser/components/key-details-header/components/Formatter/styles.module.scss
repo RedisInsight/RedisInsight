@@ -12,9 +12,20 @@
 
   & ~ div {
     right: 4px;
+    top: 3px;
     svg {
-      width: 10px !important;
-      height: 10px !important;
+      width: 11px !important;
+      height: 11px !important;
     }
   }
+}
+
+.controlsIcon {
+  position: relative;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.dropdownDisplaySmall {
+  left: 100px !important;
 }

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption, EuiText } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
 
 import { KeyValueFormat, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -33,14 +34,20 @@ const KeyValueFormatter = (props: Props) => {
           value,
           inputDisplay: (
             <>
-              {width > MIDDLE_SCREEN_RESOLUTION && text}
+              {text}
+              {/* Waiting for icon */}
+              {/* {width > MIDDLE_SCREEN_RESOLUTION && text}
               {width <= MIDDLE_SCREEN_RESOLUTION && (
                 <EuiIcon
                   type={theme === Theme.Dark ? iconDark : iconLight}
                   className={styles.controlsIcon}
                   data-testid={`key-value-formatter-option-selected-${value}`}
                 />
-              )}
+                )}
+              >
+                {text}
+              </EuiText>
+              */}
             </>
           ),
           dropdownDisplay: <EuiText className={styles.dropdownDisplay}>{text}</EuiText>,
@@ -50,7 +57,7 @@ const KeyValueFormatter = (props: Props) => {
     )
 
     setOptions(newOptions)
-  }, [viewFormat, keyType])
+  }, [viewFormat, keyType, width])
 
   const onChangeType = (value: KeyValueFormat) => {
     setTypeSelected(value)
@@ -61,8 +68,9 @@ const KeyValueFormatter = (props: Props) => {
   return (
     <div className={styles.container}>
       <EuiSuperSelect
-        options={options}
+        // isOpen
         isOpen={isSelectOpen}
+        options={options}
         valueOfSelected={typeSelected}
         className={styles.changeView}
         itemClassName={styles.formatType}

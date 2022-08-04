@@ -840,8 +840,8 @@ export function fetchConsumers(
 // Asynchronous thunk action
 export function deleteConsumersAction(
   keyName: RedisResponseBuffer,
-  groupName: string,
-  consumerNames: string[],
+  groupName: RedisResponseBuffer,
+  consumerNames: RedisResponseBuffer[],
   onSuccessAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -870,7 +870,7 @@ export function deleteConsumersAction(
         dispatch<any>(refreshKeyInfoAction(keyName))
         dispatch(addMessageNotification(
           successMessages.REMOVED_KEY_VALUE(
-            key,
+            bufferToString(keyName),
             consumerNames.join(''),
             'Consumer'
           )

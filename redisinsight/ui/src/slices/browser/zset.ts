@@ -142,7 +142,7 @@ const zsetSlice = createSlice({
     removeMembersFromList: (state, { payload }: { payload: RedisResponseBuffer[] }) => {
       remove(
         state.data?.members,
-        ({ name: { data } }: { name: RedisResponseBuffer }) => first(payload)?.data.join('') === data?.join('')
+        (member) => payload.findIndex((item) => isEqualBuffers(item, member.name)) > -1
       )
 
       state.data = {

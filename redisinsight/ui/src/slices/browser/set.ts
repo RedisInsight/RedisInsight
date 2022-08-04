@@ -3,7 +3,7 @@ import { first, remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { bufferToString, getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
@@ -120,7 +120,7 @@ const setSlice = createSlice({
     removeMembersFromList: (state, { payload }: { payload: RedisResponseBuffer[] }) => {
       remove(
         state.data?.members,
-        ({ data }: { data: any[] }) => first(payload)?.data.join('') === data.join('')
+        (member: { data: any[] }) => payload.findIndex((item) => isEqualBuffers(item, member)) > -1
       )
 
       state.data = {

@@ -15,6 +15,7 @@ module.exports = {
     'remark-rehype': '<rootDir>/redisinsight/__mocks__/remarkRehype.js',
     'rehype-stringify': '<rootDir>/redisinsight/__mocks__/rehypeStringify.js',
     'unist-util-visit': '<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js',
+    'react-children-utilities': '<rootDir>/redisinsight/__mocks__/react-children-utilities.js',
   },
   setupFilesAfterEnv: [
     '<rootDir>/redisinsight/ui/src/setup-tests.ts',
@@ -31,7 +32,6 @@ module.exports = {
     'json',
   ],
   testEnvironment: 'jsdom',
-  // testEnvironment: 'jest-environment-jsdom',
   transformIgnorePatterns: [
     'node_modules/(?!(monaco-editor|react-monaco-editor)/)',
   ],

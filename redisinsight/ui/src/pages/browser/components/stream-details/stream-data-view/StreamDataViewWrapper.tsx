@@ -13,9 +13,9 @@ import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
-
 import bufferToString from 'uiSrc/utils/formatters/bufferFormatters'
+
+import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 

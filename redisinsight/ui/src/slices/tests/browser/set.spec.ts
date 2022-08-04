@@ -9,6 +9,7 @@ import {
 } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { stringToBuffer } from 'uiSrc/utils'
 import {
   defaultSelectedKeyAction,
   deleteKeyFromList,
@@ -418,28 +419,28 @@ describe('set slice', () => {
   describe('removeMembersFromList', () => {
     it('should properly set the error', () => {
       // Arrange
-      const initailStateRemove = {
+      const initialStateRemove = {
         ...initialState,
         data: {
           ...initialState.data,
-          members: ['1', '2', '3'],
+          members: ['1', '2', '3'].map((member) => stringToBuffer(member)),
         },
       }
 
-      const data = ['1', '3']
+      const data = ['1', '3'].map((member) => stringToBuffer(member))
 
       const state = {
-        ...initailStateRemove,
+        ...initialStateRemove,
         data: {
-          ...initailStateRemove.data,
-          total: initailStateRemove.data.total - 1,
-          members: ['2'],
+          ...initialStateRemove.data,
+          total: initialStateRemove.data.total - 1,
+          members: [stringToBuffer('2')],
         },
       }
 
       // Act
       const nextState = reducer(
-        initailStateRemove,
+        initialStateRemove,
         removeMembersFromList(data)
       )
 

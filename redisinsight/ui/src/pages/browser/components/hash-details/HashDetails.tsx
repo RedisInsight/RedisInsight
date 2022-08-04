@@ -320,10 +320,10 @@ const HashDetails = (props: Props) => {
 
         if (editing) {
           const text = areaValue
-          const calculatedBreaks = text.split('\n').length
+          const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const calculatedRows = Math.round(text.length / OneRowLength + calculatedBreaks)
+          const calculatedRows = Math.round(text?.length / OneRowLength + calculatedBreaks)
           return (
             <StopPropagation>
               <InlineItemEditor
@@ -353,7 +353,7 @@ const HashDetails = (props: Props) => {
                   disabled={updateLoading}
                   inputRef={textAreaRef}
                   className={styles.textArea}
-                  data-testid="hash-value"
+                  data-testid="hash-value-editor"
                 />
               </InlineItemEditor>
             </StopPropagation>

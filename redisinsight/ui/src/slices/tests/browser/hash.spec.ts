@@ -8,6 +8,7 @@ import {
   mockStore,
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { stringToBuffer } from 'uiSrc/utils'
 import {
   defaultSelectedKeyAction,
   refreshKeyInfo,
@@ -343,31 +344,31 @@ describe('hash slice', () => {
   describe('removeFieldsFromList', () => {
     it('should properly set the error', () => {
       // Arrange
-      const initailStateRemove = {
+      const initialStateRemove = {
         ...initialState,
         data: {
           ...initialState.data,
           fields: [
-            { field: 'hash field', value: 'hash value' },
-            { field: 'hash field2', value: 'hash value' },
-            { field: 'hash field3', value: 'hash value' },
+            { field: stringToBuffer('hash field'), value: 'hash value' },
+            { field: stringToBuffer('hash field2'), value: 'hash value' },
+            { field: stringToBuffer('hash field3'), value: 'hash value' },
           ],
         },
       }
 
-      const data = ['hash field', 'hash field3']
+      const data = [stringToBuffer('hash field'), stringToBuffer('hash field3')]
 
       const state = {
-        ...initailStateRemove,
+        ...initialStateRemove,
         data: {
-          ...initailStateRemove.data,
-          total: initailStateRemove.data.total - 1,
-          fields: [{ field: 'hash field2', value: 'hash value' }],
+          ...initialStateRemove.data,
+          total: initialStateRemove.data.total - 1,
+          fields: [{ field: stringToBuffer('hash field2'), value: 'hash value' }],
         },
       }
 
       // Act
-      const nextState = reducer(initailStateRemove, removeFieldsFromList(data))
+      const nextState = reducer(initialStateRemove, removeFieldsFromList(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

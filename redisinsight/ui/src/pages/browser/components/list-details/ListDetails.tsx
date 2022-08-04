@@ -24,7 +24,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
-import { bufferFormatRangeItems, formatLongName, validateListIndex } from 'uiSrc/utils'
+import { bufferFormatRangeItems, formatLongName, formattingBuffer, validateListIndex } from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -228,8 +228,8 @@ const ListDetails = (props: Props) => {
       headerClassName: 'value-table-separate-border',
       render: function Index(_name: string, { index }: IListElement) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = index.toString().substring(0, 200)
-        const tooltipContent = formatLongName(index.toString())
+        const cellContent = index?.toString().substring(0, 200)
+        const tooltipContent = formatLongName(index?.toString())
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
             <div style={{ display: 'flex' }} className="truncateText" data-testid={`list-index-value-${index}`}>
@@ -264,10 +264,10 @@ const ListDetails = (props: Props) => {
 
         if (editing) {
           const text = areaValue
-          const calculatedBreaks = text.split('\n').length
+          const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const calculatedRows = Math.round(text.length / OneRowLength + calculatedBreaks)
+          const calculatedRows = Math.round(text?.length / OneRowLength + calculatedBreaks)
           return (
             <StopPropagation>
               <div className={styles.inlineItemEditor}>
@@ -298,7 +298,7 @@ const ListDetails = (props: Props) => {
                     disabled={updateLoading}
                     inputRef={textAreaRef}
                     className={styles.textArea}
-                    data-testid="element-value"
+                    data-testid="element-value-editor"
                   />
                 </InlineItemEditor>
               </div>

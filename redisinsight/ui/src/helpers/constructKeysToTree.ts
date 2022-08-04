@@ -13,7 +13,7 @@ export const constructKeysToTree = (props: Props): any[] => {
   keys.forEach((key: any) => {
     // eslint-disable-next-line prefer-object-spread
     let currentNode: any = tree
-    const { nameString: name } = key
+    const { nameString: name = '' } = key
     const nameSplitted = name.split(delimiter)
     const lastIndex = nameSplitted.length - 1
 

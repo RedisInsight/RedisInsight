@@ -14,6 +14,7 @@ import {
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   formatLongName,
+  formattingBuffer,
 } from 'uiSrc/utils'
 import { KeyTypes, OVER_RENDER_BUFFER_COUNT } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'

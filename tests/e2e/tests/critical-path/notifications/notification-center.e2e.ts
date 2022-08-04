@@ -7,12 +7,10 @@ import { NotificationParameters } from '../../../pageObjects/notification-page';
 const description = require('./notifications.json');
 const jsonNotifications: NotificationParameters[] = description.notifications;
 
-console.log(`jsonNotifications: ${jsonNotifications}`);
-
 const notificationPage = new NotificationPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
-fixture.only `Notifications`
+fixture `Notifications`
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -21,7 +19,6 @@ fixture.only `Notifications`
         await deleteAllNotificationsFromDB();
         await t.eval(() => location.reload());
     });
-
 test('Verify that when manager publishes new notification, it appears in the app', async t => {
     // Get number of notifications in the badge
     const newMessagesBeforeClosing = await notificationPage.getUnreadNotificationNumber();

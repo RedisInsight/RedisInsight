@@ -177,7 +177,7 @@ describe('POST /instance/:instanceId/string', () => {
           name: 'Should create 110MB string',
           data: {
             keyName: constants.TEST_STRING_KEY_1,
-            value: constants.GENERATE_BIG_TEST_STRING_VALUE(2),
+            value: constants.GENERATE_BIG_TEST_STRING_VALUE(10),
           },
           statusCode: 201,
         },

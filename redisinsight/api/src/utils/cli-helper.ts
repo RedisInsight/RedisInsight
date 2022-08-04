@@ -270,15 +270,14 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
  * @param str
  */
 export const getBufferFromSafeASCIIString = (str: string): Buffer => {
-  const buffers = [];
-  let buf = Buffer.from('');
+  const bytes = [];
 
   for (let i = 0; i < str.length; i += 1) {
     if (str[i] === '\\') {
       if (str[i + 1] === 'x') {
         const hexString = str.substr(i + 2, 2);
         if (isHex(hexString)) {
-          buf = Buffer.concat([buf, Buffer.from(hexString, 'hex')]);
+          bytes.push(Buffer.from(hexString, 'hex'));
           i += 3;
           // eslint-disable-next-line no-continue
           continue;
@@ -286,22 +285,25 @@ export const getBufferFromSafeASCIIString = (str: string): Buffer => {
       }
 
       if (str[i + 1] === '\\') {
-        buf = Buffer.concat([buf, Buffer.from('\\')]);
+        bytes.push(Buffer.from('\\'));
         i += 1;
         // eslint-disable-next-line no-continue
         continue;
       }
     }
 
-    buf = Buffer.concat([buf, Buffer.from(str[i])]);
-
-    if (buf.length > 99_999) {
-      buffers.push(buf);
-      buf = Buffer.from('');
+    if (str[i] === '\\' && str[i + 1] === 'x') {
+      const hexString = str.substr(i + 2, 2);
+      if (isHex(hexString)) {
+        bytes.push(Buffer.from(hexString, 'hex'));
+        i += 3;
+        // eslint-disable-next-line no-continue
+        continue;
+      }
     }
+
+    bytes.push(Buffer.from(str[i]));
   }
 
-  buffers.push(buf);
-
-  return Buffer.concat(buffers);
+  return Buffer.concat(bytes);
 };

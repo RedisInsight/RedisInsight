@@ -108,6 +108,7 @@ export {
   stringToBuffer,
   bufferToString,
   UintArrayToString,
+  anyToBuffer,
 }
 
 window.ri = {

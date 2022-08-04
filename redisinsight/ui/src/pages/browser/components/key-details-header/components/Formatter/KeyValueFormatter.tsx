@@ -9,7 +9,7 @@ import { getKeyValueFormatterOptions } from './constants'
 import { MIDDLE_SCREEN_RESOLUTION } from '../../KeyDetailsHeader'
 import styles from './styles.module.scss'
 
-interface Props {
+export interface Props {
   width: number
 }
 const KeyValueFormatter = (props: Props) => {

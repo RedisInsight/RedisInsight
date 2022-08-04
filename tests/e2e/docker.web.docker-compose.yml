@@ -36,4 +36,6 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./plugins:/root/.redisinsight-preview/plugins
+#      - ./plugins:/root/.redisinsight-preview/plugins
+      - .redisinsight-v2:/root/.redisinsight-v2
+

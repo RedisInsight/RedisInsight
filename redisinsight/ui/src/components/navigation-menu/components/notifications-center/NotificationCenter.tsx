@@ -9,7 +9,7 @@ import {
   unreadNotificationsAction
 } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import Notification from './Notification/Notification'
+import Notification from './Notification'
 
 import styles from './styles.module.scss'
 

@@ -10,7 +10,7 @@ import {
 } from 'uiSrc/slices/app/notifications'
 import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import Notification from '../Notification/Notification'
+import Notification from '../Notification'
 
 import styles from '../styles.module.scss'
 

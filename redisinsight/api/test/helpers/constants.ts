@@ -236,6 +236,8 @@ export const constants = {
   TEST_NOTIFICATION_1: {
     timestamp: 1656054100,
     title: 'Title-1',
+    category: 'Release',
+    categoryColor: '#ea14fd',
     body: 'Body-1',
     read: false,
     type: 'global',
@@ -243,6 +245,8 @@ export const constants = {
   TEST_NOTIFICATION_2: {
     timestamp: 1656054200,
     title: 'Title-2',
+    category: 'News',
+    categoryColor: null,
     body: 'Body-2',
     read: false,
     type: 'global',
@@ -250,6 +254,8 @@ export const constants = {
   TEST_NOTIFICATION_3: {
     timestamp: 1656054300,
     title: 'Title-3',
+    category: null,
+    categoryColor: null,
     body: 'Body-3',
     read: true,
     type: 'global',

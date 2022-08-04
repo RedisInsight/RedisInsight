@@ -1,10 +1,7 @@
 import { EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
-import { format } from 'date-fns'
-import parse from 'html-react-parser'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
 import {
   fetchNotificationsAction,
   notificationCenterSelector,
@@ -12,6 +9,7 @@ import {
   unreadNotificationsAction
 } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import Notification from './Notification'
 
 import styles from './styles.module.scss'
 
@@ -67,24 +65,7 @@ const NotificationCenter = () => {
                 className={cx(styles.notificationItem, { [styles.unread]: !notification.read })}
                 data-testid={`notification-item-${notification.read ? 'read' : 'unread'}_${notification.timestamp}`}
               >
-                <EuiText size="m" className={styles.notificationTitle} data-testid="notification-title">{notification.title}</EuiText>
-                <EuiText
-                  size="s"
-                  color="subdued"
-                  className={cx('notificationHTMLBody', styles.notificationBody)}
-                  data-testid="notification-body"
-                >
-                  {parse(notification.body)}
-                </EuiText>
-                <EuiText
-                  size="xs"
-                  color="subdued"
-                  textAlign="right"
-                  className={styles.notificationDate}
-                  data-testid="notification-date"
-                >
-                  {format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}
-                </EuiText>
+                <Notification notification={notification} titleSize="xxs" />
               </div>
             ))}
           </div>

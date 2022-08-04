@@ -133,11 +133,20 @@
 
   .notificationTitle {
     margin-bottom: 6px;
+    font-weight: normal;
+    display: inline-block;
   }
+}
 
-  .notificationDate {
-    margin-top: 6px;
-  }
+.notificationFooter {
+  margin-top: 6px;
+}
+
+.category {
+  margin-left: 12px;
+  border: 0;
+
+  color: #DFE5EF !important;
 }
 
 .popoverNotification {

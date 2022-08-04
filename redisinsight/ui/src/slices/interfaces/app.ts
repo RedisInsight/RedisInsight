@@ -135,10 +135,8 @@ export interface IGlobalNotification {
   title: string
   body: string
   read: boolean
-  category?: {
-    name: string
-    color: string
-  }
+  category?: string
+  categoryColor?: string
 }
 
 export interface StateAppNotifications {

@@ -1,5 +1,5 @@
 import {
-  IsInt, IsNotEmpty, IsString,
+  IsInt, IsNotEmpty, IsOptional, IsString,
 } from 'class-validator';
 
 export class CreateNotificationDto {
@@ -10,6 +10,14 @@ export class CreateNotificationDto {
   @IsNotEmpty()
   @IsString()
   title: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  categoryColor?: string;
 
   @IsNotEmpty()
   @IsString()

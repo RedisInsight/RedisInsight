@@ -42,9 +42,9 @@ const Notification = (props: Props) => {
           <EuiFlexItem grow={false}>
             <EuiBadge
               className={styles.category}
-              style={{ backgroundColor: notification.category.color ?? '#677075' }}
+              style={{ backgroundColor: notification.categoryColor ?? '#677075' }}
             >
-              {notification.category.name}
+              {notification.category}
             </EuiBadge>
           </EuiFlexItem>
         )}

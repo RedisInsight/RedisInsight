@@ -274,11 +274,20 @@ export const getBufferFromSafeASCIIString = (str: string): Buffer => {
   let buf = Buffer.from('');
 
   for (let i = 0; i < str.length; i += 1) {
-    if (str[i] === '\\' && str[i + 1] === 'x') {
-      const hexString = str.substr(i + 2, 2);
-      if (isHex(hexString)) {
-        buf = Buffer.concat([buf, Buffer.from(hexString, 'hex')]);
-        i += 3;
+    if (str[i] === '\\') {
+      if (str[i + 1] === 'x') {
+        const hexString = str.substr(i + 2, 2);
+        if (isHex(hexString)) {
+          buf = Buffer.concat([buf, Buffer.from(hexString, 'hex')]);
+          i += 3;
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+      }
+
+      if (str[i + 1] === '\\') {
+        buf = Buffer.concat([buf, Buffer.from('\\')]);
+        i += 1;
         // eslint-disable-next-line no-continue
         continue;
       }

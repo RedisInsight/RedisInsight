@@ -14,6 +14,8 @@ import {
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { InternalServerErrorException } from '@nestjs/common';
+import { mockKeyDto } from 'src/modules/browser/__mocks__';
+import { RedisString } from 'src/common/constants';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -21,6 +23,7 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
 
 const mockClient = new Redis();
 const mockConnectionErrorMessage = 'Could not connect to localhost, please check the connection details.';
+const { keyName } = mockKeyDto;
 
 describe('BrowserToolService', () => {
   let service: BrowserToolService;
@@ -60,7 +63,6 @@ describe('BrowserToolService', () => {
   });
 
   describe('execCommand', () => {
-    const keyName = 'keyName';
     it('should call send_command with correct args', async () => {
       getRedisClient.mockResolvedValue(mockClient);
 
@@ -77,7 +79,7 @@ describe('BrowserToolService', () => {
           'usage',
           keyName,
         ], {
-          replyEncoding: 'utf8',
+          replyEncoding: null,
         }),
       ]))));
     });
@@ -99,9 +101,8 @@ describe('BrowserToolService', () => {
   });
 
   describe('execPipeline', () => {
-    const keyName = 'keyName';
     const args: Array<
-    [toolCommand: BrowserToolCommands, ...args: Array<string | number>]
+    [toolCommand: BrowserToolCommands, ...args: Array<RedisString | number>]
     > = [
       [BrowserToolKeysCommands.Type, keyName],
       [BrowserToolKeysCommands.Ttl, keyName],
@@ -128,9 +129,8 @@ describe('BrowserToolService', () => {
   });
 
   describe('execMulti', () => {
-    const keyName = 'keyName';
     const args: Array<
-    [toolCommand: BrowserToolCommands, ...args: Array<string | number>]
+    [toolCommand: BrowserToolCommands, ...args: Array<RedisString | number>]
     > = [
       [BrowserToolStringCommands.Set, keyName],
       [BrowserToolStringCommands.Get, keyName],

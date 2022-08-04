@@ -62,10 +62,7 @@ describe('POST /instance/:instanceId/hash/get-fields', () => {
           keyName: constants.TEST_HASH_KEY_BIN_BUF_OBJ_1,
           cursor: 0,
           count: 15,
-          match: {
-            type: 'Buffer',
-            data: [...[...constants.TEST_HASH_FIELD_BIN_BUFFER_1].slice(0, -10), ...Buffer.from('*')],
-          },
+          match: constants.TEST_HASH_FIELD_BIN_UTF8_1.slice(0, -10) + '*',
         },
         responseBody: {
           keyName: constants.TEST_HASH_KEY_BIN_UTF8_1,
@@ -86,10 +83,7 @@ describe('POST /instance/:instanceId/hash/get-fields', () => {
           keyName: constants.TEST_HASH_KEY_BIN_BUF_OBJ_1,
           cursor: 0,
           count: 15,
-          match: {
-            type: 'Buffer',
-            data: [...[...constants.TEST_HASH_FIELD_BIN_BUFFER_1].slice(0, -10), ...Buffer.from('*')],
-          },
+          match: constants.TEST_HASH_FIELD_BIN_UTF8_1.slice(0, -10) + '*',
         },
         responseBody: {
           keyName: constants.TEST_HASH_KEY_BIN_BUF_OBJ_1,

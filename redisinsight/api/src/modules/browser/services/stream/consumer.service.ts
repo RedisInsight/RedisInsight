@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
-import { catchAclError, catchTransactionError, convertStringsArrayToObject } from 'src/utils';
+import { catchAclError, catchTransactionError } from 'src/utils';
 import {
   BrowserToolCommands,
   BrowserToolKeysCommands, BrowserToolStreamCommands,

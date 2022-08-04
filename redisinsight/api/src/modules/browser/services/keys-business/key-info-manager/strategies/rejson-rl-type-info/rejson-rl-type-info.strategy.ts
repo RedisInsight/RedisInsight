@@ -69,18 +69,21 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
             clientOptions,
             BrowserToolRejsonRlCommands.JsonObjLen,
             [key, '.'],
+            'utf8',
           );
         case 'array':
           return await this.redisManager.execCommand(
             clientOptions,
             BrowserToolRejsonRlCommands.JsonArrLen,
             [key, '.'],
+            'utf8',
           );
         case 'string':
           return await this.redisManager.execCommand(
             clientOptions,
             BrowserToolRejsonRlCommands.JsonStrLen,
             [key, '.'],
+            'utf8',
           );
         default:
           return undefined;

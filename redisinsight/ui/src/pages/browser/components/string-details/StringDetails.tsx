@@ -8,8 +8,9 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiProgress, EuiText, EuiTextArea } from '@elastic/eui'
+import { onlyText } from 'react-children-utilities'
 
-import { Nullable } from 'uiSrc/utils'
+import { formattingBuffer, Nullable } from 'uiSrc/utils'
 import {
   resetStringValue,
   stringDataSelector,
@@ -18,8 +19,8 @@ import {
 } from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import bufferToString, { stringToBuffer } from 'uiSrc/utils/buffer/bufferFormatters'
+import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 
 import styles from './styles.module.scss'
 
@@ -37,14 +38,16 @@ const StringDetails = (props: Props) => {
 
   const { loading } = useSelector(stringSelector)
   const { value: initialValue } = useSelector(stringDataSelector)
-
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [rows, setRows] = useState<number>(5)
-  const [value, setValue] = useState<Nullable<string>>(null)
+  const [value, setValue] = useState<Nullable<string | JSX.Element>>(null)
   const [areaValue, setAreaValue] = useState<string>('')
+  const [viewFormat, setViewFormat] = useState(viewFormatProp)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
+  const viewValueRef: Ref<HTMLPreElement> = useRef(null)
 
   const dispatch = useDispatch()
 
@@ -53,22 +56,28 @@ const StringDetails = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    const initialValueString = bufferToString(initialValue)
+    if (!initialValue) return
+
+    const initialValueString = formattingBuffer(initialValue, viewFormatProp)
 
     setValue(initialValueString)
-    setAreaValue(initialValueString || '')
-  }, [initialValue])
+    setAreaValue(onlyText(initialValueString) || '')
+
+    if (viewFormat !== viewFormatProp) {
+      setViewFormat(viewFormatProp)
+    }
+  }, [initialValue, viewFormatProp])
 
   useEffect(() => {
     // Approximate calculation of textarea rows by initialValue
     if (!isEditItem || !textAreaRef.current || value === null) {
       return
     }
-
-    const calculatedBreaks = value.split('\n').length
+    const text = onlyText(value)
+    const calculatedBreaks = text.split('\n').length
     const textAreaWidth = textAreaRef.current.clientWidth
     const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-    const calculatedRows = Math.round(value.length / OneRowLength + calculatedBreaks)
+    const calculatedRows = Math.round(text.length / OneRowLength + calculatedBreaks)
 
     if (calculatedRows > MAX_ROWS) {
       setRows(MAX_ROWS)
@@ -79,7 +88,7 @@ const StringDetails = (props: Props) => {
       return
     }
     setRows(calculatedRows)
-  }, [isEditItem])
+  }, [viewValueRef, isEditItem])
 
   useMemo(() => {
     if (isEditItem) {
@@ -96,7 +105,7 @@ const StringDetails = (props: Props) => {
   }
 
   const onDeclineChanges = () => {
-    setAreaValue(value || '')
+    setAreaValue(onlyText(value) || '')
     setIsEdit(false)
   }
 
@@ -116,14 +125,14 @@ const StringDetails = (props: Props) => {
         <EuiText
           onClick={() => setIsEdit(true)}
         >
-          <pre className={styles.stringValue} data-testid="string-value">
+          <pre className={styles.stringValue} data-testid="string-value" ref={viewValueRef}>
             {value !== '' ? value : (<span style={{ fontStyle: 'italic' }}>Empty</span>)}
           </pre>
         </EuiText>
       )}
       {isEditItem && (
         <InlineItemEditor
-          initialValue={value || ''}
+          initialValue={onlyText(value) || ''}
           controlsPosition="bottom"
           placeholder="Enter Value"
           fieldName="value"

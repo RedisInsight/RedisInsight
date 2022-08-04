@@ -19,7 +19,7 @@ import {
   updateSelectedKeyRefreshTime,
 } from './keys'
 import { AppDispatch, RootState } from '../store'
-import { RedisResponseBuffer, StateHash } from '../interfaces'
+import { RedisResponseBuffer, RedisString, StateHash } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: StateHash = {
@@ -137,8 +137,9 @@ const hashSlice = createSlice({
       state.loading = false
       state.error = payload
     },
-    removeFieldsFromList: (state, { payload }: { payload: string[] }) => {
-      remove(state.data?.fields, ({ field }) => payload.includes(field))
+    removeFieldsFromList: (state, { payload }: { payload: RedisString[] }) => {
+      remove(state.data?.fields, ({ field }) =>
+        payload.findIndex((item) => isEqualBuffers(item, field)) > -1)
 
       state.data = {
         ...state.data,
@@ -219,8 +220,8 @@ export function fetchHashFields(
           cursor,
           count,
           match,
-          encoding,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
@@ -255,8 +256,8 @@ export function refreshHashFieldsAction(key: RedisResponseBuffer, resetData?: bo
           cursor: 0,
           count: SCAN_COUNT_DEFAULT,
           match,
-          encoding,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
@@ -271,7 +272,7 @@ export function refreshHashFieldsAction(key: RedisResponseBuffer, resetData?: bo
 
 // Asynchronous thunk actions
 export function fetchMoreHashFields(
-  key: string,
+  key: RedisResponseBuffer,
   cursor: number,
   count: number,
   match: string
@@ -292,8 +293,8 @@ export function fetchMoreHashFields(
           cursor,
           count,
           match: isNull(match) ? '*' : match,
-          encoding,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
@@ -308,11 +309,16 @@ export function fetchMoreHashFields(
 }
 
 // Asynchronous thunk actions
-export function deleteHashFields(key: string, fields: string[], onSuccessAction?: () => void,) {
+export function deleteHashFields(
+  key: RedisResponseBuffer,
+  fields: RedisResponseBuffer[],
+  onSuccessAction?: () => void,
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeHashFields())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status, data } = await apiService.delete(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -323,6 +329,7 @@ export function deleteHashFields(key: string, fields: string[], onSuccessAction?
             keyName: key,
             fields,
           },
+          params: { encoding },
         }
       )
       const newTotalValue = state.browser.hash.data.total - data.affected
@@ -363,12 +370,14 @@ export function addHashFieldsAction(
     dispatch(updateValue())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.put(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.HASH
         ),
-        data
+        data,
+        { params: { encoding } },
       )
       if (isStatusSuccessful(status)) {
         if (onSuccessAction) {
@@ -397,12 +406,14 @@ export function updateHashFieldsAction(
     dispatch(updateValue())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.put(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.HASH
         ),
-        data
+        data,
+        { params: { encoding } },
       )
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({

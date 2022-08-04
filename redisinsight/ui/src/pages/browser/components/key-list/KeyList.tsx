@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
@@ -27,7 +27,6 @@ import {
   keysDataSelector,
   keysSelector,
   selectedKeySelector,
-  setKeys,
   sourceKeysFetch,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -40,6 +39,7 @@ import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import styles from './styles.module.scss'
@@ -50,10 +50,13 @@ export interface Props {
   loading: boolean
   hideFooter?: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
-  loadMoreItems?: ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => void
+  loadMoreItems?: (
+    oldKeys: IKeyPropTypes[],
+    { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
+  ) => void
 }
 
-const KeyList = (props: Props) => {
+const KeyList = forwardRef((props: Props, ref) => {
   let wheelTimer = 0
   const { selectKey, loadMoreItems, loading, keysState, hideFooter } = props
 
@@ -68,12 +71,20 @@ const KeyList = (props: Props) => {
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    if (keysState.keys.length > 0) {
-      const newKeys = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
-
-      setItems(newKeys)
+  useImperativeHandle(ref, () => ({
+    handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
+      onLoadMoreItems(config)
     }
+  }))
+
+  useEffect(() => {
+    const newKeys = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+
+    if (keysState.keys.length < items.length) {
+      formattedLastIndexRef.current = 0
+    }
+
+    setItems(newKeys)
   }, [keysState.keys])
 
   const getNoItemsMessage = () => {
@@ -87,8 +98,8 @@ const KeyList = (props: Props) => {
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
-    dispatch(setKeys(bufferFormatRows(items.length - 1)))
-    loadMoreItems?.(props)
+    const formattedAllKeys = bufferFormatRangeItems(items, formattedLastIndexRef.current, items.length, formatItem)
+    loadMoreItems?.(formattedAllKeys, props)
   }
 
   const onWheelSearched = (event: React.WheelEvent) => {
@@ -111,10 +122,10 @@ const KeyList = (props: Props) => {
     dispatch(setBrowserKeyListScrollPosition(position))
   }
 
-  const formatItem = (item: GetKeyInfoResponse): GetKeyInfoResponse => ({
+  const formatItem = useCallback((item: GetKeyInfoResponse): GetKeyInfoResponse => ({
     ...item,
     nameString: bufferToString(item.name)
-  })
+  }), [])
 
   const bufferFormatRows = (lastIndex: number) => {
     const newItems = bufferFormatRangeItems(items, formattedLastIndexRef.current, lastIndex, formatItem)
@@ -269,6 +280,6 @@ const KeyList = (props: Props) => {
       </div>
     </div>
   )
-}
+})
 
 export default KeyList

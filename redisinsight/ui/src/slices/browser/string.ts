@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, stringToBuffer } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { refreshKeyInfoAction } from './keys'
@@ -95,18 +95,12 @@ export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
         ),
         {
           keyName: key,
-          encoding,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
-        // TODO: REMOVE
-        const newData = {
-          ...data,
-          value: stringToBuffer(data.value)
-        }
-
-        dispatch(getStringSuccess(newData))
+        dispatch(getStringSuccess(data))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -118,8 +112,8 @@ export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
 
 // Asynchronous thunk action
 export function updateStringValueAction(
-  key: string,
-  value: string,
+  key: RedisResponseBuffer,
+  value: RedisResponseBuffer,
   onSuccess?: () => void,
   onFailed?: () => void
 ) {
@@ -128,6 +122,7 @@ export function updateStringValueAction(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.put(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -136,7 +131,8 @@ export function updateStringValueAction(
         {
           keyName: key,
           value,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {

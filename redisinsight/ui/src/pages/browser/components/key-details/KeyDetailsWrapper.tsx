@@ -128,7 +128,7 @@ const KeyDetailsWrapper = (props: Props) => {
     }
   }
 
-  const handleEditTTL = (key: string, ttl: number) => {
+  const handleEditTTL = (key: RedisResponseBuffer, ttl: number) => {
     dispatch(editKeyTTL(key, ttl))
   }
   const handleEditKey = (oldKey: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => {

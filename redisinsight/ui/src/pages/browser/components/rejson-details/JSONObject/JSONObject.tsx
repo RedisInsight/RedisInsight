@@ -15,7 +15,7 @@ import { connect } from 'react-redux'
 import cx from 'classnames'
 
 import { fetchVisualisationResults, setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
-import { createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
+import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
 
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
@@ -740,8 +740,8 @@ class JSONObject extends React.Component<Props, State> {
                     data-testid="edit-object-btn"
                   />
                   <PopoverDelete
-                    header={createDeleteFieldHeader(selectedKey)}
-                    text={createDeleteFieldMessage(keyName.toString())}
+                    header={createDeleteFieldHeader(keyName.toString())}
+                    text={createDeleteFieldMessage(bufferToString(selectedKey))}
                     item={keyName.toString()}
                     suffix="object"
                     deleting={deleting}

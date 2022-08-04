@@ -1,5 +1,11 @@
 import { isString } from 'lodash'
-import { RedisResponseBuffer, RedisResponseBufferType, RedisString, UintArray } from 'uiSrc/slices/interfaces'
+import {
+  RedisResponseBuffer,
+  RedisResponseBufferType,
+  RedisResponseEncoding,
+  RedisString,
+  UintArray,
+} from 'uiSrc/slices/interfaces'
 import { Nullable } from '../types'
 
 const decoder = new TextDecoder('utf-8')
@@ -64,7 +70,7 @@ const ASCIIHTMLToBuffer = (str: string): RedisResponseBuffer => {
 const ASCIIToBuffer = (str:string): RedisResponseBuffer => {
   const chars = []
   for (let i = 0; i < str.length; ++i) {
-    chars.push(str.charCodeAt(i))/* from  w  ww. j  a  v  a  2s.c o  m */
+    chars.push(str.charCodeAt(i))
   }
   return anyToBuffer(new Uint8Array(chars))
 }
@@ -78,13 +84,11 @@ const UTF8ToBuffer = (reply: string): RedisResponseBuffer => anyToBuffer(encoder
 // common formatters
 const stringToBuffer = (data: string): RedisResponseBuffer => UTF8ToBuffer(data)
 
-const bufferToString = (data: RedisString = '', dev?: boolean): string => {
+const bufferToString = (data: RedisString = '', formatResult: RedisResponseEncoding = RedisResponseEncoding.UTF8): string => {
   let string = data
 
-  if (dev) return data?.toString()
-
   if (!isString(data) && data?.type === RedisResponseBufferType.Buffer) {
-    string = bufferToUTF8(data)
+    string = formatResult === RedisResponseEncoding.UTF8 ? bufferToUTF8(data) : bufferToASCII(data)
   } else {
     string = string?.toString()
   }
@@ -103,11 +107,16 @@ export {
   isEqualBuffers,
   stringToBuffer,
   bufferToString,
+  UintArrayToString,
 }
 
-window.bufferToUTF8 = bufferToUTF8
-window.bufferToASCII = bufferToASCII
-window.UTF8ToBuffer = UTF8ToBuffer
-window.ASCIIToBuffer = ASCIIToBuffer
-window.ASCIIHTMLToBuffer = ASCIIHTMLToBuffer
-window.UintArrayToString = UintArrayToString
+window.ri = {
+  bufferToUTF8,
+  bufferToASCII,
+  UTF8ToBuffer,
+  ASCIIToBuffer,
+  ASCIIHTMLToBuffer,
+  UintArrayToString,
+  stringToBuffer,
+  bufferToString,
+}

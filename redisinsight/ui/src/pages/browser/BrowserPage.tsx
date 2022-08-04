@@ -38,6 +38,7 @@ import { resetErrors } from 'uiSrc/slices/app/notifications'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 import AddKey from './components/add-key/AddKey'
 import KeyList from './components/key-list/KeyList'
@@ -71,8 +72,10 @@ const BrowserPage = () => {
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
   const [sizes, setSizes] = useState(panelSizes)
+
   const selectedKeyRef = useRef<Nullable<RedisResponseBuffer>>(selectedKey)
   const prevSelectedType = useRef<string>(type)
+  const keyListRef = useRef()
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -200,10 +203,17 @@ const BrowserPage = () => {
     setIsBulkActionsPanelOpen(false)
   }
 
-  const loadMoreItems = ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => {
+  const loadMoreItems = (
+    oldKeys: IKeyPropTypes[],
+    { startIndex, stopIndex }: { startIndex: number; stopIndex: number }
+  ) => {
     if (keysState.nextCursor !== '0') {
-      dispatch(fetchMoreKeys(keysState.nextCursor, stopIndex - startIndex + 1))
+      dispatch(fetchMoreKeys(oldKeys, keysState.nextCursor, stopIndex - startIndex + 1))
     }
+  }
+
+  const handleScanMoreClick = (config: { startIndex: number; stopIndex: number }) => {
+    keyListRef.current?.handleLoadMoreItems?.(config)
   }
 
   const handleEditKey = (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => {
@@ -251,14 +261,15 @@ const BrowserPage = () => {
                       keysState={keysState}
                       loading={loading}
                       loadKeys={loadKeys}
-                      loadMoreItems={loadMoreItems}
                       handleAddKeyPanel={handleAddKeyPanel}
                       handleBulkActionsPanel={handleBulkActionsPanel}
+                      handleScanMoreClick={handleScanMoreClick}
                       nextCursor={keysState.nextCursor}
                     />
                     {viewType === KeyViewType.Browser && (
                       <KeyList
                         hideFooter
+                        ref={keyListRef}
                         keysState={keysState}
                         loading={loading}
                         loadMoreItems={loadMoreItems}
@@ -267,9 +278,11 @@ const BrowserPage = () => {
                     )}
                     {viewType === KeyViewType.Tree && (
                       <KeyTree
+                        ref={keyListRef}
                         keysState={keysState}
                         loading={loading}
                         selectKey={selectKey}
+                        loadMoreItems={loadMoreItems}
                       />
                     )}
                   </>

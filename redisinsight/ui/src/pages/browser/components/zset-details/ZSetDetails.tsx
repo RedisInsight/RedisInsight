@@ -4,6 +4,7 @@ import { omit, toNumber } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
+import { onlyText } from 'react-children-utilities'
 
 import {
   zsetSelector,
@@ -21,8 +22,8 @@ import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TableCellAlignment } fro
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { bufferFormatRangeItems, createDeleteFieldHeader, createDeleteFieldMessage, formatLongName, validateScoreNumber } from 'uiSrc/utils'
+import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { bufferFormatRangeItems, createDeleteFieldHeader, createDeleteFieldMessage, formatLongName, formattingBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -31,7 +32,7 @@ import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { AddMembersToZSetDto, SearchZSetMembersResponse, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
-import bufferToString, { stringToBuffer } from 'uiSrc/utils/buffer/bufferFormatters'
+import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -59,10 +60,11 @@ const ZSetDetails = (props: Props) => {
   const { loading, searching } = useSelector(zsetSelector)
   const { loading: updateLoading } = useSelector(updateZsetScoreStateSelector)
   const [sortedColumnOrder, setSortedColumnOrder] = useState(SortOrder.ASC)
-  const { name: key, nameString: keyString, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { total, nextCursor, members: loadedMembers } = useSelector(zsetDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [match, setMatch] = useState<string>('')
   const [deleting, setDeleting] = useState('')
@@ -70,30 +72,31 @@ const ZSetDetails = (props: Props) => {
   const [sortedColumnName, setSortedColumnName] = useState('score')
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
+  const [viewFormat, setViewFormat] = useState(viewFormatProp)
 
   const dispatch = useDispatch()
 
   const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
 
-  // useEffect(() => {
-  //   const zsetMembers: IZsetMember[] = loadedMembers.slice(members.length).map((item) => ({
-  //     ...item,
-  //     editing: false,
-  //     name: {
-  //       ...item.name,
-  //       string: bufferToString(item.name)
-  //     },
-  //   }))
-  //   setMembers((prevMembers) => prevMembers.concat(zsetMembers))
-  // }, [loadedMembers])
-
   useEffect(() => {
-    if (loadedMembers.length > 0) {
-      const newMembers = bufferFormatRangeItems(loadedMembers, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+    const newMembers = bufferFormatRangeItems(loadedMembers, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
 
-      setMembers(newMembers)
+    setMembers(newMembers)
+
+    if (loadedMembers.length < members.length) {
+      formattedLastIndexRef.current = 0
     }
-  }, [loadedMembers])
+
+    if (viewFormat !== viewFormatProp) {
+      setExpandedRows([])
+      setViewFormat(viewFormatProp)
+
+      cellCache.clearAll()
+      setTimeout(() => {
+        cellCache.clearAll()
+      }, 0)
+    }
+  }, [loadedMembers, viewFormatProp])
 
   const closePopover = useCallback(() => {
     setDeleting('')
@@ -125,7 +128,7 @@ const ZSetDetails = (props: Props) => {
 
   const handleEditMember = (name = '', editing: boolean) => {
     const newMemberState = members.map((item) => {
-      if (item.name?.string === name) {
+      if (item.name?.viewValue === name) {
         return { ...item, editing }
       }
       return item
@@ -213,16 +216,18 @@ const ZSetDetails = (props: Props) => {
         largestCellLength: members[rowIndex]?.name?.length || 0,
       }
     })
+
+    cellCache.clearAll()
   }
 
-  const formatItem = (item: IZsetMember): IZsetMember => ({
+  const formatItem = useCallback((item: IZsetMember): IZsetMember => ({
     ...item,
     editing: false,
     name: {
       ...item.name,
-      string: bufferToString(item.name)
+      viewValue: formattingBuffer(item.name, viewFormatProp)
     },
-  })
+  }), [viewFormatProp])
 
   const bufferFormatRows = (lastIndex: number) => {
     const newMembers = bufferFormatRangeItems(members, formattedLastIndexRef.current, lastIndex, formatItem)
@@ -247,11 +252,11 @@ const ZSetDetails = (props: Props) => {
       alignment: TableCellAlignment.Left,
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
-      render: function Name(_name: string, { name }: IZsetMember, expanded?: boolean) {
+      render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
+        const name = nameItem.viewValue ?? ''
         // Better to cut the long string, because it could affect virtual scroll performance
-        // const cellContent = name.substring(0, 200)
-        // const tooltipContent = formatLongName(name)
-        const cellContent = bufferToString(name)
+        const cellContent = name.substring?.(0, 200) ?? name
+        const tooltipContent = formatLongName(onlyText(name))
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div
@@ -264,7 +269,7 @@ const ZSetDetails = (props: Props) => {
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="bottom"
-                  // content={tooltipContent}
+                  content={tooltipContent}
                 >
                   <>{cellContent}</>
                 </EuiToolTip>
@@ -281,7 +286,7 @@ const ZSetDetails = (props: Props) => {
       isSortable: true,
       truncateText: true,
       render: function Score(_name: string, { name: nameItem, score, editing }: IZsetMember, expanded?: boolean) {
-        const name = nameItem.string
+        const name = nameItem.viewValue ?? ''
         const cellContent = score.toString().substring(0, 200)
         const tooltipContent = formatLongName(score.toString())
         if (editing) {
@@ -294,7 +299,7 @@ const ZSetDetails = (props: Props) => {
                 fieldName="score"
                 expandable
                 onDecline={() => handleEditMember(name, false)}
-                onApply={(value) => handleApplyEditScore(omit(nameItem, ['string']), value, name)}
+                onApply={(value) => handleApplyEditScore(omit(nameItem, ['viewValue']), value, name)}
                 validation={validateScoreNumber}
               />
             </StopPropagation>
@@ -332,7 +337,7 @@ const ZSetDetails = (props: Props) => {
       maxWidth: 100,
       absoluteWidth: 100,
       render: function Actions(_act: any, { name: nameItem }: IZsetMember) {
-        const name = nameItem.string
+        const name = nameItem.viewValue ?? ''
         return (
           <StopPropagation>
             <div className="value-table-actions">
@@ -346,8 +351,8 @@ const ZSetDetails = (props: Props) => {
                 data-testid={`zset-edit-button-${name}`}
               />
               <PopoverDelete
-                header={createDeleteFieldHeader(name)}
-                text={createDeleteFieldMessage(keyString ?? '')}
+                header={createDeleteFieldHeader(nameItem)}
+                text={createDeleteFieldMessage(key ?? '')}
                 item={name}
                 suffix={suffix}
                 deleting={deleting}

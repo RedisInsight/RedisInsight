@@ -18,7 +18,7 @@ import {
   fetchVisualisationResults,
   setReJSONDataAction
 } from 'uiSrc/slices/browser/rejson'
-import { createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
+import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
 
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
@@ -728,8 +728,8 @@ class JSONArrayComponent extends Component<Props, State> {
                     data-testid="btn-edit-field"
                   />
                   <PopoverDelete
-                    header={createDeleteFieldHeader(selectedKey)}
-                    text={createDeleteFieldMessage(keyName.toString())}
+                    header={createDeleteFieldHeader(keyName.toString())}
+                    text={createDeleteFieldMessage(bufferToString(selectedKey))}
                     item={keyName.toString()}
                     suffix="array"
                     deleting={deleting}

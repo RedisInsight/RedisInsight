@@ -1,0 +1,20 @@
+.container {
+  padding-right: 6px;
+}
+
+.changeView:global(.euiSuperSelectControl) {
+  border: none !important;
+  background-color: inherit !important;
+  color: var(--iconsDefaultColor) !important;
+  min-width: 46px;
+  padding-right: 18px;
+  padding-left: 0;
+
+  & ~ div {
+    right: 4px;
+    svg {
+      width: 10px !important;
+      height: 10px !important;
+    }
+  }
+}

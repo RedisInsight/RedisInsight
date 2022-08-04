@@ -10,7 +10,6 @@ import {
   getApiErrorMessage,
   isStatusSuccessful,
   Maybe,
-  stringToBuffer,
   bufferToString,
 } from 'uiSrc/utils'
 import {
@@ -124,11 +123,11 @@ const listSlice = createSlice({
     },
     loadSearchingListElementSuccess: (
       state,
-      { payload }: PayloadAction<GetListElementResponse>
+      { payload: [index, data] }: PayloadAction<[number, GetListElementResponse]>
     ) => {
       state.loading = false
 
-      state.data.elements = [payload]
+      state.data.elements = [{ index, element: data?.value }]
     },
     loadSearchingListElementFailure: (state, { payload }) => {
       state.loading = false
@@ -163,14 +162,7 @@ const listSlice = createSlice({
       state,
       { payload }: { payload: SetListElementDto }
     ) => {
-      state.data.elements[state.data.elements.length === 1 ? 0 : payload.index] = {
-        ...payload,
-        // TODO: REMOVE
-        element: {
-          ...payload.element,
-          string: bufferToString(payload.element),
-        },
-      }
+      state.data.elements[state.data.elements.length === 1 ? 0 : payload.index] = payload
     },
     insertListElements: (state) => {
       state.loading = true
@@ -251,17 +243,13 @@ export function fetchListElements(key: RedisResponseBuffer, offset: number, coun
           keyName: key,
           offset,
           count,
-          encoding,
+        }, {
+          params: { encoding },
         }
       )
 
       if (isStatusSuccessful(status)) {
-        // TODO: REMOVE
-        const newData = {
-          ...data,
-          elements: data.elements.map((element) => stringToBuffer(element))
-        }
-        dispatch(loadListElementsSuccess(newData))
+        dispatch(loadListElementsSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }
     } catch (error) {
@@ -293,18 +281,12 @@ export function fetchMoreListElements(
           keyName: key,
           offset,
           count,
-          encoding,
-        }
+        },
+        { params: { encoding } },
       )
 
-      // TODO: REMOVE
-      const newData = {
-        ...data,
-        elements: data.elements.map((element) => stringToBuffer(element))
-      }
-
       if (isStatusSuccessful(status)) {
-        dispatch(loadMoreListElementsSuccess(newData))
+        dispatch(loadMoreListElementsSuccess(data))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -333,19 +315,13 @@ export function fetchSearchingListElementAction(
         ),
         {
           keyName: key,
-          encoding,
+        }, {
+          params: { encoding },
         }
       )
 
-      // TODO: REMOVE
-      const newData = {
-        ...data,
-        index,
-        element: stringToBuffer(data.value)
-      }
-
       if (isStatusSuccessful(status)) {
-        dispatch(loadSearchingListElementSuccess(newData))
+        dispatch(loadSearchingListElementSuccess([index, data]))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
         onSuccess?.()
       }
@@ -381,12 +357,14 @@ export function updateListElementAction(
     dispatch(updateValue())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.patch<SetListElementResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST
         ),
-        data
+        data,
+        { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
@@ -425,12 +403,14 @@ export function insertListElementsAction(
     dispatch(insertListElements())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.put<PushElementToListDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST
         ),
-        data
+        data,
+        { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
@@ -457,12 +437,13 @@ export function deleteListElementsAction(
     dispatch(deleteListElements())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status, data: responseData } = await apiService.delete<DeleteListElementsResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST_DELETE_ELEMENTS
         ),
-        { data }
+        { data, params: { encoding } },
       )
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()

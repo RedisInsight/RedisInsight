@@ -127,8 +127,8 @@ export const AddJSONFormConfig: IAddJSONFormConfig = {
 
 interface IAddStreamFormConfig {
   entryId: IFormField
-  fieldName: IFormField
-  fieldValue: IFormField
+  name: IFormField
+  value: IFormField
 }
 
 export const AddStreamFormConfig: IAddStreamFormConfig = {
@@ -139,15 +139,15 @@ export const AddStreamFormConfig: IAddStreamFormConfig = {
     label: 'Entry ID*',
     placeholder: 'Enter Entry ID'
   },
-  fieldName: {
-    id: 'fieldName',
+  name: {
+    id: 'name',
     name: 'Field Name',
     isRequire: false,
     label: 'Field',
     placeholder: 'Enter Field',
   },
-  fieldValue: {
-    id: 'fieldValue',
+  value: {
+    id: 'value',
     name: 'Field Value',
     isRequire: false,
     label: 'Value',

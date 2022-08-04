@@ -25,8 +25,8 @@ export interface Props {
 }
 
 export const INITIAL_STREAM_FIELD_STATE = {
-  fieldName: '',
-  fieldValue: '',
+  name: '',
+  value: '',
   id: 0,
 }
 
@@ -65,7 +65,7 @@ const AddKeyStream = (props: Props) => {
       keyName: stringToBuffer(keyName),
       entries: [{
         id: entryID,
-        fields: [...map(fields, (field) => [stringToBuffer(field.fieldName), stringToBuffer(field.fieldValue)])]
+        fields: [...fields.map(({ name, value }) => ({ name: stringToBuffer(name), value: stringToBuffer(value) }))],
       }]
     }
     if (keyTTL !== undefined) {

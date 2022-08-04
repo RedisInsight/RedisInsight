@@ -15,7 +15,6 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
-  resetKeys,
   resetKeysData,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -56,9 +55,9 @@ export interface Props {
   keysState: KeysStoreData
   nextCursor: string
   loadKeys: (type?: KeyViewType) => void
-  loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
   handleBulkActionsPanel: (value: boolean) => void
+  handleScanMoreClick: (config: any) => void
 }
 
 const KeysHeader = (props: Props) => {
@@ -66,9 +65,9 @@ const KeysHeader = (props: Props) => {
     loading,
     keysState,
     loadKeys,
-    loadMoreItems,
     handleAddKeyPanel,
     handleBulkActionsPanel,
+    handleScanMoreClick,
     nextCursor,
   } = props
 
@@ -158,7 +157,7 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleScanMore = (config: any) => {
-    loadMoreItems?.({
+    handleScanMoreClick?.({
       ...config,
       stopIndex: (viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT) - 1,
     })

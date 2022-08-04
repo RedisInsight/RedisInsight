@@ -9,7 +9,7 @@ import {
   EuiFlexItem,
   EuiPanel, EuiTextArea,
 } from '@elastic/eui'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
 
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
@@ -58,7 +58,7 @@ const AddKeyReJSON = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateRejsonRlWithExpireDto = {
-      keyName,
+      keyName: stringToBuffer(keyName),
       data: ReJSONValue
     }
     if (keyTTL !== undefined) {

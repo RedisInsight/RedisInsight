@@ -214,7 +214,7 @@ export class ConsumerGroupDto {
     example: 'group',
   })
   @RedisStringType()
-  name: string;
+  name: RedisString;
 
   @ApiProperty({
     type: Number,

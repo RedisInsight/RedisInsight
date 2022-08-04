@@ -40,7 +40,7 @@ export * from './polyfills'
 export * from './tree'
 export * from './pubSubUtils'
 export * from './formatDate'
-export * from './buffer'
+export * from './formatters'
 
 export {
   Maybe,

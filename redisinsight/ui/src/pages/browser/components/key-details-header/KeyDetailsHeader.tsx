@@ -27,6 +27,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatBytes, formatNameShort, isEqualBuffers, MAX_TTL_NUMBER, replaceSpaces, stringToBuffer, validateTTLNumber } from 'uiSrc/utils'
+import KeyValueFormatter from './components/Formatter'
 import AutoRefresh from '../auto-refresh'
 
 import styles from './styles.module.scss'
@@ -49,8 +50,8 @@ export interface Props {
 const COPY_KEY_NAME_ICON = 'copyKeyNameIcon'
 
 const PADDING_WRAPPER_SIZE = 36
-const HIDE_LAST_REFRESH = 750 - PADDING_WRAPPER_SIZE
-const MIDDLE_SCREEN_RESOLUTION = 640 - PADDING_WRAPPER_SIZE
+const HIDE_LAST_REFRESH = 850 - PADDING_WRAPPER_SIZE
+export const MIDDLE_SCREEN_RESOLUTION = 740 - PADDING_WRAPPER_SIZE
 
 const KeyDetailsHeader = ({
   isFullScreen,
@@ -121,8 +122,6 @@ const KeyDetailsHeader = ({
     const newKeyBuffer = stringToBuffer(key || '')
 
     if (keyBuffer && !isEqualBuffers(keyBuffer, newKeyBuffer) && !isNull(keyProp)) {
-      console.log({ keyBuffer })
-
       onEditKey(keyBuffer, newKeyBuffer, () => setKey(keyProp))
     }
   }
@@ -204,7 +203,7 @@ const KeyDetailsHeader = ({
         eventData
       })
     }
-    onRefresh(key, type)
+    onRefresh(keyBuffer, type)
   }
 
   const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
@@ -638,6 +637,7 @@ const KeyDetailsHeader = ({
                       onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                       testid="refresh-key-btn"
                     />
+                    {keyType && <KeyValueFormatter width={width} />}
                     {keyType && Actions(width)}
 
                     <EuiPopover

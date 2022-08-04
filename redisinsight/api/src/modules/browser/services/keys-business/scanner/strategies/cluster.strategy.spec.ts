@@ -770,15 +770,43 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.DbSize,
           expect.anything(),
           expect.anything(),
-        )
+      )
         .mockRejectedValue(replyError);
-
-      try {
-        await strategy.getKeys(mockClientOptions, args);
-        fail();
-      } catch (err) {
-        expect(err.message).toEqual(replyError.message);
-      }
+      when(browserTool.execCommandFromNode)
+        .calledWith(
+          mockClientOptions,
+          BrowserToolKeysCommands.Scan,
+          expect.anything(),
+          expect.anything(),
+          null,
+        )
+        .mockResolvedValue({ result: [0, [Buffer.from(getKeyInfoResponse.name)]] });      
+        strategy.getKeysInfo = jest
+          .fn()
+          .mockResolvedValue([getKeyInfoResponse]);
+      
+      const result = await strategy.getKeys(mockClientOptions, args);
+      
+      expect(result).toEqual([
+        {
+          ...mockClusterNodesEmptyResult[0],
+          total: null,
+          scanned: getKeysDto.count,
+          keys: [getKeyInfoResponse],
+        },
+        {
+          ...mockClusterNodesEmptyResult[1],
+          total: null,
+          scanned: getKeysDto.count,
+          keys: [getKeyInfoResponse],
+        },
+        {
+          ...mockClusterNodesEmptyResult[2],
+          total: null,
+          scanned: getKeysDto.count,
+          keys: [getKeyInfoResponse],
+        },
+      ]);
     });
     it('should throw error on scan command', async () => {
       const args = { ...getKeysDto };

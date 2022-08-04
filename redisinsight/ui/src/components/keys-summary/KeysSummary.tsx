@@ -1,8 +1,9 @@
 import React from 'react'
 import cx from 'classnames'
+import { isNull } from 'lodash'
 import { EuiText, EuiTextColor } from '@elastic/eui'
 
-import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { numberWithSpaces, nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
 import ScanMore from '../scan-more'
 
 import styles from './styles.module.scss'
@@ -12,6 +13,7 @@ export interface Props {
   items: any[]
   scanned?: number
   totalItemsCount?: number
+  nextCursor: string
   scanMoreStyle?: {
     [key: string]: string | number;
   }
@@ -26,6 +28,7 @@ const KeysSummary = (props: Props) => {
     totalItemsCount = 0,
     scanMoreStyle,
     loadMoreItems,
+    nextCursor,
   } = props
 
   const resultsLength = items.length
@@ -33,7 +36,7 @@ const KeysSummary = (props: Props) => {
 
   return (
     <>
-      {!!totalItemsCount && (
+      {(!!totalItemsCount || isNull(totalItemsCount)) && (
         <div className={styles.content} data-testid="keys-summary">
           <EuiText size="xs">
             {!!scanned && (
@@ -54,7 +57,7 @@ const KeysSummary = (props: Props) => {
                     {' '}
                     /
                     {' '}
-                    <span data-testid="keys-total">{numberWithSpaces(totalItemsCount)}</span>
+                    <span data-testid="keys-total">{nullableNumberWithSpaces(totalItemsCount)}</span>
                     {' '}
                     keys
                     <span
@@ -70,6 +73,7 @@ const KeysSummary = (props: Props) => {
                   totalItemsCount={totalItemsCount}
                   loading={loading}
                   loadMoreItems={loadMoreItems}
+                  nextCursor={nextCursor}
                 />
               </>
             )}
@@ -78,14 +82,14 @@ const KeysSummary = (props: Props) => {
               <EuiText size="xs">
                 <b>
                   Total:&nbsp;
-                  {numberWithSpaces(totalItemsCount)}
+                  {nullableNumberWithSpaces(totalItemsCount)}
                 </b>
               </EuiText>
             )}
           </EuiText>
         </div>
       )}
-      {loading && !totalItemsCount && (
+      {loading && !totalItemsCount && !isNull(totalItemsCount) && (
         <EuiText size="xs" data-testid="scanning-text">
           Scanning...
         </EuiText>

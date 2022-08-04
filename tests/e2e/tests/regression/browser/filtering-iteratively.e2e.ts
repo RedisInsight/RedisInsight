@@ -41,7 +41,7 @@ test
         keys = await common.createArrayWithKeyValue(1000);
         await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
         //Search all string keys
-        await browserPage.selectFilterGroupType(KeyTypesTexts.String)
+        await browserPage.selectFilterGroupType(KeyTypesTexts.String);
         await browserPage.searchByKeyName('*');
         //Verify that scan more button is not shown
         await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is shown');

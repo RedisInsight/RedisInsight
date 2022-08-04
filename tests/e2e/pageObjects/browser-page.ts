@@ -84,6 +84,7 @@ export class BrowserPage {
     forceClaimCheckbox = Selector('[data-testid=force-claim-checkbox]').sibling();
     editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
     saveButton = Selector('[data-testid=save-btn]');
+    bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -157,6 +158,7 @@ export class BrowserPage {
     databaseNames = Selector('[data-testid^=db_name_]');
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
     hashValuesList = Selector('[data-testid^=hash-field-value-] span');
+    hashFieldValue = Selector('[data-testid^=hash-field-value-]');
     setMembersList = Selector('[data-testid^=set-member-value-]');
     zsetMembersList = Selector('[data-testid^=zset-member-value-]');
     zsetScoresList = Selector('[data-testid^=zset-score-value-]');
@@ -817,5 +819,75 @@ export type AddNewKeyParameters = {
     TTL?: string,
     members?: string,
     scores?: string,
-    field?: string
+    field?: string,
+    fields?: [{
+        field?: string,
+        valuse?: string
+    }]
+};
+
+/**
+ * Hash key parameters
+ * @param keyName The name of the key
+ * @param fields The Array with fields
+ * @param field The field of the field
+ * @param value The value of the field
+
+ */
+ export type HashKeyParameters = {
+    keyName: string,
+    fields: {
+        field: string,
+        value: string
+    }[]
+};
+
+/**
+ * Stream key parameters
+ * @param keyName The name of the key
+ * @param entries The Array with entries
+ * @param id The id of entry
+ * @param fields The Array with fields
+ */
+export type StreamKeyParameters = {
+    keyName: string,
+    entries: {
+        id: string,
+        fields: string[][]
+    }[]
+};
+
+/**
+ * Set key parameters
+ * @param keyName The name of the key
+ * @param members The Array with members
+ */
+ export type SetKeyParameters = {
+    keyName: string,
+    members: string[]
+};
+
+/**
+ * Sorted Set key parameters
+ * @param keyName The name of the key
+ * @param members The Array with members
+ * @param name The name of the member
+ * @param id The id of the member
+ */
+ export type SortedSetKeyParameters = {
+    keyName: string,
+    members: {
+        name: string,
+        score: string
+    }[]
+};
+
+/**
+ * List key parameters
+ * @param keyName The name of the key
+ * @param element The element in list
+ */
+ export type ListKeyParameters = {
+    keyName: string,
+    element: string
 };

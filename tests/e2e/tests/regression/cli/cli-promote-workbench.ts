@@ -24,7 +24,6 @@ fixture `Promote workbench in CLI`
 test('Verify that users can see workbench promotion message when they open CLI', async t => {
     // Open CLI
     await t.click(cliPage.cliExpandButton);
-    console.log(await cliPage.workbenchLink.parent().textContent);
     await t.expect(cliPage.workbenchLink.parent().textContent).eql('Try Workbench, our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.');
     // Verify that user is redirected to Workbench page clicking on workbench link in CLI
     await t.click(cliPage.workbenchLink);

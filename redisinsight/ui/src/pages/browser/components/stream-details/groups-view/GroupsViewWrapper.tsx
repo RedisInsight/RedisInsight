@@ -16,7 +16,7 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { consumerGroupIdRegex, formatLongName, isEqualBuffers, validateConsumerGroupId } from 'uiSrc/utils'
+import { bufferToString, consumerGroupIdRegex, formatLongName, isEqualBuffers, validateConsumerGroupId } from 'uiSrc/utils'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'

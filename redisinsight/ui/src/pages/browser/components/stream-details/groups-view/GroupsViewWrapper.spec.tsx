@@ -9,6 +9,7 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { stringToBuffer } from 'uiSrc/utils'
 import GroupsView, { Props as GroupsViewProps } from './GroupsView'
 import GroupsViewWrapper, { Props } from './GroupsViewWrapper'
 
@@ -29,14 +30,20 @@ jest.mock('./GroupsView', () => ({
 
 const mockGroupName = 'group'
 const mockGroups: ConsumerGroupDto[] = [{
-  name: 'test',
+  name: {
+    ...stringToBuffer('test'),
+    viewValue: 'test',
+  },
   consumers: 123,
   pending: 321,
   smallestPendingId: '123',
   greatestPendingId: '123',
   lastDeliveredId: '123'
 }, {
-  name: 'test2',
+  name: {
+    ...stringToBuffer('test2'),
+    viewValue: 'test2',
+  },
   consumers: 13,
   pending: 31,
   smallestPendingId: '3',

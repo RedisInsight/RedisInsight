@@ -72,6 +72,7 @@ import reducer, {
   deleteMessageFromList
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services')
@@ -79,32 +80,39 @@ jest.mock('uiSrc/services')
 let store: typeof mockedStore
 
 const mockedEntryData = {
-  keyName: 'stream_example',
+  keyName: bufferToString('stream_example'),
+  keyNameString: 'stream_example',
   total: 1,
   lastGeneratedId: '1652942518810-0',
   firstEntry: {
     id: '1652942518810-0',
-    fields: { 1: '2' }
+    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') }
   },
   lastEntry: {
     id: '1652942518810-0',
-    fields: { 1: '2' }
+    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') }
   },
   entries: [{
     id: '1652942518810-0',
-    fields: { 1: '2' }
+    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') }
   }]
 }
 
 const mockGroups: ConsumerGroupDto[] = [{
-  name: 'test',
+  name: {
+    ...stringToBuffer('test'),
+    viewValue: 'test',
+  },
   consumers: 123,
   pending: 321,
   smallestPendingId: '123',
   greatestPendingId: '123',
   lastDeliveredId: '123'
 }, {
-  name: 'test2',
+  name: {
+    ...stringToBuffer('test2'),
+    viewValue: 'test2',
+  },
   consumers: 13,
   pending: 31,
   smallestPendingId: '3',
@@ -113,23 +121,25 @@ const mockGroups: ConsumerGroupDto[] = [{
 }]
 
 const mockConsumers: ConsumerDto[] = [{
-  name: 'test',
+  name: stringToBuffer('test'),
+  nameString: 'test',
   idle: 123,
   pending: 321,
 }, {
-  name: 'test2',
+  name: stringToBuffer('test2'),
+  nameString: 'test2',
   idle: 13,
   pending: 31,
 }]
 
 const mockMessages: PendingEntryDto[] = [{
   id: '123',
-  consumerName: 'test',
+  consumerName: stringToBuffer('test'),
   idle: 321,
   delivered: 321,
 }, {
   id: '1234',
-  consumerName: 'test2',
+  consumerName: stringToBuffer('test2'),
   idle: 3213,
   delivered: 1321,
 }]
@@ -533,7 +543,7 @@ describe('stream slice', () => {
     it('should properly set groups.data = payload', () => {
       // Arrange
       const data: ConsumerGroupDto[] = [{
-        name: '123',
+        name: stringToBuffer('123'),
         consumers: 123,
         pending: 123,
         smallestPendingId: '123',
@@ -566,7 +576,10 @@ describe('stream slice', () => {
     it('should properly set groups.selectedGroup.data = payload', () => {
       // Arrange
       const data: ConsumerDto[] = [{
-        name: '123',
+        name: {
+          ...stringToBuffer('123'),
+          viewValue: '123',
+        },
         pending: 123,
         idle: 123,
       }]
@@ -702,7 +715,11 @@ describe('stream slice', () => {
   describe('setSelectedGroup', () => {
     it('should properly set selectedGroups', () => {
       // Arrange
-      const group = { name: 'group name' }
+      const group = {
+        name: stringToBuffer('group name'),
+        nameString: 'group name',
+      }
+
       const state = {
         ...initialState,
         groups: {
@@ -725,7 +742,7 @@ describe('stream slice', () => {
   describe('setSelectedConsumer', () => {
     it('should properly set selectedConsumer', () => {
       // Arrange
-      const consumer = { name: 'consumer name' }
+      const consumer = { name: stringToBuffer('consumer name'), nameString: 'consumer name', }
       const state = {
         ...initialState,
         groups: {
@@ -1283,9 +1300,9 @@ describe('stream slice', () => {
     describe('deleteConsumersAction', () => {
       it('succeed to delete data', async () => {
         // Arrange
-        const keyName = 'key'
-        const groupName = 'group'
-        const consumerNames = ['consumer']
+        const keyName = stringToBuffer('key')
+        const groupName = stringToBuffer('group')
+        const consumerNames = ['consumer'].map((name) => stringToBuffer(name))
         const responsePayload = { status: 200 }
 
         apiService.delete = jest.fn().mockResolvedValue(responsePayload)
@@ -1306,7 +1323,7 @@ describe('stream slice', () => {
           addMessageNotification(
             successMessages.REMOVED_KEY_VALUE(
               keyName,
-              consumerNames.join(''),
+              consumerNames.map((name) => bufferToString(name)).join(''),
               'Consumer'
             )
           )

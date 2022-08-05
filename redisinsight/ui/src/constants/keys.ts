@@ -162,3 +162,12 @@ export const MODULES_KEY_TYPES_NAMES: ModulesKeyTypesNames = Object.freeze({
   [ModulesKeyTypes.Graph]: 'RedisGraph',
   [ModulesKeyTypes.TimeSeries]: 'RedisTimeSeries',
 })
+
+export enum KeyValueFormat {
+  Unicode = 'Unicode',
+  ASCII = 'ASCII',
+  JSON = 'JSON',
+  HEX = 'HEX',
+  Binary = 'Binary',
+  Msgpack = 'Msgpack',
+}

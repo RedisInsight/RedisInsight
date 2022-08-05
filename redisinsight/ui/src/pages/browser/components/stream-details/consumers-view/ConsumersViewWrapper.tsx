@@ -35,6 +35,7 @@ const ConsumersViewWrapper = (props: Props) => {
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const {
     name: selectedGroupName = '',
+    nameString: selectedGroupNameString = '',
     lastRefreshTime,
     data: loadedConsumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
@@ -105,11 +106,12 @@ const ConsumersViewWrapper = (props: Props) => {
       headerCellClassName: 'truncateText',
       render: function Name(_name: string, { name }: ConsumerDto) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = name.substring(0, 200)
-        const tooltipContent = formatLongName(name)
+        const viewName = name?.viewValue ?? ''
+        const cellContent = viewName.substring(0, 200)
+        const tooltipContent = formatLongName(viewName)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-consumer-${name}`}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-consumer-${viewName}`}>
               <EuiToolTip
                 className={styles.tooltipName}
                 anchorClassName="truncateText"
@@ -156,22 +158,23 @@ const ConsumersViewWrapper = (props: Props) => {
       maxWidth: actionsWidth,
       minWidth: actionsWidth,
       render: function Actions(_act: any, { name }: ConsumerDto) {
+        const viewName = name?.viewValue ?? ''
         return (
           <div>
             <PopoverDelete
-              header={name}
+              header={viewName}
               text={(
                 <>
-                  will be removed from Consumer Group <b>{selectedGroupName}</b>
+                  will be removed from Consumer Group <b>{selectedGroupNameString}</b>
                 </>
               )}
-              item={name}
+              item={viewName}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
               updateLoading={false}
               showPopover={showPopover}
-              testid={`remove-consumer-button-${name}`}
+              testid={`remove-consumer-button-${viewName}`}
               handleDeleteItem={() => handleDeleteConsumer(name)}
               handleButtonClick={handleRemoveIconClick}
             />

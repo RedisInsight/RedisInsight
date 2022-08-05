@@ -19,7 +19,7 @@ import {
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import styles from './styles.module.scss'
 
-type Positions = 'top' | 'bottom' | 'left' | 'right'
+type Positions = 'top' | 'bottom' | 'left' | 'right' | 'inside'
 type Design = 'default' | 'separate'
 
 export interface Props {
@@ -44,6 +44,7 @@ export interface Props {
   iconSize?: IconSize
   viewChildrenMode?: boolean
   autoComplete?: string
+  controlsClassName?: string
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -69,6 +70,7 @@ const InlineItemEditor = (props: Props) => {
     iconSize,
     isDisabled,
     autoComplete = 'off',
+    controlsClassName,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -174,6 +176,7 @@ const InlineItemEditor = (props: Props) => {
                       styles.controls,
                       styles[`controls${capitalize(controlsPosition)}`],
                       styles[`controls${capitalize(controlsDesign)}`],
+                      controlsClassName,
                     )}
                   >
                     <EuiButtonIcon

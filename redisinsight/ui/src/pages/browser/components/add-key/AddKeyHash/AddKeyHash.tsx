@@ -22,7 +22,7 @@ import {
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import styles from 'uiSrc/pages/browser/components/key-details-add-items/styles.module.scss'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import {
   AddHashFormConfig as config
 } from '../constants/fields-config'
@@ -108,10 +108,10 @@ const AddKeyHash = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateHashWithExpireDto = {
-      keyName,
+      keyName: stringToBuffer(keyName),
       fields: fields.map((item) => ({
-        field: item.fieldName,
-        value: item.fieldValue
+        field: stringToBuffer(item.fieldName),
+        value: stringToBuffer(item.fieldValue),
       }))
     }
     if (keyTTL !== undefined) {

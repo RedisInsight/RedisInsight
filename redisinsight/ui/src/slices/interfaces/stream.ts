@@ -6,6 +6,7 @@ import {
   GetStreamEntriesResponse,
   PendingEntryDto,
 } from 'apiSrc/modules/browser/dto/stream.dto'
+import { RedisResponseBuffer } from './app'
 
 type Range = {
   start: string
@@ -31,6 +32,7 @@ export interface StateStream {
 
 export interface StateStreamData extends GetStreamEntriesResponse {
   lastRefreshTime: Nullable<number>
+  keyNameString: string
 }
 
 export interface StateConsumerGroups {
@@ -42,14 +44,16 @@ export interface StateConsumerGroups {
 }
 
 export interface StateSelectedGroup {
-  name: string
+  name: RedisResponseBuffer
+  nameString: string
   data: ConsumerDto[]
   selectedConsumer: Nullable<StateSelectedConsumer>
   lastRefreshTime: Nullable<number>
 }
 
 export interface StateSelectedConsumer {
-  name: string
+  name: RedisResponseBuffer
+  nameString: string
   pending: number
   idle: number
   data: PendingEntryDto[]

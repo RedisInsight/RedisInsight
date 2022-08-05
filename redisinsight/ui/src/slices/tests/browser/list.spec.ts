@@ -9,6 +9,7 @@ import {
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { DeleteListElementsDto, PushElementToListDto } from 'apiSrc/modules/browser/dto'
+import { stringToBuffer } from 'uiSrc/utils'
 import {
   defaultSelectedKeyAction,
   deleteKeyFromList,
@@ -109,9 +110,9 @@ describe('list slice', () => {
       // Arrange
 
       const data = {
-        key: 'list',
-        keyName: 'list',
-        elements: ['1', '2', '3'],
+        key: stringToBuffer('list'),
+        keyName: stringToBuffer('list'),
+        elements: ['1', '2', '3'].map((element) => stringToBuffer(element)),
         total: 1,
         count: 123,
       }
@@ -123,6 +124,7 @@ describe('list slice', () => {
         data: {
           ...initialState.data,
           ...data,
+          elements: data.elements.map((element, i) => ({ index: i, element })),
         },
       }
 
@@ -185,7 +187,8 @@ describe('list slice', () => {
       const data = {
         keyName: 'list',
         key: 'list',
-        elements: ['1', '23', '432'],
+        elements: ['1', '23', '432'].map((element, i) => (stringToBuffer(element))),
+        // elements: ['1', '23', '432'].map((element, i) => ({ element: stringToBuffer(element), index: i })),
         total: 1,
       }
 
@@ -194,7 +197,7 @@ describe('list slice', () => {
         loading: false,
         data: {
           ...initialState.data,
-          elements: data.elements,
+          elements: data.elements.map((element, i) => ({ element, index: i })),
         },
       }
 
@@ -383,8 +386,8 @@ describe('list slice', () => {
       // Arrange
 
       const data = {
-        keyName: 'list',
-        value: '12311',
+        keyName: stringToBuffer('list'),
+        value: stringToBuffer('12311'),
       }
 
       const state = {
@@ -392,14 +395,14 @@ describe('list slice', () => {
         loading: false,
         data: {
           ...initialState.data,
-          elements: [data.value],
+          elements: [{ element: data.value, index: 0 }],
         },
       }
 
       // Act
       const nextState = reducer(
         initialState,
-        loadSearchingListElementSuccess(data)
+        loadSearchingListElementSuccess([0, data])
       )
 
       // Assert
@@ -412,8 +415,8 @@ describe('list slice', () => {
     it('should properly set the state with empty data', () => {
       // Arrange
       const data = {
-        keyName: 'list',
-        value: '',
+        keyName: stringToBuffer('list'),
+        value: stringToBuffer(''),
       }
 
       const state = {
@@ -421,14 +424,14 @@ describe('list slice', () => {
         loading: false,
         data: {
           ...initialState.data,
-          elements: [data.value],
+          elements: [{ element: data.value, index: 0 }],
         },
       }
 
       // Act
       const nextState = reducer(
         initialState,
-        loadSearchingListElementSuccess(data)
+        loadSearchingListElementSuccess([0, data])
       )
 
       // Assert
@@ -654,8 +657,8 @@ describe('list slice', () => {
         // Arrange
         const searchingIndex = 10
         const data = {
-          keyName: 'small list',
-          value: 'value',
+          keyName: stringToBuffer('small list'),
+          value: stringToBuffer('value'),
         }
 
         const responsePayload = { data, status: 200 }
@@ -670,7 +673,7 @@ describe('list slice', () => {
         // Assert
         const expectedActions = [
           loadSearchingListElement(searchingIndex),
-          loadSearchingListElementSuccess(responsePayload.data),
+          loadSearchingListElementSuccess([searchingIndex, responsePayload.data]),
           updateSelectedKeyRefreshTime(Date.now()),
         ]
 

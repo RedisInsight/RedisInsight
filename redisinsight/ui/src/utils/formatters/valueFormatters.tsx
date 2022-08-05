@@ -14,8 +14,11 @@ const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(for
 const bufferToUnicode = (reply: RedisResponseBuffer): string =>
   bufferToUTF8(reply)
 
-const bufferToJSON = (reply: string, props: FormattingProps): { value: JSX.Element | string, isValid: boolean } =>
-  JSONViewer({ value: reply, ...props })
+const bufferToJSON = (
+  reply: RedisResponseBuffer,
+  props: FormattingProps
+): { value: JSX.Element | string, isValid: boolean } =>
+  JSONViewer({ value: bufferToUTF8(reply), ...props })
 
 const formattingBuffer = (
   reply: RedisResponseBuffer,
@@ -24,7 +27,7 @@ const formattingBuffer = (
 ): { value: JSX.Element | string, isValid: boolean } => {
   switch (format) {
     case KeyValueFormat.JSON: {
-      return bufferToJSON(bufferToUTF8(reply), props as FormattingProps)
+      return bufferToJSON(reply, props as FormattingProps)
     }
     case KeyValueFormat.Msgpack: {
       // TODO: for future

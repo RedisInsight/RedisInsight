@@ -4,7 +4,6 @@ import React, { ChangeEvent, Ref, useCallback, useEffect, useRef, useState } fro
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
 import { omit, union } from 'lodash'
-import { onlyText } from 'react-children-utilities'
 
 import {
   hashSelector,
@@ -102,7 +101,7 @@ const HashDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const hashFields = bufferFormatRangeItems(loadedFields, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+    const hashFields = loadedFields.map(formatItem)
 
     setFields(hashFields)
 
@@ -259,18 +258,6 @@ const HashDetails = (props: Props) => {
     editing: false
   }), [viewFormatProp])
 
-  const bufferFormatRows = (lastIndex: number) => {
-    const newFields = bufferFormatRangeItems(fields, formattedLastIndexRef.current, lastIndex, formatItem)
-
-    setFields(newFields)
-
-    if (lastIndex > formattedLastIndexRef.current) {
-      formattedLastIndexRef.current = lastIndex
-    }
-
-    return newFields
-  }
-
   const columns: ITableColumn[] = [
     {
       id: 'field',
@@ -335,7 +322,7 @@ const HashDetails = (props: Props) => {
             <StopPropagation>
               <InlineItemEditor
                 expandable
-                initialValue={onlyText(value)}
+                initialValue={value}
                 controlsPosition="inside"
                 controlsDesign="separate"
                 placeholder="Enter Value"
@@ -474,7 +461,6 @@ const HashDetails = (props: Props) => {
           onRowToggleViewClick={handleRowToggleViewClick}
           expandedRows={expandedRows}
           setExpandedRows={setExpandedRows}
-          onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
         />
       </div>
     </>

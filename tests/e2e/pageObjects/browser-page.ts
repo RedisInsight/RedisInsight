@@ -84,6 +84,7 @@ export class BrowserPage {
     forceClaimCheckbox = Selector('[data-testid=force-claim-checkbox]').sibling();
     editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
     saveButton = Selector('[data-testid=save-btn]');
+    bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');

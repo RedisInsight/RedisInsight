@@ -10,6 +10,7 @@ import {
 } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { stringToBuffer } from 'uiSrc/utils'
 import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
@@ -556,21 +557,21 @@ describe('zset slice', () => {
         data: {
           ...initialState.data,
           members: [
-            { name: 'member name', score: 1 },
-            { name: 'member name1', score: 2 },
-            { name: 'member name2', score: 3 },
+            { name: stringToBuffer('member name'), score: 1 },
+            { name: stringToBuffer('member name1'), score: 2 },
+            { name: stringToBuffer('member name2'), score: 3 },
           ],
         },
       }
 
-      const data = ['member name', 'member name1']
+      const data = [stringToBuffer('member name'), stringToBuffer('member name1')]
 
       const state = {
         ...initialStateRemove,
         data: {
           ...initialStateRemove.data,
           total: initialStateRemove.data.total - 1,
-          members: [{ name: 'member name2', score: 3 }],
+          members: [{ name: stringToBuffer('member name2'), score: 3 }],
         },
       }
 
@@ -685,11 +686,11 @@ describe('zset slice', () => {
           ...initialState.data,
           members: [
             {
-              name: 'name',
+              name: stringToBuffer('name'),
               score: 1,
             },
             {
-              name: 'name2',
+              name: stringToBuffer('name2'),
               score: 2,
             }
           ]
@@ -697,7 +698,7 @@ describe('zset slice', () => {
       }
 
       const data: ZSetMemberDto[] = [{
-        name: 'name2',
+        name: stringToBuffer('name2'),
         score: 3,
       }]
 
@@ -706,10 +707,10 @@ describe('zset slice', () => {
         data: {
           ...initialState.data,
           members: [{
-            name: 'name',
+            name: stringToBuffer('name'),
             score: 1,
           }, {
-            name: 'name2',
+            name: stringToBuffer('name2'),
             score: 3,
           }]
         }

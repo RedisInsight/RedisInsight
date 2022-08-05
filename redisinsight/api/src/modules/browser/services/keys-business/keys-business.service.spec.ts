@@ -40,7 +40,7 @@ import { KeysBusinessService } from './keys-business.service';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
-  name: 'testString',
+  name: Buffer.from('testString'),
   type: 'string',
   ttl: -1,
   size: 50,
@@ -117,7 +117,7 @@ describe('KeysBusinessService', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
-        ])
+        ], 'utf8')
         .mockResolvedValue(RedisDataType.String);
     });
 
@@ -139,7 +139,7 @@ describe('KeysBusinessService', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
-        ])
+        ], 'utf8')
         .mockResolvedValue('none');
 
       await expect(
@@ -154,7 +154,7 @@ describe('KeysBusinessService', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
-        ])
+        ], 'utf8')
         .mockRejectedValue(replyError);
 
       await expect(

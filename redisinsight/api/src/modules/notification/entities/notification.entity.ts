@@ -14,6 +14,12 @@ export class NotificationEntity {
   @Column({ nullable: false })
   title: string;
 
+  @Column({ nullable: true })
+  category?: string;
+
+  @Column({ nullable: true })
+  categoryColor?: string;
+
   @Column({ nullable: false, type: 'text' })
   body: string;
 

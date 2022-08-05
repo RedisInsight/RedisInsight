@@ -1,4 +1,6 @@
 import React from 'react'
+import { RedisString } from 'uiSrc/slices/interfaces'
+import { bufferToString } from './formatters'
 import replaceSpaces from './replaceSpaces'
 
 export function formatLongName(
@@ -28,12 +30,12 @@ export function getDbIndex(db: number = 0) {
 export const truncateText = (text = '', maxLength = 0, separator = '...') =>
   (text.length >= maxLength ? text.slice(0, maxLength) + separator : text)
 
-export const createDeleteFieldHeader = (keyName: string) => formatNameShort(keyName)
+export const createDeleteFieldHeader = (keyName: RedisString) => formatNameShort(bufferToString((keyName)))
 
-export const createDeleteFieldMessage = (field: string) => (
+export const createDeleteFieldMessage = (field: RedisString) => (
   <>
     will be removed from
     {' '}
-    <b>{formatNameShort(field)}</b>
+    <b>{formatNameShort(bufferToString(field))}</b>
   </>
 )

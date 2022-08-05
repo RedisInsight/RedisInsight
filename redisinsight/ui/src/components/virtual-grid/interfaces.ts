@@ -46,7 +46,7 @@ export interface IProps {
   rowHeight?: number
   footerHeight?: number
   selectable?: boolean
-  keyName?: string
+  keyName?: RedisResponseBuffer
   headerHeight?: number
   searching?: boolean
   onRowToggleViewClick?: (expanded: boolean, rowIndex: number) => void

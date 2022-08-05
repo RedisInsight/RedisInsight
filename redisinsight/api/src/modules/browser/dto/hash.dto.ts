@@ -1,5 +1,5 @@
 import {
-  KeyDto,
+  KeyDto, KeyResponse,
   KeyWithExpireDto,
   ScanDataTypeDto,
 } from 'src/modules/browser/dto/keys.dto';
@@ -8,10 +8,11 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsDefined,
-  IsString,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { RedisString } from 'src/common/constants';
 
 export class HashFieldDto {
   @ApiProperty({
@@ -19,16 +20,18 @@ export class HashFieldDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  field: string;
+  @IsRedisString()
+  @RedisStringType()
+  field: RedisString;
 
   @ApiProperty({
     description: 'Field',
     type: String,
   })
   @IsDefined()
-  @IsString()
-  value: string;
+  @IsRedisString()
+  @RedisStringType()
+  value: RedisString;
 }
 
 export class AddFieldsToHashDto extends KeyDto {
@@ -52,13 +55,7 @@ export class CreateHashWithExpireDto extends IntersectionType(
 
 export class GetHashFieldsDto extends ScanDataTypeDto {}
 
-export class HashScanResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class HashScanResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     minimum: 0,
@@ -93,8 +90,9 @@ export class DeleteFieldsFromHashDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
-  fields: string[];
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  fields: RedisString[];
 }
 
 export class DeleteFieldsFromHashResponse {

@@ -8,7 +8,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall, getMainCheckFn
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -31,7 +31,9 @@ const responseSchema = Joi.object().keys({
   affected: Joi.number().required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
+const mainCheckFn = getMainCheckFn(endpoint);
+
+const deleteCheckFn = async (testCase) => {
   it(testCase.name, async () => {
     if (testCase.before) {
       await testCase.before();
@@ -57,21 +59,15 @@ const mainCheckFn = async (testCase) => {
 };
 
 describe('DELETE /instance/:instanceId/keys', () => {
-  before(async () => await rte.data.generateKeys(true));
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    beforeEach(() => rte.data.generateBinKeys(true));
 
-  // todo: investigate BE validation pipe with transform:true flag. Seems like works incorrect
-  xdescribe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
     [
       {
-        name: 'Should remove string',
+        name: 'Should process ascii input',
         data: {
-          keyNames: [constants.TEST_STRING_KEY_1],
+          keyNames: [constants.TEST_STRING_KEY_BIN_ASCII_1],
         },
         responseSchema,
         responseBody: {
@@ -79,9 +75,9 @@ describe('DELETE /instance/:instanceId/keys', () => {
         },
       },
       {
-        name: 'Should remove list',
+        name: 'Should process buffer input',
         data: {
-          keyNames: [constants.TEST_LIST_KEY_1],
+          keyNames: [constants.TEST_STRING_KEY_BIN_BUF_OBJ_1],
         },
         responseSchema,
         responseBody: {
@@ -89,116 +85,159 @@ describe('DELETE /instance/:instanceId/keys', () => {
         },
       },
       {
-        name: 'Should remove set',
+        name: 'Should return error when send unicode with unprintable chars',
+        query: {
+          encoding: 'buffer',
+        },
         data: {
-          keyNames: [constants.TEST_SET_KEY_1],
-        },
-        responseSchema,
-        responseBody: {
-          affected: 1,
-        },
-      },
-      {
-        name: 'Should remove zset',
-        data: {
-          keyNames: [constants.TEST_ZSET_KEY_1],
-        },
-        responseSchema,
-        responseBody: {
-          affected: 1,
-        },
-      },
-      {
-        name: 'Should remove hash',
-        data: {
-          keyNames: [constants.TEST_HASH_KEY_1],
-        },
-        responseSchema,
-        responseBody: {
-          affected: 1,
-        },
-      },
-      {
-        name: 'Should remove multiple keys',
-        data: {
-          keyNames: [
-            constants.TEST_STRING_KEY_1,
-            constants.TEST_LIST_KEY_1,
-            constants.TEST_SET_KEY_1,
-            constants.TEST_ZSET_KEY_1,
-            constants.TEST_HASH_KEY_1,
-          ],
-        },
-        responseSchema,
-        responseBody: {
-          affected: 5,
-        },
-        before: async function () {
-          // generate already deleted keys again
-          await rte.data.generateKeys(true)
-          this.data.keyNames.map(async (keyName) => {
-            expect(await rte.client.exists(keyName)).to.eql(1);
-          });
-        }
-      },
-      {
-        name: 'Should return NotFound error for not existing error',
-        data: {
-          keyNames: [constants.getRandomString()],
+          keyNames: [constants.TEST_STRING_KEY_BIN_UTF8_1],
         },
         statusCode: 404,
-        // todo: investigate error payload. Seems that missed fields and wrong message
-        responseBody: {
-          statusCode: 404,
-          message: 'Not Found',
-        },
       },
     ].map(mainCheckFn);
+  });
+  describe('Rest', () => {
+    before(async () => await rte.data.generateKeys(true));
 
-    describe('ReJSON-RL', () => {
-      requirements('rte.modules.rejson');
+    // todo: investigate BE validation pipe with transform:true flag. Seems like works incorrect
+    xdescribe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+    describe('Common', () => {
       [
         {
-          name: 'Should remove ReJSON',
+          name: 'Should remove string',
           data: {
-            keyNames: [constants.TEST_REJSON_KEY_1],
+            keyNames: [constants.TEST_STRING_KEY_1],
           },
           responseSchema,
           responseBody: {
             affected: 1,
           },
         },
-      ].map(mainCheckFn);
+        {
+          name: 'Should remove list',
+          data: {
+            keyNames: [constants.TEST_LIST_KEY_1],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 1,
+          },
+        },
+        {
+          name: 'Should remove set',
+          data: {
+            keyNames: [constants.TEST_SET_KEY_1],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 1,
+          },
+        },
+        {
+          name: 'Should remove zset',
+          data: {
+            keyNames: [constants.TEST_ZSET_KEY_1],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 1,
+          },
+        },
+        {
+          name: 'Should remove hash',
+          data: {
+            keyNames: [constants.TEST_HASH_KEY_1],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 1,
+          },
+        },
+        {
+          name: 'Should remove multiple keys',
+          data: {
+            keyNames: [
+              constants.TEST_STRING_KEY_1,
+              constants.TEST_LIST_KEY_1,
+              constants.TEST_SET_KEY_1,
+              constants.TEST_ZSET_KEY_1,
+              constants.TEST_HASH_KEY_1,
+            ],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 5,
+          },
+          before: async function () {
+            // generate already deleted keys again
+            await rte.data.generateKeys(true)
+            this.data.keyNames.map(async (keyName) => {
+              expect(await rte.client.exists(keyName)).to.eql(1);
+            });
+          }
+        },
+        {
+          name: 'Should return NotFound error for not existing error',
+          data: {
+            keyNames: [constants.getRandomString()],
+          },
+          statusCode: 404,
+          // todo: investigate error payload. Seems that missed fields and wrong message
+          responseBody: {
+            statusCode: 404,
+            message: 'Not Found',
+          },
+        },
+      ].map(deleteCheckFn);
+
+      describe('ReJSON-RL', () => {
+        requirements('rte.modules.rejson');
+        [
+          {
+            name: 'Should remove ReJSON',
+            data: {
+              keyNames: [constants.TEST_REJSON_KEY_1],
+            },
+            responseSchema,
+            responseBody: {
+              affected: 1,
+            },
+          },
+        ].map(deleteCheckFn);
+      });
     });
-  });
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => await rte.data.generateKeys(true));
+      before(async () => rte.data.setAclUserRules('~* +@all'));
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => await rte.data.generateKeys(true));
-    before(async () => rte.data.setAclUserRules('~* +@all'));
-
-    [
-      {
-        name: 'Should remove key',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyNames: [constants.TEST_STRING_KEY_1],
+      [
+        {
+          name: 'Should remove key',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyNames: [constants.TEST_STRING_KEY_1],
+          },
+          statusCode: 200,
         },
-        statusCode: 200,
-      },
-      {
-        name: 'Should throw error if no permissions for "del" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyNames: [constants.TEST_STRING_KEY_1],
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "del" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyNames: [constants.TEST_STRING_KEY_1],
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -del')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -del')
-      },
-    ].map(mainCheckFn);
+      ].map(deleteCheckFn);
+    });
   });
 });

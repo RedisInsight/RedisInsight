@@ -9,3 +9,5 @@ export enum TableCellTextAlignment {
   Center = 'center',
   Right = 'right',
 }
+
+export const OVER_RENDER_BUFFER_COUNT = 50

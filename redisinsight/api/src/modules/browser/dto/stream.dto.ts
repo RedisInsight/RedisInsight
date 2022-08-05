@@ -15,9 +15,35 @@ import {
   ValidateIf,
   IsBoolean,
 } from 'class-validator';
-import { KeyDto, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
+import { KeyDto, KeyResponse, KeyWithExpireDto } from 'src/modules/browser/dto/keys.dto';
 import { SortOrder } from 'src/constants';
 import { Type } from 'class-transformer';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { RedisString } from 'src/common/constants';
+
+export class StreamEntryFieldDto {
+  @ApiProperty({
+    type: String,
+    description: 'Entry field name',
+    example: 'field1',
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsRedisString()
+  @RedisStringType()
+  name: RedisString;
+
+  @ApiProperty({
+    type: String,
+    description: 'Entry value',
+    example: 'value1',
+  })
+  @IsDefined()
+  @IsNotEmpty()
+  @IsRedisString()
+  @RedisStringType()
+  value: RedisString;
+}
 
 export class StreamEntryDto {
   @ApiProperty({
@@ -33,13 +59,15 @@ export class StreamEntryDto {
   @ApiProperty({
     type: Object,
     description: 'Entry fields',
-    example: [['field1', 'value1'], ['field2', 'value2']],
+    example: [{ name: 'field1', value: 'value1' }, { name: 'field2', value: 'value2' }],
   })
   @IsDefined()
   @IsNotEmpty()
-  @IsArray()
   @ArrayNotEmpty()
-  fields: Array<Array<string>>;
+  @IsArray()
+  @Type(() => StreamEntryFieldDto)
+  @ValidateNested({ each: true })
+  fields: StreamEntryFieldDto[];
 }
 
 export class GetStreamEntriesDto extends KeyDto {
@@ -83,13 +111,7 @@ export class GetStreamEntriesDto extends KeyDto {
   sortOrder?: SortOrder = SortOrder.Desc;
 }
 
-export class GetStreamEntriesResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetStreamEntriesResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     description: 'Total number of entries',
@@ -106,12 +128,14 @@ export class GetStreamEntriesResponse {
     description: 'First stream entry',
     type: StreamEntryDto,
   })
+  @Type(() => StreamEntryDto)
   firstEntry: StreamEntryDto;
 
   @ApiProperty({
     description: 'Last stream entry',
     type: StreamEntryDto,
   })
+  @Type(() => StreamEntryDto)
   lastEntry: StreamEntryDto;
 
   @ApiProperty({
@@ -119,6 +143,7 @@ export class GetStreamEntriesResponse {
     type: StreamEntryDto,
     isArray: true,
   })
+  @Type(() => StreamEntryDto)
   entries: StreamEntryDto[];
 }
 
@@ -130,17 +155,11 @@ export class AddStreamEntriesDto extends KeyDto {
     example: [
       {
         id: '*',
-        fields: [
-          ['field1', 'value1'],
-          ['field2', 'value2'],
-        ],
+        fields: [{ name: 'field1', value: 'value1' }, { name: 'field2', value: 'value2' }],
       },
       {
         id: '*',
-        fields: [
-          ['field1', 'value1'],
-          ['field2', 'value2'],
-        ],
+        fields: [{ name: 'field1', value: 'value1' }, { name: 'field2', value: 'value2' }],
       },
     ],
   })
@@ -152,13 +171,7 @@ export class AddStreamEntriesDto extends KeyDto {
   entries: StreamEntryDto[];
 }
 
-export class AddStreamEntriesResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class AddStreamEntriesResponse extends KeyResponse {
   @ApiProperty({
     description: 'Entries IDs',
     type: String,
@@ -200,7 +213,8 @@ export class ConsumerGroupDto {
     description: 'Consumer Group name',
     example: 'group',
   })
-  name: string;
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: Number,
@@ -245,8 +259,9 @@ export class CreateConsumerGroupDto {
     example: 'group',
   })
   @IsNotEmpty()
-  @IsString()
-  name: string;
+  @IsRedisString()
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: String,
@@ -286,9 +301,9 @@ export class DeleteConsumerGroupsDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsNotEmpty({ each: true })
-  @IsString({ each: true })
-  consumerGroups: string[];
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  consumerGroups: RedisString[];
 }
 
 export class DeleteConsumerGroupsResponse {
@@ -305,7 +320,8 @@ export class ConsumerDto {
     description: 'The consumer\'s name',
     example: 'consumer-2',
   })
-  name: string;
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: Number,
@@ -330,8 +346,9 @@ export class GetConsumersDto extends KeyDto {
     example: 'group-1',
   })
   @IsNotEmpty()
-  @IsString()
-  groupName: string;
+  @IsRedisString()
+  @RedisStringType()
+  groupName: RedisString;
 }
 
 export class DeleteConsumersDto extends GetConsumersDto {
@@ -344,9 +361,10 @@ export class DeleteConsumersDto extends GetConsumersDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsString({ each: true })
   @IsNotEmpty({ each: true })
-  consumerNames: string[];
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  consumerNames: RedisString[];
 }
 
 export class PendingEntryDto {
@@ -362,7 +380,8 @@ export class PendingEntryDto {
     description: 'Consumer name',
     example: 'consumer-1',
   })
-  consumerName: string;
+  @RedisStringType()
+  consumerName: RedisString;
 
   @ApiProperty({
     type: Number,
@@ -390,8 +409,9 @@ export class GetPendingEntriesDto extends IntersectionType(
     example: 'consumer-1',
   })
   @IsNotEmpty()
-  @IsString()
-  consumerName: string;
+  @IsRedisString()
+  @RedisStringType()
+  consumerName: RedisString;
 
   @ApiPropertyOptional({
     description: 'Specifying the start id',
@@ -431,9 +451,10 @@ export class AckPendingEntriesDto extends GetConsumersDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsString({ each: true })
+  @IsRedisString({ each: true })
   @IsNotEmpty({ each: true })
-  entries: string[];
+  @RedisStringType({ each: true })
+  entries: RedisString[];
 }
 
 export class AckPendingEntriesResponse {
@@ -451,8 +472,9 @@ export class ClaimPendingEntryDto extends KeyDto {
     example: 'group-1',
   })
   @IsNotEmpty()
-  @IsString()
-  groupName: string;
+  @IsRedisString()
+  @RedisStringType()
+  groupName: RedisString;
 
   @ApiProperty({
     type: String,
@@ -460,8 +482,9 @@ export class ClaimPendingEntryDto extends KeyDto {
     example: 'consumer-1',
   })
   @IsNotEmpty()
-  @IsString()
-  consumerName: string;
+  @IsRedisString()
+  @RedisStringType()
+  consumerName: RedisString;
 
   @ApiProperty({
     description: 'Claim only if its idle time is greater the minimum idle time ',
@@ -482,8 +505,9 @@ export class ClaimPendingEntryDto extends KeyDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @IsString({ each: true })
   @IsNotEmpty({ each: true })
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
   entries: string[];
 
   @ApiPropertyOptional({

@@ -10,6 +10,8 @@ const responseSchema = Joi.object().keys({
   totalUnread: Joi.number().integer().min(0).required(),
   notifications: Joi.array().items(Joi.object().keys({
     title: Joi.string().required(),
+    category: Joi.string().allow(null),
+    categoryColor: Joi.string().allow(null),
     body: Joi.string().required(),
     timestamp: Joi.number().integer().required(),
     read: Joi.boolean().required(),

@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
-import { catchAclError, catchTransactionError, convertStringsArrayToObject } from 'src/utils';
+import { catchAclError, catchTransactionError } from 'src/utils';
 import {
   BrowserToolCommands,
   BrowserToolKeysCommands, BrowserToolStreamCommands,
@@ -15,6 +15,7 @@ import {
   ConsumerDto, DeleteConsumersDto,
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class ConsumerService {
@@ -90,7 +91,7 @@ export class ConsumerService {
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
-        ...args: Array<string | number>,
+        ...args: Array<string | number | Buffer>,
       ]> = dto.consumerNames.map((consumerName) => (
         [
           BrowserToolStreamCommands.XGroupDelConsumer,
@@ -259,6 +260,7 @@ export class ConsumerService {
         clientOptions,
         BrowserToolStreamCommands.XClaim,
         args,
+        'utf8',
       );
 
       this.logger.log('Successfully claimed pending entries.');
@@ -321,13 +323,13 @@ export class ConsumerService {
       return null;
     }
 
-    const entryObj = convertStringsArrayToObject(entry as string[]);
+    const [,name,,pending,,idle] = entry;
 
-    return {
-      name: entryObj['name'],
-      pending: entryObj['pending'],
-      idle: entryObj['idle'],
-    };
+    return plainToClass(ConsumerDto, {
+      name,
+      pending,
+      idle,
+    });
   }
 
   /**
@@ -363,11 +365,11 @@ export class ConsumerService {
       return null;
     }
 
-    return {
+    return plainToClass(PendingEntryDto, {
       id: `${entry[0]}`,
-      consumerName: `${entry[1]}`,
+      consumerName: entry[1],
       idle: +entry[2],
       delivered: +entry[3],
-    };
+    });
   }
 }

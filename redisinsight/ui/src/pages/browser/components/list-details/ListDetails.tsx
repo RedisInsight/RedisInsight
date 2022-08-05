@@ -1,11 +1,11 @@
-import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
-import React, { useEffect, useState } from 'react'
+import { EuiButtonIcon, EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { isEqual, isNull, union } from 'lodash'
 import { CellMeasurerCache } from 'react-virtualized'
+import { onlyText } from 'react-children-utilities'
 
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   listSelector,
   listDataSelector,
@@ -14,21 +14,24 @@ import {
   updateListElementAction,
   updateListValueStateSelector,
   fetchSearchingListElementAction,
+  setListElements,
 } from 'uiSrc/slices/browser/list'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes, TableCellAlignment } from 'uiSrc/constants'
 import {
   ITableColumn,
   IColumnSearchState,
 } from 'uiSrc/components/virtual-table/interfaces'
-import { formatLongName, validateListIndex } from 'uiSrc/utils'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
+import { bufferFormatRangeItems, formatLongName, formattingBuffer, validateListIndex } from 'uiSrc/utils'
+import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
+import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -39,6 +42,7 @@ const headerHeight = 60
 const rowHeight = 43
 const footerHeight = 0
 const initSearchingIndex = null
+const APPROXIMATE_WIDTH_OF_SIGN = 8.3
 
 const cellCache = new CellMeasurerCache({
   fixedWidth: true,
@@ -55,34 +59,61 @@ interface Props {
 
 const ListDetails = (props: Props) => {
   const { isFooterOpen } = props
-  const [elements, setElements] = useState<IListElement[]>([])
-  const [width, setWidth] = useState(100)
-  const [expandedRows, setExpandedRows] = useState<number[]>([])
-
   const { loading } = useSelector(listSelector)
   const { loading: updateLoading } = useSelector(updateListValueStateSelector)
   const { elements: loadedElements, total, searchedIndex } = useSelector(
     listDataSelector
   )
-
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+
+  const [elements, setElements] = useState<IListElement[]>([])
+  const [width, setWidth] = useState(100)
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
+  const [viewFormat, setViewFormat] = useState(viewFormatProp)
+  const [areaValue, setAreaValue] = useState<string>('')
+  const [, forceUpdate] = useState({})
+
+  const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
+  const textAreaRef: React.Ref<HTMLTextAreaElement> = useRef(null)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const listElements: IListElement[] = loadedElements.map((item, index) => ({
-      index: searchedIndex ?? index,
-      element: item,
-      editing: false,
-    }))
+    const listElements = bufferFormatRangeItems(loadedElements, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+
     setElements(listElements)
-  }, [loadedElements])
+
+    if (loadedElements.length < elements.length) {
+      formattedLastIndexRef.current = 0
+    }
+
+    if (viewFormat !== viewFormatProp) {
+      setExpandedRows([])
+      setViewFormat(viewFormatProp)
+
+      cellCache.clearAll()
+      setTimeout(() => {
+        cellCache.clearAll()
+      }, 0)
+    }
+  }, [loadedElements, viewFormatProp])
+
+  const formatItem = useCallback(({ index, element }: IListElement): IListElement => ({
+    index: searchedIndex ?? index,
+    editing: false,
+    element: {
+      ...element,
+      viewValue: formattingBuffer(element, viewFormatProp),
+    },
+  }), [viewFormatProp])
 
   const handleEditElement = (index = 0, editing: boolean) => {
     const newElemsState = elements.map((item) => {
       if (item.index === index) {
+        setAreaValue(onlyText(item.element?.viewValue))
         return { ...item, editing }
       }
       return item
@@ -92,16 +123,16 @@ const ListDetails = (props: Props) => {
       setElements(newElemsState)
     }
 
-    cellCache.clearAll()
     setTimeout(() => {
       cellCache.clearAll()
+      forceUpdate({})
     }, 0)
   }
 
-  const handleApplyEditElement = (index = 0, element: string) => {
+  const handleApplyEditElement = (index = 0) => {
     const data: SetListElementDto = {
       keyName: key,
-      element,
+      element: stringToBuffer(areaValue),
       index,
     }
     dispatch(
@@ -117,6 +148,7 @@ const ListDetails = (props: Props) => {
   }
 
   const handleSearch = (search: IColumnSearchState[]) => {
+    formattedLastIndexRef.current = 0
     const indexColumn = search.find((column) => column.id === 'index')
     const onSuccess = () => {
       sendEventTelemetry({
@@ -150,6 +182,16 @@ const ListDetails = (props: Props) => {
     }
   }
 
+  const bufferFormatRows = (lastIndex: number) => {
+    const newElements = bufferFormatRangeItems(elements, formattedLastIndexRef.current, lastIndex, formatItem)
+    setElements(newElements)
+
+    if (lastIndex > formattedLastIndexRef.current) {
+      formattedLastIndexRef.current = lastIndex
+    }
+    return newElements
+  }
+
   const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
     const browserViewEvent = expanded
       ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
@@ -166,6 +208,8 @@ const ListDetails = (props: Props) => {
         largestCellLength: elements[rowIndex]?.element?.length || 0,
       }
     })
+
+    cellCache.clearAll()
   }
 
   const columns: ITableColumn[] = [
@@ -184,8 +228,8 @@ const ListDetails = (props: Props) => {
       headerClassName: 'value-table-separate-border',
       render: function Index(_name: string, { index }: IListElement) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = index.toString().substring(0, 200)
-        const tooltipContent = formatLongName(index.toString())
+        const cellContent = index?.toString().substring(0, 200)
+        const tooltipContent = formatLongName(index?.toString())
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
             <div style={{ display: 'flex' }} className="truncateText" data-testid={`list-index-value-${index}`}>
@@ -210,27 +254,53 @@ const ListDetails = (props: Props) => {
       alignment: TableCellAlignment.Left,
       render: function Element(
         _element: string,
-        { element, index, editing }: IListElement,
+        { element: elementItem, index, editing }: IListElement,
         expanded: boolean = false
       ) {
+        const element = elementItem?.viewValue ?? ''
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = element.substring(0, 200)
-        const tooltipContent = formatLongName(element)
+        const cellContent = element.substring?.(0, 200) ?? element
+        const tooltipContent = formatLongName(onlyText(element))
 
         if (editing) {
+          const text = areaValue
+          const calculatedBreaks = text?.split('\n').length
+          const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
+          const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
+          const calculatedRows = Math.round(text?.length / OneRowLength + calculatedBreaks)
           return (
             <StopPropagation>
               <div className={styles.inlineItemEditor}>
                 <InlineItemEditor
-                  initialValue={element}
-                  controlsPosition="right"
+                  expandable
+                  initialValue={onlyText(element)}
+                  controlsPosition="inside"
+                  controlsDesign="separate"
                   placeholder="Enter Element"
                   fieldName="elementValue"
-                  expandable
+                  controlsClassName={styles.textAreaControls}
                   isLoading={updateLoading}
                   onDecline={() => handleEditElement(index, false)}
-                  onApply={(value) => handleApplyEditElement(index, value)}
-                />
+                  onApply={() => handleApplyEditElement(index)}
+                >
+                  <EuiTextArea
+                    fullWidth
+                    name="value"
+                    id="value"
+                    rows={calculatedRows}
+                    resize="none"
+                    placeholder="Enter Element"
+                    value={areaValue}
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                      cellCache.clearAll()
+                      setAreaValue(e.target.value)
+                    }}
+                    disabled={updateLoading}
+                    inputRef={textAreaRef}
+                    className={styles.textArea}
+                    data-testid="element-value-editor"
+                  />
+                </InlineItemEditor>
               </div>
             </StopPropagation>
           )
@@ -287,6 +357,7 @@ const ListDetails = (props: Props) => {
 
   const loadMoreItems = ({ startIndex, stopIndex }: any) => {
     if (isNull(searchedIndex)) {
+      dispatch(setListElements(bufferFormatRows(elements.length - 1)))
       dispatch(
         fetchMoreListElements(key, startIndex, stopIndex - startIndex + 1)
       )
@@ -335,6 +406,7 @@ const ListDetails = (props: Props) => {
         onRowToggleViewClick={handleRowToggleViewClick}
         expandedRows={expandedRows}
         setExpandedRows={setExpandedRows}
+        onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
       />
     </div>
   )

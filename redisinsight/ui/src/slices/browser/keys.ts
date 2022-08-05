@@ -1,8 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, KeyTypes, SortOrder } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes, KeyValueFormat, SortOrder } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -15,6 +15,9 @@ import {
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import bufferToString, { isEqualBuffers } from 'uiSrc/utils/formatters/bufferFormatters'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+
 import {
   CreateListWithExpireDto,
   SetStringWithExpireDto,
@@ -24,6 +27,7 @@ import {
   CreateSetWithExpireDto,
 } from 'apiSrc/modules/browser/dto'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
+
 import { fetchString } from './string'
 import { setZsetInitialState, fetchZSetMembers } from './zset'
 import { fetchSetMembers } from './set'
@@ -35,6 +39,7 @@ import { addErrorNotification, addMessageNotification } from '../app/notificatio
 import { KeysStore, KeyViewType } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
 import { StreamViewType } from '../interfaces/stream'
+import { RedisResponseBuffer } from '../interfaces'
 
 export const initialState: KeysStore = {
   loading: false,
@@ -61,6 +66,7 @@ export const initialState: KeysStore = {
     error: '',
     data: null,
     length: 0,
+    viewFormat: KeyValueFormat.Unicode,
   },
   addKey: {
     loading: false,
@@ -71,6 +77,7 @@ export const initialState: KeysStore = {
 export const initialKeyInfo = {
   ttl: -1,
   name: null,
+  nameString: null,
   type: KeyTypes.String,
   size: 1,
   length: 0,
@@ -107,7 +114,7 @@ const keysSlice = createSlice({
       state.error = ''
     },
     loadMoreKeysSuccess: (state, { payload: { total, scanned, nextCursor, keys, shardsMeta } }) => {
-      state.data.keys = state.data?.keys?.concat(keys)
+      state.data.keys = keys
       state.data.total = total
       state.data.scanned = scanned
       state.data.nextCursor = nextCursor
@@ -120,11 +127,15 @@ const keysSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+
     loadKeyInfoSuccess: (state, { payload }) => {
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
-        data: { ...payload },
+        data: {
+          ...payload,
+          nameString: bufferToString(payload.name),
+        },
       }
     },
     refreshKeyInfo: (state) => {
@@ -172,7 +183,7 @@ const keysSlice = createSlice({
       }
     },
     deleteKeyFromList: (state, { payload }) => {
-      remove(state.data?.keys, (key) => key.name === payload)
+      remove(state.data?.keys, (key) => isEqualBuffers(key.name, payload))
 
       state.data = {
         ...state.data,
@@ -193,6 +204,7 @@ const keysSlice = createSlice({
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
+        viewFormat: KeyValueFormat.Unicode,
         // data: null,
       }
     },
@@ -205,7 +217,7 @@ const keysSlice = createSlice({
     },
     editKeyTTLFromList: (state, { payload }) => {
       const keys = state.data.keys.map((key) => {
-        if (key.name === payload?.key) {
+        if (isEqualBuffers(key.name, payload?.key)) {
           key.ttl = payload?.ttl
         }
         return key
@@ -218,7 +230,7 @@ const keysSlice = createSlice({
     },
     editKeyFromList: (state, { payload }) => {
       const keys = state.data.keys.map((key) => {
-        if (key.name === payload?.key) {
+        if (isEqualBuffers(key.name, payload?.key)) {
           key.name = payload?.newKey
         }
         return key
@@ -231,7 +243,7 @@ const keysSlice = createSlice({
     },
     updateKeySizeFromList: (state, { payload }) => {
       const keys = state.data.keys.map((key) => {
-        if (key.name === payload?.key) {
+        if (isEqualBuffers(key.name, payload?.key)) {
           key.size = payload?.size
         }
         return key
@@ -309,6 +321,10 @@ const keysSlice = createSlice({
         return
       }
       state.isBrowserFullScreen = !state.isBrowserFullScreen
+    },
+
+    setViewFormat: (state, { payload }: PayloadAction<KeyValueFormat>) => {
+      state.selectedKey.viewFormat = payload
     }
   },
 })
@@ -347,7 +363,8 @@ export const {
   resetKeyInfo,
   resetKeys,
   resetKeysData,
-  toggleBrowserFullScreen
+  toggleBrowserFullScreen,
+  setViewFormat,
 } = keysSlice.actions
 
 // A selector
@@ -392,6 +409,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
 
       const state = stateInit()
       const { search: match, filter: type } = state.browser.keys
+      const { encoding } = state.app.info
 
       const { data, status } = await apiService.get(
         getUrl(
@@ -399,7 +417,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH },
+          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding },
           cancelToken: sourceKeysFetch.token,
         }
       )
@@ -463,7 +481,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
 }
 
 // Asynchronous thunk action
-export function fetchMoreKeys(cursor: string, count: number) {
+export function fetchMoreKeys(oldKeys: IKeyPropTypes[] = [], cursor: string, count: number) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadMoreKeys())
 
@@ -475,20 +493,25 @@ export function fetchMoreKeys(cursor: string, count: number) {
 
       const state = stateInit()
       const { search: match, filter: type } = state.browser.keys
+      const { encoding } = state.app.info
       const { data, status } = await apiService.get(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH },
+          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding },
           cancelToken: sourceKeysFetch.token,
         }
       )
 
       sourceKeysFetch = null
       if (isStatusSuccessful(status)) {
-        dispatch(loadMoreKeysSuccess(parseKeysListResponse(state.browser.keys.data.shardsMeta, data)))
+        const newKeysData = parseKeysListResponse(state.browser.keys.data.shardsMeta, data)
+        dispatch(loadMoreKeysSuccess({
+          ...newKeysData,
+          keys: oldKeys.concat(newKeysData.keys)
+        }))
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
@@ -514,24 +537,26 @@ export function fetchMoreKeys(cursor: string, count: number) {
 }
 
 // Asynchronous thunk action
-export function fetchKeyInfo(key: string, resetData?: boolean) {
+export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultSelectedKeyAction())
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_INFO
         ),
-        { keyName: key }
+        { keyName: key },
+        { params: { encoding } }
       )
 
       if (isStatusSuccessful(status)) {
         dispatch(loadKeyInfoSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
-        if (state.browser.keys.selectedKey?.data?.name === key) {
+        if (isEqualBuffers(state.browser.keys.selectedKey?.data?.name, key)) {
           dispatch(updateKeySizeFromList({ key, size: data?.size }))
         }
       }
@@ -578,22 +603,24 @@ export function fetchKeyInfo(key: string, resetData?: boolean) {
 }
 
 // Asynchronous thunk action
-export function refreshKeyInfoAction(key: string) {
+export function refreshKeyInfoAction(key: RedisResponseBuffer) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(refreshKeyInfo())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_INFO
         ),
-        { keyName: key }
+        { keyName: key },
+        { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {
         dispatch(refreshKeyInfoSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
-        if (state.browser.keys.selectedKey?.data?.name === key) {
+        if (isEqualBuffers(state.browser.keys.selectedKey?.data?.name, key)) {
           dispatch(updateKeySizeFromList({ key, size: data?.size }))
         }
       }
@@ -618,9 +645,11 @@ function addTypedKey(
     dispatch(addKey())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.post(
         getUrl(state.connections.instances?.connectedInstance?.id ?? '', endpoint),
-        data
+        data,
+        { params: { encoding } },
       )
       if (isStatusSuccessful(status)) {
         const additionalData = getAdditionalAddedEventData(endpoint, data)
@@ -725,18 +754,22 @@ export function addStreamKey(
 }
 
 // Asynchronous thunk action
-export function deleteKeyAction(key: string, onSuccessAction?: () => void) {
+export function deleteKeyAction(key: RedisResponseBuffer, onSuccessAction?: () => void) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(deleteKey())
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.delete(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
         ),
-        { data: { keyNames: [key] } }
+        {
+          data: { keyNames: [key] },
+          params: { encoding },
+        }
       )
 
       if (isStatusSuccessful(status)) {
@@ -766,8 +799,8 @@ export function deleteKeyAction(key: string, onSuccessAction?: () => void) {
 
 // Asynchronous thunk action
 export function editKey(
-  key: string,
-  newKey: string,
+  key: RedisResponseBuffer,
+  newKey: RedisResponseBuffer,
   onSuccess?: () => void,
   onFailure?: () => void
 ) {
@@ -776,12 +809,14 @@ export function editKey(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.patch(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_NAME
         ),
-        { keyName: key, newKeyName: newKey }
+        { keyName: key, newKeyName: newKey },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
@@ -804,12 +839,14 @@ export function editKeyTTL(key: string, ttl: number) {
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.patch(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_TTL
         ),
-        { keyName: key, ttl }
+        { keyName: key, ttl },
+        { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {
         sendEventTelemetry({

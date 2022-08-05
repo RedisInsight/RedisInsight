@@ -17,7 +17,7 @@ import { useParams } from 'react-router-dom'
 import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewGroupAction } from 'uiSrc/slices/browser/stream'
-import { consumerGroupIdRegex, validateConsumerGroupId } from 'uiSrc/utils'
+import { consumerGroupIdRegex, stringToBuffer, validateConsumerGroupId } from 'uiSrc/utils'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -69,7 +69,7 @@ const AddStreamGroup = (props: Props) => {
       const data: CreateConsumerGroupsDto = {
         keyName,
         consumerGroups: [{
-          name: groupName,
+          name: stringToBuffer(groupName),
           lastDeliveredId: id,
         }],
       }

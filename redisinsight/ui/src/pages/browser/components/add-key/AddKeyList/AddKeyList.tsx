@@ -12,7 +12,7 @@ import {
   EuiFieldText,
 } from '@elastic/eui'
 
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
 import { CreateListWithExpireDto } from 'apiSrc/modules/browser/dto'
 
@@ -49,8 +49,8 @@ const AddKeyList = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateListWithExpireDto = {
-      keyName,
-      element,
+      keyName: stringToBuffer(keyName),
+      element: stringToBuffer(element),
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL

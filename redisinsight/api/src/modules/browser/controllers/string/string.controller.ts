@@ -5,8 +5,6 @@ import {
   Param,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody, ApiOkResponse, ApiOperation, ApiTags,
@@ -18,18 +16,22 @@ import {
   SetStringWithExpireDto,
 } from 'src/modules/browser/dto/string.dto';
 import { GetKeyInfoDto } from 'src/modules/browser/dto';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { StringBusinessService } from '../../services/string-business/string-business.service';
 
 @ApiTags('String')
 @Controller('string')
-export class StringController {
-  constructor(private stringBusinessService: StringBusinessService) {}
+export class StringController extends BaseController {
+  constructor(private stringBusinessService: StringBusinessService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold string value' })
   @ApiRedisParams()
   @ApiBody({ type: SetStringWithExpireDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async setString(
     @Param('dbInstance') dbInstance: string,
       @Body() stringDto: SetStringWithExpireDto,
@@ -52,7 +54,7 @@ export class StringController {
     description: 'String value',
     type: GetStringValueResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async getStringValue(
     @Param('dbInstance') dbInstance: string,
       @Body() getKeyInfoDto: GetKeyInfoDto,
@@ -69,7 +71,7 @@ export class StringController {
   @ApiOperation({ description: 'Update string value' })
   @ApiRedisParams()
   @ApiBody({ type: SetStringDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async updateStringValue(
     @Param('dbInstance') dbInstance: string,
       @Body() setStringDto: SetStringDto,

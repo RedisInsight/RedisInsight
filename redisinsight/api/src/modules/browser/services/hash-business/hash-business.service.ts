@@ -12,12 +12,13 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import config from 'src/utils/config';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
-import { RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
+import { plainToClass } from 'class-transformer';
 import {
   AddFieldsToHashDto,
   CreateHashWithExpireDto,
@@ -113,14 +114,14 @@ export class HashBusinessService {
           [keyName, field],
         );
         if (!isNull(value)) {
-          result.fields.push({ field, value });
+          result.fields.push(plainToClass(HashFieldDto, { field, value }));
         }
       } else {
         const scanResult = await this.scanHash(clientOptions, dto);
         result = { ...result, ...scanResult };
       }
       this.logger.log('Succeed to get fields of the Hash data type.');
-      return result;
+      return plainToClass(GetHashFieldsResponse, result);
     } catch (error) {
       this.logger.error('Failed to get fields of the Hash data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -151,7 +152,7 @@ export class HashBusinessService {
         );
       }
       const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
-      const added = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolHashCommands.HSet,
         [keyName, ...args],
@@ -206,8 +207,8 @@ export class HashBusinessService {
 
   public async createSimpleHash(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
-    args: string[],
+    key: RedisString,
+    args: RedisString[],
   ): Promise<void> {
     await this.browserTool.execCommand(
       clientOptions,
@@ -218,8 +219,8 @@ export class HashBusinessService {
 
   public async createHashWithExpiration(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
-    args: string[],
+    key: RedisString,
+    args: RedisString[],
     expire,
   ): Promise<void> {
     const [
@@ -261,7 +262,7 @@ export class HashBusinessService {
       const fields: HashFieldDto[] = chunk(
         fieldsArray,
         2,
-      ).map(([field, value]: string[]) => ({ field, value }));
+      ).map(([field, value]: string[]) => plainToClass(HashFieldDto, { field, value }));
       result = {
         ...result,
         nextCursor: parseInt(nextCursor, 10),

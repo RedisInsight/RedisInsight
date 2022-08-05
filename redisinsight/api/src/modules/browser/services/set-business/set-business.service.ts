@@ -16,6 +16,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { plainToClass } from 'class-transformer';
 import {
   AddMembersToSetDto,
   CreateSetWithExpireDto,
@@ -23,7 +24,6 @@ import {
   DeleteMembersFromSetResponse,
   GetSetMembersDto,
   GetSetMembersResponse,
-  RedisDataType,
   SetScanResponse,
 } from '../../dto';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
@@ -117,7 +117,7 @@ export class SetBusinessService {
         result = { ...result, ...scanResult };
       }
       this.logger.log('Succeed to get members of the Set data type.');
-      return result;
+      return plainToClass(GetSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to get members of the Set data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -147,7 +147,7 @@ export class SetBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      const added = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolSetCommands.SAdd,
         [keyName, ...members],

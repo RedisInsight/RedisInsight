@@ -8,7 +8,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall, getMainCheckFn
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -36,24 +36,7 @@ const validInputData = {
   path: '.',
 };
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('PATCH /instance/:instanceId/rejson-rl/arrappend', () => {
   requirements('rte.modules.rejson');
@@ -69,9 +52,12 @@ describe('PATCH /instance/:instanceId/rejson-rl/arrappend', () => {
   describe('Common', () => {
     [
       {
-        name: 'Should append array',
+        name: 'Should append array (from buf)',
         data: {
-          keyName: constants.TEST_REJSON_KEY_2,
+          keyName: {
+            type: 'Buffer',
+            data: [...Buffer.from(constants.TEST_REJSON_KEY_2)],
+          },
           data: [JSON.stringify([1, 2])],
           path: '.'
         },

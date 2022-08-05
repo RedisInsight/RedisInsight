@@ -8,7 +8,9 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall,
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -28,10 +30,12 @@ const validInputData = {
 };
 
 const responseSchema = Joi.object().keys({
-  keyName: Joi.string().required(),
-}).required();
+  keyName: JoiRedisString.required(),
+}).required().strict(true);
 
-const mainCheckFn = async (testCase) => {
+const mainCheckFn = getMainCheckFn(endpoint);
+
+const renameCheckFn = async (testCase) => {
   it(testCase.name, async () => {
     if (testCase.before) {
       await testCase.before();
@@ -55,145 +59,229 @@ const mainCheckFn = async (testCase) => {
 };
 
 describe('PATCH /instance/:instanceId/keys/name', () => {
-  before(async () => await rte.data.generateKeys(true));
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    before(() => rte.data.generateKeys(true));
 
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
     [
       {
-        name: 'Should rename string',
+        name: 'Should rename utf8 to buf and return utf8 (by default)',
         data: {
           keyName: constants.TEST_STRING_KEY_1,
-          newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          newKeyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
         },
         responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.keyName).to.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
+        },
       },
       {
-        name: 'Should rename list',
+        name: 'Should rename buf to utf8 and return utf8',
+        query: {
+          encoding: 'utf8',
+        },
         data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          newKeyName: constants.TEST_STRING_KEY_1,
         },
         responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.keyName).to.eq(constants.TEST_STRING_KEY_1);
+        }
       },
       {
-        name: 'Should rename set',
+        name: 'Should rename utf8 to ascii and return buffer',
+        query: {
+          encoding: 'buffer',
+        },
         data: {
-          keyName: constants.TEST_SET_KEY_1,
-          newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          keyName: constants.TEST_STRING_KEY_1,
+          newKeyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
         },
         responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.keyName).to.deep.eq(constants.TEST_STRING_KEY_BIN_BUF_OBJ_1);
+        },
       },
       {
-        name: 'Should rename zset',
+        name: 'Should rename ASCII to utf8 and return utf8',
+        query: {
+          encoding: 'utf8',
+        },
         data: {
-          keyName: constants.TEST_ZSET_KEY_1,
-          newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
+          newKeyName: constants.TEST_STRING_KEY_1,
         },
         responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.keyName).to.eq(constants.TEST_STRING_KEY_1);
+        }
       },
       {
-        name: 'Should rename hash',
+        name: 'Should rename utf8 to buf and return ascii',
+        query: {
+          encoding: 'ascii',
+        },
         data: {
-          keyName: constants.TEST_HASH_KEY_1,
-          newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          keyName: constants.TEST_STRING_KEY_1,
+          newKeyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
         },
         responseSchema,
+        checkFn: ({ body }) => {
+          expect(body.keyName).to.eq(constants.TEST_STRING_KEY_BIN_ASCII_1);
+        },
       },
       {
-        name: 'Should return NotFound error for not existing error',
+        name: 'Should return error when send unicode with unprintable chars',
+        query: {
+          encoding: 'buffer',
+        },
         data: {
-          keyName: constants.getRandomString(),
-          newKeyName: constants.getRandomString(),
+          keyName: constants.TEST_STRING_KEY_BIN_UTF8_1,
+          newKeyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
         },
         statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Key with this name does not exist.',
-        },
-        before: async function () {
-          expect(await rte.client.exists(this.data.keyName)).to.eql(0);
-          expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
-        },
-        after: async function () {
-          expect(await rte.client.exists(this.data.keyName)).to.eql(0);
-          expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
-        }
       },
     ].map(mainCheckFn);
-
-    describe('ReJSON-RL', () => {
-      requirements('rte.modules.rejson');
+  });
+  describe('Rest', () => {
+    before(async () => await rte.data.generateKeys(true));
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+    describe('Common', () => {
       [
         {
-          name: 'Should rename ReJSON',
+          name: 'Should rename string',
           data: {
-            keyName: constants.TEST_REJSON_KEY_1,
+            keyName: constants.TEST_STRING_KEY_1,
+            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          },
+          responseSchema,
+        },
+        {
+          name: 'Should rename list',
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          },
+          responseSchema,
+        },
+        {
+          name: 'Should rename set',
+          data: {
+            keyName: constants.TEST_SET_KEY_1,
+            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          },
+          responseSchema,
+        },
+        {
+          name: 'Should rename zset',
+          data: {
+            keyName: constants.TEST_ZSET_KEY_1,
+            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          },
+          responseSchema,
+        },
+        {
+          name: 'Should rename hash',
+          data: {
+            keyName: constants.TEST_HASH_KEY_1,
+            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          },
+          responseSchema,
+        },
+        {
+          name: 'Should return NotFound error for not existing error',
+          data: {
+            keyName: constants.getRandomString(),
             newKeyName: constants.getRandomString(),
           },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Key with this name does not exist.',
+          },
+          before: async function () {
+            expect(await rte.client.exists(this.data.keyName)).to.eql(0);
+            expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
+          },
+          after: async function () {
+            expect(await rte.client.exists(this.data.keyName)).to.eql(0);
+            expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
+          }
         },
-      ].map(mainCheckFn);
+      ].map(renameCheckFn);
+
+      describe('ReJSON-RL', () => {
+        requirements('rte.modules.rejson');
+        [
+          {
+            name: 'Should rename ReJSON',
+            data: {
+              keyName: constants.TEST_REJSON_KEY_1,
+              newKeyName: constants.getRandomString(),
+            },
+          },
+        ].map(renameCheckFn);
+      });
     });
-  });
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => await rte.data.generateKeys(true));
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => await rte.data.generateKeys(true));
+      before(async () => rte.data.setAclUserRules('~* +@all'));
 
-    before(async () => rte.data.setAclUserRules('~* +@all'));
-
-    [
-      {
-        name: 'Should rename key',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_STRING_KEY_1,
-          newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+      [
+        {
+          name: 'Should rename key',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_STRING_KEY_1,
+            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+          },
+          statusCode: 200,
         },
-        statusCode: 200,
-      },
-      {
-        name: 'Should throw error if no permissions for "exists" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          newKeyName: constants.getRandomString(),
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "exists" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            newKeyName: constants.getRandomString(),
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
+          after: async function () {
+            expect(await rte.client.exists(this.data.keyName)).to.eql(1);
+            expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
+          }
         },
-        before: () => rte.data.setAclUserRules('~* +@all -exists'),
-        after: async function () {
-          expect(await rte.client.exists(this.data.keyName)).to.eql(1);
-          expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
-        }
-      },
-      {
-        name: 'Should throw error if no permissions for "renamenx" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_1,
-          newKeyName: constants.getRandomString(),
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "renamenx" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_1,
+            newKeyName: constants.getRandomString(),
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -renamenx'),
+          after: async function () {
+            expect(await rte.client.exists(this.data.keyName)).to.eql(1);
+            expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
+          }
         },
-        before: () => rte.data.setAclUserRules('~* +@all -renamenx'),
-        after: async function () {
-          expect(await rte.client.exists(this.data.keyName)).to.eql(1);
-          expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
-        }
-      },
-    ].map(mainCheckFn);
+      ].map(renameCheckFn);
+    });
   });
 });

@@ -27,8 +27,8 @@ import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptio
 import { StringBusinessService } from './string-business.service';
 
 const mockSetStringDto: SetStringDto = {
-  keyName: 'foo',
-  value: 'Lorem ipsum dolor sit amet.',
+  keyName: Buffer.from('foo'),
+  value: Buffer.from('Lorem ipsum dolor sit amet.'),
 };
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {

@@ -6,52 +6,22 @@ import { BrowserToolService } from 'src/modules/browser/services/browser-tool/br
 import {
   BrowserToolKeysCommands, BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { AddStreamEntriesDto, StreamEntryDto } from 'src/modules/browser/dto/stream.dto';
 import {
   BadRequestException, ConflictException, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
+import {
+  mockAddStreamEntriesDto,
+  mockConsumerGroup,
+  mockConsumerGroupsReply, mockCreateConsumerGroupDto,
+  mockKeyDto
+} from 'src/modules/browser/__mocks__';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
-const mockKeyDto = {
-  keyName: 'keyName',
-};
-
-const mockStreamEntry: StreamEntryDto = {
-  id: '*',
-  fields: [
-    ['field1', 'value1']
-  ]
-};
-const mockAddStreamEntriesDto: AddStreamEntriesDto = {
-  keyName: 'testList',
-  entries: [mockStreamEntry],
-};
-
-const mockConsumerGroup = {
-  name: 'consumer-1',
-  consumers: 0,
-  pending: 0,
-  lastDeliveredId: '1651130346487-0',
-  smallestPendingId: '1651130346480-0',
-  greatestPendingId: '1651130346487-0',
-};
-
-const mockGroupToCreate = {
-  name: mockConsumerGroup.name,
-  lastDeliveredId: mockConsumerGroup.lastDeliveredId,
-};
-
-const mockConsumerGroupsReply = [
-  'name', mockConsumerGroup.name,
-  'consumers', mockConsumerGroup.consumers,
-  'pending', mockConsumerGroup.pending,
-  'last-delivered-id', mockConsumerGroup.lastDeliveredId,
-];
 
 describe('ConsumerGroupService', () => {
   let service: ConsumerGroupService;
@@ -157,7 +127,7 @@ describe('ConsumerGroupService', () => {
       await expect(
         service.createGroups(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate, mockGroupToCreate],
+          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
         }),
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
@@ -179,7 +149,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.createGroups(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate, mockGroupToCreate],
+          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
         });
         fail();
       } catch (e) {
@@ -195,7 +165,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.createGroups(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate, mockGroupToCreate],
+          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
         });
         fail();
       } catch (e) {
@@ -209,7 +179,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.createGroups(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate, mockGroupToCreate],
+          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
         });
         fail();
       } catch (e) {
@@ -226,7 +196,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.createGroups(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate, mockGroupToCreate],
+          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
         });
         fail();
       } catch (e) {
@@ -243,7 +213,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.createGroups(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate, mockGroupToCreate],
+          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
         });
         fail();
       } catch (e) {
@@ -262,13 +232,13 @@ describe('ConsumerGroupService', () => {
       await expect(
         service.updateGroup(mockClientOptions, {
           ...mockKeyDto,
-          ...mockGroupToCreate,
+          ...mockCreateConsumerGroupDto,
         }),
       ).resolves.not.toThrow();
       expect(browserTool.execCommand).toHaveBeenCalledWith(
         mockClientOptions,
         BrowserToolStreamCommands.XGroupSetId,
-        [mockKeyDto.keyName, mockGroupToCreate.name, mockGroupToCreate.lastDeliveredId],
+        [mockKeyDto.keyName, mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.lastDeliveredId],
       );
     });
     it('should throw Not Found when key does not exists', async () => {
@@ -279,7 +249,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.updateGroup(mockClientOptions, {
           ...mockKeyDto,
-          ...mockGroupToCreate,
+          ...mockCreateConsumerGroupDto,
         });
         fail();
       } catch (e) {
@@ -295,7 +265,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.updateGroup(mockClientOptions, {
           ...mockKeyDto,
-          ...mockGroupToCreate,
+          ...mockCreateConsumerGroupDto,
         });
         fail();
       } catch (e) {
@@ -309,7 +279,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.updateGroup(mockClientOptions, {
           ...mockKeyDto,
-          ...mockGroupToCreate,
+          ...mockCreateConsumerGroupDto,
         });
         fail();
       } catch (e) {
@@ -323,7 +293,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.updateGroup(mockClientOptions, {
           ...mockKeyDto,
-          ...mockGroupToCreate,
+          ...mockCreateConsumerGroupDto,
         });
         fail();
       } catch (e) {
@@ -337,7 +307,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.updateGroup(mockClientOptions, {
           ...mockKeyDto,
-          ...mockGroupToCreate,
+          ...mockCreateConsumerGroupDto,
         });
         fail();
       } catch (e) {
@@ -357,7 +327,7 @@ describe('ConsumerGroupService', () => {
       await expect(
         service.deleteGroup(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate.name, mockGroupToCreate.name],
+          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
         }),
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
@@ -373,7 +343,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.deleteGroup(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate.name, mockGroupToCreate.name],
+          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
         });
         fail();
       } catch (e) {
@@ -389,7 +359,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.deleteGroup(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate.name, mockGroupToCreate.name],
+          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
         });
         fail();
       } catch (e) {
@@ -403,7 +373,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.deleteGroup(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate.name, mockGroupToCreate.name],
+          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
         });
         fail();
       } catch (e) {
@@ -420,7 +390,7 @@ describe('ConsumerGroupService', () => {
       try {
         await service.deleteGroup(mockClientOptions, {
           ...mockKeyDto,
-          consumerGroups: [mockGroupToCreate.name, mockGroupToCreate.name],
+          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
         });
         fail();
       } catch (e) {

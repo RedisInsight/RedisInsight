@@ -3,7 +3,7 @@ import cx from 'classnames'
 import React, { ChangeEvent, Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
-import { omit, union } from 'lodash'
+import { union } from 'lodash'
 
 import {
   hashSelector,
@@ -13,14 +13,12 @@ import {
   fetchMoreHashFields,
   updateHashValueStateSelector,
   updateHashFieldsAction,
-  setHashFields,
 } from 'uiSrc/slices/browser/hash'
 import {
   formatLongName,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   Nullable,
-  bufferFormatRangeItems,
   formattingBuffer,
   bufferToString,
   isEqualBuffers,
@@ -167,7 +165,7 @@ const HashDetails = (props: Props) => {
   const handleApplyEditField = (field = '') => {
     const data: AddFieldsToHashDto = {
       keyName: key,
-      fields: [{ field, value: stringToBuffer(areaValue) }],
+      fields: [{ field, value: stringToBuffer(getSerializedFormat(viewFormat, areaValue)) }],
     }
     dispatch(updateHashFieldsAction(data, () => onHashEditedSuccess(field)))
   }
@@ -240,7 +238,6 @@ const HashDetails = (props: Props) => {
 
   const loadMoreItems = () => {
     if (nextCursor !== 0) {
-      dispatch(setHashFields(bufferFormatRows(fields.length - 1)))
       dispatch(
         fetchMoreHashFields(
           key,
@@ -280,7 +277,7 @@ const HashDetails = (props: Props) => {
             <div style={{ display: 'flex' }} data-testid={`hash-field-${field}`}>
               {!expanded && (
                 <EuiToolTip
-                  title={isValid ? 'Field' : `Failed to convert to ${viewFormat}`}
+                  title={isValid ? 'Field' : `Failed to convert to ${viewFormatProp}`}
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="bottom"
@@ -330,7 +327,7 @@ const HashDetails = (props: Props) => {
                 isLoading={updateLoading}
                 controlsClassName={styles.textAreaControls}
                 onDecline={() => handleEditField(fieldItem, false)}
-                onApply={() => handleApplyEditField(omit(fieldItem, ['viewValue']))}
+                onApply={() => handleApplyEditField(fieldItem)}
               >
                 <EuiTextArea
                   fullWidth
@@ -361,7 +358,7 @@ const HashDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title={isValid ? 'Value' : `Failed to convert to ${viewFormat}`}
+                  title={isValid ? 'Value' : `Failed to convert to ${viewFormatProp}`}
                   className={styles.tooltip}
                   position="bottom"
                   content={tooltipContent}

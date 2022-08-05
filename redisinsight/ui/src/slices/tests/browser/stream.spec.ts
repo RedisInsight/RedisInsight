@@ -1322,8 +1322,8 @@ describe('stream slice', () => {
           refreshKeyInfo(),
           addMessageNotification(
             successMessages.REMOVED_KEY_VALUE(
-              bufferToString(keyName),
-              consumerNames.join(''),
+              keyName,
+              consumerNames.map((name) => bufferToString(name)).join(''),
               'Consumer'
             )
           )

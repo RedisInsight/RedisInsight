@@ -8,7 +8,7 @@ import {
   mockStore,
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { stringToBuffer } from 'uiSrc/utils'
+import { bufferToString, stringToBuffer } from 'uiSrc/utils'
 import {
   defaultSelectedKeyAction,
   refreshKeyInfo,
@@ -564,8 +564,8 @@ describe('hash slice', () => {
         async () => {
           // Arrange
 
-          const key = 'key'
-          const fields = ['hash field', 'hash field 2']
+          const key = stringToBuffer('key')
+          const fields = ['hash field', 'hash field 2'].map((field) => stringToBuffer(field))
           const responsePayload = { status: 200, data: { affected: 2 } }
           const nextState = Object.assign(initialStateDefault, {
             browser: {
@@ -596,7 +596,7 @@ describe('hash slice', () => {
             addMessageNotification(
               successMessages.REMOVED_KEY_VALUE(
                 key,
-                fields.join(''),
+                fields.map((field) => bufferToString(field)).join(''),
                 'Field'
               )
             )

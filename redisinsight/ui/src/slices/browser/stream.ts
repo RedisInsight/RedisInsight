@@ -659,7 +659,7 @@ export function deleteStreamEntry(key: RedisResponseBuffer, entries: string[], o
         dispatch<any>(refreshKeyInfoAction(key))
         dispatch(addMessageNotification(
           successMessages.REMOVED_KEY_VALUE(
-            bufferToString(key),
+            key,
             entries.join(''),
             'Entry'
           )
@@ -781,7 +781,7 @@ export function deleteConsumerGroupsAction(
         dispatch<any>(refreshKeyInfoAction(keyName))
         dispatch(addMessageNotification(
           successMessages.REMOVED_KEY_VALUE(
-            bufferToString(keyName),
+            keyName,
             consumerGroups.map((group) => bufferToString(group)).join(''),
             'Group'
           )
@@ -870,8 +870,8 @@ export function deleteConsumersAction(
         dispatch<any>(refreshKeyInfoAction(keyName))
         dispatch(addMessageNotification(
           successMessages.REMOVED_KEY_VALUE(
-            bufferToString(keyName),
-            consumerNames.join(''),
+            keyName,
+            consumerNames.map((consumer) => bufferToString(consumer)).join(''),
             'Consumer'
           )
         ))

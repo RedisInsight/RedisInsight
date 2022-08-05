@@ -341,7 +341,7 @@ export function deleteHashFields(
           dispatch<any>(refreshKeyInfoAction(key))
           dispatch(addMessageNotification(
             successMessages.REMOVED_KEY_VALUE(
-              bufferToString(key),
+              key,
               fields.map((field) => bufferToString(field)).join(''),
               'Field',
             )

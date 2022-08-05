@@ -452,7 +452,7 @@ export function deleteListElementsAction(
           dispatch<any>(fetchKeyInfo(data.keyName))
           dispatch(addMessageNotification(
             successMessages.REMOVED_LIST_ELEMENTS(
-              bufferToString(data.keyName),
+              data.keyName,
               data.count,
               responseData.elements
             )

@@ -341,7 +341,7 @@ export function deleteSetMembers(
           dispatch<any>(refreshKeyInfoAction(key))
           dispatch(addMessageNotification(
             successMessages.REMOVED_KEY_VALUE(
-              bufferToString(key),
+              key,
               members.map((member) => bufferToString(member)).join(''),
               'Member'
             )

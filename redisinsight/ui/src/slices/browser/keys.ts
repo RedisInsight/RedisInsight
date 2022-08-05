@@ -658,7 +658,7 @@ function addTypedKey(
         }
         dispatch(addKeySuccess())
         dispatch(
-          addMessageNotification(successMessages.ADDED_NEW_KEY(bufferToString(data.keyName)))
+          addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
         )
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
@@ -787,7 +787,7 @@ export function deleteKeyAction(key: RedisResponseBuffer, onSuccessAction?: () =
         dispatch(deleteKeySuccess())
         dispatch(deleteKeyFromList(key))
         onSuccessAction?.()
-        dispatch(addMessageNotification(successMessages.DELETED_KEY(bufferToString(key))))
+        dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)

@@ -33,7 +33,7 @@ export class DeleteMembersFromSetDto extends KeyDto {
   @ArrayNotEmpty()
   @IsRedisString({ each: true })
   @RedisStringType({ each: true })
-  members: string[];
+  members: RedisString[];
 }
 
 export class CreateSetWithExpireDto extends IntersectionType(

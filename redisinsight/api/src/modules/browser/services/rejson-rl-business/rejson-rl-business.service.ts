@@ -44,6 +44,7 @@ export class RejsonRlBusinessService {
       clientOptions,
       BrowserToolRejsonRlCommands.JsonGet,
       [keyName, path],
+      'utf8',
     );
 
     if (data === null) {
@@ -192,6 +193,7 @@ export class RejsonRlBusinessService {
           clientOptions,
           BrowserToolRejsonRlCommands.JsonArrLen,
           [keyName, path],
+          'utf8',
         );
 
         for (let i = 0; i < arrayLength; i += 1) {

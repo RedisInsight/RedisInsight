@@ -4,7 +4,6 @@ import {
   describe,
   it,
   Joi,
-  _,
   deps,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
@@ -211,7 +210,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           await validateApiCall(        {
             endpoint,
             data: {
-              command: `get ${constants.TEST_STRING_KEY_1}`,
+              command: `get ${constants.TEST_STRING_KEY_2}`,
             },
             responseSchema,
             checkFn: async ({ body }) => {

@@ -9,7 +9,7 @@ import {
     UserAgreementPage,
     CliPage
 } from '../pageObjects';
-import { addNewStandaloneDatabaseApi } from './api/api-database';
+import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi } from './api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -132,6 +132,20 @@ export async function acceptLicenseTermsAndAddDatabaseApi(databaseParameters: Ad
 }
 
 /**
+ * Accept License terms and add Sentinel database using api
+ * @param databaseParameters The database parameters
+ * @param databaseName The database name
+*/
+export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParameters: SentinelParameters, databaseName: string): Promise<void> {
+    await acceptLicenseTerms();
+    await discoverSentinelDatabaseApi(databaseParameters);
+    // Reload Page to see the database added through api
+    await t.eval(() => location.reload());
+    //Connect to DB
+    await myRedisDatabasePage.clickOnDBByName(databaseName);
+}
+
+/**
  * Accept License terms and add OSS cluster database
  * @param databaseParameters The database parameters
  * @param databaseName The database name
@@ -140,6 +154,32 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
     await acceptLicenseTerms();
     await addOSSClusterDatabase(databaseParameters);
     //Connect to DB
+    await myRedisDatabasePage.clickOnDBByName(databaseName);
+}
+
+/**
+ * Accept License terms and add RE Cluster database
+ * @param databaseParameters The database parameters
+ * @param databaseName The database name
+*/
+export async function acceptLicenseTermsAndAddREClusterDatabase(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+    await acceptLicenseTerms();
+    await addNewREClusterDatabase(databaseParameters);
+    //Connect to DB
+    await myRedisDatabasePage.clickOnDBByName(databaseName);
+}
+
+/**
+ * Accept License terms and add RE Cloud database
+ * @param databaseParameters The database parameters
+ * @param databaseName The database name
+*/
+export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+    await acceptLicenseTerms();
+    await addRedisDatabasePage.addRedisDataBase(databaseParameters);
+    //Click for saving
+    await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The existence of the database', { timeout: 5000 });
     await myRedisDatabasePage.clickOnDBByName(databaseName);
 }
 

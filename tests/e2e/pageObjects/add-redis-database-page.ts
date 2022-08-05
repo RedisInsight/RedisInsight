@@ -169,7 +169,7 @@ export type AddNewDatabaseParameters = {
 };
 
 /**
- * Add new database parameters
+ * Sentinel database parameters
  * @param sentinelHost The host of sentinel
  * @param sentinelPort The port of sentinel
  * @param sentinelPassword The password of sentinel
@@ -183,7 +183,7 @@ export type SentinelParameters = {
 };
 
 /**
- * Add new database parameters
+ * OSS Cluster dtabase parameters
  * @param ossClusterHost The host of OSS Cluster
  * @param ossClusterPort The port of OSS Cluster
  * @param ossClusterDatabaseName Database name for OSS Cluster

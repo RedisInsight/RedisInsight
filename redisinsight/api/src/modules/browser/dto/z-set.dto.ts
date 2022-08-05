@@ -7,9 +7,9 @@ import {
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
-  IsNumber,
+  IsNumber, IsString,
   Min,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { SortOrder } from 'src/constants';
@@ -130,9 +130,8 @@ export class SearchZSetMembersDto extends PickType(ScanDataTypeDto, [
     default: '*',
   })
   @IsDefined()
-  @IsRedisString()
-  @RedisStringType()
-  match: RedisString;
+  @IsString()
+  match: string;
 }
 
 export class DeleteMembersFromZSetResponse extends DeleteMembersFromSetResponse {}

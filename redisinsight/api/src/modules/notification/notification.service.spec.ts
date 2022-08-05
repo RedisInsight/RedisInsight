@@ -14,6 +14,8 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 const mockNotification1 = {
   title: 'Title-1',
   body: 'Body-1',
+  category: 'Release',
+  categoryColor: '#b432ea',
   timestamp: 100,
 };
 

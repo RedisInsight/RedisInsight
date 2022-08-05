@@ -4,7 +4,7 @@ import {
   Injectable,
   Logger, NotFoundException,
 } from '@nestjs/common';
-import { catchAclError, catchTransactionError, convertStringsArrayToObject } from 'src/utils';
+import { catchAclError, catchTransactionError } from 'src/utils';
 import { SortOrder } from 'src/constants/sort';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
@@ -59,12 +59,11 @@ export class StreamService {
         throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
       }
 
-      const info = convertStringsArrayToObject(await this.browserTool.execCommand(
+      const info = await this.browserTool.execCommand(
         clientOptions,
         BrowserToolStreamCommands.XInfoStream,
         [keyName],
-        'utf8',
-      ));
+      );
 
       let entries = [];
       if (sortOrder && sortOrder === SortOrder.Asc) {
@@ -77,10 +76,10 @@ export class StreamService {
 
       return plainToClass(GetStreamEntriesResponse, {
         keyName,
-        total: info.length,
-        lastGeneratedId: info['last-generated-id'],
-        firstEntry: StreamService.formatArrayToDto(info['first-entry']),
-        lastEntry: StreamService.formatArrayToDto(info['last-entry']),
+        total: info[1],
+        lastGeneratedId: info[7].toString(),
+        firstEntry: StreamService.formatArrayToDto(info[11]),
+        lastEntry: StreamService.formatArrayToDto(info[13]),
         entries,
       });
     } catch (error) {

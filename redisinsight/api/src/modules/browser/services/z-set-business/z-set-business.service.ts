@@ -269,9 +269,8 @@ export class ZSetBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      if (dto.match && !isGlob(dto.match?.toString(), { strict: false })) {
-        // const member = unescapeGlob(dto.match);
-        const member = dto.match;
+      if (dto.match && !isGlob(dto.match, { strict: false })) {
+        const member = unescapeGlob(dto.match);
         result.nextCursor = 0;
         const score = await this.browserTool.execCommand(
           clientOptions,

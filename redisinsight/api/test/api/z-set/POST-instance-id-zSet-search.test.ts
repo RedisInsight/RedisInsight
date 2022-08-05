@@ -62,10 +62,7 @@ describe('POST /instance/:instanceId/zSet/search', () => {
           keyName: constants.TEST_ZSET_KEY_BIN_BUF_OBJ_1,
           cursor: 0,
           count: 15,
-          match: {
-            type: 'Buffer',
-            data: [...[...constants.TEST_ZSET_KEY_BIN_BUFFER_1].slice(0, -20), ...Buffer.from('*')]
-          },
+          match: constants.TEST_ZSET_KEY_BIN_UTF8_1.slice(0, -20) + '*',
         },
         responseSchema,
         responseBody: {
@@ -86,10 +83,7 @@ describe('POST /instance/:instanceId/zSet/search', () => {
           keyName: constants.TEST_ZSET_KEY_BIN_BUF_OBJ_1,
           cursor: 0,
           count: 15,
-          match: {
-            type: 'Buffer',
-            data: [...[...constants.TEST_ZSET_KEY_BIN_BUFFER_1].slice(0, -20), ...Buffer.from('*')]
-          },
+          match: constants.TEST_ZSET_KEY_BIN_UTF8_1.slice(0, -20) + '*',
         },
         responseSchema,
         responseBody: {

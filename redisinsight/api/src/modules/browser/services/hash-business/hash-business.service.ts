@@ -18,6 +18,7 @@ import {
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { RedisString } from 'src/common/constants';
+import { plainToClass } from 'class-transformer';
 import {
   AddFieldsToHashDto,
   CreateHashWithExpireDto,
@@ -28,7 +29,6 @@ import {
   HashFieldDto,
   HashScanResponse,
 } from '../../dto/hash.dto';
-import { plainToClass } from 'class-transformer';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -105,9 +105,8 @@ export class HashBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      if (dto.match && !isGlob(dto.match.toString(), { strict: false })) {
-        // const field = unescapeGlob(dto.match);
-        const field = dto.match;
+      if (dto.match && !isGlob(dto.match, { strict: false })) {
+        const field = unescapeGlob(dto.match);
         result.nextCursor = 0;
         const value = await this.browserTool.execCommand(
           clientOptions,

@@ -891,3 +891,30 @@ export type StreamKeyParameters = {
     keyName: string,
     element: string
 };
+
+/**
+ * The key arguments for multiple keys/fields adding
+ * @param keysCount The number of keys to add
+ * @param fieldsCount The number of fields in key to add
+ * @param elementsCount The number of elements in key to add
+ * @param membersCount The number of members in key to add
+ * @param keyName The full key name
+ * @param keyNameStartWith The name of key should start with
+ * @param fieldStartWitht The name of field should start with
+ * @param fieldValueStartWith The name of field value should start with
+ * @param elementStartWith The name of element should start with
+ * @param memberStartWith The name of member should start with
+ */
+
+ export type AddKeyArguments = {
+    keysCount?: number,
+    fieldsCount?: number,
+    elementsCount?: number,
+    membersCount?: number,
+    keyName?: string,
+    keyNameStartWith?: string,
+    fieldStartWith?: string,
+    fieldValueStartWith?: string,
+    elementStartWith?: string,
+    memberStartWith?: string
+  }

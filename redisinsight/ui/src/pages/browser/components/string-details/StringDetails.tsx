@@ -7,10 +7,10 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiProgress, EuiText, EuiTextArea } from '@elastic/eui'
-import { onlyText } from 'react-children-utilities'
+import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
-import { formattingBuffer, Nullable } from 'uiSrc/utils'
+import { bufferToString, formattingBuffer, getSerializedFormat, isTextViewFormatter } from 'uiSrc/utils'
 import {
   resetStringValue,
   stringDataSelector,
@@ -42,7 +42,7 @@ const StringDetails = (props: Props) => {
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [rows, setRows] = useState<number>(5)
-  const [value, setValue] = useState<Nullable<string | JSX.Element>>(null)
+  const [value, setValue] = useState<RedisResponseBuffer>(stringToBuffer(''))
   const [areaValue, setAreaValue] = useState<string>('')
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
 
@@ -58,10 +58,9 @@ const StringDetails = (props: Props) => {
   useEffect(() => {
     if (!initialValue) return
 
-    const initialValueString = formattingBuffer(initialValue, viewFormatProp)
-
-    setValue(initialValueString)
-    setAreaValue(onlyText(initialValueString) || '')
+    const initialValueString = bufferToString(initialValue)
+    setAreaValue(initialValueString)
+    setValue(initialValue)
 
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
@@ -73,11 +72,12 @@ const StringDetails = (props: Props) => {
     if (!isEditItem || !textAreaRef.current || value === null) {
       return
     }
-    const text = onlyText(value)
-    const calculatedBreaks = text.split('\n').length
+    const text = areaValue
+    const calculatedBreaks = text?.split('\n').length
     const textAreaWidth = textAreaRef.current.clientWidth
     const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-    const calculatedRows = Math.round(text.length / OneRowLength + calculatedBreaks)
+    const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+    const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
 
     if (calculatedRows > MAX_ROWS) {
       setRows(MAX_ROWS)
@@ -93,23 +93,27 @@ const StringDetails = (props: Props) => {
   useMemo(() => {
     if (isEditItem) {
       (document.activeElement as HTMLElement)?.blur()
+      setAreaValue(getSerializedFormat(viewFormat, bufferToString(value), 4))
     }
   }, [isEditItem])
 
   const onApplyChanges = () => {
+    const data = stringToBuffer(getSerializedFormat(viewFormat, areaValue))
     const onSuccess = () => {
       setIsEdit(false)
-      setValue(areaValue)
+      setValue(data)
     }
-    dispatch(updateStringValueAction(key, stringToBuffer(areaValue), onSuccess))
+    dispatch(updateStringValueAction(key, data, onSuccess))
   }
 
   const onDeclineChanges = () => {
-    setAreaValue(onlyText(value) || '')
+    setAreaValue(getSerializedFormat(viewFormat, bufferToString(value), 4))
     setIsEdit(false)
   }
 
   const isLoading = loading || value === null
+
+  const { value: formattedValue, isValid } = formattingBuffer(value, viewFormat, { expanded: true })
 
   return (
     <div className={styles.container}>
@@ -124,15 +128,27 @@ const StringDetails = (props: Props) => {
       {!isEditItem && (
         <EuiText
           onClick={() => setIsEdit(true)}
+          style={{ whiteSpace: 'break-spaces' }}
         >
-          <pre className={styles.stringValue} data-testid="string-value" ref={viewValueRef}>
-            {value !== '' ? value : (<span style={{ fontStyle: 'italic' }}>Empty</span>)}
-          </pre>
+          {areaValue !== ''
+            ? (isValid
+              ? formattedValue
+              : (
+                <EuiToolTip
+                  title={`Failed to convert to ${viewFormat}`}
+                  className={styles.tooltip}
+                  position="bottom"
+                >
+                  <>{formattedValue}</>
+                </EuiToolTip>
+              )
+            )
+            : (<span style={{ fontStyle: 'italic' }}>Empty</span>)}
         </EuiText>
       )}
       {isEditItem && (
         <InlineItemEditor
-          initialValue={onlyText(value) || ''}
+          initialValue={bufferToString(value) || ''}
           controlsPosition="bottom"
           placeholder="Enter Value"
           fieldName="value"

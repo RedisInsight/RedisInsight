@@ -2,9 +2,14 @@ import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last, mergeWith, toNumber } from 'lodash'
-import { onlyText } from 'react-children-utilities'
 
-import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName, formattingBuffer } from 'uiSrc/utils'
+import {
+  createDeleteFieldHeader,
+  createDeleteFieldMessage,
+  formatLongName,
+  formattingBuffer,
+  stringToBuffer
+} from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -116,14 +121,8 @@ const StreamDataViewWrapper = (props: Props) => {
   }, [])
 
   const formatItem = useCallback((field) => ({
-    name: {
-      ...field.name,
-      viewValue: bufferToString(field.name),
-    },
-    value: {
-      ...field.value,
-      viewValue: formattingBuffer(field.value, viewFormatProp),
-    },
+    name: field.name,
+    value: field.value,
   }), [viewFormatProp])
 
   const onSuccessRemoved = () => {
@@ -170,11 +169,13 @@ const StreamDataViewWrapper = (props: Props) => {
     headerCellClassName: 'truncateText',
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
-      const values = fields.filter(({ name: fieldName }) => fieldName?.viewValue === name)
-      const value = values[index] ? values[index]?.value?.viewValue : ''
+      const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName) === name)
+      const value = values[index] ? bufferToString(values[index]?.value) : ''
 
-      const cellContent = value.substring?.(0, 650) ?? value
-      const tooltipContent = formatLongName(onlyText(value))
+      const bufferValue = values[index]?.value || stringToBuffer('')
+      const { value: formattedValue, isValid } = formattingBuffer(bufferValue, viewFormatProp, { expanded })
+      const cellContent = formattedValue.substring?.(0, 650) ?? formattedValue
+      const tooltipContent = formatLongName(value)
 
       return (
         <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
@@ -185,7 +186,7 @@ const StreamDataViewWrapper = (props: Props) => {
           >
             {!expanded && (
               <EuiToolTip
-                title="Value"
+                title={isValid ? 'Value' : `Failed to convert to ${viewFormatProp}`}
                 className={styles.tooltip}
                 anchorClassName="streamItem line-clamp-2"
                 position="bottom"
@@ -194,7 +195,7 @@ const StreamDataViewWrapper = (props: Props) => {
                 <>{cellContent}</>
               </EuiToolTip>
             )}
-            {expanded && value}
+            {expanded && formattedValue}
           </div>
         </EuiText>
       )

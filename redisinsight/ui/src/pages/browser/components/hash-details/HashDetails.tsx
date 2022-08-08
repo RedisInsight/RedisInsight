@@ -3,8 +3,7 @@ import cx from 'classnames'
 import React, { ChangeEvent, Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
-import { omit, union } from 'lodash'
-import { onlyText } from 'react-children-utilities'
+import { union } from 'lodash'
 
 import {
   hashSelector,
@@ -14,9 +13,18 @@ import {
   fetchMoreHashFields,
   updateHashValueStateSelector,
   updateHashFieldsAction,
-  setHashFields,
 } from 'uiSrc/slices/browser/hash'
-import { formatLongName, createDeleteFieldHeader, createDeleteFieldMessage, Nullable, bufferFormatRangeItems, formattingBuffer } from 'uiSrc/utils'
+import {
+  formatLongName,
+  createDeleteFieldHeader,
+  createDeleteFieldMessage,
+  Nullable,
+  formattingBuffer,
+  bufferToString,
+  isEqualBuffers,
+  isTextViewFormatter,
+  getSerializedFormat
+} from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -91,7 +99,7 @@ const HashDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const hashFields = bufferFormatRangeItems(loadedFields, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+    const hashFields = loadedFields.map(formatItem)
 
     setFields(hashFields)
 
@@ -139,9 +147,10 @@ const HashDetails = (props: Props) => {
   }
 
   const handleEditField = useCallback((field = '', editing: boolean) => {
-    setFields((prevFields) => prevFields.map((item, i) => {
-      if (item.field?.viewValue === field) {
-        setAreaValue(onlyText(item.value?.viewValue))
+    setFields((prevFields) => prevFields.map((item) => {
+      if (isEqualBuffers(item.field, field)) {
+        const value = getSerializedFormat(viewFormat, bufferToString(item.value), 4)
+        setAreaValue(value)
         return { ...item, editing }
       }
       return item
@@ -151,12 +160,12 @@ const HashDetails = (props: Props) => {
       cellCache.clearAll()
       forceUpdate({})
     }, 0)
-  }, [cellCache])
+  }, [cellCache, viewFormat])
 
   const handleApplyEditField = (field = '') => {
     const data: AddFieldsToHashDto = {
       keyName: key,
-      fields: [{ field, value: stringToBuffer(areaValue) }],
+      fields: [{ field, value: stringToBuffer(getSerializedFormat(viewFormat, areaValue)) }],
     }
     dispatch(updateHashFieldsAction(data, () => onHashEditedSuccess(field)))
   }
@@ -229,7 +238,6 @@ const HashDetails = (props: Props) => {
 
   const loadMoreItems = () => {
     if (nextCursor !== 0) {
-      dispatch(setHashFields(bufferFormatRows(fields.length - 1)))
       dispatch(
         fetchMoreHashFields(
           key,
@@ -242,28 +250,10 @@ const HashDetails = (props: Props) => {
   }
 
   const formatItem = useCallback(({ field, value }: HashFieldDto): IHashField => ({
-    field: {
-      ...field,
-      viewValue: formattingBuffer(field, viewFormatProp),
-    },
-    value: {
-      ...value,
-      viewValue: formattingBuffer(value, viewFormatProp),
-    },
+    field,
+    value,
     editing: false
   }), [viewFormatProp])
-
-  const bufferFormatRows = (lastIndex: number) => {
-    const newFields = bufferFormatRangeItems(fields, formattedLastIndexRef.current, lastIndex, formatItem)
-
-    setFields(newFields)
-
-    if (lastIndex > formattedLastIndexRef.current) {
-      formattedLastIndexRef.current = lastIndex
-    }
-
-    return newFields
-  }
 
   const columns: ITableColumn[] = [
     {
@@ -276,27 +266,27 @@ const HashDetails = (props: Props) => {
       alignment: TableCellAlignment.Left,
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
-      render: function Field(_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) {
+      render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const field = fieldItem.viewValue ?? ''
-        const cellContent = field.substring?.(0, 200) ?? field
-        const tooltipContent = formatLongName(onlyText(field))
+        const field = bufferToString(fieldItem) || ''
+        const tooltipContent = formatLongName(field)
+        const { value, isValid } = formattingBuffer(fieldItem, viewFormatProp, { expanded })
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div style={{ display: 'flex' }} data-testid={`hash-field-${field}`}>
               {!expanded && (
                 <EuiToolTip
-                  title="Field"
+                  title={isValid ? 'Field' : `Failed to convert to ${viewFormatProp}`}
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="bottom"
                   content={tooltipContent}
                 >
-                  <>{cellContent}</>
+                  <>{value.substring?.(0, 200) ?? value}</>
                 </EuiToolTip>
               )}
-              {expanded && field}
+              {expanded && value}
             </div>
           </EuiText>
         )
@@ -312,31 +302,32 @@ const HashDetails = (props: Props) => {
         { field: fieldItem, value: valueItem, editing }: IHashField,
         expanded?: boolean,
       ) {
-        const field = fieldItem.viewValue ?? ''
-        const value = valueItem.viewValue ?? ''
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = value.substring?.(0, 200) ?? value
-        const tooltipContent = formatLongName(onlyText(value))
+        const value = bufferToString(valueItem)
+        const field = bufferToString(fieldItem)
+        const tooltipContent = formatLongName(value)
+        const { value: formattedValue, isValid } = formattingBuffer(valueItem, viewFormatProp, { expanded })
 
         if (editing) {
           const text = areaValue
           const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const calculatedRows = Math.round(text?.length / OneRowLength + calculatedBreaks)
+          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+          const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
           return (
             <StopPropagation>
               <InlineItemEditor
                 expandable
-                initialValue={onlyText(value)}
+                initialValue={value}
                 controlsPosition="inside"
                 controlsDesign="separate"
                 placeholder="Enter Value"
                 fieldName="fieldValue"
                 isLoading={updateLoading}
                 controlsClassName={styles.textAreaControls}
-                onDecline={() => handleEditField(field, false)}
-                onApply={() => handleApplyEditField(omit(fieldItem, ['viewValue']))}
+                onDecline={() => handleEditField(fieldItem, false)}
+                onApply={() => handleApplyEditField(fieldItem)}
               >
                 <EuiTextArea
                   fullWidth
@@ -367,16 +358,16 @@ const HashDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title="Value"
+                  title={isValid ? 'Value' : `Failed to convert to ${viewFormatProp}`}
                   className={styles.tooltip}
                   position="bottom"
                   content={tooltipContent}
                   anchorClassName="truncateText"
                 >
-                  <>{cellContent}</>
+                  <>{formattedValue.substring?.(0, 200) ?? formattedValue}</>
                 </EuiToolTip>
               )}
-              {expanded && value}
+              {expanded && formattedValue}
             </div>
           </EuiText>
         )
@@ -391,7 +382,7 @@ const HashDetails = (props: Props) => {
       minWidth: 95,
       maxWidth: 95,
       render: function Actions(_act: any, { field: fieldItem }: HashFieldDto) {
-        const field = fieldItem.viewValue
+        const field = bufferToString(fieldItem)
         return (
           <StopPropagation>
             <div className="value-table-actions">
@@ -401,7 +392,7 @@ const HashDetails = (props: Props) => {
                 className="editFieldBtn"
                 color="primary"
                 disabled={updateLoading}
-                onClick={() => handleEditField(field, true)}
+                onClick={() => handleEditField(fieldItem, true)}
                 data-testid={`edit-hash-button-${field}`}
               />
               <PopoverDelete
@@ -467,7 +458,6 @@ const HashDetails = (props: Props) => {
           onRowToggleViewClick={handleRowToggleViewClick}
           expandedRows={expandedRows}
           setExpandedRows={setExpandedRows}
-          onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
         />
       </div>
     </>

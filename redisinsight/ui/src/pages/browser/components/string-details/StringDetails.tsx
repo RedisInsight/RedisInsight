@@ -143,7 +143,7 @@ const StringDetails = (props: Props) => {
                 </EuiToolTip>
               )
             )
-            : (<span style={{ fontStyle: 'italic' }}>Empty</span>)}
+            : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
         </EuiText>
       )}
       {isEditItem && (

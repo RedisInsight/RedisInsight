@@ -165,7 +165,7 @@ const VirtualGrid = (props: IProps) => {
                     className={styles.gridHeaderItemSortable}
                     onClick={() => changeSorting(column.id)}
                   >
-                    <span>{content.label}</span>
+                    {content.render ? content.render(content) : <span>{content.label}</span>}
                     <span style={{ paddingLeft: 0 }}>
                       <EuiIcon
                         style={{ marginLeft: '4px' }}
@@ -174,7 +174,7 @@ const VirtualGrid = (props: IProps) => {
                     </span>
                   </button>
                 )}
-                {!content?.sortable && (<div>{content.label}</div>)}
+                {!content?.sortable && (content.render ? content.render(content) : content.label)}
               </>
             )}
             {!isObject(content) && content}

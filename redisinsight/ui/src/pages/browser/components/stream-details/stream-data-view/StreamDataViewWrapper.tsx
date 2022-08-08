@@ -2,6 +2,7 @@ import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last, mergeWith, toNumber } from 'lodash'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import {
   createDeleteFieldHeader,
@@ -58,15 +59,18 @@ const StreamDataViewWrapper = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    const fieldsNames = {}
+    const fieldsNames: { [key: string]: { index: number, name: RedisResponseBuffer } } = {}
 
     const streamEntries = loadedEntries?.map((entry) => {
-      const namesInEntry = {}
+      const namesInEntry: { [key: string]: { index: number, name: RedisResponseBuffer } } = {}
       const entryFields = entry.fields.map((field) => {
         const { name } = field
         const nameViewValue = bufferToString(name)
 
-        namesInEntry[nameViewValue] = namesInEntry[nameViewValue] ? namesInEntry[nameViewValue] + 1 : 1
+        namesInEntry[nameViewValue] = {
+          index: namesInEntry[nameViewValue] ? namesInEntry[nameViewValue].index + 1 : 1,
+          name
+        }
 
         return formatItem(field)
       })
@@ -83,27 +87,39 @@ const StreamDataViewWrapper = (props: Props) => {
     const columnsNames = Object.keys(fieldsNames).reduce((acc, field) => {
       let names = {}
       // add index to each field name
-      for (let i = 0; i < fieldsNames[field]; i++) {
-        names = { ...names, [`${field}-${i}`]: field }
+      const { index, name } = fieldsNames[field] || {}
+      for (let i = 0; i < index; i++) {
+        names = {
+          ...names,
+          [`${field}-${i}`]: {
+            id: field,
+            label: field,
+            render: () => {
+              const { value: formattedValue } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
+              return formattedValue
+            }
+          }
+        }
       }
       return { ...acc, ...names }
     }, {})
 
     // for Manager columns
     // setUniqFields(fields)
-    const headerRow = { id: {
-      id: 'id',
-      label: 'Entry ID',
-      sortable: true
-    },
-    ...columnsNames,
-    actions: '',
+    const headerRow = {
+      id: {
+        id: 'id',
+        label: 'Entry ID',
+        sortable: true
+      },
+      ...columnsNames,
+      actions: '',
     }
     setEntries([headerRow, ...streamEntries])
     setColumns([
       idColumn,
       ...Object.keys(columnsNames).map((field) =>
-        getTemplateColumn(field, columnsNames[field])),
+        getTemplateColumn(field, columnsNames[field]?.id)),
       actionsColumn
     ])
 

@@ -40,9 +40,10 @@ test
     .meta({ rte: rte.standalone })('Verify that user can see DB is automatically scanned by 10K keys in the background, user can see the number of keys scanned and use the "Scan More" button to search per another 10000 keys', async t => {
         await t.click(browserPage.treeViewButton);
         //Verify that user can use the "Scan More" button to search per another 10000 keys
-        for (let i = 10; i < 100; i += 10){
+        for (let i = 10; i < 100; i += 10) {
             // scannedValue = scannedValue + 10;
-            await t.expect(browserPage.progressKeyList.exists).notOk('Progress Bar', { timeout: 30000 });
+            await t.expect(browserPage.progressKeyList.exists).ok('Progress Bar not displayed', { timeout: 30000 });
+            await t.expect(browserPage.progressKeyList.exists).notOk('Progress Bar still displayed', { timeout: 30000 });
             const scannedValueText = await browserPage.scannedValue.textContent;
             const regExp = new RegExp(`${i} 00` + '.');
             await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${i} 000 keys`);

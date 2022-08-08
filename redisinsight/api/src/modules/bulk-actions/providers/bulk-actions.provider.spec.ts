@@ -24,6 +24,7 @@ mockSocket2['emit'] = jest.fn();
 
 const nodeClient = Object.create(Redis.prototype);
 nodeClient.sendCommand = jest.fn();
+nodeClient.options = { db: 0 };
 
 const mockBulkActionFilter = Object.assign(new BulkActionFilter(), {
   count: 10_000,

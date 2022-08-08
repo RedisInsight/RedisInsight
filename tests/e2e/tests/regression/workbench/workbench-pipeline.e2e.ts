@@ -44,7 +44,7 @@ test('Verify that user can enter only numbers >0 in "Commands in pipeline" input
     // Verify that negative number converted to positive
     await t.expect(settingsPage.commandsInPipelineInput.value).eql(pipelineValues[1], 'Value is incorrect');
 });
-test('Verify that only chosen in pipeline number of commands is loading at the same time in Workbench', async t => {
+test.skip('Verify that only chosen in pipeline number of commands is loading at the same time in Workbench', async t => {
     await settingsPage.changeCommandsInPipeline(pipelineValues[1]);
     // Go to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);

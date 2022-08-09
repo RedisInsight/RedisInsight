@@ -26,7 +26,8 @@ const bufferToHex = (reply: RedisResponseBuffer): string => {
   let result = ''
 
   reply.data.forEach((byte: number) => {
-    result += byte.toString(16)
+    // eslint-disable-next-line
+    result += ('0' + (byte & 0xFF).toString(16)).slice(-2)
   })
 
   return result

@@ -50,7 +50,6 @@ test
         }
     });
 test
-    .meta({ rte: rte.reCloud })
     .before(async t => {
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig, cloudDatabaseConfig.databaseName);
         //Go to Workbench page

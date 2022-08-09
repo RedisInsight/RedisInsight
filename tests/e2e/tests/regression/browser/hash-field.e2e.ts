@@ -5,7 +5,6 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { populateHashWithFields } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
-import { addHashKeyApi, deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const common = new Common();
@@ -14,18 +13,17 @@ const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig
 const keyName = `TestHashKey-${common.generateWord(10)}`;
 const fieldForSearch = `SearchField-${common.generateWord(5)}`;
 const keyToAddParameters = { fieldsCount: 500000, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
-const hashKeyParameters = { keyName, fields: [{ field: common.generateWord(20), value: common.generateWord(20) }] };
 
 fixture `Hash Key fields verification`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await addHashKeyApi(hashKeyParameters, ossStandaloneConfig);
+        await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })
     .afterEach(async () => {
         //Clear and delete database
-        await deleteKeyByNameApi(keyName, ossStandaloneConfig);
+        await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
@@ -35,6 +33,7 @@ test
         await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);
         await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);
         //Add custom field to the hash key
+        await browserPage.openKeyDetails(keyName);
         await browserPage.addFieldToHash(fieldForSearch, 'testHashValue');
         //Search by full field name
         await browserPage.searchByTheValueInKeyDetails(fieldForSearch);

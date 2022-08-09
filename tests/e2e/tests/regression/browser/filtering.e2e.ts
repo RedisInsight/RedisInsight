@@ -1,6 +1,6 @@
 import { Chance } from 'chance';
 import { Selector } from 'testcafe';
-import { rte } from '../../../helpers/constants';
+import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig } from '../../../helpers/conf';
@@ -213,6 +213,7 @@ test
         keyName = `KeyForSearch-${chance.word({ length: 10 })}`;
         await browserPage.addSetKey(keyName);
         // Search by key name
+        await browserPage.selectFilterGroupType(KeyTypesTexts.Set);
         await browserPage.searchByKeyName('KeyForSearch*');
         // Verify that required key is displayed
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');

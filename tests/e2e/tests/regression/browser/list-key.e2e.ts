@@ -5,7 +5,6 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { populateListWithElements } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
-import { addListKeyApi, deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const common = new Common();
@@ -14,18 +13,17 @@ const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig
 const keyName = `TestListKey-${common.generateWord(10)}`;
 const elementForSearch = `SearchField-${common.generateWord(5)}`;
 const keyToAddParameters = { elementsCount: 500000, keyName, elementStartWith: 'listElement' };
-const listKeyParameters = { keyName, element: 'testElement' };
 
 fixture `List Key verification`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await addListKeyApi(listKeyParameters, ossStandaloneConfig);
+        await browserPage.addListKey(keyName, '2147476121', 'testElement');
     })
     .afterEach(async () => {
         //Clear and delete database
-        await deleteKeyByNameApi(keyName, ossStandaloneConfig);
+        await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test
@@ -35,6 +33,7 @@ test
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
         //Add custom element to the list key
+        await browserPage.openKeyDetails(keyName);
         await browserPage.addElementToList(elementForSearch);
         //Search by element index
         await browserPage.searchByTheValueInKeyDetails('1000001');

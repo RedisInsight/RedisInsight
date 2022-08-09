@@ -59,7 +59,7 @@ test
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can search via Scan more for search pattern and selected data type in OSS Cluster DB', async t => {
         //Create new keys
-        keys = await common.createArrayWithKeyValue(1000);
+        keys = await common.createArrayWithKeyValue(1500);
         await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
         //Search all string keys
         await browserPage.selectFilterGroupType(KeyTypesTexts.String);
@@ -67,9 +67,10 @@ test
         //Verify that scan more button is shown
         await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is not shown');
         await t.click(browserPage.scanMoreButton);
+        const regExp = new RegExp(`10` + '.');
         //Verify that number of results is 1000
-        const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
-        await t.expect(keysNumberOfResults).contains('1 000', 'Number of results is not 1 000');
+        const scannedValueText = await browserPage.scannedValue.textContent;
+        await t.expect(scannedValueText).match(regExp, 'Number of results is not 1 000');
     });
 test
     .meta({ rte: rte.ossCluster })
@@ -87,7 +88,8 @@ test
         //Verify that scan more button is shown
         await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is not shown');
         await t.click(browserPage.scanMoreButton);
+        const regExp = new RegExp(`10` + '.');
         //Verify that number of results is 1000
-        const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
-        await t.expect(keysNumberOfResults).contains('1 000', 'Number of results is not 1 000');
+        const scannedValueText = await browserPage.scannedValue.textContent;
+        await t.expect(scannedValueText).match(regExp, 'Number of results is not 1 000');
     });

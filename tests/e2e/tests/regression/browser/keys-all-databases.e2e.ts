@@ -47,7 +47,6 @@ test
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test
-    .meta({ rte: rte.reCloud })
     .before(async() => {
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig, cloudDatabaseConfig.databaseName);
     })

@@ -23,7 +23,8 @@ import {
   bufferToString,
   isEqualBuffers,
   isTextViewFormatter,
-  getSerializedFormat
+  bufferToSerializedFormat,
+  stringToSerializedBufferFormat
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -149,7 +150,7 @@ const HashDetails = (props: Props) => {
   const handleEditField = useCallback((field = '', editing: boolean) => {
     setFields((prevFields) => prevFields.map((item) => {
       if (isEqualBuffers(item.field, field)) {
-        const value = getSerializedFormat(viewFormat, bufferToString(item.value), 4)
+        const value = bufferToSerializedFormat(viewFormat, item.value, 4)
         setAreaValue(value)
         return { ...item, editing }
       }
@@ -165,7 +166,7 @@ const HashDetails = (props: Props) => {
   const handleApplyEditField = (field = '') => {
     const data: AddFieldsToHashDto = {
       keyName: key,
-      fields: [{ field, value: stringToBuffer(getSerializedFormat(viewFormat, areaValue)) }],
+      fields: [{ field, value: stringToSerializedBufferFormat(viewFormat, areaValue) }],
     }
     dispatch(updateHashFieldsAction(data, () => onHashEditedSuccess(field)))
   }

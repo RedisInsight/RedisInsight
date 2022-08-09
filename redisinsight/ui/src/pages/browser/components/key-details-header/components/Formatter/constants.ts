@@ -15,6 +15,12 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     iconLight: 'kqlSelector',
     value: KeyValueFormat.JSON,
   },
+  {
+    text: 'Msgpack',
+    iconDark: 'kqlSelector',
+    iconLight: 'kqlSelector',
+    value: KeyValueFormat.Msgpack,
+  },
 ]
 
 export const KEY_VALUE_JSON_FORMATTER_OPTIONS = [KeyValueFormat.Unicode]

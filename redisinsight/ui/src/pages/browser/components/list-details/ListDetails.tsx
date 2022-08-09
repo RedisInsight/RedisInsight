@@ -23,11 +23,12 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
 import {
+  bufferToSerializedFormat,
   bufferToString,
   formatLongName,
   formattingBuffer,
-  getSerializedFormat,
   isTextViewFormatter,
+  stringToSerializedBufferFormat,
   validateListIndex
 } from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
@@ -36,7 +37,6 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -115,7 +115,7 @@ const ListDetails = (props: Props) => {
   const handleEditElement = (index = 0, editing: boolean) => {
     const newElemsState = elements.map((item) => {
       if (item.index === index) {
-        const value = getSerializedFormat(viewFormat, bufferToString(item.element), 4)
+        const value = bufferToSerializedFormat(viewFormat, item.element, 4)
         setAreaValue(value)
         return { ...item, editing }
       }
@@ -135,7 +135,7 @@ const ListDetails = (props: Props) => {
   const handleApplyEditElement = (index = 0) => {
     const data: SetListElementDto = {
       keyName: key,
-      element: stringToBuffer(getSerializedFormat(viewFormat, areaValue)),
+      element: stringToSerializedBufferFormat(viewFormat, areaValue),
       index,
     }
     dispatch(

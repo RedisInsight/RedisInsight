@@ -10,7 +10,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
-import { bufferToString, formattingBuffer, getSerializedFormat, isTextViewFormatter } from 'uiSrc/utils'
+import {
+  bufferToSerializedFormat,
+  bufferToString,
+  formattingBuffer,
+  isTextViewFormatter,
+  stringToSerializedBufferFormat
+} from 'uiSrc/utils'
 import {
   resetStringValue,
   stringDataSelector,
@@ -93,12 +99,12 @@ const StringDetails = (props: Props) => {
   useMemo(() => {
     if (isEditItem) {
       (document.activeElement as HTMLElement)?.blur()
-      setAreaValue(getSerializedFormat(viewFormat, bufferToString(value), 4))
+      setAreaValue(bufferToSerializedFormat(viewFormat, value, 4))
     }
   }, [isEditItem])
 
   const onApplyChanges = () => {
-    const data = stringToBuffer(getSerializedFormat(viewFormat, areaValue))
+    const data = stringToSerializedBufferFormat(viewFormat, areaValue)
     const onSuccess = () => {
       setIsEdit(false)
       setValue(data)
@@ -107,7 +113,7 @@ const StringDetails = (props: Props) => {
   }
 
   const onDeclineChanges = () => {
-    setAreaValue(getSerializedFormat(viewFormat, bufferToString(value), 4))
+    setAreaValue(bufferToSerializedFormat(viewFormat, value, 4))
     setIsEdit(false)
   }
 

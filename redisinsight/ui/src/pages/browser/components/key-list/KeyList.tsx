@@ -144,7 +144,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       id: 'type',
       label: 'Type',
       absoluteWidth: 'auto',
-      minWidth: 124,
+      minWidth: 126,
       render: (cellData: any, { nameString: name }: any) => <GroupBadge type={cellData} name={name} />,
     },
     {

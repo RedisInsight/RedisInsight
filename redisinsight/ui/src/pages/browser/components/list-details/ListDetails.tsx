@@ -2,9 +2,8 @@ import { EuiButtonIcon, EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@e
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { isEqual, isNull, union } from 'lodash'
+import { isEqual, isNull } from 'lodash'
 import { CellMeasurerCache } from 'react-virtualized'
-import { onlyText } from 'react-children-utilities'
 
 import {
   listSelector,
@@ -14,7 +13,6 @@ import {
   updateListElementAction,
   updateListValueStateSelector,
   fetchSearchingListElementAction,
-  setListElements,
 } from 'uiSrc/slices/browser/list'
 import {
   ITableColumn,
@@ -24,14 +22,21 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
-import { bufferFormatRangeItems, formatLongName, formattingBuffer, validateListIndex } from 'uiSrc/utils'
+import {
+  bufferToSerializedFormat,
+  bufferToString,
+  formatLongName,
+  formattingBuffer,
+  isTextViewFormatter,
+  stringToSerializedBufferFormat,
+  validateListIndex
+} from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -82,7 +87,7 @@ const ListDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const listElements = bufferFormatRangeItems(loadedElements, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+    const listElements = loadedElements.map(formatItem)
 
     setElements(listElements)
 
@@ -104,16 +109,14 @@ const ListDetails = (props: Props) => {
   const formatItem = useCallback(({ index, element }: IListElement): IListElement => ({
     index: searchedIndex ?? index,
     editing: false,
-    element: {
-      ...element,
-      viewValue: formattingBuffer(element, viewFormatProp),
-    },
+    element
   }), [viewFormatProp])
 
   const handleEditElement = (index = 0, editing: boolean) => {
     const newElemsState = elements.map((item) => {
       if (item.index === index) {
-        setAreaValue(onlyText(item.element?.viewValue))
+        const value = bufferToSerializedFormat(viewFormat, item.element, 4)
+        setAreaValue(value)
         return { ...item, editing }
       }
       return item
@@ -132,7 +135,7 @@ const ListDetails = (props: Props) => {
   const handleApplyEditElement = (index = 0) => {
     const data: SetListElementDto = {
       keyName: key,
-      element: stringToBuffer(areaValue),
+      element: stringToSerializedBufferFormat(viewFormat, areaValue),
       index,
     }
     dispatch(
@@ -141,9 +144,6 @@ const ListDetails = (props: Props) => {
   }
 
   const onElementEditedSuccess = (elementIndex = 0) => {
-    const indexOfElement = elements.findIndex(({ index }) => index === elementIndex)
-    setExpandedRows((prevState) => union(prevState, [indexOfElement]))
-
     handleEditElement(elementIndex, false)
   }
 
@@ -180,16 +180,6 @@ const ListDetails = (props: Props) => {
         )
       )
     }
-  }
-
-  const bufferFormatRows = (lastIndex: number) => {
-    const newElements = bufferFormatRangeItems(elements, formattedLastIndexRef.current, lastIndex, formatItem)
-    setElements(newElements)
-
-    if (lastIndex > formattedLastIndexRef.current) {
-      formattedLastIndexRef.current = lastIndex
-    }
-    return newElements
   }
 
   const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
@@ -257,23 +247,23 @@ const ListDetails = (props: Props) => {
         { element: elementItem, index, editing }: IListElement,
         expanded: boolean = false
       ) {
-        const element = elementItem?.viewValue ?? ''
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = element.substring?.(0, 200) ?? element
-        const tooltipContent = formatLongName(onlyText(element))
+        const element = bufferToString(elementItem, viewFormat)
+        const tooltipContent = formatLongName(element)
+        const { value, isValid } = formattingBuffer(elementItem, viewFormatProp, { expanded })
 
         if (editing) {
           const text = areaValue
           const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const calculatedRows = Math.round(text?.length / OneRowLength + calculatedBreaks)
+          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+          const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
           return (
             <StopPropagation>
               <div className={styles.inlineItemEditor}>
                 <InlineItemEditor
                   expandable
-                  initialValue={onlyText(element)}
+                  initialValue={element}
                   controlsPosition="inside"
                   controlsDesign="separate"
                   placeholder="Enter Element"
@@ -313,16 +303,16 @@ const ListDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title="Element"
+                  title={isValid ? 'Element' : `Failed to convert to ${viewFormatProp}`}
                   className={styles.tooltip}
                   position="bottom"
                   content={tooltipContent}
                   anchorClassName="truncateText"
                 >
-                  <>{cellContent}</>
+                  <>{value.substring?.(0, 200) ?? value}</>
                 </EuiToolTip>
               )}
-              {expanded && element}
+              {expanded && value}
             </div>
           </EuiText>
         )
@@ -357,7 +347,6 @@ const ListDetails = (props: Props) => {
 
   const loadMoreItems = ({ startIndex, stopIndex }: any) => {
     if (isNull(searchedIndex)) {
-      dispatch(setListElements(bufferFormatRows(elements.length - 1)))
       dispatch(
         fetchMoreListElements(key, startIndex, stopIndex - startIndex + 1)
       )
@@ -406,7 +395,6 @@ const ListDetails = (props: Props) => {
         onRowToggleViewClick={handleRowToggleViewClick}
         expandedRows={expandedRows}
         setExpandedRows={setExpandedRows}
-        onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
       />
     </div>
   )

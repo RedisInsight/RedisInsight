@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
@@ -7,10 +7,9 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
-import { onlyText } from 'react-children-utilities'
 
 import {
-  bufferFormatRangeItems,
+  bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   formatLongName,
@@ -26,7 +25,6 @@ import {
   fetchMoreSetMembers,
   setDataSelector,
   setSelector,
-  setSetMembers,
 } from 'uiSrc/slices/browser/set'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
@@ -37,7 +35,6 @@ import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
-import { RedisString } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 const suffix = '_set'
@@ -77,9 +74,7 @@ const SetDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const newMembers = bufferFormatRangeItems(loadedMembers, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
-
-    setMembers(newMembers)
+    setMembers(loadedMembers)
 
     if (loadedMembers.length < members.length) {
       formattedLastIndexRef.current = 0
@@ -120,7 +115,7 @@ const SetDetails = (props: Props) => {
   }
 
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteSetMembers(key, [stringToBuffer(member)], onSuccessRemoved))
+    dispatch(deleteSetMembers(key, [stringToBuffer(member, viewFormat)], onSuccessRemoved))
     closePopover()
   }
 
@@ -163,23 +158,6 @@ const SetDetails = (props: Props) => {
     dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
   }
 
-  const formatItem = useCallback((item: RedisString): RedisString => ({
-    ...item,
-    viewValue: formattingBuffer(item, viewFormatProp)
-  }), [viewFormatProp])
-
-  const bufferFormatRows = (lastIndex: number) => {
-    const newMembers = bufferFormatRangeItems(members, formattedLastIndexRef.current, lastIndex, formatItem)
-
-    setMembers(newMembers)
-
-    if (lastIndex > formattedLastIndexRef.current) {
-      formattedLastIndexRef.current = lastIndex
-    }
-
-    return newMembers
-  }
-
   const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
     const browserViewEvent = expanded
       ? TelemetryEvent.BROWSER_KEY_FIELD_VALUE_EXPANDED
@@ -210,9 +188,10 @@ const SetDetails = (props: Props) => {
       truncateText: true,
       render: function Name(_name: string, memberItem: string, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const member = memberItem.viewValue ?? ''
-        const cellContent = member.substring?.(0, 300) ?? member
-        const tooltipContent = formatLongName(onlyText(member))
+        const member = bufferToString(memberItem, viewFormat)
+        const tooltipContent = formatLongName(member)
+        const { value, isValid } = formattingBuffer(memberItem, viewFormatProp, { expanded })
+        const cellContent = value.substring?.(0, 200) ?? value
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
@@ -222,7 +201,7 @@ const SetDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title="Member"
+                  title={isValid ? 'Member' : `Failed to convert to ${viewFormatProp}`}
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="left"
@@ -231,7 +210,7 @@ const SetDetails = (props: Props) => {
                   <>{cellContent}</>
                 </EuiToolTip>
               )}
-              {expanded && member}
+              {expanded && value}
             </div>
           </EuiText>
         )
@@ -245,7 +224,7 @@ const SetDetails = (props: Props) => {
       maxWidth: 60,
       headerClassName: 'hidden',
       render: function Actions(_act: any, memberItem: string) {
-        const member = memberItem.viewValue ?? ''
+        const member = bufferToString(memberItem, viewFormat)
         return (
           <div className="value-table-actions">
             <PopoverDelete
@@ -270,7 +249,6 @@ const SetDetails = (props: Props) => {
 
   const loadMoreItems = () => {
     if (nextCursor !== 0) {
-      dispatch(setSetMembers(bufferFormatRows(members.length - 1)))
       dispatch(
         fetchMoreSetMembers(key, nextCursor, SCAN_COUNT_DEFAULT, match || matchAllValue)
       )
@@ -321,7 +299,6 @@ const SetDetails = (props: Props) => {
         onRowToggleViewClick={handleRowToggleViewClick}
         expandedRows={expandedRows}
         setExpandedRows={setExpandedRows}
-        onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
       />
 
     </div>

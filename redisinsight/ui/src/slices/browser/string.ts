@@ -114,7 +114,7 @@ export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
 export function updateStringValueAction(
   key: RedisResponseBuffer,
   value: RedisResponseBuffer,
-  onSuccess?: () => void,
+  onSuccess?: (value: RedisResponseBuffer) => void,
   onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -149,7 +149,7 @@ export function updateStringValueAction(
         })
         dispatch(updateValueSuccess(value))
         dispatch<any>(refreshKeyInfoAction(key))
-        onSuccess?.()
+        onSuccess?.(value)
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)

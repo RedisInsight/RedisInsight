@@ -132,7 +132,7 @@ const ZSetDetails = (props: Props) => {
   }
 
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteZSetMembers(key, [stringToBuffer(member)], onSuccessRemoved))
+    dispatch(deleteZSetMembers(key, [stringToBuffer(member, viewFormat)], onSuccessRemoved))
     closePopover()
   }
 
@@ -242,7 +242,7 @@ const ZSetDetails = (props: Props) => {
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
       render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
-        const name = bufferToString(nameItem)
+        const name = bufferToString(nameItem, viewFormat)
         const tooltipContent = formatLongName(name)
         const { value, isValid } = formattingBuffer(nameItem, viewFormat, { expanded })
         const cellContent = value.substring?.(0, 200) ?? value
@@ -276,7 +276,7 @@ const ZSetDetails = (props: Props) => {
       isSortable: true,
       truncateText: true,
       render: function Score(_name: string, { name: nameItem, score, editing }: IZsetMember, expanded?: boolean) {
-        const name = bufferToString(nameItem)
+        const name = bufferToString(nameItem, viewFormat)
         const cellContent = score.toString().substring(0, 200)
         const tooltipContent = formatLongName(score.toString())
         if (editing) {
@@ -327,7 +327,7 @@ const ZSetDetails = (props: Props) => {
       maxWidth: 100,
       absoluteWidth: 100,
       render: function Actions(_act: any, { name: nameItem }: IZsetMember) {
-        const name = bufferToString(nameItem)
+        const name = bufferToString(nameItem, viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">

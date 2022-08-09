@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -37,13 +37,15 @@ const KeyValueFormatter = (props: Props) => {
         value,
         inputDisplay: (
           <>
-            {width > MIDDLE_SCREEN_RESOLUTION && <EuiText>{text}</EuiText>}
+            {width > MIDDLE_SCREEN_RESOLUTION && (
+              <EuiTextColor color="subdued" className={styles.optionText}>{text}</EuiTextColor>
+            )}
             {width <= MIDDLE_SCREEN_RESOLUTION && (
-            <EuiIcon
-              type={theme === Theme.Dark ? FormattersDark : FormattersLight}
-              className={styles.controlsIcon}
-              data-testid={`key-value-formatter-option-selected-${value}`}
-            />
+              <EuiIcon
+                type={theme === Theme.Dark ? FormattersDark : FormattersLight}
+                className={styles.controlsIcon}
+                data-testid={`key-value-formatter-option-selected-${value}`}
+              />
             )}
           </>
         ),

@@ -1,7 +1,8 @@
+import { decode, encode } from '@msgpack/msgpack'
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { bufferToUTF8 } from 'uiSrc/utils'
+import { anyToBuffer, bufferToUTF8, stringToBuffer, UintArrayToString } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 interface FormattingProps {
@@ -30,8 +31,13 @@ const formattingBuffer = (
       return bufferToJSON(reply, props as FormattingProps)
     }
     case KeyValueFormat.Msgpack: {
-      // TODO: for future
-      return { value: bufferToUnicode(reply), isValid: true }
+      try {
+        const decoded = decode(reply.data)
+        const value = JSON.stringify(decoded)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
     }
     default: {
       return { value: bufferToUnicode(reply), isValid: true }
@@ -39,13 +45,42 @@ const formattingBuffer = (
   }
 }
 
-const getSerializedFormat = (format: KeyValueFormat, val: string, space?: number) => {
+const bufferToSerializedFormat = (format: KeyValueFormat, value: RedisResponseBuffer, space?: number): string => {
   switch (format) {
     case KeyValueFormat.JSON: {
-      return reSerializeJSON(val, space)
+      return reSerializeJSON(bufferToUTF8(value), space)
+    }
+    case KeyValueFormat.Msgpack: {
+      try {
+        const decoded = decode(value.data)
+        const stringified = JSON.stringify(decoded)
+        return reSerializeJSON(stringified, space)
+      } catch (e) {
+        return bufferToUTF8(value)
+      }
     }
     default: {
-      return val
+      return bufferToUTF8(value)
+    }
+  }
+}
+
+const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): RedisResponseBuffer => {
+  switch (format) {
+    case KeyValueFormat.JSON: {
+      return stringToBuffer(reSerializeJSON(value))
+    }
+    case KeyValueFormat.Msgpack: {
+      try {
+        const json = JSON.parse(value)
+        const encoded = encode(json)
+        return anyToBuffer(encoded)
+      } catch (e) {
+        return stringToBuffer(value)
+      }
+    }
+    default: {
+      return stringToBuffer(value)
     }
   }
 }
@@ -54,5 +89,6 @@ export {
   formattingBuffer,
   isTextViewFormatter,
   isJsonViewFormatter,
-  getSerializedFormat
+  bufferToSerializedFormat,
+  stringToSerializedBufferFormat
 }

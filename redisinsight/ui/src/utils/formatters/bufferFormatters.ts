@@ -22,6 +22,17 @@ const decimalToHexString = (d: number, padding = 2) => {
   return '0'.repeat(padding).substr(0, padding - hex.length) + hex
 }
 
+const bufferToHex = (reply: RedisResponseBuffer): string => {
+  let result = ''
+
+  reply.data.forEach((byte: number) => {
+    result += byte.toString(16)
+  })
+
+  // return result.replace(/\s/g, '').replace(/(.{2})/g, '$1 ')
+  return result
+}
+
 const bufferToASCII = (reply: RedisResponseBuffer): string => {
   let result = ''
   reply.data.forEach((byte: number) => {
@@ -84,6 +95,17 @@ const UTF8ToBuffer = (reply: string): RedisResponseBuffer => anyToBuffer(encoder
 // common formatters
 const stringToBuffer = (data: string): RedisResponseBuffer => UTF8ToBuffer(data)
 
+const hexToBuffer = (data: string): RedisResponseBuffer => {
+  // let stringWithoutSpaces = data.replace(/ /g, '')
+  let string = data
+  const result = []
+  while (string.length >= 2) {
+    result.push(parseInt(string.substring(0, 2), 16))
+    string = string.substring(2, string.length)
+  }
+  return { type: RedisResponseBufferType.Buffer, data: result }
+}
+
 const bufferToString = (data: RedisString = '', formatResult: RedisResponseEncoding = RedisResponseEncoding.UTF8): string => {
   let string = data
 
@@ -101,6 +123,7 @@ export default bufferToString
 export {
   bufferToUTF8,
   bufferToASCII,
+  bufferToHex,
   UTF8ToBuffer,
   decimalToHexString,
   ASCIIToBuffer,
@@ -108,6 +131,7 @@ export {
   stringToBuffer,
   bufferToString,
   UintArrayToString,
+  hexToBuffer,
   anyToBuffer,
 }
 

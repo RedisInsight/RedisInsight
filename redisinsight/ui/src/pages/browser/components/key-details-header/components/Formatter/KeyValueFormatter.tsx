@@ -65,6 +65,10 @@ const KeyValueFormatter = (props: Props) => {
     dispatch(setViewFormat(value))
   }
 
+  if (!options.length) {
+    return null
+  }
+
   return (
     <div className={styles.container}>
       <EuiSuperSelect

@@ -21,9 +21,15 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     iconLight: 'kqlSelector',
     value: KeyValueFormat.Msgpack,
   },
+  {
+    text: 'HEX',
+    iconDark: 'kqlSelector',
+    iconLight: 'kqlSelector',
+    value: KeyValueFormat.HEX,
+  },
 ]
 
-export const KEY_VALUE_JSON_FORMATTER_OPTIONS = [KeyValueFormat.Unicode]
+export const KEY_VALUE_JSON_FORMATTER_OPTIONS = []
 
 export const getKeyValueFormatterOptions = (viewFormat?: KeyTypes | ModulesKeyTypes) => (
   viewFormat !== KeyTypes.ReJSON

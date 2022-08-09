@@ -3,7 +3,6 @@ import cx from 'classnames'
 import React, { ChangeEvent, Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
-import { union } from 'lodash'
 
 import {
   hashSelector,
@@ -172,9 +171,6 @@ const HashDetails = (props: Props) => {
   }
 
   const onHashEditedSuccess = (fieldName = '') => {
-    const indexOfField = fields.findIndex(({ field }) => field === fieldName)
-    setExpandedRows((prevState) => union(prevState, [indexOfField]))
-
     handleEditField(fieldName, false)
   }
 
@@ -303,6 +299,7 @@ const HashDetails = (props: Props) => {
         { field: fieldItem, value: valueItem, editing }: IHashField,
         expanded?: boolean,
       ) {
+        console.log(expanded)
         // Better to cut the long string, because it could affect virtual scroll performance
         const value = bufferToString(valueItem)
         const field = bufferToString(fieldItem)

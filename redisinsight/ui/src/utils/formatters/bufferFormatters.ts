@@ -29,7 +29,6 @@ const bufferToHex = (reply: RedisResponseBuffer): string => {
     result += byte.toString(16)
   })
 
-  // return result.replace(/\s/g, '').replace(/(.{2})/g, '$1 ')
   return result
 }
 
@@ -96,7 +95,6 @@ const UTF8ToBuffer = (reply: string): RedisResponseBuffer => anyToBuffer(encoder
 const stringToBuffer = (data: string): RedisResponseBuffer => UTF8ToBuffer(data)
 
 const hexToBuffer = (data: string): RedisResponseBuffer => {
-  // let stringWithoutSpaces = data.replace(/ /g, '')
   let string = data
   const result = []
   while (string.length >= 2) {

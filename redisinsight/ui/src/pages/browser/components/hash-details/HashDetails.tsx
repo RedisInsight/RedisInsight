@@ -299,7 +299,6 @@ const HashDetails = (props: Props) => {
         { field: fieldItem, value: valueItem, editing }: IHashField,
         expanded?: boolean,
       ) {
-        console.log(expanded)
         // Better to cut the long string, because it could affect virtual scroll performance
         const value = bufferToString(valueItem)
         const field = bufferToString(fieldItem)

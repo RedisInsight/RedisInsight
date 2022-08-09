@@ -135,6 +135,7 @@ const StringDetails = (props: Props) => {
         <EuiText
           onClick={() => setIsEdit(true)}
           style={{ whiteSpace: 'break-spaces' }}
+          data-testid="string-value"
         >
           {areaValue !== ''
             ? (isValid

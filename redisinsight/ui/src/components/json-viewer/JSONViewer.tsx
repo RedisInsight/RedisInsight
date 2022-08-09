@@ -18,7 +18,7 @@ const JSONViewer = (props: Props) => {
 
     return {
       value: (
-        <div className={cx(styles.jsonViewer, { [styles.collapsed]: !expanded })}>
+        <div className={cx(styles.jsonViewer, { [styles.collapsed]: !expanded })} data-tesid="value-as-json">
           <JSONPretty json={value} space={space} />
         </div>
       ),

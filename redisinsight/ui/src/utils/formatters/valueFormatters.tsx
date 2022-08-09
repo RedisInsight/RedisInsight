@@ -2,7 +2,7 @@ import { decode, encode } from '@msgpack/msgpack'
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, bufferToUTF8, stringToBuffer, UintArrayToString } from 'uiSrc/utils'
+import { anyToBuffer, bufferToUTF8, stringToBuffer } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 interface FormattingProps {

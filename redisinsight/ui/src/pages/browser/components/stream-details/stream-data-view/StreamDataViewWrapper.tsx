@@ -65,7 +65,7 @@ const StreamDataViewWrapper = (props: Props) => {
       const namesInEntry: { [key: string]: { index: number, name: RedisResponseBuffer } } = {}
       const entryFields = entry.fields.map((field) => {
         const { name } = field
-        const nameViewValue = bufferToString(name)
+        const nameViewValue = bufferToString(name, viewFormat)
 
         namesInEntry[nameViewValue] = {
           index: namesInEntry[nameViewValue] ? namesInEntry[nameViewValue].index + 1 : 1,
@@ -185,8 +185,8 @@ const StreamDataViewWrapper = (props: Props) => {
     headerCellClassName: 'truncateText',
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
-      const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName) === name)
-      const value = values[index] ? bufferToString(values[index]?.value) : ''
+      const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
+      const value = values[index] ? bufferToString(values[index]?.value, viewFormat) : ''
 
       const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(bufferValue, viewFormatProp, { expanded })
@@ -227,7 +227,7 @@ const StreamDataViewWrapper = (props: Props) => {
     className: styles.cell,
     headerClassName: 'streamItemHeader',
     render: function Id({ id }: StreamEntryDto) {
-      const idStr = bufferToString(id)
+      const idStr = bufferToString(id, viewFormat)
       const timestamp = idStr.split('-')?.[0]
       return (
         <div>

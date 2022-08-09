@@ -2,10 +2,10 @@ import { decode, encode } from '@msgpack/msgpack'
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, bufferToUTF8, stringToBuffer, bufferToHex, hexToBuffer } from 'uiSrc/utils'
+import { anyToBuffer, bufferToASCII, bufferToUTF8, stringToBuffer, bufferToHex, hexToBuffer } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
-interface FormattingProps {
+export interface FormattingProps {
   expanded: boolean
 }
 
@@ -36,6 +36,8 @@ const formattingBuffer = (
     }
     case KeyValueFormat.HEX: {
       return { value: bufferToHex(reply), isValid: true }
+    case KeyValueFormat.ASCII: {
+      return { value: bufferToASCII(reply), isValid: true }
     }
     case KeyValueFormat.Msgpack: {
       try {
@@ -56,6 +58,9 @@ const bufferToSerializedFormat = (format: KeyValueFormat, value: RedisResponseBu
   switch (format) {
     case KeyValueFormat.JSON: {
       return reSerializeJSON(bufferToUTF8(value), space)
+    }
+    case KeyValueFormat.ASCII: {
+      return bufferToASCII(value)
     }
     case KeyValueFormat.Msgpack: {
       try {
@@ -86,7 +91,7 @@ const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): 
         const encoded = encode(json)
         return anyToBuffer(encoded)
       } catch (e) {
-        return stringToBuffer(value)
+        return stringToBuffer(value, format)
       }
     }
     case KeyValueFormat.HEX: {
@@ -96,7 +101,7 @@ const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): 
       return stringToBuffer(value)
     }
     default: {
-      return stringToBuffer(value)
+      return stringToBuffer(value, format)
     }
   }
 }

@@ -2,7 +2,7 @@ import { EuiButtonIcon, EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@e
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { isEqual, isNull, union } from 'lodash'
+import { isEqual, isNull } from 'lodash'
 import { CellMeasurerCache } from 'react-virtualized'
 
 import {
@@ -144,9 +144,6 @@ const ListDetails = (props: Props) => {
   }
 
   const onElementEditedSuccess = (elementIndex = 0) => {
-    const indexOfElement = elements.findIndex(({ index }) => index === elementIndex)
-    setExpandedRows((prevState) => union(prevState, [indexOfElement]))
-
     handleEditElement(elementIndex, false)
   }
 
@@ -250,7 +247,7 @@ const ListDetails = (props: Props) => {
         { element: elementItem, index, editing }: IListElement,
         expanded: boolean = false
       ) {
-        const element = bufferToString(elementItem)
+        const element = bufferToString(elementItem, viewFormat)
         const tooltipContent = formatLongName(element)
         const { value, isValid } = formattingBuffer(elementItem, viewFormatProp, { expanded })
 

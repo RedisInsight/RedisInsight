@@ -1,6 +1,7 @@
 import React, {
   ChangeEvent,
   Ref,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -8,7 +9,6 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import {
   bufferToSerializedFormat,
@@ -26,7 +26,6 @@ import {
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 
 import styles from './styles.module.scss'
 
@@ -48,9 +47,10 @@ const StringDetails = (props: Props) => {
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [rows, setRows] = useState<number>(5)
-  const [value, setValue] = useState<RedisResponseBuffer>(stringToBuffer(''))
+  const [value, setValue] = useState<JSX.Element | string>('')
   const [areaValue, setAreaValue] = useState<string>('')
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
+  const [isValid, setIsValid] = useState(true)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
   const viewValueRef: Ref<HTMLPreElement> = useRef(null)
@@ -64,9 +64,12 @@ const StringDetails = (props: Props) => {
   useEffect(() => {
     if (!initialValue) return
 
-    const initialValueString = bufferToString(initialValue)
+    const initialValueString = bufferToString(initialValue, viewFormat)
+    const { value: formattedValue, isValid } = formattingBuffer(initialValue, viewFormatProp, { expanded: true })
     setAreaValue(initialValueString)
-    setValue(initialValue)
+
+    setValue(formattedValue)
+    setIsValid(isValid)
 
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
@@ -97,9 +100,9 @@ const StringDetails = (props: Props) => {
   }, [viewValueRef, isEditItem])
 
   useMemo(() => {
-    if (isEditItem) {
+    if (isEditItem && initialValue) {
       (document.activeElement as HTMLElement)?.blur()
-      setAreaValue(bufferToSerializedFormat(viewFormat, value, 4))
+      setAreaValue(bufferToSerializedFormat(viewFormat, initialValue, 4))
     }
   }, [isEditItem])
 
@@ -107,19 +110,19 @@ const StringDetails = (props: Props) => {
     const data = stringToSerializedBufferFormat(viewFormat, areaValue)
     const onSuccess = () => {
       setIsEdit(false)
-      setValue(data)
+      setValue(formattingBuffer(data, viewFormat, { expanded: true })?.value)
     }
     dispatch(updateStringValueAction(key, data, onSuccess))
   }
 
-  const onDeclineChanges = () => {
-    setAreaValue(bufferToSerializedFormat(viewFormat, value, 4))
+  const onDeclineChanges = useCallback(() => {
+    if (!initialValue) return
+
+    setAreaValue(bufferToSerializedFormat(viewFormat, initialValue, 4))
     setIsEdit(false)
-  }
+  }, [initialValue])
 
   const isLoading = loading || value === null
-
-  const { value: formattedValue, isValid } = formattingBuffer(value, viewFormat, { expanded: true })
 
   return (
     <div className={styles.container}>
@@ -139,14 +142,14 @@ const StringDetails = (props: Props) => {
         >
           {areaValue !== ''
             ? (isValid
-              ? formattedValue
+              ? value
               : (
                 <EuiToolTip
                   title={`Failed to convert to ${viewFormat}`}
                   className={styles.tooltip}
                   position="bottom"
                 >
-                  <>{formattedValue}</>
+                  <>{value}</>
                 </EuiToolTip>
               )
             )
@@ -155,7 +158,6 @@ const StringDetails = (props: Props) => {
       )}
       {isEditItem && (
         <InlineItemEditor
-          initialValue={bufferToString(value) || ''}
           controlsPosition="bottom"
           placeholder="Enter Value"
           fieldName="value"

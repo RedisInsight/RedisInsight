@@ -188,7 +188,7 @@ const SetDetails = (props: Props) => {
       truncateText: true,
       render: function Name(_name: string, memberItem: string, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const member = bufferToString(memberItem, viewFormat)
+        const member = bufferToString(memberItem)
         const tooltipContent = formatLongName(member)
         const { value, isValid } = formattingBuffer(memberItem, viewFormatProp, { expanded })
         const cellContent = value.substring?.(0, 200) ?? value

@@ -114,6 +114,7 @@ const HashDetails = (props: Props) => {
       cellCache.clearAll()
       setTimeout(() => {
         cellCache.clearAll()
+        forceUpdate({})
       }, 0)
     }
   }, [loadedFields, viewFormatProp])

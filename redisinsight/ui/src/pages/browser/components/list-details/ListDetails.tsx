@@ -102,6 +102,7 @@ const ListDetails = (props: Props) => {
       cellCache.clearAll()
       setTimeout(() => {
         cellCache.clearAll()
+        forceUpdate({})
       }, 0)
     }
   }, [loadedElements, viewFormatProp])

@@ -15,7 +15,7 @@ nodeClient.sendCommand = jest.fn();
 nodeClient.pipeline = jest.fn(() => ({
   exec: mockExec,
 }));
-
+nodeClient.options = { db: 1 };
 const mockBulkActionFilter = new BulkActionFilter();
 
 const mockCreateBulkActionDto = {
@@ -34,6 +34,8 @@ const mockCursorBuffer = Buffer.from(mockCursorString);
 const mockZeroCursorBuffer = Buffer.from('0');
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
+
+const mockRedisKeyspaceInfoResponse: string = '# keyspace\r\ndb1:keys=100,expires=0,avg_ttl=0\r\n';
 
 describe('AbstractBulkActionSimpleRunner', () => {
   let deleteRunner: DeleteBulkActionSimpleRunner;
@@ -54,7 +56,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
   describe('prepareToStart', () => {
     it('should get total before start', async () => {
-      nodeClient.sendCommand.mockResolvedValueOnce(100);
+      nodeClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponse);
 
       expect(deleteRunner['progress']['total']).toEqual(0);
       expect(deleteRunner['progress']['scanned']).toEqual(0);

@@ -17,7 +17,7 @@ import {
   EuiIcon,
 } from '@elastic/eui'
 
-import { Maybe, Nullable } from 'uiSrc/utils'
+import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import TableColumnSearch from 'uiSrc/components/table-column-search/TableColumnSearch'
@@ -109,7 +109,7 @@ const VirtualTable = (props: IProps) => {
   }, [forceScrollTop])
 
   useEffect(() => {
-    const selectedRowIndex = selectedKey ? findIndex(items, { name: selectedKey.name }) : null
+    const selectedRowIndex = selectedKey ? findIndex(items, ({ name }) => isEqualBuffers(name, selectedKey.name)) : null
     setSelectedRowIndex(isNumber(selectedRowIndex) && selectedRowIndex > -1 ? selectedRowIndex : null)
   }, [selectedKey, items])
 

@@ -41,6 +41,8 @@ import { AppDispatch, RootState } from '../store'
 import { StreamViewType } from '../interfaces/stream'
 import { RedisResponseBuffer } from '../interfaces'
 
+const defaultViewFormat = KeyValueFormat.Unicode
+
 export const initialState: KeysStore = {
   loading: false,
   error: '',
@@ -66,7 +68,7 @@ export const initialState: KeysStore = {
     error: '',
     data: null,
     length: 0,
-    viewFormat: KeyValueFormat.Unicode,
+    viewFormat: defaultViewFormat,
   },
   addKey: {
     loading: false,
@@ -204,7 +206,7 @@ const keysSlice = createSlice({
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
-        viewFormat: KeyValueFormat.Unicode,
+        viewFormat: defaultViewFormat,
         // data: null,
       }
     },
@@ -382,6 +384,8 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
+    dispatch(setViewFormat(defaultViewFormat))
+
     if (type === KeyTypes.Hash) {
       dispatch(setHashInitialState())
     }

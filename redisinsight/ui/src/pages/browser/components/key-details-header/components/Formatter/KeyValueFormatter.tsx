@@ -36,18 +36,25 @@ const KeyValueFormatter = (props: Props) => {
       ({ value, text }) => ({
         value,
         inputDisplay: (
-          <>
-            {width > MIDDLE_SCREEN_RESOLUTION && (
-              <EuiTextColor color="subdued" className={styles.optionText}>{text}</EuiTextColor>
-            )}
-            {width <= MIDDLE_SCREEN_RESOLUTION && (
-              <EuiIcon
-                type={theme === Theme.Dark ? FormattersDark : FormattersLight}
-                className={styles.controlsIcon}
-                data-testid={`key-value-formatter-option-selected-${value}`}
-              />
-            )}
-          </>
+          <EuiToolTip
+            content={typeSelected}
+            position="top"
+            display="inlineBlock"
+            anchorClassName="flex-row"
+          >
+            <>
+              {width > MIDDLE_SCREEN_RESOLUTION && (
+                <EuiTextColor color="subdued" className={styles.optionText}>{text}</EuiTextColor>
+              )}
+              {width <= MIDDLE_SCREEN_RESOLUTION && (
+                <EuiIcon
+                  type={theme === Theme.Dark ? FormattersDark : FormattersLight}
+                  className={styles.controlsIcon}
+                  data-testid={`key-value-formatter-option-selected-${value}`}
+                />
+              )}
+            </>
+          </EuiToolTip>
         ),
         dropdownDisplay: <EuiText className={styles.dropdownDisplay}>{text}</EuiText>,
         'data-test-subj': `format-option-${value}`,
@@ -82,22 +89,16 @@ const KeyValueFormatter = (props: Props) => {
 
   return (
     <div className={styles.container}>
-      <EuiToolTip
-        content={typeSelected}
-        position="top"
-        display="inlineBlock"
-        anchorClassName="flex-row"
-      >
-        <EuiSuperSelect
-          isOpen={isSelectOpen}
-          options={options}
-          valueOfSelected={typeSelected}
-          className={styles.changeView}
-          itemClassName={styles.formatType}
-          onChange={(value: KeyValueFormat) => onChangeType(value)}
-          data-testid="select-format-key-value"
-        />
-      </EuiToolTip>
+      <EuiSuperSelect
+        autoFocus
+        isOpen={isSelectOpen}
+        options={options}
+        valueOfSelected={typeSelected}
+        className={styles.changeView}
+        itemClassName={styles.formatType}
+        onChange={(value: KeyValueFormat) => onChangeType(value)}
+        data-testid="select-format-key-value"
+      />
     </div>
   )
 }

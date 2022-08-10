@@ -90,7 +90,6 @@ const KeyValueFormatter = (props: Props) => {
   return (
     <div className={styles.container}>
       <EuiSuperSelect
-        autoFocus
         isOpen={isSelectOpen}
         options={options}
         valueOfSelected={typeSelected}

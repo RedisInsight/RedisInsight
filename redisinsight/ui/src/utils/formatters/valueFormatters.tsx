@@ -36,6 +36,7 @@ const formattingBuffer = (
     }
     case KeyValueFormat.HEX: {
       return { value: bufferToHex(reply), isValid: true }
+    }
     case KeyValueFormat.ASCII: {
       return { value: bufferToASCII(reply), isValid: true }
     }

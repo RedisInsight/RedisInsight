@@ -186,7 +186,7 @@ const StreamDataViewWrapper = (props: Props) => {
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
       const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
-      const value = values[index] ? bufferToString(values[index]?.value, viewFormat) : ''
+      const value = values[index] ? bufferToString(values[index]?.value) : ''
 
       const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(bufferValue, viewFormatProp, { expanded })

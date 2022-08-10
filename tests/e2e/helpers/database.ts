@@ -175,10 +175,19 @@ export async function acceptLicenseTermsAndAddREClusterDatabase(databaseParamete
  * @param databaseName The database name
 */
 export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+    const searchTimeout = 60 * 1000; // 60 sec to wait for changing Last Connection time
+    const dbSelector = myRedisDatabasePage.dbNameList.withExactText(databaseName);
+    const startTime = Date.now();
+
     await acceptLicenseTerms();
     await addRedisDatabasePage.addRedisDataBase(databaseParameters);
     //Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+    // Reload page until db appears
+    do {
+        await t.eval(() => location.reload());
+    }
+    while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The existence of the database', { timeout: 5000 });
     await myRedisDatabasePage.clickOnDBByName(databaseName);
 }

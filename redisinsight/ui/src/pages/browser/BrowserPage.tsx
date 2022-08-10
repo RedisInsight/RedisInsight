@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 
-import { bufferToUTF8, formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
+import { bufferToString, formatLongName, getDbIndex, isEqualBuffers, Nullable, setTitle } from 'uiSrc/utils'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   getBasedOnViewTypeEvent,
@@ -183,7 +183,7 @@ const BrowserPage = () => {
   }
 
   const selectKey = ({ rowData }: { rowData: any }) => {
-    if (rowData.name?.string !== selectedKey) {
+    if (!isEqualBuffers(rowData.name, selectedKey)) {
       dispatch(toggleBrowserFullScreen(false))
 
       dispatch(setInitialStateByType(prevSelectedType.current))
@@ -220,7 +220,7 @@ const BrowserPage = () => {
     setSelectedKey(newKey)
 
     if (viewType === KeyViewType.Tree) {
-      dispatch(updateBrowserTreeSelectedLeaf({ key: bufferToUTF8(key), newKey: bufferToUTF8(newKey) }))
+      dispatch(updateBrowserTreeSelectedLeaf({ key: bufferToString(key), newKey: bufferToString(newKey) }))
     }
   }
 

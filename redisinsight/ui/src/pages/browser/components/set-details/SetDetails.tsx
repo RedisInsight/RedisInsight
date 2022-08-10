@@ -115,7 +115,7 @@ const SetDetails = (props: Props) => {
   }
 
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteSetMembers(key, [stringToBuffer(member)], onSuccessRemoved))
+    dispatch(deleteSetMembers(key, [stringToBuffer(member, viewFormat)], onSuccessRemoved))
     closePopover()
   }
 
@@ -188,7 +188,7 @@ const SetDetails = (props: Props) => {
       truncateText: true,
       render: function Name(_name: string, memberItem: string, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const member = bufferToString(memberItem)
+        const member = bufferToString(memberItem, viewFormat)
         const tooltipContent = formatLongName(member)
         const { value, isValid } = formattingBuffer(memberItem, viewFormatProp, { expanded })
         const cellContent = value.substring?.(0, 200) ?? value
@@ -224,7 +224,7 @@ const SetDetails = (props: Props) => {
       maxWidth: 60,
       headerClassName: 'hidden',
       render: function Actions(_act: any, memberItem: string) {
-        const member = bufferToString(memberItem)
+        const member = bufferToString(memberItem, viewFormat)
         return (
           <div className="value-table-actions">
             <PopoverDelete

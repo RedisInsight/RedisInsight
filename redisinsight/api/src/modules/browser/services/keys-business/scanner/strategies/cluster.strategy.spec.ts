@@ -64,6 +64,14 @@ const mockClusterNodesEmptyResult: IGetNodeKeysResult[] = [
   { ...mockNodeEmptyResult, ...mockClusterNodes[2] },
 ];
 
+const mockRedisKeyspaceInfoResponse_1: string = '# Keyspace\r\ndb0:keys=1,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_2: string = '# Keyspace\r\ndb0:keys=3000,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_3: string = '# Keyspace\r\n \r\n';
+const mockRedisKeyspaceInfoResponse_4: string = '# Keyspace\r\ndb0:keys=2000,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_5: string = '# Keyspace\r\ndb0:keys=1000,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_6: string = '# Keyspace\r\ndb0:keys=1000000,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_7: string = '# Keyspace\r\ndb0:keys=10,expires=0,avg_ttl=0\r\n';
+
 const mockGetKeysInfoFn = jest.fn();
 mockGetKeysInfoFn.mockImplementation(async (clientOptions, keys) => {
   if (keys.length < 1) {
@@ -123,11 +131,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           expect.anything(),
         )
-        .mockResolvedValue({ result: 1 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_1 });
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([getKeyInfoResponse]);
 
@@ -158,21 +166,21 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[0],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[1],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[2],
       );
@@ -206,11 +214,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           mockClusterNodes[0],
         )
-        .mockResolvedValue({ result: 3000 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_2 });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -241,11 +249,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           mockClusterNodes[1],
         )
-        .mockResolvedValue({ result: 2000 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_4 });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -267,11 +275,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           mockClusterNodes[2],
         )
-        .mockResolvedValue({ result: 1000 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_5 });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -311,21 +319,21 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[0],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[1],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[2],
       );
@@ -383,11 +391,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           mockClusterNodes[0],
         )
-        .mockResolvedValue({ result: 3000 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_2 });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -418,11 +426,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           mockClusterNodes[1],
         )
-        .mockResolvedValue({ result: 2000 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_4 });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -444,11 +452,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           mockClusterNodes[2],
         )
-        .mockResolvedValue({ result: 1000000 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_6 });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -494,21 +502,21 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[0],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[1],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[2],
       );
@@ -590,11 +598,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           expect.anything(),
         )
-        .mockResolvedValue({ result: 0 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_3 });
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
@@ -625,21 +633,21 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[0],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[1],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[2],
       );
@@ -652,11 +660,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           expect.anything(),
         )
-        .mockResolvedValue({ result: 0 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_3 });
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
@@ -687,21 +695,21 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[0],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[1],
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[2],
       );
@@ -714,11 +722,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           expect.anything(),
         )
-        .mockResolvedValue({ result: 0 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_3 });
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
@@ -737,7 +745,7 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
         mockClusterNodes[0],
       );
@@ -756,18 +764,18 @@ describe('Cluster Scanner Strategy', () => {
         );
       }
     });
-    it('should throw error on dbsize command', async () => {
+    it('should throw error on info keyspace command', async () => {
       const args = { ...getKeysDto };
 
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
-        command: 'DBSIZE',
+        command: 'INFO KEYSPACE',
       };
 
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
           expect.anything(),
       )
@@ -785,28 +793,12 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
       
-      const result = await strategy.getKeys(mockClientOptions, args);
-      
-      expect(result).toEqual([
-        {
-          ...mockClusterNodesEmptyResult[0],
-          total: null,
-          scanned: getKeysDto.count,
-          keys: [getKeyInfoResponse],
-        },
-        {
-          ...mockClusterNodesEmptyResult[1],
-          total: null,
-          scanned: getKeysDto.count,
-          keys: [getKeyInfoResponse],
-        },
-        {
-          ...mockClusterNodesEmptyResult[2],
-          total: null,
-          scanned: getKeysDto.count,
-          keys: [getKeyInfoResponse],
-        },
-      ]);
+        try {
+          await strategy.getKeys(mockClientOptions, args);
+          fail();
+        } catch (err) {
+          expect(err.message).toEqual(replyError.message);
+        }
     });
     it('should throw error on scan command', async () => {
       const args = { ...getKeysDto };
@@ -819,11 +811,11 @@ describe('Cluster Scanner Strategy', () => {
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
           expect.anything(),
         )
-        .mockResolvedValue({ result: 1 });
+        .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_1 });
       when(browserTool.execCommandFromNode)
         .calledWith(
           mockClientOptions,
@@ -846,11 +838,11 @@ describe('Cluster Scanner Strategy', () => {
         when(browserTool.execCommandFromNode)
           .calledWith(
             mockClientOptions,
-            BrowserToolKeysCommands.DbSize,
+            BrowserToolKeysCommands.InfoKeyspace,
             [],
             expect.anything(),
           )
-          .mockResolvedValue({ result: 10 });
+          .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_7 });
         strategy.scanNodes = jest.fn();
       });
       it("should call scan when math contains '?' glob", async () => {
@@ -916,16 +908,15 @@ describe('Cluster Scanner Strategy', () => {
     });
     describe('find exact key', () => {
       const key = getKeyInfoResponse.name;
-      const total = 10;
       beforeEach(async () => {
         when(browserTool.execCommandFromNode)
           .calledWith(
             mockClientOptions,
-            BrowserToolKeysCommands.DbSize,
+            BrowserToolKeysCommands.InfoKeyspace,
             [],
             expect.anything(),
           )
-          .mockResolvedValue({ result: total });
+          .mockResolvedValue({ result: mockRedisKeyspaceInfoResponse_7 });
         strategy.scanNodes = jest.fn();
         strategy.getKeyInfo = jest
           .fn()
@@ -942,19 +933,19 @@ describe('Cluster Scanner Strategy', () => {
         expect(result).toEqual([
           {
             ...mockClusterNodesEmptyResult[0],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
             keys: [getKeyInfoResponse],
           },
           {
             ...mockClusterNodesEmptyResult[1],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
           {
             ...mockClusterNodesEmptyResult[2],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
         ]);
         expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, key);
@@ -972,19 +963,19 @@ describe('Cluster Scanner Strategy', () => {
         expect(result).toEqual([
           {
             ...mockClusterNodesEmptyResult[0],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
             keys: [{ ...getKeyInfoResponse, name: searchPattern }],
           },
           {
             ...mockClusterNodesEmptyResult[1],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
           {
             ...mockClusterNodesEmptyResult[2],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
         ]);
         expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, searchPattern);
@@ -1005,19 +996,19 @@ describe('Cluster Scanner Strategy', () => {
         expect(result).toEqual([
           {
             ...mockClusterNodesEmptyResult[0],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
             keys: [getKeyInfoResponse],
           },
           {
             ...mockClusterNodesEmptyResult[1],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
           {
             ...mockClusterNodesEmptyResult[2],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
         ]);
       });
@@ -1035,19 +1026,19 @@ describe('Cluster Scanner Strategy', () => {
         expect(result).toEqual([
           {
             ...mockClusterNodesEmptyResult[0],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
             keys: [],
           },
           {
             ...mockClusterNodesEmptyResult[1],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
           {
             ...mockClusterNodesEmptyResult[2],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
         ]);
       });
@@ -1066,19 +1057,19 @@ describe('Cluster Scanner Strategy', () => {
         expect(result).toEqual([
           {
             ...mockClusterNodesEmptyResult[0],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
             keys: [],
           },
           {
             ...mockClusterNodesEmptyResult[1],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
           {
             ...mockClusterNodesEmptyResult[2],
-            total,
-            scanned: total,
+            total: 10,
+            scanned: 10,
           },
         ]);
       });

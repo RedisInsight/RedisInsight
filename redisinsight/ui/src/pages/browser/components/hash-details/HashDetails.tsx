@@ -142,7 +142,7 @@ const HashDetails = (props: Props) => {
   }
 
   const handleDeleteField = (field = '') => {
-    dispatch(deleteHashFields(key, [stringToBuffer(field)], onSuccessRemoved))
+    dispatch(deleteHashFields(key, [stringToBuffer(field, viewFormat)], onSuccessRemoved))
     closePopover()
   }
 
@@ -265,7 +265,7 @@ const HashDetails = (props: Props) => {
       headerClassName: 'value-table-separate-border',
       render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const field = bufferToString(fieldItem) || ''
+        const field = bufferToString(fieldItem, viewFormat) || ''
         const tooltipContent = formatLongName(field)
         const { value, isValid } = formattingBuffer(fieldItem, viewFormatProp, { expanded })
 
@@ -300,8 +300,8 @@ const HashDetails = (props: Props) => {
         expanded?: boolean,
       ) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const value = bufferToString(valueItem)
-        const field = bufferToString(fieldItem)
+        const value = bufferToString(valueItem, viewFormat)
+        const field = bufferToString(fieldItem, viewFormat)
         const tooltipContent = formatLongName(value)
         const { value: formattedValue, isValid } = formattingBuffer(valueItem, viewFormatProp, { expanded })
 
@@ -379,7 +379,7 @@ const HashDetails = (props: Props) => {
       minWidth: 95,
       maxWidth: 95,
       render: function Actions(_act: any, { field: fieldItem }: HashFieldDto) {
-        const field = bufferToString(fieldItem)
+        const field = bufferToString(fieldItem, viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">

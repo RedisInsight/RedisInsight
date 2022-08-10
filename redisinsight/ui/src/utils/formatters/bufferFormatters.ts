@@ -1,8 +1,10 @@
 import { isString } from 'lodash'
+import { KeyValueFormat } from 'uiSrc/constants'
+import { Buffer } from 'buffer'
+// eslint-disable-next-line import/order
 import {
   RedisResponseBuffer,
   RedisResponseBufferType,
-  RedisResponseEncoding,
   RedisString,
   UintArray,
 } from 'uiSrc/slices/interfaces'
@@ -19,7 +21,18 @@ const IS_NON_PRINTABLE_ASCII_CHARACTER = /[^ -~\u0007\b\t\n\r]/
 
 const decimalToHexString = (d: number, padding = 2) => {
   const hex = Number(d).toString(16)
-  return '0'.repeat(padding).substr(0, padding - hex.length) + hex
+  return '0'.repeat(padding).substring(0, padding - hex.length) + hex
+}
+
+const bufferToHex = (reply: RedisResponseBuffer): string => {
+  let result = ''
+
+  reply.data.forEach((byte: number) => {
+    // eslint-disable-next-line
+    result += ('0' + (byte & 0xFF).toString(16)).slice(-2)
+  })
+
+  return result
 }
 
 const bufferToASCII = (reply: RedisResponseBuffer): string => {
@@ -62,17 +75,19 @@ const bufferToASCII = (reply: RedisResponseBuffer): string => {
 const anyToBuffer = (reply: UintArray): RedisResponseBuffer =>
   ({ data: reply, type: RedisResponseBufferType.Buffer })
 
-const ASCIIHTMLToBuffer = (str: string): RedisResponseBuffer => {
-  const asciiStr = str.replaceAll('\\\\', '\\')
-  return ASCIIToBuffer(asciiStr)
-}
+const ASCIIToBuffer = (str: string) => {
+  let result = ''
 
-const ASCIIToBuffer = (str:string): RedisResponseBuffer => {
-  const chars = []
-  for (let i = 0; i < str.length; ++i) {
-    chars.push(str.charCodeAt(i))
+  for (let i = 0; i < str.length;) {
+    if (str.substring(i, i + 2) === '\\x') {
+      result += str.substring(i + 2, i + 4)
+      i += 4
+    } else {
+      result += Buffer.from(str[i++]).toString('hex')
+    }
   }
-  return anyToBuffer(new Uint8Array(chars))
+
+  return anyToBuffer(Array.from(Buffer.from(result, 'hex')))
 }
 
 const bufferToUTF8 = (reply: RedisResponseBuffer): string => decoder.decode(new Uint8Array(reply.data))
@@ -82,18 +97,46 @@ const UintArrayToString = (reply: UintArray): string => decoder.decode(new Uint8
 const UTF8ToBuffer = (reply: string): RedisResponseBuffer => anyToBuffer(encoder.encode(reply))
 
 // common formatters
-const stringToBuffer = (data: string): RedisResponseBuffer => UTF8ToBuffer(data)
-
-const bufferToString = (data: RedisString = '', formatResult: RedisResponseEncoding = RedisResponseEncoding.UTF8): string => {
-  let string = data
-
-  if (!isString(data) && data?.type === RedisResponseBufferType.Buffer) {
-    string = formatResult === RedisResponseEncoding.UTF8 ? bufferToUTF8(data) : bufferToASCII(data)
-  } else {
-    string = string?.toString()
+const stringToBuffer = (data: string, formatResult: KeyValueFormat = KeyValueFormat.Unicode): RedisResponseBuffer => {
+  switch (formatResult) {
+    case KeyValueFormat.Unicode: {
+      return UTF8ToBuffer(data)
+    }
+    case KeyValueFormat.ASCII: {
+      return ASCIIToBuffer(data)
+    }
+    default: {
+      return UTF8ToBuffer(data)
+    }
   }
+}
 
-  return string
+const hexToBuffer = (data: string): RedisResponseBuffer => {
+  let string = data
+  const result = []
+  while (string.length >= 2) {
+    result.push(parseInt(string.substring(0, 2), 16))
+    string = string.substring(2, string.length)
+  }
+  return { type: RedisResponseBufferType.Buffer, data: result }
+}
+
+const bufferToString = (data: RedisString = '', formatResult: KeyValueFormat = KeyValueFormat.Unicode): string => {
+  if (!isString(data) && data?.type === RedisResponseBufferType.Buffer) {
+    switch (formatResult) {
+      case KeyValueFormat.Unicode: {
+        return bufferToUTF8(data)
+      }
+      case KeyValueFormat.ASCII: {
+        return bufferToASCII(data)
+      }
+
+      default: {
+        return bufferToUTF8(data)
+      }
+    }
+  }
+  return data?.toString()
 }
 
 export default bufferToString
@@ -101,6 +144,7 @@ export default bufferToString
 export {
   bufferToUTF8,
   bufferToASCII,
+  bufferToHex,
   UTF8ToBuffer,
   decimalToHexString,
   ASCIIToBuffer,
@@ -108,6 +152,7 @@ export {
   stringToBuffer,
   bufferToString,
   UintArrayToString,
+  hexToBuffer,
   anyToBuffer,
 }
 
@@ -116,8 +161,10 @@ window.ri = {
   bufferToASCII,
   UTF8ToBuffer,
   ASCIIToBuffer,
-  ASCIIHTMLToBuffer,
   UintArrayToString,
   stringToBuffer,
   bufferToString,
 }
+
+// for BE libraries which work with Buffer
+window.Buffer = Buffer

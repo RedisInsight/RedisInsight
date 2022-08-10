@@ -1,5 +1,4 @@
 import * as isGlob from 'is-glob';
-import { Logger } from '@nestjs/common';
 import { isNull, get } from 'lodash';
 import config from 'src/utils/config';
 import { unescapeGlob, convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
@@ -17,7 +16,6 @@ import { IGetNodeKeysResult } from '../scanner.interface';
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
 export class StandaloneStrategy extends AbstractStrategy {
-  private logger = new Logger('Debug');
   private readonly redisManager: BrowserToolService;
 
   private settingsProvider: ISettingsProvider;
@@ -52,13 +50,12 @@ export class StandaloneStrategy extends AbstractStrategy {
         clientOptions,
         BrowserToolKeysCommands.InfoKeyspace,
         [],
-        'utf8'
-      )
+        'utf8',
+      ),
     );
-    const dbInfo = get(info, 'keyspace', {})
-    this.logger.log(info)
+    const dbInfo = get(info, 'keyspace', {});
     if (!dbInfo[`db${currentDbIndex}`]) {
-      node.total = 0
+      node.total = 0;
     } else {
       const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
       node.total = parseInt(keys, 10);

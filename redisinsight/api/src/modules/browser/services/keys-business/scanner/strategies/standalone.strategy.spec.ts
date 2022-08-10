@@ -90,6 +90,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
         .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
 
@@ -147,6 +148,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
         .mockResolvedValue(mockRedisKeyspaceInfoResponse_2);
 
@@ -171,6 +173,7 @@ describe('Standalone Scanner Strategy', () => {
         mockClientOptions,
         BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         2,
@@ -208,6 +211,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
         .mockResolvedValue(mockRedisKeyspaceInfoResponse_2);
 
@@ -233,6 +237,7 @@ describe('Standalone Scanner Strategy', () => {
         mockClientOptions,
         BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
     });
     it('should not call scan when total is 0', async () => {
@@ -241,6 +246,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
         .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
 
@@ -258,6 +264,7 @@ describe('Standalone Scanner Strategy', () => {
         mockClientOptions,
         BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
       expect(strategy.getKeysInfo).toBeCalledTimes(0);
     });
@@ -267,6 +274,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
         .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
@@ -293,14 +301,14 @@ describe('Standalone Scanner Strategy', () => {
         command: 'info keyspace',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.InfoKeyspace, [])
+        .calledWith(mockClientOptions, BrowserToolKeysCommands.InfoKeyspace, [], 'utf8')
         .mockRejectedValue(replyError);
-        try {
-          await strategy.getKeys(mockClientOptions, getKeysDto);
-          fail('Should throw an error');
-        } catch (err) {
-          expect(err.message).toEqual(replyError.message);
-        }
+      try {
+        await strategy.getKeys(mockClientOptions, getKeysDto);
+        fail('Should throw an error');
+      } catch (err) {
+        expect(err.message).toEqual(replyError.message);
+      }
     });
     it('should throw error on scan command', async () => {
       when(browserTool.execCommand)
@@ -308,6 +316,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
         .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
 
@@ -338,6 +347,7 @@ describe('Standalone Scanner Strategy', () => {
             mockClientOptions,
             BrowserToolKeysCommands.InfoKeyspace,
             expect.anything(),
+            'utf8',
           )
           .mockResolvedValue(mockRedisKeyspaceInfoResponse_4);
         strategy.scan = jest.fn();
@@ -411,7 +421,8 @@ describe('Standalone Scanner Strategy', () => {
           .calledWith(
             mockClientOptions,
             BrowserToolKeysCommands.InfoKeyspace,
-            expect.anything(),
+            [],
+            'utf8',
           )
           .mockResolvedValue(mockRedisKeyspaceInfoResponse_4);
         strategy.scan = jest.fn();

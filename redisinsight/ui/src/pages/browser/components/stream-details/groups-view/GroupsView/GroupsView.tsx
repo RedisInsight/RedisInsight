@@ -49,7 +49,7 @@ const ConsumerGroups = (props: Props) => {
       setSortedColumnName(column)
       setSortedColumnOrder(order)
 
-      setGroups(orderBy(data, column, order?.toLowerCase()))
+      setGroups(orderBy(data, [`${column}.viewValue`], order?.toLowerCase()))
     }, [groups]
   )
 

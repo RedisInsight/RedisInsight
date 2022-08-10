@@ -10,10 +10,22 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     value: KeyValueFormat.Unicode,
   },
   {
+    text: 'ASCII',
+    iconDark: 'kqlSelector',
+    iconLight: 'kqlSelector',
+    value: KeyValueFormat.ASCII,
+  },
+  {
     text: 'JSON',
     iconDark: 'kqlSelector',
     iconLight: 'kqlSelector',
     value: KeyValueFormat.JSON,
+  },
+  {
+    text: 'Msgpack',
+    iconDark: 'kqlSelector',
+    iconLight: 'kqlSelector',
+    value: KeyValueFormat.Msgpack,
   },
 ]
 

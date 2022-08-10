@@ -33,6 +33,11 @@ $outer-height-mobile: 340px;
   color: inherit !important;
   padding: 0 !important;
   background: inherit !important;
+
+  pre {
+    background-color: transparent !important;
+    padding: 0 !important;
+  }
 }
 
 .stringTextArea {

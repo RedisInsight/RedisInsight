@@ -65,7 +65,7 @@ export default {
     title: 'Key has been deleted',
     message: (
       <>
-        <b>{formatNameShort(keyName)}</b>
+        <b>{formatNameShort(bufferToString(keyName))}</b>
         {' '}
         has been deleted.
       </>

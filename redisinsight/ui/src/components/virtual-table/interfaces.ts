@@ -5,6 +5,7 @@ import {
   TableCellAlignment,
   TableCellTextAlignment,
 } from 'uiSrc/constants'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
 
 export interface IColumnSearchState {

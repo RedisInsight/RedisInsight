@@ -21,7 +21,7 @@ const endpoint = common.getEndpoint();
  */
 export async function addHashKeyApi(keyParameters: HashKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/hash`)
+    const response = await request(endpoint).post(`/instance/${databaseId}/hash?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'fields': keyParameters.fields
@@ -38,7 +38,7 @@ export async function addHashKeyApi(keyParameters: HashKeyParameters, databasePa
  */
 export async function addStreamKeyApi(keyParameters: StreamKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/streams`)
+    const response = await request(endpoint).post(`/instance/${databaseId}/streams?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'entries': keyParameters.entries
@@ -55,7 +55,7 @@ export async function addStreamKeyApi(keyParameters: StreamKeyParameters, databa
  */
 export async function addSetKeyApi(keyParameters: SetKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/set`)
+    const response = await request(endpoint).post(`/instance/${databaseId}/set?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'members': keyParameters.members
@@ -72,7 +72,7 @@ export async function addSetKeyApi(keyParameters: SetKeyParameters, databasePara
  */
 export async function addSortedSetKeyApi(keyParameters: SortedSetKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/zSet`)
+    const response = await request(endpoint).post(`/instance/${databaseId}/zSet?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'members': keyParameters.members
@@ -89,7 +89,7 @@ export async function addSortedSetKeyApi(keyParameters: SortedSetKeyParameters, 
  */
 export async function addListKeyApi(keyParameters: ListKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/list`)
+    const response = await request(endpoint).post(`/instance/${databaseId}/list?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'element': keyParameters.element

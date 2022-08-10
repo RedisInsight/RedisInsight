@@ -637,7 +637,7 @@ const KeyDetailsHeader = ({
                       onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                       testid="refresh-key-btn"
                     />
-                    {keyType && <KeyValueFormatter width={width} />}
+                    {Object.values(KeyTypes).includes(keyType) && <KeyValueFormatter width={width} />}
                     {keyType && Actions(width)}
 
                     <EuiPopover

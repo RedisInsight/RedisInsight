@@ -1,35 +1,31 @@
 import { KeyTypes, KeyValueFormat, ModulesKeyTypes } from 'uiSrc/constants'
-import UnicodeIconDark from 'uiSrc/assets/img/workbench/text_view_dark.svg'
-import UnicodeIconLight from 'uiSrc/assets/img/workbench/text_view_light.svg'
 
 export const KEY_VALUE_FORMATTER_OPTIONS = [
   {
     text: 'Unicode',
-    iconDark: UnicodeIconDark,
-    iconLight: UnicodeIconLight,
     value: KeyValueFormat.Unicode,
   },
   {
     text: 'ASCII',
-    iconDark: 'kqlSelector',
-    iconLight: 'kqlSelector',
     value: KeyValueFormat.ASCII,
   },
   {
     text: 'JSON',
-    iconDark: 'kqlSelector',
-    iconLight: 'kqlSelector',
     value: KeyValueFormat.JSON,
   },
   {
     text: 'Msgpack',
+    value: KeyValueFormat.Msgpack,
+  },
+  {
+    text: 'HEX',
     iconDark: 'kqlSelector',
     iconLight: 'kqlSelector',
-    value: KeyValueFormat.Msgpack,
+    value: KeyValueFormat.HEX,
   },
 ]
 
-export const KEY_VALUE_JSON_FORMATTER_OPTIONS = [KeyValueFormat.Unicode]
+export const KEY_VALUE_JSON_FORMATTER_OPTIONS = []
 
 export const getKeyValueFormatterOptions = (viewFormat?: KeyTypes | ModulesKeyTypes) => (
   viewFormat !== KeyTypes.ReJSON

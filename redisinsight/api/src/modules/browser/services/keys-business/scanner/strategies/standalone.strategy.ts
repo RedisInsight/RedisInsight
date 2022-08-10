@@ -1,7 +1,7 @@
 import * as isGlob from 'is-glob';
-import { isNull } from 'lodash';
+import { isNull, get } from 'lodash';
 import config from 'src/utils/config';
-import { unescapeGlob } from 'src/utils';
+import { unescapeGlob, convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 import {
   GetKeyInfoResponse,
   GetKeysWithDetailsResponse,
@@ -36,6 +36,7 @@ export class StandaloneStrategy extends AbstractStrategy {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const client = await this.redisManager.getRedisClient(clientOptions);
+    const currentDbIndex = get(client, ['options', 'db'], 0);
 
     const node = {
       total: 0,
@@ -44,14 +45,20 @@ export class StandaloneStrategy extends AbstractStrategy {
       cursor: parseInt(args.cursor, 10),
     };
 
-    try {
-      node.total = await this.redisManager.execCommand(
+    const info = convertRedisInfoReplyToObject(
+      await this.redisManager.execCommand(
         clientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         [],
-      );
-    } catch (e) {
-      node.total = null;
+        'utf8',
+      ),
+    );
+    const dbInfo = get(info, 'keyspace', {});
+    if (!dbInfo[`db${currentDbIndex}`]) {
+      node.total = 0;
+    } else {
+      const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+      node.total = parseInt(keys, 10);
     }
 
     if (!isGlob(match, { strict: false })) {

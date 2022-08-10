@@ -19,6 +19,7 @@ nodeClient.sendCommand = jest.fn();
 nodeClient.pipeline = jest.fn(() => ({
   exec: mockExec,
 }));
+nodeClient.options = { db: 0 };
 
 const clusterClient = Object.create(Redis.Cluster.prototype);
 clusterClient.nodes = jest.fn();
@@ -41,6 +42,8 @@ const mockKey = 'mockedKey';
 const mockKeyBuffer = Buffer.from(mockKey);
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
+
+const mockRedisKeyspaceInfoResponse_1: string = '# Keyspace\r\ndb0:keys=10000,expires=0,avg_ttl=0\r\n';
 
 const generateErrors = (amount: number, raw = true): any => (
   new Array(amount).fill(1)
@@ -86,8 +89,8 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
   describe('prepare', () => {
     beforeEach(() => {
-      nodeClient.sendCommand.mockResolvedValue(10_000);
-      clusterClient.sendCommand.mockResolvedValue(10_000);
+      nodeClient.sendCommand.mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
+      clusterClient.sendCommand.mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
       clusterClient.nodes = jest.fn().mockReturnValue([nodeClient, nodeClient]);
     });
 

@@ -1,5 +1,20 @@
 .container {
-  padding-right: 6px;
+  margin-right: 6px;
+  height: 30px;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background-color: var(--tableRowSelectedColor);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+
+  :global(.euiFormControlLayout) {
+    height: 100%;
+  }
 }
 
 .changeView:global(.euiSuperSelectControl) {
@@ -9,19 +24,29 @@
   min-width: 46px;
   padding-right: 18px;
   padding-left: 0;
+  height: 28px;
 
   & ~ div {
-    right: 4px;
-    top: 3px;
+    right: 7px;
+    top: 4px;
     svg {
-      width: 11px !important;
-      height: 11px !important;
+      width: 10px !important;
+      height: 10px !important;
     }
   }
 }
 
+.optionText {
+  padding-left: 6px;
+  padding-right: 4px;
+  font-size: 13px;
+  line-height: 30px;
+}
+
 .controlsIcon {
   position: relative;
+  margin-left: 3px;
+  margin-top: 2px;
   width: 20px !important;
   height: 20px !important;
 }

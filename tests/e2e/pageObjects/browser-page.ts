@@ -451,6 +451,22 @@ export class BrowserPage {
     }
 
     /**
+     * Searching by Key name in the list and clicking Scan More until find
+     * @param searchPattern Search pattern to enter
+     * @param keyName The name of the key
+     */
+    async searchByKeyNameWithScanMore(searchPattern: string, keyName: string): Promise<void> {
+        await this.searchByKeyName(searchPattern);
+        const scannedValueText = Number(await this.scannedValue.textContent);
+        const totalKeysValue = Number(await this.totalKeysNumber.textContent);
+        // Scan until finding element or all keys scanned
+        while (true) {
+            await t.click(this.scanMoreButton);
+            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) break;
+        }
+    }
+
+    /**
      * Verifying if the Key is in the List of keys
      * @param keyName The name of the key
      */

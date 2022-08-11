@@ -200,11 +200,11 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });
 test
-    .before(async() => {
+    .before(async () => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
-    .after(async() => {
+    .after(async () => {
         // Delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
@@ -214,14 +214,11 @@ test
         await browserPage.addSetKey(keyName);
         // Search by key name
         await browserPage.selectFilterGroupType(KeyTypesTexts.Set);
-        await browserPage.searchByKeyName('KeyForSearch*');
         // Verify that required key is displayed
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
-        // Switch to tree view
+        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
+        // Verify that required key is displayed in tree view
         await t.click(browserPage.treeViewButton);
-        // Check searched key in tree view
-        await t.click(browserPage.treeViewNotPatternedKeys);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
+        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
     });
 test
     .before(async() => {

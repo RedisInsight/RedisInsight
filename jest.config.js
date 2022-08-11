@@ -35,6 +35,17 @@ module.exports = {
   transformIgnorePatterns: [
     'node_modules/(?!(monaco-editor|react-monaco-editor)/)',
   ],
+  coverageThreshold: {
+    global: {
+      statements: 70,
+      branches: 50,
+      functions: 60,
+      lines: 72,
+    },
+    // './redisinsight/ui/src/slices/**/*.ts': {
+    //   statements: 90,
+    // },
+  },
   globals: {
     TextDecoder,
     TextEncoder,

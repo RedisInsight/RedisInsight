@@ -61,9 +61,7 @@ const cellCache = new CellMeasurerCache({
   minHeight: rowHeight,
 })
 
-interface IHashField extends HashFieldDto {
-  editing: boolean;
-}
+interface IHashField extends HashFieldDto {}
 
 export interface Props {
   isFooterOpen: boolean
@@ -87,6 +85,7 @@ const HashDetails = (props: Props) => {
   const [match, setMatch] = useState<Nullable<string>>(matchAllValue)
   const [deleting, setDeleting] = useState('')
   const [fields, setFields] = useState<IHashField[]>([])
+  const [editingField, setEditingField] = useState<Nullable<string>>(null)
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
@@ -99,9 +98,7 @@ const HashDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const hashFields = loadedFields.map(formatItem)
-
-    setFields(hashFields)
+    setFields(loadedFields)
 
     if (loadedFields.length < fields.length) {
       formattedLastIndexRef.current = 0
@@ -110,6 +107,7 @@ const HashDetails = (props: Props) => {
     if (viewFormat !== viewFormatProp) {
       setExpandedRows([])
       setViewFormat(viewFormatProp)
+      setEditingField(null)
 
       cellCache.clearAll()
       setTimeout(() => {
@@ -147,15 +145,19 @@ const HashDetails = (props: Props) => {
     closePopover()
   }
 
-  const handleEditField = useCallback((field = '', editing: boolean) => {
-    setFields((prevFields) => prevFields.map((item) => {
-      if (isEqualBuffers(item.field, field)) {
-        const value = bufferToSerializedFormat(viewFormat, item.value, 4)
-        setAreaValue(value)
-        return { ...item, editing }
-      }
-      return item
-    }))
+  const handleEditField = useCallback((fieldItem, editing: boolean, valueItem?) => {
+    setEditingField((prevValue) => (editing ? fieldItem : (isEqualBuffers(prevValue, fieldItem) ? null : prevValue)))
+
+    if (valueItem) {
+      const value = bufferToSerializedFormat(viewFormat, valueItem, 4)
+      setAreaValue(value)
+    }
+
+    if (editing) {
+      setTimeout(() => {
+        textAreaRef?.current?.focus()
+      }, 100)
+    }
 
     setTimeout(() => {
       cellCache.clearAll()
@@ -247,12 +249,6 @@ const HashDetails = (props: Props) => {
     }
   }
 
-  const formatItem = useCallback(({ field, value }: HashFieldDto): IHashField => ({
-    field,
-    value,
-    editing: false
-  }), [viewFormatProp])
-
   const columns: ITableColumn[] = [
     {
       id: 'field',
@@ -297,8 +293,9 @@ const HashDetails = (props: Props) => {
       alignment: TableCellAlignment.Left,
       render: function Value(
         _name: string,
-        { field: fieldItem, value: valueItem, editing }: IHashField,
+        { field: fieldItem, value: valueItem }: IHashField,
         expanded?: boolean,
+        rowIndex = 0
       ) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const value = bufferToString(valueItem)
@@ -306,17 +303,27 @@ const HashDetails = (props: Props) => {
         const tooltipContent = formatLongName(value)
         const { value: formattedValue, isValid } = formattingBuffer(valueItem, viewFormatProp, { expanded })
 
-        if (editing) {
+        const isEditing = isEqualBuffers(fieldItem, editingField)
+
+        if (isEditing) {
           const text = areaValue
           const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
           const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+
+          setTimeout(() => {
+            cellCache.clear(rowIndex, 1)
+          }, 0)
+
           return (
             <StopPropagation>
               <InlineItemEditor
                 expandable
+                preventOutsideClick
+                disableFocusTrap
+                declineOnUnmount={false}
                 initialValue={value}
                 controlsPosition="inside"
                 controlsDesign="separate"
@@ -379,7 +386,7 @@ const HashDetails = (props: Props) => {
       absoluteWidth: 95,
       minWidth: 95,
       maxWidth: 95,
-      render: function Actions(_act: any, { field: fieldItem }: HashFieldDto) {
+      render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto) {
         const field = bufferToString(fieldItem, viewFormat)
         return (
           <StopPropagation>
@@ -390,7 +397,7 @@ const HashDetails = (props: Props) => {
                 className="editFieldBtn"
                 color="primary"
                 disabled={updateLoading}
-                onClick={() => handleEditField(fieldItem, true)}
+                onClick={() => handleEditField(fieldItem, true, valueItem)}
                 data-testid={`edit-hash-button-${field}`}
               />
               <PopoverDelete

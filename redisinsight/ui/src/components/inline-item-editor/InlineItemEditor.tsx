@@ -45,6 +45,8 @@ export interface Props {
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
+  preventOutsideClick?: boolean
+  disableFocusTrap?: boolean
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -71,6 +73,8 @@ const InlineItemEditor = (props: Props) => {
     isDisabled,
     autoComplete = 'off',
     controlsClassName,
+    preventOutsideClick = false,
+    disableFocusTrap = false
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -107,6 +111,7 @@ const InlineItemEditor = (props: Props) => {
   }
 
   const handleClickOutside = (event: any) => {
+    if (preventOutsideClick) return
     if (!containerEl?.current?.contains(event.target)) {
       if (!isLoading) {
         onDecline(event)
@@ -139,7 +144,7 @@ const InlineItemEditor = (props: Props) => {
           <EuiOutsideClickDetector onOutsideClick={handleClickOutside}>
             <div ref={containerEl} className={styles.container}>
               <EuiWindowEvent event="keydown" handler={handleOnEsc} />
-              <EuiFocusTrap>
+              <EuiFocusTrap disabled={disableFocusTrap}>
                 <EuiForm
                   component="form"
                   className="relative"

@@ -67,7 +67,7 @@ test
         //Verify that scan more button is shown
         await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is not shown');
         await t.click(browserPage.scanMoreButton);
-        const regExp = new RegExp(`1 0` + '.');
+        const regExp = new RegExp('1 0' + '.');
         //Verify that number of results is 1000
         const scannedValueText = await browserPage.scannedValue.textContent;
         await t.expect(scannedValueText).match(regExp, 'Number of results is not 1 000');
@@ -87,7 +87,7 @@ test
         //Verify that scan more button is shown
         await t.expect(browserPage.scanMoreButton.exists).ok('Scan more is not shown');
         await t.click(browserPage.scanMoreButton);
-        const regExp = new RegExp(`1 0` + '.');
+        const regExp = new RegExp('1 0' + '.');
         //Verify that number of results is 1000
         const scannedValueText = await browserPage.scannedValue.textContent;
         await t.expect(scannedValueText).match(regExp, 'Number of results is not 1 000');

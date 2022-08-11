@@ -90,7 +90,7 @@ test
     });
 test
     .meta({ env: env.web, rte: rte.sentinel })
-    .before(async t => {
+    .before(async() => {
         await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig, ossSentinelConfig.masters[1].alias);
     })
     .after(async() => {

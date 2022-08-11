@@ -17,18 +17,17 @@ const keyToAddParameters = { membersCount: 500000, keyName, memberStartWith: 'se
 fixture `Set Key verification`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addSetKey(keyName, '2147476121', 'testMember');
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can search per exact member name in Set key in DB with 1 million of members', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can search per exact member name in Set key in DB with 1 million of members', async t => {
         // Add 1000000 members to the set key
         await populateSetWithMembers(dbParameters.host, dbParameters.port, keyToAddParameters);
         await populateSetWithMembers(dbParameters.host, dbParameters.port, keyToAddParameters);

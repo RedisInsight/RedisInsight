@@ -200,11 +200,11 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });
 test
-    .before(async () => {
+    .before(async() => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
-    .after(async () => {
+    .after(async() => {
         // Delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);

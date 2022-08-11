@@ -17,18 +17,17 @@ const keyToAddParameters = { elementsCount: 500000, keyName, elementStartWith: '
 fixture `List Key verification`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addListKey(keyName, '2147476121', 'testElement');
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can search per exact element index in List key in DB with 1 million of fields', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can search per exact element index in List key in DB with 1 million of fields', async t => {
         // Add 1000000 elements to the list key
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);

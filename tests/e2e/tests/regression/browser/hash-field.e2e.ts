@@ -17,18 +17,17 @@ const keyToAddParameters = { fieldsCount: 500000, keyName, fieldStartWith: 'hash
 fixture `Hash Key fields verification`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
+    });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can search per exact field name in Hash in DB with 1 million of fields', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can search per exact field name in Hash in DB with 1 million of fields', async t => {
         // Add 1000000 fields to the hash key
         await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);
         await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);

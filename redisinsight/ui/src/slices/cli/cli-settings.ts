@@ -138,6 +138,12 @@ const cliSettingsSlice = createSlice({
       state.searchedCommand = ''
       state.searchingCommandFilter = ''
     },
+
+    goBackFromCommand: (state) => {
+      state.matchedCommand = ''
+      state.searchedCommand = ''
+      state.isSearching = true
+    }
   },
 })
 
@@ -163,6 +169,7 @@ export const {
   resetCliHelperSettings,
   getUnsupportedCommandsSuccess,
   getBlockingCommandsSuccess,
+  goBackFromCommand
 } = cliSettingsSlice.actions
 
 // A selector

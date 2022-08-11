@@ -38,9 +38,11 @@ export class RedisSentinelBusinessService {
       this.autodiscoveryAnalyticsService.sendGetSentinelMastersSucceedEvent(result);
 
       if (client?.quit) {
-        await client.quit().catch((e) => {
+        try {
+          await client.quit();
+        } catch (e) {
           this.logger.error('Unable to quit connection', e);
-        });
+        }
       } else if (client?.disconnect) {
         await client.disconnect();
       }

@@ -96,7 +96,7 @@ const StreamDataViewWrapper = (props: Props) => {
             label: field,
             render: () => {
               const { value: formattedValue } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
-              return formattedValue
+              return formattedValue || (<div>&nbsp;</div>)
             }
           }
         }
@@ -118,8 +118,7 @@ const StreamDataViewWrapper = (props: Props) => {
     setEntries([headerRow, ...streamEntries])
     setColumns([
       idColumn,
-      ...Object.keys(columnsNames).map((field) =>
-        getTemplateColumn(field, columnsNames[field]?.id)),
+      ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field]?.id)),
       actionsColumn
     ])
 

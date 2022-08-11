@@ -133,10 +133,12 @@ const VirtualGrid = (props: IProps) => {
     preventSelect = true
   }
 
+  const renderNotEmptyContent = (text: string) => text || (<div>&nbsp;</div>)
+
   const Cell = ({ columnIndex, rowIndex, style }: GridChildComponentProps<null>) => {
     const rowData = items[rowIndex]
     const column = columns[columnIndex]
-    const content: any = rowData?.[column?.id] || ''
+    const content: string | { [key: string]: any } = rowData?.[column?.id] || ''
     const cellRef = useRef<HTMLDivElement>(null)
 
     const expanded = expandedRows.indexOf(rowIndex) !== -1
@@ -165,7 +167,7 @@ const VirtualGrid = (props: IProps) => {
                     className={styles.gridHeaderItemSortable}
                     onClick={() => changeSorting(column.id)}
                   >
-                    {content.render ? content.render(content) : <span>{content.label}</span>}
+                    {(content.render) ? content.render(content) : renderNotEmptyContent(content.label)}
                     <span style={{ paddingLeft: 0 }}>
                       <EuiIcon
                         style={{ marginLeft: '4px' }}
@@ -174,11 +176,13 @@ const VirtualGrid = (props: IProps) => {
                     </span>
                   </button>
                 )}
-                {!content?.sortable && (content.render ? content.render(content) : content.label)}
+                {!content?.sortable && (content.render
+                  ? content.render(content)
+                  : renderNotEmptyContent(content.label)
+                )}
               </>
             )}
-            {!isObject(content) && content}
-            {!isObject(content) && !content && <div>&nbsp;</div> }
+            {!isObject(content) && renderNotEmptyContent(content)}
           </div>
         </div>
       )

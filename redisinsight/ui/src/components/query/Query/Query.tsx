@@ -14,7 +14,6 @@ import {
   redisLanguageConfig,
   KEYBOARD_SHORTCUTS,
   DSLNaming,
-  BrowserStorageItem,
 } from 'uiSrc/constants'
 import {
   actionTriggerParameterHints,
@@ -30,16 +29,14 @@ import {
   Nullable,
   toModelDeltaDecoration
 } from 'uiSrc/utils'
-import { localStorageService } from 'uiSrc/services'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
-import { WorkbenchMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-
 import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
 
@@ -47,11 +44,13 @@ import styles from './styles.module.scss'
 
 export interface Props {
   query: string
+  activeMode: RunQueryMode
   setQueryEl: Function
   setQuery: (script: string) => void
   setIsCodeBtnDisabled: (value: boolean) => void
   onSubmit: (query?: string) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
+  onQueryChangeMode: () => void
 }
 
 const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
@@ -65,12 +64,18 @@ let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
 
 const Query = (props: Props) => {
-  const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl, setIsCodeBtnDisabled = () => {} } = props
+  const {
+    query = '',
+    activeMode,
+    setQuery,
+    onKeyDown,
+    onSubmit,
+    setQueryEl,
+    setIsCodeBtnDisabled = () => { },
+    onQueryChangeMode
+  } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
-  const [mode, setMode] = useState<WorkbenchMode>(
-    (localStorageService?.get(BrowserStorageItem.workbenchMode) ?? WorkbenchMode.ASCII)
-  )
   const isWidgetOpen = useRef(false)
   const input = useRef<HTMLDivElement>(null)
   const isWidgetEscaped = useRef(false)
@@ -129,34 +134,12 @@ const Query = (props: Props) => {
     isDedicatedEditorOpenRef.current = isDedicatedEditorOpen
   }, [isDedicatedEditorOpen])
 
-  useEffect(() => {
-    localStorageService.set(BrowserStorageItem.workbenchMode, mode)
-  }, [mode])
-
   const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
     const position = editor.getPosition()
     isDedicatedEditorOpenRef.current = false
     editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 } })
     editor.trigger('mouse', '_moveTo', { position })
     editor.focus()
-  }
-
-  const changeWorkbenchMode = () => {
-    sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_MODE_CHANGED,
-      eventData: {
-        databaseId: instanceId,
-        changedFromMode: mode,
-        changedToMode: mode === WorkbenchMode.ASCII
-          ? WorkbenchMode.Raw
-          : WorkbenchMode.ASCII
-      }
-    })
-    setMode(
-      mode === WorkbenchMode.ASCII
-        ? WorkbenchMode.Raw
-        : WorkbenchMode.ASCII
-    )
   }
 
   const onPressWidget = () => {
@@ -493,18 +476,10 @@ const Query = (props: Props) => {
             content="Raw mode"
             data-testid="change-mode-tooltip"
           >
-            {/* <EuiButtonIcon
-              onClick={() => setMode(mode === 'ASCII' ? 'RAW' : 'ASCII')}
-              disabled={loading}
-              iconType="playFilled"
-              className={cx(styles.submitButton, { [styles.submitButtonLoading]: loading })}
-              aria-label="change mode"
-              data-testid="btn-change-mode"
-            /> */}
             <EuiButton
-              onClick={() => changeWorkbenchMode()}
+              onClick={() => onQueryChangeMode()}
               disabled={loading}
-              className={cx(styles.textBtn, { [styles.activeBtn]: mode === WorkbenchMode.Raw })}
+              className={cx(styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
               aria-label="change mode"
               data-testid="btn-change-mode"
             >

@@ -15,15 +15,14 @@ import { format, parseISO } from 'date-fns'
 import { useParams } from 'react-router-dom'
 import { findIndex } from 'lodash'
 
-import { Theme, BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
+import { Theme } from 'uiSrc/constants'
 import { getCommandNameFromQuery, getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { WorkbenchMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
@@ -39,7 +38,8 @@ export interface Props {
   isFullScreen: boolean
   createdAt?: Date
   summaryText?: string
-  mode: WorkbenchMode
+  activeMode: RunQueryMode
+  mode: RunQueryMode
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
@@ -61,10 +61,11 @@ const QueryCardHeader = (props: Props) => {
     summaryText,
     createdAt,
     mode,
+    activeMode,
     selectedValue,
     setSelectedValue,
     onQueryDelete,
-    onQueryReRun
+    onQueryReRun,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -79,14 +80,12 @@ const QueryCardHeader = (props: Props) => {
   }
 
   const sendEvent = (event: TelemetryEvent, query: string, additionalData: object = {}) => {
-    const workbenchMode = localStorageService?.get(BrowserStorageItem.workbenchMode)
-
     sendEventTelemetry({
       event,
       eventData: {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
-        rawMode: workbenchMode === WorkbenchMode.Raw,
+        rawMode: activeMode === RunQueryMode.Raw,
         ...additionalData
       }
     })
@@ -233,7 +232,7 @@ const QueryCardHeader = (props: Props) => {
           {!!createdAt && (
             <EuiTextColor className={styles.timeText} component="div">
               {getFormatTime()}
-              {mode === WorkbenchMode.Raw && (
+              {mode === RunQueryMode.Raw && (
                 <EuiToolTip
                   className={styles.tooltip}
                   content="Raw mode"

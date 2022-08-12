@@ -13,7 +13,7 @@ import { omit } from 'lodash';
 import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
-  WorkbenchMode,
+  RunQueryMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
@@ -49,7 +49,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
-  mode: WorkbenchMode.ASCII,
+  mode: RunQueryMode.ASCII,
 };
 
 const mockCommandExecutionEntity = new CommandExecutionEntity({

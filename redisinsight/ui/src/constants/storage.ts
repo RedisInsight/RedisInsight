@@ -15,7 +15,7 @@ enum BrowserStorageItem {
   autoRefreshRate = 'autoRefreshRate',
   bulkActionId = 'bulkActionId',
   dbConfig = 'dbConfig_',
-  workbenchMode = 'workbenchMode'
+  RunQueryMode = 'RunQueryMode'
 }
 
 export default BrowserStorageItem

@@ -8,7 +8,7 @@ import { CommandExecutionProvider } from 'src/modules/workbench/providers/comman
 import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
-  WorkbenchMode,
+  RunQueryMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
@@ -29,7 +29,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
-  mode: WorkbenchMode.ASCII,
+  mode: RunQueryMode.ASCII,
 };
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [
@@ -105,7 +105,7 @@ describe('WorkbenchService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'subscribe',
-        mode: WorkbenchMode.ASCII,
+        mode: RunQueryMode.ASCII,
       };
 
       await service.createCommandExecution(mockClientOptions, dto);
@@ -127,7 +127,7 @@ describe('WorkbenchService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'scan 0',
-        mode: WorkbenchMode.ASCII,
+        mode: RunQueryMode.ASCII,
       };
 
       try {
@@ -144,7 +144,7 @@ describe('WorkbenchService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'scan 0',
-        mode: WorkbenchMode.ASCII,
+        mode: RunQueryMode.ASCII,
       };
 
       try {

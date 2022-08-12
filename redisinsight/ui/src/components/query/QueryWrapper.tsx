@@ -4,27 +4,36 @@ import { EuiLoadingContent } from '@elastic/eui'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { getMultiCommands, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
-import { WorkbenchMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import Query from './Query'
 import styles from './Query/styles.module.scss'
 
 export interface Props {
   query: string
+  activeMode: RunQueryMode
   setQuery: (script: string) => void
   setQueryEl: Function
   setIsCodeBtnDisabled: (value: boolean) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onSubmit: (value?: string) => void
+  onQueryChangeMode: () => void
 }
 const QueryWrapper = (props: Props) => {
-  const { query = '', setQuery, setQueryEl, setIsCodeBtnDisabled, onKeyDown, onSubmit } = props
+  const {
+    query = '',
+    activeMode,
+    setQuery,
+    setQueryEl,
+    setIsCodeBtnDisabled,
+    onKeyDown,
+    onSubmit,
+    onQueryChangeMode
+  } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const {
     loading: isCommandsLoading,
@@ -46,14 +55,12 @@ const QueryWrapper = (props: Props) => {
 
       const command = removeMonacoComments(decode([commandLine, multiCommands].join(';')).trim())
 
-      const workbenchMode = localStorageService?.get(BrowserStorageItem.workbenchMode)
-
       return {
         command,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
-        rawMode: workbenchMode === WorkbenchMode.Raw
+        rawMode: activeMode === RunQueryMode.Raw
       }
     })()
 
@@ -80,11 +87,13 @@ const QueryWrapper = (props: Props) => {
   ) : (
     <Query
       query={query}
+      activeMode={activeMode}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
       setIsCodeBtnDisabled={setIsCodeBtnDisabled}
       onKeyDown={onKeyDown}
       onSubmit={handleSubmit}
+      onQueryChangeMode={onQueryChangeMode}
     />
   )
 }

@@ -9,7 +9,7 @@ import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workb
 import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
-  WorkbenchMode,
+  RunQueryMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -57,7 +57,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
-  mode: WorkbenchMode.ASCII,
+  mode: RunQueryMode.ASCII,
 };
 
 const mockCommandExecutionResult: CommandExecutionResult = {
@@ -104,7 +104,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
-          mode: WorkbenchMode.ASCII,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -117,7 +117,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
-          mode: WorkbenchMode.ASCII,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -135,7 +135,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
-          mode: WorkbenchMode.ASCII,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -149,7 +149,7 @@ describe('WorkbenchCommandsExecutor', () => {
         try {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
-            mode: WorkbenchMode.ASCII,
+            mode: RunQueryMode.ASCII,
           });
           fail();
         } catch (e) {
@@ -249,7 +249,7 @@ describe('WorkbenchCommandsExecutor', () => {
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
-          mode: WorkbenchMode.ASCII,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([
@@ -266,7 +266,7 @@ describe('WorkbenchCommandsExecutor', () => {
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
-          mode: WorkbenchMode.ASCII,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -281,7 +281,7 @@ describe('WorkbenchCommandsExecutor', () => {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
-            mode: WorkbenchMode.ASCII,
+            mode: RunQueryMode.ASCII,
           });
           fail();
         } catch (e) {
@@ -296,7 +296,7 @@ describe('WorkbenchCommandsExecutor', () => {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
-            mode: WorkbenchMode.ASCII,
+            mode: RunQueryMode.ASCII,
           });
           fail();
         } catch (e) {

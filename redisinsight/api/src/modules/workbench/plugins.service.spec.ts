@@ -6,7 +6,7 @@ import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workb
 import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
-  WorkbenchMode,
+  RunQueryMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -33,7 +33,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
-  mode: WorkbenchMode.ASCII,
+  mode: RunQueryMode.ASCII,
 };
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [
@@ -122,7 +122,7 @@ describe('PluginsService', () => {
     it('should return status failed when unsupported command called', async () => {
       const dto = {
         command: 'subscribe',
-        mode: WorkbenchMode.ASCII,
+        mode: RunQueryMode.ASCII,
       };
 
       pluginsCommandsWhitelistProvider.getWhitelistCommands.mockResolvedValueOnce(mockWhitelistCommandsResponse);
@@ -146,7 +146,7 @@ describe('PluginsService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'get foo',
-        mode: WorkbenchMode.ASCII,
+        mode: RunQueryMode.ASCII,
       };
 
       try {

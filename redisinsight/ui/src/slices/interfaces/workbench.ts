@@ -40,7 +40,7 @@ export interface CommandExecutionUI extends Partial<CommandExecution> {
   error?: string
 }
 
-export enum WorkbenchMode {
+export enum RunQueryMode {
   Raw = 'RAW',
   ASCII = 'ASCII',
 }

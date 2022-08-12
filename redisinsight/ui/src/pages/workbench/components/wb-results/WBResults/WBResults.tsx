@@ -6,6 +6,7 @@ import { Theme } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import MultiPlayIconDark from 'uiSrc/assets/img/multi_play_icon_dark.svg'
 import MultiPlayIconLight from 'uiSrc/assets/img/multi_play_icon_light.svg'
@@ -13,12 +14,21 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: CommandExecutionUI[]
+  activeMode: RunQueryMode
   scrollDivRef: React.Ref<HTMLDivElement>
   onQueryReRun: (query: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   onQueryDelete: (commandId: string) => void
   onQueryOpen: (commandId: string) => void
 }
-const WBResults = ({ items = [], onQueryReRun, onQueryDelete, onQueryOpen, scrollDivRef }: Props) => {
+const WBResults = (props: Props) => {
+  const {
+    items = [],
+    activeMode,
+    onQueryReRun,
+    onQueryDelete,
+    onQueryOpen,
+    scrollDivRef
+  } = props
   const { theme } = useContext(ThemeContext)
 
   const NoResults = (
@@ -47,6 +57,7 @@ const WBResults = ({ items = [], onQueryReRun, onQueryDelete, onQueryOpen, scrol
           loading={loading}
           command={command}
           createdAt={createdAt}
+          activeMode={activeMode}
           mode={mode}
           onQueryOpen={() => onQueryOpen(id)}
           onQueryReRun={() => onQueryReRun(command, null, false)}

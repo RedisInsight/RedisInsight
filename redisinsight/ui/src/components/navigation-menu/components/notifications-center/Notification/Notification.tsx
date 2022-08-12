@@ -7,6 +7,7 @@ import React from 'react'
 
 import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
 import { IGlobalNotification } from 'uiSrc/slices/interfaces'
+import { truncateText } from 'uiSrc/utils'
 
 import styles from '../styles.module.scss'
 
@@ -44,7 +45,7 @@ const Notification = (props: Props) => {
               className={styles.category}
               style={{ backgroundColor: notification.categoryColor ?? '#666' }}
             >
-              {notification.category}
+              {truncateText(notification.category, 32)}
             </EuiBadge>
           </EuiFlexItem>
         )}

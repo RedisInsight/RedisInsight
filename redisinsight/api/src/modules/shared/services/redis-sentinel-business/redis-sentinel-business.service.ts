@@ -36,7 +36,16 @@ export class RedisSentinelBusinessService {
       const client = await this.redisService.createStandaloneClient(dto, AppTool.Common, false);
       result = await this.getMasters(client);
       this.autodiscoveryAnalyticsService.sendGetSentinelMastersSucceedEvent(result);
-      await client.quit();
+
+      if (client?.quit) {
+        try {
+          await client.quit();
+        } catch (e) {
+          this.logger.error('Unable to quit connection', e);
+        }
+      } else if (client?.disconnect) {
+        await client.disconnect();
+      }
     } catch (error) {
       const exception: HttpException = getRedisConnectionException(error, dto);
       this.autodiscoveryAnalyticsService.sendGetSentinelMastersFailedEvent(exception);

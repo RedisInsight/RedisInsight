@@ -7,10 +7,9 @@ import {
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
-  IsNumber,
-  IsString,
+  IsNumber, IsString,
   Min,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { SortOrder } from 'src/constants';
@@ -18,7 +17,11 @@ import {
   DeleteMembersFromSetDto,
   DeleteMembersFromSetResponse,
 } from 'src/modules/browser/dto/set.dto';
-import { KeyDto, KeyWithExpireDto, ScanDataTypeDto } from './keys.dto';
+import { RedisString } from 'src/common/constants';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import {
+  KeyDto, KeyResponse, KeyWithExpireDto, ScanDataTypeDto,
+} from './keys.dto';
 
 export class GetZSetMembersDto extends KeyDto {
   @ApiProperty({
@@ -68,8 +71,9 @@ export class ZSetMemberDto {
     description: 'Member name value.',
   })
   @IsDefined()
-  @IsString()
-  name: string;
+  @IsRedisString()
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     description: 'Member score value.',
@@ -132,13 +136,7 @@ export class SearchZSetMembersDto extends PickType(ScanDataTypeDto, [
 
 export class DeleteMembersFromZSetResponse extends DeleteMembersFromSetResponse {}
 
-export class GetZSetResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetZSetResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     description: 'The number of members in the currently-selected z-set.',
@@ -153,13 +151,7 @@ export class GetZSetResponse {
   members: ZSetMemberDto[];
 }
 
-export class ScanZSetResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class ScanZSetResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     minimum: 0,

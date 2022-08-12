@@ -13,6 +13,8 @@ import {
   ApiBody, ApiOkResponse, ApiOperation, ApiTags,
 } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import {
   AddFieldsToHashDto,
   CreateHashWithExpireDto,
@@ -25,14 +27,16 @@ import { HashBusinessService } from '../../services/hash-business/hash-business.
 
 @ApiTags('Hash')
 @Controller('hash')
-export class HashController {
-  constructor(private hashBusinessService: HashBusinessService) {}
+export class HashController extends BaseController {
+  constructor(private hashBusinessService: HashBusinessService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold Hash data type' })
   @ApiRedisParams()
   @ApiBody({ type: CreateHashWithExpireDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async createHash(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: CreateHashWithExpireDto,
@@ -57,7 +61,7 @@ export class HashController {
     description: 'Specified fields of the hash stored at key.',
     type: GetHashFieldsResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async getMembers(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: GetHashFieldsDto,
@@ -76,7 +80,7 @@ export class HashController {
   })
   @ApiRedisParams()
   @ApiBody({ type: AddFieldsToHashDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async addMember(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: AddFieldsToHashDto,
@@ -95,7 +99,7 @@ export class HashController {
   })
   @ApiRedisParams()
   @ApiBody({ type: DeleteFieldsFromHashDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async deleteFields(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: DeleteFieldsFromHashDto,

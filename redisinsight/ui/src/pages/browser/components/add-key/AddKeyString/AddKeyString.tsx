@@ -10,7 +10,7 @@ import {
   EuiFlexItem,
   EuiPanel, EuiTextArea,
 } from '@elastic/eui'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
@@ -47,8 +47,8 @@ const AddKeyString = (props: Props) => {
 
   const submitData = (): void => {
     const data: SetStringWithExpireDto = {
-      keyName,
-      value
+      keyName: stringToBuffer(keyName),
+      value: stringToBuffer(value)
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL

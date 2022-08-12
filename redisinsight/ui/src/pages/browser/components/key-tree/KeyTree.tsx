@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,6 +12,9 @@ import { constructKeysToTree } from 'uiSrc/helpers'
 import VirtualTree from 'uiSrc/components/virtual-tree'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
+import { bufferToString } from 'uiSrc/utils'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import KeyTreeDelimiter from './KeyTreeDelimiter'
 
 import KeyList from '../key-list'
@@ -21,13 +24,17 @@ export interface Props {
   keysState: KeysStoreData
   loading: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
+  loadMoreItems: (
+    oldKeys: IKeyPropTypes[],
+    { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
+  ) => void
 }
 
 export const firstPanelId = 'tree'
 export const secondPanelId = 'keys'
 
-const KeyTree = (props: Props) => {
-  const { selectKey, loading, keysState } = props
+const KeyTree = forwardRef((props: Props, ref) => {
+  const { selectKey, loadMoreItems, loading, keysState } = props
 
   const firstPanelId = 'tree'
   const secondPanelId = 'keys'
@@ -40,9 +47,15 @@ const KeyTree = (props: Props) => {
   const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
   const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(true)
-  const [items, setItems] = useState(keysState.keys ?? [])
+  const [items, setItems] = useState<IKeyPropTypes[]>(keysState.keys ?? [])
 
   const dispatch = useDispatch()
+
+  useImperativeHandle(ref, () => ({
+    handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
+      onLoadMoreItems(config)
+    }
+  }))
 
   useEffect(() => {
     updateKeysList()
@@ -60,7 +73,7 @@ const KeyTree = (props: Props) => {
   }, [selectedLeaf])
 
   useEffect(() => {
-    setItems(keysState.keys)
+    setItems(parseKeyNames(keysState.keys))
     if (keysState.keys?.length === 0) {
       dispatch(setBrowserTreeSelectedLeaf({}))
     }
@@ -70,14 +83,23 @@ const KeyTree = (props: Props) => {
     updateSelectedKeys()
   }, [delimiter, keysState.lastRefreshTime])
 
+  const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+    const formattedAllKeys = parseKeyNames(keysState.keys)
+    loadMoreItems?.(formattedAllKeys, props)
+  }
+
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {
-    setItems(keysState.keys)
+    setItems(parseKeyNames(keysState.keys))
     setTimeout(() => {
       setStatusSelected({})
       setSelectDefaultLeaf(true)
     }, 0)
   }
+
+  const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
+    keys.map((item) =>
+      ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
 
   const updateKeysList = (items:any = {}) => {
     const newState:KeysStoreData = {
@@ -176,6 +198,7 @@ const KeyTree = (props: Props) => {
                     <KeyList
                       hideHeader
                       hideFooter
+                      ref={ref}
                       keysState={keyListState}
                       loading={loading || constructingTree}
                       selectKey={selectKey}
@@ -190,6 +213,6 @@ const KeyTree = (props: Props) => {
       </div>
     </div>
   )
-}
+})
 
 export default KeyTree

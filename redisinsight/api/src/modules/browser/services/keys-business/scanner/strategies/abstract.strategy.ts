@@ -2,6 +2,7 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { IRedisConsumer, ReplyError } from 'src/models';
 import IORedis from 'ioredis';
+import { RedisString } from 'src/common/constants';
 import { IScannerStrategy } from '../scanner.interface';
 
 export abstract class AbstractStrategy implements IScannerStrategy {
@@ -15,7 +16,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
 
   public async getKeyInfo(
     client: IORedis.Redis | IORedis.Cluster,
-    key: string,
+    key: RedisString,
     knownType?: RedisDataType,
   ) {
     const options = {
@@ -54,7 +55,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
 
   public async getKeysInfo(
     client: IORedis.Redis,
-    keys: string[],
+    keys: RedisString[],
     type?: RedisDataType,
   ): Promise<GetKeyInfoResponse[]> {
     const sizeResults = await this.getKeysSize(client, keys);
@@ -74,7 +75,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
 
   protected async getKeysTtl(
     client: IORedis.Redis,
-    keys: string[],
+    keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
       transactionError,
@@ -92,7 +93,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
 
   protected async getKeysType(
     client: IORedis.Redis,
-    keys: string[],
+    keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
       transactionError,
@@ -110,7 +111,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
 
   protected async getKeysSize(
     client: IORedis.Redis,
-    keys: string[],
+    keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
       transactionError,

@@ -29,7 +29,7 @@ import reducer, {
   setSearchingCommand,
   clearSearchingCommand,
   resetCliClientUuid,
-  resetCliHelperSettings,
+  resetCliHelperSettings, goBackFromCommand,
 } from '../../cli/cli-settings'
 
 jest.mock('uiSrc/constants/cliOutput', () => ({
@@ -322,6 +322,37 @@ describe('cliSettings slice', () => {
         cli: {
           settings: nextState,
         }, }
+      expect(cliSettingsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('goBackFromCommand', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const initState: typeof initialState = {
+        ...initialState,
+        isShowHelper: true,
+        isSearching: true,
+        isEnteringCommand: true,
+        isMinimizedHelper: true,
+        matchedCommand: '123',
+        searchingCommand: '123',
+        searchedCommand: '123',
+        searchingCommandFilter: '123',
+      }
+
+      const state: typeof initialState = {
+        ...initState,
+        matchedCommand: '',
+        searchedCommand: '',
+        isSearching: true
+      }
+
+      // Act
+      const nextState = reducer(initState, goBackFromCommand())
+
+      // Assert
+      const rootState = { ...initialStateDefault, cli: { settings: nextState } }
       expect(cliSettingsSelector(rootState)).toEqual(state)
     })
   })

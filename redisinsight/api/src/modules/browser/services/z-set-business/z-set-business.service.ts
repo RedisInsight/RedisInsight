@@ -16,7 +16,6 @@ import {
   DeleteMembersFromZSetResponse,
   GetZSetMembersDto,
   GetZSetResponse,
-  RedisDataType,
   ScanZSetResponse,
   SearchZSetMembersDto,
   SearchZSetMembersResponse,
@@ -33,6 +32,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { plainToClass } from 'class-transformer';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -122,7 +122,7 @@ export class ZSetBusinessService {
       }
       catchAclError(error);
     }
-    return result;
+    return plainToClass(GetZSetResponse, result);
   }
 
   public async addMembers(
@@ -146,7 +146,7 @@ export class ZSetBusinessService {
         );
       }
       const args = this.formatMembersDtoToCommandArgs(members);
-      const added = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolZSetCommands.ZAdd,
         [keyName, ...args],
@@ -278,14 +278,14 @@ export class ZSetBusinessService {
           [keyName, member],
         );
         if (!isNull(score)) {
-          result.members.push({ name: member, score });
+          result.members.push(plainToClass(ZSetMemberDto, { name: member, score }));
         }
       } else {
         const scanResult = await this.scanZSet(clientOptions, dto);
         result = { ...result, ...scanResult };
       }
       this.logger.log('Succeed to search members of the ZSet data type.');
-      return result;
+      return plainToClass(SearchZSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to search members of the ZSet data type.', error);
 
@@ -406,21 +406,20 @@ export class ZSetBusinessService {
     const result: ZSetMemberDto[] = [];
     while (reply.length) {
       const member = reply.splice(0, 2);
-      result.push({
+      result.push(plainToClass(ZSetMemberDto, {
         name: member[0],
         score: parseFloat(member[1]),
-      });
+      }));
     }
     return result;
   }
 
-  private formatMembersDtoToCommandArgs(members: ZSetMemberDto[]): string[] {
-    return members.reduce<string[]>(
+  private formatMembersDtoToCommandArgs(members: ZSetMemberDto[]): (string | Buffer)[] {
+    return members.reduce<(string | Buffer)[]>(
       (prev: string[], cur: ZSetMemberDto) => [
         ...prev,
-        ...[`${cur.score}`, `${cur.name}`],
+        ...[`${cur.score}`, cur.name],
       ],
-      [],
-    );
+    []);
   }
 }

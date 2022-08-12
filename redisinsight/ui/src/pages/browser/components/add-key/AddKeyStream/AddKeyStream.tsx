@@ -10,7 +10,7 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 import { addStreamKey } from 'uiSrc/slices/browser/keys'
-import { entryIdRegex, isRequiredStringsValid, Maybe } from 'uiSrc/utils'
+import { entryIdRegex, isRequiredStringsValid, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { StreamEntryFields } from 'uiSrc/pages/browser/components/key-details-add-items'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
@@ -25,8 +25,8 @@ export interface Props {
 }
 
 export const INITIAL_STREAM_FIELD_STATE = {
-  fieldName: '',
-  fieldValue: '',
+  name: '',
+  value: '',
   id: 0,
 }
 
@@ -62,10 +62,10 @@ const AddKeyStream = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateStreamDto = {
-      keyName,
+      keyName: stringToBuffer(keyName),
       entries: [{
         id: entryID,
-        fields: [...map(fields, (field) => [field.fieldName, field.fieldValue])]
+        fields: [...fields.map(({ name, value }) => ({ name: stringToBuffer(name), value: stringToBuffer(value) }))],
       }]
     }
     if (keyTTL !== undefined) {

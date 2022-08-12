@@ -2,8 +2,15 @@ import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last, mergeWith, toNumber } from 'lodash'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
-import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
+import {
+  createDeleteFieldHeader,
+  createDeleteFieldMessage,
+  formatLongName,
+  formattingBuffer,
+  stringToBuffer
+} from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -11,9 +18,10 @@ import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { keysSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import bufferToString from 'uiSrc/utils/formatters/bufferFormatters'
 
+import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 
@@ -30,10 +38,12 @@ const StreamDataViewWrapper = (props: Props) => {
   const {
     entries: loadedEntries = [],
     keyName: key,
-    lastRefreshTime
+    keyNameString: keyString,
+    lastRefreshTime,
   } = useSelector(streamDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType: browserViewType } = useSelector(keysSelector)
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const dispatch = useDispatch()
 
@@ -42,47 +52,80 @@ const StreamDataViewWrapper = (props: Props) => {
   const [entries, setEntries] = useState<StreamEntryDto[]>([])
   const [columns, setColumns] = useState<ITableColumn[]>([])
   const [deleting, setDeleting] = useState<string>('')
+  const [viewFormat, setViewFormat] = useState(viewFormatProp)
 
   useEffect(() => {
     dispatch(updateSelectedKeyRefreshTime(lastRefreshTime))
   }, [])
 
   useEffect(() => {
-    const fieldsNames = loadedEntries?.reduce((acc, entry) => {
-      const namesInEntry = entry.fields.reduce(
-        (acc, field) => ({ ...acc, [field[0]]: acc[field[0]] ? acc[field[0]] + 1 : 1 }),
-        {}
-      )
+    const fieldsNames: { [key: string]: { index: number, name: RedisResponseBuffer } } = {}
+
+    const streamEntries = loadedEntries?.map((entry) => {
+      const namesInEntry: { [key: string]: { index: number, name: RedisResponseBuffer } } = {}
+      const entryFields = entry.fields.map((field) => {
+        const { name } = field
+        const nameViewValue = bufferToString(name, viewFormat)
+
+        namesInEntry[nameViewValue] = {
+          index: namesInEntry[nameViewValue] ? namesInEntry[nameViewValue].index + 1 : 1,
+          name
+        }
+
+        return formatItem(field)
+      })
+
       const mergeByCount = (accCount: number, newCount: number) => (newCount > accCount ? newCount : accCount)
-      return mergeWith(acc, namesInEntry, mergeByCount)
-    }, {})
+
+      mergeWith(fieldsNames, namesInEntry, mergeByCount)
+      return {
+        ...entry,
+        fields: entryFields
+      }
+    })
 
     const columnsNames = Object.keys(fieldsNames).reduce((acc, field) => {
       let names = {}
       // add index to each field name
-      for (let i = 0; i < fieldsNames[field]; i++) {
-        names = { ...names, [`${field}-${i}`]: field }
+      const { index, name } = fieldsNames[field] || {}
+      for (let i = 0; i < index; i++) {
+        names = {
+          ...names,
+          [`${field}-${i}`]: {
+            id: field,
+            label: field,
+            render: () => {
+              const { value: formattedValue } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
+              return formattedValue || (<div>&nbsp;</div>)
+            }
+          }
+        }
       }
       return { ...acc, ...names }
     }, {})
 
     // for Manager columns
     // setUniqFields(fields)
-    const headerRow = { id: {
-      id: 'id',
-      label: 'Entry ID',
-      sortable: true
-    },
-    ...columnsNames,
-    actions: '',
+    const headerRow = {
+      id: {
+        id: 'id',
+        label: 'Entry ID',
+        sortable: true
+      },
+      ...columnsNames,
+      actions: '',
     }
-    setEntries([headerRow, ...loadedEntries])
+    setEntries([headerRow, ...streamEntries])
     setColumns([
       idColumn,
-      ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field])),
+      ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field]?.id)),
       actionsColumn
     ])
-  }, [loadedEntries, deleting])
+
+    if (viewFormat !== viewFormatProp) {
+      setViewFormat(viewFormatProp)
+    }
+  }, [loadedEntries, deleting, viewFormatProp])
 
   const closePopover = useCallback(() => {
     setDeleting('')
@@ -91,6 +134,11 @@ const StreamDataViewWrapper = (props: Props) => {
   const showPopover = useCallback((entry = '') => {
     setDeleting(`${entry + suffix}`)
   }, [])
+
+  const formatItem = useCallback((field) => ({
+    name: field.name,
+    value: field.value,
+  }), [viewFormatProp])
 
   const onSuccessRemoved = () => {
     sendEventTelemetry({
@@ -136,9 +184,12 @@ const StreamDataViewWrapper = (props: Props) => {
     headerCellClassName: 'truncateText',
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
-      const values = fields.filter((field) => field[0] === name)
-      const value = values[index] ? values[index][1] : ''
-      const cellContent = value.substring(0, 650)
+      const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
+      const value = values[index] ? bufferToString(values[index]?.value) : ''
+
+      const bufferValue = values[index]?.value || stringToBuffer('')
+      const { value: formattedValue, isValid } = formattingBuffer(bufferValue, viewFormatProp, { expanded })
+      const cellContent = formattedValue.substring?.(0, 650) ?? formattedValue
       const tooltipContent = formatLongName(value)
 
       return (
@@ -150,7 +201,7 @@ const StreamDataViewWrapper = (props: Props) => {
           >
             {!expanded && (
               <EuiToolTip
-                title="Value"
+                title={isValid ? 'Value' : `Failed to convert to ${viewFormatProp}`}
                 className={styles.tooltip}
                 anchorClassName="streamItem line-clamp-2"
                 position="bottom"
@@ -159,7 +210,7 @@ const StreamDataViewWrapper = (props: Props) => {
                 <>{cellContent}</>
               </EuiToolTip>
             )}
-            {expanded && value}
+            {expanded && formattedValue}
           </div>
         </EuiText>
       )
@@ -175,7 +226,8 @@ const StreamDataViewWrapper = (props: Props) => {
     className: styles.cell,
     headerClassName: 'streamItemHeader',
     render: function Id({ id }: StreamEntryDto) {
-      const timestamp = id.split('-')?.[0]
+      const idStr = bufferToString(id, viewFormat)
+      const timestamp = idStr.split('-')?.[0]
       return (
         <div>
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
@@ -205,7 +257,7 @@ const StreamDataViewWrapper = (props: Props) => {
         <div>
           <PopoverDelete
             header={createDeleteFieldHeader(id)}
-            text={createDeleteFieldMessage(key)}
+            text={createDeleteFieldMessage(keyString)}
             item={id}
             suffix={suffix}
             deleting={deleting}

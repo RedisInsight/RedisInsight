@@ -8,11 +8,12 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
-  IsString,
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { KeyDto, KeyWithExpireDto } from './keys.dto';
+import { RedisString } from 'src/common/constants';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { KeyDto, KeyResponse, KeyWithExpireDto } from './keys.dto';
 
 export enum ListElementDestination {
   Tail = 'TAIL',
@@ -25,8 +26,9 @@ export class PushElementToListDto extends KeyDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  element: string;
+  @IsRedisString()
+  @RedisStringType()
+  element: RedisString;
 
   @ApiPropertyOptional({
     description:
@@ -44,13 +46,7 @@ export class PushElementToListDto extends KeyDto {
   destination: ListElementDestination = ListElementDestination.Tail;
 }
 
-export class PushListElementsResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class PushListElementsResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     description: 'The number of elements in the list after current operation.',
@@ -64,8 +60,9 @@ export class SetListElementDto extends KeyDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  element: string;
+  @IsRedisString()
+  @RedisStringType()
+  element: RedisString;
 
   @ApiProperty({
     description: 'Element index',
@@ -91,7 +88,8 @@ export class SetListElementResponse {
     description: 'List element',
     type: String,
   })
-  element: string;
+  @RedisStringType()
+  element: RedisString;
 }
 
 export class CreateListWithExpireDto extends IntersectionType(
@@ -154,13 +152,7 @@ export class DeleteListElementsDto extends KeyDto {
   count: number;
 }
 
-export class GetListElementsResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetListElementsResponse extends KeyResponse {
   @ApiProperty({
     type: Number,
     description: 'The number of elements in the currently-selected list.',
@@ -172,21 +164,17 @@ export class GetListElementsResponse {
     description: 'Array of elements.',
     isArray: true,
   })
-  elements: string[];
+  @RedisStringType({ each: true })
+  elements: RedisString[];
 }
 
-export class GetListElementResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetListElementResponse extends KeyResponse {
   @ApiProperty({
     type: () => String,
     description: 'Element value',
   })
-  value: string;
+  @RedisStringType()
+  value: RedisString;
 }
 
 export class DeleteListElementsResponse {
@@ -195,5 +183,6 @@ export class DeleteListElementsResponse {
     isArray: true,
     description: 'Removed elements from list',
   })
-  elements: string[];
+  @RedisStringType({ each: true })
+  elements: RedisString[];
 }

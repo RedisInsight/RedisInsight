@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
@@ -9,11 +9,13 @@ import {
 } from '@elastic/eui'
 import {
   formatBytes,
-  formatLongName,
-  replaceSpaces,
   truncateTTLToDuration,
   truncateNumberToFirstUnit,
   truncateTTLToSeconds,
+  replaceSpaces,
+  formatLongName,
+  bufferToString,
+  bufferFormatRangeItems,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
@@ -36,8 +38,10 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -46,10 +50,13 @@ export interface Props {
   loading: boolean
   hideFooter?: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
-  loadMoreItems?: ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => void
+  loadMoreItems?: (
+    oldKeys: IKeyPropTypes[],
+    { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
+  ) => void
 }
 
-const KeyList = (props: Props) => {
+const KeyList = forwardRef((props: Props, ref) => {
   let wheelTimer = 0
   const { selectKey, loadMoreItems, loading, keysState, hideFooter } = props
 
@@ -57,7 +64,28 @@ const KeyList = (props: Props) => {
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered } = useSelector(keysSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
+
+  const [items, setItems] = useState(keysState.keys)
+
+  const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
+
   const dispatch = useDispatch()
+
+  useImperativeHandle(ref, () => ({
+    handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
+      onLoadMoreItems(config)
+    }
+  }))
+
+  useEffect(() => {
+    const newKeys = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+
+    if (keysState.keys.length < items.length) {
+      formattedLastIndexRef.current = 0
+    }
+
+    setItems(newKeys)
+  }, [keysState.keys])
 
   const getNoItemsMessage = () => {
     if (isSearched) {
@@ -67,6 +95,11 @@ const KeyList = (props: Props) => {
       return ScanNoResultsFoundText
     }
     return total ? NoResultsFoundText : NoKeysToDisplayText
+  }
+
+  const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+    const formattedAllKeys = bufferFormatRangeItems(items, formattedLastIndexRef.current, items.length, formatItem)
+    loadMoreItems?.(formattedAllKeys, props)
   }
 
   const onWheelSearched = (event: React.WheelEvent) => {
@@ -80,7 +113,7 @@ const KeyList = (props: Props) => {
     ) {
       clearTimeout(wheelTimer)
       wheelTimer = window.setTimeout(() => {
-        loadMoreItems?.({ stopIndex: SCAN_COUNT_DEFAULT, startIndex: 1 })
+        onLoadMoreItems({ stopIndex: SCAN_COUNT_DEFAULT, startIndex: 1 })
       }, 100)
     }
   }
@@ -89,23 +122,41 @@ const KeyList = (props: Props) => {
     dispatch(setBrowserKeyListScrollPosition(position))
   }
 
+  const formatItem = useCallback((item: GetKeyInfoResponse): GetKeyInfoResponse => ({
+    ...item,
+    nameString: bufferToString(item.name)
+  }), [])
+
+  const bufferFormatRows = (lastIndex: number) => {
+    const newItems = bufferFormatRangeItems(items, formattedLastIndexRef.current, lastIndex, formatItem)
+
+    setItems(newItems)
+
+    if (lastIndex > formattedLastIndexRef.current) {
+      formattedLastIndexRef.current = lastIndex
+    }
+
+    return newItems
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'type',
       label: 'Type',
       absoluteWidth: 'auto',
-      minWidth: 124,
-      render: (cellData: any, { name }: any) => <GroupBadge type={cellData} name={name} />,
+      minWidth: 126,
+      render: (cellData: any, { nameString: name }: any) => <GroupBadge type={cellData} name={name} />,
     },
     {
-      id: 'name',
+      id: 'nameString',
       label: 'Key',
       minWidth: 100,
       truncateText: true,
-      render: (cellData: string = '', { name }: any) => {
+      render: (cellData: string = '') => {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = replaceSpaces(cellData.substring(0, 200))
-        const tooltipContent = formatLongName(cellData)
+        const name = cellData
+        const cellContent = replaceSpaces(name?.substring(0, 200))
+        const tooltipContent = formatLongName(name)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
             <div style={{ display: 'flex' }} className="truncateText" data-testid={`key-${name}`}>
@@ -121,7 +172,7 @@ const KeyList = (props: Props) => {
             </div>
           </EuiText>
         )
-      },
+      }
     },
     {
       id: 'ttl',
@@ -130,7 +181,7 @@ const KeyList = (props: Props) => {
       minWidth: 70,
       truncateText: true,
       alignment: TableCellAlignment.Right,
-      render: (cellData: number, { name }: any) => {
+      render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
         if (cellData === -1) {
           return (
             <EuiTextColor color="subdued" data-testid={`ttl-${name}`}>
@@ -168,7 +219,7 @@ const KeyList = (props: Props) => {
       minWidth: 100,
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
-      render: (cellData: number, { name }: any) => {
+      render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
         if (!cellData) {
           return (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }} data-testid={`size-${name}`}>
@@ -209,11 +260,12 @@ const KeyList = (props: Props) => {
               onRowClick={selectKey}
               headerHeight={0}
               rowHeight={43}
+              threshold={50}
               columns={columns}
-              loadMoreItems={loadMoreItems}
+              loadMoreItems={onLoadMoreItems}
               onWheel={onWheelSearched}
               loading={loading}
-              items={keysState.keys}
+              items={items}
               totalItemsCount={keysState.total ? keysState.total : Infinity}
               scanned={isSearched || isFiltered ? keysState.scanned : 0}
               noItemsMessage={getNoItemsMessage()}
@@ -221,12 +273,13 @@ const KeyList = (props: Props) => {
               scrollTopProp={scrollTopPosition}
               setScrollTopPosition={setScrollTopPosition}
               hideFooter={hideFooter}
+              onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
             />
           </div>
         </div>
       </div>
     </div>
   )
-}
+})
 
 export default KeyList

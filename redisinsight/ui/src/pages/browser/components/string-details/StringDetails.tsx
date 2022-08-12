@@ -1,15 +1,22 @@
 import React, {
   ChangeEvent,
   Ref,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiProgress, EuiText, EuiTextArea } from '@elastic/eui'
+import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
 
-import { Nullable } from 'uiSrc/utils'
+import {
+  bufferToSerializedFormat,
+  bufferToString,
+  formattingBuffer,
+  isTextViewFormatter,
+  stringToSerializedBufferFormat
+} from 'uiSrc/utils'
 import {
   resetStringValue,
   stringDataSelector,
@@ -18,6 +25,7 @@ import {
 } from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 
 import styles from './styles.module.scss'
 
@@ -33,14 +41,19 @@ export interface Props {
 const StringDetails = (props: Props) => {
   const { isEditItem, setIsEdit } = props
 
-  const [rows, setRows] = useState<number>(5)
-  const [value, setValue] = useState<Nullable<string>>(null)
-  const [areaValue, setAreaValue] = useState<string>('')
-
   const { loading } = useSelector(stringSelector)
-  const { value: initialValue, key } = useSelector(stringDataSelector)
+  const { value: initialValue } = useSelector(stringDataSelector)
+  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+
+  const [rows, setRows] = useState<number>(5)
+  const [value, setValue] = useState<JSX.Element | string>('')
+  const [areaValue, setAreaValue] = useState<string>('')
+  const [viewFormat, setViewFormat] = useState(viewFormatProp)
+  const [isValid, setIsValid] = useState(true)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
+  const viewValueRef: Ref<HTMLPreElement> = useRef(null)
 
   const dispatch = useDispatch()
 
@@ -49,20 +62,31 @@ const StringDetails = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    setValue(initialValue)
-    setAreaValue(initialValue || '')
-  }, [initialValue])
+    if (!initialValue) return
+
+    const initialValueString = bufferToString(initialValue, viewFormat)
+    const { value: formattedValue, isValid } = formattingBuffer(initialValue, viewFormatProp, { expanded: true })
+    setAreaValue(initialValueString)
+
+    setValue(formattedValue)
+    setIsValid(isValid)
+
+    if (viewFormat !== viewFormatProp) {
+      setViewFormat(viewFormatProp)
+    }
+  }, [initialValue, viewFormatProp])
 
   useEffect(() => {
     // Approximate calculation of textarea rows by initialValue
     if (!isEditItem || !textAreaRef.current || value === null) {
       return
     }
-
-    const calculatedBreaks = value.split('\n').length
+    const text = areaValue
+    const calculatedBreaks = text?.split('\n').length
     const textAreaWidth = textAreaRef.current.clientWidth
     const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-    const calculatedRows = Math.round(value.length / OneRowLength + calculatedBreaks)
+    const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+    const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
 
     if (calculatedRows > MAX_ROWS) {
       setRows(MAX_ROWS)
@@ -73,26 +97,30 @@ const StringDetails = (props: Props) => {
       return
     }
     setRows(calculatedRows)
-  }, [isEditItem])
+  }, [viewValueRef, isEditItem])
 
   useMemo(() => {
-    if (isEditItem) {
+    if (isEditItem && initialValue) {
       (document.activeElement as HTMLElement)?.blur()
+      setAreaValue(bufferToSerializedFormat(viewFormat, initialValue, 4))
     }
   }, [isEditItem])
 
   const onApplyChanges = () => {
+    const data = stringToSerializedBufferFormat(viewFormat, areaValue)
     const onSuccess = () => {
       setIsEdit(false)
-      setValue(areaValue)
+      setValue(formattingBuffer(data, viewFormat, { expanded: true })?.value)
     }
-    dispatch(updateStringValueAction(key, areaValue, onSuccess))
+    dispatch(updateStringValueAction(key, data, onSuccess))
   }
 
-  const onDeclineChanges = () => {
-    setAreaValue(value || '')
+  const onDeclineChanges = useCallback(() => {
+    if (!initialValue) return
+
+    setAreaValue(bufferToSerializedFormat(viewFormat, initialValue, 4))
     setIsEdit(false)
-  }
+  }, [initialValue])
 
   const isLoading = loading || value === null
 
@@ -109,15 +137,27 @@ const StringDetails = (props: Props) => {
       {!isEditItem && (
         <EuiText
           onClick={() => setIsEdit(true)}
+          style={{ whiteSpace: 'break-spaces' }}
+          data-testid="string-value"
         >
-          <pre className={styles.stringValue} data-testid="string-value">
-            {value !== '' ? value : (<span style={{ fontStyle: 'italic' }}>Empty</span>)}
-          </pre>
+          {areaValue !== ''
+            ? (isValid
+              ? value
+              : (
+                <EuiToolTip
+                  title={`Failed to convert to ${viewFormat}`}
+                  className={styles.tooltip}
+                  position="bottom"
+                >
+                  <>{value}</>
+                </EuiToolTip>
+              )
+            )
+            : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
         </EuiText>
       )}
       {isEditItem && (
         <InlineItemEditor
-          initialValue={value || ''}
           controlsPosition="bottom"
           placeholder="Enter Value"
           fieldName="value"

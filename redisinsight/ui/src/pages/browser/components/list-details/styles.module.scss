@@ -4,6 +4,21 @@
   width: 100%;
   padding: 16px;
   background-color: var(--euiColorEmptyShade);
+
+  .textAreaControls {
+    right: -56px !important;
+    background-color: var(--euiPageBackgroundColor) !important;
+  }
+
+  .textArea {
+    background-color: var(--euiPageBackgroundColor) !important;
+    border-color: var(--euiColorPrimary) !important;
+    z-index: 3;
+    padding-left: 20px;
+    margin: -8px -6px -8px -20px !important;
+    height: calc(100% + 16px) !important;
+    min-width: calc(100% + 106px) !important;
+  }
 }
 
 .inlineItemEditor {

@@ -22,6 +22,7 @@ import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
+import { stringToBuffer } from 'uiSrc/utils'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -122,8 +123,8 @@ const AddHashFields = (props: Props) => {
     const data: AddFieldsToHashDto = {
       keyName: selectedKey,
       fields: fields.map((item) => ({
-        field: item.fieldName,
-        value: item.fieldValue,
+        field: stringToBuffer(item.fieldName),
+        value: stringToBuffer(item.fieldValue,)
       })),
     }
     dispatch(addHashFieldsAction(data, onSuccessAdded))

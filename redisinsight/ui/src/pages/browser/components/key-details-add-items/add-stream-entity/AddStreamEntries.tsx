@@ -1,9 +1,9 @@
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel, EuiTextColor } from '@elastic/eui'
 import cx from 'classnames'
-import { toNumber, map } from 'lodash'
+import { toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { entryIdRegex } from 'uiSrc/utils'
+import { entryIdRegex, stringToBuffer } from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { addNewEntriesAction, streamDataSelector } from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -96,7 +96,7 @@ const AddStreamEntries = (props: Props) => {
         keyName,
         entries: [{
           id: entryID,
-          fields: [...map(fields, (field) => [field.fieldName, field.fieldValue])]
+          fields: [...fields.map(({ name, value }) => ({ name: stringToBuffer(name), value: stringToBuffer(value) }))],
         }]
       }
       dispatch(addNewEntriesAction(data, onSuccessAdded))

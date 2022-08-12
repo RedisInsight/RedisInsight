@@ -1,5 +1,5 @@
-import {t, Selector} from 'testcafe';
-import {Common} from '../helpers/common';
+import { t, Selector } from 'testcafe';
+import { Common } from '../helpers/common';
 
 const common = new Common();
 
@@ -187,6 +187,7 @@ export class BrowserPage {
     treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
     ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
     stringKeyValue = Selector('.key-details-body pre');
+    keyDetailsValue = Selector('.key-details-body div div div');
     keyDetailsBadge = Selector('.key-details-header .euiBadge__text');
     treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
     treeViewNotPatternedKeys = Selector('[data-testid*="node-item_keys"]');
@@ -505,7 +506,7 @@ export class BrowserPage {
      */
     async editStringKeyValue(value: string): Promise<void> {
         await t
-            .click(this.stringKeyValue)
+            .click(this.keyDetailsValue)
             .pressKey('ctrl+a delete')
             .typeText(this.stringKeyValueInput, value)
             .click(this.applyButton);
@@ -513,7 +514,7 @@ export class BrowserPage {
 
     //Get string key value from details
     async getStringKeyValue(): Promise<string> {
-        return this.stringKeyValue.textContent;
+        return this.keyDetailsValue.textContent;
     }
 
     /**
@@ -834,7 +835,7 @@ export type AddNewKeyParameters = {
  * @param value The value of the field
 
  */
- export type HashKeyParameters = {
+export type HashKeyParameters = {
     keyName: string,
     fields: {
         field: string,
@@ -862,7 +863,7 @@ export type StreamKeyParameters = {
  * @param keyName The name of the key
  * @param members The Array with members
  */
- export type SetKeyParameters = {
+export type SetKeyParameters = {
     keyName: string,
     members: string[]
 };
@@ -874,7 +875,7 @@ export type StreamKeyParameters = {
  * @param name The name of the member
  * @param id The id of the member
  */
- export type SortedSetKeyParameters = {
+export type SortedSetKeyParameters = {
     keyName: string,
     members: {
         name: string,
@@ -887,7 +888,7 @@ export type StreamKeyParameters = {
  * @param keyName The name of the key
  * @param element The element in list
  */
- export type ListKeyParameters = {
+export type ListKeyParameters = {
     keyName: string,
     element: string
 };

@@ -10,6 +10,7 @@ import {
   EuiText,
 } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
+import { isUndefined } from 'lodash'
 
 import {
   setBulkActionType,
@@ -150,7 +151,7 @@ const BulkActions = (props: Props) => {
                 <BulkActionsInfo
                   search={match || search || '*'}
                   loading={loading}
-                  filter={filterType || filter}
+                  filter={isUndefined(filterType) ? filter : filterType}
                   status={status}
                 >
                   <>

@@ -4,9 +4,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 
-import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
+import { bufferToString, formatLongName, getDbIndex, isEqualBuffers, Nullable, setTitle } from 'uiSrc/utils'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+  TelemetryEvent,
+  TelemetryPageView,
+} from 'uiSrc/telemetry'
 import {
   fetchKeys,
   fetchMoreKeys,
@@ -31,6 +37,8 @@ import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 import AddKey from './components/add-key/AddKey'
 import KeyList from './components/key-list/KeyList'
@@ -60,12 +68,14 @@ const BrowserPage = () => {
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
-  const [selectedKey, setSelectedKey] = useState<Nullable<string>>(selectedKeyContext)
+  const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
   const [sizes, setSizes] = useState(panelSizes)
-  const selectedKeyRef = useRef<Nullable<string>>(selectedKey)
+
+  const selectedKeyRef = useRef<Nullable<RedisResponseBuffer>>(selectedKey)
   const prevSelectedType = useRef<string>(type)
+  const keyListRef = useRef()
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -152,7 +162,7 @@ const BrowserPage = () => {
     ))
   }
 
-  const handleAddKeyPanel = (value: boolean, keyName?: string) => {
+  const handleAddKeyPanel = (value: boolean, keyName?: RedisResponseBuffer) => {
     if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen) {
       dispatch(resetKeyInfo())
     }
@@ -162,7 +172,7 @@ const BrowserPage = () => {
     setIsBulkActionsPanelOpen(false)
   }
 
-  const handleBulkActionsPanel = (value: boolean, keyName?: string) => {
+  const handleBulkActionsPanel = (value: boolean, keyName?: RedisResponseBuffer) => {
     if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen) {
       dispatch(resetKeyInfo())
     }
@@ -173,7 +183,7 @@ const BrowserPage = () => {
   }
 
   const selectKey = ({ rowData }: { rowData: any }) => {
-    if (rowData.name !== selectedKey) {
+    if (!isEqualBuffers(rowData.name, selectedKey)) {
       dispatch(toggleBrowserFullScreen(false))
 
       dispatch(setInitialStateByType(prevSelectedType.current))
@@ -193,24 +203,31 @@ const BrowserPage = () => {
     setIsBulkActionsPanelOpen(false)
   }
 
-  const loadMoreItems = ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => {
+  const loadMoreItems = (
+    oldKeys: IKeyPropTypes[],
+    { startIndex, stopIndex }: { startIndex: number; stopIndex: number }
+  ) => {
     if (keysState.nextCursor !== '0') {
-      dispatch(fetchMoreKeys(keysState.nextCursor, stopIndex - startIndex + 1))
+      dispatch(fetchMoreKeys(oldKeys, keysState.nextCursor, stopIndex - startIndex + 1))
     }
   }
 
-  const handleEditKey = (key: string, newKey: string) => {
+  const handleScanMoreClick = (config: { startIndex: number; stopIndex: number }) => {
+    keyListRef.current?.handleLoadMoreItems?.(config)
+  }
+
+  const handleEditKey = (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => {
     setSelectedKey(newKey)
 
     if (viewType === KeyViewType.Tree) {
-      dispatch(updateBrowserTreeSelectedLeaf({ key, newKey }))
+      dispatch(updateBrowserTreeSelectedLeaf({ key: bufferToString(key), newKey: bufferToString(newKey) }))
     }
   }
 
   const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen
 
   const onEditKey = useCallback(
-    (key: string, newKey: string) => handleEditKey(key, newKey),
+    (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => handleEditKey(key, newKey),
     [],
   )
 
@@ -244,14 +261,15 @@ const BrowserPage = () => {
                       keysState={keysState}
                       loading={loading}
                       loadKeys={loadKeys}
-                      loadMoreItems={loadMoreItems}
                       handleAddKeyPanel={handleAddKeyPanel}
                       handleBulkActionsPanel={handleBulkActionsPanel}
+                      handleScanMoreClick={handleScanMoreClick}
                       nextCursor={keysState.nextCursor}
                     />
                     {viewType === KeyViewType.Browser && (
                       <KeyList
                         hideFooter
+                        ref={keyListRef}
                         keysState={keysState}
                         loading={loading}
                         loadMoreItems={loadMoreItems}
@@ -260,9 +278,11 @@ const BrowserPage = () => {
                     )}
                     {viewType === KeyViewType.Tree && (
                       <KeyTree
+                        ref={keyListRef}
                         keysState={keysState}
                         loading={loading}
                         selectKey={selectKey}
+                        loadMoreItems={loadMoreItems}
                       />
                     )}
                   </>

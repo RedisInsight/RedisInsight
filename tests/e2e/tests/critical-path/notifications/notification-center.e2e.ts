@@ -35,7 +35,7 @@ test('Verify that when manager publishes new notification, it appears in the app
     // Verify that when user closes new notification popup, number of unread messages decreased in badge
     if (notificationPage.notificationBadge.exists) {
         const newMessagesAfterClosing = await notificationPage.getUnreadNotificationNumber();
-        await t.expect(newMessagesBeforeClosing).eql(newMessagesAfterClosing + 1);
+        await t.expect(newMessagesBeforeClosing).eql(newMessagesAfterClosing + 1, 'Reduced number of unread messages');
     }
 });
 test('Verify that user can see message "No notifications to display." when no messages received', async t => {
@@ -66,7 +66,6 @@ test('Verify that user can open notification center by clicking on icon and see 
         // Check date of the message
         await t.expect(notificationPage.notificationTitle.withExactText(jsonNotifications[i].title).exists).ok('Displayed title');
         await t.expect(notificationPage.notificationBody.withExactText(jsonNotifications[i].body).exists).ok('Displayed body');
-        // const fromFile = await notificationPage.convertEpochDateToMessageDate(jsonNotifications[i]);
         await t.expect(notificationPage.notificationDate.withExactText(await notificationPage.convertEpochDateToMessageDate(jsonNotifications[i])).exists).ok('Displayed date');
     }
     // Verify that as soon as user closes notification center, unread messages become read
@@ -88,9 +87,9 @@ test('Verify that all messages in notification center are sorted by timestamp fr
         const body = await notificationPage.notificationList.child(i).find(notificationPage.cssNotificationBody).textContent;
         const date = await notificationPage.notificationList.child(i).find(notificationPage.cssNotificationDate).textContent;
         // Compare with what contained in sorted set
-        await t.expect(title).eql(sortedNotifications[i].title);
-        await t.expect(body).eql(sortedNotifications[i].body);
-        await t.expect(date).eql(await notificationPage.convertEpochDateToMessageDate(sortedNotifications[i]));
+        await t.expect(title).eql(sortedNotifications[i].title, 'Title corresponds to sorted notification');
+        await t.expect(body).eql(sortedNotifications[i].body, 'Body corresponds to sorted notification');
+        await t.expect(date).eql(await notificationPage.convertEpochDateToMessageDate(sortedNotifications[i]), 'Date corresponds to sorted notification');
     }
 });
 test
@@ -106,5 +105,5 @@ test
         await t.expect(notificationPage.notificationPopup.exists).notOk('Popup is not displayed');
         // Verify that new messages is displayed only in notification center if notifications are turned off
         await t.click(notificationPage.notificationCenterButton);
-        await t.expect(notificationPage.unreadNotification.count).eql(jsonNotifications.length);
+        await t.expect(notificationPage.unreadNotification.count).eql(jsonNotifications.length, 'Unread notifications number');
     });

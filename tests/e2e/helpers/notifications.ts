@@ -5,10 +5,12 @@ import { NotificationParameters } from '../pageObjects/notification-page';
 const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
     || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 const dbPath = `${workingDirectory}/redisinsight.db`;
-console.log(`dbPath: ${dbPath}`);
 
 const sqlite3 = require('sqlite3').verbose();
 
+/**
+ * Delete all the notifications from local DB
+ */
 export function deleteAllNotificationsFromDB(): void {
     const db = new sqlite3.Database(dbPath);
     db.run('DELETE from notification', function(err: { message: string }) {
@@ -19,6 +21,10 @@ export function deleteAllNotificationsFromDB(): void {
     db.close();
 }
 
+/**
+ * Insert specified notification to local  DB
+ * @param notifications Array with notification data
+ */
 export function insertNotificationInDB(notifications: NotificationParameters[]): void {
     const db = new sqlite3.Database(dbPath);
     let query = 'insert into notification ("type", "timestamp", "title", "body", "read") values';

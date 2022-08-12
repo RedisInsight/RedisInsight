@@ -68,8 +68,41 @@
   width: 44px;
   position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+}
+
+.textBtn.textBtn {
+  border: none !important;
+  width: 24px;
+  height: 24px !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+
+  &:hover {
+    border: 1px solid #364DA8 !important;
+  }
+
+  :global(.euiButton__content) {
+    padding: 0 !important;
+    color: #B5B6C0 !important;
+  }
+  
+  &.activeBtn {
+    background: #292F47 !important;
+    border: 1px solid #465282;
+
+    &:hover {
+      border: 1px solid #364DA8 !important;
+    }
+
+    :global(.euiButton__content) {
+      color: #8BA2FF !important;
+    }
+  }
 }
 
 .submitButton {

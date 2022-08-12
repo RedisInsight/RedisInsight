@@ -3,7 +3,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiButton, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
@@ -14,6 +14,7 @@ import {
   redisLanguageConfig,
   KEYBOARD_SHORTCUTS,
   DSLNaming,
+  BrowserStorageItem,
 } from 'uiSrc/constants'
 import {
   actionTriggerParameterHints,
@@ -29,12 +30,14 @@ import {
   Nullable,
   toModelDeltaDecoration
 } from 'uiSrc/utils'
+import { localStorageService } from 'uiSrc/services'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
+import { WorkbenchMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
@@ -65,6 +68,9 @@ const Query = (props: Props) => {
   const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl, setIsCodeBtnDisabled = () => {} } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
+  const [mode, setMode] = useState<WorkbenchMode>(
+    (localStorageService?.get(BrowserStorageItem.workbenchMode) ?? WorkbenchMode.ASCII)
+  )
   const isWidgetOpen = useRef(false)
   const input = useRef<HTMLDivElement>(null)
   const isWidgetEscaped = useRef(false)
@@ -123,12 +129,34 @@ const Query = (props: Props) => {
     isDedicatedEditorOpenRef.current = isDedicatedEditorOpen
   }, [isDedicatedEditorOpen])
 
+  useEffect(() => {
+    localStorageService.set(BrowserStorageItem.workbenchMode, mode)
+  }, [mode])
+
   const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
     const position = editor.getPosition()
     isDedicatedEditorOpenRef.current = false
     editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 } })
     editor.trigger('mouse', '_moveTo', { position })
     editor.focus()
+  }
+
+  const changeWorkbenchMode = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_MODE_CHANGED,
+      eventData: {
+        databaseId: instanceId,
+        changedFromMode: mode,
+        changedToMode: mode === WorkbenchMode.ASCII
+          ? WorkbenchMode.Raw
+          : WorkbenchMode.ASCII
+      }
+    })
+    setMode(
+      mode === WorkbenchMode.ASCII
+        ? WorkbenchMode.Raw
+        : WorkbenchMode.ASCII
+    )
   }
 
   const onPressWidget = () => {
@@ -462,6 +490,29 @@ const Query = (props: Props) => {
         <div className={cx(styles.actions, { [styles.disabledActions]: isDedicatedEditorOpen })}>
           <EuiToolTip
             position="left"
+            content="Raw mode"
+            data-testid="change-mode-tooltip"
+          >
+            {/* <EuiButtonIcon
+              onClick={() => setMode(mode === 'ASCII' ? 'RAW' : 'ASCII')}
+              disabled={loading}
+              iconType="playFilled"
+              className={cx(styles.submitButton, { [styles.submitButtonLoading]: loading })}
+              aria-label="change mode"
+              data-testid="btn-change-mode"
+            /> */}
+            <EuiButton
+              onClick={() => changeWorkbenchMode()}
+              disabled={loading}
+              className={cx(styles.textBtn, { [styles.activeBtn]: mode === WorkbenchMode.Raw })}
+              aria-label="change mode"
+              data-testid="btn-change-mode"
+            >
+              -R
+            </EuiButton>
+          </EuiToolTip>
+          <EuiToolTip
+            position="left"
             content={
               KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
@@ -489,6 +540,8 @@ const Query = (props: Props) => {
               />
             </>
           </EuiToolTip>
+          {/* block for third action icon */}
+          <div style={{ height: '24px' }} />
         </div>
       </div>
       {isDedicatedEditorOpen && (

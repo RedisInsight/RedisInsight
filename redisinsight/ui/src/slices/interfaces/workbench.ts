@@ -39,3 +39,8 @@ export interface CommandExecutionUI extends Partial<CommandExecution> {
   isOpen?: boolean
   error?: string
 }
+
+export enum WorkbenchMode {
+  Raw = 'RAW',
+  ASCII = 'ASCII',
+}

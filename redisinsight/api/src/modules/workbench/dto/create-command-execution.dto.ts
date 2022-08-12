@@ -11,6 +11,11 @@ export enum ClusterNodeRole {
   Slave = 'SLAVE',
 }
 
+export enum WorkbenchMode {
+  Raw = 'RAW',
+  ASCII = 'ASCII',
+}
+
 export class CreateCommandExecutionDto {
   @ApiProperty({
     type: String,
@@ -19,6 +24,18 @@ export class CreateCommandExecutionDto {
   @IsString()
   @IsNotEmpty()
   command: string;
+
+  @ApiProperty({
+    description: 'Workbench mode',
+    default: WorkbenchMode.ASCII,
+    enum: WorkbenchMode,
+  })
+  @IsEnum(WorkbenchMode, {
+    message: `mode must be a valid enum value. Valid values: ${Object.values(
+      WorkbenchMode,
+    )}.`,
+  })
+  mode: WorkbenchMode;
 
   @ApiPropertyOptional({
     description: 'Execute command for nodes with defined role',

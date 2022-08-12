@@ -5,7 +5,11 @@ import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/red
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
-import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import {
+  ClusterNodeRole,
+  CreateCommandExecutionDto,
+  WorkbenchMode,
+} from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -25,6 +29,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
+  mode: WorkbenchMode.ASCII,
 };
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [
@@ -100,6 +105,7 @@ describe('WorkbenchService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'subscribe',
+        mode: WorkbenchMode.ASCII,
       };
 
       await service.createCommandExecution(mockClientOptions, dto);
@@ -121,6 +127,7 @@ describe('WorkbenchService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'scan 0',
+        mode: WorkbenchMode.ASCII,
       };
 
       try {
@@ -137,6 +144,7 @@ describe('WorkbenchService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'scan 0',
+        mode: WorkbenchMode.ASCII,
       };
 
       try {

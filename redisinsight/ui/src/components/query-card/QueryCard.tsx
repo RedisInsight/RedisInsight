@@ -5,6 +5,7 @@ import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { WorkbenchMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getWBQueryType,
   getVisualizationsByCommand,
@@ -27,6 +28,7 @@ export interface Props {
   command: string
   isOpen: boolean
   result: Maybe<CommandExecutionResult[]>
+  mode: WorkbenchMode
   createdAt?: Date
   loading?: boolean
   onQueryDelete: () => void
@@ -42,6 +44,7 @@ const QueryCard = (props: Props) => {
     id,
     command = '',
     result,
+    mode,
     isOpen,
     createdAt,
     onQueryOpen,
@@ -144,6 +147,7 @@ const QueryCard = (props: Props) => {
           setSelectedValue={changeViewTypeSelected}
           onQueryDelete={onQueryDelete}
           onQueryReRun={onQueryReRun}
+          mode={mode}
         />
         {isOpen && (
           <>

@@ -6,7 +6,11 @@ import {
 } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import {
+  ClusterNodeRole,
+  CreateCommandExecutionDto,
+  WorkbenchMode,
+} from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
@@ -53,6 +57,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
+  mode: WorkbenchMode.ASCII,
 };
 
 const mockCommandExecutionResult: CommandExecutionResult = {
@@ -99,6 +104,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
+          mode: WorkbenchMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -111,6 +117,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
+          mode: WorkbenchMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -128,6 +135,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
+          mode: WorkbenchMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -141,6 +149,7 @@ describe('WorkbenchCommandsExecutor', () => {
         try {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
+            mode: WorkbenchMode.ASCII,
           });
           fail();
         } catch (e) {
@@ -240,6 +249,7 @@ describe('WorkbenchCommandsExecutor', () => {
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
+          mode: WorkbenchMode.ASCII,
         });
 
         expect(result).toEqual([
@@ -256,6 +266,7 @@ describe('WorkbenchCommandsExecutor', () => {
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
+          mode: WorkbenchMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -270,6 +281,7 @@ describe('WorkbenchCommandsExecutor', () => {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
+            mode: WorkbenchMode.ASCII,
           });
           fail();
         } catch (e) {
@@ -284,6 +296,7 @@ describe('WorkbenchCommandsExecutor', () => {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
+            mode: WorkbenchMode.ASCII,
           });
           fail();
         } catch (e) {

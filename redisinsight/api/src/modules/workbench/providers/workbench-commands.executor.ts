@@ -21,16 +21,19 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CreateCommandExecutionDto, WorkbenchMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { RawFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/raw-formatter.strategy';
+import { UTF8FormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/utf-8-formatter.strategy';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {
   private logger = new Logger('WorkbenchCommandsExecutor');
 
-  private formatter = new RawFormatterStrategy();
+  private rawFormatter = new RawFormatterStrategy();
+
+  private utf8Formatter = new UTF8FormatterStrategy();
 
   constructor(
     private redisTool: RedisToolService,
@@ -42,13 +45,16 @@ export class WorkbenchCommandsExecutor {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult[]> {
-    const { command, role, nodeOptions } = dto;
+    const {
+      command, role, nodeOptions, mode,
+    } = dto;
 
     if (nodeOptions) {
       const result = await this.sendCommandForSingleNode(
         clientOptions,
         command,
         role,
+        mode,
         nodeOptions,
       );
 
@@ -56,7 +62,7 @@ export class WorkbenchCommandsExecutor {
     }
 
     if (role) {
-      return this.sendCommandForNodes(clientOptions, command, role);
+      return this.sendCommandForNodes(clientOptions, command, role, mode);
     }
 
     return [await this.sendCommandForStandalone(clientOptions, dto)];
@@ -67,15 +73,20 @@ export class WorkbenchCommandsExecutor {
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult> {
     this.logger.log('Executing workbench command.');
-    const { command: commandLine } = dto;
+    const { command: commandLine, mode } = dto;
 
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
-      const response = this.formatter.format(
-        await this.redisTool.execCommand(clientOptions, command, args, replyEncoding),
-      );
+      const response = mode === WorkbenchMode.ASCII
+        ? this.rawFormatter.format(
+          await this.redisTool.execCommand(clientOptions, command, args, replyEncoding),
+        )
+        : this.utf8Formatter.format(
+          await this.redisTool.execCommand(clientOptions, command, args, replyEncoding),
+        );
 
       this.logger.log('Succeed to execute workbench command.');
 
@@ -106,11 +117,13 @@ export class WorkbenchCommandsExecutor {
     clientOptions: IFindRedisClientInstanceByOptions,
     commandLine: string,
     role: ClusterNodeRole = ClusterNodeRole.All,
+    mode: WorkbenchMode = WorkbenchMode.ASCII,
     nodeOptions: ClusterSingleNodeOptions,
   ): Promise<CommandExecutionResult> {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
       const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
@@ -144,7 +157,9 @@ export class WorkbenchCommandsExecutor {
 
       return {
         ...rest,
-        response: this.formatter.format(rest.response),
+        response: mode === WorkbenchMode.Raw
+          ? this.utf8Formatter.format(rest.response)
+          : this.rawFormatter.format(rest.response),
         node: { host, port, slot },
       };
     } catch (error) {
@@ -169,6 +184,7 @@ export class WorkbenchCommandsExecutor {
     clientOptions: IFindRedisClientInstanceByOptions,
     commandLine: string,
     role: ClusterNodeRole,
+    mode: WorkbenchMode,
   ): Promise<CommandExecutionResult[]> {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
     try {
@@ -183,7 +199,9 @@ export class WorkbenchCommandsExecutor {
           response, status, host, port,
         } = nodeExecReply;
         const result = {
-          response: this.formatter.format(response),
+          response: mode === WorkbenchMode.Raw
+            ? this.utf8Formatter.format(response)
+            : this.rawFormatter.format(response),
           status,
           node: { host, port },
         };

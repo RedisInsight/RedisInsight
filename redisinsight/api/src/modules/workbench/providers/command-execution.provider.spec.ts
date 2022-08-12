@@ -10,7 +10,11 @@ import {
   MockType,
 } from 'src/__mocks__';
 import { omit } from 'lodash';
-import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import {
+  ClusterNodeRole,
+  CreateCommandExecutionDto,
+  WorkbenchMode,
+} from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -45,6 +49,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
+  mode: WorkbenchMode.ASCII,
 };
 
 const mockCommandExecutionEntity = new CommandExecutionEntity({
@@ -53,6 +58,7 @@ const mockCommandExecutionEntity = new CommandExecutionEntity({
   command: mockEncryptResult.data,
   result: mockEncryptResult.data,
   role: mockCreateCommandExecutionDto.role,
+  mode: mockCreateCommandExecutionDto.mode,
   nodeOptions: JSON.stringify(mockCreateCommandExecutionDto.nodeOptions),
   encryption: 'KEYTAR',
   createdAt: new Date(),

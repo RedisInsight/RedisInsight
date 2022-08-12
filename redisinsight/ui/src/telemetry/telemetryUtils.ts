@@ -56,6 +56,7 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   // for analytics is granted or not.
   // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
   const { event, eventData = {}, nonTracking = false } = payload
+  console.log(event, eventData)
 
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)

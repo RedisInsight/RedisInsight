@@ -38,7 +38,7 @@ const WBResults = ({ items = [], onQueryReRun, onQueryDelete, onQueryOpen, scrol
   return (
     <div className={cx(styles.container)}>
       <div ref={scrollDivRef} />
-      {items.map(({ command = '', isOpen = false, result = undefined, id = '', loading, createdAt }) => (
+      {items.map(({ command = '', isOpen = false, result = undefined, id = '', loading, createdAt, mode }) => (
         <QueryCard
           id={id}
           key={id}
@@ -47,6 +47,7 @@ const WBResults = ({ items = [], onQueryReRun, onQueryDelete, onQueryOpen, scrol
           loading={loading}
           command={command}
           createdAt={createdAt}
+          mode={mode}
           onQueryOpen={() => onQueryOpen(id)}
           onQueryReRun={() => onQueryReRun(command, null, false)}
           onQueryDelete={() => onQueryDelete(id)}

@@ -12,6 +12,7 @@ import {
   getMultiCommands,
   scrollIntoView,
 } from 'uiSrc/utils'
+import { localStorageService } from 'uiSrc/services'
 import {
   sendWBCommandAction,
   workbenchResultsSelector,
@@ -28,6 +29,7 @@ import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slice
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { BrowserStorageItem } from 'uiSrc/constants'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
@@ -134,10 +136,12 @@ const WBViewWrapper = () => {
     multiCommands: string[] = [],
   ) => {
     const { connectionType, host, port } = state.instance
+    const mode = localStorageService.get(BrowserStorageItem.workbenchMode)
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
         commands,
         multiCommands,
+        mode,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       }))
       return
@@ -156,6 +160,7 @@ const WBViewWrapper = () => {
       sendWBCommandClusterAction({
         commands,
         options,
+        mode,
         multiCommands,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })

@@ -4,12 +4,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
-
-export enum ClusterNodeRole {
-  All = 'ALL',
-  Master = 'MASTER',
-  Slave = 'SLAVE',
-}
+import { ClusterNodeRole, WorkbenchMode } from './create-command-execution.dto';
 
 export class CreateCommandExecutionsDto {
   @ApiProperty({
@@ -20,6 +15,18 @@ export class CreateCommandExecutionsDto {
   @ArrayNotEmpty()
   @Type(() => String)
   commands: string[];
+
+  @ApiProperty({
+    description: 'Workbench mode',
+    default: WorkbenchMode.ASCII,
+    enum: WorkbenchMode,
+  })
+  @IsEnum(WorkbenchMode, {
+    message: `mode must be a valid enum value. Valid values: ${Object.values(
+      WorkbenchMode,
+    )}.`,
+  })
+  mode: WorkbenchMode;
 
   @ApiPropertyOptional({
     description: 'Execute command for nodes with defined role',

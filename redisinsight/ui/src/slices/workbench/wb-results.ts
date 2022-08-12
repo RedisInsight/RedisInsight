@@ -4,6 +4,7 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
+import { WorkbenchMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
@@ -185,6 +186,7 @@ export function fetchWBHistoryAction(instanceId: string) {
 export function sendWBCommandAction({
   commands = [],
   multiCommands = [],
+  mode = WorkbenchMode.ASCII,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -192,6 +194,7 @@ export function sendWBCommandAction({
   commands: string[]
   multiCommands?: string[]
   commandId?: string
+  mode?: WorkbenchMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -209,6 +212,7 @@ export function sendWBCommandAction({
         ),
         {
           commands,
+          mode,
         }
       )
 
@@ -232,6 +236,7 @@ export function sendWBCommandClusterAction({
   commands = [],
   multiCommands = [],
   options,
+  mode = WorkbenchMode.ASCII,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -240,6 +245,7 @@ export function sendWBCommandClusterAction({
   options: CreateCommandExecutionDto
   commandId?: string
   multiCommands?: string[]
+  mode: WorkbenchMode,
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -258,6 +264,7 @@ export function sendWBCommandClusterAction({
         {
           ...options,
           commands,
+          mode,
           outputFormat: CliOutputFormatterType.Raw,
         }
       )

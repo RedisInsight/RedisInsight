@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { ClusterNodeRole } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { ClusterNodeRole, WorkbenchMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
 import { Expose } from 'class-transformer';
 
@@ -25,6 +25,14 @@ export class CommandExecution {
   })
   @Expose()
   command: string;
+
+  @ApiProperty({
+    description: 'Workbench mode',
+    default: WorkbenchMode.ASCII,
+    enum: WorkbenchMode,
+  })
+  @Expose()
+  mode: WorkbenchMode;
 
   @ApiProperty({
     description: 'Command execution result',

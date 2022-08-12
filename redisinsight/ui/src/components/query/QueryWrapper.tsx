@@ -4,10 +4,13 @@ import { EuiLoadingContent } from '@elastic/eui'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { getMultiCommands, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { WorkbenchMode } from 'uiSrc/slices/interfaces/workbench'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import Query from './Query'
 import styles from './Query/styles.module.scss'
@@ -43,11 +46,14 @@ const QueryWrapper = (props: Props) => {
 
       const command = removeMonacoComments(decode([commandLine, multiCommands].join(';')).trim())
 
+      const workbenchMode = localStorageService?.get(BrowserStorageItem.workbenchMode)
+
       return {
         command,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
-        pipeline: batchSize > 1
+        pipeline: batchSize > 1,
+        rawMode: workbenchMode === WorkbenchMode.Raw
       }
     })()
 

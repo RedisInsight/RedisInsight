@@ -233,28 +233,23 @@ const QueryCardHeader = (props: Props) => {
           {!!createdAt && (
             <EuiTextColor className={styles.timeText} component="div">
               {getFormatTime()}
+              {mode === WorkbenchMode.Raw && (
+                <EuiToolTip
+                  className={styles.tooltip}
+                  content="Raw mode"
+                  position="bottom"
+                >
+                  <EuiTextColor className={cx(styles.timeText, styles.mode)}>
+                    -R
+                  </EuiTextColor>
+                </EuiToolTip>
+              )}
             </EuiTextColor>
           )}
           {!!summaryText && !isOpen && (
             <EuiTextColor className={styles.summaryText} component="div">
               {truncateText(summaryText, 17)}
             </EuiTextColor>
-          )}
-        </EuiFlexItem>
-        <EuiFlexItem
-          grow={false}
-          className={styles.mode}
-        >
-          {mode === WorkbenchMode.Raw && (
-            <EuiToolTip
-              className={styles.tooltip}
-              content="Raw mode"
-              position="bottom"
-            >
-              <EuiTextColor className={styles.timeText} component="div">
-                -R
-              </EuiTextColor>
-            </EuiToolTip>
           )}
         </EuiFlexItem>
         <EuiFlexItem

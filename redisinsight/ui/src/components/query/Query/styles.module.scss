@@ -83,24 +83,28 @@
   background: transparent !important;
 
   &:hover {
-    border: 1px solid #364DA8 !important;
+    border: 1px solid var(--buttonSecondaryHoverColor) !important;
   }
 
   :global(.euiButton__content) {
     padding: 0 !important;
-    color: #B5B6C0 !important;
+    color: var(--iconsDefaultColor) !important;
+
+    &:hover {
+      color: var(--euiColorPrimaryText) !important;
+    }
   }
   
   &.activeBtn {
-    background: #292F47 !important;
-    border: 1px solid #465282;
-
-    &:hover {
-      border: 1px solid #364DA8 !important;
-    }
+    background: var(--browserComponentActive) !important;
+    border: 1px solid var(--euiColorSecondary);
 
     :global(.euiButton__content) {
-      color: #8BA2FF !important;
+      color: var(--euiColorPrimary) !important;
+    }
+
+    &:hover {
+      border: 1px solid var(--buttonSecondaryHoverColor) !important;
     }
   }
 }

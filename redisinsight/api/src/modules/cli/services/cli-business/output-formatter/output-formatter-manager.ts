@@ -1,3 +1,4 @@
+import { RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import {
   CliOutputFormatterTypes,
   IOutputFormatterStrategy,
@@ -7,13 +8,13 @@ export class OutputFormatterManager {
   private strategies = {};
 
   addStrategy(
-    name: CliOutputFormatterTypes,
+    name: CliOutputFormatterTypes | RunQueryMode,
     strategy: IOutputFormatterStrategy,
   ): void {
     this.strategies[name] = strategy;
   }
 
-  getStrategy(name: CliOutputFormatterTypes): IOutputFormatterStrategy {
+  getStrategy(name: CliOutputFormatterTypes | RunQueryMode): IOutputFormatterStrategy {
     if (!this.strategies[name]) {
       throw new Error(`Unsupported formatter strategy: ${name}`);
     }

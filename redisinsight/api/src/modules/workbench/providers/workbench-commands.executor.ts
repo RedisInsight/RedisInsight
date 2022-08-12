@@ -23,6 +23,7 @@ import { CommandExecutionResult } from 'src/modules/workbench/models/command-exe
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CreateCommandExecutionDto, RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { OutputFormatterManager } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter-manager';
 import { RawFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/raw-formatter.strategy';
 import { UTF8FormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/utf-8-formatter.strategy';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
@@ -31,15 +32,23 @@ import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workb
 export class WorkbenchCommandsExecutor {
   private logger = new Logger('WorkbenchCommandsExecutor');
 
-  private rawFormatter = new RawFormatterStrategy();
-
-  private utf8Formatter = new UTF8FormatterStrategy();
+  private outputFormatterManager: OutputFormatterManager;
 
   constructor(
     private redisTool: RedisToolService,
     private analyticsService: WorkbenchAnalyticsService,
     private readonly commandsService: CommandsService,
-  ) {}
+  ) {
+    this.outputFormatterManager = new OutputFormatterManager();
+    this.outputFormatterManager.addStrategy(
+      RunQueryMode.Raw,
+      new UTF8FormatterStrategy(),
+    );
+    this.outputFormatterManager.addStrategy(
+      RunQueryMode.ASCII,
+      new RawFormatterStrategy(),
+    );
+  }
 
   public async sendCommand(
     clientOptions: IFindRedisClientInstanceByOptions,
@@ -77,16 +86,11 @@ export class WorkbenchCommandsExecutor {
 
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+      const formatter = this.outputFormatterManager.getStrategy(mode);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
-      const response = mode === RunQueryMode.ASCII
-        ? this.rawFormatter.format(
-          await this.redisTool.execCommand(clientOptions, command, args, replyEncoding),
-        )
-        : this.utf8Formatter.format(
-          await this.redisTool.execCommand(clientOptions, command, args, replyEncoding),
-        );
+      const response = formatter.format(await this.redisTool.execCommand(clientOptions, command, args, replyEncoding))
 
       this.logger.log('Succeed to execute workbench command.');
 
@@ -123,6 +127,7 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+      const formatter = this.outputFormatterManager.getStrategy(mode);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
@@ -157,9 +162,8 @@ export class WorkbenchCommandsExecutor {
 
       return {
         ...rest,
-        response: mode === RunQueryMode.Raw
-          ? this.utf8Formatter.format(rest.response)
-          : this.rawFormatter.format(rest.response),
+        
+        response: formatter.format(rest.response),
         node: { host, port, slot },
       };
     } catch (error) {
@@ -189,6 +193,8 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
+      const formatter = this.outputFormatterManager.getStrategy(mode);
+
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
@@ -199,9 +205,7 @@ export class WorkbenchCommandsExecutor {
           response, status, host, port,
         } = nodeExecReply;
         const result = {
-          response: mode === RunQueryMode.Raw
-            ? this.utf8Formatter.format(response)
-            : this.rawFormatter.format(response),
+          response: formatter.format(response),
           status,
           node: { host, port },
         };

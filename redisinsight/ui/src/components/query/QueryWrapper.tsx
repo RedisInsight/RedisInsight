@@ -23,6 +23,15 @@ export interface Props {
   onSubmit: (value?: string) => void
   onQueryChangeMode: () => void
 }
+
+interface IState {
+  activeMode: RunQueryMode
+}
+
+let state: IState = {
+  activeMode: RunQueryMode.ASCII,
+}
+
 const QueryWrapper = (props: Props) => {
   const {
     query = '',
@@ -40,6 +49,10 @@ const QueryWrapper = (props: Props) => {
     commandsArray: REDIS_COMMANDS_ARRAY,
   } = useSelector(appRedisCommandsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+
+  state = {
+    activeMode,
+  }
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
     const eventData = (() => {
@@ -60,7 +73,7 @@ const QueryWrapper = (props: Props) => {
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
-        rawMode: activeMode === RunQueryMode.Raw
+        rawMode: state.activeMode === RunQueryMode.Raw
       }
     })()
 

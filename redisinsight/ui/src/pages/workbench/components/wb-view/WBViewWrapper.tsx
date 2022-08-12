@@ -38,18 +38,20 @@ import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import WBView from './WBView'
 
 interface IState {
-  loading: boolean,
-  instance: Instance,
+  loading: boolean
+  instance: Instance
   batchSize: number
-  unsupportedCommands: string[],
-  blockingCommands: string[],
-  visualizations: IPluginVisualization[],
-  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>,
+  activeRunQueryMode: RunQueryMode
+  unsupportedCommands: string[]
+  blockingCommands: string[]
+  visualizations: IPluginVisualization[]
+  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
 }
 
 let state: IState = {
   loading: false,
   batchSize: PIPELINE_COUNT_DEFAULT,
+  activeRunQueryMode: RunQueryMode.ASCII,
   instance: instanceInitState.connectedInstance,
   unsupportedCommands: [],
   blockingCommands: [],
@@ -82,6 +84,7 @@ const WBViewWrapper = () => {
     unsupportedCommands,
     visualizations,
     batchSize,
+    activeRunQueryMode,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -118,6 +121,11 @@ const WBViewWrapper = () => {
   }, [activeRunQueryMode])
 
   const handleChangeQueryRunMode = () => {
+    setActiveRunQueryMode(
+      activeRunQueryMode === RunQueryMode.ASCII
+        ? RunQueryMode.Raw
+        : RunQueryMode.ASCII
+    )
     sendEventTelemetry({
       event: TelemetryEvent.WORKBENCH_MODE_CHANGED,
       eventData: {
@@ -128,11 +136,6 @@ const WBViewWrapper = () => {
           : RunQueryMode.ASCII
       }
     })
-    setActiveRunQueryMode(
-      activeRunQueryMode === RunQueryMode.ASCII
-        ? RunQueryMode.Raw
-        : RunQueryMode.ASCII
-    )
   }
 
   const handleSubmit = (
@@ -162,6 +165,7 @@ const WBViewWrapper = () => {
     commands: string[],
     multiCommands: string[] = [],
   ) => {
+    const { activeRunQueryMode } = state
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
@@ -186,7 +190,7 @@ const WBViewWrapper = () => {
       sendWBCommandClusterAction({
         commands,
         options,
-        activeRunQueryMode,
+        mode: state.activeRunQueryMode,
         multiCommands,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })

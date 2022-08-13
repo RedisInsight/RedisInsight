@@ -82,18 +82,18 @@ aliases:
       no_output_timeout: 15m
   iTestsNames: &iTestsNames
     - oss-st-5            # OSS Standalone v5
-    - oss-st-5-pass       # OSS Standalone v5 with admin pass required
-    - oss-st-6            # OSS Standalone v6 and all modules
-    - oss-st-big          # OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)
-    - mods-preview        # OSS Standalone and all preview modules
-    - oss-st-6-tls        # OSS Standalone v6 with TLS enabled
-    - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
-    - oss-clu             # OSS Cluster
-    - oss-clu-tls         # OSS Cluster with TLS enabled
-    - oss-sent            # OSS Sentinel
-    - re-st               # Redis Enterprise with Standalone inside
-    - re-clu              # Redis Enterprise with Cluster inside
-    - re-crdt             # Redis Enterprise with active-active database inside
+#    - oss-st-5-pass       # OSS Standalone v5 with admin pass required
+#    - oss-st-6            # OSS Standalone v6 and all modules
+#    - oss-st-big          # OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)
+#    - mods-preview        # OSS Standalone and all preview modules
+#    - oss-st-6-tls        # OSS Standalone v6 with TLS enabled
+#    - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
+#    - oss-clu             # OSS Cluster
+#    - oss-clu-tls         # OSS Cluster with TLS enabled
+#    - oss-sent            # OSS Sentinel
+#    - re-st               # Redis Enterprise with Standalone inside
+#    - re-clu              # Redis Enterprise with Cluster inside
+#    - re-crdt             # Redis Enterprise with active-active database inside
   guides-filter: &guidesFilter
     filters:
       branches:
@@ -220,7 +220,10 @@ jobs:
           paths:
             - ./redisinsight/api/node_modules
   integration-tests-run:
-    executor: linux-executor-dlc
+#    executor: linux-executor-dlc
+    docker:
+      - image: cimg/base:current
+    resource_class: xlarge
     parameters:
       rte:
         description: Redis Test Environment name
@@ -235,6 +238,9 @@ jobs:
         type: boolean
         default: false
     steps:
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
       - checkout
       - restore_cache:
           <<: *apiDepsCacheKey

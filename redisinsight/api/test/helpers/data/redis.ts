@@ -28,7 +28,7 @@ export const initDataHelper = (rte) => {
     let totalKeys = 0;
     let dbSize = -1;
 
-    while (dbSize !== totalKeys) {
+    while (true) {
       const currentDbIndex = get(client, ['options', 'db'], 0);
 
       dbSize = await sendCommand('dbsize')
@@ -40,7 +40,11 @@ export const initDataHelper = (rte) => {
         totalKeys = parseInt(keys, 10);
       }
 
-      await sleep(1000);
+      if (dbSize === totalKeys) {
+        break;
+      }
+
+      await sleep(200);
     }
   }
 

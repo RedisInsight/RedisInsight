@@ -2,11 +2,13 @@ import { get } from 'lodash';
 import { constants } from '../constants';
 import * as _ from 'lodash';
 import * as IORedis from 'ioredis';
+import { sleep } from '../test';
+import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
-  const sendCommand = async (command: string, args: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
+  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
     return client.sendCommand(new IORedis.Command(command, args, {
       replyEncoding,
     }));
@@ -21,6 +23,26 @@ export const initDataHelper = (rte) => {
       }
     })) : client.send_command(args.shift(), ...args);
   };
+
+  const waitForInfoSync = async () => {
+    let totalKeys = 0;
+    let dbSize = -1;
+
+    while (dbSize !== totalKeys) {
+      const currentDbIndex = get(client, ['options', 'db'], 0);
+
+      dbSize = await sendCommand('dbsize')
+
+      const info = convertRedisInfoReplyToObject(await sendCommand('info', ['keyspace']));
+      const dbInfo = get(info, 'keyspace', {});
+      if (dbInfo[`db${currentDbIndex}`]) {
+        const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+        totalKeys = parseInt(keys, 10);
+      }
+
+      await sleep(1000);
+    }
+  }
 
   const executeCommandAll = async (...args: string[]): Promise<any> => {
     return client.nodes ? Promise.all(client.nodes().map(async (node) => {
@@ -114,6 +136,8 @@ export const initDataHelper = (rte) => {
       constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
       constants.TEST_STREAM_ID_1
     ]);
+
+    await waitForInfoSync();
   };
 
   // keys
@@ -129,6 +153,8 @@ export const initDataHelper = (rte) => {
     await generateHashes();
     await generateReJSONs();
     await generateStreams();
+
+    await waitForInfoSync();
   };
 
   const insertKeysBasedOnEnv = async (pipeline, forcePipeline: boolean = false) => {
@@ -382,6 +408,8 @@ export const initDataHelper = (rte) => {
       { create: n => _.map(new Array(n), (v,i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
       { create: n => _.map(new Array(n), (v,i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
     ], number, clean);
+
+    await waitForInfoSync();
   };
 
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {

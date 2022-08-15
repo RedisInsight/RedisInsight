@@ -62,7 +62,7 @@ export const getDocUrlForCommand = (commandName: string): string => {
 }
 
 export const getCommandRepeat = (command = ''): [string, number] => {
-  const [countRepeatStr, ...restCommand] = command.split(' ')
+  const [countRepeatStr = '', ...restCommand] = command?.split?.(' ')
   let countRepeat = toNumber(countRepeatStr)
   let commandLine = restCommand.join(' ')
   if (!isNumber(countRepeat) || isNaN(countRepeat) || !command) {

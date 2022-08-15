@@ -40,7 +40,6 @@ services:
       context: ./../../
       dockerfile: Dockerfile
     volumes:
-#      - ./plugins:/root/.redisinsight-v2/plugins
       - .redisinsight-v2:/root/.redisinsight-v2
     ports:
       - 5000:5000

@@ -2,7 +2,16 @@ import { decode, encode } from '@msgpack/msgpack'
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, bufferToASCII, bufferToUTF8, stringToBuffer, bufferToHex, hexToBuffer } from 'uiSrc/utils'
+import {
+  anyToBuffer,
+  bufferToASCII,
+  bufferToBinary,
+  bufferToHex,
+  bufferToUTF8,
+  hexToBuffer,
+  stringToBuffer,
+  binaryToBuffer
+} from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 export interface FormattingProps {
@@ -12,7 +21,8 @@ export interface FormattingProps {
 const isTextViewFormatter = (format: KeyValueFormat) => [
   KeyValueFormat.Unicode,
   KeyValueFormat.ASCII,
-  KeyValueFormat.HEX
+  KeyValueFormat.HEX,
+  KeyValueFormat.Binary,
 ].includes(format)
 const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
 
@@ -31,15 +41,10 @@ const formattingBuffer = (
   props?: FormattingProps
 ): { value: JSX.Element | string, isValid: boolean } => {
   switch (format) {
-    case KeyValueFormat.JSON: {
-      return bufferToJSON(reply, props as FormattingProps)
-    }
-    case KeyValueFormat.HEX: {
-      return { value: bufferToHex(reply), isValid: true }
-    }
-    case KeyValueFormat.ASCII: {
-      return { value: bufferToASCII(reply), isValid: true }
-    }
+    case KeyValueFormat.ASCII: return { value: bufferToASCII(reply), isValid: true }
+    case KeyValueFormat.HEX: return { value: bufferToHex(reply), isValid: true }
+    case KeyValueFormat.Binary: return { value: bufferToBinary(reply), isValid: true }
+    case KeyValueFormat.JSON: return bufferToJSON(reply, props as FormattingProps)
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(reply.data)
@@ -49,20 +54,16 @@ const formattingBuffer = (
         return { value: bufferToUTF8(reply), isValid: false }
       }
     }
-    default: {
-      return { value: bufferToUnicode(reply), isValid: true }
-    }
+    default: return { value: bufferToUnicode(reply), isValid: true }
   }
 }
 
 const bufferToSerializedFormat = (format: KeyValueFormat, value: RedisResponseBuffer, space?: number): string => {
   switch (format) {
-    case KeyValueFormat.JSON: {
-      return reSerializeJSON(bufferToUTF8(value), space)
-    }
-    case KeyValueFormat.ASCII: {
-      return bufferToASCII(value)
-    }
+    case KeyValueFormat.ASCII: return bufferToASCII(value)
+    case KeyValueFormat.HEX: return bufferToHex(value)
+    case KeyValueFormat.Binary: return bufferToBinary(value)
+    case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(value.data)
@@ -72,17 +73,25 @@ const bufferToSerializedFormat = (format: KeyValueFormat, value: RedisResponseBu
         return bufferToUTF8(value)
       }
     }
-    case KeyValueFormat.HEX: {
-      return bufferToHex(value)
-    }
-    default: {
-      return bufferToUTF8(value)
-    }
+    default: return bufferToUTF8(value)
   }
 }
 
 const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): RedisResponseBuffer => {
   switch (format) {
+    case KeyValueFormat.HEX: {
+      if ((value.match(/([0-9]|[a-f])/gim) || []).length === value.length && (value.length % 2 === 0)) {
+        return hexToBuffer(value)
+      }
+      return stringToBuffer(value)
+    }
+    case KeyValueFormat.Binary: {
+      const str = value.replace(/ /g, '')
+      if (str.length % 8 === 0 && /^[0-1]+$/g.test(str)) {
+        return binaryToBuffer(str)
+      }
+      return stringToBuffer(value)
+    }
     case KeyValueFormat.JSON: {
       return stringToBuffer(reSerializeJSON(value))
     }
@@ -94,12 +103,6 @@ const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): 
       } catch (e) {
         return stringToBuffer(value, format)
       }
-    }
-    case KeyValueFormat.HEX: {
-      if ((value.match(/([0-9]|[a-f])/gim) || []).length === value.length && (value.length % 2 === 0)) {
-        return hexToBuffer(value)
-      }
-      return stringToBuffer(value)
     }
     default: {
       return stringToBuffer(value, format)

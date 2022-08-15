@@ -9,16 +9,18 @@ import {
   isEqualBuffers,
   hexToBuffer,
   bufferToHex,
+  bufferToBinary,
+  binaryToBuffer
 } from 'uiSrc/utils'
 
 const defaultValues = [
-  { unicode: 'test', ascii: 'test', hex: '74657374', uint8Array: [116, 101, 115, 116] },
-  { unicode: 'test test', ascii: 'test test', hex: '746573742074657374', uint8Array: [116, 101, 115, 116, 32, 116, 101, 115, 116] },
-  { unicode: '嘿', ascii: '\\xe5\\x98\\xbf', hex: 'e598bf', uint8Array: [229, 152, 191] },
-  { unicode: '\xea12 \x12 p5', ascii: '\\xc3\\xaa12 \\x12 p5', hex: 'c3aa31322012207035', uint8Array: [195, 170, 49, 50, 32, 18, 32, 112, 53] },
-  { unicode: 'hi \n hi \t', ascii: 'hi \\n hi \\t', hex: '6869200a2068692009', uint8Array: [104, 105, 32, 10, 32, 104, 105, 32, 9] },
-  { unicode: '!@#54ueo\'6&*(){', ascii: '!@#54ueo\'6&*(){', hex: '214023353475656f2736262a28297b', uint8Array: [33, 64, 35, 53, 52, 117, 101, 111, 39, 54, 38, 42, 40, 41, 123] },
-  { unicode: 'привет', ascii: '\\xd0\\xbf\\xd1\\x80\\xd0\\xb8\\xd0\\xb2\\xd0\\xb5\\xd1\\x82', hex: 'd0bfd180d0b8d0b2d0b5d182', uint8Array: [208, 191, 209, 128, 208, 184, 208, 178, 208, 181, 209, 130] },
+  { unicode: 'test', ascii: 'test', hex: '74657374', uint8Array: [116, 101, 115, 116], binary: '01110100011001010111001101110100' },
+  { unicode: 'test test', ascii: 'test test', hex: '746573742074657374', uint8Array: [116, 101, 115, 116, 32, 116, 101, 115, 116], binary: '011101000110010101110011011101000010000001110100011001010111001101110100' },
+  { unicode: '嘿', ascii: '\\xe5\\x98\\xbf', hex: 'e598bf', uint8Array: [229, 152, 191], binary: '111001011001100010111111' },
+  { unicode: '\xea12 \x12 p5', ascii: '\\xc3\\xaa12 \\x12 p5', hex: 'c3aa31322012207035', uint8Array: [195, 170, 49, 50, 32, 18, 32, 112, 53], binary: '110000111010101000110001001100100010000000010010001000000111000000110101' },
+  { unicode: 'hi \n hi \t', ascii: 'hi \\n hi \\t', hex: '6869200a2068692009', uint8Array: [104, 105, 32, 10, 32, 104, 105, 32, 9], binary: '011010000110100100100000000010100010000001101000011010010010000000001001' },
+  { unicode: '!@#54ueo\'6&*(){', ascii: '!@#54ueo\'6&*(){', hex: '214023353475656f2736262a28297b', uint8Array: [33, 64, 35, 53, 52, 117, 101, 111, 39, 54, 38, 42, 40, 41, 123], binary: '001000010100000000100011001101010011010001110101011001010110111100100111001101100010011000101010001010000010100101111011' },
+  { unicode: 'привет', ascii: '\\xd0\\xbf\\xd1\\x80\\xd0\\xb8\\xd0\\xb2\\xd0\\xb5\\xd1\\x82', hex: 'd0bfd180d0b8d0b2d0b5d182', uint8Array: [208, 191, 209, 128, 208, 184, 208, 178, 208, 181, 209, 130], binary: '110100001011111111010001100000001101000010111000110100001011001011010000101101011101000110000010' },
 ]
 
 const getStringToBufferTests = defaultValues.map(({ unicode, uint8Array }) =>
@@ -115,5 +117,22 @@ describe('isEqualBuffers', () => {
   test.each(getBuffersTest)('%j', ({ input1, input2, expected }) => {
     // @ts-ignore
     expect(isEqualBuffers(input1, input2)).toEqual(expected)
+  })
+})
+
+const getBufferToBinaryTests = defaultValues.map(({ binary, uint8Array }) =>
+  ({ input: anyToBuffer(uint8Array), expected: binary }))
+
+describe('bufferToBinary', () => {
+  test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
+    // @ts-ignore
+    expect(bufferToBinary(input)).toEqual(expected)
+  })
+})
+
+describe('binaryToBuffer', () => {
+  test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
+    // @ts-ignore
+    expect(binaryToBuffer(expected)).toEqual(input)
   })
 })

@@ -84,7 +84,7 @@ const CliBodyWrapper = () => {
   const refHotkeys = useHotkeys<HTMLDivElement>('command+k,ctrl+l', handleClearOutput)
 
   const handleSubmit = () => {
-    const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim())
+    const [commandLine, countRepeat] = getCommandRepeat(decode(command).trim() || '')
     const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
     dispatch(concatToOutput(cliCommandOutput(decode(command), currentDbIndex)))
 

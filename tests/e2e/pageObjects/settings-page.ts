@@ -15,7 +15,7 @@ export class SettingsPage {
     switchAnalyticsOption = Selector('[data-testid=switch-option-analytics]');
     switchEulaOption = Selector('[data-testid=switch-option-eula]');
     submitConsentsPopupButton = Selector('[data-testid=consents-settings-popup] [data-testid=btn-submit]');
-    switchNovitifationsOption = Selector('[data-testid=switch-option-notifications]');
+    switchNotificationsOption = Selector('[data-testid=switch-option-notifications]');
     //TEXT INPUTS (also referred to as 'Text fields')
     keysToScanValue = Selector('[data-testid=keys-to-scan-value]');
     keysToScanInput = Selector('[data-testid=keys-to-scan-input]');
@@ -56,7 +56,7 @@ export class SettingsPage {
      * Get state of Notifications switcher
      */
     async getNotificationsSwitcherValue(): Promise<string> {
-        return await this.switchNovitifationsOption.getAttribute('aria-checked');
+        return await this.switchNotificationsOption.getAttribute('aria-checked');
     }
 
     /**

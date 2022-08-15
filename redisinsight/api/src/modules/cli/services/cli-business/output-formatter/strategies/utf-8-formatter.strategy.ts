@@ -1,11 +1,11 @@
 import { isArray, isObject } from 'lodash';
-import { getUTG8FromBuffer } from 'src/utils/cli-helper';
+import { getUTF8FromBuffer } from 'src/utils/cli-helper';
 import { IOutputFormatterStrategy } from '../output-formatter.interface';
 
 export class UTF8FormatterStrategy implements IOutputFormatterStrategy {
   public format(reply: any): any {
     if (reply instanceof Buffer) {
-      return getUTG8FromBuffer(reply)
+      return getUTF8FromBuffer(reply)
     }
     if (isArray(reply)) {
       return this.formatRedisArrayReply(reply);

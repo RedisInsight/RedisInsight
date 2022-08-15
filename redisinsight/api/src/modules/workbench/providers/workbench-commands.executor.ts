@@ -26,6 +26,7 @@ import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.se
 import { OutputFormatterManager } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter-manager';
 import { RawFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/raw-formatter.strategy';
 import { UTF8FormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/utf-8-formatter.strategy';
+import { CliOutputFormatterTypes } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
@@ -41,11 +42,11 @@ export class WorkbenchCommandsExecutor {
   ) {
     this.outputFormatterManager = new OutputFormatterManager();
     this.outputFormatterManager.addStrategy(
-      RunQueryMode.Raw,
+      CliOutputFormatterTypes.UTF8,
       new UTF8FormatterStrategy(),
     );
     this.outputFormatterManager.addStrategy(
-      RunQueryMode.ASCII,
+      CliOutputFormatterTypes.Raw,
       new RawFormatterStrategy(),
     );
   }
@@ -86,7 +87,7 @@ export class WorkbenchCommandsExecutor {
 
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const formatter = this.outputFormatterManager.getStrategy(mode);
+      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.UTF8);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
@@ -127,7 +128,7 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const formatter = this.outputFormatterManager.getStrategy(mode);
+      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.UTF8);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
@@ -193,7 +194,7 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const formatter = this.outputFormatterManager.getStrategy(mode);
+      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.UTF8);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;

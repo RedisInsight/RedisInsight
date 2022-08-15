@@ -20,6 +20,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 const dataSchema = Joi.object({
   command: Joi.string().required(),
   role: Joi.string().valid('ALL', 'MASTER', 'SLAVE').allow(null),
+  mode: Joi.string().valid('RAW', 'ASCII'),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     // todo: fix BE transform to avoid handle boolean as number
@@ -35,6 +36,7 @@ const dataSchema = Joi.object({
 const validInputData = {
   command: 'set foo bar',
   role: 'ALL',
+  mode: 'ASCII',
   nodeOptions: {
     host: 'localhost',
     port: 6379,
@@ -55,6 +57,7 @@ const responseSchema = Joi.object().keys({
     }),
   })),
   role: Joi.string().allow(null),
+  mode: Joi.string().required(),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().required(),
@@ -101,6 +104,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           statusCode: 404,
           data: {
             command: 'get foo',
+            mode: 'ASCII',
           },
           responseBody: {
             statusCode: 404,
@@ -112,6 +116,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           name: 'Should get string',
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
+            mode: 'ASCII',
           },
           responseSchema,
           checkFn: async ({ body }) => {
@@ -133,6 +138,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           name: 'Should support ft.info command (whitelist case insensitive check)',
           data: {
             command: `ft.info ${constants.TEST_STRING_KEY_1}`,
+            mode: 'ASCII',
           },
           responseSchema,
         },
@@ -144,48 +150,56 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           name: 'Should return error if try to run unsupported command (monitor)',
           data: {
             command: `monitor`,
+            mode: 'ASCII',
           },
         },
         {
           name: 'Should return error if try to run unsupported command (subscribe)',
           data: {
             command: `subscribe`,
+            mode: 'ASCII',
           },
         },
         {
           name: 'Should return error if try to run unsupported command (psubscribe)',
           data: {
             command: `psubscribe`,
+            mode: 'ASCII',
           },
         },
         {
           name: 'Should return error if try to run unsupported command (sync)',
           data: {
             command: `sync`,
+            mode: 'ASCII',
           },
         },
         {
           name: 'Should return error if try to run unsupported command (psync)',
           data: {
             command: `psync`,
+            mode: 'ASCII',
           },
         },
         {
           name: 'Should return error if try to run unsupported command (script debug)',
           data: {
             command: `script debug`,
+            mode: 'ASCII',
           },
         },
         {
           name: 'Should return error if try to run blocking command',
           data: {
             command: `blpop key`,
+            mode: 'ASCII',
           },
         },
         {
           name: 'Should return error if try to run not readonly command',
           data: {
             command: `set string_key value`,
+            mode: 'ASCII',
           },
         },
       ].map((testCase) => mainCheckFn({
@@ -211,6 +225,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
             endpoint,
             data: {
               command: `get ${constants.TEST_STRING_KEY_2}`,
+              mode: 'ASCII',
             },
             responseSchema,
             checkFn: async ({ body }) => {
@@ -237,6 +252,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'ALL',
+            mode: 'ASCII',
           },
           statusCode: 400,
           responseBody: {
@@ -249,6 +265,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           name: 'Should return error if try to execute command for particular node for standalone database',
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
+            mode: 'ASCII',
             nodeOptions: {
               host: 'localhost',
               port: 6379,
@@ -286,6 +303,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'ALL',
+            mode: 'ASCII',
           },
           responseSchema,
           before: async () => {
@@ -336,6 +354,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'MASTER',
+            mode: 'ASCII',
           },
           responseSchema,
           checkFn: async ({ body }) => {
@@ -381,6 +400,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'SLAVE',
+            mode: 'ASCII',
           },
           responseSchema,
           checkFn: async ({ body }) => {
@@ -429,6 +449,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           name: 'Incorrect node should return an error',
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
+            mode: 'ASCII',
             nodeOptions: {
               host: 'unreachable',
               port: 6380,
@@ -452,6 +473,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           endpoint,
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
+            mode: 'ASCII',
             nodeOptions: {
               ...nodes[0],
               enableRedirection: true,

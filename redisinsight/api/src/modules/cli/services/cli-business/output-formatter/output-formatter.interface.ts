@@ -1,6 +1,7 @@
 export enum CliOutputFormatterTypes {
   Text = 'TEXT',
   Raw = 'RAW',
+  UTF8 = 'UTF8',
 }
 
 export interface IRedirectionInfo {

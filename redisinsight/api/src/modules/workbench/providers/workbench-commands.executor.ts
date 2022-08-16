@@ -42,7 +42,7 @@ export class WorkbenchCommandsExecutor {
   ) {
     this.outputFormatterManager = new OutputFormatterManager();
     this.outputFormatterManager.addStrategy(
-      CliOutputFormatterTypes.UTF8,
+      CliOutputFormatterTypes.Text,
       new UTF8FormatterStrategy(),
     );
     this.outputFormatterManager.addStrategy(
@@ -87,7 +87,7 @@ export class WorkbenchCommandsExecutor {
 
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.UTF8);
+      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.Text);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
@@ -128,7 +128,7 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.UTF8);
+      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.Text);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
 
@@ -194,7 +194,7 @@ export class WorkbenchCommandsExecutor {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
     try {
       const [command, ...args] = splitCliCommandLine(commandLine);
-      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.UTF8);
+      const formatter = this.outputFormatterManager.getStrategy(mode === RunQueryMode.ASCII ? CliOutputFormatterTypes.Raw : CliOutputFormatterTypes.Text);
 
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;

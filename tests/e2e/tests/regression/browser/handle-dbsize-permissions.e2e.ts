@@ -40,7 +40,7 @@ fixture `Handle user permissions`
         ossStandaloneNoPermissionsConfig.host = process.env.OSS_STANDALONE_HOST || 'oss-standalone';
     });
 
-test.only('Verify that user without dbsize permissions can connect to DB', async t => {
+test('Verify that user without dbsize permissions can connect to DB', async t => {
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     // Check that user can see total number of key is overview

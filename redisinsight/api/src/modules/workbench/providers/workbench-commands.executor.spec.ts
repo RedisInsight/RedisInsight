@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { get } from 'lodash';
 import {
   mockRedisMovedError,
   mockStandaloneDatabaseEntity,
@@ -21,6 +22,8 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
+import { OutputFormatterManager } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter-manager';
+import { CliOutputFormatterTypes, IOutputFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
@@ -33,6 +36,7 @@ const mockCliTool = () => ({
   execCommand: jest.fn(),
   execCommandForNodes: jest.fn(),
   execCommandForNode: jest.fn(),
+  outputFormatterManager: jest.fn(),
 });
 
 const mockCommandsService = () => ({
@@ -68,10 +72,20 @@ const mockCommandExecutionResult: CommandExecutionResult = {
   },
 };
 
+const mockCommandExecutionResult_2: CommandExecutionResult = {
+  status: mockCliNodeResponse.status,
+  response: '\xe5\x90\x8d\xe5\xad\x97',
+  node: {
+    ...mockNodeEndpoint,
+  },
+};
+
 describe('WorkbenchCommandsExecutor', () => {
   let service: WorkbenchCommandsExecutor;
   let cliTool;
   let commandsService: CommandsService;
+  let utf8Formatter: IOutputFormatterStrategy;
+  let asciiFormatter: IOutputFormatterStrategy;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -95,6 +109,16 @@ describe('WorkbenchCommandsExecutor', () => {
     service = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
     cliTool = module.get<RedisToolService>(RedisToolService);
     commandsService = module.get<CommandsService>(CommandsService);
+    const outputFormatterManager: OutputFormatterManager = get(
+      service,
+      'outputFormatterManager',
+    );
+    utf8Formatter = outputFormatterManager.getStrategy(
+      CliOutputFormatterTypes.Text,
+    );
+    asciiFormatter = outputFormatterManager.getStrategy(
+      CliOutputFormatterTypes.Raw,
+    );
   });
 
   describe('sendCommand', () => {
@@ -142,6 +166,38 @@ describe('WorkbenchCommandsExecutor', () => {
           response: MOCK_ERROR_MESSAGE,
           status: CommandExecutionStatus.Fail,
         }]);
+      });
+      it('should successfully execute command and return ascii response', async () => {
+        const formatSpy = jest.spyOn(asciiFormatter, 'format');
+
+        cliTool.execCommand.mockResolvedValueOnce(mockCommandExecutionResult.response);
+
+        const result = await service.sendCommand(mockClientOptions, {
+          command: mockCreateCommandExecutionDto.command,
+          mode: RunQueryMode.ASCII,
+        });
+
+        expect(result).toEqual([{
+          response: mockCommandExecutionResult.response,
+          status: mockCommandExecutionResult.status,
+        }]);
+        expect(formatSpy).toHaveBeenCalled();
+      });
+      it('should successfully execute command and return raw response', async () => {
+        const formatSpy = jest.spyOn(utf8Formatter, 'format');
+
+        cliTool.execCommand.mockResolvedValueOnce(mockCommandExecutionResult.response);
+
+        const result = await service.sendCommand(mockClientOptions, {
+          command: mockCreateCommandExecutionDto.command,
+          mode: RunQueryMode.Raw,
+        });
+
+        expect(result).toEqual([{
+          response: mockCommandExecutionResult.response,
+          status: mockCommandExecutionResult.status,
+        }]);
+        expect(formatSpy).toHaveBeenCalled();
       });
       it('should throw an error when unexpected error happened', async () => {
         cliTool.execCommand.mockRejectedValueOnce(new ServiceUnavailableException(MOCK_ERROR_MESSAGE));

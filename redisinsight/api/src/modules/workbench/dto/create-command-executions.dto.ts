@@ -27,7 +27,7 @@ export class CreateCommandExecutionsDto {
       RunQueryMode,
     )}.`,
   })
-  mode?: RunQueryMode;
+  mode?: RunQueryMode = RunQueryMode.ASCII;
 
   @ApiPropertyOptional({
     description: 'Execute command for nodes with defined role',

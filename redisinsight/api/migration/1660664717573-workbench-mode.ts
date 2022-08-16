@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class workbenchMode1660659807165 implements MigrationInterface {
-    name = 'workbenchMode1660659807165'
+export class workbenchMode1660664717573 implements MigrationInterface {
+    name = 'workbenchMode1660664717573'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`DROP INDEX "IDX_5cd90dd6def1fd7c521e53fb2c"`);

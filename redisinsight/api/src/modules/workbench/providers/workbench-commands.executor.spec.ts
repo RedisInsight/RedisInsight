@@ -22,9 +22,7 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { OutputFormatterManager } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter-manager';
-import { CliOutputFormatterTypes, IOutputFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
-import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
+import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
@@ -36,7 +34,7 @@ const mockCliTool = () => ({
   execCommand: jest.fn(),
   execCommandForNodes: jest.fn(),
   execCommandForNode: jest.fn(),
-  outputFormatterManager: jest.fn(),
+  formatterManager: jest.fn(),
 });
 
 const mockCommandsService = () => ({
@@ -72,20 +70,12 @@ const mockCommandExecutionResult: CommandExecutionResult = {
   },
 };
 
-const mockCommandExecutionResult_2: CommandExecutionResult = {
-  status: mockCliNodeResponse.status,
-  response: '\xe5\x90\x8d\xe5\xad\x97',
-  node: {
-    ...mockNodeEndpoint,
-  },
-};
-
 describe('WorkbenchCommandsExecutor', () => {
   let service: WorkbenchCommandsExecutor;
   let cliTool;
   let commandsService: CommandsService;
-  let utf8Formatter: IOutputFormatterStrategy;
-  let asciiFormatter: IOutputFormatterStrategy;
+  let utf8Formatter: IFormatterStrategy;
+  let asciiFormatter: IFormatterStrategy;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -109,15 +99,15 @@ describe('WorkbenchCommandsExecutor', () => {
     service = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
     cliTool = module.get<RedisToolService>(RedisToolService);
     commandsService = module.get<CommandsService>(CommandsService);
-    const outputFormatterManager: OutputFormatterManager = get(
+    const formatterManager: FormatterManager = get(
       service,
-      'outputFormatterManager',
+      'formatterManager',
     );
-    utf8Formatter = outputFormatterManager.getStrategy(
-      CliOutputFormatterTypes.Text,
+    utf8Formatter = formatterManager.getStrategy(
+      FormatterTypes.UTF8,
     );
-    asciiFormatter = outputFormatterManager.getStrategy(
-      CliOutputFormatterTypes.Raw,
+    asciiFormatter = formatterManager.getStrategy(
+      FormatterTypes.ASCII,
     );
   });
 

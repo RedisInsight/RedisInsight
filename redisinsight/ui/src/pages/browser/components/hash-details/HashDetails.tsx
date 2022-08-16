@@ -114,6 +114,7 @@ const HashDetails = (props: Props) => {
       cellCache.clearAll()
       setTimeout(() => {
         cellCache.clearAll()
+        forceUpdate({})
       }, 0)
     }
   }, [loadedFields, viewFormatProp])
@@ -265,7 +266,7 @@ const HashDetails = (props: Props) => {
       headerClassName: 'value-table-separate-border',
       render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const field = bufferToString(fieldItem, viewFormat) || ''
+        const field = bufferToString(fieldItem) || ''
         const tooltipContent = formatLongName(field)
         const { value, isValid } = formattingBuffer(fieldItem, viewFormatProp, { expanded })
 
@@ -300,8 +301,8 @@ const HashDetails = (props: Props) => {
         expanded?: boolean,
       ) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const value = bufferToString(valueItem, viewFormat)
-        const field = bufferToString(fieldItem, viewFormat)
+        const value = bufferToString(valueItem)
+        const field = bufferToString(fieldItem)
         const tooltipContent = formatLongName(value)
         const { value: formattedValue, isValid } = formattingBuffer(valueItem, viewFormatProp, { expanded })
 

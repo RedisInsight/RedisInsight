@@ -68,8 +68,45 @@
   width: 44px;
   position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+}
+
+.textBtn.textBtn {
+  border: none !important;
+  width: 24px;
+  height: 24px !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+
+  &:hover {
+    border: 1px solid var(--buttonSecondaryHoverColor) !important;
+  }
+
+  :global(.euiButton__content) {
+    padding: 0 !important;
+    color: var(--iconsDefaultColor) !important;
+
+    &:hover {
+      color: var(--euiColorPrimaryText) !important;
+    }
+  }
+  
+  &.activeBtn {
+    background: var(--browserComponentActive) !important;
+    border: 1px solid var(--euiColorSecondary);
+
+    :global(.euiButton__content) {
+      color: var(--euiColorPrimary) !important;
+    }
+
+    &:hover {
+      border: 1px solid var(--buttonSecondaryHoverColor) !important;
+    }
+  }
 }
 
 .submitButton {

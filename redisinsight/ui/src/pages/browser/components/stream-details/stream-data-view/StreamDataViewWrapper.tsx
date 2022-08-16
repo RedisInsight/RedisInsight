@@ -96,7 +96,7 @@ const StreamDataViewWrapper = (props: Props) => {
             label: field,
             render: () => {
               const { value: formattedValue } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
-              return formattedValue
+              return formattedValue || (<div>&nbsp;</div>)
             }
           }
         }
@@ -118,8 +118,7 @@ const StreamDataViewWrapper = (props: Props) => {
     setEntries([headerRow, ...streamEntries])
     setColumns([
       idColumn,
-      ...Object.keys(columnsNames).map((field) =>
-        getTemplateColumn(field, columnsNames[field]?.id)),
+      ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field]?.id)),
       actionsColumn
     ])
 
@@ -186,7 +185,7 @@ const StreamDataViewWrapper = (props: Props) => {
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
       const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
-      const value = values[index] ? bufferToString(values[index]?.value, viewFormat) : ''
+      const value = values[index] ? bufferToString(values[index]?.value) : ''
 
       const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(bufferValue, viewFormatProp, { expanded })

@@ -242,7 +242,7 @@ const ZSetDetails = (props: Props) => {
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
       render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
-        const name = bufferToString(nameItem, viewFormat)
+        const name = bufferToString(nameItem)
         const tooltipContent = formatLongName(name)
         const { value, isValid } = formattingBuffer(nameItem, viewFormat, { expanded })
         const cellContent = value.substring?.(0, 200) ?? value

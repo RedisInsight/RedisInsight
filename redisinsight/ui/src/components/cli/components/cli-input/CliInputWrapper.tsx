@@ -21,7 +21,7 @@ const CliInputWrapper = (props: Props) => {
   const { spec: ALL_REDIS_COMMANDS } = useSelector(appRedisCommandsSelector)
   const { db } = useSelector(outputSelector)
 
-  const [commandLine, repeatCommand] = getCommandRepeat(command)
+  const [commandLine, repeatCommand] = getCommandRepeat(command || '')
   const [firstCommand, secondCommand] = commandLine.split(' ')
   const firstCommandMatch = firstCommand.toUpperCase()
   const secondCommandMatch = `${firstCommandMatch} ${secondCommand ? secondCommand.toUpperCase() : null}`

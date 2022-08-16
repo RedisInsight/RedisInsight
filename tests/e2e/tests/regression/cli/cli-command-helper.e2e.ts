@@ -218,7 +218,7 @@ test
             'BF.MEXISTS key item [item ...]',
             'CMS.QUERY key item [item ...]',
             'TDIGEST.RESET key',
-            'TOPK.LIST key withcount',
+            'TOPK.LIST key [withcount]',
             'CF.ADD key item'
         ];
         externalPageLinks = [

@@ -102,6 +102,7 @@ const ListDetails = (props: Props) => {
       cellCache.clearAll()
       setTimeout(() => {
         cellCache.clearAll()
+        forceUpdate({})
       }, 0)
     }
   }, [loadedElements, viewFormatProp])
@@ -247,7 +248,7 @@ const ListDetails = (props: Props) => {
         { element: elementItem, index, editing }: IListElement,
         expanded: boolean = false
       ) {
-        const element = bufferToString(elementItem, viewFormat)
+        const element = bufferToString(elementItem)
         const tooltipContent = formatLongName(element)
         const { value, isValid } = formattingBuffer(elementItem, viewFormatProp, { expanded })
 

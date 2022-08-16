@@ -1,23 +1,23 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import {
-    BrowserPage,
-    CliPage
-} from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts, rte } from '../../../helpers/constants';
-import { keyTypes } from '../../../helpers/keys';
+import { keyLength, KeyTypesTexts, rte } from '../../../helpers/constants';
+import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../helpers/keys';
 import { Chance } from 'chance';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const chance = new Chance();
+const common = new Common();
 
 let keyName = chance.word({ length: 10 });
+const keysData = keyTypes.map(object => ({ ...object }));
+keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`);
 
 fixture `Filtering per key name in Browser page`
     .meta({type: 'critical_path', rte: rte.standalone})
@@ -48,25 +48,17 @@ test
     });
 test
     .after(async () => {
-        //Delete database
+        // Clear keys and database
+        await deleteKeysViaCli(keysData);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     ('Verify that user can filter keys per data type in Browser page', async t => {
         keyName = chance.word({ length: 10 });
         //Create new keys
-        await t.click(cliPage.cliExpandButton);
-        for (const { textType, keyName } of keyTypes) {
-            if (textType in COMMANDS_TO_CREATE_KEY) {
-                await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName), { paste: true });
-                await t.pressKey('enter');
-            }
-        }
-        await t.click(cliPage.cliCollapseButton);
-        await t.click(browserPage.refreshKeysButton);
-        for (const { textType, keyName } of keyTypes) {
+        await addKeysViaCli(keysData);
+        for (const { textType, keyName } of keysData) {
             await browserPage.selectFilterGroupType(textType);
             await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key of type ${textType} was found`);
-            await browserPage.deleteKey();
         }
     });
 test

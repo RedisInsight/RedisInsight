@@ -1,9 +1,15 @@
 import { createClient } from 'redis';
+import { t } from 'testcafe';
 import { Chance } from 'chance';
+import { COMMANDS_TO_CREATE_KEY } from '../helpers/constants';
+import { BrowserPage, CliPage } from '../pageObjects';
+import { keyData } from '../pageObjects/browser-page';
 import { KeyTypesTexts } from './constants';
 import { Common } from './common';
 
 const common = new Common();
+const cliPage = new CliPage();
+const browserPage = new BrowserPage();
 
 export function getRandomKeyName(keyNameLength: number): string {
     const chance = new Chance();
@@ -29,11 +35,39 @@ export const keyTypes = [
     { textType: KeyTypesTexts.ZSet, keyName: 'zset' },
     { textType: KeyTypesTexts.List, keyName: 'list' },
     { textType: KeyTypesTexts.String, keyName: 'string' },
-    { textType: KeyTypesTexts.Graph, keyName: 'graph' },
     { textType: KeyTypesTexts.ReJSON, keyName: 'json' },
     { textType: KeyTypesTexts.Stream, keyName: 'stream' },
+    { textType: KeyTypesTexts.Graph, keyName: 'graph' },
     { textType: KeyTypesTexts.TimeSeries, keyName: 'timeSeries' }
 ];
+
+/**
+ * Adding keys of each type through the cli
+ * @param keyData The key data
+ */
+export async function addKeysViaCli(keyData: keyData): Promise<void> {
+    await t.click(cliPage.cliExpandButton);
+    for (const { textType, keyName } of keyData) {
+        if (textType in COMMANDS_TO_CREATE_KEY) {
+            await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName), { paste: true });
+            await t.pressKey('enter');
+        }
+    }
+    await t.click(cliPage.cliCollapseButton);
+    await t.click(browserPage.refreshKeysButton);
+}
+
+/**
+ * Delete keys of each type through the cli
+ * @param keyData The key data
+ */
+export async function deleteKeysViaCli(keyData: keyData): Promise<void> {
+    const keys: string[] = [];
+    for (const { keyName } of keyData) {
+        keys.push(keyName);
+    }
+    await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
+}
 
 /**
  * Populate database with hash keys

@@ -20,7 +20,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 const dataSchema = Joi.object({
   command: Joi.string().required(),
   role: Joi.string().valid('ALL', 'MASTER', 'SLAVE').allow(null),
-  mode: Joi.string().valid('RAW', 'ASCII'),
+  mode: Joi.string().valid('RAW', 'ASCII').allow(null),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     // todo: fix BE transform to avoid handle boolean as number

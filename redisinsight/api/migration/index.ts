@@ -15,7 +15,7 @@ import { pluginState1641805606399 } from './1641805606399-plugin-state';
 import { sni1650278664000 } from "./1650278664000-sni";
 import { notification1655821010349 } from './1655821010349-notification';
 import { notificationCategory1659687030433 } from './1659687030433-notification-category';
-import { commandExecution1660639540853  } from './1660639540853-command-execution-mode';
+import { workbenchMode1660659807165 } from './1660659807165-workbench-mode';
 
 export default [
   initialMigration1614164490968,
@@ -35,5 +35,5 @@ export default [
   sni1650278664000,
   notification1655821010349,
   notificationCategory1659687030433,
-  commandExecution1660639540853,
+  workbenchMode1660659807165,
 ];

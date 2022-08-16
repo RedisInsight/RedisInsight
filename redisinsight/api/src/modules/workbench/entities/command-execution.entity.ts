@@ -26,8 +26,8 @@ export class CommandExecutionEntity {
   @Column({ nullable: false, type: 'text' })
   command: string;
 
-  @Column({ nullable: false, type: 'text' })
-  mode: RunQueryMode;
+  @Column({ nullable: true })
+  mode?: RunQueryMode = RunQueryMode.ASCII;
 
   @Column({ nullable: false, type: 'text' })
   @Transform((object) => JSON.stringify(object), { toClassOnly: true })

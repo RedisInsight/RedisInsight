@@ -1,6 +1,6 @@
-import { UTF8FormatterStrategy } from './utf-8-formatter.strategy';
+import { UTF8FormatterStrategy } from './utf8-formatter.strategy';
 
-describe('Cli RawFormatterStrategy', () => {
+describe('UTF8FormatterStrategy', () => {
   let strategy;
   beforeEach(async () => {
     strategy = new UTF8FormatterStrategy();

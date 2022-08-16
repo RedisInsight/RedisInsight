@@ -16,17 +16,18 @@ export class CreateCommandExecutionsDto {
   @Type(() => String)
   commands: string[];
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Workbench mode',
     default: RunQueryMode.ASCII,
     enum: RunQueryMode,
   })
+  @IsOptional()
   @IsEnum(RunQueryMode, {
     message: `mode must be a valid enum value. Valid values: ${Object.values(
       RunQueryMode,
     )}.`,
   })
-  mode: RunQueryMode;
+  mode?: RunQueryMode;
 
   @ApiPropertyOptional({
     description: 'Execute command for nodes with defined role',

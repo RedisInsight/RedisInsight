@@ -26,13 +26,13 @@ export class CommandExecution {
   @Expose()
   command: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Workbench mode',
     default: RunQueryMode.ASCII,
     enum: RunQueryMode,
   })
   @Expose()
-  mode: RunQueryMode;
+  mode?: RunQueryMode = RunQueryMode.ASCII;
 
   @ApiProperty({
     description: 'Command execution result',

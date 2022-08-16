@@ -6,21 +6,21 @@ import { FormatterManager } from './formatter-manager';
 const strategyName = FormatterTypes.UTF8;
 const testStrategy = new UTF8FormatterStrategy();
 
-describe('OutputFormatterManager', () => {
-  let outputFormatter: FormatterManager;
+describe('FormatterManager', () => {
+  let formatter: FormatterManager;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [FormatterManager],
     }).compile();
 
-    outputFormatter = module.get<FormatterManager>(
+    formatter = module.get<FormatterManager>(
       FormatterManager,
     );
   });
   it('Should throw error if no strategy', () => {
     try {
-      outputFormatter.getStrategy(strategyName);
+      formatter.getStrategy(strategyName);
     } catch (e) {
       expect(e.message).toEqual(
         `Unsupported formatter strategy: ${strategyName}`,
@@ -28,16 +28,16 @@ describe('OutputFormatterManager', () => {
     }
   });
   it('Should add strategy to formatter and get it back', () => {
-    outputFormatter.addStrategy(strategyName, testStrategy);
-    expect(outputFormatter.getStrategy(strategyName)).toEqual(testStrategy);
+    formatter.addStrategy(strategyName, testStrategy);
+    expect(formatter.getStrategy(strategyName)).toEqual(testStrategy);
   });
   it('Should support TextFormatter strategy', () => {
-    outputFormatter.addStrategy(
+    formatter.addStrategy(
       FormatterTypes.UTF8,
       new UTF8FormatterStrategy(),
     );
     expect(
-      outputFormatter.getStrategy(FormatterTypes.UTF8),
+      formatter.getStrategy(FormatterTypes.UTF8),
     ).toBeInstanceOf(UTF8FormatterStrategy);
   });
 });

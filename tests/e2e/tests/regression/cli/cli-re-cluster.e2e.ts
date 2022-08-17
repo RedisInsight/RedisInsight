@@ -28,7 +28,7 @@ fixture `Work with CLI in all types of databases`
 test
     .meta({ rte: rte.reCluster })
     .before(async() => {
-        await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig, redisEnterpriseClusterConfig.databaseName);
+        await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
     .after(async() => {
         //Clear and delete database
@@ -49,7 +49,7 @@ test
 test
     .meta({ rte: rte.reCloud })
     .before(async() => {
-        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig, cloudDatabaseConfig.databaseName);
+        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async() => {
         //Clear and delete database
@@ -91,7 +91,7 @@ test
 test
     .meta({ env: env.web, rte: rte.sentinel })
     .before(async() => {
-        await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig, ossSentinelConfig.masters[1].alias);
+        await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
     .after(async() => {
         //Clear and delete database

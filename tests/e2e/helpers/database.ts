@@ -29,7 +29,7 @@ export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabas
     //Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     //Wait for database to be exist
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName).exists).ok('The existence of the database', { timeout: 10000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The existence of the database', { timeout: 10000 });
     //Close message
     await t.click(myRedisDatabasePage.toastCloseButton);
 }
@@ -60,8 +60,8 @@ export async function addNewREClusterDatabase(databaseParameters: AddNewDatabase
     //Click on submit button
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     //Wait for database to be exist in the list of Autodiscover databases and select it
-    await t.expect(autoDiscoverREDatabases.databaseNames.withExactText(databaseParameters.databaseName).exists).ok('The existence of the database', { timeout: 10000 });
-    await t.typeText(autoDiscoverREDatabases.search, databaseParameters.databaseName);
+    await t.expect(autoDiscoverREDatabases.databaseNames.withExactText(databaseParameters.databaseName ?? '').exists).ok('The existence of the database', { timeout: 10000 });
+    await t.typeText(autoDiscoverREDatabases.search, databaseParameters.databaseName ?? '');
     await t.click(autoDiscoverREDatabases.databaseCheckbox);
     //Click Add selected databases button
     await t.click(autoDiscoverREDatabases.addSelectedDatabases);
@@ -146,37 +146,34 @@ export async function acceptLicenseTermsAndAddOSSClusterDatabase(databaseParamet
 /**
  * Accept License terms and add Sentinel database using api
  * @param databaseParameters The database parameters
- * @param databaseName The database name
 */
-export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParameters: SentinelParameters, databaseName: string): Promise<void> {
+export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParameters: SentinelParameters): Promise<void> {
     await acceptLicenseTerms();
     await discoverSentinelDatabaseApi(databaseParameters);
     // Reload Page to see the database added through api
     await t.eval(() => location.reload());
     //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(databaseName);
+    await myRedisDatabasePage.clickOnDBByName(databaseParameters.name ?? '');
 }
 
 /**
  * Accept License terms and add RE Cluster database
  * @param databaseParameters The database parameters
- * @param databaseName The database name
 */
-export async function acceptLicenseTermsAndAddREClusterDatabase(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+export async function acceptLicenseTermsAndAddREClusterDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     await acceptLicenseTerms();
     await addNewREClusterDatabase(databaseParameters);
     //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(databaseName);
+    await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '');
 }
 
 /**
  * Accept License terms and add RE Cloud database
  * @param databaseParameters The database parameters
- * @param databaseName The database name
 */
-export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
+export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const searchTimeout = 60 * 1000; // 60 sec to wait database appearing
-    const dbSelector = myRedisDatabasePage.dbNameList.withExactText(databaseName);
+    const dbSelector = myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '');
     const startTime = Date.now();
 
     await acceptLicenseTerms();
@@ -188,8 +185,8 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
         await t.eval(() => location.reload());
     }
     while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The existence of the database', { timeout: 5000 });
-    await myRedisDatabasePage.clickOnDBByName(databaseName);
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The existence of the database', { timeout: 5000 });
+    await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '');
 }
 
 //Accept License terms

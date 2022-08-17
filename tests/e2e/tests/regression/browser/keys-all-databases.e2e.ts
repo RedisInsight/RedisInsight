@@ -1,3 +1,4 @@
+import { t } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
 import {
     acceptLicenseTermsAndAddOSSClusterDatabase,
@@ -21,90 +22,66 @@ const browserPage = new BrowserPage();
 const common = new Common();
 
 let keyName = common.generateWord(10);
+const verifyKeysAdded = async () => {
+    keyName = common.generateWord(10);
+    //add Hash key
+    await browserPage.addHashKey(keyName);
+    //check the notification message
+    const notification = await browserPage.getMessageText();
+    await t.expect(notification).contains('Key has been added', 'The notification');
+    //check that new key is displayed in the list
+    await browserPage.searchByKeyName(keyName);
+    const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
+    await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+}
 
 fixture `Work with keys in all types of databases`
     .meta({ type: 'regression' })
     .page(commonUrl);
 test
     .meta({ rte: rte.reCluster })
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
-    .after(async() => {
+    .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
-    })('Verify that user can add Key in RE Cluster DB', async t => {
-        keyName = common.generateWord(10);
-        //add Hash key
-        await browserPage.addHashKey(keyName);
-        //check the notification message
-        const notification = await browserPage.getMessageText();
-        await t.expect(notification).contains('Key has been added', 'The notification');
-        //check that new key is displayed in the list
-        await browserPage.searchByKeyName(keyName);
-        const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-        await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    })('Verify that user can add Key in RE Cluster DB', async () => {
+        await verifyKeysAdded();
     });
 test
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
-    .after(async() => {
+    .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(cloudDatabaseConfig.databaseName);
-    })('Verify that user can add Key in RE Cloud DB', async t => {
-        keyName = common.generateWord(10);
-        //add Hash key
-        await browserPage.addHashKey(keyName);
-        //check the notification message
-        const notification = await browserPage.getMessageText();
-        await t.expect(notification).contains('Key has been added', 'The notification');
-        //check that new key is displayed in the list
-        await browserPage.searchByKeyName(keyName);
-        const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-        await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    })('Verify that user can add Key in RE Cloud DB', async () => {
+        await verifyKeysAdded();
     });
 test
     .meta({ rte: rte.ossCluster })
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
     })
-    .after(async() => {
+    .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-    })('Verify that user can add Key in OSS Cluster DB', async t => {
-        keyName = common.generateWord(10);
-        //add Hash key
-        await browserPage.addHashKey(keyName);
-        //check the notification message
-        const notification = await browserPage.getMessageText();
-        await t.expect(notification).contains('Key has been added', 'The notification');
-        //check that new key is displayed in the list
-        await browserPage.searchByKeyName(keyName);
-        const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-        await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    })('Verify that user can add Key in OSS Cluster DB', async () => {
+        await verifyKeysAdded();
     });
 test
     .meta({ env: env.web, rte: rte.sentinel })
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
-    .after(async() => {
+    .after(async () => {
         //Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteSentinelDatabaseApi(ossSentinelConfig);
-    })('Verify that user can add Key in Sentinel Primary Group', async t => {
-        keyName = common.generateWord(10);
-        //add Hash key
-        await browserPage.addHashKey(keyName);
-        //check the notification message
-        const notification = await browserPage.getMessageText();
-        await t.expect(notification).contains('Key has been added', 'The notification');
-        //check that new key is displayed in the list
-        await browserPage.searchByKeyName(keyName);
-        const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-        await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    })('Verify that user can add Key in Sentinel Primary Group', async () => {
+        await verifyKeysAdded();
     });

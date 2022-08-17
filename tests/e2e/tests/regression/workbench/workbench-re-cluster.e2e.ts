@@ -43,7 +43,7 @@ fixture `Work with Workbench in all types of databases`
     .page(commonUrl);
 test
     .meta({ rte: rte.reCluster })
-    .before(async t => {
+    .before(async () => {
         await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
     .after(async () => {
@@ -53,34 +53,34 @@ test
         await verifyCommandsInWorkbench();
     });
 test
-    .before(async t => {
+    .before(async () => {
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async () => {
         //Delete database
         await deleteDatabase(cloudDatabaseConfig.databaseName);
-    })('Verify that user can run commands in Workbench in RE Cloud DB', async t => {
-
+    })('Verify that user can run commands in Workbench in RE Cloud DB', async () => {
+        await verifyCommandsInWorkbench();
     });
 test
     .meta({ rte: rte.ossCluster })
-    .before(async t => {
+    .before(async () => {
         await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
     })
     .after(async () => {
         //Delete database
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-    })('Verify that user can run commands in Workbench in OSS Cluster DB', async t => {
+    })('Verify that user can run commands in Workbench in OSS Cluster DB', async () => {
         await verifyCommandsInWorkbench();
     });
 test
     .meta({ env: env.web, rte: rte.sentinel })
-    .before(async t => {
+    .before(async () => {
         await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
     .after(async () => {
         //Delete database
         await deleteSentinelDatabaseApi(ossSentinelConfig);
-    })('Verify that user can run commands in Workbench in Sentinel Primary Group', async t => {
+    })('Verify that user can run commands in Workbench in Sentinel Primary Group', async () => {
         await verifyCommandsInWorkbench();
     });

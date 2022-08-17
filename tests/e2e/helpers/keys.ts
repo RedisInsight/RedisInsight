@@ -40,8 +40,7 @@ export const keyTypes = [
  * Populate database with hash keys
  * @param host The host of database
  * @param port The port of database
- * @param count The count of keys to add
- * @param keyNameStartWith The name of the key
+ * @param keyArguments The arguments of key
  */
 export async function populateDBWithHashes(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
     const dbConf = { host, port: Number(port) };
@@ -59,6 +58,7 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
                 });
             }
         }
+        await client.quit();
     });
 }
 
@@ -87,6 +87,7 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
         await client.hset(keyArguments.keyName, fields, async (error: string) => {
             if (error) throw error;
         });
+        await client.quit();
     });
 }
 
@@ -96,7 +97,7 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
  * @param port The port of database
  * @param keyArguments The arguments of key and its members
  */
- export async function populateListWithElements(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
+export async function populateListWithElements(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
     const dbConf = { host, port: Number(port) };
     const client = createClient(dbConf);
     const elements: string[] = [];
@@ -114,6 +115,7 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
         await client.lpush(keyArguments.keyName, elements, async (error: string) => {
             if (error) throw error;
         });
+        await client.quit();
     });
 }
 
@@ -123,7 +125,7 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
  * @param port The port of database
  * @param keyArguments The arguments of key and its members
  */
- export async function populateSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
+export async function populateSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
     const dbConf = { host, port: Number(port) };
     const client = createClient(dbConf);
     const members: string[] = [];
@@ -141,6 +143,7 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
         await client.sadd(keyArguments.keyName, members, async (error: string) => {
             if (error) throw error;
         });
+        await client.quit();
     });
 }
 
@@ -160,5 +163,6 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
         await client.flushall((error: string) => {
             if (error) throw error;
         });
+        await client.quit();
     });
 }

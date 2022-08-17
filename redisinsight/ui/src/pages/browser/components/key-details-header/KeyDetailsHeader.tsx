@@ -19,7 +19,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
-import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION } from 'uiSrc/constants'
+import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
@@ -67,7 +67,7 @@ const KeyDetailsHeader = ({
   onEditItem = () => {},
   onRemoveItem = () => {},
 }: Props) => {
-  const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
+  const { loading, lastRefreshTime, isEditable } = useSelector(selectedKeySelector)
   const {
     ttl: ttlProp,
     type,
@@ -377,15 +377,21 @@ const KeyDetailsHeader = ({
         </EuiToolTip>
       )}
       {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
-        <div className={styles.actionBtn}>
+        <EuiToolTip
+          content={isEditable ? 'Edit' : TEXT_UNPRINTABLE_CHARACTERS}
+          position="bottom"
+          display="inlineBlock"
+          anchorClassName={styles.actionBtn}
+        >
           <EuiButtonIcon
             iconType="pencil"
             color="primary"
+            disabled={!isEditable}
             aria-label={KEY_TYPES_ACTIONS[keyType].editItem?.name}
             onClick={onEditItem}
             data-testid="edit-key-value-btn"
           />
-        </div>
+        </EuiToolTip>
       )}
     </>
   )
@@ -442,6 +448,8 @@ const KeyDetailsHeader = ({
                           <>
                             <InlineItemEditor
                               onApply={() => applyEditKey()}
+                              isDisabled={!isEditable}
+                              disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                               onDecline={(event) => cancelEditKey(event)}
                               viewChildrenMode={!keyIsEditing}
                               isLoading={loading}

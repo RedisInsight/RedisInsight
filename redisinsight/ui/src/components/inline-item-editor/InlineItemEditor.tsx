@@ -15,6 +15,7 @@ import {
   EuiOutsideClickDetector,
   EuiFocusTrap,
   EuiWindowEvent,
+  EuiToolTip,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import styles from './styles.module.scss'
@@ -45,6 +46,7 @@ export interface Props {
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
+  disabledTooltipText?: string
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -71,6 +73,7 @@ const InlineItemEditor = (props: Props) => {
     isDisabled,
     autoComplete = 'off',
     controlsClassName,
+    disabledTooltipText = '',
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -132,6 +135,33 @@ const InlineItemEditor = (props: Props) => {
   const isDisabledApply = (): boolean =>
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
+  const ApplyBtn = () => (
+    <EuiButtonIcon
+      iconSize={iconSize ?? 'l'}
+      iconType="check"
+      color="primary"
+      type="submit"
+      aria-label="Apply"
+      className={cx(styles.btn, styles.applyBtn)}
+      isDisabled={isDisabledApply()}
+      data-testid="apply-btn"
+    />
+  )
+  const ApplyBtnComponent = () => (
+    isDisabled && disabledTooltipText
+      ? (
+        <EuiToolTip
+          anchorClassName={styles.tooltip}
+          position="bottom"
+          display="inlineBlock"
+          content={disabledTooltipText}
+        >
+          <ApplyBtn />
+        </EuiToolTip>
+      )
+      : <ApplyBtn />
+  )
+
   return (
     <>
       {viewChildrenMode
@@ -189,16 +219,7 @@ const InlineItemEditor = (props: Props) => {
                       isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
-                    <EuiButtonIcon
-                      iconSize={iconSize ?? 'l'}
-                      iconType="check"
-                      color="primary"
-                      type="submit"
-                      aria-label="Apply"
-                      className={cx(styles.btn, styles.applyBtn)}
-                      isDisabled={isDisabledApply()}
-                      data-testid="apply-btn"
-                    />
+                    <ApplyBtnComponent />
                   </div>
                 </EuiForm>
               </EuiFocusTrap>

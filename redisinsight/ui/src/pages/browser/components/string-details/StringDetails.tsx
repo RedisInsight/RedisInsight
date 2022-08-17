@@ -14,7 +14,9 @@ import {
   bufferToSerializedFormat,
   bufferToString,
   formattingBuffer,
+  isEqualBuffers,
   isTextViewFormatter,
+  stringToBuffer,
   stringToSerializedBufferFormat
 } from 'uiSrc/utils'
 import {
@@ -25,7 +27,7 @@ import {
 } from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { selectedKeyDataSelector, selectedKeySelector, setIsEditableKey } from 'uiSrc/slices/browser/keys'
 
 import styles from './styles.module.scss'
 
@@ -44,7 +46,7 @@ const StringDetails = (props: Props) => {
   const { loading } = useSelector(stringSelector)
   const { value: initialValue } = useSelector(stringDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
-  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const { viewFormat: viewFormatProp, isEditable } = useSelector(selectedKeySelector)
 
   const [rows, setRows] = useState<number>(5)
   const [value, setValue] = useState<JSX.Element | string>('')
@@ -70,6 +72,12 @@ const StringDetails = (props: Props) => {
 
     setValue(formattedValue)
     setIsValid(isValid)
+    dispatch(
+      setIsEditableKey(
+        isEqualBuffers(initialValue,
+          stringToBuffer(initialValueString))
+      )
+    )
 
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
@@ -122,6 +130,10 @@ const StringDetails = (props: Props) => {
     setIsEdit(false)
   }, [initialValue])
 
+  const handleEdit = useCallback(() => {
+    setIsEdit(isEditable)
+  }, [isEditable])
+
   const isLoading = loading || value === null
 
   return (
@@ -136,7 +148,7 @@ const StringDetails = (props: Props) => {
       )}
       {!isEditItem && (
         <EuiText
-          onClick={() => setIsEdit(true)}
+          onClick={handleEdit}
           style={{ whiteSpace: 'break-spaces' }}
           data-testid="string-value"
         >

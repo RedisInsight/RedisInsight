@@ -37,7 +37,7 @@ import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSr
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
@@ -313,6 +313,8 @@ const HashDetails = (props: Props) => {
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
           const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+          const disabled = !isEqualBuffers(valueItem, stringToBuffer(areaValue))
+
           return (
             <StopPropagation>
               <InlineItemEditor
@@ -323,6 +325,8 @@ const HashDetails = (props: Props) => {
                 placeholder="Enter Value"
                 fieldName="fieldValue"
                 isLoading={updateLoading}
+                isDisabled={disabled}
+                disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                 controlsClassName={styles.textAreaControls}
                 onDecline={() => handleEditField(fieldItem, false)}
                 onApply={() => handleApplyEditField(fieldItem)}

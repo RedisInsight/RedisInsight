@@ -1,4 +1,7 @@
 import { decode, encode } from '@msgpack/msgpack'
+// eslint-disable-next-line import/order
+import { Buffer } from 'buffer'
+import { serialize, unserialize } from 'php-serialize'
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -54,6 +57,15 @@ const formattingBuffer = (
         return { value: bufferToUTF8(reply), isValid: false }
       }
     }
+    case KeyValueFormat.PHP: {
+      try {
+        const decoded = unserialize(reply.data, { encoding: 'binary' })
+        const value = JSON.stringify(decoded)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
     default: return { value: bufferToUnicode(reply), isValid: true }
   }
 }
@@ -67,6 +79,15 @@ const bufferToSerializedFormat = (format: KeyValueFormat, value: RedisResponseBu
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(value.data)
+        const stringified = JSON.stringify(decoded)
+        return reSerializeJSON(stringified, space)
+      } catch (e) {
+        return bufferToUTF8(value)
+      }
+    }
+    case KeyValueFormat.PHP: {
+      try {
+        const decoded = unserialize(Buffer.from(value.data), { encoding: 'binary' })
         const stringified = JSON.stringify(decoded)
         return reSerializeJSON(stringified, space)
       } catch (e) {
@@ -100,6 +121,15 @@ const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): 
         const json = JSON.parse(value)
         const encoded = encode(json)
         return anyToBuffer(encoded)
+      } catch (e) {
+        return stringToBuffer(value, format)
+      }
+    }
+    case KeyValueFormat.PHP: {
+      try {
+        const json = JSON.parse(value)
+        const serialized = serialize(json)
+        return stringToBuffer(serialized)
       } catch (e) {
         return stringToBuffer(value, format)
       }

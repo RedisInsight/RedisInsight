@@ -147,8 +147,6 @@ const bufferToString = (data: RedisString = '', formatResult: KeyValueFormat = K
   return data?.toString()
 }
 
-export default bufferToString
-
 export {
   bufferToUTF8,
   bufferToASCII,
@@ -174,6 +172,10 @@ window.ri = {
   UintArrayToString,
   stringToBuffer,
   bufferToString,
+  bufferToHex,
+  hexToBuffer,
+  bufferToBinary,
+  binaryToBuffer
 }
 
 // for BE libraries which work with Buffer

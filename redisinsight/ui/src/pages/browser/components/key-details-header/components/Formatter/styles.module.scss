@@ -1,5 +1,5 @@
 .container {
-  margin-right: 6px;
+  margin-right: 12px;
   height: 30px;
   border-radius: 4px;
   transition: transform 0.3s ease;
@@ -14,6 +14,31 @@
 
   :global(.euiFormControlLayout) {
     height: 100%;
+  }
+
+  width: 92px;
+  overflow: hidden;
+
+  .selectWrapper {
+    width: 142px;
+    position: absolute;
+
+    :global(.euiFormControlLayout__childrenWrapper) {
+      width: 92px;
+    }
+  }
+
+  &:not(.fullWidth) {
+    width: 46px;
+
+    :global(.euiFormControlLayout__childrenWrapper) {
+      width: 46px;
+    }
+  }
+
+  .optionText {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

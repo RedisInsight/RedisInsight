@@ -4,7 +4,6 @@ import { toNumber } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
-import { RedisString } from 'src/common/constants'
 
 import {
   zsetSelector,
@@ -22,6 +21,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { RedisString } from 'uiSrc/slices/interfaces'
 import {
   bufferToString,
   createDeleteFieldHeader,

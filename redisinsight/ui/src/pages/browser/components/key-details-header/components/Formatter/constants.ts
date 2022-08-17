@@ -25,6 +25,10 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     text: 'Msgpack',
     value: KeyValueFormat.Msgpack,
   },
+  {
+    text: 'PHP Unserialize',
+    value: KeyValueFormat.PHP,
+  },
 ]
 
 export const KEY_VALUE_JSON_FORMATTER_OPTIONS = []

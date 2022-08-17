@@ -12,13 +12,13 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 const cliPage = new CliPage();
 const common = new Common();
 let filteringGroup = '';
-let filteringGroups: string[] = [];
+let filteringGroups = [];
 let commandToCheck = '';
-let commandsToCheck: string[] = [];
+let commandsToCheck = [];
 let commandArgumentsToCheck = '';
-let commandsArgumentsToCheck: string[] = [];
+let commandsArgumentsToCheck = [];
 let externalPageLink = '';
-let externalPageLinks: string[] = [];
+let externalPageLinks = [];
 
 const getPageUrl = ClientFunction(() => window.location.href);
 

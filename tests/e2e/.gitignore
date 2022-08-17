@@ -1,1 +1,4 @@
+# plugins
 plugins
+
+tests\e2e\.redisinsight-v2

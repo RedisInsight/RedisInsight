@@ -918,7 +918,7 @@ export type ListKeyParameters = {
  * @param textType The type of the key
  * @param keyName The name of the key
  */
-export type keyData = {
+export type KeyData = {
     textType: string,
     keyName: string
 }[];

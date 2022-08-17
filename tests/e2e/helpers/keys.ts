@@ -3,7 +3,7 @@ import { t } from 'testcafe';
 import { Chance } from 'chance';
 import { COMMANDS_TO_CREATE_KEY } from '../helpers/constants';
 import { BrowserPage, CliPage } from '../pageObjects';
-import { keyData } from '../pageObjects/browser-page';
+import { KeyData } from '../pageObjects/browser-page';
 import { KeyTypesTexts } from './constants';
 import { Common } from './common';
 
@@ -45,7 +45,7 @@ export const keyTypes = [
  * Adding keys of each type through the cli
  * @param keyData The key data
  */
-export async function addKeysViaCli(keyData: keyData): Promise<void> {
+export async function addKeysViaCli(keyData: KeyData): Promise<void> {
     await t.click(cliPage.cliExpandButton);
     for (const { textType, keyName } of keyData) {
         if (textType in COMMANDS_TO_CREATE_KEY) {
@@ -61,7 +61,7 @@ export async function addKeysViaCli(keyData: keyData): Promise<void> {
  * Delete keys of each type through the cli
  * @param keyData The key data
  */
-export async function deleteKeysViaCli(keyData: keyData): Promise<void> {
+export async function deleteKeysViaCli(keyData: KeyData): Promise<void> {
     const keys: string[] = [];
     for (const { keyName } of keyData) {
         keys.push(keyName);

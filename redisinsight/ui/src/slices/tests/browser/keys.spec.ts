@@ -55,6 +55,7 @@ import reducer, {
   addStringKey,
   addZsetKey,
   updateSelectedKeyRefreshTime,
+  setIsEditableKey,
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
 
@@ -735,6 +736,30 @@ describe('keys slice', () => {
 
       // Act
       const nextState = reducer(initialStateMock, editKeyFromList(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setIsEditableKey', () => {
+    it('should properly set isEditable selected key', () => {
+      // Arrange
+      const isEditable = false
+
+      const state = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          isEditable: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setIsEditableKey(isEditable))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

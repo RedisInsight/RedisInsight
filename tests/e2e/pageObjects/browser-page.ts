@@ -935,3 +935,13 @@ export type ListKeyParameters = {
     elementStartWith?: string,
     memberStartWith?: string
   }
+
+/**
+ * Keys Data parameters
+ * @param textType The type of the key
+ * @param keyName The name of the key
+ */
+export type KeyData = {
+    textType: string,
+    keyName: string
+}[];

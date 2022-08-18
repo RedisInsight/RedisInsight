@@ -17,6 +17,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   databaseId: Joi.string().required(),
   command: Joi.string().required(),
   role: Joi.string().allow(null),
+  mode: Joi.string().required(),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().required(),

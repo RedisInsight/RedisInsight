@@ -73,16 +73,20 @@ $marginIcon: 12px;
 }
 
 .time {
-  max-width: 95px;
+  max-width: 115px;
   position: relative;
   height: 18px;
+}
+
+.mode {
+  margin-left: 6px;
 }
 
 .timeText, .summaryText {
   font: normal normal normal 12px/16px Graphik, sans-serif;
   letter-spacing: -0.12px;
   color: var(--euiColorMediumShade) !important;
-  min-width: 104px;
+  min-width: 109px;
   text-align: left;
 }
 

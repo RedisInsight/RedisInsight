@@ -111,6 +111,7 @@ export class BrowserPage {
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
     relativeTimeOption = Selector('#idle');
     timestampOption = Selector('#time');
+    formatSwitcher = Selector('[data-testid=select-format-key-value]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -594,6 +595,15 @@ export class BrowserPage {
     }
 
     /**
+     * Open key details of the key by name
+     * @param keyName The name of the key
+     */
+    async openKeyDetailsByKeyName(keyName: string): Promise<void> {
+        const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+        await t.click(keyNameInTheList);
+    }
+
+    /**
      * Add element to the List key
      * @param element The value of the list element
      */
@@ -803,6 +813,16 @@ export class BrowserPage {
         await t.click(this.consumerGroup);
         await t.click(this.streamConsumerName);
     }
+
+    /**
+     * Open formatter and select option
+     * @param formatter The name of format
+     */
+    async selectFormatter(formatter: string): Promise<void> {
+        const option = Selector(`[data-test-subj="format-option-${formatter}"]`);
+        await t.click(this.formatSwitcher);
+        await t.click(option);
+    }
 }
 
 /**
@@ -892,3 +912,13 @@ export type ListKeyParameters = {
     keyName: string,
     element: string
 };
+
+/**
+ * Keys Data parameters
+ * @param textType The type of the key
+ * @param keyName The name of the key
+ */
+export type KeyData = {
+    textType: string,
+    keyName: string
+}[];

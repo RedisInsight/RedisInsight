@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { get } from 'lodash';
 import {
   mockRedisMovedError,
   mockStandaloneDatabaseEntity,
@@ -6,7 +7,11 @@ import {
 } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import {
+  ClusterNodeRole,
+  CreateCommandExecutionDto,
+  RunQueryMode,
+} from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
@@ -17,7 +22,7 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
+import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
@@ -29,6 +34,7 @@ const mockCliTool = () => ({
   execCommand: jest.fn(),
   execCommandForNodes: jest.fn(),
   execCommandForNode: jest.fn(),
+  formatterManager: jest.fn(),
 });
 
 const mockCommandsService = () => ({
@@ -53,6 +59,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
+  mode: RunQueryMode.ASCII,
 };
 
 const mockCommandExecutionResult: CommandExecutionResult = {
@@ -67,6 +74,8 @@ describe('WorkbenchCommandsExecutor', () => {
   let service: WorkbenchCommandsExecutor;
   let cliTool;
   let commandsService: CommandsService;
+  let utf8Formatter: IFormatterStrategy;
+  let asciiFormatter: IFormatterStrategy;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -90,6 +99,16 @@ describe('WorkbenchCommandsExecutor', () => {
     service = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
     cliTool = module.get<RedisToolService>(RedisToolService);
     commandsService = module.get<CommandsService>(CommandsService);
+    const formatterManager: FormatterManager = get(
+      service,
+      'formatterManager',
+    );
+    utf8Formatter = formatterManager.getStrategy(
+      FormatterTypes.UTF8,
+    );
+    asciiFormatter = formatterManager.getStrategy(
+      FormatterTypes.ASCII,
+    );
   });
 
   describe('sendCommand', () => {
@@ -99,6 +118,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -111,6 +131,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -128,6 +149,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -135,12 +157,45 @@ describe('WorkbenchCommandsExecutor', () => {
           status: CommandExecutionStatus.Fail,
         }]);
       });
+      it('should successfully execute command and return ascii response', async () => {
+        const formatSpy = jest.spyOn(asciiFormatter, 'format');
+
+        cliTool.execCommand.mockResolvedValueOnce(mockCommandExecutionResult.response);
+
+        const result = await service.sendCommand(mockClientOptions, {
+          command: mockCreateCommandExecutionDto.command,
+          mode: RunQueryMode.ASCII,
+        });
+
+        expect(result).toEqual([{
+          response: mockCommandExecutionResult.response,
+          status: mockCommandExecutionResult.status,
+        }]);
+        expect(formatSpy).toHaveBeenCalled();
+      });
+      it('should successfully execute command and return raw response', async () => {
+        const formatSpy = jest.spyOn(utf8Formatter, 'format');
+
+        cliTool.execCommand.mockResolvedValueOnce(mockCommandExecutionResult.response);
+
+        const result = await service.sendCommand(mockClientOptions, {
+          command: mockCreateCommandExecutionDto.command,
+          mode: RunQueryMode.Raw,
+        });
+
+        expect(result).toEqual([{
+          response: mockCommandExecutionResult.response,
+          status: mockCommandExecutionResult.status,
+        }]);
+        expect(formatSpy).toHaveBeenCalled();
+      });
       it('should throw an error when unexpected error happened', async () => {
         cliTool.execCommand.mockRejectedValueOnce(new ServiceUnavailableException(MOCK_ERROR_MESSAGE));
 
         try {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
+            mode: RunQueryMode.ASCII,
           });
           fail();
         } catch (e) {
@@ -240,6 +295,7 @@ describe('WorkbenchCommandsExecutor', () => {
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([
@@ -256,6 +312,7 @@ describe('WorkbenchCommandsExecutor', () => {
         const result = await service.sendCommand(mockClientOptions, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
+          mode: RunQueryMode.ASCII,
         });
 
         expect(result).toEqual([{
@@ -270,6 +327,7 @@ describe('WorkbenchCommandsExecutor', () => {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
+            mode: RunQueryMode.ASCII,
           });
           fail();
         } catch (e) {
@@ -284,6 +342,7 @@ describe('WorkbenchCommandsExecutor', () => {
           await service.sendCommand(mockClientOptions, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
+            mode: RunQueryMode.ASCII,
           });
           fail();
         } catch (e) {

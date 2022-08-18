@@ -19,7 +19,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
-import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION } from 'uiSrc/constants'
+import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
@@ -89,11 +89,13 @@ const KeyDetailsHeader = ({
   const [key, setKey] = useState(keyProp)
   const [keyIsEditing, setKeyIsEditing] = useState(false)
   const [keyIsHovering, setKeyIsHovering] = useState(false)
+  const [keyIsEditable, setKeyIsEditable] = useState(true)
 
   useEffect(() => {
     setKey(keyProp)
     setTTL(`${ttlProp}`)
-  }, [keyProp, ttlProp])
+    setKeyIsEditable(isEqualBuffers(keyBuffer, stringToBuffer(keyProp || '')))
+  }, [keyProp, ttlProp, keyBuffer])
 
   const keyNameRef = useRef<HTMLInputElement>(null)
 
@@ -442,6 +444,8 @@ const KeyDetailsHeader = ({
                           <>
                             <InlineItemEditor
                               onApply={() => applyEditKey()}
+                              isDisabled={!keyIsEditable}
+                              disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                               onDecline={(event) => cancelEditKey(event)}
                               viewChildrenMode={!keyIsEditing}
                               isLoading={loading}

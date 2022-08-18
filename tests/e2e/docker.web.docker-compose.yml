@@ -9,6 +9,7 @@ services:
     volumes:
       - ./results:/usr/src/app/results
       - ./plugins:/usr/src/app/plugins
+      - .redisinsight-v2:/root/.redisinsight-v2
     env_file:
       - ./.env
     entrypoint: [
@@ -35,4 +36,5 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./plugins:/root/.redisinsight-preview/plugins
+      - .redisinsight-v2:/root/.redisinsight-v2
+

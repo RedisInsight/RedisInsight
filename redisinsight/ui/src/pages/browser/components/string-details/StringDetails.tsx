@@ -14,6 +14,7 @@ import {
   bufferToSerializedFormat,
   bufferToString,
   formattingBuffer,
+  isFormatEditable,
   isTextViewFormatter,
   stringToSerializedBufferFormat
 } from 'uiSrc/utils'
@@ -51,6 +52,7 @@ const StringDetails = (props: Props) => {
   const [areaValue, setAreaValue] = useState<string>('')
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
   const [isValid, setIsValid] = useState(true)
+  const [isEditable, setIsEditable] = useState(true)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
   const viewValueRef: Ref<HTMLPreElement> = useRef(null)
@@ -70,6 +72,7 @@ const StringDetails = (props: Props) => {
 
     setValue(formattedValue)
     setIsValid(isValid)
+    setIsEditable(isFormatEditable(viewFormatProp))
 
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
@@ -85,7 +88,7 @@ const StringDetails = (props: Props) => {
     const calculatedBreaks = text?.split('\n').length
     const textAreaWidth = textAreaRef.current.clientWidth
     const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-    const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+    const approximateLinesByLength = (!isValid || isTextViewFormatter(viewFormat)) ? text?.length / OneRowLength : 0
     const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
 
     if (calculatedRows > MAX_ROWS) {
@@ -136,7 +139,7 @@ const StringDetails = (props: Props) => {
       )}
       {!isEditItem && (
         <EuiText
-          onClick={() => setIsEdit(true)}
+          onClick={() => isEditable && setIsEdit(true)}
           style={{ whiteSpace: 'break-spaces' }}
           data-testid="string-value"
         >

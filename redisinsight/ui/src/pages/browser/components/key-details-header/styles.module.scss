@@ -180,6 +180,8 @@
 
 .actionBtn {
   margin-right: 12px;
+  position: relative;
+  z-index: 2;
 
   &.withText {
     color: var(--euiTextSubduedColor) !important;

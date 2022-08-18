@@ -27,6 +27,7 @@ import {
   bufferToString,
   formatLongName,
   formattingBuffer,
+  isFormatEditable,
   isTextViewFormatter,
   stringToSerializedBufferFormat,
   validateListIndex
@@ -257,7 +258,9 @@ const ListDetails = (props: Props) => {
           const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+          const approximateLinesByLength = (!isValid || isTextViewFormatter(viewFormat))
+            ? text?.length / OneRowLength
+            : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
           return (
             <StopPropagation>
@@ -328,17 +331,20 @@ const ListDetails = (props: Props) => {
       maxWidth: 60,
       absoluteWidth: 60,
       render: function Actions(_element: any, { index }: IListElement) {
+        const isEditable = isFormatEditable(viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiButtonIcon
-                iconType="pencil"
-                aria-label="Edit element"
-                className="editFieldBtn"
-                color="primary"
-                onClick={() => handleEditElement(index, true)}
-                data-testid={`edit-list-button-${index}`}
-              />
+              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+                <EuiButtonIcon
+                  iconType="pencil"
+                  aria-label="Edit element"
+                  className="editFieldBtn"
+                  color="primary"
+                  onClick={() => handleEditElement(index, true)}
+                  data-testid={`edit-list-button-${index}`}
+                />
+              </EuiToolTip>
             </div>
           </StopPropagation>
         )

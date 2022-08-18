@@ -2,6 +2,7 @@ import { decode, encode } from '@msgpack/msgpack'
 // eslint-disable-next-line import/order
 import { Buffer } from 'buffer'
 import { serialize, unserialize } from 'php-serialize'
+import { getData } from 'rawproto'
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -28,6 +29,7 @@ const isTextViewFormatter = (format: KeyValueFormat) => [
   KeyValueFormat.Binary,
 ].includes(format)
 const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
+const isFormatEditable = (format: KeyValueFormat) => ![KeyValueFormat.Protobuf].includes(format)
 
 const bufferToUnicode = (reply: RedisResponseBuffer): string =>
   bufferToUTF8(reply)
@@ -60,6 +62,15 @@ const formattingBuffer = (
     case KeyValueFormat.PHP: {
       try {
         const decoded = unserialize(reply.data, { encoding: 'binary' })
+        const value = JSON.stringify(decoded)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
+    case KeyValueFormat.Protobuf: {
+      try {
+        const decoded = getData(reply.data)
         const value = JSON.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
@@ -144,6 +155,7 @@ export {
   formattingBuffer,
   isTextViewFormatter,
   isJsonViewFormatter,
+  isFormatEditable,
   bufferToSerializedFormat,
   stringToSerializedBufferFormat
 }

@@ -23,7 +23,8 @@ import {
   isEqualBuffers,
   isTextViewFormatter,
   bufferToSerializedFormat,
-  stringToSerializedBufferFormat
+  stringToSerializedBufferFormat,
+  isFormatEditable
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -311,7 +312,9 @@ const HashDetails = (props: Props) => {
           const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+          const approximateLinesByLength = (!isValid || isTextViewFormatter(viewFormat))
+            ? text?.length / OneRowLength
+            : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
           return (
             <StopPropagation>
@@ -381,18 +384,21 @@ const HashDetails = (props: Props) => {
       maxWidth: 95,
       render: function Actions(_act: any, { field: fieldItem }: HashFieldDto) {
         const field = bufferToString(fieldItem, viewFormat)
+        const isEditable = isFormatEditable(viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiButtonIcon
-                iconType="pencil"
-                aria-label="Edit field"
-                className="editFieldBtn"
-                color="primary"
-                disabled={updateLoading}
-                onClick={() => handleEditField(fieldItem, true)}
-                data-testid={`edit-hash-button-${field}`}
-              />
+              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+                <EuiButtonIcon
+                  iconType="pencil"
+                  aria-label="Edit field"
+                  className="editFieldBtn"
+                  color="primary"
+                  disabled={updateLoading || !isEditable}
+                  onClick={() => handleEditField(fieldItem, true)}
+                  data-testid={`edit-hash-button-${field}`}
+                />
+              </EuiToolTip>
               <PopoverDelete
                 header={createDeleteFieldHeader(fieldItem)}
                 text={createDeleteFieldMessage(key ?? '')}

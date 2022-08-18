@@ -96,6 +96,24 @@ export async function getDatabaseByName(databaseName?: string): Promise<string> 
 }
 
 /**
+ * Delete all databases through api
+ */
+export async function deleteAllDatabasesApi(): Promise<void> {
+    const allDatabases = await getAllDatabases();
+    const databaseIds = [];
+    for (let i = 0; i < allDatabases.length; i++) {
+        const dbData = JSON.parse(JSON.stringify(allDatabases[i]));
+        databaseIds.push(dbData.id);
+    }
+    if (databaseIds.length > 0) {
+        await request(endpoint).delete('/instance')
+            .send({ 'ids': databaseIds })
+            .set('Accept', 'application/json')
+            .expect(200);
+    }
+}
+
+/**
  * Delete Standalone database through api
  * @param databaseParameters The database parameters
  */
@@ -123,12 +141,13 @@ export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSCluster
  * Delete a Sentinel database through api
  * @param databaseParameters The database parameters
  */
- export async function deleteSentinelDatabaseApi(databaseParameters: SentinelParameters): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseParameters.name);
-    const response = await request(endpoint).delete('/instance')
-        .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
-
-    await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');
+export async function deleteSentinelDatabaseApi(databaseParameters: SentinelParameters): Promise<void> {
+    for (let i = 0; i < databaseParameters.name.length; i++) {
+        const databaseId = await getDatabaseByName(databaseParameters.name[i]);
+        const response = await request(endpoint).delete('/instance')
+            .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
+        await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');
+    }
 }
 
 /**

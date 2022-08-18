@@ -30,13 +30,13 @@ export function getRandomParagraph(sentences: number): string {
 }
 
 export const keyTypes = [
-    { textType: KeyTypesTexts.Hash, keyName: 'hash' },
-    { textType: KeyTypesTexts.Set, keyName: 'set' },
-    { textType: KeyTypesTexts.ZSet, keyName: 'zset' },
-    { textType: KeyTypesTexts.List, keyName: 'list' },
-    { textType: KeyTypesTexts.String, keyName: 'string' },
-    { textType: KeyTypesTexts.ReJSON, keyName: 'json' },
-    { textType: KeyTypesTexts.Stream, keyName: 'stream' },
+    { textType: KeyTypesTexts.Hash, keyName: 'hash', data: 'value' },
+    { textType: KeyTypesTexts.List, keyName: 'list', data: 'element' },
+    { textType: KeyTypesTexts.Set, keyName: 'set', data: 'member' },
+    { textType: KeyTypesTexts.ZSet, keyName: 'zset', data: 'member' },
+    { textType: KeyTypesTexts.String, keyName: 'string', data: 'value' },
+    { textType: KeyTypesTexts.ReJSON, keyName: 'json', data: 'data' },
+    { textType: KeyTypesTexts.Stream, keyName: 'stream', data: 'field' },
     { textType: KeyTypesTexts.Graph, keyName: 'graph' },
     { textType: KeyTypesTexts.TimeSeries, keyName: 'timeSeries' }
 ];
@@ -45,11 +45,11 @@ export const keyTypes = [
  * Adding keys of each type through the cli
  * @param keyData The key data
  */
-export async function addKeysViaCli(keyData: KeyData): Promise<void> {
+export async function addKeysViaCli(keyData: KeyData, keyValue?: string): Promise<void> {
     await t.click(cliPage.cliExpandButton);
     for (const { textType, keyName } of keyData) {
         if (textType in COMMANDS_TO_CREATE_KEY) {
-            await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName), { paste: true });
+            await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue), { paste: true });
             await t.pressKey('enter');
         }
     }

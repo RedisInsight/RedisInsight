@@ -1,9 +1,11 @@
 import { Chance } from 'chance';
-import { rte } from '../../../helpers/constants';
+import { Selector } from 'testcafe';
+import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { keyTypes } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -13,7 +15,7 @@ let keyName2 = chance.word({ length: 20 });
 const COMMAND_GROUP_SET = 'Set';
 
 fixture `Filtering per key name in Browser page`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -196,4 +198,41 @@ test
         // Check searched key in tree view
         await t.click(browserPage.treeViewNotPatternedKeys);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
+    });
+test
+    .before(async() => {
+        // Add Big standalone DB
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+    })
+    .after(async() => {
+        // Delete database
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+    })('Verify that user can filter per key name using patterns in DB with 10-50 millions of keys', async t => {
+        // Create new key
+        keyName = `KeyForSearch-${chance.word({ length: 10 })}`;
+        await browserPage.addSetKey(keyName);
+        // Search by key name
+        await browserPage.selectFilterGroupType(KeyTypesTexts.Set);
+        // Verify that required key is displayed
+        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
+        // Verify that required key is displayed in tree view
+        await t.click(browserPage.treeViewButton);
+        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
+    });
+test
+    .before(async() => {
+        // Add Big standalone DB
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+    })
+    .after(async() => {
+        // Delete database
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+    })('Verify that user can filter per key type in DB with 10-50 millions of keys', async t => {
+        for (let i = 0; i < keyTypes.length - 3; i++) {
+            await browserPage.selectFilterGroupType(keyTypes[i].textType);
+            const filteredTypeKeys = Selector(`[data-testid^=badge-${keyTypes[i].keyName.slice(0, 3)}]`);
+            // Verify that all results have the same type as in filter
+            await t.expect(await browserPage.filteringLabel.count).eql(await filteredTypeKeys.count, `The keys of type ${keyTypes[i].textType} not filtered correctly`);
+        }
     });

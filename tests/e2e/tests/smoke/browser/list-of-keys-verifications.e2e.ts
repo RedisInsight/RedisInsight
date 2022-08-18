@@ -8,7 +8,7 @@ const browserPage = new BrowserPage();
 const chance = new Chance();
 
 let keyName = chance.word({ length: 10 });
-let keyNames = [];
+let keyNames: string[] = [];
 
 fixture `List of keys verifications`
     .meta({ type: 'smoke' })

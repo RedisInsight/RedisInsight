@@ -43,6 +43,7 @@ $breakpoint-to-hide-resize-panel: 1124px;
 }
 
 .resizePanelRight {
+  min-width: 500px;
   :global(.euiResizablePanel__content) {
     @media (min-width: $breakpoint-to-hide-resize-panel) {
       padding-left: 8px;

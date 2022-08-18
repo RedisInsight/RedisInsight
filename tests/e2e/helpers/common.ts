@@ -45,6 +45,20 @@ export class Common {
     }
 
     /**
+    * Create array of keys and values for using in OSS Cluster
+    * @param length The amount of array elements
+    */
+     async createArrayWithKeyValueForOSSCluster(length: number): Promise<string[]> {
+        const arr = [];
+        for(let i = 1; i <= length * 2; i++) {
+            arr[i] = `{user1}:${chance.word({ length: 10 })}-key${i}`;
+            arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
+            i++;
+        }
+        return arr;
+    }
+
+    /**
     * Create array of keys and values with edittable counter value
     * @param length The amount of array elements
     * @param keyName The name of the key

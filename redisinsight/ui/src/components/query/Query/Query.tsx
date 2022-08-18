@@ -3,7 +3,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiButton, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
@@ -39,6 +39,7 @@ import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
+import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
 
 import styles from './styles.module.scss'
 
@@ -477,13 +478,15 @@ const Query = (props: Props) => {
             data-testid="change-mode-tooltip"
           >
             <EuiButton
+              fill
+              size="s"
+              color="secondary"
               onClick={() => onQueryChangeMode()}
               disabled={loading}
               className={cx(styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
-              aria-label="change mode"
               data-testid="btn-change-mode"
             >
-              -R
+              <EuiIcon type={RawModeIcon} />
             </EuiButton>
           </EuiToolTip>
           <EuiToolTip

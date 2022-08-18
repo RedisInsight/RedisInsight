@@ -22,10 +22,15 @@
 
   z-index: 1;
 
+  .tooltip,
   :global(.euiButtonIcon) {
     width: 50% !important;
     height: 100% !important;
   }
+}
+
+.tooltip :global(.euiButtonIcon) {
+  width: 100% !important;
 }
 
 .controlsBottom {

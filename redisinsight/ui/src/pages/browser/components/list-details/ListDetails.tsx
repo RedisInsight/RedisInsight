@@ -262,7 +262,7 @@ const ListDetails = (props: Props) => {
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
           const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
-          const disabled = !isEqualBuffers(elementItem, stringToBuffer(areaValue))
+          const disabled = !isEqualBuffers(elementItem, stringToBuffer(element))
             && !isNonUnicodeFormatter(viewFormat)
           return (
             <StopPropagation>

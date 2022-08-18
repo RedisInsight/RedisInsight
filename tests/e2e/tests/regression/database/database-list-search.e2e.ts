@@ -4,7 +4,7 @@ import {
     addNewStandaloneDatabasesApi,
     deleteStandaloneDatabasesApi,
     discoverSentinelDatabaseApi,
-    deleteSentinelDatabaseApi,
+    deleteAllSentinelDatabasesApi,
     addNewOSSClusterDatabaseApi,
     deleteOSSClusterDatabaseApi
 } from '../../../helpers/api/api-database';
@@ -38,11 +38,11 @@ fixture `Database list search`
         // Reload Page
         await t.eval(() => location.reload());
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete databases
         await deleteStandaloneDatabasesApi(databasesForAdding);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await deleteSentinelDatabaseApi(ossSentinelConfig);
+        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     });
 test('Verify that user can search DB by database name on the List of databases', async t => {
     //Search for DB by name

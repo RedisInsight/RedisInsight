@@ -138,10 +138,10 @@ export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSCluster
 }
 
 /**
- * Delete a Sentinel database through api
+ * Delete all primary groups from Sentinel through api
  * @param databaseParameters The database parameters
  */
-export async function deleteSentinelDatabaseApi(databaseParameters: SentinelParameters): Promise<void> {
+export async function deleteAllSentinelDatabasesApi(databaseParameters: SentinelParameters): Promise<void> {
     for (let i = 0; i < databaseParameters.name.length; i++) {
         const databaseId = await getDatabaseByName(databaseParameters.name[i]);
         const response = await request(endpoint).delete('/instance')

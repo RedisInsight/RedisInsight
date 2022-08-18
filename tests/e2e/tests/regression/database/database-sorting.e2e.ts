@@ -2,7 +2,7 @@ import { t } from 'testcafe';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import {
     discoverSentinelDatabaseApi,
-    deleteSentinelDatabaseApi,
+    deleteAllSentinelDatabasesApi,
     addNewOSSClusterDatabaseApi,
     deleteOSSClusterDatabaseApi,
     addNewStandaloneDatabaseApi,
@@ -56,7 +56,7 @@ fixture.only `Remember database sorting`
         // Clear and delete databases
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await deleteSentinelDatabaseApi(ossSentinelConfig);
+        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     });
 test('Verify that sorting on the list of databases saved when database opened', async t => {
     // Sort by Connection Type
@@ -87,7 +87,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         ossStandaloneConfig.databaseName = oldDBName;
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await deleteSentinelDatabaseApi(ossSentinelConfig);
+        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     })('Verify that user has the same sorting if db name is changed', async t => {
         // Sort by Database name
         await t.click(myRedisDatabasePage.sortByDatabaseAlias);

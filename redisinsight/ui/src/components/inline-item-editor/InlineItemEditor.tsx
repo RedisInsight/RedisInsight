@@ -136,31 +136,24 @@ const InlineItemEditor = (props: Props) => {
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
   const ApplyBtn = () => (
-    <EuiButtonIcon
-      iconSize={iconSize ?? 'l'}
-      iconType="check"
-      color="primary"
-      type="submit"
-      aria-label="Apply"
-      className={cx(styles.btn, styles.applyBtn)}
-      isDisabled={isDisabledApply()}
-      data-testid="apply-btn"
-    />
-  )
-  const ApplyBtnComponent = () => (
-    isDisabled && disabledTooltipText
-      ? (
-        <EuiToolTip
-          anchorClassName={styles.tooltip}
-          position="bottom"
-          display="inlineBlock"
-          title={disabledTooltipText?.title}
-          content={disabledTooltipText?.text}
-        >
-          <ApplyBtn />
-        </EuiToolTip>
-      )
-      : <ApplyBtn />
+    <EuiToolTip
+      anchorClassName={styles.tooltip}
+      position="bottom"
+      display="inlineBlock"
+      title={isDisabled && disabledTooltipText?.title}
+      content={isDisabled && disabledTooltipText?.text}
+    >
+      <EuiButtonIcon
+        iconSize={iconSize ?? 'l'}
+        iconType="check"
+        color="primary"
+        type="submit"
+        aria-label="Apply"
+        className={cx(styles.btn, styles.applyBtn)}
+        isDisabled={isDisabledApply()}
+        data-testid="apply-btn"
+      />
+    </EuiToolTip>
   )
 
   return (
@@ -220,7 +213,7 @@ const InlineItemEditor = (props: Props) => {
                       isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
-                    <ApplyBtnComponent />
+                    <ApplyBtn />
                   </div>
                 </EuiForm>
               </EuiFocusTrap>

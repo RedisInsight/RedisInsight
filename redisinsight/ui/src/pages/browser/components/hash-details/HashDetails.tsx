@@ -314,7 +314,7 @@ const HashDetails = (props: Props) => {
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
           const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
-          const disabled = !isEqualBuffers(valueItem, stringToBuffer(areaValue))
+          const disabled = !isEqualBuffers(valueItem, stringToBuffer(value))
              && !isNonUnicodeFormatter(viewFormat)
 
           return (

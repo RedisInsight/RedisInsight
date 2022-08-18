@@ -24,7 +24,7 @@ import {
   isTextViewFormatter,
   bufferToSerializedFormat,
   stringToSerializedBufferFormat,
-  isEditableUnprintableFormatter
+  isNonUnicodeFormatter
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -315,7 +315,7 @@ const HashDetails = (props: Props) => {
           const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
           const disabled = !isEqualBuffers(valueItem, stringToBuffer(areaValue))
-             && !isEditableUnprintableFormatter(viewFormat)
+             && !isNonUnicodeFormatter(viewFormat)
 
           return (
             <StopPropagation>

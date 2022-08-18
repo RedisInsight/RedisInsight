@@ -16,7 +16,7 @@ const isTextViewFormatter = (format: KeyValueFormat) => [
 ].includes(format)
 const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
 
-const isEditableUnprintableFormatter = (format: KeyValueFormat) => [
+const isNonUnicodeFormatter = (format: KeyValueFormat) => [
   KeyValueFormat.ASCII,
   KeyValueFormat.HEX,
   KeyValueFormat.Binary,
@@ -119,5 +119,5 @@ export {
   isJsonViewFormatter,
   bufferToSerializedFormat,
   stringToSerializedBufferFormat,
-  isEditableUnprintableFormatter,
+  isNonUnicodeFormatter,
 }

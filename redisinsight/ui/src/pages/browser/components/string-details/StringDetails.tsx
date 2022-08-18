@@ -14,7 +14,7 @@ import {
   bufferToSerializedFormat,
   bufferToString,
   formattingBuffer,
-  isEditableUnprintableFormatter,
+  isNonUnicodeFormatter,
   isEqualBuffers,
   isTextViewFormatter,
   stringToBuffer,
@@ -77,7 +77,7 @@ const StringDetails = (props: Props) => {
     setIsValid(isValid)
     setIsDisabled(
       !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
-      && !isEditableUnprintableFormatter(viewFormatProp)
+      && !isNonUnicodeFormatter(viewFormatProp)
     )
 
     if (viewFormat !== viewFormatProp) {

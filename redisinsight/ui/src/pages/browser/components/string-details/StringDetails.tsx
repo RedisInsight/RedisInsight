@@ -74,8 +74,7 @@ const StringDetails = (props: Props) => {
     setIsValid(isValid)
     dispatch(
       setIsEditableKey(
-        isEqualBuffers(initialValue,
-          stringToBuffer(initialValueString))
+        isEqualBuffers(initialValue, stringToBuffer(initialValueString))
       )
     )
 

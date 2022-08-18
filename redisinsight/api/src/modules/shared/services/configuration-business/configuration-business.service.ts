@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { get, isNil } from 'lodash';
 import {
   convertBulkStringsToObject,
@@ -20,7 +20,7 @@ import { RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto'
 export class ConfigurationBusinessService {
   public async checkClusterConnection(client: IORedis.Redis): Promise<boolean> {
     try {
-      const reply = await client.send_command('cluster', ['info']);
+      const reply = await client.cluster('INFO');
       const clusterInfo: IRedisClusterInfo = convertBulkStringsToObject(reply);
       return clusterInfo?.cluster_state === 'ok';
     } catch (e) {
@@ -32,7 +32,7 @@ export class ConfigurationBusinessService {
     client: IORedis.Redis,
   ): Promise<boolean> {
     try {
-      await client.send_command('sentinel', ['masters']);
+      await client.call('sentinel', ['masters']);
       return true;
     } catch (e) {
       return false;
@@ -42,7 +42,7 @@ export class ConfigurationBusinessService {
   public async getRedisClusterNodes(
     client: IORedis.Redis,
   ): Promise<IRedisClusterNode[]> {
-    const nodes: any = await client.send_command('cluster', ['nodes']);
+    const nodes: any = await client.call('cluster', ['nodes']);
     return parseClusterNodes(nodes);
   }
 
@@ -57,7 +57,7 @@ export class ConfigurationBusinessService {
 
   public async getDatabasesCount(client: any): Promise<number> {
     try {
-      const reply = await client.send_command('config', ['get', 'databases']);
+      const reply = await client.call('config', ['get', 'databases']);
       return reply.length ? parseInt(reply[1], 10) : 1;
     } catch (e) {
       return 1;
@@ -66,7 +66,7 @@ export class ConfigurationBusinessService {
 
   public async getLoadedModulesList(client: any): Promise<RedisModuleDto[]> {
     try {
-      const reply = await client.send_command('module', ['list']);
+      const reply = await client.call('module', ['list']);
       const modules = reply.map((module: any[]) => convertStringsArrayToObject(module));
       return this.convertRedisModules(modules);
     } catch (e) {
@@ -79,7 +79,7 @@ export class ConfigurationBusinessService {
     client: IORedis.Redis,
   ): Promise<RedisDatabaseInfoResponse> {
     const info = convertRedisInfoReplyToObject(
-      await client.send_command('info'),
+      await client.info(),
     );
     const serverInfo = info['server'];
     const memoryInfo = info['memory'];
@@ -160,7 +160,7 @@ export class ConfigurationBusinessService {
     const modules: RedisModuleDto[] = [];
     await Promise.all(Array.from(REDIS_MODULES_COMMANDS, async ([moduleName, commands]) => {
       try {
-        let commandsInfo = await client.send_command('command', ['info', ...commands]);
+        let commandsInfo = await client.call('command', ['info', ...commands]);
         commandsInfo = commandsInfo.filter((info) => !isNil(info));
         if (commandsInfo.length) {
           modules.push({ name: moduleName });

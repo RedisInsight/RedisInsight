@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis';
+import IORedis from 'ioredis';
 import {
   mockSocket,
 } from 'src/__mocks__';
@@ -9,7 +9,7 @@ import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { BulkActionType } from 'src/modules/bulk-actions/contants';
 import { RedisDataType } from 'src/modules/browser/dto';
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(IORedis.prototype);
 
 const mockBulkActionFilter = {
   count: 10_000,

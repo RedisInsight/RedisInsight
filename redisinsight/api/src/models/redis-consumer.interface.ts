@@ -1,6 +1,6 @@
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { ReplyError } from 'src/models/redis-client';
-import IORedis from 'ioredis';
+import { Redis } from 'ioredis';
 
 export interface IRedisConsumer {
   execCommand(
@@ -17,7 +17,7 @@ export interface IRedisConsumer {
   ): Promise<[ReplyError | null, any]>;
 
   execPipelineFromClient(
-    client: IORedis.Redis,
+    client: Redis,
     toolCommands: Array<
     [toolCommand: any, ...args: Array<string | number | Buffer>]
     >,

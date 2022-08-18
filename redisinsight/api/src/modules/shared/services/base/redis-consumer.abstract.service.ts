@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { AppTool, ReplyError, IRedisConsumer } from 'src/models';
 import {

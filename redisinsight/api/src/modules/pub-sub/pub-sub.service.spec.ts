@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import {
   // mockLogFile,
   // mockRedisShardObserver,

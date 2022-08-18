@@ -17,11 +17,11 @@ export const initDataHelper = (rte) => {
   const executeCommand = async (...args: string[]): Promise<any> => {
     return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
       try {
-        return node.send_command(...args);
+        return node.call(...args);
       } catch (e) {
         return null;
       }
-    })) : client.send_command(args.shift(), ...args);
+    })) : client.call(args.shift(), ...args);
   };
 
   const waitForInfoSync = async () => {
@@ -51,11 +51,11 @@ export const initDataHelper = (rte) => {
   const executeCommandAll = async (...args: string[]): Promise<any> => {
     return client.nodes ? Promise.all(client.nodes().map(async (node) => {
       try {
-        return node.send_command(...args);
+        return node.call(...args);
       } catch (e) {
         return null;
       }
-    })) : client.send_command(args.shift(), ...args);
+    })) : client.call(args.shift(), ...args);
   };
 
   const setAclUserRules = async (

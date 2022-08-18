@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis';
+import IORedis from 'ioredis';
 import { omit } from 'lodash';
 import {
   mockSocket,
@@ -14,14 +14,14 @@ import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-s
 
 const mockExec = jest.fn();
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
 nodeClient.pipeline = jest.fn(() => ({
   exec: mockExec,
 }));
 nodeClient.options = { db: 0 };
 
-const clusterClient = Object.create(Redis.Cluster.prototype);
+const clusterClient = Object.create(IORedis.Cluster.prototype);
 clusterClient.nodes = jest.fn();
 clusterClient.sendCommand = jest.fn();
 

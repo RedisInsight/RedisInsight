@@ -446,6 +446,17 @@ export class BrowserPage {
     }
 
     /**
+     * Searching by Key name in the list
+     * @param keyName The name of the key
+     */
+    async searchByKeyName(keyName: string): Promise<void> {
+        await t.click(this.filterByPatterSearchInput);
+        await t.pressKey('ctrl+a delete');
+        await t.typeText(this.filterByPatterSearchInput, keyName);
+        await t.pressKey('enter');
+    }
+
+    /**
      * Searching by Key name in the list and clicking Scan More until find
      * @param searchPattern Search pattern to enter
      * @param keyName The name of the key
@@ -459,17 +470,6 @@ export class BrowserPage {
             await t.click(this.scanMoreButton);
             if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) break;
         }
-    }
-
-    /**
-     * Searching by Key name in the list
-     * @param keyName The name of the key
-     */
-    async searchByKeyName(keyName: string): Promise<void> {
-        await t.click(this.filterByPatterSearchInput);
-        await t.pressKey('ctrl+a delete');
-        await t.typeText(this.filterByPatterSearchInput, keyName);
-        await t.pressKey('enter');
     }
 
     /**

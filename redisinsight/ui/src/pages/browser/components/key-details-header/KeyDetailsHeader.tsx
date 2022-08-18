@@ -67,7 +67,7 @@ const KeyDetailsHeader = ({
   onEditItem = () => {},
   onRemoveItem = () => {},
 }: Props) => {
-  const { loading, lastRefreshTime, isEditable } = useSelector(selectedKeySelector)
+  const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
   const {
     ttl: ttlProp,
     type,
@@ -89,11 +89,13 @@ const KeyDetailsHeader = ({
   const [key, setKey] = useState(keyProp)
   const [keyIsEditing, setKeyIsEditing] = useState(false)
   const [keyIsHovering, setKeyIsHovering] = useState(false)
+  const [keyIsEditable, setKeyIsEditable] = useState(true)
 
   useEffect(() => {
     setKey(keyProp)
     setTTL(`${ttlProp}`)
-  }, [keyProp, ttlProp])
+    setKeyIsEditable(isEqualBuffers(keyBuffer, stringToBuffer(keyProp || '')))
+  }, [keyProp, ttlProp, keyBuffer])
 
   const keyNameRef = useRef<HTMLInputElement>(null)
 
@@ -377,22 +379,15 @@ const KeyDetailsHeader = ({
         </EuiToolTip>
       )}
       {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
-        <EuiToolTip
-          title={isEditable ? undefined : TEXT_UNPRINTABLE_CHARACTERS?.title}
-          content={isEditable ? 'Edit' : TEXT_UNPRINTABLE_CHARACTERS?.text}
-          position="bottom"
-          display="inlineBlock"
-          anchorClassName={styles.actionBtn}
-        >
+        <div className={styles.actionBtn}>
           <EuiButtonIcon
             iconType="pencil"
             color="primary"
-            disabled={!isEditable}
             aria-label={KEY_TYPES_ACTIONS[keyType].editItem?.name}
             onClick={onEditItem}
             data-testid="edit-key-value-btn"
           />
-        </EuiToolTip>
+        </div>
       )}
     </>
   )
@@ -449,7 +444,7 @@ const KeyDetailsHeader = ({
                           <>
                             <InlineItemEditor
                               onApply={() => applyEditKey()}
-                              isDisabled={!isEditable}
+                              isDisabled={!keyIsEditable}
                               disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                               onDecline={(event) => cancelEditKey(event)}
                               viewChildrenMode={!keyIsEditing}

@@ -64,7 +64,6 @@ export const initialState: KeysStore = {
   selectedKey: {
     loading: false,
     refreshing: false,
-    isEditable: true,
     lastRefreshTime: null,
     error: '',
     data: null,
@@ -193,11 +192,6 @@ const keysSlice = createSlice({
         total: state.data.total - 1,
         scanned: state.data.scanned - 1,
       }
-    },
-
-    // set isEditable selected key
-    setIsEditableKey: (state, { payload }: PayloadAction<boolean>) => {
-      state.selectedKey.isEditable = payload
     },
 
     // edit TTL or Key actions
@@ -373,7 +367,6 @@ export const {
   resetKeysData,
   toggleBrowserFullScreen,
   setViewFormat,
-  setIsEditableKey,
 } = keysSlice.actions
 
 // A selector
@@ -391,7 +384,6 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
-    dispatch(setIsEditableKey(true))
     dispatch(setViewFormat(defaultViewFormat))
 
     if (type === KeyTypes.Hash) {

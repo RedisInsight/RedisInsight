@@ -14,6 +14,7 @@ import {
   bufferToSerializedFormat,
   bufferToString,
   formattingBuffer,
+  isEditableUnprintableFormatter,
   isEqualBuffers,
   isTextViewFormatter,
   stringToBuffer,
@@ -27,8 +28,9 @@ import {
 } from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { selectedKeyDataSelector, selectedKeySelector, setIsEditableKey } from 'uiSrc/slices/browser/keys'
+import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 
+import { TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 const MAX_ROWS = 25
@@ -46,13 +48,14 @@ const StringDetails = (props: Props) => {
   const { loading } = useSelector(stringSelector)
   const { value: initialValue } = useSelector(stringDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
-  const { viewFormat: viewFormatProp, isEditable } = useSelector(selectedKeySelector)
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [rows, setRows] = useState<number>(5)
   const [value, setValue] = useState<JSX.Element | string>('')
   const [areaValue, setAreaValue] = useState<string>('')
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
   const [isValid, setIsValid] = useState(true)
+  const [isDisabled, setIsDisabled] = useState(false)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
   const viewValueRef: Ref<HTMLPreElement> = useRef(null)
@@ -72,10 +75,9 @@ const StringDetails = (props: Props) => {
 
     setValue(formattedValue)
     setIsValid(isValid)
-    dispatch(
-      setIsEditableKey(
-        isEqualBuffers(initialValue, stringToBuffer(initialValueString))
-      )
+    setIsDisabled(
+      !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
+      && !isEditableUnprintableFormatter(viewFormatProp)
     )
 
     if (viewFormat !== viewFormatProp) {
@@ -129,10 +131,6 @@ const StringDetails = (props: Props) => {
     setIsEdit(false)
   }, [initialValue])
 
-  const handleEdit = useCallback(() => {
-    setIsEdit(isEditable)
-  }, [isEditable])
-
   const isLoading = loading || value === null
 
   return (
@@ -147,7 +145,7 @@ const StringDetails = (props: Props) => {
       )}
       {!isEditItem && (
         <EuiText
-          onClick={handleEdit}
+          onClick={() => setIsEdit(true)}
           style={{ whiteSpace: 'break-spaces' }}
           data-testid="string-value"
         >
@@ -174,6 +172,8 @@ const StringDetails = (props: Props) => {
           fieldName="value"
           expandable
           isLoading={false}
+          isDisabled={isDisabled}
+          disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
           onDecline={onDeclineChanges}
           onApply={onApplyChanges}
           declineOnUnmount={false}

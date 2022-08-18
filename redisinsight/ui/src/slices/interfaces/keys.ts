@@ -34,7 +34,6 @@ export interface KeysStore {
     data: Nullable<IKeyPropTypes>
     length: Maybe<number>
     viewFormat: KeyValueFormat
-    isEditable: boolean
   }
   addKey: {
     loading: boolean

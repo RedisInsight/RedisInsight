@@ -16,6 +16,12 @@ const isTextViewFormatter = (format: KeyValueFormat) => [
 ].includes(format)
 const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
 
+const isEditableUnprintableFormatter = (format: KeyValueFormat) => [
+  KeyValueFormat.ASCII,
+  KeyValueFormat.HEX,
+  KeyValueFormat.Binary,
+].includes(format)
+
 const bufferToUnicode = (reply: RedisResponseBuffer): string =>
   bufferToUTF8(reply)
 
@@ -112,5 +118,6 @@ export {
   isTextViewFormatter,
   isJsonViewFormatter,
   bufferToSerializedFormat,
-  stringToSerializedBufferFormat
+  stringToSerializedBufferFormat,
+  isEditableUnprintableFormatter,
 }

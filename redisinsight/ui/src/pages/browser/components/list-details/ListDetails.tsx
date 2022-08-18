@@ -27,6 +27,7 @@ import {
   bufferToString,
   formatLongName,
   formattingBuffer,
+  isEditableUnprintableFormatter,
   isEqualBuffers,
   isTextViewFormatter,
   stringToBuffer,
@@ -262,6 +263,7 @@ const ListDetails = (props: Props) => {
           const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
           const disabled = !isEqualBuffers(elementItem, stringToBuffer(areaValue))
+            && !isEditableUnprintableFormatter(viewFormat)
           return (
             <StopPropagation>
               <div className={styles.inlineItemEditor}>

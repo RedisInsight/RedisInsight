@@ -378,7 +378,8 @@ const KeyDetailsHeader = ({
       )}
       {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
         <EuiToolTip
-          content={isEditable ? 'Edit' : TEXT_UNPRINTABLE_CHARACTERS}
+          title={isEditable ? undefined : TEXT_UNPRINTABLE_CHARACTERS?.title}
+          content={isEditable ? 'Edit' : TEXT_UNPRINTABLE_CHARACTERS?.text}
           position="bottom"
           display="inlineBlock"
           anchorClassName={styles.actionBtn}

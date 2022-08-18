@@ -46,7 +46,7 @@ export interface Props {
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
-  disabledTooltipText?: string
+  disabledTooltipText?: { title: string, text: string }
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -73,7 +73,7 @@ const InlineItemEditor = (props: Props) => {
     isDisabled,
     autoComplete = 'off',
     controlsClassName,
-    disabledTooltipText = '',
+    disabledTooltipText,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -154,7 +154,8 @@ const InlineItemEditor = (props: Props) => {
           anchorClassName={styles.tooltip}
           position="bottom"
           display="inlineBlock"
-          content={disabledTooltipText}
+          title={disabledTooltipText?.title}
+          content={disabledTooltipText?.text}
         >
           <ApplyBtn />
         </EuiToolTip>

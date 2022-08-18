@@ -446,6 +446,22 @@ export class BrowserPage {
     }
 
     /**
+     * Searching by Key name in the list and clicking Scan More until find
+     * @param searchPattern Search pattern to enter
+     * @param keyName The name of the key
+     */
+    async searchByKeyNameWithScanMore(searchPattern: string, keyName: string): Promise<void> {
+        await this.searchByKeyName(searchPattern);
+        const scannedValueText = Number(await this.scannedValue.textContent);
+        const totalKeysValue = Number(await this.totalKeysNumber.textContent);
+        // Scan until finding element or all keys scanned
+        while (true) {
+            await t.click(this.scanMoreButton);
+            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) break;
+        }
+    }
+
+    /**
      * Searching by Key name in the list
      * @param keyName The name of the key
      */
@@ -917,6 +933,33 @@ export type ListKeyParameters = {
     keyName: string,
     element: string
 };
+
+/**
+ * The key arguments for multiple keys/fields adding
+ * @param keysCount The number of keys to add
+ * @param fieldsCount The number of fields in key to add
+ * @param elementsCount The number of elements in key to add
+ * @param membersCount The number of members in key to add
+ * @param keyName The full key name
+ * @param keyNameStartWith The name of key should start with
+ * @param fieldStartWitht The name of field should start with
+ * @param fieldValueStartWith The name of field value should start with
+ * @param elementStartWith The name of element should start with
+ * @param memberStartWith The name of member should start with
+ */
+
+export type AddKeyArguments = {
+    keysCount?: number,
+    fieldsCount?: number,
+    elementsCount?: number,
+    membersCount?: number,
+    keyName?: string,
+    keyNameStartWith?: string,
+    fieldStartWith?: string,
+    fieldValueStartWith?: string,
+    elementStartWith?: string,
+    memberStartWith?: string
+}
 
 /**
  * Keys Data parameters

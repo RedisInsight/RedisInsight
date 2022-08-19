@@ -75,8 +75,15 @@ const bufferToASCII = (reply: RedisResponseBuffer): string => {
 const anyToBuffer = (reply: UintArray): RedisResponseBuffer =>
   ({ data: reply, type: RedisResponseBufferType.Buffer })
 
-const ASCIIToBuffer = (str: string) => {
+const ASCIIToBuffer = (strInit: string) => {
   let result = ''
+  const str = strInit
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\')
+    .replace(/\\b/g, '\b')
+    .replace(/\\t/g, '\t')
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
 
   for (let i = 0; i < str.length;) {
     if (str.substring(i, i + 2) === '\\x') {

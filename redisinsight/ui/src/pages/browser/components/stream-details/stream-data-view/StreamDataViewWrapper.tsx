@@ -100,16 +100,16 @@ const StreamDataViewWrapper = (props: Props) => {
               const tooltipContent = formatLongName(value)
               return (
                 <div
-                  style={{ display: 'flex', whiteSpace: 'break-spaces', wordBreak: 'break-all' }}
+                  style={{ display: 'flex', whiteSpace: 'break-spaces', wordBreak: 'break-all', width: 'max-content' }}
                   data-testid={`stream-field-name-${field}`}
                 >
                   <EuiToolTip
                     title={isValid ? 'Field' : `Failed to convert to ${viewFormatProp}`}
-                    anchorClassName="line-clamp-1"
+                    anchorClassName="truncateText"
                     position="bottom"
                     content={tooltipContent}
                   >
-                    <>{formattedValue}</>
+                    <>{formattedValue || (<div>&nbsp;</div>)}</>
                   </EuiToolTip>
                 </div>
               )
@@ -197,7 +197,6 @@ const StreamDataViewWrapper = (props: Props) => {
     isSortable: false,
     className: styles.cell,
     headerClassName: 'streamItemHeader',
-    headerCellClassName: 'truncateText',
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
       const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)

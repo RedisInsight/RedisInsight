@@ -54,14 +54,19 @@ export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSCluster
 /**
  * Add a Sentinel database via autodiscover through api
  * @param databaseParameters The database parameters
+ * @param primaryGroupsNumber Number of added primary groups
  */
-export async function discoverSentinelDatabaseApi(databaseParameters: SentinelParameters): Promise<void> {
+export async function discoverSentinelDatabaseApi(databaseParameters: SentinelParameters, primaryGroupsNumber?: number): Promise<void> {
+    let masters = databaseParameters.masters;
+    if (primaryGroupsNumber) {
+        masters = databaseParameters.masters.slice(0, primaryGroupsNumber);
+    }
     const response = await request(endpoint).post('/instance/sentinel-masters')
         .send({
             'host': databaseParameters.sentinelHost,
             'port': databaseParameters.sentinelPort,
             'password': databaseParameters.sentinelPassword,
-            'masters': databaseParameters.masters
+            'masters': masters
         })
         .set('Accept', 'application/json');
 
@@ -92,6 +97,23 @@ export async function getDatabaseByName(databaseName?: string): Promise<string> 
         return await item.name === databaseName;
     });
 
+    return await response[0].id;
+}
+
+/**
+ * Get database through api using database connection type
+ * @param connectionType The database connection type
+ */
+export async function getDatabaseByConnectionType(connectionType?: string): Promise<string> {
+    if (!connectionType) {
+        throw new Error('Error: Missing connectionType');
+    }
+    const allDataBases = await getAllDatabases();
+    let response: object = {};
+    response = await asyncFilter(allDataBases, async(item: databaseParameters) => {
+        await doAsyncStuff();
+        return await item.connectionType === connectionType;
+    });
     return await response[0].id;
 }
 
@@ -148,6 +170,16 @@ export async function deleteAllSentinelDatabasesApi(databaseParameters: Sentinel
             .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
         await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');
     }
+}
+
+/**
+ * Delete all databases by connection type
+ */
+export async function deleteAllDatabasesByConnectionTypeApi(connectionType: string): Promise<void> {
+    const databaseIds = await getDatabaseByConnectionType(connectionType);
+    const response = await request(endpoint).delete('/instance')
+        .send({ 'ids': [`${databaseIds}`] }).set('Accept', 'application/json');
+    await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');
 }
 
 /**

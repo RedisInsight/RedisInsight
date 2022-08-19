@@ -85,14 +85,14 @@ const getChunkCountSearch = (command: string = '') => {
 
   if (getIsKeysOnly(command)) count = onlyKeysChunkCount
 
-  specialArgs.forEach((arg) => command.includes(arg) && ++count)
+  specialArgs.forEach((arg) => command.toUpperCase().includes(arg) && ++count)
 
   return count
 }
 
 const getIsKeysOnly = (command: string = '') => (
-  command.toLowerCase().includes(CommandArgument.NoContent.toLowerCase())
-  || command.toLowerCase().includes(`${CommandArgument.Return.toLowerCase()} 0`)
+  command.toUpperCase().includes(CommandArgument.NoContent)
+  || command.toUpperCase().includes(`${CommandArgument.Return} 0`)
 )
 
 export {

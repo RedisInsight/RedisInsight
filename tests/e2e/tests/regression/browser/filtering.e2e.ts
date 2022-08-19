@@ -229,7 +229,7 @@ test
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per key type in DB with 10-50 millions of keys', async t => {
-        for (let i = 0; i < keyTypes.length - 3; i++) {
+        for (let i = 0; i < keyTypes.length - 4; i++) {
             await browserPage.selectFilterGroupType(keyTypes[i].textType);
             const filteredTypeKeys = Selector(`[data-testid^=badge-${keyTypes[i].keyName.slice(0, 3)}]`);
             // Verify that all results have the same type as in filter

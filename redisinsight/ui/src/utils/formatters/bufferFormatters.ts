@@ -78,11 +78,12 @@ const anyToBuffer = (reply: UintArray): RedisResponseBuffer =>
 const ASCIIToBuffer = (strInit: string) => {
   let result = ''
   const str = strInit
-    .replaceAll('\\\\', '\\')
-    .replaceAll('\\b"', '\b')
-    .replaceAll('\\t"', '\t')
-    .replaceAll('\\n"', '\n')
-    .replaceAll('\\r"', '\r')
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\')
+    .replace(/\\b/g, '\b')
+    .replace(/\\t/g, '\t')
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
 
   for (let i = 0; i < str.length;) {
     if (str.substring(i, i + 2) === '\\x') {

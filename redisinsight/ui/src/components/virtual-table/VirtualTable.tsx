@@ -17,7 +17,7 @@ import {
   EuiIcon,
 } from '@elastic/eui'
 
-import { Maybe, Nullable } from 'uiSrc/utils'
+import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import TableColumnSearch from 'uiSrc/components/table-column-search/TableColumnSearch'
@@ -34,6 +34,7 @@ const VirtualTable = (props: IProps) => {
     headerHeight = 44,
     rowHeight = 40,
     scanned = 0,
+    threshold = 100,
     totalItemsCount = 0,
     onRowClick = () => {},
     onSearch = () => {},
@@ -58,6 +59,7 @@ const VirtualTable = (props: IProps) => {
     onChangeWidth = () => {},
     expandedRows = [],
     setExpandedRows = () => {},
+    onRowsRendered: onRowsRenderedProps,
     cellCache = new CellMeasurerCache({
       fixedWidth: true,
       minHeight: rowHeight,
@@ -107,7 +109,7 @@ const VirtualTable = (props: IProps) => {
   }, [forceScrollTop])
 
   useEffect(() => {
-    const selectedRowIndex = selectedKey ? findIndex(items, { name: selectedKey.name }) : null
+    const selectedRowIndex = selectedKey ? findIndex(items, ({ name }) => isEqualBuffers(name, selectedKey.name)) : null
     setSelectedRowIndex(isNumber(selectedRowIndex) && selectedRowIndex > -1 ? selectedRowIndex : null)
   }, [selectedKey, items])
 
@@ -179,7 +181,7 @@ const VirtualTable = (props: IProps) => {
             style={{ justifyContent: column.alignment, wordBreak: 'break-word' }}
             role="presentation"
           >
-            {column?.render?.(cellData, rowData, expandedRows.indexOf(rowIndex) !== -1)}
+            {column?.render?.(cellData, rowData, expandedRows.indexOf(rowIndex) !== -1, rowIndex)}
           </div>
         </CellMeasurer>
       )
@@ -377,7 +379,7 @@ const VirtualTable = (props: IProps) => {
           <InfiniteLoader
             isRowLoaded={isRowLoaded}
             minimumBatchSize={SCAN_COUNT_DEFAULT}
-            threshold={100}
+            threshold={threshold}
             loadMoreRows={loadMoreRows}
             rowCount={totalItemsCount}
           >
@@ -387,7 +389,6 @@ const VirtualTable = (props: IProps) => {
                 onRowDoubleClick={() => clearSelectTimeout()}
                 estimatedRowSize={rowHeight}
                 ref={registerChild}
-                onRowsRendered={onRowsRendered}
                 headerHeight={headerHeight}
                 rowHeight={cellCache.rowHeight}
                 width={tableWidth > width ? tableWidth : width}
@@ -411,6 +412,10 @@ const VirtualTable = (props: IProps) => {
                 onScroll={onScroll}
                 scrollTop={forceScrollTop}
                 deferredMeasurementCache={cellCache}
+                onRowsRendered={(props) => {
+                  onRowsRendered(props)
+                  onRowsRenderedProps?.(props)
+                }}
               >
                 {columns.map((column: ITableColumn, index: number) => (
                   <Column

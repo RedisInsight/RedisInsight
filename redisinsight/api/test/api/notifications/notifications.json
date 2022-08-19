@@ -3,11 +3,15 @@
     {
       "title": "Title-1",
       "body": "Body-1",
+      "category": "release",
+      "categoryColor": "#d2b04c",
       "timestamp": 1656054100
     },
     {
       "title": "Title-3",
       "body": "Body-3",
+      "category": "news",
+      "categoryColor": "#f18f49",
       "timestamp": 1656054300
     },
     {

@@ -8,6 +8,7 @@ import {
   mockStore,
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { bufferToString, stringToBuffer } from 'uiSrc/utils'
 import {
   defaultSelectedKeyAction,
   refreshKeyInfo,
@@ -343,31 +344,31 @@ describe('hash slice', () => {
   describe('removeFieldsFromList', () => {
     it('should properly set the error', () => {
       // Arrange
-      const initailStateRemove = {
+      const initialStateRemove = {
         ...initialState,
         data: {
           ...initialState.data,
           fields: [
-            { field: 'hash field', value: 'hash value' },
-            { field: 'hash field2', value: 'hash value' },
-            { field: 'hash field3', value: 'hash value' },
+            { field: stringToBuffer('hash field'), value: 'hash value' },
+            { field: stringToBuffer('hash field2'), value: 'hash value' },
+            { field: stringToBuffer('hash field3'), value: 'hash value' },
           ],
         },
       }
 
-      const data = ['hash field', 'hash field3']
+      const data = [stringToBuffer('hash field'), stringToBuffer('hash field3')]
 
       const state = {
-        ...initailStateRemove,
+        ...initialStateRemove,
         data: {
-          ...initailStateRemove.data,
-          total: initailStateRemove.data.total - 1,
-          fields: [{ field: 'hash field2', value: 'hash value' }],
+          ...initialStateRemove.data,
+          total: initialStateRemove.data.total - 1,
+          fields: [{ field: stringToBuffer('hash field2'), value: 'hash value' }],
         },
       }
 
       // Act
-      const nextState = reducer(initailStateRemove, removeFieldsFromList(data))
+      const nextState = reducer(initialStateRemove, removeFieldsFromList(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -563,8 +564,8 @@ describe('hash slice', () => {
         async () => {
           // Arrange
 
-          const key = 'key'
-          const fields = ['hash field', 'hash field 2']
+          const key = stringToBuffer('key')
+          const fields = ['hash field', 'hash field 2'].map((field) => stringToBuffer(field))
           const responsePayload = { status: 200, data: { affected: 2 } }
           const nextState = Object.assign(initialStateDefault, {
             browser: {
@@ -595,7 +596,7 @@ describe('hash slice', () => {
             addMessageNotification(
               successMessages.REMOVED_KEY_VALUE(
                 key,
-                fields.join(''),
+                fields.map((field) => bufferToString(field)).join(''),
                 'Field'
               )
             )

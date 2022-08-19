@@ -15,11 +15,12 @@ import {
   EuiOutsideClickDetector,
   EuiFocusTrap,
   EuiWindowEvent,
+  EuiToolTip,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import styles from './styles.module.scss'
 
-type Positions = 'top' | 'bottom' | 'left' | 'right'
+type Positions = 'top' | 'bottom' | 'left' | 'right' | 'inside'
 type Design = 'default' | 'separate'
 
 export interface Props {
@@ -44,6 +45,8 @@ export interface Props {
   iconSize?: IconSize
   viewChildrenMode?: boolean
   autoComplete?: string
+  controlsClassName?: string
+  disabledTooltipText?: { title: string, text: string }
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -69,6 +72,8 @@ const InlineItemEditor = (props: Props) => {
     iconSize,
     isDisabled,
     autoComplete = 'off',
+    controlsClassName,
+    disabledTooltipText,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -130,6 +135,27 @@ const InlineItemEditor = (props: Props) => {
   const isDisabledApply = (): boolean =>
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
+  const ApplyBtn = () => (
+    <EuiToolTip
+      anchorClassName={styles.tooltip}
+      position="bottom"
+      display="inlineBlock"
+      title={isDisabled && disabledTooltipText?.title}
+      content={isDisabled && disabledTooltipText?.text}
+    >
+      <EuiButtonIcon
+        iconSize={iconSize ?? 'l'}
+        iconType="check"
+        color="primary"
+        type="submit"
+        aria-label="Apply"
+        className={cx(styles.btn, styles.applyBtn)}
+        isDisabled={isDisabledApply()}
+        data-testid="apply-btn"
+      />
+    </EuiToolTip>
+  )
+
   return (
     <>
       {viewChildrenMode
@@ -174,6 +200,7 @@ const InlineItemEditor = (props: Props) => {
                       styles.controls,
                       styles[`controls${capitalize(controlsPosition)}`],
                       styles[`controls${capitalize(controlsDesign)}`],
+                      controlsClassName,
                     )}
                   >
                     <EuiButtonIcon
@@ -186,16 +213,7 @@ const InlineItemEditor = (props: Props) => {
                       isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
-                    <EuiButtonIcon
-                      iconSize={iconSize ?? 'l'}
-                      iconType="check"
-                      color="primary"
-                      type="submit"
-                      aria-label="Apply"
-                      className={cx(styles.btn, styles.applyBtn)}
-                      isDisabled={isDisabledApply()}
-                      data-testid="apply-btn"
-                    />
+                    <ApplyBtn />
                   </div>
                 </EuiForm>
               </EuiFocusTrap>

@@ -2,10 +2,11 @@
   margin: 0 16px 0;
   height: calc(100% - 70px);
   background-color: var(--euiColorEmptyShade);
-  padding: 18px;
+  padding: 24px 18px;
 
   .title {
-    font-size: 24px;
+    font-size: 16px;
+    line-height: 24px;
   }
 
   .actionsLine {

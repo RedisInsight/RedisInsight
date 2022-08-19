@@ -3,7 +3,11 @@ import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import SetDetails, { Props } from './SetDetails'
 
-const members = ['member1', 'member2', 'member3']
+const members = [
+  { type: 'Buffer', data: [49] },
+  { type: 'Buffer', data: [50] },
+  { type: 'Buffer', data: [51] },
+]
 const mockedProps = mock<Props>()
 
 jest.mock('uiSrc/slices/browser/set', () => {
@@ -13,8 +17,8 @@ jest.mock('uiSrc/slices/browser/set', () => {
     setDataSelector: jest.fn().mockReturnValue({
       ...defaultState,
       total: 3,
-      key: 'z',
-      keyName: 'z',
+      key: { type: 'Buffer', data: [49] },
+      keyName: { type: 'Buffer', data: [49] },
       members,
     }),
     fetchSetMembers: () => jest.fn()
@@ -50,6 +54,6 @@ describe('SetDetails', () => {
   it('should render delete popup after click remove button', () => {
     render(<SetDetails {...instance(mockedProps)} />)
     fireEvent.click(screen.getAllByTestId(/set-remove-btn/)[0])
-    expect(screen.getByTestId(/set-remove-btn-member1-icon/)).toBeInTheDocument()
+    expect(screen.getByTestId(/set-remove-btn-1-icon/)).toBeInTheDocument()
   })
 })

@@ -11,7 +11,7 @@ import {
   EuiFlexItem,
   EuiPanel,
 } from '@elastic/eui'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import {
   addSetKey, addKeyStateSelector,
 } from 'uiSrc/slices/browser/keys'
@@ -109,8 +109,8 @@ const AddKeySet = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateSetWithExpireDto = {
-      keyName,
-      members: members.map((item) => item.name)
+      keyName: stringToBuffer(keyName),
+      members: members.map((item) => stringToBuffer(item.name))
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL

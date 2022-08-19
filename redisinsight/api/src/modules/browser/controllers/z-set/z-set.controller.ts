@@ -6,11 +6,11 @@ import {
   Patch,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import {
   AddMembersToZSetDto,
   CreateZSetWithExpireDto,
@@ -26,15 +26,17 @@ import { ZSetBusinessService } from '../../services/z-set-business/z-set-busines
 
 @ApiTags('ZSet')
 @Controller('/zSet')
-@UsePipes(new ValidationPipe({ transform: true }))
-export class ZSetController {
-  constructor(private zSetBusinessService: ZSetBusinessService) {}
+export class ZSetController extends BaseController {
+  constructor(private zSetBusinessService: ZSetBusinessService) {
+    super();
+  }
 
   @Post('')
   @ApiRedisInstanceOperation({
     description: 'Set key to hold ZSet data type',
     statusCode: 201,
   })
+  @ApiQueryRedisStringEncoding()
   async createSet(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: CreateZSetWithExpireDto,
@@ -60,6 +62,7 @@ export class ZSetController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async getZSet(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: GetZSetMembersDto,
@@ -77,6 +80,7 @@ export class ZSetController {
     description: 'Add the specified members to the ZSet stored at key',
     statusCode: 200,
   })
+  @ApiQueryRedisStringEncoding()
   async addMembers(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: AddMembersToZSetDto,
@@ -94,6 +98,7 @@ export class ZSetController {
     description: 'Update the specified member in the ZSet stored at key',
     statusCode: 200,
   })
+  @ApiQueryRedisStringEncoding()
   async updateMember(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: UpdateMemberInZSetDto,
@@ -118,6 +123,7 @@ export class ZSetController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async deleteMembers(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: DeleteMembersFromZSetDto,
@@ -143,6 +149,7 @@ export class ZSetController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async searchZSet(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: SearchZSetMembersDto,

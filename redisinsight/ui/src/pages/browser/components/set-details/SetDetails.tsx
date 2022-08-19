@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
@@ -8,11 +8,17 @@ import {
 } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 
-import { createDeleteFieldHeader, createDeleteFieldMessage, formatLongName } from 'uiSrc/utils'
-import { KeyTypes } from 'uiSrc/constants'
+import {
+  bufferToString,
+  createDeleteFieldHeader,
+  createDeleteFieldMessage,
+  formatLongName,
+  formattingBuffer,
+} from 'uiSrc/utils'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import {
   deleteSetMembers,
   fetchSetMembers,
@@ -28,6 +34,7 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
+import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import styles from './styles.module.scss'
 
 const suffix = '_set'
@@ -47,18 +54,42 @@ export interface Props {
 
 const SetDetails = (props: Props) => {
   const { isFooterOpen } = props
+
+  const { loading } = useSelector(setSelector)
+  const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
+  const { length = 0, name: key } = useSelector(selectedKeyDataSelector) ?? {}
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+
   const [match, setMatch] = useState('*')
   const [deleting, setDeleting] = useState('')
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
+  const [members, setMembers] = useState<any[]>(loadedMembers)
+  const [viewFormat, setViewFormat] = useState(viewFormatProp)
 
-  const { loading } = useSelector(setSelector)
-  const { key = '', members, total, nextCursor } = useSelector(setDataSelector)
-  const { length = 0 } = useSelector(selectedKeyDataSelector) ?? {}
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
-  const { viewType } = useSelector(keysSelector)
+  const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    setMembers(loadedMembers)
+
+    if (loadedMembers.length < members.length) {
+      formattedLastIndexRef.current = 0
+    }
+
+    if (viewFormat !== viewFormatProp) {
+      setExpandedRows([])
+      setViewFormat(viewFormatProp)
+
+      cellCache.clearAll()
+      setTimeout(() => {
+        cellCache.clearAll()
+      }, 0)
+    }
+  }, [loadedMembers, viewFormatProp])
 
   const closePopover = () => {
     setDeleting('')
@@ -84,7 +115,7 @@ const SetDetails = (props: Props) => {
   }
 
   const handleDeleteMember = (member = '') => {
-    dispatch(deleteSetMembers(key, [member], onSuccessRemoved))
+    dispatch(deleteSetMembers(key, [stringToBuffer(member, viewFormat)], onSuccessRemoved))
     closePopover()
   }
 
@@ -143,6 +174,8 @@ const SetDetails = (props: Props) => {
         largestCellLength: members[rowIndex]?.length || 0,
       }
     })
+
+    cellCache.clearAll()
   }
 
   const columns:ITableColumn[] = [
@@ -153,10 +186,12 @@ const SetDetails = (props: Props) => {
       staySearchAlwaysOpen: true,
       initialSearchValue: '',
       truncateText: true,
-      render: function Name(_name: string, member: string, expanded: boolean = false) {
+      render: function Name(_name: string, memberItem: string, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = member.substring(0, 300)
+        const member = bufferToString(memberItem)
         const tooltipContent = formatLongName(member)
+        const { value, isValid } = formattingBuffer(memberItem, viewFormatProp, { expanded })
+        const cellContent = value.substring?.(0, 200) ?? value
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
@@ -166,7 +201,7 @@ const SetDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title="Member"
+                  title={isValid ? 'Member' : `Failed to convert to ${viewFormatProp}`}
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="left"
@@ -175,7 +210,7 @@ const SetDetails = (props: Props) => {
                   <>{cellContent}</>
                 </EuiToolTip>
               )}
-              {expanded && member}
+              {expanded && value}
             </div>
           </EuiText>
         )
@@ -188,13 +223,14 @@ const SetDetails = (props: Props) => {
       minWidth: 60,
       maxWidth: 60,
       headerClassName: 'hidden',
-      render: function Actions(_act: any, cellData: string) {
+      render: function Actions(_act: any, memberItem: string) {
+        const member = bufferToString(memberItem, viewFormat)
         return (
           <div className="value-table-actions">
             <PopoverDelete
-              header={createDeleteFieldHeader(cellData)}
-              text={createDeleteFieldMessage(key)}
-              item={cellData}
+              header={createDeleteFieldHeader(memberItem)}
+              text={createDeleteFieldMessage(key ?? '')}
+              item={member}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}
@@ -202,7 +238,7 @@ const SetDetails = (props: Props) => {
               showPopover={showPopover}
               handleDeleteItem={handleDeleteMember}
               handleButtonClick={handleRemoveIconClick}
-              testid={`set-remove-btn-${cellData}`}
+              testid={`set-remove-btn-${member}`}
               appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null}
             />
           </div>

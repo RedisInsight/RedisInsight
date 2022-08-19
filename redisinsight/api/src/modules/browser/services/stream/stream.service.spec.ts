@@ -3,99 +3,25 @@ import { when } from 'jest-when';
 import { mockRedisConsumer, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { BrowserToolKeysCommands, BrowserToolStreamCommands } from 'src/modules/browser/constants/browser-tool-commands';
+import {
+  BrowserToolKeysCommands,
+  BrowserToolStreamCommands,
+} from 'src/modules/browser/constants/browser-tool-commands';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
-import { AddStreamEntriesDto, GetStreamEntriesDto, StreamEntryDto } from 'src/modules/browser/dto/stream.dto';
 import {
   BadRequestException, ConflictException, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes, SortOrder } from 'src/constants';
+import {
+  mockAddStreamEntriesDto,
+  mockEmptyStreamEntriesReply, mockEmptyStreamInfo,
+  mockEmptyStreamInfoReply, mockGetStreamEntriesDto, mockStreamEntries, mockStreamEntriesReply,
+  mockStreamEntry, mockStreamInfo, mockStreamInfoReply,
+} from 'src/modules/browser/__mocks__';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
-};
-
-const mockStreamEntry: StreamEntryDto = {
-  id: '*',
-  fields: [
-    ['field1', 'value1'],
-  ],
-};
-const mockAddStreamEntriesDto: AddStreamEntriesDto = {
-  keyName: 'testList',
-  entries: [mockStreamEntry],
-};
-const mockStreamInfoReply = [
-  'length',
-  2,
-  'radix-tree-keys',
-  1,
-  'radix-tree-nodes',
-  2,
-  'last-generated-id',
-  '1651130346487-1',
-  'groups',
-  0,
-  'first-entry',
-  ['1651130346487-0', ['field1', 'value1', 'field2', 'value2']],
-  'last-entry',
-  ['1651130346487-1', ['field1', 'value1', 'field2', 'value2']],
-];
-
-const mockEmptyStreamInfoReply = [
-  'length',
-  0,
-  'radix-tree-keys',
-  1,
-  'radix-tree-nodes',
-  2,
-  'last-generated-id',
-  '1651130346487-1',
-  'groups',
-  0,
-  'first-entry',
-  null,
-  'last-entry',
-  null,
-];
-
-const mockEmptyStreamInfo = {
-  keyName: mockAddStreamEntriesDto.keyName,
-  total: 0,
-  lastGeneratedId: '1651130346487-1',
-  firstEntry: null,
-  lastEntry: null,
-};
-
-const mockStreamInfo = {
-  keyName: mockAddStreamEntriesDto.keyName,
-  total: 2,
-  lastGeneratedId: '1651130346487-1',
-  firstEntry: {
-    id: '1651130346487-0',
-    fields: [ ['field1', 'value1'], ['field2', 'value2'] ],
-  },
-  lastEntry: {
-    id: '1651130346487-1',
-    fields: [ ['field1', 'value1'], ['field2', 'value2'] ],
-  },
-};
-const mockStreamEntriesReply = [
-  ['1651130346487-1', ['field1', 'value1', 'field2', 'value2']],
-  ['1651130346487-0', ['field1', 'value1', 'field2', 'value2']],
-];
-const mockEmptyStreamEntriesReply = [];
-const mockStreamEntries = [
-  { id: '1651130346487-1', fields: [ ['field1', 'value1'], ['field2', 'value2'] ] },
-  { id: '1651130346487-0', fields: [ ['field1', 'value1'], ['field2', 'value2'] ] },
-];
-
-const mockGetStreamEntriesDto: GetStreamEntriesDto = {
-  keyName: mockAddStreamEntriesDto.keyName,
-  start: '-',
-  end: '+',
-  sortOrder: SortOrder.Desc,
 };
 
 describe('StreamService', () => {
@@ -133,7 +59,7 @@ describe('StreamService', () => {
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
         [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-        ...mockStreamEntry.fields[0]],
+          mockStreamEntry.fields[0].name, mockStreamEntry.fields[0].value],
         [BrowserToolKeysCommands.Expire, mockAddStreamEntriesDto.keyName, 1000],
       ]);
     });
@@ -145,7 +71,7 @@ describe('StreamService', () => {
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
         [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          ...mockStreamEntry.fields[0]],
+          mockStreamEntry.fields[0].name, mockStreamEntry.fields[0].value],
       ]);
     });
     it('should throw error key exists', async () => {
@@ -239,7 +165,7 @@ describe('StreamService', () => {
       ).resolves.not.toThrow();
       expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
         [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          ...mockStreamEntry.fields[0]],
+          mockStreamEntry.fields[0].name, mockStreamEntry.fields[0].value],
       ]);
     });
     it('should throw Not Found when key does not exists', async () => {
@@ -318,13 +244,13 @@ describe('StreamService', () => {
       }
     });
   });
-  describe('get etries from empty stream', () => {
+  describe('get entries from empty stream', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
         .mockResolvedValue(true);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoStream, [mockAddStreamEntriesDto.keyName])
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoStream, expect.anything())
         .mockResolvedValue(mockEmptyStreamInfoReply);
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolStreamCommands.XRevRange, expect.anything())
@@ -343,10 +269,10 @@ describe('StreamService', () => {
   describe('getEntries', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValue(true);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoStream, [mockAddStreamEntriesDto.keyName])
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoStream, expect.anything())
         .mockResolvedValue(mockStreamInfoReply);
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolStreamCommands.XRevRange, expect.anything())

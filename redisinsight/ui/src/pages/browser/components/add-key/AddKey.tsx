@@ -16,7 +16,8 @@ import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCom
 import { addKeyStateSelector, resetAddKey, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash/AddKeyHash'
 import AddKeyZset from './AddKeyZset/AddKeyZset'
@@ -29,7 +30,7 @@ import AddKeyStream from './AddKeyStream/AddKeyStream'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onAddKeyPanel: (value: boolean, keyName?: string) => void
+  onAddKeyPanel: (value: boolean, keyName?: RedisResponseBuffer) => void
   onClosePanel: () => void
 }
 const AddKey = (props: Props) => {
@@ -85,7 +86,7 @@ const AddKey = (props: Props) => {
   }
 
   const closeAddKeyPanel = (isCancelled?: boolean) => {
-    onAddKeyPanel(false, keyName)
+    onAddKeyPanel(false, stringToBuffer(keyName))
     if (isCancelled) {
       onClosePanel()
       closeKeyTelemetry()

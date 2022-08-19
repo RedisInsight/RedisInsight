@@ -43,7 +43,7 @@ const mockKeyList = (props: KeyListProps) => (
     <button
       type="button"
       data-testid="loadMoreItems-btn"
-      onClick={() => props?.loadMoreItems?.({ startIndex: 1, stopIndex: 2 })}
+      onClick={() => props?.handleScanMoreClick?.({ startIndex: 1, stopIndex: 2 })}
     >
       loadMoreItems
     </button>

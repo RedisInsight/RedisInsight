@@ -7,7 +7,6 @@ import {
   streamSelector,
   setStreamViewType,
   fetchConsumerGroups,
-  streamGroupsSelector,
   selectedGroupSelector,
   selectedConsumerSelector,
 } from 'uiSrc/slices/browser/stream'
@@ -21,8 +20,8 @@ import styles from './styles.module.scss'
 
 const StreamTabs = () => {
   const { viewType } = useSelector(streamSelector)
-  const { name: selectedGroupName = '' } = useSelector(selectedGroupSelector) ?? {}
-  const { name: selectedConsumerName = '' } = useSelector(selectedConsumerSelector) ?? {}
+  const { nameString: selectedGroupName = '' } = useSelector(selectedGroupSelector) ?? {}
+  const { nameString: selectedConsumerName = '' } = useSelector(selectedConsumerSelector) ?? {}
 
   const { instanceId } = useParams<{ instanceId: string }>()
 

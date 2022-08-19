@@ -116,6 +116,7 @@ export const generateNCommandExecutions = async (
         enableRedirection: true,
       }),
       role: 'ALL',
+      mode: 'ASCII',
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
       createdAt: new Date(),
       ...partial,

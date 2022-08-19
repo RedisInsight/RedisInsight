@@ -68,8 +68,52 @@
   width: 44px;
   position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+}
+
+.textBtn.textBtn {
+  border: none !important;
+  width: 24px;
+  height: 24px !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  :global(.euiButton__content) {
+    padding: 0 !important;
+  }
+
+  &:hover, 
+  &:focus {
+    border: 1px solid var(--buttonSecondaryHoverColor) !important;
+  }
+
+  svg path {
+    fill: var(--euiTextSubduedColor) !important;
+  }
+
+  &:hover svg path,
+  &:focus svg path {
+    fill: var(--wbHoverIconColor) !important;
+  }
+  
+  &.activeBtn {
+    background: var(--browserComponentActive) !important;
+    border: 1px solid var(--euiColorSecondary);
+
+    svg path {
+      fill: var(--wbActiveIconColor) !important;
+    }
+
+    &:hover,
+    &:focus {
+      border: 1px solid var(--buttonSecondaryHoverColor) !important;
+    }
+  }
 }
 
 .submitButton {

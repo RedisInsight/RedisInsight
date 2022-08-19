@@ -17,6 +17,7 @@ import {
   setReJSONDataAction
 } from 'uiSrc/slices/browser/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
+import { bufferToString } from 'uiSrc/utils'
 import { JSONErrors } from '../constants'
 import JSONScalar from '../JSONScalar/JSONScalar'
 import JSONObject from '../JSONObject/JSONObject'
@@ -264,7 +265,7 @@ class RejsonDetails extends React.Component<Props, State> {
             deleteMsg={deleteMsg}
             onJSONPropertyEdited={onJSONPropertyEdited}
             parentPath=""
-            keyName={selectedKey}
+            keyName={bufferToString(selectedKey)}
             onJSONPropertyDeleted={onJSONPropertyDeleted}
             onJSONPropertyAdded={onJSONPropertyAdded}
             value={data as JSONScalarValue}
@@ -615,7 +616,7 @@ class RejsonDetails extends React.Component<Props, State> {
                 onJSONPropertyAdded={onJSONPropertyAdded}
                 parentPath=""
                 onJSONPropertyEdited={onJSONPropertyEdited}
-                keyName={selectedKey}
+                keyName={bufferToString(selectedKey)}
                 value={data as JSONScalarValue}
                 handleSubmitUpdateValue={handleSubmitUpdateValue}
                 handleSubmitRemoveKey={(path, jsonKeyName) => this.onClickRemoveKey(path, jsonKeyName)}

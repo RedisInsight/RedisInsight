@@ -1,10 +1,12 @@
 import { ReactNode } from 'react'
-import { CellMeasurerCache } from 'react-virtualized'
+import { CellMeasurerCache, IndexRange, OverscanIndexRange } from 'react-virtualized'
 import {
   SortOrder,
   TableCellAlignment,
   TableCellTextAlignment,
 } from 'uiSrc/constants'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { Nullable } from 'uiSrc/utils'
 
 export interface IColumnSearchState {
   initialSearchValue?: string
@@ -37,7 +39,7 @@ export interface ITableColumn {
   absoluteWidth?: number | string
   alignment?: TableCellAlignment
   textAlignment?: TableCellTextAlignment
-  render?: (cellData?: any, columnItem?: any, expanded?: boolean) => any
+  render?: (cellData?: any, columnItem?: any, expanded?: boolean, rowIndex?: number) => any
   className?: string
   prependSearchName?: string
   staySearchAlwaysOpen?: boolean
@@ -48,12 +50,13 @@ export interface IProps {
   loading: boolean
   scanned?: number
   columns: ITableColumn[]
+  threshold?: number
   loadMoreItems?: (config: any) => void
   rowHeight?: number
   footerHeight?: number
   selectable?: boolean
   expandable?: boolean
-  keyName?: string
+  keyName?: RedisResponseBuffer
   headerHeight?: number
   searching?: boolean
   onRowClick?: (rowData: any) => void
@@ -63,7 +66,7 @@ export interface IProps {
   onChangeSorting?: (cellData?: any, columnItem?: any) => void
   items?: any
   noItemsMessage?: string | string[] | JSX.Element
-  totalItemsCount?: number
+  totalItemsCount?: Nullable<number>
   selectedKey?: any
   sortedColumn?: ISortedColumn
   disableScroll?: boolean
@@ -75,7 +78,9 @@ export interface IProps {
   onChangeWidth?: (width: number) => void
   cellCache?: CellMeasurerCache
   expandedRows?: number[]
+  overscanRowCount?: number
   setExpandedRows?: (rows: number[]) => void
+  onRowsRendered?: (info: IndexRange & OverscanIndexRange) => void
 }
 
 export interface ISortedColumn {

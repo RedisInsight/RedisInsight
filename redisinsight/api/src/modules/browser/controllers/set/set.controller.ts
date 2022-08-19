@@ -6,13 +6,13 @@ import {
   Param,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody, ApiOkResponse, ApiOperation, ApiTags,
 } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import {
   AddMembersToSetDto,
   CreateSetWithExpireDto,
@@ -25,14 +25,16 @@ import { SetBusinessService } from '../../services/set-business/set-business.ser
 
 @ApiTags('Set')
 @Controller('set')
-export class SetController {
-  constructor(private setBusinessService: SetBusinessService) {}
+export class SetController extends BaseController {
+  constructor(private setBusinessService: SetBusinessService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold Set data type' })
   @ApiRedisParams()
   @ApiBody({ type: CreateSetWithExpireDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async createSet(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: CreateSetWithExpireDto,
@@ -57,7 +59,7 @@ export class SetController {
     description: 'Specified members of the set stored at key.',
     type: GetSetMembersResponse,
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async getMembers(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: GetSetMembersDto,
@@ -76,7 +78,7 @@ export class SetController {
   })
   @ApiRedisParams()
   @ApiBody({ type: AddMembersToSetDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async addMembers(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: AddMembersToSetDto,
@@ -95,7 +97,7 @@ export class SetController {
   })
   @ApiRedisParams()
   @ApiBody({ type: DeleteMembersFromSetDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiQueryRedisStringEncoding()
   async deleteMembers(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: DeleteMembersFromSetDto,

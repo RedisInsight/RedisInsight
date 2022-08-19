@@ -4,13 +4,19 @@ import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { RedisToolFactory } from 'src/modules/shared/services/base/redis-tool.factory';
+import { CommandsModule } from 'src/modules/commands/commands.module';
+import { CommandsService } from 'src/modules/commands/commands.service';
+import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
 import { AppTool } from 'src/models';
+import config from 'src/utils/config';
 import { CliController } from './controllers/cli.controller';
 import { CliBusinessService } from './services/cli-business/cli-business.service';
 import { CliAnalyticsService } from './services/cli-analytics/cli-analytics.service';
 
+const COMMANDS_CONFIGS = config.get('commands');
+
 @Module({
-  imports: [SharedModule],
+  imports: [SharedModule, CommandsModule],
   controllers: [CliController],
   providers: [
     CliBusinessService,
@@ -22,6 +28,12 @@ import { CliAnalyticsService } from './services/cli-analytics/cli-analytics.serv
         { enableAutoConnection: false },
       ),
       inject: [RedisToolFactory],
+    },
+    {
+      provide: CommandsService,
+      useFactory: () => new CommandsService(
+        COMMANDS_CONFIGS.map(({ name, url }) => new CommandsJsonProvider(name, url)),
+      ),
     },
   ],
 })

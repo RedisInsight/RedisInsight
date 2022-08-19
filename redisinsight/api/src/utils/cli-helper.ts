@@ -239,7 +239,10 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
           result += '\\a';
           break;
         case '"':
-          result += `\\${char}`;
+          result += '\\"';
+          break;
+        case '\\':
+          result += '\\\\';
           break;
         case '\b':
           result += '\\b';
@@ -261,6 +264,8 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
   return result;
 };
 
+export const getUTF8FromBuffer = (reply: Buffer): string => reply.toString('utf8');
+
 /**
  * Generates a Buffer from escaped string representation
  * An opposite for getASCIISafeStringFromBuffer
@@ -270,6 +275,25 @@ export const getBufferFromSafeASCIIString = (str: string): Buffer => {
   const bytes = [];
 
   for (let i = 0; i < str.length; i += 1) {
+    if (str[i] === '\\') {
+      if (str[i + 1] === 'x') {
+        const hexString = str.substr(i + 2, 2);
+        if (isHex(hexString)) {
+          bytes.push(Buffer.from(hexString, 'hex'));
+          i += 3;
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+      }
+
+      if (str[i + 1] === '\\') {
+        bytes.push(Buffer.from('\\'));
+        i += 1;
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+    }
+
     if (str[i] === '\\' && str[i + 1] === 'x') {
       const hexString = str.substr(i + 2, 2);
       if (isHex(hexString)) {

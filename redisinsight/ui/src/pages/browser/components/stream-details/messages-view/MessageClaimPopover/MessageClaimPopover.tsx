@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react'
+import React, { useState, useEffect, ChangeEvent, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -20,20 +20,20 @@ import {
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
 
+import { isEqualBuffers, validateNumber } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
-import { validateNumber } from 'uiSrc/utils'
 import { prepareDataForClaimRequest, getDefaultConsumer, ClaimTimeOptions } from 'uiSrc/utils/streamUtils'
 import { ClaimPendingEntryDto, ClaimPendingEntriesResponse, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
 
 const getConsumersOptions = (consumers: ConsumerDto[]) => (
   consumers.map((consumer) => ({
-    value: consumer.name,
+    value: consumer.name?.viewValue,
     inputDisplay: (
       <EuiText size="m" className={styles.option} data-testid="consumer-option">
-        <EuiText className={styles.consumerName}>{consumer.name}</EuiText>
+        <EuiText className={styles.consumerName}>{consumer.name?.viewValue}</EuiText>
         <EuiText size="s" className={styles.pendingCount} data-testid="pending-count">
           {`pending: ${consumer.pending}`}
         </EuiText>
@@ -134,13 +134,14 @@ const MessageClaimPopover = (props: Props) => {
   }
 
   useEffect(() => {
-    const consumersWithoutCurrent = filter(consumers, (consumer) => consumer.name !== currentConsumerName)
-    const sortedConsumers = orderBy(getConsumersOptions(consumersWithoutCurrent), ['name'], ['asc'])
+    const consumersWithoutCurrent = filter(consumers, (consumer) =>
+      !isEqualBuffers(consumer.name, currentConsumerName))
+    const sortedConsumers = orderBy(getConsumersOptions(consumersWithoutCurrent), ['name.viewValue'], ['asc'])
     if (sortedConsumers.length) {
       setConsumerOptions(sortedConsumers)
       setInitialValues({
         ...initialValues,
-        consumerName: getDefaultConsumer(consumersWithoutCurrent)?.name
+        consumerName: getDefaultConsumer(consumersWithoutCurrent)?.name?.viewValue
       })
     }
   }, [consumers, currentConsumerName])

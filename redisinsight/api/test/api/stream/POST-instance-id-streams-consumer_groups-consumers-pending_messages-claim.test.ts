@@ -8,7 +8,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall, getMainCheckFn
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -27,7 +27,7 @@ const dataSchema = Joi.object({
   entries: Joi.array().items(Joi.string().required().label('entries').messages({
     'any.required': '{#label} should not be empty',
   })).required().min(1).messages({
-    'array.sparse': 'each value in entries must be a string',
+    'array.sparse': 'each value in entries should not be empty',
   }),
   minIdleTime: Joi.number().integer().min(0),
   time: Joi.number().integer(),
@@ -47,24 +47,7 @@ const responseSchema = Joi.object().keys({
   affected: Joi.array().items(Joi.string()).required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /instance/:instanceId/streams/consumer-groups/consumers/pending-messages/claim', () => {
   requirements('!rte.crdt');
@@ -116,10 +99,22 @@ describe('POST /instance/:instanceId/streams/consumer-groups/consumers/pending-m
       {
         name: 'Should claim single entry',
         data: {
-          keyName: constants.TEST_STREAM_KEY_1,
-          groupName: constants.TEST_STREAM_GROUP_1,
-          consumerName: constants.TEST_STREAM_CONSUMER_2,
-          entries: [constants.TEST_STREAM_ID_3],
+          keyName: {
+            type: 'Buffer',
+            data: [...Buffer.from(constants.TEST_STREAM_KEY_1)],
+          },
+          groupName: {
+            type: 'Buffer',
+            data: [...Buffer.from(constants.TEST_STREAM_GROUP_1)],
+          },
+          consumerName: {
+            type: 'Buffer',
+            data: [...Buffer.from(constants.TEST_STREAM_CONSUMER_2)],
+          },
+          entries: [{
+            type: 'Buffer',
+            data: [...Buffer.from(constants.TEST_STREAM_ID_3)],
+          }],
           force: true,
         },
         responseSchema,

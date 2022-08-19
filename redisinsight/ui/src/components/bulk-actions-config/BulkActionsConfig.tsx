@@ -16,6 +16,7 @@ import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 
 interface IProps {
   retryDelay?: number;
@@ -30,7 +31,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-   if (!isActionTriggered || !instanceId || socketRef.current?.connected) {
+    if (!isActionTriggered || !instanceId || socketRef.current?.connected) {
       return
     }
 
@@ -91,7 +92,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
           match: search || '*',
         }
       },
-      onBulkDeleting
+      onBulkDeleting,
     )
   }
 
@@ -114,13 +115,18 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
   }
 
   const fetchBulkAction = (data: any) => {
-    if (data.status === 'error') {
+    if (data.status === BulkActionsServerEvent.Error) {
       sessionStorageService.set(BrowserStorageItem.bulkActionId, '')
       dispatch(setBulkActionsInitialState())
     }
   }
 
-  const onBulkDeleting = () => {
+  const onBulkDeleting = (data: any) => {
+    if (data.status === BulkActionsServerEvent.Error) {
+      dispatch(disconnectBulkAction())
+      dispatch(addErrorNotification({ response: { data: data.error } }))
+    }
+
     socketRef.current?.on(BulkActionsServerEvent.Overview, (payload: any) => {
       dispatch(setLoading(isProcessingBulkAction(payload.status)))
       dispatch(setOverview(payload))

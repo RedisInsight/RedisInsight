@@ -15,7 +15,6 @@ import {
   fetchKeys,
   keysDataSelector,
   keysSelector,
-  resetKeys,
   resetKeysData,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -54,10 +53,11 @@ interface IViewType {
 export interface Props {
   loading: boolean
   keysState: KeysStoreData
+  nextCursor: string
   loadKeys: (type?: KeyViewType) => void
-  loadMoreItems?: (config: any) => void
   handleAddKeyPanel: (value: boolean) => void
   handleBulkActionsPanel: (value: boolean) => void
+  handleScanMoreClick: (config: any) => void
 }
 
 const KeysHeader = (props: Props) => {
@@ -65,9 +65,10 @@ const KeysHeader = (props: Props) => {
     loading,
     keysState,
     loadKeys,
-    loadMoreItems,
     handleAddKeyPanel,
     handleBulkActionsPanel,
+    handleScanMoreClick,
+    nextCursor,
   } = props
 
   const { lastRefreshTime } = useSelector(keysDataSelector)
@@ -156,7 +157,7 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleScanMore = (config: any) => {
-    loadMoreItems?.({
+    handleScanMoreClick?.({
       ...config,
       stopIndex: (viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT) - 1,
     })
@@ -272,6 +273,7 @@ const KeysHeader = (props: Props) => {
                 loading={loading}
                 scanMoreStyle={scanMoreStyle}
                 loadMoreItems={handleScanMore}
+                nextCursor={nextCursor}
               />
               <AutoRefresh
                 postfix="keys"

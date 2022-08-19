@@ -46,12 +46,12 @@ describe('CommandsService', () => {
 
     service = module.get(CommandsService);
 
-    mainCommandsProvider.getCommands.mockResolvedValue(mockMainCommands);
-    redisearchCommandsProvider.getCommands.mockResolvedValue(mockRedisearchCommands);
-    redijsonCommandsProvider.getCommands.mockResolvedValue(mockRedijsonCommands);
-    redistimeseriesCommandsProvider.getCommands.mockResolvedValue(mockRedistimeseriesCommands);
-    redisaiCommandsProvider.getCommands.mockResolvedValue(mockRedisaiCommands);
-    redisgraphCommandsProvider.getCommands.mockResolvedValue(mockRedisgraphCommands);
+    mainCommandsProvider.getCommands.mockResolvedValue({ main: mockMainCommands });
+    redisearchCommandsProvider.getCommands.mockResolvedValue({ search: mockRedisearchCommands });
+    redijsonCommandsProvider.getCommands.mockResolvedValue({ json: mockRedijsonCommands });
+    redistimeseriesCommandsProvider.getCommands.mockResolvedValue({ timeseries: mockRedistimeseriesCommands });
+    redisaiCommandsProvider.getCommands.mockResolvedValue({ sai: mockRedisaiCommands });
+    redisgraphCommandsProvider.getCommands.mockResolvedValue({ graph: mockRedisgraphCommands });
   });
 
   describe('onModuleInit', () => {
@@ -76,6 +76,19 @@ describe('CommandsService', () => {
         ...mockRedisaiCommands,
         ...mockRedisgraphCommands,
         ...mockMainCommands,
+      });
+    });
+  });
+
+  describe('getCommandsGroups', () => {
+    it('Should return commands groups', async () => {
+      expect(await service.getCommandsGroups()).toEqual({
+        search: { ...mockRedisearchCommands },
+        json: { ...mockRedijsonCommands },
+        timeseries: { ...mockRedistimeseriesCommands },
+        sai: { ...mockRedisaiCommands },
+        graph: { ...mockRedisgraphCommands },
+        main: { ...mockMainCommands },
       });
     });
   });

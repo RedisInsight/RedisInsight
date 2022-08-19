@@ -17,12 +17,15 @@ import {
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
 import { KeyDto } from 'src/modules/browser/dto';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 
 @ApiTags('Streams')
 @Controller('streams/consumer-groups')
-@UsePipes(new ValidationPipe({ transform: true }))
-export class ConsumerGroupController {
-  constructor(private service: ConsumerGroupService) {}
+export class ConsumerGroupController extends BaseController {
+  constructor(private service: ConsumerGroupService) {
+    super();
+  }
 
   @Post('/get')
   @ApiRedisInstanceOperation({
@@ -37,6 +40,7 @@ export class ConsumerGroupController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async getGroups(
     @Param('dbInstance') instanceId: string,
       @Body() dto: KeyDto,

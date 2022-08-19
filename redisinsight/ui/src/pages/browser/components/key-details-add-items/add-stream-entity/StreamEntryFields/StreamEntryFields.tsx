@@ -45,7 +45,7 @@ const StreamEntryFields = (props: Props) => {
   const entryIdRef = useRef<HTMLInputElement>(null)
 
   const isClearDisabled = (item: any): boolean =>
-    fields.length === 1 && !(item.fieldName.length || item.fieldValue.length)
+    fields.length === 1 && !(item.name.length || item.value.length)
 
   useEffect(() => {
     if (prevCountFields.current !== 0 && prevCountFields.current < fields.length) {
@@ -75,8 +75,8 @@ const StreamEntryFields = (props: Props) => {
     const newState = fields.map((item) => (item.id === id
       ? {
         ...item,
-        fieldName: '',
-        fieldValue: ''
+        name: '',
+        value: ''
       } : item))
     setFields(newState)
   }
@@ -163,11 +163,11 @@ const StreamEntryFields = (props: Props) => {
                             fullWidth
                             name={`fieldName-${item.id}`}
                             id={`fieldName-${item.id}`}
-                            placeholder={config.fieldName.placeholder}
-                            value={item.fieldName}
+                            placeholder={config.name.placeholder}
+                            value={item.name}
                             onChange={(e: ChangeEvent<HTMLInputElement>) =>
                               handleFieldChange(
-                                'fieldName',
+                                'name',
                                 item.id,
                                 e.target.value
                               )}
@@ -184,11 +184,11 @@ const StreamEntryFields = (props: Props) => {
                             className={styles.fieldValue}
                             name={`fieldValue-${item.id}`}
                             id={`fieldValue-${item.id}`}
-                            placeholder={config.fieldValue.placeholder}
-                            value={item.fieldValue}
+                            placeholder={config.value.placeholder}
+                            value={item.value}
                             onChange={(e: ChangeEvent<HTMLInputElement>) =>
                               handleFieldChange(
-                                'fieldValue',
+                                'value',
                                 item.id,
                                 e.target.value
                               )}

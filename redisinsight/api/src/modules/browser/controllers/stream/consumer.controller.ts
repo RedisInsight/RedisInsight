@@ -15,12 +15,15 @@ import {
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
+import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 
 @ApiTags('Streams')
 @Controller('streams/consumer-groups/consumers')
-@UsePipes(new ValidationPipe({ transform: true }))
-export class ConsumerController {
-  constructor(private service: ConsumerService) {}
+export class ConsumerController extends BaseController {
+  constructor(private service: ConsumerService) {
+    super();
+  }
 
   @Post('/get')
   @ApiRedisInstanceOperation({
@@ -34,6 +37,7 @@ export class ConsumerController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async getConsumers(
     @Param('dbInstance') instanceId: string,
       @Body() dto: GetConsumersDto,
@@ -65,6 +69,7 @@ export class ConsumerController {
       },
     ],
   })
+  @ApiQueryRedisStringEncoding()
   async getPendingEntries(
     @Param('dbInstance') instanceId: string,
       @Body() dto: GetPendingEntriesDto,

@@ -3,6 +3,8 @@ import { orderBy } from 'lodash'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
 import { ClaimPendingEntryDto, ConsumerDto, ConsumerGroupDto, PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { RedisString } from 'uiSrc/slices/interfaces'
+import { isEqualBuffers } from './formatters'
 
 export enum ClaimTimeOptions {
   RELATIVE = 'idle',
@@ -78,18 +80,18 @@ export const prepareDataForClaimRequest = (
   })
 }
 
-export const updateConsumerGroups = (groups: ConsumerGroupDto[], groupName: string, consumers: ConsumerDto[]) =>
+export const updateConsumerGroups = (groups: ConsumerGroupDto[], groupName: RedisString, consumers: ConsumerDto[]) =>
   groups?.map((group: ConsumerGroupDto) => {
-    if (group.name === groupName) {
+    if (isEqualBuffers(group.name, groupName)) {
       group.consumers = consumers?.length
       group.pending = consumers?.reduce(((a, { pending }) => a + pending), 0)
     }
     return group
   })
 
-export const updateConsumers = (consumers: ConsumerDto[], consumerName: string, messages: PendingEntryDto[]) =>
+export const updateConsumers = (consumers: ConsumerDto[], consumerName: RedisString, messages: PendingEntryDto[]) =>
   consumers?.map((consumer: ConsumerDto) => {
-    if (consumer.name === consumerName) {
+    if (isEqualBuffers(consumer.name, consumerName)) {
       consumer.pending = messages?.length
     }
     return consumer

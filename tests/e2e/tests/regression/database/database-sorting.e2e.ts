@@ -38,7 +38,7 @@ const sortList = async(): Promise<string[]> => {
     return sortedDatabaseNames;
 };
 
-fixture.only `Remember database sorting`
+fixture `Remember database sorting`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -60,7 +60,7 @@ fixture.only `Remember database sorting`
     });
 test('Verify that sorting on the list of databases saved when database opened', async t => {
     // Sort by Connection Type
-    const sortedByConnectionType = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.name[1], ossSentinelConfig.name[0], ossStandaloneConfig.databaseName];
+    const sortedByConnectionType = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.name[0] || ossSentinelConfig.name[1], ossSentinelConfig.name[0] || ossSentinelConfig.name[1], ossStandaloneConfig.databaseName];
     await t.click(myRedisDatabasePage.sortByConnectionType);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedByConnectionType);
@@ -73,7 +73,7 @@ test('Verify that sorting on the list of databases saved when database opened', 
     // Sort by Host and Port
     await t.click(myRedisDatabasePage.sortByHostAndPort);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-    const sortedDatabaseHost = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.name[1], ossSentinelConfig.name[0], ossStandaloneConfig.databaseName];
+    const sortedDatabaseHost = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.name[0] || ossSentinelConfig.name[1], ossSentinelConfig.name[0] || ossSentinelConfig.name[1], ossStandaloneConfig.databaseName];
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedDatabaseHost);
     // Verify that sorting on the list of databases saved when databases list refreshed
     await t.eval(() => location.reload());

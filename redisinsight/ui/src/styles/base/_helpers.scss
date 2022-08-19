@@ -23,6 +23,15 @@
   justify-content: space-between;
 }
 
+.line-clamp-1 {
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box !important;
+}
+
 .line-clamp-2 {
   line-clamp: 2;
   -webkit-line-clamp: 2;

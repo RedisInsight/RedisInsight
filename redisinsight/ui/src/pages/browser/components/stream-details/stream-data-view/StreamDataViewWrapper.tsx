@@ -95,8 +95,24 @@ const StreamDataViewWrapper = (props: Props) => {
             id: field,
             label: field,
             render: () => {
-              const { value: formattedValue } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
-              return formattedValue || (<div>&nbsp;</div>)
+              const value = name ? bufferToString(name) : ''
+              const { value: formattedValue, isValid } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
+              const tooltipContent = formatLongName(value)
+              return (
+                <div
+                  style={{ display: 'flex', whiteSpace: 'break-spaces', wordBreak: 'break-all' }}
+                  data-testid={`stream-field-name-${field}`}
+                >
+                  <EuiToolTip
+                    title={isValid ? 'Field' : `Failed to convert to ${viewFormatProp}`}
+                    anchorClassName="line-clamp-1"
+                    position="bottom"
+                    content={tooltipContent}
+                  >
+                    <>{formattedValue}</>
+                  </EuiToolTip>
+                </div>
+              )
             }
           }
         }

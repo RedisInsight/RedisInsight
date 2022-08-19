@@ -90,8 +90,10 @@ const getChunkCountSearch = (command: string = '') => {
   return count
 }
 
-const getIsKeysOnly = (command: string = '') => (command.includes(CommandArgument.NoContent)
-    || command.includes(`${CommandArgument.Return} 0`))
+const getIsKeysOnly = (command: string = '') => (
+  command.toLowerCase().includes(CommandArgument.NoContent.toLowerCase())
+  || command.toLowerCase().includes(`${CommandArgument.Return.toLowerCase()} 0`)
+)
 
 export {
   parseInfoRawResponse,

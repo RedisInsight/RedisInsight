@@ -111,7 +111,7 @@ const StreamDataViewWrapper = (props: Props) => {
                         position="bottom"
                         content={tooltipContent}
                       >
-                        <>{formattedValue || (<div>&nbsp;</div>)}</>
+                        <>{formattedValue}</>
                       </EuiToolTip>
                     </div>
                   ) : (

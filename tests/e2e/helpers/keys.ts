@@ -46,6 +46,7 @@ export const keyTypes = [
  * Adding keys of each type through the cli
  * @param keyData The key data
  * @param keyValue The key value
+ * @param keyField The key field value
  */
 export async function addKeysViaCli(keyData: KeyData, keyValue?: string, keyField?: string): Promise<void> {
     await t.click(cliPage.cliExpandButton);

@@ -78,14 +78,10 @@ test('Verify that user can edit the values in the key regardless if they are val
             // Open key details and select formatter
             await browserPage.openKeyDetails(keysData[0].keyName);
             await browserPage.selectFormatter(formatter.format);
-            await t.click(browserPage.editHashButton);
-            await t.typeText(browserPage.hashFieldValueEditor, invalidText, { replace: true, paste: true });
-            await t.click(browserPage.applyButton);
+            await browserPage.editHashKeyValue(invalidText);
             // Verify that invalid value can be saved
             await t.expect(browserPage.hashFieldValue.textContent).contains(invalidText, `Invalid ${formatter.format} value is not saved`);
-            await t.click(browserPage.editHashButton);
-            await t.typeText(browserPage.hashFieldValueEditor, formatter.fromText, { replace: true, paste: true });
-            await t.click(browserPage.applyButton);
+            await browserPage.editHashKeyValue(formatter.fromText);
             // Verify that valid value can be saved
             await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromText, `Valid ${formatter.format} value is not saved`);
             await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).ok(`Value is not formatted to ${formatter.format}`);
@@ -117,18 +113,17 @@ test
         // Create new keys
         await addKeysViaCli(keysData, formatters[1].fromText);
     })('Verify that user can see highlighted key details in Msgpack format', async t => {
-        const valueSelector = browserPage.stringKeyValueInput;
-        // Open String key details
-        await browserPage.openKeyDetailsByKeyName(keysData[4].keyName);
+        // Open HaSH key details
+        await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
         // Verify that msgpack value not formatted with default formatter
-        await t.expect(valueSelector.find(browserPage.cssJsonValue).exists).notOk('Value is formatted to Msgpack');
+        await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).notOk('Value is formatted to Msgpack');
         // Add valid msgpack in HEX format
         await browserPage.selectFormatter('HEX');
-        await browserPage.editStringKeyValue(formatters[1].toText!);
+        await browserPage.editHashKeyValue(formatters[1].toText!);
         await browserPage.selectFormatter('Msgpack');
         // Verify that msgpack value is formatted and highlighted
-        await t.expect(valueSelector.innerText).contains('{\n    "field": "value"\n}', 'Value is not saved as msgpack');
-        await t.expect(valueSelector.find(browserPage.cssJsonValue).exists).ok('Value is not formatted to Msgpack');
+        await t.expect(browserPage.hashFieldValue.innerText).contains(formatters[1].fromText!, 'Value is not saved as msgpack');
+        await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).ok('Value is not formatted to Msgpack');
     });
 test
     .before(async() => {
@@ -164,9 +159,7 @@ test('Verify that user can edit value for Hash field in ASCII/HEX and convert th
             await browserPage.openKeyDetails(keysData[0].keyName);
             await browserPage.selectFormatter(formatter.format);
             // Add value in selected format
-            await t.click(browserPage.editHashButton);
-            await t.typeText(browserPage.hashFieldValueEditor, formatter.toText!, { replace: true, paste: true });
-            await t.click(browserPage.applyButton);
+            await browserPage.editHashKeyValue(formatter.toText!);
             // Verify that value saved in selected format
             await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.toText!, `${formatter.format} value is not saved`);
             await browserPage.selectFormatter('Unicode');

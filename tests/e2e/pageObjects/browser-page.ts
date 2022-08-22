@@ -469,7 +469,9 @@ export class BrowserPage {
         // Scan until finding element or all keys scanned
         while (true) {
             await t.click(this.scanMoreButton);
-            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) break;
+            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) {
+                break;
+            }
         }
     }
 
@@ -553,6 +555,17 @@ export class BrowserPage {
         await t.typeText(this.hashFieldInput, keyFieldValue);
         await t.typeText(this.hashValueInput, keyValue);
         await t.click(this.saveHashFieldButton);
+    }
+
+    /**
+     * Edit Hash key value from details
+     * @param value The value of the key
+     */
+    async editHashKeyValue(value: string): Promise<void> {
+        await t
+            .click(this.editHashButton)
+            .typeText(this.hashFieldValueEditor, value, {replace: true, paste: true})
+            .click(this.applyButton);
     }
 
     /**
@@ -960,7 +973,7 @@ export type AddKeyArguments = {
     fieldValueStartWith?: string,
     elementStartWith?: string,
     memberStartWith?: string
-}
+};
 
 /**
  * Keys Data parameters

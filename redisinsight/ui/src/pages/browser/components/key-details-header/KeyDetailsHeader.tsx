@@ -457,7 +457,7 @@ const KeyDetailsHeader = ({
                                 inputRef={keyNameRef}
                                 className={cx(
                                   styles.keyInput,
-                                  { [styles.keyInputEditing]: keyIsEditing }
+                                  { [styles.keyInputEditing]: keyIsEditing, 'input-warning': !keyIsEditable }
                                 )}
                                 placeholder={AddCommonFieldsFormConfig?.keyName?.placeholder}
                                 value={key}

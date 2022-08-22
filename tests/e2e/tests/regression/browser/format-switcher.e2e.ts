@@ -58,3 +58,16 @@ test('Verify that user don`t see format switcher for JSON, GRAPH, TS keys', asyn
         await t.expect(browserPage.formatSwitcher.visible).notOk(`Formatter is displayed for ${keysWithoutSwitcher[i].textType} type`, { timeout: 1000 });
     }
 });
+test('Verify that user can see switcher icon for narrow screen and tooltip by hovering', async t => {
+    await browserPage.openKeyDetails(keysData[0].keyName);
+    await browserPage.selectFormatter('JSON');
+    // Verify icon is not displayed with high screen resolution
+    await t.expect(browserPage.formatSwitcherIcon.visible).notOk('Format switcher Icon is displayed with high screen resolution');
+    // Minimize the window to check icon
+    await t.resizeWindow(1500, 900);
+    // Verify icon is displayed with low screen resolution
+    await t.expect(browserPage.formatSwitcherIcon.visible).ok('Format switcher Icon is not displayed with low screen resolution');
+    await t.hover(browserPage.formatSwitcher);
+    // Verify tooltip is displayed on hover with low screen resolution
+    await t.expect(browserPage.tooltip.textContent).contains('JSON', 'Selected formatter is not displayed in tooltip');
+});

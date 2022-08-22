@@ -179,7 +179,7 @@ export type SentinelParameters = {
     sentinelPort: string,
     masters?: object[],
     sentinelPassword?: string,
-    name?: string
+    name?: string[]
 };
 
 /**

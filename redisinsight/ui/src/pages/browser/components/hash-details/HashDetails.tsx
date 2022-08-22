@@ -347,7 +347,7 @@ const HashDetails = (props: Props) => {
                   }}
                   disabled={updateLoading}
                   inputRef={textAreaRef}
-                  className={styles.textArea}
+                  className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                   data-testid="hash-value-editor"
                 />
               </InlineItemEditor>

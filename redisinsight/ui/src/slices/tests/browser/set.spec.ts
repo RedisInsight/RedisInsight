@@ -123,7 +123,7 @@ describe('set slice', () => {
     it('should properly set the state with empty data', () => {
       // Arrange
       const data: any = {
-        keyName: ''
+        keyName: 'key'
       }
 
       const state = {
@@ -131,7 +131,8 @@ describe('set slice', () => {
         error: '',
         data: {
           ...initialState.data,
-          ...data
+          ...data,
+          key: data.keyName
         },
       }
 

@@ -18,5 +18,13 @@
     margin: -8px -6px -8px -20px !important;
     height: calc(100% + 16px) !important;
     min-width: calc(100% + 120px) !important;
+
+    &:focus {
+      background-image: none !important;
+    }
+
+    &.areaWarning {
+      border-color: var(--euiColorWarningLight) !important;
+    }
   }
 }

@@ -13,6 +13,7 @@ import {
   updateHashValueStateSelector,
   updateHashFieldsAction,
 } from 'uiSrc/slices/browser/hash'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   formatLongName,
   createDeleteFieldHeader,
@@ -239,7 +240,7 @@ const HashDetails = (props: Props) => {
     if (nextCursor !== 0) {
       dispatch(
         fetchMoreHashFields(
-          key,
+          key as RedisResponseBuffer,
           nextCursor,
           SCAN_COUNT_DEFAULT,
           match || matchAllValue

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { first, remove } from 'lodash'
+import { remove } from 'lodash'
 
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -19,7 +19,7 @@ import {
   updateSelectedKeyRefreshTime,
 } from './keys'
 import { AppDispatch, RootState } from '../store'
-import { InitialStateSet, RedisResponseBuffer, RedisString } from '../interfaces'
+import { InitialStateSet, RedisResponseBuffer } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: InitialStateSet = {
@@ -27,7 +27,7 @@ export const initialState: InitialStateSet = {
   error: '',
   data: {
     total: 0,
-    key: '',
+    key: undefined,
     keyName: '',
     members: [],
     nextCursor: 0,
@@ -41,7 +41,7 @@ const setSlice = createSlice({
   initialState,
   reducers: {
 
-    setSetMembers: (state, { payload }: PayloadAction<RedisString[]>) => {
+    setSetMembers: (state, { payload }: PayloadAction<RedisResponseBuffer[]>) => {
       state.data.members = payload
     },
     // load Set members

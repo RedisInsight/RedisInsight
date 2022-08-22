@@ -38,7 +38,8 @@
     "start:web:public": "cross-env PUBLIC_DEV=true webpack serve --config ./configs/webpack.config.web.dev.babel.js",
     "test": "jest ./redisinsight/ui -w 1",
     "test:watch": "jest ./redisinsight/ui --watch -w 1",
-    "test:cov": "jest ./redisinsight/ui --coverage -w 1"
+    "test:cov": "jest ./redisinsight/ui --coverage -w 1",
+    "type-check:ui": "tsc --project redisinsight/ui --noEmit"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

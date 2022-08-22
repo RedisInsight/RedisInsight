@@ -1,3 +1,4 @@
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces/app'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/dto/hash.dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
@@ -316,17 +317,17 @@ export interface ILoadedSentinel {
 }
 
 export interface ModifiedGetSetMembersResponse extends GetSetMembersResponse {
-  key?: string
+  key?: RedisResponseBuffer
   match?: string
 }
 
 export interface ModifiedZsetMembersResponse extends SearchZSetMembersResponse {
-  key?: string
+  key?: RedisResponseBuffer
   match?: string
 }
 
 export interface ModifiedGetHashMembersResponse extends GetHashFieldsResponse {
-  key?: string
+  key?: RedisResponseBuffer
   match?: string
 }
 

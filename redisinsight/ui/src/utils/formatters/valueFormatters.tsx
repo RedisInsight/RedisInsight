@@ -6,7 +6,7 @@ import { anyToBuffer, bufferToASCII, bufferToUTF8, stringToBuffer, bufferToHex, 
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 export interface FormattingProps {
-  expanded: boolean
+  expanded?: boolean
 }
 
 const isTextViewFormatter = (format: KeyValueFormat) => [

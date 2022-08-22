@@ -47,10 +47,10 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     })
 
     // Catch connect error
-    socketRef.current?.on(SocketEvent.ConnectionError, (error) => {})
+    socketRef.current?.on(SocketEvent.ConnectionError, () => {})
 
     // Catch exceptions
-    socketRef.current?.on(PubSubEvent.Exception, (error) => {
+    socketRef.current?.on(PubSubEvent.Exception, () => {
       handleDisconnect()
     })
 

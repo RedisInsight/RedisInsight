@@ -223,12 +223,12 @@ const WBViewWrapper = () => {
     setScript('')
   }
 
-  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>) => {
+  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>, clearEditor = true) => {
     if (state.loading || (!value && !script)) return
 
     handleSubmit(value, commandId)
     setTimeout(() => {
-      cleanupWB && resetCommand()
+      (cleanupWB && clearEditor) && resetCommand()
     }, 0)
   }
 

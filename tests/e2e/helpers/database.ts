@@ -153,7 +153,7 @@ export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParame
     // Reload Page to see the database added through api
     await t.eval(() => location.reload());
     //Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(databaseParameters.name ?? '');
+    await myRedisDatabasePage.clickOnDBByName(databaseParameters.name[1] ?? '');
 }
 
 /**

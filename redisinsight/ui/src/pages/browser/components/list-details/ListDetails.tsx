@@ -295,7 +295,7 @@ const ListDetails = (props: Props) => {
                     }}
                     disabled={updateLoading}
                     inputRef={textAreaRef}
-                    className={styles.textArea}
+                    className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                     data-testid="element-value-editor"
                   />
                 </InlineItemEditor>

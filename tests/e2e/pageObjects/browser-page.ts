@@ -9,6 +9,7 @@ export class BrowserPage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
+    cssJsonValue = '[data-tesid=value-as-json]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -85,6 +86,7 @@ export class BrowserPage {
     editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
     saveButton = Selector('[data-testid=save-btn]');
     bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
+    editHashButton = Selector('[data-testid^=edit-hash-button-]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -125,6 +127,7 @@ export class BrowserPage {
     ttlText = Selector('[data-testid=key-ttl-text] span');
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
+    hashFieldValueEditor = Selector('[data-testid=hash-value-editor]');
     listKeyElementInput = Selector('[data-testid=element]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-testid=json-value]');
@@ -160,6 +163,7 @@ export class BrowserPage {
     databaseNames = Selector('[data-testid^=db_name_]');
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
     hashValuesList = Selector('[data-testid^=hash-field-value-] span');
+    hashField = Selector('[data-testid^=hash-field-]').nth(0);
     hashFieldValue = Selector('[data-testid^=hash-field-value-]');
     setMembersList = Selector('[data-testid^=set-member-value-]');
     zsetMembersList = Selector('[data-testid^=zset-member-value-]');
@@ -230,6 +234,7 @@ export class BrowserPage {
     streamRangeBar = Selector('[data-testid=mock-fill-range]');
     rangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
     rangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
+    jsonValue = Selector('[data-testid=value-as-json]');
 
     /**
      * Common part for Add any new key
@@ -464,7 +469,9 @@ export class BrowserPage {
         // Scan until finding element or all keys scanned
         while (true) {
             await t.click(this.scanMoreButton);
-            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) break;
+            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) {
+                break;
+            }
         }
     }
 
@@ -548,6 +555,17 @@ export class BrowserPage {
         await t.typeText(this.hashFieldInput, keyFieldValue);
         await t.typeText(this.hashValueInput, keyValue);
         await t.click(this.saveHashFieldButton);
+    }
+
+    /**
+     * Edit Hash key value from details
+     * @param value The value of the key
+     */
+    async editHashKeyValue(value: string): Promise<void> {
+        await t
+            .click(this.editHashButton)
+            .typeText(this.hashFieldValueEditor, value, {replace: true, paste: true})
+            .click(this.applyButton);
     }
 
     /**
@@ -955,7 +973,7 @@ export type AddKeyArguments = {
     fieldValueStartWith?: string,
     elementStartWith?: string,
     memberStartWith?: string
-}
+};
 
 /**
  * Keys Data parameters

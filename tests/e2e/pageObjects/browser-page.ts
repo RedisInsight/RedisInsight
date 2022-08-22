@@ -163,6 +163,7 @@ export class BrowserPage {
     databaseNames = Selector('[data-testid^=db_name_]');
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
     hashValuesList = Selector('[data-testid^=hash-field-value-] span');
+    hashField = Selector('[data-testid^=hash-field-]').nth(0);
     hashFieldValue = Selector('[data-testid^=hash-field-value-]');
     setMembersList = Selector('[data-testid^=set-member-value-]');
     zsetMembersList = Selector('[data-testid^=zset-member-value-]');

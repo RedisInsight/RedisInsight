@@ -47,11 +47,13 @@ export const keyTypes = [
  * @param keyData The key data
  * @param keyValue The key value
  */
-export async function addKeysViaCli(keyData: KeyData, keyValue?: string): Promise<void> {
+export async function addKeysViaCli(keyData: KeyData, keyValue?: string, keyField?: string): Promise<void> {
     await t.click(cliPage.cliExpandButton);
     for (const { textType, keyName } of keyData) {
         if (textType in COMMANDS_TO_CREATE_KEY) {
-            await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue), { paste: true });
+            textType === 'Hash' || textType === 'Stream'
+            ? await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue, keyField), { paste: true })
+            : await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue), { paste: true });
             await t.pressKey('enter');
         }
     }

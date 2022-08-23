@@ -94,6 +94,11 @@ aliases:
     - re-st               # Redis Enterprise with Standalone inside
     - re-clu              # Redis Enterprise with Cluster inside
     - re-crdt             # Redis Enterprise with active-active database inside
+  iTestsNamesShort: &iTestsNamesShort
+    - oss-st-5-pass       # OSS Standalone v5 with admin pass required
+    - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
+    - oss-clu-tls         # OSS Cluster with TLS enabled
+    - re-crdt             # Redis Enterprise with active-active database inside
   guides-filter: &guidesFilter
     filters:
       branches:
@@ -356,7 +361,6 @@ jobs:
                 shell: bash.exe
       - store_test_results:
           path: ./tests/e2e/results
-
   e2e-tests:
     executor: linux-executor
     parameters:
@@ -690,7 +694,6 @@ jobs:
       - store_artifacts:
           path: release
           destination: release
-
   release-aws-test:
     executor: linux-executor
     steps:
@@ -858,22 +861,177 @@ jobs:
             done
 
 workflows:
-  build:
+  # FE Unit tests for "fe/feature" or "fe/bugfix" branches only
+  frontend-tests:
     jobs:
-      # unit tests (on any commit)
       - unit-tests-ui:
           name: UTest - UI
+          filters:
+            branches:
+              only:
+                - /^fe/feature.*/
+                - /^fe/bugfix.*/
+  # BE Unit + Integration (limited RTEs) tests for "be/feature" or "be/bugfix" branches only
+  backend-tests:
+    jobs:
       - unit-tests-api:
           name: UTest - API
-
-      # integration tests run in parallel (on any commit)
-      # target server runs locally to calculate code coverage
+          filters:
+            branches:
+              only:
+                - /^be/feature.*/
+                - /^be/bugfix.*/
+      - integration-tests-run:
+          matrix:
+            alias: itest-code
+            parameters:
+              rte: *iTestsNamesShort
+          name: ITest - << matrix.rte >> (code)
+          requires:
+            - UTest - API
+  # E2E tests for "e2e/feature" or "e2e/bugfix" branches only
+  e2e-tests:
+    jobs:
+      - approve:
+          name: Start E2E Tests
+          type: approval
+          filters:
+            branches:
+              only:
+                - /^e2e/feature.*/
+                - /^e2e/bugfix.*/
+      - docker:
+          name: Build docker image
+          requires:
+            - Start E2E Tests
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker image
+  # Workflow for feature, bugfix, main branches
+  feature-main-branch:
+    jobs:
+      # Approve to run all (unit, integration, e2e) tests
+      - approve:
+          name: Start All Tests
+          type: approval
+          filters:
+            branches:
+              only:
+                - /^feature.*/
+                - /^bugfix.*/
+                - main
+      # FE tests
+      - unit-tests-ui:
+          name: UTest - UI
+          requires:
+            - Start All Tests
+      # BE tests
+      - unit-tests-api:
+          name: UTest - API
+          requires:
+            - Start All Tests
       - integration-tests-run:
           matrix:
             alias: itest-code
             parameters:
               rte: *iTestsNames
           name: ITest - << matrix.rte >> (code)
+          requires:
+            - Start All Tests
+      - integration-tests-coverage:
+          name: ITest - Final coverage
+          requires:
+            - itest-code
+      # E2E tests
+      - docker:
+          name: Build docker image
+          requires:
+            - Start All Tests
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker image
+      # Approve to build
+      - approve:
+          name: Build App
+          type: approval
+          requires:
+            - UTest - UI
+            - UTest - API
+            - ITest - Final coverage
+          filters:
+            branches:
+              only:
+                - /^e2e/feature.*/
+                - /^e2e/bugfix.*/
+  # build electron app (dev) from "build" branches
+  build:
+    jobs:
+      - setup-sign-certificates:
+          name: Setup sign certificates (dev)
+          requires:
+            - Build dev app
+          filters:
+            branches:
+              only:
+                - /^build.*/
+      - setup-build:
+          name: Setup build (dev)
+          env: dev
+          requires:
+            - Setup sign certificates (dev)
+      - linux:
+          name: Build app - Linux (dev)
+          env: dev
+          requires: &devBuildRequire
+            - Setup build (dev)
+      - macosx:
+          name: Build app - MacOS (dev)
+          env: dev
+          requires: *devBuildRequire
+      - windows:
+          name: Build app - Windows (dev)
+          env: dev
+          requires: *devBuildRequire
+      - store-build-artifacts:
+          name: Store build artifacts (dev)
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+      - release-aws-test:
+          name: Release AWS dev
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+  # Main workflow for release/* and latest branches only
+  release:
+    jobs:
+      # unit tests (on any commit)
+      - unit-tests-ui:
+          name: UTest - UI
+          filters: &releaseAndLatestFilter
+            branches:
+              only:
+                - /^release.*/
+                - latest
+      - unit-tests-api:
+          name: UTest - API
+          <<: *releaseAndLatestFilter
+      # integration tests
+      - integration-tests-run:
+          matrix:
+            alias: itest-code
+            parameters:
+              rte: *iTestsNames
+          name: ITest - << matrix.rte >> (code)
+          <<: *releaseAndLatestFilter
       - integration-tests-coverage:
           name: ITest - Final coverage
           requires:
@@ -881,73 +1039,17 @@ workflows:
         # e2e tests (doesn't affect pipeline even if fail)
       - docker:
           name: Build docker image
-          filters: &e2eFilter
-            branches:
-              only:
-                - /^release.*/
-                - /^e2e.*/
-                - /^feature/e2e.*/
-                - main
-                - latest
+          <<: *releaseAndLatestFilter
       - e2e-tests:
           name: E2ETest
           build: docker
           parallelism: 4
-          filters: *e2eFilter
           requires:
             - Build docker image
 
-      # build and release electron app (dev)
-      - dev-build-approve:
-          name: Build dev app
-          type: approval
-          requires:
-            - UTest - UI
-            - UTest - API
-            - ITest - Final coverage
-          <<: *devFilter
-      - setup-sign-certificates:
-          name: Setup sign certificates (dev)
-          requires:
-            - Build dev app
-          <<: *devFilter
-      - setup-build:
-          name: Setup build (dev)
-          env: dev
-          requires:
-            - Setup sign certificates (dev)
-          <<: *devFilter
-      - linux:
-          name: Build app - Linux (dev)
-          env: dev
-          requires: &stageElectronBuildRequires
-            - Setup build (dev)
-          <<: *devFilter
-      - macosx:
-          name: Build app - MacOS (dev)
-          env: dev
-          requires: *stageElectronBuildRequires
-          <<: *devFilter
-      - windows:
-          name: Build app - Windows (dev)
-          env: dev
-          requires: *stageElectronBuildRequires
-          <<: *devFilter
-      - store-build-artifacts:
-          name: Store build artifacts (dev)
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
 
-      - release-aws-test:
-          name: Release AWS test
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
-
-      # build and release electron app (stage)
+      # ================== STAGE ==================
+      # prebuild (stage)
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
           requires:
@@ -959,28 +1061,24 @@ workflows:
           name: Setup build (stage)
           requires:
             - Setup sign certificates (stage)
-          <<: *stageFilter
+      # build electron app (stage)
       - linux:
           name: Build app - Linux (stage)
           requires: &stageElectronBuildRequires
             - Setup build (stage)
-          <<: *stageFilter
       - macosx:
           name: Build app - MacOS (stage)
           requires: *stageElectronBuildRequires
-          <<: *stageFilter
       - windows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
-          <<: *stageFilter
-
+      # release to AWS (stage)
       - release-aws-test:
-          name: Release AWS test
+          name: Release AWS stage
           requires:
             - Build app - Linux (stage)
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
-
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team
@@ -990,6 +1088,7 @@ workflows:
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
 
+      # ================== PROD ==================
       # build and release electron app (prod)
       - setup-sign-certificates:
           name: Setup sign certificates (prod)
@@ -1003,24 +1102,20 @@ workflows:
           env: prod
           requires:
             - Setup sign certificates (prod)
-          <<: *prodFilter
       - linux:
           name: Build app - Linux (prod)
           env: prod
           requires: &prodElectronBuildRequires
             - Setup build (prod)
-          <<: *prodFilter
       - macosx:
           name: Build app - MacOS (prod)
           env: prod
           requires: *prodElectronBuildRequires
-          <<: *prodFilter
       - windows:
           name: Build app - Windows (prod)
           env: prod
           requires: *prodElectronBuildRequires
-          <<: *prodFilter
-      # virus check all electron apps (prod only)
+      # virus check all electron apps (prod)
       - virustotal:
           name: Virus check - AppImage (prod)
           ext: .AppImage
@@ -1046,8 +1141,7 @@ workflows:
           ext: .exe
           requires:
             - Build app - Windows (prod)
-
-      # upload release to AWS
+      # upload release to prerelease AWS folder
       - release-aws-private:
           name: Release AWS S3 Private (prod)
           requires:
@@ -1056,7 +1150,6 @@ workflows:
             - Virus check x64 - dmg (prod)
             - Virus check arm64 - dmg (prod)
             - Virus check - exe (prod)
-
       # Manual approve for publish release
       - approve-publish:
           name: Approve Publish Release (prod)
@@ -1064,14 +1157,12 @@ workflows:
           requires:
             - Release AWS S3 Private (prod)
           <<: *prodFilter # double check for "latest"
-
       # Publish release
       - publish-prod-aws:
           name: Publish AWS S3
           requires:
             - Approve Publish Release (prod)
           <<: *prodFilter # double check for "latest"
-
   # Nightly tests
   nightly:
     triggers:

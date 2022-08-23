@@ -122,16 +122,18 @@ export async function getDatabaseByConnectionType(connectionType?: string): Prom
  */
 export async function deleteAllDatabasesApi(): Promise<void> {
     const allDatabases = await getAllDatabases();
-    const databaseIds = [];
-    for (let i = 0; i < allDatabases.length; i++) {
-        const dbData = JSON.parse(JSON.stringify(allDatabases[i]));
-        databaseIds.push(dbData.id);
-    }
-    if (databaseIds.length > 0) {
-        await request(endpoint).delete('/instance')
-            .send({ 'ids': databaseIds })
-            .set('Accept', 'application/json')
-            .expect(200);
+    if (allDatabases.length > 0) {
+        const databaseIds = [];
+        for (let i = 0; i < allDatabases.length; i++) {
+            const dbData = JSON.parse(JSON.stringify(allDatabases[i]));
+            databaseIds.push(dbData.id);
+        }
+        if (databaseIds.length > 0) {
+            await request(endpoint).delete('/instance')
+                .send({ 'ids': databaseIds })
+                .set('Accept', 'application/json')
+                .expect(200);
+        }
     }
 }
 

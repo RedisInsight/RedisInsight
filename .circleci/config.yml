@@ -974,8 +974,6 @@ workflows:
     jobs:
       - setup-sign-certificates:
           name: Setup sign certificates (dev)
-          requires:
-            - Build dev app
           filters:
             branches:
               only:

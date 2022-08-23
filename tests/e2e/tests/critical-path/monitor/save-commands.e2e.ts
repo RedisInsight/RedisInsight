@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as os from 'os';
+import { join as joinPath } from 'path';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MonitorPage, CliPage } from '../../../pageObjects';
 import {
@@ -12,13 +13,31 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 const monitorPage = new MonitorPage();
 const cliPage = new CliPage();
 const tempDir = os.tmpdir();
-const downloadsDir = `C:*****\\Downloads`;
+let downloadedFilePath = '';
+
+async function getFileDownloadPath(): Promise<string> {
+    return joinPath(os.homedir(), 'Downloads');
+}
+
+async function findByFileStarts(dir: string): Promise<number> {
+    const matchedFiles: string[] = [];
+    const files = fs.readdirSync(dir);
+
+    for (const file of files) {
+        if (file.startsWith('test_standalone')) {
+            matchedFiles.push(file);
+        }
+    }
+
+    return matchedFiles.length;
+}
 
 fixture `Save commands`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        downloadedFilePath = await getFileDownloadPath();
     })
     .afterEach(async() => {
         //Delete database
@@ -34,7 +53,7 @@ test
         //Check the toggle and Tooltip for Save log
         await t.expect(monitorPage.saveLogSwitchButton.visible).ok('The toggle that allows to save Profiler log is displayed');
         await t.hover(monitorPage.saveLogSwitchButton);
-        for(const message of toolTip){
+        for (const message of toolTip) {
             await t.expect(monitorPage.saveLogToolTip.textContent).contains(message, 'The toolTip for save log in Profiler is displayed');
         }
         //Check toggle state
@@ -88,25 +107,25 @@ test
         await t.expect(monitorPage.resetProfilerButton.visible).ok('The Reset Profiler button visibility');
         await t.expect(monitorPage.downloadLogButton.visible).ok('The Download button visibility');
     });
-//skipped due the error in path
-test.skip
+test
     .meta({ rte: rte.standalone })('Verify that when user see the toggle is OFF - Profiler logs are not being saved', async t => {
         //Remember the number of files in Temp
-        const numberOfDownloadFiles = fs.readdirSync(downloadsDir).length;
+        const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);
         //Start Monitor without Save logs
         await monitorPage.startMonitor();
+        await t.wait(3000);
         //Check the download files
-        await t.expect(numberOfDownloadFiles).eql(fs.readdirSync(downloadsDir).length, 'The Profiler logs are not being saved');
+        await t.expect(await findByFileStarts(downloadedFilePath)).eql(numberOfDownloadFiles, 'The Profiler logs are saved');
     });
-//skipped due the error in path
+// Skipped due to testCafe issue https://github.com/DevExpress/testcafe/issues/5574
 test.skip
     .meta({ rte: rte.standalone })('Verify that when user see the toggle is ON - Profiler logs are being saved', async t => {
         //Remember the number of files in Temp
-        const numberOfDownloadFiles = fs.readdirSync(downloadsDir).length;
+        const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);
         //Start Monitor with Save logs
         await monitorPage.startMonitorWithSaveLog();
         //Download logs and check result
         await monitorPage.stopMonitor();
         await t.click(monitorPage.downloadLogButton);
-        await t.expect(numberOfDownloadFiles).gt(fs.readdirSync(downloadsDir).length, 'The Profiler logs are being saved');
+        await t.expect(await findByFileStarts(downloadedFilePath)).gt(numberOfDownloadFiles, 'The Profiler logs not saved', { timeout: 5000 });
     });

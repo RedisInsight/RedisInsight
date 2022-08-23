@@ -35,6 +35,14 @@ const bufferToHex = (reply: RedisResponseBuffer): string => {
   return result
 }
 
+const bufferToBinary = (reply: RedisResponseBuffer): string =>
+  Array.from(reply.data).reduce((str, byte) => str + byte.toString(2).padStart(8, '0'), '')
+
+const binaryToBuffer = (reply: string) => {
+  const data: number[] = reply.match(/.{1,8}/g)?.map((v) => parseInt(v, 2)) || []
+  return anyToBuffer(data)
+}
+
 const bufferToASCII = (reply: RedisResponseBuffer): string => {
   let result = ''
   reply.data.forEach((byte: number) => {
@@ -161,6 +169,8 @@ export {
   UintArrayToString,
   hexToBuffer,
   anyToBuffer,
+  bufferToBinary,
+  binaryToBuffer
 }
 
 window.ri = {

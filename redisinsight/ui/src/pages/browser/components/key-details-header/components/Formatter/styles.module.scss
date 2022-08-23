@@ -3,6 +3,8 @@
   height: 30px;
   border-radius: 4px;
   transition: transform 0.3s ease;
+  width: 92px;
+  overflow: hidden;
 
   &:hover {
     transform: translateY(-1px);
@@ -15,9 +17,6 @@
   :global(.euiFormControlLayout) {
     height: 100%;
   }
-
-  width: 92px;
-  overflow: hidden;
 
   .selectWrapper {
     width: 142px;

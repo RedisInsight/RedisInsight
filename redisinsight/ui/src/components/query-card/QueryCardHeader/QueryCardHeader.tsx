@@ -239,7 +239,7 @@ const QueryCardHeader = (props: Props) => {
                   position="bottom"
                 >
                   <EuiTextColor className={cx(styles.timeText, styles.mode)}>
-                    -R
+                    -r
                   </EuiTextColor>
                 </EuiToolTip>
               )}

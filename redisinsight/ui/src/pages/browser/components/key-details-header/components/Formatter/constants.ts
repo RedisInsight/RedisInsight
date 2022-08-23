@@ -10,6 +10,14 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     value: KeyValueFormat.ASCII,
   },
   {
+    text: 'HEX',
+    value: KeyValueFormat.HEX,
+  },
+  {
+    text: 'Binary',
+    value: KeyValueFormat.Binary,
+  },
+  {
     text: 'JSON',
     value: KeyValueFormat.JSON,
   },
@@ -18,10 +26,12 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     value: KeyValueFormat.Msgpack,
   },
   {
-    text: 'HEX',
-    iconDark: 'kqlSelector',
-    iconLight: 'kqlSelector',
-    value: KeyValueFormat.HEX,
+    text: 'PHP Unserialize',
+    value: KeyValueFormat.PHP,
+  },
+  {
+    text: 'Protobuf',
+    value: KeyValueFormat.Protobuf,
   },
 ]
 

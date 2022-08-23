@@ -10,7 +10,6 @@ import {
   getApiErrorMessage,
   isStatusSuccessful,
   Maybe,
-  bufferToString,
 } from 'uiSrc/utils'
 import {
   SetListElementDto,
@@ -33,7 +32,7 @@ import {
 import { StateList } from '../interfaces/list'
 import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { RedisResponseBuffer, RedisString } from '../interfaces'
+import { RedisResponseBuffer } from '../interfaces'
 
 export const initialState: StateList = {
   loading: false,
@@ -60,7 +59,7 @@ const listSlice = createSlice({
   reducers: {
     setListInitialState: () => initialState,
 
-    setListElements: (state, { payload } : PayloadAction<RedisString[]>) => {
+    setListElements: (state, { payload } : PayloadAction<RedisResponseBuffer[]>) => {
       state.data.elements = payload
     },
     // load List elements

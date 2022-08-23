@@ -38,7 +38,8 @@
     "start:web:public": "cross-env PUBLIC_DEV=true webpack serve --config ./configs/webpack.config.web.dev.babel.js",
     "test": "jest ./redisinsight/ui -w 1",
     "test:watch": "jest ./redisinsight/ui --watch -w 1",
-    "test:cov": "jest ./redisinsight/ui --coverage -w 1"
+    "test:cov": "jest ./redisinsight/ui --coverage -w 1",
+    "type-check:ui": "tsc --project redisinsight/ui --noEmit"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -223,6 +224,8 @@
     "html-react-parser": "^1.2.4",
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
+    "php-serialize": "^4.0.2",
+    "rawproto": "^0.7.6",
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.5",
     "react-dom": "^18.2.0",

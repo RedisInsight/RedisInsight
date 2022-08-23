@@ -27,6 +27,7 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "allowJs": true,
+    "skipLibCheck": true,
     "paths": {
       "uiSrc/*": [
         "redisinsight/ui/src/*"

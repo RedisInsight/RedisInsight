@@ -11,11 +11,12 @@ import {
   getUrl,
   isStatusSuccessful,
   Maybe,
+  bufferToString,
+  isEqualBuffers
 } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import bufferToString, { isEqualBuffers } from 'uiSrc/utils/formatters/bufferFormatters'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 import {

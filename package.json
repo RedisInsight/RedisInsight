@@ -224,6 +224,7 @@
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
     "php-serialize": "^4.0.2",
+    "rawproto": "^0.7.6",
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.5",
     "react-dom": "^18.2.0",

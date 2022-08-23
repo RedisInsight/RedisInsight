@@ -29,6 +29,10 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     text: 'PHP Unserialize',
     value: KeyValueFormat.PHP,
   },
+  {
+    text: 'Protobuf',
+    value: KeyValueFormat.Protobuf,
+  },
 ]
 
 export const KEY_VALUE_JSON_FORMATTER_OPTIONS = []

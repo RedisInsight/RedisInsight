@@ -4,6 +4,7 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
@@ -21,6 +22,7 @@ import {
 
 export const initialState: StateWorkbenchResults = {
   loading: false,
+  processing: false,
   error: '',
   items: [],
 }
@@ -91,7 +93,8 @@ const workbenchResultsSlice = createSlice({
     },
 
     sendWBCommandSuccess: (state,
-      { payload: { data, commandId } }: { payload: { data: CommandExecution[], commandId: string } }) => {
+      { payload: { data, commandId, processing } }:
+      { payload: { data: CommandExecution[], commandId: string, processing?: boolean } }) => {
       state.items = [...state.items].map((item) => {
         let newItem = item
         data.forEach((command, i) => {
@@ -103,6 +106,7 @@ const workbenchResultsSlice = createSlice({
       })
 
       state.loading = false
+      state.processing = processing || false
     },
 
     fetchWBCommandSuccess: (state, { payload }: { payload: CommandExecution }) => {
@@ -185,6 +189,7 @@ export function fetchWBHistoryAction(instanceId: string) {
 export function sendWBCommandAction({
   commands = [],
   multiCommands = [],
+  mode = RunQueryMode.ASCII,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -192,6 +197,7 @@ export function sendWBCommandAction({
   commands: string[]
   multiCommands?: string[]
   commandId?: string
+  mode: RunQueryMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -209,11 +215,12 @@ export function sendWBCommandAction({
         ),
         {
           commands,
+          mode,
         }
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data }))
+        dispatch(sendWBCommandSuccess({ commandId, data, processing: !!multiCommands?.length }))
 
         onSuccessAction?.(multiCommands)
       }
@@ -232,6 +239,7 @@ export function sendWBCommandClusterAction({
   commands = [],
   multiCommands = [],
   options,
+  mode = RunQueryMode.ASCII,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -240,6 +248,7 @@ export function sendWBCommandClusterAction({
   options: CreateCommandExecutionDto
   commandId?: string
   multiCommands?: string[]
+  mode: RunQueryMode,
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -258,6 +267,7 @@ export function sendWBCommandClusterAction({
         {
           ...options,
           commands,
+          mode,
           outputFormat: CliOutputFormatterType.Raw,
         }
       )

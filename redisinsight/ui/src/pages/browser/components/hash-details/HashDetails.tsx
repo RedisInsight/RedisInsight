@@ -13,6 +13,7 @@ import {
   updateHashValueStateSelector,
   updateHashFieldsAction,
 } from 'uiSrc/slices/browser/hash'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   formatLongName,
   createDeleteFieldHeader,
@@ -23,7 +24,9 @@ import {
   isEqualBuffers,
   isTextViewFormatter,
   bufferToSerializedFormat,
-  stringToSerializedBufferFormat
+  stringToSerializedBufferFormat,
+  isNonUnicodeFormatter,
+  isFormatEditable
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -37,7 +40,7 @@ import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSr
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
@@ -240,7 +243,7 @@ const HashDetails = (props: Props) => {
     if (nextCursor !== 0) {
       dispatch(
         fetchMoreHashFields(
-          key,
+          key as RedisResponseBuffer,
           nextCursor,
           SCAN_COUNT_DEFAULT,
           match || matchAllValue
@@ -310,13 +313,15 @@ const HashDetails = (props: Props) => {
           const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+          const approximateLinesByLength = (!isValid || isTextViewFormatter(viewFormat))
+            ? text?.length / OneRowLength
+            : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
-
+          const disabled = !isEqualBuffers(valueItem, stringToBuffer(value))
+            && !isNonUnicodeFormatter(viewFormat)
           setTimeout(() => {
             cellCache.clear(rowIndex, 1)
           }, 0)
-
           return (
             <StopPropagation>
               <InlineItemEditor
@@ -330,6 +335,8 @@ const HashDetails = (props: Props) => {
                 placeholder="Enter Value"
                 fieldName="fieldValue"
                 isLoading={updateLoading}
+                isDisabled={disabled}
+                disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                 controlsClassName={styles.textAreaControls}
                 onDecline={() => handleEditField(fieldItem, false)}
                 onApply={() => handleApplyEditField(fieldItem)}
@@ -348,7 +355,7 @@ const HashDetails = (props: Props) => {
                   }}
                   disabled={updateLoading}
                   inputRef={textAreaRef}
-                  className={styles.textArea}
+                  className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                   data-testid="hash-value-editor"
                 />
               </InlineItemEditor>
@@ -388,18 +395,21 @@ const HashDetails = (props: Props) => {
       maxWidth: 95,
       render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto) {
         const field = bufferToString(fieldItem, viewFormat)
+        const isEditable = isFormatEditable(viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiButtonIcon
-                iconType="pencil"
-                aria-label="Edit field"
-                className="editFieldBtn"
-                color="primary"
-                disabled={updateLoading}
-                onClick={() => handleEditField(fieldItem, true, valueItem)}
-                data-testid={`edit-hash-button-${field}`}
-              />
+              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+                <EuiButtonIcon
+                  iconType="pencil"
+                  aria-label="Edit field"
+                  className="editFieldBtn"
+                  color="primary"
+                  disabled={updateLoading || !isEditable}
+                  onClick={() => handleEditField(fieldItem, true, valueItem)}
+                  data-testid={`edit-hash-button-${field}`}
+                />
+              </EuiToolTip>
               <PopoverDelete
                 header={createDeleteFieldHeader(fieldItem)}
                 text={createDeleteFieldMessage(key ?? '')}

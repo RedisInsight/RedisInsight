@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import parse from 'html-react-parser'
+import { DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
 
 import { getModule, truncateText } from 'uiSrc/utils'
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
@@ -100,7 +101,7 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
           {
             modules?.map(({ name = '', semanticVersion = '', version = '' }) => (
               <div key={name} className={cx(styles.mi_moduleName)}>
-                {`${truncateText(getModule(name)?.name ?? name, 50)} `}
+                {`${truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)} `}
                 {!!(semanticVersion || version) && (
                   <span className={styles.mi_version}>
                     v.

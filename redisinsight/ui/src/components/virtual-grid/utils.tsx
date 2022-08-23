@@ -43,10 +43,11 @@ export const useInnerElementType = (
     React.forwardRef((props:ReactNode, ref) => {
       const sumRowsHeights = (index: number) => {
         let sum = 0
+        let currentIndex = index
 
-        while (index > 1) {
+        while (currentIndex > 1) {
           sum += rowHeight(index - 1)
-          index -= 1
+          currentIndex -= 1
         }
 
         return sum
@@ -54,10 +55,11 @@ export const useInnerElementType = (
 
       const sumColumnWidths = (index: number) => {
         let sum = 0
+        let currentIndex = index
 
-        while (index > 1) {
+        while (currentIndex > 1) {
           sum += columnWidth(index - 1, tableWidth, columns)
-          index -= 1
+          currentIndex -= 1
         }
 
         return sum
@@ -65,7 +67,7 @@ export const useInnerElementType = (
 
       const shownIndecies = getShownIndicies(props.children)
 
-      let children = React.Children.map(props.children, (child, index) => {
+      let children = React.Children.map(props.children, (child) => {
         const { column, row } = getCellIndicies(child)
 
         // do not show non-sticky cell

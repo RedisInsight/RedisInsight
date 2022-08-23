@@ -14,7 +14,7 @@ const decoder = new TextDecoder('utf-8')
 const encoder = new TextEncoder()
 
 const isEqualBuffers = (a?: Nullable<RedisResponseBuffer>, b?: Nullable<RedisResponseBuffer>) =>
-  a?.data?.join() === b?.data?.join()
+  a?.data?.join(',') === b?.data?.join(',')
 
 // eslint-disable-next-line no-control-regex
 const IS_NON_PRINTABLE_ASCII_CHARACTER = /[^ -~\u0007\b\t\n\r]/
@@ -33,6 +33,14 @@ const bufferToHex = (reply: RedisResponseBuffer): string => {
   })
 
   return result
+}
+
+const bufferToBinary = (reply: RedisResponseBuffer): string =>
+  Array.from(reply.data).reduce((str, byte) => str + byte.toString(2).padStart(8, '0'), '')
+
+const binaryToBuffer = (reply: string) => {
+  const data: number[] = reply.match(/.{1,8}/g)?.map((v) => parseInt(v, 2)) || []
+  return anyToBuffer(data)
 }
 
 const bufferToASCII = (reply: RedisResponseBuffer): string => {
@@ -75,8 +83,15 @@ const bufferToASCII = (reply: RedisResponseBuffer): string => {
 const anyToBuffer = (reply: UintArray): RedisResponseBuffer =>
   ({ data: reply, type: RedisResponseBufferType.Buffer })
 
-const ASCIIToBuffer = (str: string) => {
+const ASCIIToBuffer = (strInit: string) => {
   let result = ''
+  const str = strInit
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\')
+    .replace(/\\b/g, '\b')
+    .replace(/\\t/g, '\t')
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
 
   for (let i = 0; i < str.length;) {
     if (str.substring(i, i + 2) === '\\x') {
@@ -139,8 +154,6 @@ const bufferToString = (data: RedisString = '', formatResult: KeyValueFormat = K
   return data?.toString()
 }
 
-export default bufferToString
-
 export {
   bufferToUTF8,
   bufferToASCII,
@@ -154,6 +167,8 @@ export {
   UintArrayToString,
   hexToBuffer,
   anyToBuffer,
+  bufferToBinary,
+  binaryToBuffer
 }
 
 window.ri = {
@@ -164,6 +179,10 @@ window.ri = {
   UintArrayToString,
   stringToBuffer,
   bufferToString,
+  bufferToHex,
+  hexToBuffer,
+  bufferToBinary,
+  binaryToBuffer
 }
 
 // for BE libraries which work with Buffer

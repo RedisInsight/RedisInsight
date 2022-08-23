@@ -12,7 +12,11 @@ const TTL_INPUT_TEST_ID = 'edit-ttl-input'
 jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
   selectedKeyDataSelector: jest.fn().mockReturnValue({
-    name: 'test',
+    name: {
+      type: 'Buffer',
+      data: [116, 101, 115, 116]
+    },
+    nameString: 'test'
   }),
 }))
 

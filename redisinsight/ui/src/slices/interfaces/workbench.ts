@@ -10,6 +10,7 @@ export interface StateWorkbenchSettings {
 
 export interface StateWorkbenchResults {
   loading: boolean
+  processing: boolean
   error: string
   items: CommandExecutionUI[]
 }
@@ -38,4 +39,9 @@ export interface CommandExecutionUI extends Partial<CommandExecution> {
   loading?: boolean
   isOpen?: boolean
   error?: string
+}
+
+export enum RunQueryMode {
+  Raw = 'RAW',
+  ASCII = 'ASCII',
 }

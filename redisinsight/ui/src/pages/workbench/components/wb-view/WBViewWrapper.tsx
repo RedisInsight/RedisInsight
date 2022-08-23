@@ -12,6 +12,7 @@ import {
   getMultiCommands,
   scrollIntoView,
 } from 'uiSrc/utils'
+import { localStorageService } from 'uiSrc/services'
 import {
   sendWBCommandAction,
   workbenchResultsSelector,
@@ -24,28 +25,33 @@ import {
 import { ConnectionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
-import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { userSettingsConfigSelector, userSettingsWBSelector } from 'uiSrc/slices/user/user-settings'
+import { BrowserStorageItem } from 'uiSrc/constants'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import WBView from './WBView'
 
 interface IState {
-  loading: boolean,
-  instance: Instance,
+  loading: boolean
+  instance: Instance
   batchSize: number
-  unsupportedCommands: string[],
-  blockingCommands: string[],
-  visualizations: IPluginVisualization[],
-  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>,
+  activeRunQueryMode: RunQueryMode
+  unsupportedCommands: string[]
+  blockingCommands: string[]
+  visualizations: IPluginVisualization[]
+  scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
 }
 
 let state: IState = {
   loading: false,
   batchSize: PIPELINE_COUNT_DEFAULT,
+  activeRunQueryMode: RunQueryMode.ASCII,
   instance: instanceInitState.connectedInstance,
   unsupportedCommands: [],
   blockingCommands: [],
@@ -59,11 +65,15 @@ const WBViewWrapper = () => {
   const { loading, items } = useSelector(workbenchResultsSelector)
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+  const { cleanup: cleanupWB } = useSelector(userSettingsWBSelector)
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
   const [script, setScript] = useState(scriptContext)
   const [multiCommands, setMultiCommands] = useState<string[]>([])
   const [scriptEl, setScriptEl] = useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
+  const [activeRunQueryMode, setActiveRunQueryMode] = useState<RunQueryMode>(
+    (localStorageService?.get(BrowserStorageItem.RunQueryMode) ?? RunQueryMode.ASCII)
+  )
 
   const instance = useSelector(connectedInstanceSelector)
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -75,6 +85,7 @@ const WBViewWrapper = () => {
     unsupportedCommands,
     visualizations,
     batchSize,
+    activeRunQueryMode,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -106,6 +117,28 @@ const WBViewWrapper = () => {
     }
   }, [multiCommands])
 
+  useEffect(() => {
+    localStorageService.set(BrowserStorageItem.RunQueryMode, activeRunQueryMode)
+  }, [activeRunQueryMode])
+
+  const handleChangeQueryRunMode = () => {
+    setActiveRunQueryMode(
+      activeRunQueryMode === RunQueryMode.ASCII
+        ? RunQueryMode.Raw
+        : RunQueryMode.ASCII
+    )
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_MODE_CHANGED,
+      eventData: {
+        databaseId: instanceId,
+        changedFromMode: activeRunQueryMode,
+        changedToMode: activeRunQueryMode === RunQueryMode.ASCII
+          ? RunQueryMode.Raw
+          : RunQueryMode.ASCII
+      }
+    })
+  }
+
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
@@ -133,11 +166,13 @@ const WBViewWrapper = () => {
     commands: string[],
     multiCommands: string[] = [],
   ) => {
+    const { activeRunQueryMode } = state
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
         commands,
         multiCommands,
+        mode: activeRunQueryMode,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       }))
       return
@@ -156,6 +191,7 @@ const WBViewWrapper = () => {
       sendWBCommandClusterAction({
         commands,
         options,
+        mode: state.activeRunQueryMode,
         multiCommands,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })
@@ -187,12 +223,12 @@ const WBViewWrapper = () => {
     setScript('')
   }
 
-  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>) => {
+  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>, clearEditor = true) => {
     if (state.loading || (!value && !script)) return
 
     handleSubmit(value, commandId)
     setTimeout(() => {
-      resetCommand()
+      (cleanupWB && clearEditor) && resetCommand()
     }, 0)
   }
 
@@ -204,9 +240,11 @@ const WBViewWrapper = () => {
       setScriptEl={setScriptEl}
       scriptEl={scriptEl}
       scrollDivRef={scrollDivRef}
+      activeMode={activeRunQueryMode}
       onSubmit={sourceValueSubmit}
       onQueryOpen={handleQueryOpen}
       onQueryDelete={handleQueryDelete}
+      onQueryChangeMode={handleChangeQueryRunMode}
     />
   )
 }

@@ -21,13 +21,17 @@ import {
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import {
   bufferToSerializedFormat,
   bufferToString,
   formatLongName,
   formattingBuffer,
+  isFormatEditable,
+  isNonUnicodeFormatter,
+  isEqualBuffers,
   isTextViewFormatter,
+  stringToBuffer,
   stringToSerializedBufferFormat,
   validateListIndex
 } from 'uiSrc/utils'
@@ -257,8 +261,12 @@ const ListDetails = (props: Props) => {
           const calculatedBreaks = text?.split('\n').length
           const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
           const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
+          const approximateLinesByLength = (!isValid || isTextViewFormatter(viewFormat))
+            ? text?.length / OneRowLength
+            : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+          const disabled = !isEqualBuffers(elementItem, stringToBuffer(element))
+            && !isNonUnicodeFormatter(viewFormat)
           return (
             <StopPropagation>
               <div className={styles.inlineItemEditor}>
@@ -271,6 +279,8 @@ const ListDetails = (props: Props) => {
                   fieldName="elementValue"
                   controlsClassName={styles.textAreaControls}
                   isLoading={updateLoading}
+                  isDisabled={disabled}
+                  disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                   onDecline={() => handleEditElement(index, false)}
                   onApply={() => handleApplyEditElement(index)}
                 >
@@ -288,7 +298,7 @@ const ListDetails = (props: Props) => {
                     }}
                     disabled={updateLoading}
                     inputRef={textAreaRef}
-                    className={styles.textArea}
+                    className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                     data-testid="element-value-editor"
                   />
                 </InlineItemEditor>
@@ -328,17 +338,20 @@ const ListDetails = (props: Props) => {
       maxWidth: 60,
       absoluteWidth: 60,
       render: function Actions(_element: any, { index }: IListElement) {
+        const isEditable = isFormatEditable(viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiButtonIcon
-                iconType="pencil"
-                aria-label="Edit element"
-                className="editFieldBtn"
-                color="primary"
-                onClick={() => handleEditElement(index, true)}
-                data-testid={`edit-list-button-${index}`}
-              />
+              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+                <EuiButtonIcon
+                  iconType="pencil"
+                  aria-label="Edit element"
+                  className="editFieldBtn"
+                  color="primary"
+                  onClick={() => handleEditElement(index, true)}
+                  data-testid={`edit-list-button-${index}`}
+                />
+              </EuiToolTip>
             </div>
           </StopPropagation>
         )

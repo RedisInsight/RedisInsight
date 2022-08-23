@@ -7,6 +7,7 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import {
   bufferToString,
@@ -186,7 +187,7 @@ const SetDetails = (props: Props) => {
       staySearchAlwaysOpen: true,
       initialSearchValue: '',
       truncateText: true,
-      render: function Name(_name: string, memberItem: string, expanded: boolean = false) {
+      render: function Name(_name: string, memberItem: RedisResponseBuffer, expanded: boolean = false) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const member = bufferToString(memberItem)
         const tooltipContent = formatLongName(member)
@@ -223,7 +224,7 @@ const SetDetails = (props: Props) => {
       minWidth: 60,
       maxWidth: 60,
       headerClassName: 'hidden',
-      render: function Actions(_act: any, memberItem: string) {
+      render: function Actions(_act: any, memberItem: RedisResponseBuffer) {
         const member = bufferToString(memberItem, viewFormat)
         return (
           <div className="value-table-actions">

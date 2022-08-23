@@ -5,6 +5,7 @@ import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getWBQueryType,
   getVisualizationsByCommand,
@@ -27,6 +28,8 @@ export interface Props {
   command: string
   isOpen: boolean
   result: Maybe<CommandExecutionResult[]>
+  activeMode: RunQueryMode
+  mode: RunQueryMode
   createdAt?: Date
   loading?: boolean
   onQueryDelete: () => void
@@ -42,6 +45,8 @@ const QueryCard = (props: Props) => {
     id,
     command = '',
     result,
+    activeMode,
+    mode,
     isOpen,
     createdAt,
     onQueryOpen,
@@ -139,6 +144,8 @@ const QueryCard = (props: Props) => {
           summaryText={summaryText}
           queryType={queryType}
           selectedValue={selectedViewValue}
+          activeMode={activeMode}
+          mode={mode}
           toggleOpen={toggleOpen}
           toggleFullScreen={toggleFullScreen}
           setSelectedValue={changeViewTypeSelected}

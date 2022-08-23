@@ -8,26 +8,51 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { getMultiCommands, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import Query from './Query'
 import styles from './Query/styles.module.scss'
 
 export interface Props {
   query: string
+  activeMode: RunQueryMode
   setQuery: (script: string) => void
   setQueryEl: Function
   setIsCodeBtnDisabled: (value: boolean) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onSubmit: (value?: string) => void
+  onQueryChangeMode: () => void
 }
+
+interface IState {
+  activeMode: RunQueryMode
+}
+
+let state: IState = {
+  activeMode: RunQueryMode.ASCII,
+}
+
 const QueryWrapper = (props: Props) => {
-  const { query = '', setQuery, setQueryEl, setIsCodeBtnDisabled, onKeyDown, onSubmit } = props
+  const {
+    query = '',
+    activeMode,
+    setQuery,
+    setQueryEl,
+    setIsCodeBtnDisabled,
+    onKeyDown,
+    onSubmit,
+    onQueryChangeMode
+  } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const {
     loading: isCommandsLoading,
     commandsArray: REDIS_COMMANDS_ARRAY,
   } = useSelector(appRedisCommandsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+
+  state = {
+    activeMode,
+  }
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
     const eventData = (() => {
@@ -47,7 +72,8 @@ const QueryWrapper = (props: Props) => {
         command,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
-        pipeline: batchSize > 1
+        pipeline: batchSize > 1,
+        rawMode: state.activeMode === RunQueryMode.Raw
       }
     })()
 
@@ -74,11 +100,13 @@ const QueryWrapper = (props: Props) => {
   ) : (
     <Query
       query={query}
+      activeMode={activeMode}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
       setIsCodeBtnDisabled={setIsCodeBtnDisabled}
       onKeyDown={onKeyDown}
       onSubmit={handleSubmit}
+      onQueryChangeMode={onQueryChangeMode}
     />
   )
 }

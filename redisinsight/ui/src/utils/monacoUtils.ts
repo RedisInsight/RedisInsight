@@ -26,7 +26,7 @@ export const splitMonacoValuePerLines = (command = '') => {
   const linesResult: string[] = []
   const lines = command.split(/\n(?=[^\s])/g)
   lines.forEach((line) => {
-    const [commandLine, countRepeat] = getCommandRepeat(line)
+    const [commandLine, countRepeat] = getCommandRepeat(line || '')
 
     if (!isRepeatCountCorrect(countRepeat)) {
       linesResult.push(line)

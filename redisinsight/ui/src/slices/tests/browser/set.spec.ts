@@ -123,7 +123,7 @@ describe('set slice', () => {
     it('should properly set the state with empty data', () => {
       // Arrange
       const data: any = {
-        keyName: ''
+        keyName: 'key'
       }
 
       const state = {
@@ -131,7 +131,8 @@ describe('set slice', () => {
         error: '',
         data: {
           ...initialState.data,
-          ...data
+          ...data,
+          key: data.keyName
         },
       }
 
@@ -155,7 +156,7 @@ describe('set slice', () => {
         error: data,
         data: {
           total: 0,
-          key: '',
+          key: undefined,
           keyName: '',
           members: [],
           nextCursor: 0,
@@ -182,7 +183,7 @@ describe('set slice', () => {
         error: '',
         data: {
           total: 0,
-          key: '',
+          key: undefined,
           keyName: '',
           members: [],
           nextCursor: 0,
@@ -206,7 +207,7 @@ describe('set slice', () => {
       // Arrange
 
       const data = {
-        key: '',
+        key: undefined,
         keyName: '',
         nextCursor: 0,
         total: 0,
@@ -269,7 +270,7 @@ describe('set slice', () => {
         error: data,
         data: {
           total: 0,
-          key: '',
+          key: undefined,
           keyName: '',
           members: [],
           nextCursor: 0,
@@ -398,7 +399,7 @@ describe('set slice', () => {
         error: data,
         data: {
           total: 0,
-          key: '',
+          key: undefined,
           keyName: '',
           members: [],
           nextCursor: 0,

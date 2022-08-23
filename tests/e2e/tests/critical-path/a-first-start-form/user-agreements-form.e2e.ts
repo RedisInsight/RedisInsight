@@ -70,6 +70,6 @@ test('Verify that if "Use recommended settings" is selected, and user unchecks a
     // Check Use recommended settings switcher
     await t.click(userAgreementPage.recommendedSwitcher);
     // Verify Use recommended settings switcher unchecked after unchecking notifications switcher
-    await t.click(settingsPage.switchNovitifationsOption);
+    await t.click(settingsPage.switchNotificationsOption);
     await t.expect(await userAgreementPage.getRecommendedSwitcherValue()).eql('false', 'Use recommended settings switcher is still checked');
 });

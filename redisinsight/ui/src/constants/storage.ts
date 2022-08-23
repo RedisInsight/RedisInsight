@@ -14,7 +14,9 @@ enum BrowserStorageItem {
   treeViewDelimiter = 'treeViewDelimiter',
   autoRefreshRate = 'autoRefreshRate',
   bulkActionId = 'bulkActionId',
-  dbConfig = 'dbConfig_'
+  dbConfig = 'dbConfig_',
+  RunQueryMode = 'RunQueryMode',
+  wbCleanUp = 'wbCleanUp',
 }
 
 export default BrowserStorageItem

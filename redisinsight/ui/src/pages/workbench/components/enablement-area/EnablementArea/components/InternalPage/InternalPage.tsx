@@ -21,8 +21,8 @@ import {
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import styles from './styles.module.scss'
 import './styles/main.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   onClose: () => void;

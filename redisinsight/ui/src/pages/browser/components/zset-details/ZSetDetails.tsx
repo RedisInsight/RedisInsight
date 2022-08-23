@@ -4,7 +4,6 @@ import { toNumber } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
-import { RedisString } from 'src/common/constants'
 
 import {
   zsetSelector,
@@ -22,6 +21,8 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { ZsetMember } from 'uiSrc/slices/interfaces/zset'
 import {
   bufferToString,
   createDeleteFieldHeader,
@@ -38,7 +39,7 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEdit
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { AddMembersToZSetDto, SearchZSetMembersResponse, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
+import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
@@ -53,7 +54,7 @@ const cellCache = new CellMeasurerCache({
   minHeight: rowHeight,
 })
 
-interface IZsetMember extends ZSetMemberDto {
+interface IZsetMember extends ZsetMember {
   editing: boolean;
 }
 
@@ -136,7 +137,7 @@ const ZSetDetails = (props: Props) => {
     closePopover()
   }
 
-  const handleEditMember = (name = '', editing: boolean) => {
+  const handleEditMember = (name: RedisResponseBuffer, editing: boolean) => {
     const newMemberState = members.map((item) => {
       if (isEqualBuffers(item.name, name)) {
         return { ...item, editing }
@@ -147,7 +148,7 @@ const ZSetDetails = (props: Props) => {
     cellCache.clearAll()
   }
 
-  const handleApplyEditScore = (name: RedisString, score: string = '') => {
+  const handleApplyEditScore = (name: RedisResponseBuffer, score: string = '') => {
     const data: AddMembersToZSetDto = {
       keyName: key,
       members: [{
@@ -276,7 +277,6 @@ const ZSetDetails = (props: Props) => {
       isSortable: true,
       truncateText: true,
       render: function Score(_name: string, { name: nameItem, score, editing }: IZsetMember, expanded?: boolean) {
-        const name = bufferToString(nameItem, viewFormat)
         const cellContent = score.toString().substring(0, 200)
         const tooltipContent = formatLongName(score.toString())
         if (editing) {
@@ -289,7 +289,7 @@ const ZSetDetails = (props: Props) => {
                 fieldName="score"
                 expandable
                 onDecline={() => handleEditMember(nameItem, false)}
-                onApply={(value) => handleApplyEditScore(nameItem, value, name)}
+                onApply={(value) => handleApplyEditScore(nameItem, value)}
                 validation={validateScoreNumber}
               />
             </StopPropagation>

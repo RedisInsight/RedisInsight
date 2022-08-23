@@ -61,7 +61,7 @@ test
         const cli_command = 'command';
         const workbench_command = 'hello';
         const common_command = 'info';
-        const browser_command = 'dbsize';
+        const browser_command = 'hset';
         //Start Monitor
         await monitorPage.startMonitor();
         //Send command in CLI
@@ -71,6 +71,7 @@ test
         //Refresh the page to send command from Browser client
         await t.click(browserPage.refreshKeysButton);
         //Check the command from browser client
+        await browserPage.addHashKey(keyName);
         await monitorPage.checkCommandInMonitorResults(browser_command);
         //Open Workbench page to create new client
         await t.click(myRedisDatabasePage.workbenchButton);

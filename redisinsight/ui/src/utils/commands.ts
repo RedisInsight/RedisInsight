@@ -1,7 +1,6 @@
 import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
 import {
   CommandArgsType,
-  CommandPrefix,
   ICommandArg,
   ICommandArgGenerated
 } from 'uiSrc/constants'
@@ -62,7 +61,7 @@ export const getDocUrlForCommand = (commandName: string): string => {
 }
 
 export const getCommandRepeat = (command = ''): [string, number] => {
-  const [countRepeatStr, ...restCommand] = command.split(' ')
+  const [countRepeatStr = '', ...restCommand] = command?.split?.(' ')
   let countRepeat = toNumber(countRepeatStr)
   let commandLine = restCommand.join(' ')
   if (!isNumber(countRepeat) || isNaN(countRepeat) || !command) {

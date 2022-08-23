@@ -21,14 +21,17 @@ import {
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import {
   bufferToSerializedFormat,
   bufferToString,
   formatLongName,
   formattingBuffer,
   isFormatEditable,
+  isNonUnicodeFormatter,
+  isEqualBuffers,
   isTextViewFormatter,
+  stringToBuffer,
   stringToSerializedBufferFormat,
   validateListIndex
 } from 'uiSrc/utils'
@@ -262,6 +265,8 @@ const ListDetails = (props: Props) => {
             ? text?.length / OneRowLength
             : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+          const disabled = !isEqualBuffers(elementItem, stringToBuffer(element))
+            && !isNonUnicodeFormatter(viewFormat)
           return (
             <StopPropagation>
               <div className={styles.inlineItemEditor}>
@@ -274,6 +279,8 @@ const ListDetails = (props: Props) => {
                   fieldName="elementValue"
                   controlsClassName={styles.textAreaControls}
                   isLoading={updateLoading}
+                  isDisabled={disabled}
+                  disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                   onDecline={() => handleEditElement(index, false)}
                   onApply={() => handleApplyEditElement(index)}
                 >
@@ -291,7 +298,7 @@ const ListDetails = (props: Props) => {
                     }}
                     disabled={updateLoading}
                     inputRef={textAreaRef}
-                    className={styles.textArea}
+                    className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                     data-testid="element-value-editor"
                   />
                 </InlineItemEditor>

@@ -25,6 +25,10 @@ export class MyRedisDatabasePage {
     applyButton = Selector('[data-testid=apply-btn]');
     submitChangesButton = Selector('[data-testid=btn-submit]');
     promoButton = Selector('[data-testid=promo-btn]');
+    sortByDatabaseAlias = Selector('span').withAttribute('title', 'Database Alias');
+    sortByHostAndPort = Selector('span').withAttribute('title', 'Host:Port');
+    sortByConnectionType = Selector('span').withAttribute('title', 'Connection Type');
+    sortByLastConnection = Selector('span').withAttribute('title', 'Last connection');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     //ICONS
@@ -133,6 +137,30 @@ export class MyRedisDatabasePage {
     async checkModulesOnPage(moduleList: Selector[]): Promise<void> {
         for (const item of moduleList) {
             await t.expect(item.visible).ok(`${item} icon`);
+        }
+    }
+
+    /**
+     * Get all databases from List of DBs page
+     */
+    async getAllDatabases(): Promise<string[]> {
+        const databases = [];
+        const n = await this.dbNameList.count;
+        for(let k = 0; k < n; k++) {
+            const name = await this.dbNameList.nth(k).textContent;
+            databases.push(name);
+        }
+        return databases;
+    }
+
+    /**
+     * Get all databases from List of DBs page
+     * @param actualList Actual databases list
+     * @param sortedList Expected list
+     */
+    async compareDatabases(actualList: string[], sortedList: string[]): Promise<void> {
+        for (let k = 0; k < actualList.length; k++) {
+            await t.expect(actualList[k].trim()).eql(sortedList[k].trim());
         }
     }
 }

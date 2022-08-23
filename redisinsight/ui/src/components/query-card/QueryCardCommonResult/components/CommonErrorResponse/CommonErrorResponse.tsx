@@ -26,7 +26,7 @@ const CommonErrorResponse = (command = '', result?: any) => {
   const { modules } = useSelector(connectedInstanceSelector)
   const dispatch = useDispatch()
   const unsupportedCommands = [SelectCommand.toLowerCase(), ...cliUnsupportedCommands, ...blockingCommands]
-  const [commandLine, countRepeat] = getCommandRepeat(command)
+  const [commandLine, countRepeat] = getCommandRepeat(command || '')
 
   // Flow if MONITOR command was executed
   if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {

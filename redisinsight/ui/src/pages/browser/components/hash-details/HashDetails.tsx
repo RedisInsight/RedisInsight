@@ -24,6 +24,7 @@ import {
   isTextViewFormatter,
   bufferToSerializedFormat,
   stringToSerializedBufferFormat,
+  isNonUnicodeFormatter,
   isFormatEditable
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
@@ -38,7 +39,7 @@ import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSr
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
@@ -316,6 +317,9 @@ const HashDetails = (props: Props) => {
             ? text?.length / OneRowLength
             : 0
           const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+          const disabled = !isEqualBuffers(valueItem, stringToBuffer(value))
+             && !isNonUnicodeFormatter(viewFormat)
+
           return (
             <StopPropagation>
               <InlineItemEditor
@@ -326,6 +330,8 @@ const HashDetails = (props: Props) => {
                 placeholder="Enter Value"
                 fieldName="fieldValue"
                 isLoading={updateLoading}
+                isDisabled={disabled}
+                disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                 controlsClassName={styles.textAreaControls}
                 onDecline={() => handleEditField(fieldItem, false)}
                 onApply={() => handleApplyEditField(fieldItem)}
@@ -344,7 +350,7 @@ const HashDetails = (props: Props) => {
                   }}
                   disabled={updateLoading}
                   inputRef={textAreaRef}
-                  className={styles.textArea}
+                  className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                   data-testid="hash-value-editor"
                 />
               </InlineItemEditor>

@@ -3,7 +3,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
@@ -35,20 +35,23 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-
 import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
+import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   query: string
+  activeMode: RunQueryMode
   setQueryEl: Function
   setQuery: (script: string) => void
   setIsCodeBtnDisabled: (value: boolean) => void
   onSubmit: (query?: string) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
+  onQueryChangeMode: () => void
 }
 
 const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
@@ -62,7 +65,16 @@ let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
 
 const Query = (props: Props) => {
-  const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl, setIsCodeBtnDisabled = () => {} } = props
+  const {
+    query = '',
+    activeMode,
+    setQuery,
+    onKeyDown,
+    onSubmit,
+    setQueryEl,
+    setIsCodeBtnDisabled = () => { },
+    onQueryChangeMode
+  } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
   const isWidgetOpen = useRef(false)
@@ -462,6 +474,23 @@ const Query = (props: Props) => {
         <div className={cx(styles.actions, { [styles.disabledActions]: isDedicatedEditorOpen })}>
           <EuiToolTip
             position="left"
+            content="Raw mode"
+            data-testid="change-mode-tooltip"
+          >
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              onClick={() => onQueryChangeMode()}
+              disabled={loading}
+              className={cx(styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
+              data-testid="btn-change-mode"
+            >
+              <EuiIcon type={RawModeIcon} />
+            </EuiButton>
+          </EuiToolTip>
+          <EuiToolTip
+            position="left"
             content={
               KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
@@ -489,6 +518,8 @@ const Query = (props: Props) => {
               />
             </>
           </EuiToolTip>
+          {/* block for third action icon */}
+          <div style={{ height: '24px' }} />
         </div>
       </div>
       {isDedicatedEditorOpen && (

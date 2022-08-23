@@ -14,7 +14,7 @@ const decoder = new TextDecoder('utf-8')
 const encoder = new TextEncoder()
 
 const isEqualBuffers = (a?: Nullable<RedisResponseBuffer>, b?: Nullable<RedisResponseBuffer>) =>
-  a?.data?.join() === b?.data?.join()
+  a?.data?.join(',') === b?.data?.join(',')
 
 // eslint-disable-next-line no-control-regex
 const IS_NON_PRINTABLE_ASCII_CHARACTER = /[^ -~\u0007\b\t\n\r]/
@@ -83,8 +83,15 @@ const bufferToASCII = (reply: RedisResponseBuffer): string => {
 const anyToBuffer = (reply: UintArray): RedisResponseBuffer =>
   ({ data: reply, type: RedisResponseBufferType.Buffer })
 
-const ASCIIToBuffer = (str: string) => {
+const ASCIIToBuffer = (strInit: string) => {
   let result = ''
+  const str = strInit
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\')
+    .replace(/\\b/g, '\b')
+    .replace(/\\t/g, '\t')
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
 
   for (let i = 0; i < str.length;) {
     if (str.substring(i, i + 2) === '\\x') {

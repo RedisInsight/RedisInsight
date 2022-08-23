@@ -14,6 +14,7 @@ import {
   appContextWorkbench
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
+import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 
 import WBResultsWrapper from '../../wb-results'
 import EnablementAreaWrapper from '../../enablement-area'
@@ -32,9 +33,11 @@ export interface Props {
   setScriptEl: Function
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
   scrollDivRef: Ref<HTMLDivElement>
+  activeMode: RunQueryMode
   onSubmit: (query?: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
+  onQueryChangeMode: () => void
 }
 
 const WBView = (props: Props) => {
@@ -44,9 +47,11 @@ const WBView = (props: Props) => {
     setScript,
     setScriptEl,
     scriptEl,
+    activeMode,
     onSubmit,
     onQueryOpen,
     onQueryDelete,
+    onQueryChangeMode,
     scrollDivRef,
   } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
@@ -100,10 +105,12 @@ const WBView = (props: Props) => {
                 >
                   <QueryWrapper
                     query={script}
+                    activeMode={activeMode}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
                     setIsCodeBtnDisabled={setIsCodeBtnDisabled}
                     onSubmit={onSubmit}
+                    onQueryChangeMode={onQueryChangeMode}
                   />
                 </EuiResizablePanel>
 
@@ -124,6 +131,7 @@ const WBView = (props: Props) => {
                 >
                   <WBResultsWrapper
                     items={items}
+                    activeMode={activeMode}
                     scrollDivRef={scrollDivRef}
                     onQueryReRun={onSubmit}
                     onQueryOpen={onQueryOpen}

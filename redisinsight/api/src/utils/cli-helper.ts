@@ -264,6 +264,8 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
   return result;
 };
 
+export const getUTF8FromBuffer = (reply: Buffer): string => reply.toString('utf8');
+
 /**
  * Generates a Buffer from escaped string representation
  * An opposite for getASCIISafeStringFromBuffer

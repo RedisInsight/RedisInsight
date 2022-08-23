@@ -20,17 +20,20 @@ RedisInsight is an intuitive and efficient GUI for Redis, allowing you to intera
 
 ### RedisInsight Highlights:
 
-* Browse, filter and visualise your key-value Redis data structures
-* CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets 
+* Browse, filter, visualise your key-value Redis data structures and see key values in different formats (including JSON, Hex, ASCII, etc.)
+* CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets, and Streams
 * CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
-* Profiler - analyze every command sent to Redis in real-time 
-* Introducing Workbench - advanced command line interface with intelligent command auto-complete and complex data visualizations
+* Profiler - analyze every command sent to Redis in real-time
+* SlowLog - analyze slow operations in Redis instances based on the [Slowlog](https://github.com/RedisInsight/RedisInsight/releases#:~:text=results%20of%20the-,Slowlog,-command%20to%20analyze) command
+* Pub/Sub - support for [Redis pub/sub](https://redis.io/docs/manual/pubsub/), enabling subscription to channels and posting messages to channels
+* Bulk actions - Delete the keys in bulk based on the filters set in Browser or Tree view
+* Introducing Workbench - advanced command line interface with intelligent command auto-complete, complex data visualizations and support for the raw mode
 * Command auto-complete support for [RediSearch](https://oss.redis.com/redisearch/), [RedisJSON](https://oss.redis.com/redisjson/), [RedisGraph](https://oss.redis.com/redisgraph/), [RedisTimeSeries](https://oss.redis.com/redistimeseries/), [RedisAI](https://oss.redis.com/redisai/)
 * Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index, queries, and aggregations
 * Ability to build your own data visualization plugins
 * Built-in click-through guides for Redis capabilities
 * Oficially supported for Redis OSS, [Redis Cloud](https://redis.com/try-free/). Works with Microsoft Azure Cache for Redis (official support upcoming).
-* Available for macOS, Windows and Linux 
+* Available for macOS (including M1), Windows and Linux 
 
 Check out the [release notes](https://docs.redis.com/latest/ri/release-notes/). 
 

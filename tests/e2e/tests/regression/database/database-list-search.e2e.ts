@@ -4,7 +4,7 @@ import {
     addNewStandaloneDatabasesApi,
     deleteStandaloneDatabasesApi,
     discoverSentinelDatabaseApi,
-    deleteSentinelDatabaseApi,
+    deleteAllSentinelDatabasesApi,
     addNewOSSClusterDatabaseApi,
     deleteOSSClusterDatabaseApi
 } from '../../../helpers/api/api-database';
@@ -29,7 +29,7 @@ const databasesForAdding = [
 fixture `Database list search`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         // Add new databases using API
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
@@ -38,11 +38,11 @@ fixture `Database list search`
         // Reload Page
         await t.eval(() => location.reload());
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         //Clear and delete databases
         await deleteStandaloneDatabasesApi(databasesForAdding);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await deleteSentinelDatabaseApi(ossSentinelConfig);
+        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     });
 test('Verify that user can search DB by database name on the List of databases', async t => {
     //Search for DB by name
@@ -60,7 +60,7 @@ test('Verify that user can search DB by host on the List of databases', async t 
     //Verify that database found on the list search by host
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[0].databaseName).exists).ok('The database with host not found', { timeout: 10000 });
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[1].databaseName).exists).ok('The database with host not found', { timeout: 10000 });
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.name).exists).notOk('The database with other host is found', { timeout: 10000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.name[1]).exists).notOk('The database with other host is found', { timeout: 10000 });
 });
 test('Verify that user can search DB by port on the List of databases', async t => {
     //Search for DB by port
@@ -69,7 +69,7 @@ test('Verify that user can search DB by port on the List of databases', async t 
     //Verify that database found on the list search by port
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[0].databaseName).exists).notOk('The database with port is found', { timeout: 10000 });
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[1].databaseName).exists).notOk('The database with port is found', { timeout: 10000 });
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.name).exists).ok('The database with other port is not found', { timeout: 10000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.name[1]).exists).ok('The database with other port is not found', { timeout: 10000 });
 });
 // Unskip after fixing https://redislabs.atlassian.net/browse/RI-3300
 test.skip('Verify that user can search DB by Connection Type on the List of databases', async t => {

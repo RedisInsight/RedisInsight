@@ -1023,7 +1023,7 @@ workflows:
                 - latest
       - unit-tests-api:
           name: UTest - API
-          <<: *releaseAndLatestFilter
+          filters: *releaseAndLatestFilter
       # integration tests
       - integration-tests-run:
           matrix:
@@ -1031,7 +1031,7 @@ workflows:
             parameters:
               rte: *iTestsNames
           name: ITest - << matrix.rte >> (code)
-          <<: *releaseAndLatestFilter
+          filters: *releaseAndLatestFilter
       - integration-tests-coverage:
           name: ITest - Final coverage
           requires:
@@ -1039,7 +1039,7 @@ workflows:
         # e2e tests (doesn't affect pipeline even if fail)
       - docker:
           name: Build docker image
-          <<: *releaseAndLatestFilter
+          filters: *releaseAndLatestFilter
       - e2e-tests:
           name: E2ETest
           build: docker

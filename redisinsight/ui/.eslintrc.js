@@ -65,7 +65,7 @@ module.exports = {
     'no-nested-ternary': 'off',
     'no-param-reassign': ['error', { props: false }],
     'sonarjs/no-duplicate-string': 'off',
-    'sonarjs/cognitive-complexity': [1, 15],
+    'sonarjs/cognitive-complexity': [1, 20],
     'sonarjs/no-identical-functions': [0, 5],
     'import/order': [
       1,

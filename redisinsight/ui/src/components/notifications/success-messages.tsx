@@ -1,6 +1,6 @@
 import React from 'react'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { bufferToString, formatNameShort, Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -71,7 +71,7 @@ export default {
       </>
     ),
   }),
-  REMOVED_KEY_VALUE: (keyName: RedisResponseBuffer, keyValue: RedisString, valueType: string) => ({
+  REMOVED_KEY_VALUE: (keyName: RedisResponseBuffer, keyValue: RedisResponseBuffer, valueType: string) => ({
     title: (
       <>
         <span>{valueType}</span>

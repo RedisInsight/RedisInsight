@@ -19,7 +19,7 @@ import {
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 export interface FormattingProps {
-  expanded: boolean
+  expanded?: boolean
 }
 
 const isTextViewFormatter = (format: KeyValueFormat) => [

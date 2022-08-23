@@ -7,25 +7,25 @@ export const constructKeysToTreeMockResult = [
     children: [],
     keys: {
       keys2: {
-        name: 'keys2',
+        nameString: 'keys2',
         type: 'hash',
         ttl: -1,
         size: 71
       },
       test1: {
-        name: 'test1',
+        nameString: 'test1',
         type: 'hash',
         ttl: -1,
         size: 71
       },
       test2: {
-        name: 'test2',
+        nameString: 'test2',
         type: 'hash',
         ttl: -1,
         size: 71
       },
       keys1: {
-        name: 'keys1',
+        nameString: 'keys1',
         type: 'hash',
         ttl: -1,
         size: 71
@@ -43,19 +43,19 @@ export const constructKeysToTreeMockResult = [
         children: [],
         keys: {
           'keys:1': {
-            name: 'keys:1',
+            nameString: 'keys:1',
             type: 'hash',
             ttl: -1,
             size: 71
           },
           'keys:3': {
-            name: 'keys:3',
+            nameString: 'keys:3',
             type: 'hash',
             ttl: -1,
             size: 71
           },
           'keys:2': {
-            name: 'keys:2',
+            nameString: 'keys:2',
             type: 'hash',
             ttl: -1,
             size: 71
@@ -73,13 +73,13 @@ export const constructKeysToTreeMockResult = [
             children: [],
             keys: {
               'keys:1:2': {
-                name: 'keys:1:2',
+                nameString: 'keys:1:2',
                 type: 'hash',
                 ttl: -1,
                 size: 71
               },
               'keys:1:1': {
-                name: 'keys:1:1',
+                nameString: 'keys:1:1',
                 type: 'hash',
                 ttl: -1,
                 size: 71
@@ -110,7 +110,7 @@ export const constructKeysToTreeMockResult = [
             children: [],
             keys: {
               'empty::test': {
-                name: 'empty::test',
+                nameString: 'empty::test',
                 type: 'hash',
                 ttl: -1,
                 size: 71

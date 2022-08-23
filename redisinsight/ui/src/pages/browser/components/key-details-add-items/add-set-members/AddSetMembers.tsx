@@ -17,6 +17,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { stringToBuffer } from 'uiSrc/utils'
 import AddItemsActions from '../../add-items-actions/AddItemsActions'
 import { AddZsetFormConfig as config } from '../../add-key/constants/fields-config'
 
@@ -109,8 +110,9 @@ const AddSetMembers = (props: Props) => {
   const submitData = (): void => {
     const data = {
       keyName: selectedKey,
-      members: members.map((item) => item.name),
+      members: members.map((item) => stringToBuffer(item.name)),
     }
+
     dispatch(addSetMembersAction(data, onSuccessAdded))
   }
 

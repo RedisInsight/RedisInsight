@@ -66,16 +66,6 @@ const MessagesList = (props: Props) => {
     })
   }
 
-  // TODO: delete after manual tests
-  // const scrollToBottomReserve = () => {
-  //   const { scrollHeight = 0, offsetHeight = 0 } = outerRef.current || {}
-
-  //   listRef.current?.scrollTo(scrollHeight - offsetHeight)
-  //   requestAnimationFrame(() => {
-  //     listRef.current?.scrollTo(scrollHeight - offsetHeight)
-  //   })
-  // }
-
   const handleAnchorClick = () => {
     scrollToBottom()
   }

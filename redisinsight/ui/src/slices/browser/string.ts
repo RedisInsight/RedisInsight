@@ -8,6 +8,7 @@ import { refreshKeyInfoAction } from './keys'
 import { addErrorNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 import { StringState } from '../interfaces/string'
+import { RedisResponseBuffer } from '../interfaces'
 
 export const initialState: StringState = {
   loading: false,
@@ -80,12 +81,13 @@ export const stringDataSelector = (state: RootState) =>
 export default stringSlice.reducer
 
 // Asynchronous thunk action
-export function fetchString(key: string, resetData?: boolean) {
+export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(getString(resetData))
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -93,7 +95,8 @@ export function fetchString(key: string, resetData?: boolean) {
         ),
         {
           keyName: key,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
@@ -109,9 +112,9 @@ export function fetchString(key: string, resetData?: boolean) {
 
 // Asynchronous thunk action
 export function updateStringValueAction(
-  key: string,
-  value: string,
-  onSuccess?: () => void,
+  key: RedisResponseBuffer,
+  value: RedisResponseBuffer,
+  onSuccess?: (value: RedisResponseBuffer) => void,
   onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -119,6 +122,7 @@ export function updateStringValueAction(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.put(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -127,7 +131,8 @@ export function updateStringValueAction(
         {
           keyName: key,
           value,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
@@ -144,7 +149,7 @@ export function updateStringValueAction(
         })
         dispatch(updateValueSuccess(value))
         dispatch<any>(refreshKeyInfoAction(key))
-        onSuccess?.()
+        onSuccess?.(value)
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)

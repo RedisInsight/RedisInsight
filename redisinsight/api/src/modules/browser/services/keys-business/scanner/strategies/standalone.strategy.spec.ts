@@ -39,6 +39,11 @@ const mockNodeEmptyResult: IGetNodeKeysResult = {
   keys: [],
 };
 
+const mockRedisKeyspaceInfoResponse_1: string = '# Keyspace\r\ndb0:keys=1,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_2: string = '# Keyspace\r\ndb0:keys=1000000,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_3: string = '# Keyspace\r\n \r\n';
+const mockRedisKeyspaceInfoResponse_4: string = '# Keyspace\r\ndb0:keys=10,expires=0,avg_ttl=0\r\n';
+
 let strategy;
 let browserTool;
 let settingsProvider;
@@ -83,10 +88,11 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(1);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([getKeyInfoResponse]);
 
@@ -140,10 +146,11 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(1000000);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_2);
 
       strategy.getKeysInfo = jest
         .fn()
@@ -164,8 +171,9 @@ describe('Standalone Scanner Strategy', () => {
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         2,
@@ -201,10 +209,11 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(1000000);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_2);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
@@ -226,18 +235,20 @@ describe('Standalone Scanner Strategy', () => {
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
     });
     it('should not call scan when total is 0', async () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(0);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
@@ -251,8 +262,9 @@ describe('Standalone Scanner Strategy', () => {
       expect(browserTool.execCommand).toBeCalledTimes(1);
       expect(browserTool.execCommand).toHaveBeenLastCalledWith(
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
       expect(strategy.getKeysInfo).toBeCalledTimes(0);
     });
@@ -260,10 +272,11 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(0);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
       strategy.scan = jest.fn().mockResolvedValue(undefined);
 
@@ -282,15 +295,14 @@ describe('Standalone Scanner Strategy', () => {
       expect(result).toEqual([mockNodeEmptyResult]);
       expect(strategy.getKeysInfo).toBeCalledTimes(0);
     });
-    it('should throw error on dbsize command', async () => {
+    it('should throw error on Info Keyspace command', async () => {
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
-        command: 'DBSIZE',
+        command: 'info keyspace',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.DbSize, [])
+        .calledWith(mockClientOptions, BrowserToolKeysCommands.InfoKeyspace, [], 'utf8')
         .mockRejectedValue(replyError);
-
       try {
         await strategy.getKeys(mockClientOptions, getKeysDto);
         fail('Should throw an error');
@@ -302,10 +314,11 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(10);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
 
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
@@ -332,10 +345,11 @@ describe('Standalone Scanner Strategy', () => {
         when(browserTool.execCommand)
           .calledWith(
             mockClientOptions,
-            BrowserToolKeysCommands.DbSize,
+            BrowserToolKeysCommands.InfoKeyspace,
             expect.anything(),
+            'utf8',
           )
-          .mockResolvedValue(10);
+          .mockResolvedValue(mockRedisKeyspaceInfoResponse_4);
         strategy.scan = jest.fn();
       });
       it("should call scan when math contains '?' glob", async () => {
@@ -406,10 +420,11 @@ describe('Standalone Scanner Strategy', () => {
         when(browserTool.execCommand)
           .calledWith(
             mockClientOptions,
-            BrowserToolKeysCommands.DbSize,
-            expect.anything(),
+            BrowserToolKeysCommands.InfoKeyspace,
+            [],
+            'utf8',
           )
-          .mockResolvedValue(total);
+          .mockResolvedValue(mockRedisKeyspaceInfoResponse_4);
         strategy.scan = jest.fn();
       });
       it('should find exact key when match is not glob patter', async () => {

@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { parseKeysListResponse } from 'uiSrc/utils'
+import { parseKeysListResponse, stringToBuffer } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -118,13 +118,13 @@ describe('keys slice', () => {
         nextCursor: '228',
         keys: [
           {
-            name: 'bull:mail-queue:155',
+            name: stringToBuffer('bull:mail-queue:155'),
             type: 'hash',
             ttl: 2147474450,
             size: 3041,
           },
           {
-            name: 'bull:mail-queue:223',
+            name: stringToBuffer('bull:mail-queue:223'),
             type: 'hash',
             ttl: -1,
             size: 3041,
@@ -255,13 +255,13 @@ describe('keys slice', () => {
         scanned: 0,
         keys: [
           {
-            name: 'bull:mail-queue:155',
+            name: stringToBuffer('bull:mail-queue:155'),
             type: 'hash',
             ttl: 2147474450,
             size: 3041,
           },
           {
-            name: 'bull:mail-queue:223',
+            name: stringToBuffer('bull:mail-queue:223'),
             type: 'hash',
             ttl: -1,
             size: 3041,
@@ -345,7 +345,8 @@ describe('keys slice', () => {
     it('should properly set the state', () => {
       // Arrange
       const data = {
-        name: 'keyName',
+        name: stringToBuffer('keyName'),
+        nameString: 'keyName',
         type: 'hash',
         ttl: -1,
         size: 279,
@@ -754,13 +755,13 @@ describe('keys slice', () => {
           shardsMeta: {},
           keys: [
             {
-              name: 'bull:mail-queue:155',
+              name: stringToBuffer('bull:mail-queue:155'),
               type: 'hash',
               ttl: 2147474450,
               size: 3041,
             },
             {
-              name: 'bull:mail-queue:223',
+              name: stringToBuffer('bull:mail-queue:223'),
               type: 'hash',
               ttl: -1,
               size: 3041,
@@ -831,13 +832,13 @@ describe('keys slice', () => {
           shardsMeta: {},
           keys: [
             {
-              name: 'bull:mail-queue:155',
+              name: stringToBuffer('bull:mail-queue:155'),
               type: 'hash',
               ttl: 2147474450,
               size: 3041,
             },
             {
-              name: 'bull:mail-queue:223',
+              name: stringToBuffer('bull:mail-queue:223'),
               type: 'hash',
               ttl: -1,
               size: 3041,
@@ -860,7 +861,7 @@ describe('keys slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys('0', 20))
+        await store.dispatch<any>(fetchMoreKeys([], '0', 20))
 
         // Assert
         const expectedActions = [
@@ -899,7 +900,7 @@ describe('keys slice', () => {
       it('call both defaultSelectedKeyAction and loadKeyInfoSuccess when fetch is successed', async () => {
         // Arrange
         const data = {
-          name: 'string',
+          name: stringToBuffer('string'),
           type: KeyTypes.String,
           ttl: -1,
           size: 10,
@@ -951,7 +952,7 @@ describe('keys slice', () => {
       it('success to refresh key info', async () => {
         // Arrange
         const data = {
-          name: 'keyName',
+          name: stringToBuffer('keyName'),
           type: 'hash',
           ttl: -1,
           size: 279,
@@ -961,7 +962,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(refreshKeyInfoAction('keyName'))
+        await store.dispatch<any>(refreshKeyInfoAction(stringToBuffer('keyName')))
 
         // Assert
         const expectedActions = [

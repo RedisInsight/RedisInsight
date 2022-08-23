@@ -14,87 +14,26 @@ import {
   mockRedisWrongTypeError,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
-import config from 'src/utils/config';
 import {
-  AddMembersToZSetDto,
   CreateZSetWithExpireDto,
-  DeleteMembersFromZSetDto,
-  GetZSetMembersDto,
   SearchZSetMembersDto,
-  SearchZSetMembersResponse,
-  UpdateMemberInZSetDto,
 } from 'src/modules/browser/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import {
+  getZSetMembersInAscResponse, getZSetMembersInDescResponse,
+  mockAddMembersDto, mockDeleteMembersDto,
+  mockGetMembersDto,
+  mockMembersForZAddCommand, mockSearchMembersDto, mockSearchZSetMembersResponse, mockUpdateMemberDto,
+} from 'src/modules/browser/__mocks__';
 import { ZSetBusinessService } from './z-set-business.service';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
-const REDIS_SCAN_CONFIG = config.get('redis_scan');
-
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
-};
-
-const mockGetMembersDto: GetZSetMembersDto = {
-  keyName: 'zSet',
-  offset: 0,
-  count: REDIS_SCAN_CONFIG.countDefault || 15,
-  sortOrder: SortOrder.Asc,
-};
-
-const mockSearchMembersDto: SearchZSetMembersDto = {
-  keyName: 'zSet',
-  cursor: 0,
-  count: 15,
-  match: '*',
-};
-
-const mockAddMembersDto: AddMembersToZSetDto = {
-  keyName: mockGetMembersDto.keyName,
-  members: [
-    {
-      name: 'member1',
-      score: 0,
-    },
-    {
-      name: 'member2',
-      score: 2,
-    },
-  ],
-};
-
-const mockUpdateMemberDto: UpdateMemberInZSetDto = {
-  keyName: mockGetMembersDto.keyName,
-  member: mockAddMembersDto.members[0],
-};
-
-const mockMembersForZAddCommand = ['0', 'member1', '2', 'member2'];
-
-const mockDeleteMembersDto: DeleteMembersFromZSetDto = {
-  keyName: mockAddMembersDto.keyName,
-  members: ['member1', 'member2'],
-};
-
-const getZSetMembersInAscResponse = {
-  keyName: mockGetMembersDto.keyName,
-  total: mockAddMembersDto.members.length,
-  members: [...mockAddMembersDto.members],
-};
-
-const getZSetMembersInDescResponse = {
-  keyName: mockGetMembersDto.keyName,
-  total: mockAddMembersDto.members.length,
-  members: mockAddMembersDto.members.slice().reverse(),
-};
-
-const mockSearchZSetMembersResponse: SearchZSetMembersResponse = {
-  keyName: mockGetMembersDto.keyName,
-  total: mockAddMembersDto.members.length,
-  nextCursor: 0,
-  members: [...mockAddMembersDto.members],
 };
 
 describe('ZSetBusinessService', () => {
@@ -202,14 +141,7 @@ describe('ZSetBusinessService', () => {
     };
     it('succeed to create ZSet data type with expiration', async () => {
       when(browserTool.execMulti)
-        .calledWith(mockClientOptions, [
-          [
-            BrowserToolZSetCommands.ZAdd,
-            dto.keyName,
-            ...mockMembersForZAddCommand,
-          ],
-          [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
-        ])
+        .calledWith(mockClientOptions, expect.anything())
         .mockResolvedValue([
           null,
           [
@@ -567,10 +499,10 @@ describe('ZSetBusinessService', () => {
       );
     });
     it('succeed to find exact member in the z-set', async () => {
-      const item = { name: 'member', score: 2 };
+      const item = { name: Buffer.from('member'), score: 2 };
       const dto: SearchZSetMembersDto = {
         ...mockSearchMembersDto,
-        match: item.name,
+        match: item.name.toString(),
       };
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolZSetCommands.ZScore, [
@@ -608,14 +540,16 @@ describe('ZSetBusinessService', () => {
       expect(result).toEqual({ ...mockSearchZSetMembersResponse, members: [] });
     });
     it('should not call scan when math contains escaped glob', async () => {
+      const mockMatch = 'm\\[a-e\\]mber';
+      const mockSpecialMember = Buffer.from('m[a-e]mber');
       const dto: SearchZSetMembersDto = {
         ...mockSearchMembersDto,
-        match: 'm\\[a-e\\]mber',
+        match: mockMatch,
       };
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolZSetCommands.ZScore, [
           dto.keyName,
-          'm[a-e]mber',
+          mockSpecialMember.toString(),
         ])
         .mockResolvedValue(1);
 
@@ -623,7 +557,7 @@ describe('ZSetBusinessService', () => {
 
       expect(result).toEqual({
         ...mockSearchZSetMembersResponse,
-        members: [{ name: 'm[a-e]mber', score: 1 }],
+        members: [{ name: mockSpecialMember, score: 1 }],
       });
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
         mockClientOptions,

@@ -1,14 +1,14 @@
 import {
   expect,
   describe,
-  it,
+  _,
   before,
   deps,
   Joi,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -31,167 +31,186 @@ const responseSchema = Joi.object().keys({
   affected: Joi.number().integer().required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('DELETE /instance/:instanceId/set/members', () => {
-  before(rte.data.truncate);
-
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
-    before(async () => await rte.data.generateKeys(true));
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    beforeEach(() => rte.data.generateBinKeys(true));
 
     [
       {
-        name: 'Should delete single member',
+        name: 'Should remove member from buff',
         data: {
-          keyName: constants.TEST_SET_KEY_2,
-          members: ['member_1'],
+          keyName: constants.TEST_SET_KEY_BIN_BUF_OBJ_1,
+          members: [constants.TEST_SET_MEMBER_BIN_BUF_OBJ_1],
         },
-        responseSchema,
         responseBody: {
-          affected: 1
+          affected: 1,
         },
         after: async () => {
-          const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
-          expect(scanResult[0]).to.eql('0'); // full scan completed
-          expect(scanResult[1].length).to.eql(99);
+          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(0);
         },
       },
       {
-        name: 'Should delete multiple members',
+        name: 'Should add member from ascii',
         data: {
-          keyName: constants.TEST_SET_KEY_2,
-          members: ['member_2', 'member_3', 'member_4'],
+          keyName: constants.TEST_SET_KEY_BIN_ASCII_1,
+          members: [constants.TEST_SET_MEMBER_BIN_ASCII_1],
         },
-        responseSchema,
         responseBody: {
-          affected: 3
+          affected: 1,
         },
         after: async () => {
-          const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
-          expect(scanResult[0]).to.eql('0'); // full scan completed
-          expect(scanResult[1].length).to.eql(96);
-        },
-      },
-      {
-        name: 'Should not delete any member if incorrect member passed',
-        data: {
-          keyName: constants.TEST_SET_KEY_2,
-          members: [constants.getRandomString()],
-        },
-        responseSchema,
-        responseBody: {
-          affected: 0
-        },
-        after: async () => {
-          const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
-          expect(scanResult[0]).to.eql('0'); // full scan completed
-          expect(scanResult[1].length).to.eql(96);
-        },
-      },
-      {
-        name: 'Should return NotFound error if key does not exists',
-        data: {
-          keyName: constants.getRandomString(),
-          members: [constants.getRandomString()],
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Key with this name does not exist.',
-        },
-      },
-      {
-        name: 'Should return NotFound error if instance id does not exists',
-        endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
-        data: {
-          keyName: constants.TEST_LIST_KEY_2,
-          members: [constants.getRandomString()],
-        },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Invalid database instance id.',
-        },
-        after: async () => {
-          // check that value was not overwritten
-          const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
-          expect(scanResult[0]).to.eql('0'); // full scan completed
-          expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
+          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(0);
         },
       },
     ].map(mainCheckFn);
   });
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => rte.data.setAclUserRules('~* +@all'));
+  describe('Main', () => {
+    before(rte.data.truncate);
 
-    [
-      {
-        name: 'Should delete member',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_SET_KEY_2,
-          members: [constants.getRandomString()],
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+
+    describe('Common', () => {
+      before(async () => await rte.data.generateKeys(true));
+
+      [
+        {
+          name: 'Should delete single member',
+          data: {
+            keyName: constants.TEST_SET_KEY_2,
+            members: ['member_1'],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 1
+          },
+          after: async () => {
+            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            expect(scanResult[0]).to.eql('0'); // full scan completed
+            expect(scanResult[1].length).to.eql(99);
+          },
         },
-        responseSchema,
-        responseBody: {
-          affected: 0,
-        }
-      },
-      {
-        name: 'Should throw error if no permissions for "exists" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_SET_KEY_2,
-          members: [constants.getRandomString()],
+        {
+          name: 'Should delete multiple members',
+          data: {
+            keyName: constants.TEST_SET_KEY_2,
+            members: ['member_2', 'member_3', 'member_4'],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 3
+          },
+          after: async () => {
+            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            expect(scanResult[0]).to.eql('0'); // full scan completed
+            expect(scanResult[1].length).to.eql(96);
+          },
         },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should not delete any member if incorrect member passed',
+          data: {
+            keyName: constants.TEST_SET_KEY_2,
+            members: [constants.getRandomString()],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 0
+          },
+          after: async () => {
+            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            expect(scanResult[0]).to.eql('0'); // full scan completed
+            expect(scanResult[1].length).to.eql(96);
+          },
+        },
+        {
+          name: 'Should return NotFound error if key does not exists',
+          data: {
+            keyName: constants.getRandomString(),
+            members: [constants.getRandomString()],
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Key with this name does not exist.',
+          },
+        },
+        {
+          name: 'Should return NotFound error if instance id does not exists',
+          endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+          data: {
+            keyName: constants.TEST_LIST_KEY_2,
+            members: [constants.getRandomString()],
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Invalid database instance id.',
+          },
+          after: async () => {
+            // check that value was not overwritten
+            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            expect(scanResult[0]).to.eql('0'); // full scan completed
+            expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
+          },
+        },
+      ].map(mainCheckFn);
+    });
+
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => rte.data.setAclUserRules('~* +@all'));
+
+      [
+        {
+          name: 'Should delete member',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_SET_KEY_2,
+            members: [constants.getRandomString()],
+          },
+          responseSchema,
+          responseBody: {
+            affected: 0,
+          }
+        },
+        {
+          name: 'Should throw error if no permissions for "exists" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_SET_KEY_2,
+            members: [constants.getRandomString()],
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -exists')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -exists')
-      },
-      {
-        name: 'Should throw error if no permissions for "srem" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_SET_KEY_2,
-          members: [constants.getRandomString()],
-        },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "srem" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_SET_KEY_2,
+            members: [constants.getRandomString()],
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -srem')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -srem')
-      },
-    ].map(mainCheckFn);
+      ].map(mainCheckFn);
+    });
   });
 });

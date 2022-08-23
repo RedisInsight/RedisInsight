@@ -8,7 +8,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  getMainCheckFn
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -36,162 +36,185 @@ const validInputData = {
   },
 };
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('PATCH /instance/:instanceId/zSet', () => {
-  before(async () => await rte.data.generateKeys(true));
+  describe('Modes', () => {
+    requirements('!rte.bigData');
+    beforeEach(() => rte.data.generateBinKeys(true));
 
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
-
-  describe('Common', () => {
     [
       {
-        name: 'Should return NotFound error if instance id does not exists',
-        endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+        name: 'Should modify member from buff',
         data: {
-          keyName: constants.TEST_ZSET_KEY_1,
+          keyName: constants.TEST_ZSET_KEY_BIN_BUF_OBJ_1,
           member: {
-            name: constants.getRandomString(),
-            score: 0
+            name: constants.TEST_ZSET_MEMBER_BIN_BUF_OBJ_1,
+            score: 3,
           },
         },
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'Invalid database instance id.',
+        after: async () => {
+          expect(await rte.data.sendCommand('zrange', [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10], null)).to.deep.eq([
+            constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
+          ]);
         },
-        after: async () =>
-          // check that value was not overwritten
-          expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10))
-            .to.eql([
+      },
+      {
+        name: 'Should modify member from ascii',
+        data: {
+          keyName: constants.TEST_ZSET_KEY_BIN_ASCII_1,
+          member: {
+            name: constants.TEST_ZSET_MEMBER_BIN_ASCII_1,
+            score: 3,
+          },
+        },
+        after: async () => {
+          expect(await rte.data.sendCommand('zrange', [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10], null)).to.deep.eq([
+            constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
+          ]);
+        },
+      },
+    ].map(mainCheckFn);
+  });
+
+  describe('Main', () => {
+    before(async () => await rte.data.generateKeys(true));
+
+    describe('Validation', () => {
+      generateInvalidDataTestCases(dataSchema, validInputData).map(
+        validateInvalidDataTestCase(endpoint, dataSchema),
+      );
+    });
+
+    describe('Common', () => {
+      [
+        {
+          name: 'Should return NotFound error if instance id does not exists',
+          endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
+          data: {
+            keyName: constants.TEST_ZSET_KEY_1,
+            member: {
+              name: constants.getRandomString(),
+              score: 0
+            },
+          },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Invalid database instance id.',
+          },
+          after: async () =>
+            // check that value was not overwritten
+            expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10))
+              .to.eql([
               constants.TEST_ZSET_MEMBER_1,
               constants.TEST_ZSET_MEMBER_2,
-          ])
-      },
-      {
-        name: 'Should return NotFound error if key does not exists',
-        data: {
-          keyName: constants.getRandomString(),
-          member: {
-            name: constants.getRandomString(),
-            score: 0
-          },
+            ])
         },
-        statusCode: 404,
-        responseBody: {
+        {
+          name: 'Should return NotFound error if key does not exists',
+          data: {
+            keyName: constants.getRandomString(),
+            member: {
+              name: constants.getRandomString(),
+              score: 0
+            },
+          },
           statusCode: 404,
-          error: 'Not Found',
-          message: 'Key with this name does not exist.',
-        },
-      },
-      {
-        name: 'Should return NotFound error if try to modify incorrect data type',
-        data: {
-          keyName: constants.TEST_STRING_KEY_1,
-          member: {
-            name: constants.getRandomString(),
-            score: 0
+          responseBody: {
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Key with this name does not exist.',
           },
         },
-        statusCode: 400,
-        responseBody: {
+        {
+          name: 'Should return NotFound error if try to modify incorrect data type',
+          data: {
+            keyName: constants.TEST_STRING_KEY_1,
+            member: {
+              name: constants.getRandomString(),
+              score: 0
+            },
+          },
           statusCode: 400,
-          error: 'Bad Request',
-        },
-      },
-      {
-        name: 'Should modify member with empty value',
-        data: {
-          keyName: constants.TEST_ZSET_KEY_1,
-          member: {
-            name: constants.TEST_ZSET_MEMBER_1,
-            score: 1
+          responseBody: {
+            statusCode: 400,
+            error: 'Bad Request',
           },
         },
-        statusCode: 200,
-        after: async () => {
-          expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10)).to.deep.eql([
-            constants.TEST_ZSET_MEMBER_2,
-            constants.TEST_ZSET_MEMBER_1,
-          ]);
-        }
-      },
-    ].map(mainCheckFn);
-  });
+        {
+          name: 'Should modify member with empty value',
+          data: {
+            keyName: constants.TEST_ZSET_KEY_1,
+            member: {
+              name: constants.TEST_ZSET_MEMBER_1,
+              score: 1
+            },
+          },
+          statusCode: 200,
+          after: async () => {
+            expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10)).to.deep.eql([
+              constants.TEST_ZSET_MEMBER_2,
+              constants.TEST_ZSET_MEMBER_1,
+            ]);
+          }
+        },
+      ].map(mainCheckFn);
+    });
 
-  describe('ACL', () => {
-    requirements('rte.acl');
-    before(async () => rte.data.setAclUserRules('~* +@all'));
+    describe('ACL', () => {
+      requirements('rte.acl');
+      before(async () => rte.data.setAclUserRules('~* +@all'));
 
-    [
-      {
-        name: 'Should create regular item',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_ZSET_KEY_1,
-          member: {
-            name: constants.TEST_ZSET_MEMBER_1,
-            score: 0.1
+      [
+        {
+          name: 'Should create regular item',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_ZSET_KEY_1,
+            member: {
+              name: constants.TEST_ZSET_MEMBER_1,
+              score: 0.1
+            },
           },
+          statusCode: 200,
         },
-        statusCode: 200,
-      },
-      {
-        name: 'Should throw error if no permissions for "zadd" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.TEST_ZSET_KEY_1,
-          member: {
-            name: constants.getRandomString(),
-            score: 0
+        {
+          name: 'Should throw error if no permissions for "zadd" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_ZSET_KEY_1,
+            member: {
+              name: constants.getRandomString(),
+              score: 0
+            },
           },
-        },
-        statusCode: 403,
-        responseBody: {
           statusCode: 403,
-          error: 'Forbidden',
-        },
-        before: () => rte.data.setAclUserRules('~* +@all -zadd')
-      },
-      {
-        name: 'Should throw error if no permissions for "exists" command',
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        data: {
-          keyName: constants.getRandomString(),
-          member: {
-            name: constants.getRandomString(),
-            score: 0
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
           },
+          before: () => rte.data.setAclUserRules('~* +@all -zadd')
         },
-        statusCode: 403,
-        responseBody: {
+        {
+          name: 'Should throw error if no permissions for "exists" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.getRandomString(),
+            member: {
+              name: constants.getRandomString(),
+              score: 0
+            },
+          },
           statusCode: 403,
-          error: 'Forbidden',
+          responseBody: {
+            statusCode: 403,
+            error: 'Forbidden',
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -exists')
         },
-        before: () => rte.data.setAclUserRules('~* +@all -exists')
-      },
-    ].map(mainCheckFn);
+      ].map(mainCheckFn);
+    });
   });
 });

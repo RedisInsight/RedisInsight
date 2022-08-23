@@ -12,81 +12,31 @@ import {
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
+import {
+  mockAckPendingMessagesDto,
+  mockAdditionalClaimPendingEntriesDto,
+  mockClaimPendingEntriesDto,
+  mockClaimPendingEntriesReply,
+  mockConsumer,
+  mockConsumerGroup,
+  mockConsumerReply,
+  mockGetPendingMessagesDto,
+  mockKeyDto,
+  mockPendingMessage,
+  mockPendingMessageReply,
+} from 'src/modules/browser/__mocks__';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
-const mockKeyDto = {
-  keyName: 'keyName',
-};
-
-const mockConsumerGroup = {
-  name: 'group-1',
-  consumers: 0,
-  pending: 0,
-  lastDeliveredId: '1651130346487-0',
-  smallestPendingId: '1651130346480-0',
-  greatestPendingId: '1651130346487-0',
-};
-
-const mockConsumer = {
-  name: 'consumer-1',
-  pending: 0,
-  idle: 10,
-};
-
-const mockConsumerReply = [
-  'name', mockConsumer.name,
-  'pending', mockConsumer.pending,
-  'idle', mockConsumer.idle,
-];
-
-const mockGetPendingMessagesDto = {
-  ...mockKeyDto,
-  groupName: mockConsumerGroup.name,
-  start: '-',
-  end: '+',
-  count: 10,
-  consumerName: mockConsumer.name,
-};
-
-const mockPendingMessage = {
-  id: '1651130346487-0',
-  consumerName: mockConsumer.name,
-  idle: mockConsumer.idle,
-  delivered: 1,
-};
-
-const mockPendingMessageReply = Object.values(mockPendingMessage);
-
-const mockAckPendingMessagesDto = {
-  ...mockKeyDto,
-  groupName: mockConsumerGroup.name,
-  entries: [mockPendingMessage.id, mockPendingMessage.id],
-};
-
-const mockClaimPendingEntriesDto = {
-  ...mockKeyDto,
-  groupName: mockConsumerGroup.name,
-  consumerName: mockConsumer.name,
-  entries: [mockPendingMessage.id, mockPendingMessage.id],
-  minIdleTime: 0,
-};
-const mockAdditionalClaimPendingEntriesDto = {
-  time: 0,
-  retryCount: 1,
-  force: true,
-};
-
-const mockClaimPendingEntriesReply = [
-  mockPendingMessage.id, mockPendingMessage.id,
-];
 
 describe('ConsumerService', () => {
   let service: ConsumerService;
   let browserTool: MockType<BrowserToolService>;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConsumerService,
@@ -461,17 +411,18 @@ describe('ConsumerService', () => {
       }
     });
   });
-  describe('ackPendingEntries', () => {
+  describe('claimPendingEntries', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything())
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockResolvedValue(mockClaimPendingEntriesReply);
     });
     it('claim pending entries', async () => {
       const result = await service.claimPendingEntries(mockClientOptions, mockClaimPendingEntriesDto);
       expect(result).toEqual({ affected: mockClaimPendingEntriesReply });
 
-      expect(browserTool.execCommand).toHaveBeenCalledWith(mockClientOptions,
+      expect(browserTool.execCommand).toHaveBeenCalledWith(
+        mockClientOptions,
         BrowserToolStreamCommands.XClaim,
         [
           mockClaimPendingEntriesDto.keyName,
@@ -480,7 +431,9 @@ describe('ConsumerService', () => {
           mockClaimPendingEntriesDto.minIdleTime,
           ...mockClaimPendingEntriesDto.entries,
           'justid',
-        ]);
+        ],
+        'utf8',
+      );
     });
     it('claim pending entries with additional args', async () => {
       const result = await service.claimPendingEntries(mockClientOptions, {
@@ -489,7 +442,8 @@ describe('ConsumerService', () => {
       });
       expect(result).toEqual({ affected: mockClaimPendingEntriesReply });
 
-      expect(browserTool.execCommand).toHaveBeenCalledWith(mockClientOptions,
+      expect(browserTool.execCommand).toHaveBeenCalledWith(
+        mockClientOptions,
         BrowserToolStreamCommands.XClaim,
         [
           mockClaimPendingEntriesDto.keyName,
@@ -501,7 +455,9 @@ describe('ConsumerService', () => {
           'retrycount', mockAdditionalClaimPendingEntriesDto.retryCount,
           'force',
           'justid',
-        ]);
+        ],
+        'utf8',
+      );
     });
     it('claim pending entries with additional args and "idle" instead of "time"', async () => {
       const result = await service.claimPendingEntries(mockClientOptions, {
@@ -511,7 +467,8 @@ describe('ConsumerService', () => {
       });
       expect(result).toEqual({ affected: mockClaimPendingEntriesReply });
 
-      expect(browserTool.execCommand).toHaveBeenCalledWith(mockClientOptions,
+      expect(browserTool.execCommand).toHaveBeenCalledWith(
+        mockClientOptions,
         BrowserToolStreamCommands.XClaim,
         [
           mockClaimPendingEntriesDto.keyName,
@@ -523,7 +480,9 @@ describe('ConsumerService', () => {
           'retrycount', mockAdditionalClaimPendingEntriesDto.retryCount,
           'force',
           'justid',
-        ]);
+        ],
+        'utf8',
+      );
     });
     it('should throw Not Found when key does not exists', async () => {
       when(browserTool.execCommand)
@@ -540,7 +499,7 @@ describe('ConsumerService', () => {
     });
     it('should proxy Not Found error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything())
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
@@ -553,7 +512,7 @@ describe('ConsumerService', () => {
     });
     it('should throw Bad Request when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything())
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {
@@ -566,7 +525,7 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything())
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new Error(RedisErrorCodes.NoGroup));
 
       try {
@@ -579,7 +538,7 @@ describe('ConsumerService', () => {
     });
     it('should throw Internal Server error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything())
+        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new Error('oO'));
 
       try {

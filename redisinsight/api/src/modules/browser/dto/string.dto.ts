@@ -1,6 +1,10 @@
-import { ApiProperty, IntersectionType } from '@nestjs/swagger';
-import { IsDefined, IsString } from 'class-validator';
-import { KeyDto, KeyWithExpireDto } from './keys.dto';
+import {
+  ApiProperty, IntersectionType,
+} from '@nestjs/swagger';
+import { IsDefined } from 'class-validator';
+import { RedisString } from 'src/common/constants';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { KeyDto, KeyResponse, KeyWithExpireDto } from './keys.dto';
 
 export class SetStringDto extends KeyDto {
   @ApiProperty({
@@ -8,8 +12,9 @@ export class SetStringDto extends KeyDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  value: string;
+  @IsRedisString()
+  @RedisStringType()
+  value: RedisString;
 }
 
 export class SetStringWithExpireDto extends IntersectionType(
@@ -17,17 +22,11 @@ export class SetStringWithExpireDto extends IntersectionType(
   KeyWithExpireDto,
 ) {}
 
-export class GetStringValueResponse {
-  @ApiProperty({
-    type: String,
-    description: 'Key Name',
-  })
-  keyName: string;
-
+export class GetStringValueResponse extends KeyResponse {
   @ApiProperty({
     description: 'Key value',
     type: String,
   })
-  @IsString()
-  value: string;
+  @RedisStringType()
+  value: RedisString;
 }

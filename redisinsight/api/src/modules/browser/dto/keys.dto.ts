@@ -16,6 +16,8 @@ import {
   ApiPropertyOptional,
 } from '@nestjs/swagger';
 import { MAX_TTL_NUMBER } from 'src/constants/redis-keys';
+import { RedisString } from 'src/common/constants';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
 
 export enum RedisDataType {
   String = 'string',
@@ -35,8 +37,20 @@ export class KeyDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  keyName: string;
+  @IsRedisString()
+  @RedisStringType()
+  keyName: RedisString;
+}
+
+export class KeyResponse {
+  @ApiProperty({
+    description: 'Key Name',
+    type: String,
+  })
+  @IsDefined()
+  @IsRedisString()
+  @RedisStringType()
+  keyName: RedisString;
 }
 
 export class KeyWithExpireDto extends KeyDto {
@@ -87,8 +101,8 @@ export class ScanDataTypeDto extends KeyDto {
     type: String,
     default: '*',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   match?: string;
 }
 
@@ -151,8 +165,9 @@ export class DeleteKeysDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
-  keyNames: string[];
+  @RedisStringType({ each: true })
+  @IsRedisString({ each: true })
+  keyNames: RedisString[];
 }
 
 export class DeleteKeysResponse {
@@ -163,41 +178,20 @@ export class DeleteKeysResponse {
   affected: number;
 }
 
-export class RenameKeyDto {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  @IsDefined()
-  @IsString()
-  keyName: string;
-
+export class RenameKeyDto extends KeyDto {
   @ApiProperty({
     description: 'New key name',
     type: String,
   })
   @IsDefined()
-  @IsString()
-  newKeyName: string;
+  @IsRedisString()
+  @RedisStringType()
+  newKeyName: RedisString;
 }
 
-export class RenameKeyResponse {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  keyName: string;
-}
+export class RenameKeyResponse extends KeyResponse {}
 
-export class UpdateKeyTtlDto {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  @IsDefined()
-  @IsString()
-  keyName: string;
-
+export class UpdateKeyTtlDto extends KeyDto {
   @ApiProperty({
     type: Number,
     description:
@@ -227,7 +221,8 @@ export class GetKeyInfoResponse {
   @ApiProperty({
     type: String,
   })
-  name: string;
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: String,
@@ -285,6 +280,8 @@ export class GetKeysWithDetailsResponse {
     description: 'Array of Keys.',
     isArray: true,
   })
+  @IsArray()
+  @Type(() => GetKeyInfoResponse)
   keys: GetKeyInfoResponse[];
 
   @ApiPropertyOptional({

@@ -72,17 +72,17 @@ describe('AutoRefresh', () => {
       screen.getByTestId(/apply-btn/).click()
 
       await act(async () => {
-        await new Promise((r) => setTimeout(r, 1100))
+        await new Promise((r) => setTimeout(r, 1300))
       })
       expect(onRefresh).toBeCalledTimes(1)
 
       await act(async () => {
-        await new Promise((r) => setTimeout(r, 1100))
+        await new Promise((r) => setTimeout(r, 1300))
       })
       expect(onRefresh).toBeCalledTimes(2)
 
       await act(async () => {
-        await new Promise((r) => setTimeout(r, 1100))
+        await new Promise((r) => setTimeout(r, 1300))
       })
       expect(onRefresh).toBeCalledTimes(3)
     })

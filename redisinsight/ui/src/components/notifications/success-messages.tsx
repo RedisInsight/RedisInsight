@@ -1,6 +1,7 @@
 import React from 'react'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { formatNameShort, Maybe } from 'uiSrc/utils'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
+import { bufferToString, formatNameShort, Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 // TODO: use i18n file for texts
@@ -49,28 +50,28 @@ export default {
       ),
     }
   },
-  ADDED_NEW_KEY: (keyName: string) => ({
+  ADDED_NEW_KEY: (keyName: RedisResponseBuffer) => ({
     title: 'Key has been added',
     message: (
       <>
-        <b>{formatNameShort(keyName)}</b>
+        <b>{formatNameShort(bufferToString(keyName))}</b>
         {' '}
         has been added. Please refresh the list of Keys to see
         updates.
       </>
     ),
   }),
-  DELETED_KEY: (keyName: string) => ({
+  DELETED_KEY: (keyName: RedisResponseBuffer) => ({
     title: 'Key has been deleted',
     message: (
       <>
-        <b>{formatNameShort(keyName)}</b>
+        <b>{formatNameShort(bufferToString(keyName))}</b>
         {' '}
         has been deleted.
       </>
     ),
   }),
-  REMOVED_KEY_VALUE: (keyName: string, keyValue: string, valueType: string) => ({
+  REMOVED_KEY_VALUE: (keyName: RedisResponseBuffer, keyValue: RedisString, valueType: string) => ({
     title: (
       <>
         <span>{valueType}</span>
@@ -80,27 +81,31 @@ export default {
     ),
     message: (
       <>
-        <b>{formatNameShort(keyValue)}</b>
+        <b>{formatNameShort(bufferToString(keyValue))}</b>
         {' '}
         has been removed from &nbsp;
-        <b>{formatNameShort(keyName)}</b>
+        <b>{formatNameShort(bufferToString(keyName))}</b>
       </>
     ),
   }),
-  REMOVED_LIST_ELEMENTS: (keyName: string, numberOfElements: number, listOfElements: string[]) => {
+  REMOVED_LIST_ELEMENTS: (
+    keyName: RedisResponseBuffer,
+    numberOfElements: number,
+    listOfElements: RedisResponseBuffer[],
+  ) => {
     const limitShowRemovedElements = 10
     return {
       title: 'Elements have been removed',
       message: (
         <>
           <span>
-            {`${numberOfElements} Element(s) removed from ${formatNameShort(keyName)}:`}
+            {`${numberOfElements} Element(s) removed from ${formatNameShort(bufferToString(keyName))}:`}
           </span>
           <ul style={{ marginBottom: 0 }}>
             {listOfElements.slice(0, limitShowRemovedElements).map((el, i) => (
               // eslint-disable-next-line react/no-array-index-key
               <li className={styles.list} key={i}>
-                {formatNameShort(el)}
+                {formatNameShort(bufferToString(el))}
               </li>
             ))}
             {listOfElements.length >= limitShowRemovedElements && <li>...</li>}

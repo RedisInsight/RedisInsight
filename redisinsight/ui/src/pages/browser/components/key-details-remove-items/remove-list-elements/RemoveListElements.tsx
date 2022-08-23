@@ -19,7 +19,7 @@ import {
 } from '@elastic/eui'
 
 import { KeyTypes } from 'uiSrc/constants'
-import { validateCountNumber, isVersionHigherOrEquals, formatNameShort } from 'uiSrc/utils'
+import { validateCountNumber, isVersionHigherOrEquals, formatNameShort, bufferToString } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
@@ -179,7 +179,7 @@ const RemoveListElements = (props: Props) => {
             {' '}
             of
             {' '}
-            <b>{formatNameShort(selectedKey)}</b>
+            <b>{formatNameShort(bufferToString(selectedKey))}</b>
           </EuiText>
           {(!length || length <= +count) && (
             <div className={styles.appendInfo}>

@@ -18,6 +18,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { insertListElementsAction } from 'uiSrc/slices/browser/list'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { KeyTypes } from 'uiSrc/constants'
+import { stringToBuffer } from 'uiSrc/utils'
 import { PushElementToListDto } from 'apiSrc/modules/browser/dto'
 
 import { AddListFormConfig as config } from '../../add-key/constants/fields-config'
@@ -84,7 +85,7 @@ const AddListElements = (props: Props) => {
   const submitData = (): void => {
     const data: PushElementToListDto = {
       keyName: selectedKey,
-      element,
+      element: stringToBuffer(element),
       destination,
     }
     dispatch(insertListElementsAction(data, onSuccessAdded))

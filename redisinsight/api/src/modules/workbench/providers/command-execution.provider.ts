@@ -47,6 +47,7 @@ export class CommandExecutionProvider {
       {
         ...await this.commandExecutionRepository.save(await this.encryptEntity(entity)),
         command: commandExecution.command,
+        mode: commandExecution.mode,
         result: commandExecution.result,
         nodeOptions: commandExecution.nodeOptions,
       },
@@ -70,7 +71,7 @@ export class CommandExecutionProvider {
     const entities = await this.commandExecutionRepository
       .createQueryBuilder('e')
       .where({ databaseId })
-      .select(['e.id', 'e.command', 'e.databaseId', 'e.createdAt', 'e.encryption', 'e.role', 'e.nodeOptions'])
+      .select(['e.id', 'e.command', 'e.databaseId', 'e.createdAt', 'e.encryption', 'e.role', 'e.nodeOptions', 'e.mode'])
       .orderBy('e.createdAt', 'DESC')
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)
       .getMany();

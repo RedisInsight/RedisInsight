@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { isUndefined } from 'lodash'
 
 import { millisecondsFormat } from 'uiSrc/utils'
-import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { numberWithSpaces, nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
 import { getApproximateNumber } from 'uiSrc/utils/validations'
 import { overviewBulkActionsSelector, summaryBulkActionsSelector } from 'uiSrc/slices/browser/bulkActions'
@@ -23,7 +23,7 @@ const BulkDeleteSummary = () => {
     }
 
     const approximateCount = scanned < total ? (keys.length * total) / scanned : keys.length
-    setTitle(`Expected amount: ${scanned < total ? '~' : ''}${numberWithSpaces(Math.round(approximateCount))} keys`)
+    setTitle(`Expected amount: ${scanned < total ? '~' : ''}${nullableNumberWithSpaces(Math.round(approximateCount))} keys`)
   }, [scanned, total, keys])
 
   return (
@@ -39,18 +39,18 @@ const BulkDeleteSummary = () => {
               the number of keys scanned and the scan percentage.
               The final number may be different."
             >
-              <EuiIcon color="subdued" type="iInCircle" />
+              <EuiIcon color="subdued" type="iInCircle" data-testid="bulk-delete-tooltip" />
             </EuiToolTip>
           </EuiText>
           <EuiText color="subdued" className={styles.summaryApproximate} data-testid="bulk-delete-summary">
             {`Scanned ${getApproximateNumber((total ? scanned / total : 1) * 100)}% `}
-            {`(${numberWithSpaces(scanned)}/${numberWithSpaces(total)}) `}
+            {`(${numberWithSpaces(scanned)}/${nullableNumberWithSpaces(total)}) `}
             {`and found ${numberWithSpaces(keys.length)} keys`}
           </EuiText>
         </>
       )}
       {!isUndefined(status) && (
-        <EuiFlexGroup alignItems="flexStart" direction="row" gutterSize="none" responsive={false} className={styles.summary}>
+        <EuiFlexGroup alignItems="flexStart" direction="row" gutterSize="none" responsive={false} className={styles.summary} data-testid="bulk-delete-completed-summary">
           <EuiFlexItem grow={false}>
             <EuiText className={styles.summaryValue}>{numberWithSpaces(processed)}</EuiText>
             <EuiText color="subdued" className={styles.summaryLabel}>Keys Processed</EuiText>

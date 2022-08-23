@@ -2,11 +2,13 @@ import { get } from 'lodash';
 import { constants } from '../constants';
 import * as _ from 'lodash';
 import * as IORedis from 'ioredis';
+import { sleep } from '../test';
+import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
-  const sendCommand = async (command: string, args: string[], replyEncoding = 'utf8'): Promise<any> => {
+  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
     return client.sendCommand(new IORedis.Command(command, args, {
       replyEncoding,
     }));
@@ -21,6 +23,30 @@ export const initDataHelper = (rte) => {
       }
     })) : client.send_command(args.shift(), ...args);
   };
+
+  const waitForInfoSync = async () => {
+    let totalKeys = 0;
+    let dbSize = -1;
+
+    while (true) {
+      const currentDbIndex = get(client, ['options', 'db'], 0);
+
+      dbSize = await sendCommand('dbsize')
+
+      const info = convertRedisInfoReplyToObject(await sendCommand('info', ['keyspace']));
+      const dbInfo = get(info, 'keyspace', {});
+      if (dbInfo[`db${currentDbIndex}`]) {
+        const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+        totalKeys = parseInt(keys, 10);
+      }
+
+      if (dbSize === totalKeys) {
+        break;
+      }
+
+      await sleep(200);
+    }
+  }
 
   const executeCommandAll = async (...args: string[]): Promise<any> => {
     return client.nodes ? Promise.all(client.nodes().map(async (node) => {
@@ -51,9 +77,13 @@ export const initDataHelper = (rte) => {
     let cursor = null;
     let keys = [];
     while (cursor !== '0') {
-      [cursor, keys] = await node.send_command('scan', [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`])
+      [cursor, keys] = await node.sendCommand(new IORedis.Command(
+        'scan',
+        [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`],
+      ));
+      cursor = cursor.toString();
       if (keys.length) {
-        await node.send_command('del', ...keys)
+        await Promise.all(keys.map((key) => node.sendCommand(new IORedis.Command('del', [key]))));
       }
     }
   }
@@ -66,6 +96,52 @@ export const initDataHelper = (rte) => {
           return null;
         }
     })) : flushTestRunData(client);
+  };
+
+  // bin data
+  const generateBinKeys = async (clean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    // string
+    await client.set(constants.TEST_STRING_KEY_BIN_BUFFER_1, constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+
+    // list
+    await client.lpush(constants.TEST_LIST_KEY_BIN_BUFFER_1, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1);
+
+    // set
+    await client.sadd(constants.TEST_SET_KEY_BIN_BUFFER_1, constants.TEST_SET_MEMBER_BIN_BUFFER_1);
+
+    // zset
+    await client.zadd(
+      constants.TEST_ZSET_KEY_BIN_BUFFER_1,
+      constants.TEST_ZSET_MEMBER_1_SCORE,
+      constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
+    );
+
+    // hash
+    await client.hset(
+      constants.TEST_HASH_KEY_BIN_BUFFER_1,
+      constants.TEST_HASH_FIELD_BIN_BUFFER_1,
+      constants.TEST_HASH_VALUE_BIN_BUFFER_1,
+    );
+
+    // stream
+    await client.xadd(
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      '*',
+      constants.TEST_STREAM_FIELD_BIN_BUFFER_1,
+      constants.TEST_STREAM_VALUE_BIN_BUFFER_1,
+    );
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+      constants.TEST_STREAM_ID_1
+    ]);
+
+    await waitForInfoSync();
   };
 
   // keys
@@ -81,6 +157,8 @@ export const initDataHelper = (rte) => {
     await generateHashes();
     await generateReJSONs();
     await generateStreams();
+
+    await waitForInfoSync();
   };
 
   const insertKeysBasedOnEnv = async (pipeline, forcePipeline: boolean = false) => {
@@ -334,6 +412,8 @@ export const initDataHelper = (rte) => {
       { create: n => _.map(new Array(n), (v,i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
       { create: n => _.map(new Array(n), (v,i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
     ], number, clean);
+
+    await waitForInfoSync();
   };
 
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
@@ -375,6 +455,7 @@ export const initDataHelper = (rte) => {
     executeCommandAll,
     setAclUserRules,
     truncate,
+    generateBinKeys,
     generateKeys,
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,

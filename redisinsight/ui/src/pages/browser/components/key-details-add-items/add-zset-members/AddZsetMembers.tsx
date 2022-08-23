@@ -12,7 +12,7 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 
-import { validateScoreNumber } from 'uiSrc/utils'
+import { stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import {
@@ -157,7 +157,7 @@ const AddZsetMembers = (props: Props) => {
     const data = {
       keyName: selectedKey,
       members: members.map((item) => ({
-        name: item.name,
+        name: stringToBuffer(item.name),
         score: toNumber(item.score),
       })),
     }

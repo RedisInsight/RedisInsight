@@ -37,7 +37,6 @@ export class WorkbenchController {
       {
         instanceId: dbInstance,
         tool: AppTool.Workbench,
-  
       },
       dto,
     );

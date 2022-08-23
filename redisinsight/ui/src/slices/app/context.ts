@@ -3,7 +3,7 @@ import { getTreeLeafField, Nullable } from 'uiSrc/utils'
 import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { RootState } from '../store'
-import { StateAppContext } from '../interfaces'
+import { RedisResponseBuffer, StateAppContext } from '../interfaces'
 
 export const initialState: StateAppContext = {
   contextInstanceId: '',
@@ -51,7 +51,7 @@ const appContextSlice = createSlice({
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {
       state.contextInstanceId = payload
     },
-    setBrowserSelectedKey: (state, { payload }: { payload: Nullable<string> }) => {
+    setBrowserSelectedKey: (state, { payload }: { payload: Nullable<RedisResponseBuffer> }) => {
       state.browser.keyList.selectedKey = payload
     },
     setBrowserKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {

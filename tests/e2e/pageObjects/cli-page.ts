@@ -26,6 +26,7 @@ export class CliPage {
     cliBadge = Selector('[data-testid=expand-cli] span');
     commandHelperBadge = Selector('[data-testid=expand-command-helper] span');
     cliResizeButton = Selector('[data-test-subj=resize-btn-browser-cli]');
+    workbenchLink = Selector('[data-test-subj=cli-workbench-page-btn]');
     //TEXT INPUTS (also referred to as 'Text fields')
     cliCommandInput = Selector('[data-testid=cli-command]');
     cliArea = Selector('[data-testid=cli');
@@ -50,6 +51,8 @@ export class CliPage {
     cliDbIndex = Selector('[data-testid=cli-db-index]');
     cliWarningMessage = Selector('[class*=euiTextColor--danger]');
     cliLinkToPubSub = Selector('[data-test-subj=pubsub-page-btn]');
+    // Panel
+    cliPanel = Selector('[data-testid=cli]');
 
     /**
   * Select filter group type

@@ -1,7 +1,7 @@
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, KeyValueFormat } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { Maybe, Nullable } from 'uiSrc/utils'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 
 export interface Key {
   name: string
@@ -33,6 +33,7 @@ export interface KeysStore {
     error: string
     data: Nullable<IKeyPropTypes>
     length: Maybe<number>
+    viewFormat: KeyValueFormat
   }
   addKey: {
     loading: boolean

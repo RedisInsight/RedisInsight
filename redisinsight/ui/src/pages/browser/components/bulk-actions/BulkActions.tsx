@@ -10,6 +10,7 @@ import {
   EuiText,
 } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
+import { isUndefined } from 'lodash'
 
 import {
   setBulkActionType,
@@ -137,6 +138,7 @@ const BulkActions = (props: Props) => {
               color="primary"
               aria-label="Close panel"
               className={styles.closeBtn}
+              data-testid="bulk-close-panel"
               onClick={closePanel}
             />
           </EuiToolTip>
@@ -149,7 +151,7 @@ const BulkActions = (props: Props) => {
                 <BulkActionsInfo
                   search={match || search || '*'}
                   loading={loading}
-                  filter={filterType || filter}
+                  filter={isUndefined(filterType) ? filter : filterType}
                   status={status}
                 >
                   <>

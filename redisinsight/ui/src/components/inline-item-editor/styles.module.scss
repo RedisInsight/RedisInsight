@@ -22,10 +22,15 @@
 
   z-index: 1;
 
+  .tooltip,
   :global(.euiButtonIcon) {
     width: 50% !important;
     height: 100% !important;
   }
+}
+
+.tooltip :global(.euiButtonIcon) {
+  width: 100% !important;
 }
 
 .controlsBottom {
@@ -56,12 +61,20 @@
   box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
 }
 
+.controlsInside {
+  top: calc(100% - 35px);
+  right: 7px;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
+}
+
 .controlsSeparate {
   border-radius: 0;
   box-shadow: none;
   background-color: inherit !important;
   text-align: right;
   width: 60px;
+  z-index: 4;
 
   .btn {
     margin: 6px 3px;

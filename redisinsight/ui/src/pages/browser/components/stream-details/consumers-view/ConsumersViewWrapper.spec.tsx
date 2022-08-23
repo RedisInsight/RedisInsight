@@ -8,6 +8,7 @@ import {
   setSelectedConsumer
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
+import { bufferToString } from 'uiSrc/utils'
 import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import ConsumersView, { Props as ConsumersViewProps } from './ConsumersView'
 import ConsumersViewWrapper, { Props } from './ConsumersViewWrapper'
@@ -29,11 +30,17 @@ jest.mock('./ConsumersView', () => ({
 
 const mockConsumerName = 'group'
 const mockConsumers: ConsumerDto[] = [{
-  name: 'test',
+  name: {
+    ...bufferToString('test'),
+    viewValue: 'test'
+  },
   idle: 123,
   pending: 321,
 }, {
-  name: 'test2',
+  name: {
+    ...bufferToString('test2'),
+    viewValue: 'test2'
+  },
   idle: 13,
   pending: 31,
 }]

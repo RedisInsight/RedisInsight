@@ -1,9 +1,10 @@
 import {RequestMock, t} from 'testcafe';
 import { Chance } from 'chance';
-import {commonUrl} from './conf';
+import {apiUrl, commonUrl} from './conf';
 
 const settingsApiUrl = `${commonUrl}/api/settings`;
 const chance = new Chance();
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 
 const mockedSettingsResponse = {
     agreements: {
@@ -37,6 +38,20 @@ export class Common {
         const arr = [];
         for(let i = 1; i <= length * 2; i++) {
             arr[i] = `${chance.word({ length: 10 })}-key${i}`;
+            arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
+            i++;
+        }
+        return arr;
+    }
+
+    /**
+    * Create array of keys and values for using in OSS Cluster
+    * @param length The amount of array elements
+    */
+     async createArrayWithKeyValueForOSSCluster(length: number): Promise<string[]> {
+        const arr = [];
+        for(let i = 1; i <= length * 2; i++) {
+            arr[i] = `{user1}:${chance.word({ length: 10 })}-key${i}`;
             arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
             i++;
         }
@@ -84,5 +99,28 @@ export class Common {
     */
     async getBackgroundColour(element: Selector): Promise<string> {
         return element.getStyleProperty('background-color');
+    }
+
+    /**
+    * Generate word by number of symbols
+    * @param number The number of symbols
+    */
+    generateWord(number: number): string {
+        return chance.word({ length: number });
+    }
+
+    /**
+    * Generate sentence by number of words
+    * @param number The number of words
+    */
+    generateSentence(number: number): string {
+        return chance.sentence({ words: number });
+    }
+
+    /**
+    * Return api endpoint with disabled certificate validation
+    */
+    getEndpoint(): string {
+        return apiUrl;
     }
 }

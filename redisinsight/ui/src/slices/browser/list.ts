@@ -10,6 +10,7 @@ import {
   getApiErrorMessage,
   isStatusSuccessful,
   Maybe,
+  bufferToString,
 } from 'uiSrc/utils'
 import {
   SetListElementDto,
@@ -22,9 +23,6 @@ import {
 
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { StateList } from '../interfaces/list'
-import { AppDispatch, RootState } from '../store'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import {
   refreshKeyInfoAction,
   fetchKeyInfo,
@@ -32,6 +30,10 @@ import {
   deleteKeySuccess,
   updateSelectedKeyRefreshTime,
 } from './keys'
+import { StateList } from '../interfaces/list'
+import { AppDispatch, RootState } from '../store'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import { RedisResponseBuffer, RedisString } from '../interfaces'
 
 export const initialState: StateList = {
   loading: false,
@@ -57,6 +59,10 @@ const listSlice = createSlice({
   initialState,
   reducers: {
     setListInitialState: () => initialState,
+
+    setListElements: (state, { payload } : PayloadAction<RedisString[]>) => {
+      state.data.elements = payload
+    },
     // load List elements
     loadListElements: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
@@ -73,6 +79,7 @@ const listSlice = createSlice({
       state.data = {
         ...state.data,
         ...payload,
+        elements: payload.elements.map((element, i) => ({ index: i, element })),
         key: payload.keyName,
       }
       state.loading = false
@@ -94,7 +101,7 @@ const listSlice = createSlice({
     ) => {
       state.loading = false
 
-      state.data.elements = state.data?.elements?.concat(elements)
+      state.data.elements = state.data?.elements?.concat(elements.map((element, i) => ({ index: i, element })))
     },
     loadMoreListElementsFailure: (state, { payload }) => {
       state.loading = false
@@ -116,11 +123,11 @@ const listSlice = createSlice({
     },
     loadSearchingListElementSuccess: (
       state,
-      { payload: { value } }: PayloadAction<GetListElementResponse>
+      { payload: [index, data] }: PayloadAction<[number, GetListElementResponse]>
     ) => {
       state.loading = false
 
-      state.data.elements = [value]
+      state.data.elements = [{ index, element: data?.value }]
     },
     loadSearchingListElementFailure: (state, { payload }) => {
       state.loading = false
@@ -155,7 +162,7 @@ const listSlice = createSlice({
       state,
       { payload }: { payload: SetListElementDto }
     ) => {
-      state.data.elements[state.data.elements.length === 1 ? 0 : payload.index] = payload.element
+      state.data.elements[state.data.elements.length === 1 ? 0 : payload.index] = payload
     },
     insertListElements: (state) => {
       state.loading = true
@@ -187,6 +194,7 @@ const listSlice = createSlice({
 // Actions generated from the slice
 export const {
   setListInitialState,
+  setListElements,
   loadListElements,
   loadListElementsSuccess,
   loadListElementsFailure,
@@ -219,12 +227,13 @@ export const updateListValueStateSelector = (state: RootState) =>
 export default listSlice.reducer
 
 // Asynchronous thunk actions
-export function fetchListElements(key: string, offset: number, count: number, resetData?: boolean) {
+export function fetchListElements(key: RedisResponseBuffer, offset: number, count: number, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadListElements(resetData))
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post<GetListElementsResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -234,6 +243,8 @@ export function fetchListElements(key: string, offset: number, count: number, re
           keyName: key,
           offset,
           count,
+        }, {
+          params: { encoding },
         }
       )
 
@@ -251,7 +262,7 @@ export function fetchListElements(key: string, offset: number, count: number, re
 
 // Asynchronous thunk actions
 export function fetchMoreListElements(
-  key: string,
+  key: RedisResponseBuffer,
   offset: number,
   count: number
 ) {
@@ -260,7 +271,8 @@ export function fetchMoreListElements(
 
     try {
       const state = stateInit()
-      const { data, status } = await apiService.post(
+      const { encoding } = state.app.info
+      const { data, status } = await apiService.post<GetListElementsResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST_GET_ELEMENTS
@@ -269,7 +281,8 @@ export function fetchMoreListElements(
           keyName: key,
           offset,
           count,
-        }
+        },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {
@@ -285,7 +298,7 @@ export function fetchMoreListElements(
 
 // Asynchronous thunk actions
 export function fetchSearchingListElementAction(
-  key: string,
+  key: RedisResponseBuffer,
   index: Nullable<number>,
   onSuccess?: () => void,
 ) {
@@ -294,6 +307,7 @@ export function fetchSearchingListElementAction(
 
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post<GetListElementResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -301,11 +315,13 @@ export function fetchSearchingListElementAction(
         ),
         {
           keyName: key,
+        }, {
+          params: { encoding },
         }
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadSearchingListElementSuccess(data))
+        dispatch(loadSearchingListElementSuccess([index, data]))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
         onSuccess?.()
       }
@@ -318,7 +334,7 @@ export function fetchSearchingListElementAction(
 }
 
 // Asynchronous thunk actions
-export function refreshListElementsAction(key: string = '', resetData?: boolean) {
+export function refreshListElementsAction(key: RedisResponseBuffer, resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { searchedIndex } = state.browser.list.data
@@ -341,12 +357,14 @@ export function updateListElementAction(
     dispatch(updateValue())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.patch<SetListElementResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST
         ),
-        data
+        data,
+        { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
@@ -385,12 +403,14 @@ export function insertListElementsAction(
     dispatch(insertListElements())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status } = await apiService.put<PushElementToListDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST
         ),
-        data
+        data,
+        { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
@@ -417,12 +437,13 @@ export function deleteListElementsAction(
     dispatch(deleteListElements())
     try {
       const state = stateInit()
+      const { encoding } = state.app.info
       const { status, data: responseData } = await apiService.delete<DeleteListElementsResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST_DELETE_ELEMENTS
         ),
-        { data }
+        { data, params: { encoding } },
       )
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()

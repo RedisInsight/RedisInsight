@@ -47,18 +47,18 @@ describe('CommandsJsonProvider', () => {
       mockedFs.readFile.mockRejectedValueOnce(new Error('No file'));
       mockedFs.readFile.mockResolvedValueOnce(Buffer.from(JSON.stringify(mockMainCommands)));
 
-      expect(await service.getCommands()).toEqual(mockMainCommands);
+      expect(await service.getCommands()).toEqual({ "name": mockMainCommands });
     });
     it('should return default config when incorrect json received from file', async () => {
       mockedFs.readFile.mockResolvedValueOnce(Buffer.from('incorrect json'));
       mockedFs.readFile.mockResolvedValueOnce(Buffer.from(JSON.stringify(mockMainCommands)));
 
-      expect(await service.getCommands()).toEqual(mockMainCommands);
+      expect(await service.getCommands()).toEqual({"name": mockMainCommands });
     });
     it('should return latest commands', async () => {
       mockedFs.readFile.mockResolvedValue(Buffer.from(JSON.stringify(mockRedijsonCommands)));
 
-      expect(await service.getCommands()).toEqual(mockRedijsonCommands);
+      expect(await service.getCommands()).toEqual({ "name": mockRedijsonCommands });
     });
   });
 
@@ -76,7 +76,7 @@ describe('CommandsJsonProvider', () => {
     it('should return default commands', async () => {
       mockedFs.readFile.mockResolvedValue(Buffer.from(JSON.stringify(mockRedijsonCommands)));
 
-      expect(await service.getDefaultCommands()).toEqual(mockRedijsonCommands);
+      expect(await service.getDefaultCommands()).toEqual({ "name": mockRedijsonCommands});
     });
   });
 });

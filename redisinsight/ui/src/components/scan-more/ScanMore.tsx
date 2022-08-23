@@ -1,4 +1,5 @@
 import React from 'react'
+import { isNull } from 'lodash'
 import { EuiButton, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -10,6 +11,7 @@ export interface Props {
   loading: boolean
   scanned?: number
   totalItemsCount?: number
+  nextCursor?: string
   style?: {
     [key: string]: string | number;
   }
@@ -26,9 +28,12 @@ const ScanMore = ({
   loading,
   style,
   loadMoreItems,
+  nextCursor,
 }: Props) => (
   <>
-    {scanned < totalItemsCount && (
+    {((scanned < totalItemsCount || isNull(totalItemsCount)))
+      && nextCursor !== '0'
+      && (
       <EuiButton
         fill={fill}
         size="s"

@@ -1,7 +1,7 @@
-import { toNumber, omit } from 'lodash';
+import { toNumber, omit, isNull, get } from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
-import { unescapeGlob } from 'src/utils';
+import { unescapeGlob, convertBulkStringsToObject } from 'src/utils';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
@@ -40,9 +40,10 @@ export class ClusterStrategy extends AbstractStrategy {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const client = await this.redisManager.getRedisClient(clientOptions);
+    const currentDbIndex = get(client, ['options', 'db'], 0);
     const nodes = await this.getNodesToScan(clientOptions, args.cursor);
     const settings = await this.settingsProvider.getSettings();
-    await this.calculateNodesTotalKeys(clientOptions, nodes);
+    await this.calculateNodesTotalKeys(clientOptions, currentDbIndex, nodes);
 
     if (!isGlob(match, { strict: false })) {
       const keyName = unescapeGlob(match);
@@ -50,7 +51,7 @@ export class ClusterStrategy extends AbstractStrategy {
         // eslint-disable-next-line no-param-reassign
         node.cursor = 0;
         // eslint-disable-next-line no-param-reassign
-        node.scanned = node.total;
+        node.scanned = isNull(node.total) ? 1 : node.total;
       });
       nodes[0].keys = [await this.getKeyInfo(client, keyName)];
       nodes[0].keys = nodes[0].keys.filter((key: GetKeyInfoResponse) => {
@@ -133,18 +134,26 @@ export class ClusterStrategy extends AbstractStrategy {
 
   private async calculateNodesTotalKeys(
     clientOptions,
+    currentDbIndex: number,
     nodes: IGetNodeKeysResult[],
   ): Promise<void> {
     await Promise.all(
       nodes.map(async (node) => {
         const result = await this.redisManager.execCommandFromNode(
           clientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           [],
           { host: node.host, port: node.port },
-        );
-        // eslint-disable-next-line no-param-reassign
-        node.total = result.result;
+        )
+
+        const info = convertBulkStringsToObject(result.result)
+
+        if (!info[`db${currentDbIndex}`]) {
+          node.total = 0
+        } else {
+          const { keys } = convertBulkStringsToObject(info[`db${currentDbIndex}`], ',', '=');
+          node.total = parseInt(keys, 10);
+        }  
       }),
     );
   }

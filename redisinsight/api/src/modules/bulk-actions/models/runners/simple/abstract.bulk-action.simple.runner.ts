@@ -1,4 +1,6 @@
 import IORedis from 'ioredis';
+import { get } from 'lodash';
+import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 import { BulkActionStatus } from 'src/modules/bulk-actions/contants';
 import { AbstractBulkActionRunner } from 'src/modules/bulk-actions/models/runners/abstract.bulk-action.runner';
 
@@ -20,9 +22,19 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
    * @inheritDoc
    */
   async prepareToStart() {
-    // @ts-ignore
-    const total = await this.node.sendCommand(new IORedis.Command('dbsize', []));
-    this.progress.setTotal(total);
+
+    const keyspaceInfo = convertRedisInfoReplyToObject(
+      // @ts-ignore
+      await this.node.sendCommand(new IORedis.Command('info', ['keyspace'], { replyEncoding: 'utf8' }))
+    );
+    const dbInfo = get(keyspaceInfo, 'keyspace', {})
+    if (!dbInfo[`db${this.node.options.db}`]) {
+      this.progress.setTotal(0);
+
+    } else {
+      const { keys } = convertBulkStringsToObject(dbInfo[`db${this.node.options.db}`], ',', '=');
+      this.progress.setTotal(parseInt(keys, 10));
+    }
   }
 
   /**

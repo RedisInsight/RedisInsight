@@ -20,7 +20,7 @@ import {
 } from 'apiSrc/modules/browser/dto/rejson-rl.dto'
 
 import { refreshKeyInfoAction } from './keys'
-import { InitialStateRejson } from '../interfaces'
+import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 
@@ -123,7 +123,7 @@ export default rejsonSlice.reducer
 export let sourceRejson: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
-export function fetchReJSON(key: string, path = '.', resetData?: boolean) {
+export function fetchReJSON(key: RedisResponseBuffer, path = '.', resetData?: boolean) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadRejsonBranch(resetData))
 
@@ -134,6 +134,7 @@ export function fetchReJSON(key: string, path = '.', resetData?: boolean) {
       sourceRejson = CancelToken.source()
 
       const state = stateInit()
+      const { encoding } = state.app.info
       const { data, status } = await apiService.post<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -143,6 +144,7 @@ export function fetchReJSON(key: string, path = '.', resetData?: boolean) {
           keyName: key,
           path,
           forceRetrieve: false,
+          encoding,
         },
         { cancelToken: sourceRejson.token }
       )
@@ -329,6 +331,7 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
       sourceRejson = CancelToken.source()
 
       const state = stateInit()
+      const { encoding } = state.app.info
       const key = state.browser.keys?.selectedKey?.data?.name
       const { data, status } = await apiService.post<GetRejsonRlResponseDto>(
         getUrl(
@@ -339,6 +342,7 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
           keyName: key,
           path,
           forceRetrieve,
+          encoding,
         },
         { cancelToken: sourceRejson.token }
       )

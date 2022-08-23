@@ -1,5 +1,5 @@
-import {t, Selector} from 'testcafe';
-import {Common} from '../helpers/common';
+import { t, Selector } from 'testcafe';
+import { Common } from '../helpers/common';
 
 const common = new Common();
 
@@ -9,6 +9,7 @@ export class BrowserPage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
+    cssJsonValue = '[data-tesid=value-as-json]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -84,6 +85,8 @@ export class BrowserPage {
     forceClaimCheckbox = Selector('[data-testid=force-claim-checkbox]').sibling();
     editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
     saveButton = Selector('[data-testid=save-btn]');
+    bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
+    editHashButton = Selector('[data-testid^=edit-hash-button-]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -110,6 +113,8 @@ export class BrowserPage {
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
     relativeTimeOption = Selector('#idle');
     timestampOption = Selector('#time');
+    formatSwitcher = Selector('[data-testid=select-format-key-value]');
+    formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -122,6 +127,7 @@ export class BrowserPage {
     ttlText = Selector('[data-testid=key-ttl-text] span');
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
+    hashFieldValueEditor = Selector('[data-testid=hash-value-editor]');
     listKeyElementInput = Selector('[data-testid=element]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-testid=json-value]');
@@ -157,6 +163,8 @@ export class BrowserPage {
     databaseNames = Selector('[data-testid^=db_name_]');
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
     hashValuesList = Selector('[data-testid^=hash-field-value-] span');
+    hashField = Selector('[data-testid^=hash-field-]').nth(0);
+    hashFieldValue = Selector('[data-testid^=hash-field-value-]');
     setMembersList = Selector('[data-testid^=set-member-value-]');
     zsetMembersList = Selector('[data-testid^=zset-member-value-]');
     zsetScoresList = Selector('[data-testid^=zset-score-value-]');
@@ -185,6 +193,7 @@ export class BrowserPage {
     treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
     ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
     stringKeyValue = Selector('.key-details-body pre');
+    keyDetailsValue = Selector('.key-details-body div div div');
     keyDetailsBadge = Selector('.key-details-header .euiBadge__text');
     treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
     treeViewNotPatternedKeys = Selector('[data-testid*="node-item_keys"]');
@@ -225,6 +234,7 @@ export class BrowserPage {
     streamRangeBar = Selector('[data-testid=mock-fill-range]');
     rangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
     rangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
+    jsonValue = Selector('[data-testid=value-as-json]');
 
     /**
      * Common part for Add any new key
@@ -448,6 +458,24 @@ export class BrowserPage {
     }
 
     /**
+     * Searching by Key name in the list and clicking Scan More until find
+     * @param searchPattern Search pattern to enter
+     * @param keyName The name of the key
+     */
+    async searchByKeyNameWithScanMore(searchPattern: string, keyName: string): Promise<void> {
+        await this.searchByKeyName(searchPattern);
+        const scannedValueText = Number(await this.scannedValue.textContent);
+        const totalKeysValue = Number(await this.totalKeysNumber.textContent);
+        // Scan until finding element or all keys scanned
+        while (true) {
+            await t.click(this.scanMoreButton);
+            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) {
+                break;
+            }
+        }
+    }
+
+    /**
      * Verifying if the Key is in the List of keys
      * @param keyName The name of the key
      */
@@ -503,7 +531,7 @@ export class BrowserPage {
      */
     async editStringKeyValue(value: string): Promise<void> {
         await t
-            .click(this.stringKeyValue)
+            .click(this.keyDetailsValue)
             .pressKey('ctrl+a delete')
             .typeText(this.stringKeyValueInput, value)
             .click(this.applyButton);
@@ -511,7 +539,7 @@ export class BrowserPage {
 
     //Get string key value from details
     async getStringKeyValue(): Promise<string> {
-        return this.stringKeyValue.textContent;
+        return this.keyDetailsValue.textContent;
     }
 
     /**
@@ -527,6 +555,17 @@ export class BrowserPage {
         await t.typeText(this.hashFieldInput, keyFieldValue);
         await t.typeText(this.hashValueInput, keyValue);
         await t.click(this.saveHashFieldButton);
+    }
+
+    /**
+     * Edit Hash key value from details
+     * @param value The value of the key
+     */
+    async editHashKeyValue(value: string): Promise<void> {
+        await t
+            .click(this.editHashButton)
+            .typeText(this.hashFieldValueEditor, value, {replace: true, paste: true})
+            .click(this.applyButton);
     }
 
     /**
@@ -588,6 +627,15 @@ export class BrowserPage {
     async openKeyDetails(keyName: string): Promise<void> {
         await this.searchByKeyName(keyName);
         await t.click(this.keyNameInTheList);
+    }
+
+    /**
+     * Open key details of the key by name
+     * @param keyName The name of the key
+     */
+    async openKeyDetailsByKeyName(keyName: string): Promise<void> {
+        const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+        await t.click(keyNameInTheList);
     }
 
     /**
@@ -800,6 +848,16 @@ export class BrowserPage {
         await t.click(this.consumerGroup);
         await t.click(this.streamConsumerName);
     }
+
+    /**
+     * Open formatter and select option
+     * @param formatter The name of format
+     */
+    async selectFormatter(formatter: string): Promise<void> {
+        const option = Selector(`[data-test-subj="format-option-${formatter}"]`);
+        await t.click(this.formatSwitcher);
+        await t.click(option);
+    }
 }
 
 /**
@@ -817,5 +875,112 @@ export type AddNewKeyParameters = {
     TTL?: string,
     members?: string,
     scores?: string,
-    field?: string
+    field?: string,
+    fields?: [{
+        field?: string,
+        valuse?: string
+    }]
 };
+
+/**
+ * Hash key parameters
+ * @param keyName The name of the key
+ * @param fields The Array with fields
+ * @param field The field of the field
+ * @param value The value of the field
+
+ */
+export type HashKeyParameters = {
+    keyName: string,
+    fields: {
+        field: string,
+        value: string
+    }[]
+};
+
+/**
+ * Stream key parameters
+ * @param keyName The name of the key
+ * @param entries The Array with entries
+ * @param id The id of entry
+ * @param fields The Array with fields
+ */
+export type StreamKeyParameters = {
+    keyName: string,
+    entries: {
+        id: string,
+        fields: string[][]
+    }[]
+};
+
+/**
+ * Set key parameters
+ * @param keyName The name of the key
+ * @param members The Array with members
+ */
+export type SetKeyParameters = {
+    keyName: string,
+    members: string[]
+};
+
+/**
+ * Sorted Set key parameters
+ * @param keyName The name of the key
+ * @param members The Array with members
+ * @param name The name of the member
+ * @param id The id of the member
+ */
+export type SortedSetKeyParameters = {
+    keyName: string,
+    members: {
+        name: string,
+        score: string
+    }[]
+};
+
+/**
+ * List key parameters
+ * @param keyName The name of the key
+ * @param element The element in list
+ */
+export type ListKeyParameters = {
+    keyName: string,
+    element: string
+};
+
+/**
+ * The key arguments for multiple keys/fields adding
+ * @param keysCount The number of keys to add
+ * @param fieldsCount The number of fields in key to add
+ * @param elementsCount The number of elements in key to add
+ * @param membersCount The number of members in key to add
+ * @param keyName The full key name
+ * @param keyNameStartWith The name of key should start with
+ * @param fieldStartWitht The name of field should start with
+ * @param fieldValueStartWith The name of field value should start with
+ * @param elementStartWith The name of element should start with
+ * @param memberStartWith The name of member should start with
+ */
+
+export type AddKeyArguments = {
+    keysCount?: number,
+    fieldsCount?: number,
+    elementsCount?: number,
+    membersCount?: number,
+    keyName?: string,
+    keyNameStartWith?: string,
+    fieldStartWith?: string,
+    fieldValueStartWith?: string,
+    elementStartWith?: string,
+    memberStartWith?: string
+};
+
+/**
+ * Keys Data parameters
+ * @param textType The type of the key
+ * @param keyName The name of the key
+ */
+export type KeyData = {
+    textType: string,
+    keyName: string
+}[];

@@ -1,8 +1,6 @@
 {
   "name": "testdb",
   "type": "redis",
-  "bigstore": true,
-  "bigstore_ram_size": 507374182,
   "memory_size": 1073741824,
   "port": 12000
 }

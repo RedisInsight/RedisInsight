@@ -12,53 +12,27 @@ import {
   mockRedisWrongTypeError,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
-import config from 'src/utils/config';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { ReplyError } from 'src/models';
 import {
   BrowserToolKeysCommands,
   BrowserToolSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import {
+  mockAddMembersToSetDto, mockDeleteMembersDto,
+  mockGetSetMembersDto, mockGetSetMembersResponse,
+  mockSetMember,
+  mockSetMembers,
+} from 'src/modules/browser/__mocks__';
 import { SetBusinessService } from './set-business.service';
 import {
-  AddMembersToSetDto,
   CreateSetWithExpireDto,
-  DeleteMembersFromSetDto,
   GetSetMembersDto,
-  GetSetMembersResponse,
 } from '../../dto';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
-const REDIS_SCAN_CONFIG = config.get('redis_scan');
-
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
-};
-
-const mockAddMemberDto: AddMembersToSetDto = {
-  keyName: 'testSet',
-  members: ['Lorem ipsum dolor sit amet.'],
-};
-
-const mockDeleteMembersDto: DeleteMembersFromSetDto = {
-  keyName: mockAddMemberDto.keyName,
-  members: mockAddMemberDto.members,
-};
-
-const mockGetMembersDto: GetSetMembersDto = {
-  keyName: mockAddMemberDto.keyName,
-  cursor: 0,
-  count: REDIS_SCAN_CONFIG.countDefault || 15,
-  match: '*',
-};
-
-const mockSetMembers: string[] = ['member'];
-
-const mockGetSetMembersResponse: GetSetMembersResponse = {
-  keyName: mockGetMembersDto.keyName,
-  nextCursor: 0,
-  total: mockSetMembers.length,
-  members: mockSetMembers,
 };
 
 describe('SetBusinessService', () => {
@@ -66,6 +40,8 @@ describe('SetBusinessService', () => {
   let browserTool;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SetBusinessService,
@@ -84,7 +60,7 @@ describe('SetBusinessService', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
-          mockAddMemberDto.keyName,
+          mockAddMembersToSetDto.keyName,
         ])
         .mockResolvedValue(false);
       service.createSetWithExpiration = jest.fn();
@@ -94,7 +70,7 @@ describe('SetBusinessService', () => {
 
       await expect(
         service.createSet(mockClientOptions, {
-          ...mockAddMemberDto,
+          ...mockAddMembersToSetDto,
           expire: 1000,
         }),
       ).resolves.not.toThrow();
@@ -103,25 +79,25 @@ describe('SetBusinessService', () => {
     it('create set without expiration', async () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolSetCommands.SAdd, [
-          mockAddMemberDto.keyName,
-          ...mockAddMemberDto.members,
+          mockAddMembersToSetDto.keyName,
+          ...mockAddMembersToSetDto.members,
         ])
         .mockResolvedValue(1);
 
       await expect(
-        service.createSet(mockClientOptions, mockAddMemberDto),
+        service.createSet(mockClientOptions, mockAddMembersToSetDto),
       ).resolves.not.toThrow();
       expect(service.createSetWithExpiration).not.toHaveBeenCalled();
     });
     it('key with this name exist', async () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
-          mockAddMemberDto.keyName,
+          mockAddMembersToSetDto.keyName,
         ])
         .mockResolvedValue(true);
 
       await expect(
-        service.createSet(mockClientOptions, mockAddMemberDto),
+        service.createSet(mockClientOptions, mockAddMembersToSetDto),
       ).rejects.toThrow(ConflictException);
       expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
       expect(browserTool.execMulti).not.toHaveBeenCalled();
@@ -140,7 +116,7 @@ describe('SetBusinessService', () => {
         .mockRejectedValue(replyError);
 
       await expect(
-        service.createSet(mockClientOptions, mockAddMemberDto),
+        service.createSet(mockClientOptions, mockAddMembersToSetDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for createSet", async () => {
@@ -151,14 +127,14 @@ describe('SetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.createSet(mockClientOptions, mockAddMemberDto),
+        service.createSet(mockClientOptions, mockAddMembersToSetDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('createSetWithExpiration', () => {
     const dto: CreateSetWithExpireDto = {
-      ...mockAddMemberDto,
+      ...mockAddMembersToSetDto,
       expire: 1000,
     };
     it('succeed to create Set data type with expiration', async () => {
@@ -170,7 +146,7 @@ describe('SetBusinessService', () => {
         .mockResolvedValue([
           null,
           [
-            [null, mockAddMemberDto.members.length],
+            [null, mockAddMembersToSetDto.members.length],
             [null, 1],
           ],
         ]);
@@ -179,7 +155,7 @@ describe('SetBusinessService', () => {
         mockClientOptions,
         dto,
       );
-      expect(result).toBe(mockAddMemberDto.members.length);
+      expect(result).toBe(mockAddMembersToSetDto.members.length);
     });
     it('throw transaction error', async () => {
       const transactionError: ReplyError = {
@@ -198,7 +174,7 @@ describe('SetBusinessService', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolSetCommands.SCard, [
-          mockGetMembersDto.keyName,
+          mockGetSetMembersDto.keyName,
         ])
         .mockResolvedValue(mockSetMembers.length);
     });
@@ -209,11 +185,11 @@ describe('SetBusinessService', () => {
           BrowserToolSetCommands.SScan,
           expect.anything(),
         )
-        .mockResolvedValue([0, mockSetMembers]);
+        .mockResolvedValue([Buffer.from('0'), mockSetMembers]);
 
       const result = await service.getMembers(
         mockClientOptions,
-        mockGetMembersDto,
+        mockGetSetMembersDto,
       );
 
       expect(result).toEqual(mockGetSetMembersResponse);
@@ -225,8 +201,8 @@ describe('SetBusinessService', () => {
     });
     it('succeed to find exact member in the set', async () => {
       const dto: GetSetMembersDto = {
-        ...mockGetMembersDto,
-        match: mockSetMembers[0],
+        ...mockGetSetMembersDto,
+        match: mockSetMembers[0].toString(),
       };
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolSetCommands.SIsMember, [
@@ -246,8 +222,8 @@ describe('SetBusinessService', () => {
     });
     it('failed to find exact member in the set', async () => {
       const dto: GetSetMembersDto = {
-        ...mockGetMembersDto,
-        match: mockSetMembers[0],
+        ...mockGetSetMembersDto,
+        match: mockSetMembers[0].toString(),
       };
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolSetCommands.SIsMember, [
@@ -262,7 +238,7 @@ describe('SetBusinessService', () => {
     });
     it('should not call scan when math contains escaped glob', async () => {
       const dto: GetSetMembersDto = {
-        ...mockGetMembersDto,
+        ...mockGetSetMembersDto,
         match: 'm\\[a-e\\]mber',
       };
       when(browserTool.execCommand)
@@ -276,7 +252,7 @@ describe('SetBusinessService', () => {
 
       expect(result).toEqual({
         ...mockGetSetMembersResponse,
-        members: ['m[a-e]mber'],
+        members: [Buffer.from('m[a-e]mber')],
       });
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
         mockClientOptions,
@@ -309,12 +285,12 @@ describe('SetBusinessService', () => {
     it('key with this name does not exist for getMembers', async () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolSetCommands.SCard, [
-          mockGetMembersDto.keyName,
+          mockGetSetMembersDto.keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.getMembers(mockClientOptions, mockGetMembersDto),
+        service.getMembers(mockClientOptions, mockGetSetMembersDto),
       ).rejects.toThrow(NotFoundException);
     });
     it("try to use 'SCARD' command not for list data type", async () => {
@@ -325,7 +301,7 @@ describe('SetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.getMembers(mockClientOptions, mockGetMembersDto),
+        service.getMembers(mockClientOptions, mockGetSetMembersDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for getMembers", async () => {
@@ -336,7 +312,7 @@ describe('SetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.getMembers(mockClientOptions, mockGetMembersDto),
+        service.getMembers(mockClientOptions, mockGetSetMembersDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -345,12 +321,12 @@ describe('SetBusinessService', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
-          mockAddMemberDto.keyName,
+          mockAddMembersToSetDto.keyName,
         ])
         .mockResolvedValue(true);
     });
     it('succeed to add members to the Set data type', async () => {
-      const { keyName, members } = mockAddMemberDto;
+      const { keyName, members } = mockAddMembersToSetDto;
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolSetCommands.SAdd, [
           keyName,
@@ -359,19 +335,19 @@ describe('SetBusinessService', () => {
         .mockResolvedValue(1);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMemberDto),
+        service.addMembers(mockClientOptions, mockAddMembersToSetDto),
       ).resolves.not.toThrow();
     });
     it('key with this name does not exist for addMembers', async () => {
-      const { keyName, members } = mockAddMemberDto;
+      const { keyName, members } = mockAddMembersToSetDto;
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
-          mockAddMemberDto.keyName,
+          mockAddMembersToSetDto.keyName,
         ])
         .mockResolvedValue(false);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMemberDto),
+        service.addMembers(mockClientOptions, mockAddMembersToSetDto),
       ).rejects.toThrow(NotFoundException);
       expect(
         browserTool.execCommand,
@@ -395,7 +371,7 @@ describe('SetBusinessService', () => {
         .mockRejectedValue(replyError);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMemberDto),
+        service.addMembers(mockClientOptions, mockAddMembersToSetDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for addMembers", async () => {
@@ -406,7 +382,7 @@ describe('SetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMemberDto),
+        service.addMembers(mockClientOptions, mockAddMembersToSetDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });

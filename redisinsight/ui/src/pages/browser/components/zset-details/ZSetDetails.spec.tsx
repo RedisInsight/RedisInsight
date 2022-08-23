@@ -16,9 +16,9 @@ jest.mock('uiSrc/slices/browser/zset', () => {
       key: 'z',
       keyName: 'z',
       members: [
-        { name: 'member1', score: 1 },
-        { name: 'member2', score: 2 },
-        { name: 'member3', score: 3 },
+        { name: { type: 'Buffer', data: [49] }, score: 1 },
+        { name: { type: 'Buffer', data: [50] }, score: 2 },
+        { name: { type: 'Buffer', data: [51] }, score: 3 },
       ],
     }),
     updateZsetScoreStateSelector: jest.fn().mockReturnValue(defaultState.updateScore),
@@ -49,7 +49,7 @@ describe('ZSetDetails', () => {
   it('should render delete popup after click remove button', () => {
     render(<ZSetDetails {...instance(mockedProps)} />)
     fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
-    expect(screen.getByTestId(/zset-edit-button-member1/)).toBeInTheDocument()
+    expect(screen.getByTestId(/zset-edit-button-1/)).toBeInTheDocument()
   })
 
   it('should render editor after click edit button and able to change value', () => {

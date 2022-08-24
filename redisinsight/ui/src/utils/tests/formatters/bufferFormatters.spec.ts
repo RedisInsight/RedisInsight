@@ -29,7 +29,6 @@ const getStringToBufferTests = defaultValues.map(({ unicode, uint8Array }) =>
 
 describe('stringToBuffer', () => {
   test.each(getStringToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = stringToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -41,7 +40,6 @@ const getAnyToBufferTests = defaultValues.map(({ uint8Array }) =>
 
 describe('anyToBuffer', () => {
   test.each(getAnyToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = anyToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -53,7 +51,6 @@ const getHexToBufferTests = defaultValues.map(({ hex, uint8Array }) =>
 
 describe('hexToBuffer', () => {
   test.each(getHexToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = hexToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -65,14 +62,12 @@ const getBufferToStringTests = defaultValues.map(({ unicode, uint8Array }) =>
 
 describe('bufferToString', () => {
   test.each(getBufferToStringTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToString(input)).toEqual(expected)
   })
 })
 
 describe('bufferToUTF8', () => {
   test.each(getBufferToStringTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToUTF8(input)).toEqual(expected)
   })
 })
@@ -82,7 +77,6 @@ const getBufferToASCIITests = defaultValues.map(({ ascii, uint8Array }) =>
 
 describe('bufferToASCII', () => {
   test.each(getBufferToASCIITests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToASCII(input)).toEqual(expected)
   })
 })
@@ -92,14 +86,12 @@ const getBufferToHexTests = defaultValues.map(({ hex, uint8Array }) =>
 
 describe('bufferToASCII', () => {
   test.each(getBufferToHexTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToHex(input)).toEqual(expected)
   })
 })
 
 describe('UTF8ToBuffer', () => {
   test.each(getStringToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = UTF8ToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -126,14 +118,12 @@ const getBufferToBinaryTests = defaultValues.map(({ binary, uint8Array }) =>
 
 describe('bufferToBinary', () => {
   test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToBinary(input)).toEqual(expected)
   })
 })
 
 describe('binaryToBuffer', () => {
   test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(binaryToBuffer(expected)).toEqual(input)
   })
 })

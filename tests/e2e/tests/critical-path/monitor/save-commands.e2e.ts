@@ -16,7 +16,9 @@ const tempDir = os.tmpdir();
 let downloadedFilePath = '';
 
 async function getFileDownloadPath(): Promise<string> {
-    return joinPath(os.homedir(), 'Downloads');
+    return os.platform() == 'linux'
+    ? joinPath(os.homedir(), os.hostname(), 'Downloads')
+    : joinPath(os.homedir(), 'Downloads');
 }
 
 async function findByFileStarts(dir: string): Promise<number> {

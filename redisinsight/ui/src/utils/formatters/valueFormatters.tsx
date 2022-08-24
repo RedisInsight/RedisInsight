@@ -15,7 +15,8 @@ import {
   bufferToJava,
   hexToBuffer,
   stringToBuffer,
-  binaryToBuffer
+  binaryToBuffer,
+  replaceBigIntWithString
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -78,11 +79,7 @@ const formattingBuffer = (
     case KeyValueFormat.JAVA: {
       try {
         const decoded = bufferToJava(reply)
-        const toJSObject = (obj: Object) => JSON.parse(JSON.stringify(obj, (_, value) => (
-          typeof value === 'bigint'
-            ? value.toString()
-            : value)))
-        const value = JSON.stringify(toJSObject(decoded))
+        const value = JSON.stringify(replaceBigIntWithString(decoded))
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }

@@ -99,3 +99,13 @@
 .color-green {
   color: var(--defaultGreenColor) !important;
 }
+
+.input-warning {
+  background-image: linear-gradient(
+    to top,
+    var(--euiColorWarningLight),
+    var(--euiColorWarningLight) 2px,
+    #0000 2px,
+    #0000 100%
+  ) !important;
+}

@@ -34,7 +34,7 @@ let keys2: string[];
 fixture `Database overview`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {

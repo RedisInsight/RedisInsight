@@ -14,6 +14,7 @@ import {
   EuiSpacer,
   EuiText,
   EuiCallOut,
+  EuiSwitch,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -27,7 +28,9 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   fetchUserConfigSettings,
   fetchUserSettingsSpec,
+  setWorkbenchCleanUp,
   userSettingsSelector,
+  userSettingsWBSelector,
 } from 'uiSrc/slices/user/user-settings'
 
 import styles from './styles.module.scss'
@@ -38,6 +41,7 @@ const SettingsPage = () => {
 
   const [loading, setLoading] = useState(false)
   const { loading: settingsLoading } = useSelector(userSettingsSelector)
+  const { cleanup } = useSelector(userSettingsWBSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   const dispatch = useDispatch()
@@ -66,6 +70,17 @@ const SettingsPage = () => {
       eventData: {
         previousColorTheme: previousValue,
         currentColorTheme: value,
+      }
+    })
+  }
+
+  const onSwitchWbCleanUp = (val: boolean) => {
+    dispatch(setWorkbenchCleanUp(val))
+    sendEventTelemetry({
+      event: TelemetryEvent.SETTINGS_WORKBENCH_EDITOR_CLEAR_CHANGED,
+      eventData: {
+        currentValue: !val,
+        newValue: val,
       }
     })
   }
@@ -101,6 +116,27 @@ const SettingsPage = () => {
       )}
       <ConsentsPrivacy />
     </div>
+  )
+
+  const WorkbenchSettings = () => (
+    <>
+      <EuiForm component="form">
+        <EuiTitle size="xs">
+          <h4>Editor Cleanup</h4>
+        </EuiTitle>
+        <EuiSpacer size="m" />
+        <EuiFormRow>
+          <EuiSwitch
+            label="Clear the Editor when running the code"
+            checked={cleanup}
+            onChange={(e) => onSwitchWbCleanUp(e.target.checked)}
+            className={styles.switchOption}
+            data-testid="switch-workbench-cleanup"
+          />
+        </EuiFormRow>
+        <EuiSpacer size="l" />
+      </EuiForm>
+    </>
   )
 
   const AdvancedSettingsNavGroup = () => (
@@ -145,6 +181,15 @@ const SettingsPage = () => {
             data-test-subj="accordion-privacy-settings"
           >
             {PrivacySettings()}
+          </EuiCollapsibleNavGroup>
+          <EuiCollapsibleNavGroup
+            isCollapsible
+            className={styles.accordion}
+            title="Workbench"
+            initialIsOpen={false}
+            data-test-subj="accordion-workbench-settings"
+          >
+            {WorkbenchSettings()}
           </EuiCollapsibleNavGroup>
           <EuiCollapsibleNavGroup
             isCollapsible

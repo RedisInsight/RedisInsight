@@ -9,14 +9,14 @@ import {
 } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { cloudDatabaseConfig, commonUrl, ossClusterConfig, ossSentinelConfig, redisEnterpriseClusterConfig } from '../../../helpers/conf';
-import { deleteOSSClusterDatabaseApi, deleteSentinelDatabaseApi } from '../../../helpers/api/api-database';
+import { deleteOSSClusterDatabaseApi, deleteAllSentinelDatabasesApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 
 const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
-const verifyCommandsInWorkbench = async () => {
+const verifyCommandsInWorkbench = async() => {
     const multipleCommands = [
         'info',
         'command',
@@ -36,51 +36,51 @@ const verifyCommandsInWorkbench = async () => {
     for (const command of multipleCommands) {
         await t.expect(workbenchPage.queryCardCommand.withExactText(command).exists).ok(`The command ${command} from multiple query is displayed`);
     }
-}
+};
 
 fixture `Work with Workbench in all types of databases`
     .meta({ type: 'regression' })
     .page(commonUrl);
 test
     .meta({ rte: rte.reCluster })
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
-    .after(async () => {
+    .after(async() => {
         //Delete database
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
-    })('Verify that user can run commands in Workbench in RE Cluster DB', async () => {
+    })('Verify that user can run commands in Workbench in RE Cluster DB', async() => {
         await verifyCommandsInWorkbench();
     });
 test
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
-    .after(async () => {
+    .after(async() => {
         //Delete database
         await deleteDatabase(cloudDatabaseConfig.databaseName);
-    })('Verify that user can run commands in Workbench in RE Cloud DB', async () => {
+    })('Verify that user can run commands in Workbench in RE Cloud DB', async() => {
         await verifyCommandsInWorkbench();
     });
 test
     .meta({ rte: rte.ossCluster })
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
     })
-    .after(async () => {
+    .after(async() => {
         //Delete database
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-    })('Verify that user can run commands in Workbench in OSS Cluster DB', async () => {
+    })('Verify that user can run commands in Workbench in OSS Cluster DB', async() => {
         await verifyCommandsInWorkbench();
     });
 test
     .meta({ env: env.web, rte: rte.sentinel })
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
-    .after(async () => {
+    .after(async() => {
         //Delete database
-        await deleteSentinelDatabaseApi(ossSentinelConfig);
-    })('Verify that user can run commands in Workbench in Sentinel Primary Group', async () => {
+        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
+    })('Verify that user can run commands in Workbench in Sentinel Primary Group', async() => {
         await verifyCommandsInWorkbench();
     });

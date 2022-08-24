@@ -33,7 +33,7 @@ const SearchKeyList = () => {
     setValue(initValue)
   }
 
-  const handleChangeOptions = (options: string[]) => {
+  const handleChangeOptions = () => {
     // now only one filter, so we delete option
     dispatch(setFilter(null))
     handleApply()

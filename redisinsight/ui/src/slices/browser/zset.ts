@@ -1,4 +1,4 @@
-import { cloneDeep, first, isNull, remove } from 'lodash'
+import { cloneDeep, isNull, remove } from 'lodash'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { apiService } from 'uiSrc/services'
@@ -31,7 +31,7 @@ export const initialState: StateZset = {
   error: '',
   data: {
     total: 0,
-    key: '',
+    key: undefined,
     keyName: '',
     members: [],
     nextCursor: 0,

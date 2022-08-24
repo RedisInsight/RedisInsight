@@ -418,7 +418,7 @@ describe('zset slice', () => {
       // Arrange
 
       const data = {
-        key: '',
+        key: undefined,
         keyName: '',
         match: '',
         nextCursor: 0,

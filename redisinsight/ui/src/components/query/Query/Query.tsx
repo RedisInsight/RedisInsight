@@ -86,7 +86,7 @@ const Query = (props: Props) => {
   let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
-  const { items: execHistoryItems, loading } = useSelector(workbenchResultsSelector)
+  const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
@@ -451,6 +451,8 @@ const Query = (props: Props) => {
     monaco.editor.defineTheme('light', lightTheme)
   }
 
+  const isLoading = loading || processing
+
   return (
     <div className={styles.wrapper}>
       <div
@@ -482,7 +484,7 @@ const Query = (props: Props) => {
               size="s"
               color="secondary"
               onClick={() => onQueryChangeMode()}
-              disabled={loading}
+              disabled={isLoading}
               className={cx(styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
               data-testid="btn-change-mode"
             >
@@ -505,14 +507,14 @@ const Query = (props: Props) => {
             data-testid="run-query-tooltip"
           >
             <>
-              {loading && (
+              {isLoading && (
                 <EuiLoadingSpinner size="l" data-testid="loading-spinner" />
               )}
               <EuiButtonIcon
                 onClick={() => handleSubmit()}
-                disabled={loading}
+                disabled={isLoading}
                 iconType="playFilled"
-                className={cx(styles.submitButton, { [styles.submitButtonLoading]: loading })}
+                className={cx(styles.submitButton, { [styles.submitButtonLoading]: isLoading })}
                 aria-label="submit"
                 data-testid="btn-submit"
               />

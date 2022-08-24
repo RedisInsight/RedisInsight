@@ -85,13 +85,15 @@ const getChunkCountSearch = (command: string = '') => {
 
   if (getIsKeysOnly(command)) count = onlyKeysChunkCount
 
-  specialArgs.forEach((arg) => command.includes(arg) && ++count)
+  specialArgs.forEach((arg) => command.toUpperCase().includes(arg) && ++count)
 
   return count
 }
 
-const getIsKeysOnly = (command: string = '') => (command.includes(CommandArgument.NoContent)
-    || command.includes(`${CommandArgument.Return} 0`))
+const getIsKeysOnly = (command: string = '') => (
+  command.toUpperCase().includes(CommandArgument.NoContent)
+  || command.toUpperCase().includes(`${CommandArgument.Return} 0`)
+)
 
 export {
   parseInfoRawResponse,

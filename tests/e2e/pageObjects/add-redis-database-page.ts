@@ -34,6 +34,10 @@ export class AddRedisDatabasePage {
     databaseIndexInput = Selector('[data-testid=db]');
     errorMessage = Selector('[data-test-subj=toast-error]');
     databaseIndexMessage = Selector('[data-testid=db-index-message]');
+    //Links
+    buildFromSource = Selector('a').withExactText('Build from source');
+    buildFromDocker = Selector('a').withExactText('Docker');
+    buildFromHomebrew = Selector('a').withExactText('Homebrew');
 
     /**
      * Adding a new redis database

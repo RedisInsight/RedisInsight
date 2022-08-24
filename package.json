@@ -222,6 +222,7 @@
     "formik": "^2.2.9",
     "html-entities": "^2.3.2",
     "html-react-parser": "^1.2.4",
+    "java-object-serialization": "^0.1.1",
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
     "php-serialize": "^4.0.2",

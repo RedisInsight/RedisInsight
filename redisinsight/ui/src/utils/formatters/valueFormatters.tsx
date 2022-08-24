@@ -12,6 +12,7 @@ import {
   bufferToBinary,
   bufferToHex,
   bufferToUTF8,
+  bufferToJava,
   hexToBuffer,
   stringToBuffer,
   binaryToBuffer
@@ -29,7 +30,7 @@ const isTextViewFormatter = (format: KeyValueFormat) => [
   KeyValueFormat.Binary,
 ].includes(format)
 const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
-const isFormatEditable = (format: KeyValueFormat) => ![KeyValueFormat.Protobuf].includes(format)
+const isFormatEditable = (format: KeyValueFormat) => ![KeyValueFormat.Protobuf, KeyValueFormat.JAVA].includes(format)
 
 const isNonUnicodeFormatter = (format: KeyValueFormat) => [
   KeyValueFormat.ASCII,
@@ -69,6 +70,19 @@ const formattingBuffer = (
       try {
         const decoded = unserialize(reply.data, { encoding: 'binary' })
         const value = JSON.stringify(decoded)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
+    case KeyValueFormat.JAVA: {
+      try {
+        const decoded = bufferToJava(reply)
+        const toJSObject = (obj: Object) => JSON.parse(JSON.stringify(obj, (_, value) => (
+          typeof value === 'bigint'
+            ? value.toString()
+            : value)))
+        const value = JSON.stringify(toJSObject(decoded))
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }

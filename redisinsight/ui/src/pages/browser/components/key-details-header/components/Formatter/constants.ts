@@ -33,6 +33,10 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     text: 'Protobuf',
     value: KeyValueFormat.Protobuf,
   },
+  {
+    text: 'Java Object',
+    value: KeyValueFormat.JAVA,
+  },
 ]
 
 export const KEY_VALUE_JSON_FORMATTER_OPTIONS = []

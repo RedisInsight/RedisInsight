@@ -17,7 +17,7 @@ let downloadedFilePath = '';
 
 async function getFileDownloadPath(): Promise<string> {
     return os.platform() == 'linux'
-    ? joinPath(os.homedir(), os.hostname(), 'Downloads')
+    ? joinPath('home', os.hostname(), 'Downloads')
     : joinPath(os.homedir(), 'Downloads');
 }
 

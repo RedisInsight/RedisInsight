@@ -76,12 +76,12 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     // Create new field and value and check that new column is added
     await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
     await t.expect(browserPage.streamEntryIDDateValue.count).eql(2, 'Two Entries ID');
-    await t.expect(browserPage.streamFields.count).eql(6, 'Two fields in table');
+    await t.expect(browserPage.streamFields.count).eql(7, 'Two fields in table');
     await t.expect(browserPage.streamEntryFields.count).eql(4, 'Four values in table');
     // Create value to existed filed and check that new column was not added
     await browserPage.addEntryToStream(newField, chance.word({ length: 20 }));
     await t.expect(browserPage.streamEntryIDDateValue.count).eql(3, 'Three Entries ID');
-    await t.expect(browserPage.streamFields.count).eql(7, 'Still two fields in table');
+    await t.expect(browserPage.streamFields.count).eql(8, 'Still two fields in table');
     await t.expect(browserPage.streamEntryFields.count).eql(6, 'Six values in table');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {

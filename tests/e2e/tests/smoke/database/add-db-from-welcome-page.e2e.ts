@@ -33,7 +33,7 @@ test
         await addNewStandaloneDatabase(ossStandaloneConfig);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database adding', { timeout: 10000 });
     });
-test.only
+test
     .meta({  env: env.web, rte: rte.standalone })('Verify that all the links are valid from Welcome page', async t => {
         // Verify build from source link
         await t.click(addRedisDatabasePage.buildFromSource);

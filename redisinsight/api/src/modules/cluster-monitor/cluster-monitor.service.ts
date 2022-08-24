@@ -1,12 +1,15 @@
 import { get } from 'lodash';
-import { Injectable } from '@nestjs/common';
+import IORedis from 'ioredis';
+import {
+  BadRequestException, HttpException, Injectable, Logger,
+} from '@nestjs/common';
+import { catchAclError } from 'src/utils';
 import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
 import { ClusterNodesInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-nodes.info.strategy';
-import { convertRedisInfoReplyToObject } from 'src/utils';
 import { ClusterShardsInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-shards.info.strategy';
-import { ClusterDetails } from 'src/modules/cluster-monitor/dto';
+import { ClusterDetails } from 'src/modules/cluster-monitor/models';
 
 export enum ClusterInfoStrategies {
   CLUSTER_NODES = 'CLUSTER_NODES',
@@ -15,6 +18,8 @@ export enum ClusterInfoStrategies {
 
 @Injectable()
 export class ClusterMonitorService {
+  private logger = new Logger('ClusterMonitorService');
+
   private infoStrategies: Map<string, IClusterInfo> = new Map();
 
   constructor(
@@ -30,13 +35,25 @@ export class ClusterMonitorService {
    * @param clientOptions
    */
   public async getClusterDetails(clientOptions: IFindRedisClientInstanceByOptions): Promise<ClusterDetails> {
-    const client = await this.getClient(clientOptions);
+    try {
+      const client = await this.getClient(clientOptions);
 
-    const info = convertRedisInfoReplyToObject(await client.info('server'));
+      if (!(client instanceof IORedis.Cluster)) {
+        return Promise.reject(new BadRequestException('Current database is not in a cluster mode'));
+      }
 
-    const strategy = this.getClusterInfoStrategy(get(info, 'server.redis_version'));
+      const strategy = this.getClusterInfoStrategy(get(client.nodes(), '0.serverInfo.redis_version'));
 
-    return await strategy.getClusterDetails(client);
+      return await strategy.getClusterDetails(client);
+    } catch (e) {
+      this.logger.error('Unable to get cluster details', e);
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
+    }
   }
 
   /**

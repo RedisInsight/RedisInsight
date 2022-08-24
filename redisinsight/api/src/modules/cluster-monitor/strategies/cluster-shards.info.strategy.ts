@@ -2,7 +2,7 @@ import IORedis from 'ioredis';
 import { chunk } from 'lodash';
 import { AbstractInfoStrategy } from 'src/modules/cluster-monitor/strategies/abstract.info.strategy';
 import { convertStringsArrayToObject } from 'src/utils';
-import { ClusterNodeDetails, NodeRole } from 'src/modules/cluster-monitor/dto';
+import { ClusterNodeDetails, NodeRole } from 'src/modules/cluster-monitor/models';
 
 export class ClusterShardsInfoStrategy extends AbstractInfoStrategy {
   async getClusterNodesFromRedis(client: IORedis.Cluster) {
@@ -58,6 +58,7 @@ export class ClusterShardsInfoStrategy extends AbstractInfoStrategy {
       }
 
       return node;
-    });
+    })
+      .filter((node) => node.role === NodeRole.Primary); // tmp work with primary nodes only
   }
 }

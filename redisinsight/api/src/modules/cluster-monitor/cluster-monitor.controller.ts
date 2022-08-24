@@ -3,7 +3,7 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ClusterMonitorService } from 'src/modules/cluster-monitor/cluster-monitor.service';
 import { AppTool } from 'src/models';
 import { ApiTags } from '@nestjs/swagger';
-import { ClusterDetails } from 'src/modules/cluster-monitor/dto';
+import { ClusterDetails } from 'src/modules/cluster-monitor/models';
 
 @ApiTags('Cluster Monitor')
 @Controller('/cluster-details')

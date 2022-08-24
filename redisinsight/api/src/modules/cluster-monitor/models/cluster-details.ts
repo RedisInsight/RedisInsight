@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ClusterNodeDetails } from 'src/modules/cluster-monitor/dto/cluster-node-details';
+import { ClusterNodeDetails } from 'src/modules/cluster-monitor/models/cluster-node-details';
 
 export class ClusterDetails {
   @ApiProperty({
@@ -8,6 +8,13 @@ export class ClusterDetails {
     example: '7.0.2',
   })
   version: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Redis mode. Currently one of: standalone, cluster or sentinel',
+    example: 'cluster',
+  })
+  mode: string;
 
   @ApiProperty({
     type: String,

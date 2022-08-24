@@ -2,7 +2,7 @@ import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.inf
 import IORedis from 'ioredis';
 import { convertBulkStringsToObject, convertRedisInfoReplyToObject, convertStringToNumber } from 'src/utils';
 import { get, map, sum } from 'lodash';
-import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/dto';
+import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
 import { plainToClass } from 'class-transformer';
 
 export abstract class AbstractInfoStrategy implements IClusterInfo {
@@ -19,6 +19,8 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
     const nodes = await this.getClusterNodesInfo(client, redisClusterNodes);
 
     clusterDetails = {
+      version: get(client.nodes(), '0.serverInfo.redis_version'),
+      mode: get(client.nodes(), '0.serverInfo.redis_mode'),
       ...clusterDetails,
       ...(AbstractInfoStrategy.calculateAdditionalClusterMetrics(client, nodes)),
       nodes: AbstractInfoStrategy.createClusterHierarchy(nodes),
@@ -75,7 +77,6 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
       ),
       replicationOffset: convertStringToNumber(get(info, 'replication.master_repl_offset')),
       uptimeSec: convertStringToNumber(get(info, 'server.uptime_in_seconds'), 0),
-      version: get(info, 'server.redis_version'),
     };
   }
 
@@ -174,10 +175,6 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
     nodes.forEach((node) => {
       if (additionalDetails.uptimeSec < node.uptimeSec) {
         additionalDetails.uptimeSec = node.uptimeSec;
-      }
-
-      if (!additionalDetails.version) {
-        additionalDetails.version = node.version;
       }
     });
 

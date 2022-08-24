@@ -1,6 +1,6 @@
 import { AbstractInfoStrategy } from 'src/modules/cluster-monitor/strategies/abstract.info.strategy';
 import IORedis from 'ioredis';
-import { ClusterNodeDetails, HealthStatus, NodeRole } from 'src/modules/cluster-monitor/dto';
+import { ClusterNodeDetails, HealthStatus, NodeRole } from 'src/modules/cluster-monitor/models';
 
 export class ClusterNodesInfoStrategy extends AbstractInfoStrategy {
   async getClusterNodesFromRedis(client: IORedis.Cluster): Promise<Partial<ClusterNodeDetails>[]> {
@@ -22,7 +22,8 @@ export class ClusterNodesInfoStrategy extends AbstractInfoStrategy {
         slots: slots?.length ? slots : undefined,
         health: ClusterNodesInfoStrategy.determineNodeHealth(flags),
       };
-    });
+    })
+      .filter((node) => node.role === NodeRole.Primary); // tmp work with primary nodes only;
   }
 
   static determineNodeHealth(flags: string): HealthStatus {

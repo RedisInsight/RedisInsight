@@ -1,4 +1,5 @@
 import { isString } from 'lodash'
+import { ObjectInputStream } from 'java-object-serialization'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { Buffer } from 'buffer'
 // eslint-disable-next-line import/order
@@ -136,6 +137,14 @@ const hexToBuffer = (data: string): RedisResponseBuffer => {
   return { type: RedisResponseBufferType.Buffer, data: result }
 }
 
+const bufferToJava = (reply: RedisResponseBuffer) => {
+  const stream = new ObjectInputStream(new Uint8Array(reply.data))
+  const decoded = stream.readObject()
+  const { fields } = decoded
+  const fieldsArray = Array.from(fields, ([key, value]) => ({ [key]: value }))
+  return { ...decoded, fields: fieldsArray }
+}
+
 const bufferToString = (data: RedisString = '', formatResult: KeyValueFormat = KeyValueFormat.Unicode): string => {
   if (!isString(data) && data?.type === RedisResponseBufferType.Buffer) {
     switch (formatResult) {
@@ -168,7 +177,8 @@ export {
   hexToBuffer,
   anyToBuffer,
   bufferToBinary,
-  binaryToBuffer
+  binaryToBuffer,
+  bufferToJava
 }
 
 window.ri = {

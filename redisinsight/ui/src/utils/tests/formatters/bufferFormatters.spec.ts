@@ -10,7 +10,8 @@ import {
   hexToBuffer,
   bufferToHex,
   bufferToBinary,
-  binaryToBuffer
+  binaryToBuffer,
+  bufferToJava
 } from 'uiSrc/utils'
 
 const defaultValues = [
@@ -28,7 +29,6 @@ const getStringToBufferTests = defaultValues.map(({ unicode, uint8Array }) =>
 
 describe('stringToBuffer', () => {
   test.each(getStringToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = stringToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -40,7 +40,6 @@ const getAnyToBufferTests = defaultValues.map(({ uint8Array }) =>
 
 describe('anyToBuffer', () => {
   test.each(getAnyToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = anyToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -52,7 +51,6 @@ const getHexToBufferTests = defaultValues.map(({ hex, uint8Array }) =>
 
 describe('hexToBuffer', () => {
   test.each(getHexToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = hexToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -64,14 +62,12 @@ const getBufferToStringTests = defaultValues.map(({ unicode, uint8Array }) =>
 
 describe('bufferToString', () => {
   test.each(getBufferToStringTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToString(input)).toEqual(expected)
   })
 })
 
 describe('bufferToUTF8', () => {
   test.each(getBufferToStringTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToUTF8(input)).toEqual(expected)
   })
 })
@@ -81,7 +77,6 @@ const getBufferToASCIITests = defaultValues.map(({ ascii, uint8Array }) =>
 
 describe('bufferToASCII', () => {
   test.each(getBufferToASCIITests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToASCII(input)).toEqual(expected)
   })
 })
@@ -91,14 +86,12 @@ const getBufferToHexTests = defaultValues.map(({ hex, uint8Array }) =>
 
 describe('bufferToASCII', () => {
   test.each(getBufferToHexTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToHex(input)).toEqual(expected)
   })
 })
 
 describe('UTF8ToBuffer', () => {
   test.each(getStringToBufferTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     const result = UTF8ToBuffer(input)
     result.data = Array.from(result.data)
     expect(result).toEqual(expected)
@@ -125,14 +118,26 @@ const getBufferToBinaryTests = defaultValues.map(({ binary, uint8Array }) =>
 
 describe('bufferToBinary', () => {
   test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToBinary(input)).toEqual(expected)
   })
 })
 
 describe('binaryToBuffer', () => {
   test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
-    // @ts-ignore
     expect(binaryToBuffer(expected)).toEqual(input)
+  })
+})
+
+const javaValues = [
+  { uint8Array: [172, 237, 0, 5, 115, 114, 0, 8, 69, 109, 112, 108, 111, 121, 101, 101, 2, 94, 116, 52, 103, 198, 18, 60, 2, 0, 3, 73, 0, 6, 110, 117, 109, 98, 101, 114, 76, 0, 7, 97, 100, 100, 114, 101, 115, 115, 116, 0, 18, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114, 105, 110, 103, 59, 76, 0, 4, 110, 97, 109, 101, 113, 0, 126, 0, 1, 120, 112, 0, 0, 0, 101, 116, 0, 25, 80, 104, 111, 107, 107, 97, 32, 75, 117, 97, 110, 44, 32, 65, 109, 98, 101, 104, 116, 97, 32, 80, 101, 101, 114, 116, 0, 9, 82, 101, 121, 97, 110, 32, 65, 108, 105], value: { annotations: [], className: 'Employee', fields: [{ number: 101 }, { address: 'Phokka Kuan, Ambehta Peer' }, { name: 'Reyan Ali' }], serialVersionUid: 170701604314812988n } },
+  { uint8Array: [172, 237, 0, 5, 115, 114, 0, 32, 115, 101, 114, 105, 97, 108, 105, 122, 97, 116, 105, 111, 110, 68, 101, 109, 111, 46, 65, 110, 110, 111, 116, 97, 116, 105, 111, 110, 84, 101, 115, 116, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 73, 0, 6, 110, 117, 109, 98, 101, 114, 120, 112, 0, 0, 0, 90], value: { annotations: [], className: 'serializationDemo.AnnotationTest', fields: [{ number: 90 }], serialVersionUid: 2n } },
+]
+
+const getBufferToJavaTests = javaValues.map(({ uint8Array, value }) =>
+  ({ input: anyToBuffer(uint8Array), expected: value }))
+
+describe('bufferToJava', () => {
+  test.each(getBufferToJavaTests)('%o', ({ input, expected }) => {
+    expect(bufferToJava(input)).toEqual(expected)
   })
 })

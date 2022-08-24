@@ -146,9 +146,8 @@ const javaValues = [
 const getBufferToJavaTests = javaValues.map(({ uint8Array, value }) =>
   ({ input: anyToBuffer(uint8Array), expected: value }))
 
-describe('hexToBuffer', () => {
+describe('bufferToJava', () => {
   test.each(getBufferToJavaTests)('%o', ({ input, expected }) => {
-    // @ts-ignore
     expect(bufferToJava(input)).toEqual(expected)
   })
 })

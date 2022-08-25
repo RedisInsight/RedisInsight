@@ -34,7 +34,8 @@ import {
   isEqualBuffers,
   stringToBuffer,
   stringToSerializedBufferFormat,
-  validateListIndex, Nullable
+  validateListIndex,
+  Nullable
 } from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -127,6 +128,12 @@ const ListDetails = (props: Props) => {
         textAreaRef?.current?.focus()
       }, 0)
     }
+
+    // hack to update scrollbar padding
+    clearCache()
+    setTimeout(() => {
+      clearCache()
+    }, 0)
   }, [cellCache, viewFormat])
 
   const handleApplyEditElement = (index = 0) => {

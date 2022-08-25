@@ -27,9 +27,9 @@ const mockClient = new Redis();
 const mockCluster = new Redis.Cluster([]);
 const mockClusterNode1 = new Redis();
 const mockClusterNode2 = new Redis();
-mockClusterNode1.send_command = jest.fn();
+mockClusterNode1.call = jest.fn();
 mockClusterNode1.sendCommand = jest.fn();
-mockClusterNode2.send_command = jest.fn();
+mockClusterNode2.call = jest.fn();
 mockClusterNode2.sendCommand = jest.fn();
 mockClusterNode1.options = { host: '127.0.0.1', port: 7001 };
 mockClusterNode2.options = { host: '127.0.0.1', port: 7002 };
@@ -66,7 +66,7 @@ describe('BrowserToolClusterService', () => {
       service,
       'execPipelineFromClient',
     );
-    mockClient.send_command = jest.fn();
+    mockClient.call = jest.fn();
   });
 
   describe('execCommand', () => {
@@ -80,7 +80,7 @@ describe('BrowserToolClusterService', () => {
         [keyName],
       );
 
-      expect(mockClient.send_command).toHaveBeenCalledWith('memory', [
+      expect(mockClient.call).toHaveBeenCalledWith('memory', [
         'usage',
         keyName,
       ]);
@@ -98,7 +98,7 @@ describe('BrowserToolClusterService', () => {
           [keyName],
         ),
       ).rejects.toThrow(InternalServerErrorException);
-      expect(mockClient.send_command).not.toHaveBeenCalled();
+      expect(mockClient.call).not.toHaveBeenCalled();
     });
   });
 
@@ -137,8 +137,8 @@ describe('BrowserToolClusterService', () => {
 
     it('should execute command for all nodes', async () => {
       getRedisClient.mockResolvedValue(mockCluster);
-      mockClusterNode1.send_command.mockResolvedValue(70);
-      mockClusterNode2.send_command.mockResolvedValue(10);
+      mockClusterNode1.call.mockResolvedValue(70);
+      mockClusterNode2.call.mockResolvedValue(10);
       mockCluster.nodes.mockReturnValue([mockClusterNode1, mockClusterNode2]);
 
       const result = await service.execCommandFromNodes(
@@ -152,11 +152,11 @@ describe('BrowserToolClusterService', () => {
         { result: 70, ...mockClusterNode1.options },
         { result: 10, ...mockClusterNode2.options },
       ]);
-      expect(mockClusterNode1.send_command).toHaveBeenCalledWith('memory', [
+      expect(mockClusterNode1.call).toHaveBeenCalledWith('memory', [
         'usage',
         keyName,
       ]);
-      expect(mockClusterNode2.send_command).toHaveBeenCalledWith('memory', [
+      expect(mockClusterNode2.call).toHaveBeenCalledWith('memory', [
         'usage',
         keyName,
       ]);

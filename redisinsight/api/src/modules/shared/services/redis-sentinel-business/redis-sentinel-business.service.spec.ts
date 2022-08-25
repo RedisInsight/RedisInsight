@@ -52,13 +52,13 @@ describe('RedisSentinelBusinessService', () => {
       RedisSentinelBusinessService,
     );
     redisService = await module.get<RedisService>(RedisService);
-    mockClient.send_command = jest.fn();
+    mockClient.call = jest.fn();
     mockClient.quit = jest.fn();
   });
 
   describe('connectAndGetMasters', () => {
     it('connect and get sentinel masters', async () => {
-      mockClient.send_command.mockResolvedValue(
+      mockClient.call.mockResolvedValue(
         mockRedisSentinelMasterResponse,
       );
       service.getMasterEndpoints = jest
@@ -87,13 +87,13 @@ describe('RedisSentinelBusinessService', () => {
       service.getMasterEndpoints = jest
         .fn()
         .mockResolvedValue([mockConnectionOptions]);
-      mockClient.send_command.mockResolvedValue(
+      mockClient.call.mockResolvedValue(
         [mockSentinelMasterInOkState, mockSentinelMasterInDownState],
       );
 
       const result = await service.getMasters(mockClient);
 
-      expect(mockClient.send_command).toHaveBeenCalledWith('sentinel', [
+      expect(mockClient.call).toHaveBeenCalledWith('sentinel', [
         'masters',
       ]);
       expect(result).toEqual([
@@ -105,7 +105,7 @@ describe('RedisSentinelBusinessService', () => {
       ]);
     });
     it('wrong database type', async () => {
-      mockClient.send_command.mockRejectedValue({
+      mockClient.call.mockRejectedValue({
         message:
           'ERR unknown command `sentinel`, with args beginning with: `masters`',
       });
@@ -123,7 +123,7 @@ describe('RedisSentinelBusinessService', () => {
         ...mockRedisNoPermError,
         command: 'SENTINEL',
       };
-      mockClient.send_command.mockRejectedValue(error);
+      mockClient.call.mockRejectedValue(error);
 
       await expect(service.getMasters(mockClient)).rejects.toThrow(
         ForbiddenException,
@@ -133,18 +133,18 @@ describe('RedisSentinelBusinessService', () => {
   describe('getMasterEndpoints', () => {
     it('succeed to get sentinel master endpoints', async () => {
       const masterName = mockSentinelMasterDto.name;
-      mockClient.send_command.mockResolvedValue([]);
+      mockClient.call.mockResolvedValue([]);
 
       const result = await service.getMasterEndpoints(mockClient, masterName);
 
-      expect(mockClient.send_command).toHaveBeenCalledWith('sentinel', [
+      expect(mockClient.call).toHaveBeenCalledWith('sentinel', [
         'sentinels',
         masterName,
       ]);
       expect(result).toEqual([mockConnectionOptions]);
     });
     it('wrong database type', async () => {
-      mockClient.send_command.mockRejectedValue({
+      mockClient.call.mockRejectedValue({
         message:
           'ERR unknown command `sentinel`, with args beginning with: `masters`',
       });
@@ -158,7 +158,7 @@ describe('RedisSentinelBusinessService', () => {
         ...mockRedisNoPermError,
         command: 'SENTINEL',
       };
-      mockClient.send_command.mockRejectedValue(error);
+      mockClient.call.mockRejectedValue(error);
 
       await expect(
         service.getMasterEndpoints(mockClient, mockSentinelMasterDto.name),

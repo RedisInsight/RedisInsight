@@ -47,10 +47,10 @@ describe('DELETE /instance/:instanceId/slow-logs', () => {
         name: 'Check that slowlog cleaned up',
         before: async () => {
           await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 10000000000]);
-          expect((await rte.client.send_command('slowlog', 'get')).length).to.gt(0);
+          expect((await rte.client.call('slowlog', 'get')).length).to.gt(0);
         },
         after: async () => {
-          expect((await rte.client.send_command('slowlog', 'get')).length).to.eq(0);
+          expect((await rte.client.call('slowlog', 'get')).length).to.eq(0);
         }
       },
       {

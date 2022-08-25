@@ -584,10 +584,10 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
   //             ]);
   //           },
   //           before: async () => {
-  //             expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
+  //             expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
   //           },
   //           after: async () => {
-  //             expect(await rte.client.send_command(`ft._list`)).to.include(constants.TEST_SEARCH_HASH_INDEX_1);
+  //             expect(await rte.client.call(`ft._list`)).to.include(constants.TEST_SEARCH_HASH_INDEX_1);
   //           },
   //         },
   //         {
@@ -675,7 +675,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
   //           },
   //           responseSchema,
   //           after: async () => {
-  //             expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
+  //             expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
   //           }
   //         },
   //       ].map(mainCheckFn);
@@ -705,10 +705,10 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
   //             ]);
   //           },
   //           before: async () => {
-  //             expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
+  //             expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
   //           },
   //           after: async () => {
-  //             expect(await rte.client.send_command(`ft._list`)).to.include(constants.TEST_SEARCH_JSON_INDEX_1);
+  //             expect(await rte.client.call(`ft._list`)).to.include(constants.TEST_SEARCH_JSON_INDEX_1);
   //           },
   //         },
   //         {
@@ -738,7 +738,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
   //           responseSchema,
   //           before: async () => {
   //             for (let i = 0; i < 10; i++) {
-  //               await rte.client.send_command(
+  //               await rte.client.call(
   //                 'json.set',
   //                 [`${constants.TEST_SEARCH_JSON_KEY_PREFIX_1}${i}`, '$', `{"user":{"name":"John Smith${i}"}}`]
   //               )
@@ -784,7 +784,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
   //           },
   //           responseSchema,
   //           after: async () => {
-  //             expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
+  //             expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
   //           }
   //         },
   //       ].map(mainCheckFn);

@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { concat } from 'lodash';
 import {
   BadRequestException, HttpException, Injectable, Logger,
@@ -53,7 +53,9 @@ export class SlowLogService {
    * @param dto
    */
   async getNodeSlowLogs(node: IORedis.Redis, dto: GetSlowLogsDto): Promise<SlowLog[]> {
-    const resp = await node.send_command(SlowLogCommands.SlowLog, [SlowLogArguments.Get, dto.count]);
+    const resp = await node.call(SlowLogCommands.SlowLog, [SlowLogArguments.Get, dto.count]);
+    // @ts-expect-error
+    // https://github.com/luin/ioredis/issues/1572
     return resp.map((log) => {
       const [id, time, durationUs, args, source, client] = log;
 
@@ -81,7 +83,7 @@ export class SlowLogService {
       const client = await this.getClient(clientOptions);
       const nodes = await this.getNodes(client);
 
-      await Promise.all(nodes.map((node) => node.send_command(SlowLogCommands.SlowLog, SlowLogArguments.Reset)));
+      await Promise.all(nodes.map((node) => node.call(SlowLogCommands.SlowLog, SlowLogArguments.Reset)));
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -101,7 +103,7 @@ export class SlowLogService {
     try {
       const client = await this.getClient(clientOptions);
       const resp = convertStringsArrayToObject(
-        await client.send_command(SlowLogCommands.Config, [SlowLogArguments.Get, 'slowlog*']),
+        await client.call(SlowLogCommands.Config, [SlowLogArguments.Get, 'slowlog*']),
       );
 
       return {
@@ -165,7 +167,7 @@ export class SlowLogService {
         if (client instanceof IORedis.Cluster) {
           return Promise.reject(new BadRequestException('Configuration slowlog for cluster is deprecated'));
         }
-        await Promise.all(commands.map((command) => client.send_command(
+        await Promise.all(commands.map((command) => client.call(
           command.command,
           command.args,
         ).then(command.analytics)));

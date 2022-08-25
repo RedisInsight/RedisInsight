@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { ForbiddenException, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
@@ -211,11 +211,11 @@ export class RedisObserver extends EventEmitter2 {
     const duplicate = redis.duplicate({
       ...redis.options,
       monitor: false,
-      lazyLoading: false,
+      lazyConnect: false,
       connectionName: `redisinsight-monitor-perm-check-${Math.random()}`,
     });
 
-    await duplicate.send_command('monitor');
+    await duplicate.call('monitor');
     duplicate.disconnect();
 
     return true;

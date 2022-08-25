@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { get } from 'lodash';
 import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 import { BulkActionStatus } from 'src/modules/bulk-actions/contants';
@@ -59,6 +59,8 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
     if (keys.length) {
       const commands = this.prepareCommands(keys) as string[][];
       const res = await this.node.pipeline(commands).exec();
+      // @ts-expect-error
+      // https://github.com/luin/ioredis/issues/1572
       this.processIterationResults(keys, res);
     }
 

@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
 import { RedisClientEvents, RedisClientStatus } from 'src/modules/pub-sub/constants';
 

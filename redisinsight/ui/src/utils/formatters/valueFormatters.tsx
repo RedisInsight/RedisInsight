@@ -69,7 +69,7 @@ const formattingBuffer = (
     }
     case KeyValueFormat.PHP: {
       try {
-        const decoded = unserialize(reply.data, { encoding: 'binary' })
+        const decoded = unserialize(Buffer.from(reply.data), { encoding: 'binary' })
         const value = JSON.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {

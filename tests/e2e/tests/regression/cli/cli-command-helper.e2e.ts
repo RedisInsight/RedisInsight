@@ -247,3 +247,27 @@ test
             i++;
         }
     });
+test
+    .meta({ rte: rte.standalone })('Verify that user can go back to list of commands for group in Command Helper', async t => {
+        filteringGroup = 'Search';
+        commandToCheck = 'FT.EXPLAIN';
+        const commandForSearch = 'EXPLAIN';
+        //Open Command Helper
+        await t.click(cliPage.expandCommandHelperButton);
+        //Select one command from the list
+        await t.typeText(cliPage.cliHelperSearch, commandForSearch);
+        await cliPage.selectFilterGroupType(filteringGroup);
+        // Remember found commands
+        const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
+        const filteredCommands: string[] = [];
+        for (let i = 0; i < commandsFilterCount; i++) {
+            filteredCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
+        }
+        // Select command
+        await t.click(cliPage.cliHelperOutputTitles.withExactText(commandToCheck));
+        // Click return button
+        await t.click(cliPage.returnToList);
+        // Check that user returned to list with filter and search applied
+        await cliPage.checkCommandsInCommandHelper(filteredCommands);
+        await t.expect(cliPage.returnToList.exists).notOk('Return to list button still displayed');
+    });

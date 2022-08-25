@@ -116,7 +116,7 @@ test
         //Select group from list and remember commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-        const timeSeriesCommands = [];
+        const timeSeriesCommands: string[] = [];
         for(let i = 0; i < commandsFilterCount; i++) {
             timeSeriesCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
         }
@@ -137,7 +137,7 @@ test
         //Select group from list and remember commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-        const graphCommands = [];
+        const graphCommands: string[] = [];
         for(let i = 0; i < commandsFilterCount; i++) {
             graphCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
         }

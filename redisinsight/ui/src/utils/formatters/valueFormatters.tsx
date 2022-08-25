@@ -92,7 +92,7 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Protobuf: {
       try {
-        const decoded = getData(reply.data)
+        const decoded = getData(Buffer.from(reply.data))
         const value = JSON.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {

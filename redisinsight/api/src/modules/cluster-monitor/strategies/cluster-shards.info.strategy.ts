@@ -37,7 +37,6 @@ export class ClusterShardsInfoStrategy extends AbstractInfoStrategy {
         host: nodeObj.ip,
         port: nodeObj.port,
         role: nodeObj.role === 'master' ? NodeRole.Primary : NodeRole.Replica,
-        replicationOffset: nodeObj['replication-offset'],
         health: nodeObj.health,
       };
 

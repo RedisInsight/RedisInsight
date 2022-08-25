@@ -9,7 +9,7 @@ export class ClusterNodesInfoStrategy extends AbstractInfoStrategy {
       replyEncoding: 'utf8',
     }));
 
-    return resp.split('\n').filter((e) => e).map((nodeString) => {
+    return resp.split('\r\n').filter((e) => e).map((nodeString) => {
       const [id, endpoint, flags, primary,,,,, ...slots] = nodeString.split(' ');
       const [host, ports] = endpoint.split(':');
       const [port] = ports.split('@');
@@ -27,11 +27,11 @@ export class ClusterNodesInfoStrategy extends AbstractInfoStrategy {
   }
 
   static determineNodeHealth(flags: string): HealthStatus {
-    if (['fail'].includes(flags)) {
+    if (flags.indexOf('fail') > -1 && flags.indexOf('pfail') < 0) {
       return HealthStatus.Offline;
     }
 
-    if (['master', 'slave'].includes(flags)) {
+    if (flags.indexOf('master') > -1 || flags.indexOf('slave') > -1) {
       return HealthStatus.Online;
     }
 

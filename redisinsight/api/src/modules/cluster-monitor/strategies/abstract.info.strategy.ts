@@ -19,11 +19,11 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
     const nodes = await this.getClusterNodesInfo(client, redisClusterNodes);
 
     clusterDetails = {
-      version: get(client.nodes(), '0.serverInfo.redis_version'),
-      mode: get(client.nodes(), '0.serverInfo.redis_mode'),
       ...clusterDetails,
       ...(AbstractInfoStrategy.calculateAdditionalClusterMetrics(client, nodes)),
       nodes: AbstractInfoStrategy.createClusterHierarchy(nodes),
+      version: get(client.nodes(), '0.serverInfo.redis_version'),
+      mode: get(client.nodes(), '0.serverInfo.redis_mode'),
     };
 
     return plainToClass(ClusterDetails, clusterDetails);
@@ -150,7 +150,8 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    */
   static calculateCacheHitRatio(hits: number, misses: number): number {
     try {
-      return hits / (hits + misses);
+      const cacheHitRate = hits / (hits + misses);
+      return cacheHitRate >= 0 ? cacheHitRate : null;
     } catch (e) {
       // ignore error
     }

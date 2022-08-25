@@ -32,11 +32,13 @@ import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/ad
 import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 
 import { TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
+
 import styles from './styles.module.scss'
 
 const MAX_ROWS = 25
 const MIN_ROWS = 4
-const APPROXIMATE_WIDTH_OF_SIGN = 8.3
+const APPROXIMATE_WIDTH_OF_SIGN = 8.6
 
 export interface Props {
   isEditItem: boolean;
@@ -93,12 +95,7 @@ const StringDetails = (props: Props) => {
     if (!isEditItem || !textAreaRef.current || value === null) {
       return
     }
-    const text = areaValue
-    const calculatedBreaks = text?.split('\n').length
-    const textAreaWidth = textAreaRef.current.clientWidth
-    const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-    const approximateLinesByLength = (!isValid || isTextViewFormatter(viewFormat)) ? text?.length / OneRowLength : 0
-    const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+    const calculatedRows = calculateTextareaLines(areaValue, textAreaRef.current.clientWidth, APPROXIMATE_WIDTH_OF_SIGN)
 
     if (calculatedRows > MAX_ROWS) {
       setRows(MAX_ROWS)

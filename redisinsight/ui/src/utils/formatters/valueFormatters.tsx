@@ -33,11 +33,17 @@ const isTextViewFormatter = (format: KeyValueFormat) => [
 const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
 const isFormatEditable = (format: KeyValueFormat) => ![KeyValueFormat.Protobuf, KeyValueFormat.JAVA].includes(format)
 
-const isNonUnicodeFormatter = (format: KeyValueFormat) => [
-  KeyValueFormat.ASCII,
-  KeyValueFormat.HEX,
-  KeyValueFormat.Binary,
-].includes(format)
+const isNonUnicodeFormatter = (format: KeyValueFormat, isValid: boolean) => {
+  if (format === KeyValueFormat.Msgpack) {
+    return !isValid
+  }
+  return [
+    KeyValueFormat.ASCII,
+    KeyValueFormat.HEX,
+    KeyValueFormat.Binary,
+    KeyValueFormat.Msgpack,
+  ].includes(format)
+}
 
 const bufferToUnicode = (reply: RedisResponseBuffer): string =>
   bufferToUTF8(reply)

@@ -311,7 +311,8 @@ const HashDetails = (props: Props) => {
         const { value: formattedValue, isValid } = formattingBuffer(valueItem, viewFormatProp, { expanded })
 
         if (rowIndex === editingIndex) {
-          const disabled = !isEqualBuffers(valueItem, stringToBuffer(value)) && !isNonUnicodeFormatter(viewFormat)
+          const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
+            && !isEqualBuffers(valueItem, stringToBuffer(value))
 
           setTimeout(() => cellCache.clear(rowIndex, 1), 0)
 
@@ -351,7 +352,7 @@ const HashDetails = (props: Props) => {
                         }}
                         disabled={updateLoading}
                         inputRef={textAreaRef}
-                        className={styles.textArea}
+                        className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                         spellCheck={false}
                         data-testid="hash-value-editor"
                       />

@@ -1,5 +1,9 @@
 import { flatMap } from 'lodash';
-import { convertStringsArrayToObject, convertIntToSemanticVersion } from './converter';
+import {
+  convertStringsArrayToObject,
+  convertIntToSemanticVersion,
+  convertStringToNumber,
+} from './converter';
 
 describe('convertStringsArrayToObject', () => {
   it('should return appropriate value', () => {
@@ -37,6 +41,26 @@ describe('convertIntToSemanticVersionTests', () => {
   convertIntToSemanticVersionTests.forEach((test) => {
     it(`should be output: ${test.output} for input: ${JSON.stringify(test.input)}`, () => {
       const result = convertIntToSemanticVersion(test.input);
+
+      expect(result).toEqual(test.output);
+    });
+  });
+});
+
+const convertStringToNumberTests: Record<string, any>[] = [
+  { input: ['1'], output: 1 },
+  { input: [1], output: 1 },
+  { input: [{ some: 'obj' }], output: undefined },
+  { input: [{ some: 'obj' }, 11], output: 11 },
+  { input: ['asd45', 11], output: 11 },
+  { input: ['123.123', 11], output: 123.123 },
+  { input: [undefined, 11], output: 11 },
+];
+
+describe('convertStringToNumber', () => {
+  convertStringToNumberTests.forEach((test) => {
+    it(`should be output: ${test.output} for input: ${JSON.stringify(test.input)}`, () => {
+      const result = convertStringToNumber.call(this, ...test.input);
 
       expect(result).toEqual(test.output);
     });

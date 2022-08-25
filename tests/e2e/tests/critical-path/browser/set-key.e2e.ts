@@ -57,5 +57,6 @@ test.only // todo: tmp. rollback
         await browserPage.searchByTheValueInSetKey(keyMember);
         //Check the search result
         const result = await browserPage.setMembersList.nth(0).textContent;
-        await t.expect(result).eql(keyMember, 'Bad message SCREENSHOT!');
+        // await t.expect(result).eql(keyMember, 'The set member');
+        await t.expect(result).eql('blabla', 'The set member');
     });

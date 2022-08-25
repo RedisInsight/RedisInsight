@@ -326,8 +326,8 @@ jobs:
       - store_test_results:
           path: ./tests/e2e/results
       - store_artifacts:
-          path: tests/e2e/results
-          destination: tests/e2e/results
+          path: tests/e2e/report
+          destination: tests/e2e/report
   e2e-exe:
     executor:
       name: win/default
@@ -365,8 +365,8 @@ jobs:
       - store_test_results:
           path: ./tests/e2e/results
       - store_artifacts:
-          path: tests/e2e/results
-          destination: tests/e2e/results
+          path: tests/e2e/report
+          destination: tests/e2e/report
   e2e-tests:
     executor: linux-executor
     parameters:
@@ -434,8 +434,8 @@ jobs:
       - store_test_results:
           path: ./tests/e2e/results
       - store_artifacts:
-          path: tests/e2e/results
-          destination: tests/e2e/results
+          path: tests/e2e/report
+          destination: tests/e2e/report
 
   # Build jobs
   setup-sign-certificates:

@@ -23,7 +23,7 @@ fixture `Set Key fields verification`
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
-test.only // todo: tmp. rollback
+test
     .meta({ rte: rte.standalone })
     ('Verify that user can search by part member name with pattern * in Set', async t => {
         keyName = chance.word({ length: 10 });
@@ -46,7 +46,7 @@ test.only // todo: tmp. rollback
         result = await browserPage.setMembersList.nth(0).textContent;
         await t.expect(result).eql(keyMember, 'The set member');
     });
-test.only // todo: tmp. rollback
+test
     .meta({ rte: rte.standalone })
     ('Verify that user can search by full member name in Set', async t => {
         keyName = chance.word({ length: 10 });
@@ -57,6 +57,5 @@ test.only // todo: tmp. rollback
         await browserPage.searchByTheValueInSetKey(keyMember);
         //Check the search result
         const result = await browserPage.setMembersList.nth(0).textContent;
-        // await t.expect(result).eql(keyMember, 'The set member');
-        await t.expect(result).eql('blabla', 'The set member');
+        await t.expect(result).eql(keyMember, 'The set member');
     });

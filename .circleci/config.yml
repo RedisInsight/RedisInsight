@@ -292,7 +292,7 @@ jobs:
             sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
             cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
   e2e-app-image:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       report:
         description: Send report for test run to slack
@@ -368,7 +368,7 @@ jobs:
           path: tests/e2e/report
           destination: tests/e2e/report
   e2e-tests:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       build:
         description: Backend build to run tests over
@@ -383,8 +383,7 @@ jobs:
         description: Number of threads to run tests
         type: integer
         default: 1
-#    parallelism: << parameters.parallelism >> todo: tmp. rollback
-    parallelism: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - when:

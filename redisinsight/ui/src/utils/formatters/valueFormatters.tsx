@@ -35,7 +35,7 @@ const isFormatEditable = (format: KeyValueFormat) => ![KeyValueFormat.Protobuf, 
 
 const isNonUnicodeFormatter = (format: KeyValueFormat, isValid: boolean) => {
   if (format === KeyValueFormat.Msgpack) {
-    return !isValid
+    return isValid
   }
   return [
     KeyValueFormat.ASCII,

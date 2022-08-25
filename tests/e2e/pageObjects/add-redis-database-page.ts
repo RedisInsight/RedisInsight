@@ -22,6 +22,7 @@ export class AddRedisDatabasePage {
     connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
     discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
+    cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
     //TEXT INPUTS (also referred to as 'Text fields')
     hostInput = Selector('[data-testid=host]');
     portInput = Selector('[data-testid=port]');

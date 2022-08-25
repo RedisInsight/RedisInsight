@@ -675,7 +675,7 @@ jobs:
       - <<: *scan
       - <<: *validate
   docker:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       env:
         type: enum

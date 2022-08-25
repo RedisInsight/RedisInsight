@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis';
+import IORedis from 'ioredis';
 import * as MockedSocket from 'socket.io-mock';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
@@ -21,7 +21,7 @@ export const mockSocket2 = new MockedSocket();
 mockSocket2.id = '2';
 mockSocket2['emit'] = jest.fn();
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
 
 const mockBulkActionFilter = Object.assign(new BulkActionFilter(), {

@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import {
@@ -15,7 +15,7 @@ nodeClient.monitor = jest.fn();
 nodeClient.status = 'ready';
 nodeClient.disconnect = jest.fn();
 nodeClient.duplicate = jest.fn();
-nodeClient.send_command = jest.fn();
+nodeClient.call = jest.fn();
 
 const mockClusterNode1 = nodeClient;
 const mockClusterNode2 = nodeClient;
@@ -71,7 +71,7 @@ describe('RedisObserver', () => {
     });
 
     it('should subscribe to a standalone', async () => {
-      nodeClient.send_command.mockResolvedValue('OK');
+      nodeClient.call.mockResolvedValue('OK');
 
       await redisObserver.init(getRedisClientFn);
       await redisObserver.subscribe(mockProfilerClient);
@@ -183,7 +183,7 @@ describe('RedisObserver', () => {
 
   describe('connect', () => {
     beforeEach(async () => {
-      nodeClient.send_command.mockResolvedValue('OK');
+      nodeClient.call.mockResolvedValue('OK');
       nodeClient.duplicate.mockReturnValue(nodeClient);
       nodeClient.monitor.mockReturnValue(mockRedisShardObserver);
     });
@@ -197,7 +197,7 @@ describe('RedisObserver', () => {
     });
 
     it('connect fail due to NOPERM', (done) => {
-      nodeClient.send_command.mockRejectedValueOnce(NO_PERM_ERROR);
+      nodeClient.call.mockRejectedValueOnce(NO_PERM_ERROR);
       redisObserver.init(getRedisClientFn);
       redisObserver.on('connect_error', (e) => {
         expect(redisObserver['shardsObservers']).toEqual([]);
@@ -208,7 +208,7 @@ describe('RedisObserver', () => {
     });
 
     it('connect fail due an error', (done) => {
-      nodeClient.send_command.mockRejectedValueOnce(new Error('some error'));
+      nodeClient.call.mockRejectedValueOnce(new Error('some error'));
       redisObserver.init(getRedisClientFn);
       redisObserver.on('connect_error', (e) => {
         expect(e).toBeInstanceOf(ServiceUnavailableException);

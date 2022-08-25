@@ -40,7 +40,7 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
     const [command, ...commandArgs] = toolCommand.split(' ');
     // TODO: use sendCommand method
-    return client.send_command(command, [...commandArgs, ...args]);
+    return client.call(command, [...commandArgs, ...args]);
   }
 
   async execPipeline(
@@ -68,10 +68,10 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     this.logger.log(`Execute command '${toolCommand}' from nodes, connectionName: ${getConnectionName(client)}`);
     return await Promise.all(
       nodes.map(
-        async (node: IORedis.Redis): Promise<IExecCommandFromClusterNode> => {
+        async (node: Redis): Promise<IExecCommandFromClusterNode> => {
           const { host, port } = node.options;
           const [command, ...commandArgs] = toolCommand.split(' ');
-          const result = await node.send_command(command, [
+          const result = await node.call(command, [
             ...commandArgs,
             ...args,
           ]);
@@ -90,7 +90,7 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
     exactNode: EndpointDto,
-    replyEncoding: string = 'utf8',
+    replyEncoding: BufferEncoding = 'utf8',
   ): Promise<IExecCommandFromClusterNode> {
     const client = await this.getRedisClient(clientOptions);
     this.logger.log(`Execute command '${toolCommand}' from node, connectionName: ${getConnectionName(client)}`);

@@ -15,7 +15,7 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
-import * as Redis from 'ioredis';
+import IORedis from 'ioredis';
 import { StandaloneStrategy } from './standalone.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -23,7 +23,7 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
 
 const getKeyInfoResponse = {

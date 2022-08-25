@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import * as Redis from 'ioredis';
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { AppTool, ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -47,7 +47,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
     clientOptions: IFindRedisClientInstanceByOptions,
     toolCommand: string,
     args: Array<string | Buffer>,
-    replyEncoding?: string,
+    replyEncoding?: BufferEncoding,
   ): Promise<any> {
     const client = await this.getRedisClient(clientOptions);
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
@@ -64,7 +64,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
     toolCommand: string,
     args: Array<string | Buffer>,
     nodeRole: ClusterNodeRole,
-    replyEncoding?: string,
+    replyEncoding?: BufferEncoding,
   ): Promise<ICliExecResultFromNode[]> {
     const [command, ...commandArgs] = toolCommand.split(' ');
     const nodes: IORedis.Redis[] = await this.getClusterNodes(
@@ -108,7 +108,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
     args: Array<string | Buffer>,
     nodeRole: ClusterNodeRole,
     nodeAddress: string,
-    replyEncoding?: string,
+    replyEncoding?: BufferEncoding,
   ): Promise<ICliExecResultFromNode> {
     const [command, ...commandArgs] = toolCommand.split(' ');
     const nodes: IORedis.Redis[] = await this.getClusterNodes(

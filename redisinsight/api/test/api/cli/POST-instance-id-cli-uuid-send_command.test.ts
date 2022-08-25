@@ -446,10 +446,10 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
               expect(body.response).to.have.string('"OK"');
             },
             before: async () => {
-              expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
+              expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
             },
             after: async () => {
-              expect(await rte.client.send_command(`ft._list`)).to.include(constants.TEST_SEARCH_HASH_INDEX_1);
+              expect(await rte.client.call(`ft._list`)).to.include(constants.TEST_SEARCH_HASH_INDEX_1);
             },
           },
           {
@@ -518,7 +518,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
             },
             responseSchema,
             after: async () => {
-              expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
+              expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_HASH_INDEX_1);
             }
           },
         ].map(mainCheckFn);
@@ -544,10 +544,10 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
               expect(body.response).to.have.string('"OK"');
             },
             before: async () => {
-              expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
+              expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
             },
             after: async () => {
-              expect(await rte.client.send_command(`ft._list`)).to.include(constants.TEST_SEARCH_JSON_INDEX_1);
+              expect(await rte.client.call(`ft._list`)).to.include(constants.TEST_SEARCH_JSON_INDEX_1);
             },
           },
           {
@@ -577,7 +577,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
             responseSchema,
             before: async () => {
               for (let i = 0; i < 10; i++) {
-                await rte.client.send_command(
+                await rte.client.call(
                   'json.set',
                   [`${constants.TEST_SEARCH_JSON_KEY_PREFIX_1}${i}`, '$', `{"user":{"name":"John Smith${i}"}}`]
                 )
@@ -606,7 +606,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
             },
             responseSchema,
             after: async () => {
-              expect(await rte.client.send_command('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
+              expect(await rte.client.call('ft._list')).to.not.include(constants.TEST_SEARCH_JSON_INDEX_1);
             }
           },
         ].map(mainCheckFn);
@@ -629,14 +629,14 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
             before: async () => {
               let errorMessage = '';
               try {
-                await rte.client.send_command('ft.info', [constants.TEST_SEARCH_HASH_INDEX_1])
+                await rte.client.call('ft.info', [constants.TEST_SEARCH_HASH_INDEX_1])
               } catch ({message}) {
                 errorMessage = message;
               }
               expect(errorMessage).to.eql('Unknown Index name')
             },
             after: async () => {
-              expect(await rte.client.send_command('ft.info', [constants.TEST_SEARCH_HASH_INDEX_1]))
+              expect(await rte.client.call('ft.info', [constants.TEST_SEARCH_HASH_INDEX_1]))
                 .to.include(constants.TEST_SEARCH_HASH_INDEX_1)
             },
           },
@@ -665,7 +665,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
             responseSchema,
             before: async () => {
               for (let i = 0; i < 10; i++) {
-                await rte.client.send_command(
+                await rte.client.call(
                   'ft.add',
                   [constants.TEST_SEARCH_HASH_INDEX_1, `${constants.TEST_SEARCH_HASH_KEY_PREFIX_1}${i}`, '1.0', 'FIELDS', 'title', 'hello world']
                 )
@@ -685,7 +685,7 @@ describe('POST /instance/:instanceId/cli/:uuid/send-command', () => {
             after: async () => {
               let errorMessage = '';
               try {
-                await rte.client.send_command('ft.info', [constants.TEST_SEARCH_HASH_INDEX_1])
+                await rte.client.call('ft.info', [constants.TEST_SEARCH_HASH_INDEX_1])
               } catch ({message}) {
                 errorMessage = message;
               }

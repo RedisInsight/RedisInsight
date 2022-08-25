@@ -3,6 +3,7 @@ import cx from 'classnames'
 import React, { ChangeEvent, Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
 import {
   hashSelector,
@@ -13,6 +14,7 @@ import {
   updateHashValueStateSelector,
   updateHashFieldsAction,
 } from 'uiSrc/slices/browser/hash'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   formatLongName,
   createDeleteFieldHeader,
@@ -20,10 +22,11 @@ import {
   Nullable,
   formattingBuffer,
   bufferToString,
-  isEqualBuffers,
-  isTextViewFormatter,
   bufferToSerializedFormat,
-  stringToSerializedBufferFormat
+  stringToSerializedBufferFormat,
+  isNonUnicodeFormatter,
+  isFormatEditable,
+  isEqualBuffers
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
@@ -37,9 +40,10 @@ import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSr
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
+import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import {
   GetHashFieldsResponse,
@@ -54,16 +58,13 @@ const suffix = '_hash'
 const matchAllValue = '*'
 const headerHeight = 60
 const rowHeight = 43
-const APPROXIMATE_WIDTH_OF_SIGN = 8.3
 
 const cellCache = new CellMeasurerCache({
   fixedWidth: true,
   minHeight: rowHeight,
 })
 
-interface IHashField extends HashFieldDto {
-  editing: boolean;
-}
+interface IHashField extends HashFieldDto {}
 
 export interface Props {
   isFooterOpen: boolean
@@ -87,6 +88,7 @@ const HashDetails = (props: Props) => {
   const [match, setMatch] = useState<Nullable<string>>(matchAllValue)
   const [deleting, setDeleting] = useState('')
   const [fields, setFields] = useState<IHashField[]>([])
+  const [editingIndex, setEditingIndex] = useState<Nullable<number>>(null)
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
@@ -99,9 +101,7 @@ const HashDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const hashFields = loadedFields.map(formatItem)
-
-    setFields(hashFields)
+    setFields(loadedFields)
 
     if (loadedFields.length < fields.length) {
       formattedLastIndexRef.current = 0
@@ -110,14 +110,16 @@ const HashDetails = (props: Props) => {
     if (viewFormat !== viewFormatProp) {
       setExpandedRows([])
       setViewFormat(viewFormatProp)
+      setEditingIndex(null)
 
-      cellCache.clearAll()
-      setTimeout(() => {
-        cellCache.clearAll()
-        forceUpdate({})
-      }, 0)
+      clearCache()
     }
   }, [loadedFields, viewFormatProp])
+
+  const clearCache = () => setTimeout(() => {
+    cellCache.clearAll()
+    forceUpdate({})
+  }, 0)
 
   const closePopover = useCallback(() => {
     setDeleting('')
@@ -147,21 +149,28 @@ const HashDetails = (props: Props) => {
     closePopover()
   }
 
-  const handleEditField = useCallback((field = '', editing: boolean) => {
-    setFields((prevFields) => prevFields.map((item) => {
-      if (isEqualBuffers(item.field, field)) {
-        const value = bufferToSerializedFormat(viewFormat, item.value, 4)
-        setAreaValue(value)
-        return { ...item, editing }
-      }
-      return item
-    }))
+  const handleEditField = useCallback((
+    rowIndex: Nullable<number> = null,
+    editing: boolean,
+    valueItem?: RedisResponseBuffer
+  ) => {
+    setEditingIndex(editing ? rowIndex : null)
 
+    if (editing) {
+      const value = bufferToSerializedFormat(viewFormat, valueItem, 4)
+      setAreaValue(value)
+
+      setTimeout(() => {
+        textAreaRef?.current?.focus()
+      }, 0)
+    }
+
+    // hack to update scrollbar padding
+    clearCache()
     setTimeout(() => {
-      cellCache.clearAll()
-      forceUpdate({})
+      clearCache()
     }, 0)
-  }, [cellCache, viewFormat])
+  }, [viewFormat])
 
   const handleApplyEditField = (field = '') => {
     const data: AddFieldsToHashDto = {
@@ -238,7 +247,7 @@ const HashDetails = (props: Props) => {
     if (nextCursor !== 0) {
       dispatch(
         fetchMoreHashFields(
-          key,
+          key as RedisResponseBuffer,
           nextCursor,
           SCAN_COUNT_DEFAULT,
           match || matchAllValue
@@ -246,12 +255,6 @@ const HashDetails = (props: Props) => {
       )
     }
   }
-
-  const formatItem = useCallback(({ field, value }: HashFieldDto): IHashField => ({
-    field,
-    value,
-    editing: false
-  }), [viewFormatProp])
 
   const columns: ITableColumn[] = [
     {
@@ -297,8 +300,9 @@ const HashDetails = (props: Props) => {
       alignment: TableCellAlignment.Left,
       render: function Value(
         _name: string,
-        { field: fieldItem, value: valueItem, editing }: IHashField,
+        { field: fieldItem, value: valueItem }: IHashField,
         expanded?: boolean,
+        rowIndex = 0
       ) {
         // Better to cut the long string, because it could affect virtual scroll performance
         const value = bufferToString(valueItem)
@@ -306,46 +310,56 @@ const HashDetails = (props: Props) => {
         const tooltipContent = formatLongName(value)
         const { value: formattedValue, isValid } = formattingBuffer(valueItem, viewFormatProp, { expanded })
 
-        if (editing) {
-          const text = areaValue
-          const calculatedBreaks = text?.split('\n').length
-          const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
-          const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
-          const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+        if (rowIndex === editingIndex) {
+          const disabled = !isEqualBuffers(valueItem, stringToBuffer(value)) && !isNonUnicodeFormatter(viewFormat)
+
+          setTimeout(() => cellCache.clear(rowIndex, 1), 0)
+
           return (
-            <StopPropagation>
-              <InlineItemEditor
-                expandable
-                initialValue={value}
-                controlsPosition="inside"
-                controlsDesign="separate"
-                placeholder="Enter Value"
-                fieldName="fieldValue"
-                isLoading={updateLoading}
-                controlsClassName={styles.textAreaControls}
-                onDecline={() => handleEditField(fieldItem, false)}
-                onApply={() => handleApplyEditField(fieldItem)}
-              >
-                <EuiTextArea
-                  fullWidth
-                  name="value"
-                  id="value"
-                  rows={calculatedRows}
-                  resize="none"
-                  placeholder="Enter Value"
-                  value={areaValue}
-                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                    cellCache.clearAll()
-                    setAreaValue(e.target.value)
-                  }}
-                  disabled={updateLoading}
-                  inputRef={textAreaRef}
-                  className={styles.textArea}
-                  data-testid="hash-value-editor"
-                />
-              </InlineItemEditor>
-            </StopPropagation>
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <div style={{ width }}>
+                  <StopPropagation>
+                    <InlineItemEditor
+                      expandable
+                      preventOutsideClick
+                      disableFocusTrap
+                      declineOnUnmount={false}
+                      initialValue={value}
+                      controlsPosition="inside"
+                      controlsDesign="separate"
+                      placeholder="Enter Value"
+                      fieldName="fieldValue"
+                      isLoading={updateLoading}
+                      isDisabled={disabled}
+                      disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
+                      controlsClassName={styles.textAreaControls}
+                      onDecline={() => handleEditField(rowIndex, false)}
+                      onApply={() => handleApplyEditField(fieldItem)}
+                    >
+                      <EuiTextArea
+                        fullWidth
+                        name="value"
+                        id="value"
+                        rows={calculateTextareaLines(areaValue, width + 80)}
+                        resize="none"
+                        placeholder="Enter Value"
+                        value={areaValue}
+                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                          cellCache.clearAll()
+                          setAreaValue(e.target.value)
+                        }}
+                        disabled={updateLoading}
+                        inputRef={textAreaRef}
+                        className={styles.textArea}
+                        spellCheck={false}
+                        data-testid="hash-value-editor"
+                      />
+                    </InlineItemEditor>
+                  </StopPropagation>
+                </div>
+              )}
+            </AutoSizer>
           )
         }
         return (
@@ -379,20 +393,23 @@ const HashDetails = (props: Props) => {
       absoluteWidth: 95,
       minWidth: 95,
       maxWidth: 95,
-      render: function Actions(_act: any, { field: fieldItem }: HashFieldDto) {
+      render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _, rowIndex?: number) {
         const field = bufferToString(fieldItem, viewFormat)
+        const isEditable = isFormatEditable(viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiButtonIcon
-                iconType="pencil"
-                aria-label="Edit field"
-                className="editFieldBtn"
-                color="primary"
-                disabled={updateLoading}
-                onClick={() => handleEditField(fieldItem, true)}
-                data-testid={`edit-hash-button-${field}`}
-              />
+              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+                <EuiButtonIcon
+                  iconType="pencil"
+                  aria-label="Edit field"
+                  className="editFieldBtn"
+                  color="primary"
+                  disabled={updateLoading || !isEditable}
+                  onClick={() => handleEditField(rowIndex, true, valueItem)}
+                  data-testid={`edit-hash-button-${field}`}
+                />
+              </EuiToolTip>
               <PopoverDelete
                 header={createDeleteFieldHeader(fieldItem)}
                 text={createDeleteFieldMessage(key ?? '')}

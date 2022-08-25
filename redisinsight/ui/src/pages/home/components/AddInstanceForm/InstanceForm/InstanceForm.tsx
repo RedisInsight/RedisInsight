@@ -288,10 +288,8 @@ const AddStandaloneForm = (props: Props) => {
       }
     }
 
-    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
-      if (!values.sentinelMasterName) {
-        errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
-      }
+    if (isCloneMode && connectionType === ConnectionType.Sentinel && !values.sentinelMasterName) {
+      errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
     }
 
     setErrors(errs)

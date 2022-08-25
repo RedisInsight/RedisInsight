@@ -5,6 +5,7 @@ import { last, mergeWith, toNumber } from 'lodash'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import {
+  bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   formatLongName,
@@ -19,7 +20,6 @@ import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
-import bufferToString from 'uiSrc/utils/formatters/bufferFormatters'
 
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamDataView from './StreamDataView'
@@ -95,8 +95,30 @@ const StreamDataViewWrapper = (props: Props) => {
             id: field,
             label: field,
             render: () => {
-              const { value: formattedValue } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
-              return formattedValue || (<div>&nbsp;</div>)
+              const value = name ? bufferToString(name) : ''
+              const { value: formattedValue, isValid } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
+              const tooltipContent = formatLongName(value)
+              return (
+                <>
+                  {formattedValue ? (
+                    <div
+                      style={{ display: 'flex', whiteSpace: 'break-spaces', wordBreak: 'break-all', width: 'max-content' }}
+                      data-testid={`stream-field-name-${field}`}
+                    >
+                      <EuiToolTip
+                        title={isValid ? 'Field' : `Failed to convert to ${viewFormatProp}`}
+                        anchorClassName="truncateText"
+                        position="bottom"
+                        content={tooltipContent}
+                      >
+                        <>{formattedValue}</>
+                      </EuiToolTip>
+                    </div>
+                  ) : (
+                    <div>&nbsp;</div>
+                  )}
+                </>
+              )
             }
           }
         }
@@ -181,7 +203,6 @@ const StreamDataViewWrapper = (props: Props) => {
     isSortable: false,
     className: styles.cell,
     headerClassName: 'streamItemHeader',
-    headerCellClassName: 'truncateText',
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
       const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)

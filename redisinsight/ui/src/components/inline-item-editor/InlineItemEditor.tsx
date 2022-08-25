@@ -15,6 +15,7 @@ import {
   EuiOutsideClickDetector,
   EuiFocusTrap,
   EuiWindowEvent,
+  EuiToolTip,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import styles from './styles.module.scss'
@@ -45,6 +46,9 @@ export interface Props {
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
+  disabledTooltipText?: { title: string, text: string }
+  preventOutsideClick?: boolean
+  disableFocusTrap?: boolean
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -71,6 +75,9 @@ const InlineItemEditor = (props: Props) => {
     isDisabled,
     autoComplete = 'off',
     controlsClassName,
+    disabledTooltipText,
+    preventOutsideClick = false,
+    disableFocusTrap = false
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -107,6 +114,7 @@ const InlineItemEditor = (props: Props) => {
   }
 
   const handleClickOutside = (event: any) => {
+    if (preventOutsideClick) return
     if (!containerEl?.current?.contains(event.target)) {
       if (!isLoading) {
         onDecline(event)
@@ -132,6 +140,27 @@ const InlineItemEditor = (props: Props) => {
   const isDisabledApply = (): boolean =>
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
+  const ApplyBtn = () => (
+    <EuiToolTip
+      anchorClassName={styles.tooltip}
+      position="bottom"
+      display="inlineBlock"
+      title={isDisabled && disabledTooltipText?.title}
+      content={isDisabled && disabledTooltipText?.text}
+    >
+      <EuiButtonIcon
+        iconSize={iconSize ?? 'l'}
+        iconType="check"
+        color="primary"
+        type="submit"
+        aria-label="Apply"
+        className={cx(styles.btn, styles.applyBtn)}
+        isDisabled={isDisabledApply()}
+        data-testid="apply-btn"
+      />
+    </EuiToolTip>
+  )
+
   return (
     <>
       {viewChildrenMode
@@ -139,7 +168,7 @@ const InlineItemEditor = (props: Props) => {
           <EuiOutsideClickDetector onOutsideClick={handleClickOutside}>
             <div ref={containerEl} className={styles.container}>
               <EuiWindowEvent event="keydown" handler={handleOnEsc} />
-              <EuiFocusTrap>
+              <EuiFocusTrap disabled={disableFocusTrap}>
                 <EuiForm
                   component="form"
                   className="relative"
@@ -189,16 +218,7 @@ const InlineItemEditor = (props: Props) => {
                       isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
-                    <EuiButtonIcon
-                      iconSize={iconSize ?? 'l'}
-                      iconType="check"
-                      color="primary"
-                      type="submit"
-                      aria-label="Apply"
-                      className={cx(styles.btn, styles.applyBtn)}
-                      isDisabled={isDisabledApply()}
-                      data-testid="apply-btn"
-                    />
+                    <ApplyBtn />
                   </div>
                 </EuiForm>
               </EuiFocusTrap>

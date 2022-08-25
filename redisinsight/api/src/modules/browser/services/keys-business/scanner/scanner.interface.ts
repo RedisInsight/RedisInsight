@@ -1,6 +1,6 @@
 import { RedisDataType } from 'src/modules/browser/dto';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
-import IORedis from 'ioredis';
+import { Redis } from 'ioredis';
 
 interface IGetKeysArgs {
   cursor: string;
@@ -14,7 +14,7 @@ export interface IGetNodeKeysResult {
   scanned: number;
   cursor: number;
   keys: any[];
-  node?: IORedis.Redis,
+  node?: Redis,
   host?: string;
   port?: number;
 }

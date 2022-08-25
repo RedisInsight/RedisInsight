@@ -57,3 +57,7 @@ package.json
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+# temp folders - remove in future after fix all issues
+redisinsight/ui/src/packages/redisgraph
+redisinsight/ui/src/packages/redistimeseries-app

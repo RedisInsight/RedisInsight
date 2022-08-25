@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import { when } from 'jest-when';
 import {
   mockStandaloneDatabaseEntity,
@@ -80,14 +80,15 @@ describe('OverviewService', () => {
 
     service = await module.get(OverviewService);
     spyGetNodeInfo = jest.spyOn<any, any>(service, 'getNodeInfo');
-    mockClient.send_command = jest.fn();
+    mockClient.call = jest.fn();
+    mockClient.info = jest.fn();
   });
 
   describe('getOverview', () => {
     describe('Standalone', () => {
       it('should return proper overview', async () => {
-        when(mockClient.send_command)
-          .calledWith('info')
+        when(mockClient.info)
+          .calledWith()
           .mockResolvedValue(mockStandaloneRedisInfoReply);
 
         const result = await service.getOverview(databaseId, mockClient);

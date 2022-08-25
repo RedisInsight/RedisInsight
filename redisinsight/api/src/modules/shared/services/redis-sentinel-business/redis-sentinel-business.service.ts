@@ -4,7 +4,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import {
   catchAclError,
   convertStringsArrayToObject,
@@ -58,7 +58,9 @@ export class RedisSentinelBusinessService {
     this.logger.log('Getting sentinel masters.');
     let result: SentinelMaster[];
     try {
-      const reply = await client.send_command('sentinel', ['masters']);
+      const reply = await client.call('sentinel', ['masters']);
+      // @ts-expect-error
+      // https://github.com/luin/ioredis/issues/1572
       result = reply.map((item) => {
         const {
           ip,
@@ -102,10 +104,12 @@ export class RedisSentinelBusinessService {
     this.logger.log('Getting a list of sentinel instances for master.');
     let result: EndpointDto[];
     try {
-      const reply = await client.send_command('sentinel', [
+      const reply = await client.call('sentinel', [
         'sentinels',
         masterName,
       ]);
+      // @ts-expect-error
+      // https://github.com/luin/ioredis/issues/1572
       result = reply.map((item) => {
         const { ip, port } = convertStringsArrayToObject(item);
         return { host: ip, port: parseInt(port, 10) };

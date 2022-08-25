@@ -239,7 +239,7 @@ const QueryCardHeader = (props: Props) => {
                   position="bottom"
                 >
                   <EuiTextColor className={cx(styles.timeText, styles.mode)}>
-                    -R
+                    -r
                   </EuiTextColor>
                 </EuiToolTip>
               )}
@@ -247,7 +247,7 @@ const QueryCardHeader = (props: Props) => {
           )}
           {!!summaryText && !isOpen && (
             <EuiTextColor className={styles.summaryText} component="div">
-              {truncateText(summaryText, 17)}
+              {truncateText(summaryText, 13)}
             </EuiTextColor>
           )}
         </EuiFlexItem>

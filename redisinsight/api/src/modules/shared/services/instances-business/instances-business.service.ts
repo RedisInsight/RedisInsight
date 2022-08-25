@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Repository } from 'typeorm';
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { find, omit } from 'lodash';
 import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';

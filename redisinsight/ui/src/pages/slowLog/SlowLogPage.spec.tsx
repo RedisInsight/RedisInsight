@@ -1,5 +1,4 @@
 import React from 'react'
-import { mock } from 'ts-mockito'
 import { slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
 import { render, screen } from 'uiSrc/utils/test-utils'
 

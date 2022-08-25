@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiButton, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
@@ -37,8 +37,9 @@ import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
 import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
+import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
+import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
 
 import styles from './styles.module.scss'
 
@@ -85,11 +86,13 @@ const Query = (props: Props) => {
   let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
-  const { items: execHistoryItems, loading } = useSelector(workbenchResultsSelector)
+  const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  const dispatch = useDispatch()
 
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
@@ -97,6 +100,7 @@ const Query = (props: Props) => {
   useEffect(() =>
     // componentWillUnmount
     () => {
+      dispatch(stopProcessing())
       contribution?.dispose?.()
       disposeCompletionItemProvider()
       disposeSignatureHelpProvider()
@@ -450,6 +454,8 @@ const Query = (props: Props) => {
     monaco.editor.defineTheme('light', lightTheme)
   }
 
+  const isLoading = loading || processing
+
   return (
     <div className={styles.wrapper}>
       <div
@@ -477,13 +483,15 @@ const Query = (props: Props) => {
             data-testid="change-mode-tooltip"
           >
             <EuiButton
+              fill
+              size="s"
+              color="secondary"
               onClick={() => onQueryChangeMode()}
-              disabled={loading}
+              disabled={isLoading}
               className={cx(styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
-              aria-label="change mode"
               data-testid="btn-change-mode"
             >
-              -R
+              <EuiIcon type={RawModeIcon} />
             </EuiButton>
           </EuiToolTip>
           <EuiToolTip
@@ -502,14 +510,14 @@ const Query = (props: Props) => {
             data-testid="run-query-tooltip"
           >
             <>
-              {loading && (
+              {isLoading && (
                 <EuiLoadingSpinner size="l" data-testid="loading-spinner" />
               )}
               <EuiButtonIcon
                 onClick={() => handleSubmit()}
-                disabled={loading}
+                disabled={isLoading}
                 iconType="playFilled"
-                className={cx(styles.submitButton, { [styles.submitButtonLoading]: loading })}
+                className={cx(styles.submitButton, { [styles.submitButtonLoading]: isLoading })}
                 aria-label="submit"
                 data-testid="btn-submit"
               />

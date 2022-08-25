@@ -14,7 +14,11 @@ import {
   bufferToSerializedFormat,
   bufferToString,
   formattingBuffer,
+  isNonUnicodeFormatter,
+  isEqualBuffers,
+  isFormatEditable,
   isTextViewFormatter,
+  stringToBuffer,
   stringToSerializedBufferFormat
 } from 'uiSrc/utils'
 import {
@@ -27,11 +31,14 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEdit
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 
+import { TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
+
 import styles from './styles.module.scss'
 
 const MAX_ROWS = 25
 const MIN_ROWS = 4
-const APPROXIMATE_WIDTH_OF_SIGN = 8.3
+const APPROXIMATE_WIDTH_OF_SIGN = 8.6
 
 export interface Props {
   isEditItem: boolean;
@@ -51,6 +58,8 @@ const StringDetails = (props: Props) => {
   const [areaValue, setAreaValue] = useState<string>('')
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
   const [isValid, setIsValid] = useState(true)
+  const [isDisabled, setIsDisabled] = useState(false)
+  const [isEditable, setIsEditable] = useState(true)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
   const viewValueRef: Ref<HTMLPreElement> = useRef(null)
@@ -70,6 +79,11 @@ const StringDetails = (props: Props) => {
 
     setValue(formattedValue)
     setIsValid(isValid)
+    setIsDisabled(
+      !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
+      && !isNonUnicodeFormatter(viewFormatProp)
+    )
+    setIsEditable(isFormatEditable(viewFormatProp))
 
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
@@ -81,12 +95,7 @@ const StringDetails = (props: Props) => {
     if (!isEditItem || !textAreaRef.current || value === null) {
       return
     }
-    const text = areaValue
-    const calculatedBreaks = text?.split('\n').length
-    const textAreaWidth = textAreaRef.current.clientWidth
-    const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-    const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
-    const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
+    const calculatedRows = calculateTextareaLines(areaValue, textAreaRef.current.clientWidth, APPROXIMATE_WIDTH_OF_SIGN)
 
     if (calculatedRows > MAX_ROWS) {
       setRows(MAX_ROWS)
@@ -136,7 +145,7 @@ const StringDetails = (props: Props) => {
       )}
       {!isEditItem && (
         <EuiText
-          onClick={() => setIsEdit(true)}
+          onClick={() => isEditable && setIsEdit(true)}
           style={{ whiteSpace: 'break-spaces' }}
           data-testid="string-value"
         >
@@ -163,6 +172,8 @@ const StringDetails = (props: Props) => {
           fieldName="value"
           expandable
           isLoading={false}
+          isDisabled={isDisabled}
+          disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
           onDecline={onDeclineChanges}
           onApply={onApplyChanges}
           declineOnUnmount={false}

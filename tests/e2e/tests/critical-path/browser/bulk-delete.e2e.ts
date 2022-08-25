@@ -16,6 +16,8 @@ const keyNames = [common.generateWord(20), common.generateWord(20)];
 const hashKeyParameters = { keyName: keyNames[0], fields: [{ field: common.generateWord(20), value: common.generateWord(20) }] };
 const setKeyParameters = { keyName: keyNames[1], members: [common.generateWord(20)] };
 const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
+const keyToAddParameters = { keysCount: 10000, keyNameStartWith: 'hashKey'};
+const keyToAddParameters2 = { keysCount: 500000, keyNameStartWith: 'hashKey'};
 
 fixture `Bulk Delete`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -57,7 +59,7 @@ test('Verify that user can see summary of scanned level', async t => {
     const expectedAmount = 'Expected amount: ~10 002 keys';
     const scannedKeys = 'Scanned 5% (500/10 002) and found 500 keys';
     // Add 10000 Hash keys
-    await populateDBWithHashes(dbParameters.host, dbParameters.port, 10000, 'hashKey');
+    await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
     // Filter by Hash keys
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     // Open bulk actions
@@ -90,7 +92,7 @@ test('Verify that user can see warning message clicking on Delete button for Bul
 });
 test('Verify that user can see blue progress line during the process of bulk deletion', async t => {
     // Add 500000 Hash keys
-    await populateDBWithHashes(dbParameters.host, dbParameters.port, 500000, 'hashKey');
+    await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
     // Filter and search by Hash keys added
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     await browserPage.searchByKeyName('hashKey*');
@@ -102,8 +104,8 @@ test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Add 1000000 Hash keys
-        await populateDBWithHashes(dbParameters.host, dbParameters.port, 500000, 'hashKey');
-        await populateDBWithHashes(dbParameters.host, dbParameters.port, 500000, 'hashKey');
+        await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
+        await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
         // Filter and search by Hash keys added
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
         await browserPage.searchByKeyName('hashKey*');
@@ -119,7 +121,7 @@ test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Add 500000 keys
-        await populateDBWithHashes(dbParameters.host, dbParameters.port, 500000, 'hashKey');
+        await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
         // Filter and search by Hash keys added
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
         await browserPage.searchByKeyName('hashKey*');
@@ -149,7 +151,7 @@ test
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         await addSetKeyApi(setKeyParameters, ossStandaloneRedisearch);
         //Add 10000 Hash keys
-        await populateDBWithHashes(dbParameters.host, dbParameters.port, 10000, 'hashKey');
+        await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
         // Filter by Hash keys
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     })('Verify that after finishing bulk deletion user can see # of processed keys, # of deleted keys, # of errors, execution time', async t => {

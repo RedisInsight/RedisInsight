@@ -45,7 +45,7 @@ $rowHeight: 43px;
     .timestampText {
       display: inline-block;
       color: var(--euiColorMediumShade);
-      font: normal normal normal 12px/18px Graphik;
+      font: normal normal normal 12px/18px Graphik, sans-serif;
       margin-top: 6px;
       padding-right: 6px;
     }
@@ -107,7 +107,7 @@ $rowHeight: 43px;
 .error {
   display: inline-block;
   color: var(--euiColorDangerText);
-  font: normal normal normal 12px/18px Graphik;
+  font: normal normal normal 12px/18px Graphik, sans-serif;
   margin-top: 6px;
   padding-right: 6px;
 }

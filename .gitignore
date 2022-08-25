@@ -54,6 +54,7 @@ vendor
 
 # E2E tests report
 /tests/e2e/report
+/tests/e2e/.redisinsight-v2
 
 # Parcel
 .parcel-cache

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import {
   get,
   filter,
@@ -61,7 +61,7 @@ export class OverviewService {
     const { host, port } = client.options;
     return {
       ...convertRedisInfoReplyToObject(
-        await client.send_command('info'),
+        await client.info(),
       ),
       host,
       port,

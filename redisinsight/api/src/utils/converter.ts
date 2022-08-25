@@ -1,4 +1,6 @@
-import { chunk, isInteger } from 'lodash';
+import {
+  chunk, isInteger, isString, isNumber, isNaN,
+} from 'lodash';
 
 export const convertStringsArrayToObject = (input: string[]): { [key: string]: any } => chunk(
   input,
@@ -23,4 +25,22 @@ export const convertIntToSemanticVersion = (input: number): string => {
   } catch (e) {
     return undefined;
   }
+};
+
+export const convertStringToNumber = (value: any, defaultValue?: number): number => {
+  if (isNumber(value)) {
+    return value;
+  }
+
+  if (!isString(value) || !value) {
+    return defaultValue;
+  }
+
+  const num = parseFloat(value);
+
+  if (isNaN(num)) {
+    return defaultValue;
+  }
+
+  return num;
 };

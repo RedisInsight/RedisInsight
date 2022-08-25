@@ -1,6 +1,6 @@
-import IORedis from 'ioredis';
+import { Cluster } from 'ioredis';
 import { ClusterDetails } from 'src/modules/cluster-monitor/models';
 
 export interface IClusterInfo {
-  getClusterDetails(client: IORedis.Cluster): Promise<ClusterDetails>;
+  getClusterDetails(client: Cluster): Promise<ClusterDetails>;
 }

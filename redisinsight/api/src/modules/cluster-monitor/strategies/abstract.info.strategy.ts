@@ -1,5 +1,5 @@
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
-import IORedis from 'ioredis';
+import { Cluster, Redis, Command } from 'ioredis';
 import { convertBulkStringsToObject, convertRedisInfoReplyToObject, convertStringToNumber } from 'src/utils';
 import { get, map, sum } from 'lodash';
 import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
@@ -11,7 +11,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * with each node details and cluster topology
    * @param client
    */
-  async getClusterDetails(client: IORedis.Cluster): Promise<ClusterDetails> {
+  async getClusterDetails(client: Cluster): Promise<ClusterDetails> {
     let clusterDetails = await AbstractInfoStrategy.getClusterInfo(client);
 
     const redisClusterNodes = await this.getClusterNodesFromRedis(client);
@@ -35,7 +35,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param nodes
    * @private
    */
-  private async getClusterNodesInfo(client: IORedis.Cluster, nodes): Promise<ClusterNodeDetails[]> {
+  private async getClusterNodesInfo(client: Cluster, nodes): Promise<ClusterNodeDetails[]> {
     const clientNodes = client.nodes();
     return await Promise.all(nodes.map((node) => {
       const clientNode = clientNodes.find((n) => n.options?.host === node.host && n.options?.port === node.port);
@@ -55,7 +55,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param node
    * @private
    */
-  private async getClusterNodeInfo(nodeClient: IORedis.Redis, node): Promise<ClusterNodeDetails> {
+  private async getClusterNodeInfo(nodeClient: Redis, node): Promise<ClusterNodeDetails> {
     const info = convertRedisInfoReplyToObject(await nodeClient.info());
 
     return {
@@ -84,9 +84,9 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * Get bunch of fields from CLUSTER INFO command
    * @param client
    */
-  static async getClusterInfo(client: IORedis.Cluster): Promise<Partial<ClusterDetails>> {
+  static async getClusterInfo(client: Cluster): Promise<Partial<ClusterDetails>> {
     // @ts-ignore
-    const info = convertBulkStringsToObject(await client.sendCommand(new IORedis.Command('cluster', ['info'], {
+    const info = convertBulkStringsToObject(await client.sendCommand(new Command('cluster', ['info'], {
       replyEncoding: 'utf8',
     })));
 
@@ -165,7 +165,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param nodes
    */
   static calculateAdditionalClusterMetrics(
-    client: IORedis.Cluster,
+    client: Cluster,
     nodes: ClusterNodeDetails[],
   ): Partial<ClusterDetails> {
     const additionalDetails: Partial<ClusterDetails> = {
@@ -182,5 +182,5 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
     return additionalDetails;
   }
 
-  abstract getClusterNodesFromRedis(client: IORedis.Cluster);
+  abstract getClusterNodesFromRedis(client: Cluster);
 }

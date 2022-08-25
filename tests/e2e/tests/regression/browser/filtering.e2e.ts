@@ -199,7 +199,7 @@ test
         await t.click(browserPage.treeViewNotPatternedKeys);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });
-test
+test.only
     .before(async() => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
@@ -209,16 +209,14 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per key name using patterns in DB with 10-50 millions of keys', async t => {
-        // Create new key
-        keyName = `KeyForSearch-${chance.word({ length: 10 })}`;
-        await browserPage.addSetKey(keyName);
-        // Search by key name
+        let keys: string[] = [];
         await browserPage.selectFilterGroupType(KeyTypesTexts.Set);
+        const keyNameInTheList = Selector(`[data-testid^="key-"]`);
+        for(let i = 0; i < 20; i++) {
+            keys.push(await keyNameInTheList.textContent);
+        }
         // Verify that required key is displayed
-        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
-        // Verify that required key is displayed in tree view
-        await t.click(browserPage.treeViewButton);
-        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
+        await t.expect(await browserPage.filteringLabel.count).eql(5, `${keys}`);
     });
 test
     .before(async () => {

@@ -11,7 +11,7 @@ import testcafe from 'testcafe';
                     return testMeta.env !== 'web'
                 })
                 .screenshots({
-                    path: 'report/screenshots/',
+                    path: 'results/screenshots/',
                     takeOnFails: true,
                     pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST_INDEX}.png',
                 })

@@ -28,7 +28,7 @@
   &:global(.euiFlexGroup--gutterLarge) > :global(.euiFlexItem) {
     margin-left: 0;
   }
-  
+
   :global(.euiSwitch) :global(.euiSwitch__button) {
     width: 30px;
   }
@@ -49,7 +49,7 @@
 }
 
 .claimBtn :global(.euiButtonContent .euiButton__text) {
-  font: normal normal normal 12px/18px Graphik !important;
+  font: normal normal normal 12px/18px Graphik, sans-serif !important;
 }
 
 .option {
@@ -61,7 +61,7 @@
 }
 
 .option .pendingCount {
-  font: normal normal normal 13px/24px Graphik;
+  font: normal normal normal 13px/24px Graphik, sans-serif;
   letter-spacing: -0.13px;
   color: var(--inputPlaceholderColor) !important;
   white-space: nowrap;

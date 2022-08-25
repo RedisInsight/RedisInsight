@@ -221,17 +221,19 @@ test
         await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
     });
 test
-    .before(async() => {
+    .before(async () => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
-    .after(async() => {
+    .after(async () => {
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per key type in DB with 10-50 millions of keys', async t => {
-        for (let i = 0; i < keyTypes.length - 3; i++) {
+        for (let i = 0; i < keyTypes.length - 2; i++) {
             await browserPage.selectFilterGroupType(keyTypes[i].textType);
-            const filteredTypeKeys = Selector(`[data-testid^=badge-${keyTypes[i].keyName.slice(0, 3)}]`);
+            const filteredTypeKeys = keyTypes[i].keyName === 'json'
+                ? Selector(`[data-testid^=badge-ReJSON]`)
+                : Selector(`[data-testid^=badge-${keyTypes[i].keyName}]`);
             // Verify that all results have the same type as in filter
             await t.expect(await browserPage.filteringLabel.count).eql(await filteredTypeKeys.count, `The keys of type ${keyTypes[i].textType} not filtered correctly`);
         }

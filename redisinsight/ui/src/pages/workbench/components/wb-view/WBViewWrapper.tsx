@@ -29,7 +29,7 @@ import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
-import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { userSettingsConfigSelector, userSettingsWBSelector } from 'uiSrc/slices/user/user-settings'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -65,6 +65,7 @@ const WBViewWrapper = () => {
   const { loading, items } = useSelector(workbenchResultsSelector)
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+  const { cleanup: cleanupWB } = useSelector(userSettingsWBSelector)
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
   const [script, setScript] = useState(scriptContext)
@@ -222,12 +223,12 @@ const WBViewWrapper = () => {
     setScript('')
   }
 
-  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>) => {
+  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>, clearEditor = true) => {
     if (state.loading || (!value && !script)) return
 
     handleSubmit(value, commandId)
     setTimeout(() => {
-      resetCommand()
+      (cleanupWB && clearEditor) && resetCommand()
     }, 0)
   }
 

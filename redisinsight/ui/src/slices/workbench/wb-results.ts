@@ -22,6 +22,7 @@ import {
 
 export const initialState: StateWorkbenchResults = {
   loading: false,
+  processing: false,
   error: '',
   items: [],
 }
@@ -92,7 +93,8 @@ const workbenchResultsSlice = createSlice({
     },
 
     sendWBCommandSuccess: (state,
-      { payload: { data, commandId } }: { payload: { data: CommandExecution[], commandId: string } }) => {
+      { payload: { data, commandId, processing } }:
+      { payload: { data: CommandExecution[], commandId: string, processing?: boolean } }) => {
       state.items = [...state.items].map((item) => {
         let newItem = item
         data.forEach((command, i) => {
@@ -104,6 +106,7 @@ const workbenchResultsSlice = createSlice({
       })
 
       state.loading = false
+      state.processing = processing || false
     },
 
     fetchWBCommandSuccess: (state, { payload }: { payload: CommandExecution }) => {
@@ -217,7 +220,7 @@ export function sendWBCommandAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data }))
+        dispatch(sendWBCommandSuccess({ commandId, data, processing: !!multiCommands?.length }))
 
         onSuccessAction?.(multiCommands)
       }

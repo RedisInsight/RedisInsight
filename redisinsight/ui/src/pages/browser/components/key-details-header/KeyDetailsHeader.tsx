@@ -26,7 +26,16 @@ import { streamSelector } from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { formatBytes, formatNameShort, isEqualBuffers, MAX_TTL_NUMBER, replaceSpaces, stringToBuffer, validateTTLNumber } from 'uiSrc/utils'
+import {
+  formatBytes,
+  formatNameShort,
+  isEqualBuffers,
+  isFormatEditable,
+  MAX_TTL_NUMBER,
+  replaceSpaces,
+  stringToBuffer,
+  validateTTLNumber
+} from 'uiSrc/utils'
 import KeyValueFormatter from './components/Formatter'
 import AutoRefresh from '../auto-refresh'
 
@@ -79,6 +88,7 @@ const KeyDetailsHeader = ({
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewType: streamViewType } = useSelector(streamSelector)
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState(false)
 
@@ -301,96 +311,104 @@ const KeyDetailsHeader = ({
     </EuiFlexItem>
   )
 
-  const Actions = (width: number) => (
-    <>
-      {KEY_TYPES_ACTIONS[keyType] && 'addItems' in KEY_TYPES_ACTIONS[keyType] && (
-        <EuiToolTip
-          content={width > MIDDLE_SCREEN_RESOLUTION ? '' : KEY_TYPES_ACTIONS[keyType].addItems?.name}
-          position="left"
-          anchorClassName={cx(styles.actionBtn, { [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION })}
-        >
-          <>
-            {width > MIDDLE_SCREEN_RESOLUTION ? (
-              <EuiButton
-                size="s"
-                iconType="plusInCircle"
-                color="secondary"
-                aria-label={KEY_TYPES_ACTIONS[keyType].addItems?.name}
-                onClick={onAddItem}
-                data-testid="add-key-value-items-btn"
-              >
-                {KEY_TYPES_ACTIONS[keyType].addItems?.name}
-              </EuiButton>
-            ) : (
+  const Actions = (width: number) => {
+    const isEditable = isFormatEditable(viewFormatProp)
+    return (
+      <>
+        {KEY_TYPES_ACTIONS[keyType] && 'addItems' in KEY_TYPES_ACTIONS[keyType] && (
+          <EuiToolTip
+            content={width > MIDDLE_SCREEN_RESOLUTION ? '' : KEY_TYPES_ACTIONS[keyType].addItems?.name}
+            position="left"
+            anchorClassName={cx(styles.actionBtn, { [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION })}
+          >
+            <>
+              {width > MIDDLE_SCREEN_RESOLUTION ? (
+                <EuiButton
+                  size="s"
+                  iconType="plusInCircle"
+                  color="secondary"
+                  aria-label={KEY_TYPES_ACTIONS[keyType].addItems?.name}
+                  onClick={onAddItem}
+                  data-testid="add-key-value-items-btn"
+                >
+                  {KEY_TYPES_ACTIONS[keyType].addItems?.name}
+                </EuiButton>
+              ) : (
+                <EuiButtonIcon
+                  iconType="plusInCircle"
+                  color="primary"
+                  aria-label={KEY_TYPES_ACTIONS[keyType].addItems?.name}
+                  onClick={onAddItem}
+                  data-testid="add-key-value-items-btn"
+                />
+              )}
+            </>
+          </EuiToolTip>
+        )}
+        {keyType === KeyTypes.Stream && (
+          <EuiToolTip
+            content={width > MIDDLE_SCREEN_RESOLUTION ? '' : STREAM_ADD_ACTION[streamViewType].name}
+            position="left"
+            anchorClassName={cx(styles.actionBtn, { [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION })}
+          >
+            <>
+              {width > MIDDLE_SCREEN_RESOLUTION ? (
+                <EuiButton
+                  size="s"
+                  iconType="plusInCircle"
+                  color="secondary"
+                  aria-label={STREAM_ADD_ACTION[streamViewType].name}
+                  onClick={onAddItem}
+                  data-testid="add-key-value-items-btn"
+                >
+                  {STREAM_ADD_ACTION[streamViewType].name}
+                </EuiButton>
+              ) : (
+                <EuiButtonIcon
+                  iconType="plusInCircle"
+                  color="primary"
+                  aria-label={STREAM_ADD_ACTION[streamViewType].name}
+                  onClick={onAddItem}
+                  data-testid="add-key-value-items-btn"
+                />
+              )}
+            </>
+          </EuiToolTip>
+        )}
+        {KEY_TYPES_ACTIONS[keyType] && 'removeItems' in KEY_TYPES_ACTIONS[keyType] && (
+          <EuiToolTip
+            content={KEY_TYPES_ACTIONS[keyType].removeItems?.name}
+            position="left"
+            anchorClassName={styles.actionBtn}
+          >
+            <EuiButtonIcon
+              iconType="minusInCircle"
+              color="primary"
+              aria-label={KEY_TYPES_ACTIONS[keyType].removeItems?.name}
+              onClick={onRemoveItem}
+              data-testid="remove-key-value-items-btn"
+            />
+          </EuiToolTip>
+        )}
+        {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
+          <div className={styles.actionBtn}>
+            <EuiToolTip
+              content={!isEditable ? 'Cannot change data in this format' : null}
+            >
               <EuiButtonIcon
-                iconType="plusInCircle"
+                disabled={!isEditable}
+                iconType="pencil"
                 color="primary"
-                aria-label={KEY_TYPES_ACTIONS[keyType].addItems?.name}
-                onClick={onAddItem}
-                data-testid="add-key-value-items-btn"
+                aria-label={KEY_TYPES_ACTIONS[keyType].editItem?.name}
+                onClick={onEditItem}
+                data-testid="edit-key-value-btn"
               />
-            )}
-          </>
-        </EuiToolTip>
-      )}
-      {keyType === KeyTypes.Stream && (
-        <EuiToolTip
-          content={width > MIDDLE_SCREEN_RESOLUTION ? '' : STREAM_ADD_ACTION[streamViewType].name}
-          position="left"
-          anchorClassName={cx(styles.actionBtn, { [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION })}
-        >
-          <>
-            {width > MIDDLE_SCREEN_RESOLUTION ? (
-              <EuiButton
-                size="s"
-                iconType="plusInCircle"
-                color="secondary"
-                aria-label={STREAM_ADD_ACTION[streamViewType].name}
-                onClick={onAddItem}
-                data-testid="add-key-value-items-btn"
-              >
-                {STREAM_ADD_ACTION[streamViewType].name}
-              </EuiButton>
-            ) : (
-              <EuiButtonIcon
-                iconType="plusInCircle"
-                color="primary"
-                aria-label={STREAM_ADD_ACTION[streamViewType].name}
-                onClick={onAddItem}
-                data-testid="add-key-value-items-btn"
-              />
-            )}
-          </>
-        </EuiToolTip>
-      )}
-      {KEY_TYPES_ACTIONS[keyType] && 'removeItems' in KEY_TYPES_ACTIONS[keyType] && (
-        <EuiToolTip
-          content={KEY_TYPES_ACTIONS[keyType].removeItems?.name}
-          position="left"
-          anchorClassName={styles.actionBtn}
-        >
-          <EuiButtonIcon
-            iconType="minusInCircle"
-            color="primary"
-            aria-label={KEY_TYPES_ACTIONS[keyType].removeItems?.name}
-            onClick={onRemoveItem}
-            data-testid="remove-key-value-items-btn"
-          />
-        </EuiToolTip>
-      )}
-      {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
-        <div className={styles.actionBtn}>
-          <EuiButtonIcon
-            iconType="pencil"
-            color="primary"
-            aria-label={KEY_TYPES_ACTIONS[keyType].editItem?.name}
-            onClick={onEditItem}
-            data-testid="edit-key-value-btn"
-          />
-        </div>
-      )}
-    </>
-  )
+            </EuiToolTip>
+          </div>
+        )}
+      </>
+    )
+  }
 
   return (
     <div className={`key-details-header ${styles.container}`} data-testid="key-details-header">
@@ -457,7 +475,7 @@ const KeyDetailsHeader = ({
                                 inputRef={keyNameRef}
                                 className={cx(
                                   styles.keyInput,
-                                  { [styles.keyInputEditing]: keyIsEditing }
+                                  { [styles.keyInputEditing]: keyIsEditing, 'input-warning': !keyIsEditable }
                                 )}
                                 placeholder={AddCommonFieldsFormConfig?.keyName?.placeholder}
                                 value={key}

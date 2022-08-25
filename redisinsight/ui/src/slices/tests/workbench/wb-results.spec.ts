@@ -51,7 +51,7 @@ const initialStateWithItems = {
 
 describe('workbench results slice', () => {
   describe('sendWBCommand', () => {
-    it('should properly set loading = true, isOpen = true, error = ""', () => {
+    it('should properly set state', () => {
       // Arrange
       const mockPayload = {
         commands: ['command', 'command2'],
@@ -60,6 +60,7 @@ describe('workbench results slice', () => {
       const state = {
         ...initialState,
         loading: true,
+        processing: true,
         items: mockPayload.commands.map((command, i) => ({
           command,
           id: mockPayload.commandId + i,

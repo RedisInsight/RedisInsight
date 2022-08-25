@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
@@ -37,7 +37,7 @@ import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
 import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
+import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
 import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
 
@@ -92,12 +92,15 @@ const Query = (props: Props) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
+  const dispatch = useDispatch()
+
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
 
   useEffect(() =>
     // componentWillUnmount
     () => {
+      dispatch(stopProcessing())
       contribution?.dispose?.()
       disposeCompletionItemProvider()
       disposeSignatureHelpProvider()

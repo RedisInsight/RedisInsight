@@ -69,6 +69,7 @@ const workbenchResultsSlice = createSlice({
         return item
       })
       state.loading = false
+      state.processing = false
     },
 
     sendWBCommand: (state, { payload: { commands, commandId } }:
@@ -90,6 +91,7 @@ const workbenchResultsSlice = createSlice({
 
       state.items = newItems
       state.loading = true
+      state.processing = true
     },
 
     sendWBCommandSuccess: (state,
@@ -106,7 +108,7 @@ const workbenchResultsSlice = createSlice({
       })
 
       state.loading = false
-      state.processing = processing || false
+      state.processing = (state.processing && processing) || false
     },
 
     fetchWBCommandSuccess: (state, { payload }: { payload: CommandExecution }) => {
@@ -134,6 +136,10 @@ const workbenchResultsSlice = createSlice({
 
     resetWBHistoryItems: (state) => {
       state.items = []
+    },
+
+    stopProcessing: (state) => {
+      state.processing = false
     }
   },
 })
@@ -152,6 +158,7 @@ export const {
   toggleOpenWBResult,
   deleteWBCommandSuccess,
   resetWBHistoryItems,
+  stopProcessing
 } = workbenchResultsSlice.actions
 
 // A selector

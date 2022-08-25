@@ -26,7 +26,7 @@ export class BrowserToolService extends RedisConsumerAbstractService {
     clientOptions: IFindRedisClientInstanceByOptions,
     toolCommand: BrowserToolCommands,
     args: Array<string | number | Buffer>,
-    replyEncoding: string = null,
+    replyEncoding: BufferEncoding = null,
   ): Promise<any> {
     const client = await this.getRedisClient(clientOptions);
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);

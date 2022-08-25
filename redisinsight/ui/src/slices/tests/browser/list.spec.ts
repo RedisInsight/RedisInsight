@@ -187,7 +187,7 @@ describe('list slice', () => {
       const data = {
         keyName: 'list',
         key: 'list',
-        elements: ['1', '23', '432'].map((element, i) => (stringToBuffer(element))),
+        elements: ['1', '23', '432'].map((element) => (stringToBuffer(element))),
         // elements: ['1', '23', '432'].map((element, i) => ({ element: stringToBuffer(element), index: i })),
         total: 1,
       }

@@ -81,29 +81,36 @@
   min-height: auto !important;
   border-radius: 4px !important;
   background: transparent !important;
-
-  &:hover {
-    border: 1px solid var(--buttonSecondaryHoverColor) !important;
-  }
+  box-shadow: none !important;
 
   :global(.euiButton__content) {
     padding: 0 !important;
-    color: var(--iconsDefaultColor) !important;
+  }
 
-    &:hover {
-      color: var(--euiColorPrimaryText) !important;
-    }
+  &:hover, 
+  &:focus {
+    border: 1px solid var(--buttonSecondaryHoverColor) !important;
+  }
+
+  svg path {
+    fill: var(--euiTextSubduedColor) !important;
+  }
+
+  &:hover svg path,
+  &:focus svg path {
+    fill: var(--wbHoverIconColor) !important;
   }
   
   &.activeBtn {
     background: var(--browserComponentActive) !important;
     border: 1px solid var(--euiColorSecondary);
 
-    :global(.euiButton__content) {
-      color: var(--euiColorPrimary) !important;
+    svg path {
+      fill: var(--wbActiveIconColor) !important;
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
       border: 1px solid var(--buttonSecondaryHoverColor) !important;
     }
   }

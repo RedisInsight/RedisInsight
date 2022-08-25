@@ -18,8 +18,8 @@ import { clusterSelector, resetDataRedisCluster } from 'uiSrc/slices/instances/c
 import { Instance, InstanceType } from 'uiSrc/slices/interfaces'
 import { sentinelSelector, resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
-import InstanceFormWrapper from '../AddInstanceForm/InstanceFormWrapper'
 import InstanceConnections from './InstanceConnections/InstanceConnections'
+import InstanceFormWrapper from '../AddInstanceForm/InstanceFormWrapper'
 import ClusterConnectionFormWrapper from '../ClusterConnection/ClusterConnectionFormWrapper'
 import CloudConnectionFormWrapper from '../CloudConnection/CloudConnectionFormWrapper'
 

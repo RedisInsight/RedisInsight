@@ -124,9 +124,13 @@ test
         for(const command of commands) {
             await workbenchPage.sendCommandInWorkbench(command);
         }
+        // Clear input
+        await t
+            .click(workbenchPage.queryInput)
+            .pressKey('ctrl+a')
+            .pressKey('delete');
         //Verify the quick access to command history by up button
-        await t.click(workbenchPage.queryInput);
-        for(const command of commands.reverse()) {
+        for (const command of commands.reverse()) {
             await t.pressKey('up');
             const script = await workbenchPage.scriptsLines.textContent;
             await t.expect(script.replace(/\s/g, ' ')).contains(command, 'Result of Manual command is displayed');

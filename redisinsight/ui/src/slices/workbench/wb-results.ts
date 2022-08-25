@@ -22,6 +22,7 @@ import {
 
 export const initialState: StateWorkbenchResults = {
   loading: false,
+  processing: false,
   error: '',
   items: [],
 }
@@ -68,6 +69,7 @@ const workbenchResultsSlice = createSlice({
         return item
       })
       state.loading = false
+      state.processing = false
     },
 
     sendWBCommand: (state, { payload: { commands, commandId } }:
@@ -89,10 +91,12 @@ const workbenchResultsSlice = createSlice({
 
       state.items = newItems
       state.loading = true
+      state.processing = true
     },
 
     sendWBCommandSuccess: (state,
-      { payload: { data, commandId } }: { payload: { data: CommandExecution[], commandId: string } }) => {
+      { payload: { data, commandId, processing } }:
+      { payload: { data: CommandExecution[], commandId: string, processing?: boolean } }) => {
       state.items = [...state.items].map((item) => {
         let newItem = item
         data.forEach((command, i) => {
@@ -104,6 +108,7 @@ const workbenchResultsSlice = createSlice({
       })
 
       state.loading = false
+      state.processing = (state.processing && processing) || false
     },
 
     fetchWBCommandSuccess: (state, { payload }: { payload: CommandExecution }) => {
@@ -131,6 +136,10 @@ const workbenchResultsSlice = createSlice({
 
     resetWBHistoryItems: (state) => {
       state.items = []
+    },
+
+    stopProcessing: (state) => {
+      state.processing = false
     }
   },
 })
@@ -149,6 +158,7 @@ export const {
   toggleOpenWBResult,
   deleteWBCommandSuccess,
   resetWBHistoryItems,
+  stopProcessing
 } = workbenchResultsSlice.actions
 
 // A selector
@@ -217,7 +227,7 @@ export function sendWBCommandAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data }))
+        dispatch(sendWBCommandSuccess({ commandId, data, processing: !!multiCommands?.length }))
 
         onSuccessAction?.(multiCommands)
       }

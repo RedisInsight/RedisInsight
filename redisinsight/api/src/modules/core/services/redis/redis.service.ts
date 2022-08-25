@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConnectionOptions, SecureContextOptions } from 'tls';
-import * as Redis from 'ioredis';
-import IORedis, { RedisOptions } from 'ioredis';
+import Redis from 'ioredis';
+import { RedisOptions, Cluster } from 'ioredis';
 import {
   find, findIndex, isEmpty, isNil, omitBy, remove,
 } from 'lodash';
@@ -61,7 +61,7 @@ export class RedisService {
     appTool: AppTool,
     useRetry: boolean,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
-  ): Promise<IORedis.Redis> {
+  ): Promise<Redis> {
     const config = await this.getRedisConnectionConfig(options);
 
     return new Promise((resolve, reject) => {
@@ -95,7 +95,7 @@ export class RedisService {
     nodes: IRedisClusterNodeAddress[],
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
-  ): Promise<IORedis.Cluster> {
+  ): Promise<Cluster> {
     const config = await this.getRedisConnectionConfig(options);
     return new Promise((resolve, reject) => {
       try {
@@ -106,7 +106,6 @@ export class RedisService {
             showFriendlyErrorStack: true,
             maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
             connectionName,
-            retryStrategy: useRetry ? this.retryStrategy : () => undefined,
           },
         });
         cluster.on('error', (e): void => {
@@ -129,7 +128,7 @@ export class RedisService {
     appTool: AppTool,
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
-  ): Promise<IORedis.Redis> {
+  ): Promise<Redis> {
     const {
       username, password, sentinelMaster, tls, db,
     } = options;
@@ -179,7 +178,7 @@ export class RedisService {
     databaseDto: DatabaseInstanceResponse,
     tool = AppTool.Common,
     connectionName?,
-  ): Promise<IORedis.Redis | IORedis.Cluster> {
+  ): Promise<Redis | Cluster> {
     const database = databaseDto;
     Object.keys(database).forEach((key: string) => {
       if (database[key] === null) {
@@ -205,7 +204,7 @@ export class RedisService {
     return client;
   }
 
-  public isClientConnected(client: IORedis.Redis | IORedis.Cluster): boolean {
+  public isClientConnected(client: Redis | Cluster): boolean {
     try {
       return client.status === 'ready';
     } catch (e) {
@@ -277,11 +276,11 @@ export class RedisService {
 
   private async getRedisConnectionConfig(
     options: ConnectionOptionsDto,
-  ): Promise<IORedis.RedisOptions> {
+  ): Promise<RedisOptions> {
     const {
       host, port, password, username, tls, db,
     } = options;
-    const config: IORedis.RedisOptions = {
+    const config: RedisOptions = {
       host, port, username, password, db,
     };
     if (tls) {

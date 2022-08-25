@@ -100,7 +100,11 @@ export class WorkbenchCommandsExecutor {
       const result = { response, status: CommandExecutionStatus.Success };
       const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
+      this.analyticsService.sendCommandExecutedEvent(
+        clientOptions.instanceId,
+        result,
+        { command, commandType, rawMode: mode === RunQueryMode.Raw },
+      );
       return result;
     } catch (error) {
       this.logger.error('Failed to execute workbench command.', error);
@@ -111,11 +115,19 @@ export class WorkbenchCommandsExecutor {
         || error instanceof CommandNotSupportedError
         || error.name === 'ReplyError'
       ) {
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+        this.analyticsService.sendCommandExecutedEvent(
+          clientOptions.instanceId,
+          { ...result, error },
+          { rawMode: mode === RunQueryMode.Raw },
+        );
         return result;
       }
 
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+      this.analyticsService.sendCommandExecutedEvent(
+        clientOptions.instanceId,
+        { ...result, error },
+        { rawMode: mode === RunQueryMode.Raw },
+      );
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -158,7 +170,11 @@ export class WorkbenchCommandsExecutor {
 
       const commandType = await this.checkIsCoreCommand(command) ? CommandType.Core : CommandType.Module;
 
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
+      this.analyticsService.sendCommandExecutedEvent(
+        clientOptions.instanceId,
+        result,
+        { command, commandType, rawMode: mode === RunQueryMode.Raw },
+      );
       const {
         host, port, error, slot, ...rest
       } = result;
@@ -173,10 +189,18 @@ export class WorkbenchCommandsExecutor {
       const result = { response: error.message, status: CommandExecutionStatus.Fail };
 
       if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+        this.analyticsService.sendCommandExecutedEvent(
+          clientOptions.instanceId,
+          { ...result, error },
+          { rawMode: mode === RunQueryMode.Raw },
+        );
         return result;
       }
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+      this.analyticsService.sendCommandExecutedEvent(
+        clientOptions.instanceId,
+        { ...result, error },
+        { rawMode: mode === RunQueryMode.Raw },
+      );
 
       if (error instanceof WrongDatabaseTypeError || error instanceof ClusterNodeNotFoundError) {
         throw new BadRequestException(error.message);
@@ -212,7 +236,11 @@ export class WorkbenchCommandsExecutor {
           node: { host, port },
         };
 
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command, commandType });
+        this.analyticsService.sendCommandExecutedEvent(
+          clientOptions.instanceId,
+          result,
+          { command, commandType, rawMode: mode === RunQueryMode.Raw },
+        );
         return result;
       });
     } catch (error) {
@@ -220,11 +248,19 @@ export class WorkbenchCommandsExecutor {
       const result = { response: error.message, status: CommandExecutionStatus.Fail };
 
       if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+        this.analyticsService.sendCommandExecutedEvent(
+          clientOptions.instanceId,
+          { ...result, error },
+          { rawMode: mode === RunQueryMode.Raw },
+        );
         return [result];
       }
 
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
+      this.analyticsService.sendCommandExecutedEvent(
+        clientOptions.instanceId,
+        { ...result, error },
+        { rawMode: mode === RunQueryMode.Raw },
+      );
       if (error instanceof WrongDatabaseTypeError) {
         throw new BadRequestException(error.message);
       }

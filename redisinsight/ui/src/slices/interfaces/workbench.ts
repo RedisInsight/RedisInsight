@@ -10,6 +10,7 @@ export interface StateWorkbenchSettings {
 
 export interface StateWorkbenchResults {
   loading: boolean
+  processing: boolean
   error: string
   items: CommandExecutionUI[]
 }

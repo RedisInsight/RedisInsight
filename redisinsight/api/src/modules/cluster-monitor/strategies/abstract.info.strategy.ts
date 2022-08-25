@@ -22,8 +22,8 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
       ...clusterDetails,
       ...(AbstractInfoStrategy.calculateAdditionalClusterMetrics(client, nodes)),
       nodes: AbstractInfoStrategy.createClusterHierarchy(nodes),
-      version: get(client.nodes(), '0.serverInfo.redis_version'),
-      mode: get(client.nodes(), '0.serverInfo.redis_mode'),
+      version: get(nodes, '0.version'),
+      mode: get(nodes, '0.mode'),
     };
 
     return plainToClass(ClusterDetails, clusterDetails);
@@ -77,6 +77,8 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
       ),
       replicationOffset: convertStringToNumber(get(info, 'replication.master_repl_offset')),
       uptimeSec: convertStringToNumber(get(info, 'server.uptime_in_seconds'), 0),
+      version: get(info, 'server.redis_version'),
+      mode: get(info, 'server.redis_mode'),
     };
   }
 

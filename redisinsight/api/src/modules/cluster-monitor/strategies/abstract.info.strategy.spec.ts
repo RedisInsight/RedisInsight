@@ -36,10 +36,6 @@ const m3 = {
 
 const node1 = Object.create(IORedis.prototype);
 node1.sendCommand = jest.fn();
-set(node1, 'serverInfo', {
-  redis_version: '7.0.2',
-  redis_mode: 'cluster',
-});
 set(node1, 'options', {
   host: m1.host,
   port: m1.port,
@@ -79,6 +75,8 @@ const baseNodeDetails: Partial<ClusterNodeDetails> = {
   totalKeys: 1,
   uptimeSec: 1000,
   usedMemory: 1000000,
+  version: '6.0.5',
+  mode: 'standalone',
 };
 
 const mockNode1Details = {
@@ -93,8 +91,8 @@ const mockNode2Details = {
 
 const mockClusterDetails: Partial<ClusterDetails> = {
   ...mockClusterInfo,
-  version: '7.0.2',
-  mode: 'cluster',
+  version: '6.0.5',
+  mode: 'standalone',
   uptimeSec: 1000,
   nodes: [mockNode1Details, mockNode2Details],
 };

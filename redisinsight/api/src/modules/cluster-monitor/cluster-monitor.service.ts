@@ -3,7 +3,7 @@ import IORedis from 'ioredis';
 import {
   BadRequestException, HttpException, Injectable, Logger,
 } from '@nestjs/common';
-import { catchAclError } from 'src/utils';
+import { catchAclError, convertRedisInfoReplyToObject } from 'src/utils';
 import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
@@ -42,7 +42,9 @@ export class ClusterMonitorService {
         return Promise.reject(new BadRequestException('Current database is not in a cluster mode'));
       }
 
-      const strategy = this.getClusterInfoStrategy(get(client.nodes(), '0.serverInfo.redis_version'));
+      const info = convertRedisInfoReplyToObject(await client.info('server'));
+
+      const strategy = this.getClusterInfoStrategy(get(info, 'server.redis_version'));
 
       return await strategy.getClusterDetails(client);
     } catch (e) {

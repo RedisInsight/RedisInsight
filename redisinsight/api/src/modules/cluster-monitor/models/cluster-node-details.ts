@@ -28,6 +28,13 @@ export class ClusterNodeDetails {
 
   @ApiProperty({
     type: String,
+    description: 'Redis mode',
+    example: 'cluster',
+  })
+  mode: string;
+
+  @ApiProperty({
+    type: String,
     description: 'Node IP address',
     example: '172.30.0.101',
   })

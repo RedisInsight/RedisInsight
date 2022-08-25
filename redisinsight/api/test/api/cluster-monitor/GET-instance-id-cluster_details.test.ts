@@ -8,7 +8,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 const nodeSchema = Joi.object().keys({
   id: Joi.string().required(),
   host: Joi.string().required(),
-  port: Joi.number().allow(null),
+  port: Joi.number(),
   role: Joi.string().required(),
   slots: Joi.array().items(Joi.string()).required(),
   health: Joi.string().required(),

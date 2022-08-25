@@ -35,15 +35,15 @@ const m3 = {
 };
 
 const mockClusterNodesReply = ''
-  + 'm1 172.30.100.1:6379@16379 master - 0 1661415706000 2 connected 0-5000\r\n'
-  + 's11 172.30.100.2:6379@16379 slave m1 0 1661415705000 3 connected\r\n'
-  + 's12 172.30.100.3:6379@16379 slave m1 0 1661415705000 3 connected\r\n'
-  + 'm2 172.30.100.4:6379@16379 myself,pfail - 0 1661415702000 1 connected 5001-10921 10922\r\n'
-  + 's21 172.30.100.5:6379@16379 slave m2 0 1661415704000 2 connected\r\n'
-  + 's22 172.30.100.6:6379@16379 slave m2 0 1661415705230 2 connected\r\n'
-  + 'm3 172.30.100.7:6379@16379 master,fail - 0 1661415702000 1 connected 10923-16383\r\n'
-  + 's31 172.30.100.8:6379@16379 slave m3 0 1661415704000 2 connected\r\n'
-  + 's32 172.30.100.9:6379@16379 slave m3 0 1661415705230 2 connected\r\n';
+  + 'm1 172.30.100.1:6379@16379 master - 0 1661415706000 2 connected 0-5000\n'
+  + 's11 172.30.100.2:6379@16379 slave m1 0 1661415705000 3 connected\n'
+  + 's12 172.30.100.3:6379@16379 slave m1 0 1661415705000 3 connected\n'
+  + 'm2 172.30.100.4:6379@16379 myself,pfail - 0 1661415702000 1 connected 5001-10921 10922\n'
+  + 's21 172.30.100.5:6379@16379 slave m2 0 1661415704000 2 connected\n'
+  + 's22 172.30.100.6:6379@16379 slave m2 0 1661415705230 2 connected\n'
+  + 'm3 172.30.100.7:6379@16379 master,fail - 0 1661415702000 1 connected 10923-16383\n'
+  + 's31 172.30.100.8:6379@16379 slave m3 0 1661415704000 2 connected\n'
+  + 's32 172.30.100.9:6379@16379 slave m3 0 1661415705230 2 connected\n';
 
 describe('ClusterNodesInfoStrategy', () => {
   let service: ClusterNodesInfoStrategy;

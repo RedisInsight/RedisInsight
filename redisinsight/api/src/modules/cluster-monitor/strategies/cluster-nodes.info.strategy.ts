@@ -9,7 +9,7 @@ export class ClusterNodesInfoStrategy extends AbstractInfoStrategy {
       replyEncoding: 'utf8',
     }));
 
-    return resp.split('\r\n').filter((e) => e).map((nodeString) => {
+    return resp.split('\n').filter((e) => e).map((nodeString) => {
       const [id, endpoint, flags, primary,,,,, ...slots] = nodeString.split(' ');
       const [host, ports] = endpoint.split(':');
       const [port] = ports.split('@');

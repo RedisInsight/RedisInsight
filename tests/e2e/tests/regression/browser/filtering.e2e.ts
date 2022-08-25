@@ -213,7 +213,7 @@ test.only
         await browserPage.selectFilterGroupType(KeyTypesTexts.Set);
         const keyNameInTheList = Selector(`[data-testid^="key-"]`);
         for(let i = 0; i < 20; i++) {
-            keys.push(await keyNameInTheList.textContent);
+            keys.push(await keyNameInTheList.nth(i).textContent);
         }
         // Verify that required key is displayed
         await t.expect(await browserPage.filteringLabel.count).eql(5, `${keys}`);

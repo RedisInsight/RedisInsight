@@ -41,7 +41,6 @@ const isNonUnicodeFormatter = (format: KeyValueFormat, isValid: boolean) => {
     KeyValueFormat.ASCII,
     KeyValueFormat.HEX,
     KeyValueFormat.Binary,
-    KeyValueFormat.Msgpack,
   ].includes(format)
 }
 

@@ -352,6 +352,7 @@ const ListDetails = (props: Props) => {
                   aria-label="Edit element"
                   className="editFieldBtn"
                   color="primary"
+                  disabled={!isEditable}
                   onClick={() => handleEditElement(index, true, element)}
                   data-testid={`edit-list-button-${index}`}
                 />

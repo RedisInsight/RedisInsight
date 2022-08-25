@@ -257,7 +257,8 @@ const ListDetails = (props: Props) => {
         const { value, isValid } = formattingBuffer(elementItem, viewFormatProp, { expanded })
 
         if (index === editingIndex) {
-          const disabled = !isEqualBuffers(elementItem, stringToBuffer(element)) && !isNonUnicodeFormatter(viewFormat)
+          const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
+            && !isEqualBuffers(elementItem, stringToBuffer(element))
 
           setTimeout(() => cellCache.clear(rowIndex, 1), 0)
 
@@ -298,7 +299,7 @@ const ListDetails = (props: Props) => {
                           }}
                           disabled={updateLoading}
                           inputRef={textAreaRef}
-                          className={styles.textArea}
+                          className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                           spellCheck={false}
                           data-testid="element-value-editor"
                         />

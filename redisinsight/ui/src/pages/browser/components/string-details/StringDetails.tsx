@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
 import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
 
 import {
@@ -17,7 +18,6 @@ import {
   isNonUnicodeFormatter,
   isEqualBuffers,
   isFormatEditable,
-  isTextViewFormatter,
   stringToBuffer,
   stringToSerializedBufferFormat
 } from 'uiSrc/utils'
@@ -80,8 +80,8 @@ const StringDetails = (props: Props) => {
     setValue(formattedValue)
     setIsValid(isValid)
     setIsDisabled(
-      !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
-      && !isNonUnicodeFormatter(viewFormatProp)
+      !isNonUnicodeFormatter(viewFormatProp, isValid)
+        && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
     )
     setIsEditable(isFormatEditable(viewFormatProp))
 
@@ -191,7 +191,7 @@ const StringDetails = (props: Props) => {
             }}
             disabled={loading}
             inputRef={textAreaRef}
-            className={styles.stringTextArea}
+            className={cx(styles.stringTextArea, { 'input-warning': isDisabled })}
             data-testid="string-value"
           />
         </InlineItemEditor>

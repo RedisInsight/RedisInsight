@@ -10,7 +10,6 @@ import reducer, {
   fetchClientCerts,
 } from '../../instances/clientCerts'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

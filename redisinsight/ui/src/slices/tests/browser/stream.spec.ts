@@ -75,7 +75,6 @@ import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

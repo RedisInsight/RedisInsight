@@ -54,7 +54,6 @@ import reducer, {
   refreshZsetMembersAction,
 } from '../../browser/zset'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

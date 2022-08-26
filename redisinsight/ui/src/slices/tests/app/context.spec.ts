@@ -34,7 +34,6 @@ import reducer, {
   setBrowserTreeDelimiter
 } from '../../app/context'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

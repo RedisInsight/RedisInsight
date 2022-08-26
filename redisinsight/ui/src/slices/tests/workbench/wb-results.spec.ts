@@ -32,7 +32,6 @@ import reducer, {
   fetchWBHistoryAction,
 } from '../../workbench/wb-results'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

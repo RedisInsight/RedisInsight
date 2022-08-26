@@ -23,7 +23,6 @@ import reducer, {
   updateCliCommandHistory,
 } from '../../cli/cli-output'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

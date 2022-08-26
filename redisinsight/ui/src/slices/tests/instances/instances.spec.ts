@@ -42,7 +42,6 @@ import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload 
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
 import { loadMastersSentinel } from '../../instances/sentinel'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

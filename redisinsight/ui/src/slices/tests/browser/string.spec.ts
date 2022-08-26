@@ -25,7 +25,7 @@ beforeEach(() => {
   store = cloneDeep(mockedStore)
   store.clearActions()
 })
-// jest.mock('uiSrc/services')
+
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

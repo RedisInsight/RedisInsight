@@ -33,7 +33,6 @@ import reducer, {
   setNewNotificationAction
 } from '../../app/notifications'
 
-// jest.mock('uiSrc/services')
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))

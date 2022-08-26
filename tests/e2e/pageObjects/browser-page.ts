@@ -175,7 +175,6 @@ export class BrowserPage {
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
-    keysNumberOfScanned = Selector('[data-testid=keys-number-of-scanned]');
     keysTotalNumber = Selector('[data-testid=keys-total]');
     overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
@@ -857,6 +856,24 @@ export class BrowserPage {
         const option = Selector(`[data-test-subj="format-option-${formatter}"]`);
         await t.click(this.formatSwitcher);
         await t.click(option);
+    }
+
+    /**
+     * Verify that keys can be scanned more and results increased
+     */
+    async verifyScannningMore(): Promise<void> {
+        for (let i = 10; i < 100; i += 10) {
+            // Remember results value
+            const rememberedScanResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
+            await t.expect(this.progressKeyList.exists).notOk('Progress Bar is still displayed', { timeout: 30000 });
+            const scannedValueText = await this.scannedValue.textContent;
+            const regExp = new RegExp(`${i} 00` + '.');
+            await t.expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`);
+            await t.doubleClick(this.scanMoreButton);
+            await t.expect(this.progressKeyList.exists).ok('Progress Bar is not displayed', { timeout: 30000 });
+            const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
+            await t.expect(scannedResults).gt(rememberedScanResults, { timeout: 3000 });
+        }
     }
 }
 

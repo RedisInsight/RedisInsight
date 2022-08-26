@@ -16,7 +16,10 @@ import reducer, {
 } from '../../instances/caCerts'
 import { addErrorNotification } from '../../app/notifications'
 
-jest.mock('uiSrc/services')
+// jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {

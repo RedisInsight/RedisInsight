@@ -9,7 +9,7 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
 }))
 
 describe('HomePage', () => {
-  it('should render', () => {
-    expect(render(<HomePage />)).toBeTruthy()
+  it('should render', async () => {
+    expect(await render(<HomePage />)).toBeTruthy()
   })
 })

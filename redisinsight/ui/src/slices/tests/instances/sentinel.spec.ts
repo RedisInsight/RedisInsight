@@ -36,7 +36,10 @@ import reducer, {
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 import { LoadedSentinel, ModifiedSentinelMaster } from '../../interfaces'
 
-jest.mock('uiSrc/services')
+// jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let masters: SentinelMaster[]

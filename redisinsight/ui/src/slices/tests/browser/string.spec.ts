@@ -25,7 +25,10 @@ beforeEach(() => {
   store = cloneDeep(mockedStore)
   store.clearActions()
 })
-jest.mock('uiSrc/services')
+// jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 describe('string slice', () => {
   describe('reducer, actions and selectors', () => {

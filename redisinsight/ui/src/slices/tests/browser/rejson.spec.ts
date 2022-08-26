@@ -33,7 +33,10 @@ import reducer, {
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 import { refreshKeyInfo } from '../../browser/keys'
 
-jest.mock('uiSrc/services')
+// jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let storeWithSelectedKey: typeof mockedStore

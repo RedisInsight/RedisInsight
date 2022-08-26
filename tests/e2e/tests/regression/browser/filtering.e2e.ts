@@ -199,7 +199,7 @@ test
         await t.click(browserPage.treeViewNotPatternedKeys);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });
-test
+test.only
     .before(async() => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
@@ -218,15 +218,7 @@ test
         }
         await t.click(browserPage.treeViewButton);
         //Verify that user can use the "Scan More" button to search per another 10000 keys
-        for (let i = 10; i < 100; i += 10) {
-            // scannedValue = scannedValue + 10;
-            await t.expect(browserPage.progressKeyList.exists).notOk('Progress Bar is not displayed', { timeout: 30000 });
-            const scannedValueText = await browserPage.scannedValue.textContent;
-            const regExp = new RegExp(`${i} 00` + '.');
-            await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${i} 000 keys`);
-            await t.doubleClick(browserPage.scanMoreButton);
-            await t.expect(browserPage.progressKeyList.exists).ok('Progress Bar is displayed', { timeout: 30000 });
-        }
+        await browserPage.verifyScannningMore();
     });
 test
     .before(async() => {

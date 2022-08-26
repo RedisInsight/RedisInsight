@@ -857,6 +857,23 @@ export class BrowserPage {
         await t.click(this.formatSwitcher);
         await t.click(option);
     }
+
+    /**
+     * Verify that keys can be scanned more and results increased
+     */
+    async verifyScannningMore(): Promise<void> {
+        for (let i = 10; i < 100; i += 10) {
+            // Remember results value
+            const scannedResults = Number(await this.keysNumberOfResults.textContent);
+            await t.expect(this.progressKeyList.exists).notOk('Progress Bar is not displayed', { timeout: 30000 });
+            const scannedValueText = await this.scannedValue.textContent;
+            const regExp = new RegExp(`${i} 00` + '.');
+            await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${i} 000 keys`);
+            await t.doubleClick(this.scanMoreButton);
+            await t.expect(this.progressKeyList.exists).ok('Progress Bar is displayed', { timeout: 30000 });
+            await t.expect(Number(await this.keysNumberOfResults.textContent)).gt(scannedResults, { timeout: 30000 });
+        }
+    }
 }
 
 /**

@@ -3,8 +3,7 @@ import cx from 'classnames'
 import { EuiTextColor } from '@elastic/eui'
 import { CellMeasurer, List, CellMeasurerCache, ListRowProps } from 'react-virtualized'
 
-import { getFormatTime } from 'uiSrc/utils'
-import { DEFAULT_ERROR_TEXT } from 'uiSrc/components/notifications'
+import { DEFAULT_ERROR_MESSAGE, getFormatTime } from 'uiSrc/utils'
 
 import styles from 'uiSrc/components/monitor/Monitor/styles.module.scss'
 import 'react-virtualized/styles.css'
@@ -80,7 +79,7 @@ const MonitorOutputList = (props: Props) => {
               </>
             )}
             {isError && (
-              <EuiTextColor color="danger">{message ?? DEFAULT_ERROR_TEXT}</EuiTextColor>
+              <EuiTextColor color="danger">{message ?? DEFAULT_ERROR_MESSAGE}</EuiTextColor>
             )}
           </div>
         )}

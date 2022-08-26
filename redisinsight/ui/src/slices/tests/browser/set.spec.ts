@@ -39,7 +39,9 @@ import reducer, {
   deleteSetMembers,
 } from '../../browser/set'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let dateNow: jest.SpyInstance<number>

@@ -58,7 +58,9 @@ import reducer, {
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let dateNow: jest.SpyInstance<number>

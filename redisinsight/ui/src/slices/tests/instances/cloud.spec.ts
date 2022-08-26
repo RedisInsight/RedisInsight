@@ -33,7 +33,9 @@ import reducer, {
 import { LoadedCloud } from '../../interfaces'
 import { addErrorNotification } from '../../app/notifications'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let account: GetCloudAccountShortInfoResponse

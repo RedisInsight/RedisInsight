@@ -17,6 +17,9 @@ module.exports = {
     'unist-util-visit': '<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js',
     'react-children-utilities': '<rootDir>/redisinsight/__mocks__/react-children-utilities.js',
   },
+  setupFiles: [
+    '<rootDir>/redisinsight/ui/src/setup-env.ts',
+  ],
   setupFilesAfterEnv: [
     '<rootDir>/redisinsight/ui/src/setup-tests.ts',
   ],

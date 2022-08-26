@@ -39,6 +39,8 @@ import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
 import { initialState as initialStateSlowLog } from 'uiSrc/slices/slowlog/slowlog'
 import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
+import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
+import { apiService } from 'uiSrc/services'
 
 interface Options {
   initialState?: RootState;
@@ -150,13 +152,13 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
-// mock useDispatch
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  usDispatch: () => ({
-    dispatch: jest.fn,
-  }),
-}))
+// // mock useDispatch
+// jest.mock('react-redux', () => ({
+//   ...jest.requireActual('react-redux'),
+//   usDispatch: () => ({
+//     dispatch: jest.fn,
+//   }),
+// }))
 
 // mock <AutoSizer />
 jest.mock(
@@ -188,6 +190,10 @@ Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock })
 
 const scrollIntoViewMock = jest.fn()
 window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock
+
+export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.concat(path)
+export const getMswURL = (path: string = '') =>
+  apiService.defaults.baseURL?.concat(path) ?? ''
 
 // re-export everything
 export * from '@testing-library/react'

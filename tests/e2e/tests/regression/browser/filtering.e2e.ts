@@ -199,7 +199,7 @@ test
         await t.click(browserPage.treeViewNotPatternedKeys);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });
-test.only
+test
     .before(async() => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
@@ -213,8 +213,8 @@ test.only
         await browserPage.searchByKeyName(keyName);
         for (let i = 0; i < 10; i++) {
             // Verify that keys are filtered
-            await t.expect(await browserPage.keyNameInTheList.nth(i).textContent).contains('device', 'Keys filtered incorrectly by key name')
-                .expect(await browserPage.keyNameInTheList.nth(i).textContent).contains('set', 'Keys filtered incorrectly by key type');
+            await t.expect(browserPage.keyNameInTheList.nth(i).textContent).contains('device', 'Keys filtered incorrectly by key name')
+                .expect(browserPage.keyNameInTheList.nth(i).textContent).contains('set', 'Keys filtered incorrectly by key type');
         }
         await t.click(browserPage.treeViewButton);
         //Verify that user can use the "Scan More" button to search per another 10000 keys

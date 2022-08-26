@@ -36,7 +36,7 @@ test
         //Verify that "Tree view" mode enabled state is saved
         await t.expect(browserPage.treeViewArea.visible).ok('The tree view is displayed');
     });
-test.only
+test
     .meta({ rte: rte.standalone })('Verify that user can scan DB by 10K in tree view', async t => {
         await t.click(browserPage.treeViewButton);
         //Verify that user can use the "Scan More" button to search per another 10000 keys

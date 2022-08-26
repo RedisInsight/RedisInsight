@@ -292,7 +292,7 @@ jobs:
             sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
             cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
   e2e-app-image:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       report:
         description: Send report for test run to slack
@@ -325,6 +325,9 @@ jobs:
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
+      - store_artifacts:
+          path: tests/e2e/report
+          destination: tests/e2e/report
   e2e-exe:
     executor:
       name: win/default
@@ -361,8 +364,11 @@ jobs:
                 shell: bash.exe
       - store_test_results:
           path: ./tests/e2e/results
+      - store_artifacts:
+          path: tests/e2e/report
+          destination: tests/e2e/report
   e2e-tests:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       build:
         description: Backend build to run tests over
@@ -426,6 +432,9 @@ jobs:
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
+      - store_artifacts:
+          path: tests/e2e/report
+          destination: tests/e2e/report
 
   # Build jobs
   setup-sign-certificates:
@@ -666,7 +675,7 @@ jobs:
       - <<: *scan
       - <<: *validate
   docker:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       env:
         type: enum

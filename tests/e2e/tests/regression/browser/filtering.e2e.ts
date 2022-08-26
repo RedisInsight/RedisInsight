@@ -199,7 +199,7 @@ test
         await t.click(browserPage.treeViewNotPatternedKeys);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Found key');
     });
-test.only
+test
     .before(async() => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);

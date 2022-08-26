@@ -5,7 +5,7 @@ import {
     ossStandaloneBigConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { rte } from '../../../helpers/constants';
+import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
@@ -35,6 +35,7 @@ test
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see the total number of keys, the number of keys scanned, the “Scan more” control displayed at the top of Tree view and Browser view', async t => {
+        await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
         //Verify the controls on the Browser view
         await t.expect(browserPage.totalKeysNumber.visible).ok('The total number of keys is displayed on the Browser view');
         await t.expect(browserPage.scannedValue.visible).ok('The number of keys scanned is displayed on the Browser view');

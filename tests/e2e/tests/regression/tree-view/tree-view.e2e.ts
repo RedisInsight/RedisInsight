@@ -33,8 +33,7 @@ test
         await t.click(browserPage.treeViewButton);
         await t.expect(browserPage.keyListTable.textContent).contains('No keys to display.', 'The message is displayed');
     });
-//skipped due the issue
-test.skip
+test
     .meta({ rte: rte.standalone })('Verify that user can see the total number of keys, the number of keys scanned, the “Scan more” control displayed at the top of Tree view and Browser view', async t => {
         //Verify the controls on the Browser view
         await t.expect(browserPage.totalKeysNumber.visible).ok('The total number of keys is displayed on the Browser view');

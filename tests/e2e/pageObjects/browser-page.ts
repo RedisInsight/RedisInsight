@@ -175,7 +175,6 @@ export class BrowserPage {
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
-    keysNumberOfScanned = Selector('[data-testid=keys-number-of-scanned]');
     keysTotalNumber = Selector('[data-testid=keys-total]');
     overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');

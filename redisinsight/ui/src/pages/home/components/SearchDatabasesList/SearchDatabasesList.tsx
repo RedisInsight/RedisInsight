@@ -28,8 +28,8 @@ const SearchDatabasesList = () => {
         visible: item.name?.toLowerCase().indexOf(value) !== -1
         || item.host?.toString()?.indexOf(value) !== -1
         || item.port?.toString()?.indexOf(value) !== -1
-        || item.connectionType?.toString()?.indexOf(value) !== -1
-        || item.modules?.toString()?.indexOf(value) !== -1
+        || item.connectionType?.toLowerCase()?.indexOf(value) !== -1
+        || item.modules?.map((m) => m.name?.toLowerCase()).join(',').indexOf(value) !== -1
         || lastConnectionFormat(item.lastConnection)?.indexOf(value) !== -1
       })
     )

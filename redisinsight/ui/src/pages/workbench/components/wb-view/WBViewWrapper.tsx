@@ -159,7 +159,7 @@ const WBViewWrapper = () => {
 
     isNewCommand() && scrollResults('start')
 
-    sendCommand(reverse(commandLine), multiCommands)
+    sendCommand(commandLine, multiCommands)
   }
 
   const sendCommand = (

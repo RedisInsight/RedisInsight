@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { reverse } from 'lodash';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
@@ -62,7 +63,7 @@ export class WorkbenchService {
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
     return Promise.all(
-      dto.commands.map(async (command) => await this.createCommandExecution(clientOptions, { ...dto, command })),
+      reverse(dto.commands).map(async (command) => await this.createCommandExecution(clientOptions, { ...dto, command })),
     );
   }
 

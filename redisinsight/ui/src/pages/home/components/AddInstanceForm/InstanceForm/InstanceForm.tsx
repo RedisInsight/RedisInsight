@@ -1357,6 +1357,7 @@ const AddStandaloneForm = (props: Props) => {
                     title="Database"
                     isCollapsible
                     initialIsOpen={false}
+                    data-testid="databases-nav-group"
                   >
                     {SentinelMasterDatabase()}
                   </EuiCollapsibleNavGroup>
@@ -1364,6 +1365,7 @@ const AddStandaloneForm = (props: Props) => {
                     title="Sentinel"
                     isCollapsible
                     initialIsOpen={false}
+                    data-testid="sentinel-nav-group"
                   >
                     {SentinelHostPort()}
                     {DatabaseForm()}

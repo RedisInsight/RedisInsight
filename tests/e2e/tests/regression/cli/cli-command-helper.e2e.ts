@@ -8,9 +8,11 @@ import {
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { CliActions } from '../../../common-actions/cli-actions';
 
 const cliPage = new CliPage();
 const common = new Common();
+const cliActions = new CliActions();
 let filteringGroup = '';
 let filteringGroups: string[] = [];
 let commandToCheck = '';
@@ -268,6 +270,6 @@ test
         // Click return button
         await t.click(cliPage.returnToList);
         // Check that user returned to list with filter and search applied
-        await cliPage.checkCommandsInCommandHelper(filteredCommands);
+        await cliActions.checkCommandsInCommandHelper(filteredCommands);
         await t.expect(cliPage.returnToList.exists).notOk('Return to list button still displayed');
     });

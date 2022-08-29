@@ -2,10 +2,12 @@ import { AxiosError } from 'axios'
 import { first, isArray, get } from 'lodash'
 import { AddRedisDatabaseStatus, IBulkOperationResult } from 'uiSrc/slices/interfaces'
 
+export const DEFAULT_ERROR_MESSAGE = 'Something was wrong!'
+
 export function getApiErrorMessage(error: AxiosError): string {
   const errorMessage = error?.response?.data?.message
   if (!error || !error.response) {
-    return 'Something was wrong!'
+    return DEFAULT_ERROR_MESSAGE
   }
   if (isArray(errorMessage)) {
     return first(errorMessage)

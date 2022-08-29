@@ -7,6 +7,9 @@ import {
 } from 'uiSrc/utils/test-utils'
 
 import { apiService } from 'uiSrc/services'
+import { mswServer } from 'uiSrc/mocks/server'
+import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
+import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import reducer, {
   initialState,
   setAnalyticsIdentified,
@@ -215,15 +218,7 @@ describe('slices', () => {
     })
 
     it('failed to fetch server info', async () => {
-      // Arrange
-      const errorMessage = 'Something was wrong!'
-      const responsePayload = {
-        response: {
-          status: 500,
-          data: { message: errorMessage },
-        },
-      }
-      apiService.get = jest.fn().mockRejectedValue(responsePayload)
+      mswServer.use(...errorHandlers)
 
       // Act
       await store.dispatch<any>(fetchServerInfo(jest.fn(), jest.fn()))
@@ -231,7 +226,7 @@ describe('slices', () => {
       // Assert
       const expectedActions = [
         getServerInfo(),
-        getServerInfoFailure(errorMessage),
+        getServerInfoFailure(DEFAULT_ERROR_MESSAGE),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)

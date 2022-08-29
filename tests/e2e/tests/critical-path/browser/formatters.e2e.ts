@@ -14,19 +14,25 @@ const keysData = keyTypes.map(object => ({ ...object })).filter((v, i) => i <= 6
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`);
 const formatters = [{
     format: 'JSON',
-    fromText: '{ "field": "value" }'
+    fromText: '{ "field": "value" }',
+    fromTextEdit: '{ "field": "value123" }'
 }, {
     format: 'Msgpack',
     fromText: '{ "field": "value" }',
+    fromTextEdit: '{ "field": "value123" }',
     toText: 'DF00000001A56669656C64A576616C7565'
 }, {
     format: 'ASCII',
     fromText: '山女子水 рус ascii',
-    toText: '\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe5\\xad\\x90\\xe6\\xb0\\xb4 \\xd1\\x80\\xd1\\x83\\xd1\\x81 ascii'
+    fromTextEdit: '山女子水 рус ascii 山女子',
+    toText: '\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe5\\xad\\x90\\xe6\\xb0\\xb4 \\xd1\\x80\\xd1\\x83\\xd1\\x81 ascii',
+    toTextEdit: '\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe5\\xad\\x90\\xe6\\xb0\\xb4 \\xd1\\x80\\xd1\\x83\\xd1\\x81 ascii \\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe5\\xad\\x90'
 }, {
     format: 'HEX',
     fromText: '山女子水 рус ascii',
-    toText: 'e5b1b1e5a5b3e5ad90e6b0b420d180d183d181206173636969'
+    fromTextEdit: '山女子水 рус ascii 山女子',
+    toText: 'e5b1b1e5a5b3e5ad90e6b0b420d180d183d181206173636969',
+    toTextEdit: 'e5b1b1e5a5b3e5ad90e6b0b420d180d183d18120617363696920e5b1b1e5a5b3e5ad90'
 }];
 
 fixture `Formatters`
@@ -82,8 +88,12 @@ test('Verify that user can edit the values in the key regardless if they are val
             // Verify that invalid value can be saved
             await t.expect(browserPage.hashFieldValue.textContent).contains(invalidText, `Invalid ${formatter.format} value is not saved`);
             await browserPage.editHashKeyValue(formatter.fromText);
-            // Verify that valid value can be saved
+            // Verify that valid value can be saved on edit
             await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromText, `Valid ${formatter.format} value is not saved`);
+            await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).ok(`Value is not formatted to ${formatter.format}`);
+            await browserPage.editHashKeyValue(formatter.fromTextEdit!);
+            // Verify that valid value can be edited to another valid value
+            await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromTextEdit!, `Valid ${formatter.format} value is not saved`);
             await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).ok(`Value is not formatted to ${formatter.format}`);
         }
     }
@@ -165,6 +175,13 @@ test('Verify that user can edit value for Hash field in ASCII/HEX and convert th
             await browserPage.selectFormatter('Unicode');
             // Verify that value converted to Unicode
             await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromText!, `${formatter.format} value is not converted to Unicode`);
+            await browserPage.selectFormatter(formatter.format);
+            await browserPage.editHashKeyValue(formatter.toTextEdit!);
+            // Verify that valid converted value can be edited to another
+            await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.toTextEdit!, `${formatter.format} value is not saved`);
+            await browserPage.selectFormatter('Unicode');
+            // Verify that value converted to Unicode
+            await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromTextEdit!, `${formatter.format} value is not converted to Unicode`);
         }
     }
 });

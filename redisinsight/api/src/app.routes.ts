@@ -7,6 +7,7 @@ import { CliModule } from 'src/modules/cli/cli.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
 import { SlowLogModule } from 'src/modules/slow-log/slow-log.module';
 import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
+import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 
 export const routes: Routes = [
   {
@@ -32,6 +33,10 @@ export const routes: Routes = [
       {
         path: '/:dbInstance',
         module: PubSubModule,
+      },
+      {
+        path: '/:dbInstance',
+        module: ClusterMonitorModule,
       },
     ],
   },

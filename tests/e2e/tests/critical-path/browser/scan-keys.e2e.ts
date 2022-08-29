@@ -63,12 +63,12 @@ test
         await t.click(cliPage.cliCollapseButton);
         //Search keys
         await browserPage.searchByKeyName(searchPattern);
-        const keysNumberOfScanned = await browserPage.keysNumberOfScanned.textContent;
+        const keysNumberOfScanned = await browserPage.scannedValue.textContent;
         //Verify that number of scanned is 1000
         await t.expect(keysNumberOfScanned).contains('1 000', 'Number of scanned is 1000');
         //Scan more
         await t.click(browserPage.scanMoreButton);
-        const keysNumberOfScannedScanMore = await browserPage.keysNumberOfScanned.textContent;
+        const keysNumberOfScannedScanMore = await browserPage.scannedValue.textContent;
         //Verify that number of results is 2000
         await t.expect(keysNumberOfScannedScanMore).contains('2 000', 'Number of scanned is 2000');
     });

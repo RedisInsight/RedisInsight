@@ -109,10 +109,8 @@ export class MyRedisDatabasePage {
      * @param databaseName The name of the database to be edited
      */
     async clickOnEditDBByName(databaseName: string): Promise<void> {
-        const dbNames = this.tableRowContent;
-        const count = await dbNames.count;
-
-        for (let i = 0; i < count; i++) {
+        const dbNames = this.dbNameList;
+        for (let i = 0; i < await dbNames.count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(databaseName)) {
                 await t.click(this.editDatabaseButton.nth(i));
                 break;

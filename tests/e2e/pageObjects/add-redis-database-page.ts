@@ -23,8 +23,8 @@ export class AddRedisDatabasePage {
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
     discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
-    sentinelNavigation = Selector('[data-testid=primary-group]');
-    sentinelDatabasesNavigation = Selector('[data-testid=primary-group]');
+    sentinelNavigation = Selector('[data-testid=sentinel-nav-group]');
+    sentinelDatabaseNavigation = Selector('[data-testid=database-nav-group]');
     cancelButton = Selector('[data-testid=btn-cancel]');
     //TEXT INPUTS (also referred to as 'Text fields')
     hostInput = Selector('[data-testid=host]');

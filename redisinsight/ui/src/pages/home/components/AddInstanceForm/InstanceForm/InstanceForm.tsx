@@ -1357,7 +1357,7 @@ const AddStandaloneForm = (props: Props) => {
                     title="Database"
                     isCollapsible
                     initialIsOpen={false}
-                    data-testid="databases-nav-group"
+                    data-testid="database-nav-group"
                   >
                     {SentinelMasterDatabase()}
                   </EuiCollapsibleNavGroup>

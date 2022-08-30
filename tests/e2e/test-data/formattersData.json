@@ -1,0 +1,23 @@
+[
+    {
+        "format": "ASCII",
+        "fromText": "山女子水 рус ascii",
+        "fromTextEdit": "山女子水 рус ascii 山女子",
+        "formattedText": "\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe5\\xad\\x90\\xe6\\xb0\\xb4 \\xd1\\x80\\xd1\\x83\\xd1\\x81 ascii",
+        "formattedTextEdit": "\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe5\\xad\\x90\\xe6\\xb0\\xb4 \\xd1\\x80\\xd1\\x83\\xd1\\x81 ascii \\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe5\\xad\\x90"
+    },
+    {
+        "format": "HEX",
+        "fromText": "山女子水 рус hex",
+        "fromTextEdit": "山女子水 рус hex 山女子",
+        "formattedText": "e5b1b1e5a5b3e5ad90e6b0b420d180d183d18120686578",
+        "formattedTextEdit": "e5b1b1e5a5b3e5ad90e6b0b420d180d183d1812068657820e5b1b1e5a5b3e5ad90"
+    },
+    {
+        "format": "Binary",
+        "fromText": "水 рус bin",
+        "fromTextEdit": "水山 рус bin 子",
+        "formattedText": "1110011010110000101101000010000011010001100000001101000110000011110100011000000100100000011000100110100101101110",
+        "formattedTextEdit": "111001101011000010110100111001011011000110110001001000001101000110000000110100011000001111010001100000010010000001100010011010010110111000100000111001011010110110010000"
+    }
+]

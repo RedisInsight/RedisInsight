@@ -104,13 +104,14 @@ test
             .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group name value');
         // Validate Databases section
         await t
-            .click(addRedisDatabasePage.sentinelDatabasesNavigation)
-            .expect(addRedisDatabasePage.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel port');
+            .debug()
+            .click(addRedisDatabasePage.sentinelDatabaseNavigation)
+            .expect(addRedisDatabasePage.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
         // Validate Sentinel section
         await t
             .click(addRedisDatabasePage.sentinelNavigation)
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPort, 'Invalid sentinel port')
-            .expect(addRedisDatabasePage.passwordInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPassword, 'Invalid sentinel port');
+            .expect(addRedisDatabasePage.passwordInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPassword, 'Invalid sentinel password');
         // Clone Sentinel Primary Group
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.masters[1].name).count).gt(1, 'Primary Group was not cloned');

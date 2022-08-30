@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import { reverse } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -213,7 +214,7 @@ export function sendWBCommandAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({ commands: reverse(commands), commandId }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
@@ -227,7 +228,7 @@ export function sendWBCommandAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data, processing: !!multiCommands?.length }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
 
         onSuccessAction?.(multiCommands)
       }
@@ -264,7 +265,7 @@ export function sendWBCommandClusterAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({ commands: reverse(commands), commandId }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
@@ -280,7 +281,7 @@ export function sendWBCommandClusterAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
 
         onSuccessAction?.(multiCommands)
       }

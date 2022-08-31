@@ -17,12 +17,7 @@ const newOssDatabaseAlias = 'cloned oss cluster';
 
 fixture `Clone databases`
     .meta({ type: 'critical_path' })
-    .page(commonUrl)
-    .beforeEach(async t => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await t.eval(() => location.reload());
-    });
+    .page(commonUrl);
 test
     .before(async t => {
         await acceptLicenseTerms();
@@ -66,7 +61,7 @@ test
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.deleteDatabaseByName(newOssDatabaseAlias);
     })
-    .meta({ rte: rte.standalone })('Verify that user can clone OSS Cluster', async t => {
+    .meta({ rte: rte.ossCluster })('Verify that user can clone OSS Cluster', async t => {
         await myRedisDatabasePage.clickOnEditDBByName(ossClusterConfig.ossClusterDatabaseName);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t
@@ -94,7 +89,7 @@ test
         await deleteAllSentinelDatabasesApi(sentinelCopy);
         await t.eval(() => location.reload());
     })
-    .meta({ rte: rte.standalone })('Verify that user can clone Sentinel', async t => {
+    .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
         await myRedisDatabasePage.clickOnEditDBByName(ossSentinelConfig.name[1]);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
@@ -104,7 +99,6 @@ test
             .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group name value');
         // Validate Databases section
         await t
-            .debug()
             .click(addRedisDatabasePage.sentinelDatabaseNavigation)
             .expect(addRedisDatabasePage.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
         // Validate Sentinel section

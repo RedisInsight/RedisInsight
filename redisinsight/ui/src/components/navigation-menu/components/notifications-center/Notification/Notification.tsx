@@ -44,6 +44,7 @@ const Notification = (props: Props) => {
             <EuiBadge
               className={styles.category}
               style={{ backgroundColor: notification.categoryColor ?? '#666' }}
+              data-testid="notification-category"
             >
               {truncateText(notification.category, 32)}
             </EuiBadge>

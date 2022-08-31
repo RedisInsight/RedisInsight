@@ -61,15 +61,7 @@ export class WorkbenchService {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
-    function syncPromiseAll(commands: string[], fn: (command: string) => any): Promise<CommandExecution[]> {
-      const results = [];
-      return commands.reduce((promise, command) => promise.then(() => fn(command).then((result) => {
-        results.push(result);
-        return results;
-      })), Promise.resolve());
-    }
-
-    return syncPromiseAll(
+    return this.syncPromiseAll(
       dto.commands, (async (command: string) => await this.createCommandExecution(clientOptions, { ...dto, command })),
     );
   }
@@ -114,5 +106,19 @@ export class WorkbenchService {
     return getUnsupportedCommands()
       .concat(getBlockingCommands())
       .find((command) => targetCommand.startsWith(command));
+  }
+
+  /**
+ * Run command synchronously
+ * @param commands
+ * @param fn
+ * @private
+ */
+  private syncPromiseAll(commands: string[], fn: (command: string) => any): Promise<CommandExecution[]> {
+    const results = [];
+    return commands.reduce((promise, command) => promise.then(() => fn(command).then((result) => {
+      results.push(result);
+      return results;
+    })), Promise.resolve());
   }
 }

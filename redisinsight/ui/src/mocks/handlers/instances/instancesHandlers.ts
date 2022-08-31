@@ -4,6 +4,8 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { getMswURL } from 'uiSrc/utils/test-utils'
 
+export const INSTANCE_ID_MOCK = 'instanceId'
+
 const handlers: RestHandler[] = [
   // fetchInstancesAction
   rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.INSTANCE), async (req, res, ctx) => res(

@@ -75,6 +75,7 @@ test('Verify that user can open notification center by clicking on icon and see 
         await t.expect(notificationPage.notificationTitle.withExactText(jsonNotifications[i].title).exists).ok('Displayed title');
         await t.expect(notificationPage.notificationBody.withExactText(jsonNotifications[i].body).exists).ok('Displayed body');
         await t.expect(notificationPage.notificationDate.withExactText(await notificationPage.convertEpochDateToMessageDate(jsonNotifications[i])).exists).ok('Displayed date');
+        // Verify that user can see notification with category badge and category color in the notification center
         if (!jsonNotifications[i].category !== undefined) {
             await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').exists).ok('Displayed category name');
             await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').withAttribute('title', `background-color: rgb${jsonNotifications[i].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');

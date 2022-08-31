@@ -172,5 +172,6 @@ export enum KeyValueFormat {
   Msgpack = 'Msgpack',
   PHP = 'PHP Unserialize',
   JAVA = 'Java Object',
-  Protobuf = 'Protobuf'
+  Protobuf = 'Protobuf',
+  Pickle = 'Pickle',
 }

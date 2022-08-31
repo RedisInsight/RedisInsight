@@ -1,5 +1,5 @@
 import {
-  truncateTTLToDuration,
+  truncateNumberToDuration,
   truncateNumberToFirstUnit,
   truncateTTLToRange,
   truncateTTLToSeconds,
@@ -89,8 +89,8 @@ describe('Truncate TTL util tests', () => {
     })
   })
 
-  describe('truncateTTLToDuration', () => {
-    it('truncateTTLToDuration should return appropriate value', () => {
+  describe('truncateNumberToDuration', () => {
+    it('truncateNumberToDuration should return appropriate value', () => {
       const ttl1 = 100
       const ttl2 = 1_534
       const ttl3 = 54_334
@@ -105,12 +105,12 @@ describe('Truncate TTL util tests', () => {
       const expectedResponse5 = '3 yr, 6 mo, 19 d, 10 h, 32 min, 10 s'
       const expectedResponse6 = '67 yr, 2 mo, 6 d, 12 h, 38 min, 20 s'
 
-      expect(truncateTTLToDuration(ttl1)).toEqual(expectedResponse1)
-      expect(truncateTTLToDuration(ttl2)).toEqual(expectedResponse2)
-      expect(truncateTTLToDuration(ttl3)).toEqual(expectedResponse3)
-      expect(truncateTTLToDuration(ttl4)).toEqual(expectedResponse4)
-      expect(truncateTTLToDuration(ttl5)).toEqual(expectedResponse5)
-      expect(truncateTTLToDuration(ttl6)).toEqual(expectedResponse6)
+      expect(truncateNumberToDuration(ttl1)).toEqual(expectedResponse1)
+      expect(truncateNumberToDuration(ttl2)).toEqual(expectedResponse2)
+      expect(truncateNumberToDuration(ttl3)).toEqual(expectedResponse3)
+      expect(truncateNumberToDuration(ttl4)).toEqual(expectedResponse4)
+      expect(truncateNumberToDuration(ttl5)).toEqual(expectedResponse5)
+      expect(truncateNumberToDuration(ttl6)).toEqual(expectedResponse6)
     })
   })
 

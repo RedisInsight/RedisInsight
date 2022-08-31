@@ -12,6 +12,7 @@ import {
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import SlowLogPage from 'uiSrc/pages/slowLog'
 import PubSubPage from 'uiSrc/pages/pubSub'
+import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -30,6 +31,11 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.slowLog,
     path: Pages.slowLog(':instanceId'),
     component: SlowLogPage,
+  },
+  {
+    pageName: PageNames.clusterDetails,
+    path: Pages.clusterDetails(':instanceId'),
+    component: ClusterDetailsPage,
   },
   {
     pageName: PageNames.pubSub,

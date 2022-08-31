@@ -15,6 +15,7 @@ export enum PageNames {
   browser = 'browser',
   slowLog = 'slowlog',
   pubSub = 'pub-sub',
+  clusterDetails = 'cluster-details',
 }
 
 const redisCloud = '/redis-cloud'
@@ -36,4 +37,5 @@ export const Pages = {
   workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`,
   slowLog: (instanceId: string) => `/${instanceId}/${PageNames.slowLog}`,
   pubSub: (instanceId: string) => `/${instanceId}/${PageNames.pubSub}`,
+  clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.clusterDetails}`,
 }

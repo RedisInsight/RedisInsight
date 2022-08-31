@@ -22,6 +22,7 @@ import BottomGroupComponents from 'uiSrc/components/bottom-group-components/Bott
 import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
+import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -91,6 +92,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setBulkActionsInitialState())
     dispatch(setAppContextInitialState())
     dispatch(resetKeysData())
+    dispatch(setClusterDetailsInitialState())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

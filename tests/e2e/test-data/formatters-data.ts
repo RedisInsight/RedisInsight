@@ -1,3 +1,6 @@
+/**
+ * Formatters objects with test data for format convertion
+ */
 export const formatters = [{
     format: 'JSON',
     fromText: '{ "field": "value" }',
@@ -44,6 +47,9 @@ export const formatters = [{
     formattedTextEdit: '111001101011000010110100111001011011000110110001001000001101000110000000110100011000001111010001100000010010000001100010011010010110111000100000111001011010110110010000'
 }];
 
+/**
+ * PHP data for convertion including different php unserialize data types
+ */
 export const phpData = [{
     dataType: 'Object',
     from: 'a:6:{i:1;s:30:"PHP code tester Sandbox Online";s:5:"emoji";s:24:"😀 😃 😄 😁 😆";i:2;i:5;i:5;i:89009;s:13:"Random number";i:341;s:11:"PHP Version";s:5:"8.1.9";}',

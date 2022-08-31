@@ -17,12 +17,7 @@ const newOssDatabaseAlias = 'cloned oss cluster';
 
 fixture `Clone databases`
     .meta({ type: 'critical_path' })
-    .page(commonUrl)
-    .beforeEach(async t => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await t.eval(() => location.reload());
-    });
+    .page(commonUrl);
 test
     .before(async t => {
         await acceptLicenseTerms();
@@ -104,7 +99,6 @@ test
             .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group name value');
         // Validate Databases section
         await t
-            .debug()
             .click(addRedisDatabasePage.sentinelDatabaseNavigation)
             .expect(addRedisDatabasePage.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
         // Validate Sentinel section

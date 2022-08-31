@@ -284,7 +284,7 @@ const HashDetails = (props: Props) => {
                   position="bottom"
                   content={tooltipContent}
                 >
-                  <>{value.substring?.(0, 200) ?? value}</>
+                  <>{value?.substring?.(0, 200) ?? value}</>
                 </EuiToolTip>
               )}
               {expanded && value}

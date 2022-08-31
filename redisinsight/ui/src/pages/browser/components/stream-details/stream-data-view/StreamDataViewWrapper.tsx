@@ -210,7 +210,7 @@ const StreamDataViewWrapper = (props: Props) => {
 
       const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(bufferValue, viewFormatProp, { expanded })
-      const cellContent = formattedValue.substring?.(0, 650) ?? formattedValue
+      const cellContent = formattedValue?.substring?.(0, 650) ?? formattedValue
       const tooltipContent = formatLongName(value)
 
       return (

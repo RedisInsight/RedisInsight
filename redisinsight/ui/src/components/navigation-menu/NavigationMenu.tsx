@@ -46,12 +46,11 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 
 import NotificationMenu from './components/notifications-center'
 
+import { ANALYTICS_ROUTES } from '../main-router/constants/defaultRoutes'
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
-const slowLogPath = `/${PageNames.slowLog}`
-const clusterDetailsPath = `/${PageNames.clusterDetails}`
 const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
@@ -88,7 +87,9 @@ const NavigationMenu = () => {
     dispatch(setShortcutsFlyoutState(true))
   }
 
-  const isAnalyticsPath = (path: string) => path === slowLogPath || path === clusterDetailsPath
+  const isAnalyticsPath = (activePage: string) => !!ANALYTICS_ROUTES.find(
+    ({ path }) => (`/${last(path.split('/'))}` === activePage)
+  )
 
   const privateRoutes: INavigations[] = [
     {

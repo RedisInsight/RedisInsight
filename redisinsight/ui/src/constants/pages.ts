@@ -15,6 +15,7 @@ export enum PageNames {
   browser = 'browser',
   slowLog = 'slowlog',
   pubSub = 'pub-sub',
+  analytics = 'analytics',
   clusterDetails = 'cluster-details',
 }
 
@@ -35,7 +36,8 @@ export const Pages = {
   sentinelDatabasesResult: `${sentinel}/databases-result`,
   browser: (instanceId: string) => `/${instanceId}/${PageNames.browser}`,
   workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`,
-  slowLog: (instanceId: string) => `/${instanceId}/${PageNames.slowLog}`,
   pubSub: (instanceId: string) => `/${instanceId}/${PageNames.pubSub}`,
-  clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.clusterDetails}`,
+  analytics: (instanceId: string) => `/${instanceId}/${PageNames.analytics}`,
+  slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
+  clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
 }

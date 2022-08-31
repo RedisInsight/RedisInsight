@@ -1,11 +1,11 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { SlowLog, SlowLogConfig } from 'src/modules/slow-log/models'
 import { DEFAULT_SLOWLOG_DURATION_UNIT } from 'uiSrc/constants'
-
 import { apiService } from 'uiSrc/services'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+
+import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
 
 import reducer, {
   initialState,
@@ -24,7 +24,7 @@ import reducer, {
   patchSlowLogConfigAction,
   setSlowLogInitialState,
   slowLogSelector
-} from '../../slowlog/slowlog'
+} from '../../analytics/slowlog'
 
 const timestamp = 1629128049027
 let store: typeof mockedStore
@@ -70,7 +70,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -89,7 +89,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -120,7 +120,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -141,7 +141,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -160,7 +160,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -180,7 +180,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -201,7 +201,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -220,7 +220,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -244,7 +244,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })
@@ -265,7 +265,7 @@ describe('slowLog slice', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        slowlog: nextState,
+        analytics: { slowlog: nextState },
       })
       expect(slowLogSelector(rootState)).toEqual(state)
     })

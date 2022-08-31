@@ -12,8 +12,23 @@ import {
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import SlowLogPage from 'uiSrc/pages/slowLog'
 import PubSubPage from 'uiSrc/pages/pubSub'
+import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
+import AnalyticsPage from 'uiSrc/pages/analytics'
 
 import COMMON_ROUTES from './commonRoutes'
+
+export const ANALYTICS_ROUTES: IRoute[] = [
+  {
+    pageName: PageNames.slowLog,
+    path: Pages.slowLog(':instanceId'),
+    component: SlowLogPage,
+  },
+  {
+    pageName: PageNames.clusterDetails,
+    path: Pages.clusterDetails(':instanceId'),
+    component: ClusterDetailsPage,
+  },
+]
 
 const INSTANCE_ROUTES: IRoute[] = [
   {
@@ -27,14 +42,14 @@ const INSTANCE_ROUTES: IRoute[] = [
     component: WorkbenchPage,
   },
   {
-    pageName: PageNames.slowLog,
-    path: Pages.slowLog(':instanceId'),
-    component: SlowLogPage,
-  },
-  {
     pageName: PageNames.pubSub,
     path: Pages.pubSub(':instanceId'),
     component: PubSubPage,
+  },
+  {
+    path: Pages.analytics(':instanceId'),
+    component: AnalyticsPage,
+    routes: ANALYTICS_ROUTES,
   },
 ]
 

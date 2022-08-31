@@ -26,6 +26,10 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     value: KeyValueFormat.Msgpack,
   },
   {
+    text: 'Pickle',
+    value: KeyValueFormat.Pickle,
+  },
+  {
     text: 'PHP Unserialize',
     value: KeyValueFormat.PHP,
   },

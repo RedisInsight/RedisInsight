@@ -3,6 +3,8 @@ import { decode, encode } from '@msgpack/msgpack'
 import { Buffer } from 'buffer'
 import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
+import jpickle from 'jpickle'
+
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -31,7 +33,11 @@ const isTextViewFormatter = (format: KeyValueFormat) => [
   KeyValueFormat.Binary,
 ].includes(format)
 const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
-const isFormatEditable = (format: KeyValueFormat) => ![KeyValueFormat.Protobuf, KeyValueFormat.JAVA].includes(format)
+const isFormatEditable = (format: KeyValueFormat) => ![
+  KeyValueFormat.Protobuf,
+  KeyValueFormat.JAVA,
+  KeyValueFormat.Pickle,
+].includes(format)
 
 const isNonUnicodeFormatter = (format: KeyValueFormat, isValid: boolean) => {
   if (format === KeyValueFormat.Msgpack) {
@@ -93,6 +99,15 @@ const formattingBuffer = (
     case KeyValueFormat.Protobuf: {
       try {
         const decoded = getData(Buffer.from(reply.data))
+        const value = JSON.stringify(decoded)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
+    case KeyValueFormat.Pickle: {
+      try {
+        const decoded = jpickle.loads(bufferToUTF8(reply))
         const value = JSON.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {

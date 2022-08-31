@@ -18,8 +18,8 @@ beforeEach(() => {
   store.clearActions()
 })
 
-jest.mock('uiSrc/slices/slowlog/slowlog', () => ({
-  ...jest.requireActual('uiSrc/slices/slowlog/slowlog'),
+jest.mock('uiSrc/slices/analytics/slowlog', () => ({
+  ...jest.requireActual('uiSrc/slices/analytics/slowlog'),
   slowLogConfigSelector: jest.fn().mockReturnValue({
     slowlogMaxLen: slowlogMaxLenMock,
     slowlogLogSlowerThan: slowlogLogSlowerThanMock,

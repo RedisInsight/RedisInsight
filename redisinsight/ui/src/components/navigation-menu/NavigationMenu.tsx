@@ -41,15 +41,16 @@ import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
 import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
-
 import { BuildType } from 'uiSrc/constants/env'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
+
 import NotificationMenu from './components/notifications-center'
 
+import { ANALYTICS_ROUTES } from '../main-router/constants/defaultRoutes'
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
-const slowLogPath = `/${PageNames.slowLog}`
 const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
@@ -71,7 +72,7 @@ const NavigationMenu = () => {
   const [activePage, setActivePage] = useState(Pages.home)
   const [isHelpMenuActive, setIsHelpMenuActive] = useState(false)
 
-  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', connectionType } = useSelector(connectedInstanceSelector)
   const { isReleaseNotesViewed } = useSelector(appElectronInfoSelector)
   const { server } = useSelector(appInfoSelector)
 
@@ -85,6 +86,10 @@ const NavigationMenu = () => {
     setIsHelpMenuActive(false)
     dispatch(setShortcutsFlyoutState(true))
   }
+
+  const isAnalyticsPath = (activePage: string) => !!ANALYTICS_ROUTES.find(
+    ({ path }) => (`/${last(path.split('/'))}` === activePage)
+  )
 
   const privateRoutes: INavigations[] = [
     {
@@ -116,12 +121,14 @@ const NavigationMenu = () => {
       },
     },
     {
-      tooltipText: 'Slow Log',
-      ariaLabel: 'SlowLog page button',
-      onClick: () => handleGoPage(Pages.slowLog(connectedInstanceId)),
-      dataTestId: 'slowlog-page-btn',
+      tooltipText: 'Analysis tools',
+      ariaLabel: 'Analysis tools',
+      onClick: () => handleGoPage(connectionType === ConnectionType.Cluster
+        ? Pages.clusterDetails(connectedInstanceId)
+        : Pages.slowLog(connectedInstanceId)),
+      dataTestId: 'analytics-page-btn',
       connectedInstanceId,
-      isActivePage: activePage === slowLogPath,
+      isActivePage: isAnalyticsPath(activePage),
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },

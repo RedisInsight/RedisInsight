@@ -109,7 +109,8 @@ test
         await t.expect(monitorPage.resetProfilerButton.visible).ok('The Reset Profiler button visibility');
         await t.expect(monitorPage.downloadLogButton.visible).ok('The Download button visibility');
     });
-test
+// Skipped due to testCafe issue https://github.com/DevExpress/testcafe/issues/5574
+test.skip
     .meta({ rte: rte.standalone })('Verify that when user see the toggle is OFF - Profiler logs are not being saved', async t => {
         //Remember the number of files in Temp
         const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);

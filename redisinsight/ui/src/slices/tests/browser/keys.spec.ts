@@ -54,6 +54,7 @@ import reducer, {
   addListKey,
   addStringKey,
   addZsetKey,
+  setLastBatchKeys,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
@@ -366,6 +367,39 @@ describe('keys slice', () => {
 
       // Act
       const nextState = reducer(initialState, loadKeyInfoSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setLastBatchKeys', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const strToKey = (name:string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const data = ['44', '55', '66'].map(strToKey)
+
+      const state = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '44', '55', '66'].map(strToKey),
+        }
+      }
+
+      const prevState = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
+        }
+      }
+
+      // Act
+      const nextState = reducer(prevState, setLastBatchKeys(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

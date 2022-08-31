@@ -61,7 +61,7 @@ test
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.deleteDatabaseByName(newOssDatabaseAlias);
     })
-    .meta({ rte: rte.standalone })('Verify that user can clone OSS Cluster', async t => {
+    .meta({ rte: rte.ossCluster })('Verify that user can clone OSS Cluster', async t => {
         await myRedisDatabasePage.clickOnEditDBByName(ossClusterConfig.ossClusterDatabaseName);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t
@@ -89,7 +89,7 @@ test
         await deleteAllSentinelDatabasesApi(sentinelCopy);
         await t.eval(() => location.reload());
     })
-    .meta({ rte: rte.standalone })('Verify that user can clone Sentinel', async t => {
+    .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
         await myRedisDatabasePage.clickOnEditDBByName(ossSentinelConfig.name[1]);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field

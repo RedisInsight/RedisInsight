@@ -55,6 +55,7 @@ export class WorkbenchPage {
     preselectModelBikeSalesButton = Selector('[data-testid="preselect-Model bike sales"]');
     showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
+    rawModeBtn = Selector('[data-testid="btn-change-mode"]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     //LINKS
@@ -161,16 +162,16 @@ export class WorkbenchPage {
     }
 
     /**
-     * Send commands array in Workbench page
-     * @param command The array of commands to send
-     * @param result The array of commands to send
+     * Check the last command and result in workbench
+     * @param command The command to check
+     * @param result The result to check
      */
     async checkWorkbenchCommandResult(command: string, result: string): Promise<void> {
         //Compare the command with executed command
         const actualCommand = await this.queryCardContainer.nth(0).find(this.cssQueryCardCommand).textContent;
         await t.expect(actualCommand).eql(command);
         //Compare the command result with executed command
-        const actualCommandResult = await this.queryCardContainer.nth(0).find(this.cssQueryCardCommandResult).textContent;
+        const actualCommandResult = await this.queryCardContainer.nth(0).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).eql(result);
     }
 }

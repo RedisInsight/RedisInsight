@@ -48,7 +48,7 @@ export class MyRedisDatabasePage {
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
-    dbNameList = Selector('[data-testid^=instance-name]');
+    dbNameList = Selector('[data-testid^=instance-name]', { timeout: 3000 });
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
     hostPort = Selector('[data-testid=host-port]');
@@ -109,9 +109,8 @@ export class MyRedisDatabasePage {
      * @param databaseName The name of the database to be edited
      */
     async clickOnEditDBByName(databaseName: string): Promise<void> {
-        const dbNames = this.tableRowContent;
+        const dbNames = this.dbNameList;
         const count = await dbNames.count;
-
         for (let i = 0; i < count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(databaseName)) {
                 await t.click(this.editDatabaseButton.nth(i));

@@ -12,6 +12,7 @@ export class WorkbenchPage {
     cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssQueryTableResult = '[data-testid^=query-table-result-]';
+    cssQueryPluginResult = '[data-testid^=query-table-result-]';
     queryGraphContainer = '[data-testid=query-graph-container]';
     cssQueryCardCommand = '[data-testid=query-card-command]';
     cssQueryCardCommandResult = '[data-testid=query-common-result]';
@@ -131,7 +132,7 @@ export class WorkbenchPage {
     //Select Table view option in Workbench results
     async selectViewTypeTable(): Promise<void> {
         await t.click(this.selectViewType);
-        await t.click(this.tableViewTypeOption);
+        await t.doubleClick(this.tableViewTypeOption);
     }
 
     //Select view option in Workbench results

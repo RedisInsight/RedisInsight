@@ -21,8 +21,8 @@ import {
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
-import { CommandsService } from 'src/modules/commands/commands.service';
-import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
+import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';
+import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
@@ -37,10 +37,6 @@ const mockCliTool = () => ({
   formatterManager: jest.fn(),
 });
 
-const mockCommandsService = () => ({
-  getCommandsGroups: jest.fn(),
-});
-
 const mockNodeEndpoint = {
   host: '127.0.0.1',
   port: 6379,
@@ -52,8 +48,9 @@ const mockCliNodeResponse: ICliExecResultFromNode = {
   status: CommandExecutionStatus.Success,
 };
 
+const mockSetCommand = 'set';
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
-  command: 'set foo bar',
+  command: `${mockSetCommand} foo bar`,
   nodeOptions: {
     ...mockNodeEndpoint,
     enableRedirection: true,
@@ -70,14 +67,17 @@ const mockCommandExecutionResult: CommandExecutionResult = {
   },
 };
 
+const mockAnalyticsService = mockWorkbenchAnalyticsService();
+
 describe('WorkbenchCommandsExecutor', () => {
   let service: WorkbenchCommandsExecutor;
   let cliTool;
-  let commandsService: CommandsService;
   let utf8Formatter: IFormatterStrategy;
   let asciiFormatter: IFormatterStrategy;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkbenchCommandsExecutor,
@@ -87,18 +87,14 @@ describe('WorkbenchCommandsExecutor', () => {
         },
         {
           provide: WorkbenchAnalyticsService,
-          useFactory: mockWorkbenchAnalyticsService,
-        },
-        {
-          provide: CommandsService,
-          useFactory: mockCommandsService,
+          useFactory: () => mockAnalyticsService,
         },
       ],
     }).compile();
 
     service = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
     cliTool = module.get<RedisToolService>(RedisToolService);
-    commandsService = module.get<CommandsService>(CommandsService);
+
     const formatterManager: FormatterManager = get(
       service,
       'formatterManager',
@@ -125,6 +121,20 @@ describe('WorkbenchCommandsExecutor', () => {
           response: mockCommandExecutionResult.response,
           status: mockCommandExecutionResult.status,
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          [
+            {
+              response: mockCommandExecutionResult.response,
+              status: CommandExecutionStatus.Success,
+            },
+          ],
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should return fail status in case of unsupported command error', async () => {
         cliTool.execCommand.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
@@ -138,6 +148,19 @@ describe('WorkbenchCommandsExecutor', () => {
           response: MOCK_ERROR_MESSAGE,
           status: CommandExecutionStatus.Fail,
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          {
+            response: MOCK_ERROR_MESSAGE,
+            error: new CommandNotSupportedError(MOCK_ERROR_MESSAGE),
+            status: CommandExecutionStatus.Fail,
+          },
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should return fail status when replyError happened', async () => {
         const replyError: Error = {
@@ -156,6 +179,19 @@ describe('WorkbenchCommandsExecutor', () => {
           response: MOCK_ERROR_MESSAGE,
           status: CommandExecutionStatus.Fail,
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          {
+            response: MOCK_ERROR_MESSAGE,
+            error: replyError,
+            status: CommandExecutionStatus.Fail,
+          },
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should successfully execute command and return ascii response', async () => {
         const formatSpy = jest.spyOn(asciiFormatter, 'format');
@@ -172,6 +208,20 @@ describe('WorkbenchCommandsExecutor', () => {
           status: mockCommandExecutionResult.status,
         }]);
         expect(formatSpy).toHaveBeenCalled();
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          [
+            {
+              response: mockCommandExecutionResult.response,
+              status: CommandExecutionStatus.Success,
+            },
+          ],
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should successfully execute command and return raw response', async () => {
         const formatSpy = jest.spyOn(utf8Formatter, 'format');
@@ -188,8 +238,22 @@ describe('WorkbenchCommandsExecutor', () => {
           status: mockCommandExecutionResult.status,
         }]);
         expect(formatSpy).toHaveBeenCalled();
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          [
+            {
+              response: mockCommandExecutionResult.response,
+              status: CommandExecutionStatus.Success,
+            },
+          ],
+          {
+            command: mockSetCommand,
+            rawMode: true,
+          },
+        );
       });
-      it('should throw an error when unexpected error happened', async () => {
+      it('should throw an error when on unexpected error', async () => {
         cliTool.execCommand.mockRejectedValueOnce(new ServiceUnavailableException(MOCK_ERROR_MESSAGE));
 
         try {
@@ -201,6 +265,19 @@ describe('WorkbenchCommandsExecutor', () => {
         } catch (e) {
           expect(e).toBeInstanceOf(InternalServerErrorException);
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
+
+          expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+            mockClientOptions.instanceId,
+            {
+              response: MOCK_ERROR_MESSAGE,
+              error: new ServiceUnavailableException(MOCK_ERROR_MESSAGE),
+              status: CommandExecutionStatus.Fail,
+            },
+            {
+              command: mockSetCommand,
+              rawMode: false,
+            },
+          );
         }
       });
     });
@@ -213,6 +290,19 @@ describe('WorkbenchCommandsExecutor', () => {
         expect(result).toEqual([{
           ...mockCommandExecutionResult,
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          [
+            {
+              ...mockCommandExecutionResult,
+            },
+          ],
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should return failed status when redirection disabled and MOVED response received', async () => {
         cliTool.execCommandForNode.mockResolvedValueOnce({
@@ -231,6 +321,19 @@ describe('WorkbenchCommandsExecutor', () => {
         expect(result).toEqual([{
           ...mockCommandExecutionResult,
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          [
+            {
+              ...mockCommandExecutionResult,
+            },
+          ],
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should return success status when redirection enabled and MOVED response received', async () => {
         cliTool.execCommandForNode.mockResolvedValueOnce({
@@ -248,6 +351,23 @@ describe('WorkbenchCommandsExecutor', () => {
             slot: 7008,
           },
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          [
+            {
+              ...mockCommandExecutionResult,
+              node: {
+                ...mockCommandExecutionResult.node,
+                slot: 7008,
+              },
+            },
+          ],
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should return fail status when command is not supported', async () => {
         cliTool.execCommandForNode.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
@@ -258,6 +378,19 @@ describe('WorkbenchCommandsExecutor', () => {
           response: MOCK_ERROR_MESSAGE,
           status: CommandExecutionStatus.Fail,
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          {
+            response: MOCK_ERROR_MESSAGE,
+            error: new CommandNotSupportedError(MOCK_ERROR_MESSAGE),
+            status: CommandExecutionStatus.Fail,
+          },
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should throw BadRequest when ClusterNodeNotFoundError error received', async () => {
         cliTool.execCommandForNode.mockRejectedValueOnce(new ClusterNodeNotFoundError(MOCK_ERROR_MESSAGE));
@@ -268,6 +401,19 @@ describe('WorkbenchCommandsExecutor', () => {
         } catch (e) {
           expect(e).toBeInstanceOf(BadRequestException);
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
+
+          expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+            mockClientOptions.instanceId,
+            {
+              response: MOCK_ERROR_MESSAGE,
+              error: new ClusterNodeNotFoundError(MOCK_ERROR_MESSAGE),
+              status: CommandExecutionStatus.Fail,
+            },
+            {
+              command: mockSetCommand,
+              rawMode: false,
+            },
+          );
         }
       });
       it('should throw an error when unexpected error happened', async () => {
@@ -279,6 +425,19 @@ describe('WorkbenchCommandsExecutor', () => {
         } catch (e) {
           expect(e).toBeInstanceOf(InternalServerErrorException);
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
+
+          expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+            mockClientOptions.instanceId,
+            {
+              response: MOCK_ERROR_MESSAGE,
+              error: new ServiceUnavailableException(MOCK_ERROR_MESSAGE),
+              status: CommandExecutionStatus.Fail,
+            },
+            {
+              command: mockSetCommand,
+              rawMode: false,
+            },
+          );
         }
       });
     });
@@ -305,6 +464,21 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
         ]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          [
+            mockCommandExecutionResult,
+            {
+              ...mockCommandExecutionResult,
+              status: CommandExecutionStatus.Fail,
+            },
+          ],
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should return fail status when command is not supported', async () => {
         cliTool.execCommandForNodes.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
@@ -319,6 +493,19 @@ describe('WorkbenchCommandsExecutor', () => {
           response: MOCK_ERROR_MESSAGE,
           status: CommandExecutionStatus.Fail,
         }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          {
+            response: MOCK_ERROR_MESSAGE,
+            error: new CommandNotSupportedError(MOCK_ERROR_MESSAGE),
+            status: CommandExecutionStatus.Fail,
+          },
+          {
+            command: mockSetCommand,
+            rawMode: false,
+          },
+        );
       });
       it('should throw BadRequest when WrongDatabaseTypeError error received', async () => {
         cliTool.execCommandForNodes.mockRejectedValueOnce(new WrongDatabaseTypeError(MOCK_ERROR_MESSAGE));
@@ -333,6 +520,19 @@ describe('WorkbenchCommandsExecutor', () => {
         } catch (e) {
           expect(e).toBeInstanceOf(BadRequestException);
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
+
+          expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+            mockClientOptions.instanceId,
+            {
+              response: MOCK_ERROR_MESSAGE,
+              error: new WrongDatabaseTypeError(MOCK_ERROR_MESSAGE),
+              status: CommandExecutionStatus.Fail,
+            },
+            {
+              command: mockSetCommand,
+              rawMode: false,
+            },
+          );
         }
       });
       it('should throw an error when unexpected error happened', async () => {
@@ -348,6 +548,19 @@ describe('WorkbenchCommandsExecutor', () => {
         } catch (e) {
           expect(e).toBeInstanceOf(InternalServerErrorException);
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
+
+          expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+            mockClientOptions.instanceId,
+            {
+              response: MOCK_ERROR_MESSAGE,
+              error: new ServiceUnavailableException(MOCK_ERROR_MESSAGE),
+              status: CommandExecutionStatus.Fail,
+            },
+            {
+              command: mockSetCommand,
+              rawMode: false,
+            },
+          );
         }
       });
     });

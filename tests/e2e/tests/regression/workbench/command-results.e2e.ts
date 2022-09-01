@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage } from '../../../pageObjects/workbench-page';
 import { MyRedisDatabasePage } from '../../../pageObjects';
@@ -6,23 +7,21 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
-import { Chance } from 'chance';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 
-let indexName = chance.word({ length: 5 });
-let commandsForIndex = [
+const indexName = chance.word({ length: 5 });
+const commandsForIndex = [
     `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE`,
     'HMSET product:1 price 20',
     'HMSET product:2 price 100'
 ];
 
-//skipped due the inaccessibility of the iframe
-fixture.skip `Command results at Workbench`
-    .meta({type: 'regression'})
+fixture `Command results at Workbench`
+    .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -30,54 +29,52 @@ fixture.skip `Command results at Workbench`
         await t.click(myRedisDatabasePage.workbenchButton);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
     })
-    .afterEach(async() => {
+    .afterEach(async t => {
         //Drop index and database
+        await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
+    });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
-        indexName = chance.word({ length: 5 });
+    .meta({ env: env.web })('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
+        // indexName = chance.word({ length: 5 });
         const infoCommand = `FT.INFO ${indexName}`;
         //Send FT.INFO and switch to Text view
         await workbenchPage.sendCommandInWorkbench(infoCommand);
         await workbenchPage.selectViewTypeText();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok(`The text view is switched for command FT.INFO`);
+        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The text view is not switched for command FT.INFO');
         //Switch to Table view and check result
         await workbenchPage.selectViewTypeTable();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.INFO`);
+        await t.switchToIframe(workbenchPage.iframe);
+        await t.expect(await workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.INFO');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
-        indexName = chance.word({ length: 5 });
+    .meta({ env: env.web })('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
         const searchCommand = `FT.SEARCH ${indexName} *`;
         //Send FT.SEARCH and switch to Text view
         await workbenchPage.sendCommandInWorkbench(searchCommand);
         await workbenchPage.selectViewTypeText();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok(`The text view is switched for command FT.SEARCH`);
+        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The text view is not switched for command FT.SEARCH');
         //Switch to Table view and check result
         await workbenchPage.selectViewTypeTable();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.SEARCH`);
+        await t.switchToIframe(workbenchPage.iframe);
+        await t.expect(await workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.SEARCH');
     });
 test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
-        indexName = chance.word({ length: 5 });
+    .meta({ env: env.web })('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
         const aggregateCommand = `FT.Aggregate ${indexName} * GROUPBY 0 REDUCE MAX 1 @price AS max_price`;
         //Send FT.AGGREGATE and switch to Text view
         await workbenchPage.sendCommandInWorkbench(aggregateCommand);
         await workbenchPage.selectViewTypeText();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok(`The text view is switched for command FT.AGGREGATE`);
+        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The text view is not switched for command FT.AGGREGATE');
         //Switch to Table view and check result
         await workbenchPage.selectViewTypeTable();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).exists).ok(`The table view is switched for command FT.AGGREGATE`);
+        await t.switchToIframe(workbenchPage.iframe);
+        await t.expect(await workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.AGGREGATE');
     });
-test
-    .meta({ env: env.web, rte: rte.standalone })
-    ('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
-        indexName = chance.word({ length: 5 });
+// skip due to inaccessibility of CLIENT LIST in plugin
+test.skip
+    .meta({ env: env.web })('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default in full mode
         await workbenchPage.sendCommandInWorkbench(command);

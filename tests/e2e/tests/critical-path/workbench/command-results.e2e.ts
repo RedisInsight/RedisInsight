@@ -77,7 +77,7 @@ test
         }
     });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
         indexName = chance.word({ length: 5 });
         const commands = [
             'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',

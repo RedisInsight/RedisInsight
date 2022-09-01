@@ -10,9 +10,10 @@ const workbenchPage = new WorkbenchPage();
 const common = new Common();
 const browserPage = new BrowserPage();
 
-const keyName = common.generateWord(10);
-const keyValue = '\\xe5\\x90\\x8d\\xe5\\xad\\x97';
-const unicodeValue = '名字';
+let keyName = common.generateWord(10);
+const indexName = common.generateWord(5);
+const keyValue = '\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe9\\xa6\\xac / \\xe9\\xa9\\xac\\xe7\\x9b\\xae abc 123';
+const unicodeValue = '山女馬 / 马目 abc 123';
 const rawModeIcon = '-r';
 const commandsForSend = [
     `set ${keyName} "${keyValue}"`,
@@ -38,6 +39,7 @@ fixture `Workbench Raw mode`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Use raw mode for Workbech result', async t => {
+    keyName = common.generateWord(10);
     // Send commands
     await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
     // Display result in Ascii when raw mode is off
@@ -71,6 +73,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Save Raw mode state', async t => {
+        keyName = common.generateWord(10);
         //Send command in raw mode
         await t.click(workbenchPage.rawModeBtn);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
@@ -89,4 +92,25 @@ test
         // Verify that currently selected mode is applied when User re-run the command from history
         await t.click(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssReRunCommandButton));
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
+    });
+test
+    .after(async t => {
+        //Drop index, documents and database
+        await t.switchToMainWindow();
+        await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Display Raw mode for plugins', async t => {
+        keyName = common.generateWord(5);
+        const commandsForSend = [
+            `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
+            `HMSET product:1 name "${unicodeValue}"`,
+            `FT.SEARCH ${indexName} "${unicodeValue}"`
+        ];
+        //Send command in raw mode
+        await t.click(workbenchPage.rawModeBtn);
+        await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
+        //Check the FT.SEARCH result
+        await t.switchToIframe(workbenchPage.iframe);
+        const name = workbenchPage.queryTableResult.withText(unicodeValue);
+        await t.expect(name.exists).ok('The added key name field is not converted to Unicode');
     });

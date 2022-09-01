@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
 import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
@@ -40,7 +40,8 @@ const workbenchResultsSlice = createSlice({
     },
 
     loadWBHistorySuccess: (state, { payload }:{ payload: CommandExecution[] }) => {
-      state.items = payload
+      state.items = payload.map((item) =>
+        ({ ...item, command: item.command || EMPTY_COMMAND, emptyCommand: !item.command }))
       state.loading = false
     },
 

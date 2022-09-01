@@ -11,7 +11,7 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
-import { ENCRYPTED_DATA } from 'uiSrc/constants'
+import { EMPTY_COMMAND } from 'uiSrc/constants'
 import reducer, {
   initialState,
   sendWBCommand,
@@ -209,7 +209,7 @@ describe('workbench results slice', () => {
   describe('loadWBHistorySuccess', () => {
     it('should properly set history items', () => {
       // Arrange
-      const mockCommandExecution = [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: 'get test', role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z' }]
+      const mockCommandExecution = [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: 'get test', role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z', emptyCommand: false }]
       const state = {
         ...initialStateWithItems,
         items: mockCommandExecution
@@ -227,13 +227,13 @@ describe('workbench results slice', () => {
       expect(workbenchResultsSelector(rootState)).toEqual(state)
     })
 
-    it(`if command=null should properly set history items with command=${ENCRYPTED_DATA}`, () => {
+    it(`if command=null should properly set history items with command=${EMPTY_COMMAND}`, () => {
       // Arrange
       const mockCommandExecution = [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: null, role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z' }]
 
       const state = {
         ...initialStateWithItems,
-        items: [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: ENCRYPTED_DATA, role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z' }]
+        items: [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: EMPTY_COMMAND, role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z', emptyCommand: true }]
       }
 
       // Act

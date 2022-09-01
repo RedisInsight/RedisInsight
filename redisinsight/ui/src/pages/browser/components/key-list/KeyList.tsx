@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
@@ -35,7 +35,7 @@ import {
   setBrowserKeyListScrollPosition
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import ApiEndpoints, { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
@@ -43,7 +43,12 @@ import { OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TableCellTextAlignment } 
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
+import { apiService } from 'uiSrc/services'
 import styles from './styles.module.scss'
+
+// TODO needs delete, only for POC
+const wait = (ms:number) =>
+  new Promise((resolve) => { setTimeout(resolve, ms) })
 
 export interface Props {
   hideHeader?: boolean
@@ -68,6 +73,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const [items, setItems] = useState(keysState.keys)
 
+  const itemsRef = useRef(keysState.keys)
   const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
 
   const dispatch = useDispatch()
@@ -90,13 +96,24 @@ const KeyList = forwardRef((props: Props, ref) => {
     }, [])
 
   useEffect(() => {
-    const newKeys = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+    const tempItems = [...keysState.keys]
+
+    if (items.length === 0 && tempItems.length === 0) {
+      itemsRef.current = tempItems
+      return
+    }
+    const [startIndex, newKeys] = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
+
+    tempItems.splice(itemsRef.current.length, newKeys.length, ...newKeys)
+    itemsRef.current = tempItems
+
+    uploadMetadata(startIndex, OVER_RENDER_BUFFER_COUNT, newKeys)
 
     if (keysState.keys.length < items.length) {
       formattedLastIndexRef.current = 0
     }
 
-    setItems(newKeys)
+    setItems(tempItems)
   }, [keysState.keys])
 
   const getNoItemsMessage = () => {
@@ -110,8 +127,14 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
-    const formattedAllKeys = bufferFormatRangeItems(items, formattedLastIndexRef.current, items.length, formatItem)
-    loadMoreItems?.(formattedAllKeys, props)
+    const itemsTemp = [...itemsRef.current]
+    const [startIndex, formattedAllKeys] = bufferFormatRangeItems(
+      items, formattedLastIndexRef.current, items.length, formatItem
+    )
+
+    itemsTemp.splice(startIndex, formattedAllKeys.length, ...formattedAllKeys)
+    itemsRef.current = itemsTemp
+    loadMoreItems?.(itemsTemp, props)
   }
 
   const onWheelSearched = (event: React.WheelEvent) => {
@@ -139,16 +162,55 @@ const KeyList = forwardRef((props: Props, ref) => {
     nameString: bufferToString(item.name)
   }), [])
 
-  const bufferFormatRows = (lastIndex: number) => {
-    const newItems = bufferFormatRangeItems(items, formattedLastIndexRef.current, lastIndex, formatItem)
+  const onRowsRendered = (lastIndex: number) => {
+    const [startIndex, newItems] = bufferFormatRows(lastIndex)
 
-    setItems(newItems)
+    uploadMetadata(startIndex, lastIndex, newItems)
 
     if (lastIndex > formattedLastIndexRef.current) {
       formattedLastIndexRef.current = lastIndex
     }
+  }
 
-    return newItems
+  const bufferFormatRows = (lastIndex: number): [number, GetKeyInfoResponse[]] => {
+    const tempItems = [...itemsRef.current]
+    const [startIndex, newItems] = bufferFormatRangeItems(
+      itemsRef.current, formattedLastIndexRef.current, lastIndex, formatItem
+    )
+
+    tempItems.splice(startIndex, newItems.length, ...newItems)
+
+    itemsRef.current = tempItems
+    setItems(tempItems)
+
+    return [startIndex, newItems]
+  }
+
+  const uploadMetadata = async (
+    prevIndex: number,
+    lastIndex: number,
+    itemsInit: GetKeyInfoResponse[] = []
+  ): Promise<void> => {
+    if (prevIndex === lastIndex || prevIndex > lastIndex || !itemsInit.length) {
+      return
+    }
+
+    try {
+      const { data, status } = await apiService.get(`${ApiEndpoints.INFO}`)
+
+      // TODO delete, only for POC emulation BE response
+      await wait(500)
+      const loadedItems = itemsInit.map(
+        (item) => ({ ...item, type: 'hash', memory: 123, ttl: 1000, length: 123, size: 123 })
+      )
+      const itemsTemp = [...itemsRef.current]
+      itemsTemp.splice(prevIndex, loadedItems.length, ...loadedItems)
+
+      itemsRef.current = itemsTemp
+      setItems(itemsTemp)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const columns: ITableColumn[] = [
@@ -189,8 +251,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     {
       id: 'ttl',
       label: 'TTL',
-      absoluteWidth: 70,
-      minWidth: 70,
+      absoluteWidth: 76,
+      minWidth: 76,
       truncateText: true,
       alignment: TableCellAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
@@ -277,7 +339,8 @@ const KeyList = forwardRef((props: Props, ref) => {
               loadMoreItems={onLoadMoreItems}
               onWheel={onWheelSearched}
               loading={loading}
-              items={items}
+              // items={items}
+              items={itemsRef.current}
               totalItemsCount={keysState.total ? keysState.total : Infinity}
               scanned={isSearched || isFiltered ? keysState.scanned : 0}
               noItemsMessage={getNoItemsMessage()}
@@ -285,7 +348,7 @@ const KeyList = forwardRef((props: Props, ref) => {
               scrollTopProp={scrollTopPosition}
               setScrollTopPosition={setScrollTopPosition}
               hideFooter={hideFooter}
-              onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
+              onRowsRendered={({ overscanStopIndex }) => onRowsRendered(overscanStopIndex)}
             />
           </div>
         </div>

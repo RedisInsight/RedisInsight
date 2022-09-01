@@ -77,7 +77,7 @@ test
         await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is visible');
     });
 //skipped due the issue RI-2384
-test
+test.skip
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
         //Open Working with Hashes section

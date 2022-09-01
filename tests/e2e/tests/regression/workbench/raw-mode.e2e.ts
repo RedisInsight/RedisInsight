@@ -1,7 +1,7 @@
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
@@ -39,7 +39,6 @@ fixture `Workbench Raw mode`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Use raw mode for Workbech result', async t => {
-    keyName = common.generateWord(10);
     // Send commands
     await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
     // Display result in Ascii when raw mode is off
@@ -69,11 +68,8 @@ test
     })
     .after(async t => {
         // Clear and delete database
-        await t.click(myRedisDatabasePage.browserButton);
-        await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Save Raw mode state', async t => {
-        keyName = common.generateWord(10);
         //Send command in raw mode
         await t.click(workbenchPage.rawModeBtn);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
@@ -94,13 +90,17 @@ test
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
     });
 test
+    .before(async t => {
+    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+    // Go to Workbench page
+    await t.click(myRedisDatabasePage.workbenchButton);
+})
     .after(async t => {
         //Drop index, documents and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Display Raw mode for plugins', async t => {
-        keyName = common.generateWord(5);
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
             `HMSET product:1 name "${unicodeValue}"`,

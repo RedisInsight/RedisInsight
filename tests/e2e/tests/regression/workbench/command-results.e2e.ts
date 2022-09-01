@@ -4,7 +4,7 @@ import { WorkbenchPage } from '../../../pageObjects/workbench-page';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneConfig
+    ossStandaloneRedisearch
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
@@ -24,7 +24,7 @@ fixture `Command results at Workbench`
     .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         //Add index and data
         await t.click(myRedisDatabasePage.workbenchButton);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
@@ -33,7 +33,7 @@ fixture `Command results at Workbench`
         //Drop index and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test
     .meta({ env: env.web })('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {

@@ -30,6 +30,7 @@ export interface Props {
   result: Maybe<CommandExecutionResult[]>
   activeMode: RunQueryMode
   mode: RunQueryMode
+  emptyCommand: boolean
   createdAt?: Date
   loading?: boolean
   onQueryDelete: () => void
@@ -52,7 +53,8 @@ const QueryCard = (props: Props) => {
     onQueryOpen,
     onQueryDelete,
     onQueryReRun,
-    loading
+    loading,
+    emptyCommand,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -146,6 +148,7 @@ const QueryCard = (props: Props) => {
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
+          emptyCommand={emptyCommand}
           toggleOpen={toggleOpen}
           toggleFullScreen={toggleFullScreen}
           setSelectedValue={changeViewTypeSelected}

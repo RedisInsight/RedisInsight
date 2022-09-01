@@ -131,6 +131,12 @@ const keysSlice = createSlice({
       state.error = payload
     },
 
+    setLastBatchKeys: (state, { payload }) => {
+      const newKeys = state.data.keys
+      newKeys.splice(-payload.length, payload.length, ...payload)
+      state.data.keys = newKeys
+    },
+
     loadKeyInfoSuccess: (state, { payload }) => {
       state.selectedKey = {
         ...state.selectedKey,
@@ -348,6 +354,7 @@ export const {
   defaultSelectedKeyAction,
   defaultSelectedKeyActionSuccess,
   defaultSelectedKeyActionFailure,
+  setLastBatchKeys,
   addKey,
   addKeySuccess,
   addKeyFailure,

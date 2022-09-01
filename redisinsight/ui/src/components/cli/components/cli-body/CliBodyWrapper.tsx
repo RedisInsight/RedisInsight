@@ -53,7 +53,7 @@ const CliBodyWrapper = () => {
   const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
-    !cliClientUuid && dispatch(createCliClientAction(handleWorkbenchClick))
+    !cliClientUuid && dispatch(createCliClientAction(instanceId, handleWorkbenchClick))
   }, [])
 
   useEffect(() => {

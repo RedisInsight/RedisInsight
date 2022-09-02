@@ -121,8 +121,8 @@ const NavigationMenu = () => {
       },
     },
     {
-      tooltipText: 'Analysis tools',
-      ariaLabel: 'Analysis tools',
+      tooltipText: 'Analysis Tools',
+      ariaLabel: 'Analysis Tools',
       onClick: () => handleGoPage(connectionType === ConnectionType.Cluster
         ? Pages.clusterDetails(connectedInstanceId)
         : Pages.slowLog(connectedInstanceId)),

@@ -182,6 +182,7 @@ export default cliSettingsSlice.reducer
 
 // Asynchronous thunk action
 export function createCliClientAction(
+  instanceId: string,
   onWorkbenchClick: () => void,
   onSuccessAction?: () => void,
   onFailAction?: (message: string) => void
@@ -195,7 +196,7 @@ export function createCliClientAction(
 
     try {
       const { data, status } = await apiService.post<CreateCliClientResponse>(
-        getUrl(state.connections.instances.connectedInstance?.id ?? '', ApiEndpoints.CLI)
+        getUrl(instanceId ?? '', ApiEndpoints.CLI)
       )
 
       if (isStatusSuccessful(status)) {

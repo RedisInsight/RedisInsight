@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { chunk, reverse, without } from 'lodash'
+import { chunk, without } from 'lodash'
 
 import {
   Nullable,
@@ -159,7 +159,7 @@ const WBViewWrapper = () => {
 
     isNewCommand() && scrollResults('start')
 
-    sendCommand(reverse(commandLine), multiCommands)
+    sendCommand(commandLine, multiCommands)
   }
 
   const sendCommand = (

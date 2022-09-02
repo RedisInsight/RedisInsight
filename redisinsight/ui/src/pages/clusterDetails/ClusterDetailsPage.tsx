@@ -1,18 +1,26 @@
+import { orderBy } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { ClusterNodeDetails } from 'src/modules/cluster-monitor/models'
 
 import InstanceHeader from 'uiSrc/components/instance-header'
+import ClusterNodesTable from 'uiSrc/pages/clusterDetails/components/cluser-nodes-table'
 import { clusterDetailsSelector, fetchClusterDetailsAction } from 'uiSrc/slices/analytics/clusterDetails'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
-import { formatLongName, getDbIndex, setTitle, } from 'uiSrc/utils'
+import { formatLongName, getDbIndex, getLetterByIndex, Nullable, setTitle, } from 'uiSrc/utils'
 
 import ClusterDetailsHeader from './components/cluster-details-header'
 import styles from './styles.module.scss'
+
+export interface ModifiedClusterNodes extends ClusterNodeDetails {
+  letter: string
+  index: number
+}
 
 const POLLING_INTERVAL = 5_000
 
@@ -25,9 +33,10 @@ const ClusterDetailsPage = () => {
   } = useSelector(connectedInstanceSelector)
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
-  const { loading } = useSelector(clusterDetailsSelector)
+  const { loading, data } = useSelector(clusterDetailsSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
+  const [nodes, setNodes] = useState<Nullable<ModifiedClusterNodes[]>>(null)
 
   const dispatch = useDispatch()
 
@@ -62,6 +71,14 @@ const ClusterDetailsPage = () => {
   }, [instanceId, loading])
 
   useEffect(() => {
+    if (data) {
+      const nodes = orderBy(data.nodes, ['asc', 'host'])
+      const modifiedNodes = nodes.map((d, index) => ({ ...d, letter: getLetterByIndex(index), index }))
+      setNodes(modifiedNodes)
+    }
+  }, [data])
+
+  useEffect(() => {
     if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
       sendPageView(instanceId)
     }
@@ -80,6 +97,7 @@ const ClusterDetailsPage = () => {
       <InstanceHeader />
       <div className={styles.main} data-testid="cluster-details-page">
         <ClusterDetailsHeader />
+        <ClusterNodesTable nodes={nodes} loading={loading} />
       </div>
     </>
   )

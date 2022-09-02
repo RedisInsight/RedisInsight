@@ -61,7 +61,7 @@ const mockCommandExecutionEntity = new CommandExecutionEntity({
   mode: mockCreateCommandExecutionDto.mode,
   nodeOptions: JSON.stringify(mockCreateCommandExecutionDto.nodeOptions),
   encryption: 'KEYTAR',
-  createdAt: new Date(),
+  updatedAt: new Date(),
 });
 
 const mockCommandExecutionResult: CommandExecutionResult = {
@@ -111,7 +111,7 @@ describe('CommandExecutionProvider', () => {
       expect(await service.create(mockCommandExecutionPartial)).toEqual(new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
-        createdAt: mockCommandExecutionEntity.createdAt,
+        updatedAt: mockCommandExecutionEntity.updatedAt,
       }));
     });
     it('should return full result even if size limit exceeded', async () => {
@@ -129,7 +129,7 @@ describe('CommandExecutionProvider', () => {
       })).toEqual(new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
-        createdAt: mockCommandExecutionEntity.createdAt,
+        updatedAt: mockCommandExecutionEntity.updatedAt,
         result: executionResult,
       }));
 
@@ -151,7 +151,7 @@ describe('CommandExecutionProvider', () => {
       const commandExecution = new CommandExecution({
         ...omit(mockCommandExecutionPartial, ['result']),
         id: mockCommandExecutionEntity.id,
-        createdAt: mockCommandExecutionEntity.createdAt,
+        updatedAt: mockCommandExecutionEntity.updatedAt,
       });
 
       expect(await service.getList(mockCommandExecutionEntity.databaseId)).toEqual([
@@ -168,7 +168,7 @@ describe('CommandExecutionProvider', () => {
       const commandExecution = new CommandExecution({
         ...omit(mockCommandExecutionPartial, ['result']),
         id: mockCommandExecutionEntity.id,
-        createdAt: mockCommandExecutionEntity.createdAt,
+        updatedAt: mockCommandExecutionEntity.updatedAt,
       });
 
       expect(await service.getList(mockCommandExecutionEntity.databaseId)).toEqual([
@@ -185,7 +185,7 @@ describe('CommandExecutionProvider', () => {
       const commandExecution = new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
-        createdAt: mockCommandExecutionEntity.createdAt,
+        updatedAt: mockCommandExecutionEntity.updatedAt,
       });
 
       expect(await service.getOne(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id)).toEqual(
@@ -200,7 +200,7 @@ describe('CommandExecutionProvider', () => {
       const commandExecution = new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
-        createdAt: mockCommandExecutionEntity.createdAt,
+        updatedAt: mockCommandExecutionEntity.updatedAt,
         result: null,
       });
 

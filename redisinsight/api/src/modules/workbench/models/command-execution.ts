@@ -62,7 +62,7 @@ export class CommandExecution {
     type: Date,
   })
   @Expose()
-  createdAt: Date;
+  updatedAt: Date;
 
   constructor(partial: Partial<CommandExecution> = {}) {
     Object.assign(this, partial);

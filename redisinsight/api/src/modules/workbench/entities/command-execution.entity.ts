@@ -59,7 +59,7 @@ export class CommandExecutionEntity {
 
   @CreateDateColumn()
   @Index()
-  createdAt: Date;
+  updatedAt: Date;
 
   constructor(entity: Partial<CommandExecutionEntity>) {
     Object.assign(this, entity);

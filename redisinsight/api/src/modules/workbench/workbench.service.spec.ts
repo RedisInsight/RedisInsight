@@ -47,7 +47,7 @@ const mockCommandExecution: CommandExecution = new CommandExecution({
   ...mockCreateCommandExecutionDto,
   databaseId: mockStandaloneDatabaseEntity.id,
   id: uuidv4(),
-  createdAt: new Date(),
+  updatedAt: new Date(),
   result: mockCommandExecutionResults,
 });
 

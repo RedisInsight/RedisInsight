@@ -27,7 +27,7 @@ describe('StreamTabs', () => {
     })
 
     expect(pushMock).toHaveBeenCalledTimes(1)
-    expect(pushMock).toHaveBeenCalledWith('/instanceId/cluster-details')
+    expect(pushMock).toHaveBeenCalledWith('/instanceId/analytics/cluster-details')
   })
   it('click on SlowLog tab should call History push with /slowlog path ', async () => {
     const pushMock = jest.fn()
@@ -40,6 +40,6 @@ describe('StreamTabs', () => {
     })
 
     expect(pushMock).toHaveBeenCalledTimes(1)
-    expect(pushMock).toHaveBeenCalledWith('/instanceId/slowlog')
+    expect(pushMock).toHaveBeenCalledWith('/instanceId/analytics/slowlog')
   })
 })

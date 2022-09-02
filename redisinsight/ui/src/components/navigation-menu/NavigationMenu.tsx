@@ -17,6 +17,7 @@ import {
   EuiTitle,
   EuiToolTip
 } from '@elastic/eui'
+import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -46,7 +47,6 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 
 import NotificationMenu from './components/notifications-center'
 
-import { ANALYTICS_ROUTES } from '../main-router/constants/defaultRoutes'
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`

@@ -129,14 +129,12 @@ const ModuleNotLoaded = ({ content = {} }: Props) => {
           <EuiFlexItem>
             <div className={cx(styles.summary)}>
               {(!!summaryImgPath || !!summaryImgDark || !!summaryImgLight) && (
-                <div>
-                  <img
-                    src={theme === Theme.Dark ? summaryImgDark : summaryImgLight}
-                    className={cx(styles.summaryImg)}
-                    data-testid="query-card-no-module-summary-img"
-                    alt="redisearch table"
-                  />
-                </div>
+                <img
+                  src={theme === Theme.Dark ? summaryImgDark : summaryImgLight}
+                  className={cx(styles.summaryImg)}
+                  data-testid="query-card-no-module-summary-img"
+                  alt="redisearch table"
+                />
               )}
               {!!summaryText && <div data-testid="query-card-no-module-summary-text">{parse(summaryText)}</div>}
             </div>

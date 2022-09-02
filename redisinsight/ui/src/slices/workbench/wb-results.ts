@@ -205,7 +205,7 @@ export function sendWBCommandAction({
   commands: string[]
   multiCommands?: string[]
   commandId?: string
-  mode: RunQueryMode
+  mode?: RunQueryMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -256,7 +256,7 @@ export function sendWBCommandClusterAction({
   options: CreateCommandExecutionDto
   commandId?: string
   multiCommands?: string[]
-  mode: RunQueryMode,
+  mode?: RunQueryMode,
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {

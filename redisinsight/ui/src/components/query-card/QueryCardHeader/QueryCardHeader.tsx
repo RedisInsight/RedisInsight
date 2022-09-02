@@ -36,7 +36,7 @@ export interface Props {
   query: string
   isOpen: boolean
   isFullScreen: boolean
-  createdAt?: Date
+  updatedAt?: Date
   summaryText?: string
   activeMode: RunQueryMode
   mode: RunQueryMode
@@ -59,7 +59,7 @@ const QueryCardHeader = (props: Props) => {
     query = '',
     loading,
     summaryText,
-    createdAt,
+    updatedAt,
     mode,
     activeMode,
     selectedValue,
@@ -130,8 +130,8 @@ const QueryCardHeader = (props: Props) => {
     onQueryReRun()
   }
 
-  const getFormatTime = () => (createdAt
-    && format(parseISO(createdAt?.toString()), `${parseISO(createdAt?.toString()).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
+  const getFormatTime = () => (updatedAt
+    && format(parseISO(updatedAt?.toString()), `${parseISO(updatedAt?.toString()).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
   ) || ''
 
   const handleToggleOpen = () => {
@@ -213,8 +213,8 @@ const QueryCardHeader = (props: Props) => {
     >
       <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
         <EuiFlexItem
-          className={cx(styles.titleWrapper, { [styles.titleWrapperShort]: !!createdAt })}
-          grow={!createdAt}
+          className={cx(styles.titleWrapper, { [styles.titleWrapperShort]: !!updatedAt })}
+          grow={!updatedAt}
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
@@ -229,7 +229,7 @@ const QueryCardHeader = (props: Props) => {
           </div>
         </EuiFlexItem>
         <EuiFlexItem className={cx(styles.time)} data-testid="command-execution-date-time">
-          {!!createdAt && (
+          {!!updatedAt && (
             <EuiTextColor className={styles.timeText} component="div">
               {getFormatTime()}
               {mode === RunQueryMode.Raw && (

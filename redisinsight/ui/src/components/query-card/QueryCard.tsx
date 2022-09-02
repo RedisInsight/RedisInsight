@@ -30,7 +30,7 @@ export interface Props {
   result: Maybe<CommandExecutionResult[]>
   activeMode: RunQueryMode
   mode: RunQueryMode
-  createdAt?: Date
+  updatedAt?: Date
   loading?: boolean
   onQueryDelete: () => void
   onQueryReRun: () => void
@@ -48,7 +48,7 @@ const QueryCard = (props: Props) => {
     activeMode,
     mode,
     isOpen,
-    createdAt,
+    updatedAt,
     onQueryOpen,
     onQueryDelete,
     onQueryReRun,
@@ -140,7 +140,7 @@ const QueryCard = (props: Props) => {
           isFullScreen={isFullScreen}
           query={command}
           loading={loading}
-          createdAt={createdAt}
+          updatedAt={updatedAt}
           summaryText={summaryText}
           queryType={queryType}
           selectedValue={selectedViewValue}

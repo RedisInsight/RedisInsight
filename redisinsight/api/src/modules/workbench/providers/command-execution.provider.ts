@@ -139,7 +139,7 @@ export class CommandExecutionProvider {
       .createQueryBuilder()
       .where({ databaseId })
       .select('id')
-      .orderBy('createdAt', 'DESC')
+      .orderBy('updatedAt', 'DESC')
       .offset(WORKBENCH_CONFIG.maxItemsPerDb)
       .getRawMany()).map((item) => item.id);
 

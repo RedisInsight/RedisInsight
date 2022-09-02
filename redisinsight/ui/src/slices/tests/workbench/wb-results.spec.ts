@@ -145,7 +145,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: mockedId + 0,
-          createdAt: new Date(),
+          updatedAt: new Date(),
           isOpen: true,
           error: '',
           loading: false,
@@ -215,7 +215,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: commandId + (commands.length - 1),
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Success
@@ -244,7 +244,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: commandId,
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Fail
@@ -312,7 +312,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: commandId + (commands.length - 1),
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Success
@@ -340,7 +340,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: commandId,
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Fail
@@ -394,7 +394,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: mockItemId,
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Success
@@ -422,7 +422,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: commandId,
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Fail
@@ -478,7 +478,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: mockItemId,
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Success
@@ -506,7 +506,7 @@ describe('workbench results slice', () => {
           command: 'command',
           databaseId: '123',
           id: commandId,
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Fail
@@ -562,13 +562,13 @@ describe('workbench results slice', () => {
           command: 'command1',
           id: '1',
           databaseId: '1',
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [],
         }, {
           id: '2',
           command: 'command2',
           databaseId: '1',
-          createdAt: new Date(),
+          updatedAt: new Date(),
           result: [],
         }]
         const responsePayload = { data, status: 200 }

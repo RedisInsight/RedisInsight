@@ -35,7 +35,7 @@ const responseSchema = Joi.object().keys({
     port: Joi.number().required(),
     enableRedirection: Joi.boolean().required(),
   }).allow(null),
-  createdAt: Joi.date().required(),
+  updatedAt: Joi.date().required(),
 }).required();
 
 const mainCheckFn = async (testCase) => {

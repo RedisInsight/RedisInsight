@@ -66,7 +66,7 @@ test
         await t.click(myRedisDatabasePage.settingsButton);
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Enable Editor Cleanup
-        await settingsPage.changeEditorCleanupSwitcher('true');
+        await settingsPage.changeEditorCleanupSwitcher(true);
         await common.reloadPage();
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Verify that Editor Cleanup setting is saved when refreshing the page

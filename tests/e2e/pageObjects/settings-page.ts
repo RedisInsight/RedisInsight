@@ -79,9 +79,9 @@ export class SettingsPage {
     * Enable Editor Cleanup switcher
     * @param state Enabled(true) or disabled(false)
     */
-    async changeEditorCleanupSwitcher(state: string): Promise<void> {
+    async changeEditorCleanupSwitcher(state: boolean): Promise<void> {
         const currentState = await this.getEditorCleanupSwitcherValue();
-        if (currentState !== state) {
+        if (currentState !== `${state}`) {
             await t.click(this.switchEditorCleanupOption);
         }
     }

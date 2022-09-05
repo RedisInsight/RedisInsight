@@ -13,7 +13,7 @@ import testcafe from 'testcafe';
                 .screenshots({
                     path: 'report/screenshots/',
                     takeOnFails: true,
-                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST_INDEX}.png',
+                    pathPattern: '${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST_INDEX}.png',
                 })
                 .reporter([
                     'spec',
@@ -24,6 +24,10 @@ import testcafe from 'testcafe';
                     {
                         name: 'json',
                         output: './results/e2e.results.json'
+                    },
+                    {
+                        name: 'html',
+                        output: './report/report.html'
                     }
                 ])
                 .run({

@@ -47,7 +47,7 @@ export class CommandExecutionProvider {
       return this.encryptEntity(entity);
     }));
 
-    entities = (await this.commandExecutionRepository.save(entities.reverse())).reverse();
+    entities = await this.commandExecutionRepository.save(entities);
 
     const response = await Promise.all(
       entities.map((entity, idx) => classToClass(

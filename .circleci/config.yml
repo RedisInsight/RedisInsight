@@ -404,7 +404,7 @@ jobs:
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
                   -f tests/e2e/docker.web.docker-compose.yml \
-                  up --abort-on-container-exit --force-recreate
+                  up --abort-on-container-exit --force-recreate --build
                 no_output_timeout: 5m
       - when:
           condition:

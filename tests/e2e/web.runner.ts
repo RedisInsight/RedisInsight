@@ -33,7 +33,7 @@ import testcafe from 'testcafe';
                 .run({
                     skipJsErrors: true,
                     browserInitTimeout: 60000,
-                    selectorTimeout: 5000,
+                    selectorTimeout: 500,
                     speed: 1,
                     quarantineMode: { successThreshold: '1', attemptLimit: '3' }
                 });

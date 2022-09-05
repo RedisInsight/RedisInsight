@@ -219,7 +219,7 @@ export function sendWBCommandAction({
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
+          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
         {
           commands,
@@ -270,7 +270,7 @@ export function sendWBCommandClusterAction({
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
+          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
         {
           ...options,

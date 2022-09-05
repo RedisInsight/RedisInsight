@@ -20,8 +20,8 @@ import { AgreementsEntity, IAgreementsJSON } from 'src/modules/core/models/agree
 import { ISettingsJSON, SettingsEntity } from 'src/modules/core/models/settings.entity';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
-import { AgreementsRepository } from '../../repositories/agreements.repository';
-import { SettingsRepository } from '../../repositories/settings.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { SettingsAnalyticsService } from '../../services/settings-analytics/settings-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -33,20 +33,14 @@ export class SettingsOnPremiseService
 implements OnModuleInit, ISettingsProvider {
   private logger = new Logger('SettingsOnPremiseService');
 
-  private agreementRepository: AgreementsRepository;
-
-  private settingsRepository: SettingsRepository;
-
-  private analyticsService: SettingsAnalyticsService;
-
-  private keytarEncryptionStrategy: KeytarEncryptionStrategy;
-
-  constructor(agreementRepository, settingsRepository, analyticsService, keytarEncryptionStrategy) {
-    this.agreementRepository = agreementRepository;
-    this.settingsRepository = settingsRepository;
-    this.analyticsService = analyticsService;
-    this.keytarEncryptionStrategy = keytarEncryptionStrategy;
-  }
+  constructor(
+    @InjectRepository(AgreementsEntity)
+    private readonly agreementRepository: Repository<AgreementsEntity>,
+    @InjectRepository(SettingsEntity)
+    private readonly settingsRepository: Repository<SettingsEntity>,
+    private readonly analyticsService: SettingsAnalyticsService,
+    private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
+  ) {}
 
   async onModuleInit() {
     await this.upsertSettings();

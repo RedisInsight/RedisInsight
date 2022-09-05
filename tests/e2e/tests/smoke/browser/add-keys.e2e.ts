@@ -31,7 +31,7 @@ test
         await t.expect(notofication).contains('Key has been added', 'The notification');
         //check that new key is displayed in the list
         await browserPage.searchByKeyName(keyName);
-        const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
+        const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList('Key has been added');
         await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
     });
 test

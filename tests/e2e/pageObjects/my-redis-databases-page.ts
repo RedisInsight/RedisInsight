@@ -10,6 +10,7 @@ export class MyRedisDatabasePage {
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
+    workbenchButtonWithTimeout = Selector('[data-testid=workbench-page-btn]', { timeout: 5000 });
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');
@@ -143,7 +144,7 @@ export class MyRedisDatabasePage {
      * Get all databases from List of DBs page
      */
     async getAllDatabases(): Promise<string[]> {
-        const databases = [];
+        const databases: string[] = [];
         const n = await this.dbNameList.count;
         for(let k = 0; k < n; k++) {
             const name = await this.dbNameList.nth(k).textContent;

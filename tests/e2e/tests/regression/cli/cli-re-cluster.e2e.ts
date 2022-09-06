@@ -25,7 +25,7 @@ let keyName = common.generateWord(10);
 const verifyCommandsInCli = async() => {
     keyName = common.generateWord(10);
     //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    await t.click(cliPage.cliExpandButtonWithTimeout);
     //Add key from CLI
     await t.typeText(cliPage.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`);
     await t.pressKey('enter');

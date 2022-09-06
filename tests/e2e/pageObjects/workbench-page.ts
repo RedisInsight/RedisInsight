@@ -77,7 +77,7 @@ export class WorkbenchPage {
     queryTextResult = Selector(this.cssQueryTextResult);
     queryColumns = Selector('[data-testid*=query-column-]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
-    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
+    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]', { timeout: 5000 });
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     queryCardNoModuleOutput = Selector('[data-testid=query-card-no-module-output]');
     noCommandHistorySection = Selector('[data-testid=wb_no-results]');

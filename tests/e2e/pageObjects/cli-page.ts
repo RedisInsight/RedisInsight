@@ -15,6 +15,7 @@ export class CliPage {
     //-------------------------------------------------------------------------------------------
     //BUTTONS
     cliExpandButton = Selector('[data-testid=expand-cli]');
+    cliExpandButtonWithTimeout = Selector('[data-testid=expand-cli]', { timeout: 5000 });
     cliCollapseButton = Selector('[data-testid=close-cli]');
     expandCommandHelperButton = Selector('[data-testid=expand-command-helper]');
     closeCommandHelperButton = Selector('[data-testid=close-command-helper]');

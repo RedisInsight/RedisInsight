@@ -22,7 +22,7 @@ const verifyCommandsInWorkbench = async() => {
         'command',
         'FT.SEARCH idx *'
     ];
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.workbenchButtonWithTimeout);
     //Send commands
     await workbenchPage.sendCommandInWorkbench(commandForSend1);
     await workbenchPage.sendCommandInWorkbench(commandForSend2);

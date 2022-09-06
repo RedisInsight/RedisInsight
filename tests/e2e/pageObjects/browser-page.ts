@@ -28,7 +28,7 @@ export class BrowserPage {
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     editKeyValueButton = Selector('[data-testid=edit-key-value-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
-    plusAddKeyButton = Selector('[data-testid=btn-add-key]');
+    plusAddKeyButton = Selector('[data-testid=btn-add-key]', { timeout: 5000 });
     addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');
     saveHashFieldButton = Selector('[data-testid=save-fields-btn]');
     saveMemberButton = Selector('[data-testid=save-members-btn]');

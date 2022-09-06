@@ -193,7 +193,7 @@ describe('CommandExecutionProvider', () => {
       );
     });
     it('should return null fields in case of decryption errors', async () => {
-      repository.findOne.mockResolvedValueOnce(mockCommandExecutionEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockCommandExecutionEntity);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
 

@@ -127,7 +127,6 @@ $breakpoint-table: 1232px;
       }
     }
 
-    .euiTableHeaderButton:hover .euiTableCellContent__text,
     .euiTableHeaderButton:focus .euiTableCellContent__text {
       text-decoration: none;
     }
@@ -167,5 +166,10 @@ $breakpoint-table: 1232px;
       height: 20px;
       margin-bottom: 4px;
     }
+  }
+
+  .hostPort {
+    display: inline-flex;
+    font: normal normal normal 13px/18px Graphik, sans-serif !important;
   }
 }

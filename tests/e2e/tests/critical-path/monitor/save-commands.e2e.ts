@@ -20,19 +20,17 @@ async function getFileDownloadPath(): Promise<string> {
 }
 
 async function findByFileStarts(dir: string): Promise<number> {
-    if (dir == undefined) {
-        return 0;
-    } else {
+    if (fs.existsSync(dir)) {
         const matchedFiles: string[] = [];
         const files = fs.readdirSync(dir);
-
         for (const file of files) {
             if (file.startsWith('test_standalone')) {
                 matchedFiles.push(file);
             }
         }
-
         return matchedFiles.length;
+    } else {
+        return 0;
     }
 }
 
@@ -111,7 +109,7 @@ test
         await t.expect(monitorPage.resetProfilerButton.visible).ok('The Reset Profiler button visibility');
         await t.expect(monitorPage.downloadLogButton.visible).ok('The Download button visibility');
     });
-test
+test.only
     .meta({ rte: rte.standalone })('Verify that when user see the toggle is OFF - Profiler logs are not being saved', async t => {
         //Remember the number of files in Temp
         const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);

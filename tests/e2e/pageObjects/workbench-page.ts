@@ -71,7 +71,7 @@ export class WorkbenchPage {
     responseInfo = Selector('[class="responseInfo"]');
     scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
     queryCardContainer = Selector('[data-testid^=query-card-container]');
-    queryCardCommand = Selector('[data-testid=query-card-command]');
+    queryCardCommand = Selector('[data-testid=query-card-command]', { timeout: 5000 });
     queryTableResult = Selector('[data-testid^=query-table-result-]');
     mainEditorArea = Selector('[data-testid=main-input-container-area]');
     queryTextResult = Selector(this.cssQueryTextResult);

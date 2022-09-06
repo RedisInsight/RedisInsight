@@ -31,6 +31,12 @@ describe('WorkbenchSettings', () => {
     fireEvent.click(screen.getByTestId('switch-workbench-cleanup'))
 
     expect(store.getActions())
-      .toEqual([...afterRenderActions, setWorkbenchCleanUp(true)])
+      .toEqual([...afterRenderActions, setWorkbenchCleanUp(false)])
+  })
+
+  it('should pipeline-bunch render ', () => {
+    render(<WorkbenchSettings />)
+
+    expect(screen.getByTestId(/pipeline-bunch/)).toBeInTheDocument()
   })
 })

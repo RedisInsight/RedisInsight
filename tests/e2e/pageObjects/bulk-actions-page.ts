@@ -26,7 +26,7 @@ export class BulkActionsPage {
     bulkActionWarningTooltip = Selector('[data-testid=bulk-action-tooltip]');
     bulkStatusInProgress = Selector('[data-testid=bulk-status-progress]');
     bulkStatusStopped = Selector('[data-testid=bulk-status-stopped]');
-    bulkStatusCompleted = Selector('[data-testid=bulk-status-completed]');
+    bulkStatusCompleted = Selector('[data-testid=bulk-status-completed]', { timeout: 5000 });
     bulkDeleteCompletedSummary = Selector('[data-testid=bulk-delete-completed-summary]', { timeout: 5000 });
     //CONTAINERS
     bulkActionsContainer = Selector('[data-testid=bulk-actions-content]');

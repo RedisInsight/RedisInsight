@@ -207,7 +207,7 @@ export class BrowserPage {
     keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
-    progressLine = Selector('div.euiProgress');
+    progressLine = Selector('div.euiProgress', { timeout: 5000 });
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');

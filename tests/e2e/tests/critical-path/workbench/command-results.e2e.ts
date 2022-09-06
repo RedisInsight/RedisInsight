@@ -2,7 +2,7 @@ import { Chance } from 'chance';
 import { env, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -14,10 +14,10 @@ const commandForSend2 = 'FT._LIST';
 let indexName = chance.word({ length: 5 });
 
 fixture `Command results at Workbench`
-    .meta({type: 'critical_path'})
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
@@ -25,10 +25,9 @@ fixture `Command results at Workbench`
         //Drop index, documents and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
-    .meta({ rte: rte.standalone })('Verify that user can see re-run icon near the already executed command and re-execute the command by clicking on the icon in Workbench page', async t => {
+test('Verify that user can see re-run icon near the already executed command and re-execute the command by clicking on the icon in Workbench page', async t => {
         //Send commands
         await workbenchPage.sendCommandInWorkbench(commandForSend1);
         await workbenchPage.sendCommandInWorkbench(commandForSend2);
@@ -40,8 +39,7 @@ test
         //Verify that command is re-executed
         await t.expect(workbenchPage.queryCardCommand.textContent).eql(commandForSend1, 'The command is re-executed');
     });
-test
-    .meta({ rte: rte.standalone })('Verify that user can see expanded result after command re-run at the top of results table in Workbench', async t => {
+test('Verify that user can see expanded result after command re-run at the top of results table in Workbench', async t => {
         //Send commands
         await workbenchPage.sendCommandInWorkbench(commandForSend1);
         await workbenchPage.sendCommandInWorkbench(commandForSend2);
@@ -53,8 +51,7 @@ test
         //Verify that re-executed command is at the top of results
         await t.expect(workbenchPage.queryCardCommand.nth(0).textContent).eql(commandForSend1, 'The re-executed command is at the top of results table');
     });
-test
-    .meta({ rte: rte.standalone })('Verify that user can delete command with result from table with results in Workbench', async t => {
+test('Verify that user can delete command with result from table with results in Workbench', async t => {
         //Send command
         await workbenchPage.sendCommandInWorkbench(commandForSend1);
         //Delete the command from results
@@ -63,8 +60,7 @@ test
         //Verify that deleted command is not in results
         await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend1).exists).notOk(`Command ${commandForSend1} is deleted from table with results`);
     });
-test
-    .meta({ rte: rte.standalone })('Verify that user can see the results found in the table view by default for FT.INFO, FT.SEARCH and FT.AGGREGATE', async t => {
+test('Verify that user can see the results found in the table view by default for FT.INFO, FT.SEARCH and FT.AGGREGATE', async t => {
         const commands = [
             'FT.INFO',
             'FT.SEARCH',
@@ -76,8 +72,7 @@ test
             await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command ${command}`);
         }
     });
-test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
+test('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
         indexName = chance.word({ length: 5 });
         const commands = [
             'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
@@ -98,7 +93,7 @@ test
     });
 //skipped due the inaccessibility of the iframe
 test.skip
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
+    .meta({ env: env.desktop })('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default
         await workbenchPage.sendCommandInWorkbench(command);
@@ -112,9 +107,8 @@ test.skip
 test
     .after(async() => {
         //Drop database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    .meta({ rte: rte.standalone })('Verify that user can populate commands in Editor from history by clicking keyboard “up” button', async t => {
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+    })('Verify that user can populate commands in Editor from history by clicking keyboard “up” button', async t => {
         const commands = [
             'FT.INFO',
             'RANDOMKEY',

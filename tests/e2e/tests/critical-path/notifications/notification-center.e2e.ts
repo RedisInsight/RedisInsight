@@ -4,22 +4,25 @@ import { commonUrl } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { NotificationPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { NotificationParameters } from '../../../pageObjects/notification-page';
+import { Common } from '../../../helpers/common';
 const description = require('./notifications.json');
 const jsonNotifications: NotificationParameters[] = description.notifications;
 
 const notificationPage = new NotificationPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const common = new Common();
+
 // Sort all notifications in json file
 const sortedNotifications = jsonNotifications.sort((a, b) => a.timestamp < b.timestamp ? 1 : -1);
 
 fixture `Notifications`
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async () => {
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(true);
         await deleteAllNotificationsFromDB();
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     });
 test('Verify that when manager publishes new notification, it appears in the app', async t => {
     // Get number of notifications in the badge
@@ -108,7 +111,7 @@ test
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(false);
         await deleteAllNotificationsFromDB();
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.expect(notificationPage.notificationBadge.exists).notOk('No badge');
     })('Verify that new popup message is not displayed when notifications are turned off', async t => {
         // Verify that user can see notification badge increased when new messages is sent and notifications are turned off

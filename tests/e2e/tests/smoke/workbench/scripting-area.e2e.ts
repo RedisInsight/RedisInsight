@@ -8,9 +8,11 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const common = new Common();
 
 fixture `Scripting area at Workbench`
     .meta({type: 'smoke'})
@@ -64,7 +66,7 @@ test
         await workbenchPage.sendCommandInWorkbench(commandForSend1);
         await workbenchPage.sendCommandInWorkbench(commandForSend2);
         //Check that all the previous run commands are saved and displayed
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend1).exists).ok('The previous run commands are saved');
         await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend2).exists).ok('The previous run commands are saved');
         //Send multiple commands in one query

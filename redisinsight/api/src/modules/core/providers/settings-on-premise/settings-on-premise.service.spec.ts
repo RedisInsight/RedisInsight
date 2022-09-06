@@ -81,30 +81,30 @@ describe('SettingsOnPremiseService', () => {
 
   describe('onModuleInit', () => {
     it('should create settings and agreements instance on first application launch', async () => {
-      agreementsRepository.findOne.mockResolvedValue(null);
+      agreementsRepository.findOneBy.mockResolvedValue(null);
       agreementsRepository.create.mockReturnValue(agreementsEntity);
-      settingsRepository.findOne.mockResolvedValue(null);
+      settingsRepository.findOneBy.mockResolvedValue(null);
       settingsRepository.create.mockReturnValue(settingsEntity);
 
       await service.onModuleInit();
 
-      expect(agreementsRepository.findOne).toHaveBeenCalled();
-      expect(settingsRepository.findOne).toHaveBeenCalled();
+      expect(agreementsRepository.findOneBy).toHaveBeenCalled();
+      expect(settingsRepository.findOneBy).toHaveBeenCalled();
       expect(agreementsRepository.create).toHaveBeenCalled();
       expect(settingsRepository.create).toHaveBeenCalled();
       expect(agreementsRepository.save).toHaveBeenCalledWith(agreementsEntity);
       expect(settingsRepository.save).toHaveBeenCalledWith(settingsEntity);
     });
     it('should not create settings and agreements  on the second application launch', async () => {
-      agreementsRepository.findOne.mockResolvedValue(agreementsEntity);
-      settingsRepository.findOne.mockResolvedValue(settingsEntity);
+      agreementsRepository.findOneBy.mockResolvedValue(agreementsEntity);
+      settingsRepository.findOneBy.mockResolvedValue(settingsEntity);
 
       await service.onModuleInit();
 
-      expect(agreementsRepository.findOne).toHaveBeenCalled();
+      expect(agreementsRepository.findOneBy).toHaveBeenCalled();
       expect(agreementsRepository.create).not.toHaveBeenCalled();
       expect(agreementsRepository.save).not.toHaveBeenCalled();
-      expect(settingsRepository.findOne).toHaveBeenCalled();
+      expect(settingsRepository.findOneBy).toHaveBeenCalled();
       expect(settingsRepository.create).not.toHaveBeenCalled();
       expect(settingsRepository.save).not.toHaveBeenCalled();
     });
@@ -112,8 +112,8 @@ describe('SettingsOnPremiseService', () => {
 
   describe('getSettings', () => {
     it('should return default application settings', async () => {
-      agreementsRepository.findOne.mockResolvedValue(agreementsEntity);
-      settingsRepository.findOne.mockResolvedValue(settingsEntity);
+      agreementsRepository.findOneBy.mockResolvedValue(agreementsEntity);
+      settingsRepository.findOneBy.mockResolvedValue(settingsEntity);
 
       const result = await service.getSettings();
 
@@ -137,8 +137,8 @@ describe('SettingsOnPremiseService', () => {
         version: '1.0.0',
         eula: true,
       });
-      agreementsRepository.findOne.mockResolvedValue(agreementsEntity);
-      settingsRepository.findOne.mockResolvedValue(settingsEntity);
+      agreementsRepository.findOneBy.mockResolvedValue(agreementsEntity);
+      settingsRepository.findOneBy.mockResolvedValue(settingsEntity);
 
       const result = await service.getSettings();
 
@@ -155,7 +155,7 @@ describe('SettingsOnPremiseService', () => {
       });
     });
     it('should throw InternalServerError', async () => {
-      agreementsRepository.findOne.mockRejectedValue(new Error('some error'));
+      agreementsRepository.findOneBy.mockRejectedValue(new Error('some error'));
 
       try {
         await service.getSettings();
@@ -174,8 +174,8 @@ describe('SettingsOnPremiseService', () => {
       agreementsEntity.toJSON = jest.fn().mockReturnValue({
         ...mockAgreementsJSON,
       });
-      settingsRepository.findOne.mockResolvedValue(settingsEntity);
-      agreementsRepository.findOne.mockResolvedValue(agreementsEntity);
+      settingsRepository.findOneBy.mockResolvedValue(settingsEntity);
+      agreementsRepository.findOneBy.mockResolvedValue(agreementsEntity);
       service.getSettings = jest.fn();
     });
     it('should update agreements and settings', async () => {
@@ -242,7 +242,7 @@ describe('SettingsOnPremiseService', () => {
       expect(analyticsService.sendAnalyticsAgreementChange).toHaveBeenCalled();
     });
     it('should throw AgreementIsNotDefinedException', async () => {
-      agreementsRepository.findOne.mockResolvedValueOnce({
+      agreementsRepository.findOneBy.mockResolvedValueOnce({
         id: 1,
         version: null,
         data: null,
@@ -258,7 +258,7 @@ describe('SettingsOnPremiseService', () => {
       const dto: UpdateSettingsDto = {
         agreements: mockAgreementsMap,
       };
-      agreementsRepository.findOne.mockRejectedValue(new Error('some error'));
+      agreementsRepository.findOneBy.mockRejectedValue(new Error('some error'));
 
       try {
         await service.updateSettings(dto);

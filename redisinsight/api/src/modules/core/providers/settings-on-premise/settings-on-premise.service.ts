@@ -47,8 +47,8 @@ implements OnModuleInit, ISettingsProvider {
   }
 
   private async upsertSettings() {
-    const agreementsEntity = await this.agreementRepository.findOne({});
-    const settingsEntity = await this.settingsRepository.findOne({});
+    const agreementsEntity = await this.agreementRepository.findOneBy({});
+    const settingsEntity = await this.settingsRepository.findOneBy({});
     if (!agreementsEntity) {
       const agreements: AgreementsEntity = this.agreementRepository.create({});
       await this.agreementRepository.save(agreements);
@@ -66,10 +66,10 @@ implements OnModuleInit, ISettingsProvider {
     this.logger.log('Getting application settings.');
     try {
       const agreements: IAgreementsJSON = (
-        await this.agreementRepository.findOne({})
+        await this.agreementRepository.findOneBy({})
       ).toJSON();
       const settings: ISettingsJSON = (
-        await this.settingsRepository.findOne({})
+        await this.settingsRepository.findOneBy({})
       ).toJSON();
       this.logger.log('Succeed to get application settings.');
       return {
@@ -96,7 +96,7 @@ implements OnModuleInit, ISettingsProvider {
     try {
       const oldSettings = await this.getSettings();
       if (!isEmpty(settings)) {
-        const entity: SettingsEntity = await this.settingsRepository.findOne({});
+        const entity: SettingsEntity = await this.settingsRepository.findOneBy({});
 
         entity.data = JSON.stringify({
           ...entity.toJSON(),
@@ -167,7 +167,7 @@ implements OnModuleInit, ISettingsProvider {
     dtoAgreements: Map<string, boolean> = new Map(),
   ): Promise<void> {
     this.logger.log('Updating application agreements.');
-    const entity: AgreementsEntity = await this.agreementRepository.findOne({});
+    const entity: AgreementsEntity = await this.agreementRepository.findOneBy({});
     const oldAgreements = JSON.parse(entity.data);
     const newValue = {
       ...oldAgreements,

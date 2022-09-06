@@ -178,7 +178,7 @@ describe('CommandExecutionProvider', () => {
   });
   describe('getOne', () => {
     it('should return decrypted and transformed command execution', async () => {
-      repository.findOne.mockResolvedValueOnce(mockCommandExecutionEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockCommandExecutionEntity);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockReturnValueOnce(JSON.stringify([mockCommandExecutionResult]));
 

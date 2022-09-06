@@ -27,7 +27,7 @@ const verifyCommandsInCli = async() => {
     //Open CLI
     await t.click(cliPage.cliExpandButtonWithTimeout);
     //Add key from CLI
-    await t.typeText(cliPage.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`);
+    await t.typeText(cliPage.cliCommandInputWithTimeout, `SADD ${keyName} "chinese" "japanese" "german"`);
     await t.pressKey('enter');
     //Check that the key is added
     await browserPage.searchByKeyName(keyName);

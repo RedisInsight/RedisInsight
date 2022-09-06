@@ -10,7 +10,7 @@ export class MyRedisDatabasePage {
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
-    workbenchButtonWithTimeout = Selector('[data-testid=workbench-page-btn]', { timeout: 5000 });
+    workbenchButtonWithTimeout = Selector('[data-testid=workbench-page-btn]', { timeout: 8000 });
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');

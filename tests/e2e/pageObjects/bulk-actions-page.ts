@@ -22,7 +22,7 @@ export class BulkActionsPage {
     infoFilter = Selector('[data-testid=bulk-actions-info-filter]');
     infoSearch = Selector('[data-testid=bulk-actions-info-search]');
     bulkActionsPlaceholder = Selector('[data-testid=bulk-actions-placeholder]');
-    bulkDeleteSummary = Selector('[data-testid=bulk-delete-summary]');
+    bulkDeleteSummary = Selector('[data-testid=bulk-delete-summary]', { timeout: 5000 });
     bulkActionWarningTooltip = Selector('[data-testid=bulk-action-tooltip]');
     bulkStatusInProgress = Selector('[data-testid=bulk-status-progress]');
     bulkStatusStopped = Selector('[data-testid=bulk-status-stopped]');
@@ -30,7 +30,7 @@ export class BulkActionsPage {
     bulkDeleteCompletedSummary = Selector('[data-testid=bulk-delete-completed-summary]', { timeout: 5000 });
     //CONTAINERS
     bulkActionsContainer = Selector('[data-testid=bulk-actions-content]');
-    bulkActionsSummary = Selector('[data-testid=bulk-actions-info]');
+    bulkActionsSummary = Selector('[data-testid=bulk-actions-info]', { timeout: 5000 });
     progressLine = Selector('[data-testid=progress-line]');
 
     /**

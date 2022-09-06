@@ -35,7 +35,7 @@ implements OnApplicationBootstrap, IServerProvider {
 
   private async upsertServerInfo() {
     this.logger.log('Checking server info.');
-    let serverInfo = await this.repository.findOne();
+    let serverInfo = await this.repository.findOne({});
     if (!serverInfo) {
       this.logger.log('First application launch.');
       // Create default server info on first application launch
@@ -80,7 +80,7 @@ implements OnApplicationBootstrap, IServerProvider {
   public async getInfo(): Promise<GetServerInfoResponse> {
     this.logger.log('Getting server info.');
     try {
-      const info = await this.repository.findOne();
+      const info = await this.repository.findOne({});
       if (!info) {
         return Promise.reject(new ServerInfoNotFoundException());
       }

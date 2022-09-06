@@ -39,11 +39,11 @@ describe('SettingsOnPremiseService', () => {
   let agreementsEntity: AgreementsEntity;
   let settingsEntity: SettingsEntity;
   let analyticsService: SettingsAnalyticsService;
-  let keytarEncryptionStrategy: KeytarEncryptionStrategy;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        SettingsOnPremiseService,
         {
           provide: SettingsAnalyticsService,
           useFactory: mockSettingsAnalyticsService,
@@ -76,13 +76,7 @@ describe('SettingsOnPremiseService', () => {
     );
     settingsRepository = await module.get(getRepositoryToken(SettingsEntity));
     analyticsService = await module.get<SettingsAnalyticsService>(SettingsAnalyticsService);
-    keytarEncryptionStrategy = await module.get(KeytarEncryptionStrategy);
-    service = new SettingsOnPremiseService(
-      agreementsRepository,
-      settingsRepository,
-      analyticsService,
-      keytarEncryptionStrategy,
-    );
+    service = await module.get(SettingsOnPremiseService);
   });
 
   describe('onModuleInit', () => {

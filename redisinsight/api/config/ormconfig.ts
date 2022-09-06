@@ -29,9 +29,6 @@ const ormConfig: TypeOrmModuleOptions = {
     NotificationEntity,
   ],
   migrations,
-  cli: {
-    migrationsDir: 'migration',
-  },
 };
 
 export default ormConfig;

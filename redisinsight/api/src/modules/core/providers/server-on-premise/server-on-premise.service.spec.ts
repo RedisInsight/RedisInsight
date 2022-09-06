@@ -45,6 +45,7 @@ describe('ServerOnPremiseService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventEmitter2,
+        ServerOnPremiseService,
         {
           provide: getRepositoryToken(ServerEntity),
           useFactory: mockRepository,
@@ -59,7 +60,7 @@ describe('ServerOnPremiseService', () => {
     serverRepository = await module.get(getRepositoryToken(ServerEntity));
     eventEmitter = await module.get<EventEmitter2>(EventEmitter2);
     encryptionService = module.get(EncryptionService);
-    service = new ServerOnPremiseService(serverRepository, eventEmitter, encryptionService);
+    service = module.get(ServerOnPremiseService);
   });
 
   describe('onApplicationBootstrap', () => {

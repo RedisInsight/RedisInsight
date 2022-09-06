@@ -20,14 +20,10 @@ describe('AdvancedSettings', () => {
   it('should render', () => {
     expect(render(<AdvancedSettings />)).toBeTruthy()
   })
+
   it('should Keys-to-scan-value render ', () => {
     render(<AdvancedSettings />)
 
     expect(screen.getByTestId(/keys-to-scan-value/)).toBeInTheDocument()
-  })
-  it('should pipeline-bunch render ', () => {
-    render(<AdvancedSettings />)
-
-    expect(screen.getByTestId(/pipeline-bunch/)).toBeInTheDocument()
   })
 })

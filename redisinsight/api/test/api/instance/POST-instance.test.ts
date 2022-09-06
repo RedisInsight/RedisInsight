@@ -354,12 +354,12 @@ describe('POST /instance', () => {
           },
           checkFn: async ({ body }) => {
             const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOne(body.tls.caCertId);
+              .findOneBy({ id: body.tls.caCertId });
 
             expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
 
             const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOne(body.tls.clientCertPairId);
+              .findOneBy({ id: body.tls.clientCertPairId });
 
             expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
             expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
@@ -487,12 +487,12 @@ describe('POST /instance', () => {
           },
           checkFn: async ({ body }) => {
             const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOne(body.tls.caCertId);
+              .findOneBy({ id: body.tls.caCertId });
 
             expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
 
             const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOne(body.tls.clientCertPairId);
+              .findOneBy({ id: body.tls.clientCertPairId });
 
             expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
             expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);

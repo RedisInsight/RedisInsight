@@ -336,7 +336,7 @@ const resetAgreements = async () => {
 
 export const initAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
-  const agreements: any = await rep.findOne({ where: {} });
+  const agreements: any = await rep.findOneBy({});
   agreements.version = constants.TEST_AGREEMENTS_VERSION;
   agreements.data = JSON.stringify({
     eula: true,

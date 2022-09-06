@@ -209,7 +209,7 @@ describe('CommandExecutionProvider', () => {
       );
     });
     it('should return not found exception', async () => {
-      repository.findOne.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce(null);
 
       try {
         await service.getOne(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id);

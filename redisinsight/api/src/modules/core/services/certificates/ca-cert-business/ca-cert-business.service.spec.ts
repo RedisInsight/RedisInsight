@@ -54,18 +54,18 @@ describe('CaCertBusinessService', () => {
 
   describe('getOneById', () => {
     it('should successfully find entity and decrypt field', async () => {
-      repository.findOne.mockResolvedValue(mockCaCertEntity);
+      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
       encryptionService.decrypt.mockResolvedValueOnce(mockCaCertEntity.certificate);
 
       const result = await service.getOneById(mockCaCertEntity.id);
 
-      expect(repository.findOne).toHaveBeenCalledWith({
-        where: { id: mockCaCertEntity.id },
+      expect(repository.findOneBy).toHaveBeenCalledWith({
+        id: mockCaCertEntity.id,
       });
       expect(result).toEqual(mockCaCertEntity);
     });
     it('should throw an error when certificate not found', async () => {
-      repository.findOne.mockResolvedValue(null);
+      repository.findOneBy.mockResolvedValue(null);
 
       // todo: refactor. why BadRequest?
       await expect(service.getOneById(mockCaCertEntity.id)).rejects.toThrow(
@@ -73,13 +73,13 @@ describe('CaCertBusinessService', () => {
       );
     });
     it('should find entity and return encrypted fields to equal empty string on decrypted error', async () => {
-      repository.findOne.mockResolvedValue(mockCaCertEntity);
+      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
       encryptionService.decrypt.mockRejectedValueOnce(new Error('Decryption error'));
 
       const result = await service.getOneById(mockCaCertEntity.id);
 
-      expect(repository.findOne).toHaveBeenCalledWith({
-        where: { id: mockCaCertEntity.id },
+      expect(repository.findOneBy).toHaveBeenCalledWith({
+        id: mockCaCertEntity.id,
       });
       expect(result).toEqual({
         ...mockCaCertEntity,
@@ -90,21 +90,21 @@ describe('CaCertBusinessService', () => {
 
   describe('create', () => {
     it('successfully create the certificate', async () => {
-      repository.findOne.mockResolvedValue(null);
+      repository.findOneBy.mockResolvedValue(null);
       repository.create.mockResolvedValueOnce(mockCaCertEntity);
       encryptionService.encrypt.mockResolvedValueOnce(mockEncryptResult);
       repository.save.mockResolvedValue(mockCaCertEntity);
 
       const result = await service.create(mockCaCertDto);
 
-      expect(repository.findOne).toHaveBeenCalledWith({
-        where: { name: mockCaCertEntity.name },
+      expect(repository.findOneBy).toHaveBeenCalledWith({
+        name: mockCaCertEntity.name,
       });
       expect(repository.save).toHaveBeenCalled();
       expect(result).toEqual(mockCaCertEntity);
     });
     it('certificate with this name exist', async () => {
-      repository.findOne.mockResolvedValue(mockCaCertEntity);
+      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
 
       await expect(service.create(mockCaCertDto)).rejects.toThrow(
         BadRequestException,
@@ -113,7 +113,7 @@ describe('CaCertBusinessService', () => {
       expect(repository.save).not.toHaveBeenCalled();
     });
     it('should throw and error when unable to encrypt the data', async () => {
-      repository.findOne.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce(null);
       repository.create.mockResolvedValueOnce(mockCaCertEntity);
       encryptionService.encrypt.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 
@@ -127,17 +127,17 @@ describe('CaCertBusinessService', () => {
 
   describe('delete', () => {
     it('successfully delete the certificate', async () => {
-      repository.findOne.mockResolvedValue(mockCaCertEntity);
+      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
 
       await service.delete(mockCaCertEntity.id);
 
-      expect(repository.findOne).toHaveBeenCalledWith({
-        where: { id: mockCaCertEntity.id },
+      expect(repository.findOneBy).toHaveBeenCalledWith({
+        id: mockCaCertEntity.id,
       });
       expect(repository.delete).toHaveBeenCalledWith(mockCaCertEntity.id);
     });
     it('certificate not found', async () => {
-      repository.findOne.mockResolvedValue(null);
+      repository.findOneBy.mockResolvedValue(null);
 
       await expect(service.delete(mockCaCertEntity.id)).rejects.toThrow(
         NotFoundException,

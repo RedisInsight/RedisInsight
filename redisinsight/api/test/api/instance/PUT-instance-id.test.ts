@@ -66,7 +66,7 @@ describe('PUT /instance/:id', () => {
           port: constants.TEST_REDIS_PORT,
         },
         before: async () => {
-          expect(await localDb.getInstanceByName('new name')).to.eql(undefined)
+          expect(await localDb.getInstanceByName('new name')).to.eql(null)
         },
         after: async () => {
           const newDb = await localDb.getInstanceByName('new name');

@@ -3,13 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaCertificateEntity } from 'src/modules/core/models/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/core/models/client-certificate.entity';
 import { PlainEncryptionStrategy } from 'src/modules/core/encryption/strategies/plain-encryption.strategy';
-import { AgreementsRepository } from './repositories/agreements.repository';
-import { ServerRepository } from './repositories/server.repository';
-import { SettingsRepository } from './repositories/settings.repository';
-import settingsOnPremiseFactory from './providers/settings-on-premise';
-import serverOnPremiseFactory from './providers/server-on-premise';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
+import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
+import { ServerEntity } from 'src/modules/core/models/server.entity';
+import { SettingsEntity } from 'src/modules/core/models/settings.entity';
+import settingsOnPremiseFactory from './providers/settings-on-premise';
+import serverOnPremiseFactory from './providers/server-on-premise';
 import { CaCertBusinessService } from './services/certificates/ca-cert-business/ca-cert-business.service';
 import { ClientCertBusinessService } from './services/certificates/client-cert-business/client-cert-business.service';
 import { RedisService } from './services/redis/redis.service';
@@ -32,11 +32,11 @@ export class CoreModule {
       module: CoreModule,
       imports: [
         TypeOrmModule.forFeature([
+          ServerEntity,
+          SettingsEntity,
+          AgreementsEntity,
           CaCertificateEntity,
           ClientCertificateEntity,
-          AgreementsRepository,
-          ServerRepository,
-          SettingsRepository,
         ]),
       ],
       providers: [

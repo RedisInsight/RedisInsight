@@ -101,7 +101,7 @@ export class CommandExecutionProvider {
   async getOne(databaseId: string, id: string): Promise<CommandExecution> {
     this.logger.log('Getting command executions');
 
-    const entity = await this.commandExecutionRepository.findOne({ id, databaseId });
+    const entity = await this.commandExecutionRepository.findOneBy({ id, databaseId });
 
     if (!entity) {
       this.logger.error(`Command execution with id:${id} and databaseId:${databaseId} was not Found`);

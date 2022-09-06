@@ -20,8 +20,8 @@ import { AgreementsEntity, IAgreementsJSON } from 'src/modules/core/models/agree
 import { ISettingsJSON, SettingsEntity } from 'src/modules/core/models/settings.entity';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
-import { AgreementsRepository } from '../../repositories/agreements.repository';
-import { SettingsRepository } from '../../repositories/settings.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { SettingsAnalyticsService } from '../../services/settings-analytics/settings-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -33,28 +33,22 @@ export class SettingsOnPremiseService
 implements OnModuleInit, ISettingsProvider {
   private logger = new Logger('SettingsOnPremiseService');
 
-  private agreementRepository: AgreementsRepository;
-
-  private settingsRepository: SettingsRepository;
-
-  private analyticsService: SettingsAnalyticsService;
-
-  private keytarEncryptionStrategy: KeytarEncryptionStrategy;
-
-  constructor(agreementRepository, settingsRepository, analyticsService, keytarEncryptionStrategy) {
-    this.agreementRepository = agreementRepository;
-    this.settingsRepository = settingsRepository;
-    this.analyticsService = analyticsService;
-    this.keytarEncryptionStrategy = keytarEncryptionStrategy;
-  }
+  constructor(
+    @InjectRepository(AgreementsEntity)
+    private readonly agreementRepository: Repository<AgreementsEntity>,
+    @InjectRepository(SettingsEntity)
+    private readonly settingsRepository: Repository<SettingsEntity>,
+    private readonly analyticsService: SettingsAnalyticsService,
+    private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
+  ) {}
 
   async onModuleInit() {
     await this.upsertSettings();
   }
 
   private async upsertSettings() {
-    const agreementsEntity = await this.agreementRepository.findOne();
-    const settingsEntity = await this.settingsRepository.findOne();
+    const agreementsEntity = await this.agreementRepository.findOneBy({});
+    const settingsEntity = await this.settingsRepository.findOneBy({});
     if (!agreementsEntity) {
       const agreements: AgreementsEntity = this.agreementRepository.create({});
       await this.agreementRepository.save(agreements);
@@ -72,10 +66,10 @@ implements OnModuleInit, ISettingsProvider {
     this.logger.log('Getting application settings.');
     try {
       const agreements: IAgreementsJSON = (
-        await this.agreementRepository.findOne()
+        await this.agreementRepository.findOneBy({})
       ).toJSON();
       const settings: ISettingsJSON = (
-        await this.settingsRepository.findOne()
+        await this.settingsRepository.findOneBy({})
       ).toJSON();
       this.logger.log('Succeed to get application settings.');
       return {
@@ -102,7 +96,7 @@ implements OnModuleInit, ISettingsProvider {
     try {
       const oldSettings = await this.getSettings();
       if (!isEmpty(settings)) {
-        const entity: SettingsEntity = await this.settingsRepository.findOne();
+        const entity: SettingsEntity = await this.settingsRepository.findOneBy({});
 
         entity.data = JSON.stringify({
           ...entity.toJSON(),
@@ -173,7 +167,7 @@ implements OnModuleInit, ISettingsProvider {
     dtoAgreements: Map<string, boolean> = new Map(),
   ): Promise<void> {
     this.logger.log('Updating application agreements.');
-    const entity: AgreementsEntity = await this.agreementRepository.findOne();
+    const entity: AgreementsEntity = await this.agreementRepository.findOneBy({});
     const oldAgreements = JSON.parse(entity.data);
     const newValue = {
       ...oldAgreements,

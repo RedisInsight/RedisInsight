@@ -38,7 +38,7 @@ test('Verify that when manager publishes new notification, it appears in the app
     await t.expect(notificationPage.notificationCategory.visible).ok('Category is not displayed in popup');
     if (sortedNotifications[0].category !== undefined) {
         await t.expect(notificationPage.notificationCategory.innerText).eql(sortedNotifications[0].category ?? '', 'Text for category is not correct');
-        await t.expect(notificationPage.notificationCategory.withExactText(sortedNotifications[0].category ?? '').withAttribute('title', `background-color: rgb${sortedNotifications[0].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
+        await t.expect(notificationPage.notificationCategory.withExactText(sortedNotifications[0].category ?? '').withAttribute('style', `background-color: rgb${sortedNotifications[0].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
     }
     // Verify that user can click on close button and received notification will be closed
     await t.click(notificationPage.closeNotificationPopup);
@@ -81,7 +81,7 @@ test('Verify that user can open notification center by clicking on icon and see 
         // Verify that user can see notification with category badge and category color in the notification center
         if (!jsonNotifications[i].category !== undefined) {
             await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').exists).ok('Displayed category name');
-            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').withAttribute('title', `background-color: rgb${jsonNotifications[i].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
+            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').withAttribute('style', `background-color: rgb${jsonNotifications[i].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
         }
     }
     // Verify that as soon as user closes notification center, unread messages become read

@@ -101,11 +101,11 @@ test
             .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group name value');
         // Validate Databases section
         await t
-            .click(addRedisDatabasePage.sentinelDatabaseNavigation)
+            .click(addRedisDatabasePage.cloneSentinelDatabaseNavigation)
             .expect(addRedisDatabasePage.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
         // Validate Sentinel section
         await t
-            .click(addRedisDatabasePage.sentinelNavigation)
+            .click(addRedisDatabasePage.cloneSentinelNavigation)
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPort, 'Invalid sentinel port')
             .expect(addRedisDatabasePage.passwordInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPassword, 'Invalid sentinel password');
         // Clone Sentinel Primary Group

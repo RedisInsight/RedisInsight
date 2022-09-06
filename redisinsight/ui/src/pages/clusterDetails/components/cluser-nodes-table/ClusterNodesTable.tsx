@@ -50,10 +50,10 @@ const ClusterNodesTable = ({ nodes, loading }: { nodes: Nullable<ModifiedCluster
       dataType: 'string',
       sortable: ({ index }) => index,
       render: (value: number, { letter, port }) => (
-        <>
+        <div className={styles.hostPort}>
           <span className={styles.nodeName} data-testid="node-letter">{letter}</span>
           <span>{value}:{port}</span>
-        </>
+        </div>
       )
     },
     {

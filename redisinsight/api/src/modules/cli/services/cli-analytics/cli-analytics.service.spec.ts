@@ -1,29 +1,42 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InternalServerErrorException } from '@nestjs/common';
-import { mockRedisWrongTypeError, mockStandaloneDatabaseEntity } from 'src/__mocks__';
-import { TelemetryEvents } from 'src/constants';
-import { AppTool, ReplyError } from 'src/models';
+import { mockRedisWrongTypeError, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
+import { CommandType, TelemetryEvents } from 'src/constants';
+import { ReplyError } from 'src/models';
 import { CommandParsingError } from 'src/modules/cli/constants/errors';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
+import { CommandsService } from 'src/modules/commands/commands.service';
 import { CliAnalyticsService } from './cli-analytics.service';
+
+const mockCommandsService = {
+  getCommandsGroups: jest.fn(),
+};
 
 const redisReplyError: ReplyError = {
   ...mockRedisWrongTypeError,
   command: { name: 'sadd' },
 };
-const instanceId = mockStandaloneDatabaseEntity.id;
+const databaseId = mockStandaloneDatabaseEntity.id;
 const httpException = new InternalServerErrorException();
+const mockCustomData = { data: 'Some data' };
+const mockSetCommandName = 'set';
+const mockAdditionalData = { command: mockSetCommandName };
 
 describe('CliAnalyticsService', () => {
   let service: CliAnalyticsService;
   let sendEventMethod: jest.SpyInstance<CliAnalyticsService, unknown[]>;
   let sendFailedEventMethod: jest.SpyInstance<CliAnalyticsService, unknown[]>;
+  let commandsService: MockType<CommandsService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: CommandsService,
+          useFactory: () => mockCommandsService,
+        },
         EventEmitter2,
         CliAnalyticsService,
       ],
@@ -38,27 +51,59 @@ describe('CliAnalyticsService', () => {
       service,
       'sendFailedEvent',
     );
+
+    commandsService = module.get(CommandsService);
+    commandsService.getCommandsGroups.mockResolvedValue({
+      main: {
+        SET: {
+          summary: 'Set the string value of a key',
+          since: '1.0.0',
+          group: 'string',
+          complexity: 'O(1)',
+          acl_categories: [
+            '@write',
+            '@string',
+            '@slow',
+          ],
+        },
+      },
+      redisbloom: {
+        'BF.RESERVE': {
+          summary: 'Creates a new Bloom Filter',
+          complexity: 'O(1)',
+          since: '1.0.0',
+          group: 'bf',
+        },
+      },
+      custommodule: {
+        'CUSTOM.COMMAND': {
+          summary: 'Creates a new Bloom Filter',
+          complexity: 'O(1)',
+          since: '1.0.0',
+        },
+      },
+    });
   });
 
   describe('sendCliClientCreatedEvent', () => {
     it('should emit CliClientCreated event', () => {
-      service.sendClientCreatedEvent(instanceId, AppTool.CLI, { data: 'Some data' });
+      service.sendClientCreatedEvent(databaseId, mockCustomData);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientCreated}`,
+        TelemetryEvents.CliClientCreated,
         {
-          databaseId: instanceId,
-          data: 'Some data',
+          databaseId,
+          ...mockCustomData,
         },
       );
     });
     it('should emit CliClientCreated event without additional data', () => {
-      service.sendClientCreatedEvent(instanceId, AppTool.CLI);
+      service.sendClientCreatedEvent(databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientCreated}`,
+        TelemetryEvents.CliClientCreated,
         {
-          databaseId: instanceId,
+          databaseId,
         },
       );
     });
@@ -66,25 +111,25 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientCreationFailedEvent', () => {
     it('should emit CliClientCreationFailed event', () => {
-      service.sendClientCreationFailedEvent(instanceId, AppTool.CLI, httpException, { data: 'Some data' });
+      service.sendClientCreationFailedEvent(databaseId, httpException, mockCustomData);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientCreationFailed}`,
+        TelemetryEvents.CliClientCreationFailed,
         httpException,
         {
-          databaseId: instanceId,
-          data: 'Some data',
+          databaseId,
+          ...mockCustomData,
         },
       );
     });
     it('should emit CliClientCreationFailed event without additional data', () => {
-      service.sendClientCreationFailedEvent(instanceId, AppTool.CLI, httpException);
+      service.sendClientCreationFailedEvent(databaseId, httpException);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientCreationFailed}`,
+        TelemetryEvents.CliClientCreationFailed,
         httpException,
         {
-          databaseId: instanceId,
+          databaseId,
         },
       );
     });
@@ -92,23 +137,23 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientRecreatedEvent', () => {
     it('should emit CliClientRecreated event', () => {
-      service.sendClientRecreatedEvent(instanceId, AppTool.CLI, { data: 'Some data' });
+      service.sendClientRecreatedEvent(databaseId, mockCustomData);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientRecreated}`,
+        TelemetryEvents.CliClientRecreated,
         {
-          databaseId: instanceId,
-          data: 'Some data',
+          databaseId,
+          ...mockCustomData,
         },
       );
     });
     it('should emit CliClientRecreated event without additional data', () => {
-      service.sendClientRecreatedEvent(instanceId, AppTool.CLI);
+      service.sendClientRecreatedEvent(databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientRecreated}`,
+        TelemetryEvents.CliClientRecreated,
         {
-          databaseId: instanceId,
+          databaseId,
         },
       );
     });
@@ -116,164 +161,144 @@ describe('CliAnalyticsService', () => {
 
   describe('sendCliClientDeletedEvent', () => {
     it('should emit CliClientDeleted event', () => {
-      service.sendClientDeletedEvent(1, instanceId, AppTool.CLI, { data: 'Some data' });
+      service.sendClientDeletedEvent(1, databaseId, mockCustomData);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientDeleted}`,
+        TelemetryEvents.CliClientDeleted,
         {
-          databaseId: instanceId,
-          data: 'Some data',
+          databaseId,
+          ...mockCustomData,
         },
       );
     });
     it('should emit CliClientDeleted event without additional data', () => {
-      service.sendClientDeletedEvent(1, instanceId, AppTool.CLI);
+      service.sendClientDeletedEvent(1, databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientDeleted}`,
+        TelemetryEvents.CliClientDeleted,
         {
-          databaseId: instanceId,
+          databaseId,
         },
       );
     });
     it('should not emit event', () => {
-      service.sendClientDeletedEvent(0, instanceId, AppTool.CLI);
+      service.sendClientDeletedEvent(0, databaseId);
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
     it('should not emit event on invalid input values', () => {
       const input: any = {};
-      service.sendClientDeletedEvent(input, instanceId, AppTool.CLI);
+      service.sendClientDeletedEvent(input, databaseId);
 
-      expect(() => service.sendClientDeletedEvent(input, instanceId, AppTool.CLI)).not.toThrow();
+      expect(() => service.sendClientDeletedEvent(input, databaseId)).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
 
   describe('sendCliCommandExecutedEvent', () => {
-    it('should emit CliCommandExecuted event', () => {
-      service.sendCommandExecutedEvent(instanceId, AppTool.CLI, { command: 'info' });
+    it('should emit CliCommandExecuted event', async () => {
+      await service.sendCommandExecutedEvent(databaseId, mockAdditionalData);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandExecuted}`,
+        TelemetryEvents.CliCommandExecuted,
         {
-          databaseId: instanceId,
-          command: 'info',
+          databaseId,
+          command: mockAdditionalData.command,
+          commandType: CommandType.Core,
+          moduleName: 'n/a',
+          capability: 'string',
         },
       );
     });
-    it('should emit CliCommandExecuted event without additional data', () => {
-      service.sendCommandExecutedEvent(instanceId, AppTool.CLI);
+    it('should emit CliCommandExecuted event without additional data', async () => {
+      await service.sendCommandExecutedEvent(databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandExecuted}`,
+        TelemetryEvents.CliCommandExecuted,
         {
-          databaseId: instanceId,
-        },
-      );
-    });
-    it('should emit CliCommandExecuted for undefined namespace', () => {
-      service.sendCommandExecutedEvent(instanceId, undefined, { command: 'info' });
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandExecuted}`,
-        {
-          databaseId: instanceId,
-          command: 'info',
-        },
-      );
-    });
-    it('should emit WorkbenchCommandExecuted event', () => {
-      service.sendCommandExecutedEvent(instanceId, 'workbench', { command: 'info' });
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        `WORKBENCH_${TelemetryEvents.CommandExecuted}`,
-        {
-          databaseId: instanceId,
-          command: 'info',
-        },
-      );
-    });
-    it('should emit WorkbenchCommandExecuted event without additional data', () => {
-      service.sendCommandExecutedEvent(instanceId, 'workbench');
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        `WORKBENCH_${TelemetryEvents.CommandExecuted}`,
-        {
-          databaseId: instanceId,
+          databaseId,
         },
       );
     });
   });
 
   describe('sendCliCommandErrorEvent', () => {
-    it('should emit CliCommandError event', () => {
-      service.sendCommandErrorEvent(instanceId, AppTool.CLI, redisReplyError, { data: 'Some data' });
+    it('should emit CliCommandError event', async () => {
+      await service.sendCommandErrorEvent(databaseId, redisReplyError, mockAdditionalData);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandErrorReceived}`,
+        TelemetryEvents.CliCommandErrorReceived,
         {
-          databaseId: instanceId,
+          databaseId,
           error: ReplyError.name,
-          command: 'sadd',
-          data: 'Some data',
+          command: mockAdditionalData.command,
+          commandType: CommandType.Core,
+          moduleName: 'n/a',
+          capability: 'string',
         },
       );
     });
-    it('should emit CliCommandError event without additional data', () => {
-      service.sendCommandErrorEvent(instanceId, AppTool.CLI, redisReplyError);
+    it('should emit CliCommandError event without additional data', async () => {
+      await service.sendCommandErrorEvent(databaseId, redisReplyError);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandErrorReceived}`,
+        TelemetryEvents.CliCommandErrorReceived,
         {
-          databaseId: instanceId,
+          databaseId,
           error: ReplyError.name,
           command: 'sadd',
         },
       );
     });
-    it('should emit event for custom error', () => {
+    it('should emit event for custom error', async () => {
       const error: any = CommandParsingError;
-      service.sendCommandErrorEvent(instanceId, AppTool.CLI, error);
+      await service.sendCommandErrorEvent(databaseId, error, mockAdditionalData);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandErrorReceived}`,
+        TelemetryEvents.CliCommandErrorReceived,
         {
-          databaseId: instanceId,
+          databaseId,
           error: CommandParsingError.name,
+          command: mockAdditionalData.command,
+          commandType: CommandType.Core,
+          moduleName: 'n/a',
+          capability: 'string',
         },
       );
     });
   });
 
   describe('sendCliClientCreationFailedEvent', () => {
-    it('should emit CliConnectionError event', () => {
-      service.sendConnectionErrorEvent(instanceId, AppTool.CLI, httpException, { data: 'Some data' });
+    it('should emit CliConnectionError event', async () => {
+      await service.sendConnectionErrorEvent(databaseId, httpException, mockAdditionalData);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientConnectionError}`,
+        TelemetryEvents.CliClientConnectionError,
         httpException,
         {
-          databaseId: instanceId,
-          data: 'Some data',
+          databaseId,
+          command: mockAdditionalData.command,
+          commandType: CommandType.Core,
+          moduleName: 'n/a',
+          capability: 'string',
         },
       );
     });
-    it('should emit CliConnectionError event without additional data', () => {
-      service.sendConnectionErrorEvent(instanceId, AppTool.CLI, httpException);
+    it('should emit CliConnectionError event without additional data', async () => {
+      await service.sendConnectionErrorEvent(databaseId, httpException);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClientConnectionError}`,
+        TelemetryEvents.CliClientConnectionError,
         httpException,
         {
-          databaseId: instanceId,
+          databaseId,
         },
       );
     });
   });
 
   describe('sendCliClusterCommandExecutedEvent', () => {
-    it('should emit success event', () => {
+    it('should emit success event', async () => {
       const nodExecResult: ICliExecResultFromNode = {
         response: '(integer) 5',
         host: '127.0.0.1',
@@ -281,17 +306,20 @@ describe('CliAnalyticsService', () => {
         status: CommandExecutionStatus.Success,
       };
 
-      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult, { command: 'sadd' });
+      await service.sendClusterCommandExecutedEvent(databaseId, nodExecResult, mockAdditionalData);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.ClusterNodeCommandExecuted}`,
+        TelemetryEvents.CliClusterNodeCommandExecuted,
         {
-          databaseId: instanceId,
-          command: 'sadd',
+          databaseId,
+          command: mockAdditionalData.command,
+          commandType: CommandType.Core,
+          moduleName: 'n/a',
+          capability: 'string',
         },
       );
     });
-    it('should emit event failed event for [RedisReply] error', () => {
+    it('should emit event failed event for [RedisReply] error', async () => {
       const nodExecResult: ICliExecResultFromNode = {
         response: redisReplyError.message,
         host: '127.0.0.1',
@@ -300,18 +328,18 @@ describe('CliAnalyticsService', () => {
         status: CommandExecutionStatus.Fail,
       };
 
-      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult);
+      await service.sendClusterCommandExecutedEvent(databaseId, nodExecResult);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandErrorReceived}`,
+        TelemetryEvents.CliCommandErrorReceived,
         {
-          databaseId: instanceId,
+          databaseId,
           error: redisReplyError.name,
           command: 'sadd',
         },
       );
     });
-    it('should emit event failed for custom error', () => {
+    it('should emit event failed for custom error', async () => {
       const nodExecResult: ICliExecResultFromNode = {
         response: redisReplyError.message,
         host: '127.0.0.1',
@@ -320,24 +348,24 @@ describe('CliAnalyticsService', () => {
         status: CommandExecutionStatus.Fail,
       };
 
-      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult);
+      await service.sendClusterCommandExecutedEvent(databaseId, nodExecResult);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
-        `CLI_${TelemetryEvents.CommandErrorReceived}`,
+        TelemetryEvents.CliCommandErrorReceived,
         {
-          databaseId: instanceId,
+          databaseId,
           error: CommandParsingError.name,
         },
       );
     });
-    it('should not emit event event', () => {
+    it('should not emit event event', async () => {
       const nodExecResult: any = {
         response: redisReplyError.message,
         host: '127.0.0.1',
         port: 7002,
         status: 'undefined status',
       };
-      service.sendClusterCommandExecutedEvent(instanceId, AppTool.CLI, nodExecResult);
+      await service.sendClusterCommandExecutedEvent(databaseId, nodExecResult);
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });

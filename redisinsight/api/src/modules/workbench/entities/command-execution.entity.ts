@@ -44,6 +44,9 @@ export class CommandExecutionEntity {
   role?: string;
 
   @Column({ nullable: true })
+  summary?: string;
+
+  @Column({ nullable: true })
   @Transform((object) => JSON.stringify(object), { toClassOnly: true })
   @Transform((string) => {
     try {

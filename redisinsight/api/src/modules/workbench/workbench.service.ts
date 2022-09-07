@@ -58,10 +58,66 @@ export class WorkbenchService {
    * @param clientOptions
    * @param dto
    */
+  async createCommandsExecution(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: CreateCommandExecutionDto,
+    commands: string[],
+  ): Promise<Partial<CommandExecution>> {
+    const commandExecution: Partial<CommandExecution> = {
+      ...dto,
+      databaseId: clientOptions.instanceId,
+    };
+
+    const executionResults = await Promise.all(commands.map(async (singleCommand) => {
+      const command = multilineCommandToOneLine(singleCommand);
+      const deprecatedCommand = this.findCommandInBlackList(command);
+      if (deprecatedCommand) {
+        return {
+          [command]: [
+            {
+              response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
+              status: CommandExecutionStatus.Fail,
+            },
+          ],
+        };
+      }
+      return ({ [command]: await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command }) });
+    }));
+
+    const successCommands = executionResults.filter(
+      (command) => Object.values(command)[0][0].status === CommandExecutionStatus.Success,
+    );
+    const failedCommands = executionResults.filter(
+      (command) => Object.values(command)[0][0].status === CommandExecutionStatus.Fail,
+    );
+
+    commandExecution.summary = `
+      ${executionResults.length} Commands - ${successCommands.length} success, ${failedCommands.length} errors
+    `;
+    commandExecution.command = commands.join('\r\n');
+    commandExecution.result = [{
+      status: CommandExecutionStatus.Success,
+      response: executionResults,
+    }];
+
+    return commandExecution;
+  }
+
+  /**
+   * Send redis command from workbench and save history
+   *
+   * @param clientOptions
+   * @param dto
+   */
   async createCommandExecutions(
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
+    if (dto.isGroupMode) {
+      return this.commandExecutionProvider.createMany(
+        [await this.createCommandsExecution(clientOptions, { ...dto, command: dto.commands[1] }, dto.commands)],
+      );
+    }
     // todo: rework to support pipeline
     // prepare and execute commands
     const commandExecutions = await Promise.all(

@@ -55,7 +55,7 @@ test
         await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command');
     });
 test
-    .meta({ rte: rte.standalone })('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
+    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [

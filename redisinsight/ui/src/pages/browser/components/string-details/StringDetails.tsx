@@ -191,7 +191,7 @@ const StringDetails = (props: Props) => {
             }}
             disabled={loading}
             inputRef={textAreaRef}
-            className={cx(styles.stringTextArea, { 'input-warning': isDisabled })}
+            className={cx(styles.stringTextArea, { [styles.areaWarning]: isDisabled })}
             data-testid="string-value"
           />
         </InlineItemEditor>

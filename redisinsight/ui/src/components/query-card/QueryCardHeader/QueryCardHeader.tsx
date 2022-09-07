@@ -40,6 +40,7 @@ export interface Props {
   summaryText?: string
   activeMode: RunQueryMode
   mode: RunQueryMode
+  summary?: string
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
@@ -61,6 +62,7 @@ const QueryCardHeader = (props: Props) => {
     summaryText,
     createdAt,
     mode,
+    summary,
     activeMode,
     selectedValue,
     setSelectedValue,
@@ -218,13 +220,13 @@ const QueryCardHeader = (props: Props) => {
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
-              <QueryCardTooltip query={query} />
+              <QueryCardTooltip query={summary || query} />
             </EuiTextColor>
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy query"
               className="copy-btn"
-              onClick={(event: React.MouseEvent) => handleCopy(event, query)}
+              onClick={(event: React.MouseEvent) => handleCopy(event, query || summary || '')}
             />
           </div>
         </EuiFlexItem>

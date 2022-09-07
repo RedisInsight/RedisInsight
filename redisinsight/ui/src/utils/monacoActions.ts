@@ -1,7 +1,8 @@
 import * as monacoEditor from 'monaco-editor'
 
 export enum MonacoAction {
-  Submit = 'submit'
+  Submit = 'submit',
+  ChangeGroupMode = 'change-group-mode'
 }
 
 export const getMonacoAction = (
@@ -14,6 +15,16 @@ export const getMonacoAction = (
       id: 'submit',
       label: 'Run Commands',
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+      run: action
+    }
+  }
+
+  if (actionId === MonacoAction.ChangeGroupMode) {
+    return {
+      id: 'change-group-mode',
+      label: 'Group Mode',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_G],
+
       run: action
     }
   }

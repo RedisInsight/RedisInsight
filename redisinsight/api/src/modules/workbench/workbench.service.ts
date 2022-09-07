@@ -60,7 +60,7 @@ export class WorkbenchService {
    */
   async createCommandsExecution(
     clientOptions: IFindRedisClientInstanceByOptions,
-    dto: CreateCommandExecutionDto,
+    dto: Partial<CreateCommandExecutionDto>,
     commands: string[],
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
@@ -115,7 +115,7 @@ export class WorkbenchService {
   ): Promise<CommandExecution[]> {
     if (dto.isGroupMode) {
       return this.commandExecutionProvider.createMany(
-        [await this.createCommandsExecution(clientOptions, { ...dto, command: dto.commands[1] }, dto.commands)],
+        [await this.createCommandsExecution(clientOptions, dto, dto.commands)],
       );
     }
     // todo: rework to support pipeline

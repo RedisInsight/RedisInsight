@@ -19,6 +19,7 @@ export const mockCliAnalyticsService = () => ({
 });
 
 export const mockWorkbenchAnalyticsService = () => ({
+  sendCommandExecutedEvents: jest.fn(),
   sendCommandExecutedEvent: jest.fn(),
   sendCommandDeletedEvent: jest.fn(),
 });

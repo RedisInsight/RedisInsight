@@ -4,20 +4,25 @@ import { commonUrl } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { NotificationPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { NotificationParameters } from '../../../pageObjects/notification-page';
+import { Common } from '../../../helpers/common';
 const description = require('./notifications.json');
 const jsonNotifications: NotificationParameters[] = description.notifications;
 
 const notificationPage = new NotificationPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const common = new Common();
+
+// Sort all notifications in json file
+const sortedNotifications = jsonNotifications.sort((a, b) => a.timestamp < b.timestamp ? 1 : -1);
 
 fixture `Notifications`
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async () => {
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(true);
         await deleteAllNotificationsFromDB();
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     });
 test('Verify that when manager publishes new notification, it appears in the app', async t => {
     // Get number of notifications in the badge
@@ -29,11 +34,17 @@ test('Verify that when manager publishes new notification, it appears in the app
     await t.expect(notificationPage.notificationTitle.visible).ok('Title in popup is displayed');
     await t.expect(notificationPage.notificationBody.visible).ok('Body in popup is displayed');
     await t.expect(notificationPage.notificationDate.visible).ok('Date in popup is displayed');
+    // Verify that user can see notification with category badge and category color in a single notification
+    await t.expect(notificationPage.notificationCategory.visible).ok('Category is not displayed in popup');
+    if (sortedNotifications[0].category !== undefined) {
+        await t.expect(notificationPage.notificationCategory.innerText).eql(sortedNotifications[0].category ?? '', 'Text for category is not correct');
+        await t.expect(notificationPage.notificationCategory.withExactText(sortedNotifications[0].category ?? '').withAttribute('style', `background-color: rgb${sortedNotifications[0].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
+    }
     // Verify that user can click on close button and received notification will be closed
     await t.click(notificationPage.closeNotificationPopup);
     await t.expect(notificationPage.notificationPopup.visible).notOk('Notification popup is not displayed');
     // Verify that when user closes new notification popup, number of unread messages decreased in badge
-    if (notificationPage.notificationBadge.exists) {
+    if (await notificationPage.notificationBadge.exists) {
         const newMessagesAfterClosing = await notificationPage.getUnreadNotificationNumber();
         await t.expect(newMessagesBeforeClosing).eql(newMessagesAfterClosing + 1, 'Reduced number of unread messages');
     }
@@ -67,6 +78,11 @@ test('Verify that user can open notification center by clicking on icon and see 
         await t.expect(notificationPage.notificationTitle.withExactText(jsonNotifications[i].title).exists).ok('Displayed title');
         await t.expect(notificationPage.notificationBody.withExactText(jsonNotifications[i].body).exists).ok('Displayed body');
         await t.expect(notificationPage.notificationDate.withExactText(await notificationPage.convertEpochDateToMessageDate(jsonNotifications[i])).exists).ok('Displayed date');
+        // Verify that user can see notification with category badge and category color in the notification center
+        if (jsonNotifications[i].category !== undefined) {
+            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').exists).ok(`${jsonNotifications[i].category} category name not displayed`);
+            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').withAttribute('style', `background-color: rgb${jsonNotifications[i].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
+        }
     }
     // Verify that as soon as user closes notification center, unread messages become read
     await t.click(myRedisDatabasePage.myRedisDBButton); // Close notification center
@@ -78,8 +94,6 @@ test('Verify that user can open notification center by clicking on icon and see 
 test('Verify that all messages in notification center are sorted by timestamp from newest to oldest', async t => {
     // Wait for new notifications
     await t.expect(notificationPage.notificationBadge.exists).ok('New notifications appear', { timeout: 35000 });
-    // Sort all notifications in json file
-    const sortedNotifications = jsonNotifications.sort((a, b) => a.timestamp < b.timestamp ? 1 : -1);
     await t.click(notificationPage.notificationCenterButton);
     for (let i = 0; i < sortedNotifications.length; i++) {
         // Get data one by one from notification center
@@ -97,7 +111,7 @@ test
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(false);
         await deleteAllNotificationsFromDB();
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.expect(notificationPage.notificationBadge.exists).notOk('No badge');
     })('Verify that new popup message is not displayed when notifications are turned off', async t => {
         // Verify that user can see notification badge increased when new messages is sent and notifications are turned off

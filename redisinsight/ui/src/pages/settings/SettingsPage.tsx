@@ -14,24 +14,23 @@ import {
   EuiSpacer,
   EuiText,
   EuiCallOut,
-  EuiSwitch,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
 import { THEMES } from 'uiSrc/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { ConsentsNotifications, ConsentsPrivacy, AdvancedSettings } from 'uiSrc/components'
+import { ConsentsNotifications, ConsentsPrivacy } from 'uiSrc/components'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   fetchUserConfigSettings,
   fetchUserSettingsSpec,
-  setWorkbenchCleanUp,
   userSettingsSelector,
-  userSettingsWBSelector,
 } from 'uiSrc/slices/user/user-settings'
+
+import { AdvancedSettings, WorkbenchSettings } from './components'
 
 import styles from './styles.module.scss'
 
@@ -41,7 +40,6 @@ const SettingsPage = () => {
 
   const [loading, setLoading] = useState(false)
   const { loading: settingsLoading } = useSelector(userSettingsSelector)
-  const { cleanup } = useSelector(userSettingsWBSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   const dispatch = useDispatch()
@@ -70,17 +68,6 @@ const SettingsPage = () => {
       eventData: {
         previousColorTheme: previousValue,
         currentColorTheme: value,
-      }
-    })
-  }
-
-  const onSwitchWbCleanUp = (val: boolean) => {
-    dispatch(setWorkbenchCleanUp(val))
-    sendEventTelemetry({
-      event: TelemetryEvent.SETTINGS_WORKBENCH_EDITOR_CLEAR_CHANGED,
-      eventData: {
-        currentValue: !val,
-        newValue: val,
       }
     })
   }
@@ -118,28 +105,18 @@ const SettingsPage = () => {
     </div>
   )
 
-  const WorkbenchSettings = () => (
-    <>
-      <EuiForm component="form">
-        <EuiTitle size="xs">
-          <h4>Editor Cleanup</h4>
-        </EuiTitle>
-        <EuiSpacer size="m" />
-        <EuiFormRow>
-          <EuiSwitch
-            label="Clear the Editor when running the code"
-            checked={cleanup}
-            onChange={(e) => onSwitchWbCleanUp(e.target.checked)}
-            className={styles.switchOption}
-            data-testid="switch-workbench-cleanup"
-          />
-        </EuiFormRow>
-        <EuiSpacer size="l" />
-      </EuiForm>
-    </>
+  const WorkbenchSettingsGroup = () => (
+    <div>
+      {loading && (
+        <div className={styles.cover}>
+          <EuiLoadingSpinner size="xl" />
+        </div>
+      )}
+      <WorkbenchSettings />
+    </div>
   )
 
-  const AdvancedSettingsNavGroup = () => (
+  const AdvancedSettingsGroup = () => (
     <div>
       {loading && (
         <div className={styles.cover}>
@@ -148,7 +125,7 @@ const SettingsPage = () => {
       )}
       <EuiCallOut className={styles.warning}>
         <EuiText size="s" className={styles.smallText}>
-          These settings should only be changed if you understand their impact.
+          Advanced settings should only be changed if you understand their impact.
         </EuiText>
       </EuiCallOut>
       <AdvancedSettings />
@@ -189,7 +166,7 @@ const SettingsPage = () => {
             initialIsOpen={false}
             data-test-subj="accordion-workbench-settings"
           >
-            {WorkbenchSettings()}
+            {WorkbenchSettingsGroup()}
           </EuiCollapsibleNavGroup>
           <EuiCollapsibleNavGroup
             isCollapsible
@@ -198,7 +175,7 @@ const SettingsPage = () => {
             initialIsOpen={false}
             data-test-subj="accordion-advanced-settings"
           >
-            {AdvancedSettingsNavGroup()}
+            {AdvancedSettingsGroup()}
           </EuiCollapsibleNavGroup>
         </EuiPageContentBody>
       </EuiPageBody>

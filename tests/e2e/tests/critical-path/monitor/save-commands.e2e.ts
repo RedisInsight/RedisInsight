@@ -16,22 +16,22 @@ const tempDir = os.tmpdir();
 let downloadedFilePath = '';
 
 async function getFileDownloadPath(): Promise<string> {
-    return os.platform() == 'linux'
-    ? joinPath('home', os.hostname(), 'Downloads')
-    : joinPath(os.homedir(), 'Downloads');
+    return joinPath(os.homedir(), 'Downloads');
 }
 
 async function findByFileStarts(dir: string): Promise<number> {
-    const matchedFiles: string[] = [];
-    const files = fs.readdirSync(dir);
-
-    for (const file of files) {
-        if (file.startsWith('test_standalone')) {
-            matchedFiles.push(file);
+    if (fs.existsSync(dir)) {
+        const matchedFiles: string[] = [];
+        const files = fs.readdirSync(dir);
+        for (const file of files) {
+            if (file.startsWith('test_standalone')) {
+                matchedFiles.push(file);
+            }
         }
+        return matchedFiles.length;
+    } else {
+        return 0;
     }
-
-    return matchedFiles.length;
 }
 
 fixture `Save commands`
@@ -109,8 +109,7 @@ test
         await t.expect(monitorPage.resetProfilerButton.visible).ok('The Reset Profiler button visibility');
         await t.expect(monitorPage.downloadLogButton.visible).ok('The Download button visibility');
     });
-// Skipped due to testCafe issue https://github.com/DevExpress/testcafe/issues/5574
-test.skip
+test
     .meta({ rte: rte.standalone })('Verify that when user see the toggle is OFF - Profiler logs are not being saved', async t => {
         //Remember the number of files in Temp
         const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);

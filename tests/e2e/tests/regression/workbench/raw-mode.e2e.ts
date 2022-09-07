@@ -1,6 +1,6 @@
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
@@ -91,16 +91,17 @@ test
     });
 test
     .before(async t => {
-    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-    // Go to Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
-})
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        // Go to Workbench page
+        await t.click(myRedisDatabasePage.workbenchButton);
+    })
     .after(async t => {
         //Drop index, documents and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
-    })('Display Raw mode for plugins', async t => {
+    })
+    .meta({ env: env.desktop })('Display Raw mode for plugins', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
             `HMSET product:1 name "${unicodeValue}"`,

@@ -4,7 +4,7 @@ import {
   screen,
   fireEvent,
 } from 'uiSrc/utils/test-utils'
-import AdvancedSettingsItem from './AdvancedSettingsItem'
+import SettingItem from './SettingItem'
 
 jest.mock('uiSrc/slices/user/user-settings', () => ({
   ...jest.requireActual('uiSrc/slices/user/user-settings'),
@@ -28,24 +28,24 @@ const mockedProps = {
   label: 'Keys to Scan:',
 }
 
-describe('AdvancedSettingsItem', () => {
+describe('SettingItem', () => {
   it('should render', () => {
-    expect(render(<AdvancedSettingsItem {...mockedProps} />)).toBeTruthy()
+    expect(render(<SettingItem {...mockedProps} />)).toBeTruthy()
   })
 
   it('should render keys to scan value', () => {
-    render(<AdvancedSettingsItem {...mockedProps} />)
+    render(<SettingItem {...mockedProps} />)
     expect(screen.getByTestId(/keys-to-scan-value/)).toHaveTextContent('10000')
   })
 
   it('should render keys to scan input after click value', () => {
-    render(<AdvancedSettingsItem {...mockedProps} />)
+    render(<SettingItem {...mockedProps} />)
     fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
     expect(screen.getByTestId(/keys-to-scan-input/)).toBeInTheDocument()
   })
 
   it('should change keys to scan input properly', () => {
-    render(<AdvancedSettingsItem {...mockedProps} />)
+    render(<SettingItem {...mockedProps} />)
     fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
     fireEvent.change(
       screen.getByTestId(/keys-to-scan-input/),
@@ -57,7 +57,7 @@ describe('AdvancedSettingsItem', () => {
   })
 
   it('should properly apply changes', () => {
-    render(<AdvancedSettingsItem {...mockedProps} />)
+    render(<SettingItem {...mockedProps} />)
 
     fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
     fireEvent.change(
@@ -71,7 +71,7 @@ describe('AdvancedSettingsItem', () => {
   })
 
   it('should properly decline changes', async () => {
-    render(<AdvancedSettingsItem {...mockedProps} />)
+    render(<SettingItem {...mockedProps} />)
     fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
 
     fireEvent.change(

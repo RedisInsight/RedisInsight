@@ -48,12 +48,24 @@ const WBResults = (props: Props) => {
   return (
     <div className={cx(styles.container)}>
       <div ref={scrollDivRef} />
-      {items.map(({ command = '', isOpen = false, result = undefined, id = '', loading, createdAt, mode }) => (
+      {items.map((
+        {
+          command = '',
+          isOpen = false,
+          result = undefined,
+          summary = undefined,
+          id = '',
+          loading,
+          createdAt,
+          mode,
+        }
+      ) => (
         <QueryCard
           id={id}
           key={id}
           isOpen={isOpen}
           result={result}
+          summary={summary}
           loading={loading}
           command={command}
           createdAt={createdAt}

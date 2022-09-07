@@ -46,6 +46,7 @@ interface IState {
   blockingCommands: string[]
   visualizations: IPluginVisualization[]
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
+  isGroupMode: boolean
 }
 
 let state: IState = {
@@ -57,6 +58,7 @@ let state: IState = {
   blockingCommands: [],
   visualizations: [],
   scriptEl: null,
+  isGroupMode: false,
 }
 
 const WBViewWrapper = () => {
@@ -74,6 +76,9 @@ const WBViewWrapper = () => {
   const [activeRunQueryMode, setActiveRunQueryMode] = useState<RunQueryMode>(
     (localStorageService?.get(BrowserStorageItem.RunQueryMode) ?? RunQueryMode.ASCII)
   )
+  const [isGroupMode, setIsGroupMode] = useState<boolean>(
+    (localStorageService?.get(BrowserStorageItem.wbGroupMode) ?? false) === 'true'
+  )
 
   const instance = useSelector(connectedInstanceSelector)
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -86,6 +91,7 @@ const WBViewWrapper = () => {
     visualizations,
     batchSize,
     activeRunQueryMode,
+    isGroupMode,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -121,6 +127,10 @@ const WBViewWrapper = () => {
     localStorageService.set(BrowserStorageItem.RunQueryMode, activeRunQueryMode)
   }, [activeRunQueryMode])
 
+  useEffect(() => {
+    localStorageService.set(BrowserStorageItem.wbGroupMode, isGroupMode)
+  }, [isGroupMode])
+
   const handleChangeQueryRunMode = () => {
     setActiveRunQueryMode(
       activeRunQueryMode === RunQueryMode.ASCII
@@ -139,13 +149,23 @@ const WBViewWrapper = () => {
     })
   }
 
+  const handleChangeGroupMode = () => {
+    setIsGroupMode(!isGroupMode)
+  }
+
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
   ) => {
     const { loading, batchSize } = state
     const isNewCommand = () => !commandId
-    const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), batchSize > 1 ? batchSize : 1)
+    const getChunkSize = () => {
+      if (isGroupMode) {
+        return splitMonacoValuePerLines(commandInit).length
+      }
+      return batchSize > 1 ? batchSize : 1
+    }
+    const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), getChunkSize())
     const multiCommands = rest.map((command) => getMultiCommands(command))
     const commandLine = without(
       commands.map((command) => removeMonacoComments(decode(command).trim())),
@@ -166,10 +186,11 @@ const WBViewWrapper = () => {
     commands: string[],
     multiCommands: string[] = [],
   ) => {
-    const { activeRunQueryMode } = state
+    const { activeRunQueryMode, isGroupMode } = state
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
+        isGroupMode: commands.length === 1 ? false : isGroupMode,
         commands,
         multiCommands,
         mode: activeRunQueryMode,
@@ -192,6 +213,7 @@ const WBViewWrapper = () => {
         commands,
         options,
         mode: state.activeRunQueryMode,
+        isGroupMode: commands.length === 1 ? false : isGroupMode,
         multiCommands,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })
@@ -245,6 +267,8 @@ const WBViewWrapper = () => {
       onQueryOpen={handleQueryOpen}
       onQueryDelete={handleQueryDelete}
       onQueryChangeMode={handleChangeQueryRunMode}
+      isGroupMode={isGroupMode}
+      onChangeGroupMode={handleChangeGroupMode}
     />
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import parse from 'html-react-parser'
 
@@ -8,7 +8,7 @@ import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-outpu
 import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
-import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { ClusterNode, RedisDefaultModules, CommandExecutionResult } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
@@ -75,6 +75,22 @@ const cliCommandWrapper = (command: string) => (
 
 const clearOutput = (dispatch: any) => {
   dispatch(resetOutput())
+}
+
+const cliParseCommandsGroupResult = (
+  result: CommandExecutionResult,
+  query: string,
+  index: number
+) => {
+  const executionCommand = cliCommandWrapper(`> ${Object.keys(result)[0]} \r\n`)
+  const executionResult = cliParseTextResponse(Object.values(result)[0][0].response || '(nil)', query, Object.values(result)[0][0].status, CliPrefix.QueryCard)
+  return (
+    <Fragment key={`${query}-${index}`}>
+      {executionCommand}
+      {executionResult}
+      {Object.values(result)[0][0].status === CommandExecutionStatus.Fail ? '\r\n' : null}
+    </Fragment>
+  )
 }
 
 const updateCliHistoryStorage = (
@@ -154,6 +170,7 @@ export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
+  cliParseCommandsGroupResult,
   cliCommandOutput,
   bashTextValue,
   cliCommandWrapper,

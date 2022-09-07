@@ -3,7 +3,7 @@ import cx from 'classnames'
 import { EuiLoadingContent } from '@elastic/eui'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
-import { cliParseTextResponse, CliPrefix, Maybe, cliCommandWrapper } from 'uiSrc/utils'
+import { cliParseTextResponse, cliParseCommandsGroupResult, CliPrefix, Maybe } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -24,17 +24,8 @@ const QueryCardCliResult = (props: Props) => {
         <div data-testid="query-cli-result">
           {!summary ? result?.map(({ response, status }) =>
             cliParseTextResponse(response || '(nil)', query, status, CliPrefix.QueryCard))
-            : result[0].response.map((item: CommandExecutionResult) => {
-              const executionCommand = cliCommandWrapper(`> ${Object.keys(item)[0]} \r\n`)
-              const executionResult = cliParseTextResponse(Object.values(item)[0][0].response || '(nil)', query, Object.values(item)[0][0].status, CliPrefix.QueryCard)
-              return (
-                <>
-                  {executionCommand}
-                  {executionResult}
-                  {Object.values(item)[0][0].status === 'fail' ? '\r\n' : null}
-                </>
-              )
-            })}
+            : result[0].response.map((item: CommandExecutionResult, index: number) =>
+              cliParseCommandsGroupResult(item, query, index))}
         </div>
       )}
       {loading && (

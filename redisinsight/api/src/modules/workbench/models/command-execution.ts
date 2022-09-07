@@ -34,13 +34,6 @@ export class CommandExecution {
   @Expose()
   mode?: RunQueryMode = RunQueryMode.ASCII;
 
-  @ApiPropertyOptional({
-    description: 'Workbench executions summary',
-    type: String,
-  })
-  @Expose()
-  summary?: string;
-
   @ApiProperty({
     description: 'Command execution result',
     type: () => CommandExecutionResult,

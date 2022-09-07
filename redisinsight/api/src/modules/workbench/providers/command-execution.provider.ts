@@ -81,17 +81,7 @@ export class CommandExecutionProvider {
     const entities = await this.commandExecutionRepository
       .createQueryBuilder('e')
       .where({ databaseId })
-      .select([
-        'e.id',
-        'e.command',
-        'e.databaseId',
-        'e.createdAt',
-        'e.encryption',
-        'e.role',
-        'e.nodeOptions',
-        'e.mode',
-        'e.summary',
-      ])
+      .select(['e.id', 'e.command', 'e.databaseId', 'e.createdAt', 'e.encryption', 'e.role', 'e.nodeOptions', 'e.mode'])
       .orderBy('e.createdAt', 'DESC')
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)
       .getMany();

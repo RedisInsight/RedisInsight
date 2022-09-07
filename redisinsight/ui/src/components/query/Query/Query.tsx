@@ -40,21 +40,18 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
 import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
-import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   query: string
   activeMode: RunQueryMode
-  isGroupMode?: boolean
   setQueryEl: Function
   setQuery: (script: string) => void
   setIsCodeBtnDisabled: (value: boolean) => void
   onSubmit: (query?: string) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onQueryChangeMode: () => void
-  onChangeGroupMode: () => void
 }
 
 const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
@@ -66,20 +63,17 @@ const aroundQuotesRegExp = /(^["']|["']$)/g
 let decorations: string[] = []
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
-let toggleGroupMode: () => void = () => {}
 
 const Query = (props: Props) => {
   const {
     query = '',
     activeMode,
-    isGroupMode,
     setQuery,
     onKeyDown,
     onSubmit,
     setQueryEl,
     setIsCodeBtnDisabled = () => { },
-    onQueryChangeMode,
-    onChangeGroupMode
+    onQueryChangeMode
   } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
@@ -117,11 +111,6 @@ const Query = (props: Props) => {
     execHistory = execHistoryItems
     execHistoryPos = 0
   }, [execHistoryItems])
-
-  useEffect(() => {
-    // HACK: The Monaco editor memoize the state and ignores updates to it
-    toggleGroupMode = onChangeGroupMode
-  }, [isGroupMode])
 
   useEffect(() => {
     if (!monacoObjects.current) return
@@ -406,10 +395,6 @@ const Query = (props: Props) => {
       getMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco)
     )
 
-    editor.addAction(
-      getMonacoAction(MonacoAction.ChangeGroupMode, () => toggleGroupMode(), monaco)
-    )
-
     editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {
       onPressWidget()
     }, SYNTAX_CONTEXT_ID)
@@ -512,17 +497,15 @@ const Query = (props: Props) => {
           <EuiToolTip
             position="left"
             content={
-              isLoading
-                ? 'Please wait while the commands are being executed…'
-                : KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
-                  <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                    <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
-                    <KeyboardShortcut
-                      separator={KEYBOARD_SHORTCUTS?._separator}
-                      items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
-                    />
-                  </div>
-                )
+              KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
+                  <KeyboardShortcut
+                    separator={KEYBOARD_SHORTCUTS?._separator}
+                    items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
+                  />
+                </div>
+              )
             }
             data-testid="run-query-tooltip"
           >
@@ -540,35 +523,8 @@ const Query = (props: Props) => {
               />
             </>
           </EuiToolTip>
-          <EuiToolTip
-            position="left"
-            content={
-              KEYBOARD_SHORTCUTS?.workbench?.changeGroupMode && (
-                <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.changeGroupMode?.label}:\u00A0\u00A0`}</EuiText>
-                  <KeyboardShortcut
-                    separator={KEYBOARD_SHORTCUTS?._separator}
-                    items={KEYBOARD_SHORTCUTS.workbench.changeGroupMode.keys}
-                  />
-                </div>
-              )
-            }
-            data-testid="run-query-tooltip"
-          >
-            <>
-              <EuiButton
-                fill
-                size="s"
-                color="secondary"
-                onClick={() => onChangeGroupMode()}
-                disabled={isLoading}
-                className={cx(styles.textBtn, { [styles.activeBtn]: isGroupMode })}
-                data-testid="btn-change-group-mode"
-              >
-                <EuiIcon type={GroupModeIcon} />
-              </EuiButton>
-            </>
-          </EuiToolTip>
+          {/* block for third action icon */}
+          <div style={{ height: '24px' }} />
         </div>
       </div>
       {isDedicatedEditorOpen && (

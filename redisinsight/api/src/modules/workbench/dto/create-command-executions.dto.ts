@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBoolean, IsEnum, IsArray, IsNotEmptyObject, IsOptional, ArrayNotEmpty, ValidateNested,
+  IsEnum, IsArray, IsNotEmptyObject, IsOptional, ArrayNotEmpty, ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
@@ -28,14 +28,6 @@ export class CreateCommandExecutionsDto {
     )}.`,
   })
   mode?: RunQueryMode = RunQueryMode.ASCII;
-
-  @ApiPropertyOptional({
-    description: 'Workbench group mode',
-    default: false,
-  })
-  @IsOptional()
-  @IsBoolean()
-  isGroupMode?: boolean;
 
   @ApiPropertyOptional({
     description: 'Execute command for nodes with defined role',

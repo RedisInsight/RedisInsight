@@ -16,38 +16,32 @@ import styles from './Query/styles.module.scss'
 export interface Props {
   query: string
   activeMode: RunQueryMode
-  isGroupMode: boolean
   setQuery: (script: string) => void
   setQueryEl: Function
   setIsCodeBtnDisabled: (value: boolean) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onSubmit: (value?: string) => void
   onQueryChangeMode: () => void
-  onChangeGroupMode: () => void
 }
 
 interface IState {
   activeMode: RunQueryMode
-  isGroupMode: boolean
 }
 
 let state: IState = {
   activeMode: RunQueryMode.ASCII,
-  isGroupMode: false
 }
 
 const QueryWrapper = (props: Props) => {
   const {
     query = '',
     activeMode,
-    isGroupMode,
     setQuery,
     setQueryEl,
     setIsCodeBtnDisabled,
     onKeyDown,
     onSubmit,
-    onQueryChangeMode,
-    onChangeGroupMode
+    onQueryChangeMode
   } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const {
@@ -58,7 +52,6 @@ const QueryWrapper = (props: Props) => {
 
   state = {
     activeMode,
-    isGroupMode
   }
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
@@ -80,8 +73,7 @@ const QueryWrapper = (props: Props) => {
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
-        rawMode: state.activeMode === RunQueryMode.Raw,
-        isGroupMode: commands.length === 1 ? false : isGroupMode,
+        rawMode: state.activeMode === RunQueryMode.Raw
       }
     })()
 
@@ -109,14 +101,12 @@ const QueryWrapper = (props: Props) => {
     <Query
       query={query}
       activeMode={activeMode}
-      isGroupMode={isGroupMode}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
       setIsCodeBtnDisabled={setIsCodeBtnDisabled}
       onKeyDown={onKeyDown}
       onSubmit={handleSubmit}
       onQueryChangeMode={onQueryChangeMode}
-      onChangeGroupMode={onChangeGroupMode}
     />
   )
 }

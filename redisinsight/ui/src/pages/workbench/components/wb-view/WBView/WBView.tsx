@@ -34,12 +34,10 @@ export interface Props {
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
   scrollDivRef: Ref<HTMLDivElement>
   activeMode: RunQueryMode
-  isGroupMode: boolean
   onSubmit: (query?: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
   onQueryChangeMode: () => void
-  onChangeGroupMode: () => void
 }
 
 const WBView = (props: Props) => {
@@ -50,12 +48,10 @@ const WBView = (props: Props) => {
     setScriptEl,
     scriptEl,
     activeMode,
-    isGroupMode,
     onSubmit,
     onQueryOpen,
     onQueryDelete,
     onQueryChangeMode,
-    onChangeGroupMode,
     scrollDivRef,
   } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
@@ -110,13 +106,11 @@ const WBView = (props: Props) => {
                   <QueryWrapper
                     query={script}
                     activeMode={activeMode}
-                    isGroupMode={isGroupMode}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
                     setIsCodeBtnDisabled={setIsCodeBtnDisabled}
                     onSubmit={onSubmit}
                     onQueryChangeMode={onQueryChangeMode}
-                    onChangeGroupMode={onChangeGroupMode}
                   />
                 </EuiResizablePanel>
 

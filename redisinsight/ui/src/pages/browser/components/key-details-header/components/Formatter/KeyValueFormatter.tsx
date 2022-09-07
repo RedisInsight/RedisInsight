@@ -57,7 +57,7 @@ const KeyValueFormatter = (props: Props) => {
             </>
           </EuiToolTip>
         ),
-        dropdownDisplay: <EuiText className={styles.dropdownDisplay}>{text}</EuiText>,
+        dropdownDisplay: <EuiText size="s" className={styles.dropdownDisplay}>{text}</EuiText>,
         'data-test-subj': `format-option-${value}`,
       })
     )

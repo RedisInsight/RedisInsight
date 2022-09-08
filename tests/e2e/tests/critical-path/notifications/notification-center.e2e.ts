@@ -4,22 +4,25 @@ import { commonUrl } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { NotificationPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { NotificationParameters } from '../../../pageObjects/notification-page';
+import { Common } from '../../../helpers/common';
 const description = require('./notifications.json');
 const jsonNotifications: NotificationParameters[] = description.notifications;
 
 const notificationPage = new NotificationPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const common = new Common();
+
 // Sort all notifications in json file
 const sortedNotifications = jsonNotifications.sort((a, b) => a.timestamp < b.timestamp ? 1 : -1);
 
 fixture `Notifications`
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async () => {
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(true);
         await deleteAllNotificationsFromDB();
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     });
 test('Verify that when manager publishes new notification, it appears in the app', async t => {
     // Get number of notifications in the badge
@@ -35,7 +38,7 @@ test('Verify that when manager publishes new notification, it appears in the app
     await t.expect(notificationPage.notificationCategory.visible).ok('Category is not displayed in popup');
     if (sortedNotifications[0].category !== undefined) {
         await t.expect(notificationPage.notificationCategory.innerText).eql(sortedNotifications[0].category ?? '', 'Text for category is not correct');
-        await t.expect(notificationPage.notificationCategory.withExactText(sortedNotifications[0].category ?? '').withAttribute('title', `background-color: rgb${sortedNotifications[0].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
+        await t.expect(notificationPage.notificationCategory.withExactText(sortedNotifications[0].category ?? '').withAttribute('style', `background-color: rgb${sortedNotifications[0].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
     }
     // Verify that user can click on close button and received notification will be closed
     await t.click(notificationPage.closeNotificationPopup);
@@ -76,9 +79,9 @@ test('Verify that user can open notification center by clicking on icon and see 
         await t.expect(notificationPage.notificationBody.withExactText(jsonNotifications[i].body).exists).ok('Displayed body');
         await t.expect(notificationPage.notificationDate.withExactText(await notificationPage.convertEpochDateToMessageDate(jsonNotifications[i])).exists).ok('Displayed date');
         // Verify that user can see notification with category badge and category color in the notification center
-        if (!jsonNotifications[i].category !== undefined) {
-            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').exists).ok('Displayed category name');
-            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').withAttribute('title', `background-color: rgb${jsonNotifications[i].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
+        if (jsonNotifications[i].category !== undefined) {
+            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').exists).ok(`${jsonNotifications[i].category} category name not displayed`);
+            await t.expect(notificationPage.notificationCategory.withExactText(jsonNotifications[i].category ?? '').withAttribute('style', `background-color: rgb${jsonNotifications[i].rbgColor}; color: rgb(0, 0, 0);`).exists).ok('Category color');
         }
     }
     // Verify that as soon as user closes notification center, unread messages become read
@@ -108,7 +111,7 @@ test
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(false);
         await deleteAllNotificationsFromDB();
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.expect(notificationPage.notificationBadge.exists).notOk('No badge');
     })('Verify that new popup message is not displayed when notifications are turned off', async t => {
         // Verify that user can see notification badge increased when new messages is sent and notifications are turned off

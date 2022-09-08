@@ -9,6 +9,7 @@ import {
     ossStandaloneNoPermissionsConfig
 } from '../../../helpers/conf';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -16,6 +17,7 @@ const cliPage = new CliPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseOverviewPage = new DatabaseOverviewPage();
 const bulkActionsPage = new BulkActionsPage();
+const common = new Common();
 const createUserCommand = 'acl setuser noperm nopass on +@all ~* -dbsize';
 const keyName = chance.word({ length: 20 });
 const createKeyCommand = `set ${keyName} ${chance.word({ length: 20 })}`;
@@ -30,7 +32,7 @@ fixture `Handle user permissions`
         // await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
     .afterEach(async() => {
         // Delete database

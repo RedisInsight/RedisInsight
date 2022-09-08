@@ -25,7 +25,7 @@ export interface Props {
   validation: (value: string) => string,
 }
 
-const AdvancedSettingsItem = (props: Props) => {
+const SettingItem = (props: Props) => {
   const { initValue, title, summary, testid, placeholder, label, onApply, validation = (val: string) => val } = props
 
   const [value, setValue] = useState<string>(initValue)
@@ -117,4 +117,4 @@ const AdvancedSettingsItem = (props: Props) => {
   )
 }
 
-export default AdvancedSettingsItem
+export default SettingItem

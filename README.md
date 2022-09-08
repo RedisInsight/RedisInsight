@@ -39,12 +39,10 @@ Check out the [release notes](https://docs.redis.com/latest/ri/release-notes/).
 
 ## Get started with RedisInsight
 
-This repository includes the code for RedisInsight 2.0, Currently available in public preview. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
-
-The current GA version of RedisInsight is 1.11. You can install RedisInsight 2.0 along with the GA version. 
+This repository includes the code for the GA version of RedisInsight 2.0. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
 
 ### Installable 
-Available to download for free from [here](https://redis.com/redis-enterprise/redis-insight/#insight-form). 
+Available to download for free from [here](https://redis.com/redis-enterprise/redis-insight/#insight-form).
 
 ### Build 
 Alternatively you can also build from source. See our wiki for instructions.

@@ -10,9 +10,11 @@ import {
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { cloudDatabaseConfig, commonUrl, ossClusterConfig, ossSentinelConfig, redisEnterpriseClusterConfig } from '../../../helpers/conf';
 import { deleteOSSClusterDatabaseApi, deleteAllSentinelDatabasesApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const common = new Common();
 
 const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
@@ -27,7 +29,7 @@ const verifyCommandsInWorkbench = async() => {
     await workbenchPage.sendCommandInWorkbench(commandForSend1);
     await workbenchPage.sendCommandInWorkbench(commandForSend2);
     //Check that all the previous run commands are saved and displayed
-    await t.eval(() => location.reload());
+    await common.reloadPage();
     await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend1).exists).ok('The previous run commands are saved');
     await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend2).exists).ok('The previous run commands are saved');
     //Send multiple commands in one query

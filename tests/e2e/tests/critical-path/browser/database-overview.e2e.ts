@@ -67,7 +67,7 @@ test
         //Add database with different modules
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         countOfModules = await browserPage.modulesButton.count;
         for(let i = 0; i < countOfModules; i++) {
@@ -123,7 +123,7 @@ test
         //Add database with more than 1M keys
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneBigConfig);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneBigConfig.databaseName);
         //Wait 5 seconds
         await t.wait(fiveSecondsTimeout);

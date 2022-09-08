@@ -284,7 +284,7 @@ const HashDetails = (props: Props) => {
                   position="bottom"
                   content={tooltipContent}
                 >
-                  <>{value.substring?.(0, 200) ?? value}</>
+                  <>{value?.substring?.(0, 200) ?? value}</>
                 </EuiToolTip>
               )}
               {expanded && value}
@@ -377,7 +377,7 @@ const HashDetails = (props: Props) => {
                   content={tooltipContent}
                   anchorClassName="truncateText"
                 >
-                  <>{formattedValue.substring?.(0, 200) ?? formattedValue}</>
+                  <>{formattedValue?.substring?.(0, 200) ?? formattedValue}</>
                 </EuiToolTip>
               )}
               {expanded && formattedValue}

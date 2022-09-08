@@ -81,6 +81,7 @@ test.skip
     .meta({ rte: rte.standalone })
     ('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
         //Open Working with Hashes section
+        await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         //Evaluate the last button in Enablement Area
         const buttonsQuantity = await workbenchPage.preselectButtons.count;
@@ -94,13 +95,13 @@ test.skip
         //Go back to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
         //Check that scroll position is saved
-        await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status');
+        await t.expect(await workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status');
         //Go to list of DBs page
         await t.click(myRedisDatabasePage.myRedisDBButton);
         //Go back to active DB again
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         //Check that scroll position is saved
-        await t.expect(workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
+        await t.expect(await workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'Scroll position is correct');
     });
 test
     .meta({ rte: rte.standalone })

@@ -49,7 +49,7 @@ export class MyRedisDatabasePage {
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
-    dbNameList = Selector('[data-testid^=instance-name]', { timeout: 3000 });
+    dbNameList = Selector('[data-testid^=instance-name]', { timeout: 2000 });
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
     hostPort = Selector('[data-testid=host-port]');

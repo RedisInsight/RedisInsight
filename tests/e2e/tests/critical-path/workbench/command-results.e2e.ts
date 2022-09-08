@@ -13,7 +13,7 @@ const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
 let indexName = chance.word({ length: 5 });
 
-fixture `Command results at Workbench`
+fixture.only `Command results at Workbench`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -72,8 +72,7 @@ test('Verify that user can see the results found in the table view by default fo
             await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is selected by default for command ${command}`);
         }
     });
-test
-    .meta({ env: env.desktop })('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
+test('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
         indexName = chance.word({ length: 5 });
         const commands = [
             'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
@@ -92,9 +91,7 @@ test
         await workbenchPage.selectViewTypeText();
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.desktop })('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
+test('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default
         await workbenchPage.sendCommandInWorkbench(command);

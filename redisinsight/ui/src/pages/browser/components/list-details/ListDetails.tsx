@@ -325,7 +325,7 @@ const ListDetails = (props: Props) => {
                   content={tooltipContent}
                   anchorClassName="truncateText"
                 >
-                  <>{value.substring?.(0, 200) ?? value}</>
+                  <>{value?.substring?.(0, 200) ?? value}</>
                 </EuiToolTip>
               )}
               {expanded && value}

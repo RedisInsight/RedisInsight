@@ -12,6 +12,7 @@ export class WorkbenchPage {
     cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssQueryTableResult = '[data-testid^=query-table-result-]';
+    cssQueryPluginResult = '[data-testid^=query-table-result-]';
     queryGraphContainer = '[data-testid=query-graph-container]';
     cssQueryCardCommand = '[data-testid=query-card-command]';
     cssQueryCardCommandResult = '[data-testid=query-common-result]';
@@ -55,6 +56,7 @@ export class WorkbenchPage {
     preselectModelBikeSalesButton = Selector('[data-testid="preselect-Model bike sales"]');
     showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
+    rawModeBtn = Selector('[data-testid="btn-change-mode"]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     //LINKS
@@ -130,7 +132,7 @@ export class WorkbenchPage {
     //Select Table view option in Workbench results
     async selectViewTypeTable(): Promise<void> {
         await t.click(this.selectViewType);
-        await t.click(this.tableViewTypeOption);
+        await t.doubleClick(this.tableViewTypeOption);
     }
 
     //Select view option in Workbench results
@@ -161,16 +163,16 @@ export class WorkbenchPage {
     }
 
     /**
-     * Send commands array in Workbench page
-     * @param command The array of commands to send
-     * @param result The array of commands to send
+     * Check the last command and result in workbench
+     * @param command The command to check
+     * @param result The result to check
      */
     async checkWorkbenchCommandResult(command: string, result: string): Promise<void> {
         //Compare the command with executed command
         const actualCommand = await this.queryCardContainer.nth(0).find(this.cssQueryCardCommand).textContent;
         await t.expect(actualCommand).eql(command);
         //Compare the command result with executed command
-        const actualCommandResult = await this.queryCardContainer.nth(0).find(this.cssQueryCardCommandResult).textContent;
+        const actualCommandResult = await this.queryCardContainer.nth(0).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).eql(result);
     }
 }

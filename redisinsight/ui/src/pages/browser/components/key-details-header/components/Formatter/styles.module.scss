@@ -60,6 +60,19 @@
   }
 }
 
+.formatType {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  padding: 6px !important;
+  min-height: 36px !important;
+
+  :global(.euiContextMenu__icon) {
+    height: 14px;
+    width: 14px;
+    margin-right: 6px;
+  }
+}
+
 .optionText {
   padding-left: 6px;
   padding-right: 4px;

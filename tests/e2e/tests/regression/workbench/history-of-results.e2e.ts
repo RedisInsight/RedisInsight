@@ -5,11 +5,13 @@ import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObject
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
 const cliPage = new CliPage();
+const common = new Common();
 
 const oneMinuteTimeout = 60000;
 let keyName = chance.word({ length: 10 });
@@ -36,7 +38,7 @@ test
         const dateTime = await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent;
         //Wait fo 1 minute, refresh page and check results
         await t.wait(oneMinuteTimeout);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent).eql(dateTime, 'The original date and time of command execution is saved after the page update');
     });
 //skipped due the long time execution and hangs of test
@@ -53,7 +55,7 @@ test.skip
         await workbenchPage.sendCommandInWorkbench(`${commandToSend} "${commandText}"`);
         await workbenchPage.sendCommandInWorkbench(commandToGet);
         //Refresh the page and check result
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.click(workbenchPage.queryCardContainer.withText(commandToGet));
         await t.expect(workbenchPage.queryTextResult.textContent).eql('"Results have been deleted since they exceed 1 MB. Re-run the command to see new results."', 'The messageis displayed');
     });

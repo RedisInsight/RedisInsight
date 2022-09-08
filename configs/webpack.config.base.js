@@ -50,6 +50,7 @@ export default {
       checkResource(resource) {
         const lazyImports = [
           '@nestjs/microservices',
+          '@nestjs/serve-static',
           // '@nestjs/platform-express',
           // 'pnpapi',
           'cache-manager',

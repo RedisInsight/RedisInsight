@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, KeyValueFormat } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { parseKeysListResponse, stringToBuffer } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
@@ -56,6 +56,8 @@ import reducer, {
   addZsetKey,
   setLastBatchKeys,
   updateSelectedKeyRefreshTime,
+  resetKeyInfo,
+  resetKeys,
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
 
@@ -777,6 +779,52 @@ describe('keys slice', () => {
         browser: { keys: nextState },
       })
       expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetKeyInfo', () => {
+    it('should properly save viewFormat', () => {
+      // Arrange
+      const viewFormat = KeyValueFormat.HEX
+      const initialStateMock = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          viewFormat
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialStateMock, resetKeyInfo())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(initialStateMock)
+    })
+  })
+
+  describe('resetKeys', () => {
+    it('should properly save viewFormat', () => {
+      // Arrange
+      const viewFormat = KeyValueFormat.HEX
+      const initialStateMock = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          viewFormat
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialStateMock, resetKeys())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(initialStateMock)
     })
   })
 

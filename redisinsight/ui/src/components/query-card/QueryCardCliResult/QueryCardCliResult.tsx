@@ -1,6 +1,7 @@
 import React from 'react'
 import cx from 'classnames'
 import { EuiLoadingContent } from '@elastic/eui'
+import { isArray } from 'lodash'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { cliParseTextResponse, cliParseCommandsGroupResult, CliPrefix, Maybe } from 'uiSrc/utils'
@@ -22,9 +23,9 @@ const QueryCardCliResult = (props: Props) => {
     <div className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
         <div data-testid="query-cli-result">
-          {!summary ? result?.map(({ response, status }) =>
+          {!summary || !isArray(result[0].response) ? result?.map(({ response, status }) =>
             cliParseTextResponse(response || '(nil)', query, status, CliPrefix.QueryCard))
-            : result[0].response.map((item: CommandExecutionResult, index: number) =>
+            : result[0].response.map((item: any, index: number) =>
               cliParseCommandsGroupResult(item, query, index))}
         </div>
       )}

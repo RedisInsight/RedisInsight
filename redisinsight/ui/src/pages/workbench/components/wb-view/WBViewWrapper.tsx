@@ -190,7 +190,7 @@ const WBViewWrapper = () => {
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
-        isGroupMode: commands.length === 1 ? false : isGroupMode,
+        isGroupMode,
         commands,
         multiCommands,
         mode: activeRunQueryMode,
@@ -213,7 +213,7 @@ const WBViewWrapper = () => {
         commands,
         options,
         mode: state.activeRunQueryMode,
-        isGroupMode: commands.length === 1 ? false : isGroupMode,
+        isGroupMode,
         multiCommands,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })

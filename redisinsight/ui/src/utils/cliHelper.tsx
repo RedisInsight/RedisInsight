@@ -8,7 +8,7 @@ import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-outpu
 import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
-import { ClusterNode, RedisDefaultModules, CommandExecutionResult } from 'uiSrc/slices/interfaces'
+import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
@@ -17,6 +17,12 @@ import formatToText from './cliTextFormatter'
 export enum CliPrefix {
   Cli = 'cli',
   QueryCard = 'query-card',
+}
+
+interface IGroupModeCommand {
+  command: string
+  response: string
+  status: CommandExecutionStatus
 }
 
 const cliParseTextResponseWithRedirect = (
@@ -73,22 +79,45 @@ const cliCommandWrapper = (command: string) => (
   </span>
 )
 
+const wbSummaryCommand = (command: string) => (
+  <span
+    className="cli-command-wrapper"
+    data-testid="wb-summary-command"
+  >
+    {`> ${command} \n`}
+  </span>
+)
+
+const wbSummaryCommandResult = (result: string, status: CommandExecutionStatus) => (
+  <span
+    className={
+      status === CommandExecutionStatus.Success
+        ? `${CliPrefix.Cli}-output-response-success`
+        : `${CliPrefix.Cli}-output-response-fail`
+    }
+    data-testid="wb-summary-command"
+  >
+    {`${result} \n`}
+  </span>
+)
+
 const clearOutput = (dispatch: any) => {
   dispatch(resetOutput())
 }
 
 const cliParseCommandsGroupResult = (
-  result: CommandExecutionResult,
+  result: IGroupModeCommand,
   query: string,
   index: number
 ) => {
-  const executionCommand = cliCommandWrapper(`> ${Object.keys(result)[0]} \r\n`)
-  const executionResult = cliParseTextResponse(Object.values(result)[0][0].response || '(nil)', query, Object.values(result)[0][0].status, CliPrefix.QueryCard)
+  const executionCommand = wbSummaryCommand(result.command)
+  const executionResult = wbSummaryCommandResult(result.response || '(nil)', result.status)
+
   return (
     <Fragment key={`${query}-${index}`}>
       {executionCommand}
       {executionResult}
-      {Object.values(result)[0][0].status === CommandExecutionStatus.Fail ? '\r\n' : null}
+      {/* {Object.values(result)[0][0].status === CommandExecutionStatus.Fail ? '\r\n' : null} */}
     </Fragment>
   )
 }

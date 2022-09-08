@@ -16,7 +16,7 @@ import styles from './Query/styles.module.scss'
 export interface Props {
   query: string
   activeMode: RunQueryMode
-  isGroupMode: boolean
+  isGroupMode?: boolean
   setQuery: (script: string) => void
   setQueryEl: Function
   setIsCodeBtnDisabled: (value: boolean) => void
@@ -81,7 +81,7 @@ const QueryWrapper = (props: Props) => {
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
         rawMode: state.activeMode === RunQueryMode.Raw,
-        isGroupMode: commands.length === 1 ? false : isGroupMode,
+        isGroupMode
       }
     })()
 

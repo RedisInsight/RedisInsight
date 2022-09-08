@@ -7,18 +7,20 @@ import { truncateText } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
-  query: string;
-  maxLinesNumber?: number;
+  query: string
+  summary?: string
+  maxLinesNumber?: number
 }
 
 interface IQueryLine {
-  index: number;
-  value: string;
-  isFolding?: boolean;
+  index: number
+  value: string
+  isFolding?: boolean
 }
 
 const QueryCardTooltip = (props: Props) => {
-  const { query = '', maxLinesNumber = 20 } = props
+  const { query = '', maxLinesNumber = 20, summary } = props
+
   let queryLines: IQueryLine[] = query
     .split('\n')
     .map((query: string, i) => ({
@@ -54,7 +56,7 @@ const QueryCardTooltip = (props: Props) => {
       content={<>{contentItems}</>}
       position="bottom"
     >
-      <span>{query}</span>
+      <span>{summary || query}</span>
     </EuiToolTip>
   )
 }

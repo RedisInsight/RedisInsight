@@ -220,13 +220,13 @@ const QueryCardHeader = (props: Props) => {
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
-              <QueryCardTooltip query={summary || query} />
+              <QueryCardTooltip query={query} summary={summary} />
             </EuiTextColor>
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy query"
               className="copy-btn"
-              onClick={(event: React.MouseEvent) => handleCopy(event, query || summary || '')}
+              onClick={(event: React.MouseEvent) => handleCopy(event, query || '')}
             />
           </div>
         </EuiFlexItem>
@@ -258,7 +258,7 @@ const QueryCardHeader = (props: Props) => {
           className={cx(styles.buttonIcon, styles.viewTypeIcon)}
           onClick={onDropDownViewClick}
         >
-          {isOpen && options.length > 1 && (
+          {isOpen && options.length > 1 && !summary && (
             <div className={styles.dropdownWrapper}>
               <div className={styles.dropdown}>
                 <EuiSuperSelect

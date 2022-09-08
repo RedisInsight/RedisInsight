@@ -127,6 +127,14 @@ const QueryCard = (props: Props) => {
 
   const commonError = CommonErrorResponse(command, result)
 
+  const getSummaryText = (summary?: string) => {
+    if (summary) {
+      const { total, success, fail } = JSON.parse(summary)
+      return `${total} Commands - ${success} success, ${fail} errors`
+    }
+    return summary
+  }
+
   return (
     <div className={cx(styles.containerWrapper, {
       fullscreen: isFullScreen,
@@ -148,7 +156,7 @@ const QueryCard = (props: Props) => {
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
-          summary={summary}
+          summary={getSummaryText(summary)}
           toggleOpen={toggleOpen}
           toggleFullScreen={toggleFullScreen}
           setSelectedValue={changeViewTypeSelected}
@@ -161,7 +169,7 @@ const QueryCard = (props: Props) => {
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>
-                  {viewTypeSelected === WBQueryType.Plugin && (
+                  {viewTypeSelected === WBQueryType.Plugin && !summary && (
                     <>
                       {!loading && result !== undefined ? (
                         <QueryCardCliPlugin
@@ -178,11 +186,11 @@ const QueryCard = (props: Props) => {
                       )}
                     </>
                   )}
-                  {viewTypeSelected === WBQueryType.Text && (
+                  {(viewTypeSelected === WBQueryType.Text || summary) && (
                     <QueryCardCliResult
                       loading={loading}
                       query={command}
-                      summary={summary}
+                      summary={getSummaryText(summary)}
                       result={result}
                     />
                   )}

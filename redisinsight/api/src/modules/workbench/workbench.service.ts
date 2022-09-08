@@ -72,28 +72,27 @@ export class WorkbenchService {
       const command = multilineCommandToOneLine(singleCommand);
       const deprecatedCommand = this.findCommandInBlackList(command);
       if (deprecatedCommand) {
-        return {
-          [command]: [
-            {
-              response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
-              status: CommandExecutionStatus.Fail,
-            },
-          ],
-        };
-      }
-      return ({ [command]: await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command }) });
+        return ({
+            command,
+            response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
+            status: CommandExecutionStatus.Fail,
+          })
+      };
+      const res = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command })
+      return ({ ...res[0], command });
     }));
 
     const successCommands = executionResults.filter(
-      (command) => Object.values(command)[0][0].status === CommandExecutionStatus.Success,
+      (command) => command.status === CommandExecutionStatus.Success,
     );
     const failedCommands = executionResults.filter(
-      (command) => Object.values(command)[0][0].status === CommandExecutionStatus.Fail,
+      (command) => command.status === CommandExecutionStatus.Fail,
     );
 
-    commandExecution.summary = `
-      ${executionResults.length} Commands - ${successCommands.length} success, ${failedCommands.length} errors
-    `;
+    commandExecution.summary = JSON.stringify(
+      { total: executionResults.length, success: successCommands.length, fail: failedCommands.length }
+    );
+
     commandExecution.command = commands.join('\r\n');
     commandExecution.result = [{
       status: CommandExecutionStatus.Success,

@@ -43,7 +43,9 @@ describe('POST /instance/sentinel-masters', () => {
           expect(body[0].status).to.eql('success');
           expect(body[0].message).to.eql('Added');
 
-          const db: any = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOne(body[0].id);
+          const db: any = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOneBy({
+            id: body[0].id,
+          });
 
           expect(db.password).to.eql(localDb.encryptData(constants.TEST_REDIS_PASSWORD));
           expect(db.sentinelMasterPassword).to.eql(localDb.encryptData(constants.TEST_SENTINEL_MASTER_PASS));
@@ -79,7 +81,9 @@ describe('POST /instance/sentinel-masters', () => {
           expect(body[0].status).to.eql('success');
           expect(body[0].message).to.eql('Added');
 
-          const db: any = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOne(body[0].id);
+          const db: any = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOneBy({
+            id: body[0].id,
+          });
 
           expect(db.password).to.eql(constants.TEST_REDIS_PASSWORD);
           expect(db.sentinelMasterPassword).to.eql(constants.TEST_SENTINEL_MASTER_PASS);

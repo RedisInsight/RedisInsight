@@ -1,17 +1,21 @@
 import { keyLength, rte } from '../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../helpers/keys';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage } from '../../../pageObjects';
+import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const common = new Common();
+const myRedisDatabasePage = new MyRedisDatabasePage();
 
 const keysData = keyTypes.map(object => ({ ...object }));
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`);
-const defaultValue = 'Unicode';
+const databasesForAdding = [
+    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB1' },
+    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB2' }
+];
 
 fixture `Format switcher functionality`
     .meta({
@@ -29,26 +33,39 @@ fixture `Format switcher functionality`
         await deleteKeysViaCli(keysData);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Verify that user can see switcher changed to default for key when reopening key details', async t => {
-    // Open key details and select JSON formatter
-    await browserPage.openKeyDetails(keysData[0].keyName);
-    await browserPage.selectFormatter('JSON');
-    // Reopen key details
-    await t.click(browserPage.closeKeyButton);
-    await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
-    // Verify that formatter changed to default 'Unicode'
-    await t.expect(browserPage.formatSwitcher.withExactText(defaultValue).visible).ok('Formatter value is not default');
-});
-test('Verify that user can see switcher changed to default for key when switching between keys when details tab opened', async t => {
-    // Open key details and select HEX formatter
-    await t.click(browserPage.searchButton);
-    await browserPage.openKeyDetailsByKeyName(keysData[1].keyName);
-    await browserPage.selectFormatter('HEX');
-    // Open another key details
-    await browserPage.openKeyDetailsByKeyName(keysData[3].keyName);
-    // Verify that formatter changed to default 'Unicode'
-    await t.expect(browserPage.formatSwitcher.withExactText(defaultValue).visible).ok('Formatter value is not default');
-});
+test
+    .before(async() => {
+        // Add new databases using API
+        await acceptLicenseTerms();
+        await addNewStandaloneDatabasesApi(databasesForAdding);
+        // Create new keys
+        await addKeysViaCli(keysData);
+        // Reload Page
+        await common.reloadPage();
+        await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
+    })
+    .after(async() => {
+        // Clear keys and database
+        await deleteKeysViaCli(keysData);
+        await deleteStandaloneDatabasesApi(databasesForAdding);
+    })('Formatters saved selection', async t => {
+        // Open key details and select JSON formatter
+        await browserPage.openKeyDetails(keysData[0].keyName);
+        await browserPage.selectFormatter('JSON');
+        // Reopen key details
+        await t.click(browserPage.closeKeyButton);
+        await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
+        // Verify that formatters selection is saved when user switches between keys
+        await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
+        // Verify that formatters selection is saved when user reloads the page
+        await common.reloadPage();
+        await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
+        // Go to another database
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
+        // Verify that formatters selection is saved when user switches between databases
+        await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
+    });
 test('Verify that user don`t see format switcher for JSON, GRAPH, TS keys', async t => {
     // Create array with JSON, GRAPH, TS keys
     const keysWithoutSwitcher = [keysData[5], keysData[7], keysData[8]];

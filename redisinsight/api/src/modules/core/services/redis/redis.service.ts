@@ -8,7 +8,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { AppTool } from 'src/models';
 import apiConfig from 'src/utils/config';
-import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
+import { AWS_REDIS_CONNECTION_SUFFIX, CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 import {
   ConnectionOptionsDto,
   DatabaseInstanceResponse,
@@ -101,6 +101,11 @@ export class RedisService {
       try {
         const cluster = new Redis.Cluster(nodes, {
           clusterRetryStrategy: useRetry ? this.retryStrategy : () => undefined,
+          // Simple DNS fix for ElastiCache and MemoryDB
+          //
+          // Add `dnsLookup` if the cluster is either ElastiCache or MemoryDB
+          // Refer: https://github.com/luin/ioredis#special-note-aws-elasticache-clusters-with-tls
+          dnsLookup: options.tls && nodes.filter(n => n.host.endsWith(AWS_REDIS_CONNECTION_SUFFIX)).length ? (address, callback) => callback(null, address) : undefined,
           redisOptions: {
             ...config,
             showFriendlyErrorStack: true,

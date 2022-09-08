@@ -9,7 +9,7 @@ import {
 } from '@elastic/eui'
 import {
   formatBytes,
-  truncateTTLToDuration,
+  truncateNumberToDuration,
   truncateNumberToFirstUnit,
   truncateTTLToSeconds,
   replaceSpaces,
@@ -213,7 +213,7 @@ const KeyList = forwardRef((props: Props, ref) => {
                   <>
                     {`${truncateTTLToSeconds(cellData)} s`}
                     <br />
-                    {`(${truncateTTLToDuration(cellData)})`}
+                    {`(${truncateNumberToDuration(cellData)})`}
                   </>
                 )}
               >

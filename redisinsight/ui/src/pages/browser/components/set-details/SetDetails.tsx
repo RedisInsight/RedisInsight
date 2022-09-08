@@ -192,7 +192,7 @@ const SetDetails = (props: Props) => {
         const member = bufferToString(memberItem)
         const tooltipContent = formatLongName(member)
         const { value, isValid } = formattingBuffer(memberItem, viewFormatProp, { expanded })
-        const cellContent = value.substring?.(0, 200) ?? value
+        const cellContent = value?.substring?.(0, 200) ?? value
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>

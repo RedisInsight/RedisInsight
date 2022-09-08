@@ -38,11 +38,11 @@ test
         // Add new databases using API
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
-        // Create new keys
-        await addKeysViaCli(keysData);
         // Reload Page
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
+        // Create new keys
+        await addKeysViaCli(keysData);
     })
     .after(async() => {
         // Clear keys and database
@@ -59,10 +59,12 @@ test
         await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
         // Verify that formatters selection is saved when user reloads the page
         await common.reloadPage();
+        await browserPage.openKeyDetailsByKeyName(keysData[1].keyName);
         await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
         // Go to another database
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
+        await browserPage.openKeyDetailsByKeyName(keysData[2].keyName);
         // Verify that formatters selection is saved when user switches between databases
         await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
     });

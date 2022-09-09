@@ -105,17 +105,17 @@ describe('CommandExecutionProvider', () => {
 
   describe('create', () => {
     it('should process new entity', async () => {
-      repository.save.mockReturnValueOnce(mockCommandExecutionEntity);
+      repository.save.mockReturnValueOnce([mockCommandExecutionEntity]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
-      expect(await service.create(mockCommandExecutionPartial)).toEqual(new CommandExecution({
+      expect(await service.createMany([mockCommandExecutionPartial])).toEqual([new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
-      }));
+      })]);
     });
     it('should return full result even if size limit exceeded', async () => {
-      repository.save.mockReturnValueOnce(mockCommandExecutionEntity);
+      repository.save.mockReturnValueOnce([mockCommandExecutionEntity]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
       const executionResult = [new CommandExecutionResult({
@@ -123,15 +123,15 @@ describe('CommandExecutionProvider', () => {
         response: `${Buffer.alloc(WORKBENCH_CONFIG.maxResultSize, 'a').toString()}`,
       })];
 
-      expect(await service.create({
+      expect(await service.createMany([{
         ...mockCommandExecutionPartial,
         result: executionResult,
-      })).toEqual(new CommandExecution({
+      }])).toEqual([new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
         result: executionResult,
-      }));
+      })]);
 
       expect(encryptionService.encrypt).toHaveBeenLastCalledWith(JSON.stringify([
         new CommandExecutionResult({

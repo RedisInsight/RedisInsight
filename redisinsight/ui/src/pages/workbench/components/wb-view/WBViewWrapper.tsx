@@ -145,21 +145,18 @@ const WBViewWrapper = () => {
   ) => {
     const { loading, batchSize } = state
     const isNewCommand = () => !commandId
-    const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), batchSize > 1 ? batchSize : 1)
+    const commandsForExecuting = splitMonacoValuePerLines(removeMonacoComments(commandInit))
+      .map((command) => removeMonacoComments(decode(command).trim()))
+    const [commands, ...rest] = chunk(commandsForExecuting, batchSize > 1 ? batchSize : 1)
     const multiCommands = rest.map((command) => getMultiCommands(command))
-    const commandLine = without(
-      commands.map((command) => removeMonacoComments(decode(command).trim())),
-      ''
-    )
-
-    if (!commandLine.length || loading) {
+    if (!commands.length || loading) {
       setMultiCommands(multiCommands)
       return
     }
 
     isNewCommand() && scrollResults('start')
 
-    sendCommand(commandLine, multiCommands)
+    sendCommand(commands, multiCommands)
   }
 
   const sendCommand = (

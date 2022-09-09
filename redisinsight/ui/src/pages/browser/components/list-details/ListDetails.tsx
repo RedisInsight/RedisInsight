@@ -206,7 +206,6 @@ const ListDetails = (props: Props) => {
   }
 
   const updateTextAreaHeight = () => {
-    console.log('update height')
     if (textAreaRef.current) {
       textAreaRef.current.style.height = '0px'
       textAreaRef.current.style.height = `${textAreaRef.current?.scrollHeight || 0}px`

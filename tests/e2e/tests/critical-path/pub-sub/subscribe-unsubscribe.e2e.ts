@@ -97,7 +97,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     //Verify that user can see a custom message when he try to run PSUBSCRIBE command in CLI or Workbench: “Use Pub/Sub to see the messages published to all channels in your database”
     await cliPage.sendCommandInCli('PSUBSCRIBE');
     await t.click(cliPage.cliExpandButton);
-    await t.expect(cliPage.cliWarningMessage.textContent).eql('Use Pub/Sub to see the messages `published to all channels in your database.', 'Message is not displayed', { timeout: 10000 });
+    await t.expect(cliPage.cliWarningMessage.textContent).eql('Use Pub/Sub to see the messages published to all channels in your database.', 'Message is not displayed', { timeout: 10000 });
     //Verify internal link to pubsub page in CLI
     await t.expect(cliPage.cliLinkToPubSub.exists).ok('Link to pubsub page is not displayed');
     await t.click(cliPage.cliLinkToPubSub);

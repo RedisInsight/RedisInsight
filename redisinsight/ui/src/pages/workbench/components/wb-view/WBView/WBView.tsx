@@ -55,7 +55,7 @@ const WBView = (props: Props) => {
     scrollDivRef,
   } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
-    (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
+    localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? false
   )
   const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 

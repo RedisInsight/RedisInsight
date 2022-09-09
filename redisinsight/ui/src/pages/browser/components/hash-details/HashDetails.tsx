@@ -43,7 +43,6 @@ import HelpTexts from 'uiSrc/constants/help-texts'
 import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
-import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import {
   GetHashFieldsResponse,
@@ -256,6 +255,13 @@ const HashDetails = (props: Props) => {
     }
   }
 
+  const updateTextAreaHeight = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = '0px'
+      textAreaRef.current.style.height = `${textAreaRef.current?.scrollHeight || 0}px`
+    }
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'field',
@@ -315,9 +321,10 @@ const HashDetails = (props: Props) => {
             && !isEqualBuffers(valueItem, stringToBuffer(value))
 
           setTimeout(() => cellCache.clear(rowIndex, 1), 0)
+          updateTextAreaHeight()
 
           return (
-            <AutoSizer disableHeight>
+            <AutoSizer disableHeight onResize={() => setTimeout(updateTextAreaHeight, 0)}>
               {({ width }) => (
                 <div style={{ width }}>
                   <StopPropagation>
@@ -342,19 +349,20 @@ const HashDetails = (props: Props) => {
                         fullWidth
                         name="value"
                         id="value"
-                        rows={calculateTextareaLines(areaValue, width + 80)}
                         resize="none"
                         placeholder="Enter Value"
                         value={areaValue}
                         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                           cellCache.clearAll()
                           setAreaValue(e.target.value)
+                          updateTextAreaHeight()
                         }}
                         disabled={updateLoading}
                         inputRef={textAreaRef}
                         className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                         spellCheck={false}
                         data-testid="hash-value-editor"
+                        style={{ height: textAreaRef.current?.scrollHeight || 0 }}
                       />
                     </InlineItemEditor>
                   </StopPropagation>

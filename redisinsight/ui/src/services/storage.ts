@@ -15,17 +15,13 @@ class StorageService {
     } catch (error) {
       console.error(`getItem from storage error: ${error}`)
     }
-    const numPatt = new RegExp(/^\d+$/)
-    const jsonPatt = new RegExp(/[[{].*[}\]]/)
 
     if (item) {
-      if (jsonPatt.test(item)) {
+      try {
         return JSON.parse(item)
+      } catch (e) {
+        return item
       }
-      if (numPatt.test(item)) {
-        return parseFloat(item)
-      }
-      return item
     }
     return null
   }

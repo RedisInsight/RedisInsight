@@ -101,11 +101,8 @@ export class RedisService {
       try {
         const cluster = new Redis.Cluster(nodes, {
           clusterRetryStrategy: useRetry ? this.retryStrategy : () => undefined,
-          // Simple DNS fix for ElastiCache and MemoryDB
-          //
-          // Add `dnsLookup` if the cluster is either ElastiCache or MemoryDB
-          // Refer: https://github.com/luin/ioredis#special-note-aws-elasticache-clusters-with-tls
-          dnsLookup: options.tls && nodes.filter(n => n.host.endsWith(AWS_REDIS_CONNECTION_SUFFIX)).length ? (address, callback) => callback(null, address) : undefined,
+          // Simple DNS fix for cluster instances
+          dnsLookup: (address, callback) => callback(null, address),
           redisOptions: {
             ...config,
             showFriendlyErrorStack: true,

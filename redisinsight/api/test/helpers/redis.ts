@@ -35,7 +35,7 @@ export const connectToRedisCluster = async (
   redisOptions: IORedis.RedisOptions,
 ): Promise<IORedis.Cluster> => {
   return await new Promise((resolve, reject) => {
-    const client = new Redis.Cluster(nodes, { redisOptions });
+    const client = new Redis.Cluster(nodes, { dnsLookup: (address, callback) => callback(null, address), redisOptions });
 
     client.on('error', (e: Error): void => {
       console.error('Unable to connect in cluster mode', e);

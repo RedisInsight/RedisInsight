@@ -10,6 +10,7 @@ export class MyRedisDatabasePage {
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
+    analysisPageButton = Selector('[data-testid=analytics-page-btn]');
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');

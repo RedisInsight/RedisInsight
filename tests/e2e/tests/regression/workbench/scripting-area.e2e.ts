@@ -15,7 +15,7 @@ const settingsPage = new SettingsPage();
 const indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 10 });
 
-fixture.only `Scripting area at Workbench`
+fixture `Scripting area at Workbench`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {

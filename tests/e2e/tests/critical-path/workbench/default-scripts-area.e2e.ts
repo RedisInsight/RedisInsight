@@ -12,7 +12,7 @@ const chance = new Chance();
 let indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 5 });
 
-fixture.only `Default scripts area at Workbench`
+fixture `Default scripts area at Workbench`
     .meta({type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async t => {

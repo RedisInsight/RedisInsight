@@ -19,8 +19,8 @@ const commandsForIndex = [
     'HMSET product:1 price 20',
     'HMSET product:2 price 100'
 ];
-// skip due to errors of FT.SEARCH issue https://redislabs.atlassian.net/browse/RI-3501
-fixture.skip `Command results at Workbench`
+
+fixture `Command results at Workbench`
     .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -72,8 +72,8 @@ test
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(await workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.AGGREGATE');
     });
-// skip due to inaccessibility of CLIENT LIST in plugin
-test
+// Skipped due to issue https://redislabs.atlassian.net/browse/RI-3524
+test.skip
     .meta({ env: env.web })('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default in full mode

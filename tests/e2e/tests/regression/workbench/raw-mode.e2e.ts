@@ -100,8 +100,7 @@ test
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
-    })
-    .meta({ env: env.desktop })('Display Raw mode for plugins', async t => {
+    })('Display Raw mode for plugins', async t => {
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
             `HMSET product:1 name "${unicodeValue}"`,

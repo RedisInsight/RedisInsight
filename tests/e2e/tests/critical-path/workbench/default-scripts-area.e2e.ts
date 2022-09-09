@@ -27,7 +27,7 @@ fixture `Default scripts area at Workbench`
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -55,7 +55,7 @@ test
         await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command');
     });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -80,7 +80,7 @@ test
         await t.expect(name.exists).ok('The added key name field is in the Search result');
     });
 test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
+    .meta({ rte: rte.standalone })('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         const aggregationResultField = 'max_price';
         const commandsForSend = [

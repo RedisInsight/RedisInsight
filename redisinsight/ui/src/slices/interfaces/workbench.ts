@@ -39,6 +39,7 @@ export interface CommandExecutionUI extends Partial<CommandExecution> {
   loading?: boolean
   isOpen?: boolean
   error?: string
+  emptyCommand: boolean
 }
 
 export enum RunQueryMode {

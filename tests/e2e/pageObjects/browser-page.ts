@@ -114,7 +114,7 @@ export class BrowserPage {
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
     relativeTimeOption = Selector('#idle');
     timestampOption = Selector('#time');
-    formatSwitcher = Selector('[data-testid=select-format-key-value]');
+    formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');

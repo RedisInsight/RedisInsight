@@ -10,7 +10,7 @@ import InputFieldSentinel from './input-field-sentinel/InputFieldSentinel'
 import PageBreadcrumbs from './page-breadcrumbs/PageBreadcrumbs'
 import ContentEditable from './ContentEditable'
 import Config from './config'
-import AdvancedSettings from './advanced-settings/AdvancedSettings'
+import SettingItem from './settings-item/SettingItem'
 import { ConsentsSettings, ConsentsSettingsPopup, ConsentsPrivacy, ConsentsNotifications } from './consents-settings'
 import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
 import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
@@ -38,7 +38,7 @@ export {
   ConsentsSettingsPopup,
   ConsentsPrivacy,
   ConsentsNotifications,
-  AdvancedSettings,
+  SettingItem,
   KeyboardShortcut,
   MonitorConfig,
   PubSubConfig,

@@ -58,6 +58,7 @@ const WBResults = (props: Props) => {
           loading,
           createdAt,
           mode,
+          emptyCommand,
         }
       ) => (
         <QueryCard
@@ -70,6 +71,7 @@ const WBResults = (props: Props) => {
           command={command}
           createdAt={createdAt}
           activeMode={activeMode}
+          emptyCommand={emptyCommand}
           mode={mode}
           onQueryOpen={() => onQueryOpen(id)}
           onQueryReRun={() => onQueryReRun(command, null, false)}

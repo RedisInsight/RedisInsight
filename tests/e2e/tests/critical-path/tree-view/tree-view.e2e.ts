@@ -7,9 +7,11 @@ import {
 } from '../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
+const common = new Common();
 
 const keyNameFilter = `keyName${chance.word({ length: 10 })}`;
 
@@ -32,7 +34,7 @@ test
 test
     .meta({ rte: rte.standalone })('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
         await t.click(browserPage.treeViewButton);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         //Verify that "Tree view" mode enabled state is saved
         await t.expect(browserPage.treeViewArea.visible).ok('The tree view is displayed');
     });

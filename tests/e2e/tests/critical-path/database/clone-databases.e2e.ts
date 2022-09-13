@@ -10,21 +10,23 @@ import {
     deleteStandaloneDatabaseApi,
     discoverSentinelDatabaseApi
 } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const common = new Common();
 const newOssDatabaseAlias = 'cloned oss cluster';
 
 fixture `Clone databases`
     .meta({ type: 'critical_path' })
     .page(commonUrl);
 test
-    .before(async t => {
+    .before(async () => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
-    .after(async() => {
+    .after(async () => {
         // Delete databases
         const dbNumber = await myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count;
         for (let i = 0; i < dbNumber; i++) {
@@ -51,10 +53,10 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count).eql(2, 'DB was not cloned');
     });
 test
-    .before(async t => {
+    .before(async () => {
         await acceptLicenseTerms();
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
     .after(async() => {
         // Delete database
@@ -75,19 +77,19 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossClusterConfig.ossClusterDatabaseName).visible).ok('Original DB is not displayed');
     });
 test
-    .before(async t => {
+    .before(async () => {
         await acceptLicenseTerms();
         // Add Sentinel databases
         await discoverSentinelDatabaseApi(ossSentinelConfig);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
-    .after(async t => {
+    .after(async () => {
         // Delete all primary groups
         const sentinelCopy = ossSentinelConfig;
         sentinelCopy.masters.push(ossSentinelConfig.masters[1]);
         sentinelCopy.name.push(ossSentinelConfig.name[1]);
         await deleteAllSentinelDatabasesApi(sentinelCopy);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
         await myRedisDatabasePage.clickOnEditDBByName(ossSentinelConfig.name[1]);
@@ -99,11 +101,11 @@ test
             .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group name value');
         // Validate Databases section
         await t
-            .click(addRedisDatabasePage.sentinelDatabaseNavigation)
+            .click(addRedisDatabasePage.cloneSentinelDatabaseNavigation)
             .expect(addRedisDatabasePage.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
         // Validate Sentinel section
         await t
-            .click(addRedisDatabasePage.sentinelNavigation)
+            .click(addRedisDatabasePage.cloneSentinelNavigation)
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPort, 'Invalid sentinel port')
             .expect(addRedisDatabasePage.passwordInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPassword, 'Invalid sentinel password');
         // Clone Sentinel Primary Group

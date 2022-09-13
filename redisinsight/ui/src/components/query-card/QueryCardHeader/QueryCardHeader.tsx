@@ -44,6 +44,7 @@ export interface Props {
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
+  emptyCommand: boolean
   toggleOpen: () => void
   toggleFullScreen: () => void
   setSelectedValue: (type: WBQueryType, value: string) => void
@@ -65,6 +66,7 @@ const QueryCardHeader = (props: Props) => {
     summary,
     activeMode,
     selectedValue,
+    emptyCommand,
     setSelectedValue,
     onQueryDelete,
     onQueryReRun,
@@ -304,7 +306,13 @@ const QueryCardHeader = (props: Props) => {
               content="Run again"
               position="left"
             >
-              <EuiButtonIcon iconType="play" aria-label="Re-run command" data-testid="re-run-command" onClick={handleQueryReRun} />
+              <EuiButtonIcon
+                disabled={emptyCommand}
+                iconType="play"
+                aria-label="Re-run command"
+                data-testid="re-run-command"
+                onClick={handleQueryReRun}
+              />
             </EuiToolTip>
           </EuiFlexItem>
         )}

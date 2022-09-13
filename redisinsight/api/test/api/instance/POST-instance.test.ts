@@ -156,7 +156,7 @@ describe('POST /instance', () => {
         const dbName = constants.getRandomString();
 
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -187,7 +187,7 @@ describe('POST /instance', () => {
       it('Create standalone instance using tls without CA verify', async () => {
         const dbName = constants.getRandomString();
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -218,7 +218,7 @@ describe('POST /instance', () => {
         const dbName = constants.getRandomString();
         const newCaName = constants.getRandomString();
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -253,7 +253,7 @@ describe('POST /instance', () => {
         const dbName = constants.getRandomString();
 
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -274,12 +274,12 @@ describe('POST /instance', () => {
           },
         });
 
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
       });
       it('Should throw an error with invalid CA cert', async () => {
         const dbName = constants.getRandomString();
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -304,7 +304,7 @@ describe('POST /instance', () => {
           },
         });
 
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
       });
     });
     describe('Create standalone instance tls with certificate auth', function () {
@@ -320,7 +320,7 @@ describe('POST /instance', () => {
         const newCaName = constants.getRandomString();
         const newClientCertName = existingClientCertName = constants.getRandomString();
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         const { body } = await validateApiCall({
           endpoint,
@@ -354,12 +354,12 @@ describe('POST /instance', () => {
           },
           checkFn: async ({ body }) => {
             const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOne(body.tls.caCertId);
+              .findOneBy({ id: body.tls.caCertId });
 
             expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
 
             const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOne(body.tls.clientCertPairId);
+              .findOneBy({ id: body.tls.clientCertPairId });
 
             expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
             expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
@@ -377,7 +377,7 @@ describe('POST /instance', () => {
         const dbName = constants.getRandomString();
 
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -413,7 +413,7 @@ describe('POST /instance', () => {
         const newCaName = constants.getRandomString();
 
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -442,7 +442,7 @@ describe('POST /instance', () => {
           },
         });
 
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
       });
       it('Create standalone instance and verify users certs (new certificates !do not encrypt)', async () => {
         await localDb.setAgreements({
@@ -453,7 +453,7 @@ describe('POST /instance', () => {
         const newCaName = constants.getRandomString();
         const newClientCertName = constants.getRandomString();
         // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(undefined);
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
           endpoint,
@@ -487,12 +487,12 @@ describe('POST /instance', () => {
           },
           checkFn: async ({ body }) => {
             const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOne(body.tls.caCertId);
+              .findOneBy({ id: body.tls.caCertId });
 
             expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
 
             const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOne(body.tls.clientCertPairId);
+              .findOneBy({ id: body.tls.clientCertPairId });
 
             expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
             expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);

@@ -27,6 +27,7 @@ export class CliPage {
     commandHelperBadge = Selector('[data-testid=expand-command-helper] span');
     cliResizeButton = Selector('[data-test-subj=resize-btn-browser-cli]');
     workbenchLink = Selector('[data-test-subj=cli-workbench-page-btn]');
+    returnToList = Selector('[data-testid=cli-helper-back-to-list-btn]');
     //TEXT INPUTS (also referred to as 'Text fields')
     cliCommandInput = Selector('[data-testid=cli-command]');
     cliArea = Selector('[data-testid=cli');
@@ -58,7 +59,7 @@ export class CliPage {
   * Select filter group type
   * @param groupName The group name
   */
-    async selectFilterGroupType(groupName: string): Promise<void>{
+    async selectFilterGroupType(groupName: string): Promise<void> {
         await t.click(this.filterGroupTypeButton);
         await t.click(this.filterOptionGroupType.withExactText(groupName));
     }
@@ -69,7 +70,7 @@ export class CliPage {
    * @param amount The amount of the keys
    * @param keyName The name of the keys. The default value is keyName
    */
-    async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void>{
+    async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void> {
         //Open CLI
         await t.click(this.cliExpandButton);
         //Add keys
@@ -83,7 +84,7 @@ export class CliPage {
    * Send command in Cli
    * @param command The command to send
    */
-    async sendCommandInCli(command: string): Promise<void>{
+    async sendCommandInCli(command: string): Promise<void> {
         //Open CLI
         await t.click(this.cliExpandButton);
         await t.typeText(this.cliCommandInput, command, { paste: true });
@@ -95,7 +96,7 @@ export class CliPage {
    * Get command result execution
    * @param command The command for send in CLI
    */
-    async getSuccessCommandResultFromCli(command: string): Promise<string>{
+    async getSuccessCommandResultFromCli(command: string): Promise<string> {
         //Open CLI
         await t.click(this.cliExpandButton);
         //Add keys
@@ -126,19 +127,5 @@ export class CliPage {
         await t.click(this.cliHelperOutputTitles.withExactText(command));
         await t.click(this.readMoreButton);
         await t.expect(getPageUrl()).eql(url, 'The opened page');
-    }
-
-    /**
-     * Check URL of command opened from command helper
-     * @param searchedCommand Searched command in Command Helper
-     * @param listToCompare The list with commands to compare with opened in Command Helper
-     */
-    async checkSearchedCommandInCommandHelper(searchedCommand: string, listToCompare: string[]): Promise<void> {
-        await t.typeText(this.cliHelperSearch, searchedCommand, { speed: 0.5 });
-        //Verify results in the output
-        const commandsCount = await this.cliHelperOutputTitles.count;
-        for (let i = 0; i < commandsCount; i++) {
-            await t.expect(this.cliHelperOutputTitles.nth(i).textContent).eql(listToCompare[i], 'Results in the output contains searched value');
-        }
     }
 }

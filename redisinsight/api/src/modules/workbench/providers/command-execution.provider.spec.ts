@@ -178,7 +178,7 @@ describe('CommandExecutionProvider', () => {
   });
   describe('getOne', () => {
     it('should return decrypted and transformed command execution', async () => {
-      repository.findOne.mockResolvedValueOnce(mockCommandExecutionEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockCommandExecutionEntity);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockReturnValueOnce(JSON.stringify([mockCommandExecutionResult]));
 
@@ -193,7 +193,7 @@ describe('CommandExecutionProvider', () => {
       );
     });
     it('should return null fields in case of decryption errors', async () => {
-      repository.findOne.mockResolvedValueOnce(mockCommandExecutionEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockCommandExecutionEntity);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
 
@@ -209,7 +209,7 @@ describe('CommandExecutionProvider', () => {
       );
     });
     it('should return not found exception', async () => {
-      repository.findOne.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce(null);
 
       try {
         await service.getOne(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id);

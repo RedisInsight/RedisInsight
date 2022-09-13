@@ -2,9 +2,11 @@ import { MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import { commonUrl } from '../../../helpers/conf';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
+const common = new Common();
 
 const explicitErrorHandler = (): void => {
     window.addEventListener('error', e => {
@@ -30,7 +32,7 @@ test
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('1500');
         // Reload Page
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         // Check that value was set
         await t.click(settingsPage.accordionAdvancedSettings);
         await t.expect(settingsPage.keysToScanValue.textContent).eql('1500', 'Keys to Scan has proper value');
@@ -49,7 +51,7 @@ test
         for (const value of equalValues) {
             await t.click(settingsPage.switchAnalyticsOption);
             // Reload Page
-            await t.eval(() => location.reload());
+            await common.reloadPage();
             await t.click(settingsPage.accordionPrivacySettings);
             await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql(value, 'Analytics was switched properly');
         }

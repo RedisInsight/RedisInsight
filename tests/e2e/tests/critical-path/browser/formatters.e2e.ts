@@ -15,10 +15,11 @@ const keysData = keyTypes.map(object => ({ ...object })).filter((v, i) => i <= 6
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`);
 const binaryFormattersSet = [formatters[5], formatters[6], formatters[7]];
 const formattersHighlightedSet = [formatters[0], formatters[3]];
-const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4]];
+const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4], formatters[8]];
 const formattersForEditSet = [formatters[0], formatters[1], formatters[3]];
-const formattersWithTooltipSet = [formatters[0], formatters[1], formatters[2], formatters[3], formatters[4]];
-const notEditableFormattersSet = [formatters[2], formatters[4]];
+const formattersWithTooltipSet = [formatters[0], formatters[1], formatters[2], formatters[3], formatters[4], formatters[8]];
+const notEditableFormattersSet = [formatters[2], formatters[4], formatters[8]];
+const defaultFormatter = 'Unicode';
 
 fixture `Formatters`
     .meta({
@@ -43,21 +44,22 @@ formattersHighlightedSet.forEach(formatter => {
             // Create new keys
             await addKeysViaCli(keysData, formatter.fromText, formatter.fromText);
         })(`Verify that user can see highlighted key details in ${formatter.format} format`, async t => {
-            // Verify for JSON and PHP Unserialize
+            // Verify for JSON and PHP serialized
             // Verify for Hash, List, Set, ZSet, String, Stream keys
             for (const key of keysData) {
                 const valueSelector = Selector(`[data-testid^=${key.keyName.split('-')[0]}-][data-testid*=${key.data}]`);
                 await browserPage.openKeyDetailsByKeyName(key.keyName);
                 // Verify that value not formatted with default formatter
+                await browserPage.selectFormatter(defaultFormatter);
                 await t.expect(valueSelector.find(browserPage.cssJsonValue).exists).notOk(`${key.textType} Value is formatted to ${formatter.format}`);
                 await browserPage.selectFormatter(formatter.format);
                 // Verify that value is formatted and highlighted
                 await t.expect(valueSelector.find(browserPage.cssJsonValue).exists).ok(`${key.textType} Value is not formatted to ${formatter.format}`);
-                // Verify that Hash field is formatted and highlighted for JSON and PHP Unserialize
+                // Verify that Hash field is formatted and highlighted for JSON and PHP serialized
                 if (key.keyName === 'hash') {
                     await t.expect(browserPage.hashField.find(browserPage.cssJsonValue).exists).ok(`Hash field is not formatted to ${formatter.format}`);
                 }
-                // Verify that Stream field is formatted and highlighted for JSON and PHP Unserialize
+                // Verify that Stream field is formatted and highlighted for JSON and PHP serialized
                 if (key.keyName === 'stream') {
                     await t.expect(Selector(browserPage.cssJsonValue).count).eql(2, `Hash field is not formatted to ${formatter.format}`);
                 }
@@ -66,7 +68,7 @@ formattersHighlightedSet.forEach(formatter => {
 });
 fromBinaryFormattersSet.forEach(formatter => {
     test(`Verify that user can see highlighted key details in ${formatter.format} format`, async t => {
-        // Verify for Msgpack, Protobuf, Java Object formats
+        // Verify for Msgpack, Protobuf, Java serialized, Pickle formats
         // Open Hash key details
         await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
         // Add valid value in HEX format for convertion
@@ -81,7 +83,7 @@ fromBinaryFormattersSet.forEach(formatter => {
 });
 formattersForEditSet.forEach(formatter => {
     test(`Verify that user can edit the values in the key regardless if they are valid in ${formatter.format} format or not`, async t => {
-        // Verify for JSON, Msgpack, PHP unserialise formatters
+        // Verify for JSON, Msgpack, PHP serialized formatters
         const invalidText = 'invalid text';
         // Open key details and select formatter
         await browserPage.openKeyDetails(keysData[0].keyName);
@@ -92,7 +94,7 @@ formattersForEditSet.forEach(formatter => {
         // Add valid value which can be converted
         await browserPage.editHashKeyValue(formatter.fromText ?? '');
         // Verify that valid value can be saved on edit
-        formatter.format === 'PHP Unserialize'
+        formatter.format === 'PHP serialized'
             ? await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.formattedText ?? '', `Valid ${formatter.format} value is not saved`)
             : await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromText ?? '', `Valid ${formatter.format} value is not saved`);
         await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).ok(`Value is not formatted to ${formatter.format}`);
@@ -104,7 +106,7 @@ formattersForEditSet.forEach(formatter => {
 });
 formattersWithTooltipSet.forEach(formatter => {
     test(`Verify that user can see tooltip with convertion failed message on hover when data is not valid ${formatter.format}`, async t => {
-        // Verify for JSON, Msgpack, Protobuf, PHP unserialise, Java serialized object formatters
+        // Verify for JSON, Msgpack, Protobuf, PHP serialized, Java serialized object, Pickle formatters
         const failedMessage = `Failed to convert to ${formatter.format}`;
         for (let i = 0; i < keysData.length; i++) {
             const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}-][data-testid*=${keysData[i].data}]`);
@@ -132,6 +134,7 @@ binaryFormattersSet.forEach(formatter => {
                 const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}-][data-testid*=${keysData[i].data}]`);
                 await browserPage.openKeyDetailsByKeyName(keysData[i].keyName);
                 // Verify that value not formatted with default formatter
+                await browserPage.selectFormatter(defaultFormatter);
                 await t.expect(valueSelector.innerText).contains(formatter.fromText ?? '', `Value is formatted as ${formatter.format} in Unicode`);
                 await browserPage.selectFormatter(formatter.format);
                 // Verify that value is formatted
@@ -163,7 +166,7 @@ binaryFormattersSet.forEach(formatter => {
         await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromTextEdit ?? '', `${formatter.format} value is not converted to Unicode`);
     });
 });
-test('Verify that user can format different data types of PHP unserialize', async t => {
+test('Verify that user can format different data types of PHP serialized', async t => {
     // Open Hash key details
     await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
     for (const type of phpData) {
@@ -172,15 +175,15 @@ test('Verify that user can format different data types of PHP unserialize', asyn
         await browserPage.addFieldToHash(type.dataType, type.from);
         //Search the added field
         await browserPage.searchByTheValueInKeyDetails(type.dataType);
-        await browserPage.selectFormatter('PHP Unserialize');
-        // Verify that PHP Unserialize value is formatted and highlighted
+        await browserPage.selectFormatter('PHP serialized');
+        // Verify that PHP serialized value is formatted and highlighted
         await t.expect(browserPage.hashFieldValue.innerText).contains(type.converted, `Value is not saved as PHP ${type.dataType}`);
         await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).ok(`Value is not formatted to PHP ${type.dataType}`);
     }
 });
 notEditableFormattersSet.forEach(formatter => {
     test(`Verify that user see edit icon disabled for all keys when ${formatter.format} selected`, async t => {
-        // Verify for Protobuf and Java Object
+        // Verify for Protobuf, Java serialized, Pickle
         // Verify for Hash, List, ZSet, String keys
         for (const key of keysData) {
             if (key.keyName === 'hash' || key.keyName === 'list' || key.keyName === 'zset' || key.keyName === 'string') {

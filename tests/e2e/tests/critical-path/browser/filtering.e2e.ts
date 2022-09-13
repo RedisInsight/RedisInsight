@@ -94,7 +94,7 @@ test('Verify that user can see filtering per key name starts when he press Enter
     await t.pressKey('enter');
     await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');
     //Check the filtering starts by clicks the control
-    await t.eval(() => location.reload());
+    await common.reloadPage();
     await t.typeText(browserPage.filterByPatterSearchInput, keyName);
     await t.click(browserPage.searchButton);
     await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');

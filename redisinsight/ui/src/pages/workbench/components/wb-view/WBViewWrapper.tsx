@@ -165,21 +165,18 @@ const WBViewWrapper = () => {
       }
       return batchSize > 1 ? batchSize : 1
     }
-    const [commands, ...rest] = chunk(splitMonacoValuePerLines(commandInit), getChunkSize())
+    const commandsForExecuting = splitMonacoValuePerLines(removeMonacoComments(commandInit))
+      .map((command) => removeMonacoComments(decode(command).trim()))
+    const [commands, ...rest] = chunk(commandsForExecuting, getChunkSize())
     const multiCommands = rest.map((command) => getMultiCommands(command))
-    const commandLine = without(
-      commands.map((command) => removeMonacoComments(decode(command).trim())),
-      ''
-    )
-
-    if (!commandLine.length || loading) {
+    if (!commands.length || loading) {
       setMultiCommands(multiCommands)
       return
     }
 
     isNewCommand() && scrollResults('start')
 
-    sendCommand(commandLine, multiCommands)
+    sendCommand(commands, multiCommands)
   }
 
   const sendCommand = (

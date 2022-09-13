@@ -8,11 +8,13 @@ import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Chance } from 'chance';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
+const common = new Common();
 
 let keyName = chance.word({ length: 10 });
 
@@ -63,7 +65,7 @@ test
         await t.expect(await browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is selected');
         //Navigate to Workbench and reload the window
         await t.click(myRedisDatabasePage.workbenchButton);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         //Return back to Browser and check context is not saved
         await t.click(myRedisDatabasePage.browserButton);
         await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).notOk('Filter per key name is not applied');

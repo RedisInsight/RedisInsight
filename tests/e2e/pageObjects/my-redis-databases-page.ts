@@ -10,7 +10,7 @@ export class MyRedisDatabasePage {
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
-    workbenchButtonWithTimeout = Selector('[data-testid=workbench-page-btn]', { timeout: 8000 });
+    workbenchButtonWithTimeout = Selector('[data-testid=workbench-page-btn]');
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');
@@ -49,7 +49,7 @@ export class MyRedisDatabasePage {
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
-    dbNameList = Selector('[data-testid^=instance-name]', { timeout: 2000 });
+    dbNameList = Selector('[data-testid^=instance-name]');
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
     hostPort = Selector('[data-testid=host-port]');

@@ -28,7 +28,7 @@ export class BrowserPage {
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     editKeyValueButton = Selector('[data-testid=edit-key-value-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
-    plusAddKeyButton = Selector('[data-testid=btn-add-key]', { timeout: 5000 });
+    plusAddKeyButton = Selector('[data-testid=btn-add-key]');
     addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');
     saveHashFieldButton = Selector('[data-testid=save-fields-btn]');
     saveMemberButton = Selector('[data-testid=save-members-btn]');
@@ -207,7 +207,7 @@ export class BrowserPage {
     keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
-    progressLine = Selector('div.euiProgress', { timeout: 5000 });
+    progressLine = Selector('div.euiProgress');
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');

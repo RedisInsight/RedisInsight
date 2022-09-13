@@ -15,22 +15,22 @@ export class BulkActionsPage {
     deleteButton = Selector('[data-testid=bulk-action-warning-btn]');
     bulkApplyButton = Selector('[data-testid=bulk-action-apply-btn]');
     bulkStopButton = Selector('[data-testid=bulk-action-stop-btn]');
-    bulkStartAgainButton = Selector('[data-testid=bulk-action-start-again-btn]', { timeout: 5000 });
-    bulkCancelButton = Selector('[data-testid=bulk-action-cancel-btn]', { timeout: 5000 });
+    bulkStartAgainButton = Selector('[data-testid=bulk-action-start-again-btn]');
+    bulkCancelButton = Selector('[data-testid=bulk-action-cancel-btn]');
     bulkClosePanelButton = Selector('[data-testid=bulk-close-panel]');
     //TEXT
     infoFilter = Selector('[data-testid=bulk-actions-info-filter]');
     infoSearch = Selector('[data-testid=bulk-actions-info-search]');
     bulkActionsPlaceholder = Selector('[data-testid=bulk-actions-placeholder]');
-    bulkDeleteSummary = Selector('[data-testid=bulk-delete-summary]', { timeout: 5000 });
+    bulkDeleteSummary = Selector('[data-testid=bulk-delete-summary]');
     bulkActionWarningTooltip = Selector('[data-testid=bulk-action-tooltip]');
     bulkStatusInProgress = Selector('[data-testid=bulk-status-progress]');
     bulkStatusStopped = Selector('[data-testid=bulk-status-stopped]');
-    bulkStatusCompleted = Selector('[data-testid=bulk-status-completed]', { timeout: 5000 });
-    bulkDeleteCompletedSummary = Selector('[data-testid=bulk-delete-completed-summary]', { timeout: 5000 });
+    bulkStatusCompleted = Selector('[data-testid=bulk-status-completed]');
+    bulkDeleteCompletedSummary = Selector('[data-testid=bulk-delete-completed-summary]');
     //CONTAINERS
     bulkActionsContainer = Selector('[data-testid=bulk-actions-content]');
-    bulkActionsSummary = Selector('[data-testid=bulk-actions-info]', { timeout: 5000 });
+    bulkActionsSummary = Selector('[data-testid=bulk-actions-info]');
     progressLine = Selector('[data-testid=progress-line]');
 
     /**

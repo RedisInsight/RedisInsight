@@ -15,7 +15,7 @@ export class CliPage {
     //-------------------------------------------------------------------------------------------
     //BUTTONS
     cliExpandButton = Selector('[data-testid=expand-cli]');
-    cliExpandButtonWithTimeout = Selector('[data-testid=expand-cli]', { timeout: 5000 });
+    cliExpandButtonWithTimeout = Selector('[data-testid=expand-cli]');
     cliCollapseButton = Selector('[data-testid=close-cli]');
     expandCommandHelperButton = Selector('[data-testid=expand-command-helper]');
     closeCommandHelperButton = Selector('[data-testid=close-command-helper]');
@@ -31,7 +31,7 @@ export class CliPage {
     returnToList = Selector('[data-testid=cli-helper-back-to-list-btn]');
     //TEXT INPUTS (also referred to as 'Text fields')
     cliCommandInput = Selector('[data-testid=cli-command]');
-    cliCommandInputWithTimeout = Selector('[data-testid=cli-command]', { timeout: 5000 });
+    cliCommandInputWithTimeout = Selector('[data-testid=cli-command]');
     cliArea = Selector('[data-testid=cli');
     cliHelperSearch = Selector('[data-testid=cli-helper-search]');
     //TEXT ELEMENTS

@@ -71,13 +71,13 @@ export class WorkbenchPage {
     responseInfo = Selector('[class="responseInfo"]');
     scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
     queryCardContainer = Selector('[data-testid^=query-card-container]');
-    queryCardCommand = Selector('[data-testid=query-card-command]', { timeout: 5000 });
+    queryCardCommand = Selector('[data-testid=query-card-command]');
     queryTableResult = Selector('[data-testid^=query-table-result-]');
     mainEditorArea = Selector('[data-testid=main-input-container-area]');
     queryTextResult = Selector(this.cssQueryTextResult);
     queryColumns = Selector('[data-testid*=query-column-]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
-    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]', { timeout: 5000 });
+    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     queryCardNoModuleOutput = Selector('[data-testid=query-card-no-module-output]');
     noCommandHistorySection = Selector('[data-testid=wb_no-results]');

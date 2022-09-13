@@ -14,7 +14,7 @@ export class DatabaseOverviewPage {
     overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
     //BUTTONS
     overviewRedisStackLogo = Selector('[data-testid=redis-stack-logo]');
-    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]', { timeout: 5000 });
+    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
     //Panel
     overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
 }

@@ -8,7 +8,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { getMultiCommands, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import Query from './Query'
 import styles from './Query/styles.module.scss'
@@ -16,7 +16,7 @@ import styles from './Query/styles.module.scss'
 export interface Props {
   query: string
   activeMode: RunQueryMode
-  isGroupMode?: boolean
+  resultsMode?: ResultsMode
   setQuery: (script: string) => void
   setQueryEl: Function
   setIsCodeBtnDisabled: (value: boolean) => void
@@ -28,19 +28,19 @@ export interface Props {
 
 interface IState {
   activeMode: RunQueryMode
-  isGroupMode: boolean
+  resultsMode: ResultsMode
 }
 
 let state: IState = {
   activeMode: RunQueryMode.ASCII,
-  isGroupMode: false
+  resultsMode: ResultsMode.Default
 }
 
 const QueryWrapper = (props: Props) => {
   const {
     query = '',
     activeMode,
-    isGroupMode,
+    resultsMode,
     setQuery,
     setQueryEl,
     setIsCodeBtnDisabled,
@@ -58,7 +58,7 @@ const QueryWrapper = (props: Props) => {
 
   state = {
     activeMode,
-    isGroupMode
+    resultsMode: ResultsMode.Default
   }
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
@@ -81,7 +81,7 @@ const QueryWrapper = (props: Props) => {
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
         rawMode: state.activeMode === RunQueryMode.Raw,
-        isGroupMode
+        resultsMode: state.resultsMode === ResultsMode.GroupMode
       }
     })()
 
@@ -109,7 +109,7 @@ const QueryWrapper = (props: Props) => {
     <Query
       query={query}
       activeMode={activeMode}
-      isGroupMode={isGroupMode}
+      resultsMode={resultsMode}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
       setIsCodeBtnDisabled={setIsCodeBtnDisabled}

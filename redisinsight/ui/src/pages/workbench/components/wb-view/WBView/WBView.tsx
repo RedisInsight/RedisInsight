@@ -14,7 +14,7 @@ import {
   appContextWorkbench
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
 import WBResultsWrapper from '../../wb-results'
 import EnablementAreaWrapper from '../../enablement-area'
@@ -34,7 +34,7 @@ export interface Props {
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
   scrollDivRef: Ref<HTMLDivElement>
   activeMode: RunQueryMode
-  isGroupMode: boolean
+  resultsMode: ResultsMode
   onSubmit: (query?: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
@@ -50,7 +50,7 @@ const WBView = (props: Props) => {
     setScriptEl,
     scriptEl,
     activeMode,
-    isGroupMode,
+    resultsMode,
     onSubmit,
     onQueryOpen,
     onQueryDelete,
@@ -110,7 +110,7 @@ const WBView = (props: Props) => {
                   <QueryWrapper
                     query={script}
                     activeMode={activeMode}
-                    isGroupMode={isGroupMode}
+                    resultsMode={resultsMode}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
                     setIsCodeBtnDisabled={setIsCodeBtnDisabled}

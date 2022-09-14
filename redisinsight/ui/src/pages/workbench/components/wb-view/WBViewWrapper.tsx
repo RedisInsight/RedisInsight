@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { chunk, without } from 'lodash'
+import { chunk } from 'lodash'
 
 import {
   Nullable,
@@ -25,7 +25,7 @@ import {
 import { ConnectionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
@@ -46,7 +46,7 @@ interface IState {
   blockingCommands: string[]
   visualizations: IPluginVisualization[]
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
-  isGroupMode: boolean
+  resultsMode: ResultsMode
 }
 
 let state: IState = {
@@ -58,7 +58,7 @@ let state: IState = {
   blockingCommands: [],
   visualizations: [],
   scriptEl: null,
-  isGroupMode: false,
+  resultsMode: ResultsMode.Default,
 }
 
 const WBViewWrapper = () => {
@@ -76,8 +76,8 @@ const WBViewWrapper = () => {
   const [activeRunQueryMode, setActiveRunQueryMode] = useState<RunQueryMode>(
     (localStorageService?.get(BrowserStorageItem.RunQueryMode) ?? RunQueryMode.ASCII)
   )
-  const [isGroupMode, setIsGroupMode] = useState<boolean>(
-    (localStorageService?.get(BrowserStorageItem.wbGroupMode) ?? false) === 'true'
+  const [resultsMode, setResultsMode] = useState<ResultsMode>(
+    (localStorageService?.get(BrowserStorageItem.wbGroupMode) ?? ResultsMode.Default)
   )
 
   const instance = useSelector(connectedInstanceSelector)
@@ -91,7 +91,7 @@ const WBViewWrapper = () => {
     visualizations,
     batchSize,
     activeRunQueryMode,
-    isGroupMode,
+    resultsMode,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -128,8 +128,8 @@ const WBViewWrapper = () => {
   }, [activeRunQueryMode])
 
   useEffect(() => {
-    localStorageService.set(BrowserStorageItem.wbGroupMode, isGroupMode)
-  }, [isGroupMode])
+    localStorageService.set(BrowserStorageItem.wbGroupMode, resultsMode)
+  }, [resultsMode])
 
   const handleChangeQueryRunMode = () => {
     setActiveRunQueryMode(
@@ -150,7 +150,11 @@ const WBViewWrapper = () => {
   }
 
   const handleChangeGroupMode = () => {
-    setIsGroupMode(!isGroupMode)
+    setResultsMode(
+      resultsMode === ResultsMode.Default
+        ? ResultsMode.GroupMode
+        : ResultsMode.Default
+    )
   }
 
   const handleSubmit = (
@@ -160,7 +164,7 @@ const WBViewWrapper = () => {
     const { loading, batchSize } = state
     const isNewCommand = () => !commandId
     const getChunkSize = () => {
-      if (isGroupMode) {
+      if (resultsMode === ResultsMode.GroupMode) {
         return splitMonacoValuePerLines(commandInit).length
       }
       return batchSize > 1 ? batchSize : 1
@@ -183,11 +187,11 @@ const WBViewWrapper = () => {
     commands: string[],
     multiCommands: string[] = [],
   ) => {
-    const { activeRunQueryMode, isGroupMode } = state
+    const { activeRunQueryMode, resultsMode } = state
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
-        isGroupMode,
+        resultsMode,
         commands,
         multiCommands,
         mode: activeRunQueryMode,
@@ -210,7 +214,7 @@ const WBViewWrapper = () => {
         commands,
         options,
         mode: state.activeRunQueryMode,
-        isGroupMode,
+        resultsMode,
         multiCommands,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })
@@ -264,7 +268,7 @@ const WBViewWrapper = () => {
       onQueryOpen={handleQueryOpen}
       onQueryDelete={handleQueryDelete}
       onQueryChangeMode={handleChangeQueryRunMode}
-      isGroupMode={isGroupMode}
+      resultsMode={resultsMode}
       onChangeGroupMode={handleChangeGroupMode}
     />
   )

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidv4 } from 'uuid';
+import { when } from 'jest-when';
 import { mockStandaloneDatabaseEntity, mockWorkbenchAnalyticsService } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
@@ -9,6 +10,7 @@ import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
   RunQueryMode,
+  ResultsMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
@@ -31,6 +33,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   },
   role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Default,
 };
 const mockCreateCommandExecutionsDto: CreateCommandExecutionsDto = {
   commands: [

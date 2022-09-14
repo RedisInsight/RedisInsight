@@ -26,6 +26,12 @@ export class CommandExecutionResult {
   response: any;
 
   @ApiPropertyOptional({
+    type: Boolean,
+    description: 'Result did not stored in db',
+  })
+  isNotStored?: boolean;
+
+  @ApiPropertyOptional({
     type: () => ClusterNode,
     description: 'Redis Cluster Node info',
   })

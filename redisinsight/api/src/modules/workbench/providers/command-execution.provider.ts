@@ -36,6 +36,8 @@ export class CommandExecutionProvider {
 
       // Do not store command execution result that exceeded limitation
       if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
+        // eslint-disable-next-line no-param-reassign
+        commandExecution.result[0].isNotStored = true;
         entity.result = JSON.stringify([
           {
             status: CommandExecutionStatus.Success,
@@ -43,7 +45,6 @@ export class CommandExecutionProvider {
           },
         ]);
       }
-
       return this.encryptEntity(entity);
     }));
 
@@ -58,6 +59,7 @@ export class CommandExecutionProvider {
           mode: commandExecutions[idx].mode,
           result: commandExecutions[idx].result,
           nodeOptions: commandExecutions[idx].nodeOptions,
+          summary: commandExecutions[idx].summary,
         },
       )),
     );
@@ -68,7 +70,6 @@ export class CommandExecutionProvider {
     } catch (e) {
       this.logger.error('Error when trying to cleanup history after insert', e);
     }
-
     return response;
   }
 
@@ -91,6 +92,7 @@ export class CommandExecutionProvider {
         'e.nodeOptions',
         'e.mode',
         'e.summary',
+        'e.resultsMode',
       ])
       .orderBy('e.createdAt', 'DESC')
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)

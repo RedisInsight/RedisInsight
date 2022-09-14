@@ -5,7 +5,7 @@ import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import {
   getWBQueryType,
   getVisualizationsByCommand,
@@ -17,7 +17,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 
 import QueryCardHeader from './QueryCardHeader'
-import QueryCardCliResult from './QueryCardCliResult'
+import QueryCardCliResult from './QueryCardCliResultWrapper'
 import QueryCardCliPlugin from './QueryCardCliPlugin'
 import QueryCardCommonResult, { CommonErrorResponse } from './QueryCardCommonResult'
 
@@ -30,8 +30,9 @@ export interface Props {
   result: Maybe<CommandExecutionResult[]>
   activeMode: RunQueryMode
   mode: RunQueryMode
+  resultsMode?: ResultsMode
   emptyCommand: boolean
-  summary?: string
+  summary?: ResultsSummary
   createdAt?: Date
   loading?: boolean
   onQueryDelete: () => void
@@ -42,6 +43,14 @@ export interface Props {
 const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
   getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || ''
 
+export const getSummaryText = (summary?: ResultsSummary) => {
+  if (summary) {
+    const { total, success, fail } = summary
+    return `${total} Command(s) - ${success} success, ${fail} error(s)`
+  }
+  return summary
+}
+
 const QueryCard = (props: Props) => {
   const {
     id,
@@ -49,6 +58,7 @@ const QueryCard = (props: Props) => {
     result,
     activeMode,
     mode,
+    resultsMode,
     summary,
     isOpen,
     createdAt,
@@ -129,14 +139,6 @@ const QueryCard = (props: Props) => {
 
   const commonError = CommonErrorResponse(command, result)
 
-  const getSummaryText = (summary?: string) => {
-    if (summary) {
-      const { total, success, fail } = JSON.parse(summary)
-      return `${total} Commands - ${success} success, ${fail} errors`
-    }
-    return summary
-  }
-
   return (
     <div className={cx(styles.containerWrapper, {
       fullscreen: isFullScreen,
@@ -172,30 +174,43 @@ const QueryCard = (props: Props) => {
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>
-                  {viewTypeSelected === WBQueryType.Plugin && !summary && (
-                    <>
-                      {!loading && result !== undefined ? (
-                        <QueryCardCliPlugin
-                          id={selectedViewValue}
-                          result={result}
-                          query={command}
-                          setSummaryText={setSummaryText}
-                          commandId={id}
-                        />
-                      ) : (
-                        <div className={styles.loading}>
-                          <EuiLoadingContent lines={5} data-testid="loading-content" />
-                        </div>
-                      )}
-                    </>
-                  )}
-                  {(viewTypeSelected === WBQueryType.Text || summary) && (
+                  {resultsMode === ResultsMode.GroupMode && (
                     <QueryCardCliResult
                       loading={loading}
                       query={command}
-                      summary={getSummaryText(summary)}
+                      resultsMode={resultsMode}
                       result={result}
+                      data-testid="group-mode-card"
                     />
+                  )}
+                  {(resultsMode === ResultsMode.Default || !resultsMode) && (
+                    <>
+                      {viewTypeSelected === WBQueryType.Plugin && (
+                        <>
+                          {!loading && result !== undefined ? (
+                            <QueryCardCliPlugin
+                              id={selectedViewValue}
+                              result={result}
+                              query={command}
+                              setSummaryText={setSummaryText}
+                              commandId={id}
+                            />
+                          ) : (
+                            <div className={styles.loading}>
+                              <EuiLoadingContent lines={5} data-testid="loading-content" />
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {(viewTypeSelected === WBQueryType.Text) && (
+                        <QueryCardCliResult
+                          loading={loading}
+                          query={command}
+                          resultsMode={resultsMode}
+                          result={result}
+                        />
+                      )}
+                    </>
                   )}
                 </>
               )}

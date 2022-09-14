@@ -107,17 +107,15 @@ const clearOutput = (dispatch: any) => {
 
 const cliParseCommandsGroupResult = (
   result: IGroupModeCommand,
-  query: string,
   index: number
 ) => {
   const executionCommand = wbSummaryCommand(result.command)
   const executionResult = wbSummaryCommandResult(result.response || '(nil)', result.status)
 
   return (
-    <Fragment key={`${query}-${index}`}>
+    <Fragment key={`group-result-${index}`}>
       {executionCommand}
       {executionResult}
-      {/* {Object.values(result)[0][0].status === CommandExecutionStatus.Fail ? '\r\n' : null} */}
     </Fragment>
   )
 }

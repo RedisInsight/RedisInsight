@@ -5,7 +5,7 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
@@ -199,7 +199,7 @@ export function sendWBCommandAction({
   commands = [],
   multiCommands = [],
   mode = RunQueryMode.ASCII,
-  isGroupMode = false,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -208,7 +208,7 @@ export function sendWBCommandAction({
   multiCommands?: string[]
   commandId?: string
   mode: RunQueryMode
-  isGroupMode?: boolean
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -218,7 +218,7 @@ export function sendWBCommandAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: isGroupMode ? [`${commands.length} - Commands`] : commands,
+        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Command(s)`] : commands,
         commandId
       }))
 
@@ -230,7 +230,7 @@ export function sendWBCommandAction({
         {
           commands,
           mode,
-          isGroupMode
+          resultsMode
         }
       )
 
@@ -255,7 +255,7 @@ export function sendWBCommandClusterAction({
   multiCommands = [],
   options,
   mode = RunQueryMode.ASCII,
-  isGroupMode = false,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -265,7 +265,7 @@ export function sendWBCommandClusterAction({
   commandId?: string
   multiCommands?: string[]
   mode?: RunQueryMode,
-  isGroupMode?: boolean
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -275,7 +275,7 @@ export function sendWBCommandClusterAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: isGroupMode ? [`${commands.length} - Commands`] : commands,
+        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Commands`] : commands,
         commandId
       }))
 
@@ -288,7 +288,7 @@ export function sendWBCommandClusterAction({
           ...options,
           commands,
           mode,
-          isGroupMode,
+          resultsMode,
           outputFormat: CliOutputFormatterType.Raw
         }
       )

@@ -1,8 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { ClusterNodeRole, RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { ClusterNodeRole, RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
 import { Expose } from 'class-transformer';
+
+export type ResultsSummary = {
+  total: number;
+  success: number;
+  fail: number;
+}
 
 export class CommandExecution {
   @ApiProperty({
@@ -35,11 +41,26 @@ export class CommandExecution {
   mode?: RunQueryMode = RunQueryMode.ASCII;
 
   @ApiPropertyOptional({
-    description: 'Workbench executions summary',
-    type: String,
+    description: 'Workbench result mode',
+    default: ResultsMode.Default,
+    enum: ResultsMode,
   })
   @Expose()
-  summary?: string;
+  resultsMode?: ResultsMode = ResultsMode.Default;
+
+  @ApiPropertyOptional({
+    description: 'Group mode',
+    type: Boolean,
+  })
+  @Expose()
+  isGroupMode?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Workbench executions summary',
+    // type: () => ResultsSummary,
+  })
+  @Expose()
+  summary?: ResultsSummary;
 
   @ApiProperty({
     description: 'Command execution result',

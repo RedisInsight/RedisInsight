@@ -4,7 +4,7 @@ import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/red
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
-import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CreateCommandExecutionDto, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -73,13 +73,13 @@ export class WorkbenchService {
       const deprecatedCommand = this.findCommandInBlackList(command);
       if (deprecatedCommand) {
         return ({
-            command,
-            response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
-            status: CommandExecutionStatus.Fail,
-          })
-      };
-      const res = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command })
-      return ({ ...res[0], command });
+          command,
+          response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
+          status: CommandExecutionStatus.Fail,
+        });
+      }
+      const result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      return ({ ...result[0], command });
     }));
 
     const successCommands = executionResults.filter(
@@ -89,9 +89,11 @@ export class WorkbenchService {
       (command) => command.status === CommandExecutionStatus.Fail,
     );
 
-    commandExecution.summary = JSON.stringify(
-      { total: executionResults.length, success: successCommands.length, fail: failedCommands.length }
-    );
+    commandExecution.summary = {
+      total: executionResults.length,
+      success: successCommands.length,
+      fail: failedCommands.length,
+    };
 
     commandExecution.command = commands.join('\r\n');
     commandExecution.result = [{
@@ -112,7 +114,7 @@ export class WorkbenchService {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
-    if (dto.isGroupMode) {
+    if (dto.resultsMode === ResultsMode.GroupMode) {
       return this.commandExecutionProvider.createMany(
         [await this.createCommandsExecution(clientOptions, dto, dto.commands)],
       );

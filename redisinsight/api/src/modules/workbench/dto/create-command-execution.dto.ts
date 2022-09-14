@@ -16,6 +16,11 @@ export enum RunQueryMode {
   ASCII = 'ASCII',
 }
 
+export enum ResultsMode {
+  Default = 'DEFAULT',
+  GroupMode = 'GROUP_MODE',
+}
+
 export class CreateCommandExecutionDto {
   @ApiProperty({
     type: String,
@@ -43,8 +48,12 @@ export class CreateCommandExecutionDto {
     default: false,
   })
   @IsOptional()
-  @IsBoolean()
-  isGroupMode?: boolean;
+  @IsEnum(ResultsMode, {
+    message: `resultsMode must be a valid enum value. Valid values: ${Object.values(
+      ResultsMode,
+    )}.`,
+  })
+  resultsMode?: ResultsMode;
 
   @ApiPropertyOptional({
     description: 'Execute command for nodes with defined role',

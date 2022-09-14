@@ -35,7 +35,7 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
@@ -47,7 +47,7 @@ import styles from './styles.module.scss'
 export interface Props {
   query: string
   activeMode: RunQueryMode
-  isGroupMode?: boolean
+  resultsMode?: ResultsMode
   setQueryEl: Function
   setQuery: (script: string) => void
   setIsCodeBtnDisabled: (value: boolean) => void
@@ -72,7 +72,7 @@ const Query = (props: Props) => {
   const {
     query = '',
     activeMode,
-    isGroupMode,
+    resultsMode,
     setQuery,
     onKeyDown,
     onSubmit,
@@ -121,7 +121,7 @@ const Query = (props: Props) => {
   useEffect(() => {
     // HACK: The Monaco editor memoize the state and ignores updates to it
     toggleGroupMode = onChangeGroupMode
-  }, [isGroupMode])
+  }, [resultsMode])
 
   useEffect(() => {
     if (!monacoObjects.current) return
@@ -562,7 +562,7 @@ const Query = (props: Props) => {
                 color="secondary"
                 onClick={() => onChangeGroupMode()}
                 disabled={isLoading}
-                className={cx(styles.textBtn, { [styles.activeBtn]: isGroupMode })}
+                className={cx(styles.textBtn, { [styles.activeBtn]: resultsMode === ResultsMode.GroupMode })}
                 data-testid="btn-change-group-mode"
               >
                 <EuiIcon type={GroupModeIcon} />

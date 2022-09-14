@@ -58,6 +58,7 @@ const WBResults = (props: Props) => {
           loading,
           createdAt,
           mode,
+          resultsMode,
           emptyCommand,
         }
       ) => (
@@ -73,6 +74,7 @@ const WBResults = (props: Props) => {
           activeMode={activeMode}
           emptyCommand={emptyCommand}
           mode={mode}
+          resultsMode={resultsMode}
           onQueryOpen={() => onQueryOpen(id)}
           onQueryReRun={() => onQueryReRun(command, null, false)}
           onQueryDelete={() => onQueryDelete(id)}

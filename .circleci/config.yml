@@ -399,7 +399,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
-                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings circleci_test_files.txt) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
@@ -413,7 +413,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
-                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings circleci_test_files.txt) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \

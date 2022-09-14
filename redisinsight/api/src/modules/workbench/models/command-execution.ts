@@ -1,12 +1,30 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDefined } from 'class-validator';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { ClusterNodeRole, RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
 import { Expose } from 'class-transformer';
 
-export type ResultsSummary = {
+export class ResultsSummary {
+  @ApiProperty({
+    description: 'Total number of commands executed',
+    type: Number,
+  })
+  @IsDefined()
   total: number;
+
+  @ApiProperty({
+    description: 'Total number of successful commands executed',
+    type: Number,
+  })
+  @IsDefined()
   success: number;
+
+  @ApiProperty({
+    description: 'Total number of failed commands executed',
+    type: Number,
+  })
+  @IsDefined()
   fail: number;
 }
 
@@ -57,7 +75,7 @@ export class CommandExecution {
 
   @ApiPropertyOptional({
     description: 'Workbench executions summary',
-    // type: () => ResultsSummary,
+    type: () => ResultsSummary,
   })
   @Expose()
   summary?: ResultsSummary;

@@ -1,5 +1,10 @@
-import { getDbIndexFromSelectQuery, getCommandNameFromQuery } from 'uiSrc/utils'
+import {
+  getDbIndexFromSelectQuery,
+  getCommandNameFromQuery,
+  cliParseCommandsGroupResult,
+} from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
+import { render } from 'uiSrc/utils/test-utils'
 
 const getDbIndexFromSelectQueryTests = [
   { input: 'select 0', expected: 0 },
@@ -49,3 +54,43 @@ describe('getCommandNameFromQuery', () => {
     expect(getCommandNameFromQuery(...input)).toEqual(expected)
   })
 })
+
+describe('cliParseCommandsGroupResult', () => {
+  const mockResult = {
+    command: 'command',
+    response: 'response',
+    status: 'success'
+  }
+  const mockIndex = 0
+  const { queryByTestId, getByText } = render(cliParseCommandsGroupResult(mockResult, mockIndex))
+  const cliCommandEl = queryByTestId('wb-command')
+  const cliCommandResultEl = queryByTestId('wb-command-result')
+  const cliCommandTextEl = getByText('> command')
+  const cliCommandResultTextEl = getByText('response')
+
+  expect(cliCommandEl).toBeInTheDocument()
+  expect(cliCommandResultEl).toBeInTheDocument()
+  expect(cliCommandTextEl).toBeInTheDocument()
+  expect(cliCommandResultTextEl).toBeInTheDocument()
+})
+
+// describe('wbSummaryCommand', () => {
+//   const mockResult = {
+//     command: 'command',
+//     response: 'response',
+//     status: 'success'
+//   }
+//   const mockIndex = 0
+//   const { queryByTestId } = render(cliParseCommandsGroupResult(mockResult, mockIndex))
+//   const cliCommandEl = queryByTestId('wb-command')
+
+//   expect(cliCommandEl).toBeInTheDocument()
+// })
+
+// describe('wbSummaryCommandResult', () => {
+//   const mockResult = 'result'
+//   const { queryByTestId } = render(cliParseCommandsGroupResult(mockResult, mockIndex))
+//   const cliCommandEl = queryByTestId('wb-command')
+
+//   expect(cliCommandEl).toBeInTheDocument()
+// })

@@ -82,7 +82,7 @@ const cliCommandWrapper = (command: string) => (
 const wbSummaryCommand = (command: string) => (
   <span
     className="cli-command-wrapper"
-    data-testid="wb-summary-command"
+    data-testid="wb-command"
   >
     {`> ${command} \n`}
   </span>
@@ -95,7 +95,7 @@ const wbSummaryCommandResult = (result: string, status: CommandExecutionStatus) 
         ? `${CliPrefix.Cli}-output-response-success`
         : `${CliPrefix.Cli}-output-response-fail`
     }
-    data-testid="wb-summary-command"
+    data-testid="wb-command-result"
   >
     {`${result} \n`}
   </span>

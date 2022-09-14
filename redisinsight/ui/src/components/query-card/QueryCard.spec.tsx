@@ -3,7 +3,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { cleanup, clearStoreActions, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, clearStoreActions, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import QueryCard, { Props, getSummaryText } from './QueryCard'
 
 const mockedProps = mock<Props>()

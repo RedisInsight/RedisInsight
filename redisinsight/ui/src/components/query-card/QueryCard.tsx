@@ -17,7 +17,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 
 import QueryCardHeader from './QueryCardHeader'
-import QueryCardCliResult from './QueryCardCliResultWrapper'
+import QueryCardCliResultWrapper from './QueryCardCliResultWrapper'
 import QueryCardCliPlugin from './QueryCardCliPlugin'
 import QueryCardCommonResult, { CommonErrorResponse } from './QueryCardCommonResult'
 
@@ -35,6 +35,7 @@ export interface Props {
   summary?: ResultsSummary
   createdAt?: Date
   loading?: boolean
+  isNotStored?: boolean
   onQueryDelete: () => void
   onQueryReRun: () => void
   onQueryOpen: () => void
@@ -67,6 +68,7 @@ const QueryCard = (props: Props) => {
     onQueryReRun,
     loading,
     emptyCommand,
+    isNotStored,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -175,11 +177,12 @@ const QueryCard = (props: Props) => {
               : (
                 <>
                   {resultsMode === ResultsMode.GroupMode && (
-                    <QueryCardCliResult
+                    <QueryCardCliResultWrapper
                       loading={loading}
                       query={command}
                       resultsMode={resultsMode}
                       result={result}
+                      isNotStored={isNotStored}
                       data-testid="group-mode-card"
                     />
                   )}
@@ -203,11 +206,12 @@ const QueryCard = (props: Props) => {
                         </>
                       )}
                       {(viewTypeSelected === WBQueryType.Text) && (
-                        <QueryCardCliResult
+                        <QueryCardCliResultWrapper
                           loading={loading}
                           query={command}
                           resultsMode={resultsMode}
                           result={result}
+                          isNotStored={isNotStored}
                         />
                       )}
                     </>

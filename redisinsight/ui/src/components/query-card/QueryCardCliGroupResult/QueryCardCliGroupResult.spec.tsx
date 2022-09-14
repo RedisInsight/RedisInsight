@@ -15,8 +15,6 @@ describe('QueryCardCliGroupResult', () => {
   })
 
   it('Should render result when result is undefined', () => {
-    const mockResult = undefined
-
-    expect(render(<QueryCardCliGroupResult result={mockResult} />)).toBeTruthy()
+    expect(render(<QueryCardCliGroupResult />)).toBeTruthy()
   })
 })

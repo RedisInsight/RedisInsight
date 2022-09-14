@@ -8,13 +8,11 @@ export interface Props {
   result: Maybe<CommandExecutionResult[]>
 }
 
-export const resultTestId = 'query-cli-group-result'
-
 const QueryCardCliGroupResult = (props: Props) => {
   const { result = [], query } = props
 
   return (
-    <div data-testid={resultTestId}>
+    <div data-testid="query-cli-group-result">
       {result?.map(({ response, status }) =>
         cliParseTextResponse(response || '(nil)', query, status, CliPrefix.QueryCard))}
     </div>

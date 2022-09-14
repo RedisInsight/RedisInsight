@@ -73,24 +73,3 @@ describe('cliParseCommandsGroupResult', () => {
   expect(cliCommandTextEl).toBeInTheDocument()
   expect(cliCommandResultTextEl).toBeInTheDocument()
 })
-
-// describe('wbSummaryCommand', () => {
-//   const mockResult = {
-//     command: 'command',
-//     response: 'response',
-//     status: 'success'
-//   }
-//   const mockIndex = 0
-//   const { queryByTestId } = render(cliParseCommandsGroupResult(mockResult, mockIndex))
-//   const cliCommandEl = queryByTestId('wb-command')
-
-//   expect(cliCommandEl).toBeInTheDocument()
-// })
-
-// describe('wbSummaryCommandResult', () => {
-//   const mockResult = 'result'
-//   const { queryByTestId } = render(cliParseCommandsGroupResult(mockResult, mockIndex))
-//   const cliCommandEl = queryByTestId('wb-command')
-
-//   expect(cliCommandEl).toBeInTheDocument()
-// })

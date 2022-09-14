@@ -4,7 +4,7 @@ import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { cliParseCommandsGroupResult, Maybe } from 'uiSrc/utils'
 
 export interface Props {
-  result: Maybe<CommandExecutionResult[]>
+  result?: Maybe<CommandExecutionResult[]>
 }
 
 const QueryCardCliGroupResult = (props: Props) => {

@@ -33,14 +33,14 @@
   }
 }
 
-.alert {
+.container .alert {
   font-size: 13px !important;
   line-height: 18px !important;
   letter-spacing: -0.13px !important;
   color: var(--euiColorWarningLight) !important;
 }
 
-.alertIcon {
+.container .alertIcon {
   margin-right: 6px;
   margin-top: -3px;
 }

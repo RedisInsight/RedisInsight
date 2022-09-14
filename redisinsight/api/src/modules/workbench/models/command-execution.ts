@@ -71,6 +71,13 @@ export class CommandExecution {
   result: CommandExecutionResult[];
 
   @ApiPropertyOptional({
+    type: Boolean,
+    description: 'Result did not stored in db',
+  })
+  @Expose()
+  isNotStored?: boolean;
+
+  @ApiPropertyOptional({
     description: 'Nodes roles where command was executed',
     default: ClusterNodeRole.All,
     enum: ClusterNodeRole,

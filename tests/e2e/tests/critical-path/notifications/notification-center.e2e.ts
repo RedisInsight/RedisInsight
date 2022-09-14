@@ -18,7 +18,7 @@ const sortedNotifications = jsonNotifications.sort((a, b) => a.timestamp < b.tim
 fixture `Notifications`
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(true);
         await deleteAllNotificationsFromDB();

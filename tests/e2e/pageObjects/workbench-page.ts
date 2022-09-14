@@ -48,6 +48,7 @@ export class WorkbenchPage {
     cancelButton = Selector('[data-testid=cancel-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
+    guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
     nextPageButton = Selector('[data-testid=enablement-area__next-page-btn]');
     prevPageButton = Selector('[data-testid=enablement-area__prev-page-btn]');
@@ -62,7 +63,9 @@ export class WorkbenchPage {
     //LINKS
     timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
     redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
-    workingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
+    tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
+    guidesWorkingWithGraphLink = Selector('[data-testid=internal-link-working-with-graphs]');
+    guidesIntroductionGraphLink = Selector('[data-testid=accordion-button-graph] [data-testid=internal-link-introduction]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
     vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
     //TEXT INPUTS (also referred to as 'Text fields')
@@ -97,6 +100,7 @@ export class WorkbenchPage {
     runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
     loadedCommand = Selector('[class=euiLoadingContent__singleLine]');
     runButtonSpinner = Selector('[data-testid=loading-spinner]');
+    enablementAreaEmptyContent = Selector('[data-testid=enablement-area__empty-prompt]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoCloseCommandDetails = Selector('span.codicon-close');

@@ -3,12 +3,13 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import QueryCardCliResult, { Props, resultTestId, loaderTestId } from './QueryCardCliResultWrapper'
+import QueryCardCliResult, { Props, resultTestId, loaderTestId, warningTestId } from './QueryCardCliResultWrapper'
 import QueryCardCliDefaultResult, { Props as QueryCardCliDefaultResultProps } from '../QueryCardCliDefaultResult'
-import QueryCardCliGroupResult from '../QueryCardCliGroupResult'
+import QueryCardCliGroupResult, { Props as QueryCardCliGroupResultProps } from '../QueryCardCliGroupResult'
 
 const mockedProps = mock<Props>()
 const mockedQueryCardCliDefaultResultProps = mock<QueryCardCliDefaultResultProps>()
+const mockedQueryCardCliGroupResultProps = mock<QueryCardCliGroupResultProps>()
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -75,7 +76,7 @@ describe('QueryCardCliResult', () => {
       <QueryCardCliResult {...instance(mockedProps)} resultsMode={ResultsMode.GroupMode} result={mockResult} />
     )
 
-    expect(render(<QueryCardCliGroupResult result={mockResult} />)).toBeTruthy()
+    expect(render(<QueryCardCliGroupResult {...instance(mockedQueryCardCliGroupResultProps)} />)).toBeTruthy()
   })
 
   it('should render QueryCardCliDefaultResult when result.response is not array', () => {
@@ -99,5 +100,21 @@ describe('QueryCardCliResult', () => {
     const loader = queryByTestId(loaderTestId)
 
     expect(loader).toBeInTheDocument()
+  })
+
+  it('should render warning', () => {
+    const mockResult = [{
+      response: 'response',
+      status: 'success',
+      isNotStored: true
+    }]
+
+    const { queryByTestId } = render(
+      <QueryCardCliResult {...instance(mockedProps)} result={mockResult} />
+    )
+
+    const warning = queryByTestId(warningTestId)
+
+    expect(warning).toBeInTheDocument()
   })
 })

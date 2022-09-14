@@ -21,6 +21,7 @@ export interface Props {
 
 export const resultTestId = 'query-cli-result'
 export const loaderTestId = 'query-cli-loader'
+export const warningTestId = 'query-cli-warning'
 
 const QueryCardCliResult = (props: Props) => {
   const { result = [], query, loading, resultsMode } = props
@@ -30,7 +31,7 @@ const QueryCardCliResult = (props: Props) => {
       {!loading && (
         <div data-testid={resultTestId}>
           {result[0]?.isNotStored && (
-            <EuiText className={styles.alert}>
+            <EuiText className={styles.alert} data-testid={warningTestId}>
               <EuiIcon type="alert" className={styles.alertIcon} />
               The result is too big to be saved. It will be deleted after the application is closed.
             </EuiText>

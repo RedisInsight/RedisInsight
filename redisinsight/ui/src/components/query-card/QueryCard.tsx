@@ -162,6 +162,7 @@ const QueryCard = (props: Props) => {
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
+          resultsMode={resultsMode}
           emptyCommand={emptyCommand}
           summary={getSummaryText(summary)}
           toggleOpen={toggleOpen}

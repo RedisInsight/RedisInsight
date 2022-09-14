@@ -81,7 +81,7 @@ const QueryWrapper = (props: Props) => {
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
         rawMode: state.activeMode === RunQueryMode.Raw,
-        resultsMode: state.resultsMode === ResultsMode.GroupMode
+        group: state.resultsMode === ResultsMode.GroupMode
       }
     })()
 

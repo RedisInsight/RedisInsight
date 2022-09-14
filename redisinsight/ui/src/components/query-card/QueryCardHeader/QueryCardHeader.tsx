@@ -22,7 +22,7 @@ import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
@@ -40,6 +40,7 @@ export interface Props {
   summaryText?: string
   activeMode: RunQueryMode
   mode: RunQueryMode
+  resultsMode?: ResultsMode
   summary?: string
   queryType: WBQueryType
   selectedValue: string
@@ -63,6 +64,7 @@ const QueryCardHeader = (props: Props) => {
     summaryText,
     createdAt,
     mode,
+    resultsMode,
     summary,
     activeMode,
     selectedValue,
@@ -90,6 +92,7 @@ const QueryCardHeader = (props: Props) => {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
         rawMode: activeMode === RunQueryMode.Raw,
+        group: resultsMode === ResultsMode.GroupMode,
         ...additionalData
       }
     })

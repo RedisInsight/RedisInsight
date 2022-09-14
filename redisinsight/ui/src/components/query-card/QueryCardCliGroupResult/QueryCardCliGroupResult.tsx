@@ -10,7 +10,7 @@ export interface Props {
 const QueryCardCliGroupResult = (props: Props) => {
   const { result = [] } = props
   return (
-    <div data-testid="query-cli-default-result">
+    <div data-testid="query-cli-default-result" style={{ maxHeight: '210px' }}>
       {result[0]?.response.map((item: any, index: number) =>
         cliParseCommandsGroupResult(item, index))}
     </div>

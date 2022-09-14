@@ -45,7 +45,8 @@ export class CreateCommandExecutionDto {
 
   @ApiPropertyOptional({
     description: 'Workbench group mode',
-    default: false,
+    default: ResultsMode.Default,
+    enum: ResultsMode,
   })
   @IsOptional()
   @IsEnum(ResultsMode, {

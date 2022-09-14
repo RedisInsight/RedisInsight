@@ -67,13 +67,6 @@ export class CommandExecution {
   resultsMode?: ResultsMode = ResultsMode.Default;
 
   @ApiPropertyOptional({
-    description: 'Group mode',
-    type: Boolean,
-  })
-  @Expose()
-  isGroupMode?: boolean;
-
-  @ApiPropertyOptional({
     description: 'Workbench executions summary',
     type: () => ResultsSummary,
   })
@@ -89,8 +82,8 @@ export class CommandExecution {
   result: CommandExecutionResult[];
 
   @ApiPropertyOptional({
-    type: Boolean,
     description: 'Result did not stored in db',
+    type: Boolean,
   })
   @Expose()
   isNotStored?: boolean;

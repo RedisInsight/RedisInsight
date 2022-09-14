@@ -45,6 +45,7 @@ export class CommandExecutionProvider {
           },
         ]);
       }
+
       return this.encryptEntity(entity);
     }));
 
@@ -64,12 +65,14 @@ export class CommandExecutionProvider {
         },
       )),
     );
+
     // cleanup history and ignore error if any
     try {
       await this.cleanupDatabaseHistory(entities[0].databaseId);
     } catch (e) {
       this.logger.error('Error when trying to cleanup history after insert', e);
     }
+
     return response;
   }
 

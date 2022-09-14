@@ -89,8 +89,7 @@ test
         await t.click(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssReRunCommandButton));
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
     });
-test
-    .meta({ env: env.desktop })
+test.only
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Go to Workbench page

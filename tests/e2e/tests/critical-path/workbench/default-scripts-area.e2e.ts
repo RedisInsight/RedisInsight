@@ -12,8 +12,8 @@ const chance = new Chance();
 let indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 5 });
 
-fixture `Default scripts area at Workbench`
-    .meta({type: 'critical_path'})
+fixture.only `Default scripts area at Workbench`
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
@@ -26,8 +26,7 @@ fixture `Default scripts area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+test('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -54,8 +53,7 @@ test
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command');
     });
-test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
+test('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
@@ -79,8 +77,7 @@ test
         await t.expect(key.exists).ok('The added key is in the Search result');
         await t.expect(name.exists).ok('The added key name field is in the Search result');
     });
-test
-    .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
+test('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         const aggregationResultField = 'max_price';
         const commandsForSend = [
@@ -102,8 +99,7 @@ test
         await t.expect(workbenchPage.queryTableResult.textContent).contains(aggregationResultField, 'The aggregation field name is in the Search result');
         await t.expect(workbenchPage.queryTableResult.textContent).contains('100', 'The aggregation max value is in the Search result');
     });
-test
-    .meta({ rte: rte.standalone })('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
+test('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
         const information = [
             '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.',
             '// Enter multiple commands at different rows to run them at once.',

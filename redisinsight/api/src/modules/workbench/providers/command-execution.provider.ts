@@ -31,13 +31,12 @@ export class CommandExecutionProvider {
    */
   async createMany(commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
     // todo: limit by 30 max to insert
-    let notStoredIndexes = {}
+    const notStoredIndexes = {};
     let entities = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
       const entity = plainToClass(CommandExecutionEntity, commandExecution);
 
       // Do not store command execution result that exceeded limitation
-      // if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
-      if (JSON.stringify(entity.result).length > 1000) {
+      if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
         notStoredIndexes[idx] = true;
         entity.result = JSON.stringify([
           {
@@ -65,7 +64,6 @@ export class CommandExecutionProvider {
         },
       )),
     );
-    this.logger.log(response[0].isNotStored)
     // cleanup history and ignore error if any
     try {
       await this.cleanupDatabaseHistory(entities[0].databaseId);

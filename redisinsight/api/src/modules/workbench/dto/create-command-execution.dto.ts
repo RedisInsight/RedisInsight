@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBoolean, IsEnum, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString, ValidateNested,
+  IsEnum, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString, ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';

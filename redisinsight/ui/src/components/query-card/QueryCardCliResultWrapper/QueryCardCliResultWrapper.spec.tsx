@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import QueryCardCliResultWrapper, { Props } from './QueryCardCliResultWrapper'
 import QueryCardCliDefaultResult, { Props as QueryCardCliDefaultResultProps } from '../QueryCardCliDefaultResult'
@@ -37,14 +37,12 @@ describe('QueryCardCliResultWrapper', () => {
       status: 'success'
     }]
 
-    const { queryByTestId } = render(
+    render(
       <QueryCardCliResultWrapper {...instance(mockedProps)} result={mockResult} />
     )
 
-    const resultEl = queryByTestId('query-cli-result')
-
-    expect(resultEl).toBeInTheDocument()
-    expect(resultEl).toHaveTextContent(mockResult?.[0]?.response)
+    expect(screen.queryByTestId('query-cli-result')).toBeInTheDocument()
+    expect(screen.queryByTestId('query-cli-result')).toHaveTextContent(mockResult?.[0]?.response)
   })
 
   it('Result element should render (nil) result', () => {
@@ -53,13 +51,11 @@ describe('QueryCardCliResultWrapper', () => {
       status: 'success'
     }]
 
-    const { queryByTestId } = render(
+    render(
       <QueryCardCliResultWrapper {...instance(mockedProps)} result={mockResult} />
     )
 
-    const resultEl = queryByTestId('query-cli-result')
-
-    expect(resultEl).toHaveTextContent('(nil)')
+    expect(screen.queryByTestId('query-cli-result')).toHaveTextContent('(nil)')
   })
 
   it('should render QueryCardCliDefaultResult', () => {
@@ -93,22 +89,18 @@ describe('QueryCardCliResultWrapper', () => {
   })
 
   it('Should render loader', () => {
-    const { queryByTestId } = render(
+    render(
       <QueryCardCliResultWrapper {...instance(mockedProps)} loading />
     )
 
-    const loader = queryByTestId('query-cli-loader')
-
-    expect(loader).toBeInTheDocument()
+    expect(screen.queryByTestId('query-cli-loader')).toBeInTheDocument()
   })
 
   it('should render warning', () => {
-    const { queryByTestId } = render(
+    render(
       <QueryCardCliResultWrapper {...instance(mockedProps)} isNotStored />
     )
 
-    const warning = queryByTestId('query-cli-warning')
-
-    expect(warning).toBeInTheDocument()
+    expect(screen.queryByTestId('query-cli-warning')).toBeInTheDocument()
   })
 })

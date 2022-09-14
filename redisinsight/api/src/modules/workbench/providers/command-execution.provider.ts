@@ -31,19 +31,19 @@ export class CommandExecutionProvider {
    */
   async createMany(commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
     // todo: limit by 30 max to insert
-    const notStoredIndexes = {};
     let entities = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
       const entity = plainToClass(CommandExecutionEntity, commandExecution);
 
       // Do not store command execution result that exceeded limitation
       if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
-        notStoredIndexes[idx] = true;
         entity.result = JSON.stringify([
           {
             status: CommandExecutionStatus.Success,
             response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
           },
         ]);
+        // Hack, do not store isNotStored. Send once to show warning
+        entity['isNotStored'] = true;
       }
 
       return this.encryptEntity(entity);
@@ -61,7 +61,6 @@ export class CommandExecutionProvider {
           result: commandExecutions[idx].result,
           nodeOptions: commandExecutions[idx].nodeOptions,
           summary: commandExecutions[idx].summary,
-          isNotStored: notStoredIndexes[idx] || false,
         },
       )),
     );

@@ -58,7 +58,7 @@ export class DatabaseAnalysisService {
       for (let i = 0; i < keys.length; i += 1) {
         keysData.push({
           name: keys[i],
-          size: sizes[i][1],
+          memory: sizes[i][1],
           length: sizes[i][1],
           type: types[i][1],
           ttl: ttls[i][1],

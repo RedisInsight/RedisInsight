@@ -29,6 +29,7 @@ import { ServerInfoController } from './controllers/server-info.controller';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
 import ormConfig from '../config/ormconfig';
+import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
 
 const SERVER_CONFIG = config.get('server');
 const PATH_CONFIG = config.get('dir_path');
@@ -52,6 +53,7 @@ const PATH_CONFIG = config.get('dir_path');
     NotificationModule,
     BulkActionsModule,
     ClusterMonitorModule,
+    DatabaseAnalysisModule,
     EventEmitterModule.forRoot(),
     ...(SERVER_CONFIG.staticContent
       ? [

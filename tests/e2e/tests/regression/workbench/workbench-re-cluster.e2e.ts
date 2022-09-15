@@ -18,7 +18,7 @@ const common = new Common();
 
 const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
-const verifyCommandsInWorkbench = async() => {
+const verifyCommandsInWorkbench = async(): Promise<void> => {
     const multipleCommands = [
         'info',
         'command',
@@ -55,6 +55,7 @@ test
         await verifyCommandsInWorkbench();
     });
 test
+    .meta({ rte: rte.reCloud })
     .before(async() => {
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })

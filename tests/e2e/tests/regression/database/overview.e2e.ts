@@ -1,24 +1,16 @@
-import { t } from 'testcafe';
 import { rte } from '../../../helpers/constants';
-import {acceptLicenseTerms, deleteDatabase} from '../../../helpers/database';
+import {acceptLicenseTermsAndAddRECloudDatabase, deleteDatabase} from '../../../helpers/database';
 import { BrowserPage, AddRedisDatabasePage, MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
 import { commonUrl, cloudDatabaseConfig } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseOverviewPage = new DatabaseOverviewPage();
 
 fixture `Overview`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
-        await addRedisDatabasePage.addRedisDataBase(cloudDatabaseConfig);
-        //Click for saving
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(cloudDatabaseConfig.databaseName).exists).ok('The existence of the database', { timeout: 5000 });
-        await myRedisDatabasePage.clickOnDBByName(cloudDatabaseConfig.databaseName);
+        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .afterEach(async() => {
         //Delete database

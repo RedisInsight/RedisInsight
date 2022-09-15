@@ -16,6 +16,7 @@ module.exports = {
     'rehype-stringify': '<rootDir>/redisinsight/__mocks__/rehypeStringify.js',
     'unist-util-visit': '<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js',
     'react-children-utilities': '<rootDir>/redisinsight/__mocks__/react-children-utilities.js',
+    d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
   },
   setupFiles: [
     '<rootDir>/redisinsight/ui/src/setup-env.ts',
@@ -37,6 +38,11 @@ module.exports = {
   testEnvironment: 'jsdom',
   transformIgnorePatterns: [
     'node_modules/(?!(monaco-editor|react-monaco-editor)/)',
+  ],
+  // TODO: add tests for plugins
+  modulePathIgnorePatterns: [
+    '<rootDir>/redisinsight/ui/src/packages',
+    '<rootDir>/redisinsight/ui/src/mocks',
   ],
   coverageThreshold: {
     global: {

@@ -15,7 +15,7 @@ export const initialState: StateUserSettings = {
   config: null,
   spec: null,
   workbench: {
-    cleanup: localStorageService?.get(BrowserStorageItem.wbCleanUp) ?? false
+    cleanup: localStorageService?.get(BrowserStorageItem.wbCleanUp) ?? true
   }
 }
 

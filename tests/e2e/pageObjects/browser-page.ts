@@ -26,6 +26,7 @@ export class BrowserPage {
     refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
+    editKeyValueButton = Selector('[data-testid=edit-key-value-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
     plusAddKeyButton = Selector('[data-testid=btn-add-key]');
     addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');
@@ -113,7 +114,7 @@ export class BrowserPage {
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
     relativeTimeOption = Selector('#idle');
     timestampOption = Selector('#time');
-    formatSwitcher = Selector('[data-testid=select-format-key-value]');
+    formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
@@ -702,7 +703,7 @@ export class BrowserPage {
      * @param jsonKey The json key name
      * @param jsonKeyValue The value of the json key
      */
-    async addJsonKeyOnTheSameLevel(jsonKey: string, jsonKeyValue: any): Promise<void> {
+    async addJsonKeyOnTheSameLevel(jsonKey: string, jsonKeyValue: string): Promise<void> {
         await t.click(this.addJsonObjectButton);
         await t.typeText(this.jsonKeyInput, jsonKey);
         await t.typeText(this.jsonValueInput, jsonKeyValue);
@@ -714,7 +715,7 @@ export class BrowserPage {
      * @param jsonKey The json key name
      * @param jsonKeyValue The value of the json key
      */
-    async addJsonKeyInsideStructure(jsonKey: string, jsonKeyValue: any): Promise<void> {
+    async addJsonKeyInsideStructure(jsonKey: string, jsonKeyValue: string): Promise<void> {
         await t.click(this.expandJsonObject);
         await t.click(this.addJsonFieldButton);
         await t.typeText(this.jsonKeyInput, jsonKey);

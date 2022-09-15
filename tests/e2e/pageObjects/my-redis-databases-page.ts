@@ -65,7 +65,7 @@ export class MyRedisDatabasePage {
             await t.click(this.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t.expect(db.exists).ok('The database exists', {timeout: 10000});
+        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
         await t.click(db);
     }
 

@@ -4,9 +4,11 @@ import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseOverviewPage = new DatabaseOverviewPage();
+const common = new Common();
 
 const moduleNameList = ['RediSearch', 'RedisJSON', 'RedisGraph', 'RedisTimeSeries', 'RedisBloom', 'RedisGears', 'RedisAI'];
 const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleGraphIcon, myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGearsIcon, myRedisDatabasePage.moduleAIIcon];
@@ -14,11 +16,11 @@ const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.mo
 fixture `Database modules`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async () => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
         // Reload Page
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
     .afterEach(async() => {
         //Delete database

@@ -31,6 +31,7 @@ export class SlowLogPage {
     slowLogCommandValue = Selector('[data-testid=command-value]');
     slowLogEmptyResult = Selector('[data-testid=empty-slow-log]');
     slowLogCommandStatistics = Selector('[data-testid=entries-from-timestamp]');
+    configInfo = Selector('[data-testid=config-info]');
     // Table
     slowLogTable = Selector('[data-testid=slowlog-table]');
 

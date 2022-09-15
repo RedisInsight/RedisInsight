@@ -9638,6 +9638,11 @@ jest@^27.5.1:
     import-local "^3.0.2"
     jest-cli "^27.5.1"
 
+jpickle@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/jpickle/-/jpickle-0.4.1.tgz#17eea5d3624cccec38f86e89a059abd05952364a"
+  integrity sha512-XHSTQUtl/Yv2cNzeQ7NKFuK0Z3d1iqQC2iEwV0cu3/dG6PV3DgACEQ3wGagHRDV6MKzypPWwHVSDY8kBWkbfTA==
+
 js-base64@^2.1.8:
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.6.4.tgz#f4e686c5de1ea1f867dbcad3d46d969428df98c4"

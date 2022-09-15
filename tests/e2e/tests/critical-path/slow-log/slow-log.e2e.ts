@@ -120,8 +120,7 @@ test('Verify that user can reset settings to default on Slow Log page', async t 
     await slowLogPage.changeMaxLengthParameter(maxCommandLength);
     // Reset settings to default
     await slowLogPage.resetToDefaultConfig();
-    // Open Slow Log configuration and check default settings
-    await t.expect(slowLogPage.slowLogSlowerThanConfig.withAttribute('value', '10000').exists).ok('Default Slower Than');
-    await t.expect(slowLogPage.slowLogMaxLengthConfig.withAttribute('value', '128').exists).ok('Default Max Length');
-    await t.expect(slowLogPage.slowLogConfigureUnitButton.withExactText('µs').exists).ok('Default Slower Than');
+    // Compare configuration after re-setting
+    const configText = await slowLogPage.configInfo.textContent;
+    await t.expect(configText.replace(/\u00a0/g, ' ')).contains('Execution time: 10 000 µs, Max length: 128', 'Not reset configuration');
 });

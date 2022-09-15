@@ -24,7 +24,9 @@ export class AddRedisDatabasePage {
     discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
     sentinelNavigation = Selector('[data-testid=sentinel-nav-group]');
+    cloneSentinelNavigation = Selector('[data-testid=sentinel-nav-group-clone]');
     sentinelDatabaseNavigation = Selector('[data-testid=database-nav-group]');
+    cloneSentinelDatabaseNavigation = Selector('[data-testid=database-nav-group-clone]');
     cancelButton = Selector('[data-testid=btn-cancel]');
     //TEXT INPUTS (also referred to as 'Text fields')
     hostInput = Selector('[data-testid=host]');

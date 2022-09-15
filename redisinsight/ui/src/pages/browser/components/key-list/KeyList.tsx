@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
@@ -9,7 +9,7 @@ import {
 } from '@elastic/eui'
 import {
   formatBytes,
-  truncateTTLToDuration,
+  truncateNumberToDuration,
   truncateNumberToFirstUnit,
   truncateTTLToSeconds,
   replaceSpaces,
@@ -27,6 +27,7 @@ import {
   keysDataSelector,
   keysSelector,
   selectedKeySelector,
+  setLastBatchKeys,
   sourceKeysFetch,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -35,7 +36,7 @@ import {
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
+import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
@@ -62,7 +63,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const { data: selectedKey } = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered } = useSelector(keysSelector)
+  const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
 
   const [items, setItems] = useState(keysState.keys)
@@ -76,6 +77,17 @@ const KeyList = forwardRef((props: Props, ref) => {
       onLoadMoreItems(config)
     }
   }))
+
+  useEffect(() =>
+    () => {
+      if (viewType === KeyViewType.Tree) {
+        return
+      }
+      setItems((prevItems) => {
+        dispatch(setLastBatchKeys(prevItems.slice(-SCAN_COUNT_DEFAULT)))
+        return []
+      })
+    }, [])
 
   useEffect(() => {
     const newKeys = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
@@ -201,7 +213,7 @@ const KeyList = forwardRef((props: Props, ref) => {
                   <>
                     {`${truncateTTLToSeconds(cellData)} s`}
                     <br />
-                    {`(${truncateTTLToDuration(cellData)})`}
+                    {`(${truncateNumberToDuration(cellData)})`}
                   </>
                 )}
               >

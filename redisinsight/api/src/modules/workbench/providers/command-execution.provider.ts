@@ -25,40 +25,50 @@ export class CommandExecutionProvider {
   ) {}
 
   /**
-   * Encrypt command execution and save entire entity
+   * Encrypt command executions and save entire entities
    * Should always throw and error in case when unable to encrypt for some reason
-   * @param commandExecution
+   * @param commandExecutions
    */
-  async create(commandExecution: Partial<CommandExecution>): Promise<CommandExecution> {
-    const entity = plainToClass(CommandExecutionEntity, commandExecution);
+  async createMany(commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
+    // todo: limit by 30 max to insert
+    let entities = await Promise.all(commandExecutions.map(async (commandExecution) => {
+      const entity = plainToClass(CommandExecutionEntity, commandExecution);
 
-    // Do not store command execution result that exceeded limitation
-    if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
-      entity.result = JSON.stringify([
+      // Do not store command execution result that exceeded limitation
+      if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
+        entity.result = JSON.stringify([
+          {
+            status: CommandExecutionStatus.Success,
+            response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
+          },
+        ]);
+      }
+
+      return this.encryptEntity(entity);
+    }));
+
+    entities = await this.commandExecutionRepository.save(entities);
+
+    const response = await Promise.all(
+      entities.map((entity, idx) => classToClass(
+        CommandExecution,
         {
-          status: CommandExecutionStatus.Success,
-          response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
+          ...entity,
+          command: commandExecutions[idx].command,
+          mode: commandExecutions[idx].mode,
+          result: commandExecutions[idx].result,
+          nodeOptions: commandExecutions[idx].nodeOptions,
         },
-      ]);
-    }
-
-    const response = await classToClass(
-      CommandExecution,
-      {
-        ...await this.commandExecutionRepository.save(await this.encryptEntity(entity)),
-        command: commandExecution.command,
-        mode: commandExecution.mode,
-        result: commandExecution.result,
-        nodeOptions: commandExecution.nodeOptions,
-      },
+      )),
     );
 
     // cleanup history and ignore error if any
     try {
-      await this.cleanupDatabaseHistory(entity.databaseId);
+      await this.cleanupDatabaseHistory(entities[0].databaseId);
     } catch (e) {
       this.logger.error('Error when trying to cleanup history after insert', e);
     }
+
     return response;
   }
 
@@ -101,7 +111,7 @@ export class CommandExecutionProvider {
   async getOne(databaseId: string, id: string): Promise<CommandExecution> {
     this.logger.log('Getting command executions');
 
-    const entity = await this.commandExecutionRepository.findOne({ id, databaseId });
+    const entity = await this.commandExecutionRepository.findOneBy({ id, databaseId });
 
     if (!entity) {
       this.logger.error(`Command execution with id:${id} and databaseId:${databaseId} was not Found`);

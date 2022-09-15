@@ -1,9 +1,8 @@
 import React from 'react'
 import { ModifiedClusterNodes } from 'uiSrc/pages/clusterDetails/ClusterDetailsPage'
-import { getLetterByIndex } from 'uiSrc/utils'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import ClusterNodesTable from './ClusterNodesTable'
+import ClusterDetailsGraphics from './ClusterDetailsGraphics'
 
 const mockNodes = [
   {
@@ -74,37 +73,28 @@ const mockNodes = [
     mode: 'cluster',
     replicas: []
   }
-].map((d, index) => ({ ...d, letter: getLetterByIndex(index), index, color: [0, 0, 0] })) as ModifiedClusterNodes[]
+].map((d, index) => ({ ...d, letter: 'A', index, color: [0, 0, 0] })) as ModifiedClusterNodes[]
 
-describe('ClusterNodesTable', () => {
+describe('ClusterDetailsGraphics', () => {
   it('should render', () => {
-    expect(render(<ClusterNodesTable nodes={mockNodes} loading={false} />)).toBeTruthy()
+    expect(render(<ClusterDetailsGraphics nodes={mockNodes} loading={false} />)).toBeTruthy()
+  })
+
+  it('should render nothing without nodes', () => {
+    render(<ClusterDetailsGraphics nodes={[]} loading={false} />)
+    expect(screen.queryByTestId('cluster-details-graphics-loading')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('cluster-details-charts')).not.toBeInTheDocument()
   })
 
   it('should render loading content', () => {
-    render(<ClusterNodesTable nodes={null} loading />)
-    expect(screen.getByTestId('primary-nodes-table-loading')).toBeInTheDocument()
-    expect(screen.queryByTestId('primary-nodes-table')).not.toBeInTheDocument()
+    render(<ClusterDetailsGraphics nodes={null} loading />)
+    expect(screen.getByTestId('cluster-details-graphics-loading')).toBeInTheDocument()
+    expect(screen.queryByTestId('cluster-details-charts')).not.toBeInTheDocument()
   })
 
-  it('should render table', () => {
-    render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
-    expect(screen.getByTestId('primary-nodes-table')).toBeInTheDocument()
-    expect(screen.queryByTestId('primary-nodes-table-loading')).not.toBeInTheDocument()
-  })
-
-  it('should render table with 3 items', () => {
-    render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
-    expect(screen.getAllByTestId('node-letter')).toHaveLength(3)
-  })
-
-  it('should highlight max value for total keys', () => {
-    render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
-    expect(screen.getByTestId('totalKeys-value-max')).toHaveTextContent(mockNodes[2].totalKeys.toString())
-  })
-
-  it('should not highlight max value for opsPerSecond with equals values', () => {
-    render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
-    expect(screen.queryByTestId('opsPerSecond-value-max')).not.toBeInTheDocument()
+  it('should render donuts', () => {
+    render(<ClusterDetailsGraphics nodes={mockNodes} loading={false} />)
+    expect(screen.getByTestId('donut-memory')).toBeInTheDocument()
+    expect(screen.queryByTestId('donut-keys')).toBeInTheDocument()
   })
 })

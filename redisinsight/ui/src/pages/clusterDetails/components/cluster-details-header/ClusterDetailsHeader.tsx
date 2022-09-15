@@ -11,7 +11,7 @@ import { capitalize } from 'lodash'
 import {
   truncateNumberToFirstUnit,
   formatLongName,
-  truncateTTLToDuration,
+  truncateNumberToDuration,
 } from 'uiSrc/utils'
 import { nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -76,7 +76,7 @@ const ClusterDetailsHeader = () => {
           <>
             {`${nullableNumberWithSpaces(data?.uptimeSec) || 0} s`}
             <br />
-            {`(${truncateTTLToDuration(data?.uptimeSec || 0)})`}
+            {`(${truncateNumberToDuration(data?.uptimeSec || 0)})`}
           </>
         )}
       >

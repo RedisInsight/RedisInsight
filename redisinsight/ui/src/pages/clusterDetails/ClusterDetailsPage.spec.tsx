@@ -1,31 +1,36 @@
+import { cloneDeep } from 'lodash'
 import React from 'react'
-import { fetchClusterDetailsAction } from 'uiSrc/slices/analytics/clusterDetails'
-import { render } from 'uiSrc/utils/test-utils'
+import { CLUSTER_DETAILS_DATA_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
+import {
+  getClusterDetails,
+  getClusterDetailsSuccess
+} from 'uiSrc/slices/analytics/clusterDetails'
+import { act, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 
 import ClusterDetailsPage from './ClusterDetailsPage'
 
-jest.mock('uiSrc/slices/analytics/clusterDetails', () => ({
-  ...jest.requireActual('uiSrc/slices/analytics/clusterDetails'),
-  fetchClusterDetailsAction: jest.fn(),
-  clusterDetailsSelector: jest.fn().mockReturnValue({
-    data: [],
-    loading: false,
-    error: '',
-  }),
-}))
+let store: typeof mockedStore
 
 describe('ClusterDetailsPage', () => {
-  it('should render', () => {
-    const fetchClusterDetailsActionMock = jest.fn();
-    (fetchClusterDetailsAction as jest.Mock).mockImplementation(() => fetchClusterDetailsActionMock)
-    expect(render(<ClusterDetailsPage />)).toBeTruthy()
+  beforeEach(() => {
+    cleanup()
+    store = cloneDeep(mockedStore)
+    store.clearActions()
+  })
+
+  it('should render', async () => {
+    await act(() => {
+      expect(render(<ClusterDetailsPage />))
+        .toBeTruthy()
+    })
   })
 
   it('should call fetchClusterDetailsAction after rendering', async () => {
-    const fetchClusterDetailsActionMock = jest.fn();
-    (fetchClusterDetailsAction as jest.Mock).mockImplementation(() => fetchClusterDetailsActionMock)
+    await act(() => {
+      render(<ClusterDetailsPage />)
+    })
 
-    render(<ClusterDetailsPage />)
-    expect(fetchClusterDetailsActionMock).toBeCalled()
+    const expectedActions = [getClusterDetails(), getClusterDetailsSuccess(CLUSTER_DETAILS_DATA_MOCK)]
+    expect(store.getActions()).toEqual([...expectedActions])
   })
 })

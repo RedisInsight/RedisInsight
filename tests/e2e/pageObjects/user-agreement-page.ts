@@ -22,6 +22,7 @@ export class UserAgreementPage {
             await t.click(this.recommendedSwitcher);
             await t.click(this.switchOptionEula);
             await t.click(this.submitButton);
+            await t.expect(this.userAgreementsPopup.visible).notOk('The user agreements popup is not shown', { timeout: 2000 });
         }
     }
 

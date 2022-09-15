@@ -5,80 +5,96 @@ import {
 export class DatabaseAnalyzer {
   async analyze(keys) {
     const analysis = {
+      namespaces: new Map(),
       totalMemory: new Map(),
       totalKeys: new Map(),
-      topMemoryNamespaces: new Map(),
-      topKeysNamespaces: new Map(),
     };
 
     keys.forEach((key) => {
       // namespaces
-      const namespace = key.name.toString().split(':')[0];
+      const nsp = key.name.toString().split(':')[0];
 
-      // Keys nsp
-      const keysNsp = analysis.topKeysNamespaces.get(namespace) || {
-        total: 0,
+      const namespace = analysis.namespaces.get(nsp) || {
+        memory: 0,
+        keys: 0,
+        types: new Map(),
       };
 
-      keysNsp.total += 1;
-      set(keysNsp, ['types', key.type], get(keysNsp, ['types', key.type], 0) + 1);
-      analysis.topKeysNamespaces.set(namespace, keysNsp);
+      namespace.keys += 1;
+      namespace.memory += key.memory;
 
-      // Memory nsp
-      const memoryNsp = analysis.topMemoryNamespaces.get(namespace) || {
-        total: 0,
+      const namespaceType = namespace.types.get(key.type) || {
+        memory: 0,
+        keys: 0,
       };
 
-      memoryNsp.total += key.size;
-      set(memoryNsp, ['types', key.type], get(memoryNsp, ['types', key.type], 0) + key.size);
-      analysis.topMemoryNamespaces.set(namespace, memoryNsp);
+      namespaceType.keys += 1;
+      namespaceType.memory += key.memory;
+
+      namespace.types.set(key.type, namespaceType);
+      analysis.namespaces.set(nsp, namespace);
 
       // Total memory
       analysis.totalMemory.set(
         key.type,
-        (analysis.totalMemory.get(key.type) || 0) + key.size,
+        (analysis.totalMemory.get(key.type) || 0) + key.memory,
       );
 
       // Total keys
       analysis.totalKeys.set(
         key.type,
-        (analysis.totalKeys.get(key.type) || 0) + key.size,
+        (analysis.totalKeys.get(key.type) || 0) + 1,
       );
     });
 
+    console.log('___nsp', analysis.namespaces)
     return {
-      totalKeys: [...analysis.totalKeys.keys()].map((type) => ({
-        type,
-        total: analysis.totalKeys.get(type),
-      })),
-      totalMemory: [...analysis.totalMemory.keys()].map((type) => ({
-        type,
-        total: analysis.totalMemory.get(type),
-      })),
-      topKeysNsp: (sortBy([...analysis.topKeysNamespaces.keys()].map((nsp) => {
-        const data = analysis.topKeysNamespaces.get(nsp);
+      // totalKeys: [...analysis.totalKeys.keys()].map((type) => ({
+      //   type,
+      //   total: analysis.totalKeys.get(type),
+      // })),
+      // totalMemory: [...analysis.totalMemory.keys()].map((type) => ({
+      //   type,
+      //   total: analysis.totalMemory.get(type),
+      // })),
+      topKeysNsp: (sortBy([...analysis.namespaces.keys()].map((nsp) => {
+        const summary = analysis.namespaces.get(nsp);
         return {
-          ...data,
           nsp,
-          types: map(data.types, (total, type) => ({ type, total })),
+          ...summary,
+          types: sortBy([...summary.types.keys()].map((type) => {
+            const typeSummary = summary.types.get(type);
+            // console.log('___type', type, typeSummary)
+            return {
+              type,
+              ...typeSummary,
+            };
+          }), ['keys']).reverse(),
         };
-      }), ['total'])).reverse().slice(0, 15),
-      topMemoryNsp: (sortBy([...analysis.topMemoryNamespaces.keys()].map((nsp) => {
-        const data = analysis.topMemoryNamespaces.get(nsp);
+      }), ['keys'])).reverse().slice(0, 15),
+      topMemoryNsp: (sortBy([...analysis.namespaces.keys()].map((nsp) => {
+        const summary = analysis.namespaces.get(nsp);
         return {
-          ...data,
           nsp,
-          types: map(data.types, (total, type) => ({ type, total })),
+          ...summary,
+          types: sortBy([...summary.types.keys()].map((type) => {
+            const typeSummary = summary.types.get(type);
+            // console.log('___type', type, typeSummary)
+            return {
+              type,
+              ...typeSummary,
+            };
+          }), ['memory']).reverse(),
         };
-      }), ['total'])).reverse().slice(0, 15),
-      topKeysMemory: sortBy(keys, ['size']).reverse().slice(0, 15).map((key) => ({
-        ...key,
-        name: key.name.toString(),
-      })), // todo: add existing
-      topKeysLength: sortBy(keys, ['length']).reverse().slice(0, 15).map((key) => ({
-        ...key,
-        name: key.name.toString(),
-      })), // todo: add existing
+      }), ['keys'])).reverse().slice(0, 15),
+      // topKeysMemory: sortBy(keys, ['size']).reverse().slice(0, 15).map((key) => ({
+      //   ...key,
+      //   name: key.name.toString(),
+      // })), // todo: add existing
+      // topKeysLength: sortBy(keys, ['length']).reverse().slice(0, 15).map((key) => ({
+      //   ...key,
+      //   name: key.name.toString(),
+      // })), // todo: add existing
     };
   }
 }

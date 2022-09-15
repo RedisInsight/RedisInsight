@@ -15,27 +15,21 @@ const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
     || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 if (fs.existsSync(workingDirectory)) {
     // Guides content
-    // const guidesTimestampPath = `${workingDirectory}/guides/build.json`;
-    // const guidesGraphIntroductionFilePath = `${workingDirectory}/guides/quick-guides/graph/introduction.md`;
-    const guidesTimestampPath = 'E:\\Redis\\RedisInsight\\tests\\e2e\\.redisinsight-v2\\guides\\build.json';
-    const guidesGraphIntroductionFilePath = 'E:\\Redis\\RedisInsight\\tests\\e2e\\.redisinsight-v2\\guides\\quick-guides\\graph\\introduction.md';
+    const guidesTimestampPath = `${workingDirectory}/guides/build.json`;
+    const guidesGraphIntroductionFilePath = `${workingDirectory}/guides/quick-guides/graph/introduction.md`;
 
     // Tutorials content
-    // const tutorialsTimestampPath = `${workingDirectory}/tutorials/build.json`;
-    // const tutorialsTimeSeriesFilePath = `${workingDirectory}/guides/quick-guides/graph/introduction.md`;
-    const tutorialsTimestampPath = 'E:\\Redis\\RedisInsight\\tests\\e2e\\.redisinsight-v2\\tutorials\\build.json';
-    const tutorialsTimeSeriesFilePath = 'E:\\Redis\\RedisInsight\\tests\\e2e\\.redisinsight-v2\\tutorials\\redis_stack\\redis_for_time_series.md';
+    const tutorialsTimestampPath = `${workingDirectory}/tutorials/build.json`;
+    const tutorialsTimeSeriesFilePath = `${workingDirectory}/guides/quick-guides/graph/introduction.md`;
 
-    // Remove md files
-    // fs.unlinkSync(guidesGraphIntroductionFilePath);
-    // fs.unlinkSync(tutorialsTimeSeriesFilePath);
+    // Remove md files from local folder. When desktop test will start, files will be updated from remote repository
+    fs.unlinkSync(guidesGraphIntroductionFilePath);
+    fs.unlinkSync(tutorialsTimeSeriesFilePath);
 
     // Update timestamp for build files
     const guidesTimestampFile = editJsonFile(guidesTimestampPath);
     const tutorialsTimestampFile = editJsonFile(tutorialsTimestampPath);
 
-    console.log(`guide timestampBeforeUpdate: ${guidesTimestampFile.get('timestamp')}`);
-    console.log(`tutorial timestampBeforeUpdate: ${tutorialsTimestampFile.get('timestamp')}`);
     const guidesNewTimestamp = guidesTimestampFile.get('timestamp') - 10;
     const tutorialNewTimestamp = tutorialsTimestampFile.get('timestamp') - 10;
 
@@ -43,9 +37,6 @@ if (fs.existsSync(workingDirectory)) {
     guidesTimestampFile.save();
     tutorialsTimestampFile.set('timestamp', tutorialNewTimestamp);
     tutorialsTimestampFile.save();
-
-    console.log(`guide timestamp after file update: ${guidesTimestampFile.get('timestamp')}`);
-    console.log(`tutorial timestamp after file update: ${tutorialsTimestampFile.get('timestamp')}`);
 
     fixture `Automatically update information`
         .meta({ type: 'critical_path' })
@@ -56,7 +47,7 @@ if (fs.existsSync(workingDirectory)) {
         .afterEach(async() => {
             await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         });
-    test.only
+    test
         .meta({ rte: rte.standalone, env: env.desktop })('Verify that user can see updated info in Enablement Area', async t => {
             // Create new file due to cache-ability
             const guidesTimestampFileNew = editJsonFile(guidesTimestampPath);
@@ -67,8 +58,9 @@ if (fs.existsSync(workingDirectory)) {
 
             // Check Enablement area and validate that removed file is existed in Guides
             await t.click(workbenchPage.guidesGraphAccordion);
-            await t.click(workbenchPage.guidesIntroductionGraphLink);
+            await t.click(workbenchPage.guidesIntroductionGraphLink.nth(1));
             await t.expect(workbenchPage.enablementAreaEmptyContent.visible).notOk('Guides folder is not updated');
+            await t.click(workbenchPage.closeEnablementPage);
 
             // Check Enablement area and validate that removed file is existed in Tutorials
             await t.click(workbenchPage.redisStackTutorialsButton);

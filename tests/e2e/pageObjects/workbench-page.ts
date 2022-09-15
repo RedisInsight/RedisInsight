@@ -58,6 +58,7 @@ export class WorkbenchPage {
     showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
     rawModeBtn = Selector('[data-testid="btn-change-mode"]');
+    closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     //LINKS
@@ -65,7 +66,7 @@ export class WorkbenchPage {
     redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
     tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
     guidesWorkingWithGraphLink = Selector('[data-testid=internal-link-working-with-graphs]');
-    guidesIntroductionGraphLink = Selector('[data-testid=accordion-button-graph] [data-testid=internal-link-introduction]');
+    guidesIntroductionGraphLink = Selector('[data-testid=internal-link-introduction]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
     vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
     //TEXT INPUTS (also referred to as 'Text fields')

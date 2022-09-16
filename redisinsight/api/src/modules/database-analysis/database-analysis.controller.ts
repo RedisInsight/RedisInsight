@@ -1,11 +1,17 @@
 import {
-  Controller, Get, Param, Post,
+  Body,
+  Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiTags } from '@nestjs/swagger';
-import { ClusterDetails } from 'src/modules/cluster-monitor/models';
 import { DatabaseAnalysisService } from 'src/modules/database-analysis/database-analysis.service';
+import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
+import { BrowserSerializeInterceptor } from 'src/common/interceptors';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
 
+@UseInterceptors(BrowserSerializeInterceptor)
+@UsePipes(new ValidationPipe({ transform: true }))
 @ApiTags('Database Analysis')
 @Controller('/analysis')
 export class DatabaseAnalysisController {
@@ -17,16 +23,52 @@ export class DatabaseAnalysisController {
     responses: [
       {
         status: 201,
-        type: ClusterDetails,
+        type: DatabaseAnalysis,
       },
     ],
   })
   @Post()
+  @ApiQueryRedisStringEncoding()
   async create(
     @Param('dbInstance') instanceId: string,
-  ): Promise<any> { // todo: DatabaseAnalysis
-    return this.service.create({
-      instanceId,
-    });
+      @Body() dto: CreateDatabaseAnalysisDto,
+  ): Promise<DatabaseAnalysis> {
+    return this.service.create({ instanceId }, dto);
+  }
+
+  @ApiEndpoint({
+    statusCode: 200,
+    description: 'Get database analysis',
+    responses: [
+      {
+        status: 200,
+        type: DatabaseAnalysis,
+      },
+    ],
+  })
+  @Get(':id')
+  @ApiQueryRedisStringEncoding()
+  async get(
+    @Param('id') id: string,
+  ): Promise<DatabaseAnalysis> {
+    return this.service.get(id);
+  }
+
+  @ApiEndpoint({
+    statusCode: 200,
+    description: 'Get database analysis',
+    responses: [
+      {
+        status: 200,
+        type: DatabaseAnalysis,
+      },
+    ],
+  })
+  @Get('')
+  @ApiQueryRedisStringEncoding()
+  async list(
+    @Param('dbInstance') databaseId: string,
+  ): Promise<ShortDatabaseAnalysis[]> {
+    return this.service.list(databaseId);
   }
 }

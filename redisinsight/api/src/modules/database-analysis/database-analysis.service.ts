@@ -3,13 +3,13 @@ import {
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-import IORedis from 'ioredis';
 import { catchAclError } from 'src/utils';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
+import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 
 @Injectable()
 export class DatabaseAnalysisService {
@@ -20,6 +20,7 @@ export class DatabaseAnalysisService {
     private instancesBusinessService: InstancesBusinessService,
     private analyzer: DatabaseAnalyzer,
     private databaseAnalysisProvider: DatabaseAnalysisProvider,
+    private scanner: KeysScanner,
   ) {}
 
   /**
@@ -34,56 +35,29 @@ export class DatabaseAnalysisService {
     try {
       const client = await this.getClient(clientOptions);
 
-      let nodes = [client];
+      const scanResults = await this.scanner.scan(client, {
+        filter: dto.filter,
+      });
 
-      if (client instanceof IORedis.Cluster) {
-        nodes = client.nodes('master');
-      }
+      const progress = {
+        total: 0,
+        scanned: 0,
+        processed: 0,
+      };
 
-      const [cursor, keys] = await nodes[0].sendCommand(new IORedis.Command('scan', [0, 'count', 10]));
-
-      const commands = keys.map((key) => ([
-        'memory',
-        'usage',
-        key,
-        'samples',
-        '0',
-      ]));
-
-      const sizes = await nodes[0].pipeline(commands).exec();
-      const types = await nodes[0].pipeline(keys.map((key) => ([
-        'type',
-        key,
-      ]))).exec();
-      const ttls = await nodes[0].pipeline(keys.map((key) => ([
-        'ttl',
-        key,
-      ]))).exec();
-
-      const keysData = [];
-      for (let i = 0; i < keys.length; i += 1) {
-        keysData.push({
-          name: keys[i],
-          memory: sizes[i][1],
-          length: sizes[i][1],
-          type: types[i][1],
-          ttl: ttls[i][1],
-        });
-      }
+      scanResults.forEach((nodeResult) => {
+        progress.scanned += nodeResult.progress.scanned;
+        progress.processed += nodeResult.progress.processed;
+        progress.total += nodeResult.progress.total;
+      });
 
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientOptions.instanceId,
-        delimiter: dto.delimiter,
-      }, keysData));
+        ...dto,
+        progress,
+      }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));
 
       return this.databaseAnalysisProvider.create(analysis);
-      // todo: formatter
-      // classToClass(DatabaseAnalysisEntity);
-      // const entity = plainToClass(DatabaseAnalysisEntity, analysis);
-      // console.log(entity);
-
-      // return analysis;
-      return plainToClass(DatabaseAnalysis, analysis);
     } catch (e) {
       this.logger.error('Unable to analyze database', e);
 

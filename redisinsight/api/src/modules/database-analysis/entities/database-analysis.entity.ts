@@ -32,6 +32,31 @@ export class DatabaseAnalysisEntity {
       return undefined;
     }
   }, { toPlainOnly: true })
+  filter: string;
+
+  @Column({ nullable: false })
+  delimiter: string;
+
+  @Column({ nullable: true, type: 'blob' })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
+  progress: string;
+
+  @Column({ nullable: true, type: 'blob' })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
   totalKeys: string;
 
   @Column({ nullable: true, type: 'blob' })

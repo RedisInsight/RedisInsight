@@ -3,6 +3,8 @@ import { Key } from 'src/modules/database-analysis/models/key';
 import { Expose, Type } from 'class-transformer';
 import { SimpleSummary } from 'src/modules/database-analysis/models/simple-summary';
 import { ApiProperty } from '@nestjs/swagger';
+import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
+import { AnalysisProgress } from 'src/modules/database-analysis/models/analysis-progress';
 
 export class DatabaseAnalysis {
   @ApiProperty({
@@ -22,12 +24,28 @@ export class DatabaseAnalysis {
   databaseId: string;
 
   @ApiProperty({
+    description: 'Filters for scan operation',
+    type: () => ScanFilter,
+  })
+  @Expose()
+  @Type(() => ScanFilter)
+  filter: ScanFilter;
+
+  @ApiProperty({
     description: 'Namespace delimiter',
     type: String,
     default: ':',
   })
   @Expose()
   delimiter: string;
+
+  @ApiProperty({
+    description: 'Analysis progress',
+    type: () => AnalysisProgress,
+  })
+  @Expose()
+  @Type(() => AnalysisProgress)
+  progress: AnalysisProgress;
 
   @ApiProperty({
     description: 'Analysis created date (ISO string)',

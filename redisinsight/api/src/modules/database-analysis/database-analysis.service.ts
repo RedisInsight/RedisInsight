@@ -4,12 +4,12 @@ import {
 import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import IORedis from 'ioredis';
-import { catchAclError, classToClass } from 'src/utils';
-import { DatabaseAnalyzer } from 'src/modules/database-analysis/analyzer/database-analyzer';
-import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import * as fs from 'fs';
-import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
+import { catchAclError } from 'src/utils';
+import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
+import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
+import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
+import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
 
 @Injectable()
 export class DatabaseAnalysisService {
@@ -18,13 +18,19 @@ export class DatabaseAnalysisService {
   constructor(
     private redisService: RedisService,
     private instancesBusinessService: InstancesBusinessService,
+    private analyzer: DatabaseAnalyzer,
+    private databaseAnalysisProvider: DatabaseAnalysisProvider,
   ) {}
 
   /**
    * Get cluster details and details for all nodes
    * @param clientOptions
+   * @param dto
    */
-  public async create(clientOptions: IFindRedisClientInstanceByOptions): Promise<any> {
+  public async create(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: CreateDatabaseAnalysisDto,
+  ): Promise<DatabaseAnalysis> {
     try {
       const client = await this.getClient(clientOptions);
 
@@ -34,7 +40,7 @@ export class DatabaseAnalysisService {
         nodes = client.nodes('master');
       }
 
-      const [cursor, keys] = await nodes[0].sendCommand(new IORedis.Command('scan', [0, 'count', 10000]));
+      const [cursor, keys] = await nodes[0].sendCommand(new IORedis.Command('scan', [0, 'count', 10]));
 
       const commands = keys.map((key) => ([
         'memory',
@@ -65,20 +71,19 @@ export class DatabaseAnalysisService {
         });
       }
 
-      // console.log('___keysData', keysData)
+      const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
+        databaseId: clientOptions.instanceId,
+        delimiter: dto.delimiter,
+      }, keysData));
 
-      fs.writeFileSync('keys.json', JSON.stringify(keysData));
-
-      const analyzer = new DatabaseAnalyzer();
-      const analysis = await analyzer.analyze(keysData);
-      console.log('___analysis', analysis)
-
+      return this.databaseAnalysisProvider.create(analysis);
       // todo: formatter
       // classToClass(DatabaseAnalysisEntity);
       // const entity = plainToClass(DatabaseAnalysisEntity, analysis);
       // console.log(entity);
 
-      return analysis;
+      // return analysis;
+      return plainToClass(DatabaseAnalysis, analysis);
     } catch (e) {
       this.logger.error('Unable to analyze database', e);
 
@@ -88,6 +93,22 @@ export class DatabaseAnalysisService {
 
       throw catchAclError(e);
     }
+  }
+
+  /**
+   * Get analysis with all fields by id
+   * @param id
+   */
+  async get(id: string): Promise<DatabaseAnalysis> {
+    return this.databaseAnalysisProvider.get(id);
+  }
+
+  /**
+   * Get analysis list for particular database with id and createdAt fields only
+   * @param databaseId
+   */
+  async list(databaseId: string): Promise<ShortDatabaseAnalysis[]> {
+    return this.databaseAnalysisProvider.list(databaseId);
   }
 
   /**

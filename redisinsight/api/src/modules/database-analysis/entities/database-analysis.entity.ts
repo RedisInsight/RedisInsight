@@ -2,7 +2,6 @@ import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
 } from 'typeorm';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
-import { RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { Transform } from 'class-transformer';
 
 @Entity('database_analysis')
@@ -25,26 +24,32 @@ export class DatabaseAnalysisEntity {
   database: DatabaseInstanceEntity;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => Buffer.from(JSON.stringify(object)), { toClassOnly: true })
-  @Transform((buf) => {
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
     try {
-      const data = JSON.parse(buf.toString());
-      return data.map((value) => ({
-        ...value,
-        nsp: Buffer.from(value.nsp),
-      }));
+      return JSON.parse(str);
     } catch (e) {
       return undefined;
     }
   }, { toPlainOnly: true })
-  topKeysNsp: Buffer;
+  totalKeys: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => Buffer.from(JSON.stringify(object)), { toClassOnly: true })
-  @Transform((buf) => {
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
     try {
-      const data = JSON.parse(buf.toString());
-      return data.map((value) => ({
+      return JSON.parse(str);
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
+  totalMemory: string;
+
+  @Column({ nullable: true, type: 'blob' })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
+    try {
+      return JSON.parse(str).map((value) => ({
         ...value,
         nsp: Buffer.from(value.nsp),
       }));
@@ -52,7 +57,49 @@ export class DatabaseAnalysisEntity {
       return undefined;
     }
   }, { toPlainOnly: true })
-  topMemoryNsp: Buffer;
+  topKeysNsp: string;
+
+  @Column({ nullable: true, type: 'blob' })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
+    try {
+      return JSON.parse(str).map((value) => ({
+        ...value,
+        nsp: Buffer.from(value.nsp),
+      }));
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
+  topMemoryNsp: string;
+
+  @Column({ nullable: true, type: 'blob' })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
+    try {
+      return JSON.parse(str).map((value) => ({
+        ...value,
+        name: Buffer.from(value.name),
+      }));
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
+  topKeysLength: string;
+
+  @Column({ nullable: true, type: 'blob' })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
+    try {
+      return JSON.parse(str).map((value) => ({
+        ...value,
+        name: Buffer.from(value.name),
+      }));
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
+  topKeysMemory: string;
 
   @Column({ nullable: true })
   encryption: string;

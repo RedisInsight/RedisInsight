@@ -1,8 +1,15 @@
 import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
+import { Injectable } from '@nestjs/common';
 import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
 
+@Injectable()
 export class KeysScanner {
+  constructor(
+    private readonly keyInfoProvider: KeyInfoProvider,
+  ) {}
+
   async scan(client: Redis | Cluster, opts: any) {
     let nodes = [];
 
@@ -48,10 +55,21 @@ export class KeysScanner {
       nodeKeys.push({
         name: keys[i],
         memory: sizes[i][0] ? 0 : sizes[i][1],
-        length: sizes[i][1],
         type: types[i][0] ? 'N/A' : types[i][1],
         ttl: ttls[i][0] ? -1 : ttls[i][1],
       });
+    }
+
+    const lengthCommands = nodeKeys.map((key) => {
+      const strategy = this.keyInfoProvider.getStrategy(key.type);
+      return strategy.getLengthCommandArgs(key.name);
+    });
+
+    const keysLength = await client.pipeline(lengthCommands).exec();
+
+    for (let i = 0; i < nodeKeys.length; i += 1) {
+      const strategy = this.keyInfoProvider.getStrategy(nodeKeys[i].type);
+      nodeKeys[i].length = keysLength[i][0] ? 0 : strategy.getLengthValue(keysLength[i][1]);
     }
 
     return {
@@ -64,6 +82,11 @@ export class KeysScanner {
     };
   }
 
+  /**
+   * Fetches total keys for node based on database index client connected to
+   * Uses "info" command
+   * @param client
+   */
   async getNodeTotal(client: Redis): Promise<number> {
     const currentDbIndex = get(client, ['options', 'db'], 0);
     const info = convertRedisInfoReplyToObject(

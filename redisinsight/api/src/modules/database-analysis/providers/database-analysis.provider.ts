@@ -23,6 +23,8 @@ export class DatabaseAnalysisProvider {
     'topMemoryNsp',
     'topKeysLength',
     'topKeysMemory',
+    'filter',
+    'progress',
   ];
 
   constructor(

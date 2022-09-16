@@ -6,6 +6,7 @@ import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/databa
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
+import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/d
     DatabaseAnalysisService,
     DatabaseAnalyzer,
     DatabaseAnalysisProvider,
+    KeysScanner,
   ],
 })
 export class DatabaseAnalysisModule {}

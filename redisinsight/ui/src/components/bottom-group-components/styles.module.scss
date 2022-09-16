@@ -11,9 +11,33 @@
 }
 
 .containerMinimized {
+  display: flex;
+  align-items: center;
   height: 26px;
   line-height: 26px;
   border: 1px solid var(--euiColorLightShade);
+
+  .link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    background: #F6F7F9;
+    padding: 0 12px;
+    border-radius: 4px 4px 0 0;
+
+    color: #010101 !important;
+    font: normal normal normal 12px/18px Graphik;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .surveyIcon {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .componentBadgeItem {

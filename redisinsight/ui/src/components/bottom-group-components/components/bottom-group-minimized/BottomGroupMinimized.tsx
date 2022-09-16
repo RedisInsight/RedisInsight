@@ -14,6 +14,7 @@ import {
 } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { monitorSelector, toggleHideMonitor, toggleMonitor } from 'uiSrc/slices/cli/monitor'
+import SurveyIcon from 'uiSrc/assets/img/survey_icon.svg'
 
 import styles from '../../styles.module.scss'
 
@@ -67,6 +68,12 @@ const BottomGroupMinimized = () => {
     dispatch(toggleMonitor())
   }
 
+  const onClickSurvey = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.USER_SURVEY_LINK_CLICKED
+    })
+  }
+
   return (
     <div className={styles.containerMinimized}>
       <EuiFlexGroup
@@ -117,6 +124,18 @@ const BottomGroupMinimized = () => {
           </EuiBadge>
         </EuiFlexItem>
       </EuiFlexGroup>
+      <a
+        className={styles.link}
+        target="_blank"
+        rel="noreferrer"
+        href="#"
+        onClick={onClickSurvey}
+      >
+        <>
+          <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
+          <span>We need your opinion, take a survey!</span>
+        </>
+      </a>
     </div>
   )
 }

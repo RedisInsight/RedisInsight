@@ -20,6 +20,7 @@ import {
 } from 'uiSrc/components/database-overview/components/icons'
 import { ModifiedClusterNodes } from 'uiSrc/pages/clusterDetails/ClusterDetailsPage'
 import { formatBytes, Nullable } from 'uiSrc/utils'
+import { rgb } from 'uiSrc/utils/colors'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import styles from './styles.module.scss'
@@ -49,11 +50,18 @@ const ClusterNodesTable = ({ nodes, loading }: { nodes: Nullable<ModifiedCluster
       field: 'host',
       dataType: 'string',
       sortable: ({ index }) => index,
-      render: (value: number, { letter, port }) => (
-        <div className={styles.hostPort}>
-          <span className={styles.nodeName} data-testid="node-letter">{letter}</span>
-          <span>{value}:{port}</span>
-        </div>
+      render: (value: number, { letter, port, color }) => (
+        <>
+          <div
+            className={styles.nodeColor}
+            data-testid={`node-color-${letter}`}
+            style={{ backgroundColor: rgb(color) }}
+          />
+          <div className={styles.hostPort}>
+            <span className={styles.nodeName} data-testid="node-letter">{letter}</span>
+            <span>{value}:{port}</span>
+          </div>
+        </>
       )
     },
     {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { ModifiedClusterNodes } from 'uiSrc/pages/clusterDetails/ClusterDetailsPage'
 import { getLetterByIndex } from 'uiSrc/utils'
+import { rgb } from 'uiSrc/utils/colors'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
 import ClusterNodesTable from './ClusterNodesTable'
@@ -106,5 +107,12 @@ describe('ClusterNodesTable', () => {
   it('should not highlight max value for opsPerSecond with equals values', () => {
     render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
     expect(screen.queryByTestId('opsPerSecond-value-max')).not.toBeInTheDocument()
+  })
+
+  it('should render background color for each node', () => {
+    render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
+    mockNodes.forEach(({ letter, color }) => {
+      expect(screen.getByTestId(`node-color-${letter}`)).toHaveStyle({ 'background-color': rgb(color) })
+    })
   })
 })

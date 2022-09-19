@@ -40,7 +40,7 @@ export interface Props {
   summaryText?: string
   activeMode: RunQueryMode
   mode: RunQueryMode
-  resultsMode?: ResultsMode
+  activeResultsMode?: ResultsMode
   summary?: string
   queryType: WBQueryType
   selectedValue: string
@@ -64,7 +64,7 @@ const QueryCardHeader = (props: Props) => {
     summaryText,
     createdAt,
     mode,
-    resultsMode,
+    activeResultsMode,
     summary,
     activeMode,
     selectedValue,
@@ -92,7 +92,7 @@ const QueryCardHeader = (props: Props) => {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
         rawMode: activeMode === RunQueryMode.Raw,
-        group: resultsMode === ResultsMode.GroupMode,
+        group: activeResultsMode === ResultsMode.GroupMode,
         ...additionalData
       }
     })

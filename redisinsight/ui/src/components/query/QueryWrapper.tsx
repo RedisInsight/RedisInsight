@@ -28,7 +28,7 @@ export interface Props {
 
 interface IState {
   activeMode: RunQueryMode
-  resultsMode: ResultsMode
+  resultsMode?: ResultsMode
 }
 
 let state: IState = {
@@ -58,7 +58,7 @@ const QueryWrapper = (props: Props) => {
 
   state = {
     activeMode,
-    resultsMode: ResultsMode.Default
+    resultsMode
   }
 
   const sendEventSubmitTelemetry = (commandInit = query) => {

@@ -6,23 +6,27 @@ import { EuiBadge, EuiText } from '@elastic/eui'
 import styles from './styles.module.scss'
 
 export interface Props {
-  items: (string | JSX.Element)[];
-  separator?: string;
-  transparent?: boolean;
+  items: (string | JSX.Element)[]
+  separator?: string
+  transparent?: boolean
+  className?: string
 }
 
-const KeyboardShortcut = ({ items = [], separator = '', transparent = false }: Props) => (
-  <div className={styles.container}>
-    {
+const KeyboardShortcut = (props: Props) => {
+  const { items = [], separator = '', transparent = false, className = '' } = props
+  return (
+    <div className={styles.container}>
+      {
         items.map((item: string | JSX.Element, index: number) => (
           <div key={isString(item) ? item : item?.props?.children}>
-            { (index !== 0) && <div className={styles.separator}>{separator}</div> }
+            {(index !== 0) && <div className={styles.separator}>{separator}</div>}
             <EuiBadge className={cx(styles.badge, { [styles.transparent]: transparent })}>
-              <EuiText size="s">{item}</EuiText>
+              <EuiText className={className} size="s">{item}</EuiText>
             </EuiBadge>
           </div>
         ))
       }
-  </div>
-)
+    </div>
+  )
+}
 export default KeyboardShortcut

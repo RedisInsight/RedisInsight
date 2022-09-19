@@ -41,7 +41,7 @@ const DonutChart = (props: IProps) => {
   const {
     name = '',
     data,
-    width = 328,
+    width = 380,
     height = 300,
     title,
     config,
@@ -50,7 +50,7 @@ const DonutChart = (props: IProps) => {
     renderTooltip = (v) => v,
   } = props
 
-  const margin = config?.margin || 72
+  const margin = config?.margin || 98
   const radius = config?.radius || (width / 2 - margin)
   const arcWidth = config?.arcWidth || 8
   const percentToShowLabel = config?.percentToShowLabel || 5

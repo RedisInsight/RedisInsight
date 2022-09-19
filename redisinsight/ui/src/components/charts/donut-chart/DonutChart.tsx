@@ -1,5 +1,6 @@
 import cx from 'classnames'
 import * as d3 from 'd3'
+import { sumBy } from 'lodash'
 import React, { useEffect, useRef } from 'react'
 import { truncateNumberToRange } from 'uiSrc/utils'
 import { rgb, RGBColor } from 'uiSrc/utils/colors'
@@ -104,7 +105,7 @@ const DonutChart = (props: IProps) => {
 
   useEffect(() => {
     const pie = d3.pie<ChartData>().value((d: ChartData) => d.value).sort(null)
-    const dataReady = pie(data)
+    const dataReady = pie(data.filter((d) => d.value !== 0))
 
     d3
       .select(svgRef.current)
@@ -150,6 +151,10 @@ const DonutChart = (props: IProps) => {
       .text((d) => (isShowLabel(d) ? `: ${renderLabel ? renderLabel(d.value) : truncateNumberToRange(d.value)}` : ''))
       .attr('class', cx(styles.chartLabelValue, classNames?.arcLabelValue))
   }, [data])
+
+  if (!data.length || sumBy(data, 'value') === 0) {
+    return null
+  }
 
   return (
     <div className={styles.wrapper}>

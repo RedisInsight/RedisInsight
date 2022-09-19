@@ -21,6 +21,20 @@ describe('DonutChart', () => {
     expect(render(<DonutChart data={mockData} />)).toBeTruthy()
   })
 
+  it('should not render donut with empty data', () => {
+    const { container } = render(<DonutChart data={[]} name="test" />)
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('should not render donut with 0 values', () => {
+    const mockData: ChartData[] = [
+      { value: 0, name: 'A', color: [0, 0, 0] },
+      { value: 0, name: 'B', color: [10, 10, 10] },
+    ]
+    const { container } = render(<DonutChart data={mockData} name="test" />)
+    expect(container).toBeEmptyDOMElement()
+  })
+
   it('should render svg', () => {
     render(<DonutChart data={mockData} name="test" />)
     expect(screen.getByTestId('donut-test')).toBeInTheDocument()
@@ -32,6 +46,16 @@ describe('DonutChart', () => {
       expect(screen.getByTestId(`arc-${name}-${value}`)).toBeInTheDocument()
       expect(screen.getByTestId(`label-${name}-${value}`)).toBeInTheDocument()
     })
+  })
+
+  it('should not render arcs and labels with 0 value', () => {
+    const mockData: ChartData[] = [
+      { value: 0, name: 'A', color: [0, 0, 0] },
+      { value: 10, name: 'B', color: [10, 10, 10] },
+    ]
+    render(<DonutChart data={mockData} />)
+    expect(screen.queryByTestId('arc-A-0')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('label-A-0')).not.toBeInTheDocument()
   })
 
   it('should do not render label value if value less than 5%', () => {

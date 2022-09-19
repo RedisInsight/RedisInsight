@@ -11,6 +11,10 @@ export const analyticsViewTabs: AnalyticsTabs[] = [
     label: 'Overview',
   },
   {
+    id: AnalyticsViewTab.MemoryEfficiency,
+    label: 'Memory efficiency',
+  },
+  {
     id: AnalyticsViewTab.SlowLog,
     label: 'Slow Log',
   },

@@ -17,6 +17,7 @@ export enum PageNames {
   pubSub = 'pub-sub',
   analytics = 'analytics',
   clusterDetails = 'cluster-details',
+  memoryEfficiency = 'memory-efficiency'
 }
 
 const redisCloud = '/redis-cloud'
@@ -40,4 +41,5 @@ export const Pages = {
   analytics: (instanceId: string) => `/${instanceId}/${PageNames.analytics}`,
   slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
   clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
+  memoryEfficiency: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.memoryEfficiency}`,
 }

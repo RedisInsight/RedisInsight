@@ -1,0 +1,11 @@
+.main {
+  margin: 0 16px 0;
+  height: calc(100% - 70px);
+  background-color: var(--euiColorEmptyShade);
+  padding: 18px 24px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+}

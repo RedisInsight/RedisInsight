@@ -18,11 +18,20 @@ export interface StateClusterDetails {
   data: Nullable<ClusterDetails>
 }
 
+export interface StateMemoryEfficiency {
+  loading: boolean
+  error: string
+  selectedAnalysis: any
+  history: any
+  data: any
+}
+
 export interface StateAnalyticsSettings {
   viewTab: AnalyticsViewTab
 }
 
 export enum AnalyticsViewTab {
   ClusterDetails = 'ClusterDetails',
+  MemoryEfficiency = 'MemoryEfficiency',
   SlowLog = 'SlowLog',
 }

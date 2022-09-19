@@ -19,9 +19,10 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
 
   useEffect(() => {
     if (pathname === Pages.analytics(instanceId)) {
-      history.push(connectionType === ConnectionType.Cluster
-        ? Pages.clusterDetails(instanceId)
-        : Pages.slowLog(instanceId))
+      // history.push(connectionType === ConnectionType.Cluster
+      //   ? Pages.clusterDetails(instanceId)
+      //   : Pages.slowLog(instanceId))
+      history.push(Pages.clusterDetails(instanceId))
     }
   }, [connectionType, instanceId, pathname])
 

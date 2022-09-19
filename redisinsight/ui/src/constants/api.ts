@@ -73,6 +73,7 @@ enum ApiEndpoints {
   PUB_SUB = 'pub-sub',
   PUB_SUB_MESSAGES = 'pub-sub/messages',
   CLUSTER_DETAILS = 'cluster-details',
+  MEMORY_EFFICIENCY = 'analysis',
 
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',

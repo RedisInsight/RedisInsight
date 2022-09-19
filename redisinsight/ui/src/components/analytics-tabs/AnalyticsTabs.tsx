@@ -24,6 +24,9 @@ const AnalyticsTabs = () => {
     if (id === AnalyticsViewTab.SlowLog) {
       history.push(Pages.slowLog(instanceId))
     }
+    if (id === AnalyticsViewTab.MemoryEfficiency) {
+      history.push(Pages.memoryEfficiency(instanceId))
+    }
     dispatch(setAnalyticsViewTab(id))
   }
 

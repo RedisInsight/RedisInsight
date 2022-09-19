@@ -13,5 +13,5 @@ const InstancePageRouter = ({ routes }: Props) => (
     ))}
   </Switch>
 )
-
+// Check Redis Stack routing
 export default React.memo(InstancePageRouter)

@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
+import { RedisDataType } from 'src/modules/browser/dto';
 
 @Injectable()
 export class KeysScanner {
@@ -55,22 +56,62 @@ export class KeysScanner {
       nodeKeys.push({
         name: keys[i],
         memory: sizes[i][0] ? 0 : sizes[i][1],
+        length: 0,
         type: types[i][0] ? 'N/A' : types[i][1],
         ttl: ttls[i][0] ? -1 : ttls[i][1],
       });
     }
 
-    const lengthCommands = nodeKeys.map((key) => {
+    const lengthCommands = nodeKeys.map((key, idx) => {
       const strategy = this.keyInfoProvider.getStrategy(key.type);
-      return strategy.getLengthCommandArgs(key.name);
-    });
+      return {
+        idx,
+        command: strategy.getLengthCommandArgs(key.name),
+      };
+    }).filter((cmd) => !!cmd.command);
 
-    const keysLength = await client.pipeline(lengthCommands).exec();
+    const keysLength = await client.pipeline(lengthCommands.map((cmd) => cmd.command)).exec();
 
-    for (let i = 0; i < nodeKeys.length; i += 1) {
-      const strategy = this.keyInfoProvider.getStrategy(nodeKeys[i].type);
-      nodeKeys[i].length = keysLength[i][0] ? 0 : strategy.getLengthValue(keysLength[i][1]);
+    for (let i = 0; i < keysLength.length; i += 1) {
+      const nodeKeyIdx = lengthCommands[i].idx;
+      const strategy = this.keyInfoProvider.getStrategy(nodeKeys[nodeKeyIdx].type);
+      nodeKeys[nodeKeyIdx].length = keysLength[i][0] ? 0 : strategy.getLengthValue(keysLength[i][1]);
     }
+
+    // workaround for ReJSON-RL
+    await Promise.all(nodeKeys.map(async (key, idx) => {
+      if (key.type !== RedisDataType.JSON) {
+        return;
+      }
+
+      const jsonType = await client.sendCommand(new Command('json.type', [key.name, '.'], {
+        replyEncoding: 'utf8',
+      }));
+
+      let length: number;
+
+      switch (jsonType) {
+        case 'object':
+          length = await client.sendCommand(new Command('json.objlen', [key.name, '.'], {
+            replyEncoding: 'utf8',
+          })) as number;
+          break;
+        case 'array':
+          length = await client.sendCommand(new Command('json.arrlen', [key.name, '.'], {
+            replyEncoding: 'utf8',
+          })) as number;
+          break;
+        case 'string':
+          length = await client.sendCommand(new Command('json.strlen', [key.name, '.'], {
+            replyEncoding: 'utf8',
+          })) as number;
+          break;
+        default:
+          length = 0;
+      }
+
+      nodeKeys[idx].length = length;
+    }));
 
     return {
       keys: nodeKeys,

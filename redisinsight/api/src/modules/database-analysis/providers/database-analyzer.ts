@@ -87,6 +87,10 @@ export class DatabaseAnalyzer {
 
     keys.forEach((key) => {
       const nsp = this.getNamespace(key.name as Buffer, delimiter);
+      if (!nsp) {
+        return;
+      }
+
       const namespace = namespaces.get(nsp) || {
         memory: 0,
         keys: 0,
@@ -139,7 +143,7 @@ export class DatabaseAnalyzer {
 
     return nspSummaries.map((nspSummary) => ({
       ...nspSummary,
-      nsp: Buffer.from(nspSummary.nsp, 'hex'), // convert hex string back to Buffer
+      nsp: Buffer.from(nspSummary.nsp || '', 'hex'), // convert hex string back to Buffer
       types: this.calculateNspTypeSummary(nspSummary.types, field),
     }));
   }

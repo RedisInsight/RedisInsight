@@ -30,6 +30,7 @@ export interface Props {
   result: Maybe<CommandExecutionResult[]>
   activeMode: RunQueryMode
   mode: RunQueryMode
+  activeResultsMode?: ResultsMode
   resultsMode?: ResultsMode
   emptyCommand: boolean
   summary?: ResultsSummary
@@ -59,6 +60,7 @@ const QueryCard = (props: Props) => {
     result,
     activeMode,
     mode,
+    activeResultsMode,
     resultsMode,
     summary,
     isOpen,
@@ -162,7 +164,7 @@ const QueryCard = (props: Props) => {
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
-          resultsMode={resultsMode}
+          activeResultsMode={activeResultsMode}
           emptyCommand={emptyCommand}
           summary={getSummaryText(summary)}
           toggleOpen={toggleOpen}

@@ -516,8 +516,9 @@ const Query = (props: Props) => {
                 ? 'Please wait while the commands are being executed…'
                 : KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
                   <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                    <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
+                    <EuiText className={styles.tooltipText} size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
                     <KeyboardShortcut
+                      badgeTextClassName={styles.tooltipText}
                       separator={KEYBOARD_SHORTCUTS?._separator}
                       items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
                     />
@@ -545,8 +546,9 @@ const Query = (props: Props) => {
             content={
               KEYBOARD_SHORTCUTS?.workbench?.changeGroupMode && (
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.changeGroupMode?.label}:\u00A0\u00A0`}</EuiText>
+                  <EuiText className={styles.tooltipText} size="s">{`${KEYBOARD_SHORTCUTS.workbench.changeGroupMode?.label}:\u00A0\u00A0`}</EuiText>
                   <KeyboardShortcut
+                    badgeTextClassName={styles.tooltipText}
                     separator={KEYBOARD_SHORTCUTS?._separator}
                     items={KEYBOARD_SHORTCUTS.workbench.changeGroupMode.keys}
                   />

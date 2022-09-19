@@ -138,6 +138,7 @@ const WBView = (props: Props) => {
                   <WBResultsWrapper
                     items={items}
                     activeMode={activeMode}
+                    activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
                     onQueryReRun={onSubmit}
                     onQueryOpen={onQueryOpen}

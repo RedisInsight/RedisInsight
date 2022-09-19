@@ -23,7 +23,13 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  OVER_RENDER_BUFFER_COUNT,
+  TableCellAlignment,
+  TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_UNPRINTABLE_CHARACTERS
+} from 'uiSrc/constants'
 import {
   bufferToSerializedFormat,
   bufferToString,
@@ -354,7 +360,7 @@ const ListDetails = (props: Props) => {
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+              <EuiToolTip content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}>
                 <EuiButtonIcon
                   iconType="pencil"
                   aria-label="Edit element"

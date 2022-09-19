@@ -9,11 +9,11 @@ export interface Props {
   items: (string | JSX.Element)[]
   separator?: string
   transparent?: boolean
-  className?: string
+  badgeTextClassName?: string
 }
 
 const KeyboardShortcut = (props: Props) => {
-  const { items = [], separator = '', transparent = false, className = '' } = props
+  const { items = [], separator = '', transparent = false, badgeTextClassName = '' } = props
   return (
     <div className={styles.container}>
       {
@@ -21,7 +21,7 @@ const KeyboardShortcut = (props: Props) => {
           <div key={isString(item) ? item : item?.props?.children}>
             {(index !== 0) && <div className={styles.separator}>{separator}</div>}
             <EuiBadge className={cx(styles.badge, { [styles.transparent]: transparent })}>
-              <EuiText className={className} size="s">{item}</EuiText>
+              <EuiText className={badgeTextClassName} size="s">{item}</EuiText>
             </EuiBadge>
           </div>
         ))

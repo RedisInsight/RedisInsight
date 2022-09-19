@@ -518,7 +518,7 @@ const Query = (props: Props) => {
                   <div style={{ display: 'flex', alignItems: 'baseline' }}>
                     <EuiText className={styles.tooltipText} size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
                     <KeyboardShortcut
-                      className={styles.tooltipText}
+                      badgeTextClassName={styles.tooltipText}
                       separator={KEYBOARD_SHORTCUTS?._separator}
                       items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
                     />
@@ -548,7 +548,7 @@ const Query = (props: Props) => {
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
                   <EuiText className={styles.tooltipText} size="s">{`${KEYBOARD_SHORTCUTS.workbench.changeGroupMode?.label}:\u00A0\u00A0`}</EuiText>
                   <KeyboardShortcut
-                    className={styles.tooltipText}
+                    badgeTextClassName={styles.tooltipText}
                     separator={KEYBOARD_SHORTCUTS?._separator}
                     items={KEYBOARD_SHORTCUTS.workbench.changeGroupMode.keys}
                   />

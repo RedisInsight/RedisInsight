@@ -197,7 +197,7 @@ notEditableFormattersSet.forEach(formatter => {
                 // Hover on disabled button
                 await t.hover(editBtn);
                 // Verify tooltip content
-                await t.expect(browserPage.tooltip.textContent).contains('Cannot change data in this format', 'Tooltip has wrong text');
+                await t.expect(browserPage.tooltip.textContent).contains('Cannot edit the value in this format', 'Tooltip has wrong text');
             }
         }
     });

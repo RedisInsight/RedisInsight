@@ -40,7 +40,14 @@ import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSr
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_INVALID_VALUE, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  OVER_RENDER_BUFFER_COUNT,
+  TableCellAlignment,
+  TEXT_INVALID_VALUE,
+  TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_UNPRINTABLE_CHARACTERS
+} from 'uiSrc/constants'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
@@ -414,7 +421,7 @@ const HashDetails = (props: Props) => {
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+              <EuiToolTip content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}>
                 <EuiButtonIcon
                   iconType="pencil"
                   aria-label="Edit field"

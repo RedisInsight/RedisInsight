@@ -5,13 +5,13 @@ import { getRouterLinkProps } from 'uiSrc/services'
 
 export const NoResultsFoundText = (<EuiText size="m">No results found.</EuiText>)
 export const NoKeysToDisplayText = (path: string, onClick: ()=> void) => (
-  <EuiText size="m">
+  <EuiText size="m" data-testid="no-result-found-msg">
     No keys to display.
     <br />
     <EuiLink
       {...getRouterLinkProps(path, onClick)}
       color="text"
-      data-test-subj="pubsub-page-btn"
+      data-test-subj="workbench-page-btn"
     >
       Use Workbench Guides and Tutorials
     </EuiLink>

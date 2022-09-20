@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints, DEFAULT_SLOWLOG_DURATION_UNIT, DurationUnits } from 'uiSrc/constants'
 import { apiService, getDBConfigStorageField } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { StateSlowLog } from 'uiSrc/slices/interfaces/slowlog'
+import { StateSlowLog } from 'uiSrc/slices/interfaces/analytics'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
@@ -72,8 +72,8 @@ const slowLogSlice = createSlice({
   }
 })
 
-export const slowLogSelector = (state: RootState) => state.slowlog
-export const slowLogConfigSelector = (state: RootState) => state.slowlog.config || {}
+export const slowLogSelector = (state: RootState) => state.analytics.slowlog
+export const slowLogConfigSelector = (state: RootState) => state.analytics.slowlog.config || {}
 
 export const {
   setSlowLogInitialState,

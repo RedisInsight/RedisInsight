@@ -10,7 +10,7 @@ export const registerRouter = (reactRouter: any): any => {
   router = reactRouter
 }
 
-export const getRouterLinkProps = (to: any) => {
+export const getRouterLinkProps = (to: any, customOnClick?: () => void) => {
   const location = typeof to === 'string'
     ? createLocation(to, null, '', router?.history?.location)
     : to
@@ -18,6 +18,8 @@ export const getRouterLinkProps = (to: any) => {
   const href = router?.history?.createHref(location)
 
   const onClick = (event: any) => {
+    customOnClick?.()
+
     if (event.defaultPrevented) {
       return
     }

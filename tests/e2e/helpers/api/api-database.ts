@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
-import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters } from '../../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters, ClusterNodes } from '../../pageObjects/add-redis-database-page';
 import { Common } from '../common';
 
 const common = new Common();
@@ -194,4 +194,19 @@ export async function deleteStandaloneDatabasesApi(databasesParameters: AddNewDa
             await deleteStandaloneDatabaseApi(parameter);
         });
     }
+}
+
+/**
+ * Get OSS Cluster nodes
+ * @param databaseParameters The database parameters
+ */
+export async function getClusterNodesApi(databaseParameters: OSSClusterParameters): Promise<string[]> {
+    const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
+    const response = await request(endpoint)
+        .get(`/instance/${databaseId}/cluster-details`)
+        .set('Accept', 'application/json')
+        .expect(200);
+    let nodes = await response.body.nodes;
+    let nodeNames = await nodes.map((node: ClusterNodes) => (node.host + ':' + node.port));
+    return nodeNames;
 }

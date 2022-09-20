@@ -1,8 +1,24 @@
 import React from 'react'
-import { EuiText, EuiSpacer } from '@elastic/eui'
+import { EuiText, EuiSpacer, EuiLink } from '@elastic/eui'
+
+import { getRouterLinkProps } from 'uiSrc/services'
 
 export const NoResultsFoundText = (<EuiText size="m">No results found.</EuiText>)
-export const NoKeysToDisplayText = (<EuiText size="m">No keys to display.</EuiText>)
+export const NoKeysToDisplayText = (path: string, onClick: ()=> void) => (
+  <EuiText size="m">
+    No keys to display.
+    <br />
+    <EuiLink
+      {...getRouterLinkProps(path, onClick)}
+      color="text"
+      data-test-subj="pubsub-page-btn"
+    >
+      Use Workbench Guides and Tutorials
+    </EuiLink>
+    {' to quickly load the data.'}
+  </EuiText>
+)
+
 export const FullScanNoResultsFoundText = (
   <>
     <EuiText size="m" data-test-subj="no-result-found">No results found.</EuiText>

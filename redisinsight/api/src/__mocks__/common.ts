@@ -46,6 +46,7 @@ export const mockCreateQueryBuilder = jest.fn(() => ({
 
 export const mockRepository = jest.fn(() => ({
   findOne: jest.fn(),
+  findOneBy: jest.fn(),
   find: jest.fn(),
   findByIds: jest.fn(),
   create: jest.fn(),

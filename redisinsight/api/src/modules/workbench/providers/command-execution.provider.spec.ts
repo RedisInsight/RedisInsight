@@ -105,17 +105,17 @@ describe('CommandExecutionProvider', () => {
 
   describe('create', () => {
     it('should process new entity', async () => {
-      repository.save.mockReturnValueOnce(mockCommandExecutionEntity);
+      repository.save.mockReturnValueOnce([mockCommandExecutionEntity]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
-      expect(await service.create(mockCommandExecutionPartial)).toEqual(new CommandExecution({
+      expect(await service.createMany([mockCommandExecutionPartial])).toEqual([new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
-      }));
+      })]);
     });
     it('should return full result even if size limit exceeded', async () => {
-      repository.save.mockReturnValueOnce(mockCommandExecutionEntity);
+      repository.save.mockReturnValueOnce([mockCommandExecutionEntity]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
       const executionResult = [new CommandExecutionResult({
@@ -123,15 +123,15 @@ describe('CommandExecutionProvider', () => {
         response: `${Buffer.alloc(WORKBENCH_CONFIG.maxResultSize, 'a').toString()}`,
       })];
 
-      expect(await service.create({
+      expect(await service.createMany([{
         ...mockCommandExecutionPartial,
         result: executionResult,
-      })).toEqual(new CommandExecution({
+      }])).toEqual([new CommandExecution({
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
         result: executionResult,
-      }));
+      })]);
 
       expect(encryptionService.encrypt).toHaveBeenLastCalledWith(JSON.stringify([
         new CommandExecutionResult({
@@ -178,7 +178,7 @@ describe('CommandExecutionProvider', () => {
   });
   describe('getOne', () => {
     it('should return decrypted and transformed command execution', async () => {
-      repository.findOne.mockResolvedValueOnce(mockCommandExecutionEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockCommandExecutionEntity);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockReturnValueOnce(JSON.stringify([mockCommandExecutionResult]));
 
@@ -193,7 +193,7 @@ describe('CommandExecutionProvider', () => {
       );
     });
     it('should return null fields in case of decryption errors', async () => {
-      repository.findOne.mockResolvedValueOnce(mockCommandExecutionEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockCommandExecutionEntity);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
 
@@ -209,7 +209,7 @@ describe('CommandExecutionProvider', () => {
       );
     });
     it('should return not found exception', async () => {
-      repository.findOne.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce(null);
 
       try {
         await service.getOne(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id);

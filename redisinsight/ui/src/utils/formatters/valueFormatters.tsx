@@ -1,6 +1,7 @@
 import { decode, encode } from '@msgpack/msgpack'
 // eslint-disable-next-line import/order
 import { Buffer } from 'buffer'
+import { isUndefined } from 'lodash'
 import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
 import jpickle from 'jpickle'
@@ -108,6 +109,14 @@ const formattingBuffer = (
     case KeyValueFormat.Pickle: {
       try {
         const decoded = jpickle.loads(bufferToUTF8(reply))
+
+        if (isUndefined(decoded)) {
+          return {
+            value: bufferToUTF8(reply),
+            isValid: false
+          }
+        }
+
         const value = JSON.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {

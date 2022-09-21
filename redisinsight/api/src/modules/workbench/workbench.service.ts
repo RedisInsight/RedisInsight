@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { omit } from 'lodash';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
@@ -29,9 +30,9 @@ export class WorkbenchService {
   async createCommandExecution(
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionDto,
-  ): Promise<CommandExecution> {
+  ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
-      ...dto,
+      ...omit(dto, 'commands'),
       databaseId: clientOptions.instanceId,
     };
 
@@ -48,7 +49,7 @@ export class WorkbenchService {
       commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
     }
 
-    return this.commandExecutionProvider.create(commandExecution);
+    return commandExecution;
   }
 
   /**
@@ -61,9 +62,15 @@ export class WorkbenchService {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
-    return Promise.all(
+    // todo: rework to support pipeline
+    // prepare and execute commands
+    const commandExecutions = await Promise.all(
       dto.commands.map(async (command) => await this.createCommandExecution(clientOptions, { ...dto, command })),
     );
+
+    // save history
+    // todo: rework
+    return this.commandExecutionProvider.createMany(commandExecutions);
   }
 
   /**

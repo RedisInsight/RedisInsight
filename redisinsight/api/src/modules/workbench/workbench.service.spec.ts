@@ -15,6 +15,7 @@ import { CommandExecutionResult } from 'src/modules/workbench/models/command-exe
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
@@ -31,6 +32,13 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
 };
+const mockCreateCommandExecutionsDto: CreateCommandExecutionsDto = {
+  commands: [
+    mockCreateCommandExecutionDto.command,
+    mockCreateCommandExecutionDto.command,
+  ],
+  ...mockCreateCommandExecutionDto,
+};
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [
   new CommandExecutionResult({
@@ -43,16 +51,20 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
     },
   }),
 ];
-const mockCommandExecution: CommandExecution = new CommandExecution({
+const mockCommandExecutionToRun: CommandExecution = new CommandExecution({
   ...mockCreateCommandExecutionDto,
   databaseId: mockStandaloneDatabaseEntity.id,
+});
+
+const mockCommandExecution: CommandExecution = new CommandExecution({
+  ...mockCommandExecutionToRun,
   id: uuidv4(),
   createdAt: new Date(),
   result: mockCommandExecutionResults,
 });
 
 const mockCommandExecutionProvider = () => ({
-  create: jest.fn(),
+  createMany: jest.fn(),
   getList: jest.fn(),
   getOne: jest.fn(),
   delete: jest.fn(),
@@ -91,13 +103,8 @@ describe('WorkbenchService', () => {
 
   describe('createCommandExecution', () => {
     it('should successfully execute command and save it', async () => {
-      workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
-      commandExecutionProvider.create.mockResolvedValueOnce(mockCommandExecution);
-
-      const result = await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto);
-
-      expect(result).toBeInstanceOf(CommandExecution);
-      expect(result).toEqual(mockCommandExecution);
+      expect(await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto))
+        .toEqual(mockCommandExecutionToRun);
     });
     it('should save result as unsupported command message', async () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
@@ -108,9 +115,7 @@ describe('WorkbenchService', () => {
         mode: RunQueryMode.ASCII,
       };
 
-      await service.createCommandExecution(mockClientOptions, dto);
-
-      expect(commandExecutionProvider.create).toHaveBeenCalledWith({
+      expect(await service.createCommandExecution(mockClientOptions, dto)).toEqual({
         ...dto,
         databaseId: mockClientOptions.instanceId,
         result: [
@@ -137,18 +142,35 @@ describe('WorkbenchService', () => {
         expect(e).toBeInstanceOf(BadRequestException);
       }
     });
-    it('should throw an error from command execution provider (create)', async () => {
-      workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
-      commandExecutionProvider.create.mockRejectedValueOnce(new InternalServerErrorException('db error'));
+  });
 
-      const dto = {
-        ...mockCommandExecutionResults,
-        command: 'scan 0',
-        mode: RunQueryMode.ASCII,
-      };
+  describe('createCommandExecutions', () => {
+    it('should successfully execute commands and save them', async () => {
+      workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(
+        [mockCommandExecutionResults, mockCommandExecutionResults],
+      );
+      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecution, mockCommandExecution]);
+
+      const result = await service.createCommandExecutions(mockClientOptions, mockCreateCommandExecutionsDto);
+
+      expect(result).toEqual([mockCommandExecution, mockCommandExecution]);
+    });
+    it('should throw an error when command execution failed', async () => {
+      workbenchCommandsExecutor.sendCommand.mockRejectedValueOnce(new BadRequestException('error'));
 
       try {
-        await service.createCommandExecution(mockClientOptions, dto);
+        await service.createCommandExecutions(mockClientOptions, mockCreateCommandExecutionsDto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+      }
+    });
+    it('should throw an error from command execution provider (create)', async () => {
+      workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce([mockCommandExecutionResults]);
+      commandExecutionProvider.createMany.mockRejectedValueOnce(new InternalServerErrorException('db error'));
+
+      try {
+        await service.createCommandExecutions(mockClientOptions, mockCreateCommandExecutionsDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

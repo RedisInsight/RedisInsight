@@ -58,3 +58,6 @@ vendor
 
 # Parcel
 .parcel-cache
+
+# caches
+.temp_cache

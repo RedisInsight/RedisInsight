@@ -92,9 +92,8 @@ test
         await workbenchPage.selectViewTypeText();
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
     });
-//skipped due the inaccessibility of the iframe
-test.skip
-    .meta({ env: env.desktop })('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
+// Skipped due to issue https://redislabs.atlassian.net/browse/RI-3524
+test.skip('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
         const command = 'CLIENT LIST';
         //Send command and check table view is default
         await workbenchPage.sendCommandInWorkbench(command);

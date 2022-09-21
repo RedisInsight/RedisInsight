@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import { reverse } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -205,7 +206,7 @@ export function sendWBCommandAction({
   commands: string[]
   multiCommands?: string[]
   commandId?: string
-  mode: RunQueryMode
+  mode?: RunQueryMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -219,7 +220,7 @@ export function sendWBCommandAction({
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
+          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
         {
           commands,
@@ -228,7 +229,7 @@ export function sendWBCommandAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data, processing: !!multiCommands?.length }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
 
         onSuccessAction?.(multiCommands)
       }
@@ -256,7 +257,7 @@ export function sendWBCommandClusterAction({
   options: CreateCommandExecutionDto
   commandId?: string
   multiCommands?: string[]
-  mode: RunQueryMode,
+  mode?: RunQueryMode,
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -270,7 +271,7 @@ export function sendWBCommandClusterAction({
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
+          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
         {
           ...options,
@@ -281,7 +282,7 @@ export function sendWBCommandClusterAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
 
         onSuccessAction?.(multiCommands)
       }

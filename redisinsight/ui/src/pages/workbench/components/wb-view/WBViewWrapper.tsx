@@ -275,4 +275,4 @@ const WBViewWrapper = () => {
   )
 }
 
-export default React.memo(WBViewWrapper)
+export default WBViewWrapper

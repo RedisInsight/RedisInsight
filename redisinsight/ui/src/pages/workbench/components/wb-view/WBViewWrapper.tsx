@@ -164,11 +164,12 @@ const WBViewWrapper = () => {
     const { loading, batchSize } = state
     const isNewCommand = () => !commandId
     const getChunkSize = () => {
-      if (resultsMode === ResultsMode.GroupMode) {
+      if (state.resultsMode === ResultsMode.GroupMode) {
         return splitMonacoValuePerLines(commandInit).length
       }
       return batchSize > 1 ? batchSize : 1
     }
+
     const commandsForExecuting = splitMonacoValuePerLines(removeMonacoComments(commandInit))
       .map((command) => removeMonacoComments(decode(command).trim()))
     const [commands, ...rest] = chunk(commandsForExecuting, getChunkSize())

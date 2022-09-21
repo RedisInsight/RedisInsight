@@ -209,8 +209,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     {
       id: 'ttl',
       label: 'TTL',
-      absoluteWidth: 70,
-      minWidth: 70,
+      absoluteWidth: 86,
+      minWidth: 86,
       truncateText: true,
       alignment: TableCellAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
@@ -247,8 +247,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     {
       id: 'size',
       label: 'Size',
-      absoluteWidth: 100,
-      minWidth: 100,
+      absoluteWidth: 84,
+      minWidth: 84,
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {

@@ -1,195 +1,174 @@
+import React, { Fragment, useState } from 'react'
 import {
   EuiBasicTableColumn,
-  EuiIcon,
   EuiInMemoryTable,
   EuiLoadingContent,
   EuiToolTip,
+  EuiButtonIcon,
+  EuiText,
   PropertySort
 } from '@elastic/eui'
-import { IconType } from '@elastic/eui/src/components/icon/icon'
+import { useParams, useHistory } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { map } from 'lodash'
-import React, { useState } from 'react'
-import {
-  InputIconSvg,
-  KeyIconSvg,
-  MemoryIconSvg,
-  OutputIconSvg,
-  UserIconSvg,
-  MeasureIconSvg
-} from 'uiSrc/components/database-overview/components/icons'
 import { ModifiedClusterNodes } from 'uiSrc/pages/clusterDetails/ClusterDetailsPage'
 import { formatBytes, Nullable } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { GroupBadge } from 'uiSrc/components'
+import { Pages } from 'uiSrc/constants'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { changeKeyViewType, setFilter, setSearchMatch } from 'uiSrc/slices/browser/keys'
+import { setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
 
 import styles from './styles.module.scss'
 
-const NameSpacesTable = ({ nodes, loading }: { nodes: Nullable<ModifiedClusterNodes[]>, loading: boolean }) => {
-  // const [sort, setSort] = useState<PropertySort>({ field: 'host', direction: 'asc' })
+const NameSpacesTable = ({ data, loading }: { data: Nullable<ModifiedClusterNodes[]>, loading: boolean }) => {
+  const [sort, setSort] = useState<PropertySort>({ field: 'keyPattern', direction: 'asc' })
+  const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({})
 
-  // const isMaxValue = (field: string, value: number) => {
-  //   const values = map(nodes, field)
-  //   return Math.max(...values) === value && values.filter((v) => v === value).length === 1
-  // }
+  const history = useHistory()
+  const dispatch = useDispatch()
 
-  // const headerIconTemplate = (label: string, icon: IconType) => (
-  //   <div className={cx(styles.headerCell, styles.headerCellIcon)}>
-  //     <EuiIcon type={icon} className={styles.headerIcon} />
-  //     <span>{label}</span>
-  //   </div>
-  // )
+  const { instanceId } = useParams<{ instanceId: string }>()
 
-  // const columns: EuiBasicTableColumn<any>[] = [
-  //   {
-  //     name: (
-  //       <div className={styles.headerCell}>
-  //         <span>{`${nodes?.length} Primary nodes`}</span>
-  //       </div>
-  //     ),
-  //     field: 'host',
-  //     dataType: 'string',
-  //     sortable: ({ index }) => index,
-  //     render: (value: number, { letter, port }) => (
-  //       <div className={styles.hostPort}>
-  //         <span className={styles.nodeName} data-testid="node-letter">{letter}</span>
-  //         <span>{value}:{port}</span>
-  //       </div>
-  //     )
-  //   },
-  //   {
-  //     name: headerIconTemplate('Commands/s', MeasureIconSvg),
-  //     field: 'opsPerSecond',
-  //     width: '12%',
-  //     sortable: true,
-  //     align: 'right',
-  //     render: (value: number) => {
-  //       const isMax = isMaxValue('opsPerSecond', value)
-  //       return (
-  //         <span className={cx({ [styles.maxValue]: isMax })} data-testid={`opsPerSecond-value${isMax ? '-max' : ''}`}>
-  //           {numberWithSpaces(value)}
-  //         </span>
-  //       )
-  //     }
-  //   },
-  //   {
-  //     name: headerIconTemplate('Network Input', InputIconSvg),
-  //     field: 'networkInKbps',
-  //     width: '12%',
-  //     sortable: true,
-  //     align: 'right',
-  //     render: (value: number) => {
-  //       const isMax = isMaxValue('networkInKbps', value)
-  //       return (
-  //         <>
-  //           <span className={cx({ [styles.maxValue]: isMax })} data-testid={`networkInKbps-value${isMax ? '-max' : ''}`}>
-  //             {numberWithSpaces(value)}
-  //           </span>
-  //           <span className={styles.valueUnit}>kb/s</span>
-  //         </>
-  //       )
-  //     }
-  //   },
-  //   {
-  //     name: headerIconTemplate('Network Output', OutputIconSvg),
-  //     field: 'networkOutKbps',
-  //     width: '12%',
-  //     sortable: true,
-  //     align: 'right',
-  //     render: (value: number) => {
-  //       const isMax = isMaxValue('networkOutKbps', value)
-  //       return (
-  //         <>
-  //           <span className={cx({ [styles.maxValue]: isMax })} data-testid={`networkOutKbps-value${isMax ? '-max' : ''}`}>
-  //             {numberWithSpaces(value)}
-  //           </span>
-  //           <span className={styles.valueUnit}>kb/s</span>
-  //         </>
-  //       )
-  //     }
-  //   },
-  //   {
-  //     name: headerIconTemplate('Total Memory', MemoryIconSvg),
-  //     field: 'usedMemory',
-  //     width: '12%',
-  //     sortable: true,
-  //     align: 'right',
-  //     render: (value: number) => {
-  //       const [number, size] = formatBytes(value, 3, true)
-  //       const isMax = isMaxValue('usedMemory', value)
-  //       return (
-  //         <EuiToolTip
-  //           content={`${numberWithSpaces(value)} B`}
-  //           data-testid="usedMemory-tooltip"
-  //         >
-  //           <>
-  //             <span className={cx({ [styles.maxValue]: isMax })} data-testid={`usedMemory-value${isMax ? '-max' : ''}`}>
-  //               {number}
-  //             </span>
-  //             <span className={styles.valueUnit}>{size}</span>
-  //           </>
-  //         </EuiToolTip>
-  //       )
-  //     }
-  //   },
-  //   {
-  //     name: headerIconTemplate('Total Keys', KeyIconSvg),
-  //     field: 'totalKeys',
-  //     width: '12%',
-  //     sortable: true,
-  //     align: 'right',
-  //     render: (value: number) => {
-  //       const isMax = isMaxValue('totalKeys', value)
-  //       return (
-  //         <span className={cx({ [styles.maxValue]: isMax })} data-testid={`totalKeys-value${isMax ? '-max' : ''}`}>
-  //           {numberWithSpaces(value)}
-  //         </span>
-  //       )
-  //     }
-  //   },
-  //   {
-  //     name: (
-  //       <div className={cx(styles.headerCell, styles.headerCellIcon)}>
-  //         <EuiIcon type={UserIconSvg} className={styles.headerIcon} />
-  //         <span>Clients</span>
-  //       </div>
-  //     ),
-  //     field: 'connectedClients',
-  //     width: '12%',
-  //     sortable: true,
-  //     align: 'right',
-  //     render: (value: number) => {
-  //       const isMax = isMaxValue('connectedClients', value)
-  //       return (
-  //         <span className={cx({ [styles.maxValue]: isMax })} data-testid={`connectedClients-value${isMax ? '-max' : ''}`}>
-  //           {numberWithSpaces(value)}
-  //         </span>
-  //       )
-  //     }
-  //   },
-  // ]
+  const handleRedirect = (nsp: string, filter: string) => {
+    // dispatch(changeKeyViewType(KeyViewType.Tree))
+    dispatch(setBrowserTreeDelimiter(nsp))
+    dispatch(setFilter(filter))
+    dispatch(setSearchMatch(''))
+    history.push(Pages.browser(instanceId))
+  }
+
+  const toggleDetails = item => {
+    const itemIdToExpandedRowMapValues = { ...itemIdToExpandedRowMap }
+    if (itemIdToExpandedRowMapValues[item.nsp]) {
+      delete itemIdToExpandedRowMapValues[item.nsp]
+    } else {
+      itemIdToExpandedRowMapValues[item.nsp] = (
+        <div style={{ width: '100%' }}>
+          {item.types.map((type) => {
+            const [number, size] = formatBytes(type.memory, 3, true)
+            return (
+              <div className={styles.expanded} key={type.type}>
+                <div style={{ paddingLeft: '12px' }} onClick={() => handleRedirect(item.nsp, type.type)}>{`${item.nsp}:*`}</div>
+                <div><GroupBadge type={type.type} /></div>
+                <div className={styles.rightAlign}>
+                  <span data-testid="usedMemory-value">
+                    {number}
+                  </span>
+                  <span className={styles.valueUnit}>{size}</span>
+                </div>
+                <div className={styles.rightAlign}>{type.keys}</div>
+                <div />
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+    setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues)
+  }
+
+  const columns: EuiBasicTableColumn<any>[] = [
+    {
+      name: 'Key Pattern',
+      field: 'nsp',
+      dataType: 'string',
+      align: 'left',
+      sortable: ({ index }) => index,
+      render: (nsp: string, { types }: { types: any[] }) => {
+        const filterType = types.length > 1 ? '' : types[0].type
+        return (
+          <div className={styles.hostPort}>
+            <span onClick={() => handleRedirect(nsp, filterType)}>{`${nsp}:*`}</span>
+          </div>
+        )
+      }
+    },
+    {
+      name: 'Data Type',
+      field: 'types',
+      width: '34%',
+      sortable: true,
+      align: 'left',
+      render: (value: any[]) => (
+        <>{value.map(({ type }) => <GroupBadge key={type} type={type} className={styles.badge} />)}</>
+      )
+    },
+    {
+      name: 'Total Memory',
+      field: 'memory',
+      width: '12%',
+      sortable: true,
+      align: 'right',
+      render: (value: number) => {
+        const [number, size] = formatBytes(value, 3, true)
+
+        return (
+          <>
+            <span data-testid="usedMemory-value">
+              {number}
+            </span>
+            <span className={styles.valueUnit}>{size}</span>
+          </>
+        )
+      }
+    },
+    {
+      name: 'Total Keys',
+      field: 'keys',
+      width: '10%',
+      sortable: true,
+      align: 'right',
+      render: (value: number) => (
+        <span data-testid={`networkInKbps-value-${value}`}>
+          {numberWithSpaces(value)}
+        </span>
+      )
+    },
+    {
+      name: '',
+      width: '20px',
+      isExpander: true,
+      render: item => (
+        <>
+          {item.types.length > 1 && (
+            <EuiButtonIcon
+              style={{ marginRight: '6px' }}
+              onClick={() => toggleDetails(item)}
+              aria-label={itemIdToExpandedRowMap[item.nsp] ? 'Collapse' : 'Expand'}
+              iconType={itemIdToExpandedRowMap[item.nsp] ? 'arrowUp' : 'arrowDown'}
+            />
+          )}
+        </>
+      ),
+    },
+  ]
 
   return (
-    <div>Table</div>
-    // <div className={styles.wrapper}>
-    //   {(loading && !nodes) && (
-    //     <div className={styles.loading} data-testid="primary-nodes-table-loading">
-    //       <EuiLoadingContent lines={4} />
-    //     </div>
-    //   )}
-    //   {nodes && (
-    //     <div className={styles.tableWrapper}>
-    //       <EuiInMemoryTable
-    //         items={nodes ?? []}
-    //         columns={columns}
-    //         className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNodes)}
-    //         responsive={false}
-    //         sorting={{ sort }}
-    //         onTableChange={({ sort }: any) => setSort(sort)}
-    //         data-testid="primary-nodes-table"
-    //       />
-    //     </div>
-    //   )}
-    // </div>
+    <div className={styles.wrapper}>
+      {(loading && !data) && (
+        <div className={styles.loading} data-testid="primary-nodes-table-loading">
+          <EuiLoadingContent lines={4} />
+        </div>
+      )}
+      {data && (
+        <div className={styles.tableWrapper}>
+          <EuiInMemoryTable
+            items={data ?? []}
+            columns={columns}
+            className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNodes)}
+            responsive={false}
+            itemId="nsp"
+            itemIdToExpandedRowMap={itemIdToExpandedRowMap}
+            isExpandable
+            sorting={{ sort }}
+            onTableChange={({ sort }: any) => setSort(sort)}
+            data-testid="primary-nodes-table"
+          />
+        </div>
+      )}
+    </div>
   )
 }
 

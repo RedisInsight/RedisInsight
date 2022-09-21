@@ -6,6 +6,26 @@
 }
 
 .container {
-  display: flex;
-  justify-content: space-between;
+  height: 60px;
+}
+
+.progress {
+  display: inline-block;
+}
+
+.progressContainer {
+  margin-left: 12px;
+}
+
+.changeReport :global(.euiSuperSelectControl) {
+  border: none !important;
+  padding-right: 34px !important;
+
+  & ~ :global(.euiFormControlLayoutIcons) svg {
+    width: 12px;
+  }
+}
+
+.infoIcon {
+  color: var(--euiColorMediumShade);
 }

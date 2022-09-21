@@ -5,96 +5,55 @@
 // } from '@elastic/eui'
 import React from 'react'
 import cx from 'classnames'
+import { format } from 'date-fns'
 import {
   EuiSuperSelect,
   EuiSuperSelectOption,
+  EuiToolTip,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiButton,
+  EuiText
 } from '@elastic/eui'
-// import { useSelector } from 'react-redux'
-// import cx from 'classnames'
-// import { capitalize } from 'lodash'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
-// import {
-//   truncateNumberToFirstUnit,
-//   formatLongName,
-//   truncateNumberToDuration,
-// } from 'uiSrc/utils'
-// import { nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
-// import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-// import { ConnectionType, CONNECTION_TYPE_DISPLAY } from 'uiSrc/slices/interfaces'
+import {
+  createNewAnalysis,
+} from 'uiSrc/slices/analytics/memoryEfficiency'
+import {
+  appContextBrowserTree
+} from 'uiSrc/slices/app/context'
+import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { getApproximateNumber } from 'uiSrc/utils/validations'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
-// import { clusterDetailsSelector } from 'uiSrc/slices/analytics/clusterDetails'
 
 import styles from './styles.module.scss'
 
-interface IMetrics {
-  label: string
-  value: any
-  border?: 'left'
+export const getFormatTime = (time: string = '') =>
+  format(new Date(time), 'd MMM yyyy HH:mm')
+
+interface Props {
+  analysis: string
+  selectedValue: any
+  progress: any
+  onChangeSelectedAnalysis: (value: any) => void
 }
 
-const Header = (props) => {
-  const { analysis, selectedValue, onChangeSelectedAnalysis } = props
-  console.log(analysis, selectedValue)
-  // const {
-  //   username = DEFAULT_USERNAME,
-  //   connectionType = ConnectionType.Cluster,
-  // } = useSelector(connectedInstanceSelector)
+const Header = (props: Props) => {
+  const { analysis, selectedValue, onChangeSelectedAnalysis, progress = null } = props
+  const { instanceId } = useParams<{ instanceId: string }>()
+  const dispatch = useDispatch()
 
-  // const {
-  //   data,
-  //   loading,
-  // } = useSelector(clusterDetailsSelector)
-
-  // const metrics: IMetrics[] = [{
-  //   label: 'Type',
-  //   value: CONNECTION_TYPE_DISPLAY[connectionType],
-  // }, {
-  //   label: 'Version',
-  //   value: data?.version || '',
-  // }, {
-  //   label: 'User',
-  //   value: (username || DEFAULT_USERNAME)?.length < MAX_NAME_LENGTH
-  //     ? (username || DEFAULT_USERNAME)
-  //     : (
-  //       <EuiToolTip
-  //         className={styles.tooltip}
-  //         position="bottom"
-  //         content={(
-  //           <>
-  //             {formatLongName(username || DEFAULT_USERNAME)}
-  //           </>
-  //         )}
-  //       >
-  //         <div data-testid="cluster-details-username">{formatLongName(username || DEFAULT_USERNAME, MAX_NAME_LENGTH, 5)}</div>
-  //       </EuiToolTip>
-  //     ),
-  // }, {
-  //   label: 'Uptime',
-  //   border: 'left',
-  //   value: (
-  //     <EuiToolTip
-  //       className={styles.tooltip}
-  //       anchorClassName="truncateText"
-  //       position="top"
-  //       content={(
-  //         <>
-  //           {`${nullableNumberWithSpaces(data?.uptimeSec) || 0} s`}
-  //           <br />
-  //           {`(${truncateNumberToDuration(data?.uptimeSec || 0)})`}
-  //         </>
-  //       )}
-  //     >
-  //       <div data-testid="cluster-details-uptime">{truncateNumberToFirstUnit(data?.uptimeSec || 0)}</div>
-  //     </EuiToolTip>
-  //   )
-  // }]
+  const { delimiter } = useSelector(appContextBrowserTree)
 
   const analysisOptions: EuiSuperSelectOption<any>[] = analysis.map((item) => {
     const { createdAt, id } = item
     return {
       value: id,
       inputDisplay: (
-        <span>{createdAt}</span>
+        <span>{getFormatTime(createdAt)}</span>
       ),
       // dropdownDisplay: (
       //   <div className={cx(styles.dropdownOption)}>
@@ -113,48 +72,77 @@ const Header = (props) => {
     // <div className={styles.container} data-testid="cluster-details-header">
     <div>
       <AnalyticsTabs />
-      <div className={styles.container}>
+      <EuiFlexGroup className={styles.container} gutterSize="none" alignItems="center" justifyContent="spaceBetween">
         {analysis.length ? (
-          <div>
-            <span>Report generated on:</span>
-            <div className={styles.dropdown}>
+          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+            <EuiFlexItem grow={false}>
+              <EuiText color="subdued">Report generated on:</EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
               <EuiSuperSelect
                 options={analysisOptions}
-                itemClassName={cx(styles.changeViewItem)}
-                className={cx(styles.changeView)}
+                style={{ border: 'none !important' }}
+                className={styles.changeReport}
+                popoverClassName={styles.changeReport}
                 valueOfSelected={selectedValue}
                 onChange={(value: string) => onChangeSelectedAnalysis(value)}
                 data-testid="select-view-type"
               />
-            </div>
-          </div>
+            </EuiFlexItem>
+            {!!progress && (
+              <EuiFlexItem grow={false}>
+                <EuiText color="subdued" className={cx(styles.progress, styles.progressContainer)} data-testid="bulk-delete-summary">
+                  <EuiText
+                    color={progress.total === progress.processed ? 'subdued' : 'warning'}
+                    className={styles.progress}
+                    data-testid="bulk-delete-summary"
+                  >
+                    {`Scanned ${getApproximateNumber((progress.total ? progress.processed / progress.total : 1) * 100)}%`}
+                  </EuiText>
+                  {` (${numberWithSpaces(progress.processed)}/${numberWithSpaces(progress.total)} keys)`}
+                </EuiText>
+              </EuiFlexItem>
+            )}
+          </EuiFlexGroup>
         ) : (
           <div />
         )}
         <div>
-          <button>New analysis</button>
-          <span>Tooltip</span>
+          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+            <EuiFlexItem style={{ overflow: 'hidden' }}>
+              <EuiButton
+                aria-label="New analysis"
+                fill
+                data-testid="enablement-area__next-page-btn"
+                color="secondary"
+                iconType="playFilled"
+                iconSide="left"
+                onClick={() => dispatch(createNewAnalysis(instanceId, delimiter))}
+                size="s"
+              >
+                New analysis
+              </EuiButton>
+            </EuiFlexItem>
+            <EuiFlexItem style={{ paddingLeft: 12 }} grow={false}>
+              <EuiToolTip
+                position="bottom"
+                anchorClassName={styles.tooltipAnchor}
+                className={styles.tooltip}
+                title="Memory efficiency"
+                content="Analyze up to 10K keys in your Redis database to get an overview of your data and memory efficiency recommendations."
+              >
+                <EuiIcon
+                  className={styles.infoIcon}
+                  type="iInCircle"
+                  size="l"
+                  style={{ cursor: 'pointer' }}
+                  data-testid="db-info-icon"
+                />
+              </EuiToolTip>
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </div>
-      </div>
-      {/* {loading && !data && (
-        <div className={styles.loading} data-testid="cluster-details-loading">
-          <EuiLoadingContent lines={2} />
-        </div>
-      )}
-      {data && (
-        <div className={cx(styles.content)} data-testid="cluster-details-content">
-          {metrics.map(({ value, label, border }) => (
-            <div
-              className={cx(styles.item, styles[`border${capitalize(border)}`])}
-              key={label}
-              data-testid={`cluster-details-item-${label}`}
-            >
-              <EuiText color="subdued" className={styles.value}>{value}</EuiText>
-              <EuiText className={styles.label}>{label}</EuiText>
-            </div>
-          ))}
-        </div>
-      )} */}
+      </EuiFlexGroup>
     </div>
   )
 }

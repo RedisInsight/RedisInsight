@@ -134,12 +134,13 @@ const SlowLogPage = () => {
       <div className={styles.main} data-testid="slow-log-page">
         <EuiFlexGroup className={styles.header} responsive={false} alignItems="center" justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
-            {connectionType === ConnectionType.Cluster && <AnalyticsTabs />}
-            {connectionType !== ConnectionType.Cluster && (
+            <AnalyticsTabs />
+            {/* {connectionType === ConnectionType.Cluster && <AnalyticsTabs />} */}
+            {/* {connectionType !== ConnectionType.Cluster && (
               <EuiTitle size="m" className={styles.title}>
                 <h1>Slow Log</h1>
               </EuiTitle>
-            )}
+            )} */}
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>

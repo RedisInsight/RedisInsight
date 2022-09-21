@@ -3,4 +3,46 @@
   height: calc(100% - 70px);
   background-color: var(--euiColorEmptyShade);
   padding: 18px 24px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 61% 39%;
+  gap: 24px;
+}
+
+.textBtn.textBtn {
+  border: none !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-left: 18px;
+  color: var(--wbHoverIconColor) !important;
+
+  :global(.euiButton__content) {
+    padding: 6px !important;
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--wbHoverIconColor) !important;
+  }
+  
+  &.activeBtn,
+  &.textBtn:disabled {
+    background: var(--browserComponentActive) !important;
+    color: var(--wbActiveIconColor) !important;
+  }
+
+  &:disabled {
+    opacity: 1;
+  }
+
+  :global(.euiButton__text) {
+    font: normal normal normal 13px/18px Graphik !important;
+  }
 }

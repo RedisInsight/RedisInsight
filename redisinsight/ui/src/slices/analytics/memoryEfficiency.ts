@@ -12,13 +12,12 @@ import { AppDispatch, RootState } from '../store'
 export const initialState: StateMemoryEfficiency = {
   loading: false,
   error: '',
-  data: [],
+  data: null,
   history: {
     loading: false,
     error: '',
     data: [],
     selectedAnalysis: null,
-    // lastRefreshTime: null,
   }
 }
 
@@ -53,6 +52,12 @@ const memoryEfficiencySlice = createSlice({
     setSelectedAnalysis: (state, { payload }) => {
       state.history.selectedAnalysis = payload
     },
+    addNewAnalysis: (state, { payload }: PayloadAction<any>) => {
+      state.history.data = [
+        payload,
+        ...state.history.data,
+      ]
+    },
   }
 })
 
@@ -60,6 +65,7 @@ export const memoryEfficiencySelector = (state: RootState) => state.analytics.me
 export const memoryEfficiencyHistorySelector = (state: RootState) => state.analytics.memoryEfficiency.history
 
 export const {
+  addNewAnalysis,
   setMemoryEfficiencyInitialState,
   getMemoryEfficiency,
   getMemoryEfficiencySuccess,
@@ -97,6 +103,44 @@ export function fetchMemoryEfficiencyAction(
       if (isStatusSuccessful(status)) {
         dispatch(getMemoryEfficiencySuccess(data))
 
+        onSuccessAction?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(getMemoryEfficiencyError(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+export function createNewAnalysis(
+  instanceId: string,
+  delimiter: string,
+  // onSuccessAction?: (data: MemoryEfficiency) => void,
+  onSuccessAction?: (data: any) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(getMemoryEfficiency())
+
+      // const { data, status } = await apiService.post<MemoryEfficiency>(
+      const { data, status } = await apiService.post<any>(
+        getUrl(
+          instanceId,
+          ApiEndpoints.MEMORY_EFFICIENCY,
+        ),
+        {
+          delimiter,
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getMemoryEfficiencySuccess(data))
+        dispatch(addNewAnalysis({ id: data.id, createdAt: data.createdAt }))
+        dispatch(setSelectedAnalysis(data.id))
         onSuccessAction?.(data)
       }
     } catch (_err) {

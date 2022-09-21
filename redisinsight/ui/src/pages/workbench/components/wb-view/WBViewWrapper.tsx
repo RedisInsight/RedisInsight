@@ -145,11 +145,16 @@ const WBViewWrapper = () => {
   ) => {
     const { loading, batchSize } = state
     const isNewCommand = () => !commandId
-    const commandsForExecuting = splitMonacoValuePerLines(removeMonacoComments(commandInit))
-      .map((command) => removeMonacoComments(decode(command).trim()))
+    const commandsForExecuting = without(
+      splitMonacoValuePerLines(commandInit)
+        .map((command) => removeMonacoComments(decode(command).trim())),
+      ''
+    )
+
     const [commands, ...rest] = chunk(commandsForExecuting, batchSize > 1 ? batchSize : 1)
     const multiCommands = rest.map((command) => getMultiCommands(command))
-    if (!commands.length || loading) {
+
+    if (!commands?.length || loading) {
       setMultiCommands(multiCommands)
       return
     }

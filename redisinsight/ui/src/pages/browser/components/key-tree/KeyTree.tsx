@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState, useTransition } from 'react'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
@@ -40,6 +40,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const secondPanelId = 'keys'
 
   const { delimiter, panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
+
+  const [,startTransition] = useTransition()
 
   const [statusSelected, setStatusSelected] = useState(selectedLeaf)
   const [statusOpen, setStatusOpen] = useState(openNodes)
@@ -91,10 +93,10 @@ const KeyTree = forwardRef((props: Props, ref) => {
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {
     setItems(parseKeyNames(keysState.keys))
-    setTimeout(() => {
+    startTransition(() => {
       setStatusSelected({})
       setSelectDefaultLeaf(true)
-    }, 0)
+    })
   }
 
   const parseKeyNames = (keys: GetKeyInfoResponse[]) =>

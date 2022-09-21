@@ -140,7 +140,7 @@ const InlineItemEditor = (props: Props) => {
   const isDisabledApply = (): boolean =>
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
-  const ApplyBtn = () => (
+  const ApplyBtn = (
     <EuiToolTip
       anchorClassName={styles.tooltip}
       position="bottom"
@@ -218,7 +218,7 @@ const InlineItemEditor = (props: Props) => {
                       isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
-                    <ApplyBtn />
+                    {ApplyBtn}
                   </div>
                 </EuiForm>
               </EuiFocusTrap>

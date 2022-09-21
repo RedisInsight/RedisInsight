@@ -112,7 +112,7 @@ test
         //Search by not existed key pattern
         await browserPage.searchByKeyName(`${chance.string({ length: 10 })}*`);
         //Check that the last child is updated
-        for (let i = 0; i <= 5; i++) {
+        for (let i = 0; i <= 10; i++) {
             const previousTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;
             await t.wait(5500);
             const nextTimestamp = await monitorPage.monitorCommandLineTimestamp.nth(-1).textContent;

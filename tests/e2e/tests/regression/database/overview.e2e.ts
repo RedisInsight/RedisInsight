@@ -1,6 +1,6 @@
 import { rte } from '../../../helpers/constants';
-import {acceptLicenseTermsAndAddRECloudDatabase, deleteDatabase} from '../../../helpers/database';
-import { BrowserPage, AddRedisDatabasePage, MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
+import { acceptLicenseTermsAndAddRECloudDatabase, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage, DatabaseOverviewPage } from '../../../pageObjects';
 import { commonUrl, cloudDatabaseConfig } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();

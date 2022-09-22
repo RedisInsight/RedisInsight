@@ -44,6 +44,7 @@ import {
   KeyTypes,
   OVER_RENDER_BUFFER_COUNT,
   TableCellAlignment,
+  TEXT_INVALID_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
   TEXT_UNPRINTABLE_CHARACTERS
 } from 'uiSrc/constants'
@@ -350,6 +351,12 @@ const HashDetails = (props: Props) => {
                       controlsClassName={styles.textAreaControls}
                       onDecline={() => handleEditField(rowIndex, false)}
                       onApply={() => handleApplyEditField(fieldItem)}
+                      approveText={TEXT_INVALID_VALUE}
+                      approveByValidation={() =>
+                        formattingBuffer(
+                          stringToSerializedBufferFormat(viewFormat, areaValue),
+                          viewFormat
+                        )?.isValid}
                     >
                       <EuiTextArea
                         fullWidth

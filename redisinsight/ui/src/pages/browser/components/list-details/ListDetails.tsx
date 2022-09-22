@@ -27,6 +27,7 @@ import {
   KeyTypes,
   OVER_RENDER_BUFFER_COUNT,
   TableCellAlignment,
+  TEXT_INVALID_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
   TEXT_UNPRINTABLE_CHARACTERS
 } from 'uiSrc/constants'
@@ -296,6 +297,12 @@ const ListDetails = (props: Props) => {
                         disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                         onDecline={() => handleEditElement(index, false)}
                         onApply={() => handleApplyEditElement(index)}
+                        approveText={TEXT_INVALID_VALUE}
+                        approveByValidation={() =>
+                          formattingBuffer(
+                            stringToSerializedBufferFormat(viewFormat, areaValue),
+                            viewFormat
+                          )?.isValid}
                       >
                         <EuiTextArea
                           fullWidth

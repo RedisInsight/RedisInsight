@@ -16,6 +16,9 @@ import {
   EuiFocusTrap,
   EuiWindowEvent,
   EuiToolTip,
+  EuiPopover,
+  EuiButton,
+  EuiText,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import styles from './styles.module.scss'
@@ -25,7 +28,7 @@ type Design = 'default' | 'separate'
 
 export interface Props {
   onDecline: (event?: React.MouseEvent<HTMLElement>) => void
-  onApply: (value: string, event: React.MouseEvent<HTMLFormElement, MouseEvent>) => void
+  onApply: (value: string, event: React.MouseEvent) => void
   onChange?: (value: string) => void
   fieldName?: string
   initialValue?: string
@@ -49,6 +52,8 @@ export interface Props {
   disabledTooltipText?: { title: string, text: string }
   preventOutsideClick?: boolean
   disableFocusTrap?: boolean
+  approveByValidation?: (value: string) => boolean
+  approveText?: { title: string, text: string }
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -77,11 +82,14 @@ const InlineItemEditor = (props: Props) => {
     controlsClassName,
     disabledTooltipText,
     preventOutsideClick = false,
-    disableFocusTrap = false
+    disableFocusTrap = false,
+    approveByValidation,
+    approveText,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
   const [isError, setIsError] = useState<boolean>(false)
+  const [isShowApprovePopover, setIsShowApprovePopover] = useState(false)
 
   const inputRef: Ref<HTMLInputElement> = useRef(null)
 
@@ -132,8 +140,17 @@ const InlineItemEditor = (props: Props) => {
     }
   }
 
-  const handleFormSubmit = (event: React.MouseEvent<HTMLFormElement, MouseEvent>): void => {
+  const handleApplyClick = (event: React.MouseEvent) => {
+    if (approveByValidation && !approveByValidation?.(value)) {
+      setIsShowApprovePopover(true)
+    } else {
+      handleFormSubmit(event)
+    }
+  }
+
+  const handleFormSubmit = (event: React.MouseEvent<HTMLElement>): void => {
     event.preventDefault()
+    event.stopPropagation()
     onApply(value, event)
   }
 
@@ -152,10 +169,10 @@ const InlineItemEditor = (props: Props) => {
         iconSize={iconSize ?? 'l'}
         iconType="check"
         color="primary"
-        type="submit"
         aria-label="Apply"
         className={cx(styles.btn, styles.applyBtn)}
         isDisabled={isDisabledApply()}
+        onClick={handleApplyClick}
         data-testid="apply-btn"
       />
     </EuiToolTip>
@@ -218,7 +235,45 @@ const InlineItemEditor = (props: Props) => {
                       isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
-                    {ApplyBtn}
+                    {!approveByValidation && ApplyBtn}
+                    {approveByValidation && (
+                      <EuiPopover
+                        anchorPosition="leftCenter"
+                        isOpen={isShowApprovePopover}
+                        closePopover={() => setIsShowApprovePopover(false)}
+                        anchorClassName={styles.popoverAnchor}
+                        panelClassName={cx(styles.popoverPanel)}
+                        className={styles.popoverWrapper}
+                        button={ApplyBtn}
+                      >
+                        <div className={styles.popover} data-testid="approve-popover">
+                          <EuiText size="m">
+                            {!!approveText?.title && (
+                            <h4>
+                              <b>{approveText?.title}</b>
+                            </h4>
+                            )}
+                            <EuiText size="s" color="subdued" className={styles.approveText}>
+                              {approveText?.text}
+                            </EuiText>
+                          </EuiText>
+                          <div className={styles.popoverFooter}>
+                            <EuiButton
+                              fill
+                              color="warning"
+                              aria-label="Save"
+                              className={cx(styles.btn, styles.saveBtn)}
+                              isDisabled={isDisabledApply()}
+                              onClick={handleFormSubmit}
+                              data-testid="save-btn"
+                            >
+                              Save
+                            </EuiButton>
+                          </div>
+                        </div>
+
+                      </EuiPopover>
+                    )}
                   </div>
                 </EuiForm>
               </EuiFocusTrap>

@@ -29,7 +29,7 @@ export interface Props {
   isOpen: boolean
   result: Maybe<CommandExecutionResult[]>
   activeMode: RunQueryMode
-  mode: RunQueryMode
+  mode?: RunQueryMode
   activeResultsMode?: ResultsMode
   resultsMode?: ResultsMode
   emptyCommand: boolean

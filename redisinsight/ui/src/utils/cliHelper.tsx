@@ -88,19 +88,6 @@ const wbSummaryCommand = (command: string) => (
   </span>
 )
 
-const wbSummaryCommandResult = (result: string, status: CommandExecutionStatus) => (
-  <span
-    className={
-      status === CommandExecutionStatus.Success
-        ? `${CliPrefix.Cli}-output-response-success`
-        : `${CliPrefix.Cli}-output-response-fail`
-    }
-    data-testid="wb-command-result"
-  >
-    {`${result} \n`}
-  </span>
-)
-
 const clearOutput = (dispatch: any) => {
   dispatch(resetOutput())
 }
@@ -110,12 +97,12 @@ const cliParseCommandsGroupResult = (
   index: number
 ) => {
   const executionCommand = wbSummaryCommand(result.command)
-  const executionResult = wbSummaryCommandResult(result.response || '(nil)', result.status)
-
+  const executionResult = cliParseTextResponse(result.response || '(nil)', result.command, result.status)
   return (
     <Fragment key={`group-result-${index}`}>
       {executionCommand}
       {executionResult}
+      {'\n'}
     </Fragment>
   )
 }

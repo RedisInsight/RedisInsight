@@ -232,6 +232,7 @@ const QueryCardHeader = (props: Props) => {
               aria-label="Copy query"
               className="copy-btn"
               onClick={(event: React.MouseEvent) => handleCopy(event, query || '')}
+              data-testid="copy-command"
             />
           </div>
         </EuiFlexItem>

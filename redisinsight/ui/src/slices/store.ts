@@ -34,7 +34,7 @@ import pubSubReducer from './pubsub/pubsub'
 import slowLogReducer from './analytics/slowlog'
 import analyticsSettingsReducer from './analytics/settings'
 import clusterDetailsReducer from './analytics/clusterDetails'
-import memoryEfficiencyReducer from './analytics/memoryEfficiency'
+import databaseAnalysisReducer from './analytics/dbAnalysis'
 
 export const history = createBrowserHistory()
 
@@ -86,7 +86,7 @@ export const rootReducer = combineReducers({
     settings: analyticsSettingsReducer,
     slowlog: slowLogReducer,
     clusterDetails: clusterDetailsReducer,
-    memoryEfficiency: memoryEfficiencyReducer,
+    databaseAnalysis: databaseAnalysisReducer,
   }),
   pubsub: pubSubReducer,
 })

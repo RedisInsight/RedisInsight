@@ -1,7 +1,7 @@
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
 import SlowLogPage from 'uiSrc/pages/slowLog'
-import MemoryEfficiencyPage from 'uiSrc/pages/memoryEfficiency'
+import DatabaseAnalysisPage from 'uiSrc/pages/databaseAnalysis'
 
 export const ANALYTICS_ROUTES: IRoute[] = [
   {
@@ -10,9 +10,9 @@ export const ANALYTICS_ROUTES: IRoute[] = [
     component: SlowLogPage,
   },
   {
-    pageName: PageNames.memoryEfficiency,
-    path: Pages.memoryEfficiency(':instanceId'),
-    component: MemoryEfficiencyPage,
+    pageName: PageNames.databaseAnalysis,
+    path: Pages.databaseAnalysis(':instanceId'),
+    component: DatabaseAnalysisPage,
   },
   {
     pageName: PageNames.clusterDetails,

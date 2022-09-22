@@ -6,11 +6,14 @@ import { useParams, useHistory } from 'react-router-dom'
 import { Pages } from 'uiSrc/constants'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 
 import { analyticsViewTabs } from './constants'
 
 const AnalyticsTabs = () => {
   const { viewTab } = useSelector(analyticsSettingsSelector)
+  const { connectionType } = useSelector(connectedInstanceSelector)
   const history = useHistory()
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -24,14 +27,18 @@ const AnalyticsTabs = () => {
     if (id === AnalyticsViewTab.SlowLog) {
       history.push(Pages.slowLog(instanceId))
     }
-    if (id === AnalyticsViewTab.MemoryEfficiency) {
-      history.push(Pages.memoryEfficiency(instanceId))
+    if (id === AnalyticsViewTab.DatabaseAnalysis) {
+      history.push(Pages.databaseAnalysis(instanceId))
     }
     dispatch(setAnalyticsViewTab(id))
   }
 
-  const renderTabs = useCallback(() =>
-    [...analyticsViewTabs].map(({ id, label }) => (
+  const renderTabs = useCallback(() => {
+    const filteredAnalyticsViewTabs = connectionType === ConnectionType.Cluster
+      ? [...analyticsViewTabs]
+      : [...analyticsViewTabs].filter((tab) => tab.id !== AnalyticsViewTab.ClusterDetails)
+
+    return filteredAnalyticsViewTabs.map(({ id, label }) => (
       <EuiTab
         isSelected={viewTab === id}
         onClick={() => onSelectedTabChanged(id)}
@@ -40,7 +47,8 @@ const AnalyticsTabs = () => {
       >
         {label}
       </EuiTab>
-    )), [viewTab])
+    ))
+  }, [viewTab, connectionType])
 
   return (
     <>

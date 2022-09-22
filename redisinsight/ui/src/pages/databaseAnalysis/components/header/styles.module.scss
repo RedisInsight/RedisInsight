@@ -1,0 +1,32 @@
+.main {
+  margin: 0 16px 0;
+  height: calc(100% - 70px);
+  background-color: var(--euiColorEmptyShade);
+  padding: 18px 24px;
+}
+
+.container {
+  height: 60px;
+}
+
+.progress {
+  display: inline-block;
+}
+
+.progressContainer {
+  margin-left: 12px;
+}
+
+.changeReport :global(.euiSuperSelectControl) {
+  border: none !important;
+  padding-right: 34px !important;
+
+  & ~ :global(.euiFormControlLayoutIcons) svg {
+    width: 12px;
+  }
+}
+
+.infoIcon {
+  color: var(--euiColorMediumShade);
+  cursor: pointer;
+}

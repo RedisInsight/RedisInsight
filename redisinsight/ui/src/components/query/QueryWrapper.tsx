@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiLoadingContent } from '@elastic/eui'
 import { decode } from 'html-entities'
@@ -82,6 +82,12 @@ const QueryWrapper = (props: Props) => {
       eventData
     })
   }
+
+  // React.useEffect(() => {
+  //   while (true) {
+  //     handleSubmit(`set ${Math.floor((Math.random() * 1000000) + 1)} ${Math.floor((Math.random() * 1000000) + 1)}`)
+  //   }
+  // }, [])
 
   const handleSubmit = (value?: string) => {
     sendEventSubmitTelemetry(value)

@@ -47,4 +47,4 @@ const QueryCardCliResultWrapper = (props: Props) => {
   )
 }
 
-export default QueryCardCliResultWrapper
+export default React.memo(QueryCardCliResultWrapper)

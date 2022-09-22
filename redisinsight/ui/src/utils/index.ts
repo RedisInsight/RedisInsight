@@ -7,6 +7,7 @@ import replaceSpaces from './replaceSpaces'
 import setFavicon from './setFavicon'
 import setTitle from './setPageTitle'
 import formatToText from './cliTextFormatter'
+import getLetterByIndex from './getLetterByIndex'
 
 export * from './common'
 export * from './validations'
@@ -53,4 +54,5 @@ export {
   setFavicon,
   setTitle,
   formatToText,
+  getLetterByIndex
 }

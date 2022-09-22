@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { chunk } from 'lodash'
+import { chunk, without } from 'lodash'
 
 import {
   Nullable,
@@ -170,11 +170,16 @@ const WBViewWrapper = () => {
       return batchSize > 1 ? batchSize : 1
     }
 
-    const commandsForExecuting = splitMonacoValuePerLines(removeMonacoComments(commandInit))
-      .map((command) => removeMonacoComments(decode(command).trim()))
+    const commandsForExecuting = without(
+      splitMonacoValuePerLines(commandInit)
+        .map((command) => removeMonacoComments(decode(command).trim())),
+      ''
+    )
+
     const [commands, ...rest] = chunk(commandsForExecuting, getChunkSize())
     const multiCommands = rest.map((command) => getMultiCommands(command))
-    if (!commands.length || loading) {
+
+    if (!commands?.length || loading) {
       setMultiCommands(multiCommands)
       return
     }

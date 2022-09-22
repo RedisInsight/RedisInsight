@@ -141,7 +141,7 @@ describe('CommandExecutionProvider', () => {
       ]));
     });
     it('should return with flag isNotStored="true" even if size limit exceeded', async () => {
-      repository.save.mockReturnValueOnce([mockCommandExecutionEntity]);
+      repository.save.mockReturnValueOnce([{ ...mockCommandExecutionEntity, isNotStored: true }]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
       const executionResult = [new CommandExecutionResult({

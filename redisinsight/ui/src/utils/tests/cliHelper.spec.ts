@@ -2,6 +2,7 @@ import {
   getDbIndexFromSelectQuery,
   getCommandNameFromQuery,
   cliParseCommandsGroupResult,
+  CliPrefix
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
@@ -65,7 +66,18 @@ describe('cliParseCommandsGroupResult', () => {
   render(cliParseCommandsGroupResult(mockResult, mockIndex))
 
   expect(screen.queryByTestId('wb-command')).toBeInTheDocument()
-  expect(screen.queryByTestId('wb-command-result')).toBeInTheDocument()
   expect(screen.getByText('> command')).toBeInTheDocument()
-  expect(screen.getByText('response')).toBeInTheDocument()
+  expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-success`)).toBeInTheDocument()
+})
+
+describe('cliParseCommandsGroupResult error status', () => {
+  const mockResult = {
+    command: 'command',
+    response: 'response',
+    status: 'fail'
+  }
+  const mockIndex = 1
+  render(cliParseCommandsGroupResult(mockResult, mockIndex))
+
+  expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`)).toBeInTheDocument()
 })

@@ -172,6 +172,7 @@ export class WorkbenchPage {
      * Check the last command and result in workbench
      * @param command The command to check
      * @param result The result to check
+     * @param childNum Indicator which command result need to check
      */
     async checkWorkbenchCommandResult(command: string, result: string, childNum = 0): Promise<void> {
         //Compare the command with executed command

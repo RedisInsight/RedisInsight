@@ -34,10 +34,11 @@
 }
 
 .container .alert {
-  font-size: 13px !important;
-  line-height: 18px !important;
+  font-size: 14px !important;
+  line-height: 17px !important;
   letter-spacing: -0.13px !important;
   color: var(--euiColorWarningLight) !important;
+  margin-bottom: 4px;
 }
 
 .container .alertIcon {

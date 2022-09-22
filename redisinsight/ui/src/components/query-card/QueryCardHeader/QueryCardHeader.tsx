@@ -39,7 +39,7 @@ export interface Props {
   createdAt?: Date
   summaryText?: string
   activeMode: RunQueryMode
-  mode: RunQueryMode
+  mode?: RunQueryMode
   activeResultsMode?: ResultsMode
   summary?: string
   queryType: WBQueryType

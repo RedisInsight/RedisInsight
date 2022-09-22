@@ -494,7 +494,7 @@ const Query = (props: Props) => {
         <div className={cx(styles.actions, { [styles.disabledActions]: isDedicatedEditorOpen })}>
           <EuiToolTip
             position="left"
-            content="Raw mode"
+            content="Raw Mode"
             data-testid="change-mode-tooltip"
           >
             <EuiButton

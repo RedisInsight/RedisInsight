@@ -242,7 +242,7 @@ const QueryCardHeader = (props: Props) => {
               {mode === RunQueryMode.Raw && (
                 <EuiToolTip
                   className={styles.tooltip}
-                  content="Raw mode"
+                  content="Raw Mode"
                   position="bottom"
                 >
                   <EuiTextColor className={cx(styles.timeText, styles.mode)}>

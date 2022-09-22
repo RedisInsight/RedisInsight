@@ -34,7 +34,7 @@ test('Verify that user can run the commands from the Editor in the group mode', 
     await t.expect(workbenchPage.queryCardCommand.textContent).eql(`${counter} Command(s) - ${counter} success, 0 error(s)`, 'Not valid summary');
     // Verify that user can see full list of commands with results run in group
     await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandInHistory).withText(`> ${command}`).count).eql(counter, 'Number of commands is not correct');
-    await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandResultInHistory).count).eql(counter, 'Number of command result is not correct');
+    await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandSuccessResultInHistory).count).eql(counter, 'Number of command result is not correct');
     // Verify that if the only one command is executed in group, the result will be displayed as for group mode
     await workbenchPage.sendCommandInWorkbench(`${command}`);
     await t.expect(workbenchPage.queryCardCommand.textContent).eql('1 Command(s) - 1 success, 0 error(s)', 'Not valid summary for 1 command');
@@ -65,5 +65,5 @@ test('Verify that user can see group results in full mode', async t => {
     await t.click(workbenchPage.fullScreenButton);
     await t.expect(workbenchPage.queryCardCommand.textContent).eql(`${commandsNumber} Command(s) - ${commandsNumber} success, 0 error(s)`, 'Not valid summary');
     await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandInHistory).withText('> ').count).eql(commandsNumber, 'Number of commands is not correct');
-    await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandResultInHistory).count).eql(commandsNumber, 'Number of command result is not correct');
+    await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandSuccessResultInHistory).count).eql(commandsNumber, 'Number of command result is not correct');
 });

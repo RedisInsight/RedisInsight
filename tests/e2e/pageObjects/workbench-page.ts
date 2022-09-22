@@ -12,7 +12,8 @@ export class WorkbenchPage {
     cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssWorkbenchCommandInHistory = '[data-testid=wb-command]';
-    cssWorkbenchCommandResultInHistory = '[data-testid=wb-command-result]';
+    cssWorkbenchCommandSuccessResultInHistory = '[data-testid=cli-output-response-success]';
+    cssWorkbenchCommandFailedResultInHistory = '[data-testid=data-testid="cli-output-response-fail"]';
     cssQueryTableResult = '[data-testid^=query-table-result-]';
     cssQueryPluginResult = '[data-testid^=query-table-result-]';
     queryGraphContainer = '[data-testid=query-graph-container]';
@@ -102,7 +103,8 @@ export class WorkbenchPage {
     loadedCommand = Selector('[class=euiLoadingContent__singleLine]');
     runButtonSpinner = Selector('[data-testid=loading-spinner]');
     workbenchCommandInHistory = Selector(this.cssWorkbenchCommandInHistory);
-    workbenchCommandResultInHistory = Selector(this.cssWorkbenchCommandInHistory);
+    workbenchCommandSuccessResultInHistory = Selector(this.cssWorkbenchCommandSuccessResultInHistory);
+    workbenchCommandFailedResultInHistory = Selector(this.cssWorkbenchCommandFailedResultInHistory);
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoCloseCommandDetails = Selector('span.codicon-close');

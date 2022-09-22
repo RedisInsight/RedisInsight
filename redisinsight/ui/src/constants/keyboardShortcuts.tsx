@@ -43,7 +43,7 @@ const COMMON_SHORTCUTS = {
       keys: ['Ctrl', 'Enter'],
     },
     changeGroupMode: {
-      label: 'Group mode',
+      label: 'Group Mode',
       description: 'Toggle the group mode in Workbench',
       keys: ['Ctrl', 'Shift', 'G'],
     },
@@ -111,7 +111,7 @@ const MAC_SHORTCUTS = {
       keys: [(<span className="cmdSymbol">⌘</span>), 'Enter'],
     },
     changeGroupMode: {
-      label: 'Group mode',
+      label: 'Group Mode',
       description: 'Toggle the group mode in Workbench',
       keys: [(<span className="cmdSymbol">⌘</span>), 'Shift', 'G'],
     },

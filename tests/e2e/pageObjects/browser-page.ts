@@ -90,6 +90,7 @@ export class BrowserPage {
     editHashButton = Selector('[data-testid^=edit-hash-button-]');
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
+    workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -208,6 +209,7 @@ export class BrowserPage {
     multiSearchArea = Selector(this.cssFilteringLabel);
     keyDetailsHeader = Selector('[data-testid=key-details-header]');
     keyListTable = Selector('[data-testid=keyList-table]');
+    keyListMessage = Selector('[data-testid=no-result-found-msg]');
     keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');

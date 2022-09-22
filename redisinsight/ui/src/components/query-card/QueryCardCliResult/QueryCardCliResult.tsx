@@ -33,4 +33,4 @@ const QueryCardCliResult = (props: Props) => {
   )
 }
 
-export default QueryCardCliResult
+export default React.memo(QueryCardCliResult)

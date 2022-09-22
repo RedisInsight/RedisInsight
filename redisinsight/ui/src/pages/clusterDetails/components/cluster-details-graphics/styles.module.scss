@@ -1,0 +1,30 @@
+.wrapper {
+  background-color: var(--euiColorLightestShade);
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 24px;
+
+  &.loadingWrapper {
+    margin-top: 36px;
+  }
+
+  .chartTitle {
+    display: flex;
+    align-items: center;
+
+    .icon {
+      margin-right: 10px;
+    }
+  }
+
+  .preloaderCircle {
+    width: 180px;
+    height: 180px;
+    margin: 60px 0;
+    border-radius: 100%;
+    background-color: var(--separatorColor);
+  }
+}

@@ -48,8 +48,8 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
-        const firstDatabaseModules = [];
-        const secondDatabaseModules = [];
+        const firstDatabaseModules: string[] = [];
+        const secondDatabaseModules: string[] = [];
         //Remember modules
         let countOfModules = await browserPage.modulesButton.count;
         for(let i = 0; i < countOfModules; i++) {

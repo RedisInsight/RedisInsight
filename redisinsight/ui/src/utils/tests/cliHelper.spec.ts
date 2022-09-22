@@ -1,5 +1,10 @@
-import { getDbIndexFromSelectQuery, getCommandNameFromQuery } from 'uiSrc/utils'
+import {
+  getDbIndexFromSelectQuery,
+  getCommandNameFromQuery,
+  cliParseCommandsGroupResult,
+} from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
+import { render, screen } from 'uiSrc/utils/test-utils'
 
 const getDbIndexFromSelectQueryTests = [
   { input: 'select 0', expected: 0 },
@@ -48,4 +53,19 @@ describe('getCommandNameFromQuery', () => {
     // @ts-ignore
     expect(getCommandNameFromQuery(...input)).toEqual(expected)
   })
+})
+
+describe('cliParseCommandsGroupResult', () => {
+  const mockResult = {
+    command: 'command',
+    response: 'response',
+    status: 'success'
+  }
+  const mockIndex = 0
+  render(cliParseCommandsGroupResult(mockResult, mockIndex))
+
+  expect(screen.queryByTestId('wb-command')).toBeInTheDocument()
+  expect(screen.queryByTestId('wb-command-result')).toBeInTheDocument()
+  expect(screen.getByText('> command')).toBeInTheDocument()
+  expect(screen.getByText('response')).toBeInTheDocument()
 })

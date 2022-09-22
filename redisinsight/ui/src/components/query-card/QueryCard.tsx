@@ -5,7 +5,7 @@ import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import {
   getWBQueryType,
   getVisualizationsByCommand,
@@ -17,7 +17,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 
 import QueryCardHeader from './QueryCardHeader'
-import QueryCardCliResult from './QueryCardCliResult'
+import QueryCardCliResultWrapper from './QueryCardCliResultWrapper'
 import QueryCardCliPlugin from './QueryCardCliPlugin'
 import QueryCardCommonResult, { CommonErrorResponse } from './QueryCardCommonResult'
 
@@ -29,10 +29,14 @@ export interface Props {
   isOpen: boolean
   result: Maybe<CommandExecutionResult[]>
   activeMode: RunQueryMode
-  mode: RunQueryMode
+  mode?: RunQueryMode
+  activeResultsMode?: ResultsMode
+  resultsMode?: ResultsMode
   emptyCommand: boolean
+  summary?: ResultsSummary
   createdAt?: Date
   loading?: boolean
+  isNotStored?: boolean
   onQueryDelete: () => void
   onQueryReRun: () => void
   onQueryOpen: () => void
@@ -41,6 +45,14 @@ export interface Props {
 const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
   getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || ''
 
+export const getSummaryText = (summary?: ResultsSummary) => {
+  if (summary) {
+    const { total, success, fail } = summary
+    return `${total} Command(s) - ${success} success, ${fail} error(s)`
+  }
+  return summary
+}
+
 const QueryCard = (props: Props) => {
   const {
     id,
@@ -48,6 +60,9 @@ const QueryCard = (props: Props) => {
     result,
     activeMode,
     mode,
+    activeResultsMode,
+    resultsMode,
+    summary,
     isOpen,
     createdAt,
     onQueryOpen,
@@ -55,6 +70,7 @@ const QueryCard = (props: Props) => {
     onQueryReRun,
     loading,
     emptyCommand,
+    isNotStored,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -148,7 +164,9 @@ const QueryCard = (props: Props) => {
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
+          activeResultsMode={activeResultsMode}
           emptyCommand={emptyCommand}
+          summary={getSummaryText(summary)}
           toggleOpen={toggleOpen}
           toggleFullScreen={toggleFullScreen}
           setSelectedValue={changeViewTypeSelected}
@@ -161,29 +179,45 @@ const QueryCard = (props: Props) => {
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>
-                  {viewTypeSelected === WBQueryType.Plugin && (
-                    <>
-                      {!loading && result !== undefined ? (
-                        <QueryCardCliPlugin
-                          id={selectedViewValue}
-                          result={result}
-                          query={command}
-                          setSummaryText={setSummaryText}
-                          commandId={id}
-                        />
-                      ) : (
-                        <div className={styles.loading}>
-                          <EuiLoadingContent lines={5} data-testid="loading-content" />
-                        </div>
-                      )}
-                    </>
-                  )}
-                  {viewTypeSelected === WBQueryType.Text && (
-                    <QueryCardCliResult
+                  {resultsMode === ResultsMode.GroupMode && (
+                    <QueryCardCliResultWrapper
                       loading={loading}
                       query={command}
+                      resultsMode={resultsMode}
                       result={result}
+                      isNotStored={isNotStored}
+                      data-testid="group-mode-card"
                     />
+                  )}
+                  {(resultsMode === ResultsMode.Default || !resultsMode) && (
+                    <>
+                      {viewTypeSelected === WBQueryType.Plugin && (
+                        <>
+                          {!loading && result !== undefined ? (
+                            <QueryCardCliPlugin
+                              id={selectedViewValue}
+                              result={result}
+                              query={command}
+                              setSummaryText={setSummaryText}
+                              commandId={id}
+                            />
+                          ) : (
+                            <div className={styles.loading}>
+                              <EuiLoadingContent lines={5} data-testid="loading-content" />
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {(viewTypeSelected === WBQueryType.Text) && (
+                        <QueryCardCliResultWrapper
+                          loading={loading}
+                          query={command}
+                          resultsMode={resultsMode}
+                          result={result}
+                          isNotStored={isNotStored}
+                        />
+                      )}
+                    </>
                   )}
                 </>
               )}

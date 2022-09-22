@@ -11,6 +11,8 @@ export class WorkbenchPage {
     cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
     cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
+    cssWorkbenchCommandInHistory = '[data-testid=wb-command]';
+    cssWorkbenchCommandResultInHistory = '[data-testid=wb-command-result]';
     cssQueryTableResult = '[data-testid^=query-table-result-]';
     cssQueryPluginResult = '[data-testid^=query-table-result-]';
     queryGraphContainer = '[data-testid=query-graph-container]';
@@ -57,6 +59,8 @@ export class WorkbenchPage {
     showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
     rawModeBtn = Selector('[data-testid="btn-change-mode"]');
+    groupMode = Selector('[data-testid=btn-change-group-mode]');
+    copyCommand = Selector('[data-testid=copy-command]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     //LINKS
@@ -97,6 +101,8 @@ export class WorkbenchPage {
     runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
     loadedCommand = Selector('[class=euiLoadingContent__singleLine]');
     runButtonSpinner = Selector('[data-testid=loading-spinner]');
+    workbenchCommandInHistory = Selector(this.cssWorkbenchCommandInHistory);
+    workbenchCommandResultInHistory = Selector(this.cssWorkbenchCommandInHistory);
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoCloseCommandDetails = Selector('span.codicon-close');
@@ -166,13 +172,14 @@ export class WorkbenchPage {
      * Check the last command and result in workbench
      * @param command The command to check
      * @param result The result to check
+     * @param childNum Indicator which command result need to check
      */
-    async checkWorkbenchCommandResult(command: string, result: string): Promise<void> {
+    async checkWorkbenchCommandResult(command: string, result: string, childNum = 0): Promise<void> {
         //Compare the command with executed command
-        const actualCommand = await this.queryCardContainer.nth(0).find(this.cssQueryCardCommand).textContent;
+        const actualCommand = await this.queryCardContainer.nth(childNum).find(this.cssQueryCardCommand).textContent;
         await t.expect(actualCommand).eql(command);
         //Compare the command result with executed command
-        const actualCommandResult = await this.queryCardContainer.nth(0).find(this.cssQueryTextResult).textContent;
+        const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).eql(result);
     }
 }

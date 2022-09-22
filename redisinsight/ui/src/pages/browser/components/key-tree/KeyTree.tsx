@@ -93,10 +93,12 @@ const KeyTree = forwardRef((props: Props, ref) => {
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {
     setItems(parseKeyNames(keysState.keys))
-    startTransition(() => {
-      setStatusSelected({})
-      setSelectDefaultLeaf(true)
-    })
+    setTimeout(() => {
+      startTransition(() => {
+        setStatusSelected({})
+        setSelectDefaultLeaf(true)
+      })
+    }, 0)
   }
 
   const parseKeyNames = (keys: GetKeyInfoResponse[]) =>

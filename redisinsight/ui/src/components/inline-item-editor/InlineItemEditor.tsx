@@ -244,7 +244,7 @@ const InlineItemEditor = (props: Props) => {
                         anchorClassName={styles.popoverAnchor}
                         panelClassName={cx(styles.popoverPanel)}
                         className={styles.popoverWrapper}
-                        button={<ApplyBtn />}
+                        button={ApplyBtn}
                       >
                         <div className={styles.popover} data-testid="approve-popover">
                           <EuiText size="m">

@@ -42,11 +42,6 @@ const COMMON_SHORTCUTS = {
       description: 'Run Command',
       keys: ['Ctrl', 'Enter'],
     },
-    changeGroupMode: {
-      label: 'Group Mode',
-      description: 'Toggle the group mode in Workbench',
-      keys: ['Ctrl', 'Shift', 'G'],
-    },
     nextLine: {
       description: 'Go to the next line',
       keys: ['Enter'],
@@ -109,11 +104,6 @@ const MAC_SHORTCUTS = {
       label: 'Run',
       description: 'Run Command',
       keys: [(<span className="cmdSymbol">⌘</span>), 'Enter'],
-    },
-    changeGroupMode: {
-      label: 'Group Mode',
-      description: 'Toggle the group mode in Workbench',
-      keys: [(<span className="cmdSymbol">⌘</span>), 'Shift', 'G'],
     },
     nextLine: {
       description: 'Go to the next line',

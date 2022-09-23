@@ -46,7 +46,7 @@ const WorkbenchSettings = () => {
       <EuiSpacer size="m" />
       <EuiFormRow>
         <EuiSwitch
-          label="Clear the Editor when running the code"
+          label="Clear the Editor after running commands"
           checked={cleanup}
           onChange={(e) => onSwitchWbCleanUp(e.target.checked)}
           className={styles.switchOption}

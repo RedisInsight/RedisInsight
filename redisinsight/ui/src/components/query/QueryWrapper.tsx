@@ -83,12 +83,6 @@ const QueryWrapper = (props: Props) => {
     })
   }
 
-  // React.useEffect(() => {
-  //   while (true) {
-  //     handleSubmit(`set ${Math.floor((Math.random() * 1000000) + 1)} ${Math.floor((Math.random() * 1000000) + 1)}`)
-  //   }
-  // }, [])
-
   const handleSubmit = (value?: string) => {
     sendEventSubmitTelemetry(value)
     onSubmit(value)

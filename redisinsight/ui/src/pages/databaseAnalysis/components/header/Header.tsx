@@ -14,12 +14,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import {
-  createNewAnalysis,
-} from 'uiSrc/slices/analytics/dbAnalysis'
-import {
-  appContextBrowserTree
-} from 'uiSrc/slices/app/context'
+import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
+import { appContextBrowserTree } from 'uiSrc/slices/app/context'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { getApproximateNumber } from 'uiSrc/utils/validations'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
@@ -30,23 +26,23 @@ import styles from './styles.module.scss'
 export const getFormatTime = (time: string = '') =>
   format(new Date(time), 'd MMM yyyy HH:mm')
 
-interface Props {
+export interface Props {
   reports: any[]
   selectedValue: Nullable<string>
   progress: any
-  loading: boolean
   analysisLoading: boolean
   onChangeSelectedAnalysis: (value: string) => void
 }
 
 const Header = (props: Props) => {
   const {
-    reports,
+    reports = [],
     selectedValue,
     onChangeSelectedAnalysis,
     progress = null,
     analysisLoading
   } = props
+
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
@@ -78,7 +74,7 @@ const Header = (props: Props) => {
                 style={{ border: 'none !important' }}
                 className={styles.changeReport}
                 popoverClassName={styles.changeReport}
-                valueOfSelected={selectedValue}
+                valueOfSelected={selectedValue ?? ''}
                 onChange={(value: string) => onChangeSelectedAnalysis(value)}
                 data-testid="select-view-type"
               />

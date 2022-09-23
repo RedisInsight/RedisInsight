@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   EuiBasicTableColumn,
   EuiInMemoryTable,
-  EuiLoadingContent,
   EuiButtonIcon,
   EuiButtonEmpty,
   PropertySort
@@ -10,6 +9,7 @@ import {
 import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+
 import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
 import { formatBytes, Nullable } from 'uiSrc/utils'
@@ -26,12 +26,11 @@ import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<NspSummary[]>
-  loading: boolean
   delimiter: string
 }
 
 const NameSpacesTable = (props: Props) => {
-  const { data, loading, delimiter } = props
+  const { data, delimiter } = props
   const [sort, setSort] = useState<PropertySort>({ field: 'memory', direction: 'desc' })
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({})
 
@@ -47,13 +46,13 @@ const NameSpacesTable = (props: Props) => {
     dispatch(setFilter(filter))
     dispatch(setSearchMatch(`${nsp}:*`))
     dispatch(resetKeysData())
-    dispatch(resetBrowserTree())
     dispatch(fetchKeys(
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       () => dispatch(setBrowserKeyListDataLoaded(true)),
       () => dispatch(setBrowserKeyListDataLoaded(false)),
     ))
+    dispatch(resetBrowserTree())
     history.push(Pages.browser(instanceId))
   }
 
@@ -154,7 +153,7 @@ const NameSpacesTable = (props: Props) => {
       sortable: true,
       align: 'right',
       render: (value: number) => (
-        <span className={styles.count} data-testid={`networkInKbps-value-${value}`}>
+        <span className={styles.count} data-testid={`keys-value-${value}`}>
           {numberWithSpaces(value)}
         </span>
       )
@@ -182,34 +181,22 @@ const NameSpacesTable = (props: Props) => {
     },
   ]
 
-  useEffect(() => {
-    setItemIdToExpandedRowMap({})
-  }, [loading])
-
   return (
     <div className={styles.wrapper}>
-      {loading
-        ? (
-          <div className={styles.loading} data-testid="nsp-table-loading">
-            <EuiLoadingContent lines={4} />
-          </div>
-        )
-        : (
-          <div className={styles.tableWrapper}>
-            <EuiInMemoryTable
-              items={data ?? []}
-              columns={columns}
-              className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNSP)}
-              responsive={false}
-              itemId="nsp"
-              itemIdToExpandedRowMap={itemIdToExpandedRowMap}
-              isExpandable
-              sorting={{ sort }}
-              onTableChange={({ sort }: any) => setSort(sort)}
-              data-testid="nsp-table"
-            />
-          </div>
-        )}
+      <div className={styles.tableWrapper}>
+        <EuiInMemoryTable
+          items={data ?? []}
+          columns={columns}
+          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNSP)}
+          responsive={false}
+          itemId="nsp"
+          itemIdToExpandedRowMap={itemIdToExpandedRowMap}
+          isExpandable
+          sorting={{ sort }}
+          onTableChange={({ sort }: any) => setSort(sort)}
+          data-testid="nsp-table"
+        />
+      </div>
     </div>
   )
 }

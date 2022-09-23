@@ -27,32 +27,32 @@ const databaseAnalysisSlice = createSlice({
   initialState,
   reducers: {
     setDatabaseAnalysisInitialState: () => initialState,
-    getDBAnalysisReport: (state) => {
+    getDBAnalysis: (state) => {
       state.loading = true
     },
-    getDBAnalysisReportSuccess: (state, { payload }: PayloadAction<DatabaseAnalysis>) => {
+    getDBAnalysisSuccess: (state, { payload }: PayloadAction<DatabaseAnalysis>) => {
       state.loading = false
       state.data = payload
     },
-    getDBAnalysisReportError: (state, { payload }) => {
+    getDBAnalysisError: (state, { payload }) => {
       state.loading = false
       state.error = payload
     },
-    loadDBAnalysisReport: (state) => {
+    loadDBAnalysisReports: (state) => {
       state.history.loading = true
     },
-    loadDBAnalysisReportSuccess: (state, { payload }: PayloadAction<ShortDatabaseAnalysis[]>) => {
+    loadDBAnalysisReportsSuccess: (state, { payload }: PayloadAction<ShortDatabaseAnalysis[]>) => {
       state.history.loading = false
       state.history.data = payload
     },
-    loadDBAnalysisReportError: (state, { payload }) => {
+    loadDBAnalysisReportsError: (state, { payload }) => {
       state.history.loading = false
       state.history.error = payload
     },
-    setSelectedAnalysis: (state, { payload }) => {
+    setSelectedAnalysisId: (state, { payload }) => {
       state.history.selectedAnalysis = payload
     },
-    addNewAnalysis: (state, { payload }: PayloadAction<ShortDatabaseAnalysis>) => {
+    addNewAnalysisReport: (state, { payload }: PayloadAction<ShortDatabaseAnalysis>) => {
       if (isNull(state.history.data)) {
         state.history.data = [payload]
       } else {
@@ -69,22 +69,22 @@ export const DBAnalysis = (state: RootState) => state.analytics.databaseAnalysis
 export const DBAnalysisReportsSelector = (state: RootState) => state.analytics.databaseAnalysis.history
 
 export const {
-  addNewAnalysis,
+  addNewAnalysisReport,
   setDatabaseAnalysisInitialState,
-  getDBAnalysisReport,
-  getDBAnalysisReportSuccess,
-  getDBAnalysisReportError,
-  loadDBAnalysisReport,
-  loadDBAnalysisReportSuccess,
-  loadDBAnalysisReportError,
-  setSelectedAnalysis,
+  getDBAnalysis,
+  getDBAnalysisSuccess,
+  getDBAnalysisError,
+  loadDBAnalysisReports,
+  loadDBAnalysisReportsSuccess,
+  loadDBAnalysisReportsError,
+  setSelectedAnalysisId,
 } = databaseAnalysisSlice.actions
 
 // The reducer
 export default databaseAnalysisSlice.reducer
 
 // Asynchronous thunk action
-export function fetchDBAnalysisReportAction(
+export function fetchDBAnalysisAction(
   instanceId: string,
   id: string,
   onSuccessAction?: (data: DatabaseAnalysis) => void,
@@ -92,7 +92,7 @@ export function fetchDBAnalysisReportAction(
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(getDBAnalysisReport())
+      dispatch(getDBAnalysis())
 
       const { data, status } = await apiService.get<DatabaseAnalysis>(
         getUrl(
@@ -103,7 +103,7 @@ export function fetchDBAnalysisReportAction(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getDBAnalysisReportSuccess(data))
+        dispatch(getDBAnalysisSuccess(data))
 
         onSuccessAction?.(data)
       }
@@ -111,7 +111,7 @@ export function fetchDBAnalysisReportAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(getDBAnalysisReportError(errorMessage))
+      dispatch(getDBAnalysisError(errorMessage))
       onFailAction?.()
     }
   }
@@ -125,7 +125,7 @@ export function createNewAnalysis(
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(getDBAnalysisReport())
+      dispatch(getDBAnalysis())
 
       const { data, status } = await apiService.post<DatabaseAnalysis>(
         getUrl(
@@ -138,16 +138,16 @@ export function createNewAnalysis(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getDBAnalysisReportSuccess(data))
-        dispatch(addNewAnalysis({ id: data.id, createdAt: data.createdAt }))
-        dispatch(setSelectedAnalysis(data.id))
+        dispatch(getDBAnalysisSuccess(data))
+        dispatch(addNewAnalysisReport({ id: data.id, createdAt: data.createdAt }))
+        dispatch(setSelectedAnalysisId(data.id))
         onSuccessAction?.(data)
       }
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(getDBAnalysisReportError(errorMessage))
+      dispatch(getDBAnalysisError(errorMessage))
       onFailAction?.()
     }
   }
@@ -160,7 +160,7 @@ export function fetchDBAnalysisReportsHistory(
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(loadDBAnalysisReport())
+      dispatch(loadDBAnalysisReports())
 
       const { data, status } = await apiService.get<ShortDatabaseAnalysis[]>(
         getUrl(
@@ -170,7 +170,7 @@ export function fetchDBAnalysisReportsHistory(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadDBAnalysisReportSuccess(data))
+        dispatch(loadDBAnalysisReportsSuccess(data))
 
         onSuccessAction?.(data)
       }
@@ -178,7 +178,7 @@ export function fetchDBAnalysisReportsHistory(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(loadDBAnalysisReportError(errorMessage))
+      dispatch(loadDBAnalysisReportsError(errorMessage))
       onFailAction?.()
     }
   }

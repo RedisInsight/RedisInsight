@@ -7,9 +7,9 @@ import InstanceHeader from 'uiSrc/components/instance-header'
 import {
   DBAnalysis,
   DBAnalysisReportsSelector,
-  fetchDBAnalysisReportAction,
+  fetchDBAnalysisAction,
   fetchDBAnalysisReportsHistory,
-  setSelectedAnalysis
+  setSelectedAnalysisId
 } from 'uiSrc/slices/analytics/dbAnalysis'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
@@ -20,6 +20,7 @@ import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import NameSpacesTable from './components/nameSpacesTable'
 import Header from './components/header'
 import EmptyAnalysisMessage from './components/emptyAnalysisMessage'
+import Skeleton from './components/skeleton'
 import { NSPTable, emptyMessageContent } from './constants'
 import styles from './styles.module.scss'
 
@@ -48,10 +49,10 @@ const DatabaseAnalysisPage = () => {
 
   useEffect(() => {
     if (reports && reports.length && reports.map(({ id }) => id).indexOf(selectedAnalysis) === -1) {
-      dispatch(setSelectedAnalysis(
+      dispatch(setSelectedAnalysisId(
         reports[0].id,
       ))
-      dispatch(fetchDBAnalysisReportAction(
+      dispatch(fetchDBAnalysisAction(
         instanceId,
         reports[0].id
       ))
@@ -59,8 +60,8 @@ const DatabaseAnalysisPage = () => {
   }, [reports])
 
   const handleSelectAnalysis = (reportId: string) => {
-    dispatch(setSelectedAnalysis(reportId))
-    dispatch(fetchDBAnalysisReportAction(
+    dispatch(setSelectedAnalysisId(reportId))
+    dispatch(fetchDBAnalysisAction(
       instanceId,
       reportId
     ))
@@ -93,70 +94,73 @@ const DatabaseAnalysisPage = () => {
             loading={reportsLoading}
             analysisLoading={analysisLoading}
           />
-          {
-            reports.length === 0 && (
-              <EmptyAnalysisMessage
-                title={emptyMessageContent.noReports.title}
-                text={emptyMessageContent.noReports.text}
-              />
-            )
-          }
-          {
-            !!reports.length && data?.totalKeys?.total === 0 && (
-              <EmptyAnalysisMessage
-                title={emptyMessageContent.noKeys.title}
-                text={emptyMessageContent.noKeys.text}
-              />
-            )
-          }
-          {!!data?.totalKeys?.total && reports.length !== 0 && (
-            <div className={styles.grid}>
-              {!!data && data?.topMemoryNsp?.length > 0 && data?.topKeysNsp?.length > 0 && (
-                <div>
-                  <EuiTitle className={styles.sectionTitle}>
-                    <h4>TOP NAMESPACES</h4>
-                  </EuiTitle>
-                  <EuiButton
-                    fill
-                    size="s"
-                    color="secondary"
-                    onClick={() => setNspTable(NSPTable.MEMORY)}
-                    disabled={nspTable === NSPTable.MEMORY}
-                    className={cx(styles.textBtn, { [styles.activeBtn]: nspTable === NSPTable.MEMORY })}
-                    data-testid="btn-change-mode-memory"
-                  >
-                    by Memory
-                  </EuiButton>
-                  <EuiButton
-                    fill
-                    size="s"
-                    color="secondary"
-                    onClick={() => setNspTable(NSPTable.KEYS)}
-                    disabled={nspTable === NSPTable.KEYS}
-                    className={cx(styles.textBtn, { [styles.activeBtn]: nspTable === NSPTable.KEYS })}
-                    data-testid="btn-change-mode-keys"
-                  >
-                    by Number of Keys
-                  </EuiButton>
-                  {nspTable === NSPTable.MEMORY && (
-                    <NameSpacesTable
-                      data={data?.topMemoryNsp}
-                      delimiter={data?.delimiter}
-                      loading={analysisLoading}
-                      data-testid="nsp-table-memory"
-                    />
-                  )}
-                  {nspTable === NSPTable.KEYS && (
-                    <NameSpacesTable
-                      data={data?.topKeysNsp}
-                      loading={analysisLoading}
-                      delimiter={data?.delimiter}
-                      data-testid="nsp-table-keys"
-                    />
+          {analysisLoading && (<Skeleton />)}
+          {!analysisLoading && (
+            <>
+              {
+                reports.length === 0 && (
+                  <EmptyAnalysisMessage
+                    title={emptyMessageContent.noReports.title}
+                    text={emptyMessageContent.noReports.text}
+                  />
+                )
+              }
+              {
+                !!reports.length && data?.totalKeys?.total === 0 && (
+                  <EmptyAnalysisMessage
+                    title={emptyMessageContent.noKeys.title}
+                    text={emptyMessageContent.noKeys.text}
+                  />
+                )
+              }
+              {!!data?.totalKeys?.total && reports.length !== 0 && (
+                <div className={styles.grid}>
+                  {!!data && data?.topMemoryNsp?.length > 0 && data?.topKeysNsp?.length > 0 && (
+                    <div>
+                      <EuiTitle className={styles.sectionTitle}>
+                        <h4>TOP NAMESPACES</h4>
+                      </EuiTitle>
+                      <EuiButton
+                        fill
+                        size="s"
+                        color="secondary"
+                        onClick={() => setNspTable(NSPTable.MEMORY)}
+                        disabled={nspTable === NSPTable.MEMORY}
+                        className={cx(styles.textBtn, { [styles.activeBtn]: nspTable === NSPTable.MEMORY })}
+                        data-testid="btn-change-mode-memory"
+                      >
+                        by Memory
+                      </EuiButton>
+                      <EuiButton
+                        fill
+                        size="s"
+                        color="secondary"
+                        onClick={() => setNspTable(NSPTable.KEYS)}
+                        disabled={nspTable === NSPTable.KEYS}
+                        className={cx(styles.textBtn, { [styles.activeBtn]: nspTable === NSPTable.KEYS })}
+                        data-testid="btn-change-mode-keys"
+                      >
+                        by Number of Keys
+                      </EuiButton>
+                      {nspTable === NSPTable.MEMORY && (
+                        <NameSpacesTable
+                          data={data?.topMemoryNsp}
+                          delimiter={data?.delimiter}
+                          data-testid="nsp-table-memory"
+                        />
+                      )}
+                      {nspTable === NSPTable.KEYS && (
+                        <NameSpacesTable
+                          data={data?.topKeysNsp}
+                          delimiter={data?.delimiter}
+                          data-testid="nsp-table-keys"
+                        />
+                      )}
+                    </div>
                   )}
                 </div>
               )}
-            </div>
+            </>
           )}
         </>
       </div>

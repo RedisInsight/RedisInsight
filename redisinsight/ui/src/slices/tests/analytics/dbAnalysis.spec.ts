@@ -4,16 +4,16 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import reducer, {
   initialState,
-  addNewAnalysis,
+  addNewAnalysisReport,
   setDatabaseAnalysisInitialState,
-  getDBAnalysisReport,
-  getDBAnalysisReportSuccess,
-  getDBAnalysisReportError,
-  loadDBAnalysisReport,
-  loadDBAnalysisReportSuccess,
-  loadDBAnalysisReportError,
-  setSelectedAnalysis,
-  fetchDBAnalysisReportAction,
+  getDBAnalysis,
+  getDBAnalysisSuccess,
+  getDBAnalysisError,
+  loadDBAnalysisReports,
+  loadDBAnalysisReportsSuccess,
+  loadDBAnalysisReportsError,
+  setSelectedAnalysisId,
+  fetchDBAnalysisAction,
   createNewAnalysis,
   fetchDBAnalysisReportsHistory,
   DBAnalysisReportsSelector,
@@ -93,7 +93,7 @@ describe('pubsub slice', () => {
       })
     })
 
-    describe('setSelectedAnalysis', () => {
+    describe('setSelectedAnalysisId', () => {
       it('should properly set payload to selectedAnalysis', () => {
         const payload = 'id'
 
@@ -104,7 +104,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, setSelectedAnalysis(payload))
+        const nextState = reducer(initialState, setSelectedAnalysisId(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -113,7 +113,7 @@ describe('pubsub slice', () => {
         expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
       })
     })
-    describe('addNewAnalysis', () => {
+    describe('addNewAnalysisReport', () => {
       it('should properly set new analysis report', () => {
         const payload = mockHistoryReport
 
@@ -124,7 +124,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, addNewAnalysis(payload))
+        const nextState = reducer(initialState, addNewAnalysisReport(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -157,7 +157,7 @@ describe('pubsub slice', () => {
         // Act
         const nextState = reducer({
           ...startState,
-        }, addNewAnalysis(payload))
+        }, addNewAnalysisReport(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -166,7 +166,7 @@ describe('pubsub slice', () => {
         expect(DBAnalysis(rootState)).toEqual(state)
       })
     })
-    describe('loadDBAnalysisReportError', () => {
+    describe('loadDBAnalysisReportsError', () => {
       it('should properly set error to history', () => {
         // Arrange
         const error = 'Some error'
@@ -181,7 +181,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, loadDBAnalysisReportError(error))
+        const nextState = reducer(initialState, loadDBAnalysisReportsError(error))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -190,7 +190,7 @@ describe('pubsub slice', () => {
         expect(DBAnalysis(rootState)).toEqual(state)
       })
     })
-    describe('getDBAnalysisReportError', () => {
+    describe('getDBAnalysisError', () => {
       it('should properly set error', () => {
         // Arrange
         const error = 'Some error'
@@ -201,7 +201,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, getDBAnalysisReportError(error))
+        const nextState = reducer(initialState, getDBAnalysisError(error))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -210,7 +210,7 @@ describe('pubsub slice', () => {
         expect(DBAnalysis(rootState)).toEqual(state)
       })
     })
-    describe('getDBAnalysisReport', () => {
+    describe('getDBAnalysis', () => {
       it('should properly set loading: true', () => {
         // Arrange
         const state = {
@@ -219,7 +219,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, getDBAnalysisReport())
+        const nextState = reducer(initialState, getDBAnalysis())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -228,7 +228,7 @@ describe('pubsub slice', () => {
         expect(DBAnalysis(rootState)).toEqual(state)
       })
     })
-    describe('loadDBAnalysisReport', () => {
+    describe('loadDBAnalysisReports', () => {
       it('should properly set loading: true', () => {
         // Arrange
         const state = {
@@ -240,7 +240,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, loadDBAnalysisReport())
+        const nextState = reducer(initialState, loadDBAnalysisReports())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -249,7 +249,7 @@ describe('pubsub slice', () => {
         expect(DBAnalysis(rootState)).toEqual(state)
       })
     })
-    describe('getDBAnalysisReportSuccess', () => {
+    describe('getDBAnalysisSuccess', () => {
       it('should properly set loading: true', () => {
         const payload = mockAnalysis
         // Arrange
@@ -260,7 +260,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, getDBAnalysisReportSuccess(payload))
+        const nextState = reducer(initialState, getDBAnalysisSuccess(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -269,7 +269,7 @@ describe('pubsub slice', () => {
         expect(DBAnalysis(rootState)).toEqual(state)
       })
     })
-    describe('loadDBAnalysisReportSuccess', () => {
+    describe('loadDBAnalysisReportsSuccess', () => {
       it('should properly set data to history', () => {
         const payload = [mockHistoryReport]
         // Arrange
@@ -280,7 +280,7 @@ describe('pubsub slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, loadDBAnalysisReportSuccess(payload))
+        const nextState = reducer(initialState, loadDBAnalysisReportsSuccess(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -293,7 +293,7 @@ describe('pubsub slice', () => {
 
   // thunks
   describe('thunks', () => {
-    describe('fetchDBAnalysisReportAction', () => {
+    describe('fetchDBAnalysisAction', () => {
       it('succeed to fetch analysis data', async () => {
         const data = mockAnalysis
         const responsePayload = { data, status: 200 }
@@ -302,13 +302,13 @@ describe('pubsub slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchDBAnalysisReportAction('instanceId', 'id')
+          fetchDBAnalysisAction('instanceId', 'id')
         )
 
         // Assert
         const expectedActions = [
-          getDBAnalysisReport(),
-          getDBAnalysisReportSuccess(data),
+          getDBAnalysis(),
+          getDBAnalysisSuccess(data),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -327,14 +327,14 @@ describe('pubsub slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchDBAnalysisReportAction('instanceId', 'id')
+          fetchDBAnalysisAction('instanceId', 'id')
         )
 
         // Assert
         const expectedActions = [
-          getDBAnalysisReport(),
+          getDBAnalysis(),
           addErrorNotification(responsePayload as AxiosError),
-          getDBAnalysisReportError(errorMessage)
+          getDBAnalysisError(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -354,10 +354,10 @@ describe('pubsub slice', () => {
 
         // Assert
         const expectedActions = [
-          getDBAnalysisReport(),
-          getDBAnalysisReportSuccess(data),
-          addNewAnalysis({ id: data.id, createdAt: data.createdAt }),
-          setSelectedAnalysis(data.id)
+          getDBAnalysis(),
+          getDBAnalysisSuccess(data),
+          addNewAnalysisReport({ id: data.id, createdAt: data.createdAt }),
+          setSelectedAnalysisId(data.id)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -381,9 +381,9 @@ describe('pubsub slice', () => {
 
         // Assert
         const expectedActions = [
-          getDBAnalysisReport(),
+          getDBAnalysis(),
           addErrorNotification(responsePayload as AxiosError),
-          getDBAnalysisReportError(errorMessage)
+          getDBAnalysisError(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -403,8 +403,8 @@ describe('pubsub slice', () => {
 
         // Assert
         const expectedActions = [
-          loadDBAnalysisReport(),
-          loadDBAnalysisReportSuccess(data),
+          loadDBAnalysisReports(),
+          loadDBAnalysisReportsSuccess(data),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -428,9 +428,9 @@ describe('pubsub slice', () => {
 
         // Assert
         const expectedActions = [
-          loadDBAnalysisReport(),
+          loadDBAnalysisReports(),
           addErrorNotification(responsePayload as AxiosError),
-          loadDBAnalysisReportError(errorMessage)
+          loadDBAnalysisReportsError(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

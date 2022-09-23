@@ -3,6 +3,7 @@ import cx from 'classnames'
 import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import {
   clearSearchingCommand,
@@ -128,12 +129,13 @@ const BottomGroupMinimized = () => {
         className={styles.link}
         target="_blank"
         rel="noreferrer"
-        href="#"
+        href={EXTERNAL_LINKS.userSurvey}
         onClick={onClickSurvey}
+        data-testid="user-survey-link"
       >
         <>
           <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
-          <span>We need your opinion, take a survey!</span>
+          <span>We need your opinion. Please take our survey.</span>
         </>
       </a>
     </div>

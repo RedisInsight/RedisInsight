@@ -32,6 +32,8 @@ test('Disabled Editor Cleanup toggle behavior', async t => {
     await t.click(settingsPage.accordionWorkbenchSettings);
     // Disable Editor Cleanup
     await t.click(settingsPage.switchEditorCleanupOption);
+    // Verify that user can see text "Clear the Editor after running commands" for Editor Cleanup In Settings
+    await t.expect(settingsPage.switchEditorCleanupOption.sibling(0).withExactText('Clear the Editor after running commands').visible).ok('Cleanup text is not correct');
     // Go to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
     // Send commands

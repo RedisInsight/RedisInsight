@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
+
 import InstanceHeader from 'uiSrc/components/instance-header'
 import {
   DBAnalysis,
@@ -44,11 +45,11 @@ const DatabaseAnalysisPage = () => {
   useEffect(() => {
     if (!selectedAnalysis && reports?.length) {
       dispatch(setSelectedAnalysisId(
-        reports[0].id,
+        reports[0].id!,
       ))
       dispatch(fetchDBAnalysisAction(
         instanceId,
-        reports[0].id
+        reports[0].id!
       ))
     }
   }, [selectedAnalysis, reports])
@@ -84,7 +85,7 @@ const DatabaseAnalysisPage = () => {
             reports={reports}
             selectedValue={selectedAnalysis}
             onChangeSelectedAnalysis={handleSelectAnalysis}
-            progress={data?.progress ?? null}
+            progress={data?.progress}
             analysisLoading={analysisLoading}
           />
           <AnalysisDataView loading={analysisLoading} reports={reports} data={data} />

@@ -70,7 +70,7 @@ const NameSpacesTable = (props: Props) => {
                 <div>
                   <EuiButtonEmpty
                     className={cx(styles.link, styles.expanded)}
-                    onClick={() => handleRedirect(item.nsp, type.type)}
+                    onClick={() => handleRedirect(item.nsp as string, type.type)}
                   >
                     {`${item.nsp}:*`}
                   </EuiButtonEmpty>

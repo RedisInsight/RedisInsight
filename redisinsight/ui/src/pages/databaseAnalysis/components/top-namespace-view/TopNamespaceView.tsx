@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiTitle, EuiLoadingContent } from '@elastic/eui'
+import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+import { Nullable } from 'uiSrc/utils'
 
 import NameSpacesTable from '../name-spaces-table'
 import { NSPTable } from '../../constants'
 import styles from '../../styles.module.scss'
 
 export interface Props {
-  data: any
+  data: Nullable<DatabaseAnalysis>
   loading: boolean
 }
 

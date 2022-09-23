@@ -49,7 +49,7 @@ const databaseAnalysisSlice = createSlice({
       state.history.loading = false
       state.history.error = payload
     },
-    setSelectedAnalysisId: (state, { payload }) => {
+    setSelectedAnalysisId: (state, { payload }: PayloadAction<string>) => {
       state.history.selectedAnalysis = payload
     },
     addNewAnalysisReport: (state, { payload }: PayloadAction<ShortDatabaseAnalysis>) => {

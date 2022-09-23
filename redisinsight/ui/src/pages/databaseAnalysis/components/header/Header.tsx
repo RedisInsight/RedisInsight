@@ -20,16 +20,18 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { getApproximateNumber } from 'uiSrc/utils/validations'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { Nullable } from 'uiSrc/utils'
+import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
 import styles from './styles.module.scss'
 
-export const getFormatTime = (time: string = '') =>
+export const getFormatTime = (time: Date = new Date()): string =>
   format(new Date(time), 'd MMM yyyy HH:mm')
 
 export interface Props {
-  reports: any[]
+  reports: ShortDatabaseAnalysis[]
   selectedValue: Nullable<string>
-  progress: any
+  progress?: AnalysisProgress
   analysisLoading: boolean
   onChangeSelectedAnalysis: (value: string) => void
 }
@@ -60,7 +62,7 @@ const Header = (props: Props) => {
   })
 
   return (
-    <div data-testid="db-reports-header">
+    <div data-testid="db-analysis-header">
       <AnalyticsTabs />
       <EuiFlexGroup className={styles.container} gutterSize="none" alignItems="center" justifyContent="spaceBetween">
         {reports.length ? (

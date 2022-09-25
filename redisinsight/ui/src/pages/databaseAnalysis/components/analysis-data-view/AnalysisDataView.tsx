@@ -15,7 +15,8 @@ export interface Props {
 }
 
 const AnalysisDataView = (props: Props) => {
-  const { loading, reports, data } = props
+  const { loading, reports = [], data } = props
+  console.log(data)
 
   if (loading) {
     return (
@@ -28,23 +29,25 @@ const AnalysisDataView = (props: Props) => {
   return (
     <>
       {
-      reports.length === 0 && (
-        <EmptyAnalysisMessage
-          title={emptyMessageContent.noReports.title}
-          text={emptyMessageContent.noReports.text}
-        />
-      )
+        reports.length === 0 && (
+          <EmptyAnalysisMessage
+            title={emptyMessageContent.noReports.title}
+            text={emptyMessageContent.noReports.text}
+            name="reports"
+          />
+        )
       }
       {
         reports.length && data?.totalKeys?.total === 0 && (
           <EmptyAnalysisMessage
             title={emptyMessageContent.noKeys.title}
             text={emptyMessageContent.noKeys.text}
+            name="keys"
           />
         )
       }
       <div className={styles.grid}>
-        <TopNamespaceView data={data} loading={loading} />
+        <TopNamespaceView data={data} loading={loading}  />
       </div>
     </>
   )

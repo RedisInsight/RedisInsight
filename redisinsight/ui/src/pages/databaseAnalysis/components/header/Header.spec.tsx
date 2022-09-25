@@ -1,69 +1,53 @@
 import React from 'react'
+import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
-import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { getDBAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
+import { cleanup, mockedStore, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
 import Header, { Props, getFormatTime } from './Header'
 
 const mockedProps = mock<Props>()
 
-jest.mock('uiSrc/slices/app/context', () => ({
-  ...jest.requireActual('uiSrc/slices/app/context'),
-  slowLogSelector: jest.fn().mockReturnValue({
-    data: [],
-    config: null,
-    loading: false,
-  }),
-}))
-
 const mockReports = [
   { id: 'id_1', createdAt: '2022-09-23T05:30:23.000Z' },
-  { id: 'id_2', createdAt: '2022-09-23T05:15:19.000Z' }]
-
-const mockedData = [
-  {
-    id: 0,
-    time: 1652429583,
-    durationUs: 56,
-    args: 'info',
-    source: '0.0.0.1:50834',
-    client: 'redisinsight-common-0'
-  },
-  {
-    id: 1,
-    time: 1652429583,
-    durationUs: 11,
-    args: 'config get slowlog*',
-    source: '0.0.0.1:50834',
-    client: 'redisinsight-common-0'
-  }
+  { id: 'id_2', createdAt: '2022-09-23T05:15:19.000Z' }
 ]
 
-describe('SlowLogPage', () => {
+const mockProgress = {
+  total: 10,
+  scanned: 10,
+  processed: 10
+}
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
+
+describe('DatabaseAnalysisHeader', () => {
   it('should render', () => {
     expect(render(<Header {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  // it('should render empty slow log with empty data', () => {
-  //   (slowLogSelector as jest.Mock).mockImplementation(() => ({
-  //     data: [],
-  //     config: null,
-  //     loading: false,
-  //   }))
+  it('should not render progress', () => {
+    const { queryByTestId } = render(<Header {...instance(mockedProps)} reports={mockReports} progress={undefined} />)
 
-  //   render(<SlowLogPage />)
-  //   expect(screen.getByTestId('empty-slow-log')).toBeTruthy()
-  // })
+    expect(queryByTestId('analysis-progress')).not.toBeInTheDocument()
+  })
 
-  it('should render selector without options', () => {
-    render(<Header {...instance(mockedProps)} reports={mockReports} />)
+  it('should render progress', () => {
+    render(<Header {...instance(mockedProps)} reports={mockReports} progress={mockProgress} />)
 
-    const { container } = render(<Header {...instance(mockedProps)} reports={mockReports} />)
+    expect(screen.getByTestId('analysis-progress')).toBeInTheDocument()
+  })
+  it('should "getDBAnalysis" action be called after click "start-database-analysis-btn"', () => {
+    render(<Header {...instance(mockedProps)} />)
+    fireEvent.click(screen.getByTestId('start-database-analysis-btn'))
 
-    const reportOption = container.querySelector('[data-test-subj="reports-report-id_1"]')
-
-    expect(reportOption).toBeTruthy()
-    // expect(githubBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubRepo)
+    const expectedActions = [getDBAnalysis()]
+    expect(store.getActions()).toEqual(expectedActions)
   })
 })
 

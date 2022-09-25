@@ -87,7 +87,7 @@ const Header = (props: Props) => {
                   <EuiText
                     color={progress.total === progress.processed ? 'subdued' : 'warning'}
                     className={styles.progress}
-                    data-testid="bulk-delete-summary"
+                    data-testid="analysis-progress"
                   >
                     {`Scanned ${getApproximateNumber((
                       progress.total
@@ -109,7 +109,7 @@ const Header = (props: Props) => {
               <EuiButton
                 aria-label="New reports"
                 fill
-                data-testid="enablement-area__next-page-btn"
+                data-testid="start-database-analysis-btn"
                 color="secondary"
                 iconType="playFilled"
                 iconSide="left"

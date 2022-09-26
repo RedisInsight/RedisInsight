@@ -157,7 +157,7 @@ const InlineItemEditor = (props: Props) => {
   const isDisabledApply = (): boolean =>
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
-  const ApplyBtn = () => (
+  const ApplyBtn = (
     <EuiToolTip
       anchorClassName={styles.tooltip}
       position="bottom"
@@ -235,7 +235,7 @@ const InlineItemEditor = (props: Props) => {
                       isDisabled={isLoading}
                       data-testid="cancel-btn"
                     />
-                    {!approveByValidation && <ApplyBtn />}
+                    {!approveByValidation && ApplyBtn}
                     {approveByValidation && (
                       <EuiPopover
                         anchorPosition="leftCenter"
@@ -244,7 +244,7 @@ const InlineItemEditor = (props: Props) => {
                         anchorClassName={styles.popoverAnchor}
                         panelClassName={cx(styles.popoverPanel)}
                         className={styles.popoverWrapper}
-                        button={<ApplyBtn />}
+                        button={ApplyBtn}
                       >
                         <div className={styles.popover} data-testid="approve-popover">
                           <EuiText size="m">

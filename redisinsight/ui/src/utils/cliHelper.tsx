@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import parse from 'html-react-parser'
 
@@ -17,6 +17,12 @@ import formatToText from './cliTextFormatter'
 export enum CliPrefix {
   Cli = 'cli',
   QueryCard = 'query-card',
+}
+
+interface IGroupModeCommand {
+  command: string
+  response: string
+  status: CommandExecutionStatus
 }
 
 const cliParseTextResponseWithRedirect = (
@@ -73,8 +79,32 @@ const cliCommandWrapper = (command: string) => (
   </span>
 )
 
+const wbSummaryCommand = (command: string) => (
+  <span
+    className="cli-command-wrapper"
+    data-testid="wb-command"
+  >
+    {`> ${command} \n`}
+  </span>
+)
+
 const clearOutput = (dispatch: any) => {
   dispatch(resetOutput())
+}
+
+const cliParseCommandsGroupResult = (
+  result: IGroupModeCommand,
+  index: number
+) => {
+  const executionCommand = wbSummaryCommand(result.command)
+  const executionResult = cliParseTextResponse(result.response || '(nil)', result.command, result.status)
+  return (
+    <Fragment key={`group-result-${index}`}>
+      {executionCommand}
+      {executionResult}
+      {'\n'}
+    </Fragment>
+  )
 }
 
 const updateCliHistoryStorage = (
@@ -154,6 +184,7 @@ export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
+  cliParseCommandsGroupResult,
   cliCommandOutput,
   bashTextValue,
   cliCommandWrapper,

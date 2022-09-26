@@ -93,4 +93,4 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
   )
 }
 
-export default KeyTreeDelimiter
+export default React.memo(KeyTreeDelimiter)

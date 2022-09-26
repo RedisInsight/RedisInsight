@@ -2,10 +2,16 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
+import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { cleanup, clearStoreActions, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
-import QueryCard, { Props } from './QueryCard'
+import QueryCard, { Props, getSummaryText } from './QueryCard'
 
 const mockedProps = mock<Props>()
+
+const mockResult = [{
+  response: 'response',
+  status: 'success'
+}]
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -46,11 +52,6 @@ describe('QueryCard', () => {
   it('Cli result should in the document when "isOpen = true"', () => {
     const cliResultTestId = 'query-cli-result'
 
-    const mockResult = [{
-      response: 'response',
-      status: 'success'
-    }]
-
     const { queryByTestId } = render(<QueryCard
       {...instance(mockedProps)}
       isOpen
@@ -62,13 +63,8 @@ describe('QueryCard', () => {
     expect(cliResultEl).toBeInTheDocument()
   })
 
-  it('Cli result should not in the document when "isOpen = true"', () => {
+  it('Cli result should not in the document when "isOpen = false"', () => {
     const cliResultTestId = 'query-cli-result'
-
-    const mockResult = [{
-      response: 'response',
-      status: 'success'
-    }]
 
     const { queryByTestId } = render(<QueryCard
       {...instance(mockedProps)}
@@ -81,14 +77,24 @@ describe('QueryCard', () => {
     expect(cliResultEl).not.toBeInTheDocument()
   })
 
+  it('Should be in the document when resultsMode === ResultsMode.GroupMode', () => {
+    const cliResultTestId = 'query-cli-result'
+
+    const { queryByTestId } = render(<QueryCard
+      {...instance(mockedProps)}
+      isOpen={false}
+      result={mockResult}
+      resultsMode={ResultsMode.GroupMode}
+    />)
+
+    const cliResultEl = queryByTestId(cliResultTestId)
+
+    expect(cliResultEl).not.toBeInTheDocument()
+  })
+
   it('Click on the header should call toggleOpenWBResult', () => {
     const cardHeaderTestId = 'query-card-open'
     const mockId = '123'
-
-    const mockResult = [{
-      response: 'response',
-      status: 'success'
-    }]
 
     const { queryByTestId } = render(<QueryCard
       {...instance(mockedProps)}
@@ -104,5 +110,14 @@ describe('QueryCard', () => {
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
       clearStoreActions(expectedActions)
     )
+  })
+
+  it('Should return correct summary string', () => {
+    const summary = { total: 2, success: 1, fail: 1 }
+    const summaryText = '2 Command(s) - 1 success, 1 error(s)'
+
+    const summaryString = getSummaryText(summary)
+
+    expect(summaryString).toEqual(summaryText)
   })
 })

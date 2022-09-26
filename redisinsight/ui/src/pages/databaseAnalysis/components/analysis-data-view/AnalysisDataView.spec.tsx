@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { screen, render } from 'uiSrc/utils/test-utils'
+import { render } from 'uiSrc/utils/test-utils'
 
 import AnalysisDataView, { Props } from './AnalysisDataView'
 

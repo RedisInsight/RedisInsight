@@ -38,9 +38,8 @@ test('Verify that user can run the commands from the Editor in the group mode', 
     // Verify that if the only one command is executed in group, the result will be displayed as for group mode
     await workbenchPage.sendCommandInWorkbench(`${command}`);
     await t.expect(workbenchPage.queryCardCommand.textContent).eql('1 Command(s) - 1 success, 0 error(s)', 'Not valid summary for 1 command');
-    // Verify that user can use keyboard shortcut Ctrl+Shift+G to enable the group mode
-    await t.click(workbenchPage.queryInput);
-    await t.pressKey('shift+ctrl+g');
+    // Turn off group mode
+    await t.click(workbenchPage.groupMode);
     await workbenchPage.sendCommandInWorkbench(commandsString);
     await t.expect(workbenchPage.queryCardCommand.textContent).notEql(`${commandsNumber} Command(s) - ${commandsNumber} success, 0 error(s)`, 'Commands are sent in groups');
     for (let i = 0; i++; i < commandsNumber) {

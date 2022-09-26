@@ -66,7 +66,6 @@ const aroundQuotesRegExp = /(^["']|["']$)/g
 let decorations: string[] = []
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
-let toggleGroupMode: () => void = () => {}
 
 const Query = (props: Props) => {
   const {
@@ -117,11 +116,6 @@ const Query = (props: Props) => {
     execHistory = execHistoryItems
     execHistoryPos = 0
   }, [execHistoryItems])
-
-  useEffect(() => {
-    // HACK: The Monaco editor memoize the state and ignores updates to it
-    toggleGroupMode = onChangeGroupMode
-  }, [resultsMode])
 
   useEffect(() => {
     if (!monacoObjects.current) return
@@ -406,10 +400,6 @@ const Query = (props: Props) => {
       getMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco)
     )
 
-    editor.addAction(
-      getMonacoAction(MonacoAction.ChangeGroupMode, () => toggleGroupMode(), monaco)
-    )
-
     editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {
       onPressWidget()
     }, SYNTAX_CONTEXT_ID)
@@ -543,18 +533,7 @@ const Query = (props: Props) => {
           </EuiToolTip>
           <EuiToolTip
             position="left"
-            content={
-              KEYBOARD_SHORTCUTS?.workbench?.changeGroupMode && (
-                <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EuiText className={styles.tooltipText} size="s">{`${KEYBOARD_SHORTCUTS.workbench.changeGroupMode?.label}:\u00A0\u00A0`}</EuiText>
-                  <KeyboardShortcut
-                    badgeTextClassName={styles.tooltipText}
-                    separator={KEYBOARD_SHORTCUTS?._separator}
-                    items={KEYBOARD_SHORTCUTS.workbench.changeGroupMode.keys}
-                  />
-                </div>
-              )
-            }
+            content="Group Results"
             data-testid="run-query-tooltip"
           >
             <>

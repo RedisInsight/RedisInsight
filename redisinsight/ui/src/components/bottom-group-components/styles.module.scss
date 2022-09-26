@@ -17,26 +17,24 @@
   line-height: 26px;
   border: 1px solid var(--euiColorLightShade);
 
-  .link {
+  .surveyLink {
     display: flex;
     align-items: center;
     height: 100%;
-    background: #F6F7F9;
     padding: 0 12px;
-    border-radius: 4px 4px 0 0;
-
-    color: #010101 !important;
+    color: var(--htmlColor) !important;
     font: normal normal normal 12px/18px Graphik;
 
     &:hover {
-      text-decoration: underline;
+      background-color: var(--euiColorSecondary);
+      color: var(--euiColorPrimaryText) !important;
     }
   }
 
   .surveyIcon {
     margin-right: 8px;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 }
 

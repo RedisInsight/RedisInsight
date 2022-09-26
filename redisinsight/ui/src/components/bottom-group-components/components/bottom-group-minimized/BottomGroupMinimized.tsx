@@ -126,7 +126,7 @@ const BottomGroupMinimized = () => {
         </EuiFlexItem>
       </EuiFlexGroup>
       <a
-        className={styles.link}
+        className={styles.surveyLink}
         target="_blank"
         rel="noreferrer"
         href={EXTERNAL_LINKS.userSurvey}

@@ -543,6 +543,7 @@ const Query = (props: Props) => {
           </EuiToolTip>
           <EuiToolTip
             position="left"
+            title="Group Results"
             content="Bundle multiple command results"
             data-testid="run-query-tooltip"
           >

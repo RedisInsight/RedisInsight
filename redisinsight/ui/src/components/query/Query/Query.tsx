@@ -66,7 +66,6 @@ const aroundQuotesRegExp = /(^["']|["']$)/g
 let decorations: string[] = []
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
-let toggleGroupMode: () => void = () => {}
 
 const Query = (props: Props) => {
   const {
@@ -117,11 +116,6 @@ const Query = (props: Props) => {
     execHistory = execHistoryItems
     execHistoryPos = 0
   }, [execHistoryItems])
-
-  useEffect(() => {
-    // HACK: The Monaco editor memoize the state and ignores updates to it
-    toggleGroupMode = onChangeGroupMode
-  }, [resultsMode])
 
   useEffect(() => {
     if (!monacoObjects.current) return
@@ -404,10 +398,6 @@ const Query = (props: Props) => {
     setupMonacoRedisLang(monaco)
     editor.addAction(
       getMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco)
-    )
-
-    editor.addAction(
-      getMonacoAction(MonacoAction.ChangeGroupMode, () => toggleGroupMode(), monaco)
     )
 
     editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {

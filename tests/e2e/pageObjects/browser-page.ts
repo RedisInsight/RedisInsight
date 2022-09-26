@@ -241,7 +241,9 @@ export class BrowserPage {
     rangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
     rangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
     jsonValue = Selector('[data-testid=value-as-json]');
-
+    stringValueAsJson = Selector(this.cssJsonValue);
+    // POPUPS
+    changeValueWarning = Selector('[data-testid=approve-popover]');
     /**
      * Common part for Add any new key
      * @param keyName The name of the key
@@ -599,7 +601,7 @@ export class BrowserPage {
      * Edit List key value from details
      * @param value The value of the key
      */
-     async editListKeyValue(value: string): Promise<void> {
+    async editListKeyValue(value: string): Promise<void> {
         await t
             .click(this.editListButton)
             .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
@@ -615,7 +617,7 @@ export class BrowserPage {
      * Edit JSON key value from details
      * @param value The value of the key
      */
-     async editJsonKeyValue(value: string): Promise<void> {
+    async editJsonKeyValue(value: string): Promise<void> {
         await t
             .click(this.jsonScalarValue)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })

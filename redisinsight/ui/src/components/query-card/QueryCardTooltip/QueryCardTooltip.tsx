@@ -22,7 +22,7 @@ interface IQueryLine {
 const QueryCardTooltip = (props: Props) => {
   const { query = '', maxLinesNumber = 20, summary = '' } = props
 
-  let queryLines: IQueryLine[] = (query ?? EMPTY_COMMAND).split('\n')
+  let queryLines: IQueryLine[] = (query || EMPTY_COMMAND).split('\n')
     .map((query: string, i) => ({
       value: truncateText(query, 497, '...'),
       index: i
@@ -56,7 +56,7 @@ const QueryCardTooltip = (props: Props) => {
       content={<>{contentItems}</>}
       position="bottom"
     >
-      <span data-testid="query-card-tooltip-anchor">{summary ?? query ?? EMPTY_COMMAND}</span>
+      <span data-testid="query-card-tooltip-anchor">{summary || query || EMPTY_COMMAND}</span>
     </EuiToolTip>
   )
 }

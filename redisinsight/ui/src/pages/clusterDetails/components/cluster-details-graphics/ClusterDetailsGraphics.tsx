@@ -1,4 +1,4 @@
-import { EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { sumBy } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -20,26 +20,26 @@ const ClusterDetailsGraphics = ({ nodes, loading }: { nodes: Nullable<ModifiedCl
   const renderMemoryTooltip = (data: ChartData) => (
     <div className={styles.labelTooltip}>
       <div className={styles.tooltipTitle}>
-        <span className={styles.namePercentage}>
-          <b data-testid="tooltip-node-name">{data.name}: </b>
-          <span data-testid="tooltip-node-percent">{getPercentage(data.value, memorySum)}%</span>
-        </span>
-        <span data-testid="tooltip-total-memory">{formatBytes(data.value, 3, false)}</span>
+        <span data-testid="tooltip-node-name">{data.name}: </span>
+        <span data-testid="tooltip-host-port">{data.meta?.host}:{data.meta?.port}</span>
       </div>
-      <EuiText color="subdued" size="xs" data-testid="tooltip-host-port">{data.meta?.host}:{data.meta?.port}</EuiText>
+      <b>
+        <span className={styles.tooltipPercentage} data-testid="tooltip-node-percent">{getPercentage(data.value, memorySum)}%</span>
+        <span data-testid="tooltip-total-memory">(&thinsp;{formatBytes(data.value, 3, false)}&thinsp;)</span>
+      </b>
     </div>
   )
 
   const renderKeysTooltip = (data: ChartData) => (
     <div className={styles.labelTooltip}>
       <div className={styles.tooltipTitle}>
-        <span className={styles.namePercentage}>
-          <b data-testid="tooltip-node-name">{data.name}: </b>
-          <span data-testid="tooltip-node-percent">{getPercentage(data.value, keysSum)}%</span>
-        </span>
-        <span data-testid="tooltip-total-keys">{numberWithSpaces(data.value)}</span>
+        <span data-testid="tooltip-node-name">{data.name}: </span>
+        <span data-testid="tooltip-host-port">{data.meta?.host}:{data.meta?.port}</span>
       </div>
-      <EuiText color="subdued" size="xs" data-testid="tooltip-host-port">{data.meta?.host}:{data.meta?.port}</EuiText>
+      <b>
+        <span className={styles.tooltipPercentage} data-testid="tooltip-node-percent">{getPercentage(data.value, keysSum)}%</span>
+        <span data-testid="tooltip-total-keys">(&thinsp;{numberWithSpaces(data.value)}&thinsp;)</span>
+      </b>
     </div>
   )
 

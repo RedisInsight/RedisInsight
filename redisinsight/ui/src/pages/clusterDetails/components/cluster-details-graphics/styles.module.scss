@@ -51,14 +51,12 @@
   .labelTooltip {
     font-size: 12px;
 
-    .tooltipTitle {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
+    .tooltipPercentage {
+      margin-right: 6px;
+    }
 
-      .namePercentage {
-        margin-right: 18px;
-      }
+    .tooltipTitle {
+      margin-bottom: 6px;
     }
   }
 }

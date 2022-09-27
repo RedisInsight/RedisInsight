@@ -99,6 +99,7 @@ export class BrowserPage {
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
+    userSurveyLink = Selector('[data-testid=user-survey-link]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -597,7 +598,7 @@ export class BrowserPage {
      * Edit List key value from details
      * @param value The value of the key
      */
-     async editListKeyValue(value: string): Promise<void> {
+    async editListKeyValue(value: string): Promise<void> {
         await t
             .click(this.editListButton)
             .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
@@ -613,7 +614,7 @@ export class BrowserPage {
      * Edit JSON key value from details
      * @param value The value of the key
      */
-     async editJsonKeyValue(value: string): Promise<void> {
+    async editJsonKeyValue(value: string): Promise<void> {
         await t
             .click(this.jsonScalarValue)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })

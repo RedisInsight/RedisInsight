@@ -3,12 +3,13 @@ import { EuiToolTip } from '@elastic/eui'
 import { take } from 'lodash'
 import cx from 'classnames'
 
-import { truncateText } from 'uiSrc/utils'
+import { Nullable, truncateText } from 'uiSrc/utils'
+import { EMPTY_COMMAND } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 export interface Props {
-  query: string
-  summary?: string
+  query: Nullable<string>
+  summary?: Nullable<string>
   maxLinesNumber?: number
 }
 
@@ -19,10 +20,9 @@ interface IQueryLine {
 }
 
 const QueryCardTooltip = (props: Props) => {
-  const { query = '', maxLinesNumber = 20, summary } = props
+  const { query = '', maxLinesNumber = 20, summary = '' } = props
 
-  let queryLines: IQueryLine[] = query
-    .split('\n')
+  let queryLines: IQueryLine[] = (query || EMPTY_COMMAND).split('\n')
     .map((query: string, i) => ({
       value: truncateText(query, 497, '...'),
       index: i
@@ -56,7 +56,7 @@ const QueryCardTooltip = (props: Props) => {
       content={<>{contentItems}</>}
       position="bottom"
     >
-      <span>{summary || query}</span>
+      <span data-testid="query-card-tooltip-anchor">{summary || query || EMPTY_COMMAND}</span>
     </EuiToolTip>
   )
 }

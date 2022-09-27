@@ -81,7 +81,7 @@ const QueryCard = (props: Props) => {
   const [viewTypeSelected, setViewTypeSelected] = useState<WBQueryType>(queryType)
   const [summaryText, setSummaryText] = useState<string>('')
   const [selectedViewValue, setSelectedViewValue] = useState<string>(
-    getDefaultPlugin(visualizations, command) || queryType
+    getDefaultPlugin(visualizations, command || '') || queryType
   )
 
   const dispatch = useDispatch()

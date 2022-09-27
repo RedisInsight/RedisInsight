@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import InstanceHeader from 'uiSrc/components/instance-header'
 import {
-  DBAnalysis,
+  DBAnalysisSelector,
   DBAnalysisReportsSelector,
   fetchDBAnalysisAction,
   fetchDBAnalysisReportsHistory,
@@ -24,7 +24,7 @@ const DatabaseAnalysisPage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
-  const { loading: analysisLoading, data } = useSelector(DBAnalysis)
+  const { loading: analysisLoading, data } = useSelector(DBAnalysisSelector)
   const { data: reports, selectedAnalysis } = useSelector(DBAnalysisReportsSelector)
   const { name: connectedInstanceName } = useSelector(connectedInstanceSelector)
 

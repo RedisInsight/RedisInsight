@@ -50,7 +50,7 @@ const TopNamespaceView = (props: Props) => {
       </EuiButton>
       {loading
         ? (
-          <div style={{ height: '380px' }} data-testid="nsp-table-loading">
+          <div style={{ height: '380px' }} data-testid="nsp-table-loader">
             <EuiLoadingContent lines={4} />
           </div>
         ) : (
@@ -59,14 +59,14 @@ const TopNamespaceView = (props: Props) => {
             <NameSpacesTable
               data={data?.topMemoryNsp}
               delimiter={data?.delimiter}
-              data-testid="nsp-table-memory"
+              dataTestid="nsp-table-memory"
             />
             )}
             {nspTable === NSPTable.KEYS && (
               <NameSpacesTable
                 data={data?.topKeysNsp}
                 delimiter={data?.delimiter}
-                data-testid="nsp-table-keys"
+                dataTestid="nsp-table-keys"
               />
             )}
           </>

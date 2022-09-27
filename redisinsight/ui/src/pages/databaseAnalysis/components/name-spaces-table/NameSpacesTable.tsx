@@ -27,10 +27,11 @@ import styles from './styles.module.scss'
 export interface Props {
   data: Nullable<NspSummary[]>
   delimiter: string
+  dataTestid?: string
 }
 
 const NameSpacesTable = (props: Props) => {
-  const { data, delimiter } = props
+  const { data, delimiter, dataTestid = '' } = props
   const [sort, setSort] = useState<PropertySort>({ field: 'memory', direction: 'desc' })
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({})
 
@@ -182,7 +183,7 @@ const NameSpacesTable = (props: Props) => {
   ]
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid={dataTestid}>
       <div className={styles.tableWrapper}>
         <EuiInMemoryTable
           items={data ?? []}

@@ -17,7 +17,7 @@ import reducer, {
   createNewAnalysis,
   fetchDBAnalysisReportsHistory,
   DBAnalysisReportsSelector,
-  DBAnalysis
+  DBAnalysisSelector
 } from 'uiSrc/slices/analytics/dbAnalysis'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -89,7 +89,7 @@ describe('pubsub slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysis(rootState)).toEqual(initialState)
+        expect(DBAnalysisSelector(rootState)).toEqual(initialState)
       })
     })
 
@@ -163,7 +163,7 @@ describe('pubsub slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState }
         })
-        expect(DBAnalysis(rootState)).toEqual(state)
+        expect(DBAnalysisSelector(rootState)).toEqual(state)
       })
     })
     describe('loadDBAnalysisReportsError', () => {
@@ -187,7 +187,7 @@ describe('pubsub slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysis(rootState)).toEqual(state)
+        expect(DBAnalysisSelector(rootState)).toEqual(state)
       })
     })
     describe('getDBAnalysisError', () => {
@@ -207,7 +207,7 @@ describe('pubsub slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysis(rootState)).toEqual(state)
+        expect(DBAnalysisSelector(rootState)).toEqual(state)
       })
     })
     describe('getDBAnalysis', () => {
@@ -225,7 +225,7 @@ describe('pubsub slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysis(rootState)).toEqual(state)
+        expect(DBAnalysisSelector(rootState)).toEqual(state)
       })
     })
     describe('loadDBAnalysisReports', () => {
@@ -246,7 +246,7 @@ describe('pubsub slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysis(rootState)).toEqual(state)
+        expect(DBAnalysisSelector(rootState)).toEqual(state)
       })
     })
     describe('getDBAnalysisSuccess', () => {
@@ -266,7 +266,7 @@ describe('pubsub slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysis(rootState)).toEqual(state)
+        expect(DBAnalysisSelector(rootState)).toEqual(state)
       })
     })
     describe('loadDBAnalysisReportsSuccess', () => {

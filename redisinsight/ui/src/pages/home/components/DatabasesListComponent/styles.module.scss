@@ -131,3 +131,11 @@ $breakpoint-l: 1400px;
   height: 24px;
   color: var(--htmlColor) !important;
 }
+
+.actionDeleteBtn {
+  min-width: 93px !important;
+
+  &:focus {
+    text-decoration: none !important;
+  }
+}

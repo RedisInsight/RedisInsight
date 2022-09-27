@@ -296,17 +296,17 @@ export const createAclInstance = async (rte, server): Promise<void> => {
 
 export const getInstanceByName = async (name: string) => {
   const rep = await getRepository(repositories.INSTANCE);
-  return rep.findOne({ where: { name } });
+  return rep.findOneBy({ name });
 }
 
 export const getInstanceById = async (id: string) => {
   const rep = await getRepository(repositories.INSTANCE);
-  return rep.findOne({ where: { id } });
+  return rep.findOneBy({ id });
 }
 
 export const applyEulaAgreement = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
-  const agreements: any = await rep.findOne();
+  const agreements: any = await rep.findOneBy({});
   agreements.version = '1.0.0';
   agreements.data = JSON.stringify({eula: true, encryption: true});
 
@@ -317,7 +317,7 @@ export const setAgreements = async (agreements = {}) => {
   const defaultAgreements = {eula: true, encryption: true};
 
   const rep = await getRepository(repositories.AGREEMENTS);
-  const entity: any = await rep.findOne();
+  const entity: any = await rep.findOneBy({});
 
   entity.version = '1.0.0';
   entity.data = JSON.stringify({ ...defaultAgreements, ...agreements });
@@ -327,7 +327,7 @@ export const setAgreements = async (agreements = {}) => {
 
 const resetAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
-  const agreements: any = await rep.findOne();
+  const agreements: any = await rep.findOneBy({});
   agreements.version = null;
   agreements.data = null;
 
@@ -336,7 +336,7 @@ const resetAgreements = async () => {
 
 export const initAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
-  const agreements: any = await rep.findOne();
+  const agreements: any = await rep.findOneBy({});
   agreements.version = constants.TEST_AGREEMENTS_VERSION;
   agreements.data = JSON.stringify({
     eula: true,
@@ -349,7 +349,7 @@ export const initAgreements = async () => {
 export const resetSettings = async () => {
   await resetAgreements();
   const rep = await getRepository(repositories.SETTINGS);
-  const settings: any = await rep.findOne();
+  const settings: any = await rep.findOneBy({});
   settings.data = null;
 
   await rep.save(settings);
@@ -358,7 +358,7 @@ export const resetSettings = async () => {
 export const initSettings = async () => {
   await initAgreements();
   const rep = await getRepository(repositories.SETTINGS);
-  const settings: any = await rep.findOne();
+  const settings: any = await rep.findOneBy({});
   settings.data = null;
 
   await rep.save(settings);
@@ -366,7 +366,7 @@ export const initSettings = async () => {
 
 export const setAppSettings = async (data: object) => {
   const rep = await getRepository(repositories.SETTINGS);
-  const settings: any = await rep.findOne();
+  const settings: any = await rep.findOneBy({});
   settings.data = JSON.stringify({
     ...JSON.parse(settings.data),
     ...data

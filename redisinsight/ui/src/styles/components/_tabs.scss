@@ -45,3 +45,32 @@
     width: 2px;
   }
 }
+
+.tabs-active-borders {
+  .euiTab {
+    border-radius: 0;
+    padding: 8px 12px !important;
+    border-bottom: 1px solid var(--separatorColor);
+    color: var(--euiTextSubduedColor) !important;
+
+    &.euiTab-isSelected {
+      color: var(--euiColorPrimary) !important;
+      background-color: inherit !important;
+      border-bottom: 2px solid var(--euiColorPrimary);
+    }
+
+    .euiTab__content {
+      font-size: 13px !important;
+      line-height: 18px !important;
+      font-weight: 500 !important;
+    }
+  }
+
+  .euiTab + .euiTab {
+    margin-left: 0 !important;
+
+    &::after {
+      display: none !important;
+    }
+  }
+}

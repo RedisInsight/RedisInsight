@@ -43,7 +43,7 @@ export class CaCertBusinessService {
    */
   async getOneById(id: string): Promise<CaCertificateEntity> {
     this.logger.log(`Getting CA certificate with id: ${id}.`);
-    const entity = await this.repository.findOne({ where: { id } });
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       this.logger.error(`Unable to find CA certificate with id: ${id}`);
@@ -55,9 +55,7 @@ export class CaCertBusinessService {
 
   async create(certDto: CaCertDto): Promise<CaCertificateEntity> {
     this.logger.log('Creating certificate.');
-    const found = await this.repository.findOne({
-      where: { name: certDto.name },
-    });
+    const found = await this.repository.findOneBy({ name: certDto.name });
     if (found) {
       this.logger.error(
         `Failed to create certificate. ${ERROR_MESSAGES.CA_CERT_EXIST}. name: ${certDto.name}`,
@@ -84,7 +82,7 @@ export class CaCertBusinessService {
 
   async delete(id: string): Promise<void> {
     this.logger.log(`Deleting certificate. id: ${id}`);
-    const found = await this.repository.findOne({ where: { id } });
+    const found = await this.repository.findOneBy({ id });
     if (!found) {
       this.logger.error(`Failed to delete certificate. Not Found. id: ${id}`);
       throw new NotFoundException();

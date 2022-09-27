@@ -59,7 +59,7 @@ describe('DELETE /instance/:instanceId/workbench/command-executions/:commandExec
         },
         after: async () => {
           expect(await (await (localDb.getRepository(localDb.repositories.COMMAND_EXECUTION)))
-            .findOne({ id: constants.TEST_COMMAND_EXECUTION_ID_1 })).to.eql(undefined);
+            .findOneBy({ id: constants.TEST_COMMAND_EXECUTION_ID_1 })).to.eql(null);
         },
       },
     ].map(mainCheckFn);

@@ -1,16 +1,15 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { processCliClient, setCliEnteringCommand } from 'uiSrc/slices/cli/cli-settings'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { InitOutputText } from 'uiSrc/constants/cliOutput'
+import { concatToOutput } from 'uiSrc/slices/cli/cli-output'
+import { setCliEnteringCommand } from 'uiSrc/slices/cli/cli-settings'
+import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'
 import CliWrapper from './CliWrapper'
-
-jest.mock('uiSrc/slices/cli/cli-output', () => ({
-  ...jest.requireActual('uiSrc/slices/cli/cli-output'),
-  concatToOutput: () => jest.fn(),
-}))
 
 const redisCommandsPath = 'uiSrc/slices/app/redis-commands'
 
+let mathRandom: jest.SpyInstance<number>
+const random = 0.91911
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -32,6 +31,14 @@ jest.mock(redisCommandsPath, () => {
 })
 
 describe('CliWrapper', () => {
+  beforeAll(() => {
+    mathRandom = jest.spyOn(Math, 'random').mockImplementation(() => random)
+  })
+
+  afterAll(() => {
+    mathRandom.mockRestore()
+  })
+
   it('should render', () => {
     expect(render(<CliWrapper />)).toBeTruthy()
   })
@@ -40,7 +47,12 @@ describe('CliWrapper', () => {
 
     unmount()
 
-    const expectedActions = [processCliClient(), setCliEnteringCommand()]
-    expect(store.getActions().slice(-2)).toEqual(expectedActions)
+    const handleWorkbenchClick = () => {}
+
+    const expectedActions = [
+      concatToOutput(InitOutputText('', 0, 0, true, handleWorkbenchClick)),
+      setCliEnteringCommand(),
+    ]
+    expect(clearStoreActions(store.getActions().slice(-2))).toEqual(clearStoreActions(expectedActions))
   })
 })

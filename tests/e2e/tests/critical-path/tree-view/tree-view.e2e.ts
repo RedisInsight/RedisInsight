@@ -7,9 +7,11 @@ import {
 } from '../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
+const common = new Common();
 
 const keyNameFilter = `keyName${chance.word({ length: 10 })}`;
 
@@ -32,7 +34,7 @@ test
 test
     .meta({ rte: rte.standalone })('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
         await t.click(browserPage.treeViewButton);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         //Verify that "Tree view" mode enabled state is saved
         await t.expect(browserPage.treeViewArea.visible).ok('The tree view is displayed');
     });
@@ -40,15 +42,7 @@ test
     .meta({ rte: rte.standalone })('Verify that user can scan DB by 10K in tree view', async t => {
         await t.click(browserPage.treeViewButton);
         //Verify that user can use the "Scan More" button to search per another 10000 keys
-        for (let i = 10; i < 100; i += 10) {
-            // scannedValue = scannedValue + 10;
-            await t.expect(browserPage.progressKeyList.exists).notOk('Progress Bar is not displayed', { timeout: 30000 });
-            const scannedValueText = await browserPage.scannedValue.textContent;
-            const regExp = new RegExp(`${i} 00` + '.');
-            await t.expect(scannedValueText).match(regExp, `The database is automatically scanned by ${i} 000 keys`);
-            await t.doubleClick(browserPage.scanMoreButton);
-            await t.expect(browserPage.progressKeyList.exists).ok('Progress Bar is displayed', { timeout: 30000 });
-        }
+        await browserPage.verifyScannningMore();
     });
 test
     .after(async() => {

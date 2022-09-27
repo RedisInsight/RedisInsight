@@ -1,4 +1,3 @@
-import { t } from 'testcafe';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import {
     discoverSentinelDatabaseApi,
@@ -14,9 +13,11 @@ import {
     ossSentinelConfig,
     ossClusterConfig
 } from '../../../helpers/conf';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const common = new Common();
 const databases = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: ossStandaloneConfig.databaseName },
     { host: ossClusterConfig.ossClusterHost, port: ossClusterConfig.ossClusterPort, databaseName: ossClusterConfig.ossClusterDatabaseName },
@@ -27,7 +28,7 @@ const oldDBName = ossStandaloneConfig.databaseName;
 const newDBName = '! Edited Standalone DB name';
 const sortList = async(): Promise<string[]> => {
     const sortedByName = databases.sort((a, b) => a.databaseName > b.databaseName ? 1 : -1);
-    const sortedDatabaseNames = [];
+    const sortedDatabaseNames: string[] = [];
     for (let i = 0; i < sortedByName.length; i++) {
         sortedDatabaseNames.push(sortedByName[i].databaseName);
     }
@@ -46,7 +47,7 @@ fixture `Remember database sorting`
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig, 1);
         // Reload Page
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
     .afterEach(async() => {
         // Clear and delete databases
@@ -72,7 +73,7 @@ test('Verify that sorting on the list of databases saved when database opened', 
     const sortedDatabaseHost = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.name[0], ossStandaloneConfig.databaseName];
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedDatabaseHost);
     // Verify that sorting on the list of databases saved when databases list refreshed
-    await t.eval(() => location.reload());
+    await common.reloadPage();
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedDatabaseHost);
 });

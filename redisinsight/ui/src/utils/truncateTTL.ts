@@ -54,11 +54,11 @@ export const truncateTTLToRange = (ttl: number) => {
 // 500 => 8min, 20s
 // 1500 => 25 min
 // 2500000 => 28d, 22h, 26min
-export const truncateTTLToDuration = (ttl: number): string => {
+export const truncateNumberToDuration = (number: number): string => {
   try {
     const duration = intervalToDuration({
       start: 0,
-      end: ttl * 1_000,
+      end: number * 1_000,
     })
 
     const formattedDuration = formatDuration(duration, {
@@ -78,5 +78,5 @@ export const truncateTTLToDuration = (ttl: number): string => {
 export const truncateTTLToSeconds = (ttl: number) =>
   ttl?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') ?? ''
 
-export const truncateNumberToFirstUnit = (ttl: number): string =>
-  truncateTTLToDuration(ttl).split(TRUNCATE_DELIMITER)[0]
+export const truncateNumberToFirstUnit = (number: number): string =>
+  truncateNumberToDuration(number).split(TRUNCATE_DELIMITER)[0]

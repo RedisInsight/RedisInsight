@@ -18,7 +18,7 @@ export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.ZSet]: (key: string, member = 'member', score = 1) => `ZADD ${key} ${score} '${member}'`,
     [KeyTypesTexts.String]: (key: string, value = 'val') => `SET ${key} '${value}'`,
     [KeyTypesTexts.ReJSON]: (key: string, json = '"val"') => `JSON.SET ${key} . '${json}'`,
-    [KeyTypesTexts.Stream]: (key: string, value: string | number = 'value', field: string | number = 1) => `XADD ${key} * '${field}' '${value}'`,
+    [KeyTypesTexts.Stream]: (key: string, value: string | number = 'value', field: string | number = 'field') => `XADD ${key} * '${field}' '${value}'`,
     [KeyTypesTexts.Graph]: (key: string) => `GRAPH.QUERY ${key} "CREATE ()"`,
     [KeyTypesTexts.TimeSeries]: (key: string) => `TS.CREATE ${key}`
 });

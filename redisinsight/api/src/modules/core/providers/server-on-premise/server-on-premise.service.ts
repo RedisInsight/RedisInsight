@@ -4,10 +4,12 @@ import config from 'src/utils/config';
 import { AppAnalyticsEvents } from 'src/constants/app-events';
 import { TelemetryEvents } from 'src/constants/telemetry-events';
 import { GetServerInfoResponse } from 'src/dto/server.dto';
-import { ServerRepository } from 'src/modules/core/repositories/server.repository';
 import { AppType, BuildType, IServerProvider } from 'src/modules/core/models/server-provider.interface';
 import { ServerInfoNotFoundException } from 'src/constants/exceptions';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ServerEntity } from 'src/modules/core/models/server.entity';
 
 const SERVER_CONFIG = config.get('server');
 const REDIS_STACK_CONFIG = config.get('redisStack');
@@ -17,19 +19,14 @@ export class ServerOnPremiseService
 implements OnApplicationBootstrap, IServerProvider {
   private logger = new Logger('ServerOnPremiseService');
 
-  private repository: ServerRepository;
-
-  private eventEmitter: EventEmitter2;
-
-  private encryptionService: EncryptionService;
-
   private sessionId: number;
 
-  constructor(repository, eventEmitter, encryptionService) {
-    this.repository = repository;
-    this.eventEmitter = eventEmitter;
-    this.encryptionService = encryptionService;
-  }
+  constructor(
+    @InjectRepository(ServerEntity)
+    private readonly repository: Repository<ServerEntity>,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly encryptionService: EncryptionService,
+  ) {}
 
   async onApplicationBootstrap(sessionId: number = new Date().getTime()) {
     this.sessionId = sessionId;
@@ -38,7 +35,7 @@ implements OnApplicationBootstrap, IServerProvider {
 
   private async upsertServerInfo() {
     this.logger.log('Checking server info.');
-    let serverInfo = await this.repository.findOne();
+    let serverInfo = await this.repository.findOneBy({});
     if (!serverInfo) {
       this.logger.log('First application launch.');
       // Create default server info on first application launch
@@ -83,7 +80,7 @@ implements OnApplicationBootstrap, IServerProvider {
   public async getInfo(): Promise<GetServerInfoResponse> {
     this.logger.log('Getting server info.');
     try {
-      const info = await this.repository.findOne();
+      const info = await this.repository.findOneBy({});
       if (!info) {
         return Promise.reject(new ServerInfoNotFoundException());
       }

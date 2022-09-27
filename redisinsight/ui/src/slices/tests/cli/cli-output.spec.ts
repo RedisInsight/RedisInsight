@@ -8,7 +8,7 @@ import { apiService } from 'uiSrc/services'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
 import { cliParseTextResponseWithOffset, cliParseTextResponseWithRedirect } from 'uiSrc/utils/cliHelper'
 import ApiErrors from 'uiSrc/constants/apiErrors'
-import { updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
+import { processCliClient, updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
 import reducer, {
   concatToOutput,
   initialState,
@@ -23,7 +23,9 @@ import reducer, {
   updateCliCommandHistory,
 } from '../../cli/cli-output'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 jest.mock('uiSrc/slices/cli/cli-settings', () => ({
   ...jest.requireActual('uiSrc/slices/cli/cli-settings'),
   updateCliClientAction: jest.fn()
@@ -352,10 +354,8 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
           concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
-          concatToOutput(['\n']),
-          concatToOutput(['\n'])
+          processCliClient(),
         ]
-        expect(updateCliClientAction).toHaveBeenCalled()
         expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
       })
     })
@@ -482,10 +482,8 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
           concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
-          concatToOutput(['\n']),
-          concatToOutput(['\n'])
+          processCliClient(),
         ]
-        expect(updateCliClientAction).toHaveBeenCalled()
         expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
       })
     })

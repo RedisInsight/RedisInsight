@@ -43,7 +43,7 @@ export class ClientCertBusinessService {
    */
   async getOneById(id: string): Promise<ClientCertificateEntity> {
     this.logger.log(`Getting client certificate with id: ${id}.`);
-    const entity = await this.repository.findOne({ where: { id } });
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       this.logger.error(`Unable to find client certificate with id: ${id}`);
@@ -55,9 +55,7 @@ export class ClientCertBusinessService {
 
   async create(certDto: ClientCertPairDto): Promise<ClientCertificateEntity> {
     this.logger.log('Creating certificate.');
-    const found = await this.repository.findOne({
-      where: { name: certDto.name },
-    });
+    const found = await this.repository.findOneBy({ name: certDto.name });
 
     if (found) {
       this.logger.error(
@@ -90,7 +88,7 @@ export class ClientCertBusinessService {
 
   async delete(id: string): Promise<void> {
     this.logger.log(`Deleting client-certificate. id: ${id}`);
-    const found = await this.repository.findOne({ where: { id } });
+    const found = await this.repository.findOneBy({ id });
 
     if (!found) {
       this.logger.error(

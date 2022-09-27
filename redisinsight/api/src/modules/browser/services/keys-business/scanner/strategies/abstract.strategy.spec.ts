@@ -14,13 +14,13 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { StandaloneStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/standalone.strategy';
 import { AbstractStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/abstract.strategy';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
-import * as Redis from 'ioredis';
+import IORedis from 'ioredis';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(IORedis.prototype);
 
 const mockKeyInfo: GetKeyInfoResponse = {
   name: 'testString',

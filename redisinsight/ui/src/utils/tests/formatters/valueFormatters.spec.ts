@@ -1,4 +1,5 @@
 import { encode } from '@msgpack/msgpack'
+import { serialize } from 'php-serialize'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { anyToBuffer, bufferToSerializedFormat, stringToBuffer, stringToSerializedBufferFormat } from 'uiSrc/utils'
 
@@ -41,6 +42,27 @@ describe('bufferToSerializedFormat', () => {
       })
     })
   })
+
+  describe(KeyValueFormat.PHP, () => {
+    describe('should properly serialize', () => {
+      const testValues = [[1], '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
+        input: stringToBuffer(serialize(v)),
+        expected: JSON.stringify(v)
+      }))
+
+      test.each(testValues)('test %j', ({ input, expected }) => {
+        expect(bufferToSerializedFormat(KeyValueFormat.PHP, input)).toEqual(expected)
+      })
+    })
+
+    describe('should properly return value with invalid values', () => {
+      const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
+
+      test.each(testValues)('test json values', (val) => {
+        expect(bufferToSerializedFormat(KeyValueFormat.PHP, stringToBuffer(val))).toEqual(val)
+      })
+    })
+  })
 })
 
 describe('stringToSerializedBufferFormat', () => {
@@ -79,6 +101,27 @@ describe('stringToSerializedBufferFormat', () => {
 
       test.each(testValues)('test json values', (val) => {
         expect(stringToSerializedBufferFormat(KeyValueFormat.Msgpack, val)).toEqual(stringToBuffer(val))
+      })
+    })
+  })
+
+  describe(KeyValueFormat.PHP, () => {
+    describe('should properly unserialize', () => {
+      const testValues = [[1], '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
+        input: JSON.stringify(v),
+        expected: stringToBuffer(serialize(v))
+      }))
+
+      test.each(testValues)('test %j', ({ input, expected }) => {
+        expect(stringToSerializedBufferFormat(KeyValueFormat.PHP, input)).toEqual(expected)
+      })
+    })
+
+    describe('should properly return value with invalid values', () => {
+      const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
+
+      test.each(testValues)('test json values', (val) => {
+        expect(stringToSerializedBufferFormat(KeyValueFormat.PHP, val)).toEqual(stringToBuffer(val))
       })
     })
   })

@@ -4,18 +4,20 @@ import { acceptLicenseTerms } from '../../../helpers/database';
 import {MyRedisDatabasePage} from '../../../pageObjects';
 import {commonUrl, ossStandaloneConfig} from '../../../helpers/conf';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const common = new Common();
 const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Github functionality`
     .meta({ type: 'regression' })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async () => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
         // Reload Page
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
     .afterEach(async() => {
         //Delete database

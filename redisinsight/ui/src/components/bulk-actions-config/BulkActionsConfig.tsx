@@ -16,7 +16,7 @@ import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 interface IProps {
   retryDelay?: number;
@@ -51,7 +51,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
     })
 
     // Catch connect error
-    socketRef.current?.on(SocketEvent.ConnectionError, (error) => {})
+    socketRef.current?.on(SocketEvent.ConnectionError, () => {})
 
     // Catch disconnect
     socketRef.current?.on(SocketEvent.Disconnect, () => {

@@ -45,7 +45,7 @@ test('Verify that user can click on a row to expand it if any of its cells conta
     await t.expect(entryFieldSmall.clientHeight).lt(startSmallCellHeight + 5, 'Row is expanded', { timeout: 5000 });
     // Verify that user can expand/collapse for stream data type
     await t.click(entryFieldLong);
-    await t.expect(entryFieldLong.clientHeight).gt(startLongCellHeight + 150, 'Row is not expanded', { timeout: 5000 });
+    await t.expect(entryFieldLong.clientHeight).gt(startLongCellHeight + 130, 'Row is not expanded', { timeout: 5000 });
     // Verify that user can collapse the row by clicking anywhere on the expanded row
     await t.click(entryFieldLong);
     await t.expect(entryFieldLong.clientHeight).eql(startLongCellHeight, 'Row is not collapsed', { timeout: 5000 });
@@ -58,7 +58,7 @@ test('Verify that user can expand/collapse for hash data type', async t => {
     const startCellHeight = await fieldValueCell.clientHeight;
     // Verify that user can expand a row of hash data type
     await t.click(fieldValueCell);
-    await t.expect(fieldValueCell.clientHeight).gt(startCellHeight + 150, 'Row is not expanded', { timeout: 5000 });
+    await t.expect(fieldValueCell.clientHeight).gt(startCellHeight + 130, 'Row is not expanded', { timeout: 5000 });
     // Verify that user can collapse a row of hash data type
     await t.click(fieldValueCell);
     await t.expect(fieldValueCell.clientHeight).eql(startCellHeight, 'Row is not collapsed', { timeout: 5000 });
@@ -71,7 +71,7 @@ test('Verify that user can expand/collapse for set data type', async t => {
     const startLongCellHeight = await memberValueCell.clientHeight;
     // Verify that user can expand a row of set data type
     await t.click(memberValueCell);
-    await t.expect(memberValueCell.clientHeight).gt(startLongCellHeight + 150, 'Row is not expanded', { timeout: 5000 });
+    await t.expect(memberValueCell.clientHeight).gt(startLongCellHeight + 130, 'Row is not expanded', { timeout: 5000 });
     // Verify that user can collapse a row of set data type
     await t.click(memberValueCell);
     await t.expect(memberValueCell.clientHeight).eql(startLongCellHeight, 'Row is not collapsed', { timeout: 5000 });
@@ -84,7 +84,7 @@ test('Verify that user can expand/collapse for sorted set data type', async t =>
     const startLongCellHeight = await memberValueCell.clientHeight;
     // Verify that user can expand a row of sorted set data type
     await t.click(memberValueCell);
-    await t.expect(memberValueCell.clientHeight).gt(startLongCellHeight + 150, 'Row is not expanded', { timeout: 5000 });
+    await t.expect(memberValueCell.clientHeight).gt(startLongCellHeight + 130, 'Row is not expanded', { timeout: 5000 });
     // Verify that user can collapse a row of sorted set data type
     await t.click(memberValueCell);
     await t.expect(memberValueCell.clientHeight).eql(startLongCellHeight, 'Row is not collapsed', { timeout: 5000 });
@@ -97,7 +97,7 @@ test('Verify that user can expand/collapse for list data type', async t => {
     const startLongCellHeight = await elementValueCell.clientHeight;
     // Verify that user can expand a row of list data type
     await t.click(elementValueCell);
-    await t.expect(elementValueCell.clientHeight).gt(startLongCellHeight + 150, 'Row is not expanded', { timeout: 5000 });
+    await t.expect(elementValueCell.clientHeight).gt(startLongCellHeight + 130, 'Row is not expanded', { timeout: 5000 });
     // Verify that user can collapse a row of list data type
     await t.click(elementValueCell);
     await t.expect(elementValueCell.clientHeight).eql(startLongCellHeight, 'Row is not collapsed', { timeout: 5000 });

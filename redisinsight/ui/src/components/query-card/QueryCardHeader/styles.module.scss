@@ -40,10 +40,10 @@ $marginIcon: 12px;
 }
 
 .titleWrapper {
-  width: calc(100% - 350px);
+  width: calc(100% - 380px);
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 420px);
+    width: calc(100% - 450px);
   }
 }
 

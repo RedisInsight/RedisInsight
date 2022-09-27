@@ -17,7 +17,7 @@ const COMMANDS_CONFIGS = config.get('commands');
     },
   ],
   exports: [
-    CommandsService
-  ]
+    CommandsService,
+  ],
 })
 export class CommandsModule {}

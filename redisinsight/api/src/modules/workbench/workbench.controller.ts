@@ -26,7 +26,7 @@ export class WorkbenchController {
       },
     ],
   })
-  @Post('/commands-execution')
+  @Post('/command-executions')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async sendCommands(

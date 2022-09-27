@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import { when } from 'jest-when';
 import { IRedisClusterNode, RedisClusterNodeLinkState, ReplyError } from 'src/models';
 import {
@@ -18,8 +18,10 @@ import { ConfigurationBusinessService } from './configuration-business.service';
 const mockClient = Object.create(Redis.prototype);
 const mockClusterNode1 = Object.create(Redis.prototype);
 const mockClusterNode2 = Object.create(Redis.prototype);
-mockClusterNode1.send_command = jest.fn();
-mockClusterNode2.send_command = jest.fn();
+mockClusterNode1.call = jest.fn();
+mockClusterNode2.call = jest.fn();
+mockClusterNode1.info = jest.fn();
+mockClusterNode2.info = jest.fn();
 const mockCluster = Object.create(Redis.Cluster.prototype);
 
 const mockRedisClusterNodesDto: IRedisClusterNode[] = [
@@ -86,13 +88,15 @@ describe('ConfigurationBusinessService', () => {
     service = await module.get<ConfigurationBusinessService>(
       ConfigurationBusinessService,
     );
-    mockClient.send_command = jest.fn();
+    mockClient.call = jest.fn();
+    mockClient.info = jest.fn();
+    mockClient.cluster = jest.fn();
   });
 
   describe('checkClusterConnection', () => {
     it('cluster connection ok', async () => {
-      when(mockClient.send_command)
-        .calledWith('cluster', ['info'])
+      when(mockClient.cluster)
+        .calledWith('INFO')
         .mockResolvedValue(mockRedisClusterOkInfoResponse);
 
       const result = await service.checkClusterConnection(mockClient);
@@ -101,8 +105,8 @@ describe('ConfigurationBusinessService', () => {
     });
 
     it('cluster connection ok', async () => {
-      when(mockClient.send_command)
-        .calledWith('cluster', ['info'])
+      when(mockClient.cluster)
+        .calledWith('INFO')
         .mockResolvedValue(mockRedisClusterFailInfoResponse);
 
       const result = await service.checkClusterConnection(mockClient);
@@ -115,7 +119,7 @@ describe('ConfigurationBusinessService', () => {
         message: 'ERR This instance has cluster support disabled',
         command: 'CLUSTER',
       };
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('cluster', ['info'])
         .mockRejectedValue(replyError);
 
@@ -127,7 +131,7 @@ describe('ConfigurationBusinessService', () => {
 
   describe('checkSentinelConnection', () => {
     it('sentinel connection ok', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('sentinel', ['masters'])
         .mockResolvedValue(mockRedisSentinelMasterResponse);
 
@@ -141,7 +145,7 @@ describe('ConfigurationBusinessService', () => {
         message: 'Unknown command `sentinel`',
         command: 'SENTINEL',
       };
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('sentinel', ['masters'])
         .mockRejectedValue(replyError);
 
@@ -153,7 +157,7 @@ describe('ConfigurationBusinessService', () => {
 
   describe('getRedisClusterNodes', () => {
     it('should return nodes in a defined format', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('cluster', ['nodes'])
         .mockResolvedValue(mockRedisClusterNodesResponse);
 
@@ -167,7 +171,7 @@ describe('ConfigurationBusinessService', () => {
         message: 'ERR This instance has cluster support disabled',
         command: 'CLUSTER',
       };
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('cluster', ['nodes'])
         .mockRejectedValue(replyError);
 
@@ -182,7 +186,7 @@ describe('ConfigurationBusinessService', () => {
 
   describe('getDatabasesCount', () => {
     it('get databases count', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('config', ['get', 'databases'])
         .mockResolvedValue(['databases', '16']);
 
@@ -191,7 +195,7 @@ describe('ConfigurationBusinessService', () => {
       expect(result).toBe(16);
     });
     it('get databases count for limited redis db', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('config', ['get', 'databases'])
         .mockResolvedValue([]);
 
@@ -200,7 +204,7 @@ describe('ConfigurationBusinessService', () => {
       expect(result).toBe(1);
     });
     it('failed to get databases config', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('config', ['get', 'databases'])
         .mockRejectedValue(new Error("unknown command 'config'"));
 
@@ -212,13 +216,13 @@ describe('ConfigurationBusinessService', () => {
 
   describe('getLoadedModulesList', () => {
     it('get modules by using MODULE LIST command', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('module', ['list'])
         .mockResolvedValue(mockRedisModuleList);
 
       const result = await service.getLoadedModulesList(mockClient);
 
-      expect(mockClient.send_command).not.toHaveBeenCalledWith('command', expect.anything());
+      expect(mockClient.call).not.toHaveBeenCalledWith('command', expect.anything());
       expect(result).toEqual([
         { name: RedisModules.RedisAI, version: 10000, semanticVersion: '1.0.0' },
         { name: RedisModules.RedisGraph, version: 10000, semanticVersion: '1.0.0' },
@@ -231,10 +235,10 @@ describe('ConfigurationBusinessService', () => {
       ]);
     });
     it('detect all modules by using COMMAND INFO command', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('module', ['list'])
         .mockRejectedValue(mockUnknownCommandModule);
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('command', expect.anything())
         .mockResolvedValue([
           null,
@@ -243,7 +247,7 @@ describe('ConfigurationBusinessService', () => {
 
       const result = await service.getLoadedModulesList(mockClient);
 
-      expect(mockClient.send_command).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
+      expect(mockClient.call).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
       expect(result).toEqual([
         { name: RedisModules.RedisAI },
         { name: RedisModules.RedisGraph },
@@ -255,25 +259,25 @@ describe('ConfigurationBusinessService', () => {
       ]);
     });
     it('detect only RediSearch module by using COMMAND INFO command', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('module', ['list'])
         .mockRejectedValue(mockUnknownCommandModule);
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('command', ['info', ...REDIS_MODULES_COMMANDS.get(RedisModules.RediSearch)])
         .mockResolvedValue([['FT.INFO', -1, ['readonly'], 0, 0, -1, []]]);
 
       const result = await service.getLoadedModulesList(mockClient);
 
-      expect(mockClient.send_command).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
+      expect(mockClient.call).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
       expect(result).toEqual([
         { name: RedisModules.RediSearch },
       ]);
     });
     it('should return empty array if MODULE LIST and COMMAND command not allowed', async () => {
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('module', ['list'])
         .mockRejectedValue(mockUnknownCommandModule);
-      when(mockClient.send_command)
+      when(mockClient.call)
         .calledWith('command', expect.anything())
         .mockRejectedValue(mockUnknownCommandModule);
 
@@ -288,8 +292,8 @@ describe('ConfigurationBusinessService', () => {
       service.getDatabasesCount = jest.fn().mockResolvedValue(16);
     });
     it('get general info for redis standalone', async () => {
-      when(mockClient.send_command)
-        .calledWith('info')
+      when(mockClient.info)
+        .calledWith()
         .mockResolvedValue(mockStandaloneRedisInfoReply);
 
       const result = await service.getRedisGeneralInfo(mockClient);
@@ -301,7 +305,7 @@ describe('ConfigurationBusinessService', () => {
       }\r\n${
         mockRedisClientsInfoResponse
       }\r\n`;
-      when(mockClient.send_command).calledWith('info').mockResolvedValue(reply);
+      when(mockClient.info).calledWith().mockResolvedValue(reply);
 
       const result = await service.getRedisGeneralInfo(mockClient);
 
@@ -317,11 +321,11 @@ describe('ConfigurationBusinessService', () => {
       mockCluster.nodes = jest
         .fn()
         .mockReturnValue([mockClusterNode1, mockClusterNode2]);
-      when(mockClusterNode1.send_command)
-        .calledWith('info')
+      when(mockClusterNode1.info)
+        .calledWith()
         .mockResolvedValue(mockStandaloneRedisInfoReply);
-      when(mockClusterNode2.send_command)
-        .calledWith('info')
+      when(mockClusterNode2.info)
+        .calledWith()
         .mockResolvedValue(mockStandaloneRedisInfoReply);
 
       const result = await service.getRedisGeneralInfo(mockCluster);

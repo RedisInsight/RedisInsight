@@ -7,6 +7,10 @@ import {
 } from 'uiSrc/utils/test-utils'
 
 import { apiService } from 'uiSrc/services'
+import { mswServer } from 'uiSrc/mocks/server'
+import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
+import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
+import { APP_INFO_DATA_MOCK } from 'uiSrc/mocks/handlers/app/infoHandlers'
 import reducer, {
   initialState,
   setAnalyticsIdentified,
@@ -139,22 +143,14 @@ describe('slices', () => {
 
   describe('getServerInfoSuccess', () => {
     it('should properly set state after success', () => {
-      // Arrange
-      const data = {
-        id: 'id1',
-        createDateTime: '2000-01-01T00:00:00.000Z',
-        appVersion: '2.0.0',
-        osPlatform: 'win32',
-        buildType: 'ELECTRON'
-      }
       const state = {
         ...initialState,
         loading: false,
-        server: data
+        server: APP_INFO_DATA_MOCK
       }
 
       // Act
-      const nextState = reducer(initialState, getServerInfoSuccess(data))
+      const nextState = reducer(initialState, getServerInfoSuccess(APP_INFO_DATA_MOCK))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -190,40 +186,20 @@ describe('slices', () => {
   // thunks
   describe('fetchServerInfo', () => {
     it('succeed to fetch server info', async () => {
-      // Arrange
-      const data = {
-        id: 'id1',
-        createDateTime: '2000-01-01T00:00:00.000Z',
-        appVersion: '2.0.0',
-        osPlatform: 'win32',
-        buildType: 'ELECTRON'
-      }
-      const responsePayload = { status: 200, data }
-
-      apiService.get = jest.fn().mockResolvedValue(responsePayload)
-
       // Act
       await store.dispatch<any>(fetchServerInfo(jest.fn()))
 
       // Assert
       const expectedActions = [
         getServerInfo(),
-        getServerInfoSuccess(data),
+        getServerInfoSuccess(APP_INFO_DATA_MOCK),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })
 
     it('failed to fetch server info', async () => {
-      // Arrange
-      const errorMessage = 'Something was wrong!'
-      const responsePayload = {
-        response: {
-          status: 500,
-          data: { message: errorMessage },
-        },
-      }
-      apiService.get = jest.fn().mockRejectedValue(responsePayload)
+      mswServer.use(...errorHandlers)
 
       // Act
       await store.dispatch<any>(fetchServerInfo(jest.fn(), jest.fn()))
@@ -231,7 +207,7 @@ describe('slices', () => {
       // Assert
       const expectedActions = [
         getServerInfo(),
-        getServerInfoFailure(errorMessage),
+        getServerInfoFailure(DEFAULT_ERROR_MESSAGE),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)

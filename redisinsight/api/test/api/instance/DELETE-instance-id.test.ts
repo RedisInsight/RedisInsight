@@ -39,10 +39,10 @@ describe('DELETE /instance/:id', () => {
         name: 'Should remove single database',
         endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
         before: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.not.eql(undefined)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.be.an('object')
         },
         after: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(undefined)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(null)
         },
       },
       {
@@ -55,7 +55,7 @@ describe('DELETE /instance/:id', () => {
           error: 'Not Found'
         },
         before: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(undefined)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(null)
         },
       },
     ].map(mainCheckFn);

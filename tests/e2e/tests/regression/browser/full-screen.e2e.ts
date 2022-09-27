@@ -40,7 +40,7 @@ test
         const widthAfterFullScreen = await browserPage.keyDetailsTable.clientWidth;
         await t.expect(widthAfterFullScreen).gt(widthBeforeFullScreen, 'Width after switching to full screen');
         await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('Key Details Table');
-        await t.expect(browserPage.keyDetailsValue.withExactText(keyValue).exists).ok('Key Value in Details');
+        await t.expect(browserPage.stringKeyValueInput.withExactText(keyValue).exists).ok('Key Value in Details');
         // Verify that user can exit full screen in key details and two tables with keys and key details are displayed
         await t.click(browserPage.fullScreenModeButton);
         const widthAfterExitFullScreen = await browserPage.keyDetailsTable.clientWidth;

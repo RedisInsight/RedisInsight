@@ -1,12 +1,11 @@
 import React from 'react'
-import { mock } from 'ts-mockito'
-import { slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
+import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
 import SlowLogPage from './SlowLogPage'
 
-jest.mock('uiSrc/slices/slowlog/slowlog', () => ({
-  ...jest.requireActual('uiSrc/slices/slowlog/slowlog'),
+jest.mock('uiSrc/slices/analytics/slowlog', () => ({
+  ...jest.requireActual('uiSrc/slices/analytics/slowlog'),
   slowLogSelector: jest.fn().mockReturnValue({
     data: [],
     config: null,

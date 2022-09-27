@@ -19,7 +19,7 @@ import {
   updateSelectedKeyRefreshTime,
 } from './keys'
 import { AppDispatch, RootState } from '../store'
-import { RedisResponseBuffer, RedisString, StateHash } from '../interfaces'
+import { HashField, RedisResponseBuffer, StateHash } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: StateHash = {
@@ -27,7 +27,7 @@ export const initialState: StateHash = {
   error: '',
   data: {
     total: 0,
-    key: '',
+    key: undefined,
     keyName: '',
     fields: [],
     nextCursor: 0,
@@ -46,7 +46,7 @@ const hashSlice = createSlice({
   reducers: {
     setHashInitialState: () => initialState,
 
-    setHashFields: (state, { payload }: PayloadAction<HashFieldDto[]>) => {
+    setHashFields: (state, { payload }: PayloadAction<HashField[]>) => {
       state.data.fields = payload
     },
 
@@ -137,7 +137,7 @@ const hashSlice = createSlice({
       state.loading = false
       state.error = payload
     },
-    removeFieldsFromList: (state, { payload }: { payload: RedisString[] }) => {
+    removeFieldsFromList: (state, { payload }: { payload: RedisResponseBuffer[] }) => {
       remove(state.data?.fields, ({ field }) =>
         payload.findIndex((item) => isEqualBuffers(item, field)) > -1)
 
@@ -146,7 +146,7 @@ const hashSlice = createSlice({
         total: state.data.total - 1,
       }
     },
-    updateFieldsInList: (state, { payload }: { payload: HashFieldDto[] }) => {
+    updateFieldsInList: (state, { payload }: { payload: HashField[] }) => {
       const newFieldsState = state.data.fields.map((listItem) => {
         const index = payload.findIndex(
           (item) => isEqualBuffers(item.field, listItem.field)

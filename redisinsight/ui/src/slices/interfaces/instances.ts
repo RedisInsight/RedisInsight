@@ -1,3 +1,4 @@
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces/app'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/dto/hash.dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
@@ -143,6 +144,13 @@ export enum RedisCustomModulesName {
   IpTables = 'iptables-input-filter',
 }
 
+const RediSearchModulesText = [
+  RedisDefaultModules.Search,
+  RedisDefaultModules.SearchLight,
+  RedisDefaultModules.FT,
+  RedisDefaultModules.FTL
+].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
+
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
   [RedisDefaultModules.AI]: 'RedisAI',
@@ -150,13 +158,10 @@ export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
   [RedisDefaultModules.Gears]: 'RedisGears',
   [RedisDefaultModules.Bloom]: 'RedisBloom',
   [RedisDefaultModules.ReJSON]: 'RedisJSON',
-  [RedisDefaultModules.Search]: 'RediSearch',
-  [RedisDefaultModules.SearchLight]: 'RediSearch Light',
-  [RedisDefaultModules.FT]: 'RediSearch',
-  [RedisDefaultModules.FTL]: 'RediSearch Light',
   [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
   [RedisCustomModulesName.Proto]: 'redis-protobuf',
-  [RedisCustomModulesName.IpTables]: 'RedisPushIpTables'
+  [RedisCustomModulesName.IpTables]: 'RedisPushIpTables',
+  ...RediSearchModulesText
 })
 
 export enum AddRedisClusterDatabaseOptions {
@@ -316,17 +321,17 @@ export interface ILoadedSentinel {
 }
 
 export interface ModifiedGetSetMembersResponse extends GetSetMembersResponse {
-  key?: string
+  key?: RedisResponseBuffer
   match?: string
 }
 
 export interface ModifiedZsetMembersResponse extends SearchZSetMembersResponse {
-  key?: string
+  key?: RedisResponseBuffer
   match?: string
 }
 
 export interface ModifiedGetHashMembersResponse extends GetHashFieldsResponse {
-  key?: string
+  key?: RedisResponseBuffer
   match?: string
 }
 

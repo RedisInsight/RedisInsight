@@ -51,7 +51,9 @@ import reducer, {
 } from '../../browser/list'
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let dateNow: jest.SpyInstance<number>
@@ -187,7 +189,7 @@ describe('list slice', () => {
       const data = {
         keyName: 'list',
         key: 'list',
-        elements: ['1', '23', '432'].map((element, i) => (stringToBuffer(element))),
+        elements: ['1', '23', '432'].map((element) => (stringToBuffer(element))),
         // elements: ['1', '23', '432'].map((element, i) => ({ element: stringToBuffer(element), index: i })),
         total: 1,
       }

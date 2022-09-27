@@ -130,7 +130,7 @@ describe('RedisService', () => {
     });
     it('should select redis database by number', async () => {
       const mockClient = new Redis();
-      mockClient.send_command = jest.fn();
+      mockClient.call = jest.fn();
       const dto = convertEntityToDto(mockStandaloneDatabaseEntity);
       service.createStandaloneClient = jest.fn().mockResolvedValue(mockClient);
 

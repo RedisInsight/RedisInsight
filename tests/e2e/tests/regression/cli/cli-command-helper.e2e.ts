@@ -1,4 +1,3 @@
-import { ClientFunction } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { CliPage } from '../../../pageObjects';
@@ -8,9 +7,11 @@ import {
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { CliActions } from '../../../common-actions/cli-actions';
 
 const cliPage = new CliPage();
 const common = new Common();
+const cliActions = new CliActions();
 let filteringGroup = '';
 let filteringGroups: string[] = [];
 let commandToCheck = '';
@@ -19,8 +20,6 @@ let commandArgumentsToCheck = '';
 let commandsArgumentsToCheck: string[] = [];
 let externalPageLink = '';
 let externalPageLinks: string[] = [];
-
-const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `CLI Command helper`
     .meta({ type: 'regression' })
@@ -102,7 +101,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -121,7 +120,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -140,7 +139,8 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
+        // await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         await t.switchToParentWindow();
     });
 test
@@ -177,7 +177,7 @@ test
             //Click on Read More link for selected command
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).eql(externalPageLinks[i], 'The opened page');
+            await common.checkURL(externalPageLinks[i]);
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;
@@ -200,7 +200,7 @@ test
         //Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
         //Close the window with external link to switch to the application window
         await t.closeWindow();
     });
@@ -241,9 +241,33 @@ test
             //Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).eql(externalPageLinks[i], 'The opened page');
+            await common.checkURL(externalPageLinks[i]);
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;
         }
+    });
+test
+    .meta({ rte: rte.standalone })('Verify that user can go back to list of commands for group in Command Helper', async t => {
+        filteringGroup = 'Search';
+        commandToCheck = 'FT.EXPLAIN';
+        const commandForSearch = 'EXPLAIN';
+        //Open Command Helper
+        await t.click(cliPage.expandCommandHelperButton);
+        //Select one command from the list
+        await t.typeText(cliPage.cliHelperSearch, commandForSearch);
+        await cliPage.selectFilterGroupType(filteringGroup);
+        // Remember found commands
+        const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
+        const filteredCommands: string[] = [];
+        for (let i = 0; i < commandsFilterCount; i++) {
+            filteredCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
+        }
+        // Select command
+        await t.click(cliPage.cliHelperOutputTitles.withExactText(commandToCheck));
+        // Click return button
+        await t.click(cliPage.returnToList);
+        // Check that user returned to list with filter and search applied
+        await cliActions.checkCommandsInCommandHelper(filteredCommands);
+        await t.expect(cliPage.returnToList.exists).notOk('Return to list button still displayed');
     });

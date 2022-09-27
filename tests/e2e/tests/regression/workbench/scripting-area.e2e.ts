@@ -15,7 +15,7 @@ const settingsPage = new SettingsPage();
 const indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 10 });
 
-fixture`Scripting area at Workbench`
+fixture `Scripting area at Workbench`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -40,7 +40,7 @@ test
         //Go to Settings page
         await t.click(myRedisDatabasePage.settingsButton);
         //Specify Commands in pipeline
-        await t.click(settingsPage.accordionAdvancedSettings);
+        await t.click(settingsPage.accordionWorkbenchSettings);
         await settingsPage.changeCommandsInPipeline('1');
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
@@ -68,7 +68,7 @@ test
         //Go to Settings page
         await t.click(myRedisDatabasePage.settingsButton);
         //Specify Commands in pipeline
-        await t.click(settingsPage.accordionAdvancedSettings);
+        await t.click(settingsPage.accordionWorkbenchSettings);
         await settingsPage.changeCommandsInPipeline('1');
         //Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);

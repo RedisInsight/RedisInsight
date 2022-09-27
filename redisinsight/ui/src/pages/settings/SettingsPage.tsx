@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setTitle } from 'uiSrc/utils'
 import { THEMES } from 'uiSrc/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { ConsentsNotifications, ConsentsPrivacy, AdvancedSettings } from 'uiSrc/components'
+import { ConsentsNotifications, ConsentsPrivacy } from 'uiSrc/components'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -29,6 +29,8 @@ import {
   fetchUserSettingsSpec,
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
+
+import { AdvancedSettings, WorkbenchSettings } from './components'
 
 import styles from './styles.module.scss'
 
@@ -103,7 +105,18 @@ const SettingsPage = () => {
     </div>
   )
 
-  const AdvancedSettingsNavGroup = () => (
+  const WorkbenchSettingsGroup = () => (
+    <div>
+      {loading && (
+        <div className={styles.cover}>
+          <EuiLoadingSpinner size="xl" />
+        </div>
+      )}
+      <WorkbenchSettings />
+    </div>
+  )
+
+  const AdvancedSettingsGroup = () => (
     <div>
       {loading && (
         <div className={styles.cover}>
@@ -112,7 +125,7 @@ const SettingsPage = () => {
       )}
       <EuiCallOut className={styles.warning}>
         <EuiText size="s" className={styles.smallText}>
-          These settings should only be changed if you understand their impact.
+          Advanced settings should only be changed if you understand their impact.
         </EuiText>
       </EuiCallOut>
       <AdvancedSettings />
@@ -148,12 +161,21 @@ const SettingsPage = () => {
           </EuiCollapsibleNavGroup>
           <EuiCollapsibleNavGroup
             isCollapsible
+            className={styles.accordion}
+            title="Workbench"
+            initialIsOpen={false}
+            data-test-subj="accordion-workbench-settings"
+          >
+            {WorkbenchSettingsGroup()}
+          </EuiCollapsibleNavGroup>
+          <EuiCollapsibleNavGroup
+            isCollapsible
             className={cx(styles.accordion, styles.accordionWithSubTitle)}
             title="Advanced"
             initialIsOpen={false}
             data-test-subj="accordion-advanced-settings"
           >
-            {AdvancedSettingsNavGroup()}
+            {AdvancedSettingsGroup()}
           </EuiCollapsibleNavGroup>
         </EuiPageContentBody>
       </EuiPageBody>

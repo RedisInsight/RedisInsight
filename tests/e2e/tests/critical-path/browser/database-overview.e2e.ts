@@ -34,7 +34,7 @@ let keys2: string[];
 fixture `Database overview`
     .meta({type: 'critical_path'})
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
@@ -48,8 +48,8 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
-        const firstDatabaseModules = [];
-        const secondDatabaseModules = [];
+        const firstDatabaseModules: string[] = [];
+        const secondDatabaseModules: string[] = [];
         //Remember modules
         let countOfModules = await browserPage.modulesButton.count;
         for(let i = 0; i < countOfModules; i++) {
@@ -67,7 +67,7 @@ test
         //Add database with different modules
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         countOfModules = await browserPage.modulesButton.count;
         for(let i = 0; i < countOfModules; i++) {
@@ -123,7 +123,7 @@ test
         //Add database with more than 1M keys
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneBigConfig);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneBigConfig.databaseName);
         //Wait 5 seconds
         await t.wait(fiveSecondsTimeout);

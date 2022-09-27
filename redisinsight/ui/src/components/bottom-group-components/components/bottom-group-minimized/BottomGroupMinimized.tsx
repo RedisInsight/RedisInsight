@@ -3,6 +3,7 @@ import cx from 'classnames'
 import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import {
   clearSearchingCommand,
@@ -14,6 +15,7 @@ import {
 } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { monitorSelector, toggleHideMonitor, toggleMonitor } from 'uiSrc/slices/cli/monitor'
+import SurveyIcon from 'uiSrc/assets/img/survey_icon.svg'
 
 import styles from '../../styles.module.scss'
 
@@ -67,6 +69,12 @@ const BottomGroupMinimized = () => {
     dispatch(toggleMonitor())
   }
 
+  const onClickSurvey = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.USER_SURVEY_LINK_CLICKED
+    })
+  }
+
   return (
     <div className={styles.containerMinimized}>
       <EuiFlexGroup
@@ -117,6 +125,19 @@ const BottomGroupMinimized = () => {
           </EuiBadge>
         </EuiFlexItem>
       </EuiFlexGroup>
+      <a
+        className={styles.surveyLink}
+        target="_blank"
+        rel="noreferrer"
+        href={EXTERNAL_LINKS.userSurvey}
+        onClick={onClickSurvey}
+        data-testid="user-survey-link"
+      >
+        <>
+          <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
+          <span>We need your opinion. Please take our survey.</span>
+        </>
+      </a>
     </div>
   )
 }

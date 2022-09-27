@@ -100,6 +100,7 @@ export class BrowserPage {
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
+    userSurveyLink = Selector('[data-testid=user-survey-link]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');

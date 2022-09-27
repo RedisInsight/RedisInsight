@@ -11,12 +11,12 @@
 
 .tooltip {
   position: fixed;
-  background: var(--separatorColor);
+  background: var(--euiTooltipBackgroundColor);
   color: var(--htmlColor);
   padding: 10px;
   visibility: hidden;
   border-radius: 4px;
-  z-index: 5;
+  z-index: 100;
 }
 
 .chartLabel {

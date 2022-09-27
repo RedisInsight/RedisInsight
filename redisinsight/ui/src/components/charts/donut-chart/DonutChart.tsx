@@ -1,9 +1,11 @@
 import cx from 'classnames'
 import * as d3 from 'd3'
 import { sumBy } from 'lodash'
-import React, { useEffect, useRef } from 'react'
-import { truncateNumberToRange } from 'uiSrc/utils'
+import React, { useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
+import { Nullable, truncateNumberToRange } from 'uiSrc/utils'
 import { rgb, RGBColor } from 'uiSrc/utils/colors'
+import { getPercentage } from 'uiSrc/utils/numbers'
 
 import styles from './styles.module.scss'
 
@@ -11,6 +13,9 @@ export interface ChartData {
   value: number
   name: string
   color: RGBColor
+  meta?: {
+    [key: string]: any
+  }
 }
 
 interface IProps {
@@ -32,8 +37,9 @@ interface IProps {
     arcLabelValue?: string
     tooltip?: string
   }
-  renderLabel?: (value: number) => string
-  renderTooltip?: (value: number) => string
+  renderLabel?: (data: ChartData) => string
+  renderTooltip?: (data: ChartData) => React.ReactElement | string
+  labelAs?: 'value' | 'percentage'
 }
 
 const ANIMATION_DURATION_MS = 100
@@ -47,8 +53,9 @@ const DonutChart = (props: IProps) => {
     title,
     config,
     classNames,
+    labelAs = 'value',
     renderLabel,
-    renderTooltip = (v) => v,
+    renderTooltip,
   } = props
 
   const margin = config?.margin || 98
@@ -56,8 +63,10 @@ const DonutChart = (props: IProps) => {
   const arcWidth = config?.arcWidth || 8
   const percentToShowLabel = config?.percentToShowLabel || 5
 
+  const [hoveredData, setHoveredData] = useState<Nullable<ChartData>>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
+  const sum = sumBy(data, 'value')
 
   const arc = d3.arc<d3.PieArcDatum<ChartData>>()
     .outerRadius(radius)
@@ -74,12 +83,20 @@ const DonutChart = (props: IProps) => {
       .duration(ANIMATION_DURATION_MS)
       .attr('d', arcHover)
 
-    if (tooltipRef.current) {
-      tooltipRef.current.innerHTML = `${d.data.name}: ${renderTooltip(d.value)}`
-      tooltipRef.current.style.visibility = 'visible'
-      tooltipRef.current.style.top = `${e.pageY + 15}px`
-      tooltipRef.current.style.left = `${e.pageX + 15}px`
+    if (!tooltipRef.current) {
+      return
     }
+
+    // calculate position after tooltip rendering (do update as synchronous operation)
+    if (e.type === 'mouseenter') {
+      flushSync(() => { setHoveredData(d.data) })
+    }
+
+    tooltipRef.current.style.top = `${e.pageY + 15}px`
+    tooltipRef.current.style.left = (window.innerWidth < (tooltipRef.current.scrollWidth + e.pageX + 20))
+      ? `${e.pageX - tooltipRef.current.scrollWidth - 15}px`
+      : `${e.pageX + 15}px`
+    tooltipRef.current.style.visibility = 'visible'
   }
 
   const onMouseLeaveSlice = (e: MouseEvent) => {
@@ -91,6 +108,7 @@ const DonutChart = (props: IProps) => {
 
     if (tooltipRef.current) {
       tooltipRef.current.style.visibility = 'hidden'
+      setHoveredData(null)
     }
   }
 
@@ -148,11 +166,26 @@ const DonutChart = (props: IProps) => {
       .on('mouseenter mousemove', onMouseEnterSlice)
       .on('mouseleave', onMouseLeaveSlice)
       .append('tspan')
-      .text((d) => (isShowLabel(d) ? `: ${renderLabel ? renderLabel(d.value) : truncateNumberToRange(d.value)}` : ''))
+      .text((d) => {
+        if (!isShowLabel(d)) {
+          return ''
+        }
+
+        if (renderLabel) {
+          return renderLabel(d.data)
+        }
+
+        const separator = ': '
+        if (labelAs === 'percentage') {
+          return `${separator}${getPercentage(d.value, sum)}%`
+        }
+
+        return `${separator}${truncateNumberToRange(d.value)}`
+      })
       .attr('class', cx(styles.chartLabelValue, classNames?.arcLabelValue))
   }, [data])
 
-  if (!data.length || sumBy(data, 'value') === 0) {
+  if (!data.length || sum === 0) {
     return null
   }
 
@@ -163,7 +196,9 @@ const DonutChart = (props: IProps) => {
         className={cx(styles.tooltip, classNames?.tooltip)}
         data-testid="chart-value-tooltip"
         ref={tooltipRef}
-      />
+      >
+        {(renderTooltip && hoveredData) ? renderTooltip(hoveredData) : (hoveredData?.value || '')}
+      </div>
       {title && (
         <div className={styles.innerTextContainer}>
           {title}

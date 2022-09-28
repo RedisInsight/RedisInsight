@@ -1,12 +1,11 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { env, rte } from '../../../helpers/constants';
-import { BrowserPage, SlowLogPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { deleteAllDatabasesApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const slowLogPage = new SlowLogPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const common = new Common();
 const externalPageLink = 'https://www.surveymonkey.com/r/redisinsight';
@@ -32,7 +31,7 @@ test('Verify that user can use survey link', async t => {
     await t.click(myRedisDatabasePage.workbenchButton);
     await t.expect(browserPage.userSurveyLink.visible).ok('Survey Link is not displayed');
     // Slow Log page
-    await t.click(slowLogPage.slowLogPageButton);
+    await t.click(myRedisDatabasePage.analysisPageButton);
     await t.expect(browserPage.userSurveyLink.visible).ok('Survey Link is not displayed');
     // PubSub page
     await t.click(myRedisDatabasePage.pubSubButton);

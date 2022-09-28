@@ -37,7 +37,7 @@ const AnalysisDataView = (props: Props) => {
         )
       }
       {
-        reports.length && data?.totalKeys?.total === 0 && (
+        !!reports.length && data?.totalKeys?.total === 0 && (
           <EmptyAnalysisMessage
             title={emptyMessageContent.noKeys.title}
             text={emptyMessageContent.noKeys.text}

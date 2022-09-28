@@ -85,7 +85,7 @@ const DatabaseAnalysisPage = () => {
   return (
     <>
       <InstanceHeader />
-      <div className={styles.main} data-testid="cluster-details-page">
+      <div className={styles.main} data-testid="database-analysis-page">
         <Header
           reports={reports}
           selectedValue={selectedAnalysis}

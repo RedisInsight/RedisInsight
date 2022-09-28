@@ -1,5 +1,5 @@
 import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
-import { getFileInfo, getPagesInsideGroup } from './getFileInfo'
+import { getFileInfo, getPagesInsideGroup } from '../getFileInfo'
 
 const getFileInfoTests = [
   {

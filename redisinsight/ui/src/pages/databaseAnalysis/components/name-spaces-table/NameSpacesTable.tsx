@@ -4,6 +4,7 @@ import {
   EuiInMemoryTable,
   EuiButtonIcon,
   EuiButtonEmpty,
+  EuiToolTip,
   PropertySort
 } from '@elastic/eui'
 import { useParams, useHistory } from 'react-router-dom'
@@ -138,12 +139,17 @@ const NameSpacesTable = (props: Props) => {
         const [number, size] = formatBytes(value, 3, true)
 
         return (
-          <>
-            <span className={styles.count} data-testid={`nsp-usedMemory-value=${value}`}>
-              {number}
-            </span>
-            <span className={styles.valueUnit}>{size}</span>
-          </>
+          <EuiToolTip
+            content={`${numberWithSpaces(value)} B`}
+            data-testid="usedMemory-tooltip"
+          >
+            <>
+              <span className={styles.count} data-testid={`nsp-usedMemory-value=${value}`}>
+                {number}
+              </span>
+              <span className={styles.valueUnit}>{size}</span>
+            </>
+          </EuiToolTip>
         )
       }
     },

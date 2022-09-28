@@ -16,7 +16,6 @@ export interface Props {
 
 const AnalysisDataView = (props: Props) => {
   const { loading, reports = [], data } = props
-  console.log(data)
 
   if (loading) {
     return (

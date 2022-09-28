@@ -20,6 +20,7 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { getApproximateNumber } from 'uiSrc/utils/validations'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { Nullable } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
@@ -61,6 +62,26 @@ const Header = (props: Props) => {
     }
   })
 
+  const handleClick = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.MEMORY_ANALYSIS_STARTED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+    dispatch(createNewAnalysis(instanceId, delimiter))
+  }
+
+  const handleChangeReport = (value: string) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.MEMORY_ANALYSIS_HISTORY_VIEWED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+    onChangeSelectedAnalysis(value)
+  }
+
   return (
     <div data-testid="db-analysis-header">
       <AnalyticsTabs />
@@ -77,7 +98,7 @@ const Header = (props: Props) => {
                 className={styles.changeReport}
                 popoverClassName={styles.changeReport}
                 valueOfSelected={selectedValue ?? ''}
-                onChange={(value: string) => onChangeSelectedAnalysis(value)}
+                onChange={handleChangeReport}
                 data-testid="select-view-type"
               />
             </EuiFlexItem>
@@ -114,7 +135,7 @@ const Header = (props: Props) => {
                 iconType="playFilled"
                 iconSide="left"
                 disabled={analysisLoading}
-                onClick={() => dispatch(createNewAnalysis(instanceId, delimiter))}
+                onClick={handleClick}
                 size="s"
               >
                 New reports

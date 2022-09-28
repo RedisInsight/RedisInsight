@@ -20,7 +20,7 @@ fixture `User Survey`
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     });
-test.only('Verify that user can use survey link', async t => {
+test('Verify that user can use survey link', async t => {
     // Verify that user can see survey link on any page inside of DB
     // Browser page
     await t.click(browserPage.userSurveyLink);

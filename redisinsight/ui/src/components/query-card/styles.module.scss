@@ -3,6 +3,7 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .containerWrapper {
+  min-width: 420px;
   &:nth-of-type(even) {
     background-color: var(--euiColorEmptyShade) !important;
   }

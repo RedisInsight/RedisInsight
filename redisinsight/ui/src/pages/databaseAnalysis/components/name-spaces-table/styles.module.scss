@@ -51,10 +51,6 @@ $breakpoint-table: 1232px;
         justify-content: flex-start;
         align-items: flex-end;
 
-        // @media screen and (max-width: $breakpoint-table) {
-        //   padding: 12px 6px 12px 12px;
-        // }
-
         &.euiTableCellContent--alignRight {
           justify-content: flex-start;
           align-items: flex-end;
@@ -89,10 +85,6 @@ $breakpoint-table: 1232px;
     .euiTableCellContent {
       padding: 12px 12px 12px 12px;
       font: normal normal normal 14px/24px Graphik;
-
-      // @media screen and (max-width: $breakpoint-table) {
-      //   padding: 12px 6px 12px 12px;
-      // }
 
       &:global(.dataType) {
         padding: 12px 6px 4px;

@@ -14,7 +14,7 @@ import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/ana
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 
 import Header from './components/header'
 import AnalysisDataView from './components/analysis-data-view'
@@ -55,6 +55,12 @@ const DatabaseAnalysisPage = () => {
   }, [selectedAnalysis, reports])
 
   const handleSelectAnalysis = (reportId: string) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.MEMORY_ANALYSIS_HISTORY_VIEWED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
     dispatch(setSelectedAnalysisId(reportId))
     dispatch(fetchDBAnalysisAction(
       instanceId,
@@ -80,16 +86,14 @@ const DatabaseAnalysisPage = () => {
     <>
       <InstanceHeader />
       <div className={styles.main} data-testid="cluster-details-page">
-        <>
-          <Header
-            reports={reports}
-            selectedValue={selectedAnalysis}
-            onChangeSelectedAnalysis={handleSelectAnalysis}
-            progress={data?.progress}
-            analysisLoading={analysisLoading}
-          />
-          <AnalysisDataView loading={analysisLoading} reports={reports} data={data} />
-        </>
+        <Header
+          reports={reports}
+          selectedValue={selectedAnalysis}
+          onChangeSelectedAnalysis={handleSelectAnalysis}
+          progress={data?.progress}
+          analysisLoading={analysisLoading}
+        />
+        <AnalysisDataView loading={analysisLoading} reports={reports} data={data} />
       </div>
     </>
   )

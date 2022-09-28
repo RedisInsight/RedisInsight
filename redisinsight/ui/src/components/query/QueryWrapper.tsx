@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { EuiLoadingContent } from '@elastic/eui'
 import { decode } from 'html-entities'

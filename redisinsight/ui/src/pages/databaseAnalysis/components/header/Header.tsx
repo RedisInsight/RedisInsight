@@ -72,16 +72,6 @@ const Header = (props: Props) => {
     dispatch(createNewAnalysis(instanceId, delimiter))
   }
 
-  const handleChangeReport = (value: string) => {
-    sendEventTelemetry({
-      event: TelemetryEvent.MEMORY_ANALYSIS_HISTORY_VIEWED,
-      eventData: {
-        databaseId: instanceId,
-      }
-    })
-    onChangeSelectedAnalysis(value)
-  }
-
   return (
     <div data-testid="db-analysis-header">
       <AnalyticsTabs />
@@ -98,7 +88,7 @@ const Header = (props: Props) => {
                 className={styles.changeReport}
                 popoverClassName={styles.changeReport}
                 valueOfSelected={selectedValue ?? ''}
-                onChange={handleChangeReport}
+                onChange={(value: string) => onChangeSelectedAnalysis(value)}
                 data-testid="select-view-type"
               />
             </EuiFlexItem>

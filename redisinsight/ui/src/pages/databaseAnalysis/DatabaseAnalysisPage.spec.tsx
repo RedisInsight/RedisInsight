@@ -1,13 +1,6 @@
 import React from 'react'
-import { instance, mock } from 'ts-mockito'
-import {
-  DBAnalysisSelector,
-  DBAnalysisReportsSelector,
-  fetchDBAnalysisAction,
-  fetchDBAnalysisReportsHistory,
-  setSelectedAnalysisId
-} from 'uiSrc/slices/analytics/dbAnalysis'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { fetchDBAnalysisReportsHistory } from 'uiSrc/slices/analytics/dbAnalysis'
+import { render } from 'uiSrc/utils/test-utils'
 
 import DatabaseAnalysisPage from './DatabaseAnalysisPage'
 

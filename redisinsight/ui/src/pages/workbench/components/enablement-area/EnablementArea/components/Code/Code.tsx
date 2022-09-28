@@ -3,8 +3,8 @@ import React, { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import { getFileInfo, parseParams } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
-
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
+import { Maybe } from 'uiSrc/utils'
 
 import CodeButton from '../CodeButton'
 
@@ -21,7 +21,7 @@ const Code = ({ children, params, mode, ...rest }: Props) => {
 
   const loadContent = (execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams }) => {
     const pagePath = new URLSearchParams(search).get('item')
-    let file: { path: string, name: string } | undefined
+    let file: Maybe<{ path: string, name: string }>
 
     if (pagePath) {
       const pageInfo = getFileInfo(pagePath)

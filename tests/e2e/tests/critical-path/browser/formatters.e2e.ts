@@ -89,6 +89,7 @@ formattersForEditSet.forEach(formatter => {
         await browserPage.openKeyDetails(keysData[0].keyName);
         await browserPage.selectFormatter(formatter.format);
         await browserPage.editHashKeyValue(invalidText);
+        await t.click(browserPage.saveButton);
         // Verify that invalid value can be saved
         await t.expect(browserPage.hashFieldValue.textContent).contains(invalidText, `Invalid ${formatter.format} value is not saved`);
         // Add valid value which can be converted

@@ -320,7 +320,11 @@ const keysSlice = createSlice({
 
     // reset keys for keys slice
     resetKeys: (state) => cloneDeep(
-      { ...initialState, selectedKey: getInitialSelectedKeyState(state as KeysStore) }
+      {
+        ...initialState,
+        viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
+        selectedKey: getInitialSelectedKeyState(state as KeysStore)
+      }
     ),
 
     resetKeysData: (state) => {
@@ -397,7 +401,6 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
-
     if (type === KeyTypes.Hash) {
       dispatch(setHashInitialState())
     }

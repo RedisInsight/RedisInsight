@@ -58,7 +58,7 @@ const WorkbenchSettings = () => {
         initValue={batchSize.toString()}
         onApply={handleApplyPipelineCountChanges}
         validation={(value) => validateNumber(value)}
-        title="Pipeline mode"
+        title="Pipeline Mode"
         testid="pipeline-bunch"
         placeholder={`${PIPELINE_COUNT_DEFAULT}`}
         label="Commands in pipeline:"

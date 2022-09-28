@@ -149,7 +149,6 @@ test
     });
 test('Verify that when user clicks on “clear” control and filter per key name is applied filter is reset and rescan initiated', async t => {
         keyName = `KeyForSearch${chance.word({ length: 50 })}`;
-        keyName2 = `KeyForFearch${chance.word({ length: 10 })}`;
         //Add keys
         await browserPage.addStringKey(keyName);
         //Search for not existed key name

@@ -46,7 +46,7 @@ const AnalysisDataView = (props: Props) => {
         )
       }
       <div className={styles.grid}>
-        <TopNamespaceView data={data} loading={loading}  />
+        <TopNamespaceView data={data} loading={loading} />
       </div>
     </>
   )

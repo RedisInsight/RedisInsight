@@ -4,7 +4,6 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import reducer, {
   initialState,
-  addNewAnalysisReport,
   setDatabaseAnalysisInitialState,
   getDBAnalysis,
   getDBAnalysisSuccess,
@@ -111,59 +110,6 @@ describe('pubsub slice', () => {
           analytics: { databaseAnalysis: nextState },
         })
         expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
-      })
-    })
-    describe('addNewAnalysisReport', () => {
-      it('should properly set new analysis report', () => {
-        const payload = mockHistoryReport
-
-        // Arrange
-        const stateHistory = {
-          ...initialState.history,
-          data: [{ id: 'id', created: new Date('2021-04-22T09:03:56.917Z') }]
-        }
-
-        // Act
-        const nextState = reducer(initialState, addNewAnalysisReport(payload))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          analytics: { databaseAnalysis: nextState },
-        })
-        expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
-      })
-      it('should properly add new analysis report to existing state history', () => {
-        const payload = mockHistoryReport
-
-        const startState = {
-          ...initialState,
-          history: {
-            ...initialState.history,
-            data: null
-          }
-        }
-
-        // Arrange
-        const state = {
-          ...initialState,
-          history: {
-            ...initialState.history,
-            data: [
-              { id: 'id', created: new Date('2021-04-22T09:03:56.917Z') }
-            ]
-          }
-        }
-
-        // Act
-        const nextState = reducer({
-          ...startState,
-        }, addNewAnalysisReport(payload))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          analytics: { databaseAnalysis: nextState }
-        })
-        expect(DBAnalysisSelector(rootState)).toEqual(state)
       })
     })
     describe('loadDBAnalysisReportsError', () => {
@@ -347,6 +293,13 @@ describe('pubsub slice', () => {
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
+        const responsePayloadGet = {
+          data: [{ id: data.id, createdAt: data.createdAt }, mockHistoryReport],
+          status: 200
+        }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayloadGet)
+
         // Act
         await store.dispatch<any>(
           createNewAnalysis('instanceId', 'delimiter')
@@ -356,7 +309,7 @@ describe('pubsub slice', () => {
         const expectedActions = [
           getDBAnalysis(),
           getDBAnalysisSuccess(data),
-          addNewAnalysisReport({ id: data.id, createdAt: data.createdAt }),
+          loadDBAnalysisReports(),
           setSelectedAnalysisId(data.id)
         ]
 

@@ -50,7 +50,7 @@ const TopNamespaceView = (props: Props) => {
       </EuiButton>
       {loading
         ? (
-          <div style={{ height: '380px' }} data-testid="nsp-table-loader">
+          <div style={{ height: '380px', marginTop: '18px' }} data-testid="nsp-table-loader">
             <EuiLoadingContent lines={4} />
           </div>
         ) : (

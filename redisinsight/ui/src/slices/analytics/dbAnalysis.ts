@@ -52,16 +52,6 @@ const databaseAnalysisSlice = createSlice({
     setSelectedAnalysisId: (state, { payload }: PayloadAction<string>) => {
       state.history.selectedAnalysis = payload
     },
-    addNewAnalysisReport: (state, { payload }: PayloadAction<ShortDatabaseAnalysis>) => {
-      if (isNull(state.history.data)) {
-        state.history.data = [payload]
-      } else {
-        state.history.data = [
-          payload,
-          ...state.history.data,
-        ]
-      }
-    },
   }
 })
 
@@ -69,7 +59,6 @@ export const DBAnalysisSelector = (state: RootState) => state.analytics.database
 export const DBAnalysisReportsSelector = (state: RootState) => state.analytics.databaseAnalysis.history
 
 export const {
-  addNewAnalysisReport,
   setDatabaseAnalysisInitialState,
   getDBAnalysis,
   getDBAnalysisSuccess,
@@ -117,42 +106,6 @@ export function fetchDBAnalysisAction(
   }
 }
 
-export function createNewAnalysis(
-  instanceId: string,
-  delimiter: string,
-  onSuccessAction?: (data: DatabaseAnalysis) => void,
-  onFailAction?: () => void,
-) {
-  return async (dispatch: AppDispatch) => {
-    try {
-      dispatch(getDBAnalysis())
-
-      const { data, status } = await apiService.post<DatabaseAnalysis>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.DATABASE_ANALYSIS,
-        ),
-        {
-          delimiter,
-        }
-      )
-
-      if (isStatusSuccessful(status)) {
-        dispatch(getDBAnalysisSuccess(data))
-        dispatch(addNewAnalysisReport({ id: data.id, createdAt: data.createdAt }))
-        dispatch(setSelectedAnalysisId(data.id))
-        onSuccessAction?.(data)
-      }
-    } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(getDBAnalysisError(errorMessage))
-      onFailAction?.()
-    }
-  }
-}
-
 export function fetchDBAnalysisReportsHistory(
   instanceId: string,
   onSuccessAction?: (data: ShortDatabaseAnalysis[]) => void,
@@ -179,6 +132,42 @@ export function fetchDBAnalysisReportsHistory(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(loadDBAnalysisReportsError(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+export function createNewAnalysis(
+  instanceId: string,
+  delimiter: string,
+  onSuccessAction?: (data: DatabaseAnalysis) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(getDBAnalysis())
+
+      const { data, status } = await apiService.post<DatabaseAnalysis>(
+        getUrl(
+          instanceId,
+          ApiEndpoints.DATABASE_ANALYSIS,
+        ),
+        {
+          delimiter,
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getDBAnalysisSuccess(data))
+        dispatch<any>(fetchDBAnalysisReportsHistory(instanceId))
+        dispatch(setSelectedAnalysisId(data.id))
+        onSuccessAction?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(getDBAnalysisError(errorMessage))
       onFailAction?.()
     }
   }

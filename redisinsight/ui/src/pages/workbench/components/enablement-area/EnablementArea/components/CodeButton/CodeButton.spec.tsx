@@ -1,5 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import CodeButton, { Props } from './CodeButton'
 
@@ -14,6 +15,14 @@ describe('CodeButton', () => {
     expect(component).toBeTruthy()
     expect(container).toHaveTextContent(label)
   })
+
+  it('should not render auto-execute button', () => {
+    const label = 'Manual'
+    render(<CodeButton {...instance(mockedProps)} label={label} />)
+
+    expect(screen.queryByTestId(`preselect-auto-${label}`)).not.toBeInTheDocument()
+  })
+
   it('should call onClick function', () => {
     const onClick = jest.fn()
     const label = 'Manual'
@@ -22,5 +31,23 @@ describe('CodeButton', () => {
     fireEvent.click(screen.getByTestId(`preselect-${label}`))
 
     expect(onClick).toBeCalled()
+  })
+
+  it('should call onClick with auto execute param', () => {
+    const onClick = jest.fn()
+    const label = 'Auto'
+
+    render(
+      <CodeButton
+        {...instance(mockedProps)}
+        label={label}
+        onClick={onClick}
+        execute={ExecuteButtonMode.Auto}
+        params={{}}
+      />
+    )
+    fireEvent.click(screen.getByTestId(`preselect-auto-${label}`))
+
+    expect(onClick).toBeCalledWith(ExecuteButtonMode.Auto, {})
   })
 })

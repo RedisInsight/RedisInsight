@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import cx from 'classnames'
 import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
+import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { appContextWorkbenchEA, resetWorkbenchEAItem } from 'uiSrc/slices/app/context'
@@ -14,7 +15,7 @@ import {
   InternalLink,
   LazyCodeButton,
   LazyInternalPage,
-  PlainText
+  PlainText,
 } from './components'
 
 import styles from './styles.module.scss'
@@ -25,7 +26,13 @@ export interface Props {
   guides: Record<string, IEnablementAreaItem>
   tutorials: Record<string, IEnablementAreaItem>
   loading: boolean
-  openScript: (script: string, path?: string, name?: string) => void
+  openScript: (
+    script: string,
+    execute?: ExecuteButtonMode,
+    params?: CodeButtonParams,
+    path?: string,
+    name?: string
+  ) => void
   onOpenInternalPage: (page: IInternalPage) => void
   isCodeBtnDisabled?: boolean
 }

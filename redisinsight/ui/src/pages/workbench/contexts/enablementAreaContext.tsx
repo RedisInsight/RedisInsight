@@ -1,8 +1,15 @@
 import React from 'react'
+import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 interface IContext {
-  setScript: (script: string, path?: string, name?: string) => void;
-  openPage: (page: IInternalPage) => void;
+  setScript: (
+    script: string,
+    execute?: ExecuteButtonMode,
+    params?: CodeButtonParams,
+    path?: string,
+    name?: string
+  ) => void
+  openPage: (page: IInternalPage) => void
   isCodeBtnDisabled?: boolean
 }
 export interface IInternalPage {

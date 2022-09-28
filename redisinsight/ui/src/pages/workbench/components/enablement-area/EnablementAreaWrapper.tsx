@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react'
-import { monaco } from 'react-monaco-editor'
 import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import cx from 'classnames'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import React, { useEffect } from 'react'
+import { monaco } from 'react-monaco-editor'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-
-import { Nullable, } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+
+import { Nullable, } from 'uiSrc/utils'
 
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'
@@ -22,10 +23,12 @@ export interface Props {
   setIsMinimized: (value: boolean) => void
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
   setScript: (script: string) => void
+  onSubmit: (query: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   isCodeBtnDisabled?: boolean
 }
 
-const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScript, isCodeBtnDisabled }: Props) => {
+const EnablementAreaWrapper = (props: Props) => {
+  const { isMinimized, setIsMinimized, scriptEl, setScript, isCodeBtnDisabled, onSubmit } = props
   const { loading: loadingGuides, items: guides } = useSelector(workbenchGuidesSelector)
   const { loading: loadingTutorials, items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -49,10 +52,22 @@ const EnablementAreaWrapper = ({ isMinimized, setIsMinimized, scriptEl, setScrip
     })
   }
 
-  const openScript = (script: string, path?: string, name?: string) => {
+  const openScript = (
+    script: string,
+    execute = ExecuteButtonMode.Manual,
+    // for future implementation
+    _params?: CodeButtonParams,
+    path?: string,
+    name?: string
+  ) => {
     sendEventButtonClickedTelemetry({ path, name })
-    setScript(script)
 
+    if (execute === ExecuteButtonMode.Auto) {
+      onSubmit(script, null, false)
+      return
+    }
+
+    setScript(script)
     setTimeout(() => {
       scriptEl?.focus()
       scriptEl?.setSelection(new monaco.Selection(0, 0, 0, 0))

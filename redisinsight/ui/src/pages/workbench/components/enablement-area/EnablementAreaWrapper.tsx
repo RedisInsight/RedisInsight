@@ -6,12 +6,12 @@ import { monaco } from 'react-monaco-editor'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
+import { IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Nullable, } from 'uiSrc/utils'
-import { IInternalPage } from '../../contexts/enablementAreaContext'
 
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'

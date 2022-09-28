@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiIcon } from '@elastic/eui'
+import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiHideFor, EuiShowFor } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -135,7 +135,12 @@ const BottomGroupMinimized = () => {
       >
         <>
           <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
-          <span>We need your opinion. Please take our survey.</span>
+          <EuiHideFor sizes={['xs', 's']}>
+            <span>We need your opinion. Please take our survey.</span>
+          </EuiHideFor>
+          <EuiShowFor sizes={['xs', 's']}>
+            <span>Survey</span>
+          </EuiShowFor>
         </>
       </a>
     </div>

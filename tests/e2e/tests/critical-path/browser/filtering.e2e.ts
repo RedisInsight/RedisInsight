@@ -87,21 +87,21 @@ test
         await t.expect(browserPage.keysSummary.textContent).contains('Total', 'The filter is removed');
     });
 test
-.after(async() => {
+    .after(async() => {
     //Clear and delete database
-    await browserPage.deleteKeyByName(keyName);
-    await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-})('Verify that user can see filtering per key name starts when he press Enter or clicks the control to filter per key name', async t => { //Check filtering labes
-    keyName = chance.word({ length: 10 });
-    //Add new key
-    await browserPage.addStringKey(keyName);
-    //Check the filtering starts by press Enter
-    await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
-    await t.pressKey('enter');
-    await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');
-    //Check the filtering starts by clicks the control
-    await common.reloadPage();
-    await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
-    await t.click(browserPage.searchButton);
-    await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');
-});
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can see filtering per key name starts when he press Enter or clicks the control to filter per key name', async t => { //Check filtering labes
+        keyName = chance.word({ length: 10 });
+        //Add new key
+        await browserPage.addStringKey(keyName);
+        //Check the filtering starts by press Enter
+        await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
+        await t.pressKey('enter');
+        await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');
+        //Check the filtering starts by clicks the control
+        await common.reloadPage();
+        await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
+        await t.click(browserPage.searchButton);
+        await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');
+    });

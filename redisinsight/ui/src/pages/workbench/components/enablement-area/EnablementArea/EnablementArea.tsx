@@ -28,10 +28,8 @@ export interface Props {
   loading: boolean
   openScript: (
     script: string,
-    execute?: ExecuteButtonMode,
-    params?: CodeButtonParams,
-    path?: string,
-    name?: string
+    execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
+    file?: { path?: string, name?: string }
   ) => void
   onOpenInternalPage: (page: IInternalPage) => void
   isCodeBtnDisabled?: boolean

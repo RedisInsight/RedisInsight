@@ -11,10 +11,10 @@ import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workben
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Nullable, } from 'uiSrc/utils'
+import { IInternalPage } from '../../contexts/enablementAreaContext'
 
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'
-import { IInternalPage } from '../../contexts/enablementAreaContext'
 
 import styles from './styles.module.scss'
 
@@ -42,7 +42,7 @@ const EnablementAreaWrapper = (props: Props) => {
     dispatch(fetchTutorials())
   }, [])
 
-  const sendEventButtonClickedTelemetry = (data: Record<string, any>) => {
+  const sendEventButtonClickedTelemetry = (data?: Record<string, any>) => {
     sendEventTelemetry({
       event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_COMMAND_CLICKED,
       eventData: {
@@ -54,15 +54,12 @@ const EnablementAreaWrapper = (props: Props) => {
 
   const openScript = (
     script: string,
-    execute = ExecuteButtonMode.Manual,
-    // for future implementation
-    _params?: CodeButtonParams,
-    path?: string,
-    name?: string
+    execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams } = { mode: ExecuteButtonMode.Manual },
+    file?: { path?: string, name?: string }
   ) => {
-    sendEventButtonClickedTelemetry({ path, name })
+    sendEventButtonClickedTelemetry(file)
 
-    if (execute === ExecuteButtonMode.Auto) {
+    if (execute.mode === ExecuteButtonMode.Auto) {
       onSubmit(script, null, false)
       return
     }

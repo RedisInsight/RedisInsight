@@ -42,12 +42,12 @@ describe('CodeButton', () => {
         {...instance(mockedProps)}
         label={label}
         onClick={onClick}
-        execute={ExecuteButtonMode.Auto}
+        mode={ExecuteButtonMode.Auto}
         params={{}}
       />
     )
     fireEvent.click(screen.getByTestId(`preselect-auto-${label}`))
 
-    expect(onClick).toBeCalledWith(ExecuteButtonMode.Auto, {})
+    expect(onClick).toBeCalledWith({ mode: ExecuteButtonMode.Auto, params: {} })
   })
 })

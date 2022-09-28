@@ -4,10 +4,8 @@ import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/compo
 interface IContext {
   setScript: (
     script: string,
-    execute?: ExecuteButtonMode,
-    params?: CodeButtonParams,
-    path?: string,
-    name?: string
+    execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
+    file?: { path?: string, name?: string }
   ) => void
   openPage: (page: IInternalPage) => void
   isCodeBtnDisabled?: boolean

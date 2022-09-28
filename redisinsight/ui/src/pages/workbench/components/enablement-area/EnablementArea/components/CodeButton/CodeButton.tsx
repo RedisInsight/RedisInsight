@@ -1,4 +1,5 @@
 import { EuiButton, EuiIcon } from '@elastic/eui'
+import cx from 'classnames'
 import React from 'react'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { truncateText } from 'uiSrc/utils'
@@ -6,26 +7,26 @@ import { truncateText } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onClick: (execute?: ExecuteButtonMode, params?: CodeButtonParams) => void
+  onClick: (execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams }) => void
   label: string
   isLoading?: boolean
   disabled?: boolean
   className?: string
   params?: CodeButtonParams
-  execute?: ExecuteButtonMode
+  mode?: ExecuteButtonMode
 }
-const CodeButton = ({ onClick, label, isLoading, className, disabled, params, execute, ...rest }: Props) => {
-  const isAutoExecute = execute === ExecuteButtonMode.Auto
+const CodeButton = ({ onClick, label, isLoading, className, disabled, params, mode, ...rest }: Props) => {
+  const isAutoExecute = mode === ExecuteButtonMode.Auto
 
   return (
     <EuiButton
       iconSide="right"
       isLoading={isLoading}
       size="s"
-      onClick={() => onClick(execute, params)}
+      onClick={() => onClick({ mode, params })}
       fullWidth
       color="secondary"
-      className={[className, styles.button].join(' ')}
+      className={cx(className, styles.button)}
       textProps={{ className: styles.buttonText }}
       data-testid={`preselect-${isAutoExecute ? 'auto-' : ''}${label}`}
       disabled={disabled}

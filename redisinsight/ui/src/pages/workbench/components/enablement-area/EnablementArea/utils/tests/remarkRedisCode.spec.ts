@@ -5,7 +5,7 @@ import { remarkRedisCode } from '../remarkRedisCode'
 jest.mock('unist-util-visit')
 
 const getValue = (meta: string, execute = ExecuteButtonMode.Manual, params?: string, value?: string) =>
-  `<Code label="${meta}" params="${params}" execute="${execute}">{${JSON.stringify(value)}}</Code>`
+  `<Code label="${meta}" params="${params}" mode="${execute}">{${JSON.stringify(value)}}</Code>`
 
 describe('remarkRedisCode', () => {
   it('should not modify codeNode if lang not redis', () => {

@@ -26,11 +26,10 @@ import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analys
 
 import styles from './styles.module.scss'
 
-export const getFormatTime = (time: Date = new Date()): string =>
-  format(new Date(time), 'd MMM yyyy HH:mm')
+const dateFormat = 'd MMM yyyy HH:mm'
 
 export interface Props {
-  reports: ShortDatabaseAnalysis[]
+  items: ShortDatabaseAnalysis[]
   selectedValue: Nullable<string>
   progress?: AnalysisProgress
   analysisLoading: boolean
@@ -39,7 +38,7 @@ export interface Props {
 
 const Header = (props: Props) => {
   const {
-    reports = [],
+    items = [],
     selectedValue,
     onChangeSelectedAnalysis,
     progress = null,
@@ -51,14 +50,14 @@ const Header = (props: Props) => {
 
   const { delimiter } = useSelector(appContextBrowserTree)
 
-  const analysisOptions: EuiSuperSelectOption<any>[] = reports.map((item) => {
+  const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
     const { createdAt, id } = item
     return {
       value: id,
       inputDisplay: (
-        <span>{getFormatTime(createdAt)}</span>
+        <span>{format(new Date(createdAt ?? ''), dateFormat)}</span>
       ),
-      'data-test-subj': `reports-report-${id}`,
+      'data-test-subj': `items-report-${id}`,
     }
   })
 
@@ -75,8 +74,13 @@ const Header = (props: Props) => {
   return (
     <div data-testid="db-analysis-header">
       <AnalyticsTabs />
-      <EuiFlexGroup className={styles.container} gutterSize="none" alignItems="center" justifyContent="spaceBetween">
-        {reports.length ? (
+      <EuiFlexGroup
+        className={styles.container}
+        gutterSize="none"
+        alignItems="center"
+        justifyContent={items.length ? 'spaceBetween' : 'flexEnd'}
+      >
+        {items.length && (
           <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
             <EuiFlexItem grow={false}>
               <EuiText color="subdued">Report generated on:</EuiText>
@@ -89,7 +93,7 @@ const Header = (props: Props) => {
                 popoverClassName={styles.changeReport}
                 valueOfSelected={selectedValue ?? ''}
                 onChange={(value: string) => onChangeSelectedAnalysis(value)}
-                data-testid="select-view-type"
+                data-testid="select-report"
               />
             </EuiFlexItem>
             {!!progress && (
@@ -100,19 +104,22 @@ const Header = (props: Props) => {
                     className={styles.progress}
                     data-testid="analysis-progress"
                   >
-                    {`Scanned ${getApproximateNumber((
+                    {'Scanned '}
+                    {getApproximateNumber((
                       progress.total
                         ? progress.processed / progress.total
                         : 1
-                    ) * 100)}%`}
+                    ) * 100)}
+                    %
                   </EuiText>
-                  {` (${numberWithSpaces(progress.processed)}/${numberWithSpaces(progress.total)} keys)`}
+                  {` (${numberWithSpaces(progress.processed)}`}
+                  /
+                  {numberWithSpaces(progress.total)}
+                  keys
                 </EuiText>
               </EuiFlexItem>
             )}
           </EuiFlexGroup>
-        ) : (
-          <div />
         )}
         <div>
           <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>

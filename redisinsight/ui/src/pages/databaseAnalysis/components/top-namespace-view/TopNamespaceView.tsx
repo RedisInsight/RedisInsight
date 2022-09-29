@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiTitle, EuiLoadingContent } from '@elastic/eui'
-import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { Nullable } from 'uiSrc/utils'
+import { NSPTable } from 'uiSrc/constants'
+import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import NameSpacesTable from '../name-spaces-table'
-import { NSPTable } from '../../constants'
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -48,29 +48,28 @@ const TopNamespaceView = (props: Props) => {
       >
         by Number of Keys
       </EuiButton>
-      {loading
-        ? (
-          <div style={{ height: '380px', marginTop: '18px' }} data-testid="nsp-table-loader">
-            <EuiLoadingContent lines={4} />
-          </div>
-        ) : (
-          <>
-            {nspTable === NSPTable.MEMORY && (
+      {loading ? (
+        <div style={{ height: '380px', marginTop: '18px' }} data-testid="nsp-table-loader">
+          <EuiLoadingContent lines={4} />
+        </div>
+      ) : (
+        <>
+          {nspTable === NSPTable.MEMORY && (
+          <NameSpacesTable
+            data={data?.topMemoryNsp ?? []}
+            delimiter={data?.delimiter ?? ''}
+            dataTestid="nsp-table-memory"
+          />
+          )}
+          {nspTable === NSPTable.KEYS && (
             <NameSpacesTable
-              data={data?.topMemoryNsp ?? []}
+              data={data?.topKeysNsp ?? []}
               delimiter={data?.delimiter ?? ''}
-              dataTestid="nsp-table-memory"
+              dataTestid="nsp-table-keys"
             />
-            )}
-            {nspTable === NSPTable.KEYS && (
-              <NameSpacesTable
-                data={data?.topKeysNsp ?? []}
-                delimiter={data?.delimiter ?? ''}
-                dataTestid="nsp-table-keys"
-              />
-            )}
-          </>
-        )}
+          )}
+        </>
+      )}
     </div>
   )
 }

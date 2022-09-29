@@ -11,7 +11,6 @@ import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
-import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
 import { formatBytes, Nullable } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
@@ -20,8 +19,8 @@ import { Pages } from 'uiSrc/constants'
 import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-
 import { setBrowserTreeDelimiter, setBrowserKeyListDataLoaded, resetBrowserTree } from 'uiSrc/slices/app/context'
+import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 
 import styles from './styles.module.scss'
 
@@ -91,7 +90,6 @@ const NameSpacesTable = (props: Props) => {
                   <span className={styles.valueUnit}>{size}</span>
                 </div>
                 <div className={styles.rightAlign}>{type.keys}</div>
-                <div />
               </div>
             )
           })}

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiFlexGroup } from '@elastic/eui'
 
 import InstanceHeader from 'uiSrc/components/instance-header'
 import {
-  DBAnalysisSelector,
+  dbAnalysisSelector,
   DBAnalysisReportsSelector,
   fetchDBAnalysisAction,
   fetchDBAnalysisReportsHistory,
@@ -25,7 +24,7 @@ const DatabaseAnalysisPage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
-  const { loading: analysisLoading, data } = useSelector(DBAnalysisSelector)
+  const { loading: analysisLoading, data } = useSelector(dbAnalysisSelector)
   const { data: reports, selectedAnalysis } = useSelector(DBAnalysisReportsSelector)
   const { name: connectedInstanceName } = useSelector(connectedInstanceSelector)
 
@@ -34,9 +33,7 @@ const DatabaseAnalysisPage = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchDBAnalysisReportsHistory(
-      instanceId,
-    ))
+    dispatch(fetchDBAnalysisReportsHistory(instanceId))
 
     if (viewTab !== AnalyticsViewTab.DatabaseAnalysis) {
       dispatch(setAnalyticsViewTab(AnalyticsViewTab.DatabaseAnalysis))
@@ -45,9 +42,7 @@ const DatabaseAnalysisPage = () => {
 
   useEffect(() => {
     if (!selectedAnalysis && reports?.length) {
-      dispatch(setSelectedAnalysisId(
-        reports[0].id!,
-      ))
+      dispatch(setSelectedAnalysisId(reports[0].id!))
       dispatch(fetchDBAnalysisAction(
         instanceId,
         reports[0].id!
@@ -88,7 +83,7 @@ const DatabaseAnalysisPage = () => {
       <InstanceHeader />
       <div className={styles.main} data-testid="database-analysis-page">
         <Header
-          reports={reports}
+          items={reports}
           selectedValue={selectedAnalysis}
           onChangeSelectedAnalysis={handleSelectAnalysis}
           progress={data?.progress}

@@ -32,13 +32,13 @@ describe('DatabaseAnalysisHeader', () => {
   })
 
   it('should not render progress', () => {
-    const { queryByTestId } = render(<Header {...instance(mockedProps)} reports={mockReports} progress={undefined} />)
+    const { queryByTestId } = render(<Header {...instance(mockedProps)} items={mockReports} progress={undefined} />)
 
     expect(queryByTestId('analysis-progress')).not.toBeInTheDocument()
   })
 
   it('should render progress', () => {
-    render(<Header {...instance(mockedProps)} reports={mockReports} progress={mockProgress} />)
+    render(<Header {...instance(mockedProps)} items={mockReports} progress={mockProgress} />)
 
     expect(screen.getByTestId('analysis-progress')).toBeInTheDocument()
   })
@@ -49,21 +49,4 @@ describe('DatabaseAnalysisHeader', () => {
     const expectedActions = [getDBAnalysis()]
     expect(store.getActions()).toEqual(expectedActions)
   })
-})
-
-const getTimeTests = [
-  {
-    input: '2022-09-23T05:15:19.000Z',
-    expected: '23 Sep 2022 05:15'
-  }
-]
-
-describe.skip('getFormatTime', () => {
-  test.each(getTimeTests)(
-    '%j',
-    ({ input, expected }) => {
-      const result = getFormatTime(input)
-      expect(result).toEqual(expected)
-    }
-  )
 })

@@ -21,7 +21,7 @@ describe('AnalysisDataView', () => {
     expect(render(<AnalysisDataView {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should only table when loading="true"', () => {
+  it('should render only table when loading="true"', () => {
     const { queryByTestId } = render(<AnalysisDataView {...instance(mockedProps)} loading />)
 
     expect(queryByTestId('empty-analysis-no-reports')).not.toBeInTheDocument()

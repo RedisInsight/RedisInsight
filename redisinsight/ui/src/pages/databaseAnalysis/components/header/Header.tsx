@@ -121,41 +121,39 @@ const Header = (props: Props) => {
             )}
           </EuiFlexGroup>
         )}
-        <div>
-          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-            <EuiFlexItem style={{ overflow: 'hidden' }}>
-              <EuiButton
-                aria-label="New reports"
-                fill
-                data-testid="start-database-analysis-btn"
-                color="secondary"
-                iconType="playFilled"
-                iconSide="left"
-                disabled={analysisLoading}
-                onClick={handleClick}
-                size="s"
-              >
-                New reports
-              </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem style={{ paddingLeft: 12 }} grow={false}>
-              <EuiToolTip
-                position="bottom"
-                anchorClassName={styles.tooltipAnchor}
-                className={styles.tooltip}
-                title="Memory Efficiency"
-                content="Analyze up to 10K keys in your Redis database to get an overview of your data and memory efficiency recommendations."
-              >
-                <EuiIcon
-                  className={styles.infoIcon}
-                  type="iInCircle"
-                  size="l"
-                  data-testid="db-new-reports-icon"
-                />
-              </EuiToolTip>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </div>
+        <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+          <EuiFlexItem style={{ overflow: 'hidden' }}>
+            <EuiButton
+              aria-label="New reports"
+              fill
+              data-testid="start-database-analysis-btn"
+              color="secondary"
+              iconType="playFilled"
+              iconSide="left"
+              disabled={analysisLoading}
+              onClick={handleClick}
+              size="s"
+            >
+              New reports
+            </EuiButton>
+          </EuiFlexItem>
+          <EuiFlexItem style={{ paddingLeft: 12 }} grow={false}>
+            <EuiToolTip
+              position="bottom"
+              anchorClassName={styles.tooltipAnchor}
+              className={styles.tooltip}
+              title="Memory Efficiency"
+              content="Analyze up to 10K keys in your Redis database to get an overview of your data and memory efficiency recommendations."
+            >
+              <EuiIcon
+                className={styles.infoIcon}
+                type="iInCircle"
+                size="l"
+                data-testid="db-new-reports-icon"
+              />
+            </EuiToolTip>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       </EuiFlexGroup>
     </div>
   )

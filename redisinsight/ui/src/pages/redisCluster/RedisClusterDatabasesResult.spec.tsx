@@ -7,11 +7,6 @@ import RedisClusterDatabasesResult, {
 
 const mockedProps = mock<Props>()
 
-/**
- * RedisClusterDatabasesResult tests
- *
- * @group unit
- */
 describe('RedisClusterDatabasesResult', () => {
   it('should render', () => {
     const columnsMock = [

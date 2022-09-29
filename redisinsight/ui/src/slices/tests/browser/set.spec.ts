@@ -51,11 +51,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * set slice tests
- *
- * @group unit
- */
 describe('set slice', () => {
   beforeAll(() => {
     dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
@@ -65,11 +60,6 @@ describe('set slice', () => {
     dateNow.mockRestore()
   })
 
-  /**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -83,11 +73,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * loadSetMembers tests
- *
- * @group unit
- */
   describe('loadSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -107,11 +92,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * loadSetMembersSuccess tests
- *
- * @group unit
- */
   describe('loadSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -169,11 +149,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * loadSetMembersFailure tests
- *
- * @group unit
- */
   describe('loadSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -202,11 +177,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * loadMoreSetMembers tests
- *
- * @group unit
- */
   describe('loadMoreSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -234,11 +204,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * loadMoreSetMembersSuccess tests
- *
- * @group unit
- */
   describe('loadMoreSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -298,11 +263,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * loadMoreSetMembersFailure tests
- *
- * @group unit
- */
   describe('loadMoreSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -331,11 +291,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * addSetMembers tests
- *
- * @group unit
- */
   describe('addSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -355,11 +310,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * addSetMembersSuccess tests
- *
- * @group unit
- */
   describe('addSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -379,11 +329,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * addSetMembersFailure tests
- *
- * @group unit
- */
   describe('addSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -405,11 +350,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * removeSetMembers tests
- *
- * @group unit
- */
   describe('removeSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -429,11 +369,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * removeSetMembersSuccess tests
- *
- * @group unit
- */
   describe('removeSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -457,11 +392,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * removeSetMembersFailure tests
- *
- * @group unit
- */
   describe('removeSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -489,11 +419,7 @@ describe('set slice', () => {
       expect(setSelector(rootState)).toEqual(state)
     })
   })
-  /**
- * removeMembersFromList tests
- *
- * @group unit
- */
+
   describe('removeMembersFromList', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -530,17 +456,7 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
-  /**
- * fetchSetMembers tests
- *
- * @group unit
- */
     describe('fetchSetMembers', () => {
       // Arrange
       const data = {
@@ -594,11 +510,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * fetchMoreSetMembers tests
- *
- * @group unit
- */
   describe('fetchMoreSetMembers', () => {
     // Arrange
     const data = {
@@ -648,11 +559,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * addSetMembersAction tests
- *
- * @group unit
- */
   describe('addSetMembersAction', () => {
     const keyName = 'key'
     const members = ['member1', 'member2']
@@ -698,11 +604,6 @@ describe('set slice', () => {
     })
   })
 
-  /**
- * deleteSetMembers tests
- *
- * @group unit
- */
   describe('deleteSetMembers', () => {
     const key = 'key'
     const members = ['123', '123', '1']

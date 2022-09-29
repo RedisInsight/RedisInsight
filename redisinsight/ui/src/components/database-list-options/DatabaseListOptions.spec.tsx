@@ -14,11 +14,6 @@ const optionsMock: Partial<any> = {
   isReplicaSource: false,
 }
 
-/**
- * DatabaseListOptions tests
- *
- * @group unit
- */
 describe('DatabaseListOptions', () => {
   it('should render', () => {
     expect(render(<DatabaseListOptions options={optionsMock} />)).toBeTruthy()

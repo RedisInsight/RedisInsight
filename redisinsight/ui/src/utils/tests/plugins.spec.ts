@@ -1,11 +1,6 @@
 import { getVisualizationsByCommand } from 'uiSrc/utils'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 
-/**
- * getVisualizationsByCommand tests
- *
- * @group unit
- */
 describe('getVisualizationsByCommand', () => {
   it('should return proper visualizations by query', () => {
     const visualizations = [

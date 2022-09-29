@@ -5,11 +5,6 @@ import QueryCardCliDefaultResult, { Props } from './QueryCardCliDefaultResult'
 
 const mockedProps = mock<Props>()
 
-/**
- * QueryCardCliDefaultResult tests
- *
- * @group unit
- */
 describe('QueryCardCliDefaultResult', () => {
   it('should render', () => {
     expect(render(<QueryCardCliDefaultResult {...instance(mockedProps)} />)).toBeTruthy()

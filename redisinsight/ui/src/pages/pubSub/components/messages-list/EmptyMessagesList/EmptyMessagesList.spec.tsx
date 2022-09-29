@@ -4,11 +4,6 @@ import { render } from 'uiSrc/utils/test-utils'
 
 import EmptyMessagesList from './EmptyMessagesList'
 
-/**
- * EmptyMessagesList tests
- *
- * @group unit
- */
 describe('EmptyMessagesList', () => {
   it('should render', () => {
     expect(

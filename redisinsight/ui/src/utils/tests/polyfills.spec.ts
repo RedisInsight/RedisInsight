@@ -1,10 +1,5 @@
 import { scrollIntoView } from 'uiSrc/utils'
 
-/**
- * scrollIntoView tests
- *
- * @group unit
- */
 describe('scrollIntoView', () => {
   it('should called with options for all browser except Safari', () => {
     const mockScrollIntoView = jest.fn()

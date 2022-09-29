@@ -18,11 +18,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * WorkbenchSettings tests
- *
- * @group unit
- */
 describe('WorkbenchSettings', () => {
   it('should render', () => {
     expect(render(<WorkbenchSettings />)).toBeTruthy()

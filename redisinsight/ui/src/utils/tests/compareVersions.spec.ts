@@ -1,10 +1,5 @@
 import { isVersionHigherOrEquals, isVersionHigher } from 'uiSrc/utils'
 
-/**
- * isVersionHigherOrEqual tests
- *
- * @group unit
- */
 describe('isVersionHigherOrEqual', () => {
   it('isVersionHigherOrEqual should return true if the first version provided is higher or equal', () => {
     const version1 = '6.2'
@@ -29,11 +24,6 @@ describe('isVersionHigherOrEqual', () => {
   })
 })
 
-/**
- * isVersionHigher tests
- *
- * @group unit
- */
 describe('isVersionHigher', () => {
   it('isVersionHigher should return true if the first version provided is higher', () => {
     const version1 = '6.2'

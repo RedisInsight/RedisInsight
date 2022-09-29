@@ -25,11 +25,6 @@ jest.mock('uiSrc/slices/browser/set', () => {
   })
 })
 
-/**
- * SetDetails tests
- *
- * @group unit
- */
 describe('SetDetails', () => {
   it('should render', () => {
     expect(render(<SetDetails {...instance(mockedProps)} />)).toBeTruthy()

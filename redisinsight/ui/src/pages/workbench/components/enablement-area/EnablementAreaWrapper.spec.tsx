@@ -36,11 +36,6 @@ jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
   }
 })
 
-/**
- * EnablementAreaWrapper tests
- *
- * @group unit
- */
 describe('EnablementAreaWrapper', () => {
   it('should render and call getWBGuides and getWBTutorials actions', () => {
     const expectedActions = [getWBGuides(), getWBTutorials()]

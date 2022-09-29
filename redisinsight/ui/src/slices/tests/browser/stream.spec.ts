@@ -154,17 +154,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * stream slice tests
- *
- * @group unit
- */
 describe('stream slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -178,11 +168,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * setStreamInitialState tests
- *
- * @group unit
- */
   describe('setStreamInitialState', () => {
     it('should properly set initial state', () => {
       const nextState = reducer(initialState, setStreamInitialState())
@@ -193,11 +178,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadEntries tests
- *
- * @group unit
- */
   describe('loadEntries', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -217,11 +197,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadEntriesSuccess tests
- *
- * @group unit
- */
   describe('loadEntriesSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -248,11 +223,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadEntriesFailure tests
- *
- * @group unit
- */
   describe('loadEntriesFailure', () => {
     it('should properly set the state after failed fetched data', () => {
       // Arrange
@@ -274,11 +244,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadMoreEntries tests
- *
- * @group unit
- */
   describe('loadMoreEntries', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -298,11 +263,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadMoreEntriesSuccess tests
- *
- * @group unit
- */
   describe('loadMoreEntriesSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -328,11 +288,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadMoreEntriesFailure tests
- *
- * @group unit
- */
   describe('loadMoreEntriesFailure', () => {
     it('should properly set the state after failed fetched data', () => {
       // Arrange
@@ -354,11 +309,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * addNewEntries tests
- *
- * @group unit
- */
   describe('addNewEntries', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -378,11 +328,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * addNewEntriesSuccess tests
- *
- * @group unit
- */
   describe('addNewEntriesSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -403,11 +348,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * addNewEntriesFailure tests
- *
- * @group unit
- */
   describe('addNewEntriesFailure', () => {
     it('should properly set the state after failed fetched data', () => {
       // Arrange
@@ -429,11 +369,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * removeStreamEntries tests
- *
- * @group unit
- */
   describe('removeStreamEntries', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -453,11 +388,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * removeStreamEntriesSuccess tests
- *
- * @group unit
- */
   describe('removeStreamEntriesSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -478,11 +408,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * removeStreamEntriesFailure tests
- *
- * @group unit
- */
   describe('removeStreamEntriesFailure', () => {
     it('should properly set the state after failed fetched data', () => {
       // Arrange
@@ -504,11 +429,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * updateStart tests
- *
- * @group unit
- */
   describe('updateStart', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -531,11 +451,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * updateEnd tests
- *
- * @group unit
- */
   describe('updateEnd', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -558,11 +473,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * cleanRangeFilter tests
- *
- * @group unit
- */
   describe('cleanRangeFilter', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -589,11 +499,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * setStreamViewType tests
- *
- * @group unit
- */
   describe('setStreamViewType', () => {
     it('should properly set stream view type', () => {
       // Arrange
@@ -613,11 +518,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadConsumerGroups tests
- *
- * @group unit
- */
   describe('loadConsumerGroups', () => {
     it('should properly set groups.loading = true', () => {
       // Arrange
@@ -641,11 +541,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadConsumerGroupsSuccess tests
- *
- * @group unit
- */
   describe('loadConsumerGroupsSuccess', () => {
     it('should properly set groups.data = payload', () => {
       // Arrange
@@ -679,11 +574,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadConsumersSuccess tests
- *
- * @group unit
- */
   describe('loadConsumersSuccess', () => {
     it('should properly set groups.selectedGroup.data = payload', () => {
       // Arrange
@@ -717,11 +607,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadConsumerMessagesSuccess tests
- *
- * @group unit
- */
   describe('loadConsumerMessagesSuccess', () => {
     it('should properly set groups.selectedGroup.selectedConsumer.data = payload', () => {
       // Arrange
@@ -755,11 +640,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadConsumerMessagesFailure tests
- *
- * @group unit
- */
   describe('loadConsumerMessagesFailure', () => {
     it('should properly set error to groups and set viewType = Consumers payload', () => {
       // Arrange
@@ -785,11 +665,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadConsumersFailure tests
- *
- * @group unit
- */
   describe('loadConsumersFailure', () => {
     it('should properly set error to groups and set viewType = Groups payload', () => {
       // Arrange
@@ -815,11 +690,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadConsumerGroupsFailure tests
- *
- * @group unit
- */
   describe('loadConsumerGroupsFailure', () => {
     it('should properly set error to groups payload', () => {
       // Arrange
@@ -844,11 +714,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * setSelectedGroup tests
- *
- * @group unit
- */
   describe('setSelectedGroup', () => {
     it('should properly set selectedGroups', () => {
       // Arrange
@@ -876,11 +741,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * setSelectedConsumer tests
- *
- * @group unit
- */
   describe('setSelectedConsumer', () => {
     it('should properly set selectedConsumer', () => {
       // Arrange
@@ -906,11 +766,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * loadMoreConsumerMessagesSuccess tests
- *
- * @group unit
- */
   describe('loadMoreConsumerMessagesSuccess', () => {
     it('should properly concat more messages', () => {
       // Arrange
@@ -947,11 +802,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * ackPendingEntries tests
- *
- * @group unit
- */
   describe('ackPendingEntries', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -974,11 +824,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * ackPendingEntriesSuccess tests
- *
- * @group unit
- */
   describe('ackPendingEntriesSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -1002,11 +847,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * ackPendingEntriesFailure tests
- *
- * @group unit
- */
   describe('ackPendingEntriesFailure', () => {
     it('should properly set the state after failed fetched data', () => {
       // Arrange
@@ -1031,11 +871,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * claimConsumerMessages tests
- *
- * @group unit
- */
   describe('claimConsumerMessages', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -1058,11 +893,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * claimConsumerMessagesSuccess tests
- *
- * @group unit
- */
   describe('claimConsumerMessagesSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -1086,11 +916,6 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * claimConsumerMessagesFailure tests
- *
- * @group unit
- */
   describe('claimConsumerMessagesFailure', () => {
     it('should properly set the state after failed fetched data', () => {
       // Arrange
@@ -1116,17 +941,7 @@ describe('stream slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
-  /**
- * fetchStreamEntries tests
- *
- * @group unit
- */
     describe('fetchStreamEntries', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1181,11 +996,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * refreshStreamEntries tests
- *
- * @group unit
- */
     describe('refreshStreamEntries', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1236,11 +1046,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchConsumerGroups tests
- *
- * @group unit
- */
     describe('fetchConsumerGroups', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1285,11 +1090,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchConsumers tests
- *
- * @group unit
- */
     describe('fetchConsumers', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1334,11 +1134,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchConsumerMessages tests
- *
- * @group unit
- */
     describe('fetchConsumerMessages', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1383,11 +1178,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * modifyLastDeliveredIdAction tests
- *
- * @group unit
- */
     describe('modifyLastDeliveredIdAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1448,11 +1238,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * deleteConsumerGroupsAction tests
- *
- * @group unit
- */
     describe('deleteConsumerGroupsAction', () => {
       it('succeed to delete data', async () => {
         // Arrange
@@ -1514,11 +1299,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * deleteConsumersAction tests
- *
- * @group unit
- */
     describe('deleteConsumersAction', () => {
       it('succeed to delete data', async () => {
         // Arrange
@@ -1582,11 +1362,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchMoreConsumerMessages tests
- *
- * @group unit
- */
     describe('fetchMoreConsumerMessages', () => {
       it('succeed to fetch more data', async () => {
         // Arrange
@@ -1640,11 +1415,7 @@ describe('stream slice', () => {
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
-    /**
- * ackPendingEntriesAction tests
- *
- * @group unit
- */
+
     describe('ackPendingEntriesAction', () => {
       it('succeed to acknowledge data', async () => {
         // Arrange
@@ -1705,11 +1476,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * claimPendingMessagesAction tests
- *
- * @group unit
- */
     describe('claimPendingMessagesAction', () => {
       it('succeed to claim message', async () => {
         // Arrange

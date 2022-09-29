@@ -18,11 +18,6 @@ jest.mock(redisCommandsPath, () => {
   }
 })
 
-/**
- * CHSearchFilter tests
- *
- * @group unit
- */
 describe('CHSearchFilter', () => {
   it('should render', () => {
     expect(render(<CHSearchFilter submitFilter={jest.fn()} />)).toBeTruthy()

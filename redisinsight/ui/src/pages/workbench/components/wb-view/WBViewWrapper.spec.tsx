@@ -91,11 +91,6 @@ jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
   }
 })
 
-/**
- * WBViewWrapper tests
- *
- * @group unit
- */
 describe('WBViewWrapper', () => {
   beforeAll(() => {
     QueryWrapper.mockImplementation(QueryWrapperMock)

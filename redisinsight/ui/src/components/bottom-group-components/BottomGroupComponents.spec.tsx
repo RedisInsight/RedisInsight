@@ -25,11 +25,6 @@ beforeEach(() => {
 const commandHelperId = 'command-helper'
 const cliId = 'cli'
 
-/**
- * BottomGroupComponents tests
- *
- * @group unit
- */
 describe('BottomGroupComponents', () => {
   it('should render', () => {
     expect(

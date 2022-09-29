@@ -11,11 +11,6 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
-/**
- * StreamTabs tests
- *
- * @group unit
- */
 describe('StreamTabs', () => {
   it('should render', () => {
     expect(render(<AnalyticsTabs />)).toBeTruthy()

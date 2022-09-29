@@ -5,11 +5,6 @@ import AddKeyHash, { Props } from './AddKeyHash'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddKeyHash tests
- *
- * @group unit
- */
 describe('AddKeyHash', () => {
   it('should render', () => {
     expect(render(<AddKeyHash {...instance(mockedProps)} />)).toBeTruthy()

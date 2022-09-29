@@ -56,11 +56,6 @@ afterEach(() => {
   setLastBatchKeys.mockRestore()
 })
 
-/**
- * KeyList tests
- *
- * @group unit
- */
 describe('KeyList', () => {
   it('should render', () => {
     expect(render(<KeyList {...propsMock} />)).toBeTruthy()

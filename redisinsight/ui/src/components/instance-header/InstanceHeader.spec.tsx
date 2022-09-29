@@ -21,11 +21,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * InstanceHeader tests
- *
- * @group unit
- */
 describe('InstanceHeader', () => {
   it('should render', () => {
     // connectedInstanceSelector.mockImplementation(() => ({

@@ -20,11 +20,6 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
   }),
 }))
 
-/**
- * KeyDetailsHeader tests
- *
- * @group unit
- */
 describe('KeyDetailsHeader', () => {
   global.navigator.clipboard = {
     writeText: jest.fn()

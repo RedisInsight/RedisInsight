@@ -31,11 +31,6 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
   }),
 }))
 
-/**
- * ModuleNotLoaded tests
- *
- * @group unit
- */
 describe('ModuleNotLoaded', () => {
   it('should render', () => {
     expect(render(<ModuleNotLoaded content={RSNotLoadedContent} />)).toBeTruthy()

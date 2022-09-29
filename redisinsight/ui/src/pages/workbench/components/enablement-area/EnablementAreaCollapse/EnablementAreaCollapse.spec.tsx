@@ -2,11 +2,6 @@ import React from 'react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import EnablementAreaCollapse from './EnablementAreaCollapse'
 
-/**
- * EnablementAreaCollapse tests
- *
- * @group unit
- */
 describe('EnablementAreaCollapse', () => {
   it('should render', () => {
     expect(render(<EnablementAreaCollapse isMinimized setIsMinimized={jest.fn} />)).toBeTruthy()

@@ -70,11 +70,6 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   }),
 }))
 
-/**
- * ConsentsSettings tests
- *
- * @group unit
- */
 describe('ConsentsSettings', () => {
   it('should render', () => {
     expect(render(<ConsentsSettings />)).toBeTruthy()

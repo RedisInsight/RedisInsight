@@ -112,17 +112,7 @@ beforeEach(() => {
   ]
 })
 
-/**
- * instances slice tests
- *
- * @group unit
- */
 describe('instances slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -136,11 +126,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * loadInstances tests
- *
- * @group unit
- */
   describe('loadInstances', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -162,11 +147,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * defaultInstanceChanging tests
- *
- * @group unit
- */
   describe('defaultInstanceChanging', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -189,11 +169,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * changeInstanceAlias tests
- *
- * @group unit
- */
   describe('changeInstanceAlias', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -217,11 +192,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * changeInstanceAliasSuccess tests
- *
- * @group unit
- */
   describe('changeInstanceAliasSuccess', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -248,11 +218,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * changeInstanceAliasFailure tests
- *
- * @group unit
- */
   describe('changeInstanceAliasFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -276,11 +241,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * loadInstancesSuccess tests
- *
- * @group unit
- */
   describe('loadInstancesSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -326,11 +286,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * loadInstancesFailure tests
- *
- * @group unit
- */
   describe('loadInstancesFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -355,11 +310,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * getDatabaseConfigInfo tests
- *
- * @group unit
- */
   describe('getDatabaseConfigInfo', () => {
     it('should properly set state before fetch data', () => {
       // Arrange
@@ -381,11 +331,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * getDatabaseConfigInfoSuccess tests
- *
- * @group unit
- */
   describe('getDatabaseConfigInfoSuccess', () => {
     it('should properly set state after fetch data', () => {
       // Arrange
@@ -418,11 +363,6 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * getDatabaseConfigInfoFailure tests
- *
- * @group unit
- */
   describe('getDatabaseConfigInfoFailure', () => {
     it('should properly set error', () => {
       // Arrange
@@ -446,17 +386,7 @@ describe('instances slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
-  /**
- * fetchInstances tests
- *
- * @group unit
- */
     describe('fetchInstances', () => {
       it('call both fetchInstances and loadInstancesSuccess when fetch is successed', async () => {
         // Arrange
@@ -500,11 +430,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * createInstanceStandaloneAction tests
- *
- * @group unit
- */
     describe('createInstanceStandaloneAction', () => {
       it('call both createInstanceStandaloneAction and defaultInstanceChangingSuccess when fetch is successed', async () => {
         // Arrange
@@ -601,11 +526,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * deleteInstances tests
- *
- * @group unit
- */
     describe('deleteInstances', () => {
       it('call both deleteInstances and setDefaultInstanceSuccess when fetch is successed for only one instance', async () => {
         // Arrange
@@ -678,11 +598,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * updateInstance tests
- *
- * @group unit
- */
     describe('updateInstance', () => {
       it('call both updateInstance and defaultInstanceChangingSuccess when fetch is successed', async () => {
         // Arrange
@@ -741,11 +656,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * checkConnectToInstance tests
- *
- * @group unit
- */
     describe('checkConnectToInstance', () => {
       it('call both checkConnectToInstance and setDefaultInstanceSuccess when connection is successed', async () => {
         // Arrange
@@ -807,11 +717,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * getDatabaseConfigInfoAction tests
- *
- * @group unit
- */
     describe('getDatabaseConfigInfoAction', () => {
       it('succeed to get database config info', async () => {
         // Arrange
@@ -869,11 +774,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * changeInstanceAliasAction tests
- *
- * @group unit
- */
     describe('changeInstanceAliasAction', () => {
       const requestPayload = { id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', newName: 'newAlias' }
       it('succeed to change database alias', async () => {

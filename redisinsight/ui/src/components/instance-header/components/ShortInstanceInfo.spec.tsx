@@ -21,11 +21,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * ShortInstanceInfo tests
- *
- * @group unit
- */
 describe('ShortInstanceInfo', () => {
   it('should render', () => {
     expect(render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} />)).toBeTruthy()

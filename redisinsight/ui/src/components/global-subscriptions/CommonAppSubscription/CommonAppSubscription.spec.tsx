@@ -25,11 +25,6 @@ beforeEach(() => {
 
 jest.mock('socket.io-client')
 
-/**
- * CommonAppSubscription tests
- *
- * @group unit
- */
 describe('CommonAppSubscription', () => {
   it('should render', () => {
     expect(render(<CommonAppSubscription />)).toBeTruthy()

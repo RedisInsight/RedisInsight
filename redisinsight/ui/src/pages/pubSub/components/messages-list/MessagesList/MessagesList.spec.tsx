@@ -10,11 +10,6 @@ const mockedProps = {
   width: 20
 }
 
-/**
- * MessagesList tests
- *
- * @group unit
- */
 describe('MessagesList', () => {
   it('should render', () => {
     expect(

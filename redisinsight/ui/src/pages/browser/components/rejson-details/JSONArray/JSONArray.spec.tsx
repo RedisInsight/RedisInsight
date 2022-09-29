@@ -33,11 +33,6 @@ jest.mock('uiSrc/slices/browser/rejson', () => ({
   ),
 }))
 
-/**
- * JSONArray tests
- *
- * @group unit
- */
 describe('JSONArray', () => {
   it('should render simple JSON', () => {
     expect(render(<JSONArray

@@ -5,11 +5,6 @@ import PopoverItemEditor, { Props } from './PopoverItemEditor'
 
 const mockedProps = mock<Props>()
 
-/**
- * PopoverItemEditor tests
- *
- * @group unit
- */
 describe('PopoverItemEditor', () => {
   it('should render', () => {
     expect(

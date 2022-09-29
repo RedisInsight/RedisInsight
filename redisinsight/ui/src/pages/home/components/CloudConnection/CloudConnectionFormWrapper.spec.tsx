@@ -7,11 +7,6 @@ import CloudConnectionFormWrapper, {
 
 const mockedProps = mock<Props>()
 
-/**
- * CloudConnectionFormWrapper tests
- *
- * @group unit
- */
 describe('CloudConnectionFormWrapper', () => {
   it('should render', () => {
     expect(

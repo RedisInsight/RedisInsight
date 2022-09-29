@@ -21,11 +21,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * RedisStackRoutes tests
- *
- * @group unit
- */
 describe('RedisStackRoutes', () => {
   it('should render', () => {
     expect(render(<RedisStackRoutes {...instance(mockedProps)} />)).toBeTruthy()

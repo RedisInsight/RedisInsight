@@ -21,11 +21,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * WBResultsWrapper tests
- *
- * @group unit
- */
 describe('WBResultsWrapper', () => {
   it('should render', () => {
     // connectedInstanceSelector.mockImplementation(() => ({

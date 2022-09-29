@@ -21,7 +21,7 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
     if (pathname === Pages.analytics(instanceId)) {
       history.push(connectionType === ConnectionType.Cluster
         ? Pages.clusterDetails(instanceId)
-        : Pages.slowLog(instanceId))
+        : Pages.databaseAnalysis(instanceId))
     }
   }, [connectionType, instanceId, pathname])
 

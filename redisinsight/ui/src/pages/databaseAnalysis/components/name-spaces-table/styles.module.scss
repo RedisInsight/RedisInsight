@@ -1,0 +1,235 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+$breakpoint-table: 1232px;
+
+.wrapper {
+  max-width: 1920px;
+
+  .loading {
+    margin-top: 40px;
+    width: 100%;
+
+    :global {
+      .euiLoadingContent__singleLine {
+        height: 36px;
+
+        &:first-child {
+          height: 42px;
+          margin-bottom: 18px;
+        }
+      }
+
+      .euiLoadingContent__singleLine:last-child:not(:only-child) {
+        width: 100%;
+      }
+    }
+  }
+
+  .badge :global(.euiText--extraSmall) {
+    font: normal normal normal 12px/16px Graphik;
+  }
+
+  .link {
+    width: max-content;
+  
+    &:hover,
+    &:focus {
+      background-color: transparent !important;
+    }
+  
+    :global(.euiButtonEmpty__content) {
+      padding: 0;
+      width: max-content;
+  
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  
+    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
+      font: normal normal normal 13px/18px Graphik;
+      color: var(--buttonSecondaryTextColor) !important;
+    }
+  
+    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):hover,
+    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):focus {
+      color: var(--euiTextSubduedColorHover);
+    }
+  
+    &.expanded {
+      padding-left: 12px;
+    }
+  
+    &.expanded :global(.euiButtonEmpty__content.euiButtonContent  .euiButtonEmpty__text) {
+      color: var(--euiTextSubduedColor) !important;
+  
+      &:hover,
+      &:focus {
+        color: var(--euiTextSubduedColorHover) !important;
+      }
+    }
+  }
+}
+
+.tableWrapper {
+  @include euiScrollBar;
+
+  overflow: auto;
+  position: relative;
+  max-height: 100%;
+
+  :global(.euiTableRow-isExpandedRow .euiTableCellContent) {
+    padding: 0 12px !important;
+  }
+}
+
+.table.tableNSP {
+  :global {
+    .nsp-cell {
+      height: 42px;
+    }
+
+    .euiTableHeaderCell {
+      min-width: 42px;
+      background-color: var(--euiColorEmptyShade);
+
+      .euiTableCellContent {
+        padding: 12px;
+        justify-content: flex-start;
+        align-items: flex-end;
+
+        &.euiTableCellContent--alignRight {
+          justify-content: flex-start;
+          align-items: flex-end;
+          flex-direction: row-reverse;
+
+          .euiTableSortIcon {
+            margin-right: 4px;
+            margin-left: 0;
+          }
+        }
+
+        &.euiTableCellContent--alignCenter {
+          justify-content: center;
+
+          .euiTableSortIcon {
+            margin-right: 0;
+            margin-left: 4px;
+          }
+        }
+
+        .euiTableCellContent__text {
+          font: normal normal normal 12px/18px Graphik, sans-serif;
+        }
+      }
+
+      .euiTableCellContent {
+        border-bottom: 1px solid var(--euiColorLightShade);
+        outline: 1px solid var(--euiColorEmptyShade);
+      }
+    }
+
+    .euiTableCellContent {
+      padding: 12px 12px 12px 12px;
+      font: normal normal normal 14px/24px Graphik;
+
+      &:global(.dataType) {
+        padding: 12px 6px 4px;
+      }
+    }
+
+    .euiTableHeaderButton.euiTableHeaderButton-isSorted {
+      span, div {
+        color: var(--htmlColor) !important;
+      }
+    }
+
+    .euiTableHeaderButton:focus .euiTableCellContent__text {
+      text-decoration: none;
+    }
+  }
+
+  .valueUnit {
+    font: normal normal normal 12px/18px Graphik, sans-serif !important;
+    margin-left: 4px;
+    color: var(--euiColorMediumShade) !important;
+  }
+
+  .headerCell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+}
+
+.expanded {
+  display: grid;
+  grid-template-columns: auto 34% 12% calc(10% + 44px);
+  grid-column-gap: 0;
+  height: 42px;
+  width: 100%;
+
+  & div {
+    display: flex;
+    align-items: center;
+  }
+
+  .badge {
+    margin: 0 !important;
+  }
+
+  .rightAlign {
+    padding: 0 12px;
+
+    &:last-child {
+      padding: 0 52px 0 12px;
+    }
+  }
+}
+
+.rightAlign {
+  justify-content: flex-end;
+  padding: 12px;
+}
+
+:global(.euiTableCellContent) .delimiter span {
+  cursor: pointer;
+  color: var(--buttonSecondaryTextColor);
+  font: normal normal normal 13px/18px Graphik;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:global(.euiTableCellContent) .count {
+  color: var(--euiTextSubduedColor);
+  font: normal normal 500 16px/18px Inconsolata;
+}
+
+.badgesContainer {
+  display: flex;
+  flex-wrap: wrap;
+
+  & .badge {
+    margin: 0 7px 8px;
+  }
+
+  & .badge + .badge {
+    margin-left: 6px!important;
+  }
+}
+
+.truncateText {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tooltip {
+  width: auto;
+}

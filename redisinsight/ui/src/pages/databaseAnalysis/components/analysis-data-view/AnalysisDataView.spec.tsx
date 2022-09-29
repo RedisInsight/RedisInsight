@@ -16,6 +16,11 @@ const mockData = {
   totalKeys: { total: 0, types: [] },
 }
 
+/**
+ * AnalysisDataView tests
+ *
+ * @group unit
+ */
 describe('AnalysisDataView', () => {
   it('should render', () => {
     expect(render(<AnalysisDataView {...instance(mockedProps)} />)).toBeTruthy()

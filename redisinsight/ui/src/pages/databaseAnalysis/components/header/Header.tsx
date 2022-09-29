@@ -80,7 +80,7 @@ const Header = (props: Props) => {
         alignItems="center"
         justifyContent={items.length ? 'spaceBetween' : 'flexEnd'}
       >
-        {items.length && (
+        {!!items.length && (
           <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
             <EuiFlexItem grow={false}>
               <EuiText color="subdued">Report generated on:</EuiText>

@@ -20,12 +20,18 @@ const mockProgress = {
 }
 
 let store: typeof mockedStore
+
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
 })
 
+/**
+ * DatabaseAnalysisHeader tests
+ *
+ * @group unit
+ */
 describe('DatabaseAnalysisHeader', () => {
   it('should render', () => {
     expect(render(<Header {...instance(mockedProps)} />)).toBeTruthy()

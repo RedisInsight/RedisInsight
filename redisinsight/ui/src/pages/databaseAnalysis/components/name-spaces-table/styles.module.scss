@@ -184,6 +184,10 @@ $breakpoint-table: 1232px;
 
   .rightAlign {
     padding: 0 12px;
+
+    &:last-child {
+      padding: 0 52px 0 12px;
+    }
   }
 }
 

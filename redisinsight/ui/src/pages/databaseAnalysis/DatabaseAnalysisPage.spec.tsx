@@ -20,6 +20,11 @@ jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   }),
 }))
 
+/**
+ * DatabaseAnalysisPage tests
+ *
+ * @group component
+ */
 describe('DatabaseAnalysisPage', () => {
   it('should call fetchDBAnalysisReportsHistory after rendering', async () => {
     const fetchDBAnalysisReportsHistoryMock = jest.fn();

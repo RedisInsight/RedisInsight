@@ -24,7 +24,17 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * clusterDetails slice tests
+ *
+ * @group unit
+ */
 describe('clusterDetails slice', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -38,6 +48,11 @@ describe('clusterDetails slice', () => {
     })
   })
 
+  /**
+ * setUserSettingsInitialState tests
+ *
+ * @group unit
+ */
   describe('setUserSettingsInitialState', () => {
     it('should properly set the initial state', () => {
       // Arrange
@@ -56,6 +71,11 @@ describe('clusterDetails slice', () => {
     })
   })
 
+  /**
+ * getClusterDetails tests
+ *
+ * @group unit
+ */
   describe('getClusterDetails', () => {
     it('should properly set state before the fetch data', () => {
       // Arrange
@@ -75,6 +95,11 @@ describe('clusterDetails slice', () => {
     })
   })
 
+  /**
+ * getClusterDetailsSuccess tests
+ *
+ * @group unit
+ */
   describe('getClusterDetailsSuccess', () => {
     it('should properly set state after success fetch data', () => {
       // Arrange
@@ -95,6 +120,11 @@ describe('clusterDetails slice', () => {
     })
   })
 
+  /**
+ * getClusterDetailsError tests
+ *
+ * @group unit
+ */
   describe('getClusterDetailsError', () => {
     it('should properly set state after failed fetch data', () => {
       // Arrange
@@ -117,7 +147,17 @@ describe('clusterDetails slice', () => {
   })
 
   // thunks
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchClusterDetailsAction tests
+ *
+ * @group unit
+ */
     describe('fetchClusterDetailsAction', () => {
       it('succeed to fetch data', async () => {
         // Act

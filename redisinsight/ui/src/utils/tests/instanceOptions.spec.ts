@@ -38,6 +38,11 @@ const instancesRedisCloudMock = [
   }
 ]
 
+/**
+ * parseInstanceOptionsCluster tests
+ *
+ * @group unit
+ */
 describe('parseInstanceOptionsCluster', () => {
   it('should parse', () => {
     expect(parseInstanceOptionsCluster(1, instancesRedisClusterMock)).toEqual({
@@ -46,6 +51,11 @@ describe('parseInstanceOptionsCluster', () => {
   })
 })
 
+/**
+ * parseInstanceOptionsCloud tests
+ *
+ * @group unit
+ */
 describe('parseInstanceOptionsCloud', () => {
   it('should parse', () => {
     expect(parseInstanceOptionsCloud(1, instancesRedisCloudMock)).toEqual({

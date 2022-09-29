@@ -8,6 +8,11 @@ const mockedProps = mock<Props>()
 
 const INLINE_ITEM_EDITOR = 'inline-item-editor'
 
+/**
+ * AutoRefresh tests
+ *
+ * @group unit
+ */
 describe('AutoRefresh', () => {
   it('should render', () => {
     expect(render(<AutoRefresh {...instance(mockedProps)} />)).toBeTruthy()
@@ -50,6 +55,11 @@ describe('AutoRefresh', () => {
     expect(screen.getByTestId('refresh-message')).toHaveTextContent(DEFAULT_REFRESH_RATE)
   })
 
+  /**
+ * AutoRefresh Config tests
+ *
+ * @group unit
+ */
   describe('AutoRefresh Config', () => {
     it('Auto refresh config should render', () => {
       const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} />)

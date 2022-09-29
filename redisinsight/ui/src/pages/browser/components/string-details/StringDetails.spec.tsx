@@ -47,6 +47,11 @@ beforeEach(() => {
   }))
 })
 
+/**
+ * StringDetails tests
+ *
+ * @group unit
+ */
 describe('StringDetails', () => {
   it('should render', () => {
     expect(

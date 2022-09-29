@@ -5,8 +5,13 @@ import { validateScoreNumber } from 'uiSrc/utils'
 import InlineItemEditor, { Props } from './InlineItemEditor'
 
 const mockedProps = mock<Props>()
-const INLINE_ITEM_EDITOR = 'inline-item-editor'
+export const INLINE_ITEM_EDITOR = 'inline-item-editor'
 
+/**
+ * InlineItemEditor tests
+ *
+ * @group unit
+ */
 describe('InlineItemEditor', () => {
   it('should render', () => {
     expect(
@@ -40,6 +45,11 @@ describe('InlineItemEditor', () => {
     expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveFocus()
   })
 
+  /**
+ * approveByValidation tests
+ *
+ * @group unit
+ */
   describe('approveByValidation', () => {
     it('should not render popover after click on Apply btn if approveByValidation return "true" in the props and onApply should be called', () => {
       const approveByValidationMock = jest.fn().mockReturnValue(true)

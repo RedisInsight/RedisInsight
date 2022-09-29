@@ -41,6 +41,11 @@ const scanArgs = [
   },
 ]
 
+/**
+ * CliAutocomplete tests
+ *
+ * @group unit
+ */
 describe('CliAutocomplete', () => {
   it('should render', () => {
     expect(render(<CliAutocomplete {...instance(mockedProps)} />)).toBeTruthy()

@@ -17,6 +17,11 @@ const mockMessages: PendingEntryDto[] = [{
   delivered: 1321,
 }]
 
+/**
+ * MessagesView tests
+ *
+ * @group unit
+ */
 describe('MessagesView', () => {
   it('should render', () => {
     expect(render(<MessagesView {...instance(mockedProps)} data={mockMessages} />)).toBeTruthy()

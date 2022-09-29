@@ -21,6 +21,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * NotificationMenu tests
+ *
+ * @group unit
+ */
 describe('NotificationMenu', () => {
   it('should render', () => {
     expect(render(<NotificationMenu />)).toBeTruthy()

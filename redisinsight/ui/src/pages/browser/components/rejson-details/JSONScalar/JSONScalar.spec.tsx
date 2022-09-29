@@ -7,6 +7,11 @@ const INLINE_ITEM_EDITOR = 'inline-item-editor'
 
 const mockedProps = mock<Props>()
 
+/**
+ * JSONScalar tests
+ *
+ * @group unit
+ */
 describe('JSONScalar', () => {
   it('should render', () => {
     expect(render(

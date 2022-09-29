@@ -68,7 +68,17 @@ const notificationsResponse: any = {
   totalUnread: 3
 }
 
+/**
+ * slices tests
+ *
+ * @group unit
+ */
 describe('slices', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -82,6 +92,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * addErrorNotification tests
+ *
+ * @group unit
+ */
   describe('addErrorNotification', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -116,6 +131,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * removeError tests
+ *
+ * @group unit
+ */
   describe('removeError', () => {
     it('should properly remove the error', () => {
       // Arrange
@@ -149,6 +169,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * resetErrors tests
+ *
+ * @group unit
+ */
   describe('resetErrors', () => {
     it('should properly reset errors', () => {
       // Arrange
@@ -182,6 +207,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * addMessageNotification tests
+ *
+ * @group unit
+ */
   describe('addMessageNotification', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -213,6 +243,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * removeMessage tests
+ *
+ * @group unit
+ */
   describe('removeMessage', () => {
     it('should properly remove the message', () => {
       // Arrange
@@ -244,6 +279,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * resetMessages tests
+ *
+ * @group unit
+ */
   describe('resetMessages', () => {
     it('should properly reset errors', () => {
       // Arrange
@@ -275,6 +315,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * setIsCenterOpen tests
+ *
+ * @group unit
+ */
   describe('setIsCenterOpen', () => {
     it('should properly toggle isCenterOpen', () => {
       const state = {
@@ -296,6 +341,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * setIsNotificationOpen tests
+ *
+ * @group unit
+ */
   describe('setIsNotificationOpen', () => {
     it('should properly toggle isNotificationOpen', () => {
       const state = {
@@ -317,6 +367,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * setNewNotificationReceived tests
+ *
+ * @group unit
+ */
   describe('setNewNotificationReceived', () => {
     it('should properly set new notification', () => {
       const state = {
@@ -339,6 +394,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * setLastReceivedNotification tests
+ *
+ * @group unit
+ */
   describe('setLastReceivedNotification', () => {
     it('should properly set lastReceivedNotification', () => {
       const state = {
@@ -360,6 +420,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getNotifications tests
+ *
+ * @group unit
+ */
   describe('getNotifications', () => {
     it('should properly set state', () => {
       const state = {
@@ -381,6 +446,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getNotificationsSuccess tests
+ *
+ * @group unit
+ */
   describe('getNotificationsSuccess', () => {
     it('should properly set state', () => {
       const state = {
@@ -405,7 +475,17 @@ describe('slices', () => {
   })
 
   // thunks
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchNotificationsAction tests
+ *
+ * @group unit
+ */
     describe('fetchNotificationsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -450,6 +530,11 @@ describe('slices', () => {
       })
     })
 
+    /**
+ * unreadNotificationsAction tests
+ *
+ * @group unit
+ */
     describe('unreadNotificationsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -470,6 +555,11 @@ describe('slices', () => {
       })
     })
 
+    /**
+ * setNewNotificationAction tests
+ *
+ * @group unit
+ */
     describe('setNewNotificationAction', () => {
       it('succeed to update notificationsCenter', () => {
         const data = notificationsResponse

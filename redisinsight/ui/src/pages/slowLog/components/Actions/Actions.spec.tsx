@@ -6,6 +6,11 @@ import Actions, { Props } from './Actions'
 
 const mockedProps = mock<Props>()
 
+/**
+ * Actions tests
+ *
+ * @group unit
+ */
 describe('Actions', () => {
   it('should render', () => {
     expect(render(<Actions {...mockedProps} />)).toBeTruthy()

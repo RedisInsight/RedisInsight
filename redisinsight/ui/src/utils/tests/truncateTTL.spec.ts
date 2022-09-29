@@ -5,7 +5,17 @@ import {
   truncateTTLToSeconds,
 } from '../truncateTTL'
 
+/**
+ * Truncate TTL util tests tests
+ *
+ * @group unit
+ */
 describe('Truncate TTL util tests', () => {
+/**
+ * truncateTTLToRange tests
+ *
+ * @group unit
+ */
   describe('truncateTTLToRange', () => {
     it('truncateTTLToRange should return "No limit"', () => {
       const ttl = -1
@@ -89,6 +99,11 @@ describe('Truncate TTL util tests', () => {
     })
   })
 
+  /**
+ * truncateNumberToDuration tests
+ *
+ * @group unit
+ */
   describe('truncateNumberToDuration', () => {
     it('truncateNumberToDuration should return appropriate value', () => {
       const ttl1 = 100
@@ -114,6 +129,11 @@ describe('Truncate TTL util tests', () => {
     })
   })
 
+  /**
+ * truncateTTLToSeconds tests
+ *
+ * @group unit
+ */
   describe('truncateTTLToSeconds', () => {
     it('truncateTTLToSeconds should return appropriate value', () => {
       const ttl1 = 100
@@ -133,6 +153,11 @@ describe('Truncate TTL util tests', () => {
     })
   })
 
+  /**
+ * truncateNumberToFirstUnit tests
+ *
+ * @group unit
+ */
   describe('truncateNumberToFirstUnit', () => {
     it('truncateNumberToFirstUnit should return appropriate value', () => {
       const number1 = 100

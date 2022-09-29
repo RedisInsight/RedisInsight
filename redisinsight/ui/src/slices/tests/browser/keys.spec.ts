@@ -73,6 +73,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * keys slice tests
+ *
+ * @group unit
+ */
 describe('keys slice', () => {
   beforeAll(() => {
     dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
@@ -82,6 +87,11 @@ describe('keys slice', () => {
     dateNow.mockRestore()
   })
 
+  /**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -95,6 +105,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * loadKeys tests
+ *
+ * @group unit
+ */
   describe('loadKeys', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -114,6 +129,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * loadKeysSuccess tests
+ *
+ * @group unit
+ */
   describe('loadKeysSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -190,6 +210,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * loadKeysFailure tests
+ *
+ * @group unit
+ */
   describe('loadKeysFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -220,6 +245,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * loadMoreKeys tests
+ *
+ * @group unit
+ */
   describe('loadMoreKeys', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -249,6 +279,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * loadMoreKeysSuccess tests
+ *
+ * @group unit
+ */
   describe('loadMoreKeysSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -316,6 +351,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * loadMoreKeysFailure tests
+ *
+ * @group unit
+ */
   describe('loadMoreKeysFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -346,6 +386,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * loadKeyInfoSuccess tests
+ *
+ * @group unit
+ */
   describe('loadKeyInfoSuccess', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -378,6 +423,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * setLastBatchKeys tests
+ *
+ * @group unit
+ */
   describe('setLastBatchKeys', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -411,6 +461,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * refreshKeyInfo tests
+ *
+ * @group unit
+ */
   describe('refreshKeyInfo', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -433,6 +488,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * refreshKeyInfoSuccess tests
+ *
+ * @group unit
+ */
   describe('refreshKeyInfoSuccess', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -463,6 +523,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * refreshKeyInfoFail tests
+ *
+ * @group unit
+ */
   describe('refreshKeyInfoFail', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -485,6 +550,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * addKey tests
+ *
+ * @group unit
+ */
   describe('addKey', () => {
     it('should properly set the state while adding a key', () => {
       // Arrange
@@ -508,6 +578,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * addKeySuccess tests
+ *
+ * @group unit
+ */
   describe('addKeySuccess', () => {
     it('should properly set the state after successfully added key', () => {
       // Arrange
@@ -530,6 +605,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * addKeyFailure tests
+ *
+ * @group unit
+ */
   describe('addKeyFailure', () => {
     it('should properly set the state on add key failure', () => {
       // Arrange
@@ -554,6 +634,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * resetAddKey tests
+ *
+ * @group unit
+ */
   describe('resetAddKey', () => {
     it('should properly reset the state', () => {
       // Arrange
@@ -577,6 +662,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * deleteKey tests
+ *
+ * @group unit
+ */
   describe('deleteKey', () => {
     it('should properly set the state before the delete key', () => {
       // Arrange
@@ -600,6 +690,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * deleteKeySuccess tests
+ *
+ * @group unit
+ */
   describe('deleteKeySuccess', () => {
     it('should properly set the state before the delete key', () => {
       // Arrange
@@ -623,6 +718,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * deleteKeyFailure tests
+ *
+ * @group unit
+ */
   describe('deleteKeyFailure', () => {
     it('should properly set the state before the delete key', () => {
       // Arrange
@@ -647,6 +747,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * defaultSelectedKeyAction tests
+ *
+ * @group unit
+ */
   describe('defaultSelectedKeyAction', () => {
     it('should properly set the state before the delete key', () => {
       // Arrange
@@ -670,6 +775,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * defaultSelectedKeyActionSuccess tests
+ *
+ * @group unit
+ */
   describe('defaultSelectedKeyActionSuccess', () => {
     it('should properly set the state before the delete key', () => {
       // Arrange
@@ -692,6 +802,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * defaultSelectedKeyActionFailure tests
+ *
+ * @group unit
+ */
   describe('defaultSelectedKeyActionFailure', () => {
     it('should properly set the state before the delete key', () => {
       // Arrange
@@ -716,6 +831,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * editKeyTTLFromList tests
+ *
+ * @group unit
+ */
   describe('editKeyTTLFromList', () => {
     it('should properly set the state before the edit TTL', () => {
       // Arrange
@@ -749,6 +869,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * editKeyFromList tests
+ *
+ * @group unit
+ */
   describe('editKeyFromList', () => {
     it('should properly set the state before the edit key', () => {
       // Arrange
@@ -782,6 +907,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * resetKeyInfo tests
+ *
+ * @group unit
+ */
   describe('resetKeyInfo', () => {
     it('should properly save viewFormat', () => {
       // Arrange
@@ -805,6 +935,11 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * resetKeys tests
+ *
+ * @group unit
+ */
   describe('resetKeys', () => {
     it('should properly save viewFormat', () => {
       // Arrange
@@ -828,7 +963,17 @@ describe('keys slice', () => {
     })
   })
 
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchKeys tests
+ *
+ * @group unit
+ */
     describe('fetchKeys', () => {
       it('call both loadKeys and loadKeysSuccess when fetch is successed', async () => {
         // Arrange
@@ -906,6 +1051,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * fetchMoreKeys tests
+ *
+ * @group unit
+ */
     describe('fetchMoreKeys', () => {
       it('call both loadMoreKeys and loadMoreKeysSuccess when fetch is successed', async () => {
         // Arrange
@@ -980,6 +1130,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * fetchKeyInfo tests
+ *
+ * @group unit
+ */
     describe('fetchKeyInfo', () => {
       it('call both defaultSelectedKeyAction and loadKeyInfoSuccess when fetch is successed', async () => {
         // Arrange
@@ -1032,6 +1187,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * refreshKeyInfoAction tests
+ *
+ * @group unit
+ */
     describe('refreshKeyInfoAction', () => {
       it('success to refresh key info', async () => {
         // Arrange
@@ -1082,6 +1242,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * addHashKey tests
+ *
+ * @group unit
+ */
     describe('addHashKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1106,6 +1271,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * addHashZset tests
+ *
+ * @group unit
+ */
     describe('addHashZset', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1130,6 +1300,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * addHashSet tests
+ *
+ * @group unit
+ */
     describe('addHashSet', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1154,6 +1329,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * addStringKey tests
+ *
+ * @group unit
+ */
     describe('addStringKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1178,6 +1358,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * addListKey tests
+ *
+ * @group unit
+ */
     describe('addListKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1203,6 +1388,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * addReJSONKey tests
+ *
+ * @group unit
+ */
     describe('addReJSONKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1227,6 +1417,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * deleteKey tests
+ *
+ * @group unit
+ */
     describe('deleteKey', () => {
       it('call both deleteKey, deleteKeySuccess and deleteKeyFromList when delete is successed', async () => {
         // Arrange
@@ -1254,6 +1449,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * editKey tests
+ *
+ * @group unit
+ */
     describe('editKey', () => {
       it('call both editKey, editKeySuccess and editKeyFromList when editing is successed', async () => {
         // Arrange
@@ -1272,6 +1472,11 @@ describe('keys slice', () => {
       })
     })
 
+    /**
+ * editKeyTTL tests
+ *
+ * @group unit
+ */
     describe('editKeyTTL', () => {
       it('success editKeyTTL with positive ttl', async () => {
         // Arrange

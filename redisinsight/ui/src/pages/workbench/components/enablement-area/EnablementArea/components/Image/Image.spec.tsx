@@ -6,6 +6,11 @@ import Image, { Props } from './Image'
 
 const mockedProps = mock<Props>()
 
+/**
+ * Image tests
+ *
+ * @group unit
+ */
 describe('Image', () => {
   it('should render', () => {
     expect(render(<Image {...instance(mockedProps)} />)).toBeTruthy()

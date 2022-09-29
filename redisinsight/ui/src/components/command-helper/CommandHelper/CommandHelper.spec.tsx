@@ -31,6 +31,11 @@ jest.mock(redisCommandsPath, () => {
 const commandLine = 'get'
 const mockedSearchedCommands = ['HSET', 'SET']
 
+/**
+ * CliHelper tests
+ *
+ * @group unit
+ */
 describe('CliHelper', () => {
   it('should render', () => {
     expect(render(<CommandHelper {...instance(mockedProps)} />)).toBeTruthy()

@@ -11,6 +11,11 @@ const mockedRoutes = [
   },
 ]
 
+/**
+ * SentinelPage tests
+ *
+ * @group component
+ */
 describe('SentinelPage', () => {
   it('should render', () => {
     expect(

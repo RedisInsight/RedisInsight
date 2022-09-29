@@ -21,7 +21,17 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * pubsub slice tests
+ *
+ * @group unit
+ */
 describe('pubsub slice', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -34,6 +44,11 @@ describe('pubsub slice', () => {
       expect(result).toEqual(nextState)
     })
 
+    /**
+ * concatPubSubMessages tests
+ *
+ * @group unit
+ */
     describe('concatPubSubMessages', () => {
       it('should properly set payload to items', () => {
         const payload = {
@@ -95,7 +110,17 @@ describe('pubsub slice', () => {
   })
 
   // thunks
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * publishMessageAction tests
+ *
+ * @group unit
+ */
     describe('publishMessageAction', () => {
       it('succeed to fetch data', async () => {
         const data = { affected: 1 }

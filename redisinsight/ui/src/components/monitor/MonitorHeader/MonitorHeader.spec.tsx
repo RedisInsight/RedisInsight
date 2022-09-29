@@ -38,6 +38,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * MonitorHeader tests
+ *
+ * @group unit
+ */
 describe('MonitorHeader', () => {
   it('should render', () => {
     expect(render(<MonitorHeader {...instance(mockedProps)} />)).toBeTruthy()

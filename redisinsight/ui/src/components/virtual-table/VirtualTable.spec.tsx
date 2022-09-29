@@ -28,6 +28,11 @@ const sortedColumn = {
 
 const members = ['member1', 'member2']
 
+/**
+ * VirtualTable tests
+ *
+ * @group unit
+ */
 describe('VirtualTable', () => {
   it('should render with empty rows', () => {
     expect(
@@ -144,6 +149,11 @@ describe('VirtualTable', () => {
     expect(onRowClick).toBeCalled()
   })
 
+  /**
+ * Scan more tests
+ *
+ * @group unit
+ */
   describe('Scan more', () => {
     const scanMoreBtnId = 'scan-more'
 

@@ -5,6 +5,11 @@ import AddDatabasesContainer, { Props } from './AddDatabasesContainer'
 
 const mockedProps = mock<Props>()
 
+/**
+ * AddDatabasesContainer tests
+ *
+ * @group unit
+ */
 describe('AddDatabasesContainer', () => {
   it('should render', () => {
     expect(

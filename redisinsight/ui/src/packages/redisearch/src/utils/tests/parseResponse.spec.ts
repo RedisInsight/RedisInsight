@@ -27,6 +27,11 @@ const resultFTSearch: any[] = [
 
 const resultFTSearchNoContent: any[] = ['red:2', 'red:3', 'red:4', 'red:5', 'red:6']
 
+/**
+ * parseSearchRawResponse tests
+ *
+ * @group unit
+ */
 describe('parseSearchRawResponse', () => {
   it('command "get" should return result is not modified 1', () => {
     const command = 'get'
@@ -88,6 +93,11 @@ describe('parseSearchRawResponse', () => {
   })
 })
 
+/**
+ * parseAggregateRawResponse tests
+ *
+ * @group unit
+ */
 describe('parseAggregateRawResponse', () => {
   it('command "ft.aggregate" should return array of array with objects count of docs ', () => {
     const resultFTAggregate = [[], [], [], [], []]

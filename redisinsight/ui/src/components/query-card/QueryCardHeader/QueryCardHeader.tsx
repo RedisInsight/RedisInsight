@@ -245,8 +245,9 @@ const QueryCardHeader = (props: Props) => {
                   className={styles.tooltip}
                   content="Raw Mode"
                   position="bottom"
+                  data-testid="raw-mode-tooltip"
                 >
-                  <EuiTextColor className={cx(styles.timeText, styles.mode)}>
+                  <EuiTextColor className={cx(styles.timeText, styles.mode)} data-testid="raw-mode-anchor">
                     -r
                   </EuiTextColor>
                 </EuiToolTip>

@@ -148,7 +148,17 @@ beforeEach(() => {
   ]
 })
 
+/**
+ * cluster slice tests
+ *
+ * @group unit
+ */
 describe('cluster slice', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -162,6 +172,11 @@ describe('cluster slice', () => {
     })
   })
 
+  /**
+ * loadInstancesRedisCluster tests
+ *
+ * @group unit
+ */
   describe('loadInstancesRedisCluster', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -183,6 +198,11 @@ describe('cluster slice', () => {
     })
   })
 
+  /**
+ * loadInstancesRedisClusterSuccess tests
+ *
+ * @group unit
+ */
   describe('loadInstancesRedisClusterSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -241,6 +261,11 @@ describe('cluster slice', () => {
     })
   })
 
+  /**
+ * loadInstancesRedisClusterFailure tests
+ *
+ * @group unit
+ */
   describe('loadInstancesRedisClusterFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -267,6 +292,11 @@ describe('cluster slice', () => {
     })
   })
 
+  /**
+ * createInstancesRedisCluster tests
+ *
+ * @group unit
+ */
   describe('createInstancesRedisCluster', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -288,6 +318,11 @@ describe('cluster slice', () => {
     })
   })
 
+  /**
+ * createInstancesRedisClusterSuccess tests
+ *
+ * @group unit
+ */
   describe('createInstancesRedisClusterSuccess', () => {
     it('should properly set the state with created instances', () => {
       // Arrange
@@ -352,6 +387,11 @@ describe('cluster slice', () => {
     })
   })
 
+  /**
+ * createInstancesRedisClusterFailure tests
+ *
+ * @group unit
+ */
   describe('createInstancesRedisClusterFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -378,7 +418,17 @@ describe('cluster slice', () => {
     })
   })
 
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchInstancesRedisCluster tests
+ *
+ * @group unit
+ */
     describe('fetchInstancesRedisCluster', () => {
       it('call both fetchInstancesRedisCluster and loadInstancesRedisClusterSuccess when fetch is successed', async () => {
         // Arrange
@@ -431,6 +481,11 @@ describe('cluster slice', () => {
       })
     })
 
+    /**
+ * addInstancesRedisCluster tests
+ *
+ * @group unit
+ */
     describe('addInstancesRedisCluster', () => {
       it('call both addInstancesRedisCluster and createInstancesRedisClusterSuccess when fetch is successed', async () => {
         // Arrange

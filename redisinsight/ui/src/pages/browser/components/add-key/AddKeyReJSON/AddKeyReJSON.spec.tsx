@@ -18,6 +18,11 @@ const MockAddKeyFooter = (props: any) => (
   <div {...props} />
 )
 
+/**
+ * AddKeyReJSON tests
+ *
+ * @group unit
+ */
 describe('AddKeyReJSON', () => {
   beforeAll(() => {
     AddKeyFooter.mockImplementation(MockAddKeyFooter)

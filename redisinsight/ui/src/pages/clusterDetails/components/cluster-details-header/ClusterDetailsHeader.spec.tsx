@@ -21,6 +21,11 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   }),
 }))
 
+/**
+ * ClusterDetailsHeader tests
+ *
+ * @group unit
+ */
 describe('ClusterDetailsHeader', () => {
   it('should render', () => {
     expect(render(<ClusterDetailsHeader />)).toBeTruthy()

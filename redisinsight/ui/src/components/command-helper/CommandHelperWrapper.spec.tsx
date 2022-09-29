@@ -93,6 +93,11 @@ const mockedCommands: IMockedCommands[] = [
   },
 ]
 
+/**
+ * CliBodyWrapper tests
+ *
+ * @group unit
+ */
 describe('CliBodyWrapper', () => {
   it('should render', () => {
     expect(render(<CommandHelperWrapper />)).toBeTruthy()

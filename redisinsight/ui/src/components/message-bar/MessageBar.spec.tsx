@@ -6,6 +6,11 @@ import MessageBar, { Props } from './MessageBar'
 const mockedProps = mock<Props>()
 const CLOSE_BUTTON = 'close-button'
 
+/**
+ * MessageBar tests
+ *
+ * @group unit
+ */
 describe('MessageBar', () => {
   it('should render', () => {
     expect(render(<MessageBar {...instance(mockedProps)} />)).toBeTruthy()

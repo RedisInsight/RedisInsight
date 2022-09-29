@@ -9,6 +9,11 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
 
 const mockedProps = mock<Props>()
 
+/**
+ * WelcomeComponent tests
+ *
+ * @group unit
+ */
 describe('WelcomeComponent', () => {
   it('should render', () => {
     expect(

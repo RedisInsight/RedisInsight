@@ -8,6 +8,11 @@ const mockedProps = {
   ...mock<Props>(),
 }
 
+/**
+ * BulkActionsTabs tests
+ *
+ * @group unit
+ */
 describe('BulkActionsTabs', () => {
   it('should render', () => {
     expect(render(<BulkActionsTabs {...mockedProps} />)).toBeTruthy()

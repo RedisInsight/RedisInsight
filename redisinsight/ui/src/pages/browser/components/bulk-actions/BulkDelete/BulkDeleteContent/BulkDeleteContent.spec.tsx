@@ -43,6 +43,11 @@ beforeEach(() => {
   }))
 })
 
+/**
+ * BulkDeleteContent tests
+ *
+ * @group unit
+ */
 describe('BulkDeleteContent', () => {
   it('should render', () => {
     expect(render(<BulkDeleteContent />)).toBeTruthy()

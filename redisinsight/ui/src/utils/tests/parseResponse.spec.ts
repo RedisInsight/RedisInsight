@@ -3,6 +3,11 @@ import { omit } from 'lodash'
 
 const nextCursor = '127.0.0.1:7000@100||127.0.0.1:7002@9'
 
+/**
+ * parseKeysListResponse tests
+ *
+ * @group unit
+ */
 describe('parseKeysListResponse', () => {
   it('should handle empty array in response', () => {
     const currentState = {

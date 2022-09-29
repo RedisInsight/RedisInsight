@@ -16,6 +16,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * CommandHelperHeader tests
+ *
+ * @group unit
+ */
 describe('CommandHelperHeader', () => {
   it('should render', () => {
     expect(render(<CommandHelperHeader />)).toBeTruthy()

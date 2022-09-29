@@ -7,17 +7,7 @@ import reducer, {
   setAnalyticsViewTab,
 } from '../../analytics/settings'
 
-/**
- * analytics settings slice tests
- *
- * @group unit
- */
 describe('analytics settings slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -31,11 +21,6 @@ describe('analytics settings slice', () => {
     })
   })
 
-  /**
- * setAnalyticsViewTab tests
- *
- * @group unit
- */
   describe('setAnalyticsViewTab', () => {
     it('should properly set the AnalyticsViewTab.SlowLog', () => {
       // Arrange

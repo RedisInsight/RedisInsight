@@ -13,11 +13,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * CliInput tests
- *
- * @group unit
- */
 describe('CliInput', () => {
   it('should render', () => {
     expect(render(<CliInput {...instance(mockedProps)} />)).toBeTruthy()

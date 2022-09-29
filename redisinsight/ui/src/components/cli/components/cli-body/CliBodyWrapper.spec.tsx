@@ -67,11 +67,6 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn()
 }))
 
-/**
- * CliBodyWrapper tests
- *
- * @group unit
- */
 describe('CliBodyWrapper', () => {
   beforeEach(() => {
     const state: any = store.getState();

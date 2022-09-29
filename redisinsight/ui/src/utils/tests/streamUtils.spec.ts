@@ -13,11 +13,6 @@ const consumers2: ConsumerDto[] = [
 
 const consumers3: ConsumerDto[] = []
 
-/**
- * getDefaultConsumer tests
- *
- * @group unit
- */
 describe('getDefaultConsumer', () => {
   it('should get consumer with lowest pending messages count and ', () => {
     expect(getDefaultConsumer(consumers1)).toEqual({ name: 'name_1', pending: 1, idle: 123 })

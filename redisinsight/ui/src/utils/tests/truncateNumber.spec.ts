@@ -1,10 +1,5 @@
 import { truncateNumberToRange } from 'uiSrc/utils'
 
-/**
- * truncateNumberToRange tests
- *
- * @group unit
- */
 describe('truncateNumberToRange', () => {
   it('truncateNumberToRange should return value between 0 and 999', () => {
     const number1 = 10

@@ -7,11 +7,6 @@ import InternalLink, { Props } from './InternalLink'
 
 const mockedProps = mock<Props>()
 
-/**
- * InternalLink tests
- *
- * @group unit
- */
 describe('InternalLink', () => {
   it('should render', () => {
     const label = 'Manual'

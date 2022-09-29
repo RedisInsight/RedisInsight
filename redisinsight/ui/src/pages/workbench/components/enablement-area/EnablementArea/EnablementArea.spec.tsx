@@ -27,11 +27,6 @@ jest.mock('uiSrc/slices/workbench/wb-guides', () => {
   }
 })
 
-/**
- * EnablementArea tests
- *
- * @group unit
- */
 describe('EnablementArea', () => {
   it('should render', () => {
     expect(render(<EnablementArea

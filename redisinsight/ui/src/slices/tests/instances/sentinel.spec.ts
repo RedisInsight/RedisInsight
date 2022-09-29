@@ -98,17 +98,7 @@ beforeEach(() => {
   )
 })
 
-/**
- * sentinel slice tests
- *
- * @group unit
- */
 describe('sentinel slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -122,11 +112,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * loadMastersSentinel tests
- *
- * @group unit
- */
   describe('loadMastersSentinel', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -148,11 +133,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * updateMastersSentinel tests
- *
- * @group unit
- */
   describe('updateMastersSentinel', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -179,11 +159,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * loadMastersSentinelSuccess tests
- *
- * @group unit
- */
   describe('loadMastersSentinelSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -240,11 +215,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * loadMastersSentinelFailure tests
- *
- * @group unit
- */
   describe('loadMastersSentinelFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -269,11 +239,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * createMastersSentinel tests
- *
- * @group unit
- */
   describe('createMastersSentinel', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -295,11 +260,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * createMastersSentinelSuccess tests
- *
- * @group unit
- */
   describe('createMastersSentinelSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -360,11 +320,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * createMastersSentinelFailure tests
- *
- * @group unit
- */
   describe('createMastersSentinelFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -392,11 +347,6 @@ describe('sentinel slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
     it('call both fetchMastersSentinelAction and loadMastersSentinelSuccess when fetch is successed', async () => {
       // Arrange
@@ -518,11 +468,6 @@ describe('sentinel slice', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  /**
- * cloneMasterSentinelAction tests
- *
- * @group unit
- */
   describe('cloneMasterSentinelAction', () => {
     it('should call proper actions when fetch is succeed', async () => {
       // Arrange

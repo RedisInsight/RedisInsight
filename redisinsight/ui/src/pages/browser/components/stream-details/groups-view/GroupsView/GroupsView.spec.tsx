@@ -23,11 +23,6 @@ const mockGroups: IConsumerGroup[] = [{
   editing: false,
 }]
 
-/**
- * GroupsView tests
- *
- * @group unit
- */
 describe('GroupsView', () => {
   it('should render', () => {
     expect(render(<GroupsView {...instance(mockedProps)} data={mockGroups} />)).toBeTruthy()

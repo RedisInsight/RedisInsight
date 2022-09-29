@@ -10,11 +10,6 @@ const getLetterByIndexTests: any[] = [
   [1024, 'AMK'],
 ]
 
-/**
- * getLetterByIndex tests
- *
- * @group unit
- */
 describe('getLetterByIndex', () => {
   it.each(getLetterByIndexTests)('for input: %s (index), should be output: %s',
     (index, expected) => {

@@ -20,11 +20,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * SearchKeyList tests
- *
- * @group unit
- */
 describe('SearchKeyList', () => {
   it('should render', () => {
     expect(render(<SearchKeyList />)).toBeTruthy()

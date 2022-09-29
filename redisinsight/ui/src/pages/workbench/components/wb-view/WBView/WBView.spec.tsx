@@ -33,21 +33,11 @@ jest.mock('uiSrc/slices/workbench/wb-guides', () => {
   }
 })
 
-/**
- * WBView tests
- *
- * @group unit
- */
 describe('WBView', () => {
   it('should render', () => {
     expect(render(<WBView {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  /**
- * Workbench input keyboard cases tests
- *
- * @group unit
- */
   describe('Workbench input keyboard cases', () => {
     it.skip('"Enter" keydown should call "onSubmit"', () => {
       const command = 'info'

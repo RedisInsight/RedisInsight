@@ -32,11 +32,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * FilterKeyType tests
- *
- * @group unit
- */
 describe('FilterKeyType', () => {
   it('should render', () => {
     expect(render(<FilterKeyType />)).toBeTruthy()

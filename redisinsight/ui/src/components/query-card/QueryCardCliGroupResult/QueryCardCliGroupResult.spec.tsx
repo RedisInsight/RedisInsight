@@ -2,11 +2,6 @@ import React from 'react'
 import { render } from 'uiSrc/utils/test-utils'
 import QueryCardCliGroupResult from './QueryCardCliGroupResult'
 
-/**
- * QueryCardCliGroupResult tests
- *
- * @group unit
- */
 describe('QueryCardCliGroupResult', () => {
   it('should render', () => {
     const mockResult = [{

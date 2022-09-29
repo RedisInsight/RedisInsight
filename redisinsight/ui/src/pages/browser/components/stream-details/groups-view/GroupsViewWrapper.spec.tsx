@@ -70,11 +70,6 @@ const mockGroupsView = (props: GroupsViewProps) => (
   </div>
 )
 
-/**
- * GroupsViewWrapper tests
- *
- * @group unit
- */
 describe('GroupsViewWrapper', () => {
   beforeAll(() => {
     GroupsView.mockImplementation(mockGroupsView)

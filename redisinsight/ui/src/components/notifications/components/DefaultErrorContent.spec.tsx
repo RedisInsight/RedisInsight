@@ -21,11 +21,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * DefaultErrorContent tests
- *
- * @group unit
- */
 describe('DefaultErrorContent', () => {
   it('should render', () => {
     expect(render(<DefaultErrorContent {...instance(mockedProps)} />)).toBeTruthy()

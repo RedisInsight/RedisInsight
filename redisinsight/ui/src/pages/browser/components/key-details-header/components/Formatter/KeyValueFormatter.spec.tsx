@@ -8,11 +8,6 @@ const mockedProps = {
   ...mock<Props>(),
 }
 
-/**
- * KeyValueFormatter tests
- *
- * @group unit
- */
 describe('KeyValueFormatter', () => {
   it('should render', () => {
     expect(render(<KeyValueFormatter {...mockedProps} />)).toBeTruthy()

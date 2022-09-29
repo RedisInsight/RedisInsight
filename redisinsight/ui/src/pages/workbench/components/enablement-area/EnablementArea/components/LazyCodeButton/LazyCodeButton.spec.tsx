@@ -10,11 +10,6 @@ import LazyCodeButton, { Props } from './LazyCodeButton'
 
 const mockedProps = mock<Props>()
 
-/**
- * LazyCodeButton tests
- *
- * @group unit
- */
 describe('LazyCodeButton', () => {
   it('should render', () => {
     const label = 'Manual'

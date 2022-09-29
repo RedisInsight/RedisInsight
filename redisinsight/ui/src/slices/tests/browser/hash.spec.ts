@@ -56,11 +56,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * hash slice tests
- *
- * @group unit
- */
 describe('hash slice', () => {
   beforeAll(() => {
     dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
@@ -69,11 +64,7 @@ describe('hash slice', () => {
   afterAll(() => {
     dateNow.mockRestore()
   })
-  /**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
+
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -87,11 +78,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * loadHashFields tests
- *
- * @group unit
- */
   describe('loadHashFields', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -111,11 +97,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * loadHashFieldsSuccess tests
- *
- * @group unit
- */
   describe('loadHashFieldsSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -179,11 +160,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * loadHashFieldsFailure tests
- *
- * @group unit
- */
   describe('loadHashFieldsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -205,11 +181,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * loadMoreHashFields tests
- *
- * @group unit
- */
   describe('loadMoreHashFields', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -230,11 +201,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * loadMoreHashFieldsSuccess tests
- *
- * @group unit
- */
   describe('loadMoreHashFieldsSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -294,11 +260,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * loadMoreHashFieldsFailure tests
- *
- * @group unit
- */
   describe('loadMoreHashFieldsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -320,11 +281,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * removeHashFields tests
- *
- * @group unit
- */
   describe('removeHashFields', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -344,11 +300,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * removeHashFieldsSuccess tests
- *
- * @group unit
- */
   describe('removeHashFieldsSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -372,11 +323,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * removeHashFieldsFailure tests
- *
- * @group unit
- */
   describe('removeHashFieldsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -398,11 +344,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * removeFieldsFromList tests
- *
- * @group unit
- */
   describe('removeFieldsFromList', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -440,11 +381,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * updateValue tests
- *
- * @group unit
- */
   describe('updateValue', () => {
     it('should properly set the state while updating a hash key', () => {
       // Arrange
@@ -468,11 +404,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * updateValueSuccess tests
- *
- * @group unit
- */
   describe('updateValueSuccess', () => {
     it('should properly set the state after successfully updated hash key', () => {
       // Arrange
@@ -496,11 +427,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * updateValueFailure tests
- *
- * @group unit
- */
   describe('updateValueFailure', () => {
     it('should properly set the state on update hash key failure', () => {
       // Arrange
@@ -525,11 +451,6 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * resetUpdateValue tests
- *
- * @group unit
- */
   describe('resetUpdateValue', () => {
     it('should properly reset the state', () => {
       // Arrange;
@@ -553,17 +474,7 @@ describe('hash slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
-  /**
- * fetchHashFields tests
- *
- * @group unit
- */
     describe('fetchHashFields', () => {
       it('call fetchHashFields, loadHashFieldsSuccess when fetch is successed', async () => {
         // Arrange
@@ -591,11 +502,6 @@ describe('hash slice', () => {
       })
     })
 
-    /**
- * fetchMoreHashFields tests
- *
- * @group unit
- */
     describe('fetchMoreHashFields', () => {
       it(
         'call fetchMoreHashFields, loadMoreHashFieldsSuccess,'
@@ -628,11 +534,6 @@ describe('hash slice', () => {
       )
     })
 
-    /**
- * refreshHashFieldsAction tests
- *
- * @group unit
- */
     describe('refreshHashFieldsAction', () => {
       it('succeed to refresh hash data', async () => {
         // Arrange
@@ -659,11 +560,6 @@ describe('hash slice', () => {
       })
     })
 
-    /**
- * deleteHashFields tests
- *
- * @group unit
- */
     describe('deleteHashFields', () => {
       it(
         'call removeHashFields, removeHashFieldsSuccess,'
@@ -755,11 +651,6 @@ describe('hash slice', () => {
       )
     })
 
-    /**
- * addHashFields tests
- *
- * @group unit
- */
     describe('addHashFields', () => {
       const keyName = 'key'
       const fields = [
@@ -808,11 +699,6 @@ describe('hash slice', () => {
       })
     })
 
-    /**
- * updateHashFieldsAction tests
- *
- * @group unit
- */
     describe('updateHashFieldsAction', () => {
       const keyName = 'key'
       const fields = [

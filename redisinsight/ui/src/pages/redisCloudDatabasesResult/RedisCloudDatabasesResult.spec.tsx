@@ -5,11 +5,6 @@ import RedisCloudDatabasesResult, { Props } from './RedisCloudDatabasesResult'
 
 const mockedProps = mock<Props>()
 
-/**
- * RedisCloudDatabasesResult tests
- *
- * @group unit
- */
 describe('RedisCloudDatabasesResult', () => {
   it('should render', () => {
     const columnsMock = [

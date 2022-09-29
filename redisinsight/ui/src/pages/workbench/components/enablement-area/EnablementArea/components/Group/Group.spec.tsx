@@ -6,11 +6,6 @@ import Group, { Props } from './Group'
 const mockedProps = mock<Props>()
 const testId = 'quick-guides'
 
-/**
- * Group tests
- *
- * @group unit
- */
 describe('Group', () => {
   it('should render', () => {
     expect(render(<Group {...instance(mockedProps)} testId={testId} />)).toBeTruthy()

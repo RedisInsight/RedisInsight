@@ -32,11 +32,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * Query tests
- *
- * @group unit
- */
 describe('Query', () => {
   it('should render', () => {
     expect(render(<Query {...instance(mockedProps)} />)).toBeTruthy()

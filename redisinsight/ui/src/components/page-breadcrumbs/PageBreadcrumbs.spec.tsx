@@ -20,11 +20,6 @@ const breadcrumbs: Breadcrumb[] = [
   }
 ]
 
-/**
- * PageBreadcrumbs tests
- *
- * @group unit
- */
 describe('PageBreadcrumbs', () => {
   it('should render', () => {
     expect(render(<PageBreadcrumbs breadcrumbs={breadcrumbs} />)).toBeTruthy()

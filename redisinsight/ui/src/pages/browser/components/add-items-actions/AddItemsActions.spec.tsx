@@ -6,11 +6,6 @@ import { Props } from '../key-details-add-items/add-zset-members/AddZsetMembers'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddItemsActions tests
- *
- * @group unit
- */
 describe('AddItemsActions', () => {
   it('should render', () => {
     expect(render(<AddItemsActions {...instance(mockedProps)} />)).toBeTruthy()

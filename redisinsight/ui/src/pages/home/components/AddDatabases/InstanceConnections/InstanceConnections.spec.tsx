@@ -5,11 +5,6 @@ import InstanceConnections, { Props } from './InstanceConnections'
 
 const mockedProps = mock<Props>()
 
-/**
- * InstanceConnections tests
- *
- * @group unit
- */
 describe('InstanceConnections', () => {
   it('should render', () => {
     expect(

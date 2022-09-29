@@ -22,7 +22,7 @@ const TopNamespaceView = (props: Props) => {
   }
 
   return (
-    <div>
+    <div className={styles.topNamespaceView}>
       <EuiTitle className={styles.sectionTitle}>
         <h4>TOP NAMESPACES</h4>
       </EuiTitle>
@@ -33,7 +33,7 @@ const TopNamespaceView = (props: Props) => {
         onClick={() => setNspTable(NSPTable.MEMORY)}
         disabled={nspTable === NSPTable.MEMORY}
         className={cx(styles.textBtn, { [styles.activeBtn]: nspTable === NSPTable.MEMORY })}
-        data-testid="btn-change-mode-memory"
+        data-testid="btn-change-table-memory"
       >
         by Memory
       </EuiButton>
@@ -44,7 +44,7 @@ const TopNamespaceView = (props: Props) => {
         onClick={() => setNspTable(NSPTable.KEYS)}
         disabled={nspTable === NSPTable.KEYS}
         className={cx(styles.textBtn, { [styles.activeBtn]: nspTable === NSPTable.KEYS })}
-        data-testid="btn-change-mode-keys"
+        data-testid="btn-change-table-keys"
       >
         by Number of Keys
       </EuiButton>

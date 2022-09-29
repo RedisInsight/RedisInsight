@@ -117,4 +117,9 @@ const countDecimals = (value: number) => {
   return value.toString().split('.')?.[1]?.length || 0
 }
 
-export const getApproximateNumber = (number: number): string => (number < 1 ? '<1' : `${Math.round(number)}`)
+const getApproximateNumber = (number: number): string => (number < 1 ? '<1' : `${Math.round(number)}`)
+
+export const getApproximatePercentage = (total?: number, part: number = 0): string => {
+  const percent = (total ? part / total : 1) * 100
+  return `${getApproximateNumber(percent)}%`
+}

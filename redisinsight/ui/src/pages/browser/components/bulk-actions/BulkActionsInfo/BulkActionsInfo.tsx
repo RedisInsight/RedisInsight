@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 
-import { getApproximateNumber, Maybe, Nullable } from 'uiSrc/utils'
+import { getApproximatePercentage, Maybe, Nullable } from 'uiSrc/utils'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BulkActionsStatus, KeyTypes } from 'uiSrc/constants'
 import GroupBadge from 'uiSrc/components/group-badge/GroupBadge'
@@ -44,12 +44,12 @@ const BulkActionsInfo = (props: Props) => {
         {!isUndefined(status) && status !== BulkActionsStatus.Completed && status !== BulkActionsStatus.Aborted && (
           <EuiText color="subdued" className={styles.progress} data-testid="bulk-status-progress">
             In progress:
-            <span>{` ${getApproximateNumber((total ? scanned / total : 1) * 100)}%`}</span>
+            <span>{` ${getApproximatePercentage(total, scanned)}`}</span>
           </EuiText>
         )}
         {status === BulkActionsStatus.Aborted && (
           <EuiText color="danger" className={styles.progress} data-testid="bulk-status-stopped">
-            Stopped: {getApproximateNumber((total ? scanned / total : 1) * 100)}%
+            Stopped: {getApproximatePercentage(total, scanned)}
           </EuiText>
         )}
         {status === BulkActionsStatus.Completed && (

@@ -27,11 +27,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * DatabaseAnalysisHeader tests
- *
- * @group unit
- */
 describe('DatabaseAnalysisHeader', () => {
   it('should render', () => {
     expect(render(<Header {...instance(mockedProps)} />)).toBeTruthy()

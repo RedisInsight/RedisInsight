@@ -69,17 +69,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * db analysis tests
- *
- * @group unit
- */
 describe('db analysis slice', () => {
-  /**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -92,12 +82,6 @@ describe('db analysis slice', () => {
       expect(result).toEqual(nextState)
     })
 
-    /**
-   * setDatabaseAnalysisInitialState tests
-   *
-   * @group unit
-   */
-
     describe('setDatabaseAnalysisInitialState', () => {
       it('should properly set initial state', () => {
         const nextState = reducer(initialState, setDatabaseAnalysisInitialState())
@@ -108,11 +92,6 @@ describe('db analysis slice', () => {
       })
     })
 
-    /**
-   * setSelectedAnalysisId tests
-   *
-   * @group unit
-   */
     describe('setSelectedAnalysisId', () => {
       it('should properly set payload to selectedAnalysis', () => {
         const payload = 'id'
@@ -133,11 +112,7 @@ describe('db analysis slice', () => {
         expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
       })
     })
-    /**
-   * loadDBAnalysisReportsError tests
-   *
-   * @group unit
-   */
+
     describe('loadDBAnalysisReportsError', () => {
       it('should properly set error to history', () => {
         // Arrange
@@ -162,11 +137,6 @@ describe('db analysis slice', () => {
         expect(dbAnalysisSelector(rootState)).toEqual(state)
       })
     })
-    /**
-   * getDBAnalysisError tests
-   *
-   * @group unit
-   */
     describe('getDBAnalysisError', () => {
       it('should properly set error', () => {
         // Arrange
@@ -187,11 +157,6 @@ describe('db analysis slice', () => {
         expect(dbAnalysisSelector(rootState)).toEqual(state)
       })
     })
-    /**
-   * getDBAnalysis tests
-   *
-   * @group unit
-   */
     describe('getDBAnalysis', () => {
       it('should properly set loading: true', () => {
         // Arrange
@@ -210,11 +175,6 @@ describe('db analysis slice', () => {
         expect(dbAnalysisSelector(rootState)).toEqual(state)
       })
     })
-    /**
-   * loadDBAnalysisReports tests
-   *
-   * @group unit
-   */
     describe('loadDBAnalysisReports', () => {
       it('should properly set loading: true', () => {
         // Arrange
@@ -236,11 +196,6 @@ describe('db analysis slice', () => {
         expect(dbAnalysisSelector(rootState)).toEqual(state)
       })
     })
-    /**
-   * getDBAnalysisSuccess tests
-   *
-   * @group unit
-   */
     describe('getDBAnalysisSuccess', () => {
       it('should properly set loading: true', () => {
         const payload = mockAnalysis
@@ -261,11 +216,6 @@ describe('db analysis slice', () => {
         expect(dbAnalysisSelector(rootState)).toEqual(state)
       })
     })
-    /**
-   * loadDBAnalysisReportsSuccess tests
-   *
-   * @group unit
-   */
     describe('loadDBAnalysisReportsSuccess', () => {
       it('should properly set data to history', () => {
         const payload = [mockHistoryReport]
@@ -288,11 +238,6 @@ describe('db analysis slice', () => {
     })
   })
 
-  /**
-   * thunks tests
-   *
-   * @group unit
-   */
   // thunks
   describe('thunks', () => {
     describe('fetchDBAnalysisAction', () => {
@@ -342,11 +287,6 @@ describe('db analysis slice', () => {
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
-    /**
-   * createNewAnalysis tests
-   *
-   * @group unit
-   */
     describe('createNewAnalysis', () => {
       it('succeed to create new analysis', async () => {
         const data = mockAnalysis
@@ -403,11 +343,6 @@ describe('db analysis slice', () => {
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
-    /**
-   * fetchDBAnalysisReportsHistory tests
-   *
-   * @group unit
-   */
     describe('fetchDBAnalysisReportsHistory', () => {
       it('succeed to fetch analysis reports', async () => {
         const data = [mockHistoryReport]

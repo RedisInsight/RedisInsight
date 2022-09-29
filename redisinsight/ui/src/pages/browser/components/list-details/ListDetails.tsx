@@ -2,8 +2,9 @@ import { EuiButtonIcon, EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@e
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { isEqual, isNull } from 'lodash'
+import { isNull } from 'lodash'
 import { CellMeasurerCache } from 'react-virtualized'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
 import {
   listSelector,
@@ -20,19 +21,28 @@ import {
 } from 'uiSrc/components/virtual-table/interfaces'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  OVER_RENDER_BUFFER_COUNT,
+  TableCellAlignment,
+  TEXT_INVALID_VALUE,
+  TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_UNPRINTABLE_CHARACTERS
+} from 'uiSrc/constants'
 import {
   bufferToSerializedFormat,
   bufferToString,
   formatLongName,
   formattingBuffer,
+  isFormatEditable,
   isNonUnicodeFormatter,
   isEqualBuffers,
-  isTextViewFormatter,
   stringToBuffer,
   stringToSerializedBufferFormat,
-  validateListIndex
+  validateListIndex,
+  Nullable
 } from 'uiSrc/utils'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -44,22 +54,20 @@ import {
   SetListElementDto,
   SetListElementResponse,
 } from 'apiSrc/modules/browser/dto'
+
 import styles from './styles.module.scss'
 
 const headerHeight = 60
 const rowHeight = 43
 const footerHeight = 0
 const initSearchingIndex = null
-const APPROXIMATE_WIDTH_OF_SIGN = 8.3
 
 const cellCache = new CellMeasurerCache({
   fixedWidth: true,
   minHeight: rowHeight,
 })
 
-interface IListElement extends SetListElementResponse {
-  editing: boolean;
-}
+interface IListElement extends SetListElementResponse {}
 
 interface Props {
   isFooterOpen: boolean
@@ -80,6 +88,7 @@ const ListDetails = (props: Props) => {
   const [elements, setElements] = useState<IListElement[]>([])
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
+  const [editingIndex, setEditingIndex] = useState<Nullable<number>>(null)
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
   const [areaValue, setAreaValue] = useState<string>('')
   const [, forceUpdate] = useState({})
@@ -90,9 +99,7 @@ const ListDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const listElements = loadedElements.map(formatItem)
-
-    setElements(listElements)
+    setElements(loadedElements)
 
     if (loadedElements.length < elements.length) {
       formattedLastIndexRef.current = 0
@@ -101,40 +108,39 @@ const ListDetails = (props: Props) => {
     if (viewFormat !== viewFormatProp) {
       setExpandedRows([])
       setViewFormat(viewFormatProp)
+      setEditingIndex(null)
 
-      cellCache.clearAll()
-      setTimeout(() => {
-        cellCache.clearAll()
-        forceUpdate({})
-      }, 0)
+      clearCache()
     }
   }, [loadedElements, viewFormatProp])
 
-  const formatItem = useCallback(({ index, element }: IListElement): IListElement => ({
-    index: searchedIndex ?? index,
-    editing: false,
-    element
-  }), [viewFormatProp])
+  const clearCache = () => setTimeout(() => {
+    cellCache.clearAll()
+    forceUpdate({})
+  }, 0)
 
-  const handleEditElement = (index = 0, editing: boolean) => {
-    const newElemsState = elements.map((item) => {
-      if (item.index === index) {
-        const value = bufferToSerializedFormat(viewFormat, item.element, 4)
-        setAreaValue(value)
-        return { ...item, editing }
-      }
-      return item
-    })
+  const handleEditElement = useCallback((
+    index: Nullable<number> = null,
+    editing: boolean,
+    valueItem?: RedisResponseBuffer
+  ) => {
+    setEditingIndex(editing ? index : null)
 
-    if (!isEqual(elements, newElemsState)) {
-      setElements(newElemsState)
+    if (editing) {
+      const value = bufferToSerializedFormat(viewFormat, valueItem, 4)
+      setAreaValue(value)
+
+      setTimeout(() => {
+        textAreaRef?.current?.focus()
+      }, 0)
     }
 
+    // hack to update scrollbar padding
+    clearCache()
     setTimeout(() => {
-      cellCache.clearAll()
-      forceUpdate({})
+      clearCache()
     }, 0)
-  }
+  }, [cellCache, viewFormat])
 
   const handleApplyEditElement = (index = 0) => {
     const data: SetListElementDto = {
@@ -206,6 +212,13 @@ const ListDetails = (props: Props) => {
     cellCache.clearAll()
   }
 
+  const updateTextAreaHeight = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = '0px'
+      textAreaRef.current.style.height = `${textAreaRef.current?.scrollHeight || 0}px`
+    }
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'index',
@@ -248,59 +261,74 @@ const ListDetails = (props: Props) => {
       alignment: TableCellAlignment.Left,
       render: function Element(
         _element: string,
-        { element: elementItem, index, editing }: IListElement,
-        expanded: boolean = false
+        { element: elementItem, index }: IListElement,
+        expanded: boolean = false,
+        rowIndex = 0
       ) {
         const element = bufferToString(elementItem)
         const tooltipContent = formatLongName(element)
         const { value, isValid } = formattingBuffer(elementItem, viewFormatProp, { expanded })
 
-        if (editing) {
-          const text = areaValue
-          const calculatedBreaks = text?.split('\n').length
-          const textAreaWidth = textAreaRef.current?.clientWidth ?? 0
-          const OneRowLength = textAreaWidth / APPROXIMATE_WIDTH_OF_SIGN
-          const approximateLinesByLength = isTextViewFormatter(viewFormat) ? text?.length / OneRowLength : 0
-          const calculatedRows = Math.round(approximateLinesByLength + calculatedBreaks)
-          const disabled = !isEqualBuffers(elementItem, stringToBuffer(element))
-            && !isNonUnicodeFormatter(viewFormat)
+        if (index === editingIndex) {
+          const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
+            && !isEqualBuffers(elementItem, stringToBuffer(element))
+
+          setTimeout(() => cellCache.clear(rowIndex, 1), 0)
+
           return (
-            <StopPropagation>
-              <div className={styles.inlineItemEditor}>
-                <InlineItemEditor
-                  expandable
-                  initialValue={element}
-                  controlsPosition="inside"
-                  controlsDesign="separate"
-                  placeholder="Enter Element"
-                  fieldName="elementValue"
-                  controlsClassName={styles.textAreaControls}
-                  isLoading={updateLoading}
-                  isDisabled={disabled}
-                  disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
-                  onDecline={() => handleEditElement(index, false)}
-                  onApply={() => handleApplyEditElement(index)}
-                >
-                  <EuiTextArea
-                    fullWidth
-                    name="value"
-                    id="value"
-                    rows={calculatedRows}
-                    resize="none"
-                    placeholder="Enter Element"
-                    value={areaValue}
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                      cellCache.clearAll()
-                      setAreaValue(e.target.value)
-                    }}
-                    disabled={updateLoading}
-                    inputRef={textAreaRef}
-                    className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
-                    data-testid="element-value-editor"
-                  />
-                </InlineItemEditor>
-              </div>
-            </StopPropagation>
+            <AutoSizer disableHeight onResize={() => setTimeout(updateTextAreaHeight, 0)}>
+              {({ width }) => (
+                <div style={{ width }}>
+                  <StopPropagation>
+                    <div style={{ width }} className={styles.inlineItemEditor}>
+                      <InlineItemEditor
+                        expandable
+                        preventOutsideClick
+                        disableFocusTrap
+                        declineOnUnmount={false}
+                        initialValue={element}
+                        controlsPosition="inside"
+                        controlsDesign="separate"
+                        placeholder="Enter Element"
+                        fieldName="elementValue"
+                        controlsClassName={styles.textAreaControls}
+                        isLoading={updateLoading}
+                        isDisabled={disabled}
+                        disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
+                        onDecline={() => handleEditElement(index, false)}
+                        onApply={() => handleApplyEditElement(index)}
+                        approveText={TEXT_INVALID_VALUE}
+                        approveByValidation={() =>
+                          formattingBuffer(
+                            stringToSerializedBufferFormat(viewFormat, areaValue),
+                            viewFormat
+                          )?.isValid}
+                      >
+                        <EuiTextArea
+                          fullWidth
+                          name="value"
+                          id="value"
+                          resize="none"
+                          placeholder="Enter Element"
+                          value={areaValue}
+                          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                            cellCache.clearAll()
+                            setAreaValue(e.target.value)
+                            updateTextAreaHeight()
+                          }}
+                          disabled={updateLoading}
+                          inputRef={textAreaRef}
+                          className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
+                          spellCheck={false}
+                          data-testid="element-value-editor"
+                          style={{ height: textAreaRef.current?.scrollHeight || 0 }}
+                        />
+                      </InlineItemEditor>
+                    </div>
+                  </StopPropagation>
+                </div>
+              )}
+            </AutoSizer>
           )
         }
         return (
@@ -317,7 +345,7 @@ const ListDetails = (props: Props) => {
                   content={tooltipContent}
                   anchorClassName="truncateText"
                 >
-                  <>{value.substring?.(0, 200) ?? value}</>
+                  <>{value?.substring?.(0, 200) ?? value}</>
                 </EuiToolTip>
               )}
               {expanded && value}
@@ -334,18 +362,22 @@ const ListDetails = (props: Props) => {
       minWidth: 60,
       maxWidth: 60,
       absoluteWidth: 60,
-      render: function Actions(_element: any, { index }: IListElement) {
+      render: function Actions(_element: any, { index, element }: IListElement) {
+        const isEditable = isFormatEditable(viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiButtonIcon
-                iconType="pencil"
-                aria-label="Edit element"
-                className="editFieldBtn"
-                color="primary"
-                onClick={() => handleEditElement(index, true)}
-                data-testid={`edit-list-button-${index}`}
-              />
+              <EuiToolTip content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}>
+                <EuiButtonIcon
+                  iconType="pencil"
+                  aria-label="Edit element"
+                  className="editFieldBtn"
+                  color="primary"
+                  disabled={!isEditable}
+                  onClick={() => handleEditElement(index, true, element)}
+                  data-testid={`edit-list-button-${index}`}
+                />
+              </EuiToolTip>
             </div>
           </StopPropagation>
         )

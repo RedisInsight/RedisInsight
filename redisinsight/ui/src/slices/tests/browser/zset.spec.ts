@@ -54,7 +54,9 @@ import reducer, {
   refreshZsetMembersAction,
 } from '../../browser/zset'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let dateNow: jest.SpyInstance<number>
@@ -418,7 +420,7 @@ describe('zset slice', () => {
       // Arrange
 
       const data = {
-        key: '',
+        key: undefined,
         keyName: '',
         match: '',
         nextCursor: 0,

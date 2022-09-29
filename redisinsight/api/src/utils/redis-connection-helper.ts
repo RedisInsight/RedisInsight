@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { get } from 'lodash';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 
@@ -12,7 +12,7 @@ export const generateRedisConnectionName = (namespace: string, id: string, separ
 
 export const getConnectionName = (client: IORedis.Redis | IORedis.Cluster): string => {
   try {
-    if (client instanceof IORedis.Cluster) {
+    if (client.isCluster) {
       return get(client, 'options.redisOptions.connectionName', CONNECTION_NAME_GLOBAL_PREFIX);
     }
     return get(client, 'options.connectionName', CONNECTION_NAME_GLOBAL_PREFIX);

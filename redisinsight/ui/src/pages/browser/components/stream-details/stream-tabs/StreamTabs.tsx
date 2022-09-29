@@ -9,10 +9,14 @@ import {
   fetchConsumerGroups,
   selectedGroupSelector,
   selectedConsumerSelector,
+  fetchStreamEntries,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SortOrder } from 'uiSrc/constants'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 
 import { streamViewTypeTabs } from '../constants'
 
@@ -20,6 +24,7 @@ import styles from './styles.module.scss'
 
 const StreamTabs = () => {
   const { viewType } = useSelector(streamSelector)
+  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { nameString: selectedGroupName = '' } = useSelector(selectedGroupSelector) ?? {}
   const { nameString: selectedConsumerName = '' } = useSelector(selectedConsumerSelector) ?? {}
 
@@ -38,6 +43,14 @@ const StreamTabs = () => {
   }
 
   const onSelectedTabChanged = (id: StreamViewType) => {
+    if (id === StreamViewType.Data) {
+      dispatch<any>(fetchStreamEntries(
+        key,
+        SCAN_COUNT_DEFAULT,
+        SortOrder.DESC,
+        true
+      ))
+    }
     if (id === StreamViewType.Groups) {
       dispatch(fetchConsumerGroups(
         true,

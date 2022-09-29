@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import React, { useContext, useEffect, useState } from 'react'
 import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
@@ -56,7 +57,7 @@ const KeyValueFormatter = (props: Props) => {
             </>
           </EuiToolTip>
         ),
-        dropdownDisplay: <EuiText className={styles.dropdownDisplay}>{text}</EuiText>,
+        dropdownDisplay: <EuiText size="s" className={styles.dropdownDisplay}>{text}</EuiText>,
         'data-test-subj': `format-option-${value}`,
       })
     )
@@ -88,16 +89,19 @@ const KeyValueFormatter = (props: Props) => {
   }
 
   return (
-    <div className={styles.container}>
-      <EuiSuperSelect
-        isOpen={isSelectOpen}
-        options={options}
-        valueOfSelected={typeSelected}
-        className={styles.changeView}
-        itemClassName={styles.formatType}
-        onChange={(value: KeyValueFormat) => onChangeType(value)}
-        data-testid="select-format-key-value"
-      />
+    <div className={cx(styles.container, { [styles.fullWidth]: width > MIDDLE_SCREEN_RESOLUTION })}>
+      <div className={styles.selectWrapper}>
+        <EuiSuperSelect
+          fullWidth
+          isOpen={isSelectOpen}
+          options={options}
+          valueOfSelected={typeSelected}
+          className={styles.changeView}
+          itemClassName={styles.formatType}
+          onChange={(value: KeyValueFormat) => onChangeType(value)}
+          data-testid="select-format-key-value"
+        />
+      </div>
     </div>
   )
 }

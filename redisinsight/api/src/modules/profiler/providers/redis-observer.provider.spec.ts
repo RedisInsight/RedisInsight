@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import {
   mockLogFile, mockRedisShardObserver,
   MockType,
@@ -15,7 +15,7 @@ nodeClient.monitor = jest.fn();
 nodeClient.status = 'ready';
 nodeClient.disconnect = jest.fn();
 nodeClient.duplicate = jest.fn();
-nodeClient.send_command = jest.fn();
+nodeClient.call = jest.fn();
 
 describe('RedisObserverProvider', () => {
   let service: RedisObserverProvider;
@@ -52,7 +52,7 @@ describe('RedisObserverProvider', () => {
     redisService.getClientInstance.mockReturnValue({ ...mockRedisClientInstance, client: nodeClient });
     redisService.isClientConnected.mockReturnValue(true);
     databaseService.connectToInstance.mockResolvedValue(nodeClient);
-    nodeClient.send_command.mockResolvedValue('OK');
+    nodeClient.call.mockResolvedValue('OK');
     nodeClient.duplicate.mockReturnValue(nodeClient);
     nodeClient.monitor.mockReturnValue(mockRedisShardObserver);
   });

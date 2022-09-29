@@ -11,6 +11,7 @@ import { DatabaseOverviewPage } from './database-overview-page';
 import { HelpCenterPage } from './help-center-page';
 import { ShortcutsPage } from './shortcuts-page';
 import { MonitorPage } from './monitor-page';
+import { OverviewPage } from './overview-page';
 import { PubSubPage } from './pub-sub-page';
 import { SlowLogPage } from './slow-log-page';
 import { NotificationPage } from './notification-page';
@@ -29,6 +30,7 @@ export {
     HelpCenterPage,
     ShortcutsPage,
     MonitorPage,
+    OverviewPage,
     PubSubPage,
     SlowLogPage,
     NotificationPage

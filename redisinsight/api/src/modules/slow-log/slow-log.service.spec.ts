@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockRedisNoPermError, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
@@ -49,10 +49,10 @@ const mockSlowlogConfigReply = [
 const mockSlowLogReply = [mockLogReply, mockLogReply];
 
 const mockRedisNode = Object.create(Redis.prototype);
-mockRedisNode.send_command = jest.fn();
+mockRedisNode.call = jest.fn();
 
 const mockRedisCluster = Object.create(Redis.Cluster.prototype);
-mockRedisCluster.send_command = jest.fn();
+mockRedisCluster.call = jest.fn();
 mockRedisCluster.nodes = jest.fn().mockResolvedValue([mockRedisNode, mockRedisNode]);
 
 describe('SlowLogService', () => {
@@ -95,7 +95,7 @@ describe('SlowLogService', () => {
       client: mockRedisNode,
     });
     redisService.isClientConnected.mockReturnValue(true);
-    mockRedisNode.send_command.mockResolvedValue(mockSlowLogReply);
+    mockRedisNode.call.mockResolvedValue(mockSlowLogReply);
     databaseService.connectToInstance.mockResolvedValueOnce(mockRedisNode);
   });
 
@@ -145,7 +145,7 @@ describe('SlowLogService', () => {
   describe('reset', () => {
     it('should reset slowlogs for standalone', async () => {
       await service.reset(mockClientOptions);
-      expect(mockRedisNode.send_command).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
+      expect(mockRedisNode.call).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
     });
     it('should reset slowlogs cluster', async () => {
       redisService.getClientInstance.mockReturnValue({
@@ -153,7 +153,7 @@ describe('SlowLogService', () => {
         client: mockRedisCluster,
       });
       await service.reset(mockClientOptions);
-      expect(mockRedisNode.send_command).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
+      expect(mockRedisNode.call).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
     });
     it('should proxy HttpException', async () => {
       try {
@@ -177,13 +177,13 @@ describe('SlowLogService', () => {
 
   describe('getConfig', () => {
     it('should get slowlogs config', async () => {
-      mockRedisNode.send_command.mockResolvedValueOnce(mockSlowlogConfigReply);
+      mockRedisNode.call.mockResolvedValueOnce(mockSlowlogConfigReply);
 
       const res = await service.getConfig(mockClientOptions);
       expect(res).toEqual(mockSlowLogConfig);
     });
     it('should get ONLY supported slowlogs config even if there some extra fields in resp', async () => {
-      mockRedisNode.send_command.mockResolvedValueOnce([
+      mockRedisNode.call.mockResolvedValueOnce([
         ...mockSlowlogConfigReply,
         'slowlog-extra',
         12,
@@ -214,26 +214,26 @@ describe('SlowLogService', () => {
 
   describe('updateConfig', () => {
     it('should update slowlogs config (1 field)', async () => {
-      mockRedisNode.send_command.mockResolvedValueOnce(mockSlowlogConfigReply);
-      mockRedisNode.send_command.mockResolvedValueOnce('OK');
+      mockRedisNode.call.mockResolvedValueOnce(mockSlowlogConfigReply);
+      mockRedisNode.call.mockResolvedValueOnce('OK');
 
       const res = await service.updateConfig(mockClientOptions, { slowlogMaxLen: 128 });
       expect(res).toEqual(mockSlowLogConfig);
-      expect(mockRedisNode.send_command).toHaveBeenCalledTimes(2);
+      expect(mockRedisNode.call).toHaveBeenCalledTimes(2);
     });
     it('should update slowlogs config (2 fields)', async () => {
-      mockRedisNode.send_command
+      mockRedisNode.call
         .mockResolvedValueOnce(mockSlowlogConfigReply)
         .mockResolvedValueOnce('OK')
         .mockResolvedValueOnce('OK');
 
       const res = await service.updateConfig(mockClientOptions, { slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
       expect(res).toEqual({ slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
-      expect(mockRedisNode.send_command).toHaveBeenCalledTimes(3);
+      expect(mockRedisNode.call).toHaveBeenCalledTimes(3);
     });
     it('should throw an error for cluster', async () => {
       try {
-        mockRedisCluster.send_command.mockResolvedValueOnce(mockSlowlogConfigReply);
+        mockRedisCluster.call.mockResolvedValueOnce(mockSlowlogConfigReply);
 
         redisService.getClientInstance.mockReturnValue({
           ...mockRedisClientInstance,

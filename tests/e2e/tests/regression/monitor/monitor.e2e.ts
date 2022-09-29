@@ -15,6 +15,7 @@ import {
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const monitorPage = new MonitorPage();
@@ -22,6 +23,7 @@ const settingsPage = new SettingsPage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
+const common = new Common();
 
 fixture `Monitor`
     .meta({ type: 'regression' })
@@ -66,7 +68,7 @@ test
         //Run monitor
         await monitorPage.startMonitor();
         //Refresh the page
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         //Check that monitor is closed
         await t.expect(monitorPage.monitorArea.exists).notOk('Monitor area');
         //Check that monitor area doesn't have any saved results
@@ -129,7 +131,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
     .after(async() => {

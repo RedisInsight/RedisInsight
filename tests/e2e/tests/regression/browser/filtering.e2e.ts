@@ -147,14 +147,12 @@ test
         await t.expect(browserPage.filterByPatterSearchInput.getAttribute('value')).eql('', 'All characters from filter input are removed');
         await t.expect(browserPage.clearFilterButton.visible).notOk('The clear control is disappeared');
     });
-test
-    .after(async() => {
-        //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Verify that when user clicks on “clear” control and filter per key name is applied filter is reset and rescan initiated', async t => {
+test('Verify that when user clicks on “clear” control and filter per key name is applied filter is reset and rescan initiated', async t => {
         keyName = `KeyForSearch${chance.word({ length: 50 })}`;
+        //Add keys
+        await browserPage.addStringKey(keyName);
         //Search for not existed key name
-        await browserPage.searchByKeyName(keyName);
+        await browserPage.searchByKeyName(keyName2);
         await t.expect(browserPage.keyListTable.textContent).contains('No results found.', 'Key is not found');
         //Verify the clear control
         await t.click(browserPage.clearFilterButton);
@@ -206,33 +204,33 @@ test
     })
     .after(async() => {
         // Delete database
-        await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per key name using patterns in DB with 10-50 millions of keys', async t => {
-        // Create new key
-        keyName = `KeyForSearch-${chance.word({ length: 10 })}`;
-        await browserPage.addSetKey(keyName);
-        // Search by key name
+        keyName = 'device*';
         await browserPage.selectFilterGroupType(KeyTypesTexts.Set);
-        // Verify that required key is displayed
-        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
-        // Verify that required key is displayed in tree view
+        await browserPage.searchByKeyName(keyName);
+        for (let i = 0; i < 10; i++) {
+            // Verify that keys are filtered
+            await t.expect(browserPage.keyNameInTheList.nth(i).textContent).contains('device', 'Keys filtered incorrectly by key name')
+                .expect(browserPage.keyNameInTheList.nth(i).textContent).contains('set', 'Keys filtered incorrectly by key type');
+        }
         await t.click(browserPage.treeViewButton);
-        await browserPage.searchByKeyNameWithScanMore('KeyForSearch*', keyName);
+        //Verify that user can use the "Scan More" button to search per another 10000 keys
+        await browserPage.verifyScannningMore();
     });
 test
-    .before(async () => {
+    .before(async() => {
         // Add Big standalone DB
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
-    .after(async () => {
+    .after(async() => {
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per key type in DB with 10-50 millions of keys', async t => {
         for (let i = 0; i < keyTypes.length - 2; i++) {
             await browserPage.selectFilterGroupType(keyTypes[i].textType);
             const filteredTypeKeys = keyTypes[i].keyName === 'json'
-                ? Selector(`[data-testid^=badge-ReJSON]`)
+                ? Selector('[data-testid^=badge-ReJSON]')
                 : Selector(`[data-testid^=badge-${keyTypes[i].keyName}]`);
             // Verify that all results have the same type as in filter
             await t.expect(await browserPage.filteringLabel.count).eql(await filteredTypeKeys.count, `The keys of type ${keyTypes[i].textType} not filtered correctly`);

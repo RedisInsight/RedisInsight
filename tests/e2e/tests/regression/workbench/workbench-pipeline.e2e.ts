@@ -21,7 +21,7 @@ fixture `Workbench Pipeline`
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         // Go to Settings page - Pipeline mode
         await t.click(myRedisDatabasePage.settingsButton);
-        await t.click(settingsPage.accordionAdvancedSettings);
+        await t.click(settingsPage.accordionWorkbenchSettings);
     })
     .afterEach(async () => {
         //Delete database
@@ -31,7 +31,7 @@ test
     .meta({ env: env.web })('Verify that user can see the text in settings for pipeline with link', async t => {
         const pipelineText = 'Sets the size of a command batch for the pipeline(opens in a new tab or window) mode in Workbench. 0 or 1 pipelines every command.';
         // Verify text in setting for pipeline
-        await t.expect(settingsPage.accordionAdvancedSettings.textContent).contains(pipelineText, 'Text is incorrect');
+        await t.expect(settingsPage.accordionWorkbenchSettings.textContent).contains(pipelineText, 'Text is incorrect');
         await t.click(settingsPage.pipelineLink);
         // Check new opened window page with the correct URL
         await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page is incorrect');

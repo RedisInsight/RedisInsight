@@ -45,6 +45,7 @@ describe('ServerOnPremiseService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventEmitter2,
+        ServerOnPremiseService,
         {
           provide: getRepositoryToken(ServerEntity),
           useFactory: mockRepository,
@@ -59,7 +60,7 @@ describe('ServerOnPremiseService', () => {
     serverRepository = await module.get(getRepositoryToken(ServerEntity));
     eventEmitter = await module.get<EventEmitter2>(EventEmitter2);
     encryptionService = module.get(EncryptionService);
-    service = new ServerOnPremiseService(serverRepository, eventEmitter, encryptionService);
+    service = module.get(ServerOnPremiseService);
   });
 
   describe('onApplicationBootstrap', () => {
@@ -67,26 +68,26 @@ describe('ServerOnPremiseService', () => {
       eventEmitter.emit = jest.fn();
     });
     it('should create server instance on first application launch', async () => {
-      serverRepository.findOne.mockResolvedValue(null);
+      serverRepository.findOneBy.mockResolvedValue(null);
       serverRepository.create.mockReturnValue(mockServerEntity);
 
       await service.onApplicationBootstrap();
 
-      expect(serverRepository.findOne).toHaveBeenCalled();
+      expect(serverRepository.findOneBy).toHaveBeenCalled();
       expect(serverRepository.create).toHaveBeenCalled();
       expect(serverRepository.save).toHaveBeenCalledWith(mockServerEntity);
     });
     it('should not create server instance on the second application launch', async () => {
-      serverRepository.findOne.mockResolvedValue(mockServerEntity);
+      serverRepository.findOneBy.mockResolvedValue(mockServerEntity);
 
       await service.onApplicationBootstrap();
 
-      expect(serverRepository.findOne).toHaveBeenCalled();
+      expect(serverRepository.findOneBy).toHaveBeenCalled();
       expect(serverRepository.create).not.toHaveBeenCalled();
       expect(serverRepository.save).not.toHaveBeenCalled();
     });
     it('should emit APPLICATION_FIRST_START on first application launch', async () => {
-      serverRepository.findOne.mockResolvedValue(null);
+      serverRepository.findOneBy.mockResolvedValue(null);
       serverRepository.create.mockReturnValue(mockServerEntity);
 
       await service.onApplicationBootstrap(sessionId);
@@ -106,7 +107,7 @@ describe('ServerOnPremiseService', () => {
       );
     });
     it('should emit APPLICATION_STARTED on second application launch', async () => {
-      serverRepository.findOne.mockResolvedValue(mockServerEntity);
+      serverRepository.findOneBy.mockResolvedValue(mockServerEntity);
 
       await service.onApplicationBootstrap(sessionId);
 
@@ -128,7 +129,7 @@ describe('ServerOnPremiseService', () => {
 
   describe('getInfo', () => {
     it('should return server info', async () => {
-      serverRepository.findOne.mockResolvedValue(mockServerEntity);
+      serverRepository.findOneBy.mockResolvedValue(mockServerEntity);
       encryptionService.getAvailableEncryptionStrategies.mockResolvedValue([
         EncryptionStrategy.PLAIN,
         EncryptionStrategy.KEYTAR,
@@ -148,7 +149,7 @@ describe('ServerOnPremiseService', () => {
       });
     });
     it('should throw ServerInfoNotFoundException', async () => {
-      serverRepository.findOne.mockResolvedValue(null);
+      serverRepository.findOneBy.mockResolvedValue(null);
 
       try {
         await service.getInfo();
@@ -158,7 +159,7 @@ describe('ServerOnPremiseService', () => {
       }
     });
     it('should throw InternalServerError', async () => {
-      serverRepository.findOne.mockRejectedValue(new Error('some error'));
+      serverRepository.findOneBy.mockRejectedValue(new Error('some error'));
 
       try {
         await service.getInfo();

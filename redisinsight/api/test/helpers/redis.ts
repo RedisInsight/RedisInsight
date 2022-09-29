@@ -1,5 +1,5 @@
 import * as Redis from 'ioredis';
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import * as semverCompare from 'node-version-compare';
 import { constants } from './constants';
 import { parseReplToObject, parseClusterNodesResponse } from './utils';
@@ -82,11 +82,13 @@ const getClient = async (
   // check for cluster
   try {
     const clusterInfo = parseReplToObject(
-      await standaloneClient.send_command('cluster', ['info']),
+      await standaloneClient.cluster('INFO'),
     );
     if (clusterInfo.cluster_state === 'ok') {
       const nodes = parseClusterNodesResponse(
-        await standaloneClient.send_command('cluster', ['nodes']),
+        // https://github.com/luin/ioredis/issues/1572
+        // @ts-expect-error
+        await standaloneClient.cluster('NODES'),
       )
         .filter((node) => node.linkState === 'connected')
         .map(({ host, port }) => {
@@ -104,7 +106,7 @@ const getClient = async (
 
   // check for sentinel
   try {
-    const masterGroups = await standaloneClient.send_command('sentinel', ['masters']);
+    const masterGroups = await standaloneClient.call('sentinel', ['masters']);
     if (!masterGroups?.length) {
       throw new Error('Invalid sentinel configuration')
     }
@@ -167,7 +169,7 @@ export const initRTE = async () => {
     rte = await getClient(options);
   }
 
-  const info = parseReplToObject(await rte.client.send_command('info'));
+  const info = parseReplToObject(await rte.client.info());
 
   rte.env =  {
     name: constants.TEST_RUN_NAME,
@@ -203,7 +205,7 @@ export const initRTE = async () => {
 const determineModulesInstalled = async (client) => {
   const modules = {};
   try {
-    (await client.send_command('module', 'list'))
+    (await client.call('module', 'list'))
       .map(module => {
         modules[module[1].toLowerCase()] = { version: module[3] || -1 };
       });

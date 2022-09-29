@@ -158,9 +158,8 @@ const DatabaseListModules = React.memo((props: Props) => {
     </div>
   ))
 
-  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => {
-    return (
-      <span key={moduleName || abbreviation || content}>
+  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => (
+    <span key={moduleName || abbreviation || content}>
       {icon ? (
         <EuiButtonIcon
           iconType={icon}
@@ -180,8 +179,7 @@ const DatabaseListModules = React.memo((props: Props) => {
         </EuiTextColor>
       )}
     </span>
-    )
-  }
+  )
 
   const Modules = () => (
     newModules.map(({ icon, content, abbreviation, moduleName }, i) => (

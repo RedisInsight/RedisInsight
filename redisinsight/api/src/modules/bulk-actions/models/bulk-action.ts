@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { debounce } from 'lodash';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';

@@ -44,12 +44,14 @@ export const ossSentinelConfig = {
     masters: [{
         alias: 'primary-group-1',
         db: '0',
-        name: 'primary-group-1'
+        name: 'primary-group-1',
+        password: 'defaultpass'
     },
     {
         alias: 'primary-group-2',
         db: '0',
-        name: 'primary-group-2'
+        name: 'primary-group-2',
+        password: 'defaultpass'
     }],
     name: ['primary-group-1', 'primary-group-2']
 };

@@ -170,4 +170,8 @@ export enum KeyValueFormat {
   HEX = 'HEX',
   Binary = 'Binary',
   Msgpack = 'Msgpack',
+  PHP = 'PHP serialized',
+  JAVA = 'Java serialized',
+  Protobuf = 'Protobuf',
+  Pickle = 'Pickle',
 }

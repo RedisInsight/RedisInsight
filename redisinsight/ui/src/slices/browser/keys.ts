@@ -11,11 +11,12 @@ import {
   getUrl,
   isStatusSuccessful,
   Maybe,
+  bufferToString,
+  isEqualBuffers
 } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import bufferToString, { isEqualBuffers } from 'uiSrc/utils/formatters/bufferFormatters'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 import {
@@ -68,7 +69,7 @@ export const initialState: KeysStore = {
     error: '',
     data: null,
     length: 0,
-    viewFormat: defaultViewFormat,
+    viewFormat: localStorageService?.get(BrowserStorageItem.viewFormat) ?? defaultViewFormat,
   },
   addKey: {
     loading: false,
@@ -84,6 +85,9 @@ export const initialKeyInfo = {
   size: 1,
   length: 0,
 }
+
+const getInitialSelectedKeyState = (state: KeysStore) =>
+  ({ ...initialState.selectedKey, viewFormat: state.selectedKey.viewFormat })
 
 // A slice for recipes
 const keysSlice = createSlice({
@@ -128,6 +132,12 @@ const keysSlice = createSlice({
     loadMoreKeysFailure: (state, { payload }) => {
       state.loading = false
       state.error = payload
+    },
+
+    setLastBatchKeys: (state, { payload }) => {
+      const newKeys = state.data.keys
+      newKeys.splice(-payload.length, payload.length, ...payload)
+      state.data.keys = newKeys
     },
 
     loadKeyInfoSuccess: (state, { payload }) => {
@@ -206,7 +216,6 @@ const keysSlice = createSlice({
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
-        viewFormat: defaultViewFormat,
         // data: null,
       }
     },
@@ -306,11 +315,17 @@ const keysSlice = createSlice({
     },
 
     resetKeyInfo: (state) => {
-      state.selectedKey = cloneDeep(initialState.selectedKey)
+      state.selectedKey = cloneDeep(getInitialSelectedKeyState(state as KeysStore))
     },
 
     // reset keys for keys slice
-    resetKeys: () => cloneDeep(initialState),
+    resetKeys: (state) => cloneDeep(
+      {
+        ...initialState,
+        viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
+        selectedKey: getInitialSelectedKeyState(state as KeysStore)
+      }
+    ),
 
     resetKeysData: (state) => {
       // state.data.keys = []
@@ -327,6 +342,7 @@ const keysSlice = createSlice({
 
     setViewFormat: (state, { payload }: PayloadAction<KeyValueFormat>) => {
       state.selectedKey.viewFormat = payload
+      localStorageService?.set(BrowserStorageItem.viewFormat, payload)
     }
   },
 })
@@ -347,6 +363,7 @@ export const {
   defaultSelectedKeyAction,
   defaultSelectedKeyActionSuccess,
   defaultSelectedKeyActionFailure,
+  setLastBatchKeys,
   addKey,
   addKeySuccess,
   addKeyFailure,
@@ -384,8 +401,6 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
-    dispatch(setViewFormat(defaultViewFormat))
-
     if (type === KeyTypes.Hash) {
       dispatch(setHashInitialState())
     }

@@ -1,4 +1,4 @@
-import { SlowLogPage, MyRedisDatabasePage, BrowserPage, CliPage } from '../../../pageObjects';
+import { SlowLogPage, MyRedisDatabasePage, BrowserPage, CliPage, OverviewPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
@@ -8,6 +8,7 @@ const slowLogPage = new SlowLogPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
+const overviewPage = new OverviewPage();
 const slowerThanParameter = 1;
 let maxCommandLength = 50;
 let command = `slowlog get ${maxCommandLength}`;
@@ -17,13 +18,15 @@ fixture `Slow Log`
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
-        await t.click(slowLogPage.slowLogPageButton);
+        await t.click(myRedisDatabasePage.analysisPageButton);
     })
     .afterEach(async() => {
         await slowLogPage.resetToDefaultConfig();
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Verify that user can open new Slow Log page using new icon on left app panel', async t => {
+    // Verify that user see "Slow Log" page by default for non OSS Cluster
+    await t.expect(overviewPage.overviewTab.withAttribute('aria-selected', 'true').exists).notOk('The Overview tab is displayed for non OSS Cluster db');
     // Verify that user can configure slowlog-max-len for Slow Log and see whole set of commands according to the setting
     await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
     await cliPage.sendCommandInCli(command);
@@ -49,7 +52,7 @@ test('Verify that user can see "No Slow Logs found" message when slowlog-max-len
     // Go to Browser page to scan keys and turn back
     await t.click(myRedisDatabasePage.browserButton);
     await t.click(browserPage.refreshKeysButton);
-    await t.click(slowLogPage.slowLogPageButton);
+    await t.click(myRedisDatabasePage.analysisPageButton);
     // Compare number of logged commands with maxLength
     await t.expect(slowLogPage.slowLogCommandStatistics.withText(`${maxCommandLength} entries`).exists).ok('Number of displayed commands is less than ');
 });
@@ -73,7 +76,7 @@ test('Verify that users can specify number of commands that they want to display
     // Go to Browser page to scan keys and turn back
     await t.click(myRedisDatabasePage.browserButton);
     await t.click(browserPage.refreshKeysButton);
-    await t.click(slowLogPage.slowLogPageButton);
+    await t.click(myRedisDatabasePage.analysisPageButton);
     for (let i = 0; i < numberOfCommandsArray.length; i++) {
         await slowLogPage.changeDisplayUpToParameter(numberOfCommandsArray[i]);
         if (i === numberOfCommandsArray.length - 1) {
@@ -117,8 +120,7 @@ test('Verify that user can reset settings to default on Slow Log page', async t 
     await slowLogPage.changeMaxLengthParameter(maxCommandLength);
     // Reset settings to default
     await slowLogPage.resetToDefaultConfig();
-    // Open Slow Log configuration and check default settings
-    await t.expect(slowLogPage.slowLogSlowerThanConfig.withAttribute('value', '10000').exists).ok('Default Slower Than');
-    await t.expect(slowLogPage.slowLogMaxLengthConfig.withAttribute('value', '128').exists).ok('Default Max Length');
-    await t.expect(slowLogPage.slowLogConfigureUnitButton.withExactText('µs').exists).ok('Default Slower Than');
+    // Compare configuration after re-setting
+    const configText = await slowLogPage.configInfo.textContent;
+    await t.expect(configText.replace(/\u00a0/g, ' ')).contains('Execution time: 10 000 µs, Max length: 128', 'Not reset configuration');
 });

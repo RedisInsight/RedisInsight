@@ -22,6 +22,9 @@ export default {
   server: {
     env: 'staging',
   },
+  analytics: {
+    writeKey: process.env.SEGMENT_WRITE_KEY || 'Ba1YuGnxzsQN9zjqTSvzPc6f3AvmH1mj',
+  },
   db: {
     database: join(homedir, 'redisinsight.db'),
   },

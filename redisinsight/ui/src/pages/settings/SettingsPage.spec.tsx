@@ -31,4 +31,13 @@ describe('SettingsPage', () => {
     ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })
+
+  it('Accordion "Workbench settings" should render', () => {
+    const { container } = render(<SettingsPage />)
+
+    expect(
+      container.querySelector('[data-test-subj="accordion-workbench-settings"]')
+    ).toBeInTheDocument()
+    expect(render(<SettingsPage />)).toBeTruthy()
+  })
 })

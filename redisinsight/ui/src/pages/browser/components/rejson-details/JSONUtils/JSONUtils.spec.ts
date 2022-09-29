@@ -1,11 +1,6 @@
 import { generatePath, isScalar } from './JSONUtils'
 
 describe('JSONUtils', () => {
-/**
- * generatePath tests
- *
- * @group unit
- */
   describe('generatePath', () => {
     it('should generate path for Parent and Children', () => {
       const expectPath = "['parent']['children']"

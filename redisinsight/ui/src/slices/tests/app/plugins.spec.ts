@@ -43,11 +43,6 @@ const MOCK_PLUGINS_RESPONSE = {
 }
 
 describe('slices', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange

@@ -5,11 +5,6 @@ import { anyToBuffer, bufferToSerializedFormat, stringToBuffer, stringToSerializ
 
 describe('bufferToSerializedFormat', () => {
   describe(KeyValueFormat.JSON, () => {
-    /**
- * should properly serialize tests
- *
- * @group unit
- */
     describe('should properly serialize', () => {
       const testValues = [{}, '""', 1, true, { a: { b: [1, 2, '3'] } }].map((v) => JSON.stringify(v))
 
@@ -18,11 +13,6 @@ describe('bufferToSerializedFormat', () => {
       })
     })
 
-    /**
- * should properly return value with invalid values tests
- *
- * @group unit
- */
     describe('should properly return value with invalid values', () => {
       const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
 
@@ -33,11 +23,6 @@ describe('bufferToSerializedFormat', () => {
   })
 
   describe(KeyValueFormat.Msgpack, () => {
-    /**
- * should properly serialize tests
- *
- * @group unit
- */
     describe('should properly serialize', () => {
       const testValues = [{}, '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: anyToBuffer(encode(v)),
@@ -49,11 +34,6 @@ describe('bufferToSerializedFormat', () => {
       })
     })
 
-    /**
- * should properly return value with invalid values tests
- *
- * @group unit
- */
     describe('should properly return value with invalid values', () => {
       const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
 
@@ -64,11 +44,6 @@ describe('bufferToSerializedFormat', () => {
   })
 
   describe(KeyValueFormat.PHP, () => {
-    /**
- * should properly serialize tests
- *
- * @group unit
- */
     describe('should properly serialize', () => {
       const testValues = [[1], '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: stringToBuffer(serialize(v)),
@@ -80,11 +55,6 @@ describe('bufferToSerializedFormat', () => {
       })
     })
 
-    /**
- * should properly return value with invalid values tests
- *
- * @group unit
- */
     describe('should properly return value with invalid values', () => {
       const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
 
@@ -97,11 +67,6 @@ describe('bufferToSerializedFormat', () => {
 
 describe('stringToSerializedBufferFormat', () => {
   describe(KeyValueFormat.JSON, () => {
-    /**
- * should properly unserialize tests
- *
- * @group unit
- */
     describe('should properly unserialize', () => {
       const testValues = [{}, '""', 1, true, { a: { b: [1, 2, '3'] } }].map((v) => JSON.stringify(v))
 
@@ -110,11 +75,6 @@ describe('stringToSerializedBufferFormat', () => {
       })
     })
 
-    /**
- * should properly return value with invalid values tests
- *
- * @group unit
- */
     describe('should properly return value with invalid values', () => {
       const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
 
@@ -125,11 +85,6 @@ describe('stringToSerializedBufferFormat', () => {
   })
 
   describe(KeyValueFormat.Msgpack, () => {
-    /**
- * should properly unserialize tests
- *
- * @group unit
- */
     describe('should properly unserialize', () => {
       const testValues = [{}, '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: JSON.stringify(v),
@@ -141,11 +96,6 @@ describe('stringToSerializedBufferFormat', () => {
       })
     })
 
-    /**
- * should properly return value with invalid values tests
- *
- * @group unit
- */
     describe('should properly return value with invalid values', () => {
       const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
 
@@ -156,11 +106,6 @@ describe('stringToSerializedBufferFormat', () => {
   })
 
   describe(KeyValueFormat.PHP, () => {
-    /**
- * should properly unserialize tests
- *
- * @group unit
- */
     describe('should properly unserialize', () => {
       const testValues = [[1], '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: JSON.stringify(v),
@@ -172,11 +117,6 @@ describe('stringToSerializedBufferFormat', () => {
       })
     })
 
-    /**
- * should properly return value with invalid values tests
- *
- * @group unit
- */
     describe('should properly return value with invalid values', () => {
       const testValues = ['1-', '[1, 2,]', '{ zx1***.[']
 

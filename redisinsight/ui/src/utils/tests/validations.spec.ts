@@ -32,11 +32,6 @@ const text12 = '-3-2'
 const text13 = '5'
 
 describe('Validations utils', () => {
-/**
- * validateField tests
- *
- * @group unit
- */
   describe('validateField', () => {
     it('validateField should return text without empty spaces', () => {
       const expectedResponse1 = '123123123'
@@ -150,11 +145,7 @@ describe('Validations utils', () => {
       expect(validateEmail(text8)).toBeFalsy()
     })
   })
-  /**
- * validateCertName tests
- *
- * @group unit
- */
+
   describe('validateCertName', () => {
     it.each([
       ['my-new_cert', 'my-new_cert'],

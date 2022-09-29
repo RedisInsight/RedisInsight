@@ -32,11 +32,6 @@ beforeEach(() => {
 })
 
 describe('userSettings slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -313,17 +308,8 @@ describe('userSettings slice', () => {
   })
 
   // thunks
-  /**
- * thunks tests
- *
- * @group unit
- */
+
   describe('thunks', () => {
-    /**
- * fetchUserConfigSettings tests
- *
- * @group unit
- */
     describe('fetchUserConfigSettings', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -373,11 +359,6 @@ describe('userSettings slice', () => {
       })
     })
 
-    /**
- * fetchUserSettingsSpec tests
- *
- * @group unit
- */
     describe('fetchUserSettingsSpec', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -434,11 +415,6 @@ describe('userSettings slice', () => {
       })
     })
 
-    /**
- * updateUserConfigSettingsAction tests
- *
- * @group unit
- */
     describe('updateUserConfigSettingsAction', () => {
       it('succeed to update settings', async () => {
         // Arrange

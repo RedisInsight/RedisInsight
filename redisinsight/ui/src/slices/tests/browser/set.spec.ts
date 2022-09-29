@@ -419,11 +419,7 @@ describe('set slice', () => {
       expect(setSelector(rootState)).toEqual(state)
     })
   })
-  /**
- * removeMembersFromList tests
- *
- * @group unit
- */
+
   describe('removeMembersFromList', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -461,11 +457,6 @@ describe('set slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchSetMembers tests
- *
- * @group unit
- */
     describe('fetchSetMembers', () => {
       // Arrange
       const data = {

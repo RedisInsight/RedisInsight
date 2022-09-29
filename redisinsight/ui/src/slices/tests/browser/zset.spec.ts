@@ -730,11 +730,6 @@ describe('zset slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchZSetMembers tests
- *
- * @group unit
- */
     describe('fetchZSetMembers', () => {
       it('succeed to fetch zset members', async () => {
         // Arrange
@@ -791,11 +786,6 @@ describe('zset slice', () => {
       })
     })
 
-    /**
- * fetchMoreZSetMembers tests
- *
- * @group unit
- */
     describe('fetchMoreZSetMembers', () => {
       it('succeed to fetch more zset members', async () => {
         // Arrange
@@ -851,11 +841,6 @@ describe('zset slice', () => {
       })
     })
 
-    /**
- * fetchAddZSetMembers tests
- *
- * @group unit
- */
     describe('fetchAddZSetMembers', () => {
       it('succeed to fetch add zset members', async () => {
         // Arrange
@@ -908,11 +893,6 @@ describe('zset slice', () => {
       })
     })
 
-    /**
- * deleteZSetMembers tests
- *
- * @group unit
- */
     describe('deleteZSetMembers', () => {
       it('succeed to fetch delete zset members', async () => {
         // Arrange
@@ -1017,11 +997,6 @@ describe('zset slice', () => {
       })
     })
 
-    /**
- * updateZSetMembers tests
- *
- * @group unit
- */
     describe('updateZSetMembers', () => {
       it('succeed to fetch update zset members', async () => {
         // Arrange
@@ -1075,11 +1050,6 @@ describe('zset slice', () => {
       })
     })
 
-    /**
- * fetchSearchZSetMembers tests
- *
- * @group unit
- */
     describe('fetchSearchZSetMembers', () => {
       it('succeed to fetch search zset members', async () => {
         // Arrange
@@ -1129,11 +1099,6 @@ describe('zset slice', () => {
       })
     })
 
-    /**
- * fetchSearchMoreZSetMembers tests
- *
- * @group unit
- */
     describe('fetchSearchMoreZSetMembers', () => {
       it('succeed to fetch search more zset members', async () => {
         // Arrange
@@ -1182,11 +1147,6 @@ describe('zset slice', () => {
       })
     })
 
-    /**
- * refreshStringMembersAction tests
- *
- * @group unit
- */
     describe('refreshStringMembersAction', () => {
       it('succeed to fetch zset members after refresh', async () => {
         // Arrange

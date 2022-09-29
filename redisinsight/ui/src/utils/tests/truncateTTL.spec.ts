@@ -6,11 +6,6 @@ import {
 } from '../truncateTTL'
 
 describe('Truncate TTL util tests', () => {
-/**
- * truncateTTLToRange tests
- *
- * @group unit
- */
   describe('truncateTTLToRange', () => {
     it('truncateTTLToRange should return "No limit"', () => {
       const ttl = -1

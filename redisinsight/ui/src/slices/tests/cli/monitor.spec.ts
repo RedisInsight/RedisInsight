@@ -38,11 +38,7 @@ describe('monitor slice', () => {
   afterAll(() => {
     dateNow.mockRestore()
   })
-  /**
- * toggleMonitor tests
- *
- * @group unit
- */
+
   describe('toggleMonitor', () => {
     it('default state.isShowMonitor should be falsy', () => {
       // Arrange

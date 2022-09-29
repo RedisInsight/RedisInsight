@@ -77,11 +77,6 @@ beforeEach(() => {
 })
 
 describe('cloud slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -564,11 +559,6 @@ describe('cloud slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchSubscriptionsRedisCloud tests
- *
- * @group unit
- */
     describe('fetchSubscriptionsRedisCloud', () => {
       it('call fetchSubscriptionsRedisCloud, loadSubscriptionsRedisCloud, and loadSubscriptionsRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
@@ -637,11 +627,6 @@ describe('cloud slice', () => {
       })
     })
 
-    /**
- * fetchAccountRedisCloud tests
- *
- * @group unit
- */
     describe('fetchAccountRedisCloud', () => {
       it('call fetchAccountRedisCloud and loadAccountRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
@@ -698,11 +683,6 @@ describe('cloud slice', () => {
       })
     })
 
-    /**
- * fetchInstancesRedisCloud tests
- *
- * @group unit
- */
     describe('fetchInstancesRedisCloud', () => {
       it('call fetchInstancesRedisCloud and loadInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
@@ -766,11 +746,6 @@ describe('cloud slice', () => {
       })
     })
 
-    /**
- * addInstancesRedisCloud tests
- *
- * @group unit
- */
     describe('addInstancesRedisCloud', () => {
       it('call addInstancesRedisCloud and createInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange

@@ -22,11 +22,6 @@ beforeEach(() => {
 })
 
 describe('slices', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -112,11 +107,7 @@ describe('slices', () => {
   })
 
   // thunks
-  /**
- * fetchTutorials tests
- *
- * @group unit
- */
+
   describe('fetchTutorials', () => {
     it('succeed to fetch tutorials items', async () => {
       // Arrange

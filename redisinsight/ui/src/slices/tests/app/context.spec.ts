@@ -46,11 +46,6 @@ beforeEach(() => {
 })
 
 describe('slices', () => {
-/**
- * setAppContextInitialState tests
- *
- * @group unit
- */
   describe('setAppContextInitialState', () => {
     it('should properly set initial state', () => {
       const nextState = reducer(initialState, setAppContextInitialState())
@@ -329,11 +324,7 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreeNodesOpen tests
- *
- * @group unit
- */
+
   describe('setBrowserTreeNodesOpen', () => {
     it('should properly set open nodes in the tree', () => {
       // Arrange
@@ -368,11 +359,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreeSelectedLeaf tests
- *
- * @group unit
- */
+
   describe('setBrowserTreeSelectedLeaf', () => {
     it('should properly set selected keys in the tree', () => {
       // Arrange
@@ -414,11 +401,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreePanelSizes tests
- *
- * @group unit
- */
+
   describe('setBrowserTreePanelSizes', () => {
     it('should properly set browser tree panel widths', () => {
       // Arrange
@@ -442,11 +425,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreeDelimiter tests
- *
- * @group unit
- */
+
   describe('setBrowserTreeDelimiter', () => {
     it('should properly set browser tree delimiter', () => {
       // Arrange
@@ -468,11 +447,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * resetBrowserTree tests
- *
- * @group unit
- */
+
   describe('resetBrowserTree', () => {
     it('should properly set last page', () => {
       // Arrange

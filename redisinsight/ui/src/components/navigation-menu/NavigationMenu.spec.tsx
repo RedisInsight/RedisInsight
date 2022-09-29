@@ -24,11 +24,6 @@ jest.mock('uiSrc/slices/app/info', () => ({
 }))
 
 describe('NavigationMenu', () => {
-/**
- * without connectedInstance tests
- *
- * @group unit
- */
   describe('without connectedInstance', () => {
     it('should render', () => {
       (appInfoSelector as jest.Mock).mockImplementation(() => ({

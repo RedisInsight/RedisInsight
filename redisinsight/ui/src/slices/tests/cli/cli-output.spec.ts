@@ -40,11 +40,6 @@ beforeEach(() => {
 })
 
 describe('cliOutput slice', () => {
-/**
- * concatToOutput tests
- *
- * @group unit
- */
   describe('concatToOutput', () => {
     it('should properly concat a new array to existed output', () => {
       const data = ['\n\n', 'tatata']
@@ -217,11 +212,6 @@ describe('cliOutput slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * Standalone Cli command tests
- *
- * @group unit
- */
     describe('Standalone Cli command', () => {
       it('call both sendCliStandaloneCommandAction and sendCliCommandSuccess when response status is successed', async () => {
         // Arrange
@@ -370,11 +360,6 @@ describe('cliOutput slice', () => {
       })
     })
 
-    /**
- * Single Node Cluster Cli command tests
- *
- * @group unit
- */
     describe('Single Node Cluster Cli command', () => {
       const options: SendClusterCommandDto = {
         command: 'keys *',

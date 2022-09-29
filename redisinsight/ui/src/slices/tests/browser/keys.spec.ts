@@ -829,11 +829,6 @@ describe('keys slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchKeys tests
- *
- * @group unit
- */
     describe('fetchKeys', () => {
       it('call both loadKeys and loadKeysSuccess when fetch is successed', async () => {
         // Arrange
@@ -911,11 +906,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * fetchMoreKeys tests
- *
- * @group unit
- */
     describe('fetchMoreKeys', () => {
       it('call both loadMoreKeys and loadMoreKeysSuccess when fetch is successed', async () => {
         // Arrange
@@ -990,11 +980,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * fetchKeyInfo tests
- *
- * @group unit
- */
     describe('fetchKeyInfo', () => {
       it('call both defaultSelectedKeyAction and loadKeyInfoSuccess when fetch is successed', async () => {
         // Arrange
@@ -1047,11 +1032,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * refreshKeyInfoAction tests
- *
- * @group unit
- */
     describe('refreshKeyInfoAction', () => {
       it('success to refresh key info', async () => {
         // Arrange
@@ -1102,11 +1082,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * addHashKey tests
- *
- * @group unit
- */
     describe('addHashKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1131,11 +1106,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * addHashZset tests
- *
- * @group unit
- */
     describe('addHashZset', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1160,11 +1130,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * addHashSet tests
- *
- * @group unit
- */
     describe('addHashSet', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1189,11 +1154,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * addStringKey tests
- *
- * @group unit
- */
     describe('addStringKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1218,11 +1178,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * addListKey tests
- *
- * @group unit
- */
     describe('addListKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1248,11 +1203,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * addReJSONKey tests
- *
- * @group unit
- */
     describe('addReJSONKey', () => {
       it('success to add key', async () => {
         // Arrange
@@ -1277,11 +1227,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * deleteKey tests
- *
- * @group unit
- */
     describe('deleteKey', () => {
       it('call both deleteKey, deleteKeySuccess and deleteKeyFromList when delete is successed', async () => {
         // Arrange
@@ -1309,11 +1254,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * editKey tests
- *
- * @group unit
- */
     describe('editKey', () => {
       it('call both editKey, editKeySuccess and editKeyFromList when editing is successed', async () => {
         // Arrange
@@ -1332,11 +1272,6 @@ describe('keys slice', () => {
       })
     })
 
-    /**
- * editKeyTTL tests
- *
- * @group unit
- */
     describe('editKeyTTL', () => {
       it('success editKeyTTL with positive ttl', async () => {
         // Arrange

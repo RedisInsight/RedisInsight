@@ -64,11 +64,7 @@ describe('hash slice', () => {
   afterAll(() => {
     dateNow.mockRestore()
   })
-  /**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
+
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -479,11 +475,6 @@ describe('hash slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchHashFields tests
- *
- * @group unit
- */
     describe('fetchHashFields', () => {
       it('call fetchHashFields, loadHashFieldsSuccess when fetch is successed', async () => {
         // Arrange
@@ -511,11 +502,6 @@ describe('hash slice', () => {
       })
     })
 
-    /**
- * fetchMoreHashFields tests
- *
- * @group unit
- */
     describe('fetchMoreHashFields', () => {
       it(
         'call fetchMoreHashFields, loadMoreHashFieldsSuccess,'
@@ -548,11 +534,6 @@ describe('hash slice', () => {
       )
     })
 
-    /**
- * refreshHashFieldsAction tests
- *
- * @group unit
- */
     describe('refreshHashFieldsAction', () => {
       it('succeed to refresh hash data', async () => {
         // Arrange
@@ -579,11 +560,6 @@ describe('hash slice', () => {
       })
     })
 
-    /**
- * deleteHashFields tests
- *
- * @group unit
- */
     describe('deleteHashFields', () => {
       it(
         'call removeHashFields, removeHashFieldsSuccess,'
@@ -675,11 +651,6 @@ describe('hash slice', () => {
       )
     })
 
-    /**
- * addHashFields tests
- *
- * @group unit
- */
     describe('addHashFields', () => {
       const keyName = 'key'
       const fields = [
@@ -728,11 +699,6 @@ describe('hash slice', () => {
       })
     })
 
-    /**
- * updateHashFieldsAction tests
- *
- * @group unit
- */
     describe('updateHashFieldsAction', () => {
       const keyName = 'key'
       const fields = [

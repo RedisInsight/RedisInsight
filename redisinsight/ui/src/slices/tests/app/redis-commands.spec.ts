@@ -19,11 +19,6 @@ beforeEach(() => {
 })
 
 describe('slices', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -105,11 +100,7 @@ describe('slices', () => {
   })
 
   // thunks
-  /**
- * fetchRedisCommandsInfo tests
- *
- * @group unit
- */
+
   describe('fetchRedisCommandsInfo', () => {
     it('succeed to fetch redis commands', async () => {
       // Arrange

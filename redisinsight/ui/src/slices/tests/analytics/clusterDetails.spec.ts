@@ -25,11 +25,6 @@ beforeEach(() => {
 })
 
 describe('clusterDetails slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -122,17 +117,8 @@ describe('clusterDetails slice', () => {
   })
 
   // thunks
-  /**
- * thunks tests
- *
- * @group unit
- */
+
   describe('thunks', () => {
-    /**
- * fetchClusterDetailsAction tests
- *
- * @group unit
- */
     describe('fetchClusterDetailsAction', () => {
       it('succeed to fetch data', async () => {
         // Act

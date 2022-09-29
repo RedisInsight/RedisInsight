@@ -155,11 +155,6 @@ beforeEach(() => {
 })
 
 describe('stream slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -947,11 +942,6 @@ describe('stream slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchStreamEntries tests
- *
- * @group unit
- */
     describe('fetchStreamEntries', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1006,11 +996,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * refreshStreamEntries tests
- *
- * @group unit
- */
     describe('refreshStreamEntries', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1061,11 +1046,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchConsumerGroups tests
- *
- * @group unit
- */
     describe('fetchConsumerGroups', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1110,11 +1090,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchConsumers tests
- *
- * @group unit
- */
     describe('fetchConsumers', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1159,11 +1134,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchConsumerMessages tests
- *
- * @group unit
- */
     describe('fetchConsumerMessages', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1208,11 +1178,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * modifyLastDeliveredIdAction tests
- *
- * @group unit
- */
     describe('modifyLastDeliveredIdAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -1273,11 +1238,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * deleteConsumerGroupsAction tests
- *
- * @group unit
- */
     describe('deleteConsumerGroupsAction', () => {
       it('succeed to delete data', async () => {
         // Arrange
@@ -1339,11 +1299,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * deleteConsumersAction tests
- *
- * @group unit
- */
     describe('deleteConsumersAction', () => {
       it('succeed to delete data', async () => {
         // Arrange
@@ -1407,11 +1362,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * fetchMoreConsumerMessages tests
- *
- * @group unit
- */
     describe('fetchMoreConsumerMessages', () => {
       it('succeed to fetch more data', async () => {
         // Arrange
@@ -1465,11 +1415,7 @@ describe('stream slice', () => {
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
-    /**
- * ackPendingEntriesAction tests
- *
- * @group unit
- */
+
     describe('ackPendingEntriesAction', () => {
       it('succeed to acknowledge data', async () => {
         // Arrange
@@ -1530,11 +1476,6 @@ describe('stream slice', () => {
       })
     })
 
-    /**
- * claimPendingMessagesAction tests
- *
- * @group unit
- */
     describe('claimPendingMessagesAction', () => {
       it('succeed to claim message', async () => {
         // Arrange

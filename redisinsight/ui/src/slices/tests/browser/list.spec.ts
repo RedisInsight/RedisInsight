@@ -72,11 +72,7 @@ describe('list slice', () => {
   afterAll(() => {
     dateNow.mockRestore()
   })
-  /**
- * setListInitialState tests
- *
- * @group unit
- */
+
   describe('setListInitialState', () => {
     it('should properly set initialState', () => {
       // Arrange
@@ -606,11 +602,6 @@ describe('list slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchListElements tests
- *
- * @group unit
- */
     describe('fetchListElements', () => {
       it('call fetchListElements, loadListElementsSuccess when fetch is successed', async () => {
         // Arrange
@@ -639,11 +630,6 @@ describe('list slice', () => {
       })
     })
 
-    /**
- * fetchMoreListElements tests
- *
- * @group unit
- */
     describe('fetchMoreListElements', () => {
       it('call fetchMoreListElements, loadMoreListElementsSuccess when fetch is successed', async () => {
         // Arrange
@@ -669,11 +655,6 @@ describe('list slice', () => {
       })
     })
 
-    /**
- * fetchSearchingListElementAction tests
- *
- * @group unit
- */
     describe('fetchSearchingListElementAction', () => {
       it('call fetchSearchingListElementAction, loadSearchingListElementSuccess when search is successed', async () => {
         // Arrange
@@ -703,11 +684,6 @@ describe('list slice', () => {
       })
     })
 
-    /**
- * refreshListElementsAction tests
- *
- * @group unit
- */
     describe('refreshListElementsAction', () => {
       it('call refreshListElementsAction without searchingIndex, call loadListElements when fetch is successed', async () => {
         // Act
@@ -720,11 +696,6 @@ describe('list slice', () => {
       })
     })
 
-    /**
- * updateListElementAction tests
- *
- * @group unit
- */
     describe('updateListElementAction', () => {
       const keyName = 'key'
       const data = {
@@ -775,11 +746,6 @@ describe('list slice', () => {
       })
     })
 
-    /**
- * insertListElementsAction tests
- *
- * @group unit
- */
     describe('insertListElementsAction', () => {
       const data = {
         keyName: 'keyName',
@@ -828,11 +794,6 @@ describe('list slice', () => {
       })
     })
 
-    /**
- * deleteListElementsAction tests
- *
- * @group unit
- */
     describe('deleteListElementsAction', () => {
       const data = {
         keyName: 'keyName',

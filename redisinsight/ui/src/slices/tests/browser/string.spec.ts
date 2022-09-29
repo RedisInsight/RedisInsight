@@ -31,11 +31,6 @@ jest.mock('uiSrc/services', () => ({
 }))
 
 describe('string slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -276,11 +271,6 @@ describe('string slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchString tests
- *
- * @group unit
- */
     describe('fetchString', () => {
       it('call both fetchString, getStringSuccess when fetch is successed', async () => {
         // Arrange
@@ -302,11 +292,6 @@ describe('string slice', () => {
       })
     })
 
-    /**
- * updateStringValueAction tests
- *
- * @group unit
- */
     describe('updateStringValueAction', () => {
       it('succeed to fetch update string value', async () => {
         // Arrange

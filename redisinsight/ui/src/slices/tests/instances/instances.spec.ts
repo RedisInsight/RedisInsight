@@ -113,11 +113,6 @@ beforeEach(() => {
 })
 
 describe('instances slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -392,11 +387,6 @@ describe('instances slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchInstances tests
- *
- * @group unit
- */
     describe('fetchInstances', () => {
       it('call both fetchInstances and loadInstancesSuccess when fetch is successed', async () => {
         // Arrange
@@ -440,11 +430,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * createInstanceStandaloneAction tests
- *
- * @group unit
- */
     describe('createInstanceStandaloneAction', () => {
       it('call both createInstanceStandaloneAction and defaultInstanceChangingSuccess when fetch is successed', async () => {
         // Arrange
@@ -541,11 +526,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * deleteInstances tests
- *
- * @group unit
- */
     describe('deleteInstances', () => {
       it('call both deleteInstances and setDefaultInstanceSuccess when fetch is successed for only one instance', async () => {
         // Arrange
@@ -618,11 +598,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * updateInstance tests
- *
- * @group unit
- */
     describe('updateInstance', () => {
       it('call both updateInstance and defaultInstanceChangingSuccess when fetch is successed', async () => {
         // Arrange
@@ -681,11 +656,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * checkConnectToInstance tests
- *
- * @group unit
- */
     describe('checkConnectToInstance', () => {
       it('call both checkConnectToInstance and setDefaultInstanceSuccess when connection is successed', async () => {
         // Arrange
@@ -747,11 +717,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * getDatabaseConfigInfoAction tests
- *
- * @group unit
- */
     describe('getDatabaseConfigInfoAction', () => {
       it('succeed to get database config info', async () => {
         // Arrange
@@ -809,11 +774,6 @@ describe('instances slice', () => {
       })
     })
 
-    /**
- * changeInstanceAliasAction tests
- *
- * @group unit
- */
     describe('changeInstanceAliasAction', () => {
       const requestPayload = { id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', newName: 'newAlias' }
       it('succeed to change database alias', async () => {

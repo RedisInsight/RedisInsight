@@ -69,11 +69,6 @@ const notificationsResponse: any = {
 }
 
 describe('slices', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -410,17 +405,8 @@ describe('slices', () => {
   })
 
   // thunks
-  /**
- * thunks tests
- *
- * @group unit
- */
+
   describe('thunks', () => {
-    /**
- * fetchNotificationsAction tests
- *
- * @group unit
- */
     describe('fetchNotificationsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -465,11 +451,6 @@ describe('slices', () => {
       })
     })
 
-    /**
- * unreadNotificationsAction tests
- *
- * @group unit
- */
     describe('unreadNotificationsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -490,11 +471,6 @@ describe('slices', () => {
       })
     })
 
-    /**
- * setNewNotificationAction tests
- *
- * @group unit
- */
     describe('setNewNotificationAction', () => {
       it('succeed to update notificationsCenter', () => {
         const data = notificationsResponse

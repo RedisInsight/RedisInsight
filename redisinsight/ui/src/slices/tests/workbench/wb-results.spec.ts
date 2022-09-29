@@ -53,11 +53,6 @@ const initialStateWithItems = {
 }
 
 describe('workbench results slice', () => {
-/**
- * sendWBCommand tests
- *
- * @group unit
- */
   describe('sendWBCommand', () => {
     it('should properly set state', () => {
       // Arrange
@@ -117,11 +112,7 @@ describe('workbench results slice', () => {
       expect(workbenchResultsSelector(rootState)).toEqual(state)
     })
   })
-  /**
- * resetWBHistoryItems tests
- *
- * @group unit
- */
+
   describe('resetWBHistoryItems', () => {
     it('should properly remove all items', () => {
       // Arrange
@@ -260,11 +251,6 @@ describe('workbench results slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * Standalone Cli commands tests
- *
- * @group unit
- */
     describe('Standalone Cli commands', () => {
       it('call both sendWBCommandAction and sendWBCommandSuccess when response status is successed', async () => {
         // Arrange
@@ -364,11 +350,6 @@ describe('workbench results slice', () => {
       })
     })
 
-    /**
- * Single Node Cluster Cli command tests
- *
- * @group unit
- */
     describe('Single Node Cluster Cli command', () => {
       const commandId = `${Date.now()}`
       const options: SendClusterCommandDto = {
@@ -463,11 +444,6 @@ describe('workbench results slice', () => {
       })
     })
 
-    /**
- * Fetch result for command tests
- *
- * @group unit
- */
     describe('Fetch result for command', () => {
       it('call both fetchWBCommandAction and fetchWBCommandSuccess when response status is successed', async () => {
         // Arrange
@@ -552,11 +528,6 @@ describe('workbench results slice', () => {
       })
     })
 
-    /**
- * Delete command from the list tests
- *
- * @group unit
- */
     describe('Delete command from the list', () => {
       it('call both deleteWBCommandAction and fetchWBCommandSuccess when response status is successed', async () => {
         // Arrange
@@ -641,11 +612,6 @@ describe('workbench results slice', () => {
       })
     })
 
-    /**
- * Fetch list of commands tests
- *
- * @group unit
- */
     describe('Fetch list of commands', () => {
       it('call both fetchWBHistoryAction and fetchWBCommandSuccess when response status is successed', async () => {
         // Arrange

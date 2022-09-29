@@ -272,17 +272,8 @@ describe('slowLog slice', () => {
   })
 
   // thunks
-  /**
- * thunks tests
- *
- * @group unit
- */
+
   describe('thunks', () => {
-    /**
- * fetchSlowLogsAction tests
- *
- * @group unit
- */
     describe('fetchSlowLogsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -336,11 +327,6 @@ describe('slowLog slice', () => {
       })
     })
 
-    /**
- * clearSlowLogAction tests
- *
- * @group unit
- */
     describe('clearSlowLogAction', () => {
       it('succeed to fetch data', async () => {
         const responsePayload = { status: 200 }
@@ -384,11 +370,6 @@ describe('slowLog slice', () => {
       })
     })
 
-    /**
- * getSlowLogConfigAction tests
- *
- * @group unit
- */
     describe('getSlowLogConfigAction', () => {
       it('succeed to fetch data', async () => {
         const data = {
@@ -436,11 +417,6 @@ describe('slowLog slice', () => {
       })
     })
 
-    /**
- * patchSlowLogConfigAction tests
- *
- * @group unit
- */
     describe('patchSlowLogConfigAction', () => {
       it('succeed to fetch data', async () => {
         const data = {

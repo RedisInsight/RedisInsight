@@ -70,11 +70,6 @@ beforeEach(() => {
 })
 
 describe('rejson slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -373,11 +368,6 @@ describe('rejson slice', () => {
   })
 
   describe('thunks', () => {
-    /**
- * fetchReJSON tests
- *
- * @group unit
- */
     describe('fetchReJSON', () => {
       it('call both fetchReJSON and loadRejsonBranchSuccess when fetch is successed', async () => {
         // Arrange
@@ -426,11 +416,6 @@ describe('rejson slice', () => {
       })
     })
 
-    /**
- * setReJSONDataAction tests
- *
- * @group unit
- */
     describe('setReJSONDataAction', () => {
       it('succeed to fetch set json data', async () => {
         // Arrange
@@ -486,11 +471,6 @@ describe('rejson slice', () => {
       })
     })
 
-    /**
- * appendReJSONArrayItemAction tests
- *
- * @group unit
- */
     describe('appendReJSONArrayItemAction', () => {
       it('succeed to fetch append array data', async () => {
         // Arrange
@@ -546,11 +526,6 @@ describe('rejson slice', () => {
       })
     })
 
-    /**
- * removeReJSONKeyAction tests
- *
- * @group unit
- */
     describe('removeReJSONKeyAction', () => {
       it('succeed to fetch remove json key', async () => {
         // Arrange
@@ -613,11 +588,6 @@ describe('rejson slice', () => {
       })
     })
 
-    /**
- * fetchVisualisationResults tests
- *
- * @group unit
- */
     describe('fetchVisualisationResults', () => {
       it('call both fetchVisualisationResults and loadRejsonBranchSuccess when fetch is successed', async () => {
         // Arrange

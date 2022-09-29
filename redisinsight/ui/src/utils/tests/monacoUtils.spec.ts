@@ -5,6 +5,11 @@ import {
   findArgIndexByCursor
 } from 'uiSrc/utils'
 
+/**
+ * removeMonacoComments tests
+ *
+ * @group unit
+ */
 describe('removeMonacoComments', () => {
   const cases = [
     // Multiline command with comments
@@ -47,6 +52,11 @@ describe('removeMonacoComments', () => {
   )
 })
 
+/**
+ * multilineCommandToOneLine tests
+ *
+ * @group unit
+ */
 describe('multilineCommandToOneLine', () => {
   const cases = [
     // Multiline command and indent with single space
@@ -74,6 +84,11 @@ describe('multilineCommandToOneLine', () => {
   )
 })
 
+/**
+ * splitMonacoValuePerLines tests
+ *
+ * @group unit
+ */
 describe('splitMonacoValuePerLines', () => {
   const cases = [
     // Multi commands
@@ -106,6 +121,11 @@ describe('splitMonacoValuePerLines', () => {
   )
 })
 
+/**
+ * findArgIndexByCursor tests
+ *
+ * @group unit
+ */
 describe('findArgIndexByCursor', () => {
   const cases = [
     [

@@ -31,7 +31,17 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * slices tests
+ *
+ * @group unit
+ */
 describe('slices', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -45,6 +55,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * setAnalyticsIdentified tests
+ *
+ * @group unit
+ */
   describe('setAnalyticsIdentified', () => {
     it('should properly set analytics identified', () => {
       // Arrange
@@ -69,6 +84,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * setElectronInfo tests
+ *
+ * @group unit
+ */
   describe('setElectronInfo', () => {
     it('should properly set electron info', () => {
       // Arrange
@@ -96,6 +116,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * setReleaseNotesViewed tests
+ *
+ * @group unit
+ */
   describe('setReleaseNotesViewed', () => {
     it('should properly set state', () => {
       // Arrange
@@ -120,6 +145,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getServerInfo tests
+ *
+ * @group unit
+ */
   describe('getServerInfo', () => {
     it('should properly set loading', () => {
       // Arrange
@@ -141,6 +171,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getServerInfoSuccess tests
+ *
+ * @group unit
+ */
   describe('getServerInfoSuccess', () => {
     it('should properly set state after success', () => {
       const state = {
@@ -161,6 +196,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getServerInfoFailure tests
+ *
+ * @group unit
+ */
   describe('getServerInfoFailure', () => {
     it('should properly set error', () => {
       // Arrange
@@ -184,6 +224,11 @@ describe('slices', () => {
   })
 
   // thunks
+  /**
+ * fetchServerInfo tests
+ *
+ * @group unit
+ */
   describe('fetchServerInfo', () => {
     it('succeed to fetch server info', async () => {
       // Act

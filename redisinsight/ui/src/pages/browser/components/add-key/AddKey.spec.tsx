@@ -7,6 +7,11 @@ import AddKey from './AddKey'
 const handleAddKeyPanelMock = () => {}
 const handleCloseKeyMock = () => {}
 
+/**
+ * AddKey tests
+ *
+ * @group unit
+ */
 describe('AddKey', () => {
   it('should render', () => {
     expect(render(<AddKey

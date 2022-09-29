@@ -21,6 +21,11 @@ const getDbIndexFromSelectQueryTests = [
   { input: 'select abc', expected: new Error('Parsing error') },
 ]
 
+/**
+ * getDbIndexFromSelectQuery tests
+ *
+ * @group unit
+ */
 describe('getDbIndexFromSelectQuery', () => {
   test.each(getDbIndexFromSelectQueryTests)('%j', ({ input, expected }) => {
     if (expected instanceof Error) {
@@ -49,6 +54,11 @@ const getCommandNameFromQueryTests = [
   },
 ]
 
+/**
+ * getCommandNameFromQuery tests
+ *
+ * @group unit
+ */
 describe('getCommandNameFromQuery', () => {
   test.each(getCommandNameFromQueryTests)('%j', ({ input, expected }) => {
     // @ts-ignore
@@ -56,6 +66,11 @@ describe('getCommandNameFromQuery', () => {
   })
 })
 
+/**
+ * cliParseCommandsGroupResult tests
+ *
+ * @group unit
+ */
 describe('cliParseCommandsGroupResult', () => {
   const mockResult = {
     command: 'command',
@@ -70,6 +85,11 @@ describe('cliParseCommandsGroupResult', () => {
   expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-success`)).toBeInTheDocument()
 })
 
+/**
+ * cliParseCommandsGroupResult error status tests
+ *
+ * @group unit
+ */
 describe('cliParseCommandsGroupResult error status', () => {
   const mockResult = {
     command: 'command',

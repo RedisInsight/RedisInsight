@@ -22,6 +22,11 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
+/**
+ * WBResults tests
+ *
+ * @group unit
+ */
 describe('WBResults', () => {
   it('should render', () => {
     expect(render(<WBResults {...instance(mockedProps)} />)).toBeTruthy()

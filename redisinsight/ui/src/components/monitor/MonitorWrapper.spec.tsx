@@ -11,6 +11,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * MonitorWrapper tests
+ *
+ * @group unit
+ */
 describe('MonitorWrapper', () => {
   it('should render', () => {
     expect(render(<MonitorWrapper />)).toBeTruthy()

@@ -21,6 +21,11 @@ jest.mock('uiSrc/services', () => ({
   useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
 }))
 
+/**
+ * Node tests
+ *
+ * @group unit
+ */
 describe('Node', () => {
   it('should render', () => {
     expect(render(<Node {...instance(mockedProps)} data={mockedData} />)).toBeTruthy()

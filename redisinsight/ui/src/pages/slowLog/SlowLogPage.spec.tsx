@@ -32,6 +32,11 @@ const mockedData = [
   }
 ]
 
+/**
+ * SlowLogPage tests
+ *
+ * @group component
+ */
 describe('SlowLogPage', () => {
   it('should render', () => {
     expect(render(<SlowLogPage />)).toBeTruthy()

@@ -14,7 +14,17 @@ jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))
 
+/**
+ * clientCerts slice tests
+ *
+ * @group unit
+ */
 describe('clientCerts slice', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -28,6 +38,11 @@ describe('clientCerts slice', () => {
     })
   })
 
+  /**
+ * loadClientCerts tests
+ *
+ * @group unit
+ */
   describe('loadClientCerts', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -49,6 +64,11 @@ describe('clientCerts slice', () => {
     })
   })
 
+  /**
+ * loadClientCertsSuccess tests
+ *
+ * @group unit
+ */
   describe('loadClientCertsSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -97,6 +117,11 @@ describe('clientCerts slice', () => {
     })
   })
 
+  /**
+ * loadClientCertsFailure tests
+ *
+ * @group unit
+ */
   describe('loadClientCertsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -121,6 +146,11 @@ describe('clientCerts slice', () => {
     })
   })
 
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
     it('call both fetchClientCerts and loadClientCertsSuccess when fetch is successed', async () => {
       // Arrange

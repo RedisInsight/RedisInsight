@@ -21,6 +21,11 @@ const RGBColorsTests: any[] = [
   [5, 140 / 7, [151, 57, 197]],
 ]
 
+/**
+ * getRGBColorByScheme tests
+ *
+ * @group unit
+ */
 describe('getRGBColorByScheme', () => {
   it.each(RGBColorsTests)('for input: %s (index), %s (shift), should be output: %s',
     (index, shift, expected) => {
@@ -29,6 +34,11 @@ describe('getRGBColorByScheme', () => {
     })
 })
 
+/**
+ * rgb tests
+ *
+ * @group unit
+ */
 describe('rgb', () => {
   it('should return proper rgb string color', () => {
     expect(rgb([0, 0, 0])).toEqual('rgb(0, 0, 0)')

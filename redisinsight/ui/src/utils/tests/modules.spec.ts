@@ -37,6 +37,11 @@ const result2: IDatabaseModule[] = [
   { moduleName: '', abbreviation: '' },
 ]
 
+/**
+ * sortModules tests
+ *
+ * @group unit
+ */
 describe('sortModules', () => {
   it('should proper sort modules list', () => {
     expect(sortModules(modules1)).toEqual(result1)

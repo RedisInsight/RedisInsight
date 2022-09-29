@@ -3,6 +3,11 @@ import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import CHSearchInput from './CHSearchInput'
 
+/**
+ * CHSearchInput tests
+ *
+ * @group unit
+ */
 describe('CHSearchInput', () => {
   it('should render', () => {
     expect(render(<CHSearchInput submitSearch={jest.fn()} />)).toBeTruthy()

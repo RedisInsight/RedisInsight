@@ -8,6 +8,11 @@ const ADD_NEW_ITEM = 'add-new-item'
 
 const mockedProps = mock<Props>()
 
+/**
+ * AddZsetMembers tests
+ *
+ * @group unit
+ */
 describe('AddZsetMembers', () => {
   it('should render', () => {
     expect(render(<AddSetMembers {...instance(mockedProps)} />)).toBeTruthy()

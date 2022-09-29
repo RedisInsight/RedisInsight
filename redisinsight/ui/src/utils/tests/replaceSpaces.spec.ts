@@ -9,6 +9,11 @@ const getReplaceSpacesTests: any[] = [
   [11, '11'],
 ]
 
+/**
+ * replaceSpaces tests
+ *
+ * @group unit
+ */
 describe('replaceSpaces', () => {
   it.each(getReplaceSpacesTests)('for input: %s (reply), should be output: %s',
     (reply, expected) => {

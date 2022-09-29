@@ -5,6 +5,11 @@ import KeyboardShortcut, { Props } from './KeyboardShortcut'
 
 const mockedProps = mock<Props>()
 
+/**
+ * KeyboardShortcut tests
+ *
+ * @group unit
+ */
 describe('KeyboardShortcut', () => {
   it('should render', () => {
     expect(render(<KeyboardShortcut {...instance(mockedProps)} />)).toBeTruthy()

@@ -31,7 +31,17 @@ const text11 = '3.3.1'
 const text12 = '-3-2'
 const text13 = '5'
 
+/**
+ * Validations utils tests
+ *
+ * @group unit
+ */
 describe('Validations utils', () => {
+/**
+ * validateField tests
+ *
+ * @group unit
+ */
   describe('validateField', () => {
     it('validateField should return text without empty spaces', () => {
       const expectedResponse1 = '123123123'
@@ -46,6 +56,11 @@ describe('Validations utils', () => {
     })
   })
 
+  /**
+ * validateCountNumber tests
+ *
+ * @group unit
+ */
   describe('validateCountNumber', () => {
     it('validateCountNumber should return only positive numbers', () => {
       const expectedResponse1 = '123123123'
@@ -64,6 +79,11 @@ describe('Validations utils', () => {
     })
   })
 
+  /**
+ * validateTTLNumber tests
+ *
+ * @group unit
+ */
   describe('validateTTLNumber', () => {
     it('validateTTLNumber should return only numbers between 0 and MAX_TTL_NUMBER', () => {
       const expectedResponse1 = '123123123'
@@ -84,6 +104,11 @@ describe('Validations utils', () => {
     })
   })
 
+  /**
+ * validateTTLNumberForAddKey tests
+ *
+ * @group unit
+ */
   describe('validateTTLNumberForAddKey', () => {
     it('validateTTLNumberForAddKey should return only numbers between 1 and MAX_TTL_NUMBER', () => {
       expect(validateTTLNumberForAddKey('0')).toEqual('')
@@ -92,6 +117,11 @@ describe('Validations utils', () => {
     })
   })
 
+  /**
+ * validateScoreNumber tests
+ *
+ * @group unit
+ */
   describe('validateScoreNumber', () => {
     it('validateScoreNumber should return numbers with 15 decimal places max, negative values are allowed', () => {
       const expectedResponse1 = '123123123'
@@ -114,6 +144,11 @@ describe('Validations utils', () => {
     })
   })
 
+  /**
+ * validatePortNumber tests
+ *
+ * @group unit
+ */
   describe('validatePortNumber', () => {
     it('validatePortNumber should return only numbers between 0 and MAX_PORT_NUMBER', () => {
       const expectedResponse1 = `${MAX_PORT_NUMBER}`
@@ -134,6 +169,11 @@ describe('Validations utils', () => {
     })
   })
 
+  /**
+ * validateEmail tests
+ *
+ * @group unit
+ */
   describe('validateEmail', () => {
     it('validateEmail should return "true" only for email format text', () => {
       expect(validateEmail(text1)).toBeFalsy()
@@ -145,6 +185,11 @@ describe('Validations utils', () => {
       expect(validateEmail(text8)).toBeFalsy()
     })
   })
+  /**
+ * validateCertName tests
+ *
+ * @group unit
+ */
   describe('validateCertName', () => {
     it.each([
       ['my-new_cert', 'my-new_cert'],
@@ -161,6 +206,11 @@ describe('Validations utils', () => {
       })
   })
 
+  /**
+ * validateRefreshRateNumber tests
+ *
+ * @group unit
+ */
   describe('validateRefreshRateNumber', () => {
     it.each([
       [text1, `${MAX_REFRESH_RATE}`],
@@ -183,6 +233,11 @@ describe('Validations utils', () => {
       })
   })
 
+  /**
+ * errorValidateRefreshRateNumber tests
+ *
+ * @group unit
+ */
   describe('errorValidateRefreshRateNumber', () => {
     it.each([
       [validateRefreshRateNumber(text1), false],
@@ -205,6 +260,11 @@ describe('Validations utils', () => {
       })
   })
 
+  /**
+ * errorValidateNegativeInteger tests
+ *
+ * @group unit
+ */
   describe('errorValidateNegativeInteger', () => {
     it.each([
       [validateRefreshRateNumber(text1), true],
@@ -227,6 +287,11 @@ describe('Validations utils', () => {
       })
   })
 
+  /**
+ * validateConsumerGroupId tests
+ *
+ * @group unit
+ */
   describe('validateConsumerGroupId', () => {
     it.each([
       ['123', '123'],
@@ -240,6 +305,11 @@ describe('Validations utils', () => {
       })
   })
 
+  /**
+ * validateNumber tests
+ *
+ * @group unit
+ */
   describe('validateNumber', () => {
     it.each([
       ['123', '123'],

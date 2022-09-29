@@ -28,6 +28,11 @@ jest.mock('uiSrc/slices/app/plugins', () => ({
   }),
 }))
 
+/**
+ * QueryCardHeader tests
+ *
+ * @group unit
+ */
 describe('QueryCardHeader', () => {
   it('should render', () => {
     // connectedInstanceSelector.mockImplementation(() => ({

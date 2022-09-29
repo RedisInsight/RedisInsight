@@ -15,6 +15,11 @@ const mockConsumers: ConsumerDto[] = [{
   pending: 31,
 }]
 
+/**
+ * ConsumersView tests
+ *
+ * @group unit
+ */
 describe('ConsumersView', () => {
   it('should render', () => {
     expect(render(<ConsumersView {...instance(mockedProps)} data={mockConsumers} />)).toBeTruthy()

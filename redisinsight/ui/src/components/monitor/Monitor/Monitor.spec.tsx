@@ -13,6 +13,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * Monitor tests
+ *
+ * @group unit
+ */
 describe('Monitor', () => {
   it('should render', () => {
     expect(render(<Monitor {...instance(mockedProps)} />)).toBeTruthy()

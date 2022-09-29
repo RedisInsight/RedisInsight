@@ -17,6 +17,11 @@ jest.mock('uiSrc/slices/app/notifications', () => ({
   removeMessage: jest.fn
 }))
 
+/**
+ * Notifications tests
+ *
+ * @group unit
+ */
 describe('Notifications', () => {
   it('should render', () => {
     expect(render(<Notifications />)).toBeTruthy()

@@ -92,6 +92,11 @@ jest.mock('uiSrc/services', () => ({
   useDisposableWebworker: () => ({ result: mockWebWorkerResult, run: jest.fn() }),
 }))
 
+/**
+ * KeyTree tests
+ *
+ * @group unit
+ */
 describe('KeyTree', () => {
   it('Key tree delimiter should be in the document', () => {
     render(<KeyTree {...propsMock} />)

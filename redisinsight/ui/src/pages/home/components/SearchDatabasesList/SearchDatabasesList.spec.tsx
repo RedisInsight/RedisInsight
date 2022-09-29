@@ -49,6 +49,11 @@ beforeEach(() => {
   }))
 })
 
+/**
+ * SearchDatabasesList tests
+ *
+ * @group unit
+ */
 describe('SearchDatabasesList', () => {
   it('should render', () => {
     expect(render(<SearchDatabasesList />)).toBeTruthy()

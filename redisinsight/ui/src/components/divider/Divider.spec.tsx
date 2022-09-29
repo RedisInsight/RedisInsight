@@ -5,6 +5,11 @@ import Divider, { Props } from './Divider'
 
 const mockedProps = mock<Props>()
 
+/**
+ * Divider tests
+ *
+ * @group unit
+ */
 describe('Divider', () => {
   it('should render', () => {
     expect(render(<Divider {...instance(mockedProps)} />)).toBeTruthy()

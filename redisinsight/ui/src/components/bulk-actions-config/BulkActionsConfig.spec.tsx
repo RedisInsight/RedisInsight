@@ -50,6 +50,11 @@ const deletingMock = [{
   }
 }]
 
+/**
+ * BulkActionsConfig tests
+ *
+ * @group unit
+ */
 describe('BulkActionsConfig', () => {
   it('should render', () => {
     expect(render(<BulkActionsConfig />)).toBeTruthy()

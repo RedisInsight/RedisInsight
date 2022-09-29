@@ -68,6 +68,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * zset slice tests
+ *
+ * @group unit
+ */
 describe('zset slice', () => {
   beforeAll(() => {
     dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
@@ -77,6 +82,11 @@ describe('zset slice', () => {
     dateNow.mockRestore()
   })
 
+  /**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -90,6 +100,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * setZsetInitialState tests
+ *
+ * @group unit
+ */
   describe('setZsetInitialState', () => {
     it('should properly set initial state', () => {
       const nextState = reducer(initialState, setZsetInitialState())
@@ -100,6 +115,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * loadZSetMembers tests
+ *
+ * @group unit
+ */
   describe('loadZSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -119,6 +139,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * loadZSetMembersSuccess tests
+ *
+ * @group unit
+ */
   describe('loadZSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -180,6 +205,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * loadZSetMembersFailure tests
+ *
+ * @group unit
+ */
   describe('loadZSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -205,6 +235,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * searchZSetMembers tests
+ *
+ * @group unit
+ */
   describe('searchZSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -227,6 +262,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * searchZSetMembersSuccess tests
+ *
+ * @group unit
+ */
   describe('searchZSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       const data = {
@@ -289,6 +329,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * searchZSetMembersFailure tests
+ *
+ * @group unit
+ */
   describe('searchZSetMembersFailure', () => {
     it('should properly set the error', () => {
       const state = {
@@ -308,6 +353,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * searchMoreZSetMembers tests
+ *
+ * @group unit
+ */
   describe('searchMoreZSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       const data = '*'
@@ -332,6 +382,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * searchMoreZSetMembersSuccess tests
+ *
+ * @group unit
+ */
   describe('searchMoreZSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       const data = {
@@ -377,6 +432,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * searchMoreZSetMembersFailure tests
+ *
+ * @group unit
+ */
   describe('searchMoreZSetMembersFailure', () => {
     it('should properly set the error', () => {
       const state = {
@@ -396,6 +456,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * loadMoreZSetMembers tests
+ *
+ * @group unit
+ */
   describe('loadMoreZSetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -415,6 +480,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * loadMoreZSetMembersSuccess tests
+ *
+ * @group unit
+ */
   describe('loadMoreZSetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -472,6 +542,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * loadMoreZSetMembersFailure tests
+ *
+ * @group unit
+ */
   describe('loadMoreZSetMembersFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -492,6 +567,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * removeZsetMembers tests
+ *
+ * @group unit
+ */
   describe('removeZsetMembers', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -511,6 +591,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * removeZsetMembersSuccess tests
+ *
+ * @group unit
+ */
   describe('removeZsetMembersSuccess', () => {
     it('should properly set the state with fetched data', () => {
       const initialStateRemove = {
@@ -532,6 +617,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * removeZsetMembersFailure tests
+ *
+ * @group unit
+ */
   describe('removeZsetMembersFailure', () => {
     it('should properly set the error', () => {
       const state = {
@@ -551,6 +641,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * removeMembersFromList tests
+ *
+ * @group unit
+ */
   describe('removeMembersFromList', () => {
     it('should properly remove members from list', () => {
       // Arrange
@@ -588,6 +683,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * updateScore tests
+ *
+ * @group unit
+ */
   describe('updateScore', () => {
     it('should properly set the state while updating a zset score', () => {
       // Arrange
@@ -611,6 +711,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * updateScoreSuccess tests
+ *
+ * @group unit
+ */
   describe('updateScoreSuccess', () => {
     it('should properly set the state after successfully updated zset score', () => {
       // Arrange
@@ -633,6 +738,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * updateScoreFailure tests
+ *
+ * @group unit
+ */
   describe('updateScoreFailure', () => {
     it('should properly set the state on update zset score failure', () => {
       // Arrange
@@ -656,6 +766,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * resetUpdateScore tests
+ *
+ * @group unit
+ */
   describe('resetUpdateScore', () => {
     it('should properly reset the state', () => {
       // Arrange;
@@ -679,6 +794,11 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * updateMembersInList tests
+ *
+ * @group unit
+ */
   describe('updateMembersInList', () => {
     it('should properly update members in list', () => {
       // Arrange
@@ -729,7 +849,17 @@ describe('zset slice', () => {
     })
   })
 
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchZSetMembers tests
+ *
+ * @group unit
+ */
     describe('fetchZSetMembers', () => {
       it('succeed to fetch zset members', async () => {
         // Arrange
@@ -786,6 +916,11 @@ describe('zset slice', () => {
       })
     })
 
+    /**
+ * fetchMoreZSetMembers tests
+ *
+ * @group unit
+ */
     describe('fetchMoreZSetMembers', () => {
       it('succeed to fetch more zset members', async () => {
         // Arrange
@@ -841,6 +976,11 @@ describe('zset slice', () => {
       })
     })
 
+    /**
+ * fetchAddZSetMembers tests
+ *
+ * @group unit
+ */
     describe('fetchAddZSetMembers', () => {
       it('succeed to fetch add zset members', async () => {
         // Arrange
@@ -893,6 +1033,11 @@ describe('zset slice', () => {
       })
     })
 
+    /**
+ * deleteZSetMembers tests
+ *
+ * @group unit
+ */
     describe('deleteZSetMembers', () => {
       it('succeed to fetch delete zset members', async () => {
         // Arrange
@@ -997,6 +1142,11 @@ describe('zset slice', () => {
       })
     })
 
+    /**
+ * updateZSetMembers tests
+ *
+ * @group unit
+ */
     describe('updateZSetMembers', () => {
       it('succeed to fetch update zset members', async () => {
         // Arrange
@@ -1050,6 +1200,11 @@ describe('zset slice', () => {
       })
     })
 
+    /**
+ * fetchSearchZSetMembers tests
+ *
+ * @group unit
+ */
     describe('fetchSearchZSetMembers', () => {
       it('succeed to fetch search zset members', async () => {
         // Arrange
@@ -1099,6 +1254,11 @@ describe('zset slice', () => {
       })
     })
 
+    /**
+ * fetchSearchMoreZSetMembers tests
+ *
+ * @group unit
+ */
     describe('fetchSearchMoreZSetMembers', () => {
       it('succeed to fetch search more zset members', async () => {
         // Arrange
@@ -1147,6 +1307,11 @@ describe('zset slice', () => {
       })
     })
 
+    /**
+ * refreshStringMembersAction tests
+ *
+ * @group unit
+ */
     describe('refreshStringMembersAction', () => {
       it('succeed to fetch zset members after refresh', async () => {
         // Arrange

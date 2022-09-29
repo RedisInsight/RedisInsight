@@ -21,6 +21,11 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
+/**
+ * HelpLinksMenu tests
+ *
+ * @group unit
+ */
 describe('HelpLinksMenu', () => {
   it('should render', () => {
     expect(render(<HelpLinksMenu {...instance(mockedProps)} />)).toBeTruthy()

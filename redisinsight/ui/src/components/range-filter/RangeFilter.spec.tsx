@@ -9,6 +9,11 @@ const startRangeTestId = 'range-start-input'
 const endRangeTestId = 'range-end-input'
 const resetBtnTestId = 'range-filter-btn'
 
+/**
+ * RangeFilter tests
+ *
+ * @group unit
+ */
 describe('RangeFilter', () => {
   it('should render', () => {
     expect(render(<RangeFilter {...instance(mockedProps)} />)).toBeTruthy()

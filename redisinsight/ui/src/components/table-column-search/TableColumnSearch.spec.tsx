@@ -5,6 +5,11 @@ import TableColumnSearch, { Props } from './TableColumnSearch'
 
 const mockedProps = mock<Props>()
 
+/**
+ * TableColumnSearch tests
+ *
+ * @group unit
+ */
 describe('TableColumnSearch', () => {
   it('should render', () => {
     expect(

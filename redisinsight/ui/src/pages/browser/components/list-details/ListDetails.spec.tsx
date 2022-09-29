@@ -28,6 +28,11 @@ jest.mock('uiSrc/slices/browser/list', () => {
   }
 })
 
+/**
+ * ListDetails tests
+ *
+ * @group unit
+ */
 describe('ListDetails', () => {
   it('should render', () => {
     expect(render(<ListDetails />)).toBeTruthy()

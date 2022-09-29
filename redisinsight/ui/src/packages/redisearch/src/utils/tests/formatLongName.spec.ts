@@ -6,6 +6,11 @@ const formatLongNameTests: any[] = [
   ['u aoeu aoeuaoeuaoeuaoe eoua uoaeu aoeu', 10, 3, ';', 'u aoeu;oeu'],
 ]
 
+/**
+ * formatLongName tests
+ *
+ * @group unit
+ */
 describe('formatLongName', () => {
   it.each(formatLongNameTests)('for input: %s (name), %s (maxNameLength), %s (endPartLength), %s (separator), should be output: %s',
     (name, maxNameLength, endPartLength, separator, expected) => {
@@ -21,6 +26,11 @@ const formatNameShortTests: any[] = [
     'test test test test test test test test test test ...test test test '],
 ]
 
+/**
+ * formatNameShort tests
+ *
+ * @group unit
+ */
 describe('formatNameShort', () => {
   it.each(formatNameShortTests)('for input: %s (name), should be output: %s',
     (name, expected) => {

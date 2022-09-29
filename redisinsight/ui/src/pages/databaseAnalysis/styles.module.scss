@@ -1,0 +1,62 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+$breakpoint-table: 1232px;
+
+.main {
+  @include euiScrollBar;
+  margin: 0 16px 0;
+  height: calc(100% - 70px);
+  background-color: var(--euiColorEmptyShade);
+  padding: 18px 24px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 61% 39%;
+  gap: 24px;
+
+  @media screen and (max-width: $breakpoint-table) {
+    grid-template-columns: 100%;
+  }
+}
+
+.main .textBtn.textBtn {
+  border: none !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-left: 18px;
+  color: var(--wbHoverIconColor) !important;
+
+  :global(.euiButton__content) {
+    padding: 6px !important;
+  }
+
+  &.textBtn:hover,
+  &.textBtn:focus {
+    color: var(--wbHoverIconColor) !important;
+  }
+  
+  &.activeBtn,
+  &.textBtn:disabled {
+    background: var(--browserComponentActive) !important;
+    color: var(--wbActiveIconColor) !important;
+    opacity: 1;
+  }
+
+  :global(.euiButton__text) {
+    font: normal normal normal 13px/18px Graphik !important;
+  }
+}
+
+.main .sectionTitle {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 24px;
+}

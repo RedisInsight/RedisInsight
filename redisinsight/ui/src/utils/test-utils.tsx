@@ -40,6 +40,7 @@ import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/con
 import { initialState as initialStateSlowLog } from 'uiSrc/slices/analytics/slowlog'
 import { initialState as initialClusterDetails } from 'uiSrc/slices/analytics/clusterDetails'
 import { initialState as initialStateAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
+import { initialState as initialStateDbAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
@@ -100,6 +101,7 @@ const initialStateDefault: RootState = {
     settings: cloneDeep(initialStateAnalyticsSettings),
     slowlog: cloneDeep(initialStateSlowLog),
     clusterDetails: cloneDeep(initialClusterDetails),
+    databaseAnalysis: cloneDeep(initialStateDbAnalysis),
   },
   pubsub: cloneDeep(initialStatePubSub),
 }

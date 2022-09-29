@@ -125,7 +125,7 @@ const NavigationMenu = () => {
       ariaLabel: 'Analysis Tools',
       onClick: () => handleGoPage(connectionType === ConnectionType.Cluster
         ? Pages.clusterDetails(connectedInstanceId)
-        : Pages.slowLog(connectedInstanceId)),
+        : Pages.databaseAnalysis(connectedInstanceId)),
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),

@@ -1,14 +1,16 @@
 import { RedisString } from 'src/common/constants';
 import { AbstractInfoStrategy } from 'src/modules/database-analysis/scanner/key-info/strategies/abstract.info.strategy';
 import { convertStringsArrayToObject } from 'src/utils';
+import { Command, Redis } from 'ioredis';
 
 export class TsInfoStrategy extends AbstractInfoStrategy {
-  getLengthCommandArgs(key: RedisString): unknown[] {
-    return ['ts.info', [key]];
-  }
+  async getLength(client: Redis, key: RedisString): Promise<number> {
+    const { totalsamples } = convertStringsArrayToObject(
+      await client.sendCommand(new Command('ts.info', [key], {
+        replyEncoding: 'utf8',
+      })) as string[],
+    );
 
-  getLengthValue(resp): number {
-    const { totalsamples } = convertStringsArrayToObject(resp);
     return totalsamples;
   }
 }

@@ -320,7 +320,11 @@ const keysSlice = createSlice({
 
     // reset keys for keys slice
     resetKeys: (state) => cloneDeep(
-      { ...initialState, selectedKey: getInitialSelectedKeyState(state as KeysStore) }
+      {
+        ...initialState,
+        viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
+        selectedKey: getInitialSelectedKeyState(state as KeysStore)
+      }
     ),
 
     resetKeysData: (state) => {

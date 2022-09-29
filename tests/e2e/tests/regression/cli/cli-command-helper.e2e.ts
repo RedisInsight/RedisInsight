@@ -1,4 +1,3 @@
-import { ClientFunction } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { CliPage } from '../../../pageObjects';
@@ -21,8 +20,6 @@ let commandArgumentsToCheck = '';
 let commandsArgumentsToCheck: string[] = [];
 let externalPageLink = '';
 let externalPageLinks: string[] = [];
-
-const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `CLI Command helper`
     .meta({ type: 'regression' })
@@ -104,7 +101,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -123,7 +120,7 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -142,7 +139,8 @@ test
         //Click on Read More link for selected command
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
+        // await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         await t.switchToParentWindow();
     });
 test
@@ -179,7 +177,7 @@ test
             //Click on Read More link for selected command
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).eql(externalPageLinks[i], 'The opened page');
+            await common.checkURL(externalPageLinks[i]);
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;
@@ -202,7 +200,7 @@ test
         //Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
         await t.click(cliPage.readMoreButton);
         //Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
+        await common.checkURL(externalPageLink);
         //Close the window with external link to switch to the application window
         await t.closeWindow();
     });
@@ -243,7 +241,7 @@ test
             //Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
             await t.click(cliPage.readMoreButton);
             //Check new opened window page with the correct URL
-            await t.expect(getPageUrl()).eql(externalPageLinks[i], 'The opened page');
+            await common.checkURL(externalPageLinks[i]);
             //Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;

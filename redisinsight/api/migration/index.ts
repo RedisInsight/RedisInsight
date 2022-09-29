@@ -16,6 +16,7 @@ import { sni1650278664000 } from "./1650278664000-sni";
 import { notification1655821010349 } from './1655821010349-notification';
 import { notificationCategory1659687030433 } from './1659687030433-notification-category';
 import { workbenchMode1660664717573 } from './1660664717573-workbench-mode';
+import { workbenchGroupMode1663093411715 } from './1663093411715-workbench-group-mode';
 
 export default [
   initialMigration1614164490968,
@@ -36,4 +37,5 @@ export default [
   notification1655821010349,
   notificationCategory1659687030433,
   workbenchMode1660664717573,
+  workbenchGroupMode1663093411715,
 ];

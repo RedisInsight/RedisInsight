@@ -46,7 +46,7 @@ const WorkbenchSettings = () => {
       <EuiSpacer size="m" />
       <EuiFormRow>
         <EuiSwitch
-          label="Clear the Editor when running the code"
+          label="Clear the Editor after running commands"
           checked={cleanup}
           onChange={(e) => onSwitchWbCleanUp(e.target.checked)}
           className={styles.switchOption}
@@ -58,7 +58,7 @@ const WorkbenchSettings = () => {
         initValue={batchSize.toString()}
         onApply={handleApplyPipelineCountChanges}
         validation={(value) => validateNumber(value)}
-        title="Pipeline mode"
+        title="Pipeline Mode"
         testid="pipeline-bunch"
         placeholder={`${PIPELINE_COUNT_DEFAULT}`}
         label="Commands in pipeline:"

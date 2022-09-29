@@ -5,7 +5,7 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
@@ -199,6 +199,7 @@ export function sendWBCommandAction({
   commands = [],
   multiCommands = [],
   mode = RunQueryMode.ASCII,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -206,7 +207,8 @@ export function sendWBCommandAction({
   commands: string[]
   multiCommands?: string[]
   commandId?: string
-  mode?: RunQueryMode
+  mode: RunQueryMode
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -215,7 +217,10 @@ export function sendWBCommandAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({
+        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Command(s)`] : commands,
+        commandId
+      }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
@@ -225,6 +230,7 @@ export function sendWBCommandAction({
         {
           commands,
           mode,
+          resultsMode
         }
       )
 
@@ -249,6 +255,7 @@ export function sendWBCommandClusterAction({
   multiCommands = [],
   options,
   mode = RunQueryMode.ASCII,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -258,6 +265,7 @@ export function sendWBCommandClusterAction({
   commandId?: string
   multiCommands?: string[]
   mode?: RunQueryMode,
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -266,7 +274,10 @@ export function sendWBCommandClusterAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({
+        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Commands`] : commands,
+        commandId
+      }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
@@ -277,7 +288,8 @@ export function sendWBCommandClusterAction({
           ...options,
           commands,
           mode,
-          outputFormat: CliOutputFormatterType.Raw,
+          resultsMode,
+          outputFormat: CliOutputFormatterType.Raw
         }
       )
 

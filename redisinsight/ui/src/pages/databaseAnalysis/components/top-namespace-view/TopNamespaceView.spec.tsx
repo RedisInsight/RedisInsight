@@ -89,34 +89,9 @@ describe('TopNamespaceView', () => {
     expect(queryByTestId('btn-change-mode-keys')).not.toBeDisabled()
   })
 
-  it('should not render tables when topKeysNsp is empty array', () => {
+  it('should not render tables when topMemoryNsp and topKeysNsp are empty array', () => {
     const mockedData = {
       topKeysNsp: [],
-      topMemoryNsp: [
-        {
-          nsp: 'nsp_name',
-          memory: 1,
-          keys: 1,
-          types: [{ type: 'hash', memory: 1, keys: 1 }]
-        }
-      ]
-    }
-    const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)
-
-    expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
-    expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
-  })
-
-  it('should not render tables when topMemoryNsp is empty array', () => {
-    const mockedData = {
-      topKeysNsp: [
-        {
-          nsp: 'nsp_name',
-          memory: 1,
-          keys: 1,
-          types: [{ type: 'hash', memory: 1, keys: 1 }]
-        }
-      ],
       topMemoryNsp: []
     }
     const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)

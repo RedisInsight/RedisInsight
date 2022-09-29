@@ -1,11 +1,10 @@
 import React from 'react'
 import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { Nullable } from 'uiSrc/utils'
+import { emptyMessageContent } from 'uiSrc/constants'
 
 import EmptyAnalysisMessage from '../empty-analysis-message'
 import TopNamespaceView from '../top-namespace-view'
-import { emptyMessageContent } from '../../constants'
-
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -27,24 +26,20 @@ const AnalysisDataView = (props: Props) => {
 
   return (
     <>
-      {
-        reports.length === 0 && (
-          <EmptyAnalysisMessage
-            title={emptyMessageContent.noReports.title}
-            text={emptyMessageContent.noReports.text}
-            name="reports"
-          />
-        )
-      }
-      {
-        !!reports.length && data?.totalKeys?.total === 0 && (
-          <EmptyAnalysisMessage
-            title={emptyMessageContent.noKeys.title}
-            text={emptyMessageContent.noKeys.text}
-            name="keys"
-          />
-        )
-      }
+      {!reports.length && (
+        <EmptyAnalysisMessage
+          title={emptyMessageContent.noReports.title}
+          text={emptyMessageContent.noReports.text}
+          name="reports"
+        />
+      )}
+      {!!reports.length && data?.totalKeys?.total === 0 && (
+        <EmptyAnalysisMessage
+          title={emptyMessageContent.noKeys.title}
+          text={emptyMessageContent.noKeys.text}
+          name="keys"
+        />
+      )}
       <div className={styles.grid}>
         <TopNamespaceView data={data} loading={loading} />
       </div>

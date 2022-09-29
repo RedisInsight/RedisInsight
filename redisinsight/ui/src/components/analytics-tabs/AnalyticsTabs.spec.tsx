@@ -32,13 +32,13 @@ beforeEach(() => {
     }
   }))
 })
-// .instances.connectedInstance
+
 describe('AnalyticsTabs', () => {
   it('should render', () => {
     expect(render(<AnalyticsTabs />)).toBeTruthy()
   })
 
-  it('click on DatabaseAnalysis tab should call History push with /database-analysis path ', async () => {
+  it('should call History push with /database-analysis path when click on DatabaseAnalysis tab', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
@@ -51,7 +51,7 @@ describe('AnalyticsTabs', () => {
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith('/instanceId/analytics/database-analysis')
   })
-  it('click on SlowLog tab should call History push with /slowlog path ', async () => {
+  it('should call History push with /slowlog path when click on SlowLog tab', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
@@ -109,7 +109,7 @@ describe('AnalyticsTabs', () => {
     expect(queryByTestId(`analytics-tab-${AnalyticsViewTab.ClusterDetails}`)).not.toBeInTheDocument()
   })
 
-  it('click on ClusterDetails tab should call History push with /cluster-details path', async () => {
+  it('should call History push with /cluster-details path when click on ClusterDetails tab ', async () => {
     const state: RootState = store.getState();
 
     (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({

@@ -24,18 +24,18 @@ $breakpoint-table: 1232px;
   }
 }
 
-.main .textBtn.textBtn {
-  border: none !important;
+.main .topNamespaceView .textBtn.textBtn {
+  border: none;
   min-width: auto !important;
-  min-height: auto !important;
-  border-radius: 4px !important;
+  min-height: auto;
+  border-radius: 4px;
   background: transparent !important;
-  box-shadow: none !important;
+  box-shadow: none;
   margin-left: 18px;
   color: var(--wbHoverIconColor) !important;
 
   :global(.euiButton__content) {
-    padding: 6px !important;
+    padding: 6px;
   }
 
   &.textBtn:hover,

@@ -1,5 +1,6 @@
 import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { rest, RestHandler } from 'msw'
+import { ClusterDetails, HealthStatus, NodeRole } from 'apiSrc/modules/cluster-monitor/models'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { getUrl } from 'uiSrc/utils'
 import { getMswURL } from 'uiSrc/utils/test-utils'
@@ -9,13 +10,13 @@ export const INSTANCE_ID_MOCK = 'instanceId'
 const handlers: RestHandler[] = [
   // useGetClusterDetailsQuery
   rest.get<DatabaseInstanceResponse[]>(getMswURL(getUrl(INSTANCE_ID_MOCK, ApiEndpoints.CLUSTER_DETAILS)),
-    async (req, res, ctx) => res(
+    async (_req, res, ctx) => res(
       ctx.status(200),
       ctx.json(CLUSTER_DETAILS_DATA_MOCK),
     ))
 ]
 
-export const CLUSTER_DETAILS_DATA_MOCK = {
+export const CLUSTER_DETAILS_DATA_MOCK: ClusterDetails = {
   state: 'ok',
   slotsAssigned: 16384,
   slotsOk: 16384,
@@ -34,11 +35,11 @@ export const CLUSTER_DETAILS_DATA_MOCK = {
       id: '3',
       host: '3.93.234.244',
       port: 12511,
-      role: 'primary',
+      role: 'primary' as NodeRole,
       slots: [
         '10923-16383'
       ],
-      health: 'online',
+      health: 'online' as HealthStatus,
       totalKeys: 0,
       usedMemory: 38448896,
       opsPerSecond: 0,
@@ -47,24 +48,22 @@ export const CLUSTER_DETAILS_DATA_MOCK = {
       commandsProcessed: 114,
       networkInKbps: 0.35,
       networkOutKbps: 3.62,
-      cacheHitRatio: null,
+      cacheHitRatio: 0,
       replicationOffset: 0,
       uptimeSec: 1661931600,
       version: '6.2.6',
       mode: 'standalone',
-      replicas: [
-
-      ]
+      replicas: []
     },
     {
       id: '4',
       host: '44.202.117.57',
       port: 12511,
-      role: 'primary',
+      role: 'primary' as NodeRole,
       slots: [
         '0-5460'
       ],
-      health: 'online',
+      health: 'online' as HealthStatus,
       totalKeys: 0,
       usedMemory: 38448896,
       opsPerSecond: 0,
@@ -73,24 +72,22 @@ export const CLUSTER_DETAILS_DATA_MOCK = {
       commandsProcessed: 114,
       networkInKbps: 0.35,
       networkOutKbps: 3.62,
-      cacheHitRatio: null,
+      cacheHitRatio: 0,
       replicationOffset: 0,
       uptimeSec: 1661931600,
       version: '6.2.6',
       mode: 'standalone',
-      replicas: [
-
-      ]
+      replicas: []
     },
     {
       id: '5',
       host: '44.210.115.34',
       port: 12511,
-      role: 'primary',
+      role: 'primary' as NodeRole,
       slots: [
         '5461-10922'
       ],
-      health: 'online',
+      health: 'online' as HealthStatus,
       totalKeys: 0,
       usedMemory: 38448896,
       opsPerSecond: 0,
@@ -99,14 +96,12 @@ export const CLUSTER_DETAILS_DATA_MOCK = {
       commandsProcessed: 114,
       networkInKbps: 0.35,
       networkOutKbps: 3.62,
-      cacheHitRatio: null,
+      cacheHitRatio: 0,
       replicationOffset: 0,
       uptimeSec: 1661931600,
       version: '6.2.6',
       mode: 'standalone',
-      replicas: [
-
-      ]
+      replicas: []
     }
   ],
   version: '6.2.6',

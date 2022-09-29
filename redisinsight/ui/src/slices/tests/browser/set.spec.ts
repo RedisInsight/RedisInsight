@@ -419,6 +419,7 @@ describe('set slice', () => {
       expect(setSelector(rootState)).toEqual(state)
     })
   })
+
   describe('removeMembersFromList', () => {
     it('should properly set the error', () => {
       // Arrange

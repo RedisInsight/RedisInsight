@@ -7,7 +7,7 @@ import DatabaseAnalysisPage from './DatabaseAnalysisPage'
 jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   ...jest.requireActual('uiSrc/slices/analytics/dbAnalysis'),
   fetchDBAnalysisReportsHistory: jest.fn(),
-  DBAnalysisSelector: jest.fn().mockReturnValue({
+  dbAnalysisSelector: jest.fn().mockReturnValue({
     loading: false,
     error: '',
     data: null,
@@ -20,6 +20,11 @@ jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   }),
 }))
 
+/**
+ * DatabaseAnalysisPage tests
+ *
+ * @group component
+ */
 describe('DatabaseAnalysisPage', () => {
   it('should call fetchDBAnalysisReportsHistory after rendering', async () => {
     const fetchDBAnalysisReportsHistoryMock = jest.fn();

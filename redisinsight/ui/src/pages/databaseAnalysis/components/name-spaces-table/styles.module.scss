@@ -30,6 +30,48 @@ $breakpoint-table: 1232px;
   .badge :global(.euiText--extraSmall) {
     font: normal normal normal 12px/16px Graphik;
   }
+
+  .link {
+    width: max-content;
+  
+    &:hover,
+    &:focus {
+      background-color: transparent !important;
+    }
+  
+    :global(.euiButtonEmpty__content) {
+      padding: 0;
+      width: max-content;
+  
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  
+    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
+      font: normal normal normal 13px/18px Graphik;
+      color: var(--buttonSecondaryTextColor) !important;
+    }
+  
+    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):hover,
+    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):focus {
+      color: var(--euiTextSubduedColorHover);
+    }
+  
+    &.expanded {
+      padding-left: 12px;
+    }
+  
+    &.expanded :global(.euiButtonEmpty__content.euiButtonContent  .euiButtonEmpty__text) {
+      color: var(--euiTextSubduedColor) !important;
+  
+      &:hover,
+      &:focus {
+        color: var(--euiTextSubduedColorHover) !important;
+      }
+    }
+  }
 }
 
 .tableWrapper {
@@ -39,7 +81,7 @@ $breakpoint-table: 1232px;
   position: relative;
   max-height: 100%;
 
-  & :global(.euiTableRow-isExpandedRow .euiTableCellContent) {
+  :global(.euiTableRow-isExpandedRow .euiTableCellContent) {
     padding: 0 12px !important;
   }
 }
@@ -124,51 +166,9 @@ $breakpoint-table: 1232px;
   }
 }
 
-.link {
-  width: max-content;
-
-  &:hover,
-  &:focus {
-    background-color: transparent !important;
-  }
-
-  :global(.euiButtonEmpty__content) {
-    padding: 0;
-    width: max-content;
-
-    &:hover,
-    &:focus {
-      text-decoration: underline;
-    }
-  }
-
-  :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
-    font: normal normal normal 13px/18px Graphik;
-    color: var(--buttonSecondaryTextColor) !important;
-  }
-
-  :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):hover,
-  :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):focus {
-    color: var(--euiTextSubduedColorHover);
-  }
-
-  &.expanded {
-    padding-left: 12px;
-  }
-
-  &.expanded :global(.euiButtonEmpty__content.euiButtonContent  .euiButtonEmpty__text) {
-    color: var(--euiTextSubduedColor) !important;
-
-    &:hover,
-    &:focus {
-      color: var(--euiTextSubduedColorHover) !important;
-    }
-  }
-}
-
 .expanded {
   display: grid;
-  grid-template-columns: calc(44% - 44px) 34% 12% 10% 44px;
+  grid-template-columns: auto 34% 12% calc(10% + 44px);
   grid-column-gap: 0;
   height: 42px;
   width: 100%;
@@ -184,6 +184,10 @@ $breakpoint-table: 1232px;
 
   .rightAlign {
     padding: 0 12px;
+
+    &:last-child {
+      padding: 0 52px 0 12px;
+    }
   }
 }
 

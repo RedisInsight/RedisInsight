@@ -3,10 +3,9 @@ import { t } from 'testcafe';
 import { Chance } from 'chance';
 import { COMMANDS_TO_CREATE_KEY } from '../helpers/constants';
 import { BrowserPage, CliPage } from '../pageObjects';
-import { KeyData } from '../pageObjects/browser-page';
+import { KeyData, AddKeyArguments } from '../pageObjects/browser-page';
 import { KeyTypesTexts } from './constants';
 import { Common } from './common';
-import { AddKeyArguments } from '../pageObjects/browser-page';
 
 const common = new Common();
 const cliPage = new CliPage();
@@ -53,8 +52,8 @@ export async function addKeysViaCli(keyData: KeyData, keyValue?: string, keyFiel
     for (const { textType, keyName } of keyData) {
         if (textType in COMMANDS_TO_CREATE_KEY) {
             textType === 'Hash' || textType === 'Stream'
-            ? await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue, keyField), { paste: true })
-            : await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue), { paste: true });
+                ? await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue, keyField), { paste: true })
+                : await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[textType](keyName, keyValue), { paste: true });
             await t.pressKey('enter');
         }
     }
@@ -84,15 +83,17 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
     const dbConf = { host, port: Number(port) };
     const client = createClient(dbConf);
 
-    await client.on('error', async function (error: string) {
+    await client.on('error', async function(error: string) {
         throw new Error(error);
     });
-    await client.on('connect', async function () {
+    await client.on('connect', async function() {
         if (keyArguments.keysCount != undefined) {
             for (let i = 0; i < keyArguments.keysCount; i++) {
                 const keyName = `${keyArguments.keyNameStartWith}${common.generateWord(20)}`;
-                await client.hset([keyName, 'field1', 'Hello'], async (error: string) => {
-                    if (error) throw error;
+                await client.hset([keyName, 'field1', 'Hello'], async(error: string) => {
+                    if (error) {
+                        throw error;
+                    }
                 });
             }
         }
@@ -111,10 +112,10 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
     const client = createClient(dbConf);
     const fields: string[] = [];
 
-    await client.on('error', async function (error: string) {
+    await client.on('error', async function(error: string) {
         throw new Error(error);
     });
-    await client.on('connect', async function () {
+    await client.on('connect', async function() {
         if (keyArguments.fieldsCount != undefined) {
             for (let i = 0; i < keyArguments.fieldsCount; i++) {
                 const field = `${keyArguments.fieldStartWith}${common.generateWord(10)}`;
@@ -122,8 +123,10 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
                 fields.push(field, fieldValue);
             }
         }
-        await client.hset(keyArguments.keyName, fields, async (error: string) => {
-            if (error) throw error;
+        await client.hset(keyArguments.keyName, fields, async(error: string) => {
+            if (error) {
+                throw error;
+            }
         });
         await client.quit();
     });
@@ -140,18 +143,20 @@ export async function populateListWithElements(host: string, port: string, keyAr
     const client = createClient(dbConf);
     const elements: string[] = [];
 
-    await client.on('error', async function (error: string) {
+    await client.on('error', async function(error: string) {
         throw new Error(error);
     });
-    await client.on('connect', async function () {
+    await client.on('connect', async function() {
         if (keyArguments.elementsCount != undefined) {
             for (let i = 0; i < keyArguments.elementsCount; i++) {
                 const element = `${keyArguments.elementStartWith}${common.generateWord(10)}`;
                 elements.push(element);
             }
         }
-        await client.lpush(keyArguments.keyName, elements, async (error: string) => {
-            if (error) throw error;
+        await client.lpush(keyArguments.keyName, elements, async(error: string) => {
+            if (error) {
+                throw error;
+            }
         });
         await client.quit();
     });
@@ -168,18 +173,20 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
     const client = createClient(dbConf);
     const members: string[] = [];
 
-    await client.on('error', async function (error: string) {
+    await client.on('error', async function(error: string) {
         throw new Error(error);
     });
-    await client.on('connect', async function () {
+    await client.on('connect', async function() {
         if (keyArguments.membersCount != undefined) {
             for (let i = 0; i < keyArguments.membersCount; i++) {
                 const member = `${keyArguments.memberStartWith}${common.generateWord(10)}`;
                 members.push(member);
             }
         }
-        await client.sadd(keyArguments.keyName, members, async (error: string) => {
-            if (error) throw error;
+        await client.sadd(keyArguments.keyName, members, async(error: string) => {
+            if (error) {
+                throw error;
+            }
         });
         await client.quit();
     });
@@ -194,12 +201,14 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
     const dbConf = { host, port: Number(port) };
     const client = createClient(dbConf);
 
-    await client.on('error', async function (error: string) {
+    await client.on('error', async function(error: string) {
         throw new Error(error);
     });
-    await client.on('connect', async function () {
+    await client.on('connect', async function() {
         await client.flushall((error: string) => {
-            if (error) throw error;
+            if (error) {
+                throw error;
+            }
         });
         await client.quit();
     });

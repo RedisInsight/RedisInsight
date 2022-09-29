@@ -17,7 +17,7 @@ import { useParams } from 'react-router-dom'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { appContextBrowserTree } from 'uiSrc/slices/app/context'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { getApproximateNumber } from 'uiSrc/utils/validations'
+import { getApproximatePercentage } from 'uiSrc/utils/validations'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -26,11 +26,10 @@ import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analys
 
 import styles from './styles.module.scss'
 
-export const getFormatTime = (time: Date = new Date()): string =>
-  format(new Date(time), 'd MMM yyyy HH:mm')
+const dateFormat = 'd MMM yyyy HH:mm'
 
 export interface Props {
-  reports: ShortDatabaseAnalysis[]
+  items: ShortDatabaseAnalysis[]
   selectedValue: Nullable<string>
   progress?: AnalysisProgress
   analysisLoading: boolean
@@ -39,7 +38,7 @@ export interface Props {
 
 const Header = (props: Props) => {
   const {
-    reports = [],
+    items = [],
     selectedValue,
     onChangeSelectedAnalysis,
     progress = null,
@@ -51,14 +50,14 @@ const Header = (props: Props) => {
 
   const { delimiter } = useSelector(appContextBrowserTree)
 
-  const analysisOptions: EuiSuperSelectOption<any>[] = reports.map((item) => {
+  const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
     const { createdAt, id } = item
     return {
       value: id,
       inputDisplay: (
-        <span>{getFormatTime(createdAt)}</span>
+        <span>{format(new Date(createdAt ?? ''), dateFormat)}</span>
       ),
-      'data-test-subj': `reports-report-${id}`,
+      'data-test-subj': `items-report-${id}`,
     }
   })
 
@@ -75,47 +74,52 @@ const Header = (props: Props) => {
   return (
     <div data-testid="db-analysis-header">
       <AnalyticsTabs />
-      <EuiFlexGroup className={styles.container} gutterSize="none" alignItems="center" justifyContent="spaceBetween">
-        {reports.length ? (
-          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-            <EuiFlexItem grow={false}>
-              <EuiText color="subdued">Report generated on:</EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiSuperSelect
-                options={analysisOptions}
-                style={{ border: 'none !important' }}
-                className={styles.changeReport}
-                popoverClassName={styles.changeReport}
-                valueOfSelected={selectedValue ?? ''}
-                onChange={(value: string) => onChangeSelectedAnalysis(value)}
-                data-testid="select-view-type"
-              />
-            </EuiFlexItem>
-            {!!progress && (
+      <EuiFlexGroup
+        className={styles.container}
+        gutterSize="none"
+        alignItems="center"
+        justifyContent={items.length ? 'spaceBetween' : 'flexEnd'}
+      >
+        {!!items.length && (
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
               <EuiFlexItem grow={false}>
-                <EuiText color="subdued" className={cx(styles.progress, styles.progressContainer)} data-testid="bulk-delete-summary">
-                  <EuiText
-                    color={progress.total === progress.processed ? 'subdued' : 'warning'}
-                    className={styles.progress}
-                    data-testid="analysis-progress"
-                  >
-                    {`Scanned ${getApproximateNumber((
-                      progress.total
-                        ? progress.processed / progress.total
-                        : 1
-                    ) * 100)}%`}
-                  </EuiText>
-                  {` (${numberWithSpaces(progress.processed)}/${numberWithSpaces(progress.total)} keys)`}
-                </EuiText>
+                <EuiText color="subdued">Report generated on:</EuiText>
               </EuiFlexItem>
-            )}
-          </EuiFlexGroup>
-        ) : (
-          <div />
+              <EuiFlexItem>
+                <EuiSuperSelect
+                  options={analysisOptions}
+                  style={{ border: 'none !important' }}
+                  className={styles.changeReport}
+                  popoverClassName={styles.changeReport}
+                  valueOfSelected={selectedValue ?? ''}
+                  onChange={(value: string) => onChangeSelectedAnalysis(value)}
+                  data-testid="select-report"
+                />
+              </EuiFlexItem>
+              {!!progress && (
+                <EuiFlexItem grow={false}>
+                  <EuiText color="subdued" className={cx(styles.progress, styles.progressContainer)} data-testid="bulk-delete-summary">
+                    <EuiText
+                      color={progress.total === progress.processed ? 'subdued' : 'warning'}
+                      className={styles.progress}
+                      data-testid="analysis-progress"
+                    >
+                      {'Scanned '}
+                      {getApproximatePercentage(progress.total, progress.processed)}
+                    </EuiText>
+                    {` (${numberWithSpaces(progress.processed)}`}
+                    /
+                    {numberWithSpaces(progress.total)}
+                    {'keys) '}
+                  </EuiText>
+                </EuiFlexItem>
+              )}
+            </EuiFlexGroup>
+          </EuiFlexItem>
         )}
-        <div>
-          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+        <EuiFlexItem grow={false}>
+          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={true}>
             <EuiFlexItem style={{ overflow: 'hidden' }}>
               <EuiButton
                 aria-label="New reports"
@@ -148,7 +152,7 @@ const Header = (props: Props) => {
               </EuiToolTip>
             </EuiFlexItem>
           </EuiFlexGroup>
-        </div>
+        </EuiFlexItem>
       </EuiFlexGroup>
     </div>
   )

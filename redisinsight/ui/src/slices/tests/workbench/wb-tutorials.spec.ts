@@ -107,6 +107,7 @@ describe('slices', () => {
   })
 
   // thunks
+
   describe('fetchTutorials', () => {
     it('succeed to fetch tutorials items', async () => {
       // Arrange

@@ -25,16 +25,12 @@ const keyName = `${chance.word({ length: 20 })}-key`;
 const keyValue = `${chance.word({ length: 10 })}-value`;
 
 fixture `Monitor`
-    .meta({ type: 'critical_path' })
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-    })
-    .afterEach(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
-    .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -56,8 +52,12 @@ test
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
 test
-    .meta({ rte: rte.standalone })('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
-        //Define commands in different clients
+    .after(async t => {
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
+    //Define commands in different clients
         const cli_command = 'command';
         const workbench_command = 'hello';
         const common_command = 'info';

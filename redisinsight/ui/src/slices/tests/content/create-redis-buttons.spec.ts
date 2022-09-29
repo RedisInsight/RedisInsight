@@ -109,6 +109,7 @@ describe('slices', () => {
   })
 
   // thunks
+
   describe('fetchContentAction', () => {
     it('succeed to fetch content', async () => {
       // Arrange

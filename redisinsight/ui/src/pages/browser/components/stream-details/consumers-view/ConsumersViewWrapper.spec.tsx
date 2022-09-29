@@ -64,6 +64,11 @@ const mockConsumersView = (props: ConsumersViewProps) => (
   </div>
 )
 
+/**
+ * ConsumersViewWrapper tests
+ *
+ * @group unit
+ */
 describe('ConsumersViewWrapper', () => {
   beforeAll(() => {
     ConsumersView.mockImplementation(mockConsumersView)

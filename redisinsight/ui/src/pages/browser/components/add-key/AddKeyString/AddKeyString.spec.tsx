@@ -16,6 +16,11 @@ const MockAddKeyFooter = (props) => (
   <div {...props} />
 )
 
+/**
+ * AddKeyString tests
+ *
+ * @group unit
+ */
 describe('AddKeyString', () => {
   beforeAll(() => {
     AddKeyFooter.mockImplementation(MockAddKeyFooter)

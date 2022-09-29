@@ -54,6 +54,11 @@ jest.mock('./KeyDetails/KeyDetails', () => ({
 // jest.mock('uiSrc/slices/browser/list')
 // jest.mock('uiSrc/slices/browser/keys')
 
+/**
+ * KeyDetailsWrapper tests
+ *
+ * @group unit
+ */
 describe('KeyDetailsWrapper', () => {
   beforeAll(() => {
     KeyDetails.mockImplementation(MockKeyDetails)
@@ -77,6 +82,11 @@ describe('KeyDetailsWrapper', () => {
     ).toBeTruthy()
   })
 
+  /**
+ * should call onRefresh tests
+ *
+ * @group unit
+ */
   describe('should call onRefresh', () => {
     test.each(Object.values(KeyTypes))('should call onRefresh', (keyType) => {
       KeyDetails.mockImplementationOnce((props: KeyDetailsProps) => (

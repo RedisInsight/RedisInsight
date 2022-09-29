@@ -21,6 +21,11 @@ beforeEach(() => {
   }))
 })
 
+/**
+ * MessagesListWrapper tests
+ *
+ * @group unit
+ */
 describe('MessagesListWrapper', () => {
   it('should render', () => {
     expect(

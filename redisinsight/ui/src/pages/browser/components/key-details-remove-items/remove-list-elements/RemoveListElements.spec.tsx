@@ -20,6 +20,11 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   }),
 }))
 
+/**
+ * RemoveListElements tests
+ *
+ * @group unit
+ */
 describe('RemoveListElements', () => {
   it('should render', () => {
     expect(

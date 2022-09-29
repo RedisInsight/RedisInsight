@@ -30,6 +30,11 @@ jest.mock(redisCommandsPath, () => {
   }
 })
 
+/**
+ * CliWrapper tests
+ *
+ * @group unit
+ */
 describe('CliWrapper', () => {
   beforeAll(() => {
     mathRandom = jest.spyOn(Math, 'random').mockImplementation(() => random)

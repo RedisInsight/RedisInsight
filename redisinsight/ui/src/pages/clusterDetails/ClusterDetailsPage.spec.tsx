@@ -11,6 +11,11 @@ import ClusterDetailsPage from './ClusterDetailsPage'
 
 let store: typeof mockedStore
 
+/**
+ * ClusterDetailsPage tests
+ *
+ * @group component
+ */
 describe('ClusterDetailsPage', () => {
   beforeEach(() => {
     cleanup()

@@ -5,6 +5,11 @@ import PopoverDelete, { Props } from './PopoverDelete'
 
 const mockedProps = mock<Props>()
 
+/**
+ * PopoverDelete tests
+ *
+ * @group unit
+ */
 describe('PopoverDelete', () => {
   it('should render', () => {
     expect(render(<PopoverDelete {...instance(mockedProps)} />)).toBeTruthy()

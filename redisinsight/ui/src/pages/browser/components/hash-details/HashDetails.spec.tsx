@@ -27,6 +27,11 @@ jest.mock('uiSrc/slices/browser/hash', () => {
   })
 })
 
+/**
+ * HashDetails tests
+ *
+ * @group unit
+ */
 describe('HashDetails', () => {
   it('should render', () => {
     expect(render(<HashDetails {...instance(mockedProps)} />)).toBeTruthy()

@@ -31,7 +31,17 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * userSettings slice tests
+ *
+ * @group unit
+ */
 describe('userSettings slice', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -45,6 +55,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * setUserSettingsInitialState tests
+ *
+ * @group unit
+ */
   describe('setUserSettingsInitialState', () => {
     it('should properly set the initial state', () => {
       // Arrange
@@ -61,8 +76,33 @@ describe('userSettings slice', () => {
       })
       expect(userSettingsSelector(rootState)).toEqual(state)
     })
+
+    it('Cleanup should properly be "true" in the initial state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        workbench: {
+          ...initialState.workbench,
+          cleanup: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setUserSettingsInitialState())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        user: { settings: nextState },
+      })
+      expect(userSettingsSelector(rootState)).toEqual(state)
+    })
   })
 
+  /**
+ * setSettingsPopupState tests
+ *
+ * @group unit
+ */
   describe('setSettingsPopupState', () => {
     it('should properly set the state', () => {
       // Arrange
@@ -82,6 +122,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * getUserConfigSettings tests
+ *
+ * @group unit
+ */
   describe('getUserConfigSettings', () => {
     it('should properly set the state before fetch', () => {
       // Arrange
@@ -101,6 +146,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * getUserConfigSettingsSuccess tests
+ *
+ * @group unit
+ */
   describe('getUserConfigSettingsSuccess', () => {
     it('should properly set the state after fetch the data', () => {
       // Arrange
@@ -126,6 +176,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * getUserConfigSettingsFailure tests
+ *
+ * @group unit
+ */
   describe('getUserConfigSettingsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -147,6 +202,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * updateUserConfigSettings tests
+ *
+ * @group unit
+ */
   describe('updateUserConfigSettings', () => {
     it('should properly set the state before fetch', () => {
       // Arrange
@@ -166,6 +226,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * updateUserConfigSettingsSuccess tests
+ *
+ * @group unit
+ */
   describe('updateUserConfigSettingsSuccess', () => {
     it('should properly set the state after fetch the data', () => {
       // Arrange
@@ -193,6 +258,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * updateUserConfigSettingsFailure tests
+ *
+ * @group unit
+ */
   describe('updateUserConfigSettingsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -214,6 +284,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * getUserSettingsSpec tests
+ *
+ * @group unit
+ */
   describe('getUserSettingsSpec', () => {
     it('should properly set the state before fetch', () => {
       // Arrange
@@ -233,6 +308,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * getUserSettingsSpecSuccess tests
+ *
+ * @group unit
+ */
   describe('getUserSettingsSpecSuccess', () => {
     it('should properly set the state after fetch the data', () => {
       // Arrange
@@ -266,6 +346,11 @@ describe('userSettings slice', () => {
     })
   })
 
+  /**
+ * getUserSettingsSpecFailure tests
+ *
+ * @group unit
+ */
   describe('getUserSettingsSpecFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -288,7 +373,17 @@ describe('userSettings slice', () => {
   })
 
   // thunks
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchUserConfigSettings tests
+ *
+ * @group unit
+ */
     describe('fetchUserConfigSettings', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -338,6 +433,11 @@ describe('userSettings slice', () => {
       })
     })
 
+    /**
+ * fetchUserSettingsSpec tests
+ *
+ * @group unit
+ */
     describe('fetchUserSettingsSpec', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -394,6 +494,11 @@ describe('userSettings slice', () => {
       })
     })
 
+    /**
+ * updateUserConfigSettingsAction tests
+ *
+ * @group unit
+ */
     describe('updateUserConfigSettingsAction', () => {
       it('succeed to update settings', async () => {
         // Arrange

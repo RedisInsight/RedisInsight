@@ -5,6 +5,11 @@ import StreamDataViewWrapper, { Props } from './StreamDataViewWrapper'
 
 const mockedProps = mock<Props>()
 
+/**
+ * StreamDataViewWrapper tests
+ *
+ * @group unit
+ */
 describe('StreamDataViewWrapper', () => {
   it('should render', () => {
     expect(render(<StreamDataViewWrapper {...instance(mockedProps)} />)).toBeTruthy()

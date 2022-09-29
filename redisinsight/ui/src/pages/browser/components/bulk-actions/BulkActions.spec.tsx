@@ -45,6 +45,11 @@ beforeEach(() => {
   }))
 })
 
+/**
+ * BulkActions tests
+ *
+ * @group unit
+ */
 describe('BulkActions', () => {
   it('should render', () => {
     expect(render(<BulkActions {...mockedProps} />)).toBeTruthy()

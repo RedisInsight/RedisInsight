@@ -7,6 +7,11 @@ import Pagination from './Pagination'
 
 const paginationItems = Object.values(MOCK_GUIDES_ITEMS['quick-guides']?.children || {})
 
+/**
+ * Pagination tests
+ *
+ * @group unit
+ */
 describe('Pagination', () => {
   it('should render', () => {
     const component = render(<Pagination sourcePath={ApiEndpoints.GUIDES_PATH} items={paginationItems} />)

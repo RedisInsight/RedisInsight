@@ -26,6 +26,11 @@ jest.mock('uiSrc/slices/analytics/slowlog', () => ({
   }),
 }))
 
+/**
+ * SlowLogConfig tests
+ *
+ * @group unit
+ */
 describe('SlowLogConfig', () => {
   it('should render', () => {
     expect(render(<SlowLogConfig {...instance(mockedProps)} />)).toBeTruthy()

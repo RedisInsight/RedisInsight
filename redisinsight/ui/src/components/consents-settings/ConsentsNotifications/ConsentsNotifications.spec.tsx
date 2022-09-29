@@ -71,6 +71,11 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   }),
 }))
 
+/**
+ * ConsentsNotifications tests
+ *
+ * @group unit
+ */
 describe('ConsentsNotifications', () => {
   it('should render', () => {
     expect(render(<ConsentsNotifications />)).toBeTruthy()
@@ -81,6 +86,11 @@ describe('ConsentsNotifications', () => {
     expect(screen.getAllByTestId(/switch-option/)).toHaveLength(1)
   })
 
+  /**
+ * update settings tests
+ *
+ * @group unit
+ */
   describe('update settings', () => {
     it('option change should call "updateUserConfigSettingsAction"', async () => {
       render(<ConsentsNotifications />)

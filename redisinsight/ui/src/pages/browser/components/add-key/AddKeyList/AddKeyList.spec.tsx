@@ -14,6 +14,11 @@ jest.mock('../AddKeyFooter/AddKeyFooter', () => ({
 
 const MockAddKeyFooter = (props) => <div {...props} />
 
+/**
+ * AddKeyList tests
+ *
+ * @group unit
+ */
 describe('AddKeyList', () => {
   beforeAll(() => {
     AddKeyFooter.mockImplementation(MockAddKeyFooter)

@@ -8,6 +8,11 @@ const MEMBER_SCORE = 'member-score'
 
 const mockedProps = mock<Props>()
 
+/**
+ * AddZsetMembers tests
+ *
+ * @group unit
+ */
 describe('AddZsetMembers', () => {
   it('should render', () => {
     expect(render(<AddZsetMembers {...instance(mockedProps)} />)).toBeTruthy()

@@ -9,6 +9,11 @@ const inputTextTestId = 'sentinel-input'
 const inputPasswordTestId = 'sentinel-input-password'
 const inputNumberTestId = 'sentinel-input-number'
 
+/**
+ * InputFieldSentinel tests
+ *
+ * @group unit
+ */
 describe('InputFieldSentinel', () => {
   it('should render simple fieldText', () => {
     expect(

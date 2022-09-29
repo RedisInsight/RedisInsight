@@ -32,8 +32,14 @@ beforeEach(() => {
     }
   }))
 })
-// .instances.connectedInstance
-describe('AnalyticsTabs', () => {
+
+/**
+ * StreamTabs tests
+ *
+ * @group unit
+ */
+
+describe('StreamTabs', () => {
   it('should render', () => {
     expect(render(<AnalyticsTabs />)).toBeTruthy()
   })

@@ -11,6 +11,11 @@ const mockedRoutes = [
   },
 ]
 
+/**
+ * RedisCloudPage tests
+ *
+ * @group component
+ */
 describe('RedisCloudPage', () => {
   it('should render', () => {
     expect(

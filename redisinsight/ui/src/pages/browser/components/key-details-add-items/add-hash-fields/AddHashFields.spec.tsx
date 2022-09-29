@@ -8,6 +8,11 @@ const HASH_VALUE = 'hash-value'
 
 const mockedProps = mock<Props>()
 
+/**
+ * AddHashFields tests
+ *
+ * @group unit
+ */
 describe('AddHashFields', () => {
   it('should render', () => {
     expect(render(<AddHashFields {...instance(mockedProps)} />)).toBeTruthy()

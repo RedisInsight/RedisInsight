@@ -8,6 +8,11 @@ const mockedProps = {
   ...mock<Props>(),
 }
 
+/**
+ * BulkDelete tests
+ *
+ * @group unit
+ */
 describe('BulkDelete', () => {
   it('should render', () => {
     expect(render(<BulkDelete {...mockedProps} />)).toBeTruthy()

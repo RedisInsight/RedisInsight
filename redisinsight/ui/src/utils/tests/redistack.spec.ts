@@ -19,6 +19,11 @@ const getOutputCheckRediStackTests: any[] = [
   [[{ port: 12000, modules: unmapWithName(['search']) }], [{ port: 12000, modules: unmapWithName(['search']), isRediStack: false }]],
 ]
 
+/**
+ * checkRediStack tests
+ *
+ * @group unit
+ */
 describe('checkRediStack', () => {
   it.each(getOutputCheckRediStackTests)('for input: %s (reply), should be output: %s',
     (reply, expected) => {

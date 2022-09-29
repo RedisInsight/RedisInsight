@@ -24,6 +24,11 @@ const columnVariationsMock: EuiBasicTableColumn<Instance>[][] = [
   columnsMock,
 ]
 
+/**
+ * DatabasesList tests
+ *
+ * @group unit
+ */
 describe('DatabasesList', () => {
   it('should render', () => {
     expect(

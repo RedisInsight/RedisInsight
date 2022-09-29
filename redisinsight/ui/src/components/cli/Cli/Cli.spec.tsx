@@ -15,6 +15,11 @@ jest.mock(redisCommandsPath, () => {
   }
 })
 
+/**
+ * CLI tests
+ *
+ * @group unit
+ */
 describe('CLI', () => {
   it('should render', () => {
     expect(render(<CLI />)).toBeTruthy()

@@ -62,6 +62,11 @@ const getRedisModulesSummaryTests = [
   { input: 1, expected: DEFAULT_SUMMARY },
 ]
 
+/**
+ * getRedisModulesSummary tests
+ *
+ * @group unit
+ */
 describe('getRedisModulesSummary', () => {
   test.each(getRedisModulesSummaryTests)('%j', ({ input, expected }) => {
     // @ts-ignore

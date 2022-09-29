@@ -1,10 +1,15 @@
 import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from 'src/modules/database-analysis/scanner/key-info/key-info.strategy.interface';
+import { Redis } from 'ioredis';
 
 export abstract class AbstractInfoStrategy implements IKeyInfoStrategy {
-  abstract getLengthCommandArgs(key: RedisString): unknown[];
+  abstract getLength(client: Redis, key: RedisString): Promise<number>;
 
-  getLengthValue(resp): number {
-    return resp;
+  async getLengthSafe(client: Redis, key: RedisString): Promise<number> {
+    try {
+      return this.getLength(client, key);
+    } catch (e) {
+      return 0;
+    }
   }
 }

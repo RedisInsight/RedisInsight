@@ -26,6 +26,11 @@ jest.mock('uiSrc/slices/browser/zset', () => {
   })
 })
 
+/**
+ * ZSetDetails tests
+ *
+ * @group unit
+ */
 describe('ZSetDetails', () => {
   it('should render', () => {
     expect(render(<ZSetDetails {...instance(mockedProps)} />)).toBeTruthy()

@@ -1,5 +1,10 @@
 import { removeEmpty } from 'uiSrc/utils'
 
+/**
+ * removeEmpty tests
+ *
+ * @group unit
+ */
 describe('removeEmpty', () => {
   it('should remove empty fields from object', () => {
     expect(removeEmpty({ a: '', b: { c: '', d: { g: '' } }, e: 1 })).toEqual({ b: { d: {} }, e: 1 })

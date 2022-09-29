@@ -8,6 +8,11 @@ import Code, { Props } from './Code'
 
 const mockedProps = mock<Props>()
 
+/**
+ * Code tests
+ *
+ * @group unit
+ */
 describe('Code', () => {
   it('should render', () => {
     const label = 'Manual'

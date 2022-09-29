@@ -15,6 +15,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * AnalyticsPage tests
+ *
+ * @group component
+ */
 describe('AnalyticsPage', () => {
   it('should render', () => {
     expect(

@@ -29,6 +29,11 @@ jest.mock(redisCommandsPath, () => {
   }
 })
 
+/**
+ * CliInputWrapper tests
+ *
+ * @group unit
+ */
 describe('CliInputWrapper', () => {
   it('should render', () => {
     expect(render(<CliInputWrapper {...instance(mockedProps)} />)).toBeTruthy()

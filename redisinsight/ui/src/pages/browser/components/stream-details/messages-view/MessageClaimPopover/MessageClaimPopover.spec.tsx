@@ -6,6 +6,11 @@ import MessageClaimPopover, { Props } from './MessageClaimPopover'
 
 const mockedProps = mock<Props>()
 
+/**
+ * MessageClaimPopover tests
+ *
+ * @group unit
+ */
 describe('MessageClaimPopover', () => {
   it('should render', () => {
     expect(render(<MessageClaimPopover {...instance(mockedProps)} />)).toBeTruthy()

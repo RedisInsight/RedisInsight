@@ -5,6 +5,11 @@ beforeEach(() => {
   window.console = { error: jest.fn() }
 })
 
+/**
+ * loadSegmentAnalytics tests
+ *
+ * @group unit
+ */
 describe('loadSegmentAnalytics', () => {
   const writeKeyMock = '123123'
 

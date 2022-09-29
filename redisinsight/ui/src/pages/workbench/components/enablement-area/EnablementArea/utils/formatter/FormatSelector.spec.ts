@@ -2,6 +2,11 @@ import FormatSelector from './FormatSelector'
 import HtmlToJsxString from './HtmlToJsxString'
 import MarkdownToJsxString from './MarkdownToJsxString'
 
+/**
+ * FormatSelector tests
+ *
+ * @group unit
+ */
 describe('FormatSelector', () => {
   it('should select correct formatter for html ', () => {
     expect(FormatSelector.selectFor('html')).toBeInstanceOf(HtmlToJsxString)

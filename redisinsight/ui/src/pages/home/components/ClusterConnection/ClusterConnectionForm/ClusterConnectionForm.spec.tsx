@@ -5,6 +5,11 @@ import ClusterConnectionForm, { Props } from './ClusterConnectionForm'
 
 const mockedProps = mock<Props>()
 
+/**
+ * ClusterConnectionForm tests
+ *
+ * @group unit
+ */
 describe('ClusterConnectionForm', () => {
   it('should render', () => {
     expect(

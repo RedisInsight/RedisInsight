@@ -25,6 +25,11 @@ const mockedData = [
   }
 ]
 
+/**
+ * SlowLogTable tests
+ *
+ * @group unit
+ */
 describe('SlowLogTable', () => {
   it('should render', () => {
     expect(render(<SlowLogTable {...mockedProps} items={[]} />))

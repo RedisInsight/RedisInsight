@@ -40,6 +40,11 @@ const mockClusterConnectionForm = (props: ClusterConnectionFormProps) => (
   </div>
 )
 
+/**
+ * ClusterConnectionFormWrapper tests
+ *
+ * @group unit
+ */
 describe('ClusterConnectionFormWrapper', () => {
   beforeAll(() => {
     ClusterConnectionForm.mockImplementation(mockClusterConnectionForm)

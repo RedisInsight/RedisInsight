@@ -71,6 +71,11 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   }),
 }))
 
+/**
+ * ConsentsPrivacy tests
+ *
+ * @group unit
+ */
 describe('ConsentsPrivacy', () => {
   it('should render', () => {
     expect(render(<ConsentsPrivacy />)).toBeTruthy()
@@ -81,6 +86,11 @@ describe('ConsentsPrivacy', () => {
     expect(screen.getAllByTestId(/switch-option/)).toHaveLength(1)
   })
 
+  /**
+ * update settings tests
+ *
+ * @group unit
+ */
   describe('update settings', () => {
     it('option change should call "updateUserConfigSettingsAction"', async () => {
       render(<ConsentsPrivacy />)

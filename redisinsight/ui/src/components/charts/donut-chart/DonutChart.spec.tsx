@@ -12,6 +12,11 @@ const mockData: ChartData[] = [
   { value: 15, name: 'F', color: [50, 50, 50] },
 ]
 
+/**
+ * DonutChart tests
+ *
+ * @group unit
+ */
 describe('DonutChart', () => {
   it('should render with empty data', () => {
     expect(render(<DonutChart data={[]} />)).toBeTruthy()

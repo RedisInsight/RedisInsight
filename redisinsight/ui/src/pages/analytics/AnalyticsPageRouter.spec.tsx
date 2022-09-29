@@ -8,6 +8,11 @@ const mockedRoutes = [
   },
 ]
 
+/**
+ * AnalyticsPageRouter tests
+ *
+ * @group unit
+ */
 describe('AnalyticsPageRouter', () => {
   it('should render', () => {
     expect(

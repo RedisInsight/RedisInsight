@@ -13,6 +13,11 @@ const spec = {
   }
 }
 
+/**
+ * compareConsents tests
+ *
+ * @group unit
+ */
 describe('compareConsents', () => {
   it('compareConsents should return array of difference of consents', () => {
     const agreements1 = {
@@ -37,6 +42,11 @@ describe('compareConsents', () => {
   })
 })
 
+/**
+ * isDifferentConsentsExists tests
+ *
+ * @group unit
+ */
 describe('isDifferentConsentsExists', () => {
   it('isDifferentConsentsExists should return true if some difference in consents', () => {
     const agreements1 = {

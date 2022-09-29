@@ -36,6 +36,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * slowLog slice tests
+ *
+ * @group unit
+ */
 describe('slowLog slice', () => {
   beforeAll(() => {
     dateNow = jest.spyOn(Date, 'now').mockImplementation(() => timestamp)
@@ -45,6 +50,11 @@ describe('slowLog slice', () => {
     dateNow.mockRestore()
   })
 
+  /**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -58,6 +68,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * setUserSettingsInitialState tests
+ *
+ * @group unit
+ */
   describe('setUserSettingsInitialState', () => {
     it('should properly set the initial state', () => {
       // Arrange
@@ -76,6 +91,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * getSlowLogs tests
+ *
+ * @group unit
+ */
   describe('getSlowLogs', () => {
     it('should properly set state before the fetch data', () => {
       // Arrange
@@ -95,6 +115,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * getSlowLogsSuccess tests
+ *
+ * @group unit
+ */
   describe('getSlowLogsSuccess', () => {
     it('should properly set state after success fetch data', () => {
       // Arrange
@@ -126,6 +151,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * getSlowLogsError tests
+ *
+ * @group unit
+ */
   describe('getSlowLogsError', () => {
     it('should properly set state after failed fetch data', () => {
       // Arrange
@@ -147,6 +177,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * deleteSlowLogs tests
+ *
+ * @group unit
+ */
   describe('deleteSlowLogs', () => {
     it('should properly set state before the fetch data', () => {
       // Arrange
@@ -166,6 +201,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * deleteSlowLogsSuccess tests
+ *
+ * @group unit
+ */
   describe('deleteSlowLogsSuccess', () => {
     it('should properly set state after success fetch data', () => {
       // Arrange
@@ -186,6 +226,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * deleteSlowLogsError tests
+ *
+ * @group unit
+ */
   describe('deleteSlowLogsError', () => {
     it('should properly set state after failed fetch data', () => {
       // Arrange
@@ -207,6 +252,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * getSlowLogConfig tests
+ *
+ * @group unit
+ */
   describe('getSlowLogConfig', () => {
     it('should properly set state before the fetch data', () => {
       // Arrange
@@ -226,6 +276,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * getSlowLogConfigSuccess tests
+ *
+ * @group unit
+ */
   describe('getSlowLogConfigSuccess', () => {
     it('should properly set state after success fetch data', () => {
       // Arrange
@@ -250,6 +305,11 @@ describe('slowLog slice', () => {
     })
   })
 
+  /**
+ * getSlowLogConfigError tests
+ *
+ * @group unit
+ */
   describe('getSlowLogConfigError', () => {
     it('should properly set state after failed fetch data', () => {
       // Arrange
@@ -272,7 +332,17 @@ describe('slowLog slice', () => {
   })
 
   // thunks
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchSlowLogsAction tests
+ *
+ * @group unit
+ */
     describe('fetchSlowLogsAction', () => {
       it('succeed to fetch data', async () => {
         // Arrange
@@ -326,6 +396,11 @@ describe('slowLog slice', () => {
       })
     })
 
+    /**
+ * clearSlowLogAction tests
+ *
+ * @group unit
+ */
     describe('clearSlowLogAction', () => {
       it('succeed to fetch data', async () => {
         const responsePayload = { status: 200 }
@@ -369,6 +444,11 @@ describe('slowLog slice', () => {
       })
     })
 
+    /**
+ * getSlowLogConfigAction tests
+ *
+ * @group unit
+ */
     describe('getSlowLogConfigAction', () => {
       it('succeed to fetch data', async () => {
         const data = {
@@ -416,6 +496,11 @@ describe('slowLog slice', () => {
       })
     })
 
+    /**
+ * patchSlowLogConfigAction tests
+ *
+ * @group unit
+ */
     describe('patchSlowLogConfigAction', () => {
       it('succeed to fetch data', async () => {
         const data = {

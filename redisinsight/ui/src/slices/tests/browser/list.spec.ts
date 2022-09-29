@@ -64,6 +64,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * list slice tests
+ *
+ * @group unit
+ */
 describe('list slice', () => {
   beforeAll(() => {
     dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
@@ -72,6 +77,11 @@ describe('list slice', () => {
   afterAll(() => {
     dateNow.mockRestore()
   })
+  /**
+ * setListInitialState tests
+ *
+ * @group unit
+ */
   describe('setListInitialState', () => {
     it('should properly set initialState', () => {
       // Arrange
@@ -88,6 +98,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadListElements tests
+ *
+ * @group unit
+ */
   describe('loadListElements', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -107,6 +122,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadListElementsSuccess tests
+ *
+ * @group unit
+ */
   describe('loadListElementsSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -141,6 +161,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadListElementsFailure tests
+ *
+ * @group unit
+ */
   describe('loadListElementsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -162,6 +187,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadMoreListElements tests
+ *
+ * @group unit
+ */
   describe('loadMoreListElements', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -182,6 +212,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadMoreListElementsSuccess tests
+ *
+ * @group unit
+ */
   describe('loadMoreListElementsSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -238,6 +273,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadMoreListElementsFailure tests
+ *
+ * @group unit
+ */
   describe('loadMoreListElementsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -262,6 +302,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * updateValue tests
+ *
+ * @group unit
+ */
   describe('updateValue', () => {
     it('should properly set the state while updating a list key', () => {
       // Arrange
@@ -285,6 +330,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * updateValueSuccess tests
+ *
+ * @group unit
+ */
   describe('updateValueSuccess', () => {
     it('should properly set the state after successfully updated list key', () => {
       // Arrange
@@ -308,6 +358,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * updateValueFailure tests
+ *
+ * @group unit
+ */
   describe('updateValueFailure', () => {
     it('should properly set the state on update list key failure', () => {
       // Arrange
@@ -332,6 +387,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * resetUpdateValue tests
+ *
+ * @group unit
+ */
   describe('resetUpdateValue', () => {
     it('should properly reset the state', () => {
       // Arrange;
@@ -355,6 +415,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadSearchingListElement tests
+ *
+ * @group unit
+ */
   describe('loadSearchingListElement', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -383,6 +448,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadSearchingListElementSuccess tests
+ *
+ * @group unit
+ */
   describe('loadSearchingListElementSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -444,6 +514,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * loadSearchingListElementFailure tests
+ *
+ * @group unit
+ */
   describe('loadSearchingListElementFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -468,6 +543,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * insertListElements tests
+ *
+ * @group unit
+ */
   describe('insertListElements', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -489,6 +569,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * insertListElementsSuccess tests
+ *
+ * @group unit
+ */
   describe('insertListElementsSuccess', () => {
     it('should properly set the state after the fetch data', () => {
       // Arrange
@@ -510,6 +595,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * insertListElementsFailure tests
+ *
+ * @group unit
+ */
   describe('insertListElementsFailure', () => {
     it('should properly set the error after the fetch data', () => {
       // Arrange
@@ -534,6 +624,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * deleteListElements tests
+ *
+ * @group unit
+ */
   describe('deleteListElements', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -555,6 +650,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * deleteListElementsSuccess tests
+ *
+ * @group unit
+ */
   describe('deleteListElementsSuccess', () => {
     it('should properly set the state after the fetch data', () => {
       // Arrange
@@ -576,6 +676,11 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * deleteListElementsFailure tests
+ *
+ * @group unit
+ */
   describe('deleteListElementsFailure', () => {
     it('should properly set the error after the fetch data', () => {
       // Arrange
@@ -600,7 +705,17 @@ describe('list slice', () => {
     })
   })
 
+  /**
+ * thunks tests
+ *
+ * @group unit
+ */
   describe('thunks', () => {
+  /**
+ * fetchListElements tests
+ *
+ * @group unit
+ */
     describe('fetchListElements', () => {
       it('call fetchListElements, loadListElementsSuccess when fetch is successed', async () => {
         // Arrange
@@ -629,6 +744,11 @@ describe('list slice', () => {
       })
     })
 
+    /**
+ * fetchMoreListElements tests
+ *
+ * @group unit
+ */
     describe('fetchMoreListElements', () => {
       it('call fetchMoreListElements, loadMoreListElementsSuccess when fetch is successed', async () => {
         // Arrange
@@ -654,6 +774,11 @@ describe('list slice', () => {
       })
     })
 
+    /**
+ * fetchSearchingListElementAction tests
+ *
+ * @group unit
+ */
     describe('fetchSearchingListElementAction', () => {
       it('call fetchSearchingListElementAction, loadSearchingListElementSuccess when search is successed', async () => {
         // Arrange
@@ -683,6 +808,11 @@ describe('list slice', () => {
       })
     })
 
+    /**
+ * refreshListElementsAction tests
+ *
+ * @group unit
+ */
     describe('refreshListElementsAction', () => {
       it('call refreshListElementsAction without searchingIndex, call loadListElements when fetch is successed', async () => {
         // Act
@@ -695,6 +825,11 @@ describe('list slice', () => {
       })
     })
 
+    /**
+ * updateListElementAction tests
+ *
+ * @group unit
+ */
     describe('updateListElementAction', () => {
       const keyName = 'key'
       const data = {
@@ -745,6 +880,11 @@ describe('list slice', () => {
       })
     })
 
+    /**
+ * insertListElementsAction tests
+ *
+ * @group unit
+ */
     describe('insertListElementsAction', () => {
       const data = {
         keyName: 'keyName',
@@ -793,6 +933,11 @@ describe('list slice', () => {
       })
     })
 
+    /**
+ * deleteListElementsAction tests
+ *
+ * @group unit
+ */
     describe('deleteListElementsAction', () => {
       const data = {
         keyName: 'keyName',

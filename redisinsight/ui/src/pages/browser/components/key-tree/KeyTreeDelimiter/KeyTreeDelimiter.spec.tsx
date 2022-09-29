@@ -36,6 +36,11 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
+/**
+ * KeyTreeDelimiter tests
+ *
+ * @group unit
+ */
 describe('KeyTreeDelimiter', () => {
   it('should render', () => {
     expect(render(<KeyTreeDelimiter {...instance(mockedProps)} />)).toBeTruthy()

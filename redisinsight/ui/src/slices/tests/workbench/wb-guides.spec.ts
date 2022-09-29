@@ -21,7 +21,17 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * slices tests
+ *
+ * @group unit
+ */
 describe('slices', () => {
+/**
+ * reducer, actions and selectors tests
+ *
+ * @group unit
+ */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -35,6 +45,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getWBGuides tests
+ *
+ * @group unit
+ */
   describe('getWBGuides', () => {
     it('should properly set loading', () => {
       // Arrange
@@ -58,6 +73,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getWBGuidesSuccess tests
+ *
+ * @group unit
+ */
   describe('getWBGuidesSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
@@ -81,6 +101,11 @@ describe('slices', () => {
     })
   })
 
+  /**
+ * getWBGuidesFailure tests
+ *
+ * @group unit
+ */
   describe('getWBGuidesFailure', () => {
     it('should properly set error', () => {
       // Arrange
@@ -107,6 +132,11 @@ describe('slices', () => {
   })
 
   // thunks
+  /**
+ * fetchGuides tests
+ *
+ * @group unit
+ */
   describe('fetchGuides', () => {
     it('succeed to fetch guides items', async () => {
       // Arrange

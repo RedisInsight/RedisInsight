@@ -26,6 +26,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * PopoverNotification tests
+ *
+ * @group unit
+ */
 describe('PopoverNotification', () => {
   it('should render', () => {
     expect(render(<PopoverNotification />)).toBeTruthy()

@@ -37,6 +37,11 @@ const formatBytesTests: any[] = [
   [-100, 0, '-'],
 ]
 
+/**
+ * formatBytes tests
+ *
+ * @group unit
+ */
 describe('formatBytes', () => {
   it.each(formatBytesTests)('for input: %s (bytes), %s (decimals), should be output: %s',
     (bytes, decimals, expected) => {

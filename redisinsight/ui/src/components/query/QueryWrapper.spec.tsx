@@ -32,6 +32,11 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
+/**
+ * QueryWrapper tests
+ *
+ * @group unit
+ */
 describe('QueryWrapper', () => {
   it('should render', () => {
     // connectedInstanceSelector.mockImplementation(() => ({

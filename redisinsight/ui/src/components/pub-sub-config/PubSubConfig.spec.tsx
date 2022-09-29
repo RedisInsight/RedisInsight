@@ -44,6 +44,11 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 
 const subscriptionsMock = [{ channel: 'p*', type: SubscriptionType.PSubscribe }]
 
+/**
+ * PubSubConfig tests
+ *
+ * @group unit
+ */
 describe('PubSubConfig', () => {
   it('should render', () => {
     expect(render(<PubSubConfig />)).toBeTruthy()

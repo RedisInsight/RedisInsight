@@ -40,6 +40,11 @@ const getFileInfoTests = [
   },
 ]
 
+/**
+ * getFileInfo tests
+ *
+ * @group unit
+ */
 describe('getFileInfo', () => {
   test.each(getFileInfoTests)(
     '%j',
@@ -69,6 +74,11 @@ const getPagesInsideGroupTests = [
   },
 ]
 
+/**
+ * getPagesInsideGroup tests
+ *
+ * @group unit
+ */
 describe('getPagesInsideGroup', () => {
   test.each(getPagesInsideGroupTests)(
     '%j',

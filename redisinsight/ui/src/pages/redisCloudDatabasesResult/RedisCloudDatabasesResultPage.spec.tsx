@@ -29,6 +29,11 @@ const mockRedisCloudDatabasesResult = (props: RedisCloudDatabasesResultProps) =>
   </div>
 )
 
+/**
+ * RedisCloudDatabasesResultPage tests
+ *
+ * @group component
+ */
 describe('RedisCloudDatabasesResultPage', () => {
   beforeAll(() => {
     RedisCloudDatabasesResult.mockImplementation(mockRedisCloudDatabasesResult)

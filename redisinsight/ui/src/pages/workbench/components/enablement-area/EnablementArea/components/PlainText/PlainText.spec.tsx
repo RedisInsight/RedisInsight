@@ -5,6 +5,11 @@ import PlainText, { Props } from './PlainText'
 
 const mockedProps = mock<Props>()
 
+/**
+ * PlainText tests
+ *
+ * @group unit
+ */
 describe('PlainText', () => {
   it('should render', () => {
     expect(render(<PlainText {...instance(mockedProps)} />)).toBeTruthy()

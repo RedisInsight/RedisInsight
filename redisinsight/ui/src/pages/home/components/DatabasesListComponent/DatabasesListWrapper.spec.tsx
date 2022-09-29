@@ -62,6 +62,11 @@ const mockDatabasesList = (props: DatabasesListProps) => (
   </div>
 )
 
+/**
+ * DatabasesListWrapper tests
+ *
+ * @group unit
+ */
 describe('DatabasesListWrapper', () => {
   beforeAll(() => {
     DatabasesList.mockImplementation(mockDatabasesList)

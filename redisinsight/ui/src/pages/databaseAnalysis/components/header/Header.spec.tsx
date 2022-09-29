@@ -4,7 +4,7 @@ import { instance, mock } from 'ts-mockito'
 import { getDBAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { cleanup, mockedStore, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
-import Header, { Props, getFormatTime } from './Header'
+import Header, { Props } from './Header'
 
 const mockedProps = mock<Props>()
 

@@ -77,11 +77,6 @@ const mockNodes = [
   }
 ].map((d, index) => ({ ...d, letter: getLetterByIndex(index), index, color: [0, 0, 0] })) as ModifiedClusterNodes[]
 
-/**
- * ClusterNodesTable tests
- *
- * @group unit
- */
 describe('ClusterNodesTable', () => {
   it('should render', () => {
     expect(render(<ClusterNodesTable nodes={mockNodes} loading={false} />)).toBeTruthy()

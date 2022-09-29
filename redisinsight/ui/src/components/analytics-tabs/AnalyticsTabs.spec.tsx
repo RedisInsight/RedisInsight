@@ -33,13 +33,7 @@ beforeEach(() => {
   }))
 })
 
-/**
- * StreamTabs tests
- *
- * @group unit
- */
-
-describe('StreamTabs', () => {
+describe('AnalyticsTabs', () => {
   it('should render', () => {
     expect(render(<AnalyticsTabs />)).toBeTruthy()
   })

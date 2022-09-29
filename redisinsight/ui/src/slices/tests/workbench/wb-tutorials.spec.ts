@@ -21,17 +21,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * slices tests
- *
- * @group unit
- */
 describe('slices', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -45,11 +35,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getWBTutorials tests
- *
- * @group unit
- */
   describe('getWBTutorials', () => {
     it('should properly set loading', () => {
       // Arrange
@@ -73,11 +58,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getWBTutorialsSuccess tests
- *
- * @group unit
- */
   describe('getWBTutorialsSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
@@ -101,11 +81,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getWBTutorialsFailure tests
- *
- * @group unit
- */
   describe('getWBTutorialsFailure', () => {
     it('should properly set error', () => {
       // Arrange
@@ -132,11 +107,7 @@ describe('slices', () => {
   })
 
   // thunks
-  /**
- * fetchTutorials tests
- *
- * @group unit
- */
+
   describe('fetchTutorials', () => {
     it('succeed to fetch tutorials items', async () => {
       // Arrange

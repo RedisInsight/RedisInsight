@@ -5,11 +5,6 @@ import AddKeyFooter, { Props } from './AddKeyFooter'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddKeyFooter tests
- *
- * @group unit
- */
 describe('AddKeyFooter', () => {
   it('should render', () => {
     expect(render(<AddKeyFooter {...instance(mockedProps)} />)).toBeTruthy()

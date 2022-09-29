@@ -50,11 +50,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * cliSettings slice tests
- *
- * @group unit
- */
 describe('cliSettings slice', () => {
   beforeAll(() => {
     mathRandom = jest.spyOn(Math, 'random').mockImplementation(() => random)
@@ -64,11 +59,6 @@ describe('cliSettings slice', () => {
     mathRandom.mockRestore()
   })
 
-  /**
- * toggleCliHelper tests
- *
- * @group unit
- */
   describe('toggleCliHelper', () => {
     it('default state.isShowHelper should be falsy', () => {
       // Arrange
@@ -102,11 +92,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * toggleCli tests
- *
- * @group unit
- */
   describe('toggleCli', () => {
     it('should properly set !isShowCli', () => {
       // Arrange
@@ -129,11 +114,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * setMatchedCommand tests
- *
- * @group unit
- */
   describe('setMatchedCommand', () => {
     it('should properly set matchedCommand', () => {
       // Arrange
@@ -156,11 +136,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * setCliEnteringCommand tests
- *
- * @group unit
- */
   describe('setCliEnteringCommand', () => {
     it('should properly set isEnteringCommand = true', () => {
       // Arrange
@@ -182,11 +157,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * setSearchedCommand tests
- *
- * @group unit
- */
   describe('setSearchedCommand', () => {
     it('should properly set searched command', () => {
       // Arrange
@@ -210,11 +180,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * setSearchingCommand tests
- *
- * @group unit
- */
   describe('setSearchingCommand', () => {
     it('should properly set searching command', () => {
       // Arrange
@@ -239,11 +204,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * setSearchingCommandFilter tests
- *
- * @group unit
- */
   describe('setSearchingCommandFilter', () => {
     it('should properly set searching command filter', () => {
       // Arrange
@@ -268,11 +228,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * clearSearchingCommand tests
- *
- * @group unit
- */
   describe('clearSearchingCommand', () => {
     it('should properly clear search', () => {
       // Arrange
@@ -297,11 +252,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * resetCliSettings tests
- *
- * @group unit
- */
   describe('resetCliSettings', () => {
     it('should properly set isShowCli = false', () => {
       // Arrange
@@ -323,11 +273,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * resetCliClientUuid tests
- *
- * @group unit
- */
   describe('resetCliClientUuid', () => {
     it('should properly set cliClientUuid = ""', () => {
       // Arrange
@@ -348,11 +293,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * resetCliHelperSettings tests
- *
- * @group unit
- */
   describe('resetCliHelperSettings', () => {
     it('should properly set Cli Helper settings to default', () => {
       // Arrange
@@ -392,11 +332,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * goBackFromCommand tests
- *
- * @group unit
- */
   describe('goBackFromCommand', () => {
     it('should properly set state', () => {
       // Arrange
@@ -428,11 +363,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * processCliClient tests
- *
- * @group unit
- */
   describe('processCliClient', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -454,11 +384,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * processCliClientSuccess tests
- *
- * @group unit
- */
   describe('processCliClientSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -505,11 +430,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * processCliClientFailure tests
- *
- * @group unit
- */
   describe('processCliClientFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -533,11 +453,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * getUnsupportedCommandsSuccess tests
- *
- * @group unit
- */
   describe('getUnsupportedCommandsSuccess', () => {
     it('should properly set unsupportedCommands', () => {
       // Arrange
@@ -561,11 +476,6 @@ describe('cliSettings slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
     it('call both createCliClientAction and processCliClientSuccess when fetch is successed', async () => {
       // Arrange

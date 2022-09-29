@@ -28,11 +28,6 @@ const mockedProps = {
   label: 'Keys to Scan:',
 }
 
-/**
- * SettingItem tests
- *
- * @group unit
- */
 describe('SettingItem', () => {
   it('should render', () => {
     expect(render(<SettingItem {...mockedProps} />)).toBeTruthy()

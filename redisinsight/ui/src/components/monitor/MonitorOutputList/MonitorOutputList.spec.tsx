@@ -10,11 +10,6 @@ const mockedProps = {
   width: 20
 }
 
-/**
- * MonitorOutputList tests
- *
- * @group unit
- */
 describe('MonitorOutputList', () => {
   it('should render', () => {
     expect(render(<MonitorOutputList {...mockedProps} />)).toBeTruthy()

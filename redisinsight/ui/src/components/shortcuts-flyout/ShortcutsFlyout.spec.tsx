@@ -21,11 +21,6 @@ jest.mock(appInfoSlicesPath, () => ({
   }),
 }))
 
-/**
- * ShortcutsFlyout tests
- *
- * @group unit
- */
 describe('ShortcutsFlyout', () => {
   it('should render', () => {
     expect(render(<ShortcutsFlyout />)).toBeTruthy()

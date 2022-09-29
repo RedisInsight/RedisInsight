@@ -18,11 +18,6 @@ const overviewMetrics = getOverviewMetrics({
   }
 })
 
-/**
- * DatabaseOverview tests
- *
- * @group unit
- */
 describe('DatabaseOverview', () => {
   it('should render', () => {
     expect(render(

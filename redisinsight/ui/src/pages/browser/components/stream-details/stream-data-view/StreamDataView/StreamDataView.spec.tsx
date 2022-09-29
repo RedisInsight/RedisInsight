@@ -5,11 +5,6 @@ import StreamDataView, { Props } from './StreamDataView'
 
 const mockedProps = mock<Props>()
 
-/**
- * StreamDataView tests
- *
- * @group unit
- */
 describe('StreamDataView', () => {
   it('should render', () => {
     expect(render(<StreamDataView {...instance(mockedProps)} />)).toBeTruthy()

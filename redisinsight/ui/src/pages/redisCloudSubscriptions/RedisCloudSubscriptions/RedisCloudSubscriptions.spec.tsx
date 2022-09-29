@@ -9,11 +9,6 @@ import RedisCloudSubscriptions, { Props } from './RedisCloudSubscriptions'
 
 const mockedProps = mock<Props>()
 
-/**
- * RedisCloudSubscriptions tests
- *
- * @group unit
- */
 describe('RedisCloudSubscriptions', () => {
   it('should render', () => {
     const columnsMock = [

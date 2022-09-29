@@ -13,11 +13,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * QueryCardCliResult tests
- *
- * @group unit
- */
 describe('QueryCardCliResult', () => {
   it('should render', () => {
     expect(render(<QueryCardCommonResult {...instance(mockedProps)} />)).toBeTruthy()

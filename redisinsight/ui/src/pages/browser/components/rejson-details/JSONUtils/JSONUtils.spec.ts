@@ -1,16 +1,6 @@
 import { generatePath, isScalar } from './JSONUtils'
 
-/**
- * JSONUtils tests
- *
- * @group unit
- */
 describe('JSONUtils', () => {
-/**
- * generatePath tests
- *
- * @group unit
- */
   describe('generatePath', () => {
     it('should generate path for Parent and Children', () => {
       const expectPath = "['parent']['children']"
@@ -21,11 +11,6 @@ describe('JSONUtils', () => {
     })
   })
 
-  /**
- * isScalar tests
- *
- * @group unit
- */
   describe('isScalar', () => {
     it('should return Truthy for scalar variables', () => {
       const string = 'string'

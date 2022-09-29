@@ -27,11 +27,6 @@ const removeIds = (nodes: any[]) => nodes.map(({ children, id, ...rest }) => ({
   children: removeIds(children)
 }))
 
-/**
- * constructKeysToTree tests
- *
- * @group unit
- */
 describe('constructKeysToTree', () => {
   it.each(constructKeysToTreeTests)('for input: %s (items), should be output: %s',
     (items, expected) => {

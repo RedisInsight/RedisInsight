@@ -1,10 +1,5 @@
 import { isMacOs } from 'uiSrc/utils'
 
-/**
- * isMacOs tests
- *
- * @group unit
- */
 describe('isMacOs', () => {
   const originalPlatform = navigator.platform
   afterAll(() => {

@@ -5,11 +5,6 @@ import AddListElements, { HEAD_DESTINATION, Props } from './AddListElements'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddListElements tests
- *
- * @group unit
- */
 describe('AddListElements', () => {
   it('should render', () => {
     expect(render(<AddListElements {...instance(mockedProps)} />)).toBeTruthy()

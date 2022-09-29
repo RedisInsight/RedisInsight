@@ -18,11 +18,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * EncryptionErrorContent tests
- *
- * @group unit
- */
 describe('EncryptionErrorContent', () => {
   it('should render', () => {
     expect(render(<EncryptionErrorContent />)).toBeTruthy()

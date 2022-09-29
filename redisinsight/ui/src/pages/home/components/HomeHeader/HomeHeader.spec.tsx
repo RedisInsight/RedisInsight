@@ -16,11 +16,6 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => {
   }
 })
 
-/**
- * HomeHeader tests
- *
- * @group unit
- */
 describe('HomeHeader', () => {
   it('should render', () => {
     expect(render(<HomeHeader {...instance(mockedProps)} />)).toBeTruthy()

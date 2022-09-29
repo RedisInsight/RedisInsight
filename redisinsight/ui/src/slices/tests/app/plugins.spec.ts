@@ -42,17 +42,7 @@ const MOCK_PLUGINS_RESPONSE = {
   ]
 }
 
-/**
- * slices tests
- *
- * @group unit
- */
 describe('slices', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -66,11 +56,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getAllPlugins tests
- *
- * @group unit
- */
   describe('getAllPlugins', () => {
     it('should properly set loading', () => {
       // Arrange
@@ -92,11 +77,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getAllPluginsSuccess tests
- *
- * @group unit
- */
   describe('getAllPluginsSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
@@ -133,11 +113,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getAllPluginsFailure tests
- *
- * @group unit
- */
   describe('getAllPluginsFailure', () => {
     it('should properly set error', () => {
       // Arrange

@@ -11,11 +11,6 @@ const getOutputForFormatToTextTests: any[] = [
   ['test2\r\ntest2\r\ntest2', bulkReplyCommands[1], 'test2\r\ntest2\r\ntest2'],
 ]
 
-/**
- * formatToText tests
- *
- * @group unit
- */
 describe('formatToText', () => {
   it.each(getOutputForFormatToTextTests)('for input: %s (reply), %s (command), should be output: %s',
     (reply, command, expected) => {

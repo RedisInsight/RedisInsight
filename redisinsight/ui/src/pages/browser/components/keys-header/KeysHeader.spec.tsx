@@ -42,11 +42,6 @@ const propsMock = {
   handleAddKeyPanel: jest.fn(),
 }
 
-/**
- * KeysHeader tests
- *
- * @group unit
- */
 describe('KeysHeader', () => {
   it('should render', () => {
     expect(render(<KeysHeader {...propsMock} />)).toBeTruthy()

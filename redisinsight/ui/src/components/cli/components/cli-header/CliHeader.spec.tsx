@@ -40,11 +40,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * CliHeader tests
- *
- * @group unit
- */
 describe('CliHeader', () => {
   it('should render', () => {
     expect(render(<CliHeader />)).toBeTruthy()

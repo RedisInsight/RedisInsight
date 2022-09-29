@@ -27,17 +27,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * caCerts slice tests
- *
- * @group unit
- */
 describe('caCerts slice', () => {
-/**
- * reducer, actions and selectors tests
- *
- * @group unit
- */
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -51,11 +41,6 @@ describe('caCerts slice', () => {
     })
   })
 
-  /**
- * loadCaCerts tests
- *
- * @group unit
- */
   describe('loadCaCerts', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -77,11 +62,6 @@ describe('caCerts slice', () => {
     })
   })
 
-  /**
- * loadCaCertsSuccess tests
- *
- * @group unit
- */
   describe('loadCaCertsSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -130,11 +110,6 @@ describe('caCerts slice', () => {
     })
   })
 
-  /**
- * loadCaCertsFailure tests
- *
- * @group unit
- */
   describe('loadCaCertsFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -159,11 +134,6 @@ describe('caCerts slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
     it('call both fetchCaCerts and loadCaCertsSuccess when fetch is successed', async () => {
       // Arrange

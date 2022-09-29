@@ -21,11 +21,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * DedicatedEditor tests
- *
- * @group unit
- */
 describe('DedicatedEditor', () => {
   it('should render', () => {
     expect(render(<DedicatedEditor {...instance(mockedProps)} />)).toBeTruthy()

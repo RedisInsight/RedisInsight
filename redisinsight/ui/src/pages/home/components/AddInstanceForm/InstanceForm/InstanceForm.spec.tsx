@@ -31,11 +31,6 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   setConnectedInstanceId: jest.fn,
 }))
 
-/**
- * InstanceForm tests
- *
- * @group unit
- */
 describe('InstanceForm', () => {
   it('should render', () => {
     expect(
@@ -540,11 +535,6 @@ describe('InstanceForm', () => {
     expect(screen.getByTestId('clone-db-btn')).toBeTruthy()
   })
 
-  /**
- * should render proper fields with Clone mode tests
- *
- * @group unit
- */
   describe('should render proper fields with Clone mode', () => {
     it('should render proper fields for standalone db', () => {
       render(

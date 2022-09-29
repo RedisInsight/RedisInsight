@@ -5,11 +5,6 @@ import FieldMessage, { Props } from './FieldMessage'
 
 const mockedProps = mock<Props>()
 
-/**
- * FieldMessage tests
- *
- * @group unit
- */
 describe('FieldMessage', () => {
   it('should render', () => {
     const message = 'Error Message'

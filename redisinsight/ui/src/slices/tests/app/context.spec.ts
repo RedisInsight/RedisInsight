@@ -45,17 +45,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * slices tests
- *
- * @group unit
- */
 describe('slices', () => {
-/**
- * setAppContextInitialState tests
- *
- * @group unit
- */
   describe('setAppContextInitialState', () => {
     it('should properly set initial state', () => {
       const nextState = reducer(initialState, setAppContextInitialState())
@@ -66,11 +56,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setAppContextConnectedInstanceId tests
- *
- * @group unit
- */
   describe('setAppContextConnectedInstanceId', () => {
     it('should properly set id', () => {
       // Arrange
@@ -92,11 +77,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setBrowserKeyListDataLoaded tests
- *
- * @group unit
- */
   describe('setBrowserKeyListDataLoaded', () => {
     it('should properly set context is data loaded', () => {
       // Arrange
@@ -121,11 +101,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setBrowserSelectedKey tests
- *
- * @group unit
- */
   describe('setBrowserSelectedKey', () => {
     it('should properly set selectedKey', () => {
       // Arrange
@@ -150,11 +125,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setBrowserKeyListScrollPosition tests
- *
- * @group unit
- */
   describe('setBrowserKeyListScrollPosition', () => {
     it('should properly set scroll position of keyList', () => {
       // Arrange
@@ -179,11 +149,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setBrowserPanelSizes tests
- *
- * @group unit
- */
   describe('setBrowserPanelSizes', () => {
     it('should properly set browser panel widths', () => {
       // Arrange
@@ -208,11 +173,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setWorkbenchScript tests
- *
- * @group unit
- */
   describe('setWorkbenchScript', () => {
     it('should properly set workbench script', () => {
       // Arrange
@@ -234,11 +194,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setWorkbenchVerticalPanelSizes tests
- *
- * @group unit
- */
   describe('setWorkbenchVerticalPanelSizes', () => {
     it('should properly set wb panel sizes', () => {
       // Arrange
@@ -266,11 +221,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setWorkbenchEAItem tests
- *
- * @group unit
- */
   describe('setWorkbenchEAItem', () => {
     it('should properly set path to opened guide page', () => {
       // Arrange
@@ -303,11 +253,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setWorkbenchEAItemScrollTop tests
- *
- * @group unit
- */
   describe('setWorkbenchEAItemScrollTop', () => {
     it('should properly set state', () => {
       // Arrange
@@ -328,11 +273,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * resetWorkbenchEAItem tests
- *
- * @group unit
- */
   describe('resetWorkbenchEAItem', () => {
     it('should properly reset enablement-area context', () => {
       // Arrange
@@ -364,11 +304,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * setLastPageContext tests
- *
- * @group unit
- */
   describe('setLastPageContext', () => {
     it('should properly set last page', () => {
       // Arrange
@@ -389,11 +324,7 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreeNodesOpen tests
- *
- * @group unit
- */
+
   describe('setBrowserTreeNodesOpen', () => {
     it('should properly set open nodes in the tree', () => {
       // Arrange
@@ -428,11 +359,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreeSelectedLeaf tests
- *
- * @group unit
- */
+
   describe('setBrowserTreeSelectedLeaf', () => {
     it('should properly set selected keys in the tree', () => {
       // Arrange
@@ -474,11 +401,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreePanelSizes tests
- *
- * @group unit
- */
+
   describe('setBrowserTreePanelSizes', () => {
     it('should properly set browser tree panel widths', () => {
       // Arrange
@@ -502,11 +425,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * setBrowserTreeDelimiter tests
- *
- * @group unit
- */
+
   describe('setBrowserTreeDelimiter', () => {
     it('should properly set browser tree delimiter', () => {
       // Arrange
@@ -528,11 +447,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
-  /**
- * resetBrowserTree tests
- *
- * @group unit
- */
+
   describe('resetBrowserTree', () => {
     it('should properly set last page', () => {
       // Arrange
@@ -577,11 +492,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * updateBrowserTreeSelectedLeaf tests
- *
- * @group unit
- */
   describe('updateBrowserTreeSelectedLeaf', () => {
     it('should properly update selected leaf and add a new fitted key', () => {
       const payload = {

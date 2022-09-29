@@ -5,11 +5,6 @@ import CloudConnectionForm, { Props } from './CloudConnectionForm'
 
 const mockedProps = mock<Props>()
 
-/**
- * CloudConnectionForm tests
- *
- * @group unit
- */
 describe('CloudConnectionForm', () => {
   it('should render', () => {
     expect(

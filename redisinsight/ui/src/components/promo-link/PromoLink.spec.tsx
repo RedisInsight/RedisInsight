@@ -6,11 +6,6 @@ import PromoLink, { Props } from './PromoLink'
 const mockedProps = mock<Props>()
 const testId = 'promoLink'
 
-/**
- * PromoLink tests
- *
- * @group unit
- */
 describe('PromoLink', () => {
   it('should render', () => {
     expect(render(<PromoLink {...instance(mockedProps)} />)).toBeTruthy()

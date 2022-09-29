@@ -5,11 +5,6 @@ import CodeButton, { Props } from './CodeButton'
 
 const mockedProps = mock<Props>()
 
-/**
- * CodeButton tests
- *
- * @group unit
- */
 describe('CodeButton', () => {
   it('should render', () => {
     const label = 'Manual'

@@ -27,11 +27,6 @@ const defaultValues = [
 const getStringToBufferTests = defaultValues.map(({ unicode, uint8Array }) =>
   ({ input: unicode, expected: { data: uint8Array, type: RedisResponseBufferType.Buffer } }))
 
-/**
- * stringToBuffer tests
- *
- * @group unit
- */
 describe('stringToBuffer', () => {
   test.each(getStringToBufferTests)('%j', ({ input, expected }) => {
     const result = stringToBuffer(input)
@@ -43,11 +38,6 @@ describe('stringToBuffer', () => {
 const getAnyToBufferTests = defaultValues.map(({ uint8Array }) =>
   ({ input: uint8Array, expected: { data: uint8Array, type: RedisResponseBufferType.Buffer } }))
 
-/**
- * anyToBuffer tests
- *
- * @group unit
- */
 describe('anyToBuffer', () => {
   test.each(getAnyToBufferTests)('%j', ({ input, expected }) => {
     const result = anyToBuffer(input)
@@ -59,11 +49,6 @@ describe('anyToBuffer', () => {
 const getHexToBufferTests = defaultValues.map(({ hex, uint8Array }) =>
   ({ input: hex, expected: { data: uint8Array, type: RedisResponseBufferType.Buffer } }))
 
-/**
- * hexToBuffer tests
- *
- * @group unit
- */
 describe('hexToBuffer', () => {
   test.each(getHexToBufferTests)('%j', ({ input, expected }) => {
     const result = hexToBuffer(input)
@@ -75,22 +60,12 @@ describe('hexToBuffer', () => {
 const getBufferToStringTests = defaultValues.map(({ unicode, uint8Array }) =>
   ({ input: anyToBuffer(uint8Array), expected: unicode }))
 
-/**
- * bufferToString tests
- *
- * @group unit
- */
 describe('bufferToString', () => {
   test.each(getBufferToStringTests)('%j', ({ input, expected }) => {
     expect(bufferToString(input)).toEqual(expected)
   })
 })
 
-/**
- * bufferToUTF8 tests
- *
- * @group unit
- */
 describe('bufferToUTF8', () => {
   test.each(getBufferToStringTests)('%j', ({ input, expected }) => {
     expect(bufferToUTF8(input)).toEqual(expected)
@@ -100,11 +75,6 @@ describe('bufferToUTF8', () => {
 const getBufferToASCIITests = defaultValues.map(({ ascii, uint8Array }) =>
   ({ input: anyToBuffer(uint8Array), expected: ascii }))
 
-/**
- * bufferToASCII tests
- *
- * @group unit
- */
 describe('bufferToASCII', () => {
   test.each(getBufferToASCIITests)('%j', ({ input, expected }) => {
     expect(bufferToASCII(input)).toEqual(expected)
@@ -114,22 +84,12 @@ describe('bufferToASCII', () => {
 const getBufferToHexTests = defaultValues.map(({ hex, uint8Array }) =>
   ({ input: anyToBuffer(uint8Array), expected: hex }))
 
-/**
- * bufferToASCII tests
- *
- * @group unit
- */
 describe('bufferToASCII', () => {
   test.each(getBufferToHexTests)('%j', ({ input, expected }) => {
     expect(bufferToHex(input)).toEqual(expected)
   })
 })
 
-/**
- * UTF8ToBuffer tests
- *
- * @group unit
- */
 describe('UTF8ToBuffer', () => {
   test.each(getStringToBufferTests)('%j', ({ input, expected }) => {
     const result = UTF8ToBuffer(input)
@@ -146,11 +106,6 @@ const getBuffersTest = [
   { input1: { data: [16, 101, 35, 116] }, input2: { data: [16, 101, 35, 116] }, expected: true },
 ]
 
-/**
- * isEqualBuffers tests
- *
- * @group unit
- */
 describe('isEqualBuffers', () => {
   test.each(getBuffersTest)('%j', ({ input1, input2, expected }) => {
     // @ts-ignore
@@ -161,22 +116,12 @@ describe('isEqualBuffers', () => {
 const getBufferToBinaryTests = defaultValues.map(({ binary, uint8Array }) =>
   ({ input: anyToBuffer(uint8Array), expected: binary }))
 
-/**
- * bufferToBinary tests
- *
- * @group unit
- */
 describe('bufferToBinary', () => {
   test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
     expect(bufferToBinary(input)).toEqual(expected)
   })
 })
 
-/**
- * binaryToBuffer tests
- *
- * @group unit
- */
 describe('binaryToBuffer', () => {
   test.each(getBufferToBinaryTests)('%j', ({ input, expected }) => {
     expect(binaryToBuffer(expected)).toEqual(input)
@@ -191,11 +136,6 @@ const javaValues = [
 const getBufferToJavaTests = javaValues.map(({ uint8Array, value }) =>
   ({ input: anyToBuffer(uint8Array), expected: value }))
 
-/**
- * bufferToJava tests
- *
- * @group unit
- */
 describe('bufferToJava', () => {
   test.each(getBufferToJavaTests)('%o', ({ input, expected }) => {
     expect(bufferToJava(input)).toEqual(expected)

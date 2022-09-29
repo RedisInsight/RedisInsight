@@ -23,17 +23,7 @@ jest.mock('uiSrc/slices/app/info', () => ({
   })
 }))
 
-/**
- * NavigationMenu tests
- *
- * @group unit
- */
 describe('NavigationMenu', () => {
-/**
- * without connectedInstance tests
- *
- * @group unit
- */
   describe('without connectedInstance', () => {
     it('should render', () => {
       (appInfoSelector as jest.Mock).mockImplementation(() => ({
@@ -93,11 +83,6 @@ describe('NavigationMenu', () => {
     })
   })
 
-  /**
- * with connectedInstance tests
- *
- * @group unit
- */
   describe('with connectedInstance', () => {
     beforeAll(() => {
       jest.mock('uiSrc/slices/instances/instances', () => ({

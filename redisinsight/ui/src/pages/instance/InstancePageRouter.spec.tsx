@@ -8,11 +8,6 @@ const mockedRoutes = [
   },
 ]
 
-/**
- * InstancePageRouter tests
- *
- * @group unit
- */
 describe('InstancePageRouter', () => {
   it('should render', () => {
     expect(

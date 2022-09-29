@@ -5,7 +5,7 @@ import { EuiFlexItem, EuiPage, EuiPageBody } from '@elastic/eui'
 
 import { getApiErrorMessage, isStatusSuccessful, Nullable, setTitle } from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, Pages } from 'uiSrc/constants'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { PageHeader, PagePlaceholder } from 'uiSrc/components'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'

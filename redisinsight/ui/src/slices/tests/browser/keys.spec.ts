@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, KeyValueFormat } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { parseKeysListResponse, stringToBuffer } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
@@ -54,11 +54,16 @@ import reducer, {
   addListKey,
   addStringKey,
   addZsetKey,
+  setLastBatchKeys,
   updateSelectedKeyRefreshTime,
+  resetKeyInfo,
+  resetKeys,
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 let dateNow: jest.SpyInstance<number>
@@ -364,6 +369,39 @@ describe('keys slice', () => {
 
       // Act
       const nextState = reducer(initialState, loadKeyInfoSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setLastBatchKeys', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const strToKey = (name:string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const data = ['44', '55', '66'].map(strToKey)
+
+      const state = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '44', '55', '66'].map(strToKey),
+        }
+      }
+
+      const prevState = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
+        }
+      }
+
+      // Act
+      const nextState = reducer(prevState, setLastBatchKeys(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -741,6 +779,52 @@ describe('keys slice', () => {
         browser: { keys: nextState },
       })
       expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetKeyInfo', () => {
+    it('should properly save viewFormat', () => {
+      // Arrange
+      const viewFormat = KeyValueFormat.HEX
+      const initialStateMock = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          viewFormat
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialStateMock, resetKeyInfo())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(initialStateMock)
+    })
+  })
+
+  describe('resetKeys', () => {
+    it('should properly save viewFormat', () => {
+      // Arrange
+      const viewFormat = KeyValueFormat.HEX
+      const initialStateMock = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          viewFormat
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialStateMock, resetKeys())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(initialStateMock)
     })
   })
 

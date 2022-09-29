@@ -45,4 +45,9 @@ $outer-height-mobile: 340px;
   @media only screen and (max-width: 767px) {
     max-height: calc(100vh - #{$outer-height-mobile} - 55px);
   }
+
+  &.areaWarning {
+    border-color: var(--euiColorWarningLight) !important;
+    background-image: none !important;
+  }
 }

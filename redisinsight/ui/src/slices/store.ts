@@ -30,8 +30,10 @@ import workbenchResultsReducer from './workbench/wb-results'
 import workbenchGuidesReducer from './workbench/wb-guides'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
 import contentCreateRedisButtonReducer from './content/create-redis-buttons'
-import slowLogReducer from './slowlog/slowlog'
 import pubSubReducer from './pubsub/pubsub'
+import slowLogReducer from './analytics/slowlog'
+import analyticsSettingsReducer from './analytics/settings'
+import clusterDetailsReducer from './analytics/clusterDetails'
 
 export const history = createBrowserHistory()
 
@@ -79,7 +81,11 @@ export const rootReducer = combineReducers({
   content: combineReducers({
     createRedisButtons: contentCreateRedisButtonReducer,
   }),
-  slowlog: slowLogReducer,
+  analytics: combineReducers({
+    settings: analyticsSettingsReducer,
+    slowlog: slowLogReducer,
+    clusterDetails: clusterDetailsReducer,
+  }),
   pubsub: pubSubReducer,
 })
 

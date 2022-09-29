@@ -7,6 +7,7 @@ import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
   RunQueryMode,
+  ResultsMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -34,6 +35,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   },
   role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Default,
 };
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [

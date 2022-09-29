@@ -23,8 +23,7 @@ fixture `JSON Key verification`
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
-//skipped due the issue https://redislabs.atlassian.net/browse/RI-2866
-test.skip
+test
     .meta({ rte: rte.standalone })
     ('Verify that user can not add invalid JSON structure inside of created JSON', async t => {
         keyName = chance.word({ length: 10 });

@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const response1 = {
   "query": "TS.MRANGE - + COUNT 50 FILTER metric=cpu",
   "result": [

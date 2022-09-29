@@ -21,6 +21,7 @@ const dataSchema = Joi.object({
   command: Joi.string().required(),
   role: Joi.string().valid('ALL', 'MASTER', 'SLAVE').allow(null),
   mode: Joi.string().valid('RAW', 'ASCII').allow(null),
+  resultsMode: Joi.string().valid('DEFAULT', 'GROUP_MODE').allow(null),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     // todo: fix BE transform to avoid handle boolean as number
@@ -37,6 +38,7 @@ const validInputData = {
   command: 'set foo bar',
   role: 'ALL',
   mode: 'ASCII',
+  resultsMode: 'DEFAULT',
   nodeOptions: {
     host: 'localhost',
     port: 6379,
@@ -58,6 +60,7 @@ const responseSchema = Joi.object().keys({
   })),
   role: Joi.string().allow(null),
   mode: Joi.string().required(),
+  resultsMode: Joi.string().required(),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().required(),
@@ -105,6 +108,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: 'get foo',
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
           responseBody: {
             statusCode: 404,
@@ -117,6 +121,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
           responseSchema,
           checkFn: async ({ body }) => {
@@ -139,6 +144,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `ft.info ${constants.TEST_STRING_KEY_1}`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
           responseSchema,
         },
@@ -151,6 +157,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `monitor`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
         {
@@ -158,6 +165,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `subscribe`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
         {
@@ -165,6 +173,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `psubscribe`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
         {
@@ -172,6 +181,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `sync`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
         {
@@ -179,6 +189,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `psync`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
         {
@@ -186,6 +197,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `script debug`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
         {
@@ -193,6 +205,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `blpop key`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
         {
@@ -200,6 +213,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `set string_key value`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
         },
       ].map((testCase) => mainCheckFn({
@@ -226,6 +240,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
             data: {
               command: `get ${constants.TEST_STRING_KEY_2}`,
               mode: 'ASCII',
+              resultsMode: 'DEFAULT',
             },
             responseSchema,
             checkFn: async ({ body }) => {
@@ -253,6 +268,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'ALL',
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
           statusCode: 400,
           responseBody: {
@@ -266,6 +282,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
             nodeOptions: {
               host: 'localhost',
               port: 6379,
@@ -290,7 +307,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
     let nodes;
 
     before(async () => {
-      database = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOne({
+      database = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOneBy({
         id: constants.TEST_INSTANCE_ID,
       });
       nodes = JSON.parse(database.nodes);
@@ -304,6 +321,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'ALL',
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
           responseSchema,
           before: async () => {
@@ -355,6 +373,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'MASTER',
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
           responseSchema,
           checkFn: async ({ body }) => {
@@ -401,6 +420,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             role: 'SLAVE',
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
           },
           responseSchema,
           checkFn: async ({ body }) => {
@@ -450,6 +470,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
             nodeOptions: {
               host: 'unreachable',
               port: 6380,
@@ -474,6 +495,7 @@ describe('POST /instance/:instanceId/plugins/command-executions', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             mode: 'ASCII',
+            resultsMode: 'DEFAULT',
             nodeOptions: {
               ...nodes[0],
               enableRedirection: true,

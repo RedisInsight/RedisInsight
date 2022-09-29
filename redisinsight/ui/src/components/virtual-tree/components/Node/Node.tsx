@@ -16,7 +16,6 @@ const Node = ({
   setOpen
 }: NodePublicState<TreeData>) => {
   const {
-    id,
     isLeaf,
     leafIcon,
     keys,

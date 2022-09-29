@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
@@ -35,23 +35,26 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
+import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
 import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
+import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   query: string
   activeMode: RunQueryMode
+  resultsMode?: ResultsMode
   setQueryEl: Function
   setQuery: (script: string) => void
   setIsCodeBtnDisabled: (value: boolean) => void
   onSubmit: (query?: string) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onQueryChangeMode: () => void
+  onChangeGroupMode: () => void
 }
 
 const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
@@ -68,12 +71,14 @@ const Query = (props: Props) => {
   const {
     query = '',
     activeMode,
+    resultsMode,
     setQuery,
     onKeyDown,
     onSubmit,
     setQueryEl,
     setIsCodeBtnDisabled = () => { },
-    onQueryChangeMode
+    onQueryChangeMode,
+    onChangeGroupMode
   } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
@@ -86,11 +91,13 @@ const Query = (props: Props) => {
   let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
-  const { items: execHistoryItems, loading } = useSelector(workbenchResultsSelector)
+  const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  const dispatch = useDispatch()
 
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
@@ -98,6 +105,7 @@ const Query = (props: Props) => {
   useEffect(() =>
     // componentWillUnmount
     () => {
+      dispatch(stopProcessing())
       contribution?.dispose?.()
       disposeCompletionItemProvider()
       disposeSignatureHelpProvider()
@@ -451,6 +459,8 @@ const Query = (props: Props) => {
     monaco.editor.defineTheme('light', lightTheme)
   }
 
+  const isLoading = loading || processing
+
   return (
     <div className={styles.wrapper}>
       <div
@@ -474,7 +484,7 @@ const Query = (props: Props) => {
         <div className={cx(styles.actions, { [styles.disabledActions]: isDedicatedEditorOpen })}>
           <EuiToolTip
             position="left"
-            content="Raw mode"
+            content="Raw Mode"
             data-testid="change-mode-tooltip"
           >
             <EuiButton
@@ -482,7 +492,7 @@ const Query = (props: Props) => {
               size="s"
               color="secondary"
               onClick={() => onQueryChangeMode()}
-              disabled={loading}
+              disabled={isLoading}
               className={cx(styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
               data-testid="btn-change-mode"
             >
@@ -492,34 +502,54 @@ const Query = (props: Props) => {
           <EuiToolTip
             position="left"
             content={
-              KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
-                <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
-                  <KeyboardShortcut
-                    separator={KEYBOARD_SHORTCUTS?._separator}
-                    items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
-                  />
-                </div>
-              )
+              isLoading
+                ? 'Please wait while the commands are being executed…'
+                : KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
+                  <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                    <EuiText className={styles.tooltipText} size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
+                    <KeyboardShortcut
+                      badgeTextClassName={styles.tooltipText}
+                      separator={KEYBOARD_SHORTCUTS?._separator}
+                      items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
+                    />
+                  </div>
+                )
             }
             data-testid="run-query-tooltip"
           >
             <>
-              {loading && (
+              {isLoading && (
                 <EuiLoadingSpinner size="l" data-testid="loading-spinner" />
               )}
               <EuiButtonIcon
                 onClick={() => handleSubmit()}
-                disabled={loading}
+                disabled={isLoading}
                 iconType="playFilled"
-                className={cx(styles.submitButton, { [styles.submitButtonLoading]: loading })}
+                className={cx(styles.submitButton, { [styles.submitButtonLoading]: isLoading })}
                 aria-label="submit"
                 data-testid="btn-submit"
               />
             </>
           </EuiToolTip>
-          {/* block for third action icon */}
-          <div style={{ height: '24px' }} />
+          <EuiToolTip
+            position="left"
+            content="Group Results"
+            data-testid="run-query-tooltip"
+          >
+            <>
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                onClick={() => onChangeGroupMode()}
+                disabled={isLoading}
+                className={cx(styles.textBtn, { [styles.activeBtn]: resultsMode === ResultsMode.GroupMode })}
+                data-testid="btn-change-group-mode"
+              >
+                <EuiIcon type={GroupModeIcon} />
+              </EuiButton>
+            </>
+          </EuiToolTip>
         </div>
       </div>
       {isDedicatedEditorOpen && (

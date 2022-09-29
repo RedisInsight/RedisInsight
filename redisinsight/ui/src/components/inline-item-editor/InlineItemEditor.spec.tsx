@@ -39,4 +39,66 @@ describe('InlineItemEditor', () => {
     render(<InlineItemEditor {...instance(mockedProps)} onDecline={jest.fn()} />)
     expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveFocus()
   })
+
+  describe('approveByValidation', () => {
+    it('should not render popover after click on Apply btn if approveByValidation return "true" in the props and onApply should be called', () => {
+      const approveByValidationMock = jest.fn().mockReturnValue(true)
+      const onApplyMock = jest.fn().mockReturnValue(false)
+      const { queryByTestId } = render(
+        <InlineItemEditor
+          {...instance(mockedProps)}
+          onApply={onApplyMock}
+          onDecline={jest.fn()}
+          approveByValidation={approveByValidationMock}
+        />
+      )
+
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+
+      fireEvent.click(screen.getByTestId(/apply-btn/))
+      expect(queryByTestId('approve-popover')).not.toBeInTheDocument()
+      expect(onApplyMock).toBeCalled()
+    })
+
+    it('should render popover after click on Apply btn if approveByValidation return "false" in the props and onApply should not be called ', () => {
+      const approveByValidationMock = jest.fn().mockReturnValue(false)
+      const onApplyMock = jest.fn().mockReturnValue(false)
+      const { queryByTestId } = render(
+        <InlineItemEditor
+          {...instance(mockedProps)}
+          onApply={onApplyMock}
+          onDecline={jest.fn()}
+          approveByValidation={approveByValidationMock}
+        />
+      )
+
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+
+      fireEvent.click(screen.getByTestId(/apply-btn/))
+      expect(queryByTestId('approve-popover')).toBeInTheDocument()
+      expect(onApplyMock).not.toBeCalled()
+    })
+
+    it('should render popover after click on Apply btn if approveByValidation return "false" in the props and onApply should be called after click on Save btn', () => {
+      const approveByValidationMock = jest.fn().mockReturnValue(false)
+      const onApplyMock = jest.fn().mockReturnValue(false)
+      const { queryByTestId } = render(
+        <InlineItemEditor
+          {...instance(mockedProps)}
+          onApply={onApplyMock}
+          onDecline={jest.fn()}
+          approveByValidation={approveByValidationMock}
+        />
+      )
+
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+
+      fireEvent.click(screen.getByTestId(/apply-btn/))
+      expect(queryByTestId('approve-popover')).toBeInTheDocument()
+      expect(onApplyMock).not.toBeCalled()
+
+      fireEvent.click(screen.getByTestId(/save-btn/))
+      expect(onApplyMock).toBeCalled()
+    })
+  })
 })

@@ -288,10 +288,8 @@ const AddStandaloneForm = (props: Props) => {
       }
     }
 
-    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
-      if (!values.sentinelMasterName) {
-        errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
-      }
+    if (isCloneMode && connectionType === ConnectionType.Sentinel && !values.sentinelMasterName) {
+      errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
     }
 
     setErrors(errs)
@@ -1359,6 +1357,7 @@ const AddStandaloneForm = (props: Props) => {
                     title="Database"
                     isCollapsible
                     initialIsOpen={false}
+                    data-testid="database-nav-group"
                   >
                     {SentinelMasterDatabase()}
                   </EuiCollapsibleNavGroup>
@@ -1366,6 +1365,7 @@ const AddStandaloneForm = (props: Props) => {
                     title="Sentinel"
                     isCollapsible
                     initialIsOpen={false}
+                    data-testid="sentinel-nav-group"
                   >
                     {SentinelHostPort()}
                     {DatabaseForm()}
@@ -1387,6 +1387,7 @@ const AddStandaloneForm = (props: Props) => {
                     title="Database"
                     isCollapsible
                     initialIsOpen={false}
+                    data-testid="database-nav-group-clone"
                   >
                     {SentinelMasterDatabase()}
                   </EuiCollapsibleNavGroup>
@@ -1394,6 +1395,7 @@ const AddStandaloneForm = (props: Props) => {
                     title="Sentinel"
                     isCollapsible
                     initialIsOpen={false}
+                    data-testid="sentinel-nav-group-clone"
                   >
                     {DatabaseForm()}
                   </EuiCollapsibleNavGroup>

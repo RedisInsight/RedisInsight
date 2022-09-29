@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
-import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters } from '../../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters, ClusterNodes } from '../../pageObjects/add-redis-database-page';
 import { Common } from '../common';
 
 const common = new Common();
@@ -122,16 +122,18 @@ export async function getDatabaseByConnectionType(connectionType?: string): Prom
  */
 export async function deleteAllDatabasesApi(): Promise<void> {
     const allDatabases = await getAllDatabases();
-    const databaseIds = [];
-    for (let i = 0; i < allDatabases.length; i++) {
-        const dbData = JSON.parse(JSON.stringify(allDatabases[i]));
-        databaseIds.push(dbData.id);
-    }
-    if (databaseIds.length > 0) {
-        await request(endpoint).delete('/instance')
-            .send({ 'ids': databaseIds })
-            .set('Accept', 'application/json')
-            .expect(200);
+    if (allDatabases.length > 0) {
+        const databaseIds = [];
+        for (let i = 0; i < allDatabases.length; i++) {
+            const dbData = JSON.parse(JSON.stringify(allDatabases[i]));
+            databaseIds.push(dbData.id);
+        }
+        if (databaseIds.length > 0) {
+            await request(endpoint).delete('/instance')
+                .send({ 'ids': databaseIds })
+                .set('Accept', 'application/json')
+                .expect(200);
+        }
     }
 }
 
@@ -192,4 +194,19 @@ export async function deleteStandaloneDatabasesApi(databasesParameters: AddNewDa
             await deleteStandaloneDatabaseApi(parameter);
         });
     }
+}
+
+/**
+ * Get OSS Cluster nodes
+ * @param databaseParameters The database parameters
+ */
+export async function getClusterNodesApi(databaseParameters: OSSClusterParameters): Promise<string[]> {
+    const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
+    const response = await request(endpoint)
+        .get(`/instance/${databaseId}/cluster-details`)
+        .set('Accept', 'application/json')
+        .expect(200);
+    let nodes = await response.body.nodes;
+    let nodeNames = await nodes.map((node: ClusterNodes) => (node.host + ':' + node.port));
+    return nodeNames;
 }

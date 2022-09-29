@@ -1,56 +1,57 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
-import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
-import { AppTool, ReplyError } from 'src/models';
+import { ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
+import { CommandsService } from 'src/modules/commands/commands.service';
+import { CommandTelemetryBaseService } from 'src/modules/shared/services/base/command.telemetry.base.service';
 
 @Injectable()
-export class CliAnalyticsService extends TelemetryBaseService {
-  constructor(protected eventEmitter: EventEmitter2) {
-    super(eventEmitter);
+export class CliAnalyticsService extends CommandTelemetryBaseService {
+  constructor(
+    protected eventEmitter: EventEmitter2,
+    protected readonly commandsService: CommandsService,
+  ) {
+    super(eventEmitter, commandsService);
   }
 
   sendClientCreatedEvent(
-    instanceId: string,
-    namespace: string,
+    databaseId: string,
     additionalData: object = {},
   ): void {
     this.sendEvent(
-      this.getNamespaceEvent(TelemetryEvents.ClientCreated, namespace),
+      TelemetryEvents.CliClientCreated,
       {
-        databaseId: instanceId,
+        databaseId,
         ...additionalData,
       },
     );
   }
 
   sendClientCreationFailedEvent(
-    instanceId: string,
-    namespace: string,
+    databaseId: string,
     exception: HttpException,
     additionalData: object = {},
   ): void {
     this.sendFailedEvent(
-      this.getNamespaceEvent(TelemetryEvents.ClientCreationFailed, namespace),
+      TelemetryEvents.CliClientCreationFailed,
       exception,
       {
-        databaseId: instanceId,
+        databaseId,
         ...additionalData,
       },
     );
   }
 
   sendClientRecreatedEvent(
-    instanceId: string,
-    namespace: string,
+    databaseId: string,
     additionalData: object = {},
   ): void {
     this.sendEvent(
-      this.getNamespaceEvent(TelemetryEvents.ClientRecreated, namespace),
+      TelemetryEvents.CliClientRecreated,
       {
-        databaseId: instanceId,
+        databaseId,
         ...additionalData,
       },
     );
@@ -58,16 +59,15 @@ export class CliAnalyticsService extends TelemetryBaseService {
 
   sendClientDeletedEvent(
     affected: number,
-    instanceId: string,
-    namespace: string,
+    databaseId: string,
     additionalData: object = {},
   ): void {
     try {
       if (affected > 0) {
         this.sendEvent(
-          this.getNamespaceEvent(TelemetryEvents.ClientDeleted, namespace),
+          TelemetryEvents.CliClientDeleted,
           {
-            databaseId: instanceId,
+            databaseId,
             ...additionalData,
           },
         );
@@ -77,33 +77,37 @@ export class CliAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendCommandExecutedEvent(
-    instanceId: string,
-    namespace: string,
+  public async sendCommandExecutedEvent(
+    databaseId: string,
     additionalData: object = {},
-  ): void {
-    this.sendEvent(
-      this.getNamespaceEvent(TelemetryEvents.CommandExecuted, namespace),
-      {
-        databaseId: instanceId,
-        ...additionalData,
-      },
-    );
-  }
-
-  sendCommandErrorEvent(
-    instanceId: string,
-    namespace: string,
-    error: ReplyError,
-    additionalData: object = {},
-  ): void {
+  ): Promise<void> {
     try {
       this.sendEvent(
-        this.getNamespaceEvent(TelemetryEvents.CommandErrorReceived, namespace),
+        TelemetryEvents.CliCommandExecuted,
         {
-          databaseId: instanceId,
+          databaseId,
+          ...(await this.getCommandAdditionalInfo(additionalData['command'])),
+          ...additionalData,
+        },
+      );
+    } catch (e) {
+      // ignore error
+    }
+  }
+
+  public async sendCommandErrorEvent(
+    databaseId: string,
+    error: ReplyError,
+    additionalData: object = {},
+  ): Promise<void> {
+    try {
+      this.sendEvent(
+        TelemetryEvents.CliCommandErrorReceived,
+        {
+          databaseId,
           error: error?.name,
           command: error?.command?.name,
+          ...(await this.getCommandAdditionalInfo(additionalData['command'])),
           ...additionalData,
         },
       );
@@ -112,30 +116,32 @@ export class CliAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendClusterCommandExecutedEvent(
-    instanceId: string,
-    namespace: string,
+  public async sendClusterCommandExecutedEvent(
+    databaseId: string,
     result: ICliExecResultFromNode,
     additionalData: object = {},
-  ): void {
+  ): Promise<void> {
     const { status, error } = result;
     try {
       if (status === CommandExecutionStatus.Success) {
         this.sendEvent(
-          this.getNamespaceEvent(TelemetryEvents.ClusterNodeCommandExecuted, namespace),
+          TelemetryEvents.CliClusterNodeCommandExecuted,
           {
-            databaseId: instanceId,
+            databaseId,
+            ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
           },
         );
       }
       if (status === CommandExecutionStatus.Fail) {
         this.sendEvent(
-          this.getNamespaceEvent(TelemetryEvents.CommandErrorReceived, namespace),
+          TelemetryEvents.CliCommandErrorReceived,
           {
-            databaseId: instanceId,
+            databaseId,
             error: error.name,
             command: error?.command?.name,
+            ...(await this.getCommandAdditionalInfo(additionalData['command'])),
+            ...additionalData,
           },
         );
       }
@@ -144,23 +150,19 @@ export class CliAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendConnectionErrorEvent(
-    instanceId: string,
-    namespace: string,
+  public async sendConnectionErrorEvent(
+    databaseId: string,
     exception: HttpException,
     additionalData: object = {},
-  ): void {
+  ): Promise<void> {
     this.sendFailedEvent(
-      this.getNamespaceEvent(TelemetryEvents.ClientConnectionError, namespace),
+      TelemetryEvents.CliClientConnectionError,
       exception,
       {
-        databaseId: instanceId,
+        databaseId,
+        ...(await this.getCommandAdditionalInfo(additionalData['command'])),
         ...additionalData,
       },
     );
-  }
-
-  private getNamespaceEvent(event: TelemetryEvents, namespace: string = AppTool.CLI): string {
-    return namespace.toLowerCase() === 'workbench' ? `WORKBENCH_${event}` : `CLI_${event}`;
   }
 }

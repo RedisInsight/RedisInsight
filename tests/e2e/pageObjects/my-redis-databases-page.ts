@@ -10,6 +10,7 @@ export class MyRedisDatabasePage {
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
+    analysisPageButton = Selector('[data-testid=analytics-page-btn]');
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');
@@ -48,7 +49,7 @@ export class MyRedisDatabasePage {
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
-    dbNameList = Selector('[data-testid^=instance-name]');
+    dbNameList = Selector('[data-testid^=instance-name]', { timeout: 3000 });
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
     hostPort = Selector('[data-testid=host-port]');
@@ -64,7 +65,7 @@ export class MyRedisDatabasePage {
             await t.click(this.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t.expect(db.exists).ok('The database exists', {timeout: 10000});
+        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
         await t.click(db);
     }
 
@@ -109,9 +110,8 @@ export class MyRedisDatabasePage {
      * @param databaseName The name of the database to be edited
      */
     async clickOnEditDBByName(databaseName: string): Promise<void> {
-        const dbNames = this.tableRowContent;
+        const dbNames = this.dbNameList;
         const count = await dbNames.count;
-
         for (let i = 0; i < count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(databaseName)) {
                 await t.click(this.editDatabaseButton.nth(i));

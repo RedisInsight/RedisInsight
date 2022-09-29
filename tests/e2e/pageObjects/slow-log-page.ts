@@ -10,7 +10,6 @@ export class SlowLogPage {
     //CSS Selectors
     cssSelectorDurationValue = '[data-testid=duration-value]';
     //BUTTONS
-    slowLogPageButton = Selector('[data-testid=slowlog-page-btn]');
     slowLogSortByTimestamp = Selector('[data-testid=header-sorting-button]');
     slowLogNumberOfCommandsDropdown = Selector('[data-testid=count-select]');
     slowLogConfigureButton = Selector('[data-testid=configure-btn]');
@@ -32,6 +31,7 @@ export class SlowLogPage {
     slowLogCommandValue = Selector('[data-testid=command-value]');
     slowLogEmptyResult = Selector('[data-testid=empty-slow-log]');
     slowLogCommandStatistics = Selector('[data-testid=entries-from-timestamp]');
+    configInfo = Selector('[data-testid=config-info]');
     // Table
     slowLogTable = Selector('[data-testid=slowlog-table]');
 

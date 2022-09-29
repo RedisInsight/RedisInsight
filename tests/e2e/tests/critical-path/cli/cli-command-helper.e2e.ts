@@ -3,8 +3,10 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { CliActions } from '../../../common-actions/cli-actions';
 
 const cliPage = new CliPage();
+const cliActions = new CliActions();
 
 const defaultHelperText = 'Enter any command in CLI or use search to see detailed information.';
 const COMMAND_APPEND = 'APPEND';
@@ -116,14 +118,14 @@ test
         //Select group from list and remember commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-        const timeSeriesCommands = [];
+        const timeSeriesCommands: string[] = [];
         for(let i = 0; i < commandsFilterCount; i++) {
             timeSeriesCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
         }
         //Unselect group from list
         await cliPage.selectFilterGroupType(COMMAND_GROUP_TIMESERIES);
         //Search per part of command and check all opened commands
-        await cliPage.checkSearchedCommandInCommandHelper(commandForSearch, timeSeriesCommands);
+        await cliActions.checkSearchedCommandInCommandHelper(commandForSearch, timeSeriesCommands);
         //Check the first command documentation url
         await cliPage.checkURLCommand(timeSeriesCommands[0], `https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`);
         await t.switchToParentWindow();
@@ -137,14 +139,14 @@ test
         //Select group from list and remember commands
         await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
         const commandsFilterCount = await cliPage.cliHelperOutputTitles.count;
-        const graphCommands = [];
+        const graphCommands: string[] = [];
         for(let i = 0; i < commandsFilterCount; i++) {
             graphCommands.push(await cliPage.cliHelperOutputTitles.nth(i).textContent);
         }
         //Unselect group from list
         await cliPage.selectFilterGroupType(COMMAND_GROUP_GRAPH);
         //Search per part of command and check all opened commands
-        await cliPage.checkSearchedCommandInCommandHelper(commandForSearch, graphCommands);
+        await cliActions.checkSearchedCommandInCommandHelper(commandForSearch, graphCommands);
         //Check the first command documentation url
         await cliPage.checkURLCommand(graphCommands[0], externalPageLink);
         await t.switchToParentWindow();

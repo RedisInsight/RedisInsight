@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis';
+import IORedis from 'ioredis';
 import {
   mockSocket,
 } from 'src/__mocks__';
@@ -12,7 +12,7 @@ import { BulkActionProgress } from 'src/modules/bulk-actions/models/bulk-action-
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 
 const mockExec = jest.fn();
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
 nodeClient.pipeline = jest.fn(() => ({
   exec: mockExec,

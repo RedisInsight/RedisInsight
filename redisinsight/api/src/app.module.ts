@@ -15,6 +15,7 @@ import { SlowLogModule } from 'src/modules/slow-log/slow-log.module';
 import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
 import { NotificationModule } from 'src/modules/notification/notification.module';
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
+import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -50,6 +51,7 @@ const PATH_CONFIG = config.get('dir_path');
     SlowLogModule,
     NotificationModule,
     BulkActionsModule,
+    ClusterMonitorModule,
     EventEmitterModule.forRoot(),
     ...(SERVER_CONFIG.staticContent
       ? [

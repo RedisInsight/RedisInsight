@@ -10,6 +10,7 @@ import {
     CliPage
 } from '../pageObjects';
 import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi } from './api/api-database';
+import { Common } from './common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -18,6 +19,7 @@ const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const browserPage = new BrowserPage();
 const userAgreementPage = new UserAgreementPage();
 const cliPage = new CliPage();
+const common = new Common();
 
 /**
  * Add a new database manually using host and port
@@ -126,7 +128,7 @@ export async function acceptLicenseTermsAndAddDatabaseApi(databaseParameters: Ad
     await acceptLicenseTerms();
     await addNewStandaloneDatabaseApi(databaseParameters);
     // Reload Page to see the new added database through api
-    await t.eval(() => location.reload());
+    await common.reloadPage();
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);
 }
@@ -151,7 +153,7 @@ export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParame
     await acceptLicenseTerms();
     await discoverSentinelDatabaseApi(databaseParameters);
     // Reload Page to see the database added through api
-    await t.eval(() => location.reload());
+    await common.reloadPage();
     //Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseParameters.name[1] ?? '');
 }
@@ -182,7 +184,7 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     // Reload page until db appears
     do {
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     }
     while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The existence of the database', { timeout: 5000 });
@@ -193,7 +195,6 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
 export async function acceptLicenseTerms(): Promise<void> {
     await t.maximizeWindow();
     await userAgreementPage.acceptLicenseTerms();
-    await t.expect(userAgreementPage.userAgreementsPopup.visible).notOk('The user agreements popup is not shown', { timeout: 2000 });
 }
 
 //Accept License terms and connect to the RedisStack database

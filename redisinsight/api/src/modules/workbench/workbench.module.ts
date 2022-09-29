@@ -20,8 +20,8 @@ import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers
 import { PluginsController } from 'src/modules/workbench/plugins.controller';
 import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
-import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 import config from 'src/utils/config';
+import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 const COMMANDS_CONFIGS = config.get('commands');
 
@@ -52,7 +52,7 @@ const COMMANDS_CONFIGS = config.get('commands');
       provide: CommandsService,
       useFactory: () => new CommandsService(
         COMMANDS_CONFIGS.map(({ name, url }) => new CommandsJsonProvider(name, url)),
-      ) 
+      ),
     },
     PluginsService,
     PluginCommandsWhitelistProvider,

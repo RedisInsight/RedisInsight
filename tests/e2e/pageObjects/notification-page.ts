@@ -30,6 +30,7 @@ export class NotificationPage {
     notificationBody = Selector(this.cssNotificationBody);
     notificationDate = Selector(this.cssNotificationDate);
     notificationList = Selector(this.cssNotificationList);
+    notificationCategory = Selector('[data-testid=notification-category]');
     //ICONS
     notificationBadge = Selector('[data-testid=total-unread-badge]', { timeout: 35000 });
 
@@ -81,5 +82,8 @@ export type NotificationParameters = {
     timestamp: number,
     body: string,
     type?: string,
-    isRead?: boolean
+    isRead?: boolean,
+    category?: string,
+    colorCategory?: string,
+    rbgColor?: string
 };

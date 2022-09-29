@@ -46,7 +46,7 @@ export class PluginStateProvider {
   async getOne(visualizationId: string, commandExecutionId: string): Promise<PluginState> {
     this.logger.log('Getting plugin state');
 
-    const entity = await this.repository.findOne({ visualizationId, commandExecutionId });
+    const entity = await this.repository.findOneBy({ visualizationId, commandExecutionId });
 
     if (!entity) {
       this.logger.error(`Plugin state ${commandExecutionId}:${visualizationId} was not Found`);

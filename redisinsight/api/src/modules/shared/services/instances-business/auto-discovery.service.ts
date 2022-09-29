@@ -80,7 +80,7 @@ export class AutoDiscoveryService implements OnModuleInit {
       );
 
       const info = convertRedisInfoReplyToObject(
-        await client.send_command('info'),
+        await client.info(),
       );
 
       if (info?.server?.redis_mode === 'standalone') {

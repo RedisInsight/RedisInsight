@@ -8,6 +8,7 @@ services:
     tty: true
     volumes:
       - ./results:/usr/src/app/results
+      - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
       - .redisinsight-v2:/root/.redisinsight-v2
     env_file:

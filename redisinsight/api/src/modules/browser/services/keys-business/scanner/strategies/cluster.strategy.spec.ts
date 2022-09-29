@@ -18,7 +18,7 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
-import * as Redis from 'ioredis';
+import IORedis from 'ioredis';
 import { ClusterStrategy } from './cluster.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -26,12 +26,12 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
 
 const mockClusterNode1 = nodeClient;
 const mockClusterNode2 = nodeClient;
-const clusterClient = Object.create(Redis.Cluster.prototype);
+const clusterClient = Object.create(IORedis.Cluster.prototype);
 clusterClient.sendCommand = jest.fn();
 mockClusterNode1.options = { ...nodeClient.options, host: 'localhost', port: 5000 };
 mockClusterNode2.options = { ...nodeClient.options, host: 'localhost', port: 5001 };
@@ -788,11 +788,10 @@ describe('Cluster Scanner Strategy', () => {
           expect.anything(),
           null,
         )
-        .mockResolvedValue({ result: [0, [Buffer.from(getKeyInfoResponse.name)]] });      
+        .mockResolvedValue({ result: [0, [Buffer.from(getKeyInfoResponse.name)]] });
         strategy.getKeysInfo = jest
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
-      
         try {
           await strategy.getKeys(mockClientOptions, args);
           fail();

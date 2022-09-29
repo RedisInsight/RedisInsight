@@ -5,7 +5,6 @@
 $breakpoint-table: 1232px;
 
 .wrapper {
-  height: calc(100% - 140px);
   max-width: 1920px;
 
   .loading {
@@ -96,6 +95,7 @@ $breakpoint-table: 1232px;
     }
 
     .euiTableCellContent {
+      position: relative;
       padding: 12px 12px 12px 24px;
       font: normal normal 500 16px/18px Inconsolata;
 
@@ -171,5 +171,13 @@ $breakpoint-table: 1232px;
   .hostPort {
     display: inline-flex;
     font: normal normal normal 13px/18px Graphik, sans-serif !important;
+  }
+
+  .nodeColor {
+    position: absolute;
+    left: 0;
+    top: 1px;
+    bottom: 1px;
+    width: 3px;
   }
 }

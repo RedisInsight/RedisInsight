@@ -11,3 +11,8 @@ export const nullableNumberWithSpaces = (number: Nullable<number> = 0) => {
   }
   return numberWithSpaces(number)
 }
+
+export const getPercentage = (value = 0, sum = 1, round = false, decimals = 2) => {
+  const percent = parseFloat(((value / sum) * 100).toFixed(decimals))
+  return round ? Math.round(percent) : percent
+}

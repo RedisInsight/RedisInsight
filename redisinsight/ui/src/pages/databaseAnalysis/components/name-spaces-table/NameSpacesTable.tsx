@@ -69,17 +69,23 @@ const NameSpacesTable = (props: Props) => {
             const [number, size] = formatBytes(type.memory, 3, true)
             return (
               <div className={styles.expanded} key={type.type}>
-                <div>
-                  <EuiButtonEmpty
-                    className={cx(styles.link, styles.expanded)}
-                    onClick={() => handleRedirect(item.nsp as string, type.type)}
+                <div className={styles.truncateText}>
+                  <EuiToolTip
+                    anchorClassName={styles.tooltip}
+                    position="bottom"
+                    content={`${item.nsp}:*`}
                   >
-                    {`${item.nsp}:*`}
-                  </EuiButtonEmpty>
+                    <EuiButtonEmpty
+                      className={cx(styles.link, styles.expanded)}
+                      onClick={() => handleRedirect(item.nsp as string, type.type)}
+                    >
+                      {`${item.nsp}:*`}
+                    </EuiButtonEmpty>
+                  </EuiToolTip>
                 </div>
                 <div><GroupBadge type={type.type} /></div>
                 <div className={styles.rightAlign}>
-                  <span data-testid="usedMemory-value">
+                  <span className={styles.count} data-testid="usedMemory-value">
                     {number}
                   </span>
                   <span className={styles.valueUnit}>{size}</span>
@@ -100,19 +106,28 @@ const NameSpacesTable = (props: Props) => {
       name: 'Key Pattern',
       field: 'nsp',
       dataType: 'string',
+      height: '42px',
       align: 'left',
       width: 'calc(44% - 44px)',
       sortable: true,
+      truncateText: true,
+      className: 'nsp-cell',
       render: (nsp: string, { types }: { types: any[] }) => {
-        const filterType = types.length > 1 ? '' : types[0].type
+        const filterType = types.length > 1 ? null : types[0].type
         return (
-          <div className={styles.delimiter}>
-            <EuiButtonEmpty
-              className={styles.link}
-              onClick={() => handleRedirect(nsp, filterType)}
+          <div className={cx(styles.delimiter, styles.truncateText)}>
+            <EuiToolTip
+              anchorClassName={styles.tooltip}
+              position="bottom"
+              content={`${nsp}:*`}
             >
-              {`${nsp}:*`}
-            </EuiButtonEmpty>
+              <EuiButtonEmpty
+                className={styles.link}
+                onClick={() => handleRedirect(nsp, filterType)}
+              >
+                {`${nsp}:*`}
+              </EuiButtonEmpty>
+            </EuiToolTip>
           </div>
         )
       }

@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { isNull } from 'lodash'
-import { ApiEndpoints, } from 'uiSrc/constants'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { StateDatabaseAnalysis } from 'uiSrc/slices/interfaces/analytics'

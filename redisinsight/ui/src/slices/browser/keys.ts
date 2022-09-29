@@ -397,7 +397,6 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
-
     if (type === KeyTypes.Hash) {
       dispatch(setHashInitialState())
     }

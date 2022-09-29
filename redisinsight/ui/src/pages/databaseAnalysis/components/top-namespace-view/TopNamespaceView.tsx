@@ -17,7 +17,7 @@ const TopNamespaceView = (props: Props) => {
   const { data, loading } = props
   const [nspTable, setNspTable] = useState<NSPTable>(NSPTable.MEMORY)
 
-  if (!data?.topMemoryNsp?.length || !data?.topKeysNsp?.length) {
+  if (!data?.topMemoryNsp?.length && !data?.topKeysNsp?.length && !loading) {
     return null
   }
 
@@ -57,15 +57,15 @@ const TopNamespaceView = (props: Props) => {
           <>
             {nspTable === NSPTable.MEMORY && (
             <NameSpacesTable
-              data={data?.topMemoryNsp}
-              delimiter={data?.delimiter}
+              data={data?.topMemoryNsp ?? []}
+              delimiter={data?.delimiter ?? ''}
               dataTestid="nsp-table-memory"
             />
             )}
             {nspTable === NSPTable.KEYS && (
               <NameSpacesTable
-                data={data?.topKeysNsp}
-                delimiter={data?.delimiter}
+                data={data?.topKeysNsp ?? []}
+                delimiter={data?.delimiter ?? ''}
                 dataTestid="nsp-table-keys"
               />
             )}

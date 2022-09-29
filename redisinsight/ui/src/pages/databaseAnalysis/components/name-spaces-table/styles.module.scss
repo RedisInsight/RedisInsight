@@ -26,6 +26,10 @@ $breakpoint-table: 1232px;
       }
     }
   }
+
+  .badge :global(.euiText--extraSmall) {
+    font: normal normal normal 12px/16px Graphik;
+  }
 }
 
 .tableWrapper {
@@ -42,6 +46,10 @@ $breakpoint-table: 1232px;
 
 .table.tableNSP {
   :global {
+    .nsp-cell {
+      height: 42px;
+    }
+
     .euiTableHeaderCell {
       min-width: 42px;
       background-color: var(--euiColorEmptyShade);
@@ -163,10 +171,19 @@ $breakpoint-table: 1232px;
   grid-template-columns: calc(44% - 44px) 34% 12% 10% 44px;
   grid-column-gap: 0;
   height: 42px;
+  width: 100%;
 
   & div {
     display: flex;
     align-items: center;
+  }
+
+  .badge {
+    margin: 0 !important;
+  }
+
+  .rightAlign {
+    padding: 0 12px;
   }
 }
 
@@ -201,4 +218,14 @@ $breakpoint-table: 1232px;
   & .badge + .badge {
     margin-left: 6px!important;
   }
+}
+
+.truncateText {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tooltip {
+  width: auto;
 }

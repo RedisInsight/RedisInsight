@@ -6,11 +6,6 @@ import { IProps } from './interfaces'
 
 const mockedProps = mock<IProps>()
 
-/**
- * VirtualGrid tests
- *
- * @group unit
- */
 describe('VirtualGrid', () => {
   it('should render', () => {
     expect(

@@ -16,11 +16,6 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   updateUserConfigSettingsAction: () => jest.fn
 }))
 
-/**
- * AdvancedSettings tests
- *
- * @group unit
- */
 describe('AdvancedSettings', () => {
   it('should render', () => {
     expect(render(<AdvancedSettings />)).toBeTruthy()

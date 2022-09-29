@@ -23,11 +23,6 @@ jest.mock(redisCommandsPath, () => {
   }
 })
 
-/**
- * CHSearchInput tests
- *
- * @group unit
- */
 describe('CHSearchInput', () => {
   it('should render', () => {
     expect(render(<CHSearchWrapper />)).toBeTruthy()

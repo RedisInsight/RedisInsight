@@ -135,11 +135,6 @@ const mockedCommands: IMockedCommands[] = [
   },
 ]
 
-/**
- * getComplexityShortNotation tests
- *
- * @group unit
- */
 describe('getComplexityShortNotation', () => {
   it('Complexity short should return text according mocked data', () => {
     mockedCommands.forEach(({ matchedCommand = '', complexityShortMock }) => {
@@ -163,11 +158,6 @@ describe('getComplexityShortNotation', () => {
   })
 })
 
-/**
- * generateArgs tests
- *
- * @group unit
- */
 describe('generateArgs', () => {
   it('generateArgs short should return argument with GeneratedName (with Enums names)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesMock = [] }) => {
@@ -185,11 +175,6 @@ describe('generateArgs', () => {
   })
 })
 
-/**
- * generateArgName tests
- *
- * @group unit
- */
 describe('generateArgName', () => {
   it('Arguments names should return text according mocked data (with Enums values)', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesWithEnumsMock }) => {
@@ -230,11 +215,6 @@ const getDocUrlForCommandTests: any[] = [
   ['NON.EXIST COMMAND', 'https://redis.io/commands/non.exist-command'],
 ]
 
-/**
- * getDocUrlForCommand tests
- *
- * @group unit
- */
 describe('getDocUrlForCommand', () => {
   it.each(getDocUrlForCommandTests)('for input: %s (command), should be output: %s',
     (command, expected) => {

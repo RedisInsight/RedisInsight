@@ -5,11 +5,6 @@ import KeysSummary, { Props } from './KeysSummary'
 
 const mockedProps = mock<Props>()
 
-/**
- * KeysSummary tests
- *
- * @group unit
- */
 describe('KeysSummary', () => {
   it('should render', () => {
     expect(render(<KeysSummary {...instance(mockedProps)} />)).toBeTruthy()

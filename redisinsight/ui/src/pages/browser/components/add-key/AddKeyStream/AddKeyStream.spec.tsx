@@ -5,11 +5,6 @@ import AddKeyStream, { Props } from './AddKeyStream'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddKeyStream tests
- *
- * @group unit
- */
 describe('AddKeyStream', () => {
   it('should render', () => {
     expect(render(<AddKeyStream {...instance(mockedProps)} />)).toBeTruthy()

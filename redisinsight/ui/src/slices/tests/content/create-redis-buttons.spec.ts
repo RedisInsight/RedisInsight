@@ -29,11 +29,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * slices tests
- *
- * @group unit
- */
 describe('slices', () => {
 /**
  * reducer, actions and selectors tests
@@ -53,11 +48,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getContent tests
- *
- * @group unit
- */
   describe('getContent', () => {
     it('should properly set loading', () => {
       // Arrange
@@ -79,11 +69,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getContentSuccess tests
- *
- * @group unit
- */
   describe('getContentSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
@@ -106,11 +91,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getContentFailure tests
- *
- * @group unit
- */
   describe('getContentFailure', () => {
     it('should properly set error', () => {
       // Arrange

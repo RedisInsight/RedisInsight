@@ -46,11 +46,6 @@ const mockMessagesView = (props: MessagesViewProps) => (
   </div>
 )
 
-/**
- * MessagesViewWrapper tests
- *
- * @group unit
- */
 describe('MessagesViewWrapper', () => {
   beforeAll(() => {
     MessagesView.mockImplementation(mockMessagesView)

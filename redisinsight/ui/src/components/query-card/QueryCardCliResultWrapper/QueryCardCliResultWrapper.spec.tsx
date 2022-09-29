@@ -26,11 +26,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * QueryCardCliResultWrapper tests
- *
- * @group unit
- */
 describe('QueryCardCliResultWrapper', () => {
   it('should render', () => {
     expect(render(<QueryCardCliResultWrapper {...instance(mockedProps)} />)).toBeTruthy()

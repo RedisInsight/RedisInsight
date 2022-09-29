@@ -30,11 +30,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * monitor slice tests
- *
- * @group unit
- */
 describe('monitor slice', () => {
   beforeAll(() => {
     dateNow = jest.spyOn(Date, 'now').mockImplementation(() => timestamp)
@@ -81,11 +76,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * showMonitor tests
- *
- * @group unit
- */
   describe('showMonitor', () => {
     it('should properly set !isShowMonitor', () => {
       // Arrange
@@ -107,11 +97,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * toggleHideMonitor tests
- *
- * @group unit
- */
   describe('toggleHideMonitor', () => {
     it('should properly set !isShowMonitor', () => {
       // Arrange
@@ -133,11 +118,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * startMonitor tests
- *
- * @group unit
- */
   describe('startMonitor', () => {
     it('should properly set new state', () => {
       // Arrange
@@ -160,11 +140,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * setStartTimestamp tests
- *
- * @group unit
- */
   describe('setStartTimestamp', () => {
     it('should properly set new state', () => {
       // Arrange
@@ -190,11 +165,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * togglePauseMonitor tests
- *
- * @group unit
- */
   describe('togglePauseMonitor', () => {
     it('should properly set new state', () => {
       // Arrange
@@ -223,11 +193,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * stopMonitor tests
- *
- * @group unit
- */
   describe('stopMonitor', () => {
     it('should properly set new state', () => {
       // Arrange
@@ -249,11 +214,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * setSocket tests
- *
- * @group unit
- */
   describe('setSocket', () => {
     it('should properly set setSocket = mockedSocket', () => {
       // Arrange
@@ -276,11 +236,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * concatMonitorItems tests
- *
- * @group unit
- */
   describe('concatMonitorItems', () => {
     it('should properly set payload to items', () => {
       const payload = [{
@@ -338,11 +293,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * resetMonitorItems tests
- *
- * @group unit
- */
   describe('resetMonitorItems', () => {
     it('should properly set isShowMonitor = false', () => {
       // Arrange
@@ -364,11 +314,6 @@ describe('monitor slice', () => {
     })
   })
 
-  /**
- * setError tests
- *
- * @group unit
- */
   describe('setError', () => {
     it('should properly set an Error', () => {
       // Arrange

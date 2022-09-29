@@ -8,11 +8,6 @@ const ID_FIELD = 'id-field'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddStreamGroup tests
- *
- * @group unit
- */
 describe('AddStreamGroup', () => {
   it('should render', () => {
     expect(render(<AddStreamGroup {...instance(mockedProps)} />)).toBeTruthy()

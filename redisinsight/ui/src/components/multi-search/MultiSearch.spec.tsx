@@ -6,11 +6,6 @@ import MultiSearch, { Props } from './MultiSearch'
 const mockedProps = mock<Props>()
 const searchInputId = 'search-key'
 
-/**
- * MultiSearch tests
- *
- * @group unit
- */
 describe('MultiSearch', () => {
   it('should render', () => {
     expect(render(<MultiSearch {...instance(mockedProps)} />)).toBeTruthy()

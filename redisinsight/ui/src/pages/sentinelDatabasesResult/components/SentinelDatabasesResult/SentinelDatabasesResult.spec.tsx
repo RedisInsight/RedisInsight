@@ -36,11 +36,6 @@ beforeEach(() => {
   ]
 })
 
-/**
- * SentinelDatabasesResult tests
- *
- * @group unit
- */
 describe('SentinelDatabasesResult', () => {
   it('should render', () => {
     expect(

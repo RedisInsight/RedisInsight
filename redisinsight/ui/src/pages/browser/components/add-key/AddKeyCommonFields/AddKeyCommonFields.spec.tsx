@@ -8,11 +8,6 @@ import AddKeyCommonFields, { Props } from './AddKeyCommonFields'
 const mockedProps = mock<Props>()
 const options = ['one', 'two']
 
-/**
- * AddKeyCommonFields tests
- *
- * @group unit
- */
 describe('AddKeyCommonFields', () => {
   it('should render', () => {
     expect(

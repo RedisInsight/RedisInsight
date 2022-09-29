@@ -8,11 +8,6 @@ const MEMBER_NAME = 'member-name'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddKeyZset tests
- *
- * @group unit
- */
 describe('AddKeyZset', () => {
   it('should render', () => {
     expect(render(<AddKeyZset {...instance(mockedProps)} />)).toBeTruthy()

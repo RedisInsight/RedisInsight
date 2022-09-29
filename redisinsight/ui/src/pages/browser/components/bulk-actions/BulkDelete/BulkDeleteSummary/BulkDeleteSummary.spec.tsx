@@ -43,11 +43,6 @@ beforeEach(() => {
   }))
 })
 
-/**
- * BulkDeleteSummary tests
- *
- * @group unit
- */
 describe('BulkDeleteSummary', () => {
   it('should render', () => {
     expect(render(<BulkDeleteSummary />)).toBeTruthy()

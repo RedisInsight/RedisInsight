@@ -17,11 +17,6 @@ const modulesMock: RedisModuleDto[] = [
   { name: RedisDefaultModules.TimeSeries },
 ]
 
-/**
- * DatabaseListModules tests
- *
- * @group unit
- */
 describe('DatabaseListModules', () => {
   it('should render', () => {
     expect(render(<DatabaseListModules {...instance(mockedProps)} modules={modulesMock} />)).toBeTruthy()

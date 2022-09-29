@@ -12,11 +12,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * BottomGroupMinimized tests
- *
- * @group unit
- */
 describe('BottomGroupMinimized', () => {
   it('should render', () => {
     expect(

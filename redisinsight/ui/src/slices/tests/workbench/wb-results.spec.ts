@@ -52,11 +52,6 @@ const initialStateWithItems = {
   }]
 }
 
-/**
- * workbench results slice tests
- *
- * @group unit
- */
 describe('workbench results slice', () => {
 /**
  * sendWBCommand tests
@@ -96,11 +91,6 @@ describe('workbench results slice', () => {
     })
   })
 
-  /**
- * toggleOpenWBResult tests
- *
- * @group unit
- */
   describe('toggleOpenWBResult', () => {
     it('should properly set isOpen = true', () => {
       // Arrange
@@ -154,11 +144,6 @@ describe('workbench results slice', () => {
     })
   })
 
-  /**
- * sendWBCommandSuccess tests
- *
- * @group unit
- */
   describe('sendWBCommandSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -200,11 +185,6 @@ describe('workbench results slice', () => {
     })
   })
 
-  /**
- * processWBCommandFailure tests
- *
- * @group unit
- */
   describe('processWBCommandFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -236,11 +216,6 @@ describe('workbench results slice', () => {
     })
   })
 
-  /**
- * loadWBHistorySuccess tests
- *
- * @group unit
- */
   describe('loadWBHistorySuccess', () => {
     it('should properly set history items', () => {
       // Arrange
@@ -284,13 +259,8 @@ describe('workbench results slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
-  /**
+    /**
  * Standalone Cli commands tests
  *
  * @group unit

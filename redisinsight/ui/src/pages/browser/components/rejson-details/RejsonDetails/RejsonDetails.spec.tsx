@@ -34,11 +34,6 @@ const mockedJSONNull = null
 const mockedJSONBoolean = true
 const mockedJSONNumber = 123123
 
-/**
- * RejsonDetails tests
- *
- * @group unit
- */
 describe('RejsonDetails', () => {
   it('should render', () => {
     expect(render(
@@ -49,11 +44,6 @@ describe('RejsonDetails', () => {
     )).toBeTruthy()
   })
 
-  /**
- * should render JSON object tests
- *
- * @group unit
- */
   describe('should render JSON object', () => {
     it('should be downloaded', () => {
       expect(render(
@@ -81,11 +71,6 @@ describe('RejsonDetails', () => {
     })
   })
 
-  /**
- * should render JSON array tests
- *
- * @group unit
- */
   describe('should render JSON array', () => {
     it('should not be downloaded', () => {
       expect(render(
@@ -101,11 +86,6 @@ describe('RejsonDetails', () => {
     })
   })
 
-  /**
- * should render JSON string tests
- *
- * @group unit
- */
   describe('should render JSON string', () => {
     it('should be downloaded', () => {
       expect(render(
@@ -131,11 +111,6 @@ describe('RejsonDetails', () => {
     })
   })
 
-  /**
- * should render JSON null tests
- *
- * @group unit
- */
   describe('should render JSON null', () => {
     it('should be downloaded', () => {
       expect(render(

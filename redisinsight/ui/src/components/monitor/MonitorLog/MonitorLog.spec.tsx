@@ -12,11 +12,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * MonitorLog tests
- *
- * @group unit
- */
 describe('MonitorLog', () => {
   it('should render', () => {
     expect(render(<MonitorLog />)).toBeTruthy()

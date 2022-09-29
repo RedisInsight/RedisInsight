@@ -30,11 +30,6 @@ jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))
 
-/**
- * string slice tests
- *
- * @group unit
- */
 describe('string slice', () => {
 /**
  * reducer, actions and selectors tests
@@ -54,11 +49,6 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * getString tests
- *
- * @group unit
- */
   describe('getString', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -81,11 +71,6 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * getStringSuccess tests
- *
- * @group unit
- */
   describe('getStringSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -145,11 +130,6 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * getStringFailure tests
- *
- * @group unit
- */
   describe('getStringFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -174,11 +154,6 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * updateValue tests
- *
- * @group unit
- */
   describe('updateValue', () => {
     it('should properly set the state before the fetch data', () => {
       // Arrange
@@ -201,11 +176,6 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * updateValueSuccess tests
- *
- * @group unit
- */
   describe('updateValueSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -260,11 +230,6 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * updateValueFailure tests
- *
- * @group unit
- */
   describe('updateValueFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -289,11 +254,6 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * resetStringValue tests
- *
- * @group unit
- */
   describe('resetStringValue', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -315,13 +275,8 @@ describe('string slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
-  /**
+    /**
  * fetchString tests
  *
  * @group unit

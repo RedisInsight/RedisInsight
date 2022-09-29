@@ -46,11 +46,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * NotificationCenter tests
- *
- * @group unit
- */
 describe('NotificationCenter', () => {
   it('should render', () => {
     expect(render(<NotificationCenter />)).toBeTruthy()

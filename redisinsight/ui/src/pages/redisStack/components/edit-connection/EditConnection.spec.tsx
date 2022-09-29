@@ -18,11 +18,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-/**
- * EditConnection tests
- *
- * @group unit
- */
 describe('EditConnection', () => {
   it('should render', () => {
     expect(render(<EditConnection />)).toBeTruthy()

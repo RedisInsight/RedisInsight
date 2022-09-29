@@ -43,11 +43,6 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   }),
 }))
 
-/**
- * MonitorConfig tests
- *
- * @group unit
- */
 describe('MonitorConfig', () => {
   it('should render', () => {
     expect(render(<MonitorConfig />)).toBeTruthy()

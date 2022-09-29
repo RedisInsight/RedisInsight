@@ -53,11 +53,6 @@ jest.mock('uiSrc/utils/cliHelper', () => ({
   clearOutput: jest.fn(),
 }))
 
-/**
- * CliBody tests
- *
- * @group unit
- */
 describe('CliBody', () => {
   it('should render', () => {
     expect(render(<CliBody {...instance(mockedProps)} />)).toBeTruthy()
@@ -78,11 +73,6 @@ describe('CliBody', () => {
     expect(cliInput).toBeNull()
   })
 
-  /**
- * CLI input special commands tests
- *
- * @group unit
- */
   describe('CLI input special commands', () => {
     it('"clear" command should call "setOutputInitialState"', () => {
       const onSubmitMock = jest.fn()
@@ -111,11 +101,6 @@ describe('CliBody', () => {
     })
   })
 
-  /**
- * CLI input keyboard cases tests
- *
- * @group unit
- */
   describe('CLI input keyboard cases', () => {
     it('"Enter" keydown should call "onSubmit"', () => {
       const command = 'info'

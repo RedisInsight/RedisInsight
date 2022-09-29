@@ -3,14 +3,9 @@ import { serialize } from 'php-serialize'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { anyToBuffer, bufferToSerializedFormat, stringToBuffer, stringToSerializedBufferFormat } from 'uiSrc/utils'
 
-/**
- * bufferToSerializedFormat tests
- *
- * @group unit
- */
 describe('bufferToSerializedFormat', () => {
   describe(KeyValueFormat.JSON, () => {
-  /**
+    /**
  * should properly serialize tests
  *
  * @group unit
@@ -38,7 +33,7 @@ describe('bufferToSerializedFormat', () => {
   })
 
   describe(KeyValueFormat.Msgpack, () => {
-  /**
+    /**
  * should properly serialize tests
  *
  * @group unit
@@ -69,7 +64,7 @@ describe('bufferToSerializedFormat', () => {
   })
 
   describe(KeyValueFormat.PHP, () => {
-  /**
+    /**
  * should properly serialize tests
  *
  * @group unit
@@ -100,14 +95,9 @@ describe('bufferToSerializedFormat', () => {
   })
 })
 
-/**
- * stringToSerializedBufferFormat tests
- *
- * @group unit
- */
 describe('stringToSerializedBufferFormat', () => {
   describe(KeyValueFormat.JSON, () => {
-  /**
+    /**
  * should properly unserialize tests
  *
  * @group unit
@@ -135,7 +125,7 @@ describe('stringToSerializedBufferFormat', () => {
   })
 
   describe(KeyValueFormat.Msgpack, () => {
-  /**
+    /**
  * should properly unserialize tests
  *
  * @group unit
@@ -166,7 +156,7 @@ describe('stringToSerializedBufferFormat', () => {
   })
 
   describe(KeyValueFormat.PHP, () => {
-  /**
+    /**
  * should properly unserialize tests
  *
  * @group unit

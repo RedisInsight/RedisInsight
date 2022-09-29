@@ -69,11 +69,6 @@ beforeEach(() => {
   storeWithSelectedKey = mockStore(rootStateWithSelectedKey)
 })
 
-/**
- * rejson slice tests
- *
- * @group unit
- */
 describe('rejson slice', () => {
 /**
  * reducer, actions and selectors tests
@@ -93,11 +88,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * loadRejsonBranch tests
- *
- * @group unit
- */
   describe('loadRejsonBranch', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -119,11 +109,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * loadRejsonBranchSuccess tests
- *
- * @group unit
- */
   describe('loadRejsonBranchSuccess', () => {
     it('should properly set the state with fetched data', () => {
       // Arrange
@@ -172,11 +157,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * loadRejsonBranchFailure tests
- *
- * @group unit
- */
   describe('loadRejsonBranchFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -200,11 +180,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * appendReJSONArrayItem tests
- *
- * @group unit
- */
   describe('appendReJSONArrayItem', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -226,11 +201,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * appendReJSONArrayItemSuccess tests
- *
- * @group unit
- */
   describe('appendReJSONArrayItemSuccess', () => {
     it('should properly set the state after append', () => {
       const state = {
@@ -251,11 +221,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * appendReJSONArrayItemFailure tests
- *
- * @group unit
- */
   describe('appendReJSONArrayItemFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -279,11 +244,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * setReJSONData tests
- *
- * @group unit
- */
   describe('setReJSONData', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -305,11 +265,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * setReJSONDataSuccess tests
- *
- * @group unit
- */
   describe('setReJSONDataSuccess', () => {
     it('should properly set the state after append', () => {
       const state = {
@@ -330,11 +285,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * setReJSONDataFailure tests
- *
- * @group unit
- */
   describe('setReJSONDataFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -358,11 +308,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * removeRejsonKey tests
- *
- * @group unit
- */
   describe('removeRejsonKey', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -384,11 +329,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * removeRejsonKeySuccess tests
- *
- * @group unit
- */
   describe('removeRejsonKeySuccess', () => {
     it('should properly set the state after append', () => {
       const state = {
@@ -409,11 +349,6 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * removeRejsonKeyFailure tests
- *
- * @group unit
- */
   describe('removeRejsonKeyFailure', () => {
     it('should properly set the error', () => {
       // Arrange
@@ -437,13 +372,8 @@ describe('rejson slice', () => {
     })
   })
 
-  /**
- * thunks tests
- *
- * @group unit
- */
   describe('thunks', () => {
-  /**
+    /**
  * fetchReJSON tests
  *
  * @group unit

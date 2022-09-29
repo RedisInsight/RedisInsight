@@ -5,11 +5,6 @@ import AddKeySet, { Props } from './AddKeySet'
 
 const mockedProps = mock<Props>()
 
-/**
- * AddKeyZset tests
- *
- * @group unit
- */
 describe('AddKeyZset', () => {
   it('should render', () => {
     expect(render(<AddKeySet {...instance(mockedProps)} />)).toBeTruthy()

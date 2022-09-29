@@ -14,11 +14,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * PublishMessage tests
- *
- * @group unit
- */
 describe('PublishMessage', () => {
   it('should render', () => {
     expect(render(<PublishMessage />)).toBeTruthy()

@@ -32,11 +32,6 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   }),
 }))
 
-/**
- * Config tests
- *
- * @group unit
- */
 describe('Config', () => {
   it('should render', () => {
     render(<Config />)

@@ -1,10 +1,5 @@
 import { generatePath, isScalar } from './JSONUtils'
 
-/**
- * JSONUtils tests
- *
- * @group unit
- */
 describe('JSONUtils', () => {
 /**
  * generatePath tests
@@ -21,11 +16,6 @@ describe('JSONUtils', () => {
     })
   })
 
-  /**
- * isScalar tests
- *
- * @group unit
- */
   describe('isScalar', () => {
     it('should return Truthy for scalar variables', () => {
       const string = 'string'

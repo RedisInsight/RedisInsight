@@ -79,11 +79,6 @@ const MockInstanceForm = (props: InstanceProps) => (
   </div>
 )
 
-/**
- * InstanceFormWrapper tests
- *
- * @group unit
- */
 describe('InstanceFormWrapper', () => {
   beforeAll(() => {
     InstanceForm.mockImplementation(MockInstanceForm)

@@ -21,11 +21,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * pubsub slice tests
- *
- * @group unit
- */
 describe('pubsub slice', () => {
 /**
  * reducer, actions and selectors tests
@@ -116,7 +111,7 @@ describe('pubsub slice', () => {
  * @group unit
  */
   describe('thunks', () => {
-  /**
+    /**
  * publishMessageAction tests
  *
  * @group unit

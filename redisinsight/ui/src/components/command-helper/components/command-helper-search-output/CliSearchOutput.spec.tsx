@@ -52,11 +52,6 @@ jest.mock(redisCommandsPath, () => {
   }
 })
 
-/**
- * CHSearchOutput tests
- *
- * @group unit
- */
 describe('CHSearchOutput', () => {
   it('should render', () => {
     expect(render(<CHSearchOutput searchedCommands={[]} />)).toBeTruthy()

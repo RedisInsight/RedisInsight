@@ -21,11 +21,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-/**
- * slices tests
- *
- * @group unit
- */
 describe('slices', () => {
 /**
  * reducer, actions and selectors tests
@@ -45,11 +40,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getWBTutorials tests
- *
- * @group unit
- */
   describe('getWBTutorials', () => {
     it('should properly set loading', () => {
       // Arrange
@@ -73,11 +63,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getWBTutorialsSuccess tests
- *
- * @group unit
- */
   describe('getWBTutorialsSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
@@ -101,11 +86,6 @@ describe('slices', () => {
     })
   })
 
-  /**
- * getWBTutorialsFailure tests
- *
- * @group unit
- */
   describe('getWBTutorialsFailure', () => {
     it('should properly set error', () => {
       // Arrange

@@ -5,11 +5,6 @@ import ScanMore, { Props } from './ScanMore'
 
 const mockedProps = mock<Props>()
 
-/**
- * ActionBar tests
- *
- * @group unit
- */
 describe('ActionBar', () => {
   it('should render', () => {
     expect(render(<ScanMore {...instance(mockedProps)} />)).toBeTruthy()

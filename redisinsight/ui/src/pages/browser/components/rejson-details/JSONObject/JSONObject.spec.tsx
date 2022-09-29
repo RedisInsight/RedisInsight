@@ -28,11 +28,6 @@ jest.mock('uiSrc/slices/browser/rejson', () => ({
   ),
 }))
 
-/**
- * JSONObject tests
- *
- * @group unit
- */
 describe('JSONObject', () => {
   it('should render', () => {
     expect(render(

@@ -35,11 +35,6 @@ jest.mock('uiSrc/slices/app/plugins', () => ({
   }),
 }))
 
-/**
- * QueryCard tests
- *
- * @group unit
- */
 describe('QueryCard', () => {
   it('should render', () => {
     expect(render(<QueryCard {...instance(mockedProps)} />)).toBeTruthy()

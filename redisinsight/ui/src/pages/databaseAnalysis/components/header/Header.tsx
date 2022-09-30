@@ -117,7 +117,7 @@ const Header = (props: Props) => {
                     {` (${numberWithSpaces(progress.processed)}`}
                     /
                     {numberWithSpaces(progress.total)}
-                    {'keys) '}
+                    {' keys) '}
                   </EuiText>
                 </EuiFlexItem>
               )}

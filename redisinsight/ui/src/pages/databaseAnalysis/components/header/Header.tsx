@@ -15,9 +15,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
-import { appContextBrowserTree } from 'uiSrc/slices/app/context'
+import { localStorageService } from 'uiSrc/services'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { getApproximatePercentage } from 'uiSrc/utils/validations'
+import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { appContextBrowserTree } from 'uiSrc/slices/app/context'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -48,7 +50,11 @@ const Header = (props: Props) => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
-  const { delimiter } = useSelector(appContextBrowserTree)
+  const { delimiter = '' } = useSelector(appContextBrowserTree)
+
+  const delimiterStorage = localStorageService.get(BrowserStorageItem.treeViewDelimiter + instanceId)
+    || delimiter
+    || DEFAULT_DELIMITER
 
   const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
     const { createdAt, id } = item
@@ -68,7 +74,7 @@ const Header = (props: Props) => {
         databaseId: instanceId,
       }
     })
-    dispatch(createNewAnalysis(instanceId, delimiter))
+    dispatch(createNewAnalysis(instanceId, delimiterStorage))
   }
 
   return (
@@ -119,7 +125,7 @@ const Header = (props: Props) => {
           </EuiFlexItem>
         )}
         <EuiFlexItem grow={false}>
-          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={true}>
+          <EuiFlexGroup gutterSize="none" alignItems="center">
             <EuiFlexItem style={{ overflow: 'hidden' }}>
               <EuiButton
                 aria-label="New reports"

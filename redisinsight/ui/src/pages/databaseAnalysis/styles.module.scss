@@ -5,13 +5,19 @@
 $breakpoint-table: 1232px;
 
 .main {
-  @include euiScrollBar;
   margin: 0 16px 0;
   height: calc(100% - 70px);
   background-color: var(--euiColorEmptyShade);
   padding: 18px 24px;
   overflow: auto;
   scrollbar-width: thin;
+}
+
+.content {
+  @include euiScrollBar;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 94px);
 }
 
 .grid {

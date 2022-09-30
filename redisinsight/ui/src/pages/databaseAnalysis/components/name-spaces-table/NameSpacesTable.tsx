@@ -45,7 +45,7 @@ const NameSpacesTable = (props: Props) => {
   const handleRedirect = (nsp: string, filter: string) => {
     dispatch(setBrowserTreeDelimiter(delimiter))
     dispatch(setFilter(filter))
-    dispatch(setSearchMatch(`${nsp}:*`))
+    dispatch(setSearchMatch(`${nsp}${delimiter}*`))
     dispatch(resetKeysData())
     dispatch(fetchKeys(
       '0',
@@ -78,7 +78,7 @@ const NameSpacesTable = (props: Props) => {
                       className={cx(styles.link, styles.expanded)}
                       onClick={() => handleRedirect(item.nsp as string, type.type)}
                     >
-                      {`${item.nsp}:*`}
+                      {`${item.nsp}${delimiter}*`}
                     </EuiButtonEmpty>
                   </EuiToolTip>
                 </div>
@@ -117,13 +117,13 @@ const NameSpacesTable = (props: Props) => {
             <EuiToolTip
               anchorClassName={styles.tooltip}
               position="bottom"
-              content={`${nsp}:*`}
+              content={`${nsp}${delimiter}*`}
             >
               <EuiButtonEmpty
                 className={styles.link}
                 onClick={() => handleRedirect(nsp, filterType)}
               >
-                {`${nsp}:*`}
+                {`${nsp}${delimiter}*`}
               </EuiButtonEmpty>
             </EuiToolTip>
           </div>

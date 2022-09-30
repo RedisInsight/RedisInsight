@@ -1,4 +1,5 @@
 import React from 'react'
+import cx from 'classnames'
 import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { Nullable } from 'uiSrc/utils'
 import { emptyMessageContent } from 'uiSrc/constants'
@@ -16,31 +17,23 @@ export interface Props {
 const AnalysisDataView = (props: Props) => {
   const { loading, reports = [], data } = props
 
-  if (loading) {
-    return (
-      <div className={styles.grid}>
-        <TopNamespaceView data={data} loading={loading} />
-      </div>
-    )
-  }
-
   return (
     <>
-      {!reports.length && (
+      {!reports.length && !loading && (
         <EmptyAnalysisMessage
           title={emptyMessageContent.noReports.title}
           text={emptyMessageContent.noReports.text}
           name="reports"
         />
       )}
-      {!!reports.length && data?.totalKeys?.total === 0 && (
+      {!!reports.length && data?.totalKeys?.total === 0 && !loading && (
         <EmptyAnalysisMessage
           title={emptyMessageContent.noKeys.title}
           text={emptyMessageContent.noKeys.text}
           name="keys"
         />
       )}
-      <div className={styles.grid}>
+      <div className={cx(styles.grid, styles.content)}>
         <TopNamespaceView data={data} loading={loading} />
       </div>
     </>

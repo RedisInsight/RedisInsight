@@ -19,14 +19,14 @@ const AnalysisDataView = (props: Props) => {
 
   return (
     <>
-      {!reports.length && !loading && (
+      {!loading && !reports.length && (
         <EmptyAnalysisMessage
           title={emptyMessageContent.noReports.title}
           text={emptyMessageContent.noReports.text}
           name="reports"
         />
       )}
-      {!!reports.length && data?.totalKeys?.total === 0 && !loading && (
+      {!loading && !!reports.length && data?.totalKeys?.total === 0 && (
         <EmptyAnalysisMessage
           title={emptyMessageContent.noKeys.title}
           text={emptyMessageContent.noKeys.text}

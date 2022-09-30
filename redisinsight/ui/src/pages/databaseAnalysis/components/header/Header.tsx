@@ -125,7 +125,7 @@ const Header = (props: Props) => {
           </EuiFlexItem>
         )}
         <EuiFlexItem grow={false}>
-          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={true}>
+          <EuiFlexGroup gutterSize="none" alignItems="center">
             <EuiFlexItem style={{ overflow: 'hidden' }}>
               <EuiButton
                 aria-label="New reports"

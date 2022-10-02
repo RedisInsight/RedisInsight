@@ -405,6 +405,7 @@ describe('slices', () => {
   })
 
   // thunks
+
   describe('thunks', () => {
     describe('fetchNotificationsAction', () => {
       it('succeed to fetch data', async () => {

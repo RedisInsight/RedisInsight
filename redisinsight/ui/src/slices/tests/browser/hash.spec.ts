@@ -64,6 +64,7 @@ describe('hash slice', () => {
   afterAll(() => {
     dateNow.mockRestore()
   })
+
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange

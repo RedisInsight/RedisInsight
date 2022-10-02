@@ -23,7 +23,14 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  OVER_RENDER_BUFFER_COUNT,
+  TableCellAlignment,
+  TEXT_INVALID_VALUE,
+  TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_UNPRINTABLE_CHARACTERS
+} from 'uiSrc/constants'
 import {
   bufferToSerializedFormat,
   bufferToString,
@@ -47,7 +54,6 @@ import {
   SetListElementDto,
   SetListElementResponse,
 } from 'apiSrc/modules/browser/dto'
-import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 
 import styles from './styles.module.scss'
 
@@ -206,6 +212,13 @@ const ListDetails = (props: Props) => {
     cellCache.clearAll()
   }
 
+  const updateTextAreaHeight = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = '0px'
+      textAreaRef.current.style.height = `${textAreaRef.current?.scrollHeight || 0}px`
+    }
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'index',
@@ -263,7 +276,7 @@ const ListDetails = (props: Props) => {
           setTimeout(() => cellCache.clear(rowIndex, 1), 0)
 
           return (
-            <AutoSizer disableHeight>
+            <AutoSizer disableHeight onResize={() => setTimeout(updateTextAreaHeight, 0)}>
               {({ width }) => (
                 <div style={{ width }}>
                   <StopPropagation>
@@ -284,24 +297,31 @@ const ListDetails = (props: Props) => {
                         disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
                         onDecline={() => handleEditElement(index, false)}
                         onApply={() => handleApplyEditElement(index)}
+                        approveText={TEXT_INVALID_VALUE}
+                        approveByValidation={() =>
+                          formattingBuffer(
+                            stringToSerializedBufferFormat(viewFormat, areaValue),
+                            viewFormat
+                          )?.isValid}
                       >
                         <EuiTextArea
                           fullWidth
                           name="value"
                           id="value"
-                          rows={calculateTextareaLines(areaValue, width + 80)}
                           resize="none"
                           placeholder="Enter Element"
                           value={areaValue}
                           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                             cellCache.clearAll()
                             setAreaValue(e.target.value)
+                            updateTextAreaHeight()
                           }}
                           disabled={updateLoading}
                           inputRef={textAreaRef}
                           className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
                           spellCheck={false}
                           data-testid="element-value-editor"
+                          style={{ height: textAreaRef.current?.scrollHeight || 0 }}
                         />
                       </InlineItemEditor>
                     </div>
@@ -347,7 +367,7 @@ const ListDetails = (props: Props) => {
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiToolTip content={!isEditable ? 'Cannot change data in this format' : null}>
+              <EuiToolTip content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}>
                 <EuiButtonIcon
                   iconType="pencil"
                   aria-label="Edit element"

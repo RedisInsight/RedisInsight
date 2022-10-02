@@ -22,7 +22,7 @@ import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
@@ -39,7 +39,9 @@ export interface Props {
   createdAt?: Date
   summaryText?: string
   activeMode: RunQueryMode
-  mode: RunQueryMode
+  mode?: RunQueryMode
+  activeResultsMode?: ResultsMode
+  summary?: string
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
@@ -62,6 +64,8 @@ const QueryCardHeader = (props: Props) => {
     summaryText,
     createdAt,
     mode,
+    activeResultsMode,
+    summary,
     activeMode,
     selectedValue,
     emptyCommand,
@@ -88,6 +92,7 @@ const QueryCardHeader = (props: Props) => {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
         rawMode: activeMode === RunQueryMode.Raw,
+        group: activeResultsMode === ResultsMode.GroupMode,
         ...additionalData
       }
     })
@@ -220,13 +225,14 @@ const QueryCardHeader = (props: Props) => {
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
-              <QueryCardTooltip query={query} />
+              <QueryCardTooltip query={query} summary={summary} />
             </EuiTextColor>
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy query"
               className="copy-btn"
-              onClick={(event: React.MouseEvent) => handleCopy(event, query)}
+              onClick={(event: React.MouseEvent) => handleCopy(event, query || '')}
+              data-testid="copy-command"
             />
           </div>
         </EuiFlexItem>
@@ -237,10 +243,11 @@ const QueryCardHeader = (props: Props) => {
               {mode === RunQueryMode.Raw && (
                 <EuiToolTip
                   className={styles.tooltip}
-                  content="Raw mode"
+                  content="Raw Mode"
                   position="bottom"
+                  data-testid="raw-mode-tooltip"
                 >
-                  <EuiTextColor className={cx(styles.timeText, styles.mode)}>
+                  <EuiTextColor className={cx(styles.timeText, styles.mode)} data-testid="raw-mode-anchor">
                     -r
                   </EuiTextColor>
                 </EuiToolTip>
@@ -258,7 +265,7 @@ const QueryCardHeader = (props: Props) => {
           className={cx(styles.buttonIcon, styles.viewTypeIcon)}
           onClick={onDropDownViewClick}
         >
-          {isOpen && options.length > 1 && (
+          {isOpen && options.length > 1 && !summary && (
             <div className={styles.dropdownWrapper}>
               <div className={styles.dropdown}>
                 <EuiSuperSelect

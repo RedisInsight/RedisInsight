@@ -5,23 +5,27 @@ export const formatters = [{
     format: 'JSON',
     fromText: '{ "field": "value" }',
     fromTextEdit: '{ "field": "value123" }'
-}, {
+},
+{
     format: 'Msgpack',
     fromHexText: 'DF00000001A56669656C64A576616C7565',
     fromText: '{ "field": "value" }',
     fromTextEdit: '{ "field": "value123" }',
     formattedText: '{ "field": "value" }'
-}, {
+},
+{
     format: 'Protobuf',
     fromHexText: '08d90f10d802',
     formattedText: '[ { "1": 2009 }, { "2": 344 } ]'
-}, {
-    format: 'PHP Unserialize',
+},
+{
+    format: 'PHP serialized',
     fromText: 'a:2:{i:0;s:12:"Sample array";i:1;a:2:{i:0;s:5:"Apple";i:1;s:6:"Orange";}}',
     fromTextEdit: '[ "Sample array", [ "Apple", "Orange15" ] ]',
     formattedText: '[ "Sample array", [ "Apple", "Orange" ] ]'
-}, {
-    format: 'Java Object',
+},
+{
+    format: 'Java serialized',
     fromHexText: 'aced000573720008456d706c6f796565025e743467c6123c0200034900066e756d6265724c0007616464726573737400124c6a6176612f6c616e672f537472696e673b4c00046e616d6571007e000178700000006574001950686f6b6b61204b75616e2c20416d62656874612050656572740009526579616e20416c69',
     formattedText: '{ "fields": [ { "number": 101 }, { "address": "Phokka Kuan, Ambehta Peer" }, { "name": "Reyan Ali" } ], "annotations": [], "className": "Employee", "serialVersionUid": "170701604314812988" }'
 },
@@ -45,10 +49,15 @@ export const formatters = [{
     fromTextEdit: '水山 рус bin 子',
     formattedText: '1110011010110000101101000010000011010001100000001101000110000011110100011000000100100000011000100110100101101110',
     formattedTextEdit: '111001101011000010110100111001011011000110110001001000001101000110000000110100011000001111010001100000010010000001100010011010010110111000100000111001011010110110010000'
+},
+{
+    format: 'Pickle',
+    fromHexText: '286470300a5327617272270a70310a286c70320a49310a6149320a617353276f626a270a70330a286470340a532761270a70350a532762270a70360a7373532748656c6c6f270a70370a5327776f726c64270a70380a732e',
+    formattedText: '{ "arr": [ 1, 2 ], "obj": { "a": "b" }, "Hello": "world" }'
 }];
 
 /**
- * PHP data for convertion including different php unserialize data types
+ * PHP data for convertion including different php serialized data types
  */
 export const phpData = [{
     dataType: 'Object',

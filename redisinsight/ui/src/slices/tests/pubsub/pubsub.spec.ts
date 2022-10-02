@@ -95,6 +95,7 @@ describe('pubsub slice', () => {
   })
 
   // thunks
+
   describe('thunks', () => {
     describe('publishMessageAction', () => {
       it('succeed to fetch data', async () => {

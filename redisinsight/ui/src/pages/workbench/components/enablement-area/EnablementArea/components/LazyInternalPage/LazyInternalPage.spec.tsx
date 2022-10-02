@@ -21,6 +21,11 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
+/**
+ * LazyInternalPage tests
+ *
+ * @group component
+ */
 describe('LazyInternalPage', () => {
   it('should render', () => {
     expect(render(<LazyInternalPage {...instance(mockedProps)} />)).toBeTruthy()

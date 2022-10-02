@@ -25,11 +25,23 @@
 }
 
 .loading {
-  // margin-top: 8px;
   height: 17px;
   max-width: 600px;
 
   :global(.euiLoadingContent__singleLine) {
     margin-bottom: 0 !important;
   }
+}
+
+.container .alert {
+  font-size: 14px !important;
+  line-height: 17px !important;
+  letter-spacing: -0.13px !important;
+  color: var(--euiColorWarningLight) !important;
+  margin-bottom: 4px;
+}
+
+.container .alertIcon {
+  margin-right: 6px;
+  margin-top: -3px;
 }

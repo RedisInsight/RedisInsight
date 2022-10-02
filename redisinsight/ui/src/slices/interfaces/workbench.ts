@@ -46,3 +46,14 @@ export enum RunQueryMode {
   Raw = 'RAW',
   ASCII = 'ASCII',
 }
+
+export enum ResultsMode {
+  Default = 'DEFAULT',
+  GroupMode = 'GROUP_MODE',
+}
+
+export interface ResultsSummary {
+  total: number
+  success: number
+  fail: number
+}

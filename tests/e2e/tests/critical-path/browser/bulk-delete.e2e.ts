@@ -38,14 +38,21 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     // Open bulk actions
     await t.click(browserPage.bulkActionsButton);
     await t.expect(bulkActionsPage.bulkActionsContainer.visible).ok('Bulk actions screen not opened');
-});
-test('Verify that user can see pattern summary of the keys selected: key type, pattern', async t => {
-    // Filter by Hash keys
-    await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
-    // Open bulk actions
-    await t.click(browserPage.bulkActionsButton);
+    // Verify that user can see pattern summary of the keys selected: key type, pattern
     await t.expect(bulkActionsPage.infoFilter.innerText).contains('Key type:\nHASH', 'Key type is not correct');
     await t.expect(bulkActionsPage.infoSearch.innerText).contains('Pattern: *', 'Key pattern is not correct');
+    // Verify that user can hover over info icon in Bulk Delete preview and see info about accuracy of the calculation
+    const tooltipText = 'Expected amount is estimated based on the number of keys scanned and the scan percentage. The final number may be different.';
+    await t.hover(bulkActionsPage.bulkDeleteTooltipIcon);
+    await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Tooltip is not displayed or text is invalid');
+    // Verify that user can see warning message clicking on Delete button for Bulk Deletion
+    const warningTooltipTitle = 'Are you sure you want to perform this action?';
+    const warningTooltipMessage = 'All keys with HASH key type and selected pattern will be deleted.';
+    await t.click(bulkActionsPage.deleteButton);
+    await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipTitle, 'Warning Tooltip title is not displayed or text is invalid');
+    await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipMessage, 'Warning Tooltip message is not displayed or text is invalid');
+    await t.expect(bulkActionsPage.bulkApplyButton.visible).ok('Confirm deletion button not displayed');
+
 });
 test('Verify that user can see no pattern selected message when no key type and pattern applied for Bulk Delete', async t => {
     const messageTitle = 'No pattern or key type set';
@@ -56,8 +63,8 @@ test('Verify that user can see no pattern selected message when no key type and 
     await t.expect(bulkActionsPage.bulkActionsPlaceholder.textContent).contains(messageText, 'No pattern message not displayed');
 });
 test('Verify that user can see summary of scanned level', async t => {
-    const expectedAmount = 'Expected amount: ~10 002 keys';
-    const scannedKeys = 'Scanned 5% (500/10 002) and found 500 keys';
+    const expectedAmount = new RegExp('Expected amount: ~' + '10 ' + '.');
+    const scannedKeys = new RegExp('Scanned 5% \\(....10 ...\\) and found ... keys');
     // Add 10000 Hash keys
     await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
     // Filter by Hash keys
@@ -65,30 +72,9 @@ test('Verify that user can see summary of scanned level', async t => {
     // Open bulk actions
     await t.click(browserPage.bulkActionsButton);
     // Verify that prediction of # of keys matching the filter in the entire database displayed
-    await t.expect(bulkActionsPage.bulkActionsSummary.textContent).contains(expectedAmount, 'Bulk actions summary is not correct');
+    await t.expect(bulkActionsPage.bulkActionsSummary.textContent).match(expectedAmount, 'Bulk actions summary is not correct');
     // Verify that % of total keys scanned, # of keys scanned / total # of keys in the database, # of keys matching the filter displayed
-    await t.expect(bulkActionsPage.bulkDeleteSummary.innerText).contains(scannedKeys, 'Bulk delete summary is not correct');
-});
-test('Verify that user can hover over info icon in Bulk Delete preview and see info about accuracy of the calculation', async t => {
-    const tooltipText = 'Expected amount is estimated based on the number of keys scanned and the scan percentage. The final number may be different.';
-    // Filter by Hash keys
-    await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
-    // Open bulk actions
-    await t.click(browserPage.bulkActionsButton);
-    await t.hover(bulkActionsPage.bulkDeleteTooltipIcon);
-    await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Tooltip is not displayed or text is invalid');
-});
-test('Verify that user can see warning message clicking on Delete button for Bulk Deletion', async t => {
-    const warningTooltipTitle = 'Are you sure you want to perform this action?';
-    const warningTooltipMessage = 'All keys with HASH key type and selected pattern will be deleted.';
-    // Filter by Hash keys
-    await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
-    // Open bulk actions
-    await t.click(browserPage.bulkActionsButton);
-    await t.click(bulkActionsPage.deleteButton);
-    await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipTitle, 'Warning Tooltip title is not displayed or text is invalid');
-    await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipMessage, 'Warning Tooltip message is not displayed or text is invalid');
-    await t.expect(bulkActionsPage.bulkApplyButton.visible).ok('Confirm deletion button not displayed');
+    await t.expect(bulkActionsPage.bulkDeleteSummary.innerText).match(scannedKeys, 'Bulk delete summary is not correct');
 });
 test('Verify that user can see blue progress line during the process of bulk deletion', async t => {
     // Add 500000 Hash keys

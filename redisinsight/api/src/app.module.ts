@@ -29,14 +29,14 @@ import { SettingsController } from './controllers/settings.controller';
 import { ServerInfoController } from './controllers/server-info.controller';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
-import ormConfig from '../config/ormconfig';
+import { ormModuleOptions } from '../config/ormconfig';
 
 const SERVER_CONFIG = config.get('server');
 const PATH_CONFIG = config.get('dir_path');
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormConfig),
+    TypeOrmModule.forRoot(ormModuleOptions),
     RouterModule.forRoutes(routes),
     SharedModule,
     InstancesModule,

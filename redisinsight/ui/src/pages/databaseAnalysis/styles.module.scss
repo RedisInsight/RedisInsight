@@ -2,7 +2,7 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
-$breakpoint-table: 1232px;
+$breakpoint-table: 1680px;
 
 .main {
   margin: 0 16px 0;
@@ -10,7 +10,6 @@ $breakpoint-table: 1232px;
   background-color: var(--euiColorEmptyShade);
   padding: 18px 24px;
   overflow: auto;
-  scrollbar-width: thin;
 }
 
 .content {
@@ -48,7 +47,7 @@ $breakpoint-table: 1232px;
   &.textBtn:focus {
     color: var(--wbHoverIconColor) !important;
   }
-  
+
   &.activeBtn,
   &.textBtn:disabled {
     background: var(--browserComponentActive) !important;
@@ -61,7 +60,7 @@ $breakpoint-table: 1232px;
   }
 }
 
-.main .sectionTitle {
+.main :global(.section-title) {
   display: inline-block;
   font-size: 16px;
   line-height: 24px;

@@ -6,6 +6,7 @@ import { emptyMessageContent } from 'uiSrc/constants'
 
 import EmptyAnalysisMessage from '../empty-analysis-message'
 import TopNamespaceView from '../top-namespace-view'
+import SummaryPerData from '../summary-per-data'
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -34,7 +35,10 @@ const AnalysisDataView = (props: Props) => {
         />
       )}
       <div className={cx(styles.grid, styles.content)}>
-        <TopNamespaceView data={data} loading={loading} />
+        <div>
+          <SummaryPerData data={data} loading={loading} />
+          <TopNamespaceView data={data} loading={loading} />
+        </div>
       </div>
     </>
   )

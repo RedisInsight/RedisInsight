@@ -22,6 +22,10 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
 
 const nodeClient = Object.create(IORedis.prototype);
 
+const clusterClient = Object.create(IORedis.Cluster.prototype);
+clusterClient.isCluster = true;
+clusterClient.sendCommand = jest.fn();
+
 const mockKeyInfo: GetKeyInfoResponse = {
   name: 'testString',
   type: 'string',
@@ -81,6 +85,13 @@ describe('RedisScannerAbstract', () => {
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
         )
         .mockResolvedValue([null, Array(keys.length).fill([null, 'string'])]);
+      when(clusterClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'type' }))
+        .mockResolvedValue('string')
+        .calledWith(jasmine.objectContaining({ name: 'ttl' }))
+        .mockResolvedValue(-1)
+        .calledWith(jasmine.objectContaining({ name: 'memory' }))
+        .mockResolvedValue(50);
     });
     it('should return correct keys info', async () => {
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -89,6 +100,16 @@ describe('RedisScannerAbstract', () => {
       }));
 
       const result = await scannerInstance.getKeysInfo(nodeClient, keys);
+
+      expect(result).toEqual(mockResult);
+    });
+    it('should return correct keys info (cluster)', async () => {
+      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
+        ...mockKeyInfo,
+        name: key,
+      }));
+
+      const result = await scannerInstance.getKeysInfo(clusterClient, keys);
 
       expect(result).toEqual(mockResult);
     });

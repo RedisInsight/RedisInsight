@@ -2,6 +2,7 @@ import { DurationUnits } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
 import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
 import { ClusterDetails } from 'apiSrc/modules/cluster-monitor/models/cluster-details'
+import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 export interface StateSlowLog {
   loading: boolean
@@ -18,11 +19,24 @@ export interface StateClusterDetails {
   data: Nullable<ClusterDetails>
 }
 
+export interface StateDatabaseAnalysis {
+  loading: boolean,
+  error: string,
+  data: Nullable<DatabaseAnalysis>,
+  history: {
+    loading: boolean,
+    error: string,
+    data: ShortDatabaseAnalysis[],
+    selectedAnalysis: Nullable<string>,
+  }
+}
+
 export interface StateAnalyticsSettings {
   viewTab: AnalyticsViewTab
 }
 
 export enum AnalyticsViewTab {
   ClusterDetails = 'ClusterDetails',
+  DatabaseAnalysis = 'DatabaseAnalysis',
   SlowLog = 'SlowLog',
 }

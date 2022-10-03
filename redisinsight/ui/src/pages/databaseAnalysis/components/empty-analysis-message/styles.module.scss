@@ -1,0 +1,32 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.container {
+  @include euiScrollBar;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+
+  width: 100%;
+  height: calc(100% - 96px);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+
+  .title {
+    font: normal normal 500 18px/24px Graphik !important;
+    padding-bottom: 12px;
+  }
+
+  .summary {
+    font-size: 13px !important;
+    line-height: 18px !important;
+    letter-spacing: -0.13px !important;
+    color: var(--euiColorMediumShade) !important;
+  }
+}

@@ -117,6 +117,7 @@ describe('clusterDetails slice', () => {
   })
 
   // thunks
+
   describe('thunks', () => {
     describe('fetchClusterDetailsAction', () => {
       it('succeed to fetch data', async () => {

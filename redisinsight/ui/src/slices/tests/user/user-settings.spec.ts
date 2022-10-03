@@ -61,6 +61,26 @@ describe('userSettings slice', () => {
       })
       expect(userSettingsSelector(rootState)).toEqual(state)
     })
+
+    it('Cleanup should properly be "true" in the initial state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        workbench: {
+          ...initialState.workbench,
+          cleanup: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setUserSettingsInitialState())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        user: { settings: nextState },
+      })
+      expect(userSettingsSelector(rootState)).toEqual(state)
+    })
   })
 
   describe('setSettingsPopupState', () => {
@@ -288,6 +308,7 @@ describe('userSettings slice', () => {
   })
 
   // thunks
+
   describe('thunks', () => {
     describe('fetchUserConfigSettings', () => {
       it('succeed to fetch data', async () => {

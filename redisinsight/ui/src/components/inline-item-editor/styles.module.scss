@@ -23,13 +23,15 @@
   z-index: 1;
 
   .tooltip,
-  :global(.euiButtonIcon) {
+  .declineBtn,
+  .popoverWrapper {
     width: 50% !important;
     height: 100% !important;
   }
 }
 
-.tooltip :global(.euiButtonIcon) {
+.applyBtn {
+  height: 100% !important;
   width: 100% !important;
 }
 
@@ -76,14 +78,19 @@
   width: 60px;
   z-index: 4;
 
-  .btn {
+  .btn,
+  .popoverWrapper {
     margin: 6px 3px;
     height: 24px !important;
     width: 24px !important;
+  }
 
-    &:hover {
-      background-color: var(--hoverInListColorDarken) !important;
-    }
+  .btn:hover {
+    background-color: var(--hoverInListColorDarken) !important;
+  }
+
+  .applyBtn {
+    margin-top: 0;
   }
 
   svg {
@@ -108,4 +115,48 @@
   max-width: 100%;
   margin-right: 80px;
   word-break: break-all;
+}
+
+.popoverAnchor,
+.popoverWrapper .tooltip {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.popoverPanel:global(.euiPanel--paddingMedium) {
+  width: 296px !important;
+  padding: 24px 30px !important;
+  border: 1px solid var(--euiColorPrimary) !important;
+  background-color: var(--browserTableRowEven) !important;
+
+  :global(.euiPopover__panelArrow:after) {
+    border-left-color: var(--browserTableRowEven) !important;
+  }
+  :global(.euiPopover__panelArrow:before) {
+    border-left-color: var(--euiColorPrimary) !important;
+  }
+}
+
+.popover {
+  word-wrap: break-word;
+
+  h4 b {
+    font-size: 14px !important;
+    color: var(--htmlColor) !important;
+  }
+}
+.approveText {
+  font-size: 13px !important;
+  letter-spacing: -0.13px;
+}
+
+.popoverFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+
+  .saveBtn {
+    height: 36px !important;
+    width: 86px !important;
+  }
 }

@@ -24,6 +24,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * InstancePage tests
+ *
+ * @group component
+ */
 describe('InstancePage', () => {
   it('should render', () => {
     expect(

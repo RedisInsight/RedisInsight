@@ -1,11 +1,12 @@
 import { orderBy } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { ClusterNodeDetails } from 'src/modules/cluster-monitor/models'
 
 import InstanceHeader from 'uiSrc/components/instance-header'
-import ClusterNodesTable from 'uiSrc/pages/clusterDetails/components/cluser-nodes-table'
+import { Theme } from 'uiSrc/constants'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { clusterDetailsSelector, fetchClusterDetailsAction } from 'uiSrc/slices/analytics/clusterDetails'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
@@ -13,13 +14,16 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, getLetterByIndex, Nullable, setTitle, } from 'uiSrc/utils'
+import { ColorScheme, getRGBColorByScheme, RGBColor } from 'uiSrc/utils/colors'
 
-import ClusterDetailsHeader from './components/cluster-details-header'
+import { ClusterDetailsHeader, ClusterDetailsGraphics, ClusterNodesTable } from './components'
+
 import styles from './styles.module.scss'
 
 export interface ModifiedClusterNodes extends ClusterNodeDetails {
   letter: string
   index: number
+  color: RGBColor
 }
 
 const POLLING_INTERVAL = 5_000
@@ -39,9 +43,17 @@ const ClusterDetailsPage = () => {
   const [nodes, setNodes] = useState<Nullable<ModifiedClusterNodes[]>>(null)
 
   const dispatch = useDispatch()
+  const { theme } = useContext(ThemeContext)
 
   const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
   setTitle(`${dbName} - Overview`)
+
+  const colorScheme: ColorScheme = {
+    cHueStart: 180,
+    cHueRange: 140,
+    cSaturation: 55,
+    cLightness: theme === Theme.Dark ? 45 : 55
+  }
 
   useEffect(() => {
     dispatch(fetchClusterDetailsAction(
@@ -73,7 +85,13 @@ const ClusterDetailsPage = () => {
   useEffect(() => {
     if (data) {
       const nodes = orderBy(data.nodes, ['asc', 'host'])
-      const modifiedNodes = nodes.map((d, index) => ({ ...d, letter: getLetterByIndex(index), index }))
+      const shift = colorScheme.cHueRange / nodes.length
+      const modifiedNodes = nodes.map((d, index) => ({
+        ...d,
+        letter: getLetterByIndex(index),
+        index,
+        color: getRGBColorByScheme(index, shift, colorScheme)
+      }))
       setNodes(modifiedNodes)
     }
   }, [data])
@@ -97,7 +115,10 @@ const ClusterDetailsPage = () => {
       <InstanceHeader />
       <div className={styles.main} data-testid="cluster-details-page">
         <ClusterDetailsHeader />
-        <ClusterNodesTable nodes={nodes} loading={loading} />
+        <div className={styles.wrapper}>
+          <ClusterDetailsGraphics nodes={nodes} loading={loading} />
+          <ClusterNodesTable nodes={nodes} loading={loading} />
+        </div>
       </div>
     </>
   )

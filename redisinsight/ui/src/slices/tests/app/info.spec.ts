@@ -184,6 +184,7 @@ describe('slices', () => {
   })
 
   // thunks
+
   describe('fetchServerInfo', () => {
     it('succeed to fetch server info', async () => {
       // Act

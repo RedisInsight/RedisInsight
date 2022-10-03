@@ -1,0 +1,68 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+$breakpoint-table: 1232px;
+
+.main {
+  margin: 0 16px 0;
+  height: calc(100% - 70px);
+  background-color: var(--euiColorEmptyShade);
+  padding: 18px 24px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.content {
+  @include euiScrollBar;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 104px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 61% 39%;
+  gap: 24px;
+
+  @media screen and (max-width: $breakpoint-table) {
+    grid-template-columns: 100%;
+  }
+}
+
+.main .topNamespaceView .textBtn.textBtn {
+  border: none;
+  min-width: auto !important;
+  min-height: auto;
+  border-radius: 4px;
+  background: transparent !important;
+  box-shadow: none;
+  margin-left: 18px;
+  color: var(--wbHoverIconColor) !important;
+
+  :global(.euiButton__content) {
+    padding: 6px;
+  }
+
+  &.textBtn:hover,
+  &.textBtn:focus {
+    color: var(--wbHoverIconColor) !important;
+  }
+  
+  &.activeBtn,
+  &.textBtn:disabled {
+    background: var(--browserComponentActive) !important;
+    color: var(--wbActiveIconColor) !important;
+    opacity: 1;
+  }
+
+  :global(.euiButton__text) {
+    font: normal normal normal 13px/18px Graphik !important;
+  }
+}
+
+.main .sectionTitle {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 24px;
+}

@@ -5,6 +5,7 @@ import { SimpleSummary } from 'src/modules/database-analysis/models/simple-summa
 import { ApiProperty } from '@nestjs/swagger';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 import { AnalysisProgress } from 'src/modules/database-analysis/models/analysis-progress';
+import { SumGroup } from 'src/modules/database-analysis/models/sum-group';
 
 export class DatabaseAnalysis {
   @ApiProperty({
@@ -104,4 +105,13 @@ export class DatabaseAnalysis {
   @Expose()
   @Type(() => Key)
   topKeysMemory: Key[];
+
+  @ApiProperty({
+    description: 'Expiration groups',
+    isArray: true,
+    type: () => SumGroup,
+  })
+  @Expose()
+  @Type(() => SumGroup)
+  expirationGroups: SumGroup[];
 }

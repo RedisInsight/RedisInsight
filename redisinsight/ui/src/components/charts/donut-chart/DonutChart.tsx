@@ -1,6 +1,6 @@
 import cx from 'classnames'
 import * as d3 from 'd3'
-import { sumBy } from 'lodash'
+import { isString, sumBy } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Nullable, truncateNumberToRange } from 'uiSrc/utils'
@@ -12,7 +12,7 @@ import styles from './styles.module.scss'
 export interface ChartData {
   value: number
   name: string
-  color: RGBColor
+  color: RGBColor | string
   meta?: {
     [key: string]: any
   }
@@ -61,7 +61,7 @@ const DonutChart = (props: IProps) => {
   const margin = config?.margin || 98
   const radius = config?.radius || (width / 2 - margin)
   const arcWidth = config?.arcWidth || 8
-  const percentToShowLabel = config?.percentToShowLabel || 5
+  const percentToShowLabel = config?.percentToShowLabel ?? 5
 
   const [hoveredData, setHoveredData] = useState<Nullable<ChartData>>(null)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -113,12 +113,12 @@ const DonutChart = (props: IProps) => {
   }
 
   const isShowLabel = (d: d3.PieArcDatum<ChartData>) =>
-    d.endAngle - d.startAngle > (Math.PI * 2) / (100 / percentToShowLabel)
+    (percentToShowLabel > 0 ? d.endAngle - d.startAngle > (Math.PI * 2) / (100 / percentToShowLabel) : true)
 
   const getLabelPosition = (d: d3.PieArcDatum<ChartData>) => {
     const [x, y] = arc.centroid(d)
     const h = Math.sqrt(x * x + y * y)
-    return `translate(${(x / h) * (radius + 16)}, ${((y + 4) / h) * (radius + 16)})`
+    return `translate(${(x / h) * (radius + 12)}, ${((y + 4) / h) * (radius + 12)})`
   }
 
   useEffect(() => {
@@ -147,7 +147,7 @@ const DonutChart = (props: IProps) => {
       .append('path')
       .attr('data-testid', (d) => `arc-${d.data.name}-${d.data.value}`)
       .attr('d', arc)
-      .attr('fill', (d) => rgb(d.data.color))
+      .attr('fill', (d) => (isString(d.data.color) ? d.data.color : rgb(d.data.color)))
       .attr('class', cx(styles.arc, classNames?.arc))
       .on('mouseenter mousemove', onMouseEnterSlice)
       .on('mouseleave', onMouseLeaveSlice)

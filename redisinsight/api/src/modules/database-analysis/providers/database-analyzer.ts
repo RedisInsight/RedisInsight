@@ -7,7 +7,7 @@ import {
   NspSummary,
   NspTypeSummary,
   SimpleSummary,
-  SimpleTypeSummary,
+  SimpleTypeSummary, SumGroup,
 } from 'src/modules/database-analysis/models';
 import { RedisString } from 'src/common/constants';
 import { Injectable } from '@nestjs/common';
@@ -28,6 +28,7 @@ export class DatabaseAnalyzer {
       topMemoryNsp: await this.calculateNspSummary(namespaces, 'memory'),
       topKeysLength: await this.calculateTopKeys([keys], 'length'),
       topKeysMemory: await this.calculateTopKeys([keys], 'memory'),
+      expirationGroups: await this.calculateExpirationTimeGroups(keys),
     };
   }
 
@@ -172,5 +173,60 @@ export class DatabaseAnalyzer {
     return sortBy([].concat(...keysBatches.map(
       (keysBatch) => sortBy(keysBatch, field).reverse().slice(0, TOP_KEYS_LIMIT),
     )), field).reverse().slice(0, TOP_KEYS_LIMIT);
+  }
+
+  async calculateExpirationTimeGroups(keys: Key[]): Promise<SumGroup[]> {
+    const groups = [
+      {
+        threshold: 0,
+        total: 0,
+        label: 'No expiry',
+      },
+      {
+        threshold: 60 * 60 * 1000,
+        total: 0,
+        label: '<1 hr',
+      },
+      {
+        threshold: 4 * 60 * 60 * 1000,
+        total: 0,
+        label: '1-4 Hrs',
+      },
+      {
+        threshold: 12 * 60 * 60 * 1000,
+        total: 0,
+        label: '4-12 Hrs',
+      },
+      {
+        threshold: 24 * 60 * 60 * 1000,
+        total: 0,
+        label: '12-24 Hrs',
+      },
+      {
+        threshold: 7 * 24 * 60 * 60 * 1000,
+        total: 0,
+        label: '1-7 Days',
+      },
+      {
+        threshold: 30 * 24 * 60 * 60 * 1000,
+        total: 0,
+        label: '>7 Days',
+      },
+      {
+        threshold: Number.MAX_SAFE_INTEGER,
+        total: 0,
+        label: '>1 Month',
+      },
+    ];
+
+    keys.forEach((key) => {
+      groups.forEach((group, i) => {
+        if (key.ttl < group.threshold) {
+          groups[i].total += key.memory;
+        }
+      });
+    });
+
+    return groups;
   }
 }

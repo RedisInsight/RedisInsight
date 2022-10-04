@@ -126,6 +126,17 @@ export class DatabaseAnalysisEntity {
   }, { toPlainOnly: true })
   topKeysMemory: string;
 
+  @Column({ nullable: true, type: 'blob' })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((str) => {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
+  expirationGroups: string;
+
   @Column({ nullable: true })
   encryption: string;
 

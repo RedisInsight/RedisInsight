@@ -120,7 +120,6 @@ test
     })('Namespaces sorting', async t => {
     // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
-        await t.debug();
         // Verify that user can sort by Key Pattern column ASC
         await t.click(memoryEfficiencyPage.tableKeyPatternHeader);
         await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[1], 'Sorting by Key Pattern ASC not working');

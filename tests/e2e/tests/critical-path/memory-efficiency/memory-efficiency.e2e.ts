@@ -1,5 +1,5 @@
 import { Selector } from 'testcafe';
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -8,8 +8,14 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const cliPage = new CliPage();
 
-fixture.only `Memory Efficiency`
+let keyName = 'hash:Hash1'
+const keyTTL = '2147476121';
+// const keyFieldValue = 'hashField11111';
+const keyValue = 'hashValue11111!';
+
+fixture `Memory Efficiency`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -36,4 +42,19 @@ test('No reports/keys message and report tooltip', async t => {
     // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button
     await t.hover(memoryEfficiencyPage.reportTooltipIcon);
     await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Report tooltip is not displayed or text is invalid');
+});
+test
+.before(async t => {
+    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    await browserPage.addHashKey(keyName, keyTTL, keyValue);
+    await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
+    // Go to Analysis Tools page
+    await t.click(myRedisDatabasePage.analysisPageButton);
+})
+.after(async t => {
+    await cliPage.deleteKeysFromCliWithDelimiter(15);
+    await browserPage.deleteKeyByName(keyName);
+    await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+})('Keyspaces displaying in Summary per keyspaces table', async t => {
+
 });

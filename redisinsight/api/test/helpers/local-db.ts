@@ -17,6 +17,7 @@ export const repositories = {
   PLUGIN_STATE: 'PluginStateEntity',
   SETTINGS: 'SettingsEntity',
   NOTIFICATION: 'NotificationEntity',
+  DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
 }
 
 let localDbConnection;
@@ -119,6 +120,60 @@ export const generateNCommandExecutions = async (
       mode: 'ASCII',
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
       createdAt: new Date(),
+      ...partial,
+    }));
+  }
+
+  return result;
+}
+
+export const generateNDatabaseAnalysis = async (
+  partial: Record<string, any>,
+  number: number,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.DATABASE_ANALYSIS);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  for (let i = 0; i < number; i++) {
+    result.push(await rep.save({
+      id: uuidv4(),
+      databaseId: uuidv4(),
+      delimiter: constants.TEST_DATABASE_ANALYSIS_DELIMITER_1,
+      filter: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_FILTER_1)),
+      progress: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_PROGRESS_1)),
+      totalKeys: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_TOTAL_KEYS_1)),
+      totalMemory: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_TOTAL_MEMORY_1)),
+      topKeysNsp: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_NSP_1,
+          nsp: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_NSP_1.nsp),
+        },
+      ])),
+      topMemoryNsp: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_MEMORY_NSP_1,
+          nsp: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_MEMORY_NSP_1.nsp),
+        },
+      ])),
+      topKeysLength: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1,
+          name: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1.name),
+        },
+      ])),
+      topKeysMemory: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1,
+          name: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1.name),
+        },
+      ])),
+      createdAt: new Date(),
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
       ...partial,
     }));
   }

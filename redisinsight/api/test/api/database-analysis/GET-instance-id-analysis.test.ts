@@ -10,7 +10,7 @@ const endpoint = (
 const responseSchema = Joi.array().items(Joi.object({
   createdAt: Joi.date().required(),
   id: Joi.string().required(),
-})).required().max(15);
+})).required().max(5);
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('GET /instance/:instanceId/analysis', () => {

@@ -1,5 +1,5 @@
 import { describe, deps, before, getMainCheckFn } from '../deps';
-import { analysisSchema } from './GET-instance-id-analysis-id.test';
+import { analysisSchema } from './constants';
 const { localDb, request, server, constants, rte } = deps;
 
 const endpoint = (
@@ -25,6 +25,7 @@ describe('POST /instance/:instanceId/analysis', () => {
       query: {
         delimiter: '-',
       },
+      statusCode: 201,
       responseSchema,
     },
   ].map(mainCheckFn);

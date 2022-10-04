@@ -436,6 +436,11 @@ export const constants = {
     length: 1_000,
     ttl: -1,
   },
+  TEST_DATABASE_ANALYSIS_EXPIRATION_GROUP_1: {
+    label: '1-4 Hrs',
+    total: 10_000_000,
+    threshold: 4 * 60 * 60 * 1000,
+  },
 
 
   // etc...

@@ -172,6 +172,9 @@ export const generateNDatabaseAnalysis = async (
           name: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1.name),
         },
       ])),
+      expirationGroups: encryptData(JSON.stringify([
+        constants.TEST_DATABASE_ANALYSIS_EXPIRATION_GROUP_1,
+      ])),
       createdAt: new Date(),
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
       ...partial,

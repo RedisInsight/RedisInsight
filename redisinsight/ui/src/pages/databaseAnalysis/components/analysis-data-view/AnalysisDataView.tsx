@@ -6,6 +6,7 @@ import { emptyMessageContent } from 'uiSrc/constants'
 import EmptyAnalysisMessage from '../empty-analysis-message'
 import TopNamespaceView from '../top-namespace-view'
 import styles from '../../styles.module.scss'
+import ExpirationGroupsView from '../analysis-ttl-view'
 
 export interface Props {
   data: Nullable<DatabaseAnalysis>
@@ -42,6 +43,7 @@ const AnalysisDataView = (props: Props) => {
       )}
       <div className={styles.grid}>
         <TopNamespaceView data={data} loading={loading} />
+        <ExpirationGroupsView data={data} loading={loading} />
       </div>
     </>
   )

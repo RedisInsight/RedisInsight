@@ -1,0 +1,26 @@
+.container {
+  position: relative;
+  min-height: 300px;
+  max-width: 600px;
+}
+
+.content {
+  padding-top: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+.switch {
+  position: absolute !important;
+  right: 26px;
+  top: 6px;
+  line-height: 18px !important;
+
+  :global(.euiSwitch__label) {
+    font-size: 13px !important;
+    padding-left: 0px;
+    span {
+      color: var(--euiTextSubduedColor);
+    }
+  }
+}

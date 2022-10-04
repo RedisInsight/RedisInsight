@@ -8,8 +8,8 @@ export interface StateSlowLog {
   loading: boolean
   error: string
   data: SlowLog[]
-  lastRefreshTime: Nullable<number>,
-  config: Nullable<SlowLogConfig>,
+  lastRefreshTime: Nullable<number>
+  config: Nullable<SlowLogConfig>
   durationUnit: DurationUnits
 }
 
@@ -20,14 +20,15 @@ export interface StateClusterDetails {
 }
 
 export interface StateDatabaseAnalysis {
-  loading: boolean,
-  error: string,
-  data: Nullable<DatabaseAnalysis>,
+  loading: boolean
+  error: string
+  data: Nullable<DatabaseAnalysis>
   history: {
-    loading: boolean,
-    error: string,
-    data: ShortDatabaseAnalysis[],
-    selectedAnalysis: Nullable<string>,
+    loading: boolean
+    error: string
+    data: ShortDatabaseAnalysis[]
+    selectedAnalysis: Nullable<string>
+    showNoExpiryGroup: boolean
   }
 }
 

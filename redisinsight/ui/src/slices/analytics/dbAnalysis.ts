@@ -17,6 +17,7 @@ export const initialState: StateDatabaseAnalysis = {
     loading: false,
     error: '',
     data: [],
+    showNoExpiryGroup: false,
     selectedAnalysis: null,
   }
 }
@@ -51,6 +52,9 @@ const databaseAnalysisSlice = createSlice({
     setSelectedAnalysisId: (state, { payload }: PayloadAction<string>) => {
       state.history.selectedAnalysis = payload
     },
+    setShowNoExpiryGroup: (state, { payload }: PayloadAction<boolean>) => {
+      state.history.showNoExpiryGroup = payload
+    },
   }
 })
 
@@ -66,6 +70,7 @@ export const {
   loadDBAnalysisReportsSuccess,
   loadDBAnalysisReportsError,
   setSelectedAnalysisId,
+  setShowNoExpiryGroup,
 } = databaseAnalysisSlice.actions
 
 // The reducer

@@ -220,11 +220,12 @@ export class DatabaseAnalyzer {
     ];
 
     keys.forEach((key) => {
-      groups.forEach((group, i) => {
-        if (key.ttl < group.threshold) {
+      for (let i = 0; i < groups.length; i += 1) {
+        if (key.ttl < groups[i].threshold) {
           groups[i].total += key.memory;
+          break;
         }
-      });
+      }
     });
 
     return groups;

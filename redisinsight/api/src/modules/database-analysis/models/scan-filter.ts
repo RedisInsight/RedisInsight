@@ -3,6 +3,7 @@ import {
   IsEnum, IsInt, IsOptional, IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 
 export class ScanFilter {
   @ApiProperty({
@@ -11,6 +12,7 @@ export class ScanFilter {
     example: 'list',
   })
   @IsOptional()
+  @Expose()
   @IsEnum(RedisDataType)
   type?: RedisDataType = null;
 
@@ -22,6 +24,7 @@ export class ScanFilter {
   })
   @IsOptional()
   @IsString()
+  @Expose()
   match?: string = '*';
 
   @ApiProperty({
@@ -32,6 +35,7 @@ export class ScanFilter {
   })
   @IsOptional()
   @IsInt()
+  @Expose()
   count?: number = 10_000;
 
   /**

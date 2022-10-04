@@ -30,7 +30,6 @@ import testcafe from 'testcafe';
                         output: './report/report.html'
                     }
                 ])
-                // .concurrency(2)
                 .run({
                     skipJsErrors: true,
                     browserInitTimeout: 60000,

@@ -23,6 +23,7 @@ import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monito
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
+import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -93,6 +94,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setAppContextInitialState())
     dispatch(resetKeysData())
     dispatch(setClusterDetailsInitialState())
+    dispatch(setDatabaseAnalysisInitialState())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

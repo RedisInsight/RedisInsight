@@ -31,7 +31,7 @@ export class CommandExecutionProvider {
    */
   async createMany(commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
     // todo: limit by 30 max to insert
-    let entities = await Promise.all(commandExecutions.map(async (commandExecution) => {
+    let entities = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
       const entity = plainToClass(CommandExecutionEntity, commandExecution);
 
       // Do not store command execution result that exceeded limitation
@@ -42,6 +42,8 @@ export class CommandExecutionProvider {
             response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
           },
         ]);
+        // Hack, do not store isNotStored. Send once to show warning
+        entity['isNotStored'] = true;
       }
 
       return this.encryptEntity(entity);
@@ -58,6 +60,7 @@ export class CommandExecutionProvider {
           mode: commandExecutions[idx].mode,
           result: commandExecutions[idx].result,
           nodeOptions: commandExecutions[idx].nodeOptions,
+          summary: commandExecutions[idx].summary,
         },
       )),
     );
@@ -81,7 +84,18 @@ export class CommandExecutionProvider {
     const entities = await this.commandExecutionRepository
       .createQueryBuilder('e')
       .where({ databaseId })
-      .select(['e.id', 'e.command', 'e.databaseId', 'e.createdAt', 'e.encryption', 'e.role', 'e.nodeOptions', 'e.mode'])
+      .select([
+        'e.id',
+        'e.command',
+        'e.databaseId',
+        'e.createdAt',
+        'e.encryption',
+        'e.role',
+        'e.nodeOptions',
+        'e.mode',
+        'e.summary',
+        'e.resultsMode',
+      ])
       .orderBy('e.createdAt', 'DESC')
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)
       .getMany();

@@ -112,6 +112,7 @@ describe('workbench results slice', () => {
       expect(workbenchResultsSelector(rootState)).toEqual(state)
     })
   })
+
   describe('resetWBHistoryItems', () => {
     it('should properly remove all items', () => {
       // Arrange

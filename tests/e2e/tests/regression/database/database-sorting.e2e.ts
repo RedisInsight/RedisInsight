@@ -1,4 +1,3 @@
-import { t } from 'testcafe';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import {
     discoverSentinelDatabaseApi,

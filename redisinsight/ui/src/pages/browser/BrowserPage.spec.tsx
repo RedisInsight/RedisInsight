@@ -88,6 +88,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * BrowserPage tests
+ *
+ * @group component
+ */
 describe('BrowserPage', () => {
   beforeAll(() => {
     KeyList.mockImplementation(mockKeyList)

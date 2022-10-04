@@ -88,6 +88,9 @@ export class BrowserPage {
     saveButton = Selector('[data-testid=save-btn]');
     bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
     editHashButton = Selector('[data-testid^=edit-hash-button-]');
+    editZsetButton = Selector('[data-testid^=zset-edit-button-]');
+    editListButton = Selector('[data-testid^=edit-list-button-]');
+    workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -97,6 +100,7 @@ export class BrowserPage {
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
+    userSurveyLink = Selector('[data-testid=user-survey-link]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -129,7 +133,9 @@ export class BrowserPage {
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
     hashFieldValueEditor = Selector('[data-testid=hash-value-editor]');
+    listElementEditor = Selector('[data-testid=hash-value-editor]');
     listKeyElementInput = Selector('[data-testid=element]');
+    listKeyElementEditorInput = Selector('[data-testid=element-value-editor]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-testid=json-value]');
     setMemberInput = Selector('[data-testid=member-name]');
@@ -156,6 +162,7 @@ export class BrowserPage {
     claimIdleTimeInput = Selector('[data-testid=time-count]');
     claimRetryCountInput = Selector('[data-testid=retry-count]');
     lastIdInput = Selector('[data-testid=last-id-field]');
+    inlineItemEditor = Selector('[data-testid=inline-item-editor]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -193,7 +200,6 @@ export class BrowserPage {
     treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
     ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
     stringKeyValue = Selector('.key-details-body pre');
-    keyDetailsValue = Selector('.key-details-body div div div');
     keyDetailsBadge = Selector('.key-details-header .euiBadge__text');
     treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
     treeViewNotPatternedKeys = Selector('[data-testid*="node-item_keys"]');
@@ -204,6 +210,7 @@ export class BrowserPage {
     multiSearchArea = Selector(this.cssFilteringLabel);
     keyDetailsHeader = Selector('[data-testid=key-details-header]');
     keyListTable = Selector('[data-testid=keyList-table]');
+    keyListMessage = Selector('[data-testid=no-result-found-msg]');
     keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
@@ -235,7 +242,9 @@ export class BrowserPage {
     rangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
     rangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
     jsonValue = Selector('[data-testid=value-as-json]');
-
+    stringValueAsJson = Selector(this.cssJsonValue);
+    // POPUPS
+    changeValueWarning = Selector('[data-testid=approve-popover]');
     /**
      * Common part for Add any new key
      * @param keyName The name of the key
@@ -531,15 +540,31 @@ export class BrowserPage {
      */
     async editStringKeyValue(value: string): Promise<void> {
         await t
-            .click(this.keyDetailsValue)
+            .click(this.stringKeyValueInput)
             .pressKey('ctrl+a delete')
             .typeText(this.stringKeyValueInput, value)
             .click(this.applyButton);
     }
 
-    //Get string key value from details
+    //Get String key value from details
     async getStringKeyValue(): Promise<string> {
-        return this.keyDetailsValue.textContent;
+        return this.stringKeyValueInput.textContent;
+    }
+
+    /**
+     * Edit Zset key score from details
+     * @param value The value of the key
+     */
+    async editZsetKeyScore(value: string): Promise<void> {
+        await t
+            .click(this.editZsetButton)
+            .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
+            .click(this.applyButton);
+    }
+
+    //Get Zset key score from details
+    async getZsetKeyScore(): Promise<string> {
+        return this.zsetScoresList.textContent;
     }
 
     /**
@@ -564,8 +589,45 @@ export class BrowserPage {
     async editHashKeyValue(value: string): Promise<void> {
         await t
             .click(this.editHashButton)
-            .typeText(this.hashFieldValueEditor, value, {replace: true, paste: true})
+            .typeText(this.hashFieldValueEditor, value, { replace: true, paste: true })
             .click(this.applyButton);
+    }
+
+    //Get Hash key value from details
+    async getHashKeyValue(): Promise<string> {
+        return this.hashFieldValue.textContent;
+    }
+
+    /**
+     * Edit List key value from details
+     * @param value The value of the key
+     */
+    async editListKeyValue(value: string): Promise<void> {
+        await t
+            .click(this.editListButton)
+            .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
+            .click(this.applyButton);
+    }
+
+    //Get List key value from details
+    async getListKeyValue(): Promise<string> {
+        return this.listElementsList.textContent;
+    }
+
+    /**
+     * Edit JSON key value from details
+     * @param value The value of the key
+     */
+    async editJsonKeyValue(value: string): Promise<void> {
+        await t
+            .click(this.jsonScalarValue)
+            .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
+            .click(this.applyButton);
+    }
+
+    //Get JSON key value from details
+    async getJsonKeyValue(): Promise<string> {
+        return this.jsonKeyValue.textContent;
     }
 
     /**

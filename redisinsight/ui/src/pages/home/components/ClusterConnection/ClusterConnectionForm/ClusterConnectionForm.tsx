@@ -21,12 +21,11 @@ import {
 
 import {
   MAX_PORT_NUMBER,
-  validateEmail,
   validateField,
   validatePortNumber,
 } from 'uiSrc/utils/validations'
 import { APPLICATION_NAME } from 'uiSrc/constants'
-import { ErrorTextValidation, handlePasteHostName } from 'uiSrc/utils'
+import { handlePasteHostName } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 
@@ -64,8 +63,6 @@ const fieldDisplayNames: Values = {
   username: 'Admin Username',
   password: 'Admin Password',
 }
-
-const initErrorEmail = `Username/email ${ErrorTextValidation.FormatIncorrect}`
 
 const Message = () => (
   <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
@@ -105,7 +102,6 @@ const ClusterConnectionForm = (props: Props) => {
   const [errors, setErrors] = useState<FormikErrors<Values>>(
     host || port || username || password ? {} : fieldDisplayNames
   )
-  const [errorEmail, setErrorEmail] = useState<string>('')
 
   const [initialValues, setInitialValues] = useState({
     host,
@@ -132,24 +128,6 @@ const ClusterConnectionForm = (props: Props) => {
         !value && Object.assign(errs, { [key]: fieldDisplayNames[key] })
     )
 
-    if (
-      values.username
-      && formik.touched.username
-      && !validateEmail(values.username)
-    ) {
-      setErrorEmail(initErrorEmail)
-      Object.assign(errs, { username: initErrorEmail })
-    }
-
-    if (
-      values.username
-      && formik.touched.username
-      && validateEmail(values.username)
-    ) {
-      setErrorEmail('')
-      delete errs.username
-    }
-
     setErrors(errs)
     return errs
   }
@@ -170,16 +148,6 @@ const ClusterConnectionForm = (props: Props) => {
     if (event.key === keys.ENTER && submitIsEnable()) {
       formik.submitForm()
       event.stopPropagation()
-    }
-  }
-
-  const onBlurUsername = (username: string) => {
-    formik.setFieldTouched('username')
-    if (username && !validateEmail(username)) {
-      setErrorEmail(initErrorEmail)
-      setErrors(Object.assign(errors, { username: initErrorEmail }))
-    } else {
-      setErrorEmail('')
     }
   }
 
@@ -342,8 +310,6 @@ const ClusterConnectionForm = (props: Props) => {
             <EuiFlexItem className={flexItemClassName}>
               <EuiFormRow
                 label="Admin Username*"
-                error={errorEmail}
-                isInvalid={!!errorEmail}
               >
                 <EuiFieldText
                   name="username"
@@ -351,14 +317,9 @@ const ClusterConnectionForm = (props: Props) => {
                   data-testid="username"
                   fullWidth
                   maxLength={200}
-                  isInvalid={!!errorEmail}
                   placeholder="Enter Admin Username"
                   value={formik.values.username}
                   onChange={formik.handleChange}
-                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
-                    onBlurUsername(e.target.value)
-                    formik.handleBlur(e)
-                  }}
                 />
               </EuiFormRow>
             </EuiFlexItem>

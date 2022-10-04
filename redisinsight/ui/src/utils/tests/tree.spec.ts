@@ -10,6 +10,7 @@ const getTreeLeafFieldTests: any[] = [
   ['$$$', 'keys$$$keys'],
   ['-', 'keys-keys'],
 ]
+
 describe('getTreeLeafField', () => {
   it.each(getTreeLeafFieldTests)('for input: %s (reply), should be output: %s',
     (reply, expected) => {

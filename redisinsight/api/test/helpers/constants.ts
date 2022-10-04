@@ -354,5 +354,89 @@ export const constants = {
     read: true,
     type: 'global',
   },
+
+  // Database Analysis
+  TEST_DATABASE_ANALYSIS_ID_1: uuidv4(),
+  TEST_DATABASE_ANALYSIS_CREATED_AT_1: new Date(),
+  TEST_DATABASE_ANALYSIS_DELIMITER_1: ':',
+  TEST_DATABASE_ANALYSIS_FILTER_1: {
+    type: null,
+    match: '*',
+    count: 10_000,
+  },
+  TEST_DATABASE_ANALYSIS_PROGRESS_1: {
+    total: 1_000_000,
+    scanned: 10_000,
+    processed: 10_000,
+  },
+  TEST_DATABASE_ANALYSIS_TOTAL_KEYS_1: {
+    total: 10_000,
+    types: [
+      {
+        type: 'string',
+        total: 50_000,
+      },
+      {
+        type: 'list',
+        total: 50_000,
+      },
+    ]
+  },
+  TEST_DATABASE_ANALYSIS_TOTAL_MEMORY_1: {
+    total: 10_000_000,
+    types: [
+      {
+        type: 'string',
+        total: 5_000_000,
+      },
+      {
+        type: 'list',
+        total: 5_000_000,
+      },
+    ]
+  },
+  TEST_DATABASE_ANALYSIS_TOP_KEYS_NSP_1: {
+    nsp: 'Namespace',
+    memory: 10_000_000,
+    keys: 10_000_000,
+    types: [
+      {
+        type: 'string',
+        keys: 5_000,
+        memory: 5_000_000,
+      },
+      {
+        type: 'list',
+        keys: 5_000,
+        memory: 5_000_000,
+      },
+    ]
+  },
+  TEST_DATABASE_ANALYSIS_TOP_MEMORY_NSP_1: {
+    nsp: 'Namespace',
+    memory: 10_000_000,
+    keys: 10_000_000,
+    types: [
+      {
+        type: 'string',
+        keys: 5_000,
+        memory: 5_000_000,
+      },
+      {
+        type: 'list',
+        keys: 5_000,
+        memory: 5_000_000,
+      },
+    ]
+  },
+  TEST_DATABASE_ANALYSIS_TOP_KEYS_1: {
+    name: 'Key Name',
+    type: 'string',
+    memory: 1_000,
+    length: 1_000,
+    ttl: -1,
+  },
+
+
   // etc...
 }

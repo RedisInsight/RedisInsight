@@ -324,6 +324,7 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeNodesOpen', () => {
     it('should properly set open nodes in the tree', () => {
       // Arrange
@@ -358,6 +359,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeSelectedLeaf', () => {
     it('should properly set selected keys in the tree', () => {
       // Arrange
@@ -399,6 +401,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreePanelSizes', () => {
     it('should properly set browser tree panel widths', () => {
       // Arrange
@@ -422,6 +425,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeDelimiter', () => {
     it('should properly set browser tree delimiter', () => {
       // Arrange
@@ -443,6 +447,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('resetBrowserTree', () => {
     it('should properly set last page', () => {
       // Arrange

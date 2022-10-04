@@ -145,6 +145,7 @@ describe('Validations utils', () => {
       expect(validateEmail(text8)).toBeFalsy()
     })
   })
+
   describe('validateCertName', () => {
     it.each([
       ['my-new_cert', 'my-new_cert'],

@@ -15,7 +15,7 @@ export interface Props {
 
 const GroupBadge = ({ type, name = '', className = '', onDelete, compressed }: Props) => (
   <EuiBadge
-    style={{ backgroundColor: GROUP_TYPES_COLORS[type] ?? '#14708D' }}
+    style={{ backgroundColor: GROUP_TYPES_COLORS[type] ?? 'var(--defaultTypeColor)' }}
     className={cx(
       styles.badgeWrapper,
       className,

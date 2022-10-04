@@ -1,4 +1,6 @@
+import { sumBy } from 'lodash'
 import React from 'react'
+import { getPercentage } from 'uiSrc/utils/numbers'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import DonutChart, { ChartData } from './DonutChart'
@@ -11,6 +13,8 @@ const mockData: ChartData[] = [
   { value: 30, name: 'E', color: [40, 40, 40] },
   { value: 15, name: 'F', color: [50, 50, 50] },
 ]
+
+const sum = sumBy(mockData, 'value')
 
 describe('DonutChart', () => {
   it('should render with empty data', () => {
@@ -71,11 +75,27 @@ describe('DonutChart', () => {
   it('should call render tooltip and label methods', () => {
     const renderLabel = jest.fn()
     const renderTooltip = jest.fn()
-    render(<DonutChart data={mockData} renderLabel={renderLabel} renderTooltip={renderTooltip} />)
-    expect(renderLabel).toBeCalled()
+    render(
+      <DonutChart
+        data={mockData}
+        renderLabel={renderLabel}
+        renderTooltip={renderTooltip}
+        config={{ percentToShowLabel: 0 }}
+      />
+    )
+    expect(renderLabel).toBeCalledTimes(mockData.length)
 
     fireEvent.mouseEnter(screen.getByTestId('arc-A-1'))
-    expect(renderTooltip).toBeCalled()
+    expect(renderTooltip).toBeCalledWith(mockData[0])
+  })
+
+  it('should render provided tooltip', () => {
+    const renderTooltip = () => (<span data-testid="label" />)
+
+    render(<DonutChart data={mockData} renderTooltip={renderTooltip} />)
+
+    fireEvent.mouseEnter(screen.getByTestId('arc-A-1'))
+    expect(screen.getByTestId('label')).toBeInTheDocument()
   })
 
   it('should set tooltip as visible on hover and hidden on leave', () => {
@@ -86,5 +106,13 @@ describe('DonutChart', () => {
 
     fireEvent.mouseLeave(screen.getByTestId('arc-A-1'))
     expect(screen.getByTestId('chart-value-tooltip')).not.toBeVisible()
+  })
+
+  it('should display values with percentage', () => {
+    render(<DonutChart data={mockData} labelAs="percentage" config={{ percentToShowLabel: 0 }} />)
+
+    mockData.forEach(({ value, name }) => {
+      expect(screen.getByTestId(`label-${name}-${value}`)).toHaveTextContent(`: ${getPercentage(value, sum)}%`)
+    })
   })
 })

@@ -80,13 +80,19 @@ module.exports = {
         ],
         pathGroups: [
           {
+            pattern: 'apiSrc/**',
+            group: 'internal',
+            position: 'after'
+          },
+          {
             pattern: '{.,..}/*.scss', // same directory only
             // pattern: '{.,..}/**/*\.scss' // same & outside directories (e.g. import '../foo/foo.scss')
             group: 'object',
             position: 'after'
           }
         ],
-        warnOnUnassignedImports: true
+        warnOnUnassignedImports: true,
+        pathGroupsExcludedImportTypes: ['builtin']
       },
     ],
   },

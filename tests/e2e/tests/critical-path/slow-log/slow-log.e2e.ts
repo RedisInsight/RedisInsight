@@ -19,6 +19,7 @@ fixture `Slow Log`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(slowLogPage.slowLogTab);
     })
     .afterEach(async() => {
         await slowLogPage.resetToDefaultConfig();

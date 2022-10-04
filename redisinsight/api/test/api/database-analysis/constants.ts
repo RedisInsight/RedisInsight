@@ -39,7 +39,7 @@ export const analysisSchema = Joi.object().keys({
   delimiter: Joi.string().required(),
   createdAt: Joi.date().required(),
   filter: Joi.object({
-    type: Joi.string().allow(null).required(),
+    type: Joi.string().allow(null),
     match: Joi.string().required(),
     count: Joi.number().integer().required(),
   }).required(),

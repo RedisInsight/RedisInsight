@@ -10,7 +10,8 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 
-let keyName = 'hash:Hash1'
+let hashKeyName = 'test:Hash1';
+let streamKeyName = 'test:Stream1';
 const keyTTL = '2147476121';
 // const keyFieldValue = 'hashField11111';
 const keyValue = 'hashValue11111!';
@@ -46,14 +47,19 @@ test('No reports/keys message and report tooltip', async t => {
 test
 .before(async t => {
     await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-    await browserPage.addHashKey(keyName, keyTTL, keyValue);
+    await browserPage.addHashKey(hashKeyName, keyTTL, keyValue);
+    await browserPage.addStreamKey(streamKeyName, 'field', 'value', keyTTL);
     await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
-    // Go to Analysis Tools page
-    await t.click(myRedisDatabasePage.analysisPageButton);
+    await t.click(browserPage.treeViewButton);
+    await browserPage.searchByKeyName('');
+    // // Go to Analysis Tools page
+    // await t.click(myRedisDatabasePage.analysisPageButton);
 })
 .after(async t => {
     await cliPage.deleteKeysFromCliWithDelimiter(15);
-    await browserPage.deleteKeyByName(keyName);
+    // await t.click(myRedisDatabasePage.browserButton);
+    await browserPage.deleteKeyByName(hashKeyName);
+    await browserPage.deleteKeyByName(streamKeyName);
     await deleteStandaloneDatabaseApi(ossStandaloneConfig);
 })('Keyspaces displaying in Summary per keyspaces table', async t => {
 

@@ -1,13 +1,15 @@
 import { EuiIcon, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
-import { DatabaseAnalysis, SimpleTypeSummary } from 'apiSrc/modules/database-analysis/models'
+
 import { DonutChart } from 'uiSrc/components/charts'
 import { ChartData } from 'uiSrc/components/charts/donut-chart/DonutChart'
 import { KeyIconSvg, MemoryIconSvg } from 'uiSrc/components/database-overview/components/icons'
 import { GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY, GroupTypesColors, GroupTypesDisplay } from 'uiSrc/constants'
 import { formatBytes, Nullable } from 'uiSrc/utils'
 import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
+
+import { DatabaseAnalysis, SimpleTypeSummary } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
 

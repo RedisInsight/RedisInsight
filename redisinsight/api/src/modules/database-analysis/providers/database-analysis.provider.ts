@@ -25,6 +25,7 @@ export class DatabaseAnalysisProvider {
     'topKeysMemory',
     'filter',
     'progress',
+    'expirationGroups',
   ];
 
   constructor(

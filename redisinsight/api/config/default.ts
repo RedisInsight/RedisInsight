@@ -141,7 +141,7 @@ export default {
     countBatch: parseInt(process.env.WORKBENCH_BATCH_SIZE, 10) || 5,
   },
   database_analysis: {
-    maxItemsPerDb: parseInt(process.env.DATABASE_ANALYSIS_MAX_ITEMS_PER_DB, 10) || 15,
+    maxItemsPerDb: parseInt(process.env.DATABASE_ANALYSIS_MAX_ITEMS_PER_DB, 10) || 5,
   },
   commands: [
     {

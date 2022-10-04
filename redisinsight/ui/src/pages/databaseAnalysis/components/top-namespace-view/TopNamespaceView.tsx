@@ -23,7 +23,7 @@ const TopNamespaceView = (props: Props) => {
 
   return (
     <div className={styles.topNamespaceView}>
-      <EuiTitle className={styles.sectionTitle}>
+      <EuiTitle className="section-title">
         <h4>TOP NAMESPACES</h4>
       </EuiTitle>
       <EuiButton

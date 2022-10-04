@@ -5,3 +5,4 @@ export * from './simple-type-summary';
 export * from './simple-summary';
 export * from './database-analysis';
 export * from './short-database-analysis';
+export * from './sum-group';

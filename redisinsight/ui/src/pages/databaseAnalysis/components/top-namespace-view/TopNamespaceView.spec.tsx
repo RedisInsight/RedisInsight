@@ -11,7 +11,7 @@ describe('TopNamespaceView', () => {
     expect(render(<TopNamespaceView {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should render nsp-table-keys when click "btn-change-mode-keys" ', () => {
+  it('should render nsp-table-keys when click "btn-change-table-keys" ', () => {
     const mockedData = {
       topKeysNsp: [{
         nsp: 'nsp_name',
@@ -29,15 +29,15 @@ describe('TopNamespaceView', () => {
 
     const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)
 
-    fireEvent.click(screen.getByTestId('btn-change-mode-keys'))
+    fireEvent.click(screen.getByTestId('btn-change-table-keys'))
 
     expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).toBeInTheDocument()
-    expect(queryByTestId('btn-change-mode-memory')).not.toBeDisabled()
-    expect(queryByTestId('btn-change-mode-keys')).toBeDisabled()
+    expect(queryByTestId('btn-change-table-memory')).not.toBeDisabled()
+    expect(queryByTestId('btn-change-table-keys')).toBeDisabled()
   })
 
-  it('should render nsp-table-keys when click "btn-change-mode-memory" and memory button should be disabled', () => {
+  it('should render nsp-table-keys when click "btn-change-table-memory" and memory button should be disabled', () => {
     const mockedData = {
       topKeysNsp: [{
         nsp: 'nsp_name',
@@ -56,13 +56,13 @@ describe('TopNamespaceView', () => {
     const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)
 
     // memory button is disabled by default
-    fireEvent.click(screen.getByTestId('btn-change-mode-keys'))
-    fireEvent.click(screen.getByTestId('btn-change-mode-memory'))
+    fireEvent.click(screen.getByTestId('btn-change-table-keys'))
+    fireEvent.click(screen.getByTestId('btn-change-table-memory'))
 
     expect(queryByTestId('nsp-table-memory')).toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
-    expect(queryByTestId('btn-change-mode-memory')).toBeDisabled()
-    expect(queryByTestId('btn-change-mode-keys')).not.toBeDisabled()
+    expect(queryByTestId('btn-change-table-memory')).toBeDisabled()
+    expect(queryByTestId('btn-change-table-keys')).not.toBeDisabled()
   })
 
   it('should render nsp-table-keys by default" ', () => {
@@ -85,8 +85,8 @@ describe('TopNamespaceView', () => {
 
     expect(queryByTestId('nsp-table-memory')).toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
-    expect(queryByTestId('btn-change-mode-memory')).toBeDisabled()
-    expect(queryByTestId('btn-change-mode-keys')).not.toBeDisabled()
+    expect(queryByTestId('btn-change-table-memory')).toBeDisabled()
+    expect(queryByTestId('btn-change-table-keys')).not.toBeDisabled()
   })
 
   it('should not render tables when topMemoryNsp and topKeysNsp are empty array', () => {

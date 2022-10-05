@@ -74,5 +74,5 @@ RedisInsight includes an opt-in telemetry system, that is leveraged to help impr
 
 ## License 
 
-RedisInsight is licensed under [SSPL](/LICENSE) license.
+RedisInsight is licensed under [SSPL](/LICENSE) license
 

@@ -59,10 +59,10 @@ export class KeysScanner {
     for (let i = 0; i < keys.length; i += 1) {
       nodeKeys.push({
         name: keys[i],
-        memory: sizes[i][0] ? 0 : sizes[i][1],
+        memory: sizes[i][0] ? null : sizes[i][1],
         length: lengths[i],
         type: types[i][0] ? 'N/A' : types[i][1],
-        ttl: ttls[i][0] ? -1 : ttls[i][1],
+        ttl: ttls[i][0] ? -2 : ttls[i][1],
       });
     }
 

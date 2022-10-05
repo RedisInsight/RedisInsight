@@ -11,6 +11,7 @@ import {
 } from 'src/modules/database-analysis/models';
 import { RedisString } from 'src/common/constants';
 import { Injectable } from '@nestjs/common';
+import { sortByNumberField } from 'src/utils/base.helper';
 
 const TOP_KEYS_LIMIT = 15;
 const TOP_NSP_LIMIT = 15;
@@ -170,9 +171,15 @@ export class DatabaseAnalyzer {
    * @param field
    */
   async calculateTopKeys(keysBatches: Key[][], field: string): Promise<Key[]> {
-    return sortBy([].concat(...keysBatches.map(
-      (keysBatch) => sortBy(keysBatch, field).reverse().slice(0, TOP_KEYS_LIMIT),
-    )), field).reverse().slice(0, TOP_KEYS_LIMIT);
+    return sortByNumberField(
+      [].concat(...keysBatches.map(
+        (keysBatch) => sortByNumberField(
+          keysBatch,
+          field,
+        ).reverse().slice(0, TOP_KEYS_LIMIT),
+      )),
+      field,
+    ).reverse().slice(0, TOP_KEYS_LIMIT);
   }
 
   async calculateExpirationTimeGroups(keys: Key[]): Promise<SumGroup[]> {
@@ -180,35 +187,35 @@ export class DatabaseAnalyzer {
       {
         threshold: 0,
         total: 0,
-        label: 'No expiry',
+        label: 'No Expire',
       },
       {
-        threshold: 60 * 60 * 1000,
+        threshold: 60 * 60,
         total: 0,
         label: '<1 hr',
       },
       {
-        threshold: 4 * 60 * 60 * 1000,
+        threshold: 4 * 60 * 60,
         total: 0,
         label: '1-4 Hrs',
       },
       {
-        threshold: 12 * 60 * 60 * 1000,
+        threshold: 12 * 60 * 60,
         total: 0,
         label: '4-12 Hrs',
       },
       {
-        threshold: 24 * 60 * 60 * 1000,
+        threshold: 24 * 60 * 60,
         total: 0,
         label: '12-24 Hrs',
       },
       {
-        threshold: 7 * 24 * 60 * 60 * 1000,
+        threshold: 7 * 24 * 60 * 60,
         total: 0,
         label: '1-7 Days',
       },
       {
-        threshold: 30 * 24 * 60 * 60 * 1000,
+        threshold: 30 * 24 * 60 * 60,
         total: 0,
         label: '>7 Days',
       },

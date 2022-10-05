@@ -6,7 +6,7 @@ import { Key } from 'apiSrc/modules/database-analysis/models/key'
 
 import Table from './Table'
 import Loader from '../table-loader'
-import styles from '../../styles.module.scss'
+import styles from '../styles.module.scss'
 
 export interface Props {
   topKeysLength: Key[]

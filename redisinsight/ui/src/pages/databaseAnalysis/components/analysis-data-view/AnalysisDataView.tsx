@@ -1,7 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
-import { emptyMessageContent } from 'uiSrc/pages/databaseAnalysis'
 import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import TopKeys from '../top-keys'
@@ -23,18 +22,10 @@ const AnalysisDataView = (props: Props) => {
   return (
     <>
       {!loading && !reports.length && (
-        <EmptyAnalysisMessage
-          title={emptyMessageContent.noReports.title}
-          text={emptyMessageContent.noReports.text}
-          name="reports"
-        />
+        <EmptyAnalysisMessage name="reports" />
       )}
       {!loading && !!reports.length && data?.totalKeys?.total === 0 && (
-        <EmptyAnalysisMessage
-          title={emptyMessageContent.noKeys.title}
-          text={emptyMessageContent.noKeys.text}
-          name="keys"
-        />
+        <EmptyAnalysisMessage name="keys" />
       )}
       <div className={cx(styles.grid, styles.content)}>
         <SummaryPerData data={data} loading={loading} />

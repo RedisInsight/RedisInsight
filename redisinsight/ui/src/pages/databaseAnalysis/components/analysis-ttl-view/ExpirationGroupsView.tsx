@@ -18,6 +18,7 @@ export interface Props {
 
 const ExpirationGroupsView = (props: Props) => {
   const { data, loading } = props
+  const { totalMemory, totalKeys } = data || {}
 
   const { showNoExpiryGroup } = useSelector(DBAnalysisReportsSelector)
   const [expirationGroups, setExpirationGroups] = useState<AreaChartData[]>([])
@@ -53,7 +54,7 @@ const ExpirationGroupsView = (props: Props) => {
     dispatch(setShowNoExpiryGroup(value))
   }
 
-  if (!expirationGroups.length) {
+  if (!expirationGroups.length || !totalMemory?.total || !totalKeys?.total) {
     return null
   }
 

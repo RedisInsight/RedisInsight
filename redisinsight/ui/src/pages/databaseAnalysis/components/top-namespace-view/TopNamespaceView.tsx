@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiTitle, EuiLoadingContent } from '@elastic/eui'
 import { Nullable } from 'uiSrc/utils'
-import { NSPTable } from 'uiSrc/constants'
+import { NSPTable } from 'uiSrc/pages/databaseAnalysis'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import NameSpacesTable from '../name-spaces-table'

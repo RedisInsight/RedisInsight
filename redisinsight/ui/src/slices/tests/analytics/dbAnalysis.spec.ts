@@ -16,7 +16,8 @@ import reducer, {
   createNewAnalysis,
   fetchDBAnalysisReportsHistory,
   DBAnalysisReportsSelector,
-  dbAnalysisSelector
+  dbAnalysisSelector,
+  setShowNoExpiryGroup,
 } from 'uiSrc/slices/analytics/dbAnalysis'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -123,7 +124,8 @@ describe('db analysis slice', () => {
             loading: false,
             error,
             data: [],
-            selectedAnalysis: null
+            selectedAnalysis: null,
+            showNoExpiryGroup: false,
           }
         }
 
@@ -228,6 +230,25 @@ describe('db analysis slice', () => {
 
         // Act
         const nextState = reducer(initialState, loadDBAnalysisReportsSuccess(payload))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          analytics: { databaseAnalysis: nextState },
+        })
+        expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
+      })
+    })
+    describe('setShowNoExpiryGroup', () => {
+      it('should properly set data to history', () => {
+        const payload = true
+        // Arrange
+        const stateHistory = {
+          ...initialState.history,
+          showNoExpiryGroup: true,
+        }
+
+        // Act
+        const nextState = reducer(initialState, setShowNoExpiryGroup(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

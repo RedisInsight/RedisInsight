@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
@@ -11,6 +12,7 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const workbenchPage = new WorkbenchPage();
 const common = new Common();
+const chance = new Chance();
 
 const hashKeyName = 'test:Hash1';
 const hashValue = 'hashValue11111!';
@@ -18,6 +20,7 @@ const streamKeyName = 'test:Stream1';
 const streamKeyNameDelimiter = 'test-Stream1';
 const keySpaces = ['test:*', 'key1:*', 'key2:*', 'key5:*', 'key5:5', 'test-*', 'key4:*'];
 const keyTTL = '2147476121';
+const keyNamesReport = chance.unique(chance.word, 6);
 
 fixture `Memory Efficiency`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -173,4 +176,38 @@ test
         await t.click(myRedisDatabasePage.analysisPageButton);
         // Verify that context saved after switching between pages
         await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
+    });
+test
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await t.click(myRedisDatabasePage.analysisPageButton);
+    })
+    .after(async() => {
+        const keysNumber = keyNamesReport.length;
+        for (let i = 0; i < keysNumber; i++) {
+            await cliPage.sendCommandInCli(`del ${keyNamesReport[i]}`);
+        }
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Analysis history', async t => {
+        const numberOfKeys = [];
+        for (let i = 0; i < 6; i++) {
+            await cliPage.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
+            await t.click(memoryEfficiencyPage.newReportBtn);
+            numberOfKeys.push(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);
+        }
+        await t.click(memoryEfficiencyPage.selectedReport);
+        // Verify that user can see up to the 5 most recent previous results per database in the history
+        await t.expect(memoryEfficiencyPage.reportItem.count).eql(5, 'Number of saved reports is not correct');
+        // Verify that user can switch between reports and see all data updated in each report
+        for (let i = 0; i < 5; i++) {
+            await t.click(memoryEfficiencyPage.reportItem.nth(i));
+            const actualNumber = await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent;
+            await t.expect(actualNumber).eql(numberOfKeys[5 - i], 'Report content (total keys) is not correct');
+            await t.click(memoryEfficiencyPage.selectedReport);
+        }
+        // Verify that specific report is saved as context
+        await t.click(memoryEfficiencyPage.reportItem.nth(3));
+        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.expect(memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent).eql(numberOfKeys[2], 'Context is not saved');
     });

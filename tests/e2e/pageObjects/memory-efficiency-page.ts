@@ -11,6 +11,8 @@ export class MemoryEfficiencyPage {
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
     expandArrowBtn = Selector('[data-testid=expand-arrow-test]');
     sortByKeyPattern = Selector('[data-testid=tableHeaderSortButton]');
+    reportItem = Selector('[data-test-subj^=items-report-]');
+    selectedReport = Selector('[data-testid=select-report]');
     // ICONS
     reportTooltipIcon = Selector('[data-testid=db-new-reports-icon]');
     // TEXT ELEMENTS
@@ -22,4 +24,6 @@ export class MemoryEfficiencyPage {
     tableKeyPatternHeader = Selector('[data-test-subj*=tableHeaderCell_nsp]');
     tableMemoryHeader = Selector('[data-test-subj*=tableHeaderCell_memory]');
     tableKeysHeader = Selector('[data-test-subj*=tableHeaderCell_keys]');
+    // GRAPH ELEMENTS
+    donutTotalKeys = Selector('[data-testid=donut-title-keys]');
 }

@@ -26,12 +26,16 @@ import {
   getSlowLogConfigAction,
   slowLogConfigSelector,
   slowLogSelector
-} from 'uiSrc/slices/slowlog/slowlog'
+} from 'uiSrc/slices/analytics/slowlog'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
+import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
+import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
+
 import { EmptySlowLog, SlowLogTable, Actions } from './components'
 
 import styles from './styles.module.scss'
@@ -52,6 +56,7 @@ const SlowLogPage = () => {
   const { data, loading, durationUnit, config } = useSelector(slowLogSelector)
   const { slowlogLogSlowerThan = 0, slowlogMaxLen } = useSelector(slowLogConfigSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
+  const { viewTab } = useSelector(analyticsSettingsSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const [count, setCount] = useState<string>(DEFAULT_COUNT_VALUE)
@@ -65,6 +70,9 @@ const SlowLogPage = () => {
 
   useEffect(() => {
     getConfig()
+    if (viewTab !== AnalyticsViewTab.SlowLog) {
+      dispatch(setAnalyticsViewTab(AnalyticsViewTab.SlowLog))
+    }
   }, [])
 
   useEffect(() => {
@@ -126,9 +134,12 @@ const SlowLogPage = () => {
       <div className={styles.main} data-testid="slow-log-page">
         <EuiFlexGroup className={styles.header} responsive={false} alignItems="center" justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
-            <EuiTitle size="m" className={styles.title}>
-              <h1>Slow Log</h1>
-            </EuiTitle>
+            {connectionType === ConnectionType.Cluster && <AnalyticsTabs />}
+            {connectionType !== ConnectionType.Cluster && (
+              <EuiTitle size="m" className={styles.title}>
+                <h1>Slow Log</h1>
+              </EuiTitle>
+            )}
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>

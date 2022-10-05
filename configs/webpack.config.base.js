@@ -54,7 +54,7 @@ export default {
           // 'pnpapi',
           'cache-manager',
           // 'class-validator',
-          'fastify-static',
+          '@fastify/static',
           'fastify-swagger',
           // 'hiredis',
           // 'reflect-metadata',

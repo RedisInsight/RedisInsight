@@ -62,12 +62,12 @@ describe('DELETE /instance', () => {
           affected: 2,
         },
         before: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.not.eql(undefined)
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3)).to.not.eql(undefined)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.be.an('object')
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3)).to.be.an('object')
         },
         after: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(undefined)
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3)).to.eql(undefined)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(null)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3)).to.eql(null)
         },
       },
       {
@@ -79,8 +79,8 @@ describe('DELETE /instance', () => {
           affected: 0,
         },
         before: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(undefined)
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3)).to.eql(undefined)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(null)
+          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3)).to.eql(null)
         },
       },
     ].map(mainCheckFn);

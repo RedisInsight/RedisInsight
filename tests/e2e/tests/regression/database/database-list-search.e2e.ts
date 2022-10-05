@@ -1,4 +1,3 @@
-import { t } from 'testcafe';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import {
     addNewStandaloneDatabasesApi,
@@ -11,8 +10,10 @@ import {
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config, ossSentinelConfig, ossClusterConfig } from '../../../helpers/conf';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const common = new Common();
 const databasesForSearch = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testSearch' },
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testSecondSearch' },
@@ -36,7 +37,7 @@ fixture `Database list search`
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig);
         // Reload Page
-        await t.eval(() => location.reload());
+        await common.reloadPage();
     })
     .afterEach(async() => {
         //Clear and delete databases
@@ -93,7 +94,7 @@ test('Verify that user can search DB by Last Connection on the List of databases
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[1].databaseName).exists).ok('The database with Last Connection not found', { timeout: 10000 });
     //Verify that database added > 1min ago found on the list search by Last Connection
     do {
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.typeText(myRedisDatabasePage.searchInput, searchedDBSecond, { replace: true });
     }
     while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);

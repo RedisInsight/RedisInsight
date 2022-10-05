@@ -6,7 +6,7 @@ import { Theme } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import MultiPlayIconDark from 'uiSrc/assets/img/multi_play_icon_dark.svg'
 import MultiPlayIconLight from 'uiSrc/assets/img/multi_play_icon_light.svg'
@@ -15,6 +15,7 @@ import styles from './styles.module.scss'
 export interface Props {
   items: CommandExecutionUI[]
   activeMode: RunQueryMode
+  activeResultsMode?: ResultsMode
   scrollDivRef: React.Ref<HTMLDivElement>
   onQueryReRun: (query: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   onQueryDelete: (commandId: string) => void
@@ -24,6 +25,7 @@ const WBResults = (props: Props) => {
   const {
     items = [],
     activeMode,
+    activeResultsMode,
     onQueryReRun,
     onQueryDelete,
     onQueryOpen,
@@ -53,11 +55,14 @@ const WBResults = (props: Props) => {
           command = '',
           isOpen = false,
           result = undefined,
+          summary = undefined,
           id = '',
           loading,
           createdAt,
           mode,
+          resultsMode,
           emptyCommand,
+          isNotStored
         }
       ) => (
         <QueryCard
@@ -65,12 +70,16 @@ const WBResults = (props: Props) => {
           key={id}
           isOpen={isOpen}
           result={result}
+          summary={summary}
           loading={loading}
           command={command}
           createdAt={createdAt}
           activeMode={activeMode}
           emptyCommand={emptyCommand}
+          isNotStored={isNotStored}
           mode={mode}
+          activeResultsMode={activeResultsMode}
+          resultsMode={resultsMode}
           onQueryOpen={() => onQueryOpen(id)}
           onQueryReRun={() => onQueryReRun(command, null, false)}
           onQueryDelete={() => onQueryDelete(id)}

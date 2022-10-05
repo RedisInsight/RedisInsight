@@ -14,7 +14,7 @@ import {
   appContextWorkbench
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
 import WBResultsWrapper from '../../wb-results'
 import EnablementAreaWrapper from '../../enablement-area'
@@ -34,10 +34,12 @@ export interface Props {
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
   scrollDivRef: Ref<HTMLDivElement>
   activeMode: RunQueryMode
+  resultsMode: ResultsMode
   onSubmit: (query?: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
   onQueryChangeMode: () => void
+  onChangeGroupMode: () => void
 }
 
 const WBView = (props: Props) => {
@@ -48,14 +50,16 @@ const WBView = (props: Props) => {
     setScriptEl,
     scriptEl,
     activeMode,
+    resultsMode,
     onSubmit,
     onQueryOpen,
     onQueryDelete,
     onQueryChangeMode,
+    onChangeGroupMode,
     scrollDivRef,
   } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
-    (localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? 'false') === 'true'
+    localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? false
   )
   const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 
@@ -101,16 +105,18 @@ const WBView = (props: Props) => {
                   scrollable={false}
                   className={styles.queryPanel}
                   initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
-                  style={{ minHeight: '140px' }}
+                  style={{ minHeight: '140px', overflow: 'hidden' }}
                 >
                   <QueryWrapper
                     query={script}
                     activeMode={activeMode}
+                    resultsMode={resultsMode}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
                     setIsCodeBtnDisabled={setIsCodeBtnDisabled}
                     onSubmit={onSubmit}
                     onQueryChangeMode={onQueryChangeMode}
+                    onChangeGroupMode={onChangeGroupMode}
                   />
                 </EuiResizablePanel>
 
@@ -132,6 +138,7 @@ const WBView = (props: Props) => {
                   <WBResultsWrapper
                     items={items}
                     activeMode={activeMode}
+                    activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
                     onQueryReRun={onSubmit}
                     onQueryOpen={onQueryOpen}

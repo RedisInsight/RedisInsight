@@ -1,6 +1,6 @@
 import { Chance } from 'chance';
 import { t } from 'testcafe';
-import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, acceptLicenseTermsAndAddRECloudDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     CliPage,
@@ -32,7 +32,7 @@ const verifyTooltipContainsText = async(text: string, contains: boolean): Promis
 };
 
 fixture `Database overview`
-    .meta({ rte: rte.standalone, type: 'regression' })
+    .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
         //Create databases and keys
@@ -54,33 +54,31 @@ fixture `Database overview`
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Verify that user can see total and current logical database number of keys (if there are any keys in other logical DBs)', async t => {
-    //Wait for Total Keys number refreshed
-    await t.expect(browserPage.overviewTotalKeys.withText(`${keysAmount + 1}`).exists).ok('Total keys are not changed', { timeout: 10000 });
-    await t.hover(workbenchPage.overviewTotalKeys);
-    //Verify that user can see total number of keys and number of keys in current logical database
-    await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-    await verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
-    await verifyTooltipContainsText(`db1:${keysAmount}Keys`, true);
-});
-test('Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)', async t => {
-    //Open Database
-    await t.click(myRedisDatabasePage.myRedisDBButton);
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await t.hover(workbenchPage.overviewTotalKeys);
-    //Verify that user can see only total number of keys
-    await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-    await verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
-    await verifyTooltipContainsText('db1', false);
-});
 test
-    .before(async t => {
-        await acceptLicenseTerms();
-        await addRedisDatabasePage.addRedisDataBase(cloudDatabaseConfig);
-        //Click for saving
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(cloudDatabaseConfig.databaseName).exists).ok('The existence of the database', { timeout: 5000 });
-        await myRedisDatabasePage.clickOnDBByName(cloudDatabaseConfig.databaseName);
+    .meta({ rte: rte.standalone })('Verify that user can see total and current logical database number of keys (if there are any keys in other logical DBs)', async t => {
+        //Wait for Total Keys number refreshed
+        await t.expect(browserPage.overviewTotalKeys.withText(`${keysAmount + 1}`).exists).ok('Total keys are not changed', { timeout: 10000 });
+        await t.hover(workbenchPage.overviewTotalKeys);
+        //Verify that user can see total number of keys and number of keys in current logical database
+        await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
+        await verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
+        await verifyTooltipContainsText(`db1:${keysAmount}Keys`, true);
+    });
+test
+    .meta({ rte: rte.standalone })('Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)', async t => {
+        //Open Database
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await t.hover(workbenchPage.overviewTotalKeys);
+        //Verify that user can see only total number of keys
+        await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
+        await verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
+        await verifyTooltipContainsText('db1', false);
+    });
+test
+    .meta({ rte: rte.reCloud })
+    .before(async() => {
+        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async() => {
         //Delete database

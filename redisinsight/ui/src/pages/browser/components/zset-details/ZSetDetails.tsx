@@ -246,7 +246,7 @@ const ZSetDetails = (props: Props) => {
         const name = bufferToString(nameItem)
         const tooltipContent = formatLongName(name)
         const { value, isValid } = formattingBuffer(nameItem, viewFormat, { expanded })
-        const cellContent = value.substring?.(0, 200) ?? value
+        const cellContent = value?.substring?.(0, 200) ?? value
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>

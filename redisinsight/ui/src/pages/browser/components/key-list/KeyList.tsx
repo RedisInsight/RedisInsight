@@ -1,6 +1,7 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+import { useParams } from 'react-router-dom'
 
 import {
   EuiText,
@@ -9,7 +10,7 @@ import {
 } from '@elastic/eui'
 import {
   formatBytes,
-  truncateTTLToDuration,
+  truncateNumberToDuration,
   truncateNumberToFirstUnit,
   truncateTTLToSeconds,
   replaceSpaces,
@@ -39,8 +40,9 @@ import ApiEndpoints, { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { OVER_RENDER_BUFFER_COUNT, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { OVER_RENDER_BUFFER_COUNT, Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import { apiService } from 'uiSrc/services'
@@ -65,6 +67,8 @@ export interface Props {
 const KeyList = forwardRef((props: Props, ref) => {
   let wheelTimer = 0
   const { selectKey, loadMoreItems, loading, keysState, hideFooter } = props
+
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { data: selectedKey } = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
@@ -116,14 +120,30 @@ const KeyList = forwardRef((props: Props, ref) => {
     setItems(tempItems)
   }, [keysState.keys])
 
+  const onNoKeysLinkClick = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_WORKBENCH_LINK_CLICKED,
+        TelemetryEvent.TREE_VIEW_WORKBENCH_LINK_CLICKED
+      ),
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
+
   const getNoItemsMessage = () => {
+    if (total === 0) {
+      return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
+    }
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
     }
     if (isFiltered && keysState.scanned < total) {
       return ScanNoResultsFoundText
     }
-    return total ? NoResultsFoundText : NoKeysToDisplayText
+    return NoResultsFoundText
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
@@ -251,8 +271,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     {
       id: 'ttl',
       label: 'TTL',
-      absoluteWidth: 76,
-      minWidth: 76,
+      absoluteWidth: 86,
+      minWidth: 86,
       truncateText: true,
       alignment: TableCellAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
@@ -275,7 +295,7 @@ const KeyList = forwardRef((props: Props, ref) => {
                   <>
                     {`${truncateTTLToSeconds(cellData)} s`}
                     <br />
-                    {`(${truncateTTLToDuration(cellData)})`}
+                    {`(${truncateNumberToDuration(cellData)})`}
                   </>
                 )}
               >
@@ -289,8 +309,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     {
       id: 'size',
       label: 'Size',
-      absoluteWidth: 100,
-      minWidth: 100,
+      absoluteWidth: 84,
+      minWidth: 84,
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {

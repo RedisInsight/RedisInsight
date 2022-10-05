@@ -12,10 +12,12 @@ export class SettingsPage {
     accordionAppearance = Selector('[data-test-subj=accordion-appearance]');
     accordionPrivacySettings = Selector('[data-test-subj=accordion-privacy-settings]');
     accordionAdvancedSettings = Selector('[data-test-subj=accordion-advanced-settings]');
+    accordionWorkbenchSettings = Selector('[data-test-subj=accordion-workbench-settings]');
     switchAnalyticsOption = Selector('[data-testid=switch-option-analytics]');
     switchEulaOption = Selector('[data-testid=switch-option-eula]');
     submitConsentsPopupButton = Selector('[data-testid=consents-settings-popup] [data-testid=btn-submit]');
     switchNotificationsOption = Selector('[data-testid=switch-option-notifications]');
+    switchEditorCleanupOption = Selector('[data-testid=switch-workbench-cleanup]');
     //TEXT INPUTS (also referred to as 'Text fields')
     keysToScanValue = Selector('[data-testid=keys-to-scan-value]');
     keysToScanInput = Selector('[data-testid=keys-to-scan-input]');
@@ -64,5 +66,23 @@ export class SettingsPage {
      */
     async getEulaSwitcherValue(): Promise<string> {
         return await this.switchEulaOption.getAttribute('aria-checked');
+    }
+
+    /**
+     * Get state of Editor Cleanup switcher
+     */
+    async getEditorCleanupSwitcherValue(): Promise<string> {
+        return await this.switchEditorCleanupOption.getAttribute('aria-checked');
+    }
+
+    /**
+    * Enable Editor Cleanup switcher
+    * @param state Enabled(true) or disabled(false)
+    */
+    async changeEditorCleanupSwitcher(state: boolean): Promise<void> {
+        const currentState = await this.getEditorCleanupSwitcherValue();
+        if (currentState !== `${state}`) {
+            await t.click(this.switchEditorCleanupOption);
+        }
     }
 }

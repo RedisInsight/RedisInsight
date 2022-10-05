@@ -1,4 +1,4 @@
-import {RequestMock, t} from 'testcafe';
+import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import {apiUrl, commonUrl} from './conf';
 
@@ -35,7 +35,7 @@ export class Common {
     * @param length The amount of array elements
     */
     async createArrayWithKeyValue(length: number): Promise<string[]> {
-        const arr = [];
+        const arr: string[] = [];
         for(let i = 1; i <= length * 2; i++) {
             arr[i] = `${chance.word({ length: 10 })}-key${i}`;
             arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
@@ -48,8 +48,8 @@ export class Common {
     * Create array of keys and values for using in OSS Cluster
     * @param length The amount of array elements
     */
-     async createArrayWithKeyValueForOSSCluster(length: number): Promise<string[]> {
-        const arr = [];
+    async createArrayWithKeyValueForOSSCluster(length: number): Promise<string[]> {
+        const arr: string[] = [];
         for(let i = 1; i <= length * 2; i++) {
             arr[i] = `{user1}:${chance.word({ length: 10 })}-key${i}`;
             arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
@@ -64,7 +64,7 @@ export class Common {
     * @param keyName The name of the key
     */
     async createArrayWithKeyValueAndKeyname(length: number, keyName: string): Promise<string[]> {
-        const keyNameArray = [];
+        const keyNameArray: string[] = [];
         for(let i = 1; i <= length; i++) {
             const key = `${keyName}${i}`;
             const value = `value${i}`;
@@ -86,7 +86,7 @@ export class Common {
     * @param length The amount of array elements
     */
     async createArray(length: number): Promise<string[]> {
-        const arr = [];
+        const arr: string[] = [];
         for(let i = 1; i <= length; i++) {
             arr[i] = `${i}`;
         }
@@ -122,5 +122,21 @@ export class Common {
     */
     getEndpoint(): string {
         return apiUrl;
+    }
+
+    /**
+    * Reload page
+    */
+    async reloadPage(): Promise<void> {
+        await t.eval(() => location.reload());
+    }
+
+    /**
+     * Check opened URL
+     * @param expectedUrl Expected link that is compared with actual
+     */
+    async checkURL(expectedUrl: string): Promise<void> {
+        const getPageUrl = ClientFunction(() => window.location.href);
+        await t.expect(getPageUrl()).eql(expectedUrl, 'Opened URL is not correct');
     }
 }

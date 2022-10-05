@@ -30,8 +30,7 @@ import {
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-
-import { TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import { TEXT_INVALID_VALUE, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 
 import styles from './styles.module.scss'
@@ -177,6 +176,12 @@ const StringDetails = (props: Props) => {
           onDecline={onDeclineChanges}
           onApply={onApplyChanges}
           declineOnUnmount={false}
+          approveText={TEXT_INVALID_VALUE}
+          approveByValidation={() =>
+            formattingBuffer(
+              stringToSerializedBufferFormat(viewFormat, areaValue),
+              viewFormat
+            )?.isValid}
         >
           <EuiTextArea
             fullWidth
@@ -191,7 +196,7 @@ const StringDetails = (props: Props) => {
             }}
             disabled={loading}
             inputRef={textAreaRef}
-            className={cx(styles.stringTextArea, { 'input-warning': isDisabled })}
+            className={cx(styles.stringTextArea, { [styles.areaWarning]: isDisabled })}
             data-testid="string-value"
           />
         </InlineItemEditor>

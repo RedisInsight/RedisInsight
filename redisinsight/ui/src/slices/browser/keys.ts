@@ -69,7 +69,7 @@ export const initialState: KeysStore = {
     error: '',
     data: null,
     length: 0,
-    viewFormat: defaultViewFormat,
+    viewFormat: localStorageService?.get(BrowserStorageItem.viewFormat) ?? defaultViewFormat,
   },
   addKey: {
     loading: false,
@@ -85,6 +85,9 @@ export const initialKeyInfo = {
   size: 1,
   length: 0,
 }
+
+const getInitialSelectedKeyState = (state: KeysStore) =>
+  ({ ...initialState.selectedKey, viewFormat: state.selectedKey.viewFormat })
 
 // A slice for recipes
 const keysSlice = createSlice({
@@ -213,7 +216,6 @@ const keysSlice = createSlice({
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
-        viewFormat: defaultViewFormat,
         // data: null,
       }
     },
@@ -313,11 +315,17 @@ const keysSlice = createSlice({
     },
 
     resetKeyInfo: (state) => {
-      state.selectedKey = cloneDeep(initialState.selectedKey)
+      state.selectedKey = cloneDeep(getInitialSelectedKeyState(state as KeysStore))
     },
 
     // reset keys for keys slice
-    resetKeys: () => cloneDeep(initialState),
+    resetKeys: (state) => cloneDeep(
+      {
+        ...initialState,
+        viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
+        selectedKey: getInitialSelectedKeyState(state as KeysStore)
+      }
+    ),
 
     resetKeysData: (state) => {
       // state.data.keys = []
@@ -334,6 +342,7 @@ const keysSlice = createSlice({
 
     setViewFormat: (state, { payload }: PayloadAction<KeyValueFormat>) => {
       state.selectedKey.viewFormat = payload
+      localStorageService?.set(BrowserStorageItem.viewFormat, payload)
     }
   },
 })
@@ -392,8 +401,6 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
-    dispatch(setViewFormat(defaultViewFormat))
-
     if (type === KeyTypes.Hash) {
       dispatch(setHashInitialState())
     }

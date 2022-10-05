@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import { reverse } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
@@ -198,6 +199,7 @@ export function sendWBCommandAction({
   commands = [],
   multiCommands = [],
   mode = RunQueryMode.ASCII,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -206,6 +208,7 @@ export function sendWBCommandAction({
   multiCommands?: string[]
   commandId?: string
   mode: RunQueryMode
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -214,21 +217,25 @@ export function sendWBCommandAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({
+        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Command(s)`] : commands,
+        commandId
+      }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
+          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
         {
           commands,
           mode,
+          resultsMode
         }
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data, processing: !!multiCommands?.length }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
 
         onSuccessAction?.(multiCommands)
       }
@@ -248,6 +255,7 @@ export function sendWBCommandClusterAction({
   multiCommands = [],
   options,
   mode = RunQueryMode.ASCII,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -256,7 +264,8 @@ export function sendWBCommandClusterAction({
   options: CreateCommandExecutionDto
   commandId?: string
   multiCommands?: string[]
-  mode: RunQueryMode,
+  mode?: RunQueryMode,
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -265,23 +274,27 @@ export function sendWBCommandClusterAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({
+        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Commands`] : commands,
+        commandId
+      }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
-          ApiEndpoints.WORKBENCH_COMMANDS_EXECUTION,
+          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
         {
           ...options,
           commands,
           mode,
-          outputFormat: CliOutputFormatterType.Raw,
+          resultsMode,
+          outputFormat: CliOutputFormatterType.Raw
         }
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
 
         onSuccessAction?.(multiCommands)
       }

@@ -1,6 +1,5 @@
 import {
   expect,
-  before,
   describe,
   it,
   Joi,
@@ -88,7 +87,7 @@ describe('POST /instance/:instanceId/plugins/:vId/command-executions/:id/state',
         checkFn: async ({ body }) => {
           expect(body).to.eql({});
           const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
-            .findOne({
+            .findOneBy({
               commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
               visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
             });
@@ -111,7 +110,7 @@ describe('POST /instance/:instanceId/plugins/:vId/command-executions/:id/state',
         checkFn: async ({ body }) => {
           expect(body).to.eql({});
           const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
-            .findOne({
+            .findOneBy({
               commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
               visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
             });
@@ -134,7 +133,7 @@ describe('POST /instance/:instanceId/plugins/:vId/command-executions/:id/state',
         checkFn: async ({ body }) => {
           expect(body).to.eql({});
           const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
-            .findOne({
+            .findOneBy({
               commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
               visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
             });

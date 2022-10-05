@@ -10,12 +10,12 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     value: KeyValueFormat.ASCII,
   },
   {
-    text: 'HEX',
-    value: KeyValueFormat.HEX,
-  },
-  {
     text: 'Binary',
     value: KeyValueFormat.Binary,
+  },
+  {
+    text: 'HEX',
+    value: KeyValueFormat.HEX,
   },
   {
     text: 'JSON',
@@ -26,15 +26,19 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     value: KeyValueFormat.Msgpack,
   },
   {
-    text: 'PHP Unserialize',
-    value: KeyValueFormat.PHP,
+    text: 'Pickle',
+    value: KeyValueFormat.Pickle,
   },
   {
     text: 'Protobuf',
     value: KeyValueFormat.Protobuf,
   },
   {
-    text: 'Java Object',
+    text: 'PHP serialized',
+    value: KeyValueFormat.PHP,
+  },
+  {
+    text: 'Java serialized',
     value: KeyValueFormat.JAVA,
   },
 ]
@@ -45,5 +49,5 @@ export const getKeyValueFormatterOptions = (viewFormat?: KeyTypes | ModulesKeyTy
   viewFormat !== KeyTypes.ReJSON
     ? [...KEY_VALUE_FORMATTER_OPTIONS]
     : [...KEY_VALUE_FORMATTER_OPTIONS].filter((option) =>
-      KEY_VALUE_JSON_FORMATTER_OPTIONS.indexOf(option.value) !== -1)
+      (KEY_VALUE_JSON_FORMATTER_OPTIONS as Array<any>).indexOf(option.value) !== -1)
 )

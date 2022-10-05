@@ -3,10 +3,12 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, CliPage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const cliPage = new CliPage();
+const common = new Common();
 
 const speed = 0.4;
 
@@ -63,7 +65,7 @@ test
         await t.expect(await cliPage.cliCollapseButton.exists).ok('CLI is still expanded');
         await t.expect(await workbenchPage.queryInputScriptArea.textContent).eql(command, 'Input in Editor is saved');
         //Reload the window and chek context
-        await t.eval(() => location.reload());
+        await common.reloadPage();
         await t.expect(await cliPage.cliCollapseButton.exists).notOk('CLI is collapsed');
         await t.expect(await workbenchPage.queryInputScriptArea.textContent).eql('', 'Input in Editor is removed');
     });

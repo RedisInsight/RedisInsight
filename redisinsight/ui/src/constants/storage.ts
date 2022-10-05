@@ -17,6 +17,8 @@ enum BrowserStorageItem {
   dbConfig = 'dbConfig_',
   RunQueryMode = 'RunQueryMode',
   wbCleanUp = 'wbCleanUp',
+  viewFormat = 'viewFormat',
+  wbGroupMode = 'wbGroupMode'
 }
 
 export default BrowserStorageItem

@@ -1,18 +1,18 @@
-import { fireEvent } from '@testing-library/react'
-import { cloneDeep } from 'lodash'
 import React from 'react'
-import { setWorkbenchCleanUp } from 'uiSrc/slices/user/user-settings'
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import SettingsPage from './SettingsPage'
 
-let store: typeof mockedStore
-beforeEach(() => {
-  cleanup()
-  store = cloneDeep(mockedStore)
-  store.clearActions()
-})
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
-
+/**
+ * SettingsPage tests
+ *
+ * @group component
+ */
 describe('SettingsPage', () => {
   it('should render', () => {
     expect(render(<SettingsPage />)).toBeTruthy()
@@ -51,15 +51,26 @@ describe('SettingsPage', () => {
     ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })
+})
 
-  it('should call proper actions after click on switch wb clear mode', () => {
+describe('Telemetry', () => {
+  it('change Cleanup setting', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    sendEventTelemetry.mockReset()
+
     render(<SettingsPage />)
-
-    const afterRenderActions = [...store.getActions()]
 
     fireEvent.click(screen.getByTestId('switch-workbench-cleanup'))
 
-    expect(store.getActions())
-      .toEqual([...afterRenderActions, setWorkbenchCleanUp(true)])
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.SETTINGS_WORKBENCH_EDITOR_CLEAR_CHANGED,
+      eventData: {
+        currentValue: true,
+        newValue: false,
+      },
+    })
   })
 })

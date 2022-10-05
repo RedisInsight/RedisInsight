@@ -244,4 +244,4 @@ const AutoRefresh = ({
   )
 }
 
-export default AutoRefresh
+export default React.memo(AutoRefresh)

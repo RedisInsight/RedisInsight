@@ -5,6 +5,11 @@ import InternalPage, { Props } from './InternalPage'
 
 const mockedProps = mock<Props>()
 
+/**
+ * InternalPage tests
+ *
+ * @group component
+ */
 describe('InternalPage', () => {
   it('should render', () => {
     expect(render(<InternalPage {...instance(mockedProps)} />)).toBeTruthy()

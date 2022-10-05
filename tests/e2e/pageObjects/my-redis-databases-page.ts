@@ -10,6 +10,7 @@ export class MyRedisDatabasePage {
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
+    analysisPageButton = Selector('[data-testid=analytics-page-btn]');
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');
@@ -64,7 +65,7 @@ export class MyRedisDatabasePage {
             await t.click(this.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t.expect(db.exists).ok('The database exists', {timeout: 10000});
+        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
         await t.click(db);
     }
 

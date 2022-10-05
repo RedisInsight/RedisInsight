@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import React, { useEffect, useRef } from 'react'
+import cx from 'classnames'
 
 import styles from './styles.module.scss'
 
@@ -10,12 +11,8 @@ export interface AreaChartData {
   ylabel: string
 }
 
-interface IDatum {
+interface IDatum extends AreaChartData{
   index: number
-  xlabel: string
-  ylabel: string
-  y: number
-  x: number
 }
 
 interface IProps {
@@ -25,6 +22,12 @@ interface IProps {
   height?: number
   divideLastColumn?: boolean
   multiplierGrid?: number
+  classNames?: {
+    area?: string
+    dashedLine?: string
+    tooltip?: string
+    scatterPoints?: string
+  }
   tooltipValidation?: (val: any, index: number) => any
   leftAxiosValidation?: (val: any, index: number) => any
   bottomAxiosValidation?: (val: any, index: number) => any
@@ -39,6 +42,7 @@ const AreaChart = (props: IProps) => {
     name,
     width: propWidth = 0,
     height: propHeight = 0,
+    classNames,
     divideLastColumn,
     multiplierGrid = DEFAULT_MULTIPLIER_GRID,
     tooltipValidation = (val) => val,
@@ -58,7 +62,7 @@ const AreaChart = (props: IProps) => {
     }
 
     const tooltip = d3.select('body').append('div')
-      .attr('class', styles.tooltip)
+      .attr('class', cx(styles.tooltip, classNames?.tooltip || ''))
       .style('opacity', 0)
 
     d3
@@ -103,25 +107,26 @@ const AreaChart = (props: IProps) => {
       .attr('fill', 'none')
       .attr('stroke', 'var(--euiColorPrimary)')
       .attr('stroke-width', 2)
-      .attr('d', d3.line<IDatum>()
-        .x((d) => xAxis(d.index))
-        .y((d) => yAxis(d.y))
-        .curve(d3.curveMonotoneX))
+      .attr(
+        'd',
+        d3.line<IDatum>()
+          .x((d) => xAxis(d.index))
+          .y((d) => yAxis(d.y))
+          .curve(d3.curveMonotoneX)
+      )
 
     if (divideLastColumn) {
       svg.append('line')
+        .attr('class', cx(styles.dashedLine, classNames?.dashedLine))
         .attr('x1', xAxis(cleanedData.length - 1.5))
         .attr('x2', xAxis(cleanedData.length - 1.5))
         .attr('y1', 0)
         .attr('y2', height)
-        .style('stroke', 'var(--euiTextSubduedColor)')
-        .style('stroke-width', '1px')
-        .style('stroke-dasharray', '5,3')
     }
 
     svg.append('path')
       .datum(cleanedData)
-      .attr('class', styles.area)
+      .attr('class', cx(styles.area, classNames?.area))
       .attr('d', area)
 
     svg.append('g')
@@ -147,7 +152,7 @@ const AreaChart = (props: IProps) => {
       .data(cleanedData)
       .enter()
       .append('circle')
-      .attr('class', styles.scatterPoints)
+      .attr('class', cx(styles.scatterPoints, classNames?.scatterPoints || ''))
       .attr('cx', (d) => xAxis(d.index))
       .attr('cy', (d) => yAxis(d.y))
       .attr('r', 5)
@@ -159,7 +164,7 @@ const AreaChart = (props: IProps) => {
           .style('opacity', 1)
         tooltip.html(`${tooltipValidation(d.y, d.index)}<div class=${styles.arrow}></div>`)
           .style('left', `${event.pageX - 40}px`)
-          .style('top', `${event.pageY - 70}px`)
+          .style('top', `${event.pageY - 66}px`)
           .attr('data-testid', 'area-tooltip-circle')
       })
       .on('mouseout', () => {

@@ -32,11 +32,9 @@ const ExpirationGroupsView = (props: Props) => {
     const newExpirationGroups = [...(data?.expirationGroups || [])]
 
     // move "No expire" column to the end if should be shown
-    if (showNoExpiryGroup && newExpirationGroups.length > 0) {
-      newExpirationGroups.push(newExpirationGroups.shift())
-    } else {
-      // remove "No expire" column if should not be shown
-      newExpirationGroups.shift()
+    const noExpireGroup = newExpirationGroups.shift()
+    if (showNoExpiryGroup && noExpireGroup && newExpirationGroups.length > 0) {
+      newExpirationGroups.push(noExpireGroup)
     }
 
     setExpirationGroups(

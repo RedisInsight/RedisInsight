@@ -47,6 +47,12 @@
   cursor: pointer;
 }
 
+.dashedLine {
+  stroke: var(--euiTextSubduedColor);
+  stroke-width: 1px;
+  stroke-dasharray: 5, 3;
+}
+
 :global {
   .tick line,
   .domain {

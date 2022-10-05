@@ -28,6 +28,9 @@ $breakpoint-table: 1680px;
   }
 
   @media screen and (max-width: $breakpoint-table) {
+    > div:nth-child(2n-1) {
+      margin-right: 0;
+    }
     grid-template-columns: 100%;
   }
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import cx from 'classnames'
-import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { Nullable } from 'uiSrc/utils'
-import { emptyMessageContent } from 'uiSrc/constants'
+import { emptyMessageContent } from 'uiSrc/pages/databaseAnalysis'
+import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import EmptyAnalysisMessage from '../empty-analysis-message'
 import TopNamespaceView from '../top-namespace-view'

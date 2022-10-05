@@ -7,26 +7,6 @@ $breakpoint-table: 1232px;
 .wrapper {
   max-width: 1920px;
 
-  .loading {
-    margin-top: 40px;
-    width: 100%;
-
-    :global {
-      .euiLoadingContent__singleLine {
-        height: 36px;
-
-        &:first-child {
-          height: 42px;
-          margin-bottom: 18px;
-        }
-      }
-
-      .euiLoadingContent__singleLine:last-child:not(:only-child) {
-        width: 100%;
-      }
-    }
-  }
-
   .badge :global(.euiText--extraSmall) {
     font: normal normal normal 12px/16px Graphik;
   }
@@ -90,6 +70,16 @@ $breakpoint-table: 1232px;
   :global {
     .nsp-cell {
       height: 42px;
+    }
+    
+    .euiTableRowCell:first-child,
+    .euiTableHeaderCell:first-child {
+      padding-left: 12px;
+    }
+
+    .euiTableRowCell:last-child,
+    .euiTableHeaderCell:last-child {
+      padding-right: 12px;
     }
 
     .euiTableHeaderCell {

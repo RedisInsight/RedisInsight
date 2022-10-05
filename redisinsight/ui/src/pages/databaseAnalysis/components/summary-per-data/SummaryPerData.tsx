@@ -37,7 +37,7 @@ const SummaryPerData = ({ data, loading }: Props) => {
     }
   }, [data])
 
-  if (loading && !totalMemory && !totalKeys) {
+  if (loading) {
     return (
       <div className={cx(styles.chartsWrapper, styles.loadingWrapper)} data-testid="summary-per-data-loading">
         <div className={styles.preloaderCircle} />

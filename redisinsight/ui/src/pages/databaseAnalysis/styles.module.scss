@@ -35,6 +35,10 @@ $breakpoint-table: 1680px;
   }
 }
 
+.main .topNamespaceView:not(:last-child) {
+  margin-bottom: 37px;
+}
+
 .main .topNamespaceView .textBtn.textBtn {
   border: none;
   min-width: auto !important;

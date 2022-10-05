@@ -22,7 +22,7 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { setBrowserTreeDelimiter, setBrowserKeyListDataLoaded, resetBrowserTree } from 'uiSrc/slices/app/context'
 import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 
-import styles from './styles.module.scss'
+import styles from '../styles.module.scss'
 
 export interface Props {
   data: Nullable<NspSummary[]>

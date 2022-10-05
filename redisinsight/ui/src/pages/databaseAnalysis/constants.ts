@@ -1,4 +1,4 @@
-export enum NSPTable {
+export enum TableView {
   MEMORY = 'memory',
   KEYS = 'keys',
 }

@@ -1,8 +1,4 @@
 .wrapper {
-  // // position: relative;
-  // // height: 450px;
-  // width: 100%;
-  // height: 100%;
 }
 
 .svg {
@@ -31,6 +27,19 @@
   font-size: 12px !important;
   box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
   bottom: 0;
+
+  .arrow {
+    top: 50px !important;
+    left: calc(50% - 6px);
+    content: '';
+    position: absolute;
+    transform-origin: center;
+    border-radius: 2px;
+    background-color: var(--euiTooltipBackgroundColor);
+    width: 12px;
+    height: 12px;
+    transform: translateY(-7px) rotateZ(45deg);
+  }
 }
 
 .scatterPoints {
@@ -43,5 +52,9 @@
   .domain {
     stroke: var(--textColorShade);
     opacity: 0.1;
+  }
+
+  text {
+    color: var(--euiTextSubduedColor);
   }
 }

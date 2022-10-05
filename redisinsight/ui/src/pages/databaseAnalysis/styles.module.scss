@@ -1,6 +1,6 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
 
 $breakpoint-table: 1680px;
 
@@ -22,7 +22,10 @@ $breakpoint-table: 1680px;
 .grid {
   display: grid;
   grid-template-columns: 61% 39%;
-  gap: 24px;
+
+  > div:nth-child(2n-1) {
+    margin-right: 24px;
+  }
 
   @media screen and (max-width: $breakpoint-table) {
     grid-template-columns: 100%;

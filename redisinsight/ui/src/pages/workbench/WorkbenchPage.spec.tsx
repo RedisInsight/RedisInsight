@@ -213,6 +213,8 @@ describe('Telemetry', () => {
         rawMode: true,
       }
     })
+
+    sendEventTelemetry.mockRestore()
   })
 
   it('Results: Raw mode', async () => {
@@ -220,13 +222,7 @@ describe('Telemetry', () => {
 
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
-    sendEventTelemetry.mockRestore()
-
     render(<WorkbenchPage />)
-
-    // turn on Raw mode
-    fireEvent.click(screen.getByTestId('btn-change-mode'))
-    sendEventTelemetry.mockRestore()
 
     fireEvent.click(screen.getByTestId('re-run-command'))
 

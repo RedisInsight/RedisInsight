@@ -174,7 +174,7 @@ test
         // Verify that context saved after switching between pages
         await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
     });
-test.only
+test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(hashKeyName, keysTTL[0], hashValue);

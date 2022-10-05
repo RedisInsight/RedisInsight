@@ -123,6 +123,6 @@ describe('TopNamespace', () => {
 
     expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
-    expect(queryByTestId('nsp-table-loader')).toBeInTheDocument()
+    expect(queryByTestId('table-loader')).toBeInTheDocument()
   })
 })

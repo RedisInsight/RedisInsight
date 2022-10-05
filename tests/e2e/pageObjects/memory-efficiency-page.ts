@@ -11,6 +11,7 @@ export class MemoryEfficiencyPage {
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
     expandArrowBtn = Selector('[data-testid=expand-arrow-test]');
     sortByKeyPattern = Selector('[data-testid=tableHeaderSortButton]');
+    showNoExpiryToggle = Selector('[data-testid=show-no-expiry-switch]');
     // ICONS
     reportTooltipIcon = Selector('[data-testid=db-new-reports-icon]');
     // TEXT ELEMENTS
@@ -22,4 +23,10 @@ export class MemoryEfficiencyPage {
     tableKeyPatternHeader = Selector('[data-test-subj*=tableHeaderCell_nsp]');
     tableMemoryHeader = Selector('[data-test-subj*=tableHeaderCell_memory]');
     tableKeysHeader = Selector('[data-test-subj*=tableHeaderCell_keys]');
+    // GRAPH
+    firstPoint = Selector('[data-testid*=circle-3600000]');
+    thirdPoint = Selector('[data-testid*=circle-43200000]');
+    fourthPoint = Selector('[data-testid*=circle-86400000]');
+    noExpiryPoint = Selector('[data-testid*=circle-0]');
+    noExpiryDefaultPoint = Selector('[data-testid=circle-0-0]');
 }

@@ -17,7 +17,7 @@ const hashValue = 'hashValue11111!';
 const streamKeyName = 'test:Stream1';
 const streamKeyNameDelimiter = 'test-Stream1';
 const keySpaces = ['test:*', 'key1:*', 'key2:*', 'key5:*', 'key5:5', 'test-*', 'key4:*'];
-const keyTTL = '2147476121';
+const keysTTL = ['3500000', '86300000', '2147476121'];
 
 fixture `Memory Efficiency`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -50,9 +50,9 @@ test('No reports/keys message and report tooltip', async t => {
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await browserPage.addHashKey(hashKeyName, keyTTL, hashValue);
-        await browserPage.addStreamKey(streamKeyName, 'field', 'value', keyTTL);
-        await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keyTTL);
+        await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
+        await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[2]);
+        await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
         await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
@@ -105,7 +105,7 @@ test
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await browserPage.addHashKey(keySpaces[4], keyTTL, hashValue);
+        await browserPage.addHashKey(keySpaces[4], keysTTL[2], hashValue);
         await cliPage.addKeysFromCliWithDelimiter('MSET', 5);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
@@ -150,7 +150,7 @@ test
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await browserPage.addHashKey(hashKeyName, keyTTL, hashValue);
+        await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.analysisPageButton);
@@ -173,4 +173,37 @@ test
         await t.click(myRedisDatabasePage.analysisPageButton);
         // Verify that context saved after switching between pages
         await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
+    });
+test.only
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await browserPage.addHashKey(hashKeyName, keysTTL[0], hashValue);
+        await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[1]);
+        await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value');
+        // Go to Analysis Tools page
+        await t.click(myRedisDatabasePage.analysisPageButton);
+    })
+    .after(async t => {
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(hashKeyName);
+        await browserPage.deleteKeyByName(streamKeyName);
+        await browserPage.deleteKeyByName(streamKeyNameDelimiter);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Summary per expiration time', async t => {
+    // Create new report
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        // Points are displayed in graph according to their TTL
+        const firstPointLocation = +((await memoryEfficiencyPage.firstPoint.getAttribute('cy')).slice(0, 2));
+        const thirdPointLocation = await memoryEfficiencyPage.thirdPoint.getAttribute('cy');
+        const fourthPointLocation = +((await memoryEfficiencyPage.fourthPoint.getAttribute('cy')).slice(0, 2));
+        const noExpiryDefaultPointLocation = memoryEfficiencyPage.noExpiryDefaultPoint;
+
+        await t.expect(firstPointLocation).lt(198, 'Point in <1 hr breakdown doesn\'t contain key');
+        await t.expect(fourthPointLocation).lt(198, 'Point in 12-25 Hrs breakdown doesn\'t contain key');
+        await t.expect(thirdPointLocation).eql('198', 'Point in 4-12 Hrs breakdown contains key');
+        await t.expect(noExpiryDefaultPointLocation.exists).notOk('No expiry breakdown displayed when toggle is off', {timeout: 1000});
+        // No Expiry toggle shows No expiry breakdown
+        await t.click(memoryEfficiencyPage.showNoExpiryToggle);
+        const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('cy')).slice(0, 2));
+        await t.expect(noExpiryPointLocation).lt(198, 'Point in No expiry breakdown doesn\'t contain key');
     });

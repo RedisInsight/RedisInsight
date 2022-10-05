@@ -59,6 +59,10 @@ const Table = (props: Props) => {
     history.push(Pages.browser(instanceId))
   }
 
+  const setDataTestId = ({ name }: { name: string }) => ({
+    'data-testid': `row-${name}`
+  })
+
   const columns: EuiBasicTableColumn<Key>[] = [
     {
       name: 'Key Type',
@@ -191,7 +195,8 @@ const Table = (props: Props) => {
           columns={columns}
           className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNSP)}
           responsive={false}
-          itemId="nsp"
+          itemId="name"
+          rowProps={setDataTestId}
           sorting={{ sort }}
           onTableChange={({ sort }: any) => setSort(sort)}
           data-testid="nsp-table"

@@ -3,7 +3,7 @@ import { render } from 'uiSrc/utils/test-utils'
 
 import TableLoader from './TableLoader'
 
-describe('TopNamespaceView', () => {
+describe('TableLoader', () => {
   it('should render', () => {
     expect(render(<TableLoader />)).toBeTruthy()
   })

@@ -6,7 +6,7 @@ import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database
 
 import TopKeys from '../top-keys'
 import EmptyAnalysisMessage from '../empty-analysis-message'
-import TopNamespaceView from '../top-namespace'
+import TopNamespace from '../top-namespace'
 import SummaryPerData from '../summary-per-data'
 import ExpirationGroupsView from '../analysis-ttl-view'
 import styles from '../../styles.module.scss'
@@ -39,7 +39,7 @@ const AnalysisDataView = (props: Props) => {
       <div className={cx(styles.grid, styles.content)}>
         <SummaryPerData data={data} loading={loading} />
         <ExpirationGroupsView data={data} loading={loading} />
-        <TopNamespaceView data={data} loading={loading} />
+        <TopNamespace data={data} loading={loading} />
         <TopKeys
           delimiter={data?.delimiter}
           topKeysLength={data?.topKeysLength ?? []}

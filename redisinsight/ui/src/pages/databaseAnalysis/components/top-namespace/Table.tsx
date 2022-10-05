@@ -99,6 +99,10 @@ const NameSpacesTable = (props: Props) => {
     setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues)
   }
 
+  const setDataTestId = ({ nsp }: { nsp: string }) => ({
+    'data-testid': `row-${nsp}`
+  })
+
   const columns: EuiBasicTableColumn<NspSummary>[] = [
     {
       name: 'Key Pattern',
@@ -212,6 +216,7 @@ const NameSpacesTable = (props: Props) => {
           itemId="nsp"
           itemIdToExpandedRowMap={itemIdToExpandedRowMap}
           isExpandable
+          rowProps={setDataTestId}
           sorting={{ sort }}
           onTableChange={({ sort }: any) => setSort(sort)}
           data-testid="nsp-table"

@@ -2,13 +2,13 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
-import TopNamespaceView, { Props } from './TopNamespace'
+import TopNamespace, { Props } from './TopNamespace'
 
 const mockedProps = mock<Props>()
 
-describe('TopNamespaceView', () => {
+describe('TopNamespace', () => {
   it('should render', () => {
-    expect(render(<TopNamespaceView {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<TopNamespace {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should render nsp-table-keys when click "btn-change-table-keys" ', () => {
@@ -27,7 +27,7 @@ describe('TopNamespaceView', () => {
       }]
     }
 
-    const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
 
     fireEvent.click(screen.getByTestId('btn-change-table-keys'))
 
@@ -53,7 +53,7 @@ describe('TopNamespaceView', () => {
       }]
     }
 
-    const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
 
     // memory button is disabled by default
     fireEvent.click(screen.getByTestId('btn-change-table-keys'))
@@ -81,7 +81,7 @@ describe('TopNamespaceView', () => {
       }]
     }
 
-    const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
 
     expect(queryByTestId('nsp-table-memory')).toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
@@ -94,7 +94,7 @@ describe('TopNamespaceView', () => {
       topKeysNsp: [],
       topMemoryNsp: []
     }
-    const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
 
     expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
@@ -119,7 +119,7 @@ describe('TopNamespaceView', () => {
         }
       ]
     }
-    const { queryByTestId } = render(<TopNamespaceView {...instance(mockedProps)} loading data={mockedData} />)
+    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} loading data={mockedData} />)
 
     expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()

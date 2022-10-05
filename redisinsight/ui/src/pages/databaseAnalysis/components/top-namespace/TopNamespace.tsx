@@ -14,7 +14,7 @@ export interface Props {
   loading: boolean
 }
 
-const TopNamespaceView = (props: Props) => {
+const TopNamespace = (props: Props) => {
   const { data, loading } = props
   const [tableView, setTableView] = useState<TableView>(TableView.MEMORY)
 
@@ -71,4 +71,4 @@ const TopNamespaceView = (props: Props) => {
   )
 }
 
-export default TopNamespaceView
+export default TopNamespace

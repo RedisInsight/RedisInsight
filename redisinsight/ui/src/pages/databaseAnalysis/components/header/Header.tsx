@@ -138,7 +138,7 @@ const Header = (props: Props) => {
                 onClick={handleClick}
                 size="s"
               >
-                New reports
+                New Reports
               </EuiButton>
             </EuiFlexItem>
             <EuiFlexItem style={{ paddingLeft: 12 }} grow={false}>

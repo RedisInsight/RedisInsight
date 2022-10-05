@@ -370,32 +370,32 @@ describe('DatabaseAnalyzer', () => {
           },
           {
             label: '<1 hr',
-            threshold: 3600000,
+            threshold: 3600,
             total: 0,
           },
           {
             label: '1-4 Hrs',
-            threshold: 14400000,
+            threshold: 14400,
             total: 0,
           },
           {
             label: '4-12 Hrs',
-            threshold: 43200000,
+            threshold: 43200,
             total: 0,
           },
           {
             label: '12-24 Hrs',
-            threshold: 86400000,
+            threshold: 86400,
             total: 0,
           },
           {
             label: '1-7 Days',
-            threshold: 604800000,
+            threshold: 604800,
             total: 0,
           },
           {
             label: '>7 Days',
-            threshold: 2592000000,
+            threshold: 2592000,
             total: 0,
           },
           {

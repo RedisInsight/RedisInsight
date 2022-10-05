@@ -80,7 +80,7 @@ describe('POST /instance/:instanceId/analysis', () => {
       checkFn: async ({ body }) => {
         expect(body.delimiter).to.eq('-');
         expect(body.progress.total).to.gt(0);
-        expect(body.progress.scanned).to.gt(10_000_000);
+        expect(body.progress.scanned).to.gte(10_000_000);
         expect(body.progress.processed).to.eq(1);
         expect(body.filter).to.deep.eq({
           match: constants.TEST_STRING_KEY_1,
@@ -136,7 +136,7 @@ describe('POST /instance/:instanceId/analysis', () => {
           expect(body.expirationGroups[i].total).to.eq(0);
           expect(body.expirationGroups[i].threshold).to.gt(0);
         }
-        expect(body.expirationGroups[0].label).to.eq('No expiry');
+        expect(body.expirationGroups[0].label).to.eq('No Expire');
         expect(body.expirationGroups[0].total).to.gt(0);
         expect(body.expirationGroups[0].threshold).to.eq(0);
       },

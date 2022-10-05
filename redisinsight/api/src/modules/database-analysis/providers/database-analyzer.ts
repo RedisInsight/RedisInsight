@@ -190,32 +190,32 @@ export class DatabaseAnalyzer {
         label: 'No Expire',
       },
       {
-        threshold: 60 * 60 * 1000,
+        threshold: 60 * 60,
         total: 0,
         label: '<1 hr',
       },
       {
-        threshold: 4 * 60 * 60 * 1000,
+        threshold: 4 * 60 * 60,
         total: 0,
         label: '1-4 Hrs',
       },
       {
-        threshold: 12 * 60 * 60 * 1000,
+        threshold: 12 * 60 * 60,
         total: 0,
         label: '4-12 Hrs',
       },
       {
-        threshold: 24 * 60 * 60 * 1000,
+        threshold: 24 * 60 * 60,
         total: 0,
         label: '12-24 Hrs',
       },
       {
-        threshold: 7 * 24 * 60 * 60 * 1000,
+        threshold: 7 * 24 * 60 * 60,
         total: 0,
         label: '1-7 Days',
       },
       {
-        threshold: 30 * 24 * 60 * 60 * 1000,
+        threshold: 30 * 24 * 60 * 60,
         total: 0,
         label: '>7 Days',
       },

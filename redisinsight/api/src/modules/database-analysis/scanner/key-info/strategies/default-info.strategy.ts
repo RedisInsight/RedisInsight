@@ -2,6 +2,6 @@ import { AbstractInfoStrategy } from 'src/modules/database-analysis/scanner/key-
 
 export class DefaultInfoStrategy extends AbstractInfoStrategy {
   async getLength(): Promise<number> {
-    return 0;
+    return null;
   }
 }

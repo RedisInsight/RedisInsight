@@ -11,6 +11,7 @@ import {
 } from 'src/modules/database-analysis/models';
 import { RedisString } from 'src/common/constants';
 import { Injectable } from '@nestjs/common';
+import { sortByNumberField } from 'src/utils/base.helper';
 
 const TOP_KEYS_LIMIT = 15;
 const TOP_NSP_LIMIT = 15;
@@ -170,9 +171,15 @@ export class DatabaseAnalyzer {
    * @param field
    */
   async calculateTopKeys(keysBatches: Key[][], field: string): Promise<Key[]> {
-    return sortBy([].concat(...keysBatches.map(
-      (keysBatch) => sortBy(keysBatch, field).reverse().slice(0, TOP_KEYS_LIMIT),
-    )), field).reverse().slice(0, TOP_KEYS_LIMIT);
+    return sortByNumberField(
+      [].concat(...keysBatches.map(
+        (keysBatch) => sortByNumberField(
+          keysBatch,
+          field,
+        ).reverse().slice(0, TOP_KEYS_LIMIT),
+      )),
+      field,
+    ).reverse().slice(0, TOP_KEYS_LIMIT);
   }
 
   async calculateExpirationTimeGroups(keys: Key[]): Promise<SumGroup[]> {
@@ -180,7 +187,7 @@ export class DatabaseAnalyzer {
       {
         threshold: 0,
         total: 0,
-        label: 'No expiry',
+        label: 'No Expire',
       },
       {
         threshold: 60 * 60 * 1000,

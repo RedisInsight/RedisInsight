@@ -18,6 +18,7 @@ import { notificationCategory1659687030433 } from './1659687030433-notification-
 import { workbenchMode1660664717573 } from './1660664717573-workbench-mode';
 import { workbenchGroupMode1663093411715 } from './1663093411715-workbench-group-mode';
 import { databaseAnalysis1664785208236 } from './1664785208236-database-analysis';
+import { databaseAnalysisExpirationGroups1664886479051 } from './1664886479051-database-analysis-expiration-groups';
 
 export default [
   initialMigration1614164490968,
@@ -40,4 +41,5 @@ export default [
   workbenchMode1660664717573,
   workbenchGroupMode1663093411715,
   databaseAnalysis1664785208236,
+  databaseAnalysisExpirationGroups1664886479051,
 ];

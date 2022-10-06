@@ -69,7 +69,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
             new Command(BrowserToolKeysCommands.Ttl, [key], { replyEncoding: 'utf8' }),
           ) as number;
         } catch (e) {
-          // ignore error
+          ttl = null;
         }
 
         try {
@@ -79,7 +79,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
             ),
           ) as number;
         } catch (e) {
-          // ignore error
+          size = null;
         }
 
         try {
@@ -87,7 +87,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
             new Command(BrowserToolKeysCommands.Type, [key], { replyEncoding: 'utf8' }),
           ) as string;
         } catch (e) {
-          // ignore error
+          type = null;
         }
 
         return {
@@ -128,7 +128,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
@@ -146,7 +146,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
@@ -171,7 +171,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 }

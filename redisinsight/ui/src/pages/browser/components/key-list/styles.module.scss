@@ -38,6 +38,10 @@
   transition: opacity 250ms ease-in-out;
 }
 
+.keyInfoLoading {
+  width: 44px;
+}
+
 :global(.table-row-selected) .action {
   opacity: 1;
 }

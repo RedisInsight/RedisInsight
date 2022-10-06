@@ -59,8 +59,6 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
 
     // result.keys.push(...node.keys)
     result.keys = result.keys.concat(node.keys)
-      // TODO needs delete, emulate BE response only for POC
-      .map((key) => ({ ...key, type: null, memory: null, ttl: null, length: null, size: null }))
   })
 
   // summarize result numbers

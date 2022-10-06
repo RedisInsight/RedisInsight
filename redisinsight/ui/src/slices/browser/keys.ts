@@ -26,6 +26,7 @@ import {
   CreateHashWithExpireDto,
   CreateRejsonRlWithExpireDto,
   CreateSetWithExpireDto,
+  GetKeyInfoResponse,
 } from 'apiSrc/modules/browser/dto'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
@@ -430,13 +431,13 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
-      const { data, status } = await apiService.get(
+      const { data, status } = await apiService.get<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding },
+          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding, keysInfo: false },
           cancelToken: sourceKeysFetch.token,
         }
       )
@@ -519,7 +520,7 @@ export function fetchMoreKeys(oldKeys: IKeyPropTypes[] = [], cursor: string, cou
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding },
+          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding, keysInfo: false },
           cancelToken: sourceKeysFetch.token,
         }
       )

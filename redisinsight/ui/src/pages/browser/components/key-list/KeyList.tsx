@@ -2,11 +2,13 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef,
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
+import { isUndefined } from 'lodash'
 
 import {
   EuiText,
   EuiToolTip,
   EuiTextColor,
+  EuiLoadingContent,
 } from '@elastic/eui'
 import {
   formatBytes,
@@ -17,6 +19,7 @@ import {
   formatLongName,
   bufferToString,
   bufferFormatRangeItems,
+  getUrl,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
@@ -43,14 +46,11 @@ import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { OVER_RENDER_BUFFER_COUNT, Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { apiService } from 'uiSrc/services'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
-import { apiService } from 'uiSrc/services'
 import styles from './styles.module.scss'
-
-// TODO needs delete, only for POC
-const wait = (ms:number) =>
-  new Promise((resolve) => { setTimeout(resolve, ms) })
 
 export interface Props {
   hideHeader?: boolean
@@ -74,9 +74,11 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
+  const { encoding } = useSelector(appInfoSelector)
 
   const [items, setItems] = useState(keysState.keys)
 
+  const firstBatchRef = useRef(true)
   const itemsRef = useRef(keysState.keys)
   const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
 
@@ -88,8 +90,9 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
   }))
 
-  useEffect(() =>
-    () => {
+  useEffect(() => {
+
+    return () => {
       if (viewType === KeyViewType.Tree) {
         return
       }
@@ -97,10 +100,15 @@ const KeyList = forwardRef((props: Props, ref) => {
         dispatch(setLastBatchKeys(prevItems.slice(-SCAN_COUNT_DEFAULT)))
         return []
       })
-    }, [])
+    }
+  }, [])
 
   useEffect(() => {
     const tempItems = [...keysState.keys]
+
+    if (firstBatchRef.current && items.length !== 0) {
+      return
+    }
 
     if (items.length === 0 && tempItems.length === 0) {
       itemsRef.current = tempItems
@@ -147,6 +155,11 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+    if (!loadMoreItems) {
+      return
+    }
+
+    firstBatchRef.current = false
     const itemsTemp = [...itemsRef.current]
     const [startIndex, formattedAllKeys] = bufferFormatRangeItems(
       items, formattedLastIndexRef.current, items.length, formatItem
@@ -201,6 +214,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     tempItems.splice(startIndex, newItems.length, ...newItems)
 
     itemsRef.current = tempItems
+
     setItems(tempItems)
 
     return [startIndex, newItems]
@@ -211,25 +225,36 @@ const KeyList = forwardRef((props: Props, ref) => {
     lastIndex: number,
     itemsInit: GetKeyInfoResponse[] = []
   ): Promise<void> => {
-    if (prevIndex === lastIndex || prevIndex > lastIndex || !itemsInit.length) {
+    if (
+      prevIndex === lastIndex
+      || prevIndex > lastIndex
+      || !itemsInit.length
+      || !isUndefined(itemsInit[itemsInit.length - 1]?.type)
+    ) {
       return
     }
 
     try {
-      const { data, status } = await apiService.get(`${ApiEndpoints.INFO}`)
-
-      // TODO delete, only for POC emulation BE response
-      await wait(500)
-      const loadedItems = itemsInit.map(
-        (item) => ({ ...item, type: 'hash', memory: 123, ttl: 1000, length: 123, size: 123 })
+      const { data, status } = await apiService.post<GetKeyInfoResponse[]>(
+        getUrl(
+          instanceId,
+          ApiEndpoints.KEYS_INFO
+        ),
+        {
+          keys: itemsInit.map(({ name }) => name),
+          // cancelToken: sourceKeysFetch.token,
+        },
+        { params: { encoding } }
       )
+
+      const loadedItems = data.map(formatItem)
       const itemsTemp = [...itemsRef.current]
       itemsTemp.splice(prevIndex, loadedItems.length, ...loadedItems)
 
       itemsRef.current = itemsTemp
       setItems(itemsTemp)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -239,7 +264,11 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Type',
       absoluteWidth: 'auto',
       minWidth: 126,
-      render: (cellData: any, { nameString: name }: any) => <GroupBadge type={cellData} name={name} />,
+      render: (cellData: any, { nameString: name }: any) => (
+        isUndefined(cellData)
+          ? <EuiLoadingContent lines={1} className={styles.keyInfoLoading} />
+          : <GroupBadge type={cellData} name={name} />
+      )
     },
     {
       id: 'nameString',
@@ -276,6 +305,9 @@ const KeyList = forwardRef((props: Props, ref) => {
       truncateText: true,
       alignment: TableCellAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
+        if (isUndefined(cellData)) {
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} />
+        }
         if (cellData === -1) {
           return (
             <EuiTextColor color="subdued" data-testid={`ttl-${name}`}>
@@ -314,6 +346,10 @@ const KeyList = forwardRef((props: Props, ref) => {
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
+        if (isUndefined(cellData)) {
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} />
+        }
+
         if (!cellData) {
           return (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }} data-testid={`size-${name}`}>

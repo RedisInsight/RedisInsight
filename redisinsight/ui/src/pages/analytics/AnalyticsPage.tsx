@@ -22,7 +22,7 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   const { connectionType } = useSelector(connectedInstanceSelector)
   const { lastViewedPage } = useSelector(appContextAnalytics)
 
-  const pathnameRef = useRef<string>(pathname)
+  const pathnameRef = useRef<string>('')
 
   const dispatch = useDispatch()
 
@@ -31,22 +31,26 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   }, [])
 
   useEffect(() => {
-    pathnameRef.current = pathname
-  }, [pathname])
-
-  useEffect(() => {
-    // restore page from context or set default
-    if (lastViewedPage) {
-      history.push(lastViewedPage)
-      return
-    }
-
     if (pathname === Pages.analytics(instanceId)) {
+      // restore current inner page and ignore context (as we store context on unmount)
+      if (pathnameRef.current && pathnameRef.current !== lastViewedPage) {
+        history.push(pathnameRef.current)
+        return
+      }
+
+      // restore from context
+      if (lastViewedPage) {
+        history.push(lastViewedPage)
+        return
+      }
+
       history.push(connectionType === ConnectionType.Cluster
         ? Pages.clusterDetails(instanceId)
         : Pages.databaseAnalysis(instanceId))
     }
-  }, [connectionType, instanceId, lastViewedPage, pathname])
+
+    pathnameRef.current = pathname === Pages.analytics(instanceId) ? '' : pathname
+  }, [pathname])
 
   return (
     <>

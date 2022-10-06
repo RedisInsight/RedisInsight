@@ -2,8 +2,8 @@ import * as monacoEditor from 'monaco-editor'
 import { isEmpty, isUndefined, reject } from 'lodash'
 import { ICommands } from 'uiSrc/constants'
 import { IMonacoCommand, IMonacoQuery } from './monacoInterfaces'
-import { Nullable } from './types'
-import { getCommandRepeat, isRepeatCountCorrect } from './commands'
+import { Nullable } from '../types'
+import { getCommandRepeat, isRepeatCountCorrect } from '../commands'
 
 const COMMENT_SYMBOLS = '//'
 const BLANK_LINE_REGEX = /^\s*\n/gm

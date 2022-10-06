@@ -31,12 +31,7 @@ const AnalysisDataView = (props: Props) => {
         <SummaryPerData data={data} loading={loading} />
         <ExpirationGroupsView data={data} loading={loading} />
         <TopNamespace data={data} loading={loading} />
-        <TopKeys
-          delimiter={data?.delimiter}
-          topKeysLength={data?.topKeysLength ?? []}
-          topKeysMemory={data?.topKeysMemory ?? []}
-          loading={loading}
-        />
+        <TopKeys data={data} loading={loading} />
       </div>
     </>
   )

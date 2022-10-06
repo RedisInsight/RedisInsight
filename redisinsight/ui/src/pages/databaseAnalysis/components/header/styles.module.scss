@@ -7,6 +7,10 @@
 
 .container {
   height: 60px;
+
+  .text {
+    color: var(--euiColorMediumShade) !important;
+  }
 }
 
 .progress {

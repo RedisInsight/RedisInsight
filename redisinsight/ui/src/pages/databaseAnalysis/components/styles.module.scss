@@ -125,6 +125,11 @@ $breakpoint-table: 1232px;
 }
 
 .table.tableNSP {
+
+  &:global(.fixedLayout) table {
+    table-layout: fixed;
+  }
+
   :global {
     .nsp-cell {
       height: 42px;
@@ -216,7 +221,7 @@ $breakpoint-table: 1232px;
 
 .expanded {
   display: grid;
-  grid-template-columns: auto 34% 12% calc(10% + 44px);
+  grid-template-columns: auto 34% calc(12% + 14px) calc(10% + 20px);
   grid-column-gap: 0;
   height: 42px;
   width: 100%;
@@ -234,7 +239,7 @@ $breakpoint-table: 1232px;
     padding: 0 12px;
 
     &:last-child {
-      padding: 0 52px 0 12px;
+      padding: 0 28px 0 12px;
     }
   }
 }

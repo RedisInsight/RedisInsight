@@ -90,7 +90,7 @@ const Header = (props: Props) => {
           <EuiFlexItem grow={false}>
             <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
               <EuiFlexItem grow={false}>
-                <EuiText color="subdued">Report generated on:</EuiText>
+                <EuiText className={styles.text}>Report generated on:</EuiText>
               </EuiFlexItem>
               <EuiFlexItem>
                 <EuiSuperSelect
@@ -105,10 +105,10 @@ const Header = (props: Props) => {
               </EuiFlexItem>
               {!!progress && (
                 <EuiFlexItem grow={false}>
-                  <EuiText color="subdued" className={cx(styles.progress, styles.progressContainer)} data-testid="bulk-delete-summary">
+                  <EuiText className={cx(styles.progress, styles.text, styles.progressContainer)} data-testid="bulk-delete-summary">
                     <EuiText
-                      color={progress.total === progress.processed ? 'subdued' : 'warning'}
-                      className={styles.progress}
+                      color={progress.total === progress.processed ? undefined : 'warning'}
+                      className={cx(styles.progress, styles.text)}
                       data-testid="analysis-progress"
                     >
                       {'Scanned '}

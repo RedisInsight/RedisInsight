@@ -7,7 +7,7 @@ import {
   EuiButtonEmpty,
   PropertySort
 } from '@elastic/eui'
-import { isUndefined } from 'lodash'
+import { isNull } from 'lodash'
 import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -168,10 +168,10 @@ const Table = (props: Props) => {
       name: 'Length',
       field: 'length',
       width: '15%',
-      sortable: true,
+      sortable: ({ length }) => (isNull(length) ? -1 : length),
       align: 'right',
       render: (value: number, { name }) => {
-        if (isUndefined(value)) {
+        if (isNull(value)) {
           return (
             <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-test-subj={`length-${name}`}>
               -

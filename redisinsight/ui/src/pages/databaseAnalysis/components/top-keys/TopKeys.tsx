@@ -2,21 +2,21 @@ import React, { useState } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiTitle } from '@elastic/eui'
 import { TableView } from 'uiSrc/pages/databaseAnalysis'
-import { Key } from 'apiSrc/modules/database-analysis/models/key'
+import { Nullable } from 'uiSrc/utils'
+import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import Table from './Table'
 import Loader from '../table-loader'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  topKeysLength: Key[]
-  topKeysMemory: Key[]
+  data: Nullable<DatabaseAnalysis>
   loading: boolean
   delimiter?: string
 }
 
-const TopKeys = (props: Props) => {
-  const { topKeysLength, topKeysMemory, delimiter, loading } = props
+const TopKeys = ({ data, loading }: Props) => {
+  const { topKeysLength = [], topKeysMemory = [], delimiter } = data || {}
   const [tableView, setTableView] = useState<TableView>(TableView.MEMORY)
 
   if (loading) {
@@ -60,7 +60,7 @@ const TopKeys = (props: Props) => {
       </EuiButton>
       {tableView === TableView.MEMORY && (
         <Table
-          data={topKeysMemory ?? []}
+          data={topKeysMemory}
           defaultSortField="memory"
           delimiter={delimiter}
           dataTestid="top-keys-table-memory"
@@ -68,7 +68,7 @@ const TopKeys = (props: Props) => {
       )}
       {tableView === TableView.KEYS && (
         <Table
-          data={topKeysLength ?? []}
+          data={topKeysLength}
           defaultSortField="length"
           delimiter={delimiter}
           dataTestid="top-keys-table-length"

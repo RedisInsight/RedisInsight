@@ -64,10 +64,10 @@ const NameSpacesTable = (props: Props) => {
     } else {
       itemIdToExpandedRowMapValues[item.nsp] = (
         <div style={{ width: '100%' }}>
-          {item.types.map((type) => {
+          {item.types.map((type, index) => {
             const [number, size] = formatBytes(type.memory, 3, true)
             return (
-              <div className={styles.expanded} key={type.type}>
+              <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
                 <div className={styles.truncateText}>
                   <EuiToolTip
                     anchorClassName={styles.tooltip}
@@ -110,7 +110,7 @@ const NameSpacesTable = (props: Props) => {
       dataType: 'string',
       height: '42px',
       align: 'left',
-      width: 'calc(44% - 44px)',
+      width: 'auto',
       sortable: true,
       truncateText: true,
       className: 'nsp-cell',
@@ -211,7 +211,7 @@ const NameSpacesTable = (props: Props) => {
         <EuiInMemoryTable
           items={data ?? []}
           columns={columns}
-          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNSP)}
+          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', 'fixedLayout', styles.table, styles.tableNSP)}
           responsive={false}
           itemId="nsp"
           itemIdToExpandedRowMap={itemIdToExpandedRowMap}

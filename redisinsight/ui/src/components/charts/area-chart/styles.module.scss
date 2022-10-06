@@ -28,10 +28,10 @@
   box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
   bottom: 0;
 
-  .arrow {
+  &::after {
+    content: "";
     top: 50px !important;
     left: calc(50% - 6px);
-    content: "";
     position: absolute;
     transform-origin: center;
     border-radius: 2px;

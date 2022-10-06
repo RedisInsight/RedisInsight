@@ -84,7 +84,7 @@ const ExpirationGroupsView = (props: Props) => {
                 divideLastColumn={showNoExpiryGroup}
                 multiplierGrid={DEFAULT_MULTIPLIER_GRID}
                 data={expirationGroups}
-                tooltipValidation={(val) => formatBytes(val, 3)}
+                tooltipValidation={(val) => `${formatBytes(val, 3)}`}
                 leftAxiosValidation={(val, i) => formatBytes(val, 1)}
                 bottomAxiosValidation={(_val, i) => (i % DEFAULT_MULTIPLIER_GRID ? '' : expirationGroups[i / DEFAULT_MULTIPLIER_GRID]?.xlabel)}
               />

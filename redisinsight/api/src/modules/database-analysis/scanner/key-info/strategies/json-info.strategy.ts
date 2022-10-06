@@ -30,7 +30,7 @@ export class JsonInfoStrategy extends AbstractInfoStrategy {
           }),
         ) as number;
       default:
-        return 0;
+        return null;
     }
   }
 }

@@ -1,7 +1,8 @@
+import { last } from 'lodash'
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from 'uiSrc/utils/test-utils'
 
-import AreaChart, { AreaChartData } from './AreaChart'
+import AreaChart, { AreaChartData, AreaChartDataType } from './AreaChart'
 
 const mockData: AreaChartData[] = [
   { x: 1, y: 0, xlabel: '', ylabel: '' },
@@ -9,7 +10,7 @@ const mockData: AreaChartData[] = [
   { x: 10, y: 20, xlabel: '', ylabel: '' },
   { x: 2, y: 30, xlabel: '', ylabel: '' },
   { x: 30, y: 40, xlabel: '', ylabel: '' },
-  { x: 15, y: 50, xlabel: '', ylabel: '' },
+  { x: 15, y: 50000, xlabel: '', ylabel: '' },
 ]
 
 describe('AreaChart', () => {
@@ -42,10 +43,28 @@ describe('AreaChart', () => {
     render(<AreaChart data={mockData} name="test" />)
 
     await waitFor(() => {
-      fireEvent.mouseMove(screen.getByTestId('circle-15-50'))
+      fireEvent.mouseMove(screen.getByTestId('circle-15-50000'))
     }, { timeout: 210 }) // Account for long delay on tooltips
 
     expect(screen.getByTestId('area-tooltip-circle')).toBeInTheDocument()
-    expect(screen.getByTestId('area-tooltip-circle')).toHaveTextContent('50')
+    expect(screen.getByTestId('area-tooltip-circle')).toHaveTextContent('50000')
+  })
+
+  it('when dataType="Bytes" max value should be rounded by metric', async () => {
+    const lastDataValue = last(mockData)
+    const { queryByTestId } = render(<AreaChart data={mockData} name="test" dataType={AreaChartDataType.Bytes} />)
+
+    expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).not.toBeInTheDocument()
+    expect(queryByTestId('ytick-51200-4')).toBeInTheDocument()
+    expect(queryByTestId('ytick-51200-4')).toHaveTextContent('51200')
+  })
+
+  it('when dataType!="Bytes" max value should be rounded by default', async () => {
+    const lastDataValue = last(mockData)
+    const { queryByTestId } = render(<AreaChart data={mockData} name="test" />)
+
+    expect(queryByTestId('ytick-51200-4')).not.toBeInTheDocument()
+    expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).toBeInTheDocument()
+    expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).toHaveTextContent(`${lastDataValue?.y}`)
   })
 })

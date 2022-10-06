@@ -7,7 +7,7 @@ export abstract class AbstractInfoStrategy implements IKeyInfoStrategy {
 
   async getLengthSafe(client: Redis, key: RedisString): Promise<number> {
     try {
-      return this.getLength(client, key);
+      return await this.getLength(client, key);
     } catch (e) {
       return null;
     }

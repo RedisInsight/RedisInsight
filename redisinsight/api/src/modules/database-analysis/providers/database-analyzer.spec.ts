@@ -364,7 +364,7 @@ describe('DatabaseAnalyzer', () => {
         },
         expirationGroups: [
           {
-            label: 'No Expire',
+            label: 'No Expiry',
             threshold: 0,
             total: genericTotal,
           },

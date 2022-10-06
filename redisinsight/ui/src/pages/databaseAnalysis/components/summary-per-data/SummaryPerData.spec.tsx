@@ -1,7 +1,7 @@
 import React from 'react'
-import { GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
+import { getGroupTypeDisplay } from 'uiSrc/utils'
 import { render, screen } from 'uiSrc/utils/test-utils'
-import { DatabaseAnalysis, SimpleTypeSummary } from 'apiSrc/modules/database-analysis/models'
+import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import SummaryPerData from './SummaryPerData'
 
@@ -98,9 +98,6 @@ const mockData = {
   }
 } as DatabaseAnalysis
 
-const getName = (t: SimpleTypeSummary) =>
-  (t.type in GROUP_TYPES_DISPLAY ? (GROUP_TYPES_DISPLAY as any)[t.type] : t.type)
-
 describe('SummaryPerData', () => {
   it('should render', () => {
     expect(render(<SummaryPerData data={mockData} loading={false} />)).toBeTruthy()
@@ -114,7 +111,7 @@ describe('SummaryPerData', () => {
   })
 
   it('should render loading', () => {
-    render(<SummaryPerData data={null} loading />)
+    render(<SummaryPerData data={mockData} loading />)
 
     expect(screen.getByTestId('summary-per-data-loading')).toBeInTheDocument()
   })
@@ -129,11 +126,11 @@ describe('SummaryPerData', () => {
     render(<SummaryPerData data={mockData} loading={false} />)
 
     mockData.totalKeys.types.forEach((t) => {
-      expect(screen.getByTestId(`arc-${getName(t)}-${t.total}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`arc-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
     })
 
     mockData.totalMemory.types.forEach((t) => {
-      expect(screen.getByTestId(`arc-${getName(t)}-${t.total}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`arc-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
     })
   })
 
@@ -141,11 +138,11 @@ describe('SummaryPerData', () => {
     render(<SummaryPerData data={mockData} loading={false} />)
 
     mockData.totalKeys.types.forEach((t) => {
-      expect(screen.getByTestId(`label-${getName(t)}-${t.total}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`label-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
     })
 
     mockData.totalMemory.types.forEach((t) => {
-      expect(screen.getByTestId(`label-${getName(t)}-${t.total}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`label-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
     })
   })
 })

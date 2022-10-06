@@ -128,7 +128,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1] || null);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
@@ -146,7 +146,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1] || null);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
@@ -171,7 +171,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1] || null);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 }

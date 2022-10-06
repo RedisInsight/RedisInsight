@@ -36,7 +36,7 @@ interface IProps {
     tooltip?: string
     scatterPoints?: string
   }
-  tooltipValidation?: (val: any, index: number) => any
+  tooltipValidation?: (val: any, index: number) => string
   leftAxiosValidation?: (val: any, index: number) => any
   bottomAxiosValidation?: (val: any, index: number) => any
 }
@@ -197,9 +197,9 @@ const AreaChart = (props: IProps) => {
         tooltip.transition()
           .duration(200)
           .style('opacity', 1)
-        tooltip.html(`${tooltipValidation(d.y, d.index)}`)
-          .style('left', `${event.pageX - 30}px`)
-          .style('top', `${event.pageY + 25}px`)
+        tooltip.html(tooltipValidation(d.y, d.index))
+          .style('left', `${event.pageX - (tooltip?.node()?.getBoundingClientRect()?.width || 0) / 2}px`)
+          .style('top', `${event.pageY - 66}px`)
           .attr('data-testid', 'area-tooltip-circle')
       })
       .on('mouseout', () => {

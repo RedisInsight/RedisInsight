@@ -1,6 +1,7 @@
 import * as d3 from 'd3'
 import React, { useEffect, useRef } from 'react'
 import cx from 'classnames'
+import { curryRight, flow, toNumber } from 'lodash'
 
 import { formatBytes, toBytes } from 'uiSrc/utils'
 import styles from './styles.module.scss'
@@ -68,11 +69,9 @@ const AreaChart = (props: IProps) => {
 
   const getRoundedYMaxValue = (number: number): number => {
     const numLen = number.toString().length
-    let dividerValue = '1'
-    for (let i = 0; i < numLen - 1; i++) {
-      dividerValue += 0
-    }
-    return Math.ceil(number / +dividerValue) * +dividerValue
+    const dividerValue = toNumber(`1${'0'.repeat(numLen - 1)}`)
+
+    return Math.ceil(number / dividerValue) * dividerValue
   }
 
   useEffect(() => {
@@ -116,11 +115,18 @@ const AreaChart = (props: IProps) => {
       .domain(d3.extent(cleanedData, (d) => d.index) as [number, number])
       .range([0, width])
 
-    let maxY = d3.max(cleanedData, (d) => +d.y) || 0
+    let maxY = d3.max(cleanedData, (d) => d.y) || 0
 
     if (dataType === AreaChartDataType.Bytes) {
+      const curriedTyBytes = curryRight(toBytes)
       const [maxYFormatted, type] = formatBytes(maxY, 1, true)
-      maxY = +toBytes(getRoundedYMaxValue(Math.ceil(+maxYFormatted)), `${type}`)
+
+      maxY = flow(
+        toNumber,
+        Math.ceil,
+        getRoundedYMaxValue,
+        curriedTyBytes(`${type}`)
+      )(+maxYFormatted)
     }
 
     // Add Y axis

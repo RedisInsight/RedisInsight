@@ -1,7 +1,7 @@
 import { formatDuration, intervalToDuration } from 'date-fns'
 import { isNumber } from 'lodash'
 
-import { MAX_TTL_NUMBER } from './validations'
+import { MAX_TTL_NUMBER } from '../validations'
 
 const TRUNCATE_DELIMITER = ', '
 // Replace default strings of duration to cutted

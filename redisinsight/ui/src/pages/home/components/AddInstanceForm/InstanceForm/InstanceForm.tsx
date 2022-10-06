@@ -47,8 +47,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { handlePasteHostName } from 'uiSrc/utils'
-import { getDiffKeysOfObjectValues } from 'uiSrc/utils/comparisons'
+import { handlePasteHostName, getDiffKeysOfObjectValues } from 'uiSrc/utils'
 import {
   MAX_PORT_NUMBER,
   validateCertName,

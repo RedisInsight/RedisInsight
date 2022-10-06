@@ -223,17 +223,23 @@ test.only
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Analysis history', async t => {
         const numberOfKeys = [];
+        const dbSize = (await cliPage.getSuccessCommandResultFromCli('dbsize')).split(' ');
+        console.log(`dbSize: ${dbSize}`);
+        const existedNumberOfKeys = parseInt(dbSize[dbSize.length - 1]);
+        console.log(`existedNumberOfKeys: ${existedNumberOfKeys}`);
         for (let i = 0; i < 6; i++) {
             await cliPage.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
             await t.click(memoryEfficiencyPage.newReportBtn);
+            const compareValue = parseInt(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);
+            await t.expect(compareValue).eql((existedNumberOfKeys + i + 1), 'New report is not displayed', { timeout: 2000 });
             numberOfKeys.push(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);
         }
         await t.click(memoryEfficiencyPage.selectedReport);
         // Verify that user can see up to the 5 most recent previous results per database in the history
         await t.expect(memoryEfficiencyPage.reportItem.count).eql(5, 'Number of saved reports is not correct');
         // Verify that user can switch between reports and see all data updated in each report
+        console.log(`numberOfKeys in generated report: ${numberOfKeys}`);
         for (let i = 0; i < 5; i++) {
-            // await t.debug();
             await t.click(memoryEfficiencyPage.reportItem.nth(i));
             const actualNumber = await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent;
             console.log(`actualNumber: ${actualNumber}`);

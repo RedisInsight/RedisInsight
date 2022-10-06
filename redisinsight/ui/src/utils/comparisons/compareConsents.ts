@@ -1,5 +1,5 @@
 import { has } from 'lodash'
-import { isVersionHigher } from 'uiSrc/utils/compareVersions'
+import { isVersionHigher } from 'uiSrc/utils/comparisons/compareVersions'
 
 // returns true if has different consents
 export const isDifferentConsentsExists = (specs: any, applied: any) =>

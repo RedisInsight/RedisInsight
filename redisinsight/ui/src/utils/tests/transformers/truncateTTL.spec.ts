@@ -3,7 +3,7 @@ import {
   truncateNumberToFirstUnit,
   truncateTTLToRange,
   truncateTTLToSeconds,
-} from '../truncateTTL'
+} from '../../transformers/truncateTTL'
 
 describe('Truncate TTL util tests', () => {
   describe('truncateTTLToRange', () => {

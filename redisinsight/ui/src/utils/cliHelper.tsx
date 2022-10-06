@@ -12,7 +12,7 @@ import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
-import formatToText from './cliTextFormatter'
+import formatToText from './transformers/cliTextFormatter'
 
 export enum CliPrefix {
   Cli = 'cli',

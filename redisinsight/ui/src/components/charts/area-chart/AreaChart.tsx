@@ -126,7 +126,7 @@ const AreaChart = (props: IProps) => {
         Math.ceil,
         getRoundedYMaxValue,
         curriedTyBytes(`${type}`)
-      )(+maxYFormatted)
+      )(maxYFormatted)
     }
 
     // Add Y axis

@@ -17,7 +17,7 @@ const hashValue = 'hashValue11111!';
 const streamKeyName = 'test:Stream1';
 const streamKeyNameDelimiter = 'test-Stream1';
 const keySpaces = ['test:*', 'key1:*', 'key2:*', 'key5:*', 'key5:5', 'test-*', 'key4:*'];
-const keysTTL = ['3500000', '86300000', '2147476121'];
+const keysTTL = ['3500', '86300', '2147476121'];
 
 fixture `Memory Efficiency`
     .meta({ type: 'critical_path', rte: rte.standalone })

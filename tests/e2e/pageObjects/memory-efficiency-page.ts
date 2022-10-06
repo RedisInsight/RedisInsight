@@ -24,9 +24,9 @@ export class MemoryEfficiencyPage {
     tableMemoryHeader = Selector('[data-test-subj*=tableHeaderCell_memory]');
     tableKeysHeader = Selector('[data-test-subj*=tableHeaderCell_keys]');
     // GRAPH
-    firstPoint = Selector('[data-testid*=circle-3600000]');
-    thirdPoint = Selector('[data-testid*=circle-43200000]');
-    fourthPoint = Selector('[data-testid*=circle-86400000]');
+    firstPoint = Selector('[data-testid*=circle-3600]');
+    thirdPoint = Selector('[data-testid*=circle-43200]');
+    fourthPoint = Selector('[data-testid*=circle-86400]');
     noExpiryPoint = Selector('[data-testid*=circle-0]');
     noExpiryDefaultPoint = Selector('[data-testid=circle-0-0]');
 }

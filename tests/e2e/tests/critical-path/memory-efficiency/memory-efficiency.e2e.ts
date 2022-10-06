@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
@@ -19,7 +20,6 @@ const streamKeyName = 'test:Stream1';
 const streamKeyNameDelimiter = 'test-Stream1';
 const keySpaces = ['test:*', 'key1:*', 'key2:*', 'key5:*', 'key5:5', 'test-*', 'key4:*'];
 const keysTTL = ['3500', '86300', '2147476121'];
-const keyTTL = '2147476121';
 const keyNamesReport = chance.unique(chance.word, 6);
 
 fixture `Memory Efficiency`
@@ -210,7 +210,7 @@ test
         const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('cy')).slice(0, 2));
         await t.expect(noExpiryPointLocation).lt(198, 'Point in No expiry breakdown doesn\'t contain key');
     });
-test
+test.only
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await t.click(myRedisDatabasePage.analysisPageButton);
@@ -233,14 +233,19 @@ test
         await t.expect(memoryEfficiencyPage.reportItem.count).eql(5, 'Number of saved reports is not correct');
         // Verify that user can switch between reports and see all data updated in each report
         for (let i = 0; i < 5; i++) {
+            // await t.debug();
             await t.click(memoryEfficiencyPage.reportItem.nth(i));
             const actualNumber = await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent;
-            await t.expect(actualNumber).eql(numberOfKeys[5 - i], 'Report content (total keys) is not correct');
+            console.log(`actualNumber: ${actualNumber}`);
+            console.log(`expectedNumber: ${numberOfKeys[5 - i]}`);
+            await t.expect(actualNumber).eql(numberOfKeys[5 - i], 'Report content (total keys) is not correct', { timeout: 2000 });
             await t.click(memoryEfficiencyPage.selectedReport);
         }
         // Verify that specific report is saved as context
         await t.click(memoryEfficiencyPage.reportItem.nth(3));
         await t.click(myRedisDatabasePage.workbenchButton);
         await t.click(myRedisDatabasePage.analysisPageButton);
+        console.log(`actual: ${await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent}`);
+        console.log(`expected: ${numberOfKeys[2]}`);
         await t.expect(memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent).eql(numberOfKeys[2], 'Context is not saved');
     });

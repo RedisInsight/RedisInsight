@@ -46,7 +46,7 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
         ? Pages.clusterDetails(instanceId)
         : Pages.databaseAnalysis(instanceId))
     }
-  }, [connectionType, instanceId, lastViewedPage])
+  }, [connectionType, instanceId, lastViewedPage, pathname])
 
   return (
     <>

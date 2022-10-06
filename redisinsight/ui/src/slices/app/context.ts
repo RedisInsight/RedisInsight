@@ -38,6 +38,9 @@ export const initialState: StateAppContext = {
   pubsub: {
     channel: '',
     message: ''
+  },
+  analytics: {
+    lastViewedPage: ''
   }
 }
 
@@ -46,7 +49,11 @@ const appContextSlice = createSlice({
   name: 'appContext',
   initialState,
   reducers: {
-    setAppContextInitialState: () => initialState,
+    // don't need to reset instanceId
+    setAppContextInitialState: (state) => ({
+      ...initialState,
+      contextInstanceId: state.contextInstanceId
+    }),
     // set connected instance
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {
       state.contextInstanceId = payload
@@ -133,6 +140,9 @@ const appContextSlice = createSlice({
     setBrowserBulkActionOpen: (state, { payload }: PayloadAction<boolean>) => {
       state.browser.bulkActions.opened = payload
     },
+    setLastAnalyticsPage: (state, { payload }: { payload: string }) => {
+      state.analytics.lastViewedPage = payload
+    },
   },
 })
 
@@ -158,6 +168,7 @@ export const {
   setWorkbenchEAItemScrollTop,
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
+  setLastAnalyticsPage
 } = appContextSlice.actions
 
 // Selectors
@@ -175,6 +186,8 @@ export const appContextWorkbenchEA = (state: RootState) =>
   state.app.context.workbench.enablementArea
 export const appContextPubSub = (state: RootState) =>
   state.app.context.pubsub
+export const appContextAnalytics = (state: RootState) =>
+  state.app.context.analytics
 
 // The reducer
 export default appContextSlice.reducer

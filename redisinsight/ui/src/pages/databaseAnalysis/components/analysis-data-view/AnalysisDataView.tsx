@@ -31,15 +31,12 @@ const AnalysisDataView = (props: Props) => {
         <EmptyAnalysisMessage name={EmptyMessage.Keys} />
       )}
       <div className={cx(styles.grid, styles.content)}>
+        <SummaryPerData data={data} loading={loading} />
+        <ExpirationGroupsView data={data} loading={loading} />
         <div>
-          <SummaryPerData data={data} loading={loading} />
           <TopNamespace data={data} loading={loading} />
           <TopKeys data={data} loading={loading} />
         </div>
-        <div>
-          <ExpirationGroupsView data={data} loading={loading} />
-        </div>
-        <div />
       </div>
     </>
   )

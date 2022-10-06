@@ -23,3 +23,9 @@ export const formatBytes = (
     return '-'
   }
 }
+
+export const toBytes = (size: number, type: string): number => {
+  const key = SIZES.indexOf(type.toUpperCase())
+
+  return Math.floor(size * 1024 ** key)
+}

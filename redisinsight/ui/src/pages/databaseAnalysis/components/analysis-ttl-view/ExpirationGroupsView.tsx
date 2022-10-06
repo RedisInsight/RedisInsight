@@ -6,7 +6,7 @@ import cx from 'classnames'
 
 import { formatBytes, Nullable } from 'uiSrc/utils'
 import { AreaChart } from 'uiSrc/components/charts'
-import { AreaChartData, DEFAULT_MULTIPLIER_GRID } from 'uiSrc/components/charts/area-chart/AreaChart'
+import { AreaChartData, AreaChartDataType, DEFAULT_MULTIPLIER_GRID } from 'uiSrc/components/charts/area-chart/AreaChart'
 import { DBAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import styles from './styles.module.scss'
@@ -80,11 +80,12 @@ const ExpirationGroupsView = (props: Props) => {
                 name="expiration-groups"
                 width={width}
                 height={height}
+                dataType={AreaChartDataType.Bytes}
                 divideLastColumn={showNoExpiryGroup}
                 multiplierGrid={DEFAULT_MULTIPLIER_GRID}
                 data={expirationGroups}
                 tooltipValidation={(val) => formatBytes(val, 3)}
-                leftAxiosValidation={(val, i) => (i % DEFAULT_MULTIPLIER_GRID ? '' : formatBytes(val, 1))}
+                leftAxiosValidation={(val, i) => formatBytes(val, 1)}
                 bottomAxiosValidation={(_val, i) => (i % DEFAULT_MULTIPLIER_GRID ? '' : expirationGroups[i / DEFAULT_MULTIPLIER_GRID]?.xlabel)}
               />
             )}

@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
+import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
-  fetchInstanceAction, fetchInstancesAction,
-  getDatabaseConfigInfoAction, instancesSelector,
+  fetchInstanceAction,
+  fetchInstancesAction,
+  getDatabaseConfigInfoAction,
+  instancesSelector,
 } from 'uiSrc/slices/instances/instances'
 import {
   appContextSelector,
@@ -69,7 +72,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
 
-    if (contextInstanceId !== connectionInstanceId) {
+    if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
       resetContext()
     }
 
@@ -95,6 +98,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(resetKeysData())
     dispatch(setClusterDetailsInitialState())
     dispatch(setDatabaseAnalysisInitialState())
+    dispatch(setInitialAnalyticsSettings())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

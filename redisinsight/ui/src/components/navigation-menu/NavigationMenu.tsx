@@ -43,7 +43,6 @@ import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
-import { ConnectionType } from 'uiSrc/slices/interfaces'
 
 import NotificationMenu from './components/notifications-center'
 
@@ -72,7 +71,7 @@ const NavigationMenu = () => {
   const [activePage, setActivePage] = useState(Pages.home)
   const [isHelpMenuActive, setIsHelpMenuActive] = useState(false)
 
-  const { id: connectedInstanceId = '', connectionType } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
   const { isReleaseNotesViewed } = useSelector(appElectronInfoSelector)
   const { server } = useSelector(appInfoSelector)
 
@@ -123,9 +122,7 @@ const NavigationMenu = () => {
     {
       tooltipText: 'Analysis Tools',
       ariaLabel: 'Analysis Tools',
-      onClick: () => handleGoPage(connectionType === ConnectionType.Cluster
-        ? Pages.clusterDetails(connectedInstanceId)
-        : Pages.databaseAnalysis(connectedInstanceId)),
+      onClick: () => handleGoPage(Pages.analytics(connectedInstanceId)),
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),

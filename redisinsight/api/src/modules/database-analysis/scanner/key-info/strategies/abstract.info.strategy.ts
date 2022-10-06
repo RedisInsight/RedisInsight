@@ -9,7 +9,7 @@ export abstract class AbstractInfoStrategy implements IKeyInfoStrategy {
     try {
       return this.getLength(client, key);
     } catch (e) {
-      return 0;
+      return null;
     }
   }
 }

@@ -64,7 +64,7 @@ export class DatabaseAnalysisProvider {
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
     }
 
-    return classToClass(DatabaseAnalysis, await this.decryptEntity(entity));
+    return classToClass(DatabaseAnalysis, await this.decryptEntity(entity, true));
   }
 
   /**

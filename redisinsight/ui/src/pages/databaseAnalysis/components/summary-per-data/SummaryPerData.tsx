@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { DonutChart } from 'uiSrc/components/charts'
 import { ChartData } from 'uiSrc/components/charts/donut-chart/DonutChart'
 import { KeyIconSvg, MemoryIconSvg } from 'uiSrc/components/database-overview/components/icons'
-import { GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY, GroupTypesColors, GroupTypesDisplay } from 'uiSrc/constants'
-import { formatBytes, Nullable } from 'uiSrc/utils'
+import { GROUP_TYPES_COLORS, GroupTypesColors } from 'uiSrc/constants'
+import { formatBytes, getGroupTypeDisplay, Nullable } from 'uiSrc/utils'
 import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import { DatabaseAnalysis, SimpleTypeSummary } from 'apiSrc/modules/database-analysis/models'
@@ -25,7 +25,7 @@ const SummaryPerData = ({ data, loading }: Props) => {
 
   const getChartData = (t: SimpleTypeSummary) => ({
     value: t.total,
-    name: t.type in GROUP_TYPES_DISPLAY ? GROUP_TYPES_DISPLAY[t.type as GroupTypesDisplay] : t.type,
+    name: getGroupTypeDisplay(t.type),
     color: t.type in GROUP_TYPES_COLORS ? GROUP_TYPES_COLORS[t.type as GroupTypesColors] : 'var(--defaultTypeColor)',
     meta: { ...t }
   })

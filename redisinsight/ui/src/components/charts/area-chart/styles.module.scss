@@ -13,25 +13,25 @@
 
 .tooltip {
   position: absolute;
-  min-width: 75px;
+  min-width: 50px;
   height: 50px;
   min-height: 50px;
   padding: 12px 15px !important;
+  line-height: 24px;
   background: var(--euiTooltipBackgroundColor);
   color: var(--euiTooltipTextColor) !important;
   z-index: 10;
   border-radius: 8px;
   pointer-events: none;
-  line-height: 24px;
   font-weight: 400;
   font-size: 12px !important;
   box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
   bottom: 0;
 
-  .arrow {
+  &::after {
+    content: "";
     top: 50px !important;
     left: calc(50% - 6px);
-    content: '';
     position: absolute;
     transform-origin: center;
     border-radius: 2px;

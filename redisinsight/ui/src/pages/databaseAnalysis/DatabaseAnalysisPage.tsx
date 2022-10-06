@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import InstanceHeader from 'uiSrc/components/instance-header'
 import {
   dbAnalysisSelector,
   DBAnalysisReportsSelector,
@@ -79,19 +78,16 @@ const DatabaseAnalysisPage = () => {
   }
 
   return (
-    <>
-      <InstanceHeader />
-      <div className={styles.main} data-testid="database-analysis-page">
-        <Header
-          items={reports}
-          selectedValue={selectedAnalysis}
-          onChangeSelectedAnalysis={handleSelectAnalysis}
-          progress={data?.progress}
-          analysisLoading={analysisLoading}
-        />
-        <AnalysisDataView loading={analysisLoading} reports={reports} data={data} />
-      </div>
-    </>
+    <div className={styles.main} data-testid="database-analysis-page">
+      <Header
+        items={reports}
+        selectedValue={selectedAnalysis}
+        onChangeSelectedAnalysis={handleSelectAnalysis}
+        progress={data?.progress}
+        analysisLoading={analysisLoading}
+      />
+      <AnalysisDataView loading={analysisLoading} reports={reports} data={data} />
+    </div>
   )
 }
 

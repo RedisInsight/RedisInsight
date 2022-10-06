@@ -187,7 +187,7 @@ export class DatabaseAnalyzer {
       {
         threshold: 0,
         total: 0,
-        label: 'No Expire',
+        label: 'No Expiry',
       },
       {
         threshold: 60 * 60,

@@ -1,5 +1,5 @@
 import { bulkReplyCommands } from 'uiSrc/constants'
-import formatToText from '../cliTextFormatter'
+import { formatToText } from 'uiSrc/utils'
 
 const getOutputForFormatToTextTests: any[] = [
   [5, 'GET', '(integer) 5'],

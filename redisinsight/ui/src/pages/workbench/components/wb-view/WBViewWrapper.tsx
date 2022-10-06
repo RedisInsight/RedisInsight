@@ -256,9 +256,9 @@ const WBViewWrapper = () => {
     if (state.loading || (!value && !script)) return
 
     handleSubmit(value, commandId)
-    setTimeout(() => {
-      (cleanupWB && clearEditor) && resetCommand()
-    }, 0)
+    if (cleanupWB && clearEditor) {
+      resetCommand()
+    }
   }
 
   return (

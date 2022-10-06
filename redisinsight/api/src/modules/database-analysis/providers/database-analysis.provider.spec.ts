@@ -22,7 +22,7 @@ import { NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { KeytarDecryptionErrorException } from 'src/modules/core/encryption/exceptions';
 
-const mockCreateDatabaseAnalysisDto: CreateDatabaseAnalysisDto = {
+export const mockCreateDatabaseAnalysisDto: CreateDatabaseAnalysisDto = {
   delimiter: ':',
   filter: plainToClass(ScanFilter, {
     type: RedisDataType.String,

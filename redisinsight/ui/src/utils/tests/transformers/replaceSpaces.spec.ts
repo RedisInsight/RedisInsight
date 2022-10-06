@@ -1,4 +1,4 @@
-import replaceSpaces from '../replaceSpaces'
+import { replaceSpaces } from 'uiSrc/utils'
 
 const getReplaceSpacesTests: any[] = [
   ['10', '10'],

@@ -23,3 +23,12 @@ export const formatBytes = (
     return '-'
   }
 }
+
+export const toBytes = (size: number, type: string): number | string => {
+  const key = SIZES.indexOf(type.toUpperCase())
+
+  if (typeof key !== 'boolean') {
+    return Math.floor(size * 1024 ** key)
+  }
+  return '-'
+}

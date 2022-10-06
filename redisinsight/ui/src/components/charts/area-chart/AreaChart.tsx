@@ -2,6 +2,7 @@ import * as d3 from 'd3'
 import React, { useEffect, useRef } from 'react'
 import cx from 'classnames'
 
+import { formatBytes, toBytes } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface AreaChartData {
@@ -15,11 +16,17 @@ interface IDatum extends AreaChartData{
   index: number
 }
 
+export enum AreaChartDataType {
+  Bytes = 'bytes'
+}
+
 interface IProps {
   name?: string
   data?: AreaChartData[]
+  dataType?: AreaChartDataType
   width?: number
   height?: number
+  yCountTicks?: number
   divideLastColumn?: boolean
   multiplierGrid?: number
   classNames?: {
@@ -34,6 +41,7 @@ interface IProps {
 }
 
 export const DEFAULT_MULTIPLIER_GRID = 2
+export const DEFAULT_Y_TICKS = 4
 let cleanedData: IDatum[] = []
 
 const AreaChart = (props: IProps) => {
@@ -42,6 +50,8 @@ const AreaChart = (props: IProps) => {
     name,
     width: propWidth = 0,
     height: propHeight = 0,
+    yCountTicks = DEFAULT_Y_TICKS,
+    dataType,
     classNames,
     divideLastColumn,
     multiplierGrid = DEFAULT_MULTIPLIER_GRID,
@@ -55,6 +65,15 @@ const AreaChart = (props: IProps) => {
   const height = propHeight - margin.top - margin.bottom
 
   const svgRef = useRef<SVGSVGElement>(null)
+
+  const getRoundedYMaxValue = (number: number): number => {
+    const numLen = number.toString().length
+    let dividerValue = '1'
+    for (let i = 0; i < numLen - 1; i++) {
+      dividerValue += 0
+    }
+    return Math.ceil(number / +dividerValue) * +dividerValue
+  }
 
   useEffect(() => {
     if (data.length === 0) {
@@ -97,9 +116,16 @@ const AreaChart = (props: IProps) => {
       .domain(d3.extent(cleanedData, (d) => d.index) as [number, number])
       .range([0, width])
 
+    let maxY = d3.max(cleanedData, (d) => +d.y) || 0
+
+    if (dataType === AreaChartDataType.Bytes) {
+      const [maxYFormatted, type] = formatBytes(maxY, 1, true)
+      maxY = +toBytes(getRoundedYMaxValue(Math.ceil(+maxYFormatted)), `${type}`)
+    }
+
     // Add Y axis
     const yAxis = d3.scaleLinear()
-      .domain([0, d3.max(cleanedData, (d) => +d.y) || 0])
+      .domain([0, maxY || 0])
       .range([height, 0])
 
     svg.append('path')
@@ -130,6 +156,18 @@ const AreaChart = (props: IProps) => {
       .attr('d', area)
 
     svg.append('g')
+      .call(
+        d3.axisLeft(yAxis)
+          .tickSize(-width)
+          .tickValues([...d3.range(0, maxY, maxY / yCountTicks), maxY])
+          .tickFormat((d, i) => leftAxiosValidation(d, i))
+          .tickPadding(10)
+      )
+
+    const yTicks = d3.selectAll('text')
+    yTicks.attr('data-testid', (d, i) => `ytick-${d}-${i}`)
+
+    svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(
         d3.axisBottom(xAxis)
@@ -137,15 +175,6 @@ const AreaChart = (props: IProps) => {
           .tickFormat((d, i) => bottomAxiosValidation(d, i))
           .tickSize(-height)
           .tickPadding(22)
-      )
-
-    svg.append('g')
-      .call(
-        d3.axisLeft(yAxis)
-          .ticks(cleanedData.length * multiplierGrid)
-          .tickFormat((d, i) => leftAxiosValidation(d, i))
-          .tickSize(-width)
-          .tickPadding(10)
       )
 
     svg.selectAll('circle')

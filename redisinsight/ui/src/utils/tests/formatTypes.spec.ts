@@ -1,4 +1,4 @@
-import { formatBytes } from 'uiSrc/utils'
+import { formatBytes, toBytes } from 'uiSrc/utils'
 
 const formatBytesTests: any[] = [
   [256, 3, '256 B'],
@@ -47,4 +47,35 @@ describe('formatBytes', () => {
     expect(formatBytes(1572864, 0, true)).toEqual([2, 'MB'])
     expect(formatBytes(1347545989, 3, true)).toEqual([1.255, 'GB'])
   })
+})
+
+const toBytesTests: any[] = [
+  [256, 3, '256 B'],
+  [256, undefined, '256 B'],
+  [0, undefined, '0 B'],
+  [1024, undefined, '1 KB'],
+  [1048576, undefined, '1 MB'],
+  [1572864, undefined, '1.5 MB'],
+  [1099511627776, undefined, '1 TB'],
+  [1649267441664, undefined, '1.5 TB'],
+  [1379887092858, undefined, '1.255 TB'],
+  [1125899906842624, undefined, '1 PB'],
+  [1125899906842624, undefined, '1 PB'],
+  [1413004383087493, undefined, '1.255 PB'],
+  [1152921504606847000, undefined, '1 EB'],
+  [1152921504606847000, undefined, '1 EB'],
+  [1446916488281592800, undefined, '1.255 EB'],
+  [1.1805916207174113e+21, undefined, '1 ZB'],
+  [1.2089258196146292e+24, undefined, '1 YB'],
+  [1.2379400392853803e+27, undefined, '1024 YB'],
+]
+
+describe('toBytes', () => {
+  it.each(toBytesTests)('should be output: %s',
+    (expected, _bytes, formatted) => {
+      const [bytes, type] = formatted.split(' ')
+
+      const result = toBytes(+bytes, type)
+      expect(result).toBe(expected)
+    })
 })

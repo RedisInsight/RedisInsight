@@ -22,17 +22,18 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { setBrowserTreeDelimiter, setBrowserKeyListDataLoaded, resetBrowserTree } from 'uiSrc/slices/app/context'
 import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 
-import styles from '../styles.module.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<NspSummary[]>
+  defaultSortField: string
   delimiter: string
   dataTestid?: string
 }
 
 const NameSpacesTable = (props: Props) => {
-  const { data, delimiter, dataTestid = '' } = props
-  const [sort, setSort] = useState<PropertySort>({ field: 'memory', direction: 'desc' })
+  const { data, defaultSortField, delimiter, dataTestid = '' } = props
+  const [sort, setSort] = useState<PropertySort>({ field: defaultSortField, direction: 'desc' })
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({})
 
   const history = useHistory()
@@ -68,7 +69,7 @@ const NameSpacesTable = (props: Props) => {
             const [number, size] = formatBytes(type.memory, 3, true)
             return (
               <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
-                <div className={styles.truncateText}>
+                <div className="truncateText">
                   <EuiToolTip
                     anchorClassName={styles.tooltip}
                     position="bottom"
@@ -117,7 +118,7 @@ const NameSpacesTable = (props: Props) => {
       render: (nsp: string, { types }: { types: any[] }) => {
         const filterType = types.length > 1 ? null : types[0].type
         return (
-          <div className={cx(styles.delimiter, styles.truncateText)}>
+          <div className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
               anchorClassName={styles.tooltip}
               position="bottom"
@@ -184,7 +185,8 @@ const NameSpacesTable = (props: Props) => {
     },
     {
       name: '\u00A0',
-      width: '20px',
+      width: '42px',
+      className: 'expandBtn',
       isExpander: true,
       render: (item: NspSummary) => {
         const { types, nsp } = item
@@ -211,7 +213,7 @@ const NameSpacesTable = (props: Props) => {
         <EuiInMemoryTable
           items={data ?? []}
           columns={columns}
-          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', 'fixedLayout', styles.table, styles.tableNSP)}
+          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', 'fixedLayout', styles.table)}
           responsive={false}
           itemId="nsp"
           itemIdToExpandedRowMap={itemIdToExpandedRowMap}

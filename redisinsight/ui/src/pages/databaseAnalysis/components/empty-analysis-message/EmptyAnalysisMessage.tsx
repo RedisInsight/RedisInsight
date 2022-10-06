@@ -3,33 +3,23 @@ import { EuiText, EuiLink } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { Pages } from 'uiSrc/constants'
+import { EmptyMessage, Content } from 'uiSrc/pages/databaseAnalysis/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  name: string
+  name: EmptyMessage
 }
 
-const getTitleContent = (name: string) => {
-  if (name === 'reports') {
-    return 'No Reports found'
-  }
-
-  if (name === 'keys') {
-    return 'No keys to display'
-  }
-
-  return ''
-}
-
-const getTextContent = (name: string, path: string) => {
-  if (name === 'reports') {
-    return 'Run "New Analysis" to generate first report'
-  }
-
-  if (name === 'keys') {
-    return (
+const emptyMessageContent: { [key in EmptyMessage]: Content } = {
+  [EmptyMessage.Reports]: {
+    title: 'No Reports found',
+    text: () => 'Run "New Analysis" to generate first report'
+  },
+  [EmptyMessage.Keys]: {
+    title: 'No keys to display',
+    text: (path) => (
       <>
         <EuiLink
           {...getRouterLinkProps(path)}
@@ -42,8 +32,6 @@ const getTextContent = (name: string, path: string) => {
       </>
     )
   }
-
-  return ''
 }
 
 const EmptyAnalysisMessage = (props: Props) => {
@@ -51,11 +39,13 @@ const EmptyAnalysisMessage = (props: Props) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
+  const { text, title } = emptyMessageContent[name]
+
   return (
     <div className={styles.container} data-testid={`empty-analysis-no-${name}`}>
       <div className={styles.content}>
-        <EuiText className={styles.title}>{getTitleContent(name)}</EuiText>
-        <EuiText className={styles.summary}>{getTextContent(name, Pages.workbench(instanceId))}</EuiText>
+        <EuiText className={styles.title}>{title}</EuiText>
+        <EuiText className={styles.summary}>{text(Pages.workbench(instanceId))}</EuiText>
       </div>
     </div>
   )

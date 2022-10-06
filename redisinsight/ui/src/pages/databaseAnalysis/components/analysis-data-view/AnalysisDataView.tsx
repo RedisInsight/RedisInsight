@@ -2,13 +2,16 @@ import React from 'react'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
 import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+import { EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
+import {
+  TopKeys,
+  EmptyAnalysisMessage,
+  TopNamespace,
+  SummaryPerData,
+  ExpirationGroupsView
+} from 'uiSrc/pages/databaseAnalysis/components'
 
-import TopKeys from '../top-keys'
-import EmptyAnalysisMessage from '../empty-analysis-message'
-import TopNamespace from '../top-namespace'
-import SummaryPerData from '../summary-per-data'
-import ExpirationGroupsView from '../analysis-ttl-view'
-import styles from '../../styles.module.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<DatabaseAnalysis>
@@ -22,16 +25,21 @@ const AnalysisDataView = (props: Props) => {
   return (
     <>
       {!loading && !reports.length && (
-        <EmptyAnalysisMessage name="reports" />
+        <EmptyAnalysisMessage name={EmptyMessage.Reports} />
       )}
       {!loading && !!reports.length && data?.totalKeys?.total === 0 && (
-        <EmptyAnalysisMessage name="keys" />
+        <EmptyAnalysisMessage name={EmptyMessage.Keys} />
       )}
       <div className={cx(styles.grid, styles.content)}>
-        <SummaryPerData data={data} loading={loading} />
-        <ExpirationGroupsView data={data} loading={loading} />
-        <TopNamespace data={data} loading={loading} />
-        <TopKeys data={data} loading={loading} />
+        <div>
+          <SummaryPerData data={data} loading={loading} />
+          <TopNamespace data={data} loading={loading} />
+          <TopKeys data={data} loading={loading} />
+        </div>
+        <div>
+          <ExpirationGroupsView data={data} loading={loading} />
+        </div>
+        <div />
       </div>
     </>
   )

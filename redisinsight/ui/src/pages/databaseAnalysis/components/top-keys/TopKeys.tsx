@@ -3,11 +3,11 @@ import cx from 'classnames'
 import { EuiButton, EuiTitle } from '@elastic/eui'
 import { TableView } from 'uiSrc/pages/databaseAnalysis'
 import { Nullable } from 'uiSrc/utils'
-import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+import { TableLoader } from 'uiSrc/pages/databaseAnalysis/components'
+import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/model'
 
 import Table from './Table'
-import Loader from '../table-loader'
-import styles from '../styles.module.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<DatabaseAnalysis>
@@ -20,7 +20,7 @@ const TopKeys = ({ data, loading }: Props) => {
   const [tableView, setTableView] = useState<TableView>(TableView.MEMORY)
 
   if (loading) {
-    return <Loader />
+    return <TableLoader />
   }
 
   if ((!topKeysLength?.length) && (!topKeysMemory?.length)) {
@@ -28,7 +28,7 @@ const TopKeys = ({ data, loading }: Props) => {
   }
 
   return (
-    <div className={styles.topNamespaceView}>
+    <div className={styles.wrapper}>
       <EuiTitle className="section-title">
         <h4 data-testid="top-keys-title">
           {topKeysLength.length < 15 && topKeysMemory?.length < 15

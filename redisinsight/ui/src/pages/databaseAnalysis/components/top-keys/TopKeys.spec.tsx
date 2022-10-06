@@ -20,8 +20,13 @@ describe('TopKeys', () => {
   })
 
   it('should render top-keys-table-length when click "btn-change-table-keys" ', () => {
+    const mockData = {
+      topKeysLength: [mockKey],
+      topKeysMemory: [mockKey]
+    }
+
     const { queryByTestId } = render(
-      <TopKeys {...instance(mockedProps)} topKeysLength={[mockKey]} topKeysMemory={[mockKey]} />
+      <TopKeys {...instance(mockedProps)} data={mockData} />
     )
 
     fireEvent.click(screen.getByTestId('btn-change-table-keys'))
@@ -33,8 +38,13 @@ describe('TopKeys', () => {
   })
 
   it('should render top-keys-table-memory when click "btn-change-table-memory" and memory button should be disabled', () => {
+    const mockData = {
+      topKeysLength: [mockKey],
+      topKeysMemory: [mockKey]
+    }
+
     const { queryByTestId } = render(
-      <TopKeys {...instance(mockedProps)} topKeysLength={[mockKey]} topKeysMemory={[mockKey]} />
+      <TopKeys {...instance(mockedProps)} data={mockData} />
     )
 
     // memory button is disabled by default
@@ -48,8 +58,13 @@ describe('TopKeys', () => {
   })
 
   it('should render top-keys-table-memory by default" ', () => {
+    const mockData = {
+      topKeysLength: [mockKey],
+      topKeysMemory: [mockKey]
+    }
+
     const { queryByTestId } = render(
-      <TopKeys {...instance(mockedProps)} topKeysLength={[mockKey]} topKeysMemory={[mockKey]} />
+      <TopKeys {...instance(mockedProps)} data={mockData} />
     )
 
     expect(queryByTestId('top-keys-table-memory')).toBeInTheDocument()
@@ -59,8 +74,12 @@ describe('TopKeys', () => {
   })
 
   it('should not render tables when topKeysLength and topKeysMemory are empty array', () => {
+    const mockData = {
+      topKeysLength: [],
+      topKeysMemory: []
+    }
     const { queryByTestId } = render(
-      <TopKeys {...instance(mockedProps)} topKeysLength={[]} topKeysMemory={[]} />
+      <TopKeys {...instance(mockedProps)} data={mockData} />
     )
 
     expect(queryByTestId('top-keys-table-memory')).not.toBeInTheDocument()
@@ -68,8 +87,13 @@ describe('TopKeys', () => {
   })
 
   it('should render loader when loading="true"', () => {
+    const mockData = {
+      topKeysLength: [mockKey],
+      topKeysMemory: [mockKey]
+    }
+
     const { queryByTestId } = render(
-      <TopKeys {...instance(mockedProps)} topKeysLength={[mockKey]} topKeysMemory={[mockKey]} loading />
+      <TopKeys {...instance(mockedProps)} data={mockData} loading />
     )
     expect(queryByTestId('top-keys-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('top-keys-table-length')).not.toBeInTheDocument()
@@ -77,57 +101,28 @@ describe('TopKeys', () => {
   })
 
   it('should render TOP KEYS title', () => {
+    const mockData = {
+      topKeysLength: [mockKey],
+      topKeysMemory: [mockKey]
+    }
+
     const { queryByText } = render(
-      <TopKeys {...instance(mockedProps)} topKeysLength={[mockKey]} topKeysMemory={[mockKey]} />
+      <TopKeys {...instance(mockedProps)} data={mockData} />
     )
     expect(queryByText('TOP KEYS')).toBeInTheDocument()
     expect(queryByText('TOP 15 KEYS')).not.toBeInTheDocument()
   })
 
   it('should render TOP 15 KEYS title', () => {
+    const mockData = {
+      topKeysLength: Array.from({ length: 15 }, () => mockKey),
+      topKeysMemory: Array.from({ length: 15 }, () => mockKey)
+    }
+
     const { queryByText } = render(
-      <TopKeys
-        {...instance(mockedProps)}
-        topKeysLength={[
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey
-        ]}
-        topKeysMemory={[
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey,
-          mockKey
-        ]}
-      />
+      <TopKeys {...instance(mockedProps)} data={mockData} />
     )
+
     expect(queryByText('TOP KEYS')).not.toBeInTheDocument()
     expect(queryByText('TOP 15 KEYS')).toBeInTheDocument()
   })

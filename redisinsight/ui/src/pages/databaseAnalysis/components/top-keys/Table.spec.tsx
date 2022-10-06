@@ -38,14 +38,14 @@ describe('Table', () => {
   })
 
   it('should render correct ttl', () => {
-    const { container } = render(<Table {...instance(mockedProps)} data={mockData} />)
-    expect(container.querySelector('[data-test-subj="ttl-no-limit-name_1"')).toBeInTheDocument()
+    render(<Table {...instance(mockedProps)} data={mockData} />)
+    expect(screen.getByTestId('ttl-no-limit-name_1')).toBeInTheDocument()
     expect(screen.getByTestId('ttl-name')).toBeInTheDocument()
   })
 
-  it('should render correct ttl', () => {
-    const { container } = render(<Table {...instance(mockedProps)} data={mockData} />)
-    expect(container.querySelector('[data-test-subj="length-name_1"')).toBeInTheDocument()
+  it('should render correct length', () => {
+    render(<Table {...instance(mockedProps)} data={mockData} />)
+    expect(screen.getByTestId('length-empty-name_1')).toBeInTheDocument()
     expect(screen.getByTestId('length-value-name')).toBeInTheDocument()
   })
 })

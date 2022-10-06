@@ -22,7 +22,7 @@ import { setBrowserKeyListDataLoaded, setBrowserSelectedKey, resetBrowserTree, s
 import { Pages } from 'uiSrc/constants'
 import { Key } from 'apiSrc/modules/database-analysis/models/key'
 
-import styles from '../styles.module.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   data: Key[]
@@ -87,7 +87,7 @@ const Table = (props: Props) => {
       sortable: true,
       truncateText: true,
       render: (name: string) => (
-        <div data-testid="top-keys-table-name" className={cx(styles.delimiter, styles.truncateText)}>
+        <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
           <EuiToolTip
             anchorClassName={styles.tooltip}
             position="bottom"
@@ -113,7 +113,7 @@ const Table = (props: Props) => {
       render: (value: number, { name }) => {
         if (value === -1) {
           return (
-            <EuiTextColor color="subdued" data-test-subj={`ttl-no-limit-${name}`}>
+            <EuiTextColor color="subdued" data-testid={`ttl-no-limit-${name}`}>
               No limit
             </EuiTextColor>
           )
@@ -125,7 +125,7 @@ const Table = (props: Props) => {
               title="Time to Live"
               className={styles.tooltip}
               anchorClassName="truncateText"
-              position="right"
+              position="bottom"
               content={(
                 <>
                   {`${truncateTTLToSeconds(value)} s`}
@@ -168,12 +168,12 @@ const Table = (props: Props) => {
       name: 'Length',
       field: 'length',
       width: '15%',
-      sortable: ({ length }) => (isNull(length) ? -1 : length),
+      sortable: ({ length }) => length ?? -1,
       align: 'right',
       render: (value: number, { name }) => {
         if (isNull(value)) {
           return (
-            <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-test-subj={`length-${name}`}>
+            <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`length-empty-${name}`}>
               -
             </EuiTextColor>
           )
@@ -193,7 +193,7 @@ const Table = (props: Props) => {
         <EuiInMemoryTable
           items={data ?? []}
           columns={columns}
-          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNSP)}
+          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table)}
           responsive={false}
           itemId="name"
           rowProps={setDataTestId}

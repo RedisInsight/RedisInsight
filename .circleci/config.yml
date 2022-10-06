@@ -368,7 +368,7 @@ jobs:
           path: tests/e2e/report
           destination: tests/e2e/report
   e2e-tests:
-    executor: linux-executor-dlc
+    executor: linux-executor
     parameters:
       build:
         description: Backend build to run tests over

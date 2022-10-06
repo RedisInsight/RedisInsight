@@ -136,7 +136,7 @@ describe('POST /instance/:instanceId/analysis', () => {
           expect(body.expirationGroups[i].total).to.eq(0);
           expect(body.expirationGroups[i].threshold).to.gt(0);
         }
-        expect(body.expirationGroups[0].label).to.eq('No Expire');
+        expect(body.expirationGroups[0].label).to.eq('No Expiry');
         expect(body.expirationGroups[0].total).to.gt(0);
         expect(body.expirationGroups[0].threshold).to.eq(0);
       },

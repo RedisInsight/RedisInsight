@@ -8,7 +8,7 @@ import { getRouterLinkProps } from 'uiSrc/services'
 
 import styles from './styles.module.scss'
 
-export interface Props {
+interface Props {
   name: EmptyMessage
 }
 

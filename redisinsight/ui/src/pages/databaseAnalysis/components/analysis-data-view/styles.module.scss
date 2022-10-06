@@ -2,6 +2,8 @@
 @import "@elastic/eui/src/components/table/mixins";
 @import "@elastic/eui/src/global_styling/index";
 
+$breakpoint-table: 1232px;
+
 .content {
   @include euiScrollBar;
   overflow-y: auto;

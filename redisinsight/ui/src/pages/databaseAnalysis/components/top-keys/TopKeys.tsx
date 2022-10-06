@@ -4,7 +4,7 @@ import { EuiButton, EuiTitle } from '@elastic/eui'
 import { TableView } from 'uiSrc/pages/databaseAnalysis'
 import { Nullable } from 'uiSrc/utils'
 import { TableLoader } from 'uiSrc/pages/databaseAnalysis/components'
-import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/model'
+import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import Table from './Table'
 import styles from './styles.module.scss'

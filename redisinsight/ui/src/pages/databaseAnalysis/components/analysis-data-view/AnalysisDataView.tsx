@@ -1,7 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
-import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
 import {
   TopKeys,
@@ -10,6 +9,7 @@ import {
   SummaryPerData,
   ExpirationGroupsView
 } from 'uiSrc/pages/databaseAnalysis/components'
+import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
 

@@ -18,7 +18,7 @@ const mockData = [
     name: 'name_1',
     type: 'HASH',
     memory: 1000,
-    length: undefined,
+    length: null,
     ttl: -1
   }
 ]
@@ -39,13 +39,13 @@ describe('Table', () => {
 
   it('should render correct ttl', () => {
     render(<Table {...instance(mockedProps)} data={mockData} />)
-    expect(screen.getByTestId('ttl-no-limit-name_1')).toBeInTheDocument()
-    expect(screen.getByTestId('ttl-name')).toBeInTheDocument()
+    expect(screen.getByTestId('ttl-no-limit-name_1')).toHaveTextContent('No limit')
+    expect(screen.getByTestId('ttl-name')).toHaveTextContent('10 s')
   })
 
   it('should render correct length', () => {
     render(<Table {...instance(mockedProps)} data={mockData} />)
-    expect(screen.getByTestId('length-empty-name_1')).toBeInTheDocument()
-    expect(screen.getByTestId('length-value-name')).toBeInTheDocument()
+    expect(screen.getByTestId('length-empty-name_1')).toHaveTextContent('-')
+    expect(screen.getByTestId('length-value-name')).toHaveTextContent('10')
   })
 })

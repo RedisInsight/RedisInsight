@@ -2,7 +2,7 @@
 @import "@elastic/eui/src/components/table/mixins";
 @import "@elastic/eui/src/global_styling/index";
 
-$breakpoint-table: 1232px;
+$breakpoint-table: 1680px;
 
 .wrapper {
   margin-bottom: 37px;
@@ -37,7 +37,7 @@ $breakpoint-table: 1232px;
 .wrapper {
   max-width: 1920px;
 
-  .link {
+  .wrapper .link {
     width: max-content;
   
     &:hover,
@@ -92,7 +92,7 @@ $breakpoint-table: 1232px;
   }
 }
 
-.table {
+.wrapper .table {
   &:global(.fixedLayout) table {
     table-layout: fixed;
   }

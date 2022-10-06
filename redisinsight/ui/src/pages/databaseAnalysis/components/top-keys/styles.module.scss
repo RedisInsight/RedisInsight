@@ -2,75 +2,31 @@
 @import "@elastic/eui/src/components/table/mixins";
 @import "@elastic/eui/src/global_styling/index";
 
-$breakpoint-table: 1232px;
+$breakpoint-table: 1680px;
 
-.wrapper {
-  max-width: 1920px;
+.wrapper .textBtn {
+  border: none;
+  min-width: auto !important;
+  min-height: auto;
+  border-radius: 4px;
+  background: transparent !important;
+  box-shadow: none;
+  margin-left: 18px;
+  color: var(--wbHoverIconColor) !important;
 
-  .loading {
-    margin-top: 40px;
-    width: 100%;
-
-    :global {
-      .euiLoadingContent__singleLine {
-        height: 36px;
-
-        &:first-child {
-          height: 42px;
-          margin-bottom: 18px;
-        }
-      }
-
-      .euiLoadingContent__singleLine:last-child:not(:only-child) {
-        width: 100%;
-      }
-    }
+  :global(.euiButton__content) {
+    padding: 6px;
   }
 
-  .badge :global(.euiText--extraSmall) {
-    font: normal normal normal 12px/16px Graphik;
+  :global(.euiButton__text) {
+    font: normal normal normal 13px/18px Graphik !important;
   }
 
-  .link {
-    width: max-content;
-  
-    &:hover,
-    &:focus {
-      background-color: transparent !important;
-    }
-  
-    :global(.euiButtonEmpty__content) {
-      padding: 0;
-      width: max-content;
-  
-      &:hover,
-      &:focus {
-        text-decoration: underline;
-      }
-    }
-  
-    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
-      font: normal normal normal 13px/18px Graphik;
-      color: var(--buttonSecondaryTextColor) !important;
-    }
-  
-    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):hover,
-    :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):focus {
-      color: var(--euiTextSubduedColorHover);
-    }
-  
-    &.expanded {
-      padding-left: 12px;
-    }
-  
-    &.expanded :global(.euiButtonEmpty__content.euiButtonContent  .euiButtonEmpty__text) {
-      color: var(--euiTextSubduedColor) !important;
-  
-      &:hover,
-      &:focus {
-        color: var(--euiTextSubduedColorHover) !important;
-      }
-    }
+  &.activeBtn:global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary),
+  :global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary) {
+    background: var(--browserComponentActive) !important;
+    color: var(--wbActiveIconColor) !important;
+    opacity: 1;
   }
 }
 
@@ -86,10 +42,27 @@ $breakpoint-table: 1232px;
   }
 }
 
-.table.tableNSP {
-  :global {
-    .nsp-cell {
-      height: 42px;
+.table {
+  &:hover,
+  &:focus {
+
+  :global(.euiButton__text) {
+    color: var(--wbHoverIconColor) !important;
+  }
+  }
+  &:global(.fixedLayout) table {
+    table-layout: fixed;
+  }
+
+  :global {    
+    .euiTableRowCell:first-child,
+    .euiTableHeaderCell:first-child {
+      padding-left: 12px;
+    }
+
+    .euiTableRowCell:last-child,
+    .euiTableHeaderCell:last-child {
+      padding-right: 12px;
     }
 
     .euiTableHeaderCell {
@@ -166,31 +139,6 @@ $breakpoint-table: 1232px;
   }
 }
 
-.expanded {
-  display: grid;
-  grid-template-columns: auto 34% 12% calc(10% + 44px);
-  grid-column-gap: 0;
-  height: 42px;
-  width: 100%;
-
-  & div {
-    display: flex;
-    align-items: center;
-  }
-
-  .badge {
-    margin: 0 !important;
-  }
-
-  .rightAlign {
-    padding: 0 12px;
-
-    &:last-child {
-      padding: 0 52px 0 12px;
-    }
-  }
-}
-
 .rightAlign {
   justify-content: flex-end;
   padding: 12px;
@@ -217,20 +165,39 @@ $breakpoint-table: 1232px;
 
   & .badge {
     margin: 0 7px 8px;
+  }
+
+  :global(.euiBadge) span {
+    font: normal normal normal 12px/16px Graphik;
     padding-top: 0 !important;
   }
+}
 
-  & .badge + .badge {
-    margin-left: 6px!important;
+.wrapper .link {
+  width: max-content;
+
+  &:hover,
+  &:focus {
+    background-color: transparent !important;
   }
-}
 
-.truncateText {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
+  :global(.euiButtonEmpty__content) {
+    padding: 0;
+    width: max-content;
 
-.tooltip {
-  width: auto;
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
+  }
+
+  :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
+    font: normal normal normal 13px/18px Graphik;
+    color: var(--buttonSecondaryTextColor) !important;
+  }
+
+  :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):hover,
+  :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):focus {
+    color: var(--euiTextSubduedColorHover);
+  }
 }

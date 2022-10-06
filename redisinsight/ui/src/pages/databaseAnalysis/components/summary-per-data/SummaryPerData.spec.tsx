@@ -111,7 +111,7 @@ describe('SummaryPerData', () => {
   })
 
   it('should render loading', () => {
-    render(<SummaryPerData data={null} loading />)
+    render(<SummaryPerData data={mockData} loading />)
 
     expect(screen.getByTestId('summary-per-data-loading')).toBeInTheDocument()
   })

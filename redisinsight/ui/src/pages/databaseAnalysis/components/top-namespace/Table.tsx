@@ -26,13 +26,14 @@ import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<NspSummary[]>
+  defaultSortField: string
   delimiter: string
   dataTestid?: string
 }
 
 const NameSpacesTable = (props: Props) => {
-  const { data, delimiter, dataTestid = '' } = props
-  const [sort, setSort] = useState<PropertySort>({ field: 'memory', direction: 'desc' })
+  const { data, defaultSortField, delimiter, dataTestid = '' } = props
+  const [sort, setSort] = useState<PropertySort>({ field: defaultSortField, direction: 'desc' })
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({})
 
   const history = useHistory()
@@ -64,11 +65,11 @@ const NameSpacesTable = (props: Props) => {
     } else {
       itemIdToExpandedRowMapValues[item.nsp] = (
         <div style={{ width: '100%' }}>
-          {item.types.map((type) => {
+          {item.types.map((type, index) => {
             const [number, size] = formatBytes(type.memory, 3, true)
             return (
-              <div className={styles.expanded} key={type.type}>
-                <div className={styles.truncateText}>
+              <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
+                <div className="truncateText">
                   <EuiToolTip
                     anchorClassName={styles.tooltip}
                     position="bottom"
@@ -99,6 +100,10 @@ const NameSpacesTable = (props: Props) => {
     setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues)
   }
 
+  const setDataTestId = ({ nsp }: { nsp: string }) => ({
+    'data-testid': `row-${nsp}`
+  })
+
   const columns: EuiBasicTableColumn<NspSummary>[] = [
     {
       name: 'Key Pattern',
@@ -106,14 +111,14 @@ const NameSpacesTable = (props: Props) => {
       dataType: 'string',
       height: '42px',
       align: 'left',
-      width: 'calc(44% - 44px)',
+      width: 'auto',
       sortable: true,
       truncateText: true,
       className: 'nsp-cell',
       render: (nsp: string, { types }: { types: any[] }) => {
         const filterType = types.length > 1 ? null : types[0].type
         return (
-          <div className={cx(styles.delimiter, styles.truncateText)}>
+          <div className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
               anchorClassName={styles.tooltip}
               position="bottom"
@@ -180,7 +185,8 @@ const NameSpacesTable = (props: Props) => {
     },
     {
       name: '\u00A0',
-      width: '20px',
+      width: '42px',
+      className: 'expandBtn',
       isExpander: true,
       render: (item: NspSummary) => {
         const { types, nsp } = item
@@ -207,11 +213,12 @@ const NameSpacesTable = (props: Props) => {
         <EuiInMemoryTable
           items={data ?? []}
           columns={columns}
-          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table, styles.tableNSP)}
+          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', 'fixedLayout', styles.table)}
           responsive={false}
           itemId="nsp"
           itemIdToExpandedRowMap={itemIdToExpandedRowMap}
           isExpandable
+          rowProps={setDataTestId}
           sorting={{ sort }}
           onTableChange={({ sort }: any) => setSort(sort)}
           data-testid="nsp-table"

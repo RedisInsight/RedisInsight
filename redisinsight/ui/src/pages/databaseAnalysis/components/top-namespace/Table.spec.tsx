@@ -2,12 +2,12 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
 
-import NameSpacesTable, { Props } from './NameSpacesTable'
+import Table, { Props } from './Table'
 
 const mockedProps = mock<Props>()
 
-describe('NameSpacesTable', () => {
+describe('Table', () => {
   it('should render', () => {
-    expect(render(<NameSpacesTable {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<Table {...instance(mockedProps)} />)).toBeTruthy()
   })
 })

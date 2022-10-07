@@ -11,8 +11,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
-import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
-import { formatBytes, Nullable } from 'uiSrc/utils'
+import { formatBytes, formatLongName, Nullable } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { GroupBadge } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
@@ -21,6 +20,7 @@ import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { setBrowserTreeDelimiter, setBrowserKeyListDataLoaded, resetBrowserTree } from 'uiSrc/slices/app/context'
 import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
+import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
 
 import styles from './styles.module.scss'
 
@@ -117,12 +117,13 @@ const NameSpacesTable = (props: Props) => {
       className: 'nsp-cell',
       render: (nsp: string, { types }: { types: any[] }) => {
         const filterType = types.length > 1 ? null : types[0].type
+        const tooltipContent = formatLongName(`${nsp}${delimiter}*`)
         return (
           <div className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
               anchorClassName={styles.tooltip}
               position="bottom"
-              content={`${nsp}${delimiter}*`}
+              content={tooltipContent}
             >
               <EuiButtonEmpty
                 className={styles.link}

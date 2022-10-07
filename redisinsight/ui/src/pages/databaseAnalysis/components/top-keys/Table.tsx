@@ -12,7 +12,14 @@ import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
-import { formatBytes, truncateNumberToDuration, truncateNumberToFirstUnit, truncateTTLToSeconds, stringToBuffer } from 'uiSrc/utils'
+import {
+  formatBytes,
+  formatLongName,
+  truncateNumberToDuration,
+  truncateNumberToFirstUnit,
+  truncateTTLToSeconds,
+  stringToBuffer
+} from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { GroupBadge } from 'uiSrc/components'
 import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
@@ -86,23 +93,26 @@ const Table = (props: Props) => {
       height: '42px',
       sortable: true,
       truncateText: true,
-      render: (name: string) => (
-        <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
-          <EuiToolTip
-            anchorClassName={styles.tooltip}
-            position="bottom"
-            content={name}
-          >
-            <EuiButtonEmpty
-              className={styles.link}
-              style={{ height: 'auto' }}
-              onClick={() => handleRedirect(name)}
+      render: (name: string) => {
+        const tooltipContent = formatLongName(name)
+        return (
+          <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
+            <EuiToolTip
+              anchorClassName={styles.tooltip}
+              position="bottom"
+              content={tooltipContent}
             >
-              {name}
-            </EuiButtonEmpty>
-          </EuiToolTip>
-        </div>
-      )
+              <EuiButtonEmpty
+                className={styles.link}
+                style={{ height: 'auto' }}
+                onClick={() => handleRedirect(name)}
+              >
+                {name}
+              </EuiButtonEmpty>
+            </EuiToolTip>
+          </div>
+        )
+      }
     },
     {
       name: 'TTL',

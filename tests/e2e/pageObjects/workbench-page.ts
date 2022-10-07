@@ -64,6 +64,8 @@ export class WorkbenchPage {
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     groupMode = Selector('[data-testid=btn-change-group-mode]');
     copyCommand = Selector('[data-testid=copy-command]');
+    redisStackTimeSeriesLoadMorePoints = Selector('[data-testid=preselect-Load more data points]');
+    documentHashCreateButton = Selector('[data-testid=preselect-auto-Create]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     //LINKS
@@ -110,6 +112,7 @@ export class WorkbenchPage {
     workbenchCommandInHistory = Selector(this.cssWorkbenchCommandInHistory);
     workbenchCommandSuccessResultInHistory = Selector(this.cssWorkbenchCommandSuccessResultInHistory);
     workbenchCommandFailedResultInHistory = Selector(this.cssWorkbenchCommandFailedResultInHistory);
+    commandExecutionDateAndTime = Selector('[data-testid=command-execution-date-time]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoCloseCommandDetails = Selector('span.codicon-close');

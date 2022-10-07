@@ -90,6 +90,7 @@ const WBView = (props: Props) => {
             isMinimized={isMinimized}
             setIsMinimized={setIsMinimized}
             setScript={setScript}
+            onSubmit={onSubmit}
             scriptEl={scriptEl}
             isCodeBtnDisabled={isCodeBtnDisabled}
           />
@@ -105,7 +106,7 @@ const WBView = (props: Props) => {
                   scrollable={false}
                   className={styles.queryPanel}
                   initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
-                  style={{ minHeight: '140px' }}
+                  style={{ minHeight: '140px', overflow: 'hidden' }}
                 >
                   <QueryWrapper
                     query={script}

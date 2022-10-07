@@ -18,4 +18,4 @@ const WBResultsWrapper = (props: Props) => (
   <WBResults {...props} />
 )
 
-export default WBResultsWrapper
+export default React.memo(WBResultsWrapper)

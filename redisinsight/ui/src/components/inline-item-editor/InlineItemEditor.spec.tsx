@@ -5,7 +5,7 @@ import { validateScoreNumber } from 'uiSrc/utils'
 import InlineItemEditor, { Props } from './InlineItemEditor'
 
 const mockedProps = mock<Props>()
-const INLINE_ITEM_EDITOR = 'inline-item-editor'
+export const INLINE_ITEM_EDITOR = 'inline-item-editor'
 
 describe('InlineItemEditor', () => {
   it('should render', () => {

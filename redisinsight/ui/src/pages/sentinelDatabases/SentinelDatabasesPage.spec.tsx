@@ -47,6 +47,11 @@ const mockSentinelDatabases = (props: SentinelDatabasesProps) => (
   </div>
 )
 
+/**
+ * SentinelDatabasesPage tests
+ *
+ * @group component
+ */
 describe('SentinelDatabasesPage', () => {
   beforeAll(() => {
     SentinelDatabases.mockImplementation(mockSentinelDatabases)

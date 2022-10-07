@@ -100,14 +100,20 @@
       height: 42px;
     }
     
-    .euiTableRowCell:first-child,
-    .euiTableHeaderCell:first-child {
+    .euiTableRowCell:first-child {
       padding-left: 12px;
     }
 
-    .euiTableRowCell:last-child,
-    .euiTableHeaderCell:last-child {
+    .euiTableRowCell:last-child  {
       padding-right: 12px;
+    }
+
+    .euiTableHeaderCell:first-child .euiTableCellContent {
+      padding-left: 24px;
+    }
+
+    .euiTableHeaderCell:last-child .euiTableCellContent {
+      padding-right: 24px;
     }
 
     .euiTableHeaderCell {
@@ -155,11 +161,11 @@
     }
 
     .euiTableCellContent {
-      padding: 12px;
+      padding: 10px;
       font: normal normal normal 14px/24px Graphik;
 
       &:global(.dataType) {
-        padding: 12px 6px 4px;
+        padding: 10px 6px 2px;
       }
     }
 

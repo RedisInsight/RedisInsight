@@ -95,6 +95,7 @@ const Table = (props: Props) => {
       truncateText: true,
       render: (name: string) => {
         const tooltipContent = formatLongName(name)
+        const cellContent = name.substring(0, 200)
         return (
           <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
@@ -107,7 +108,7 @@ const Table = (props: Props) => {
                 style={{ height: 'auto' }}
                 onClick={() => handleRedirect(name)}
               >
-                {name}
+                {cellContent}
               </EuiButtonEmpty>
             </EuiToolTip>
           </div>

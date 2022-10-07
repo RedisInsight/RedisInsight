@@ -117,7 +117,9 @@ const NameSpacesTable = (props: Props) => {
       className: 'nsp-cell',
       render: (nsp: string, { types }: { types: any[] }) => {
         const filterType = types.length > 1 ? null : types[0].type
-        const tooltipContent = formatLongName(`${nsp}${delimiter}*`)
+        const textWithDelimiter = `${nsp}${delimiter}*`
+        const cellContent = textWithDelimiter?.substring(0, 200)
+        const tooltipContent = formatLongName(textWithDelimiter)
         return (
           <div className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
@@ -129,7 +131,7 @@ const NameSpacesTable = (props: Props) => {
                 className={styles.link}
                 onClick={() => handleRedirect(nsp, filterType)}
               >
-                {`${nsp}${delimiter}*`}
+                {cellContent}
               </EuiButtonEmpty>
             </EuiToolTip>
           </div>

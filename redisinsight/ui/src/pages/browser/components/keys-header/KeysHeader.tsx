@@ -294,4 +294,4 @@ const KeysHeader = (props: Props) => {
   )
 }
 
-export default KeysHeader
+export default React.memo(KeysHeader)

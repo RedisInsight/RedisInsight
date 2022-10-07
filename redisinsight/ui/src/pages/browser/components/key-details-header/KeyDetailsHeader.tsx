@@ -19,7 +19,15 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
-import { KEY_TYPES_ACTIONS, KeyTypes, LENGTH_NAMING_BY_TYPE, ModulesKeyTypes, STREAM_ADD_ACTION, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import {
+  KEY_TYPES_ACTIONS,
+  KeyTypes,
+  LENGTH_NAMING_BY_TYPE,
+  ModulesKeyTypes,
+  STREAM_ADD_ACTION,
+  TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_UNPRINTABLE_CHARACTERS
+} from 'uiSrc/constants'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
@@ -393,7 +401,7 @@ const KeyDetailsHeader = ({
         {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
           <div className={styles.actionBtn}>
             <EuiToolTip
-              content={!isEditable ? 'Cannot change data in this format' : null}
+              content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}
             >
               <EuiButtonIcon
                 disabled={!isEditable}

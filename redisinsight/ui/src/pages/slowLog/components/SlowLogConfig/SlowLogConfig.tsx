@@ -24,7 +24,7 @@ import {
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { setDBConfigStorageField } from 'uiSrc/services'
-import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from 'uiSrc/slices/slowlog/slowlog'
+import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'

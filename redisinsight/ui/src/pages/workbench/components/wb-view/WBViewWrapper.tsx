@@ -25,7 +25,7 @@ import {
 import { ConnectionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
@@ -46,6 +46,7 @@ interface IState {
   blockingCommands: string[]
   visualizations: IPluginVisualization[]
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
+  resultsMode: ResultsMode
 }
 
 let state: IState = {
@@ -57,6 +58,7 @@ let state: IState = {
   blockingCommands: [],
   visualizations: [],
   scriptEl: null,
+  resultsMode: ResultsMode.Default,
 }
 
 const WBViewWrapper = () => {
@@ -74,6 +76,9 @@ const WBViewWrapper = () => {
   const [activeRunQueryMode, setActiveRunQueryMode] = useState<RunQueryMode>(
     (localStorageService?.get(BrowserStorageItem.RunQueryMode) ?? RunQueryMode.ASCII)
   )
+  const [resultsMode, setResultsMode] = useState<ResultsMode>(
+    (localStorageService?.get(BrowserStorageItem.wbGroupMode) ?? ResultsMode.Default)
+  )
 
   const instance = useSelector(connectedInstanceSelector)
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -86,6 +91,7 @@ const WBViewWrapper = () => {
     visualizations,
     batchSize,
     activeRunQueryMode,
+    resultsMode,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -121,6 +127,10 @@ const WBViewWrapper = () => {
     localStorageService.set(BrowserStorageItem.RunQueryMode, activeRunQueryMode)
   }, [activeRunQueryMode])
 
+  useEffect(() => {
+    localStorageService.set(BrowserStorageItem.wbGroupMode, resultsMode)
+  }, [resultsMode])
+
   const handleChangeQueryRunMode = () => {
     setActiveRunQueryMode(
       activeRunQueryMode === RunQueryMode.ASCII
@@ -139,17 +149,37 @@ const WBViewWrapper = () => {
     })
   }
 
+  const handleChangeGroupMode = () => {
+    setResultsMode(
+      resultsMode === ResultsMode.Default
+        ? ResultsMode.GroupMode
+        : ResultsMode.Default
+    )
+  }
+
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
   ) => {
     const { loading, batchSize } = state
     const isNewCommand = () => !commandId
-    const commandsForExecuting = splitMonacoValuePerLines(removeMonacoComments(commandInit))
-      .map((command) => removeMonacoComments(decode(command).trim()))
-    const [commands, ...rest] = chunk(commandsForExecuting, batchSize > 1 ? batchSize : 1)
+    const getChunkSize = () => {
+      if (state.resultsMode === ResultsMode.GroupMode) {
+        return splitMonacoValuePerLines(commandInit).length
+      }
+      return batchSize > 1 ? batchSize : 1
+    }
+
+    const commandsForExecuting = without(
+      splitMonacoValuePerLines(commandInit)
+        .map((command) => removeMonacoComments(decode(command).trim())),
+      ''
+    )
+
+    const [commands, ...rest] = chunk(commandsForExecuting, getChunkSize())
     const multiCommands = rest.map((command) => getMultiCommands(command))
-    if (!commands.length || loading) {
+
+    if (!commands?.length || loading) {
       setMultiCommands(multiCommands)
       return
     }
@@ -163,10 +193,11 @@ const WBViewWrapper = () => {
     commands: string[],
     multiCommands: string[] = [],
   ) => {
-    const { activeRunQueryMode } = state
+    const { activeRunQueryMode, resultsMode } = state
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
+        resultsMode,
         commands,
         multiCommands,
         mode: activeRunQueryMode,
@@ -189,6 +220,7 @@ const WBViewWrapper = () => {
         commands,
         options,
         mode: state.activeRunQueryMode,
+        resultsMode,
         multiCommands,
         onSuccessAction: (multiCommands) => onSuccess(multiCommands),
       })
@@ -242,6 +274,8 @@ const WBViewWrapper = () => {
       onQueryOpen={handleQueryOpen}
       onQueryDelete={handleQueryDelete}
       onQueryChangeMode={handleChangeQueryRunMode}
+      resultsMode={resultsMode}
+      onChangeGroupMode={handleChangeGroupMode}
     />
   )
 }

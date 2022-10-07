@@ -147,14 +147,12 @@ test
         await t.expect(browserPage.filterByPatterSearchInput.getAttribute('value')).eql('', 'All characters from filter input are removed');
         await t.expect(browserPage.clearFilterButton.visible).notOk('The clear control is disappeared');
     });
-test
-    .after(async() => {
-        //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Verify that when user clicks on “clear” control and filter per key name is applied filter is reset and rescan initiated', async t => {
+test('Verify that when user clicks on “clear” control and filter per key name is applied filter is reset and rescan initiated', async t => {
         keyName = `KeyForSearch${chance.word({ length: 50 })}`;
+        //Add keys
+        await browserPage.addStringKey(keyName);
         //Search for not existed key name
-        await browserPage.searchByKeyName(keyName);
+        await browserPage.searchByKeyName(keyName2);
         await t.expect(browserPage.keyListTable.textContent).contains('No results found.', 'Key is not found');
         //Verify the clear control
         await t.click(browserPage.clearFilterButton);

@@ -22,7 +22,7 @@ const browserPage = new BrowserPage();
 const common = new Common();
 
 let keyName = common.generateWord(10);
-const verifyKeysAdded = async() => {
+const verifyKeysAdded = async(): Promise<void> => {
     keyName = common.generateWord(10);
     //add Hash key
     await browserPage.addHashKey(keyName);
@@ -51,6 +51,7 @@ test
         await verifyKeysAdded();
     });
 test
+    .meta({ rte: rte.reCloud })
     .before(async() => {
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })

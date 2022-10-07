@@ -1,7 +1,8 @@
 import * as monacoEditor from 'monaco-editor'
 
 export enum MonacoAction {
-  Submit = 'submit'
+  Submit = 'submit',
+  ChangeGroupMode = 'change-group-mode'
 }
 
 export const getMonacoAction = (

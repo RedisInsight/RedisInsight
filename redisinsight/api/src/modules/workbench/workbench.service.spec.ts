@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidv4 } from 'uuid';
+import { when } from 'jest-when';
 import { mockStandaloneDatabaseEntity, mockWorkbenchAnalyticsService } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
@@ -9,6 +10,7 @@ import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
   RunQueryMode,
+  ResultsMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
@@ -31,7 +33,23 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   },
   role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Default,
 };
+
+const mockCommands = ["set 1 1", "get 1"];
+
+const mockCreateCommandExecutionDtoWithGroupMode: CreateCommandExecutionsDto = {
+  commands: mockCommands,
+  nodeOptions: {
+    host: '127.0.0.1',
+    port: 7002,
+    enableRedirection: true,
+  },
+  role: ClusterNodeRole.All,
+  mode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.GroupMode,
+};
+
 const mockCreateCommandExecutionsDto: CreateCommandExecutionsDto = {
   commands: [
     mockCreateCommandExecutionDto.command,
@@ -62,6 +80,21 @@ const mockCommandExecution: CommandExecution = new CommandExecution({
   createdAt: new Date(),
   result: mockCommandExecutionResults,
 });
+
+const mockSendCommandResultSuccess = { response: "1", status: "success" };
+const mockSendCommandResultFail = { response: "error", status: "fail" };
+
+const mockCommandExecutionWithGroupMode = {
+  mode: "ASCII",
+  commands: mockCommands,
+  resultsMode: "GROUP_MODE",
+  databaseId: "d05043d0 - 0d12- 4ce1-9ca3 - 30c6d7e391ea",
+  summary: { "total": 2, "success": 1, "fail": 1 },
+  command: "set 1 1\r\nget 1",
+  result: [{
+    "status": "success", "response": [{ "response": "OK", "status": "success", "command": "set 1 1" }, { "response": "error", "status": "fail", "command": "get 1" }]
+  }]
+}
 
 const mockCommandExecutionProvider = () => ({
   createMany: jest.fn(),
@@ -155,6 +188,41 @@ describe('WorkbenchService', () => {
 
       expect(result).toEqual([mockCommandExecution, mockCommandExecution]);
     });
+
+    it('should successfully execute commands and save in group mode view', async () => {
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockClientOptions, expect.anything())
+        .mockResolvedValue([mockSendCommandResultSuccess]);
+
+      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithGroupMode]);
+
+      const result = await service.createCommandExecutions(
+        mockClientOptions,
+        mockCreateCommandExecutionDtoWithGroupMode,
+      );
+
+      expect(result).toEqual([mockCommandExecutionWithGroupMode]);
+    });
+
+    it('should successfully execute commands with error and save summary', async () => {
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[0]})
+        .mockResolvedValue([mockSendCommandResultSuccess]);
+      
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[1]})
+        .mockResolvedValue([mockSendCommandResultFail]);
+
+      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithGroupMode]);
+
+      const result = await service.createCommandExecutions(
+        mockClientOptions,
+        mockCreateCommandExecutionDtoWithGroupMode,
+      );
+
+      expect(result).toEqual([mockCommandExecutionWithGroupMode]);
+    });
+
     it('should throw an error when command execution failed', async () => {
       workbenchCommandsExecutor.sendCommand.mockRejectedValueOnce(new BadRequestException('error'));
 

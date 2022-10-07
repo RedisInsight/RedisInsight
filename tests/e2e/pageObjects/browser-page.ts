@@ -90,6 +90,7 @@ export class BrowserPage {
     editHashButton = Selector('[data-testid^=edit-hash-button-]');
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
+    workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -99,6 +100,7 @@ export class BrowserPage {
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
+    userSurveyLink = Selector('[data-testid=user-survey-link]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -208,6 +210,7 @@ export class BrowserPage {
     multiSearchArea = Selector(this.cssFilteringLabel);
     keyDetailsHeader = Selector('[data-testid=key-details-header]');
     keyListTable = Selector('[data-testid=keyList-table]');
+    keyListMessage = Selector('[data-testid=no-result-found-msg]');
     keyDetailsTable = Selector('[data-testid=key-details]');
     keyNameFormDetails = Selector('[data-testid=key-name-text]');
     keyDetailsTTL = Selector('[data-testid=key-ttl-text]');
@@ -239,7 +242,9 @@ export class BrowserPage {
     rangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
     rangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
     jsonValue = Selector('[data-testid=value-as-json]');
-
+    stringValueAsJson = Selector(this.cssJsonValue);
+    // POPUPS
+    changeValueWarning = Selector('[data-testid=approve-popover]');
     /**
      * Common part for Add any new key
      * @param keyName The name of the key
@@ -597,7 +602,7 @@ export class BrowserPage {
      * Edit List key value from details
      * @param value The value of the key
      */
-     async editListKeyValue(value: string): Promise<void> {
+    async editListKeyValue(value: string): Promise<void> {
         await t
             .click(this.editListButton)
             .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
@@ -613,7 +618,7 @@ export class BrowserPage {
      * Edit JSON key value from details
      * @param value The value of the key
      */
-     async editJsonKeyValue(value: string): Promise<void> {
+    async editJsonKeyValue(value: string): Promise<void> {
         await t
             .click(this.jsonScalarValue)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })

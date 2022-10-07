@@ -86,6 +86,7 @@ test.only
         await cliPage.getSuccessCommandResultFromCli(cli_command);
         await monitorPage.checkCommandInMonitorResults(cli_command);
         //Verify that temporary Log file Created
+        await t.wait(5000);
         await t.expect(numberOfTempFiles).gt(fs.readdirSync(tempDir).length, 'The temporary Log file is created');
     });
 test

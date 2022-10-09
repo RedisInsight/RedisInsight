@@ -1,5 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
+import { isNull } from 'lodash'
 import { Nullable } from 'uiSrc/utils'
 import { EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
 import {
@@ -29,6 +30,9 @@ const AnalysisDataView = (props: Props) => {
       )}
       {!loading && !!reports.length && data?.totalKeys?.total === 0 && (
         <EmptyAnalysisMessage name={EmptyMessage.Keys} />
+      )}
+      {!loading && !!reports.length && isNull(data?.totalKeys) && (
+        <EmptyAnalysisMessage name={EmptyMessage.Encrypt} />
       )}
       <div className={cx(styles.grid, styles.content)}>
         <SummaryPerData data={data} loading={loading} />

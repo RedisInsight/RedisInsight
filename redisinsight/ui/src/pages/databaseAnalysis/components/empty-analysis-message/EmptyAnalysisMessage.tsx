@@ -31,6 +31,10 @@ const emptyMessageContent: { [key in EmptyMessage]: Content } = {
         {' to quickly load the data.'}
       </>
     )
+  },
+  [EmptyMessage.Encrypt]: {
+    title: 'Encrypted data',
+    text: () => 'Unable to decrypt. Check the system keychain or re-run the report generation.'
   }
 }
 

@@ -87,7 +87,7 @@ test.only
         await monitorPage.checkCommandInMonitorResults(cli_command);
         //Verify that temporary Log file Created
         await t.wait(5000);
-        await t.expect(numberOfTempFiles).gt(fs.readdirSync(tempDir).length, 'The temporary Log file is created');
+        await t.expect(numberOfTempFiles).lt(fs.readdirSync(tempDir).length, 'The temporary Log file is created');
     });
 test
     .meta({ rte: rte.standalone })('Verify that when user switch toggle to OFF and started the Profiler, temporary Log file is not Created and recording', async t => {

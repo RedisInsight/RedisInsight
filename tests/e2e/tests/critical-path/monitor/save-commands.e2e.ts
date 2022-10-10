@@ -75,7 +75,7 @@ test
         //Check the toggle
         await t.expect(monitorPage.saveLogSwitchButton.visible).notOk('The toggle is not displayed when Profiler is started');
     });
-test.only
+test
     .meta({ rte: rte.standalone })('Verify that when user switch toggle to ON and started the Profiler, temporary Log file Created and recording', async t => {
         const cli_command = 'command';
         //Remember the number of files in Temp
@@ -88,7 +88,7 @@ test.only
         //Verify that temporary Log file Created
         await t.expect(numberOfTempFiles).lt(fs.readdirSync(tempDir).length, 'The temporary Log file is not created');
     });
-test.only
+test
     .meta({ rte: rte.standalone })('Verify that when user switch toggle to OFF and started the Profiler, temporary Log file is not Created and recording', async t => {
         //Remember the number of files in Temp
         const numberOfTempFiles = fs.readdirSync(tempDir).length;

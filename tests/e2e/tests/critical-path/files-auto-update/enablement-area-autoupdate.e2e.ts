@@ -22,9 +22,10 @@ if (fs.existsSync(workingDirectory)) {
     const tutorialsTimestampPath = `${workingDirectory}/tutorials/build.json`;
     const tutorialsTimeSeriesFilePath = `${workingDirectory}/tutorials/redis_stack/redis_for_time_series.md`;
 
-    // Remove md files from local folder. When desktop test will start, files will be updated from remote repository
-    fs.unlinkSync(guidesGraphIntroductionFilePath);
-    fs.unlinkSync(tutorialsTimeSeriesFilePath);
+    // Remove md files from local folder. When desktop tests are started, files will be updated from remote repository
+    // Need to uncomment when desktop tests are started
+    // fs.unlinkSync(guidesGraphIntroductionFilePath);
+    // fs.unlinkSync(tutorialsTimeSeriesFilePath);
 
     // Update timestamp for build files
     const guidesTimestampFile = editJsonFile(guidesTimestampPath);

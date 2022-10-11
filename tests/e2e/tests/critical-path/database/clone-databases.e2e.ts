@@ -21,12 +21,12 @@ fixture `Clone databases`
     .meta({ type: 'critical_path' })
     .page(commonUrl);
 test
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await common.reloadPage();
     })
-    .after(async () => {
+    .after(async() => {
         // Delete databases
         const dbNumber = await myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count;
         for (let i = 0; i < dbNumber; i++) {
@@ -53,7 +53,7 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count).eql(2, 'DB was not cloned');
     });
 test
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTerms();
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await common.reloadPage();
@@ -77,13 +77,13 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossClusterConfig.ossClusterDatabaseName).visible).ok('Original DB is not displayed');
     });
 test
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTerms();
         // Add Sentinel databases
         await discoverSentinelDatabaseApi(ossSentinelConfig);
         await common.reloadPage();
     })
-    .after(async () => {
+    .after(async() => {
         // Delete all primary groups
         const sentinelCopy = ossSentinelConfig;
         sentinelCopy.masters.push(ossSentinelConfig.masters[1]);

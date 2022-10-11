@@ -302,7 +302,7 @@ jobs:
         description: Number of threads to run tests
         type: integer
         default: 1
-#    parallelism: << parameters.parallelism >>
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - attach_workspace:
@@ -340,7 +340,7 @@ jobs:
         description: Number of threads to run tests
         type: integer
         default: 1
-#    parallelism: << parameters.parallelism >>
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - attach_workspace:
@@ -383,7 +383,7 @@ jobs:
         description: Number of threads to run tests
         type: integer
         default: 1
-#    parallelism: << parameters.parallelism >>
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - when:
@@ -916,7 +916,7 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 1
+          parallelism: 4
           requires:
             - Build docker image
   # Workflow for feature, bugfix, main branches
@@ -962,7 +962,7 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 1
+          parallelism: 4
           requires:
             - Build docker image
       # Approve to build
@@ -1050,7 +1050,7 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 1
+          parallelism: 4
           requires:
             - Build docker image
 

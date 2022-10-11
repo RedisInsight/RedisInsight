@@ -211,7 +211,7 @@ test
         const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('cy')).slice(0, 2));
         await t.expect(noExpiryPointLocation).lt(198, 'Point in No expiry breakdown doesn\'t contain key');
     });
-test.only
+test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await t.click(myRedisDatabasePage.analysisPageButton);
@@ -224,9 +224,7 @@ test.only
     })('Analysis history', async t => {
         const numberOfKeys = [];
         const dbSize = (await cliPage.getSuccessCommandResultFromCli('dbsize')).split(' ');
-        console.log(`dbSize: ${dbSize}`);
         const existedNumberOfKeys = parseInt(dbSize[dbSize.length - 1]);
-        console.log(`existedNumberOfKeys: ${existedNumberOfKeys}`);
         for (let i = 0; i < 6; i++) {
             await cliPage.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
             await t.click(memoryEfficiencyPage.newReportBtn);
@@ -238,16 +236,11 @@ test.only
         // Verify that user can see up to the 5 most recent previous results per database in the history
         await t.expect(memoryEfficiencyPage.reportItem.count).eql(5, 'Number of saved reports is not correct');
         // Verify that user can switch between reports and see all data updated in each report
-        console.log(`numberOfKeys in generated report: ${numberOfKeys}`);
         for (let i = 0; i < 5; i++) {
-            console.log(`i: ${i}`);
             await t.click(memoryEfficiencyPage.reportItem.nth(i));
             await t.expect(memoryEfficiencyPage.reportItem.visible).notOk('Report is not switched');
-            console.log(`scannedKeysInReport: ${await memoryEfficiencyPage.scannedKeysInReport.textContent}`);
             await t.expect(memoryEfficiencyPage.scannedKeysInReport.textContent).contains(`(${numberOfKeys[5 - i]}/${numberOfKeys[5 - i]} keys)`);
             const actualNumber = await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent;
-            console.log(`actualNumber: ${actualNumber}`);
-            console.log(`expectedNumber: ${numberOfKeys[5 - i]}`);
             await t.expect(actualNumber).eql(numberOfKeys[5 - i], 'Report content (total keys) is not correct', { timeout: 2000 });
             await t.click(memoryEfficiencyPage.selectedReport);
         }
@@ -255,7 +248,5 @@ test.only
         await t.click(memoryEfficiencyPage.reportItem.nth(3));
         await t.click(myRedisDatabasePage.workbenchButton);
         await t.click(myRedisDatabasePage.analysisPageButton);
-        console.log(`actual: ${await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent}`);
-        console.log(`expected: ${numberOfKeys[2]}`);
         await t.expect(memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent).eql(numberOfKeys[2], 'Context is not saved');
     });

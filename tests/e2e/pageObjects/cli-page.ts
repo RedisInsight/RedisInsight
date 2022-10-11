@@ -85,7 +85,7 @@ export class CliPage {
    * @param keyCommand The command from cli to add key
    * @param amount The amount of the keys
    */
-     async addKeysFromCliWithDelimiter(keyCommand: string, amount: number): Promise<void> {
+    async addKeysFromCliWithDelimiter(keyCommand: string, amount: number): Promise<void> {
         //Open CLI
         await t.click(this.cliExpandButton);
         //Add keys
@@ -99,7 +99,7 @@ export class CliPage {
    * Delete keys from CLI with delimiter
    * @param amount The amount of the keys
    */
-     async deleteKeysFromCliWithDelimiter(amount: number): Promise<void> {
+    async deleteKeysFromCliWithDelimiter(amount: number): Promise<void> {
         //Open CLI
         await t.click(this.cliExpandButton);
         //Add keys

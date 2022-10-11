@@ -115,7 +115,7 @@ const AreaChart = (props: IProps) => {
       .domain(d3.extent(cleanedData, (d) => d.index) as [number, number])
       .range([0, width])
 
-    let maxY = d3.max(cleanedData, (d) => d.y) || 0
+    let maxY = d3.max(cleanedData, (d) => d.y) || yCountTicks
 
     if (dataType === AreaChartDataType.Bytes) {
       const curriedTyBytes = curryRight(toBytes)

@@ -19,6 +19,8 @@ export class MemoryEfficiencyPage {
     // TEXT ELEMENTS
     noReportsText = Selector('[data-testid=empty-analysis-no-reports]');
     noKeysText = Selector('[data-testid=empty-analysis-no-keys]');
+    scannedPercentageInReport = Selector('[data-testid=analysis-progress]');
+    scannedKeysInReport = Selector('[data-testid=bulk-delete-summary]');
     // TABLE
     tableRows = Selector('tr[class*=euiTableRow]');
     expandedRow = Selector('#row_test_expansion');

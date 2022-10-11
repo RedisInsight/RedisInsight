@@ -20,7 +20,8 @@ const streamKeyName = 'test:Stream1';
 const streamKeyNameDelimiter = 'test-Stream1';
 const keySpaces = ['test:*', 'key1:*', 'key2:*', 'key5:*', 'key5:5', 'test-*', 'key4:*'];
 const keysTTL = ['3500', '86300', '2147476121'];
-const keyNamesReport = chance.unique(chance.word, 6);
+const numberOfGeneratedKeys = 6;
+const keyNamesReport = chance.unique(chance.word, numberOfGeneratedKeys);
 
 fixture `Memory Efficiency`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -216,8 +217,7 @@ test.only
         await t.click(myRedisDatabasePage.analysisPageButton);
     })
     .after(async() => {
-        const keysNumber = keyNamesReport.length;
-        for (let i = 0; i < keysNumber; i++) {
+        for (let i = 0; i < numberOfGeneratedKeys; i++) {
             await cliPage.sendCommandInCli(`del ${keyNamesReport[i]}`);
         }
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -240,7 +240,11 @@ test.only
         // Verify that user can switch between reports and see all data updated in each report
         console.log(`numberOfKeys in generated report: ${numberOfKeys}`);
         for (let i = 0; i < 5; i++) {
+            console.log(`i: ${i}`);
             await t.click(memoryEfficiencyPage.reportItem.nth(i));
+            await t.expect(memoryEfficiencyPage.reportItem.visible).notOk('Report is not switched');
+            console.log(`scannedKeysInReport: ${await memoryEfficiencyPage.scannedKeysInReport.textContent}`);
+            await t.expect(memoryEfficiencyPage.scannedKeysInReport.textContent).contains(`(${numberOfKeys[5 - i]}/${numberOfKeys[5 - i]} keys)`);
             const actualNumber = await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent;
             console.log(`actualNumber: ${actualNumber}`);
             console.log(`expectedNumber: ${numberOfKeys[5 - i]}`);

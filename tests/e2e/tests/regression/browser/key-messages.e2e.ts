@@ -2,76 +2,64 @@ import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const chance = new Chance();
+const common = new Common();
 const cliPage = new CliPage();
 const workbenchPage = new WorkbenchPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
-let keyName = chance.word({ length: 10 });
+let keyName = common.generateWord(10);
+const dataTypes: string[] = [
+    'RedisTimeSeries',
+    'RedisGraph'
+];
+const commands: string[] = [
+    `TS.CREATE ${keyName}`,
+    `GRAPH.QUERY ${keyName} "CREATE ()"`
+];
 
 fixture `Key messages`
-    .meta({ type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
-        //Delete database
+    .afterEach(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see updated message in Browser for TimeSeries and Graph data types', async t => {
-        const dataTypes = [
-            'RedisTimeSeries',
-            'RedisGraph'
-        ];
-        for(let i = 0; i < dataTypes.length; i++) {
-            keyName = chance.word({ length: 10 });
-            let commands = [
-                `TS.CREATE ${keyName}`,
-                `GRAPH.QUERY ${keyName} "CREATE ()"`
-            ];
-            let messages = [
-                `This is a ${dataTypes[i]} key`,
-                'Use Redis commands in the ',
-                'Workbench',
-                ' tool to view the value.'
-            ];
-            //Add key and verify message in Browser
-            await cliPage.sendCommandInCli(commands[i]);
-            await browserPage.searchByKeyName(keyName);
-            await t.click(browserPage.keyNameInTheList);
-            for(let message of messages) {
-                await t.expect(browserPage.modulesTypeDetails.textContent).contains(message, `The message for ${dataTypes[i]} key is displayed`);
-            }
-            await browserPage.deleteKeyByName(keyName);
-        }
     });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see link to Workbench under word “Workbench” in the RedisTimeSeries and Graph key details', async t => {
-        const dataTypes = [
-            'RedisTimeSeries',
-            'RedisGraph'
+test('Verify that user can see updated message in Browser for TimeSeries and Graph data types', async t => {
+    for(let i = 0; i < dataTypes.length; i++) {
+        keyName = common.generateWord(10);
+        const messages: string[] = [
+            `This is a ${dataTypes[i]} key`,
+            'Use Redis commands in the ',
+            'Workbench',
+            ' tool to view the value.'
         ];
-        for(let i = 0; i < dataTypes.length; i++) {
-            keyName = chance.word({ length: 10 });
-            let commands = [
-                `TS.CREATE ${keyName}`,
-                `GRAPH.QUERY ${keyName} "CREATE ()"`
-            ];
-            //Add key and verify Workbench link
-            await cliPage.sendCommandInCli(commands[i]);
-            await browserPage.searchByKeyName(keyName);
-            await t.click(browserPage.keyNameInTheList);
-            await t.click(browserPage.internalLinkToWorkbench);
-            await t.expect(workbenchPage.queryInput.visible).ok(`The message for ${dataTypes[i]} key is displayed`);
-            await t.click(myRedisDatabasePage.browserButton);
-            await browserPage.deleteKeyByName(keyName);
+
+        // Add key and verify message in Browser
+        await cliPage.sendCommandInCli(commands[i]);
+        await browserPage.searchByKeyName(keyName);
+        await t.click(browserPage.keyNameInTheList);
+        for(const message of messages) {
+            await t.expect(browserPage.modulesTypeDetails.textContent).contains(message, `The message for ${dataTypes[i]} key is not displayed`);
         }
-    });
+        await browserPage.deleteKeyByName(keyName);
+    }
+});
+test('Verify that user can see link to Workbench under word “Workbench” in the RedisTimeSeries and Graph key details', async t => {
+    for(let i = 0; i < dataTypes.length; i++) {
+        keyName = common.generateWord(10);
+        // Add key and verify Workbench link
+        await cliPage.sendCommandInCli(commands[i]);
+        await browserPage.searchByKeyName(keyName);
+        await t.click(browserPage.keyNameInTheList);
+        await t.click(browserPage.internalLinkToWorkbench);
+        await t.expect(workbenchPage.queryInput.visible).ok(`The message for ${dataTypes[i]} key is not displayed`);
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(keyName);
+    }
+});

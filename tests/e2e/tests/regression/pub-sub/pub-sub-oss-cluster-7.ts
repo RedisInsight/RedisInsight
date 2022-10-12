@@ -32,10 +32,10 @@ test
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })
     .meta({ rte: rte.ossCluster })('Verify that SPUBLISH message is displayed for OSS Cluster 7 database', async t => {
-        await t.expect(pubSubPage.ossClusterEmptyMessage.exists).ok('SPUBLISH message');
+        await t.expect(pubSubPage.ossClusterEmptyMessage.exists).ok('SPUBLISH message nit displayed');
         // Verify that user can see published messages for OSS Cluster 7
         await t.click(pubSubPage.subscribeButton);
-        //Publish different messages
+        // Publish different messages
         await cliPage.sendCommandInCli('50 publish channel oss_cluster_message');
         await verifyMessageDisplayingInPubSub('oss_cluster_message', true);
         // Verify that SPUBLISHED messages are not displayed for OSS Cluster 7
@@ -54,7 +54,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .meta({ rte: rte.standalone })('Verify that SPUBLISH message is not displayed for other databases expect OSS Cluster 7', async t => {
-        await t.expect(pubSubPage.ossClusterEmptyMessage.exists).notOk('No SPUBLISH message');
+        await t.expect(pubSubPage.ossClusterEmptyMessage.exists).notOk('No SPUBLISH message still displayed');
         // Verify that user can't see published messages for Standalone DB
         await t.click(pubSubPage.subscribeButton);
         await cliPage.sendCommandInCli('10 spublish channel oss_cluster_message_spublish');

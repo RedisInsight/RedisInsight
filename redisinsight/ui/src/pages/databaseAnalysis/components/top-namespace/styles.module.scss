@@ -84,6 +84,7 @@
   overflow: auto;
   position: relative;
   max-height: 100%;
+  overflow-y: hidden;
 
   :global(.euiTableRow-isExpandedRow .euiTableCellContent) {
     padding: 0 12px !important;
@@ -196,7 +197,7 @@
 
 .expanded {
   display: grid;
-  grid-template-columns: auto calc(34%) calc(12% + 6px) calc(10% + 28px);
+  grid-template-columns: auto calc(32%) calc(13% + 6px) calc(11% + 22px);
   grid-column-gap: 0;
   height: 42px;
   width: 100%;
@@ -214,7 +215,7 @@
     padding: 0 12px;
 
     &:last-child {
-      padding: 0 34px 0 12px;
+      padding: 0 26px 0 12px;
     }
   }
 }

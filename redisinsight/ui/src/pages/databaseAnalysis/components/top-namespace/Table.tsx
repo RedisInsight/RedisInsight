@@ -141,7 +141,7 @@ const NameSpacesTable = (props: Props) => {
     {
       name: 'Data Type',
       field: 'types',
-      width: '34%',
+      width: '32%',
       align: 'left',
       className: 'dataType',
       render: (value: NspTypeSummary[]) => (
@@ -153,7 +153,7 @@ const NameSpacesTable = (props: Props) => {
     {
       name: 'Total Memory',
       field: 'memory',
-      width: '12%',
+      width: '13%',
       sortable: true,
       align: 'right',
       render: (value: number) => {
@@ -177,7 +177,7 @@ const NameSpacesTable = (props: Props) => {
     {
       name: 'Total Keys',
       field: 'keys',
-      width: '10%',
+      width: '11%',
       sortable: true,
       align: 'right',
       render: (value: number) => (

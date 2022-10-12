@@ -58,6 +58,7 @@ import reducer, {
   updateSelectedKeyRefreshTime,
   resetKeyInfo,
   resetKeys,
+  fetchKeysMetadata,
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
 
@@ -1315,6 +1316,57 @@ describe('keys slice', () => {
           defaultSelectedKeyActionSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchKeysMetadata', () => {
+      it('success to fetch keys metadata', async () => {
+      // Arrange
+        const data = [
+          {
+            name: stringToBuffer('key1'),
+            type: 'hash',
+            ttl: -1,
+            size: 100,
+            length: 100,
+          },
+          {
+            name: stringToBuffer('key2'),
+            type: 'hash',
+            ttl: -1,
+            size: 150,
+            length: 100,
+          },
+          {
+            name: stringToBuffer('key3'),
+            type: 'hash',
+            ttl: -1,
+            size: 110,
+            length: 100,
+          },
+        ]
+        const responsePayload = { data, status: 200 }
+
+        const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
+        const onSuccessMock = jest.fn()
+        apiService.post = apiServiceMock
+
+        // Act
+        await store.dispatch<any>(
+          fetchKeysMetadata(
+            data.map(({ name }) => ({ name })),
+            onSuccessMock
+          )
+        )
+
+        // Assert
+        expect(apiServiceMock).toBeCalledWith(
+          '/instance//keys/get-infos',
+          { keys: data.map(({ name }) => ({ name })) },
+          { params: { encoding: 'buffer' } },
+        )
+
+        expect(onSuccessMock).toBeCalledWith(data)
       })
     })
   })

@@ -19,7 +19,6 @@ import {
   formatLongName,
   bufferToString,
   bufferFormatRangeItems,
-  getUrl,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
@@ -28,6 +27,7 @@ import {
   ScanNoResultsFoundText,
 } from 'uiSrc/constants/texts'
 import {
+  fetchKeysMetadata,
   keysDataSelector,
   keysSelector,
   selectedKeySelector,
@@ -39,15 +39,13 @@ import {
   setBrowserKeyListScrollPosition
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
-import ApiEndpoints, { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { apiService } from 'uiSrc/services'
-import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import styles from './styles.module.scss'
@@ -74,7 +72,6 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
-  const { encoding } = useSelector(appInfoSelector)
 
   const [, rerender] = useState({})
 
@@ -170,7 +167,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
     const newItems = bufferFormatRows(startIndex, lastIndex)
 
-    await uploadMetadata(startIndex, lastIndex, newItems)
+    getMetadata(startIndex, lastIndex, newItems)
   }, 100)
 
   const bufferFormatRows = (startIndex: number, lastIndex: number): GetKeyInfoResponse[] => {
@@ -182,37 +179,48 @@ const KeyList = forwardRef((props: Props, ref) => {
     return newItems
   }
 
-  const uploadMetadata = async (
+  const getMetadata = (
     startIndex: number,
     lastIndex: number,
     itemsInit: GetKeyInfoResponse[] = []
-  ): Promise<void> => {
+  ): void => {
     const isSomeNotUndefined = ({ type, size, length }: GetKeyInfoResponse) =>
       !isUndefined(type) || !isUndefined(size) || !isUndefined(length)
+
     const emptyItems = reject(itemsInit, isSomeNotUndefined)
 
     if (!emptyItems.length) return
 
-    try {
-      const { data } = await apiService.post<GetKeyInfoResponse[]>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.KEYS_INFO
-        ),
-        { keys: emptyItems.map(({ name }) => name) },
-        { params: { encoding } }
-      )
+    dispatch(fetchKeysMetadata(
+      emptyItems.map(({ name }) => name),
+      (loadedItems) =>
+        onSuccessFetchedMetadata({
+          startIndex,
+          lastIndex,
+          loadedItems,
+          isFirstEmpty: !isSomeNotUndefined(itemsInit[0]),
+        })
+    ))
+  }
 
-      const loadedItems = data.map(formatItem)
-      const isFirstEmpty = !isSomeNotUndefined(itemsInit[0])
-      const startIndexDel = isFirstEmpty ? startIndex : lastIndex - loadedItems.length + 1
+  const onSuccessFetchedMetadata = (data: {
+    startIndex: number,
+    lastIndex: number,
+    isFirstEmpty: boolean
+    loadedItems: GetKeyInfoResponse[],
+  }) => {
+    const {
+      startIndex,
+      lastIndex,
+      isFirstEmpty,
+      loadedItems,
+    } = data
+    const items = loadedItems.map(formatItem)
+    const startIndexDel = isFirstEmpty ? startIndex : lastIndex - items.length + 1
 
-      itemsRef.current.splice(startIndexDel, loadedItems.length, ...loadedItems)
+    itemsRef.current.splice(startIndexDel, items.length, ...items)
 
-      rerender({})
-    } catch (error) {
-      console.error(error)
-    }
+    rerender({})
   }
 
   const columns: ITableColumn[] = [

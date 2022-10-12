@@ -897,3 +897,29 @@ export function editKeyTTL(key: string, ttl: number) {
     }
   }
 }
+
+// Asynchronous thunk action
+export function fetchKeysMetadata(
+  keys: GetKeyInfoResponse[],
+  onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
+  onFailAction?: () => void
+) {
+  return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { data } = await apiService.post<GetKeyInfoResponse[]>(
+        getUrl(
+          state.connections.instances?.connectedInstance?.id,
+          ApiEndpoints.KEYS_INFO
+        ),
+        { keys },
+        { params: { encoding: state.app.info.encoding } }
+      )
+
+      onSuccessAction?.(data)
+    } catch (error) {
+      onFailAction?.()
+      console.error(error)
+    }
+  }
+}

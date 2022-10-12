@@ -1361,7 +1361,7 @@ describe('keys slice', () => {
 
         // Assert
         expect(apiServiceMock).toBeCalledWith(
-          '/instance//keys/get-infos',
+          '/instance//keys/get-metadata',
           { keys: data.map(({ name }) => ({ name })) },
           { params: { encoding: 'buffer' } },
         )

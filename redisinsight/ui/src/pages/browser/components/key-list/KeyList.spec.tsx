@@ -139,13 +139,13 @@ describe('KeyList', () => {
       expect(apiServiceMock).toBeCalledTimes(2)
 
       expect(apiServiceMock.mock.calls[0]).toEqual([
-        '/instance//keys/get-infos',
+        '/instance//keys/get-metadata',
         { keys: ['key1'] },
         params,
       ])
 
       expect(apiServiceMock.mock.calls[1]).toEqual([
-        '/instance//keys/get-infos',
+        '/instance//keys/get-metadata',
         { keys: ['key1', 'key2', 'key3'] },
         params,
       ])

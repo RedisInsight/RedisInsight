@@ -1,15 +1,15 @@
 export const bufferFormatRangeItems = (
   items: any[], startIndex: number, lastIndex: number, formatItem: (item: any) => any,
-): [number, any[]] => {
+): any[] => {
   const newItems = []
-  if (lastIndex > startIndex) {
+  if (lastIndex >= startIndex) {
     for (let index = startIndex; index <= lastIndex; index++) {
       if (!items[index]) return [startIndex, newItems]
       newItems.push(formatItem(items[index]))
     }
   }
 
-  return [startIndex, newItems]
+  return newItems
 }
 
 export const replaceBigIntWithString = (obj: Object) => JSON.parse(JSON.stringify(obj, (_, value) => (

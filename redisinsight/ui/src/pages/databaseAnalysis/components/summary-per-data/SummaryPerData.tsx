@@ -31,9 +31,9 @@ const SummaryPerData = ({ data, loading }: Props) => {
   })
 
   useEffect(() => {
-    if (data) {
-      setMemoryData(totalMemory?.types?.map(getChartData) as ChartData[])
-      setKeysData(totalKeys?.types?.map(getChartData) as ChartData[])
+    if (data && totalMemory && totalKeys) {
+      setMemoryData(totalMemory.types?.map(getChartData) as ChartData[])
+      setKeysData(totalKeys.types?.map(getChartData) as ChartData[])
     }
   }, [data])
 
@@ -45,7 +45,6 @@ const SummaryPerData = ({ data, loading }: Props) => {
       </div>
     )
   }
-
   if ((!totalMemory || memoryData.length === 0) && (!totalKeys || keysData.length === 0)) {
     return null
   }

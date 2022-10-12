@@ -8,7 +8,7 @@ import { getRouterLinkProps } from 'uiSrc/services'
 
 import styles from './styles.module.scss'
 
-export interface Props {
+interface Props {
   name: EmptyMessage
 }
 
@@ -31,6 +31,10 @@ const emptyMessageContent: { [key in EmptyMessage]: Content } = {
         {' to quickly load the data.'}
       </>
     )
+  },
+  [EmptyMessage.Encrypt]: {
+    title: 'Encrypted data',
+    text: () => 'Unable to decrypt. Check the system keychain or re-run the report generation.'
   }
 }
 

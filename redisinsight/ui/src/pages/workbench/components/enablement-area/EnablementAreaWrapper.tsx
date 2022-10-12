@@ -23,7 +23,7 @@ export interface Props {
   setIsMinimized: (value: boolean) => void
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
   setScript: (script: string) => void
-  onSubmit: (query: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
+  onSubmit: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   isCodeBtnDisabled?: boolean
 }
 
@@ -60,7 +60,7 @@ const EnablementAreaWrapper = (props: Props) => {
     sendEventButtonClickedTelemetry(file)
 
     if (execute.mode === ExecuteButtonMode.Auto) {
-      onSubmit(script, null, false)
+      onSubmit(script, null, { ...execute.params, clearEditor: false })
       return
     }
 

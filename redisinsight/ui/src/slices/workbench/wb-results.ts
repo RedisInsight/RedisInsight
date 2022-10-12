@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { reverse } from 'lodash'
-import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -14,6 +13,7 @@ import {
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
+import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
 import {

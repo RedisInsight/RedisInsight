@@ -12,7 +12,7 @@ const common = new Common();
 let indexName = common.generateWord(5);
 
 fixture `JSON verifications at Workbench`
-    .meta({ type: 'critical_path', env: env.desktop, rte: rte.standalone })
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
@@ -25,7 +25,8 @@ fixture `JSON verifications at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test('Verify that user can see result in Table and Text view for JSON data types for FT.AGGREGATE command in Workbench', async t => {
+test
+.meta({ env: env.desktop })('Verify that user can see result in Table and Text view for JSON data types for FT.AGGREGATE command in Workbench', async t => {
     indexName = common.generateWord(5);
     const commandsForSend = [
         `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,

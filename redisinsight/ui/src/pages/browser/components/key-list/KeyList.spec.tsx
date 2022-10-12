@@ -1,7 +1,8 @@
 import React from 'react'
-import { render } from 'uiSrc/utils/test-utils'
+import { render, waitFor } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
+import { apiService } from 'uiSrc/services'
 import KeyList from './KeyList'
 
 const propsMock = {
@@ -97,5 +98,76 @@ describe('KeyList', () => {
     unmount()
 
     expect(setLastBatchKeys).not.toBeCalled()
+  })
+
+  it('should call apiService.post to get key info', async () => {
+    const apiServiceMock = jest.fn().mockResolvedValue([...propsMock.keysState.keys])
+    apiService.post = apiServiceMock
+
+    const { rerender } = render(<KeyList {...propsMock} keysState={{ ...propsMock.keysState, keys: [] }} />)
+
+    rerender(<KeyList
+      {...propsMock}
+      keysState={{
+        ...propsMock.keysState,
+        keys: propsMock.keysState.keys.map(({ name }) => ({ name })) }}
+    />)
+
+    await waitFor(async () => {
+      expect(apiServiceMock).toBeCalled()
+    }, { timeout: 150 })
+  })
+
+  it('apiService.post should be called with only keys without info', async () => {
+    const params = { params: { encoding: 'buffer' } }
+    const apiServiceMock = jest.fn().mockResolvedValue([...propsMock.keysState.keys])
+    apiService.post = apiServiceMock
+
+    const { rerender } = render(<KeyList {...propsMock} keysState={{ ...propsMock.keysState, keys: [] }} />)
+
+    rerender(<KeyList
+      {...propsMock}
+      keysState={{
+        ...propsMock.keysState,
+        keys: [
+          ...propsMock.keysState.keys.map(({ name }) => ({ name })),
+          { name: 'key5', size: 100, length: 100 }, // key with info
+        ] }}
+    />)
+
+    await waitFor(async () => {
+      expect(apiServiceMock).toBeCalledTimes(2)
+
+      expect(apiServiceMock.mock.calls[0]).toEqual([
+        '/instance/instanceId/keys/get-infos',
+        { keys: ['key1'] },
+        params,
+      ])
+
+      expect(apiServiceMock.mock.calls[1]).toEqual([
+        '/instance/instanceId/keys/get-infos',
+        { keys: ['key1', 'key2', 'key3'] },
+        params,
+      ])
+    }, { timeout: 150 })
+  })
+
+  it('key info loadings (type, ttl, size) should be in the DOM if keys do not have info', async () => {
+    const { rerender, queryAllByTestId } = render(
+      <KeyList {...propsMock} keysState={{ ...propsMock.keysState, keys: [] }} />
+    )
+
+    rerender(<KeyList
+      {...propsMock}
+      keysState={{
+        ...propsMock.keysState,
+        keys: [
+          ...propsMock.keysState.keys.map(({ name }) => ({ name })),
+        ] }}
+    />)
+
+    expect(queryAllByTestId(/ttl-loading/).length).toEqual(propsMock.keysState.keys.length)
+    expect(queryAllByTestId(/type-loading/).length).toEqual(propsMock.keysState.keys.length)
+    expect(queryAllByTestId(/size-loading/).length).toEqual(propsMock.keysState.keys.length)
   })
 })

@@ -2,7 +2,7 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef,
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { isUndefined } from 'lodash'
+import { debounce, isUndefined, reject } from 'lodash'
 
 import {
   EuiText,
@@ -43,7 +43,7 @@ import ApiEndpoints, { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { OVER_RENDER_BUFFER_COUNT, Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { apiService } from 'uiSrc/services'
@@ -76,11 +76,10 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
   const { encoding } = useSelector(appInfoSelector)
 
-  const [items, setItems] = useState(keysState.keys)
+  const [, rerender] = useState({})
 
-  const firstBatchRef = useRef(true)
   const itemsRef = useRef(keysState.keys)
-  const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
+  const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
 
@@ -90,42 +89,25 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
   }))
 
-  useEffect(() => {
-
-    return () => {
+  useEffect(() =>
+    () => {
       if (viewType === KeyViewType.Tree) {
         return
       }
-      setItems((prevItems) => {
-        dispatch(setLastBatchKeys(prevItems.slice(-SCAN_COUNT_DEFAULT)))
-        return []
+      rerender(() => {
+        dispatch(setLastBatchKeys(itemsRef.current?.slice(-SCAN_COUNT_DEFAULT)))
       })
-    }
-  }, [])
+    }, [])
 
   useEffect(() => {
-    const tempItems = [...keysState.keys]
-
-    if (firstBatchRef.current && items.length !== 0) {
+    itemsRef.current = [...keysState.keys]
+    if (itemsRef.current.length === 0) {
       return
     }
 
-    if (items.length === 0 && tempItems.length === 0) {
-      itemsRef.current = tempItems
-      return
-    }
-    const [startIndex, newKeys] = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
-
-    tempItems.splice(itemsRef.current.length, newKeys.length, ...newKeys)
-    itemsRef.current = tempItems
-
-    uploadMetadata(startIndex, OVER_RENDER_BUFFER_COUNT, newKeys)
-
-    if (keysState.keys.length < items.length) {
-      formattedLastIndexRef.current = 0
-    }
-
-    setItems(tempItems)
+    const { lastIndex, startIndex } = renderedRowsIndexesRef.current
+    onRowsRendered(startIndex, lastIndex)
+    rerender({})
   }, [keysState.keys])
 
   const onNoKeysLinkClick = () => {
@@ -155,19 +137,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
-    if (!loadMoreItems) {
-      return
-    }
-
-    firstBatchRef.current = false
-    const itemsTemp = [...itemsRef.current]
-    const [startIndex, formattedAllKeys] = bufferFormatRangeItems(
-      items, formattedLastIndexRef.current, items.length, formatItem
-    )
-
-    itemsTemp.splice(startIndex, formattedAllKeys.length, ...formattedAllKeys)
-    itemsRef.current = itemsTemp
-    loadMoreItems?.(itemsTemp, props)
+    loadMoreItems?.(itemsRef.current, props)
   }
 
   const onWheelSearched = (event: React.WheelEvent) => {
@@ -195,64 +165,51 @@ const KeyList = forwardRef((props: Props, ref) => {
     nameString: bufferToString(item.name)
   }), [])
 
-  const onRowsRendered = (lastIndex: number) => {
-    const [startIndex, newItems] = bufferFormatRows(lastIndex)
+  const onRowsRendered = debounce(async (startIndex: number, lastIndex: number) => {
+    renderedRowsIndexesRef.current = { lastIndex, startIndex }
 
-    uploadMetadata(startIndex, lastIndex, newItems)
+    const newItems = bufferFormatRows(startIndex, lastIndex)
 
-    if (lastIndex > formattedLastIndexRef.current) {
-      formattedLastIndexRef.current = lastIndex
-    }
-  }
+    await uploadMetadata(startIndex, lastIndex, newItems)
+  }, 100)
 
-  const bufferFormatRows = (lastIndex: number): [number, GetKeyInfoResponse[]] => {
-    const tempItems = [...itemsRef.current]
-    const [startIndex, newItems] = bufferFormatRangeItems(
-      itemsRef.current, formattedLastIndexRef.current, lastIndex, formatItem
+  const bufferFormatRows = (startIndex: number, lastIndex: number): GetKeyInfoResponse[] => {
+    const newItems = bufferFormatRangeItems(
+      itemsRef.current, startIndex, lastIndex, formatItem
     )
+    itemsRef.current.splice(startIndex, newItems.length, ...newItems)
 
-    tempItems.splice(startIndex, newItems.length, ...newItems)
-
-    itemsRef.current = tempItems
-
-    setItems(tempItems)
-
-    return [startIndex, newItems]
+    return newItems
   }
 
   const uploadMetadata = async (
-    prevIndex: number,
+    startIndex: number,
     lastIndex: number,
     itemsInit: GetKeyInfoResponse[] = []
   ): Promise<void> => {
-    if (
-      prevIndex === lastIndex
-      || prevIndex > lastIndex
-      || !itemsInit.length
-      || !isUndefined(itemsInit[itemsInit.length - 1]?.type)
-    ) {
-      return
-    }
+    const isSomeNotUndefined = ({ type, size, length }: GetKeyInfoResponse) =>
+      !isUndefined(type) || !isUndefined(size) || !isUndefined(length)
+    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+
+    if (!emptyItems.length) return
 
     try {
-      const { data, status } = await apiService.post<GetKeyInfoResponse[]>(
+      const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           instanceId,
           ApiEndpoints.KEYS_INFO
         ),
-        {
-          keys: itemsInit.map(({ name }) => name),
-          // cancelToken: sourceKeysFetch.token,
-        },
+        { keys: emptyItems.map(({ name }) => name) },
         { params: { encoding } }
       )
 
       const loadedItems = data.map(formatItem)
-      const itemsTemp = [...itemsRef.current]
-      itemsTemp.splice(prevIndex, loadedItems.length, ...loadedItems)
+      const isFirstEmpty = !isSomeNotUndefined(itemsInit[0])
+      const startIndexDel = isFirstEmpty ? startIndex : lastIndex - loadedItems.length + 1
 
-      itemsRef.current = itemsTemp
-      setItems(itemsTemp)
+      itemsRef.current.splice(startIndexDel, loadedItems.length, ...loadedItems)
+
+      rerender({})
     } catch (error) {
       console.error(error)
     }
@@ -266,7 +223,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       minWidth: 126,
       render: (cellData: any, { nameString: name }: any) => (
         isUndefined(cellData)
-          ? <EuiLoadingContent lines={1} className={styles.keyInfoLoading} />
+          ? <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="type-loading" />
           : <GroupBadge type={cellData} name={name} />
       )
     },
@@ -275,9 +232,18 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Key',
       minWidth: 100,
       truncateText: true,
-      render: (cellData: string = '') => {
+      render: (cellData: string) => {
+        if (isUndefined(cellData)) {
+          return (
+            <EuiLoadingContent
+              lines={1}
+              className={cx(styles.keyInfoLoading, styles.keyNameLoading)}
+              data-testid="name-loading"
+            />
+          )
+        }
         // Better to cut the long string, because it could affect virtual scroll performance
-        const name = cellData
+        const name = cellData || ''
         const cellContent = replaceSpaces(name?.substring(0, 200))
         const tooltipContent = formatLongName(name)
         return (
@@ -306,7 +272,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       alignment: TableCellAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
         if (isUndefined(cellData)) {
-          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} />
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="ttl-loading" />
         }
         if (cellData === -1) {
           return (
@@ -347,7 +313,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       textAlignment: TableCellTextAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
         if (isUndefined(cellData)) {
-          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} />
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="size-loading" />
         }
 
         if (!cellData) {
@@ -404,7 +370,8 @@ const KeyList = forwardRef((props: Props, ref) => {
               scrollTopProp={scrollTopPosition}
               setScrollTopPosition={setScrollTopPosition}
               hideFooter={hideFooter}
-              onRowsRendered={({ overscanStopIndex }) => onRowsRendered(overscanStopIndex)}
+              onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
+                onRowsRendered(overscanStartIndex, overscanStopIndex)}
             />
           </div>
         </div>
@@ -413,4 +380,4 @@ const KeyList = forwardRef((props: Props, ref) => {
   )
 })
 
-export default KeyList
+export default React.memo(KeyList)

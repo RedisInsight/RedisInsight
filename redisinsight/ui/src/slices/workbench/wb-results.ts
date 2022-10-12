@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { reverse } from 'lodash'
+import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -9,6 +10,7 @@ import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
+  isGroupMode,
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
@@ -16,8 +18,6 @@ import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
 import { AppDispatch, RootState } from '../store'
 import {
   CommandExecution,
-  CommandExecutionUI,
-  CreateCommandExecutionDto,
   StateWorkbenchResults,
 } from '../interfaces'
 
@@ -63,7 +63,7 @@ const workbenchResultsSlice = createSlice({
       })
     },
 
-    processWBCommandFailure: (state, { payload }: { payload: CommandExecutionUI }) => {
+    processWBCommandFailure: (state, { payload }: { payload: { id: string, error: string } }) => {
       state.items = [...state.items].map((item) => {
         if (item.id === payload.id) {
           return { ...item, loading: false, error: payload?.error }
@@ -218,7 +218,7 @@ export function sendWBCommandAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Command(s)`] : commands,
+        commands: isGroupMode(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
         commandId
       }))
 
@@ -236,7 +236,6 @@ export function sendWBCommandAction({
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
-
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -261,7 +260,7 @@ export function sendWBCommandClusterAction({
   onFailAction,
 }: {
   commands: string[]
-  options: CreateCommandExecutionDto
+  options: CreateCommandExecutionsDto
   commandId?: string
   multiCommands?: string[]
   mode?: RunQueryMode,
@@ -275,7 +274,7 @@ export function sendWBCommandClusterAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: resultsMode === ResultsMode.GroupMode ? [`${commands.length} - Commands`] : commands,
+        commands: isGroupMode(resultsMode) ? [`${commands.length} - Commands`] : commands,
         commandId
       }))
 
@@ -295,7 +294,6 @@ export function sendWBCommandClusterAction({
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
-
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {

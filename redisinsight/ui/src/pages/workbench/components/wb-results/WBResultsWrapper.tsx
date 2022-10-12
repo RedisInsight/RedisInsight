@@ -1,4 +1,5 @@
 import React from 'react'
+import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
@@ -9,7 +10,7 @@ export interface Props {
   activeMode: RunQueryMode
   activeResultsMode: ResultsMode
   scrollDivRef: React.Ref<HTMLDivElement>
-  onQueryReRun: (query: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
+  onQueryReRun: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryOpen: (commandId: string) => void
   onQueryDelete: (commandId: string) => void
 }

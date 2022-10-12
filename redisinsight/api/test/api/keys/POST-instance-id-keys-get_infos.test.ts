@@ -15,7 +15,7 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/instance/${instanceId}/keys/get-infos`);
+  request(server).post(`/instance/${instanceId}/keys/get-metadata`);
 
 const responseSchema = Joi.array().items(Joi.object().keys({
   name: JoiRedisString.required(),
@@ -37,7 +37,7 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-describe('POST /instance/:instanceId/keys/get-infos', () => {
+describe('POST /instance/:instanceId/keys/get-metadata', () => {
   before(async () => await rte.data.generateKeys(true));
 
   describe('Modes', () => {

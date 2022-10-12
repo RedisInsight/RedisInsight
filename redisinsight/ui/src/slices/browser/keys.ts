@@ -910,7 +910,7 @@ export function fetchKeysMetadata(
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
-          ApiEndpoints.KEYS_INFO
+          ApiEndpoints.KEYS_METADATA
         ),
         { keys },
         { params: { encoding: state.app.info.encoding } }

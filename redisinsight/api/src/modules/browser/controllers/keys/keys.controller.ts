@@ -60,7 +60,7 @@ export class KeysController extends BaseController {
     );
   }
 
-  @Post('get-infos')
+  @Post('get-metadata')
   @HttpCode(200)
   @ApiOperation({ description: 'Get info for multiple keys' })
   @ApiBody({ type: GetKeysInfoDto })

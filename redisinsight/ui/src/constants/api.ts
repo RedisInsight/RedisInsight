@@ -11,7 +11,7 @@ enum ApiEndpoints {
   REDIS_CLOUD_DATABASES = 'redis-enterprise/cloud/get-databases',
   SENTINEL_MASTERS = 'sentinel/get-masters',
   KEYS = 'keys',
-  KEYS_INFO = 'keys/get-infos',
+  KEYS_METADATA = 'keys/get-metadata',
   KEY_INFO = 'keys/get-info',
   KEY_NAME = 'keys/name',
   KEY_TTL = 'keys/ttl',

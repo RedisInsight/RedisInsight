@@ -1,3 +1,4 @@
+import { Chance } from 'chance';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
@@ -11,6 +12,7 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const workbenchPage = new WorkbenchPage();
 const common = new Common();
+const chance = new Chance();
 
 const hashKeyName = 'test:Hash1';
 const hashValue = 'hashValue11111!';
@@ -18,6 +20,8 @@ const streamKeyName = 'test:Stream1';
 const streamKeyNameDelimiter = 'test-Stream1';
 const keySpaces = ['test:*', 'key1:*', 'key2:*', 'key5:*', 'key5:5', 'test-*', 'key4:*'];
 const keysTTL = ['3500', '86300', '2147476121'];
+const numberOfGeneratedKeys = 6;
+const keyNamesReport = chance.unique(chance.word, numberOfGeneratedKeys);
 
 fixture `Memory Efficiency`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -206,4 +210,43 @@ test
         await t.click(memoryEfficiencyPage.showNoExpiryToggle);
         const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('cy')).slice(0, 2));
         await t.expect(noExpiryPointLocation).lt(198, 'Point in No expiry breakdown doesn\'t contain key');
+    });
+test
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await t.click(myRedisDatabasePage.analysisPageButton);
+    })
+    .after(async() => {
+        for (let i = 0; i < numberOfGeneratedKeys; i++) {
+            await cliPage.sendCommandInCli(`del ${keyNamesReport[i]}`);
+        }
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Analysis history', async t => {
+        const numberOfKeys = [];
+        const dbSize = (await cliPage.getSuccessCommandResultFromCli('dbsize')).split(' ');
+        const existedNumberOfKeys = parseInt(dbSize[dbSize.length - 1]);
+        for (let i = 0; i < 6; i++) {
+            await cliPage.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
+            await t.click(memoryEfficiencyPage.newReportBtn);
+            const compareValue = parseInt(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);
+            await t.expect(compareValue).eql((existedNumberOfKeys + i + 1), 'New report is not displayed', { timeout: 2000 });
+            numberOfKeys.push(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);
+        }
+        await t.click(memoryEfficiencyPage.selectedReport);
+        // Verify that user can see up to the 5 most recent previous results per database in the history
+        await t.expect(memoryEfficiencyPage.reportItem.count).eql(5, 'Number of saved reports is not correct');
+        // Verify that user can switch between reports and see all data updated in each report
+        for (let i = 0; i < 5; i++) {
+            await t.click(memoryEfficiencyPage.reportItem.nth(i));
+            await t.expect(memoryEfficiencyPage.reportItem.visible).notOk('Report is not switched');
+            await t.expect(memoryEfficiencyPage.scannedKeysInReport.textContent).contains(`(${numberOfKeys[5 - i]}/${numberOfKeys[5 - i]} keys)`);
+            const actualNumber = await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent;
+            await t.expect(actualNumber).eql(numberOfKeys[5 - i], 'Report content (total keys) is not correct', { timeout: 2000 });
+            await t.click(memoryEfficiencyPage.selectedReport);
+        }
+        // Verify that specific report is saved as context
+        await t.click(memoryEfficiencyPage.reportItem.nth(3));
+        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.expect(memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent).eql(numberOfKeys[2], 'Context is not saved');
     });

@@ -2,8 +2,6 @@
 @import "@elastic/eui/src/components/table/mixins";
 @import "@elastic/eui/src/global_styling/index";
 
-$breakpoint-table: 1680px;
-
 .wrapper {
   margin-bottom: 37px;
 
@@ -86,6 +84,7 @@ $breakpoint-table: 1680px;
   overflow: auto;
   position: relative;
   max-height: 100%;
+  overflow-y: hidden;
 
   :global(.euiTableRow-isExpandedRow .euiTableCellContent) {
     padding: 0 12px !important;
@@ -102,14 +101,20 @@ $breakpoint-table: 1680px;
       height: 42px;
     }
     
-    .euiTableRowCell:first-child,
-    .euiTableHeaderCell:first-child {
+    .euiTableRowCell:first-child {
       padding-left: 12px;
     }
 
-    .euiTableRowCell:last-child,
-    .euiTableHeaderCell:last-child {
+    .euiTableRowCell:last-child  {
       padding-right: 12px;
+    }
+
+    .euiTableHeaderCell:first-child .euiTableCellContent {
+      padding-left: 24px;
+    }
+
+    .euiTableHeaderCell:last-child .euiTableCellContent {
+      padding-right: 24px;
     }
 
     .euiTableHeaderCell {
@@ -157,11 +162,11 @@ $breakpoint-table: 1680px;
     }
 
     .euiTableCellContent {
-      padding: 12px;
+      padding: 10px;
       font: normal normal normal 14px/24px Graphik;
 
       &:global(.dataType) {
-        padding: 12px 6px 4px;
+        padding: 10px 6px 2px;
       }
     }
 
@@ -192,7 +197,7 @@ $breakpoint-table: 1680px;
 
 .expanded {
   display: grid;
-  grid-template-columns: auto calc(34%) calc(12% + 6px) calc(10% + 28px);
+  grid-template-columns: auto calc(32%) calc(13% + 6px) calc(11% + 22px);
   grid-column-gap: 0;
   height: 42px;
   width: 100%;
@@ -210,7 +215,7 @@ $breakpoint-table: 1680px;
     padding: 0 12px;
 
     &:last-child {
-      padding: 0 34px 0 12px;
+      padding: 0 26px 0 12px;
     }
   }
 }

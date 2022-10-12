@@ -33,7 +33,7 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
       // eslint-disable-next-line global-require
       this.keytar = require('keytar');
     } catch (e) {
-      this.logger.error('Failed to initialize keytar module');
+      this.logger.error('Failed to initialize keytar module', e);
     }
   }
 

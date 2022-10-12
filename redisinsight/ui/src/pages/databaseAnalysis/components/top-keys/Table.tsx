@@ -99,6 +99,7 @@ const Table = (props: Props) => {
         return (
           <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
+              title="Key Name"
               anchorClassName={styles.tooltip}
               position="bottom"
               content={tooltipContent}

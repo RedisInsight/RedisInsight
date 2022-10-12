@@ -71,6 +71,7 @@ const NameSpacesTable = (props: Props) => {
               <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
                 <div className="truncateText">
                   <EuiToolTip
+                    title="Key Pattern"
                     anchorClassName={styles.tooltip}
                     position="bottom"
                     content={`${item.nsp}:*`}
@@ -123,6 +124,7 @@ const NameSpacesTable = (props: Props) => {
         return (
           <div className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
+              title="Key Pattern"
               anchorClassName={styles.tooltip}
               position="bottom"
               content={tooltipContent}

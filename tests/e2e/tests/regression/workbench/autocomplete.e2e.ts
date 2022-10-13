@@ -62,16 +62,6 @@ test('Verify that user can see static list of arguments is displayed when he ent
     // Verify that user can close the static list of arguments by pressing “ESC”
     await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are still displayed');
 });
-// test('Verify that user can close the static list of arguments by pressing “ESC”', async t => {
-//         const command = 'TS.DELETERULE '
-//         await t.typeText(workbenchPage.queryInput, command, { replace: true })
-//         //Check that hint with arguments are displayed
-//         await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are not displayed')
-//         //Remove hints with arguments
-//         await t.pressKey('esc');
-//         //Check no hints are displayed
-//         await t.expect(workbenchPage.monacoHintWithArguments.visible).notOk('Hints with arguments are still displayed')
-//     });
 test('Verify that user can see the static list of arguments when he uses “Ctrl+Shift+Space” combination for already entered command for Windows', async t => {
     const command = 'JSON.ARRAPPEND';
     await t.typeText(workbenchPage.queryInput, command, { replace: true });

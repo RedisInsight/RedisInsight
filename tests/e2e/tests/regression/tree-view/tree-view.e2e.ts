@@ -35,11 +35,6 @@ test
         await t.click(browserPage.treeViewButton);
         await t.expect(browserPage.keyListMessage.textContent).contains(message, 'The message is not displayed');
 
-        // Verify the default separator
-        await t.expect(browserPage.treeViewSeparator.textContent).eql(':', 'The “:” (colon) not used as a default separator for namespaces');
-        // Verify that user can see that “:” (colon) used as a default separator for namespaces and see the number of keys found per each namespace
-        await t.expect(browserPage.treeViewKeysNumber.visible).ok('The user can not see the number of keys');
-
         // Verify that workbench opened by clicking on "Use Workbench Guides and Tutorials" link
         await t.click(browserPage.workbenchLinkButton);
         await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
@@ -59,6 +54,12 @@ test('Verify that user can see the total number of keys, the number of keys scan
 test('Verify that when user deletes the key he can see the key is removed from the folder, the number of keys is reduced, the percentage is recalculated', async t => {
     // Open the first key in the tree view and remove
     await t.click(browserPage.treeViewButton);
+
+    // Verify the default separator
+    await t.expect(browserPage.treeViewSeparator.textContent).eql(':', 'The “:” (colon) not used as a default separator for namespaces');
+    // Verify that user can see that “:” (colon) used as a default separator for namespaces and see the number of keys found per each namespace
+    await t.expect(browserPage.treeViewKeysNumber.visible).ok('The user can not see the number of keys');
+
     await t.expect(browserPage.treeViewDeviceFolder.visible).ok('The key folder is not displayed', { timeout: 30000 });
     await t.click(browserPage.treeViewDeviceFolder);
     const numberOfKeys = await browserPage.treeViewDeviceKyesCount.textContent;

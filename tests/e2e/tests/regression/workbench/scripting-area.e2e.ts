@@ -118,7 +118,7 @@ test
         // Check the result with sent command
         await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command is not displayed');
     });
-test.only('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
+test('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
     const command = 'FT._LIST';
     const command2 = 'select 13';
     const repeats = 5;

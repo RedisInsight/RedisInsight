@@ -21,16 +21,6 @@ fixture `Promote workbench in CLI`
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-// test('Verify that users can see workbench promotion message when they open CLI', async t => {
-//     // Open CLI
-//     await t.click(cliPage.cliExpandButton);
-//     await t.expect(cliPage.workbenchLink.parent().textContent).eql('Try Workbench, our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.', 'Wrong promotion message');
-//     // Verify that user is redirected to Workbench page clicking on workbench link in CLI
-//     await t.click(cliPage.workbenchLink);
-//     await t.expect(workbenchPage.expandArea.exists).ok('Workbench page is not opened');
-//     // Verify that CLI panel is minimized after redirection to workbench from CLI
-//     await t.expect(cliPage.cliPanel.visible).notOk('Closed CLI');
-// });
 test('Verify that user can see saved workbench context after redirection from CLI to workbench', async t => {
     // Open Workbench
     await t.click(myRedisDatabasePage.workbenchButton);

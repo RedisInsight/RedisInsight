@@ -14,6 +14,7 @@ export class MemoryEfficiencyPage {
     showNoExpiryToggle = Selector('[data-testid=show-no-expiry-switch]');
     reportItem = Selector('[data-test-subj^=items-report-]');
     selectedReport = Selector('[data-testid=select-report]');
+    sortByLength = Selector('[data-testid=btn-change-table-keys]');
     // ICONS
     reportTooltipIcon = Selector('[data-testid=db-new-reports-icon]');
     // TEXT ELEMENTS
@@ -21,6 +22,8 @@ export class MemoryEfficiencyPage {
     noKeysText = Selector('[data-testid=empty-analysis-no-keys]');
     scannedPercentageInReport = Selector('[data-testid=analysis-progress]');
     scannedKeysInReport = Selector('[data-testid=bulk-delete-summary]');
+    topKeysTitle = Selector('[data-testid=top-keys-title]');
+    topKeysKeyName = Selector('[data-testid=top-keys-table-name]');
     // TABLE
     tableRows = Selector('tr[class*=euiTableRow]');
     expandedRow = Selector('#row_test_expansion');

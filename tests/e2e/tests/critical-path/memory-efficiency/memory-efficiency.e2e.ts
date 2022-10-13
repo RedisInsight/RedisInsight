@@ -249,4 +249,6 @@ test
         await t.click(myRedisDatabasePage.workbenchButton);
         await t.click(myRedisDatabasePage.analysisPageButton);
         await t.expect(memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent).eql(numberOfKeys[2], 'Context is not saved');
+        // Verify that user can see top keys table saved as context
+        await t.expect(memoryEfficiencyPage.topKeysKeyName.count).eql(parseInt(numberOfKeys[2]), 'Top Keys table is not saved as context');
     });

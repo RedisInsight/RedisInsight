@@ -16,10 +16,6 @@ const dataTypes: string[] = [
     'RedisTimeSeries',
     'RedisGraph'
 ];
-const commands: string[] = [
-    `TS.CREATE ${keyName}`,
-    `GRAPH.QUERY ${keyName} "CREATE ()"`
-];
 
 fixture `Key messages`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -33,6 +29,10 @@ fixture `Key messages`
 test('Verify that user can see updated message in Browser for TimeSeries and Graph data types', async t => {
     for(let i = 0; i < dataTypes.length; i++) {
         keyName = common.generateWord(10);
+        const commands: string[] = [
+            `TS.CREATE ${keyName}`,
+            `GRAPH.QUERY ${keyName} "CREATE ()"`
+        ];
         const messages: string[] = [
             `This is a ${dataTypes[i]} key`,
             'Use Redis commands in the ',
@@ -53,6 +53,11 @@ test('Verify that user can see updated message in Browser for TimeSeries and Gra
 test('Verify that user can see link to Workbench under word “Workbench” in the RedisTimeSeries and Graph key details', async t => {
     for(let i = 0; i < dataTypes.length; i++) {
         keyName = common.generateWord(10);
+        const commands: string[] = [
+            `TS.CREATE ${keyName}`,
+            `GRAPH.QUERY ${keyName} "CREATE ()"`
+        ];
+
         // Add key and verify Workbench link
         await cliPage.sendCommandInCli(commands[i]);
         await browserPage.searchByKeyName(keyName);

@@ -14,13 +14,6 @@ const common = new Common();
 
 let keyName = common.generateWord(20);
 let consumerGroupName = common.generateWord(20);
-const cliCommands = [
-    `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
-    `XADD ${keyName} * message apple`,
-    `XADD ${keyName} * message orange`,
-    `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`,
-    `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
-];
 
 fixture `Pending messages`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -65,6 +58,13 @@ test('Verify that user can\'t select currently selected Consumer to Claim messag
 test('Verify that the message is claimed only if its idle time is greater than the Min Idle Time', async t => {
     keyName = common.generateWord(20);
     consumerGroupName = common.generateWord(20);
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XADD ${keyName} * message orange`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`,
+        `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
+    ];
 
     // Add New Stream Key with pending message
     for(const command of cliCommands){
@@ -83,6 +83,13 @@ test('Verify that the message is claimed only if its idle time is greater than t
 test('Verify that when user toggle optional parameters on, he can see optional fields', async t => {
     keyName = common.generateWord(20);
     consumerGroupName = common.generateWord(20);
+    const cliCommands = [
+        `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
+        `XADD ${keyName} * message apple`,
+        `XADD ${keyName} * message orange`,
+        `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`,
+        `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
+    ];
 
     // Add New Stream Key with pending message
     for(const command of cliCommands){

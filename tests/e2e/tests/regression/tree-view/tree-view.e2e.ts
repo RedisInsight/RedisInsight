@@ -3,7 +3,7 @@ import { BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
-    ossStandaloneConfig
+    ossStandaloneRedisearch
 } from '../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
@@ -23,11 +23,11 @@ fixture `Tree view verifications`
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
     })
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see message "No keys to display." when there are no keys in the database', async t => {
         const message = 'No keys to display.Use Workbench Guides and Tutorials to quickly load the data.';
 

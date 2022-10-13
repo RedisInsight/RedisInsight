@@ -7,11 +7,11 @@ import {
 } from 'lodash';
 import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
 import { getRangeForNumber, getIsPipelineEnable, SCAN_THRESHOLD_BREAKPOINTS } from 'src/utils';
-import { GetAppSettingsResponse } from 'src/dto/settings.dto';
 import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
+import { GetAppSettingsResponse } from 'src/modules/settings/dto/settings.dto';
 
 @Injectable()
-export class SettingsAnalyticsService extends TelemetryBaseService {
+export class SettingsAnalytics extends TelemetryBaseService {
   constructor(protected eventEmitter: EventEmitter2) {
     super(eventEmitter);
   }

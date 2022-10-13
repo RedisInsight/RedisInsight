@@ -1,10 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { get } from 'lodash';
 import * as Analytics from 'analytics-node';
 import { AppAnalyticsEvents } from 'src/constants';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import config from 'src/utils/config';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 export const NON_TRACKING_ANONYMOUS_ID = 'UNSET';
 const ANALYTICS_CONFIG = config.get('analytics');
@@ -32,8 +32,7 @@ export class AnalyticsService {
   private analytics;
 
   constructor(
-    @Inject('SETTINGS_PROVIDER')
-    private settingsService: ISettingsProvider,
+    private settingsService: SettingsService,
   ) {}
 
   public getAnonymousId(): string {
@@ -61,7 +60,8 @@ export class AnalyticsService {
       // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
       const { event, eventData, nonTracking } = payload;
       const isAnalyticsGranted = !!get(
-        await this.settingsService.getSettings(),
+        // todo: define how to fetch userId?
+        await this.settingsService.getAppSettings('1'),
         'agreements.analytics',
         false,
       );

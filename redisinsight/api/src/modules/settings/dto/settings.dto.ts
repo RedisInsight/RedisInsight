@@ -7,9 +7,16 @@ import {
   IsString,
   Min,
 } from 'class-validator';
-import { Exclude, Transform, Type } from 'class-transformer';
+import {
+  Exclude, Expose, Transform, Type,
+} from 'class-transformer';
 import { IAgreementSpec } from 'src/models';
 import { pickDefinedAgreements } from 'src/dto/dto-transformer';
+import { Default } from 'src/common/decorators';
+import config from 'src/utils/config';
+
+const REDIS_SCAN_CONFIG = config.get('redis_scan');
+const WORKBENCH_CONFIG = config.get('workbench');
 
 export class GetAgreementsSpecResponse {
   @ApiProperty({
@@ -59,21 +66,27 @@ export class GetAppSettingsResponse {
     type: String,
     example: 'DARK',
   })
-  theme: string;
+  @Expose()
+  @Default(null)
+  theme: string = null;
 
   @ApiProperty({
     description: 'Applied the threshold for scan operation.',
     type: Number,
     example: 10000,
   })
-  scanThreshold: number;
+  @Expose()
+  @Default(REDIS_SCAN_CONFIG.countThreshold)
+  scanThreshold: number = REDIS_SCAN_CONFIG.countThreshold;
 
   @ApiProperty({
     description: 'Applied the batch of the commands for workbench.',
     type: Number,
     example: 5,
   })
-  batchSize: number;
+  @Expose()
+  @Default(WORKBENCH_CONFIG.countBatch)
+  batchSize: number = WORKBENCH_CONFIG.countBatch;
 
   @ApiProperty({
     description: 'Agreements set by the user.',
@@ -86,6 +99,7 @@ export class GetAppSettingsResponse {
       notifications: true,
     },
   })
+  @Expose()
   agreements: GetUserAgreementsResponse;
 }
 

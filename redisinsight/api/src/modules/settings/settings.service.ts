@@ -3,81 +3,52 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  OnModuleInit,
 } from '@nestjs/common';
 import {
   difference,
   isEmpty,
-  isNumber,
   map,
   cloneDeep,
 } from 'lodash';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import config from 'src/utils/config';
 import { AgreementIsNotDefinedException } from 'src/constants';
-import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from 'src/dto/settings.dto';
-import { AgreementsEntity, IAgreementsJSON } from 'src/modules/core/models/agreements.entity';
-import { ISettingsJSON, SettingsEntity } from 'src/modules/core/models/settings.entity';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { SettingsAnalyticsService } from '../../services/settings-analytics/settings-analytics.service';
+import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
+import { SettingsRepository } from 'src/modules/settings/repositories/settings.repository';
+import { classToClass } from 'src/utils';
+import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
+import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
 
-const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const SERVER_CONFIG = config.get('server');
-const WORKBENCH_CONFIG = config.get('workbench');
 
 @Injectable()
-export class SettingsOnPremiseService
-implements OnModuleInit, ISettingsProvider {
-  private logger = new Logger('SettingsOnPremiseService');
+export class SettingsService {
+  private logger = new Logger('SettingsService');
 
   constructor(
-    @InjectRepository(AgreementsEntity)
-    private readonly agreementRepository: Repository<AgreementsEntity>,
-    @InjectRepository(SettingsEntity)
-    private readonly settingsRepository: Repository<SettingsEntity>,
-    private readonly analyticsService: SettingsAnalyticsService,
+    private readonly settingsRepository: SettingsRepository,
+    private readonly agreementRepository: AgreementsRepository,
+    private readonly analytics: SettingsAnalytics,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
   ) {}
-
-  async onModuleInit() {
-    await this.upsertSettings();
-  }
-
-  private async upsertSettings() {
-    const agreementsEntity = await this.agreementRepository.findOneBy({});
-    const settingsEntity = await this.settingsRepository.findOneBy({});
-    if (!agreementsEntity) {
-      const agreements: AgreementsEntity = this.agreementRepository.create({});
-      await this.agreementRepository.save(agreements);
-    }
-    if (!settingsEntity) {
-      const settings: SettingsEntity = this.settingsRepository.create({});
-      await this.settingsRepository.save(settings);
-    }
-  }
 
   /**
    * Method to get settings
    */
-  public async getSettings(): Promise<GetAppSettingsResponse> {
+  public async getAppSettings(userId: string): Promise<GetAppSettingsResponse> {
     this.logger.log('Getting application settings.');
     try {
-      const agreements: IAgreementsJSON = (
-        await this.agreementRepository.findOneBy({})
-      ).toJSON();
-      const settings: ISettingsJSON = (
-        await this.settingsRepository.findOneBy({})
-      ).toJSON();
+      const agreements = await this.agreementRepository.getOrCreate(userId);
+      const settings = await this.settingsRepository.getOrCreate(userId);
       this.logger.log('Succeed to get application settings.');
-      return {
-        ...settings,
-        scanThreshold: settings.scanThreshold || REDIS_SCAN_CONFIG.countThreshold,
-        batchSize: isNumber(settings.batchSize) ? settings.batchSize : WORKBENCH_CONFIG.countBatch,
-        agreements: agreements.version ? agreements : null,
-      };
+      return classToClass(GetAppSettingsResponse, {
+        ...settings?.data,
+        agreements: agreements?.version ? {
+          ...agreements?.data,
+          version: agreements?.version,
+        } : null,
+      });
     } catch (error) {
       this.logger.error('Failed to get application settings.', error);
       throw new InternalServerErrorException();
@@ -87,29 +58,34 @@ implements OnModuleInit, ISettingsProvider {
   /**
    * Method to update application settings and agreements
    * @param dto
+   * @param userId
    */
-  public async updateSettings(
+  public async updateAppSettings(
+    userId: string,
     dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
     this.logger.log('Updating application settings.');
     const { agreements, ...settings } = dto;
     try {
-      const oldSettings = await this.getSettings();
+      const oldAppSettings = await this.getAppSettings(userId);
       if (!isEmpty(settings)) {
-        const entity: SettingsEntity = await this.settingsRepository.findOneBy({});
+        const model = await this.settingsRepository.getOrCreate(userId);
+        const toUpdate = {
+          ...model,
+          data: {
+            ...model?.data,
+            ...settings,
+          },
+        };
 
-        entity.data = JSON.stringify({
-          ...entity.toJSON(),
-          ...settings,
-        });
-        await this.settingsRepository.save(entity);
+        await this.settingsRepository.update(userId, toUpdate);
       }
       if (agreements) {
-        await this.updateAgreements(dto.agreements);
+        await this.updateAgreements(agreements);
       }
       this.logger.log('Succeed to update application settings.');
-      const results = await this.getSettings();
-      this.analyticsService.sendSettingsUpdatedEvent(results, oldSettings);
+      const results = await this.getAppSettings(userId);
+      this.analytics.sendSettingsUpdatedEvent(results, oldAppSettings);
       return results;
     } catch (error) {
       this.logger.error('Failed to update application settings.', error);
@@ -165,18 +141,22 @@ implements OnModuleInit, ISettingsProvider {
 
   private async updateAgreements(
     dtoAgreements: Map<string, boolean> = new Map(),
+    userId?: string,
   ): Promise<void> {
     this.logger.log('Updating application agreements.');
-    const entity: AgreementsEntity = await this.agreementRepository.findOneBy({});
-    const oldAgreements = JSON.parse(entity.data);
-    const newValue = {
-      ...oldAgreements,
+    const model = await this.agreementRepository.getOrCreate(userId);
+    const oldAgreements = cloneDeep(model.data || {});
+
+    model.version = AGREEMENTS_SPEC.version;
+    model.data = {
+      ...model?.data,
       ...Object.fromEntries(dtoAgreements),
     };
+
     // Detect which agreements should be defined according to the settings specification
     const diff = difference(
       Object.keys(AGREEMENTS_SPEC.agreements),
-      Object.keys(newValue),
+      Object.keys(model.data),
     );
     if (diff.length) {
       const messages = diff.map(
@@ -184,13 +164,13 @@ implements OnModuleInit, ISettingsProvider {
       );
       throw new AgreementIsNotDefinedException(messages);
     }
-    entity.data = JSON.stringify(newValue);
-    entity.version = AGREEMENTS_SPEC.version;
-    await this.agreementRepository.save(entity);
+
+    await this.agreementRepository.update(userId, model);
+
     if (dtoAgreements.has('analytics')) {
-      this.analyticsService.sendAnalyticsAgreementChange(
+      this.analytics.sendAnalyticsAgreementChange(
         dtoAgreements,
-        new Map(Object.entries({ ...oldAgreements })),
+        new Map(Object.entries(oldAgreements)),
       );
     }
   }

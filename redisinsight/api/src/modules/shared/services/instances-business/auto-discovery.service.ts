@@ -1,5 +1,5 @@
 import {
-  Inject, Injectable, Logger, OnModuleInit,
+  Injectable, Logger, OnModuleInit,
 } from '@nestjs/common';
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
@@ -7,8 +7,8 @@ import { AppTool } from 'src/models';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { getAvailableEndpoints, getRunningProcesses, getTCPEndpoints } from 'src/utils/auto-discovery-helper';
 import { convertRedisInfoReplyToObject } from 'src/utils';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import config from 'src/utils/config';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 const SERVER_CONFIG = config.get('server');
 
@@ -17,8 +17,7 @@ export class AutoDiscoveryService implements OnModuleInit {
   private logger = new Logger('AutoDiscoveryService');
 
   constructor(
-    @Inject('SETTINGS_PROVIDER')
-    private settingsService: ISettingsProvider,
+    private settingsService: SettingsService,
     private databaseProvider: DatabasesProvider,
     private redisService: RedisService,
     private databaseService: InstancesBusinessService,
@@ -40,7 +39,8 @@ export class AutoDiscoveryService implements OnModuleInit {
         return;
       }
 
-      const settings = await this.settingsService.getSettings();
+      // todo: rethink autodiscovery to not rely on users settings
+      const settings = await this.settingsService.getAppSettings('1');
       // check agreements to understand if it is first launch
       if (!settings.agreements) {
         await this.discoverDatabases();

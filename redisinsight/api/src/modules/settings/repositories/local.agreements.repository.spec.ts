@@ -11,16 +11,16 @@ import {
   mockSettingsJSON,
   MockType,
 } from 'src/__mocks__';
-import { UpdateSettingsDto } from 'src/dto/settings.dto';
+import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import { AgreementIsNotDefinedException } from 'src/constants';
 import config from 'src/utils/config';
-import { SettingsEntity } from 'src/modules/core/models/settings.entity';
-import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
-import { SettingsAnalyticsService } from 'src/modules/core/services/settings-analytics/settings-analytics.service';
+import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
+import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { EncryptionStrategy } from 'src/modules/core/encryption/models';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
-import { SettingsOnPremiseService } from './settings-on-premise.service';
+import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
@@ -33,19 +33,19 @@ const mockAgreementsMap = new Map(
 );
 
 describe('SettingsOnPremiseService', () => {
-  let service: SettingsOnPremiseService;
+  let service: SettingsService;
   let agreementsRepository: MockType<Repository<AgreementsEntity>>;
   let settingsRepository: MockType<Repository<SettingsEntity>>;
   let agreementsEntity: AgreementsEntity;
   let settingsEntity: SettingsEntity;
-  let analyticsService: SettingsAnalyticsService;
+  let analyticsService: SettingsAnalytics;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SettingsOnPremiseService,
+        SettingsService,
         {
-          provide: SettingsAnalyticsService,
+          provide: SettingsAnalytics,
           useFactory: mockSettingsAnalyticsService,
         },
         {
@@ -76,46 +76,15 @@ describe('SettingsOnPremiseService', () => {
     );
     settingsRepository = await module.get(getRepositoryToken(SettingsEntity));
     analyticsService = await module.get<SettingsAnalyticsService>(SettingsAnalyticsService);
-    service = await module.get(SettingsOnPremiseService);
+    service = await module.get(SettingsService);
   });
 
-  describe('onModuleInit', () => {
-    it('should create settings and agreements instance on first application launch', async () => {
-      agreementsRepository.findOneBy.mockResolvedValue(null);
-      agreementsRepository.create.mockReturnValue(agreementsEntity);
-      settingsRepository.findOneBy.mockResolvedValue(null);
-      settingsRepository.create.mockReturnValue(settingsEntity);
-
-      await service.onModuleInit();
-
-      expect(agreementsRepository.findOneBy).toHaveBeenCalled();
-      expect(settingsRepository.findOneBy).toHaveBeenCalled();
-      expect(agreementsRepository.create).toHaveBeenCalled();
-      expect(settingsRepository.create).toHaveBeenCalled();
-      expect(agreementsRepository.save).toHaveBeenCalledWith(agreementsEntity);
-      expect(settingsRepository.save).toHaveBeenCalledWith(settingsEntity);
-    });
-    it('should not create settings and agreements  on the second application launch', async () => {
-      agreementsRepository.findOneBy.mockResolvedValue(agreementsEntity);
-      settingsRepository.findOneBy.mockResolvedValue(settingsEntity);
-
-      await service.onModuleInit();
-
-      expect(agreementsRepository.findOneBy).toHaveBeenCalled();
-      expect(agreementsRepository.create).not.toHaveBeenCalled();
-      expect(agreementsRepository.save).not.toHaveBeenCalled();
-      expect(settingsRepository.findOneBy).toHaveBeenCalled();
-      expect(settingsRepository.create).not.toHaveBeenCalled();
-      expect(settingsRepository.save).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('getSettings', () => {
+  describe('getAppSettings', () => {
     it('should return default application settings', async () => {
       agreementsRepository.findOneBy.mockResolvedValue(agreementsEntity);
       settingsRepository.findOneBy.mockResolvedValue(settingsEntity);
 
-      const result = await service.getSettings();
+      const result = await service.getAppSettings();
 
       expect(result).toEqual({
         theme: null,

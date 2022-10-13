@@ -1,12 +1,6 @@
 import { IAgreement } from 'src/models';
-import {
-  AgreementsEntity,
-  IAgreementsJSON,
-} from 'src/modules/core/models/agreements.entity';
-import {
-  ISettingsJSON,
-  SettingsEntity,
-} from 'src/modules/core/models/settings.entity';
+import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
+import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
 
 export const mockAppAgreement: IAgreement = {
   defaultValue: false,
@@ -27,10 +21,9 @@ export const mockAgreementsEntity: AgreementsEntity = {
   id: 1,
   version: null,
   data: null,
-  toJSON: (): IAgreementsJSON => mockAgreementsJSON,
 };
 
-export const mockSettingsJSON: ISettingsJSON = {
+export const mockSettingsJSON = {
   theme: null,
   scanThreshold: null,
   batchSize: null,
@@ -39,5 +32,4 @@ export const mockSettingsJSON: ISettingsJSON = {
 export const mockSettingsEntity: SettingsEntity = {
   id: 1,
   data: null,
-  toJSON: (): ISettingsJSON => mockSettingsJSON,
 };

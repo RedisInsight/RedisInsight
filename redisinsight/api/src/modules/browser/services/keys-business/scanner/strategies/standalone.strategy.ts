@@ -9,7 +9,7 @@ import {
 } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import { AbstractStrategy } from './abstract.strategy';
 import { IGetNodeKeysResult } from '../scanner.interface';
 
@@ -18,15 +18,15 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class StandaloneStrategy extends AbstractStrategy {
   private readonly redisManager: BrowserToolService;
 
-  private settingsProvider: ISettingsProvider;
+  private settingsService: SettingsService;
 
   constructor(
     redisManager: BrowserToolService,
-    settingsProvider: ISettingsProvider,
+    settingsService: SettingsService,
   ) {
     super(redisManager);
     this.redisManager = redisManager;
-    this.settingsProvider = settingsProvider;
+    this.settingsService = settingsService;
   }
 
   public async getKeys(
@@ -95,7 +95,8 @@ export class StandaloneStrategy extends AbstractStrategy {
     type?: RedisDataType,
   ): Promise<void> {
     let fullScanned = false;
-    const settings = await this.settingsProvider.getSettings();
+    // todo: remove settings from here. threshold should be part of query?
+    const settings = await this.settingsService.getAppSettings('1');
     while (
       (node.total > 0 || isNull(node.total))
       && !fullScanned

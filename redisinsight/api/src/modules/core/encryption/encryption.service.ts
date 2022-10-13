@@ -1,5 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { Injectable } from '@nestjs/common';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
 import { PlainEncryptionStrategy } from 'src/modules/core/encryption/strategies/plain-encryption.strategy';
 import { EncryptionResult, EncryptionStrategy } from 'src/modules/core/encryption/models';
@@ -7,12 +6,12 @@ import { IEncryptionStrategy } from 'src/modules/core/encryption/strategies/encr
 import {
   UnsupportedEncryptionStrategyException,
 } from 'src/modules/core/encryption/exceptions';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 @Injectable()
 export class EncryptionService {
   constructor(
-    @Inject('SETTINGS_PROVIDER')
-    private readonly settingsProvider: ISettingsProvider,
+    private readonly settingsService: SettingsService,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
     private readonly plainEncryptionStrategy: PlainEncryptionStrategy,
   ) {}
@@ -40,7 +39,8 @@ export class EncryptionService {
    * so we will throw an error when encryption type is null
    */
   async getEncryptionStrategy(): Promise<IEncryptionStrategy> {
-    const settings = await this.settingsProvider.getSettings();
+    // todo: add encryption provider as a strategy to be configurable
+    const settings = await this.settingsService.getAppSettings('1');
     switch (settings.agreements?.encryption) {
       case true:
         return this.keytarEncryptionStrategy;

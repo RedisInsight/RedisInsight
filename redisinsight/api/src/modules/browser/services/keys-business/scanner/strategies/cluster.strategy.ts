@@ -1,4 +1,6 @@
-import { toNumber, omit, isNull, get } from 'lodash';
+import {
+  toNumber, omit, isNull, get,
+} from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
 import { unescapeGlob, convertBulkStringsToObject } from 'src/utils';
@@ -13,7 +15,7 @@ import {
   RedisDataType,
 } from 'src/modules/browser/dto';
 import { parseClusterCursor } from 'src/modules/browser/utils/clusterCursor';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import { AbstractStrategy } from './abstract.strategy';
 import { IGetNodeKeysResult } from '../scanner.interface';
 
@@ -22,15 +24,15 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class ClusterStrategy extends AbstractStrategy {
   private readonly redisManager: BrowserToolClusterService;
 
-  private settingsProvider: ISettingsProvider;
+  private settingsService: SettingsService;
 
   constructor(
     redisManager: BrowserToolClusterService,
-    settingsProvider: ISettingsProvider,
+    settingsService: SettingsService,
   ) {
     super(redisManager);
     this.redisManager = redisManager;
-    this.settingsProvider = settingsProvider;
+    this.settingsService = settingsService;
   }
 
   public async getKeys(
@@ -42,7 +44,8 @@ export class ClusterStrategy extends AbstractStrategy {
     const client = await this.redisManager.getRedisClient(clientOptions);
     const currentDbIndex = get(client, ['options', 'db'], 0);
     const nodes = await this.getNodesToScan(clientOptions, args.cursor);
-    const settings = await this.settingsProvider.getSettings();
+    // todo: remove settings from here. threshold should be part of query?
+    const settings = await this.settingsService.getAppSettings('1');
     await this.calculateNodesTotalKeys(clientOptions, currentDbIndex, nodes);
 
     if (!isGlob(match, { strict: false })) {
@@ -144,16 +147,16 @@ export class ClusterStrategy extends AbstractStrategy {
           BrowserToolKeysCommands.InfoKeyspace,
           [],
           { host: node.host, port: node.port },
-        )
+        );
 
-        const info = convertBulkStringsToObject(result.result)
+        const info = convertBulkStringsToObject(result.result);
 
         if (!info[`db${currentDbIndex}`]) {
-          node.total = 0
+          node.total = 0;
         } else {
           const { keys } = convertBulkStringsToObject(info[`db${currentDbIndex}`], ',', '=');
           node.total = parseInt(keys, 10);
-        }  
+        }
       }),
     );
   }

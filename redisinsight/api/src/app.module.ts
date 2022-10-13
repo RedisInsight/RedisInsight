@@ -24,7 +24,6 @@ import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.mod
 import { ProfilerModule } from './modules/profiler/profiler.module';
 import { CliModule } from './modules/cli/cli.module';
 import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
-import { SettingsController } from './controllers/settings.controller';
 import { ServerInfoController } from './controllers/server-info.controller';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
@@ -79,7 +78,7 @@ const PATH_CONFIG = config.get('dir_path');
     }),
     StaticsManagementModule,
   ],
-  controllers: [SettingsController, ServerInfoController],
+  controllers: [ServerInfoController],
   providers: [],
 })
 export class AppModule implements OnModuleInit, NestModule {

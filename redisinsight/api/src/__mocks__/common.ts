@@ -1,5 +1,3 @@
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
-
 export type MockType<T> = {
   [P in keyof T]: jest.Mock<any>;
 };
@@ -58,8 +56,8 @@ export const mockRepository = jest.fn(() => ({
   createQueryBuilder: mockCreateQueryBuilder,
 }));
 
-export const mockSettingsProvider = (): ISettingsProvider => ({
-  getSettings: jest.fn(),
+export const mockSettingsProvider = () => ({
+  getAppSettings: jest.fn(),
   updateSettings: jest.fn(),
   getAgreementsSpec: jest.fn(),
 });

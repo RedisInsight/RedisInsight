@@ -5,16 +5,13 @@ import { ClientCertificateEntity } from 'src/modules/core/models/client-certific
 import { PlainEncryptionStrategy } from 'src/modules/core/encryption/strategies/plain-encryption.strategy';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
-import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
 import { ServerEntity } from 'src/modules/core/models/server.entity';
-import { SettingsEntity } from 'src/modules/core/models/settings.entity';
-import settingsOnPremiseFactory from './providers/settings-on-premise';
+import { SettingsModule } from 'src/modules/settings/settings.module';
 import serverOnPremiseFactory from './providers/server-on-premise';
 import { CaCertBusinessService } from './services/certificates/ca-cert-business/ca-cert-business.service';
 import { ClientCertBusinessService } from './services/certificates/client-cert-business/client-cert-business.service';
 import { RedisService } from './services/redis/redis.service';
 import { AnalyticsService } from './services/analytics/analytics.service';
-import { SettingsAnalyticsService } from './services/settings-analytics/settings-analytics.service';
 
 interface IModuleOptions {
   buildType: string;
@@ -33,14 +30,12 @@ export class CoreModule {
       imports: [
         TypeOrmModule.forFeature([
           ServerEntity,
-          SettingsEntity,
-          AgreementsEntity,
           CaCertificateEntity,
           ClientCertificateEntity,
         ]),
+        SettingsModule,
       ],
       providers: [
-        settingsOnPremiseFactory,
         serverOnPremiseFactory,
         KeytarEncryptionStrategy,
         PlainEncryptionStrategy,
@@ -49,10 +44,9 @@ export class CoreModule {
         RedisService,
         CaCertBusinessService,
         ClientCertBusinessService,
-        SettingsAnalyticsService,
       ],
       exports: [
-        settingsOnPremiseFactory,
+        SettingsModule,
         serverOnPremiseFactory,
         EncryptionService,
         AnalyticsService,

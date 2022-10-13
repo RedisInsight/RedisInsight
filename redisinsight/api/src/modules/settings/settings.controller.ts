@@ -2,27 +2,25 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   Patch,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import {
   GetAgreementsSpecResponse,
   GetAppSettingsResponse,
   UpdateSettingsDto,
-} from '../dto/settings.dto';
+} from './dto/settings.dto';
 
 @ApiTags('Settings')
 @Controller('settings')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class SettingsController {
   constructor(
-    @Inject('SETTINGS_PROVIDER')
-    private settingsService: ISettingsProvider,
+    private settingsService: SettingsService,
   ) {}
 
   @Get('')
@@ -37,8 +35,8 @@ export class SettingsController {
       },
     ],
   })
-  async getSettings(): Promise<GetAppSettingsResponse> {
-    return this.settingsService.getSettings();
+  async getAppSettings(): Promise<GetAppSettingsResponse> {
+    return this.settingsService.getAppSettings('1');
   }
 
   @Get('/agreements/spec')
@@ -78,6 +76,6 @@ export class SettingsController {
   async update(
     @Body() dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
-    return this.settingsService.updateSettings(dto);
+    return this.settingsService.updateAppSettings('1', dto);
   }
 }

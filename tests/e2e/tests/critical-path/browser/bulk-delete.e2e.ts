@@ -54,27 +54,26 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     await t.expect(bulkActionsPage.bulkApplyButton.visible).ok('Confirm deletion button not displayed');
 
 });
-test('Verify that user can see no pattern selected message when no key type and pattern applied for Bulk Delete', async t => {
-    const messageTitle = 'No pattern or key type set';
-    const messageText = 'To perform a bulk action, set the pattern or select the key type';
-    // Open bulk actions
-    await t.click(browserPage.bulkActionsButton);
-    await t.expect(bulkActionsPage.bulkActionsPlaceholder.textContent).contains(messageTitle, 'No pattern title not displayed');
-    await t.expect(bulkActionsPage.bulkActionsPlaceholder.textContent).contains(messageText, 'No pattern message not displayed');
-});
 test('Verify that user can see summary of scanned level', async t => {
     const expectedAmount = new RegExp('Expected amount: ~' + '10 ' + '.');
     const scannedKeys = new RegExp('Scanned 5% \\(....10 ...\\) and found ... keys');
+    const messageTitle = 'No pattern or key type set';
+    const messageText = 'To perform a bulk action, set the pattern or select the key type';
+
     // Add 10000 Hash keys
     await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
-    // Filter by Hash keys
-    await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     // Open bulk actions
     await t.click(browserPage.bulkActionsButton);
+    // Verify that user can see no pattern selected message when no key type and pattern applied for Bulk Delete
+    await t.expect(bulkActionsPage.bulkActionsPlaceholder.textContent).contains(messageTitle, 'No pattern title not displayed');
+    await t.expect(bulkActionsPage.bulkActionsPlaceholder.textContent).contains(messageText, 'No pattern message not displayed');
+    // Filter by Hash keys
+    await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     // Verify that prediction of # of keys matching the filter in the entire database displayed
     await t.expect(bulkActionsPage.bulkActionsSummary.textContent).match(expectedAmount, 'Bulk actions summary is not correct');
     // Verify that % of total keys scanned, # of keys scanned / total # of keys in the database, # of keys matching the filter displayed
     await t.expect(bulkActionsPage.bulkDeleteSummary.innerText).match(scannedKeys, 'Bulk delete summary is not correct');
+
 });
 test('Verify that user can see blue progress line during the process of bulk deletion', async t => {
     // Add 500000 Hash keys
@@ -136,7 +135,7 @@ test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         await addSetKeyApi(setKeyParameters, ossStandaloneRedisearch);
-        //Add 10000 Hash keys
+        // Add 10000 Hash keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
         // Filter by Hash keys
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
@@ -166,10 +165,7 @@ test('Verify that when user clicks on Close button when bulk delete is completed
     // Verify context not saved
     await t.expect(bulkActionsPage.bulkDeleteCompletedSummary.visible).notOk('Bulk delete completed summary still displayed');
     await t.expect(bulkActionsPage.bulkDeleteSummary.textContent).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
-});
-test('Verify that when user clicks on cross icon when bulk delete is completed, panel is closed, no context is saved', async t => {
-    // Filter by Hash keys
-    await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
+    // Verify that when user clicks on cross icon when bulk delete is completed, panel is closed, no context is saved
     await bulkActionsPage.startBulkDelete();
     await t.click(bulkActionsPage.bulkClosePanelButton);
     await t.click(browserPage.bulkActionsButton);

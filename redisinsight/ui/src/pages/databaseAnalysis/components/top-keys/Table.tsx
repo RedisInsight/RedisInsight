@@ -77,7 +77,6 @@ const Table = (props: Props) => {
       width: '10%',
       align: 'left',
       sortable: true,
-      className: 'dataType',
       render: (type: string) => (
         <div className={styles.badgesContainer}>
           <GroupBadge key={type} type={type} className={styles.badge} />

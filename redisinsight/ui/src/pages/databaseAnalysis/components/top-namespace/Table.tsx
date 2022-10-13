@@ -84,7 +84,7 @@ const NameSpacesTable = (props: Props) => {
                     </EuiButtonEmpty>
                   </EuiToolTip>
                 </div>
-                <div><GroupBadge type={type.type} /></div>
+                <div className={styles.badgesContainer}><GroupBadge type={type.type} /></div>
                 <div className={styles.rightAlign}>
                   <span className={styles.count} data-testid="usedMemory-value">
                     {number}

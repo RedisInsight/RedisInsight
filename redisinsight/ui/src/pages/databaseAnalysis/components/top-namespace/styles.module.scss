@@ -20,7 +20,7 @@
     }
   
     :global(.euiButton__text) {
-      font: normal normal normal 13px/18px Graphik !important;
+      font: normal normal normal 13px/17px Graphik !important;
     }
   
     &.activeBtn:global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary),
@@ -54,7 +54,7 @@
     }
   
     :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
-      font: normal normal normal 13px/18px Graphik;
+      font: normal normal normal 13px/17px Graphik;
       color: var(--buttonSecondaryTextColor) !important;
     }
   
@@ -64,7 +64,7 @@
     }
   
     &.expanded {
-      padding-left: 12px;
+      padding: 0 20px 0 12px;
     }
   
     &.expanded :global(.euiButtonEmpty__content.euiButtonContent  .euiButtonEmpty__text) {
@@ -147,7 +147,7 @@
         }
 
         .euiTableCellContent__text {
-          font: normal normal normal 12px/18px Graphik, sans-serif;
+          font: normal normal normal 12px/17px Graphik, sans-serif;
         }
       }
 
@@ -182,7 +182,7 @@
   }
 
   .valueUnit {
-    font: normal normal normal 12px/18px Graphik, sans-serif !important;
+    font: normal normal normal 12px/17px Graphik, sans-serif !important;
     margin-left: 4px;
     color: var(--euiColorMediumShade) !important;
   }
@@ -197,7 +197,7 @@
 
 .expanded {
   display: grid;
-  grid-template-columns: auto calc(32%) calc(13% + 6px) calc(11% + 22px);
+  grid-template-columns: auto calc(32%) calc(13% + 10px) calc(11% + 22px);
   grid-column-gap: 0;
   height: 42px;
   width: 100%;
@@ -228,7 +228,7 @@
 :global(.euiTableCellContent) .delimiter span {
   cursor: pointer;
   color: var(--buttonSecondaryTextColor);
-  font: normal normal normal 13px/18px Graphik;
+  font: normal normal normal 13px/17px Graphik;
 
   &:hover {
     text-decoration: underline;
@@ -237,7 +237,7 @@
 
 :global(.euiTableCellContent) .count {
   color: var(--euiTextSubduedColor);
-  font: normal normal 500 16px/18px Inconsolata;
+  font: normal normal 500 16px/17px Inconsolata;
 }
 
 .badgesContainer {

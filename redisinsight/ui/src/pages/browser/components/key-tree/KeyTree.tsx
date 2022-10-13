@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState, useTransition } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, useTransition } from 'react'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
@@ -106,12 +106,14 @@ const KeyTree = forwardRef((props: Props, ref) => {
       ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
 
   const updateKeysList = (items:any = {}) => {
-    const newState:KeysStoreData = {
-      ...keyListState,
-      keys: Object.values(items)
-    }
+    startTransition(() => {
+      const newState:KeysStoreData = {
+        ...keyListState,
+        keys: Object.values(items)
+      }
 
-    setKeyListState(newState)
+      setKeyListState(newState)
+    })
   }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {

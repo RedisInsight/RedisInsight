@@ -1,5 +1,5 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';

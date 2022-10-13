@@ -17,7 +17,7 @@
   }
 
   :global(.euiButton__text) {
-    font: normal normal normal 13px/17px Graphik !important;
+    font: normal normal normal 13px/17px Graphik, sans-serif !important;
   }
 
   &.activeBtn:global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary),
@@ -111,7 +111,7 @@
 
     .euiTableRowCell .euiTableCellContent {
       padding: 10px;
-      font: normal normal normal 14px/17px Graphik;
+      font: normal normal normal 14px/17px Graphik, sans-serif;
     }
 
     .euiTableHeaderButton.euiTableHeaderButton-isSorted {
@@ -147,7 +147,7 @@
 :global(.euiTableCellContent) .delimiter span {
   cursor: pointer;
   color: var(--buttonSecondaryTextColor);
-  font: normal normal normal 13px/17px Graphik;
+  font: normal normal normal 13px/17px Graphik, sans-serif;
 
   &:hover {
     text-decoration: underline;
@@ -156,7 +156,7 @@
 
 :global(.euiTableCellContent) .count {
   color: var(--euiTextSubduedColor);
-  font: normal normal 500 16px/17px Inconsolata;
+  font: normal normal 500 16px/17px Inconsolata, sans-serif;
 }
 
 .badgesContainer {
@@ -164,7 +164,7 @@
   flex-wrap: wrap;
 
   :global(.euiBadge) span {
-    font: normal normal normal 12px/16px Graphik;
+    font: normal normal normal 12px/16px Graphik, sans-serif;
     padding-top: 0 !important;
   }
 }
@@ -188,7 +188,7 @@
   }
 
   :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
-    font: normal normal normal 13px/17px Graphik;
+    font: normal normal normal 13px/17px Graphik, sans-serif;
     color: var(--buttonSecondaryTextColor) !important;
   }
 

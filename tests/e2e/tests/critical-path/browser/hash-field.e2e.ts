@@ -32,7 +32,7 @@ test('Verify that user can search by full field name in Hash', async t => {
     // Search by full field name
     await browserPage.searchByTheValueInKeyDetails(keyFieldValue);
     // Check the search result
-    let result = await browserPage.hashFieldsList.nth(0).textContent;
+    let result = (browserPage.hashFieldsList.nth(0)).textContent;
     await t.expect(result).eql(keyFieldValue, 'The hash field not found by full field name');
     // Verify that user can search by part field name in Hash with pattern * in Hash
     await browserPage.searchByTheValueInKeyDetails('hashField*');
@@ -41,11 +41,9 @@ test('Verify that user can search by full field name in Hash', async t => {
     // Search by part field name and the * in the beggining
     await browserPage.searchByTheValueInKeyDetails('*11111');
     // Check the search result
-    result = await browserPage.hashFieldsList.nth(0).textContent;
     await t.expect(result).eql(keyFieldValue, 'The hash field');
     // Search by part field name and the * in the middle
     await browserPage.searchByTheValueInKeyDetails('hash*11111');
     // Check the search result
-    result = await browserPage.hashFieldsList.nth(0).textContent;
     await t.expect(result).eql(keyFieldValue, 'The hash field not found by pattern');
 });

@@ -82,8 +82,8 @@ export class ZSetMemberDto {
   })
   @IsDefined()
   @IsNumber({ maxDecimalPlaces: 15 })
-  @Type(() => Number)
-  score: number;
+  // @Type(() => Number)
+  score: number | string;
 }
 
 export class AddMembersToZSetDto extends KeyDto {

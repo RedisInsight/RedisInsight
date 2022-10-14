@@ -30,7 +30,7 @@ fixture `Consumer group`
     })
     .afterEach(async t => {
         // Clear and delete database
-        if (await browserPage.closeKeyButton.visible, { timeout: 500 }) {
+        if (await browserPage.closeKeyButton.exists, { timeout: 500 }) {
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
@@ -124,7 +124,7 @@ test('Verify that user can see the Consumer information columns (Consumer Name, 
         await t.expect(browserPage.scoreButton.nth(i).textContent).eql(consumerColumns[i], `The ${i} Consumers info column name not correct`);
     }
     // Verify that user can navigate to Consumer Groups screen using the link in the breadcrumbs
-    await t.expect(browserPage.streamTabs.visible).ok('Stream navigation tabs visibility');
+    await t.expect(browserPage.streamTabs.exists).ok('Stream navigation tabs visibility');
     await t.click(browserPage.streamTabGroups);
     await t.expect(browserPage.streamTabGroups.withAttribute('aria-selected', 'true').exists).ok('The Consumer Groups screen is not opened');
 });

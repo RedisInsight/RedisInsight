@@ -136,7 +136,7 @@ export class MyRedisDatabasePage {
      */
     async checkModulesOnPage(moduleList: Selector[]): Promise<void> {
         for (const item of moduleList) {
-            await t.expect(item.visible).ok(`${item} icon`);
+            await t.expect(item.exists).ok(`${item} icon`);
         }
     }
 

@@ -396,7 +396,7 @@ export class BrowserPage {
         await this.commonAddNewKey(keyName, TTL);
         await t.click(this.streamOption);
         // Verify that user can see Entity ID filled by * by default on add Stream key form
-        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field')
+        await t.expect(this.streamEntryId.withAttribute('value', '*').exists).ok('Preselected Stream Entity ID field')
             .typeText(this.streamField, field, { replace: true, paste: true })
             .typeText(this.streamValue, value, { replace: true, paste: true });
         await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
@@ -448,11 +448,11 @@ export class BrowserPage {
      * @param groupName The group name
      */
     async selectFilterGroupType(groupName: string): Promise<void> {
-        if (await this.deleteFilterButton.visible) {
+        if (await this.deleteFilterButton.exists) {
             await t.click(this.deleteFilterButton);
         }
         await t.click(this.filterByKeyTypeDropDown)
-            .click(this.filterOptionType.withExactText(groupName));
+            .click((this.filterOptionType).withExactText(groupName));
     }
 
     /**
@@ -631,6 +631,15 @@ export class BrowserPage {
     async searchByTheValueInKeyDetails(value: string): Promise<void> {
         await t.click(this.searchButtonInKeyDetails)
             .typeText(this.searchInput, value, { replace: true, paste: true })
+            .pressKey('enter');
+    }
+
+    /**
+     * Search by the value in the key details
+     * @param value The value of the search parameter
+     */
+    async secondarySearchByTheValueInKeyDetails(value: string): Promise<void> {
+        await t.typeText(this.searchInput, value, { replace: true, paste: true })
             .pressKey('enter');
     }
 
@@ -842,7 +851,7 @@ export class BrowserPage {
             const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`;
             await t.click(Selector(folderSelector));
             const foundKeyName = `${folders[i].join(delimiter)}`;
-            await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).visible).ok('Specific key');
+            await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).exists).ok('Specific key');
             await t.click(array[0]);
         }
     }

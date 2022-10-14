@@ -37,7 +37,7 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     // Open bulk actions
     await t.click(browserPage.bulkActionsButton);
-    await t.expect(bulkActionsPage.bulkActionsContainer.visible).ok('Bulk actions screen not opened');
+    await t.expect(bulkActionsPage.bulkActionsContainer.exists).ok('Bulk actions screen not opened');
     // Verify that user can see pattern summary of the keys selected: key type, pattern
     await t.expect(bulkActionsPage.infoFilter.innerText).contains('Key type:\nHASH', 'Key type is not correct');
     await t.expect(bulkActionsPage.infoSearch.innerText).contains('Pattern: *', 'Key pattern is not correct');
@@ -51,7 +51,7 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     await t.click(bulkActionsPage.deleteButton);
     await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipTitle, 'Warning Tooltip title is not displayed or text is invalid');
     await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipMessage, 'Warning Tooltip message is not displayed or text is invalid');
-    await t.expect(bulkActionsPage.bulkApplyButton.visible).ok('Confirm deletion button not displayed');
+    await t.expect(bulkActionsPage.bulkApplyButton.exists).ok('Confirm deletion button not displayed');
 
 });
 test('Verify that user can see summary of scanned level', async t => {
@@ -82,8 +82,8 @@ test('Verify that user can see blue progress line during the process of bulk del
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     await browserPage.searchByKeyName('hashKey*');
     await bulkActionsPage.startBulkDelete();
-    await t.expect(bulkActionsPage.progressLine.visible).ok('Blue progress line not displayed', { timeout: 5000 });
-    await t.expect(bulkActionsPage.bulkStatusInProgress.visible).ok('Progress value not displayed', { timeout: 5000 });
+    await t.expect(bulkActionsPage.progressLine.exists).ok('Blue progress line not displayed', { timeout: 5000 });
+    await t.expect(bulkActionsPage.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
 });
 test
     .before(async() => {
@@ -100,7 +100,7 @@ test
         await t.click(myRedisDatabasePage.workbenchButton);
         // Go to Browser Page
         await t.click(myRedisDatabasePage.browserButton);
-        await t.expect(bulkActionsPage.bulkStatusInProgress.visible).ok('Progress value not displayed', { timeout: 5000 });
+        await t.expect(bulkActionsPage.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
     });
 test
     .before(async() => {
@@ -114,7 +114,7 @@ test
         await bulkActionsPage.startBulkDelete();
         await t.click(bulkActionsPage.bulkStopButton);
         const stoppedProgress = parseInt((await bulkActionsPage.bulkStatusStopped.innerText).replace(/[^\d]/g, ''));
-        await t.expect(bulkActionsPage.bulkStatusStopped.visible).ok('Progress value not displayed');
+        await t.expect(bulkActionsPage.bulkStatusStopped.exists).ok('Progress value not displayed');
         // Verify that when user stop bulk deletion, he can see the percentage at which the operation was stopped
         await t.expect(stoppedProgress).gt(1, 'Progress value not displayed');
         await t.expect(stoppedProgress).lt(100, 'Progress value not correct');
@@ -123,10 +123,10 @@ test('Verify that when bulk deletion is completed, status Action completed is di
     // Filter by Hash keys
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     await bulkActionsPage.startBulkDelete();
-    await t.expect(bulkActionsPage.bulkStatusCompleted.visible).ok('Bulk deletion not completed', { timeout: 15000 });
+    await t.expect(bulkActionsPage.bulkStatusCompleted.exists).ok('Bulk deletion not completed', { timeout: 15000 });
     await t.expect(bulkActionsPage.bulkStatusCompleted.textContent).eql('Action completed', 'Action completed text is not visible');
     // Verify that when bulk deletion is completed, button Delete changes to Start New
-    await t.expect(bulkActionsPage.bulkStartAgainButton.visible).ok('"Start New" button not displayed');
+    await t.expect(bulkActionsPage.bulkStartAgainButton.exists).ok('"Start New" button not displayed');
     // Verify that user can click on Start New and existed filter will be applied
     await t.click(bulkActionsPage.bulkStartAgainButton);
     await t.expect(bulkActionsPage.bulkDeleteSummary.innerText).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
@@ -163,13 +163,13 @@ test('Verify that when user clicks on Close button when bulk delete is completed
     await t.click(bulkActionsPage.bulkCancelButton);
     await t.click(browserPage.bulkActionsButton);
     // Verify context not saved
-    await t.expect(bulkActionsPage.bulkDeleteCompletedSummary.visible).notOk('Bulk delete completed summary still displayed');
+    await t.expect(bulkActionsPage.bulkDeleteCompletedSummary.exists).notOk('Bulk delete completed summary still displayed');
     await t.expect(bulkActionsPage.bulkDeleteSummary.textContent).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
     // Verify that when user clicks on cross icon when bulk delete is completed, panel is closed, no context is saved
     await bulkActionsPage.startBulkDelete();
     await t.click(bulkActionsPage.bulkClosePanelButton);
     await t.click(browserPage.bulkActionsButton);
     // Verify context not saved
-    await t.expect(bulkActionsPage.bulkDeleteCompletedSummary.visible).notOk('Bulk delete completed summary still displayed');
+    await t.expect(bulkActionsPage.bulkDeleteCompletedSummary.exists).notOk('Bulk delete completed summary still displayed');
     await t.expect(bulkActionsPage.bulkDeleteSummary.textContent).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
 });

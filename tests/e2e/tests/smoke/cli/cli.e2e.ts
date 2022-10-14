@@ -45,7 +45,7 @@ test('Verify that user can use blocking command', async t => {
     // Open CLI
     await t.click(cliPage.cliExpandButton);
     // Check that CLI is opened
-    await t.expect(cliPage.cliArea.visible).ok('CLI area is not displayed');
+    await t.expect(cliPage.cliArea.exists).ok('CLI area is not displayed');
     // Type blocking command
     await t.typeText(cliPage.cliCommandInput, 'blpop newKey 10000');
     await t.pressKey('enter');
@@ -55,7 +55,7 @@ test('Verify that user can use blocking command', async t => {
     // Collaple CLI
     await t.click(cliPage.cliCollapseButton);
     // Verify that user can collapse CLI
-    await t.expect(cliPage.cliArea.visible).notOk('CLI area should still displayed');
+    await t.expect(cliPage.cliArea.exists).notOk('CLI area should still displayed');
 });
 test
     .meta({ env: env.web })('Verify that user can use unblocking command', async t => {

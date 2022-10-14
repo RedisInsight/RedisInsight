@@ -220,7 +220,7 @@ export async function clearDatabaseInCli(): Promise<void> {
 */
 export async function deleteDatabase(databaseName: string): Promise<void> {
     await t.click(myRedisDatabasePage.myRedisDBButton);
-    if (await addRedisDatabasePage.addDatabaseButton.visible) {
+    if (await addRedisDatabasePage.addDatabaseButton.exists) {
         await myRedisDatabasePage.deleteDatabaseByName(databaseName);
     }
 }
@@ -231,7 +231,7 @@ export async function deleteDatabase(databaseName: string): Promise<void> {
  * @param databaseName The database name
 */
 export async function acceptTermsAddDatabaseOrConnectToRedisStack(databaseParameters: AddNewDatabaseParameters, databaseName: string): Promise<void> {
-    if (await addRedisDatabasePage.addDatabaseButton.visible) {
+    if (await addRedisDatabasePage.addDatabaseButton.exists) {
         await acceptLicenseTermsAndAddDatabase(databaseParameters, databaseName);
     }
     else {

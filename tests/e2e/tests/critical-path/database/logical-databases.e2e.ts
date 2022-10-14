@@ -23,9 +23,9 @@ test('Verify that user can add DB with logical index via host and port from Add 
     await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);
     // Enter logical index
     await t.click(addRedisDatabasePage.databaseIndexCheckbox);
-    await t.typeText(addRedisDatabasePage.databaseIndexInput, index, { paste: true });
+    await t.typeText(addRedisDatabasePage.databaseIndexInput, index, { replace: true, paste: true });
     // Verify that user when users select DB index they can see info message how to work with DB index in add DB screen
-    await t.expect(addRedisDatabasePage.databaseIndexMessage.visible).ok('Index message not displayed')
+    await t.expect(addRedisDatabasePage.databaseIndexMessage.exists).ok('Index message not displayed')
         .expect(addRedisDatabasePage.databaseIndexMessage.innerText).eql(indexDbMessage)
         .expect(addRedisDatabasePage.databaseIndexCheckbox.parent().withExactText('Select Logical Database').exists).ok('Checkbox text not displayed');
     // Click for saving

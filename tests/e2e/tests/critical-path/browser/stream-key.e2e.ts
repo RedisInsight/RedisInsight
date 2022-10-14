@@ -35,7 +35,7 @@ test('Verify that user can create Stream key via Add New Key form', async t => {
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     // Verify that user can see Stream details opened after key creation
-    await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).visible).ok('Stream Key Name not visible');
+    await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('Stream Key Name not visible');
     // Verify that user can see newly added Stream key in key list clicking on keys refresh button
     await t.click(browserPage.refreshKeysButton);
     const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
@@ -51,7 +51,7 @@ test('Verify that user can add several fields and values during Stream key creat
     await browserPage.commonAddNewKey(keyName);
     await t.click(browserPage.streamOption);
     // Verify that user can see Entity ID filled by * by default on add Stream key form
-    await t.expect(browserPage.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field not correct');
+    await t.expect(browserPage.streamEntryId.withAttribute('value', '*').exists).ok('Preselected Stream Entity ID field not correct');
     // Verify that user can specify valid custom value for Entry ID
     await t.typeText(browserPage.streamEntryId, '0-1', {replace: true});
     // Filled fields and value by different data types
@@ -66,7 +66,7 @@ test('Verify that user can add several fields and values during Stream key creat
     }
     await t.expect(browserPage.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
     await t.click(browserPage.addKeyButton);
-    await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).visible).ok('Stream Key Name');
+    await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('Stream Key Name');
 });
 test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
     keyName = common.generateWord(20);

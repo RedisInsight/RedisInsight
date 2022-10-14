@@ -26,12 +26,12 @@ fixture `Tree view verifications`
 test('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
     // Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)
     await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(41, 47, 71)', 'The Browser is not selected by default');
-    await t.expect(browserPage.treeViewArea.visible).notOk('The tree view is displayed', { timeout: 10000 });
+    await t.expect(browserPage.treeViewArea.exists).notOk('The tree view is displayed', { timeout: 10000 });
 
     await t.click(browserPage.treeViewButton);
     await common.reloadPage();
     // Verify that "Tree view" mode enabled state is saved
-    await t.expect(browserPage.treeViewArea.visible).ok('The tree view is not displayed');
+    await t.expect(browserPage.treeViewArea.exists).ok('The tree view is not displayed');
 
     // Verify that user can scan DB by 10K in tree view
     await browserPage.verifyScannningMore();
@@ -48,7 +48,7 @@ test
         const percentage = await browserPage.treeViewPercentage.textContent;
         // Set filter by key name
         await browserPage.searchByKeyName(keyNameFilter);
-        await t.expect(browserPage.treeViewKeysItem.visible).ok('The key not appeared after the filtering', { timeout: 10000 });
+        await t.expect(browserPage.treeViewKeysItem.exists).ok('The key not appeared after the filtering', { timeout: 10000 });
         await t.click(browserPage.treeViewKeysItem);
         // Verify the results
         await t.expect(browserPage.treeViewKeysNumber.textContent).notEql(numberOfKeys, 'The number of keys is not recalculated');
@@ -62,12 +62,12 @@ test('Verify that when user switched from Tree View to Browser and goes back sta
     await t.click(browserPage.browserViewButton);
     await t.click(browserPage.treeViewButton);
     // Verify that state of filer by key name is saved
-    await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is not applied');
+    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is not applied');
     await t.click(browserPage.treeViewButton);
     // Set filter by key type
     await browserPage.selectFilterGroupType(KeyTypesTexts.String);
     await t.click(browserPage.browserViewButton);
     await t.click(browserPage.treeViewButton);
     // Verify that state of filer by key type is saved
-    await t.expect(await browserPage.selectedFilterTypeString.visible).eql(true, 'Filter per key type is not applied');
+    await t.expect(browserPage.selectedFilterTypeString.exists).ok('Filter per key type is not applied');
 });

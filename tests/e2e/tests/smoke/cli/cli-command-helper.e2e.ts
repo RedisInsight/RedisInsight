@@ -34,7 +34,7 @@ test('Verify that user can search per command in Command Helper and see relevant
     // Close Command helper
     await t.click(cliPage.closeCommandHelperButton);
     // Verify that user can close Command helper
-    await t.expect(cliPage.cliHelperText.visible).eql(false, 'Command helper');
+    await t.expect(cliPage.cliHelperText.exists).notOk('Command helper');
 });
 test('Verify that user can select one of the commands from the list of commands described in the Groups table', async t => {
     const commandForCheck = 'SADD';

@@ -61,7 +61,7 @@ test('Verify that user can see saved filter per key type applied when he returns
     await t.click(myRedisDatabasePage.settingsButton);
     // Return back to Browser and check filter applied
     await t.click(myRedisDatabasePage.browserButton);
-    await t.expect(await browserPage.selectedFilterTypeString.visible).eql(true, 'Filter per key type is still applied');
+    await t.expect(browserPage.selectedFilterTypeString.exists).ok('Filter per key type is still applied');
     // Clear filter
     await t.click(browserPage.clearFilterButton);
     // Filter per key name and open Settings
@@ -70,7 +70,7 @@ test('Verify that user can see saved filter per key type applied when he returns
     // Return back to Browser and check filter applied
     await t.click(myRedisDatabasePage.browserButton);
     // Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page
-    await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
+    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
 });
 test('Verify that user can see saved executed commands in CLI on Browser page when he returns back to Browser page', async t => {
     const commands = [

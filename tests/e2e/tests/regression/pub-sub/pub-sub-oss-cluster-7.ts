@@ -32,7 +32,7 @@ test
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })
     .meta({ rte: rte.ossCluster })('Verify that SPUBLISH message is displayed for OSS Cluster 7 database', async t => {
-        await t.expect(pubSubPage.ossClusterEmptyMessage.exists).ok('SPUBLISH message nit displayed');
+        await t.expect(pubSubPage.ossClusterEmptyMessage.exists).ok('SPUBLISH message not displayed');
         // Verify that user can see published messages for OSS Cluster 7
         await t.click(pubSubPage.subscribeButton);
         // Publish different messages

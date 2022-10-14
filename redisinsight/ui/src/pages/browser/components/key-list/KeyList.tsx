@@ -99,6 +99,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
     if (itemsRef.current.length === 0) {
+      rerender({})
       return
     }
 
@@ -168,6 +169,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     const newItems = bufferFormatRows(startIndex, lastIndex)
 
     getMetadata(startIndex, lastIndex, newItems)
+    rerender({})
   }, 100)
 
   const bufferFormatRows = (startIndex: number, lastIndex: number): GetKeyInfoResponse[] => {
@@ -199,7 +201,8 @@ const KeyList = forwardRef((props: Props, ref) => {
           lastIndex,
           loadedItems,
           isFirstEmpty: !isSomeNotUndefined(itemsInit[0]),
-        })
+        }),
+      () => { rerender({}) }
     ))
   }
 

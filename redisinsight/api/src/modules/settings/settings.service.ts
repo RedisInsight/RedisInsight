@@ -81,7 +81,7 @@ export class SettingsService {
         await this.settingsRepository.update(userId, toUpdate);
       }
       if (agreements) {
-        await this.updateAgreements(agreements);
+        await this.updateAgreements(userId, agreements);
       }
       this.logger.log('Succeed to update application settings.');
       const results = await this.getAppSettings(userId);
@@ -140,23 +140,25 @@ export class SettingsService {
   }
 
   private async updateAgreements(
+    userId: string,
     dtoAgreements: Map<string, boolean> = new Map(),
-    userId?: string,
   ): Promise<void> {
     this.logger.log('Updating application agreements.');
-    const model = await this.agreementRepository.getOrCreate(userId);
-    const oldAgreements = cloneDeep(model.data || {});
+    const oldAgreements = await this.agreementRepository.getOrCreate(userId);
 
-    model.version = AGREEMENTS_SPEC.version;
-    model.data = {
-      ...model?.data,
-      ...Object.fromEntries(dtoAgreements),
+    const newAgreements = {
+      ...oldAgreements,
+      version: AGREEMENTS_SPEC.version,
+      data: {
+        ...oldAgreements.data,
+        ...Object.fromEntries(dtoAgreements),
+      },
     };
 
     // Detect which agreements should be defined according to the settings specification
     const diff = difference(
       Object.keys(AGREEMENTS_SPEC.agreements),
-      Object.keys(model.data),
+      Object.keys(newAgreements.data),
     );
     if (diff.length) {
       const messages = diff.map(
@@ -165,12 +167,12 @@ export class SettingsService {
       throw new AgreementIsNotDefinedException(messages);
     }
 
-    await this.agreementRepository.update(userId, model);
+    await this.agreementRepository.update(userId, newAgreements);
 
     if (dtoAgreements.has('analytics')) {
       this.analytics.sendAnalyticsAgreementChange(
         dtoAgreements,
-        new Map(Object.entries(oldAgreements)),
+        new Map(Object.entries(oldAgreements.data || {})),
       );
     }
   }

@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
-import { GetAppSettingsResponse } from 'src/dto/settings.dto';
-import { SettingsAnalyticsService } from './settings-analytics.service';
+import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
+import { GetAppSettingsResponse } from 'src/modules/settings/dto/settings.dto';
 
-describe('SettingsAnalyticsService', () => {
-  let service: SettingsAnalyticsService;
+describe('SettingsAnalytics', () => {
+  let service: SettingsAnalytics;
   let eventEmitter: EventEmitter2;
   let sendEventMethod;
 
@@ -13,14 +13,14 @@ describe('SettingsAnalyticsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventEmitter2,
-        SettingsAnalyticsService,
+        SettingsAnalytics,
       ],
     }).compile();
 
-    service = await module.get<SettingsAnalyticsService>(SettingsAnalyticsService);
+    service = await module.get<SettingsAnalytics>(SettingsAnalytics);
     eventEmitter = await module.get<EventEmitter2>(EventEmitter2);
     eventEmitter.emit = jest.fn();
-    sendEventMethod = jest.spyOn<SettingsAnalyticsService, any>(
+    sendEventMethod = jest.spyOn<SettingsAnalytics, any>(
       service,
       'sendEvent',
     );

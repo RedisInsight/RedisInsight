@@ -17,8 +17,7 @@ export class LocalSettingsRepository extends SettingsRepository {
     let entity = await this.repository.findOneBy({});
 
     if (!entity) {
-      entity = this.repository.create();
-      await this.repository.save(entity);
+      entity = await this.repository.save(this.repository.create());
     }
 
     return classToClass(Settings, entity);

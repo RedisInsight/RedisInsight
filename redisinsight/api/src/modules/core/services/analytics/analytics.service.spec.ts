@@ -1,12 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
-import { mockSettingsProvider } from 'src/__mocks__';
+import {
+  mockAppSettings,
+  mockAppSettingsWithoutPermissions,
+  mockSettingsService,
+  MockType,
+} from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
+import { AppType } from 'src/modules/core/models/server-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import {
   AnalyticsService,
   NON_TRACKING_ANONYMOUS_ID,
 } from './analytics.service';
-import { AppType } from 'src/modules/core/models/server-provider.interface';
 
 let mockAnalyticsTrack;
 jest.mock(
@@ -18,22 +23,10 @@ jest.mock(
 );
 
 const mockAnonymousId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805';
-const mockSettingsWithPermission = {
-  agreements: {
-    version: '1.0.1',
-    analytics: true,
-  },
-};
-const mockSettingsWithoutPermission = {
-  agreements: {
-    version: '1.0.1',
-    analytics: false,
-  },
-};
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
-  let settingsService: ISettingsProvider;
+  let settingsService: MockType<SettingsService>;
   const sessionId = new Date().getTime();
 
   beforeEach(async () => {
@@ -41,13 +34,13 @@ describe('AnalyticsService', () => {
       providers: [
         AnalyticsService,
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
 
-    settingsService = module.get<ISettingsProvider>('SETTINGS_PROVIDER');
+    settingsService = module.get(SettingsService);
     service = module.get<AnalyticsService>(AnalyticsService);
   });
 
@@ -74,9 +67,7 @@ describe('AnalyticsService', () => {
       service.initialize({ anonymousId: mockAnonymousId, sessionId, appType: AppType.Electron });
     });
     it('should send event with anonymousId if permission are granted', async () => {
-      settingsService.getSettings = jest
-        .fn()
-        .mockResolvedValue(mockSettingsWithPermission);
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
 
       await service.sendEvent({
         event: TelemetryEvents.ApplicationStarted,
@@ -94,9 +85,7 @@ describe('AnalyticsService', () => {
       });
     });
     it('should not send event if permission are not granted', async () => {
-      settingsService.getSettings = jest
-        .fn()
-        .mockResolvedValue(mockSettingsWithoutPermission);
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
 
       await service.sendEvent({
         event: 'SOME_EVENT',
@@ -107,9 +96,7 @@ describe('AnalyticsService', () => {
       expect(mockAnalyticsTrack).not.toHaveBeenCalled();
     });
     it('should send event for non tracking events event if permission are not granted', async () => {
-      settingsService.getSettings = jest
-        .fn()
-        .mockResolvedValue(mockSettingsWithoutPermission);
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
 
       await service.sendEvent({
         event: TelemetryEvents.ApplicationStarted,

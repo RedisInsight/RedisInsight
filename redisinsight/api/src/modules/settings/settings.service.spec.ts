@@ -1,29 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { cloneDeep } from 'lodash';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { InternalServerErrorException } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import {
-  mockAgreementsEntity,
-  mockAgreementsJSON, mockEncryptionStrategy,
-  mockSettingsAnalyticsService,
-  mockSettingsEntity,
-  mockSettingsJSON,
-  MockType,
+  mockAgreements,
+  mockAgreementsRepository, mockAppSettings,
+  mockEncryptionStrategy, mockSettings,
+  mockSettingsAnalyticsService, mockSettingsRepository,
+  MockType, mockUserId,
 } from 'src/__mocks__';
-import { GetAppSettingsResponse, UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
+import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import { AgreementIsNotDefinedException } from 'src/constants';
 import config from 'src/utils/config';
-import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
-import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
-import { EncryptionStrategy } from 'src/modules/core/encryption/models';
 import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
 import { SettingsRepository } from 'src/modules/settings/repositories/settings.repository';
-import Mock = jest.Mock;
 import { Agreements } from 'src/modules/settings/models/agreements';
 import { Settings } from 'src/modules/settings/models/settings';
 
@@ -37,51 +29,12 @@ const mockAgreementsMap = new Map(
   ]),
 );
 
-const mockAgreementsRepository = jest.fn(() => ({
-  getOrCreate: jest.fn(),
-  update: jest.fn(),
-}));
-
-const mockSettingsRepository = jest.fn(() => ({
-  getOrCreate: jest.fn(),
-  update: jest.fn(),
-}));
-
-const mockUserId = '1';
-
-const mockSettings = {
-  id: mockUserId,
-  data: {
-    theme: 'DARK',
-    scanThreshold: 500,
-    batchSize: 10,
-  },
-} as Settings;
-
-const mockAgreements = {
-  id: mockUserId,
-  version: '1.0.0',
-  data: {
-    eula: true,
-    analytics: true,
-    encryption: true,
-    notifications: true,
-  },
-} as Agreements;
-
-const mockAppSettings = {
-  ...mockSettings.data,
-  agreements: {
-    version: mockAgreements.version,
-    ...mockAgreements.data,
-  },
-} as GetAppSettingsResponse;
-
 describe('SettingsService', () => {
   let service: SettingsService;
   let agreementsRepository: MockType<AgreementsRepository>;
   let settingsRepository: MockType<SettingsRepository>;
   let analyticsService: SettingsAnalytics;
+  let keytarStrategy: MockType<KeytarEncryptionStrategy>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -109,6 +62,7 @@ describe('SettingsService', () => {
 
     agreementsRepository = await module.get(AgreementsRepository);
     settingsRepository = await module.get(SettingsRepository);
+    keytarStrategy = await module.get(KeytarEncryptionStrategy);
     analyticsService = await module.get<SettingsAnalytics>(SettingsAnalytics);
     service = await module.get(SettingsService);
   });
@@ -146,7 +100,7 @@ describe('SettingsService', () => {
 
       try {
         await service.getAppSettings(mockUserId);
-        fail('Should throw an error');
+        fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
       }
@@ -176,94 +130,114 @@ describe('SettingsService', () => {
       });
       expect(response).toEqual(mockAppSettings);
     });
-    // it('should update agreements and settings', async () => {
-    //   const dto: UpdateSettingsDto = {
-    //     scanThreshold: 1000,
-    //     batchSize: 10,
-    //     agreements: mockAgreementsMap,
-    //   };
-    //   const mockUpdatedAgreements = {
-    //     ...agreementsEntity,
-    //     version: AGREEMENTS_SPEC.version,
-    //     data: JSON.stringify(Object.fromEntries(dto.agreements)),
-    //   };
-    //
-    //   await service.updateSettings(dto);
-    //
-    //   expect(agreementsRepository.save).toHaveBeenCalledWith(
-    //     mockUpdatedAgreements,
-    //   );
-    //   expect(settingsRepository.save).toHaveBeenCalledWith({
-    //     ...settingsEntity,
-    //     data: JSON.stringify({ ...mockSettingsJSON, scanThreshold: 1000, batchSize: 10 }),
-    //   });
-    //   expect(service.getSettings).toHaveBeenCalled();
-    //   expect(analyticsService.sendAnalyticsAgreementChange).toHaveBeenCalled();
-    // });
-    // it('should update only settings', async () => {
-    //   const dto: UpdateSettingsDto = {
-    //     scanThreshold: 1000,
-    //     batchSize: 10,
-    //   };
-    //
-    //   await service.updateSettings(dto);
-    //
-    //   expect(settingsRepository.save).toHaveBeenCalledWith({
-    //     ...settingsEntity,
-    //     data: JSON.stringify({
-    //       ...mockSettingsJSON,
-    //       scanThreshold: 1000,
-    //       batchSize: 10,
-    //     }),
-    //   });
-    //   expect(service.getSettings).toHaveBeenCalled();
-    //   expect(agreementsRepository.save).not.toHaveBeenCalled();
-    //   expect(analyticsService.sendAnalyticsAgreementChange).not.toHaveBeenCalled();
-    // });
-    // it('should update only agreements', async () => {
-    //   const dto: UpdateSettingsDto = {
-    //     agreements: mockAgreementsMap,
-    //   };
-    //   const mockUpdatedAgreements = {
-    //     ...agreementsEntity,
-    //     version: AGREEMENTS_SPEC.version,
-    //     data: JSON.stringify(Object.fromEntries(dto.agreements)),
-    //   };
-    //
-    //   await service.updateSettings(dto);
-    //
-    //   expect(agreementsRepository.save).toHaveBeenCalledWith(
-    //     mockUpdatedAgreements,
-    //   );
-    //   expect(settingsRepository.save).not.toHaveBeenCalled();
-    //   expect(service.getSettings).toHaveBeenCalled();
-    //   expect(analyticsService.sendAnalyticsAgreementChange).toHaveBeenCalled();
-    // });
-    // it('should throw AgreementIsNotDefinedException', async () => {
-    //   agreementsRepository.findOneBy.mockResolvedValueOnce({
-    //     id: 1,
-    //     version: null,
-    //     data: null,
-    //   });
-    //
-    //   try {
-    //     await service.updateSettings({ agreements: new Map([]) });
-    //   } catch (err) {
-    //     expect(err).toBeInstanceOf(AgreementIsNotDefinedException);
-    //   }
-    // });
-    // it('should throw InternalServerError', async () => {
-    //   const dto: UpdateSettingsDto = {
-    //     agreements: mockAgreementsMap,
-    //   };
-    //   agreementsRepository.findOneBy.mockRejectedValue(new Error('some error'));
-    //
-    //   try {
-    //     await service.updateSettings(dto);
-    //     fail('Should throw an error');
-    //   } catch (err) {
-    //     expect(err).toBeInstanceOf(InternalServerErrorException);
-    //   }
-    // });
+    it('should update agreements only', async () => {
+      const dto: UpdateSettingsDto = {
+        agreements: new Map(Object.entries({
+          analytics: false,
+        })),
+      };
+
+      const response = await service.updateAppSettings(mockUserId, dto);
+      expect(settingsRepository.update).not.toHaveBeenCalled();
+      expect(agreementsRepository.update).toHaveBeenCalledWith(mockUserId, {
+        ...mockAgreements,
+        version: AGREEMENTS_SPEC.version,
+        data: {
+          ...mockAgreements.data,
+          analytics: false,
+        },
+      });
+      expect(response).toEqual(mockAppSettings);
+      expect(analyticsService.sendAnalyticsAgreementChange).toHaveBeenCalledWith(new Map(Object.entries({
+        analytics: false,
+      })), new Map(Object.entries({
+        ...mockAgreements.data,
+      })));
+    });
+    it('should update agreements and settings', async () => {
+      settingsRepository.getOrCreate.mockResolvedValueOnce({
+        ...mockSettings,
+        data: null,
+      });
+      settingsRepository.getOrCreate.mockResolvedValueOnce({
+        ...mockSettings,
+        data: null,
+      });
+      agreementsRepository.getOrCreate.mockResolvedValue(mockAgreements);
+
+      const dto: UpdateSettingsDto = {
+        batchSize: 6,
+        agreements: new Map(Object.entries({
+          notifications: false,
+        })),
+      };
+
+      const response = await service.updateAppSettings(mockUserId, dto);
+      expect(settingsRepository.update).toHaveBeenCalledWith(mockUserId, {
+        ...mockSettings,
+        data: {
+          batchSize: 6,
+        },
+
+      });
+      expect(agreementsRepository.update).toHaveBeenCalledWith(mockUserId, {
+        ...mockAgreements,
+        version: AGREEMENTS_SPEC.version,
+        data: {
+          ...mockAgreements.data,
+          notifications: false,
+        },
+      });
+      expect(response).toEqual(mockAppSettings);
+      expect(analyticsService.sendAnalyticsAgreementChange).not.toHaveBeenCalled();
+      expect(analyticsService.sendSettingsUpdatedEvent).toHaveBeenCalledWith(mockAppSettings, {
+        ...mockAppSettings,
+        scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
+        batchSize: WORKBENCH_CONFIG.countBatch,
+        theme: null,
+      });
+    });
+    it('should throw AgreementIsNotDefinedException', async () => {
+      agreementsRepository.getOrCreate.mockResolvedValue({
+        ...mockAgreements,
+        data: null,
+      });
+
+      try {
+        await service.updateAppSettings(mockUserId, { agreements: new Map([]) });
+        fail();
+      } catch (err) {
+        expect(err).toBeInstanceOf(AgreementIsNotDefinedException);
+      }
+    });
+    it('should throw InternalServerError', async () => {
+      agreementsRepository.getOrCreate.mockRejectedValue(new Error('some error'));
+
+      const dto: UpdateSettingsDto = {
+        agreements: mockAgreementsMap,
+      };
+
+      try {
+        await service.updateAppSettings(mockUserId, dto);
+        fail();
+      } catch (err) {
+        expect(err).toBeInstanceOf(InternalServerErrorException);
+      }
+    });
+  });
+
+  describe('getAgreementsSpec', () => {
+    it('should get agreements spec', async () => {
+      keytarStrategy.isAvailable.mockResolvedValue(true);
+
+      const response = await service.getAgreementsSpec();
+      expect(response).toEqual({
+        ...AGREEMENTS_SPEC,
+        agreements: {
+          ...AGREEMENTS_SPEC.agreements,
+          encryption: AGREEMENTS_SPEC.agreements.encryption.options.true,
+        },
+      });
+    });
   });
 });

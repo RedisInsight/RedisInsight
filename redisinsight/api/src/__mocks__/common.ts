@@ -55,9 +55,3 @@ export const mockRepository = jest.fn(() => ({
   remove: jest.fn(),
   createQueryBuilder: mockCreateQueryBuilder,
 }));
-
-export const mockSettingsProvider = () => ({
-  getAppSettings: jest.fn(),
-  updateSettings: jest.fn(),
-  getAgreementsSpec: jest.fn(),
-});

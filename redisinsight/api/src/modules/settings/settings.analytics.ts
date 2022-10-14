@@ -16,7 +16,6 @@ export class SettingsAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  // eslint-disable-next-line class-methods-use-this,max-len
   sendSettingsUpdatedEvent(
     newSettings: GetAppSettingsResponse,
     oldSettings: GetAppSettingsResponse,

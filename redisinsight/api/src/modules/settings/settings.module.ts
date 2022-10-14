@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Type } from '@nestjs/common';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { SettingsController } from 'src/modules/settings/settings.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,31 +11,39 @@ import { LocalSettingsRepository } from 'src/modules/settings/repositories/local
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
 import { LocalAgreementsRepository } from 'src/modules/settings/repositories/local.agreements.repository';
 
-@Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      SettingsEntity,
-      AgreementsEntity,
-    ]),
-  ],
-  controllers: [
-    SettingsController,
-  ],
-  providers: [
-    SettingsService,
-    SettingsAnalytics,
-    KeytarEncryptionStrategy,
-    {
-      provide: SettingsRepository,
-      useClass: LocalSettingsRepository,
-    },
-    {
-      provide: AgreementsRepository,
-      useClass: LocalAgreementsRepository,
-    },
-  ],
-  exports: [
-    SettingsService,
-  ],
-})
-export class SettingsModule {}
+@Module({})
+export class SettingsModule {
+  static register(
+    settingsRepository: Type<SettingsRepository> = LocalSettingsRepository,
+    agreementsRepository: Type<AgreementsRepository> = LocalAgreementsRepository,
+  ) {
+    return {
+      module: SettingsModule,
+      imports: [
+        TypeOrmModule.forFeature([
+          SettingsEntity,
+          AgreementsEntity,
+        ]),
+      ],
+      controllers: [
+        SettingsController,
+      ],
+      providers: [
+        SettingsService,
+        SettingsAnalytics,
+        KeytarEncryptionStrategy,
+        {
+          provide: SettingsRepository,
+          useClass: settingsRepository,
+        },
+        {
+          provide: AgreementsRepository,
+          useClass: agreementsRepository,
+        },
+      ],
+      exports: [
+        SettingsService,
+      ],
+    };
+  }
+}

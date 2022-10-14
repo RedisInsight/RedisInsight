@@ -10,10 +10,10 @@ import {
 import {
   Exclude, Expose, Transform, Type,
 } from 'class-transformer';
-import { IAgreementSpec } from 'src/models';
 import { pickDefinedAgreements } from 'src/dto/dto-transformer';
 import { Default } from 'src/common/decorators';
 import config from 'src/utils/config';
+import { IAgreementSpec } from 'src/modules/settings/models/agreements.interface';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');

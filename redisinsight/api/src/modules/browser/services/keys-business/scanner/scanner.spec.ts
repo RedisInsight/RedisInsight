@@ -7,14 +7,14 @@ import {
 import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
 import { ClusterStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/cluster.strategy';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { mockRedisConsumer, mockSettingsProvider } from 'src/__mocks__';
+import { mockRedisConsumer, mockSettingsService } from 'src/__mocks__';
 import { StandaloneStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/standalone.strategy';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 let scanner;
 let browserToolCluster;
 let browserTool;
-let settingsProvider;
+let settingsService;
 
 class TestScanStrategy implements IScannerStrategy {
   public async getKeys() {
@@ -43,14 +43,14 @@ describe('Scanner Manager', () => {
           useFactory: mockRedisConsumer,
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
 
     scanner = module.get<Scanner>(Scanner);
-    settingsProvider = module.get<ISettingsProvider>('SETTINGS_PROVIDER');
+    settingsService = module.get(SettingsService);
     browserToolCluster = module.get<BrowserToolClusterService>(
       BrowserToolClusterService,
     );
@@ -78,15 +78,15 @@ describe('Scanner Manager', () => {
   it('Should support Standalone and Cluster strategies', () => {
     scanner.addStrategy(
       ConnectionType.CLUSTER,
-      new ClusterStrategy(browserToolCluster, settingsProvider),
+      new ClusterStrategy(browserToolCluster, settingsService),
     );
     scanner.addStrategy(
       ConnectionType.STANDALONE,
-      new StandaloneStrategy(browserTool, settingsProvider),
+      new StandaloneStrategy(browserTool, settingsService),
     );
     scanner.addStrategy(
       ConnectionType.SENTINEL,
-      new StandaloneStrategy(browserTool, settingsProvider),
+      new StandaloneStrategy(browserTool, settingsService),
     );
     expect(scanner.getStrategy(ConnectionType.CLUSTER)).toBeInstanceOf(
       ClusterStrategy,

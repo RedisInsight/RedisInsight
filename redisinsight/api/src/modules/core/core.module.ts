@@ -33,7 +33,7 @@ export class CoreModule {
           CaCertificateEntity,
           ClientCertificateEntity,
         ]),
-        SettingsModule,
+        SettingsModule.register(),
       ],
       providers: [
         serverOnPremiseFactory,

@@ -2,7 +2,7 @@ import { Expose } from 'class-transformer';
 
 export class Agreements {
   @Expose()
-  id: string;
+  id: string | number;
 
   @Expose()
   version: string;

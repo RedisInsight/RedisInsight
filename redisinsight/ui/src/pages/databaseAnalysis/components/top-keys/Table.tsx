@@ -77,7 +77,6 @@ const Table = (props: Props) => {
       width: '10%',
       align: 'left',
       sortable: true,
-      className: 'dataType',
       render: (type: string) => (
         <div className={styles.badgesContainer}>
           <GroupBadge key={type} type={type} className={styles.badge} />
@@ -99,6 +98,7 @@ const Table = (props: Props) => {
         return (
           <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
+              title="Key Name"
               anchorClassName={styles.tooltip}
               position="bottom"
               content={tooltipContent}

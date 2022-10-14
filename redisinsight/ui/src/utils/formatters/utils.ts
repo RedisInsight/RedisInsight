@@ -4,7 +4,7 @@ export const bufferFormatRangeItems = (
   const newItems = []
   if (lastIndex >= startIndex) {
     for (let index = startIndex; index <= lastIndex; index++) {
-      if (!items[index]) return [startIndex, newItems]
+      if (!items[index]) return newItems
       newItems.push(formatItem(items[index]))
     }
   }

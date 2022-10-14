@@ -42,7 +42,7 @@ export class SlowLogPage {
      */
     async changeSlowerThanParameter(slowerThan: number, unit?: Selector): Promise<void> {
         await t.click(this.slowLogConfigureButton);
-        await t.typeText(this.slowLogSlowerThanConfig, slowerThan.toString(), { replace: true });
+        await t.typeText(this.slowLogSlowerThanConfig, slowerThan.toString(), { replace: true, paste: true });
         if (unit !== undefined) {
             await t.click(this.slowLogConfigureUnitButton);
             await t.click(unit);
@@ -56,7 +56,7 @@ export class SlowLogPage {
      */
     async changeMaxLengthParameter(maxLength: number): Promise<void> {
         await t.click(this.slowLogConfigureButton);
-        await t.typeText(this.slowLogMaxLengthConfig, maxLength.toString(), { replace: true });
+        await t.typeText(this.slowLogMaxLengthConfig, maxLength.toString(), { replace: true, paste: true });
         await t.click(this.slowLogSaveConfigureButton);
     }
 

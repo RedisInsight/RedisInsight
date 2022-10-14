@@ -144,7 +144,7 @@ export class MyRedisDatabasePage {
      * Get all databases from List of DBs page
      */
     async getAllDatabases(): Promise<string[]> {
-        const databases = [];
+        const databases: string[] = [];
         const n = await this.dbNameList.count;
         for(let k = 0; k < n; k++) {
             const name = await this.dbNameList.nth(k).textContent;

@@ -47,7 +47,6 @@ export class NotificationPage {
     async convertEpochDateToMessageDate(notification: NotificationParameters): Promise<string> {
         const epochTimeConversion = new Date(notification.timestamp * 1000).toDateString();
         const converted = epochTimeConversion.split(' ');
-        console.log(`convertEpochDateToMessageDate: ${[converted[2], converted[1], converted[3]].join(' ')}`);
         return [converted[2], converted[1], converted[3]].join(' ');
     }
 

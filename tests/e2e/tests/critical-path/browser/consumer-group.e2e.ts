@@ -30,7 +30,7 @@ fixture `Consumer group`
     })
     .afterEach(async t => {
         // Clear and delete database
-        if (await browserPage.closeKeyButton.visible) {
+        if (await browserPage.closeKeyButton.visible, { timeout: 500 }) {
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
@@ -59,7 +59,7 @@ test('Verify that user can create a new Consumer Group in the current Stream', a
     await t.click(browserPage.addKeyValueItemsButton);
     await t.hover(browserPage.entryIdInfoIcon);
     for (const text of toolTip) {
-        await t.expect(await browserPage.tooltip.innerText).contains(text, 'The toolTip message not displayed');
+        await t.expect(browserPage.tooltip.innerText).contains(text, 'The toolTip message not displayed');
     }
 });
 test('Verify that user can input the 0, $ and Valid Entry ID in the ID field', async t => {

@@ -32,7 +32,7 @@ export class SettingsPage {
     async changeKeysToScanValue(value: string): Promise<void> {
         await t.hover(this.keysToScanValue);
         await t.click(this.keysToScanInput);
-        await t.typeText(this.keysToScanInput, value, { replace: true });
+        await t.typeText(this.keysToScanInput, value, { replace: true, paste: true });
         await t.click(this.applyButton);
     }
 
@@ -43,7 +43,7 @@ export class SettingsPage {
     async changeCommandsInPipeline(value: string): Promise<void> {
         await t.hover(this.commandsInPipelineValue);
         await t.click(this.commandsInPipelineInput);
-        await t.typeText(this.commandsInPipelineInput, value, { replace: true });
+        await t.typeText(this.commandsInPipelineInput, value, { replace: true, paste: true });
         await t.click(this.applyButton);
     }
 

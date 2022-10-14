@@ -75,7 +75,7 @@ export class CliPage {
         await t.click(this.cliExpandButton);
         //Add keys
         const keyValueArray = await common.createArrayWithKeyValueAndKeyname(amount, keyName);
-        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
+        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
     }
@@ -87,7 +87,7 @@ export class CliPage {
     async sendCommandInCli(command: string): Promise<void> {
         //Open CLI
         await t.click(this.cliExpandButton);
-        await t.typeText(this.cliCommandInput, command, { paste: true });
+        await t.typeText(this.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
     }
@@ -100,7 +100,7 @@ export class CliPage {
         //Open CLI
         await t.click(this.cliExpandButton);
         //Add keys
-        await t.typeText(this.cliCommandInput, command, { paste: true });
+        await t.typeText(this.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
         const commandResult = await this.cliOutputResponseSuccess.innerText;
         await t.click(this.cliCollapseButton);

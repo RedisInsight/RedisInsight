@@ -14,17 +14,17 @@ import {
 import { ClientCertificateEntity } from 'src/modules/core/models/client-certificate.entity';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { KeytarEncryptionErrorException } from 'src/modules/core/encryption/exceptions';
-import { ClientCertBusinessService } from './client-cert-business.service';
+import { ClientCertificateService } from './client-certificate.service';
 
 describe('ClientCertBusinessService', () => {
-  let service: ClientCertBusinessService;
+  let service: ClientCertificateService;
   let repository: MockType<Repository<ClientCertificateEntity>>;
   let encryptionService: MockType<EncryptionService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ClientCertBusinessService,
+        ClientCertificateService,
         {
           provide: EncryptionService,
           useFactory: mockEncryptionService,
@@ -36,8 +36,8 @@ describe('ClientCertBusinessService', () => {
       ],
     }).compile();
 
-    service = await module.get<ClientCertBusinessService>(
-      ClientCertBusinessService,
+    service = await module.get<ClientCertificateService>(
+      ClientCertificateService,
     );
     encryptionService = module.get(EncryptionService);
     repository = await module.get(getRepositoryToken(ClientCertificateEntity));

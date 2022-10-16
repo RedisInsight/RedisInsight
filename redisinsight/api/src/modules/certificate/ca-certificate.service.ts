@@ -1,0 +1,74 @@
+import {
+  BadRequestException, HttpException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import {
+  EncryptionServiceErrorException,
+} from 'src/modules/core/encryption/exceptions';
+import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
+import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
+import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
+import { classToClass } from 'src/utils';
+
+@Injectable()
+export class CaCertificateService {
+  private logger = new Logger('CaCertificateService');
+
+  constructor(
+    private readonly repository: CaCertificateRepository,
+  ) {}
+
+  async get(id: string): Promise<CaCertificate> {
+    this.logger.log(`Getting CA certificate with id: ${id}.`);
+    const model = await this.repository.get(id);
+
+    if (!model) {
+      this.logger.error(`Unable to find CA certificate with id: ${id}`);
+      throw new BadRequestException(ERROR_MESSAGES.INVALID_CERTIFICATE_ID); // todo: why BadRequest?
+    }
+
+    return model;
+  }
+
+  async list(): Promise<CaCertificate[]> {
+    this.logger.log('Getting CA certificate list.');
+
+    return this.repository.list();
+  }
+
+  async create(dto: CreateCaCertificateDto): Promise<CaCertificate> {
+    this.logger.log('Creating certificate.');
+    try {
+      return this.repository.create(classToClass(CaCertificate, dto));
+    } catch (error) {
+      this.logger.error('Failed to create certificate.', error);
+
+      // todo: move this logic to the global exception filter
+      if (error instanceof EncryptionServiceErrorException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async delete(id: string): Promise<void> {
+    this.logger.log(`Deleting certificate. id: ${id}`);
+
+    try {
+      await this.repository.delete(id);
+    } catch (error) {
+      this.logger.error(`Failed to delete certificate ${id}`, error);
+
+      // todo: move this logic to the global exception filter
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+}

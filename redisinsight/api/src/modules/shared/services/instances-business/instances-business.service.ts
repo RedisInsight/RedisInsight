@@ -22,12 +22,6 @@ import {
 import { AppTool, RedisClusterNodeLinkState } from 'src/models';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import {
-  CaCertBusinessService,
-} from 'src/modules/core/services/certificates/ca-cert-business/ca-cert-business.service';
-import {
-  ClientCertBusinessService,
-} from 'src/modules/core/services/certificates/client-cert-business/client-cert-business.service';
-import {
   ConnectionType,
   DatabaseInstanceEntity,
   HostingProvider,
@@ -61,6 +55,8 @@ import { InstancesAnalyticsService } from 'src/modules/shared/services/instances
 import { OverviewService } from 'src/modules/shared/services/instances-business/overview.service';
 import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
+import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
+import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
 import { convertEntityToDto } from '../../utils/database-entity-converter';
 import { RedisEnterpriseBusinessService } from '../redis-enterprise-business/redis-enterprise-business.service';
 import { RedisCloudBusinessService } from '../redis-cloud-business/redis-cloud-business.service';
@@ -76,8 +72,8 @@ export class InstancesBusinessService {
     private instanceRepository: Repository<DatabaseInstanceEntity>,
     private databasesProvider: DatabasesProvider,
     private redisService: RedisService,
-    private caCertBusinessService: CaCertBusinessService,
-    private clientCertBusinessService: ClientCertBusinessService,
+    private caCertificateService: CaCertificateService,
+    private clientCertificateService: ClientCertificateService,
     private redisEnterpriseService: RedisEnterpriseBusinessService,
     private redisCloudService: RedisCloudBusinessService,
     private redisSentinelService: RedisSentinelBusinessService,
@@ -581,22 +577,16 @@ export class InstancesBusinessService {
     if (storeCert && database.tls) {
       database.verifyServerCert = tls.verifyServerCert;
       if (tls.newCaCert) {
-        database.caCert = await this.caCertBusinessService.create(
-          tls.newCaCert,
-        );
+        await this.caCertificateService.create(tls.newCaCert);
+        // database.caCert = await this.caCertificateService.create(tls.newCaCert);
       } else if (tls.caCertId) {
-        database.caCert = await this.caCertBusinessService.getOneById(
-          tls.caCertId,
-        );
+        // database.caCert = await this.caCertificateService.get(tls.caCertId);
       }
       if (tls.newClientCertPair) {
-        database.clientCert = await this.clientCertBusinessService.create(
-          tls.newClientCertPair,
-        );
+        await this.clientCertificateService.create(tls.newClientCertPair);
+        // database.clientCert = await this.clientCertificateService.create(tls.newClientCertPair);
       } else if (tls.clientCertPairId) {
-        database.clientCert = await this.clientCertBusinessService.getOneById(
-          tls.clientCertPairId,
-        );
+        // database.clientCert = await this.clientCertificateService.get(tls.clientCertPairId);
       }
     } else {
       database.verifyServerCert = false;

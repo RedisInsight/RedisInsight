@@ -19,10 +19,11 @@ export class UserAgreementPage {
     //Accept RedisInsight License Terms
     async acceptLicenseTerms(): Promise<void> {
         if (await this.switchOptionEula.exists) {
-            await t.click(this.recommendedSwitcher);
-            await t.click(this.switchOptionEula);
-            await t.click(this.submitButton);
-            await t.expect(this.userAgreementsPopup.exists).notOk('The user agreements popup is not shown', { timeout: 2000 });
+            await t
+                .click(this.recommendedSwitcher)
+                .click(this.switchOptionEula)
+                .click(this.submitButton)
+                .expect(this.userAgreementsPopup.exists).notOk('The user agreements popup is not shown', { timeout: 2000 });
         }
     }
 

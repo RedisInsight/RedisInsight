@@ -30,10 +30,11 @@ export class SettingsPage {
      * @param value Value for scan
      */
     async changeKeysToScanValue(value: string): Promise<void> {
-        await t.hover(this.keysToScanValue);
-        await t.click(this.keysToScanInput);
-        await t.typeText(this.keysToScanInput, value, { replace: true, paste: true });
-        await t.click(this.applyButton);
+        await t
+            .hover(this.keysToScanValue)
+            .click(this.keysToScanInput)
+            .typeText(this.keysToScanInput, value, { replace: true, paste: true })
+            .click(this.applyButton);
     }
 
     /**
@@ -41,10 +42,10 @@ export class SettingsPage {
     * @param value Value for pipeline
     */
     async changeCommandsInPipeline(value: string): Promise<void> {
-        await t.hover(this.commandsInPipelineValue);
-        await t.click(this.commandsInPipelineInput);
-        await t.typeText(this.commandsInPipelineInput, value, { replace: true, paste: true });
-        await t.click(this.applyButton);
+        await t.hover(this.commandsInPipelineValue)
+            .click(this.commandsInPipelineInput)
+            .typeText(this.commandsInPipelineInput, value, { replace: true, paste: true })
+            .click(this.applyButton);
     }
 
     /**

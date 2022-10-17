@@ -12,5 +12,5 @@ export class HelpCenterPage {
     helpCenterShortcutButton = Selector('[data-testid=shortcuts-btn]');
     helpCenterReleaseNotesButton = Selector('[data-testid=release-notes-btn]');
     //PANELS
-    helpCenterPanel = Selector('[data-testid=help-center]')
+    helpCenterPanel = Selector('[data-testid=help-center]');
 }

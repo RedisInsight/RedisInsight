@@ -54,8 +54,9 @@ export class NotificationPage {
      * Turn on notifications in Settings
      */
     async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
-        await t.click(myRedisDatabasePage.settingsButton);
-        await t.click(settingsPage.accordionAppearance);
+        await t
+            .click(myRedisDatabasePage.settingsButton)
+            .click(settingsPage.accordionAppearance);
         if (toValue === true) {
             if (await settingsPage.getNotificationsSwitcherValue() === 'false') {
                 await t.click(settingsPage.switchNotificationsOption);

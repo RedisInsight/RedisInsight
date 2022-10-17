@@ -65,8 +65,9 @@ export class MyRedisDatabasePage {
             await t.click(this.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
-        await t.click(db);
+        await t
+            .expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000})
+            .click(db);
     }
 
     //Delete all the databases from the list
@@ -75,13 +76,15 @@ export class MyRedisDatabasePage {
         const dbNames = this.tableRowContent;
         const count = await dbNames.count;
         if (count > 1) {
-            await t.click(this.selectAllCheckbox);
-            await t.click(this.deleteButtonInPopover);
-            await t.click(this.confirmDeleteAllDbButton);
+            await t
+                .click(this.selectAllCheckbox)
+                .click(this.deleteButtonInPopover)
+                .click(this.confirmDeleteAllDbButton);
         }
         else if (count === 1) {
-            await t.click(this.deleteDatabaseButton);
-            await t.click(this.confirmDeleteButton);
+            await t
+                .click(this.deleteDatabaseButton)
+                .click(this.confirmDeleteButton);
         }
         if (await this.toastCloseButton.exists) {
             await t.click(this.toastCloseButton);
@@ -98,8 +101,9 @@ export class MyRedisDatabasePage {
 
         for (let i = 0; i < count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
-                await t.click(this.deleteDatabaseButton.nth(i));
-                await t.click(this.confirmDeleteButton);
+                await t
+                    .click(this.deleteDatabaseButton.nth(i))
+                    .click(this.confirmDeleteButton);
                 break;
             }
         }
@@ -146,6 +150,7 @@ export class MyRedisDatabasePage {
     async getAllDatabases(): Promise<string[]> {
         const databases: string[] = [];
         const n = await this.dbNameList.count;
+
         for(let k = 0; k < n; k++) {
             const name = await this.dbNameList.nth(k).textContent;
             databases.push(name);

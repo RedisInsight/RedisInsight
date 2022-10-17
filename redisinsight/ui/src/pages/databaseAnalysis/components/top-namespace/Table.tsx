@@ -71,6 +71,7 @@ const NameSpacesTable = (props: Props) => {
               <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
                 <div className="truncateText">
                   <EuiToolTip
+                    title="Key Pattern"
                     anchorClassName={styles.tooltip}
                     position="bottom"
                     content={`${item.nsp}:*`}
@@ -83,7 +84,7 @@ const NameSpacesTable = (props: Props) => {
                     </EuiButtonEmpty>
                   </EuiToolTip>
                 </div>
-                <div><GroupBadge type={type.type} /></div>
+                <div className={styles.badgesContainer}><GroupBadge type={type.type} /></div>
                 <div className={styles.rightAlign}>
                   <span className={styles.count} data-testid="usedMemory-value">
                     {number}
@@ -123,6 +124,7 @@ const NameSpacesTable = (props: Props) => {
         return (
           <div className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
+              title="Key Pattern"
               anchorClassName={styles.tooltip}
               position="bottom"
               content={tooltipContent}

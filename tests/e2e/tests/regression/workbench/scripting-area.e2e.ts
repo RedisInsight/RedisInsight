@@ -1,165 +1,144 @@
-import { Chance } from 'chance';
 import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, CliPage, SettingsPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const chance = new Chance();
 const cliPage = new CliPage();
 const settingsPage = new SettingsPage();
+const common = new Common();
 
-const indexName = chance.word({ length: 5 });
-let keyName = chance.word({ length: 10 });
+const indexName = common.generateWord(5);
+let keyName = common.generateWord(5);
 
 fixture `Scripting area at Workbench`
-    .meta({ type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        //Go to Workbench page
+        // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .afterEach(async () => {
-        //Clear and delete database
+    .afterEach(async() => {
+        // Clear and delete database
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
-        const commandsForSend = [
-            'info',
-            `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-            'HMSET product:1 price 20',
-            'FT._LIST'
-        ]
-        //Go to Settings page
-        await t.click(myRedisDatabasePage.settingsButton);
-        //Specify Commands in pipeline
-        await t.click(settingsPage.accordionWorkbenchSettings);
-        await settingsPage.changeCommandsInPipeline('1');
-        //Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
-        //Send commands in multiple lines
-        await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
-        //Check the result
-        for (let i = 1; i < commandsForSend.length + 1; i++) {
-            const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
-            await t.expect(resultCommand).eql(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in the result`);
-        }
     });
+test('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
+    const commandsForSend = [
+        'info',
+        `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
+        'HMSET product:1 price 20',
+        'FT._LIST'
+    ];
+
+    // Go to Settings page
+    await t.click(myRedisDatabasePage.settingsButton);
+    // Specify Commands in pipeline
+    await t.click(settingsPage.accordionWorkbenchSettings);
+    await settingsPage.changeCommandsInPipeline('1');
+    // Go to Workbench page
+    await t.click(myRedisDatabasePage.workbenchButton);
+    // Send commands in multiple lines
+    await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
+    // Check the result
+    for (let i = 1; i < commandsForSend.length + 1; i++) {
+        const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
+        await t.expect(resultCommand).eql(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in not the result`);
+    }
+});
 test
-    .meta({ rte: rte.standalone })
-    .after(async () => {
-        //Clear and delete database
+    .after(async() => {
+        // Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
-        keyName = chance.word({ length: 10 });
+    })('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
+        keyName = common.generateWord(10);
         const commandsForSend = [
             `HMSET ${keyName} price 20`,
             'FT._LIST'
         ];
-        //Go to Settings page
+
+        // Go to Settings page
         await t.click(myRedisDatabasePage.settingsButton);
-        //Specify Commands in pipeline
+        // Specify Commands in pipeline
         await t.click(settingsPage.accordionWorkbenchSettings);
         await settingsPage.changeCommandsInPipeline('1');
-        //Go to Workbench page
+        // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
-        //Send commands in multiple lines with double slashes (//) wrapped in double quotes
+        // Send commands in multiple lines with double slashes (//) wrapped in double quotes
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n"//"'), 0.5);
-        //Check that all commands are executed
+        // Check that all commands are executed
         for (let i = 1; i < commandsForSend.length + 1; i++) {
             const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
-            await t.expect(resultCommand).contains(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in the result`);
+            await t.expect(resultCommand).contains(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is not in the result`);
         }
     });
 test
-    .meta({ rte: rte.standalone })
-    .after(async () => {
-        //Clear and delete database
+    .after(async() => {
+        // Clear and delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
-        //Open Working with Hashes page
+    })('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
+        // Open Working with Hashes page
         await t.click(workbenchPage.documentButtonInQuickGuides);
-        await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is visible', { timeout: 5000 });
+        await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is not visible', { timeout: 5000 });
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
-        //Put Create Hash commands into Editing area
+        // Put Create Hash commands into Editing area
         await t.click(workbenchPage.preselectHashCreate);
-        //Maximize Scripting area to see all the commands
+        // Maximize Scripting area to see all the commands
         await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, 300, { speed: 0.4 });
         //Get number of commands in scripting area
         const numberOfCommands = Selector('span').withExactText('HSET').count;
         //Compare number of indicator displayed and expected value
-        await t.expect(workbenchPage.monacoCommandIndicator.count).eql(await numberOfCommands, 'Number of command indicator');
+        await t.expect(workbenchPage.monacoCommandIndicator.count).eql(await numberOfCommands, 'Number of command indicator is incorrect');
     });
 test
-    .meta({ rte: rte.standalone })
-    .after(async () => {
-        //Clear and delete database
+    .after(async() => {
+        // Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
-        keyName = chance.word({ length: 10 });
+    })('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
+        keyName = common.generateWord(10);
         const command = `HSET ${keyName} field value`;
-        //Put a command in Editing Area
+
+        // Put a command in Editing Area
         await t.typeText(workbenchPage.queryInput, command);
-        //Right click to get context menu
+        // Right click to get context menu
         await t.rightClick(workbenchPage.queryInput);
-        //Select Command Palette option
+        // Select Command Palette option
         await t.click(workbenchPage.monacoContextMenu.find(workbenchPage.cssMonacoCommandPaletteLine));
-        //Print "Run Commands" shortcut
+        // Print "Run Commands" shortcut
         await t.typeText(workbenchPage.monacoShortcutInput, 'Run Commands');
-        //Select "Run Commands" from menu
+        // Select "Run Commands" from menu
         await t.click(workbenchPage.monacoSuggestionOption);
-        //Check the result with sent command
-        await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command');
+        // Check the result with sent command
+        await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command is not displayed');
     });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
-        const command = 'FT._LIST';
-        const repeats = 5;
-        //Rum command in Workbench with repeats
-        await workbenchPage.sendCommandInWorkbench(`${repeats} ${command}`);
-        //Verify result
-        for (let i = 0; i < repeats; i++) {
-            await t.expect(workbenchPage.queryCardContainer.nth(i).textContent).contains(command, 'Workbench contains separate results');
-        }
-    });
-test
-    .meta({ rte: rte.standalone })
-    .after(async () => {
-        //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can not run "Select" command in Workbench', async t => {
-        const command = 'select 13';
-        const result = '"select is not supported by the Workbench.';
-        //Run Select command in Workbench
-        await workbenchPage.sendCommandInWorkbench(command);
-        //Check the command result
-        await t.expect(workbenchPage.commandExecutionResultFailed.textContent).contains(result, 'The select command unsupported message');
-    });
-test
-    .meta({ rte: rte.standalone })
-    .after(async () => {
-        //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can use Ctrl + Enter to run the query in Workbench', async t => {
-        const command = 'FT._LIST';
-        //Type command and use Ctrl + Enter
-        await t.typeText(workbenchPage.queryInput, command, { replace: true });
-        await t.pressKey('ctrl+enter');
-        //Check that command is in results
-        await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The user can use Ctrl + Enter to run the query');
-    });
+test('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
+    const command = 'FT._LIST';
+    const command2 = 'select 13';
+    const repeats = 5;
+    const result = '"select is not supported by the Workbench.';
+
+    // Run command in Workbench with repeats
+    await workbenchPage.sendCommandInWorkbench(`${repeats} ${command}`);
+    // Verify result
+    for (let i = 0; i < repeats; i++) {
+        await t.expect(workbenchPage.queryCardContainer.nth(i).textContent).contains(command, 'Workbench not contains separate results');
+    }
+
+    // Run Select command in Workbench
+    await workbenchPage.sendCommandInWorkbench(command2);
+    // Verify that user can not run "Select" command in Workbench
+    await t.expect(workbenchPage.commandExecutionResultFailed.textContent).contains(result, 'The select command unsupported message is incorrect');
+
+    // Type command and use Ctrl + Enter
+    await t.typeText(workbenchPage.queryInput, command, { replace: true });
+    await t.pressKey('ctrl+enter');
+    // Verify that user can use Ctrl + Enter to run the query in Workbench
+    await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The user can not use Ctrl + Enter to run the query');
+});

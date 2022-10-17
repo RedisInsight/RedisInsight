@@ -91,6 +91,7 @@ export class BrowserPage {
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
+    cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');

@@ -12,6 +12,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { isNumber } from 'lodash';
 import { SortOrder } from 'src/constants';
 import {
   DeleteMembersFromSetDto,
@@ -65,6 +66,24 @@ export class GetZSetMembersDto extends KeyDto {
   sortOrder: SortOrder;
 }
 
+export class ScoreNumberValidation {
+  @ApiProperty({
+    description: 'Infinity score values',
+    type: String,
+  })
+  @IsString()
+  score: string;
+}
+
+export class ScoreStringValidation {
+  @ApiProperty({
+    description: 'Common score value',
+    type: Number,
+  })
+  @IsNumber({ maxDecimalPlaces: 15 })
+  score: number;
+}
+
 export class ZSetMemberDto {
   @ApiProperty({
     type: String,
@@ -77,12 +96,11 @@ export class ZSetMemberDto {
 
   @ApiProperty({
     description: 'Member score value.',
-    type: Number,
+    type: Number || String,
     default: 1,
   })
   @IsDefined()
-  @IsNumber({ maxDecimalPlaces: 15 })
-  // @Type(() => Number)
+  @Type((val) => isNumber(val) ? ScoreNumberValidation : ScoreStringValidation)
   score: number | string;
 }
 

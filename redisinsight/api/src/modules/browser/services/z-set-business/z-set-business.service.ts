@@ -277,8 +277,10 @@ export class ZSetBusinessService {
           BrowserToolZSetCommands.ZScore,
           [keyName, member],
         );
+        const formattedScore = isNaN(parseFloat(score)) ? String(score) : parseFloat(score);
+
         if (!isNull(score)) {
-          result.members.push(plainToClass(ZSetMemberDto, { name: member, score }));
+          result.members.push(plainToClass(ZSetMemberDto, { name: member, score: formattedScore }));
         }
       } else {
         const scanResult = await this.scanZSet(clientOptions, dto);
@@ -405,7 +407,7 @@ export class ZSetBusinessService {
     const result: ZSetMemberDto[] = [];
     while (reply.length) {
       const member = reply.splice(0, 2);
-      const score = isNaN(parseFloat(member[1])) ? member[1] : parseFloat(member[1]);
+      const score = isNaN(parseFloat(member[1])) ? String(member[1]) : parseFloat(member[1]);
       result.push(plainToClass(ZSetMemberDto, {
         name: member[0],
         score,

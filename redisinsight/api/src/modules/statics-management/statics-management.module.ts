@@ -34,6 +34,13 @@ const CONTENT_CONFIG = config.get('content');
         fallthrough: false,
       },
     }),
+    ServeStaticModule.forRoot({
+      serveRoot: SERVER_CONFIG.defaultPluginsUri,
+      rootPath: join(PATH_CONFIG.defaultPlugins),
+      serveStaticOptions: {
+        fallthrough: false,
+      },
+    }),
   ],
   providers: [
     {

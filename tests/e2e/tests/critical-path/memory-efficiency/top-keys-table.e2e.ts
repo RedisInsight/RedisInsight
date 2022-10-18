@@ -3,9 +3,9 @@ import { Selector } from 'testcafe';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { populateDBWithHashes } from '../../../helpers/keys';
+import { deleteAllKeysFromDB, populateDBWithHashes } from '../../../helpers/keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -27,15 +27,16 @@ fixture `Memory Efficiency Top Keys Table`
     .page(commonUrl);
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Create keys
-        await populateDBWithHashes(ossStandaloneConfig.host, ossStandaloneConfig.port, keyToAddParameters);
+        await populateDBWithHashes(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.analysisPageButton);
     })
     .after(async() => {
         await cliPage.sendCommandInCli('flushdb');
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Top Keys displaying in Summary of big keys', async t => {
         // Verify that user can see “-” as length for all unsupported data types
         await cliPage.sendCommandInCli(mbloomCommand);

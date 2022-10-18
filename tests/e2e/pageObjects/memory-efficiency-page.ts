@@ -25,7 +25,8 @@ export class MemoryEfficiencyPage {
     topKeysTitle = Selector('[data-testid=top-keys-title]');
     topKeysKeyName = Selector('[data-testid=top-keys-table-name]');
     // TABLE
-    tableRows = Selector('tr[class*=euiTableRow]');
+    namespaceTable = Selector('[data-testid=nsp-table-memory]');
+    nameSpaceTableRows = this.namespaceTable.find('[data-testid^=row-]');
     expandedRow = Selector('#row_test_expansion');
     tableKeyPatternHeader = Selector('[data-test-subj*=tableHeaderCell_nsp]');
     tableMemoryHeader = Selector('[data-test-subj*=tableHeaderCell_memory]');

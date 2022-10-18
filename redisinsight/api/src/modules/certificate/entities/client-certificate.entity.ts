@@ -1,7 +1,7 @@
 import {
   Column, Entity, OneToMany, PrimaryGeneratedColumn,
 } from 'typeorm';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('client_certificate')
 export class ClientCertificateEntity {
@@ -20,8 +20,8 @@ export class ClientCertificateEntity {
   @Column({ nullable: true })
   key: string;
 
-  @OneToMany(() => DatabaseInstanceEntity, (database) => database.clientCert)
-  public databases: DatabaseInstanceEntity[];
+  @OneToMany(() => DatabaseEntity, (database) => database.clientCert)
+  public databases: DatabaseEntity[];
 
   constructor(partial: Partial<ClientCertificateEntity>) {
     Object.assign(this, partial);

@@ -1,7 +1,7 @@
 import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
 } from 'typeorm';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { Transform } from 'class-transformer';
 
@@ -14,14 +14,14 @@ export class CommandExecutionEntity {
   databaseId: string;
 
   @ManyToOne(
-    () => DatabaseInstanceEntity,
+    () => DatabaseEntity,
     {
       nullable: false,
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'databaseId' })
-  database: DatabaseInstanceEntity;
+  database: DatabaseEntity;
 
   @Column({ nullable: false, type: 'text' })
   command: string;

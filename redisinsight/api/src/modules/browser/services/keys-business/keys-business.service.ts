@@ -20,16 +20,16 @@ import {
 } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
+import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
 import { RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { DatabaseService } from 'src/modules/database/database.service';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
@@ -57,7 +57,7 @@ export class KeysBusinessService {
   private keyInfoManager;
 
   constructor(
-    private instancesBusinessService: InstancesBusinessService,
+    private readonly databaseService: DatabaseService,
     private browserTool: BrowserToolService,
     private browserToolCluster: BrowserToolClusterService,
     private settingsService: SettingsService,
@@ -123,7 +123,7 @@ export class KeysBusinessService {
     try {
       this.logger.log('Getting keys with details.');
       // todo: refactor. no need entire entity here
-      const databaseInstance = await this.instancesBusinessService.getOneById(
+      const databaseInstance = await this.databaseService.get(
         clientOptions.instanceId,
       );
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);

@@ -13,6 +13,7 @@ import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { getRedisPipelineSummary } from 'src/utils/cli-helper';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 export interface IExecCommandFromClusterNode {
   host: string;
@@ -26,9 +27,9 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
 
   constructor(
     protected redisService: RedisService,
-    protected instancesBusinessService: InstancesBusinessService,
+    protected databaseService: DatabaseService,
   ) {
-    super(AppTool.Browser, redisService, instancesBusinessService);
+    super(AppTool.Browser, redisService, databaseService);
   }
 
   async execCommand(

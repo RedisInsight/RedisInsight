@@ -15,7 +15,7 @@ import {
 import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
 
 @Injectable()
-export class OverviewService {
+export class DatabaseOverviewProvider {
   private previousCpuStats = new Map();
 
   /**

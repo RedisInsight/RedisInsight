@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CaCertificate {
   @ApiProperty({
@@ -14,12 +15,16 @@ export class CaCertificate {
     type: String,
   })
   @Expose()
+  @IsNotEmpty()
+  @IsString({ always: true })
   name: string;
 
   @ApiProperty({
     description: 'Certificate body',
     type: String,
   })
-  @Expose()
+  @Expose({ groups: ['security'] })
+  @IsNotEmpty()
+  @IsString({ always: true })
   certificate: string;
 }

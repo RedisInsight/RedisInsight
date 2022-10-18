@@ -9,7 +9,6 @@ import {
   RedisService,
 } from 'src/modules/core/services/redis/redis.service';
 import { RedisConsumerAbstractService } from 'src/modules/shared/services/base/redis-consumer.abstract.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import {
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
@@ -19,6 +18,7 @@ import {
   CommandExecutionStatus,
 } from 'src/modules/cli/dto/cli.dto';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
+import { DatabaseService } from 'src/modules/database/database.service';
 import { IRedisToolOptions } from './redis-tool-options';
 
 export interface ICliExecResultFromNode {
@@ -36,10 +36,10 @@ export class RedisToolService extends RedisConsumerAbstractService {
   constructor(
     private appTool: AppTool,
     protected redisService: RedisService,
-    protected instancesBusinessService: InstancesBusinessService,
+    protected databaseService: DatabaseService,
     options: IRedisToolOptions = {},
   ) {
-    super(appTool, redisService, instancesBusinessService, options);
+    super(appTool, redisService, databaseService, options);
     this.logger = new Logger(`${appTool}ToolService`);
   }
 

@@ -9,15 +9,15 @@ import { Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Injectable()
 export class DatabasesProvider {
   protected logger = new Logger('DatabaseProvider');
 
   constructor(
-    @InjectRepository(DatabaseInstanceEntity)
-    protected readonly databasesRepository: Repository<DatabaseInstanceEntity>,
+    @InjectRepository(DatabaseEntity)
+    protected readonly databasesRepository: Repository<DatabaseEntity>,
     protected readonly encryptionService: EncryptionService,
   ) {}
 
@@ -39,7 +39,7 @@ export class DatabasesProvider {
    * Temporary this method will decrypt database entity fields
    * todo: remove decryption here and exclude passwords from the databases list response
    */
-  async getAll(): Promise<DatabaseInstanceEntity[]> {
+  async getAll(): Promise<DatabaseEntity[]> {
     this.logger.log('Getting databases list');
     const entities = await this.databasesRepository
       .createQueryBuilder('database')
@@ -51,7 +51,7 @@ export class DatabasesProvider {
     this.logger.log('Succeed to get databases entities');
 
     return Promise.all(
-      entities.map<Promise<DatabaseInstanceEntity>>((entity) => this.decryptEntity(entity, true)),
+      entities.map<Promise<DatabaseEntity>>((entity) => this.decryptEntity(entity, true)),
     );
   }
 
@@ -62,7 +62,7 @@ export class DatabasesProvider {
   async getOneById(
     id: string,
     ignoreEncryptionErrors: boolean = false,
-  ): Promise<DatabaseInstanceEntity> {
+  ): Promise<DatabaseEntity> {
     this.logger.log(`Getting database ${id}`);
 
     const entity = await this.databasesRepository
@@ -88,7 +88,7 @@ export class DatabasesProvider {
    * Should always throw and error in case when unable to encrypt for some reason
    * @param database
    */
-  async save(database: DatabaseInstanceEntity): Promise<DatabaseInstanceEntity> {
+  async save(database: DatabaseEntity): Promise<DatabaseEntity> {
     return this.decryptEntity(
       await this.databasesRepository.save(await this.encryptEntity(database)),
     );
@@ -102,7 +102,7 @@ export class DatabasesProvider {
    * @param data
    * @throws BadRequestException error when try to update password or sentinelMasterPassword fields
    */
-  async patch(id: string, data: QueryDeepPartialEntity<DatabaseInstanceEntity>) {
+  async patch(id: string, data: QueryDeepPartialEntity<DatabaseEntity>) {
     if (data.password !== undefined || data.sentinelMasterPassword !== undefined) {
       throw new BadRequestException('Deprecated to update password fields here');
     }
@@ -118,7 +118,7 @@ export class DatabasesProvider {
    * @param id
    * @param data
    */
-  async update(id: string, data: DatabaseInstanceEntity) {
+  async update(id: string, data: DatabaseEntity) {
     return this.databasesRepository.update(id, await this.encryptEntity(data));
   }
 
@@ -130,7 +130,7 @@ export class DatabasesProvider {
    * @param entity
    * @private
    */
-  private async encryptEntity(entity: DatabaseInstanceEntity): Promise<DatabaseInstanceEntity> {
+  private async encryptEntity(entity: DatabaseEntity): Promise<DatabaseEntity> {
     let password = null;
     let sentinelMasterPassword = null;
     let encryption = null;
@@ -168,9 +168,9 @@ export class DatabasesProvider {
    * @private
    */
   private async decryptEntity(
-    entity: DatabaseInstanceEntity,
+    entity: DatabaseEntity,
     ignoreErrors: boolean = false,
-  ): Promise<DatabaseInstanceEntity> {
+  ): Promise<DatabaseEntity> {
     let password = null;
     let sentinelMasterPassword = null;
 

@@ -37,6 +37,8 @@ import { ClientCertificateController } from 'src/modules/certificate/client-cert
   exports: [
     CaCertificateService,
     ClientCertificateService,
+    CaCertificateRepository,
+    ClientCertificateRepository,
   ],
 })
 export class CertificateModule {}

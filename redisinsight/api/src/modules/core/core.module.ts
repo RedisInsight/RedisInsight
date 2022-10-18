@@ -9,6 +9,7 @@ import serverOnPremiseFactory from './providers/server-on-premise';
 import { RedisService } from './services/redis/redis.service';
 import { AnalyticsService } from './services/analytics/analytics.service';
 import { CertificateModule } from 'src/modules/certificate/certificate.module';
+import { DatabaseModule } from 'src/modules/database/database.module';
 
 interface IModuleOptions {
   buildType: string;
@@ -30,6 +31,7 @@ export class CoreModule {
         ]),
         SettingsModule.register(),
         CertificateModule,
+        DatabaseModule,
       ],
       providers: [
         serverOnPremiseFactory,
@@ -42,6 +44,7 @@ export class CoreModule {
       exports: [
         SettingsModule,
         CertificateModule,
+        DatabaseModule,
         serverOnPremiseFactory,
         EncryptionService,
         AnalyticsService,

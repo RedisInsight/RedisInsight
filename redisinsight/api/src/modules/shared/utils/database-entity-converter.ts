@@ -1,7 +1,7 @@
 import { DatabaseInstanceResponse } from 'src/modules/instances/dto/database-instance.dto';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
-export const convertEntityToDto = (database: DatabaseInstanceEntity): DatabaseInstanceResponse => {
+export const convertEntityToDto = (database: DatabaseEntity): DatabaseInstanceResponse => {
   if (database) {
     const {
       tls,

@@ -14,8 +14,8 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
-import { GetSentinelMastersDto } from 'src/modules/redis-sentinel/dto/sentinel.dto';
 import { AppTool } from 'src/models';
+import { Database } from 'src/modules/database/models/database';
 import { AutodiscoveryAnalyticsService } from '../autodiscovery-analytics.service/autodiscovery-analytics.service';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class RedisSentinelBusinessService {
   ) {}
 
   public async connectAndGetMasters(
-    dto: GetSentinelMastersDto,
+    dto: Database,
   ): Promise<SentinelMaster[]> {
     this.logger.log('Connection and getting sentinel masters.');
     let result: SentinelMaster[];

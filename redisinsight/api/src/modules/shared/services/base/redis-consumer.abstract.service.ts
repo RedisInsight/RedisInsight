@@ -10,14 +10,14 @@ import {
   IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
 import { IRedisToolOptions, DEFAULT_REDIS_TOOL_OPTIONS } from 'src/modules/shared/services/base/redis-tool-options';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 export abstract class RedisConsumerAbstractService implements IRedisConsumer {
   protected redisService: RedisService;
 
-  protected instancesBusinessService: InstancesBusinessService;
+  protected databaseService: DatabaseService;
 
   protected consumer: AppTool;
 
@@ -26,13 +26,13 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
   protected constructor(
     consumer: AppTool,
     redisService: RedisService,
-    instancesBusinessService: InstancesBusinessService,
+    databaseService: DatabaseService,
     options: IRedisToolOptions = {},
   ) {
     this.consumer = consumer;
     this.options = { ...this.options, ...options };
     this.redisService = redisService;
-    this.instancesBusinessService = instancesBusinessService;
+    this.databaseService = databaseService;
   }
 
   abstract execCommand(
@@ -134,7 +134,7 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     uuid = uuidv4(),
     namespace?: string,
   ): Promise<IORedis.Redis | IORedis.Cluster> {
-    const instanceDto = await this.instancesBusinessService.getOneById(instanceId);
+    const instanceDto = await this.databaseService.get(instanceId);
     const connectionName = generateRedisConnectionName(namespace || this.consumer, uuid);
     try {
       const client = await this.redisService.connectToDatabaseInstance(

@@ -1,20 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 
-export class CreateCaCertificateDto {
-  @ApiProperty({
-    description: 'Name for CA Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  name: string;
-
-  @ApiProperty({
-    description: 'Body of the CA Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  certificate: string;
-}
+export class CreateCaCertificateDto extends PickType(CaCertificate, [
+  'name', 'certificate',
+] as const) {}

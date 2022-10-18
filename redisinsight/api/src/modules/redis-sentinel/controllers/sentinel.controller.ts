@@ -13,8 +13,9 @@ import {
 } from 'src/modules/shared/services/redis-sentinel-business/redis-sentinel-business.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel';
-import { GetSentinelMastersDto } from 'src/modules/redis-sentinel/dto/sentinel.dto';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
+import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
+import { Database } from 'src/modules/database/models/database';
 
 @ApiTags('Redis OSS Sentinel')
 @Controller('')
@@ -42,8 +43,8 @@ export class SentinelController {
     ],
   })
   async getMasters(
-    @Body() dto: GetSentinelMastersDto,
+    @Body() dto: CreateDatabaseDto,
   ): Promise<SentinelMaster[]> {
-    return await this.redisSentinelService.connectAndGetMasters(dto);
+    return await this.redisSentinelService.connectAndGetMasters(dto as Database);
   }
 }

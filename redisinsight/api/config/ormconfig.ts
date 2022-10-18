@@ -1,5 +1,4 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { ServerEntity } from 'src/modules/core/models/server.entity';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
@@ -8,6 +7,7 @@ import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entit
 import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 
@@ -21,7 +21,7 @@ const ormConfig: TypeOrmModuleOptions = {
     AgreementsEntity,
     CaCertificateEntity,
     ClientCertificateEntity,
-    DatabaseInstanceEntity,
+    DatabaseEntity,
     ServerEntity,
     SettingsEntity,
     CommandExecutionEntity,

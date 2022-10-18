@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConnectionOptions, SecureContextOptions } from 'tls';
-import Redis from 'ioredis';
-import { RedisOptions, Cluster } from 'ioredis';
+import { ConnectionOptions } from 'tls';
+import Redis, { RedisOptions, Cluster } from 'ioredis';
 import {
   find, findIndex, isEmpty, isNil, omitBy, remove,
 } from 'lodash';
@@ -9,15 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppTool } from 'src/models';
 import apiConfig from 'src/utils/config';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
-import {
-  ConnectionOptionsDto,
-  DatabaseInstanceResponse,
-  TlsDto,
-} from 'src/modules/instances/dto/database-instance.dto';
 import { IRedisClusterNodeAddress } from 'src/models/redis-cluster';
-import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
-import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
-import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
+import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { Database } from 'src/modules/database/models/database';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -49,20 +42,17 @@ export class RedisService {
 
   public clients: IRedisClientInstance[] = [];
 
-  constructor(
-    private caCertificateService: CaCertificateService,
-    private clientCertificateService: ClientCertificateService,
-  ) {
+  constructor() {
     this.lastClientsSync = Date.now();
   }
 
   public async createStandaloneClient(
-    options: ConnectionOptionsDto,
+    database: Database,
     appTool: AppTool,
     useRetry: boolean,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Redis> {
-    const config = await this.getRedisConnectionConfig(options);
+    const config = await this.getRedisConnectionConfig(database);
 
     return new Promise((resolve, reject) => {
       try {
@@ -91,12 +81,12 @@ export class RedisService {
   }
 
   public async createClusterClient(
-    options: ConnectionOptionsDto,
+    database: Database,
     nodes: IRedisClusterNodeAddress[],
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Cluster> {
-    const config = await this.getRedisConnectionConfig(options);
+    const config = await this.getRedisConnectionConfig(database);
     return new Promise((resolve, reject) => {
       try {
         const cluster = new Redis.Cluster(nodes, {
@@ -123,7 +113,7 @@ export class RedisService {
   }
 
   public async createSentinelClient(
-    options: ConnectionOptionsDto,
+    database: Database,
     sentinels: Array<{ host: string; port: number }>,
     appTool: AppTool,
     useRetry: boolean = false,
@@ -131,7 +121,7 @@ export class RedisService {
   ): Promise<Redis> {
     const {
       username, password, sentinelMaster, tls, db,
-    } = options;
+    } = database;
     const config: RedisOptions = {
       sentinels,
       name: sentinelMaster.name,
@@ -143,7 +133,7 @@ export class RedisService {
     };
 
     if (tls) {
-      const tlsConfig = await this.getTLSConfig(tls);
+      const tlsConfig = await this.getTLSConfig(database);
       config.tls = tlsConfig;
       config.sentinelTLS = tlsConfig;
       config.enableTLSForSentinelMode = true;
@@ -175,7 +165,7 @@ export class RedisService {
   }
 
   public async connectToDatabaseInstance(
-    databaseDto: DatabaseInstanceResponse,
+    databaseDto: Database,
     tool = AppTool.Common,
     connectionName?,
   ): Promise<Redis | Cluster> {
@@ -185,17 +175,19 @@ export class RedisService {
         delete database[key];
       }
     });
+
     let client;
-    const { endpoints, connectionType, ...options } = database;
+
+    const { nodes, connectionType } = database;
     switch (connectionType) {
       case ConnectionType.STANDALONE:
         client = await this.createStandaloneClient(database, tool, true, connectionName);
         break;
       case ConnectionType.CLUSTER:
-        client = await this.createClusterClient(options, endpoints, true, connectionName);
+        client = await this.createClusterClient(database, nodes, true, connectionName);
         break;
       case ConnectionType.SENTINEL:
-        client = await this.createSentinelClient(options, endpoints, tool, true, connectionName);
+        client = await this.createSentinelClient(database, nodes, tool, true, connectionName);
         break;
       default:
         client = await this.createStandaloneClient(database, tool, true, connectionName);
@@ -275,77 +267,42 @@ export class RedisService {
   }
 
   private async getRedisConnectionConfig(
-    options: ConnectionOptionsDto,
+    database: Database,
   ): Promise<RedisOptions> {
     const {
       host, port, password, username, tls, db,
-    } = options;
+    } = database;
     const config: RedisOptions = {
       host, port, username, password, db,
     };
     if (tls) {
-      config.tls = await this.getTLSConfig(tls);
+      config.tls = await this.getTLSConfig(database);
     }
     return config;
   }
 
-  private async getTLSConfig(tls: TlsDto): Promise<ConnectionOptions> {
+  private async getTLSConfig(database: Database): Promise<ConnectionOptions> {
     let config: ConnectionOptions;
     config = {
-      rejectUnauthorized: tls.verifyServerCert,
+      rejectUnauthorized: database.verifyServerCert,
       checkServerIdentity: () => undefined,
-      servername: tls.servername || undefined,
+      servername: database.tlsServername || undefined,
     };
-    if (tls.caCertId || tls.newCaCert) {
-      const caCertConfig = await this.getCaCertConfig(tls);
+    if (database.caCert) {
       config = {
         ...config,
-        ...caCertConfig,
+        ca: [database.caCert.certificate],
       };
     }
-    if (tls.clientCertPairId || tls.newClientCertPair) {
-      const clientCertConfig = await this.getClientCertConfig(tls);
+    if (database.clientCert) {
       config = {
         ...config,
-        ...clientCertConfig,
+        cert: database.clientCert.certificate,
+        key: database.clientCert.key,
       };
     }
+
     return config;
-  }
-
-  private async getCaCertConfig(tlsDto: TlsDto): Promise<SecureContextOptions> {
-    if (tlsDto.caCertId) {
-      const caCertificateEntity = await this.caCertificateService.get(tlsDto.caCertId);
-      return {
-        ca: [caCertificateEntity.certificate],
-      };
-    }
-    if (tlsDto.newCaCert) {
-      return {
-        ca: [tlsDto.newCaCert.certificate],
-      };
-    }
-    return null;
-  }
-
-  private async getClientCertConfig(
-    tlsDto: TlsDto,
-  ): Promise<SecureContextOptions> {
-    if (tlsDto.clientCertPairId) {
-      const clientCertificateEntity = await this.clientCertificateService.get(tlsDto.clientCertPairId);
-
-      return {
-        cert: clientCertificateEntity.certificate,
-        key: clientCertificateEntity.key,
-      };
-    }
-    if (tlsDto.newClientCertPair) {
-      return {
-        key: tlsDto.newClientCertPair.key,
-        cert: tlsDto.newClientCertPair.certificate,
-      };
-    }
-    return null;
   }
 
   private retryStrategy(times: number): number {

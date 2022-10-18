@@ -6,10 +6,10 @@ import {
   RedisService,
 } from 'src/modules/core/services/redis/redis.service';
 import { RedisConsumerAbstractService } from 'src/modules/shared/services/base/redis-consumer.abstract.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { getRedisPipelineSummary } from 'src/utils/cli-helper';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 @Injectable()
 export class BrowserToolService extends RedisConsumerAbstractService {
@@ -17,9 +17,9 @@ export class BrowserToolService extends RedisConsumerAbstractService {
 
   constructor(
     protected redisService: RedisService,
-    protected instancesBusinessService: InstancesBusinessService,
+    protected databaseService: DatabaseService,
   ) {
-    super(AppTool.Browser, redisService, instancesBusinessService);
+    super(AppTool.Browser, redisService, databaseService);
   }
 
   async execCommand(

@@ -29,7 +29,7 @@ if (fs.existsSync(workingDirectory)) {
     timestampPromoButtonFile.set('timestamp', newTimestamp);
     timestampPromoButtonFile.save();
 
-    fixture `Automatically update information`
+    fixture `Auto-update in Promo Button`
         .meta({type: 'critical_path'})
         .page(commonUrl)
         .beforeEach(async() => {
@@ -47,9 +47,6 @@ if (fs.existsSync(workingDirectory)) {
             const actualPromoButtonTitle = await contentPathNew.get('cloud.title');
             const actualPromoButtonDescription = await contentPathNew.get('cloud.description');
             // Check the json files are automatically updated
-            console.log(`timestamp: ${actualTimestamp}`);
-            console.log(`actualPromoButtonTitle: ${actualPromoButtonTitle}`);
-            console.log(`actualPromoButtonDescription: ${actualPromoButtonDescription}`);
             await t.expect(actualPromoButtonTitle).notEql(newPromoButtonText, 'The cloud title in the create-redis.json file is automatically updated');
             await t.expect(actualPromoButtonDescription).notEql(newPromoButtonText, 'The cloud description in the create-redis.json file is automatically updated');
             await t.expect(actualTimestamp).notEql(newTimestamp, 'The timestamp in the build.json file is automatically updated');

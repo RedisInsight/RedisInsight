@@ -35,8 +35,8 @@ fixture `Memory Efficiency`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('No reports/keys message and report tooltip', async t => {
-    const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report';
-    const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load data';
+    const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
+    const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
     const tooltipText = 'Memory EfficiencyAnalyze up to 10K keys in your Redis database to get an overview of your data and memory efficiency recommendations.';
 
     // Verify that user can see the “No reports found” message when report wasn't generated
@@ -45,8 +45,10 @@ test('No reports/keys message and report tooltip', async t => {
     await t.click(memoryEfficiencyPage.newReportBtn);
     await t.expect(memoryEfficiencyPage.noKeysText.textContent).eql(noKeysMessage, 'No keys message not displayed or text is invalid');
     // Verify that user can open workbench page from No keys to display message
-    // await t.click(browserPage.workbenchLinkButton);
-    // await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
+    await t.click(browserPage.workbenchLinkButton);
+    await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
+    // Turn back to Memory Efficiency page
+    await t.click(myRedisDatabasePage.analysisPageButton);
     // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button
     await t.hover(memoryEfficiencyPage.reportTooltipIcon);
     await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Report tooltip is not displayed or text is invalid');
@@ -74,11 +76,11 @@ test
     // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that up to 15 keyspaces based on the delimiter set in the Tree view are displayed on memory efficiency page
-        await t.expect(memoryEfficiencyPage.tableRows.count).eql(15, 'Namespaces table has more/less than 15 keyspaces');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.count).eql(15, 'Namespaces table has more/less than 15 keyspaces');
 
         // Verify that sorting by Total Memory from big to small applied by default
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[0], 'Biggest memory keyspace is not at top');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(14).textContent).contains(keySpaces[2], 'Smallest memory keyspace is not at down');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[0], 'Biggest memory keyspace is not at top');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(14).textContent).contains(keySpaces[2], 'Smallest memory keyspace is not at down');
 
         await t.click(memoryEfficiencyPage.expandArrowBtn);
         // Verify that Key Pattern with >1 keys can be expanded
@@ -103,8 +105,8 @@ test
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that delimiter can be changed in Tree View and applied
-        await t.expect(memoryEfficiencyPage.tableRows.count).eql(1, 'New delimiter not applied');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[5], 'Keyspace not displayed');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.count).eql(1, 'New delimiter not applied');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[5], 'Keyspace not displayed');
     });
 test
     .before(async t => {
@@ -126,30 +128,30 @@ test
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can sort by Key Pattern column ASC
         await t.click(memoryEfficiencyPage.tableKeyPatternHeader);
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[1], 'Sorting by Key Pattern ASC not working');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(4).textContent).contains(keySpaces[3], 'Sorting by Key Pattern ASC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[1], 'Sorting by Key Pattern ASC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(4).textContent).contains(keySpaces[3], 'Sorting by Key Pattern ASC not working');
         // Verify that user can sort by Key Pattern column DESC
         await t.click(memoryEfficiencyPage.tableKeyPatternHeader);
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[3], 'Sorting by Key Pattern DESC not working');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(4).textContent).contains(keySpaces[1], 'Sorting by Key Pattern DESC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[3], 'Sorting by Key Pattern DESC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(4).textContent).contains(keySpaces[1], 'Sorting by Key Pattern DESC not working');
 
         // Verify that user can sort by Total Memory column ASC
         await t.click(memoryEfficiencyPage.tableMemoryHeader);
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[1], 'Sorting by Total Memory ASC not working');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(4).textContent).contains(keySpaces[3], 'Sorting by Total Memory ASC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[1], 'Sorting by Total Memory ASC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(4).textContent).contains(keySpaces[3], 'Sorting by Total Memory ASC not working');
         // Verify that user can sort by Total Memory column DESC
         await t.click(memoryEfficiencyPage.tableMemoryHeader);
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[3], 'Sorting by Total Memory DESC not working');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(4).textContent).contains(keySpaces[1], 'Sorting by Total Memory DESC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[3], 'Sorting by Total Memory DESC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(4).textContent).contains(keySpaces[1], 'Sorting by Total Memory DESC not working');
 
         // Verify that user can sort by Total Keys column ASC
         await t.click(memoryEfficiencyPage.tableKeysHeader);
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[6], 'Sorting by Total Keys ASC not working');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(4).textContent).contains(keySpaces[3], 'Sorting by Total Keys ASC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[6], 'Sorting by Total Keys ASC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(4).textContent).contains(keySpaces[3], 'Sorting by Total Keys ASC not working');
         // Verify that user can sort by Total Keys column DESC
         await t.click(memoryEfficiencyPage.tableKeysHeader);
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[3], 'Sorting by Total Keys DESC not working');
-        await t.expect(memoryEfficiencyPage.tableRows.nth(4).textContent).contains(keySpaces[1], 'Sorting by Total Keys DESC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[3], 'Sorting by Total Keys DESC not working');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(4).textContent).contains(keySpaces[1], 'Sorting by Total Keys DESC not working');
     });
 test
     .before(async t => {
@@ -170,13 +172,13 @@ test
         // Reload page
         await common.reloadPage();
         // Verify that context saved after reloading page
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
         //Go to PubSub page
         await t.click(myRedisDatabasePage.pubSubButton);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.analysisPageButton);
         // Verify that context saved after switching between pages
-        await t.expect(memoryEfficiencyPage.tableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
+        await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
     });
 test
     .before(async t => {
@@ -249,4 +251,6 @@ test
         await t.click(myRedisDatabasePage.workbenchButton);
         await t.click(myRedisDatabasePage.analysisPageButton);
         await t.expect(memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent).eql(numberOfKeys[2], 'Context is not saved');
+        // Verify that user can see top keys table saved as context
+        await t.expect(memoryEfficiencyPage.topKeysKeyName.count).eql(parseInt(numberOfKeys[2]), 'Top Keys table is not saved as context');
     });

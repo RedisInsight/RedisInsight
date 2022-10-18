@@ -15,7 +15,7 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/instance/${instanceId}/keys`);
+  request(server).post(`/instance/${instanceId}/keys`);
 
 const responseSchema = Joi.array().items(Joi.object().keys({
   total: Joi.number().integer().required(),
@@ -56,7 +56,7 @@ const isKeyInResponse = (body, keyName) => _.find(
   ),
 )
 
-describe('GET /instance/:instanceId/keys', () => {
+describe('POST /instance/:instanceId/keys', () => {
   // todo: add query validation
   xdescribe('Validation', () => {});
 

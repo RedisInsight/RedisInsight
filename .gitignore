@@ -16,6 +16,7 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+/redisinsight/api/test/test-runs/coverage
 
 # IDEs and editors
 /.idea

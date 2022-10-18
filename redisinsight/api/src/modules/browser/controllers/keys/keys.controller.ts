@@ -41,6 +41,7 @@ export class KeysController extends BaseController {
   }
 
   @Post('')
+  @HttpCode(200)
   @ApiOperation({ description: 'Get keys by cursor position' })
   @ApiRedisParams()
   @ApiOkResponse({

@@ -68,7 +68,7 @@ describe('POST /instance/:instanceId/keys', () => {
     [
       {
         name: 'Should return all keys in utf-8 (by default)',
-        query: {
+        data: {
           count: 10_000,
           cursor: '0',
         },
@@ -81,6 +81,8 @@ describe('POST /instance/:instanceId/keys', () => {
         name: 'Should return all keys in utf-8',
         query: {
           encoding: 'utf8',
+        },
+        data: {
           count: 10_000,
           cursor: '0',
         },
@@ -93,6 +95,8 @@ describe('POST /instance/:instanceId/keys', () => {
         name: 'Should return all keys in ascii',
         query: {
           encoding: 'ascii',
+        },
+        data: {
           count: 10_000,
           cursor: '0',
         },
@@ -105,6 +109,8 @@ describe('POST /instance/:instanceId/keys', () => {
         name: 'Should return all keys in buffer',
         query: {
           encoding: 'buffer',
+        },
+        data: {
           count: 10_000,
           cursor: '0',
         },
@@ -126,7 +132,7 @@ describe('POST /instance/:instanceId/keys', () => {
       [
         {
           name: 'Should find key by exact name',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_1`
           },
@@ -153,7 +159,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should not find key by exact name',
-          query: {
+          data: {
             cursor: '0',
             match: 'not_exist_key'
           },
@@ -179,7 +185,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should prevent full scan in one request',
-          query: {
+          data: {
             count: 100,
             cursor: '0',
             match: 'not_exist_key*'
@@ -208,7 +214,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with * in the end',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_11*`
           },
@@ -237,7 +243,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with * in the beginning',
-          query: {
+          data: {
             cursor: '0',
             match: '*_key_111'
           },
@@ -266,7 +272,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with * in the middle',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_*_111`
           },
@@ -293,7 +299,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with ? in the end',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10?`
           },
@@ -322,7 +328,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with [a-b] glob pattern',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10[0-5]`
           },
@@ -351,7 +357,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with [a,b,c] glob pattern',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10[0,1,2]`
           },
@@ -380,7 +386,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with [abc] glob pattern',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10[012]`
           },
@@ -409,7 +415,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with [^a] glob pattern',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10[^0]`
           },
@@ -438,7 +444,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with combined glob patterns',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_s?r_*_[1][0-5][^0]`
           },
@@ -470,7 +476,7 @@ describe('POST /instance/:instanceId/keys', () => {
       [
         {
           name: 'Should scan all types',
-          query: {
+          data: {
             cursor: '0',
           },
           responseSchema,
@@ -483,7 +489,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should scan by provided count value',
-          query: {
+          data: {
             count: 500,
             cursor: '0',
           },
@@ -517,7 +523,7 @@ describe('POST /instance/:instanceId/keys', () => {
         while (cursor !== 0) {
           await validateApiCall({
             endpoint,
-            query: {
+            data: {
               cursor: cursor || 0,
               count: 99,
             },
@@ -542,7 +548,7 @@ describe('POST /instance/:instanceId/keys', () => {
         [
           {
             name: 'Should filter by type (string)',
-            query: {
+            data: {
               cursor: '0',
               type: 'string',
               count: 200,
@@ -562,7 +568,7 @@ describe('POST /instance/:instanceId/keys', () => {
           },
           {
             name: 'Should filter by type (list)',
-            query: {
+            data: {
               cursor: '0',
               type: 'list',
               count: 200,
@@ -582,7 +588,7 @@ describe('POST /instance/:instanceId/keys', () => {
           },
           {
             name: 'Should filter by type (set)',
-            query: {
+            data: {
               cursor: '0',
               type: 'set',
               count: 200,
@@ -602,7 +608,7 @@ describe('POST /instance/:instanceId/keys', () => {
           },
           {
             name: 'Should filter by type (zset)',
-            query: {
+            data: {
               cursor: '0',
               type: 'zset',
               count: 200,
@@ -622,7 +628,7 @@ describe('POST /instance/:instanceId/keys', () => {
           },
           {
             name: 'Should filter by type (hash)',
-            query: {
+            data: {
               cursor: '0',
               type: 'hash',
               count: 200,
@@ -649,7 +655,7 @@ describe('POST /instance/:instanceId/keys', () => {
           [
             {
               name: 'Should filter by type (ReJSON-RL)',
-              query: {
+              data: {
                 cursor: '0',
                 type: 'ReJSON-RL',
                 count: 200,
@@ -675,7 +681,7 @@ describe('POST /instance/:instanceId/keys', () => {
           [
             {
               name: 'Should filter by type (timeseries)',
-              query: {
+              data: {
                 cursor: '0',
                 type: 'TSDB-TYPE',
                 count: 200,
@@ -701,7 +707,7 @@ describe('POST /instance/:instanceId/keys', () => {
           [
             {
               name: 'Should filter by type (stream)',
-              query: {
+              data: {
                 cursor: '0',
                 type: 'stream',
                 count: 200,
@@ -727,7 +733,7 @@ describe('POST /instance/:instanceId/keys', () => {
           [
             {
               name: 'Should filter by type (stream)',
-              query: {
+              data: {
                 cursor: '0',
                 type: 'graphdata',
                 count: 200,
@@ -754,7 +760,7 @@ describe('POST /instance/:instanceId/keys', () => {
       [
         {
           name: 'Should scan all types',
-          query: {
+          data: {
             cursor: '0',
           },
           responseSchema,
@@ -780,7 +786,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should scan by provided count value',
-          query: {
+          data: {
             count: 300,
             cursor: '0',
           },
@@ -813,7 +819,7 @@ describe('POST /instance/:instanceId/keys', () => {
         while (cursor.length > 0) {
           await validateApiCall({
             endpoint,
-            query: {
+            data: {
               cursor: cursor.join('||'),
               count: 99,
             },
@@ -840,7 +846,7 @@ describe('POST /instance/:instanceId/keys', () => {
         [
           {
             name: 'Should filter by type (string)',
-            query: {
+            data: {
               cursor: '0',
               type: 'string',
               count: 200,
@@ -878,7 +884,7 @@ describe('POST /instance/:instanceId/keys', () => {
       [
         {
           name: 'check keyname with non-ASCII symbols should be properly listed',
-          query: {
+          data: {
             cursor: '0',
             count: 200,
           },
@@ -908,7 +914,7 @@ describe('POST /instance/:instanceId/keys', () => {
       [
         {
           name: 'Should scan all types',
-          query: {
+          data: {
             cursor: '0',
             match: key
           },
@@ -933,7 +939,7 @@ describe('POST /instance/:instanceId/keys', () => {
       {
         name: 'Should remove key',
         endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        query: {
+        data: {
           cursor: '0',
         },
         statusCode: 200,
@@ -941,7 +947,7 @@ describe('POST /instance/:instanceId/keys', () => {
       {
         name: 'Should throw error if no permissions for "scan" command',
         endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-        query: {
+        data: {
           cursor: '0',
         },
         statusCode: 403,

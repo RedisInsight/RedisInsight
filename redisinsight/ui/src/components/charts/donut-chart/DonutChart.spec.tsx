@@ -72,6 +72,11 @@ describe('DonutChart', () => {
     expect(screen.getByTestId('label-E-30')).toHaveTextContent('E: 30')
   })
 
+  it('should render label value without title', () => {
+    render(<DonutChart data={mockData} config={{ percentToShowLabel: 5 }} hideLabelTitle />)
+    expect(screen.getByTestId('label-E-30').textContent).toBe('30')
+  })
+
   it('should call render tooltip and label methods', () => {
     const renderLabel = jest.fn()
     const renderTooltip = jest.fn()

@@ -20,11 +20,16 @@ export interface Props {
   onSwitchExtrapolation?: (value: boolean) => void
 }
 
+const widthResponsiveSize = 1024
+const CHART_WITH_LABELS_WIDTH = 432
+const CHART_WIDTH = 320
+
 const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }: Props) => {
   const { totalMemory, totalKeys } = data || {}
   const [memoryData, setMemoryData] = useState<ChartData[]>([])
   const [keysData, setKeysData] = useState<ChartData[]>([])
   const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
+  const [hideLabelTitle, setHideLabelTitle] = useState(false)
 
   const getChartData = (t: SimpleTypeSummary) => ({
     value: t.total,
@@ -33,9 +38,21 @@ const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }:
     meta: { ...t }
   })
 
+  const updateChartSize = () => {
+    setHideLabelTitle(globalThis.innerWidth < widthResponsiveSize)
+  }
+
   useEffect(() => {
     setIsExtrapolated(extrapolation !== 1)
   }, [data, extrapolation])
+
+  useEffect(() => {
+    updateChartSize()
+    globalThis.addEventListener('resize', updateChartSize)
+    return () => {
+      globalThis.removeEventListener('resize', updateChartSize)
+    }
+  }, [])
 
   useEffect(() => {
     if (data && totalMemory && totalKeys) {
@@ -125,7 +142,8 @@ const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }:
           name="memory"
           data={memoryData}
           labelAs="percentage"
-          width={432}
+          hideLabelTitle={hideLabelTitle}
+          width={hideLabelTitle ? CHART_WIDTH : CHART_WITH_LABELS_WIDTH}
           config={{ radius: 94 }}
           renderTooltip={renderMemoryTooltip}
           title={(
@@ -151,7 +169,8 @@ const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }:
           name="keys"
           data={keysData}
           labelAs="percentage"
-          width={432}
+          hideLabelTitle={hideLabelTitle}
+          width={hideLabelTitle ? CHART_WIDTH : CHART_WITH_LABELS_WIDTH}
           config={{ radius: 94 }}
           renderTooltip={renderKeysTooltip}
           title={(

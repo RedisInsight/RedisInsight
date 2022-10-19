@@ -75,8 +75,7 @@ test
         //Check the toggle
         await t.expect(monitorPage.saveLogSwitchButton.visible).notOk('The toggle is not displayed when Profiler is started');
     });
-//skipped due the temp file is not created after the start of profiler
-test.skip
+test
     .meta({ rte: rte.standalone })('Verify that when user switch toggle to ON and started the Profiler, temporary Log file Created and recording', async t => {
         const cli_command = 'command';
         //Remember the number of files in Temp
@@ -87,7 +86,7 @@ test.skip
         await cliPage.getSuccessCommandResultFromCli(cli_command);
         await monitorPage.checkCommandInMonitorResults(cli_command);
         //Verify that temporary Log file Created
-        await t.expect(numberOfTempFiles).gt(fs.readdirSync(tempDir).length, 'The temporary Log file is created');
+        await t.expect(numberOfTempFiles).lt(fs.readdirSync(tempDir).length, 'The temporary Log file is not created');
     });
 test
     .meta({ rte: rte.standalone })('Verify that when user switch toggle to OFF and started the Profiler, temporary Log file is not Created and recording', async t => {
@@ -96,7 +95,7 @@ test
         //Start Monitor with Save logs
         await monitorPage.startMonitor();
         //Verify that temporary Log file is not created
-        await t.expect(numberOfTempFiles).lte(fs.readdirSync(tempDir).length, 'The temporary Log file is not created');
+        await t.expect(numberOfTempFiles).gte(fs.readdirSync(tempDir).length, 'The temporary Log file is created');
     });
 test
     .meta({ rte: rte.standalone })('Verify the Profiler Button panel when toggle was switched to ON and user pauses/resumes the Profiler', async t => {

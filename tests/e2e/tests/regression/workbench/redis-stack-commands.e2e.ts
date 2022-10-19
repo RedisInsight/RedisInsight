@@ -30,7 +30,7 @@ test.skip
     .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can switches between Graph and Text for GRAPH command and see results corresponding to their views', async t => {
         //Send Graph command
         await t.click(workbenchPage.redisStackTutorialsButton);
-        await t.click(workbenchPage.workingWithGraphLink);
+        await t.click(workbenchPage.tutorialsWorkingWithGraphLink);
         await t.click(workbenchPage.createGraphBikeButton);
         await t.click(workbenchPage.submitCommandButton);
         //Switch to Text view and check result
@@ -45,7 +45,7 @@ test
     .meta({ env: env.desktop, rte: rte.standalone })('Verify that user can see "No data to visualize" message for Graph command', async t => {
         //Send Graph command
         await t.click(workbenchPage.redisStackTutorialsButton);
-        await t.click(workbenchPage.workingWithGraphLink);
+        await t.click(workbenchPage.tutorialsWorkingWithGraphLink);
         await t.click(workbenchPage.preselectModelBikeSalesButton);
         await t.click(workbenchPage.submitCommandButton);
         //Check result

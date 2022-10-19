@@ -57,7 +57,7 @@ const DonutChart = (props: IProps) => {
     labelAs = 'value',
     renderLabel,
     renderTooltip,
-    hideLabelTitle = false
+    hideLabelTitle = false,
   } = props
 
   const margin = config?.margin || 98
@@ -124,6 +124,15 @@ const DonutChart = (props: IProps) => {
   }
 
   useEffect(() => {
+    d3
+      .select(svgRef.current)
+      .attr('width', width)
+      .attr('height', height)
+      .select('g')
+      .attr('transform', `translate(${width / 2},${height / 2})`)
+  }, [height, width])
+
+  useEffect(() => {
     const pie = d3.pie<ChartData>().value((d: ChartData) => d.value).sort(null)
     const dataReady = pie(data.filter((d) => d.value !== 0))
 
@@ -184,7 +193,7 @@ const DonutChart = (props: IProps) => {
         return truncateNumberToRange(d.value)
       })
       .attr('class', cx(styles.chartLabelValue, classNames?.arcLabelValue))
-  }, [data])
+  }, [data, hideLabelTitle])
 
   if (!data.length || sum === 0) {
     return null

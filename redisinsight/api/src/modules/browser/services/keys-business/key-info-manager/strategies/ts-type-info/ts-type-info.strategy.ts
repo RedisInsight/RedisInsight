@@ -60,6 +60,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
         clientOptions,
         BrowserToolTSCommands.TSInfo,
         [key],
+        'utf8',
       );
       const { totalsamples } = convertStringsArrayToObject(info);
       return totalsamples;

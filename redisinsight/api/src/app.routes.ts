@@ -8,6 +8,7 @@ import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
 import { SlowLogModule } from 'src/modules/slow-log/slow-log.module';
 import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
+import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,10 @@ export const routes: Routes = [
       {
         path: '/:dbInstance',
         module: ClusterMonitorModule,
+      },
+      {
+        path: '/:dbInstance',
+        module: DatabaseAnalysisModule,
       },
     ],
   },

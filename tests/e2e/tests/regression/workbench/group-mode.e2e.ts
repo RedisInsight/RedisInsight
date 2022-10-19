@@ -15,15 +15,15 @@ const commandsNumber = commands.length;
 const commandsString = commands.join('\n');
 
 fixture `Workbench Group Mode`
-    .meta({ rte: rte.standalone, type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        //Go to Workbench page
+        // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async() => {
-        //Delete database
+        // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can run the commands from the Editor in the group mode', async t => {

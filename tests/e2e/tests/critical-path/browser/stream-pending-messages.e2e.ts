@@ -1,4 +1,3 @@
-import { Chance } from 'chance';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage } from '../../../pageObjects';
@@ -7,13 +6,14 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
-const chance = new Chance();
+const common = new Common();
 
-let keyName = chance.word({ length: 20 });
-let consumerGroupName = chance.word({ length: 20 });
+let keyName = common.generateWord(20);
+let consumerGroupName = common.generateWord(20);
 
 fixture `Acknowledge and Claim of Pending messages`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -22,21 +22,22 @@ fixture `Acknowledge and Claim of Pending messages`
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async t => {
-        //Clear and delete database
-        if (await browserPage.closeKeyButton.visible){
+        // Clear and delete database
+        if (await browserPage.closeKeyButton.exists){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can acknowledge any message in the list of pending messages', async t => {
-    keyName = chance.word({ length: 20 });
-    consumerGroupName = chance.word({ length: 20 });
+    keyName = common.generateWord(20);
+    consumerGroupName = common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
         `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`
     ];
+
     // Add New Stream Key with pending message
     for(const command of cliCommands){
         await cliPage.sendCommandInCli(command);
@@ -50,8 +51,8 @@ test('Verify that user can acknowledge any message in the list of pending messag
     await t.expect(browserPage.streamMessagesContainer.textContent).contains('Your Consumer has no pending messages.', 'The messages is acknowledged from the table');
 });
 test('Verify that user can claim any message in the list of pending messages', async t => {
-    keyName = chance.word({ length: 20 });
-    consumerGroupName = chance.word({ length: 20 });
+    keyName = common.generateWord(20);
+    consumerGroupName = common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -59,6 +60,7 @@ test('Verify that user can claim any message in the list of pending messages', a
         `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`,
         `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
     ];
+
     // Add New Stream Key with pending message
     for(const command of cliCommands){
         await cliPage.sendCommandInCli(command);
@@ -75,8 +77,8 @@ test('Verify that user can claim any message in the list of pending messages', a
     await t.expect(browserPage.streamMessage.count).eql(2, 'The claimed messages is in the selected Consumer');
 });
 test('Verify that claim with optional parameters, the message removed from this Consumer and appeared in the selected Consumer', async t => {
-    keyName = chance.word({ length: 20 });
-    consumerGroupName = chance.word({ length: 20 });
+    keyName = common.generateWord(20);
+    consumerGroupName = common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -84,6 +86,7 @@ test('Verify that claim with optional parameters, the message removed from this 
         `XREADGROUP GROUP ${consumerGroupName} Alice COUNT 1 STREAMS ${keyName} >`,
         `XREADGROUP GROUP ${consumerGroupName} Bob COUNT 1 STREAMS ${keyName} >`
     ];
+
     // Add New Stream Key with pending message
     for(const command of cliCommands){
         await cliPage.sendCommandInCli(command);

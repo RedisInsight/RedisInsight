@@ -15,5 +15,5 @@ test
     .meta({ rte: rte.standalone })('Verify that user can delete databases', async t => {
         await addNewStandaloneDatabase(ossStandaloneConfig);
         await myRedisDatabasePage.deleteDatabaseByName(ossStandaloneConfig.databaseName);
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).notOk('The database deletion', { timeout: 10000 });
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).notOk('The database not deleted', { timeout: 10000 });
     });

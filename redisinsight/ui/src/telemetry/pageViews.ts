@@ -6,5 +6,6 @@ export enum TelemetryPageView {
   WORKBENCH_PAGE = 'Workbench',
   SLOWLOG_PAGE = 'Slow Log',
   CLUSTER_DETAILS_PAGE = 'Overview',
-  PUBSUB_PAGE = 'Pub/Sub'
+  PUBSUB_PAGE = 'Pub/Sub',
+  DATABASE_ANALYSIS = 'Memory analysis'
 }

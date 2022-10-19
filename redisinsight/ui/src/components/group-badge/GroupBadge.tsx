@@ -1,7 +1,8 @@
 import cx from 'classnames'
 import React from 'react'
 import { EuiBadge, EuiButtonIcon, EuiText } from '@elastic/eui'
-import { CommandGroup, KeyTypes, GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
+import { CommandGroup, KeyTypes, GROUP_TYPES_COLORS } from 'uiSrc/constants'
+import { getGroupTypeDisplay } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -15,7 +16,7 @@ export interface Props {
 
 const GroupBadge = ({ type, name = '', className = '', onDelete, compressed }: Props) => (
   <EuiBadge
-    style={{ backgroundColor: GROUP_TYPES_COLORS[type] ?? '#14708D' }}
+    style={{ backgroundColor: GROUP_TYPES_COLORS[type] ?? 'var(--defaultTypeColor)' }}
     className={cx(
       styles.badgeWrapper,
       className,
@@ -26,7 +27,7 @@ const GroupBadge = ({ type, name = '', className = '', onDelete, compressed }: P
   >
     {!compressed && (
       <EuiText style={{ color: 'var(--euiTextSubduedColorHover)' }} className="text-uppercase" size="xs">
-        {type ? (GROUP_TYPES_DISPLAY as any)[type] ?? type?.replace(/_/g, ' ') : ''}
+        {getGroupTypeDisplay(type)}
       </EuiText>
     )}
     {onDelete && (

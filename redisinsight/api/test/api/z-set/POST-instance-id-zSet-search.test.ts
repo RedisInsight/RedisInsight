@@ -41,7 +41,7 @@ const responseSchema = Joi.object().keys({
   nextCursor: Joi.number().integer().required(),
   members: Joi.array().items(Joi.object().keys({
     name: JoiRedisString.required(),
-    score: Joi.number().required(),
+    score: Joi.number().required().allow('inf', '-inf'),
   })).required(),
 }).required();
 

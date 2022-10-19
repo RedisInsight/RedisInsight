@@ -12,13 +12,14 @@ jest.mock('uiSrc/slices/browser/zset', () => {
     setZsetInitialState: jest.fn,
     zsetDataSelector: jest.fn().mockReturnValue({
       ...defaultState,
-      total: 3,
+      total: 4,
       key: 'z',
       keyName: 'z',
       members: [
         { name: { type: 'Buffer', data: [49] }, score: 1 },
         { name: { type: 'Buffer', data: [50] }, score: 2 },
         { name: { type: 'Buffer', data: [51] }, score: 3 },
+        { name: { type: 'Buffer', data: [52] }, score: 'inf' },
       ],
     }),
     updateZsetScoreStateSelector: jest.fn().mockReturnValue(defaultState.updateScore),
@@ -50,6 +51,16 @@ describe('ZSetDetails', () => {
     render(<ZSetDetails {...instance(mockedProps)} />)
     fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
     expect(screen.getByTestId(/zset-edit-button-1/)).toBeInTheDocument()
+  })
+
+  it('should render disabled edit button', () => {
+    render(<ZSetDetails {...instance(mockedProps)} />)
+    expect(screen.getByTestId(/zset-edit-button-4/)).toBeDisabled()
+  })
+
+  it('should render enabled edit button', () => {
+    render(<ZSetDetails {...instance(mockedProps)} />)
+    expect(screen.getByTestId(/zset-edit-button-3/)).not.toBeDisabled()
   })
 
   it('should render editor after click edit button and able to change value', () => {

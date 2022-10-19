@@ -43,7 +43,7 @@ test
         await t.expect(monitorPage.startMonitorButton.exists).ok('Start profiler button');
         //Verify that user can see message inside Monitor "Running Monitor will decrease throughput, avoid running it in production databases." when opens it for the first time
         await t.expect(monitorPage.monitorWarningMessage.exists).ok('Profiler warning message');
-        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases').exists).ok('Profiler warning message is correct');
+        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases.').exists).ok('Profiler warning message is not correct');
         //Verify that user can run Monitor by clicking "Run" command in the message inside Monitor
         await t.click(monitorPage.startMonitorButton);
         await t.expect(monitorPage.monitorIsStartedText.innerText).eql('Profiler is started.');

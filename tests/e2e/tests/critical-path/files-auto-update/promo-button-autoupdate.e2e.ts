@@ -29,7 +29,7 @@ if (fs.existsSync(workingDirectory)) {
     timestampPromoButtonFile.set('timestamp', newTimestamp);
     timestampPromoButtonFile.save();
 
-    fixture `Automatically update information`
+    fixture `Auto-update in Promo Button`
         .meta({type: 'critical_path'})
         .page(commonUrl)
         .beforeEach(async() => {

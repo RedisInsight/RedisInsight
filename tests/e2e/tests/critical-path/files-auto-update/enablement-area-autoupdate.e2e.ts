@@ -39,7 +39,7 @@ if (fs.existsSync(workingDirectory)) {
     tutorialsTimestampFile.set('timestamp', tutorialNewTimestamp);
     tutorialsTimestampFile.save();
 
-    fixture `Automatically update information`
+    fixture `Auto-update in Enablement Area`
         .meta({ type: 'critical_path' })
         .page(commonUrl)
         .beforeEach(async() => {

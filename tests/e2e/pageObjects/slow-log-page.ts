@@ -22,6 +22,7 @@ export class SlowLogPage {
     slowLogRefreshButton = Selector('[data-testid=refresh-slowlog-btn]');
     slowLogClearButton = Selector('[data-testid=clear-btn]');
     slowLogConfirmClearButton = Selector('[data-testid=reset-confirm-btn]');
+    slowLogTab = Selector('[data-testid=analytics-tab-SlowLog]');
     //INPUTS
     slowLogSlowerThanConfig = Selector('[data-testid=slower-than-input]');
     slowLogMaxLengthConfig = Selector('[data-testid=max-len-input]');

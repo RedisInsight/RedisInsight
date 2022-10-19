@@ -1,6 +1,6 @@
 import cx from 'classnames'
 import * as d3 from 'd3'
-import { sumBy } from 'lodash'
+import { isString, sumBy } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Nullable, truncateNumberToRange } from 'uiSrc/utils'
@@ -12,7 +12,7 @@ import styles from './styles.module.scss'
 export interface ChartData {
   value: number
   name: string
-  color: RGBColor
+  color: RGBColor | string
   meta?: {
     [key: string]: any
   }
@@ -40,6 +40,7 @@ interface IProps {
   renderLabel?: (data: ChartData) => string
   renderTooltip?: (data: ChartData) => React.ReactElement | string
   labelAs?: 'value' | 'percentage'
+  hideLabelTitle?: boolean
 }
 
 const ANIMATION_DURATION_MS = 100
@@ -56,12 +57,13 @@ const DonutChart = (props: IProps) => {
     labelAs = 'value',
     renderLabel,
     renderTooltip,
+    hideLabelTitle = false,
   } = props
 
   const margin = config?.margin || 98
   const radius = config?.radius || (width / 2 - margin)
   const arcWidth = config?.arcWidth || 8
-  const percentToShowLabel = config?.percentToShowLabel || 5
+  const percentToShowLabel = config?.percentToShowLabel ?? 5
 
   const [hoveredData, setHoveredData] = useState<Nullable<ChartData>>(null)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -113,13 +115,22 @@ const DonutChart = (props: IProps) => {
   }
 
   const isShowLabel = (d: d3.PieArcDatum<ChartData>) =>
-    d.endAngle - d.startAngle > (Math.PI * 2) / (100 / percentToShowLabel)
+    (percentToShowLabel > 0 ? d.endAngle - d.startAngle > (Math.PI * 2) / (100 / percentToShowLabel) : true)
 
   const getLabelPosition = (d: d3.PieArcDatum<ChartData>) => {
     const [x, y] = arc.centroid(d)
     const h = Math.sqrt(x * x + y * y)
-    return `translate(${(x / h) * (radius + 16)}, ${((y + 4) / h) * (radius + 16)})`
+    return `translate(${(x / h) * (radius + 12)}, ${((y + 4) / h) * (radius + 12)})`
   }
+
+  useEffect(() => {
+    d3
+      .select(svgRef.current)
+      .attr('width', width)
+      .attr('height', height)
+      .select('g')
+      .attr('transform', `translate(${width / 2},${height / 2})`)
+  }, [height, width])
 
   useEffect(() => {
     const pie = d3.pie<ChartData>().value((d: ChartData) => d.value).sort(null)
@@ -134,7 +145,7 @@ const DonutChart = (props: IProps) => {
       .select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
-      .attr('data-testid', `donut-${name}`)
+      .attr('data-testid', `donut-svg-${name}`)
       .attr('class', cx(classNames?.chart))
       .append('g')
       .attr('transform', `translate(${width / 2},${height / 2})`)
@@ -147,7 +158,7 @@ const DonutChart = (props: IProps) => {
       .append('path')
       .attr('data-testid', (d) => `arc-${d.data.name}-${d.data.value}`)
       .attr('d', arc)
-      .attr('fill', (d) => rgb(d.data.color))
+      .attr('fill', (d) => (isString(d.data.color) ? d.data.color : rgb(d.data.color)))
       .attr('class', cx(styles.arc, classNames?.arc))
       .on('mouseenter mousemove', onMouseEnterSlice)
       .on('mouseleave', onMouseLeaveSlice)
@@ -160,7 +171,7 @@ const DonutChart = (props: IProps) => {
       .append('text')
       .attr('class', cx(styles.chartLabel, classNames?.arcLabel))
       .attr('transform', getLabelPosition)
-      .text((d) => (isShowLabel(d) ? d.data.name : ''))
+      .text((d) => (isShowLabel(d) && !hideLabelTitle ? `${d.data.name}: ` : ''))
       .attr('data-testid', (d) => `label-${d.data.name}-${d.data.value}`)
       .style('text-anchor', (d) => ((d.endAngle + d.startAngle) / 2 > Math.PI ? 'end' : 'start'))
       .on('mouseenter mousemove', onMouseEnterSlice)
@@ -175,22 +186,21 @@ const DonutChart = (props: IProps) => {
           return renderLabel(d.data)
         }
 
-        const separator = ': '
         if (labelAs === 'percentage') {
-          return `${separator}${getPercentage(d.value, sum)}%`
+          return `${getPercentage(d.value, sum)}%`
         }
 
-        return `${separator}${truncateNumberToRange(d.value)}`
+        return truncateNumberToRange(d.value)
       })
       .attr('class', cx(styles.chartLabelValue, classNames?.arcLabelValue))
-  }, [data])
+  }, [data, hideLabelTitle])
 
   if (!data.length || sum === 0) {
     return null
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid={`donut-${name}`}>
       <svg ref={svgRef} />
       <div
         className={cx(styles.tooltip, classNames?.tooltip)}

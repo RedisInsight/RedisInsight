@@ -1,6 +1,6 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
 
 .section {
   position: absolute;
@@ -52,4 +52,5 @@
 
 :global(.cli-command-wrapper) {
   font: normal normal bold 14px/15px Inconsolata !important;
+  white-space: pre-line;
 }

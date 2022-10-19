@@ -27,7 +27,7 @@ const QueryCardCliResultWrapper = (props: Props) => {
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
-        <div data-testid="query-cli-result">
+        <div data-testid="query-cli-result" style={{ height: '100%' }}>
           {isNotStored && (
             <EuiText className={styles.alert} data-testid="query-cli-warning">
               <EuiIcon type="alert" className={styles.alertIcon} />

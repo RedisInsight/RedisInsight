@@ -16,7 +16,7 @@ export const MIN_ROWS_COUNT = 11
 export const MAX_CARD_HEIGHT = 210
 export const SYMBOL_WIDTH = 4.5
 
-const QueryCardCliGroupResult = (props: Props) => {
+const QueryCardCliDefaultResult = (props: Props) => {
   const { items = [], isFullScreen } = props
 
   const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 })
@@ -59,4 +59,4 @@ const QueryCardCliGroupResult = (props: Props) => {
   )
 }
 
-export default QueryCardCliGroupResult
+export default QueryCardCliDefaultResult

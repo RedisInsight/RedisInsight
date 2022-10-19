@@ -1,22 +1,36 @@
 import React from 'react'
+import cx from 'classnames'
 
-import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
-import { cliParseTextResponse, CliPrefix, Maybe } from 'uiSrc/utils'
+import VirtualList from 'uiSrc/components/virtual-list'
+
+import styles from './styles.module.scss'
 
 export interface Props {
-  query: string
-  result: Maybe<CommandExecutionResult[]>
+  items: (string | JSX.Element)[]
+  isFullScreen?: boolean
 }
 
-const QueryCardCliGroupResult = (props: Props) => {
-  const { result = [], query } = props
+export const MIN_ROWS_COUNT = 11
+export const MAX_CARD_HEIGHT = 210
+
+const QueryCardCliDefaultResult = (props: Props) => {
+  const { items = [], isFullScreen } = props
 
   return (
-    <div data-testid="query-cli-group-result">
-      {result?.map(({ response, status }) =>
-        cliParseTextResponse(response || '(nil)', query, status, CliPrefix.QueryCard))}
+    <div
+      className={cx(
+        styles.container,
+        'query-card-output-response-success',
+        { fullscreen: isFullScreen },
+      )}
+      data-testid="query-cli-card-result"
+    >
+      <VirtualList
+        items={items}
+        dynamicHeight={!isFullScreen ? { itemsCount: MIN_ROWS_COUNT, maxHeight: MAX_CARD_HEIGHT } : undefined}
+      />
     </div>
   )
 }
 
-export default QueryCardCliGroupResult
+export default QueryCardCliDefaultResult

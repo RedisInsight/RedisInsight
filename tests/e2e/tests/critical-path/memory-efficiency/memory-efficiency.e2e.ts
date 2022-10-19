@@ -219,12 +219,10 @@ test
         await t.click(myRedisDatabasePage.analysisPageButton);
     })
     .after(async() => {
-        for (let i = 0; i < numberOfGeneratedKeys; i++) {
-            await cliPage.sendCommandInCli(`del ${keyNamesReport[i]}`);
-        }
+        await cliPage.sendCommandInCli(`del ${keyNamesReport.join(' ')}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Analysis history', async t => {
-        const numberOfKeys = [];
+        const numberOfKeys: string[] = [];
         const dbSize = (await cliPage.getSuccessCommandResultFromCli('dbsize')).split(' ');
         const existedNumberOfKeys = parseInt(dbSize[dbSize.length - 1]);
         for (let i = 0; i < 6; i++) {
@@ -240,7 +238,7 @@ test
         // Verify that user can switch between reports and see all data updated in each report
         for (let i = 0; i < 5; i++) {
             await t.click(memoryEfficiencyPage.reportItem.nth(i));
-            await t.expect(memoryEfficiencyPage.reportItem.visible).notOk('Report is not switched');
+            await t.expect(memoryEfficiencyPage.reportItem.exists).notOk('Report is not switched');
             await t.expect(memoryEfficiencyPage.scannedKeysInReport.textContent).contains(`(${numberOfKeys[5 - i]}/${numberOfKeys[5 - i]} keys)`);
             const actualNumber = await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent;
             await t.expect(actualNumber).eql(numberOfKeys[5 - i], 'Report content (total keys) is not correct', { timeout: 2000 });

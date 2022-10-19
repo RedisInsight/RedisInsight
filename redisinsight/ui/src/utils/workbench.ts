@@ -20,7 +20,7 @@ const getExecuteParams = (params: CodeButtonParams = {}, state: ExecuteQueryPara
   } = state
   const { results, mode, pipeline } = params
 
-  const batchSize = (pipeline && isInteger(+pipeline)) ? +pipeline : batchSizeState
+  const batchSize = (pipeline && isInteger(+pipeline) && +pipeline >= 0) ? +pipeline : batchSizeState
   const resultsMode = (results && results in CodeButtonResults) ? CodeButtonResults[results] : resultsModeState
   const activeRunQueryMode = (mode && mode in CodeButtonRunQueryMode)
     ? CodeButtonRunQueryMode[mode]

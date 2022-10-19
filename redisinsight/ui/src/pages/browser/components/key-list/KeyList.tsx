@@ -2,7 +2,7 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef,
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { debounce, isUndefined, reject } from 'lodash'
+import { debounce, findIndex, isUndefined, reject } from 'lodash'
 
 import {
   EuiText,
@@ -189,39 +189,25 @@ const KeyList = forwardRef((props: Props, ref) => {
     const isSomeNotUndefined = ({ type, size, length }: GetKeyInfoResponse) =>
       !isUndefined(type) || !isUndefined(size) || !isUndefined(length)
 
-    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
+    if (firstEmptyItemIndex === -1) return
 
-    if (!emptyItems.length) return
+    const emptyItems = reject(itemsInit, isSomeNotUndefined)
 
     dispatch(fetchKeysMetadata(
       emptyItems.map(({ name }) => name),
       (loadedItems) =>
-        onSuccessFetchedMetadata({
-          startIndex,
-          lastIndex,
-          loadedItems,
-          isFirstEmpty: !isSomeNotUndefined(itemsInit[0]),
-        }),
+        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
       () => { rerender({}) }
     ))
   }
 
-  const onSuccessFetchedMetadata = (data: {
+  const onSuccessFetchedMetadata = (
     startIndex: number,
-    lastIndex: number,
-    isFirstEmpty: boolean
     loadedItems: GetKeyInfoResponse[],
-  }) => {
-    const {
-      startIndex,
-      lastIndex,
-      isFirstEmpty,
-      loadedItems,
-    } = data
+  ) => {
     const items = loadedItems.map(formatItem)
-    const startIndexDel = isFirstEmpty ? startIndex : lastIndex - items.length + 1
-
-    itemsRef.current.splice(startIndexDel, items.length, ...items)
+    itemsRef.current.splice(startIndex, items.length, ...items)
 
     rerender({})
   }

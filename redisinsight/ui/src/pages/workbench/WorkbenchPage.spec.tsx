@@ -119,7 +119,7 @@ describe('Telemetry', () => {
     }))
   })
 
-  it('Editor: Raw mode', async () => {
+  it('should send proper eventData after changing Raw mode', async () => {
     const sendEventTelemetryMock = jest.fn()
 
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
@@ -152,6 +152,14 @@ describe('Telemetry', () => {
     })
 
     sendEventTelemetry.mockRestore()
+  })
+
+  it('should send proper eventData without Raw mode', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<WorkbenchPage />)
 
     // send command without Raw mode
     fireEvent.click(screen.getByTestId('btn-submit'))
@@ -169,6 +177,14 @@ describe('Telemetry', () => {
     })
 
     sendEventTelemetry.mockRestore()
+  })
+
+  it('should send proper eventData with Raw mode', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<WorkbenchPage />)
 
     // turn on Raw mode
     fireEvent.click(screen.getByTestId('btn-change-mode'))
@@ -197,14 +213,14 @@ describe('Telemetry', () => {
         rawMode: true,
       }
     })
+
+    sendEventTelemetry.mockRestore()
   })
 
   it('Results: Raw mode', async () => {
     const sendEventTelemetryMock = jest.fn()
 
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
-
-    sendEventTelemetry.mockRestore()
 
     render(<WorkbenchPage />)
 

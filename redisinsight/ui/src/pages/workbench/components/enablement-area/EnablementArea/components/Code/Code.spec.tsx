@@ -43,7 +43,6 @@ describe('Code', () => {
       </EnablementAreaProvider>
     )
 
-    screen.debug()
     fireEvent.click(screen.queryByTestId(`preselect-auto-${label}`) as Element)
     expect(setScript).toBeCalledWith(MONACO_MANUAL, { mode: ExecuteButtonMode.Auto }, undefined)
   })

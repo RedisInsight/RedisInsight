@@ -12,14 +12,14 @@ export class DiscoverMasterGroupsPage {
     addPrimaryGroupButton = Selector('[data-testid=btn-add-primary-group]');
     masterGroupsTitle = Selector('//h1[text()="Auto-Discover Redis Sentinel Primary Groups"]');
 
-  /**
+    /**
  * Add all Master Groups from Sentinel
  */
-  async addMasterGroups(): Promise<void> {
-      await t
-          .click(this.selectAllCheckbox)
-          .expect(this.selectAllCheckbox.checked).ok();
-      await t
-          .click(this.addPrimaryGroupButton);
-  }
+    async addMasterGroups(): Promise<void> {
+        await t
+            .click(this.selectAllCheckbox)
+            .expect(this.selectAllCheckbox.checked).ok();
+        await t
+            .click(this.addPrimaryGroupButton);
+    }
 }

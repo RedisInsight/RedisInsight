@@ -1,4 +1,3 @@
-import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, CliPage } from '../../../pageObjects';
@@ -8,12 +7,11 @@ import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
-const chance = new Chance();
 const common = new Common();
 
-const value = chance.word({length: 5});
-let field = chance.word({length: 5});
-let keyName = chance.word({length: 20});
+const value = common.generateWord(5);
+let field = common.generateWord(5);
+let keyName = common.generateWord(20);
 
 fixture `Stream key`
     .meta({
@@ -33,45 +31,47 @@ test('Verify that user can see a Stream in a table format', async t => {
         'Entry ID',
         field
     ];
-    keyName = chance.word({length: 20});
+    keyName = common.generateWord(20);
     const command = `XADD ${keyName} * '${field}' '${value}'`;
-    //Add new Stream key with 5 EntryIds
+
+    // Add new Stream key with 5 EntryIds
     for(let i = 0; i < 5; i++){
         await cliPage.sendCommandInCli(command);
     }
-    //Open key details and check Steam format
+    // Open key details and check Steam format
     await browserPage.openKeyDetails(keyName);
-    await t.expect(browserPage.virtualTableContainer.visible).ok('The Stream is displayed in a table format');
+    await t.expect(browserPage.virtualTableContainer.visible).ok('The Stream is not displayed in a table format');
     for(const field of streamFields){
-        await t.expect(browserPage.streamEntriesContainer.textContent).contains(field, 'The Stream fields are in the table');
+        await t.expect(browserPage.streamEntriesContainer.textContent).contains(field, 'The Stream fields are not displayed in the table');
     }
-    await t.expect(browserPage.streamFieldsValues.textContent).contains(value, 'The Stream field value is in the table');
+    await t.expect(browserPage.streamFieldsValues.textContent).contains(value, 'The Stream field value is not displayed in the table');
 });
 test('Verify that user can sort ASC/DESC by Entry ID', async t => {
-    keyName = chance.word({length: 20});
+    keyName = common.generateWord(20);
     const command = `XADD ${keyName} * '${field}' '${value}'`;
-    //Add new Stream key with 5 EntryIds
+
+    // Add new Stream key with 5 EntryIds
     for(let i = 0; i < 5; i++){
         await cliPage.sendCommandInCli(command);
     }
-    //Open key details and check Entry ID ASC sorting
+    // Open key details and check Entry ID ASC sorting
     await browserPage.openKeyDetails(keyName);
     const entryCount = await browserPage.streamEntryDate.count;
     for(let i = 0; i < entryCount - 1; i++){
         const entryDateFirstAsc = Date.parse(await browserPage.streamEntryDate.nth(i).textContent);
         const entryDateSecondAsc = Date.parse(await browserPage.streamEntryDate.nth(i + 1).textContent);
-        await t.expect(entryDateFirstAsc).gt(entryDateSecondAsc, 'By default the table is sorted by Entry ID');
+        await t.expect(entryDateFirstAsc).gt(entryDateSecondAsc, 'By default the table is not sorted by Entry ID');
     }
-    //Check the DESC sorting
+    // Check the DESC sorting
     await t.click(browserPage.sortingButton);
     for(let i = 0; i < entryCount - 1; i++){
         const entryDateFirstDesc = Date.parse(await browserPage.streamEntryDate.nth(i).textContent);
         const entryDateSecondDesc = Date.parse(await browserPage.streamEntryDate.nth(i + 1).textContent);
-        await t.expect(entryDateFirstDesc).lt(entryDateSecondDesc, 'The Stream fields are sorted DESC by Entry ID');
+        await t.expect(entryDateFirstDesc).lt(entryDateSecondDesc, 'The Stream fields are not sorted DESC by Entry ID');
     }
 });
 test('Verify that user can see all the columns are displayed by default for Stream', async t => {
-    keyName = chance.word({length: 20});
+    keyName = common.generateWord(20);
     const fields = [
         'Pressure',
         'Humidity',
@@ -82,58 +82,62 @@ test('Verify that user can see all the columns are displayed by default for Stre
         '78',
         '27'
     ];
-    //Add new Stream key with 3 fields
+
+    // Add new Stream key with 3 fields
     for(let i = 0; i < fields.length; i++){
         await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
     }
-    //Open key details and check fields
+    // Open key details and check fields
     await browserPage.openKeyDetails(keyName);
     await t.click(browserPage.fullScreenModeButton);
     for(let i = fields.length - 1; i <= 0; i--){
         const fieldName = await browserPage.streamFields.nth(i).textContent;
-        await t.expect(fieldName).eql(fields[i], 'All the columns are displayed by default for Stream');
+        await t.expect(fieldName).eql(fields[i], 'All the columns are not displayed by default for Stream');
     }
     await t.click(browserPage.fullScreenModeButton);
 });
 test('Verify that the multi-line cell value tooltip is available on hover as per standard key details behavior', async t => {
-    keyName = chance.word({length: 20});
+    keyName = common.generateWord(20);
     const fields = [
         'Pressure',
         'Humidity'
     ];
-    const entryValue = chance.sentence({words: 5});
-    //Add new Stream key with multi-line cell value
+    const entryValue = common.generateSentence(5);
+
+    // Add new Stream key with multi-line cell value
     for(let i = 0; i < fields.length; i++){
         await cliPage.sendCommandInCli(`XADD ${keyName} * '${fields[i]}' '${entryValue}'`);
     }
-    //Open key details and check tooltip
+    // Open key details and check tooltip
     await browserPage.openKeyDetails(keyName);
     await t.hover(browserPage.streamEntryFields);
-    await t.expect(browserPage.tooltip.textContent).contains(entryValue, 'The multi-line cell value tooltip is available');
+    await t.expect(browserPage.tooltip.textContent).contains(entryValue, 'The multi-line cell value tooltip is not available');
 });
 test('Verify that user can see a confirmation message when request to delete an entry in the Stream', async t => {
-    keyName = chance.word({length: 20});
+    keyName = common.generateWord(20);
     field = 'fieldForRemoving';
     const confirmationMessage = `will be removed from ${keyName}`;
-    //Add new Stream key with 1 field
+
+    // Add new Stream key with 1 field
     await cliPage.sendCommandInCli(`XADD ${keyName} * ${field} ${value}`);
-    //Open key details and click on delete entry
+    // Open key details and click on delete entry
     await browserPage.openKeyDetails(keyName);
     const entryId = await browserPage.streamEntryIdValue.textContent;
     await t.click(browserPage.removeEntryButton);
-    //Check the confirmation message
-    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(confirmationMessage, `The confirmation message ${keyName}`);
-    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(entryId, 'The confirmation message for removing Entry');
+    // Check the confirmation message
+    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(confirmationMessage, `The confirmation message ${keyName} not displayed`);
+    await t.expect(browserPage.confirmationMessagePopover.textContent).contains(entryId, 'The confirmation message for removing Entry not displayed');
 });
 test('Verify that the Entry ID field, Delete button are always displayed while scrolling for Stream data', async t => {
-    keyName = chance.word({ length: 20 });
+    keyName = common.generateWord(20);
     const fields = common.createArrayWithKeys(9);
     const values = common.createArrayWithKeys(9);
-    //Add new Stream key with 3 fields
+
+    // Add new Stream key with 3 fields
     for (let i = 0; i < fields.length; i++) {
         await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
     }
-    //Open key details
+    // Open key details
     await browserPage.openKeyDetails(keyName);
     // Scroll right
     await t.pressKey('shift').scroll(browserPage.streamVirtualContainer, 'right');

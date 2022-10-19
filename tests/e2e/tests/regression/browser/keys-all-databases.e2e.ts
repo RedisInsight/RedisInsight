@@ -24,15 +24,15 @@ const common = new Common();
 let keyName = common.generateWord(10);
 const verifyKeysAdded = async(): Promise<void> => {
     keyName = common.generateWord(10);
-    //add Hash key
+    // Add Hash key
     await browserPage.addHashKey(keyName);
-    //check the notification message
+    // Check the notification message
     const notification = await browserPage.getMessageText();
-    await t.expect(notification).contains('Key has been added', 'The notification');
-    //check that new key is displayed in the list
+    await t.expect(notification).contains('Key has been added', 'The notification not correct');
+    // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
     const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-    await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    await t.expect(isKeyIsDisplayedInTheList).ok('The key is not added');
 };
 
 fixture `Work with keys in all types of databases`
@@ -44,7 +44,7 @@ test
         await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add Key in RE Cluster DB', async() => {
@@ -56,7 +56,7 @@ test
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add Key in RE Cloud DB', async() => {
@@ -68,7 +68,7 @@ test
         await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add Key in OSS Cluster DB', async() => {
@@ -80,7 +80,7 @@ test
         await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     })('Verify that user can add Key in Sentinel Primary Group', async() => {

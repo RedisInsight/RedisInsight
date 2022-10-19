@@ -103,7 +103,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       return
     }
 
-    const { lastIndex, startIndex } = renderedRowsIndexesRef.current
+    const { startIndex, lastIndex } = renderedRowsIndexesRef.current
     onRowsRendered(startIndex, lastIndex)
     rerender({})
   }, [keysState.keys])
@@ -163,14 +163,16 @@ const KeyList = forwardRef((props: Props, ref) => {
     nameString: bufferToString(item.name)
   }), [])
 
-  const onRowsRendered = debounce(async (startIndex: number, lastIndex: number) => {
+  const onRowsRendered = (startIndex: number, lastIndex: number) => {
     renderedRowsIndexesRef.current = { lastIndex, startIndex }
 
     const newItems = bufferFormatRows(startIndex, lastIndex)
 
     getMetadata(startIndex, lastIndex, newItems)
     rerender({})
-  }, 100)
+  }
+
+  const onRowsRenderedDebounced = debounce(onRowsRendered, 100)
 
   const bufferFormatRows = (startIndex: number, lastIndex: number): GetKeyInfoResponse[] => {
     const newItems = bufferFormatRangeItems(
@@ -367,7 +369,7 @@ const KeyList = forwardRef((props: Props, ref) => {
               setScrollTopPosition={setScrollTopPosition}
               hideFooter={hideFooter}
               onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
-                onRowsRendered(overscanStartIndex, overscanStopIndex)}
+                onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
             />
           </div>
         </div>

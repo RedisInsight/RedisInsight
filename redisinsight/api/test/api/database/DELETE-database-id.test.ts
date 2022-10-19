@@ -1,36 +1,18 @@
 import {
   expect,
   describe,
-  it,
   before,
   deps,
-  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 
 const { request, server, localDb, constants } = deps;
 
-const endpoint = id => request(server).delete(`/instance/${id}`);
+const endpoint = id => request(server).delete(`/${constants.API.DATABASES}/${id}`);
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
+const mainCheckFn = getMainCheckFn(endpoint);
 
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
-
-describe('DELETE /instance/:id', () => {
+describe(`DELETE /${constants.API.DATABASES}/:id`, () => {
   before(async () => await localDb.createDatabaseInstances());
 
   describe('Common', () => {

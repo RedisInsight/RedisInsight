@@ -2,6 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
 import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
 
+const API = {
+  DATABASES: 'databases',
+};
+
 const TEST_RUN_ID = `=${uuidv4()}`;
 const KEY_TTL = 100;
 const CLUSTER_HASH_SLOT = '{slot1}';
@@ -18,6 +22,8 @@ const unprintableBuf = Buffer.concat([
 ]);
 
 export const constants = {
+  // api
+  API,
   // common
   TEST_RUN_ID,
   TEST_RUN_NAME: process.env.TEST_RUN_NAME || '',

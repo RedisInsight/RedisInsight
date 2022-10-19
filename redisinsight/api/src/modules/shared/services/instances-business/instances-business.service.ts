@@ -52,7 +52,6 @@ import {
 } from 'src/modules/instances/dto/redis-sentinel.dto';
 import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
 import { InstancesAnalyticsService } from 'src/modules/shared/services/instances-business/instances-analytics.service';
-import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
@@ -144,7 +143,7 @@ export class InstancesBusinessService {
   //   }
   //   return result;
   // }
-  //
+
   // public async addRedisCloudDatabases(
   //   auth: CloudAuthDto,
   //   addDatabasesDto: AddRedisCloudDatabaseDto[],
@@ -208,7 +207,7 @@ export class InstancesBusinessService {
   //   }
   //   return result;
   // }
-  //
+
   // public async addSentinelMasters(
   //   dto: AddSentinelMastersDto,
   // ): Promise<AddSentinelMasterResponse[]> {

@@ -12,6 +12,10 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { RedisSentinelBusinessService } from 'src/modules/shared/services/redis-sentinel-business/redis-sentinel-business.service';
 import { AutodiscoveryAnalyticsService } from 'src/modules/shared/services/autodiscovery-analytics.service/autodiscovery-analytics.service';
+import { DatabaseInfoController } from 'src/modules/database/database-info.controller';
+import { DatabaseInfoService } from 'src/modules/database/database-info.service';
+import { ConfigurationBusinessService } from 'src/modules/shared/services/configuration-business/configuration-business.service';
+import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 
 @Module({
   imports: [
@@ -20,6 +24,7 @@ import { AutodiscoveryAnalyticsService } from 'src/modules/shared/services/autod
   ],
   controllers: [
     DatabaseController,
+    DatabaseInfoController,
   ],
   providers: [
     DatabaseService,
@@ -27,6 +32,8 @@ import { AutodiscoveryAnalyticsService } from 'src/modules/shared/services/autod
     DatabaseInfoProvider,
     DatabaseAnalytics,
     DatabaseFactory,
+    DatabaseInfoService,
+    DatabaseOverviewProvider,
     {
       provide: DatabaseRepository,
       useClass: LocalDatabaseRepository,
@@ -34,6 +41,7 @@ import { AutodiscoveryAnalyticsService } from 'src/modules/shared/services/autod
     // todo: remove deps below
     RedisSentinelBusinessService,
     AutodiscoveryAnalyticsService,
+    ConfigurationBusinessService,
   ],
   exports: [
     DatabaseService,

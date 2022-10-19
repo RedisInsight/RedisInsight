@@ -19,7 +19,6 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { Default } from 'src/common/decorators';
 
 export class Database {
   @ApiProperty({
@@ -101,6 +100,7 @@ export class Database {
     default: ConnectionType.STANDALONE,
     enum: ConnectionType,
   })
+  @Expose()
   connectionType: ConnectionType;
 
   @ApiProperty({
@@ -178,8 +178,7 @@ export class Database {
   @IsOptional()
   @Type(() => Boolean)
   @IsBoolean({ always: true })
-  @Default(false)
-  verifyServerCert?: boolean = false;
+  verifyServerCert?: boolean;
 
   @ApiPropertyOptional({
     description: 'CA Certificate',

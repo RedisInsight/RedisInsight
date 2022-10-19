@@ -1,7 +1,7 @@
 import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
-import { sum } from 'lodash';
+import { sum, merge } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -12,7 +12,6 @@ import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
-import { plainToClassFromExist } from 'class-transformer';
 import { AppRedisInstanceEvents } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
@@ -83,7 +82,13 @@ export class DatabaseService {
     try {
       this.logger.log('Creating new database.');
 
-      return this.repository.create(await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)));
+      const database = await this.repository.create(
+        await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
+      );
+
+      // const redisInfo = await this.getInfo(result.id, AppTool.Common, true);
+      // this.analytics.sendInstanceAddedEvent(result, redisInfo);
+      return database;
     } catch (error) {
       this.logger.error('Failed to add database.', error);
 
@@ -98,15 +103,14 @@ export class DatabaseService {
   // todo: remove manualUpdate flag logic
   public async update(
     id: string,
-    databaseDto: UpdateDatabaseDto,
+    dto: UpdateDatabaseDto,
     manualUpdate: boolean = true,
   ): Promise<Database> {
     this.logger.log(`Updating database: ${id}`);
     const oldDatabase = await this.get(id, true);
+    let database = merge(oldDatabase, dto);
 
     try {
-      let database = plainToClassFromExist(oldDatabase, databaseDto);
-
       database = await this.databaseFactory.createDatabaseModel(database);
 
       // todo: investigate manual update flag
@@ -127,7 +131,7 @@ export class DatabaseService {
       return database;
     } catch (error) {
       this.logger.error(`Failed to update database instance ${id}`, error);
-      throw catchRedisConnectionError(error, databaseDto);
+      throw catchRedisConnectionError(error, database);
     }
   }
 

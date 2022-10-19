@@ -2,17 +2,15 @@ import {
   Joi,
   expect,
   describe,
-  it,
   before,
   deps,
-  validateApiCall,
   generateInvalidDataTestCases,
-  validateInvalidDataTestCase,
+  validateInvalidDataTestCase, getMainCheckFn
 } from '../deps';
 
 const { request, server, localDb, constants } = deps;
 
-const endpoint = () => request(server).delete(`/instance`);
+const endpoint = () => request(server).delete(`/${constants.API.DATABASES}`);
 
 // input data schema
 const dataSchema = Joi.object({
@@ -23,26 +21,9 @@ const validInputData = {
   ids: [constants.getRandomString()],
 };
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
+const mainCheckFn = getMainCheckFn(endpoint);
 
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
-
-describe('DELETE /instance', () => {
+describe(`DELETE /${constants.API.DATABASES}`, () => {
   before(async () => await localDb.createDatabaseInstances());
 
   describe('Validation', () => {

@@ -1,13 +1,12 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
-import { catchRedisConnectionError, classToClass, getHostingProvider } from 'src/utils';
+import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
 import * as IORedis from 'ioredis';
-import { AppTool, RedisClusterNodeLinkState } from 'src/models';
+import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
-import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { RedisErrorCodes } from 'src/constants';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
@@ -23,7 +22,6 @@ export class DatabaseFactory {
     private databaseInfoProvider: DatabaseInfoProvider,
     private caCertificateService: CaCertificateService,
     private clientCertificateService: ClientCertificateService,
-    private analytics: DatabaseAnalytics,
   ) {}
 
   /**
@@ -53,18 +51,7 @@ export class DatabaseFactory {
     model.modules = await this.databaseInfoProvider.determineDatabaseModules(client);
     await client.disconnect();
 
-    // const result = convertEntityToDto(await this.databasesProvider.save(databaseEntity));
-    // const redisInfo = await this.getInfo(result.id, AppTool.Common, true);
-    // this.instancesAnalyticsService.sendInstanceAddedEvent(result, redisInfo);
-    // return result;
     return model;
-
-    // this.logger.error('Failed to add database.', error);
-    // // const exception = getRedisConnectionException(error, dto);
-    // // this.instancesAnalyticsService.sendInstanceAddFailedEvent(exception);
-    // // throw exception;
-    // throw error;
-
   }
 
   /**

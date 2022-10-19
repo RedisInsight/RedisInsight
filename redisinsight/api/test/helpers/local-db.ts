@@ -1,15 +1,15 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
-import { SettingsEntity } from 'src/modules/core/models/settings.entity';
-import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
+import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
 import { PluginStateEntity } from "src/modules/workbench/entities/plugin-state.entity";
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
 export const repositories = {
-  INSTANCE: 'DatabaseInstanceEntity',
+  DAtABASE: 'DatabaseEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
   AGREEMENTS: 'AgreementsEntity',
@@ -156,7 +156,7 @@ const createClientCertificate = async (certificate) => {
 }
 
 const createTesDbInstance = async (rte, server): Promise<void> => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
 
   const instance: any = {
     id: constants.TEST_INSTANCE_ID,
@@ -210,7 +210,7 @@ const createTesDbInstance = async (rte, server): Promise<void> => {
 }
 
 export const createDatabaseInstances = async () => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
   const instances = [
     {
       id: constants.TEST_INSTANCE_ID_2,
@@ -239,7 +239,7 @@ export const createDatabaseInstances = async () => {
 }
 
 export const createAclInstance = async (rte, server): Promise<void> => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
   const instance: any = {
     id: constants.TEST_INSTANCE_ACL_ID,
     name: constants.TEST_INSTANCE_ACL_NAME,
@@ -295,12 +295,12 @@ export const createAclInstance = async (rte, server): Promise<void> => {
 }
 
 export const getInstanceByName = async (name: string) => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
   return rep.findOneBy({ name });
 }
 
 export const getInstanceById = async (id: string) => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
   return rep.findOneBy({ id });
 }
 
@@ -375,7 +375,7 @@ export const setAppSettings = async (data: object) => {
 }
 
 const truncateAll = async () => {
-  await (await getRepository(repositories.INSTANCE)).clear();
+  await (await getRepository(repositories.DAtABASE)).clear();
   await (await getRepository(repositories.CA_CERT_REPOSITORY)).clear();
   await (await getRepository(repositories.CLIENT_CERT_REPOSITORY)).clear();
   await (await resetSettings());

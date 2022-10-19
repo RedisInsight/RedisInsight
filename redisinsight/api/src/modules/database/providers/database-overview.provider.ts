@@ -12,7 +12,7 @@ import {
   convertBulkStringsToObject,
   convertRedisInfoReplyToObject,
 } from 'src/utils';
-import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
+import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 
 @Injectable()
 export class DatabaseOverviewProvider {

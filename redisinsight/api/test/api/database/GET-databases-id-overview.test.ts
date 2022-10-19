@@ -1,9 +1,9 @@
-import { describe, it, deps, validateApiCall, before, expect, requirements } from '../deps';
+import { describe, it, deps, validateApiCall, before, expect, requirements, getMainCheckFn } from '../deps';
 import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
-const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/instance/${instanceId}/overview`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).get(`/${constants.API.DATABASES}/${id}/overview`);
 
 const responseSchema = Joi.object().keys({
   version: Joi.string().required(),
@@ -15,18 +15,11 @@ const responseSchema = Joi.object().keys({
   networkInKbps: Joi.number().allow(null),
   networkOutKbps: Joi.number().integer().allow(null),
   cpuUsagePercentage: Joi.number().allow(null),
-}).required();
+}).required().strict();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
-describe('GET /instance/:instanceId/overview', () => {
+describe(`GET /${constants.API.DATABASES}/:id/overview`, () => {
   before(localDb.createDatabaseInstances);
 
   [

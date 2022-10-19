@@ -1,38 +1,12 @@
 import {Joi, expect, describe, it, before, deps, requirements, validateApiCall, after} from '../deps';
+import { databaseSchema } from './constants';
 const { rte, request, server, localDb, constants } = deps;
 
-const endpoint = () => request(server).post('/instance');
+const endpoint = () => request(server).post(`/${constants.API.DATABASES}`);
 
-const responseSchema = Joi.object().keys({
-  id: Joi.string().required(),
-  name: Joi.string().required(),
-  host: Joi.string().required(),
-  port: Joi.number().integer().required(),
-  db: Joi.number().integer().allow(null),
-  connectionType: Joi.string().valid('STANDALONE', 'CLUSTER', 'SENTINEL').required(),
-  username: Joi.string().allow(null).required(),
-  password: Joi.string().allow(null).required(),
-  nameFromProvider: Joi.string().allow(null).required(),
-  lastConnection: Joi.date().allow(null).required(),
-  provider: Joi.string().valid('LOCALHOST', 'UNKNOWN', 'RE_CLOUD', 'RE_CLUSTER').required(),
-  tls: Joi.object().keys({
-    servername: Joi.string().allow(null),
-    verifyServerCert: Joi.boolean().required(),
-    caCertId: Joi.string(),
-    clientCertPairId: Joi.string(),
-  }),
-  endpoints: Joi.array().items({
-    host: Joi.string().required(),
-    port: Joi.number().integer().required(),
-  }),
-  modules: Joi.array().items({
-    name: Joi.string().required(),
-    version: Joi.number().integer(),
-    semanticVersion: Joi.string(),
-  }),
-}).required();
+const responseSchema = databaseSchema.required().strict(true);
 
-describe('POST /instance', () => {
+describe('POST /databases', () => {
   // todo: add validation tests
   describe('Validation', function () {});
   // todo: cover connection error for incorrect host + port [describe('common')]

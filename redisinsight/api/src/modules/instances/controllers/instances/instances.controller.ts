@@ -22,7 +22,6 @@ import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interc
 import { AddSentinelMasterResponse, AddSentinelMastersDto } from 'src/modules/instances/dto/redis-sentinel.dto';
 import { BuildType } from 'src/modules/core/models/server-provider.interface';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
 import {
   AddDatabaseInstanceDto,
   DatabaseInstanceResponse,

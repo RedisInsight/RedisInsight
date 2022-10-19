@@ -6,12 +6,12 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
 import { AppTool } from 'src/models';
 import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
-import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
+import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 
 @ApiTags('Database Instances')
 @Controller('databases')
-export class DatabaseController {
+export class DatabaseInfoController {
   constructor(
     private databaseInfoService: DatabaseInfoService,
   ) {}
@@ -29,7 +29,7 @@ export class DatabaseController {
       },
     ],
   })
-  async getDatabaseInfo(
+  async getInfo(
     @Param('id') id: string,
   ): Promise<RedisDatabaseInfoResponse> {
     return this.databaseInfoService.getInfo(

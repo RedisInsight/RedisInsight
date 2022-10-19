@@ -1,9 +1,9 @@
-import { describe, it, deps, validateApiCall, before, expect } from '../deps';
+import { describe, it, deps, validateApiCall, before, expect, getMainCheckFn } from '../deps';
 import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
-const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/instance/${instanceId}/info`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).get(`/${constants.API.DATABASES}/${id}/info`);
 
 const responseSchema = Joi.object().keys({
   version: Joi.string().required(),
@@ -26,23 +26,16 @@ const responseSchema = Joi.object().keys({
     hitRatio: Joi.number().required(),
     server: Joi.object().required(),
   })),
-}).required();
+}).required().strict();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
-describe('GET /instance/:instanceId/info', () => {
+describe(`GET /${constants.API.DATABASES}/:id/info`, () => {
   before(localDb.createDatabaseInstances);
 
   [
     {
-      name: 'Should connect to a database',
+      name: 'Should get database info',
       responseSchema,
       checkFn: ({body}) => {
         expect(body.version).to.eql(rte.env.version);
@@ -50,7 +43,7 @@ describe('GET /instance/:instanceId/info', () => {
     },
     {
       endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
-      name: 'Should not connect to a database due to misconfiguration',
+      name: 'Should not get info due to misconfiguration',
       statusCode: 503,
       responseBody: {
         statusCode: 503,

@@ -1,20 +1,12 @@
-import { describe, it, deps, validateApiCall, before } from '../deps';
+import { describe, it, deps, validateApiCall, before, getMainCheckFn } from '../deps';
 const { localDb, request, server, constants } = deps;
 
-const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/instance/${instanceId}/connect`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).get(`/${constants.API.DATABASES}/${id}/connect`);
 
+const mainCheckFn = getMainCheckFn(endpoint);
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-  });
-};
-
-describe('GET /instance/:instanceId/connect', () => {
+describe(`GET ${constants.API.DATABASES}/:id/connect`, () => {
   before(async () => await localDb.createDatabaseInstances());
 
   [

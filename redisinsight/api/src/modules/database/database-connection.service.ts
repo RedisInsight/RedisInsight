@@ -95,7 +95,7 @@ export class DatabaseConnectionService {
     const connectionName = generateRedisConnectionName(clientMetadata.namespace, clientMetadata.databaseId);
 
     try {
-      return this.redisService.connectToDatabaseInstance(
+      return await this.redisService.connectToDatabaseInstance(
         database,
         clientMetadata.namespace,
         connectionName,

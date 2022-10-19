@@ -76,7 +76,7 @@ const Monitor = (props: Props) => {
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiTextColor color="warning" className="warning--light" style={{ paddingLeft: 4 }} data-testid="monitor-warning-message">
-              Running Profiler will decrease throughput, avoid running it in production databases
+              Running Profiler will decrease throughput, avoid running it in production databases.
             </EuiTextColor>
           </EuiFlexItem>
         </EuiFlexGroup>

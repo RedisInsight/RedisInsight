@@ -51,6 +51,7 @@ export class WorkbenchPage {
     cancelButton = Selector('[data-testid=cancel-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
+    guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
     nextPageButton = Selector('[data-testid=enablement-area__next-page-btn]');
     prevPageButton = Selector('[data-testid=enablement-area__prev-page-btn]');
@@ -60,6 +61,7 @@ export class WorkbenchPage {
     showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
     rawModeBtn = Selector('[data-testid="btn-change-mode"]');
+    closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     groupMode = Selector('[data-testid=btn-change-group-mode]');
     copyCommand = Selector('[data-testid=copy-command]');
     redisStackTimeSeriesLoadMorePoints = Selector('[data-testid=preselect-Load more data points]');
@@ -69,7 +71,9 @@ export class WorkbenchPage {
     //LINKS
     timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
     redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
-    workingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
+    tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
+    guidesWorkingWithGraphLink = Selector('[data-testid=internal-link-working-with-graphs]');
+    guidesIntroductionGraphLink = Selector('[data-testid=internal-link-introduction]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
     vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
     //TEXT INPUTS (also referred to as 'Text fields')
@@ -104,6 +108,7 @@ export class WorkbenchPage {
     runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
     loadedCommand = Selector('[class=euiLoadingContent__singleLine]');
     runButtonSpinner = Selector('[data-testid=loading-spinner]');
+    enablementAreaEmptyContent = Selector('[data-testid=enablement-area__empty-prompt]');
     workbenchCommandInHistory = Selector(this.cssWorkbenchCommandInHistory);
     workbenchCommandSuccessResultInHistory = Selector(this.cssWorkbenchCommandSuccessResultInHistory);
     workbenchCommandFailedResultInHistory = Selector(this.cssWorkbenchCommandFailedResultInHistory);
@@ -134,22 +139,25 @@ export class WorkbenchPage {
         return this.queryCardCommand.withExactText(command).parent('[data-testid^="query-card-container-"]');
     }
 
-    //Select Text view option in Workbench results
+    // Select Text view option in Workbench results
     async selectViewTypeText(): Promise<void> {
-        await t.click(this.selectViewType);
-        await t.click(this.textViewTypeOption);
+        await t
+            .click(this.selectViewType)
+            .click(this.textViewTypeOption);
     }
 
-    //Select Table view option in Workbench results
+    // Select Table view option in Workbench results
     async selectViewTypeTable(): Promise<void> {
-        await t.click(this.selectViewType);
-        await t.doubleClick(this.tableViewTypeOption);
+        await t
+            .click(this.selectViewType)
+            .doubleClick(this.tableViewTypeOption);
     }
 
-    //Select view option in Workbench results
+    // Select view option in Workbench results
     async selectViewTypeGraph(): Promise<void> {
-        await t.click(this.selectViewType);
-        await t.click(this.graphViewTypeOption);
+        await t
+            .click(this.selectViewType)
+            .click(this.graphViewTypeOption);
     }
 
     /**
@@ -159,8 +167,9 @@ export class WorkbenchPage {
      * @param paste
      */
     async sendCommandInWorkbench(command: string, speed = 1, paste = true): Promise<void> {
-        await t.typeText(this.queryInput, command, { replace: true, speed, paste });
-        await t.click(this.submitCommandButton);
+        await t
+            .typeText(this.queryInput, command, { replace: true, speed, paste })
+            .click(this.submitCommandButton);
     }
 
     /**
@@ -180,11 +189,11 @@ export class WorkbenchPage {
      * @param childNum Indicator which command result need to check
      */
     async checkWorkbenchCommandResult(command: string, result: string, childNum = 0): Promise<void> {
-        //Compare the command with executed command
+        // Compare the command with executed command
         const actualCommand = await this.queryCardContainer.nth(childNum).find(this.cssQueryCardCommand).textContent;
-        await t.expect(actualCommand).eql(command);
-        //Compare the command result with executed command
+        await t.expect(actualCommand).eql(command, 'Actual command is not equal to executed');
+        // Compare the command result with executed command
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
-        await t.expect(actualCommandResult).eql(result);
+        await t.expect(actualCommandResult).eql(result, 'Actual command result is not equal to executed');
     }
 }

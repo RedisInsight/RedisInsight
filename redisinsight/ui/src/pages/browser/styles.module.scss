@@ -96,3 +96,9 @@ $breakpoint-to-hide-resize-panel: 1124px;
     width: 100% !important;
   }
 }
+
+.leftPanelContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

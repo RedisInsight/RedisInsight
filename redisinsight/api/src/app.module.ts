@@ -16,6 +16,7 @@ import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
 import { NotificationModule } from 'src/modules/notification/notification.module';
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
+import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -27,14 +28,14 @@ import { StaticsManagementModule } from './modules/statics-management/statics-ma
 import { ServerInfoController } from './controllers/server-info.controller';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
-import ormConfig from '../config/ormconfig';
+import { ormModuleOptions } from '../config/ormconfig';
 
 const SERVER_CONFIG = config.get('server');
 const PATH_CONFIG = config.get('dir_path');
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormConfig),
+    TypeOrmModule.forRoot(ormModuleOptions),
     RouterModule.forRoutes(routes),
     SharedModule,
     InstancesModule,
@@ -51,6 +52,7 @@ const PATH_CONFIG = config.get('dir_path');
     NotificationModule,
     BulkActionsModule,
     ClusterMonitorModule,
+    DatabaseAnalysisModule,
     EventEmitterModule.forRoot(),
     ...(SERVER_CONFIG.staticContent
       ? [

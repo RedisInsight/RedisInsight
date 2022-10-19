@@ -68,16 +68,16 @@ test
         // Verify that formatters selection is saved when user switches between databases
         await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
     });
-test('Verify that user don`t see format switcher for JSON, GRAPH, TS keys', async t => {
+test('Verify that user can see switcher icon for narrow screen and tooltip by hovering', async t => {
     // Create array with JSON, GRAPH, TS keys
     const keysWithoutSwitcher = [keysData[5], keysData[7], keysData[8]];
+
     for (let i = 0; i < keysWithoutSwitcher.length; i++) {
         await browserPage.openKeyDetailsByKeyName(keysWithoutSwitcher[i].keyName);
-        // Verify that format switcher is not displayed
+        // Verify that user don`t see format switcher for JSON, GRAPH, TS keys
         await t.expect(browserPage.formatSwitcher.visible).notOk(`Formatter is displayed for ${keysWithoutSwitcher[i].textType} type`, { timeout: 1000 });
     }
-});
-test('Verify that user can see switcher icon for narrow screen and tooltip by hovering', async t => {
+
     await browserPage.openKeyDetails(keysData[0].keyName);
     await browserPage.selectFormatter('JSON');
     // Verify icon is not displayed with high screen resolution

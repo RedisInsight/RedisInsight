@@ -8,7 +8,7 @@ export class ShortcutsPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
-    shortcutsCloseButton = Selector('[data-test-subj=euiFlyoutCloseButton]')
+    shortcutsCloseButton = Selector('[data-test-subj=euiFlyoutCloseButton]');
     //TEXT ELEMENTS
     shortcutsTitle = Selector('[data-testid=shortcuts-title]');
     shortcutsDesktopApplicationSection = Selector('[data-test-subj="shortcuts-section-Desktop application"]');

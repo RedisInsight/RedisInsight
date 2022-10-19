@@ -1,0 +1,38 @@
+.container {
+  position: relative;
+}
+
+.content {
+  margin-top: 16px;
+  background-color: var(--euiColorLightestShade);
+  border-radius: 16px;
+  padding-top: 20px;
+  margin-bottom: 24px;
+  width: 100%;
+  height: 300px;
+}
+
+.loadingWrapper {
+  margin-top: 40px;
+}
+
+.chart {
+  height: calc(100% - 40px);
+  clear: both;
+  width: 100%;
+}
+
+.switch {
+  float: right;
+  margin-right: 30px;
+  margin-bottom: 6px;
+  line-height: 18px !important;
+
+  :global(.euiSwitch__label) {
+    font-size: 13px !important;
+    padding-left: 0px;
+    span {
+      color: var(--euiTextSubduedColor);
+    }
+  }
+}

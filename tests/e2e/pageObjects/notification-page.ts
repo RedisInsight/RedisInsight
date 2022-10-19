@@ -47,7 +47,6 @@ export class NotificationPage {
     async convertEpochDateToMessageDate(notification: NotificationParameters): Promise<string> {
         const epochTimeConversion = new Date(notification.timestamp * 1000).toDateString();
         const converted = epochTimeConversion.split(' ');
-        console.log(`convertEpochDateToMessageDate: ${[converted[2], converted[1], converted[3]].join(' ')}`);
         return [converted[2], converted[1], converted[3]].join(' ');
     }
 
@@ -55,8 +54,9 @@ export class NotificationPage {
      * Turn on notifications in Settings
      */
     async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
-        await t.click(myRedisDatabasePage.settingsButton);
-        await t.click(settingsPage.accordionAppearance);
+        await t
+            .click(myRedisDatabasePage.settingsButton)
+            .click(settingsPage.accordionAppearance);
         if (toValue === true) {
             if (await settingsPage.getNotificationsSwitcherValue() === 'false') {
                 await t.click(settingsPage.switchNotificationsOption);

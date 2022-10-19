@@ -6,6 +6,7 @@ import {
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 
 const getDbIndexFromSelectQueryTests = [
   { input: 'select 0', expected: 0 },
@@ -56,28 +57,28 @@ describe('getCommandNameFromQuery', () => {
   })
 })
 
-describe('cliParseCommandsGroupResult', () => {
+describe('cliParseCommandsGroupResult success status', () => {
   const mockResult = {
     command: 'command',
     response: 'response',
-    status: 'success'
+    status: CommandExecutionStatus.Success
   }
-  const mockIndex = 0
-  render(cliParseCommandsGroupResult(mockResult, mockIndex))
+  const parsedResult = cliParseCommandsGroupResult(mockResult)
+  render(parsedResult)
 
   expect(screen.queryByTestId('wb-command')).toBeInTheDocument()
   expect(screen.getByText('> command')).toBeInTheDocument()
-  expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-success`)).toBeInTheDocument()
+  expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`)).not.toBeInTheDocument()
+  expect(parsedResult[1]).toEqual('"response"')
 })
 
 describe('cliParseCommandsGroupResult error status', () => {
   const mockResult = {
     command: 'command',
     response: 'response',
-    status: 'fail'
+    status: CommandExecutionStatus.Fail
   }
-  const mockIndex = 1
-  render(cliParseCommandsGroupResult(mockResult, mockIndex))
+  render(cliParseCommandsGroupResult(mockResult))
 
   expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`)).toBeInTheDocument()
 })

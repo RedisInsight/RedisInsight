@@ -17,6 +17,7 @@ export enum PageNames {
   pubSub = 'pub-sub',
   analytics = 'analytics',
   clusterDetails = 'cluster-details',
+  databaseAnalysis = 'database-analysis'
 }
 
 const redisCloud = '/redis-cloud'
@@ -40,4 +41,5 @@ export const Pages = {
   analytics: (instanceId: string) => `/${instanceId}/${PageNames.analytics}`,
   slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
   clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
+  databaseAnalysis: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.databaseAnalysis}`,
 }

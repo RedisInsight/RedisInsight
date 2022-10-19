@@ -18,11 +18,11 @@ const keyTTL = '2147476121';
 fixture `Expand/Collapse large values in key details`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async t => {
-        //Clear and delete database
+        // Clear and delete database
         if (await browserPage.closeKeyButton.visible) {
             await t.click(browserPage.closeKeyButton);
         }
@@ -35,7 +35,7 @@ test('Verify that user can click on a row to expand it if any of its cells conta
     // Create stream key
     await cliPage.sendCommandInCli(`XADD ${keyName} * '${field}' '${value}'`);
     await cliPage.sendCommandInCli(`XADD ${keyName} * '${field}' '${value1}'`);
-    //Open key details
+    // Open key details
     await browserPage.openKeyDetails(keyName);
     // Remember height of the cells
     const startLongCellHeight = await entryFieldLong.clientHeight;

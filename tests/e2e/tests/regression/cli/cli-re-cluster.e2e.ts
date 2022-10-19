@@ -22,14 +22,14 @@ const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(10);
-const verifyCommandsInCli = async() => {
+const verifyCommandsInCli = async(): Promise<void> => {
     keyName = common.generateWord(10);
-    //Open CLI
+    // Open CLI
     await t.click(cliPage.cliExpandButton);
-    //Add key from CLI
+    // Add key from CLI
     await t.typeText(cliPage.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`);
     await t.pressKey('enter');
-    //Check that the key is added
+    // Check that the key is added
     await browserPage.searchByKeyName(keyName);
     const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
     await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
@@ -44,7 +44,7 @@ test
         await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cluster DB', async() => {
@@ -56,7 +56,7 @@ test
         await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cloud DB', async() => {
@@ -68,7 +68,7 @@ test
         await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add data via CLI in OSS Cluster DB', async() => {
@@ -80,7 +80,7 @@ test
         await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
     .after(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {

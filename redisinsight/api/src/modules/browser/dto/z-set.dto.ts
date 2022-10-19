@@ -9,7 +9,7 @@ import {
   IsNotEmptyObject,
   IsNumber, IsString,
   Min,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { SortOrder } from 'src/constants';
@@ -18,7 +18,7 @@ import {
   DeleteMembersFromSetResponse,
 } from 'src/modules/browser/dto/set.dto';
 import { RedisString } from 'src/common/constants';
-import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { IsRedisString, RedisStringType, isZSetScore } from 'src/common/decorators';
 import {
   KeyDto, KeyResponse, KeyWithExpireDto, ScanDataTypeDto,
 } from './keys.dto';
@@ -77,13 +77,12 @@ export class ZSetMemberDto {
 
   @ApiProperty({
     description: 'Member score value.',
-    type: Number,
+    type: Number || String,
     default: 1,
   })
   @IsDefined()
-  @IsNumber({ maxDecimalPlaces: 15 })
-  @Type(() => Number)
-  score: number;
+  @isZSetScore()
+  score: number | 'inf' | '-inf';
 }
 
 export class AddMembersToZSetDto extends KeyDto {

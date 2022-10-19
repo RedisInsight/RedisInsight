@@ -184,7 +184,7 @@ describe('ZSetBusinessService', () => {
           BrowserToolZSetCommands.ZRange,
           expect.anything(),
         )
-        .mockResolvedValue(['member1', '0', 'member2', '2']);
+        .mockResolvedValue(['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']);
 
       const result = await service.getMembers(
         mockClientOptions,
@@ -199,7 +199,7 @@ describe('ZSetBusinessService', () => {
           BrowserToolZSetCommands.ZRevRange,
           expect.anything(),
         )
-        .mockResolvedValue(['member2', '2', 'member1', '0']);
+        .mockResolvedValue(['member4', 'inf', 'member3', '2', 'member2', '0', 'member1', '-inf']);
 
       const result = await service.getMembers(mockClientOptions, {
         ...mockGetMembersDto,
@@ -485,7 +485,7 @@ describe('ZSetBusinessService', () => {
           BrowserToolZSetCommands.ZScan,
           expect.anything(),
         )
-        .mockResolvedValue([0, ['member1', '0', 'member2', '2']]);
+        .mockResolvedValue([0, ['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']]);
 
       const result = await service.searchMembers(
         mockClientOptions,

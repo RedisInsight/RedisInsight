@@ -2,7 +2,7 @@ import { Chance } from 'chance';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
@@ -215,12 +215,12 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await t.click(myRedisDatabasePage.analysisPageButton);
     })
     .after(async() => {
         await cliPage.sendCommandInCli(`del ${keyNamesReport.join(' ')}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Analysis history', async t => {
         const numberOfKeys: string[] = [];
         const dbSize = (await cliPage.getSuccessCommandResultFromCli('dbsize')).split(' ');

@@ -18,7 +18,7 @@ import {
   DeleteMembersFromSetResponse,
 } from 'src/modules/browser/dto/set.dto';
 import { RedisString } from 'src/common/constants';
-import { IsRedisString, RedisStringType, IsNumberOrString } from 'src/common/decorators';
+import { IsRedisString, RedisStringType, isZSetScore } from 'src/common/decorators';
 import {
   KeyDto, KeyResponse, KeyWithExpireDto, ScanDataTypeDto,
 } from './keys.dto';
@@ -65,24 +65,6 @@ export class GetZSetMembersDto extends KeyDto {
   sortOrder: SortOrder;
 }
 
-export class ScoreNumberValidation {
-  @ApiProperty({
-    description: 'Infinity score values',
-    type: String,
-  })
-  @IsString()
-  score: string;
-}
-
-export class ScoreStringValidation {
-  @ApiProperty({
-    description: 'Common score value',
-    type: Number,
-  })
-  @IsNumber({ maxDecimalPlaces: 15 })
-  score: number;
-}
-
 export class ZSetMemberDto {
   @ApiProperty({
     type: String,
@@ -99,7 +81,7 @@ export class ZSetMemberDto {
     default: 1,
   })
   @IsDefined()
-  @IsNumberOrString()
+  @isZSetScore()
   score: number | 'inf' | '-inf';
 }
 

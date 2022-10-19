@@ -11,7 +11,7 @@ export class AddingdMasterGroupsResultPage {
     addMasterGroupsResultColumn = Selector('[data-test-subj=tableHeaderCell_message_0]');
     viewDatabasesButton = Selector('span').withText('View Databases');
 
-  async checkResultStatus(): Promise<void> {
-      await t.click(this.viewDatabasesButton);
-  }
+    async checkResultStatus(): Promise<void> {
+        await t.click(this.viewDatabasesButton);
+    }
 }

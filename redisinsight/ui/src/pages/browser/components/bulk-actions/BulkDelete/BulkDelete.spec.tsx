@@ -13,7 +13,7 @@ describe('BulkDelete', () => {
     expect(render(<BulkDelete {...mockedProps} />)).toBeTruthy()
   })
 
-  it('click on Cancel btn should call onCancel prop', () => {
+  it('should call onCancel prop when click on Cancel btn', () => {
     const mockOnCancel = jest.fn()
     render(<BulkDelete {...mockedProps} onCancel={mockOnCancel} />)
 

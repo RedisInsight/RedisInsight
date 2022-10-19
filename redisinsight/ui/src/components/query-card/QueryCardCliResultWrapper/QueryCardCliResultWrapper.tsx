@@ -5,7 +5,7 @@ import { isArray } from 'lodash'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { isGroupMode, Maybe } from 'uiSrc/utils'
+import { formatToText, isGroupMode, Maybe } from 'uiSrc/utils'
 
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
 import QueryCardCliGroupResult from '../QueryCardCliGroupResult'
@@ -18,15 +18,16 @@ export interface Props {
   status?: string
   resultsMode?: ResultsMode
   isNotStored?: boolean
+  isFullScreen?: boolean
 }
 
 const QueryCardCliResultWrapper = (props: Props) => {
-  const { result = [], query, loading, resultsMode, isNotStored } = props
+  const { result = [], query, loading, resultsMode, isNotStored, isFullScreen } = props
 
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
-        <div data-testid="query-cli-result">
+        <div data-testid="query-cli-result" style={{ height: '100%' }}>
           {isNotStored && (
             <EuiText className={styles.alert} data-testid="query-cli-warning">
               <EuiIcon type="alert" className={styles.alertIcon} />
@@ -34,8 +35,13 @@ const QueryCardCliResultWrapper = (props: Props) => {
             </EuiText>
           )}
           {isGroupMode(resultsMode) && isArray(result[0]?.response)
-            ? <QueryCardCliGroupResult result={result} />
-            : <QueryCardCliDefaultResult query={query} result={result} />}
+            ? <QueryCardCliGroupResult result={result} isFullScreen={isFullScreen} />
+            : (
+              <QueryCardCliDefaultResult
+                isFullScreen={isFullScreen}
+                items={formatToText(result[0].response || '(nil)', query).split('\n')}
+              />
+            )}
         </div>
       )}
       {loading && (

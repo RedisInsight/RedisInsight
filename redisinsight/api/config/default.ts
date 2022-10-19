@@ -140,6 +140,9 @@ export default {
     unsupportedCommands: JSON.parse(process.env.WORKBENCH_UNSUPPORTED_COMMANDS || '[]'),
     countBatch: parseInt(process.env.WORKBENCH_BATCH_SIZE, 10) || 5,
   },
+  database_analysis: {
+    maxItemsPerDb: parseInt(process.env.DATABASE_ANALYSIS_MAX_ITEMS_PER_DB, 10) || 5,
+  },
   commands: [
     {
       name: 'main',

@@ -1,7 +1,7 @@
 import React from 'react'
 import { RedisString } from 'uiSrc/slices/interfaces'
+import { replaceSpaces } from 'uiSrc/utils/transformers'
 import { bufferToString } from './formatters'
-import replaceSpaces from './replaceSpaces'
 
 export function formatLongName(
   name = '',

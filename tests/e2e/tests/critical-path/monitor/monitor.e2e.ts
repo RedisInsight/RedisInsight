@@ -1,4 +1,3 @@
-import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
@@ -13,16 +12,17 @@ import {
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
 const monitorPage = new MonitorPage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const chance = new Chance();
+const common = new Common();
 
-const keyName = `${chance.word({ length: 20 })}-key`;
-const keyValue = `${chance.word({ length: 10 })}-value`;
+const keyName = `${common.generateWord(20)}-key`;
+const keyValue = `${common.generateWord(10)}-value`;
 
 fixture `Monitor`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -43,7 +43,7 @@ test
         await t.expect(monitorPage.startMonitorButton.exists).ok('Start profiler button');
         //Verify that user can see message inside Monitor "Running Monitor will decrease throughput, avoid running it in production databases." when opens it for the first time
         await t.expect(monitorPage.monitorWarningMessage.exists).ok('Profiler warning message');
-        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases').exists).ok('Profiler warning message is correct');
+        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases.').exists).ok('Profiler warning message is not correct');
         //Verify that user can run Monitor by clicking "Run" command in the message inside Monitor
         await t.click(monitorPage.startMonitorButton);
         await t.expect(monitorPage.monitorIsStartedText.innerText).eql('Profiler is started.');

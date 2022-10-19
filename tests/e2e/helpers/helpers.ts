@@ -30,4 +30,4 @@ export type Arguments = {
   ossClusterPort?: string,
   ossClusterDatabaseName?: string,
   [key: string]: any
-}
+};

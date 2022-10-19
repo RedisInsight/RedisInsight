@@ -45,6 +45,33 @@ export class Common {
     }
 
     /**
+    * Create array of keys and values
+    * @param length The amount of array elements
+    */
+    async createArrayWithKeyValueAndDelimiter(length: number): Promise<string[]> {
+        const keyNameArray: string[] = [];
+        for(let i = 1; i <= length; i++) {
+            const key = `"key${i}:test${i}"`;
+            const value = `"value${this.generateSentence(i * 2)}"`;
+            keyNameArray.push(key, value);
+        }
+        return keyNameArray;
+    }
+
+    /**
+    * Create array of keys and values
+    * @param length The amount of array elements
+    */
+    async createArrayWithKeyAndDelimiter(length: number): Promise<string[]> {
+        const keyNameArray: string[] = [];
+        for(let i = 1; i <= length; i++) {
+            const key = `"key${i}:test${i}"`;
+            keyNameArray.push(key);
+        }
+        return keyNameArray;
+    }
+
+    /**
     * Create array of keys and values for using in OSS Cluster
     * @param length The amount of array elements
     */

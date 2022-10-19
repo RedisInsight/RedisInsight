@@ -30,15 +30,15 @@ test('Verify that user can create different types(string, number, null, array, b
         await browserPage.addJsonKey(jsonKeys[i][0], jsonKeys[i][1]);
         await t.click(browserPage.toastCloseButton);
         await t.click(browserPage.refreshKeysButton);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(jsonKeys[i][0])).ok('New keys is displayed');
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(jsonKeys[i][0])).ok('New keys are not displayed');
         // Add additional check for array elements
         if (jsonKeys[i][0].includes('array')) {
             for (const j of JSON.parse(jsonKeys[i][1])) {
-                await t.expect(browserPage.jsonScalarValue.withText(j.toString()).exists).ok('JSON value');
+                await t.expect(browserPage.jsonScalarValue.withText(j.toString()).exists).ok('JSON value not correct');
             }
         }
         else {
-            await t.expect(browserPage.jsonKeyValue.withText(jsonKeys[i][1]).exists).ok('JSON value');
+            await t.expect(browserPage.jsonKeyValue.withText(jsonKeys[i][1]).exists).ok('JSON value not correct');
         }
     }
 });

@@ -11,6 +11,7 @@ services:
       - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
       - .redisinsight-v2:/root/.redisinsight-v2
+      - .ritmp:/tmp
     env_file:
       - ./.env
     entrypoint: [
@@ -38,4 +39,5 @@ services:
       - ./.env
     volumes:
       - .redisinsight-v2:/root/.redisinsight-v2
+      - .ritmp:/tmp
 

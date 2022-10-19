@@ -14,11 +14,7 @@
 }
 
 .table {
-  height: calc(100% - 48px);
-
-  &__withoutFooter {
-    height: calc(100% - 50px) !important;
-  }
+  height: 100%;
 }
 
 :global(.show-cli) .table {

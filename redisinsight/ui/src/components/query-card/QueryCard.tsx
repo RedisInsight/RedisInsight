@@ -186,6 +186,7 @@ const QueryCard = (props: Props) => {
                       resultsMode={resultsMode}
                       result={result}
                       isNotStored={isNotStored}
+                      isFullScreen={isFullScreen}
                       data-testid="group-mode-card"
                     />
                   )}
@@ -215,6 +216,7 @@ const QueryCard = (props: Props) => {
                           resultsMode={resultsMode}
                           result={result}
                           isNotStored={isNotStored}
+                          isFullScreen={isFullScreen}
                         />
                       )}
                     </>

@@ -24,7 +24,7 @@ const dataSchema = Joi.object({
     // todo: allow(true) - is incorrect but will be transformed to number by BE. Investigate/fix it
     score: Joi.number().required().allow(true).label('.score'),
   })).messages({
-    'number.base': '{#lavel} must be a number',
+    'number.base': '{#lavel} must be a string or a number',
     'array.sparse': 'members must be either object or array',
     'array.base': 'property {#label} must be either object or array',
   }),

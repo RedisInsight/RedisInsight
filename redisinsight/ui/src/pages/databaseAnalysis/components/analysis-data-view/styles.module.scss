@@ -1,0 +1,28 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+$breakpoint-table: 1680px;
+
+.content {
+  @include euiScrollBar;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 104px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 61% 39%;
+
+  > div:nth-child(2n-1) {
+    margin-right: 24px;
+  }
+
+  @media screen and (max-width: $breakpoint-table) {
+    > div:nth-child(2n-1) {
+      margin-right: 0;
+    }
+    grid-template-columns: 100%;
+  }
+}

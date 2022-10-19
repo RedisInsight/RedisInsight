@@ -57,8 +57,9 @@ export async function addKeysViaCli(keyData: KeyData, keyValue?: string, keyFiel
             await t.pressKey('enter');
         }
     }
-    await t.click(cliPage.cliCollapseButton);
-    await t.click(browserPage.refreshKeysButton);
+    await t
+        .click(cliPage.cliCollapseButton)
+        .click(browserPage.refreshKeysButton);
 }
 
 /**

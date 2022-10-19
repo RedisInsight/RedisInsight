@@ -40,7 +40,8 @@ export class KeysController extends BaseController {
     super();
   }
 
-  @Get('')
+  @Post('')
+  @HttpCode(200)
   @ApiOperation({ description: 'Get keys by cursor position' })
   @ApiRedisParams()
   @ApiOkResponse({
@@ -50,7 +51,7 @@ export class KeysController extends BaseController {
   @ApiQueryRedisStringEncoding()
   async getKeys(
     @Param('dbInstance') dbInstance: string,
-      @Query() getKeysDto: GetKeysDto,
+      @Body() getKeysDto: GetKeysDto,
   ): Promise<GetKeysWithDetailsResponse[]> {
     return this.keysBusinessService.getKeys(
       {

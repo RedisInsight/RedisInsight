@@ -431,15 +431,18 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
-      const { data, status } = await apiService.get<GetKeyInfoResponse[]>(
+      const { data, status } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding, keysInfo: false },
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false,
+        },
+        {
+          params: { encoding },
           cancelToken: sourceKeysFetch.token,
-        }
+        },
       )
 
       sourceKeysFetch = null
@@ -514,15 +517,18 @@ export function fetchMoreKeys(oldKeys: IKeyPropTypes[] = [], cursor: string, cou
       const state = stateInit()
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
-      const { data, status } = await apiService.get(
+      const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding, keysInfo: false },
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false,
+        },
+        {
+          params: { encoding },
           cancelToken: sourceKeysFetch.token,
-        }
+        },
       )
 
       sourceKeysFetch = null

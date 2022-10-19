@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toNumber } from 'lodash'
+import { toNumber, isNumber } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
@@ -39,8 +39,8 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEdit
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
+import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -326,20 +326,22 @@ const ZSetDetails = (props: Props) => {
       minWidth: 100,
       maxWidth: 100,
       absoluteWidth: 100,
-      render: function Actions(_act: any, { name: nameItem }: IZsetMember) {
+      render: function Actions(_act: any, { name: nameItem, score }: IZsetMember) {
         const name = bufferToString(nameItem, viewFormat)
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiButtonIcon
-                iconType="pencil"
-                aria-label="Edit field"
-                className="editFieldBtn"
-                color="primary"
-                disabled={updateLoading}
-                onClick={() => handleEditMember(nameItem, true)}
-                data-testid={`zset-edit-button-${name}`}
-              />
+              <EuiToolTip content={!isNumber(score) ? 'Use CLI or Workbench to edit the score' : null}>
+                <EuiButtonIcon
+                  iconType="pencil"
+                  aria-label="Edit field"
+                  className="editFieldBtn"
+                  color="primary"
+                  disabled={updateLoading || !isNumber(score)}
+                  onClick={() => handleEditMember(nameItem, true)}
+                  data-testid={`zset-edit-button-${name}`}
+                />
+              </EuiToolTip>
               <PopoverDelete
                 header={createDeleteFieldHeader(nameItem)}
                 text={createDeleteFieldMessage(key ?? '')}

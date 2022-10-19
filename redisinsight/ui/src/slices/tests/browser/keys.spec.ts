@@ -865,7 +865,7 @@ describe('keys slice', () => {
           status: 200,
         }
 
-        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchKeys(0, 20))
@@ -892,7 +892,7 @@ describe('keys slice', () => {
           },
         }
 
-        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchKeys('0', 20))
@@ -943,7 +943,7 @@ describe('keys slice', () => {
           status: 200,
         }
 
-        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchMoreKeys([], '0', 20))
@@ -966,7 +966,7 @@ describe('keys slice', () => {
           },
         }
 
-        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchMoreKeys('0', 20))

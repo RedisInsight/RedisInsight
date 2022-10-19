@@ -2,7 +2,7 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef,
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { debounce, isUndefined, reject } from 'lodash'
+import { debounce, findIndex, isUndefined, reject } from 'lodash'
 
 import {
   EuiText,
@@ -103,7 +103,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       return
     }
 
-    const { lastIndex, startIndex } = renderedRowsIndexesRef.current
+    const { startIndex, lastIndex } = renderedRowsIndexesRef.current
     onRowsRendered(startIndex, lastIndex)
     rerender({})
   }, [keysState.keys])
@@ -163,14 +163,16 @@ const KeyList = forwardRef((props: Props, ref) => {
     nameString: bufferToString(item.name)
   }), [])
 
-  const onRowsRendered = debounce(async (startIndex: number, lastIndex: number) => {
+  const onRowsRendered = (startIndex: number, lastIndex: number) => {
     renderedRowsIndexesRef.current = { lastIndex, startIndex }
 
     const newItems = bufferFormatRows(startIndex, lastIndex)
 
     getMetadata(startIndex, lastIndex, newItems)
     rerender({})
-  }, 100)
+  }
+
+  const onRowsRenderedDebounced = debounce(onRowsRendered, 100)
 
   const bufferFormatRows = (startIndex: number, lastIndex: number): GetKeyInfoResponse[] => {
     const newItems = bufferFormatRangeItems(
@@ -189,39 +191,25 @@ const KeyList = forwardRef((props: Props, ref) => {
     const isSomeNotUndefined = ({ type, size, length }: GetKeyInfoResponse) =>
       !isUndefined(type) || !isUndefined(size) || !isUndefined(length)
 
-    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
+    if (firstEmptyItemIndex === -1) return
 
-    if (!emptyItems.length) return
+    const emptyItems = reject(itemsInit, isSomeNotUndefined)
 
     dispatch(fetchKeysMetadata(
       emptyItems.map(({ name }) => name),
       (loadedItems) =>
-        onSuccessFetchedMetadata({
-          startIndex,
-          lastIndex,
-          loadedItems,
-          isFirstEmpty: !isSomeNotUndefined(itemsInit[0]),
-        }),
+        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
       () => { rerender({}) }
     ))
   }
 
-  const onSuccessFetchedMetadata = (data: {
+  const onSuccessFetchedMetadata = (
     startIndex: number,
-    lastIndex: number,
-    isFirstEmpty: boolean
     loadedItems: GetKeyInfoResponse[],
-  }) => {
-    const {
-      startIndex,
-      lastIndex,
-      isFirstEmpty,
-      loadedItems,
-    } = data
+  ) => {
     const items = loadedItems.map(formatItem)
-    const startIndexDel = isFirstEmpty ? startIndex : lastIndex - items.length + 1
-
-    itemsRef.current.splice(startIndexDel, items.length, ...items)
+    itemsRef.current.splice(startIndex, items.length, ...items)
 
     rerender({})
   }
@@ -381,7 +369,7 @@ const KeyList = forwardRef((props: Props, ref) => {
               setScrollTopPosition={setScrollTopPosition}
               hideFooter={hideFooter}
               onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
-                onRowsRendered(overscanStartIndex, overscanStopIndex)}
+                onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
             />
           </div>
         </div>

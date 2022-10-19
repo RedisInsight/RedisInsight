@@ -4,7 +4,7 @@ import { isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
-import { EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
+import { DEFAULT_EXTRAPOLATION, EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
 import {
   TopKeys,
   EmptyAnalysisMessage,
@@ -24,7 +24,7 @@ export interface Props {
 
 const AnalysisDataView = (props: Props) => {
   const { loading, reports = [], data } = props
-  const [extrapolation, setExtrapolation] = useState(1)
+  const [extrapolation, setExtrapolation] = useState(DEFAULT_EXTRAPOLATION)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 

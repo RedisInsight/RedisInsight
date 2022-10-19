@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiSwitch, EuiTitle } from '@elastic/eui'
 import { Nullable } from 'uiSrc/utils'
-import { TableView } from 'uiSrc/pages/databaseAnalysis'
+import { DEFAULT_EXTRAPOLATION, TableView } from 'uiSrc/pages/databaseAnalysis'
 import { TableLoader } from 'uiSrc/pages/databaseAnalysis/components'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
@@ -22,7 +22,7 @@ const TopNamespace = (props: Props) => {
   const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
 
   useEffect(() => {
-    setIsExtrapolated(extrapolation !== 1)
+    setIsExtrapolated(extrapolation !== DEFAULT_EXTRAPOLATION)
   }, [data, extrapolation])
 
   if (loading) {
@@ -61,7 +61,7 @@ const TopNamespace = (props: Props) => {
         >
           by Number of Keys
         </EuiButton>
-        {extrapolation !== 1 && (
+        {extrapolation !== DEFAULT_EXTRAPOLATION && (
           <EuiSwitch
             compressed
             color="subdued"

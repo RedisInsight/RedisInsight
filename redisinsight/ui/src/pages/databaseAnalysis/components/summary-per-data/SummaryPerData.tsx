@@ -6,6 +6,7 @@ import { DonutChart } from 'uiSrc/components/charts'
 import { ChartData } from 'uiSrc/components/charts/donut-chart/DonutChart'
 import { KeyIconSvg, MemoryIconSvg } from 'uiSrc/components/database-overview/components/icons'
 import { GROUP_TYPES_COLORS, GroupTypesColors } from 'uiSrc/constants'
+import { DEFAULT_EXTRAPOLATION } from 'uiSrc/pages/databaseAnalysis'
 import { extrapolate, formatBytes, getGroupTypeDisplay, Nullable } from 'uiSrc/utils'
 import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
 
@@ -43,7 +44,7 @@ const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }:
   }
 
   useEffect(() => {
-    setIsExtrapolated(extrapolation !== 1)
+    setIsExtrapolated(extrapolation !== DEFAULT_EXTRAPOLATION)
   }, [data, extrapolation])
 
   useEffect(() => {
@@ -122,7 +123,7 @@ const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }:
         <EuiTitle className="section-title">
           <h4>SUMMARY PER DATA TYPE</h4>
         </EuiTitle>
-        {extrapolation !== 1 && (
+        {extrapolation !== DEFAULT_EXTRAPOLATION && (
           <EuiSwitch
             compressed
             color="subdued"

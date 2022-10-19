@@ -4,6 +4,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
+import { DEFAULT_EXTRAPOLATION } from 'uiSrc/pages/databaseAnalysis'
 import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
 import { AreaChart } from 'uiSrc/components/charts'
 import { AreaChartData, AreaChartDataType, DEFAULT_MULTIPLIER_GRID } from 'uiSrc/components/charts/area-chart/AreaChart'
@@ -29,7 +30,7 @@ const ExpirationGroupsView = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setIsExtrapolated(extrapolation !== 1)
+    setIsExtrapolated(extrapolation !== DEFAULT_EXTRAPOLATION)
   }, [extrapolation])
 
   useEffect(() => {
@@ -80,7 +81,7 @@ const ExpirationGroupsView = (props: Props) => {
           <EuiTitle className="section-title">
             <h4>MEMORY LIKELY TO BE FREED OVER TIME</h4>
           </EuiTitle>
-          {extrapolation !== 1 && (
+          {extrapolation !== DEFAULT_EXTRAPOLATION && (
             <EuiSwitch
               compressed
               color="subdued"

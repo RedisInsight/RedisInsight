@@ -8,6 +8,7 @@ import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies
 import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
 import { ServerEntity } from 'src/modules/core/models/server.entity';
 import { SettingsEntity } from 'src/modules/core/models/settings.entity';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import settingsOnPremiseFactory from './providers/settings-on-premise';
 import serverOnPremiseFactory from './providers/server-on-premise';
 import { CaCertBusinessService } from './services/certificates/ca-cert-business/ca-cert-business.service';
@@ -31,6 +32,7 @@ export class CoreModule {
     return {
       module: CoreModule,
       imports: [
+        EventEmitterModule.forRoot(),
         TypeOrmModule.forFeature([
           ServerEntity,
           SettingsEntity,

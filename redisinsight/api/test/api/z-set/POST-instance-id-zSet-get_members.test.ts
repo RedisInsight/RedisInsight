@@ -6,7 +6,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -38,7 +39,7 @@ const responseSchema = Joi.object().keys({
   total: Joi.number().integer().required(),
   members: Joi.array().items(Joi.object().keys({
     name: JoiRedisString.required(),
-    score: Joi.number().required(),
+    score: Joi.number().required().allow('inf', '-inf'),
   })).required(),
 }).required();
 

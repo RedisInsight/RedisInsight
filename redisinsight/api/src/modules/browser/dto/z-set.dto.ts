@@ -9,17 +9,16 @@ import {
   IsNotEmptyObject,
   IsNumber, IsString,
   Min,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { isNumber } from 'lodash';
 import { SortOrder } from 'src/constants';
 import {
   DeleteMembersFromSetDto,
   DeleteMembersFromSetResponse,
 } from 'src/modules/browser/dto/set.dto';
 import { RedisString } from 'src/common/constants';
-import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { IsRedisString, RedisStringType, IsNumberOrString } from 'src/common/decorators';
 import {
   KeyDto, KeyResponse, KeyWithExpireDto, ScanDataTypeDto,
 } from './keys.dto';
@@ -100,8 +99,8 @@ export class ZSetMemberDto {
     default: 1,
   })
   @IsDefined()
-  @Type((val) => isNumber(val) ? ScoreNumberValidation : ScoreStringValidation)
-  score: number | string;
+  @IsNumberOrString()
+  score: number | 'inf' | '-inf';
 }
 
 export class AddMembersToZSetDto extends KeyDto {

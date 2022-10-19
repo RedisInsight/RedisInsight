@@ -74,6 +74,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
+  const [isLoaded, setIsLoaded] = useState<boolean>(false)
 
   const itemsRef = useRef(keysState.keys)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
@@ -100,12 +101,14 @@ const KeyList = forwardRef((props: Props, ref) => {
     itemsRef.current = [...keysState.keys]
     if (itemsRef.current.length === 0) {
       rerender({})
+      setIsLoaded(true)
       return
     }
 
     const { startIndex, lastIndex } = renderedRowsIndexesRef.current
     onRowsRendered(startIndex, lastIndex)
     rerender({})
+    setIsLoaded(true)
   }, [keysState.keys])
 
   const onNoKeysLinkClick = () => {
@@ -122,6 +125,9 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const getNoItemsMessage = () => {
+    if (!isLoaded) {
+      return ''
+    }
     if (total === 0) {
       return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
     }

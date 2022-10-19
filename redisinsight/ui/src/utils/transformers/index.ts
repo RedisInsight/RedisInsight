@@ -6,6 +6,7 @@ export * from './truncateTTL'
 export * from './truncateNumber'
 export * from './formatBytes'
 export * from './formatDate'
+export * from './extrapolation'
 
 export {
   replaceSpaces,

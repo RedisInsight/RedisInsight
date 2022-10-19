@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiSwitch, EuiTitle } from '@elastic/eui'
 import { Nullable } from 'uiSrc/utils'
 import { TableView } from 'uiSrc/pages/databaseAnalysis'
 import { TableLoader } from 'uiSrc/pages/databaseAnalysis/components'
@@ -12,11 +12,18 @@ import styles from './styles.module.scss'
 export interface Props {
   data: Nullable<DatabaseAnalysis>
   loading: boolean
+  extrapolation: number
+  onSwitchExtrapolation?: (value: boolean) => void
 }
 
 const TopNamespace = (props: Props) => {
-  const { data, loading } = props
+  const { data, loading, extrapolation, onSwitchExtrapolation } = props
   const [tableView, setTableView] = useState<TableView>(TableView.MEMORY)
+  const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
+
+  useEffect(() => {
+    setIsExtrapolated(extrapolation !== 1)
+  }, [data, extrapolation])
 
   if (loading) {
     return <TableLoader />
@@ -27,37 +34,55 @@ const TopNamespace = (props: Props) => {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <EuiTitle className="section-title">
-        <h4>TOP NAMESPACES</h4>
-      </EuiTitle>
-      <EuiButton
-        fill
-        size="s"
-        color="secondary"
-        onClick={() => setTableView(TableView.MEMORY)}
-        disabled={tableView === TableView.MEMORY}
-        className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.MEMORY })}
-        data-testid="btn-change-table-memory"
-      >
-        by Memory
-      </EuiButton>
-      <EuiButton
-        fill
-        size="s"
-        color="secondary"
-        onClick={() => setTableView(TableView.KEYS)}
-        disabled={tableView === TableView.KEYS}
-        className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.KEYS })}
-        data-testid="btn-change-table-keys"
-      >
-        by Number of Keys
-      </EuiButton>
+    <div className={cx('section', styles.wrapper)} data-testid="top-namespaces">
+      <div className="section-title-wrapper">
+        <EuiTitle className="section-title">
+          <h4>TOP NAMESPACES</h4>
+        </EuiTitle>
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          onClick={() => setTableView(TableView.MEMORY)}
+          disabled={tableView === TableView.MEMORY}
+          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.MEMORY })}
+          data-testid="btn-change-table-memory"
+        >
+          by Memory
+        </EuiButton>
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          onClick={() => setTableView(TableView.KEYS)}
+          disabled={tableView === TableView.KEYS}
+          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.KEYS })}
+          data-testid="btn-change-table-keys"
+        >
+          by Number of Keys
+        </EuiButton>
+        {extrapolation !== 1 && (
+          <EuiSwitch
+            compressed
+            color="subdued"
+            className="switch-extrapolate-results"
+            label="Extrapolate results"
+            checked={isExtrapolated}
+            onChange={(e) => {
+              setIsExtrapolated(e.target.checked)
+              onSwitchExtrapolation?.(e.target.checked)
+            }}
+            data-testid="extrapolate-results"
+          />
+        )}
+      </div>
       {tableView === TableView.MEMORY && (
       <Table
         data={data?.topMemoryNsp ?? []}
         defaultSortField="memory"
         delimiter={data?.delimiter ?? ''}
+        isExtrapolated={isExtrapolated}
+        extrapolation={extrapolation}
         dataTestid="nsp-table-memory"
       />
       )}
@@ -66,6 +91,8 @@ const TopNamespace = (props: Props) => {
           data={data?.topKeysNsp ?? []}
           defaultSortField="keys"
           delimiter={data?.delimiter ?? ''}
+          isExtrapolated={isExtrapolated}
+          extrapolation={extrapolation}
           dataTestid="nsp-table-keys"
         />
       )}

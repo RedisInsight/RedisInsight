@@ -40,6 +40,7 @@ interface IProps {
   renderLabel?: (data: ChartData) => string
   renderTooltip?: (data: ChartData) => React.ReactElement | string
   labelAs?: 'value' | 'percentage'
+  hideLabelTitle?: boolean
 }
 
 const ANIMATION_DURATION_MS = 100
@@ -56,6 +57,7 @@ const DonutChart = (props: IProps) => {
     labelAs = 'value',
     renderLabel,
     renderTooltip,
+    hideLabelTitle = false
   } = props
 
   const margin = config?.margin || 98
@@ -134,7 +136,7 @@ const DonutChart = (props: IProps) => {
       .select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
-      .attr('data-testid', `donut-${name}`)
+      .attr('data-testid', `donut-svg-${name}`)
       .attr('class', cx(classNames?.chart))
       .append('g')
       .attr('transform', `translate(${width / 2},${height / 2})`)
@@ -160,7 +162,7 @@ const DonutChart = (props: IProps) => {
       .append('text')
       .attr('class', cx(styles.chartLabel, classNames?.arcLabel))
       .attr('transform', getLabelPosition)
-      .text((d) => (isShowLabel(d) ? d.data.name : ''))
+      .text((d) => (isShowLabel(d) && !hideLabelTitle ? `${d.data.name}: ` : ''))
       .attr('data-testid', (d) => `label-${d.data.name}-${d.data.value}`)
       .style('text-anchor', (d) => ((d.endAngle + d.startAngle) / 2 > Math.PI ? 'end' : 'start'))
       .on('mouseenter mousemove', onMouseEnterSlice)
@@ -175,12 +177,11 @@ const DonutChart = (props: IProps) => {
           return renderLabel(d.data)
         }
 
-        const separator = ': '
         if (labelAs === 'percentage') {
-          return `${separator}${getPercentage(d.value, sum)}%`
+          return `${getPercentage(d.value, sum)}%`
         }
 
-        return `${separator}${truncateNumberToRange(d.value)}`
+        return truncateNumberToRange(d.value)
       })
       .attr('class', cx(styles.chartLabelValue, classNames?.arcLabelValue))
   }, [data])
@@ -190,7 +191,7 @@ const DonutChart = (props: IProps) => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid={`donut-${name}`}>
       <svg ref={svgRef} />
       <div
         className={cx(styles.tooltip, classNames?.tooltip)}

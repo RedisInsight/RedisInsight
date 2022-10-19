@@ -28,36 +28,38 @@ const TopKeys = ({ data, loading }: Props) => {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <EuiTitle className="section-title">
-        <h4 data-testid="top-keys-title">
-          {topKeysLength.length < 15 && topKeysMemory?.length < 15
-            ? 'TOP KEYS'
-            : 'TOP 15 KEYS'}
-        </h4>
-      </EuiTitle>
-      <EuiButton
-        fill
-        size="s"
-        color="secondary"
-        onClick={() => setTableView(TableView.MEMORY)}
-        disabled={tableView === TableView.MEMORY}
-        className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.MEMORY })}
-        data-testid="btn-change-table-memory"
-      >
-        by Memory
-      </EuiButton>
-      <EuiButton
-        fill
-        size="s"
-        color="secondary"
-        onClick={() => setTableView(TableView.KEYS)}
-        disabled={tableView === TableView.KEYS}
-        className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.KEYS })}
-        data-testid="btn-change-table-keys"
-      >
-        by Length
-      </EuiButton>
+    <div className={cx('section', styles.wrapper)}>
+      <div className="section-title-wrapper">
+        <EuiTitle className="section-title">
+          <h4 data-testid="top-keys-title">
+            {topKeysLength.length < 15 && topKeysMemory?.length < 15
+              ? 'TOP KEYS'
+              : 'TOP 15 KEYS'}
+          </h4>
+        </EuiTitle>
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          onClick={() => setTableView(TableView.MEMORY)}
+          disabled={tableView === TableView.MEMORY}
+          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.MEMORY })}
+          data-testid="btn-change-table-memory"
+        >
+          by Memory
+        </EuiButton>
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          onClick={() => setTableView(TableView.KEYS)}
+          disabled={tableView === TableView.KEYS}
+          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.KEYS })}
+          data-testid="btn-change-table-keys"
+        >
+          by Length
+        </EuiButton>
+      </div>
       {tableView === TableView.MEMORY && (
         <Table
           data={topKeysMemory}

@@ -139,22 +139,25 @@ export class WorkbenchPage {
         return this.queryCardCommand.withExactText(command).parent('[data-testid^="query-card-container-"]');
     }
 
-    //Select Text view option in Workbench results
+    // Select Text view option in Workbench results
     async selectViewTypeText(): Promise<void> {
-        await t.click(this.selectViewType);
-        await t.click(this.textViewTypeOption);
+        await t
+            .click(this.selectViewType)
+            .click(this.textViewTypeOption);
     }
 
-    //Select Table view option in Workbench results
+    // Select Table view option in Workbench results
     async selectViewTypeTable(): Promise<void> {
-        await t.click(this.selectViewType);
-        await t.doubleClick(this.tableViewTypeOption);
+        await t
+            .click(this.selectViewType)
+            .doubleClick(this.tableViewTypeOption);
     }
 
-    //Select view option in Workbench results
+    // Select view option in Workbench results
     async selectViewTypeGraph(): Promise<void> {
-        await t.click(this.selectViewType);
-        await t.click(this.graphViewTypeOption);
+        await t
+            .click(this.selectViewType)
+            .click(this.graphViewTypeOption);
     }
 
     /**
@@ -164,8 +167,9 @@ export class WorkbenchPage {
      * @param paste
      */
     async sendCommandInWorkbench(command: string, speed = 1, paste = true): Promise<void> {
-        await t.typeText(this.queryInput, command, { replace: true, speed, paste });
-        await t.click(this.submitCommandButton);
+        await t
+            .typeText(this.queryInput, command, { replace: true, speed, paste })
+            .click(this.submitCommandButton);
     }
 
     /**
@@ -185,11 +189,11 @@ export class WorkbenchPage {
      * @param childNum Indicator which command result need to check
      */
     async checkWorkbenchCommandResult(command: string, result: string, childNum = 0): Promise<void> {
-        //Compare the command with executed command
+        // Compare the command with executed command
         const actualCommand = await this.queryCardContainer.nth(childNum).find(this.cssQueryCardCommand).textContent;
-        await t.expect(actualCommand).eql(command);
-        //Compare the command result with executed command
+        await t.expect(actualCommand).eql(command, 'Actual command is not equal to executed');
+        // Compare the command result with executed command
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
-        await t.expect(actualCommandResult).eql(result);
+        await t.expect(actualCommandResult).eql(result, 'Actual command result is not equal to executed');
     }
 }

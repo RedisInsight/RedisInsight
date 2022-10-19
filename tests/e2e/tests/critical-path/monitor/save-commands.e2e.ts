@@ -53,7 +53,7 @@ test('Verify that user can see a tooltip and toggle that allows to save Profiler
 
     await t.click(monitorPage.expandMonitor);
     // Check the toggle and Tooltip for Save log
-    await t.expect(monitorPage.saveLogSwitchButton.visible).ok('The toggle that allows to save Profiler log is not displayed');
+    await t.expect(monitorPage.saveLogSwitchButton.exists).ok('The toggle that allows to save Profiler log is not displayed');
     await t.hover(monitorPage.saveLogSwitchButton);
     for (const message of toolTip) {
         await t.expect(monitorPage.saveLogToolTip.textContent).contains(message, 'The toolTip for save log in Profiler is not displayed');
@@ -65,14 +65,14 @@ test('Verify that user can see that toggle is not displayed when Profiler is sta
     // Start Monitor without save logs
     await monitorPage.startMonitor();
     // Check the toggle
-    await t.expect(monitorPage.saveLogSwitchButton.visible).notOk('The toggle is displayed when Profiler is started');
+    await t.expect(monitorPage.saveLogSwitchButton.exists).notOk('The toggle is displayed when Profiler is started');
     // Restart Monitor with Save logs
     await monitorPage.stopMonitor();
     await t.click(monitorPage.resetProfilerButton);
     await t.click(monitorPage.saveLogSwitchButton);
     await t.click(monitorPage.startMonitorButton);
     // Check the toggle
-    await t.expect(monitorPage.saveLogSwitchButton.visible).notOk('The toggle is displayed when Profiler is started');
+    await t.expect(monitorPage.saveLogSwitchButton.exists).notOk('The toggle is displayed when Profiler is started');
 });
 test('Verify that when user switch toggle to ON and started the Profiler, temporary Log file Created and recording', async t => {
     const cli_command = 'command';
@@ -102,9 +102,9 @@ test('Verify the Profiler Button panel when toggle was switched to ON and user p
     // Pause the Profiler
     await t.click(monitorPage.runMonitorToggle);
     // Check the panel
-    await t.expect(monitorPage.downloadLogPanel.visible).ok('The download log panel not appeared');
-    await t.expect(monitorPage.resetProfilerButton.visible).ok('The Reset Profiler button not visible');
-    await t.expect(monitorPage.downloadLogButton.visible).ok('The Download button not visible');
+    await t.expect(monitorPage.downloadLogPanel.exists).ok('The download log panel not appeared');
+    await t.expect(monitorPage.resetProfilerButton.exists).ok('The Reset Profiler button not visible');
+    await t.expect(monitorPage.downloadLogButton.exists).ok('The Download button not visible');
 });
 test('Verify that when user see the toggle is OFF - Profiler logs are not being saved', async t => {
     // Remember the number of files in Temp

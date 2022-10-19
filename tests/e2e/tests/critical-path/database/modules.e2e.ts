@@ -65,7 +65,7 @@ test
         // Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         // Check all available modules in overview
-        const moduleIcons = await Selector('div').find('[data-testid^=Redi]');
+        const moduleIcons = Selector('div').find('[data-testid^=Redi]');
         const numberOfIcons = await moduleIcons.count;
         for (let i = 0; i < numberOfIcons; i++) {
             const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');

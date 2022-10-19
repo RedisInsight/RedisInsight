@@ -91,10 +91,10 @@ test
         await t.click(workbenchPage.preselectHashCreate);
         // Maximize Scripting area to see all the commands
         await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, 300, { speed: 0.4 });
-        // Get number of commands in scripting area
-        const numberOfCommands = await Selector('span').withExactText('HSET').count;
-        // Compare number of indicator displayed and expected value
-        await t.expect(workbenchPage.monacoCommandIndicator.count).eql(numberOfCommands, 'Number of command indicator is incorrect');
+        //Get number of commands in scripting area
+        const numberOfCommands = Selector('span').withExactText('HSET').count;
+        //Compare number of indicator displayed and expected value
+        await t.expect(workbenchPage.monacoCommandIndicator.count).eql(await numberOfCommands, 'Number of command indicator is incorrect');
     });
 test
     .after(async() => {

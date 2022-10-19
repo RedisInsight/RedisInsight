@@ -23,7 +23,7 @@ fixture `Acknowledge and Claim of Pending messages`
     })
     .afterEach(async t => {
         // Clear and delete database
-        if (await browserPage.closeKeyButton.visible){
+        if (await browserPage.closeKeyButton.exists){
             await t.click(browserPage.closeKeyButton);
         }
         await browserPage.deleteKeyByName(keyName);

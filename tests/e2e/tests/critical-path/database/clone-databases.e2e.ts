@@ -38,13 +38,13 @@ test
         // Verify that user can cancel the Clone by clicking the “Cancel” or the “x” button
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t.click(addRedisDatabasePage.cancelButton);
-        await t.expect(myRedisDatabasePage.editAliasButton.withText('Clone ').visible).notOk('Clone panel is still displayed', { timeout: 2000 });
+        await t.expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).notOk('Clone panel is still displayed', { timeout: 2000 });
         await myRedisDatabasePage.clickOnEditDBByName(ossStandaloneConfig.databaseName);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         // Verify that user see the “Add Database Manually” form pre-populated with all the connection data when cloning DB
         await t
             // Verify that name in the header has the prefix “Clone”
-            .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').visible).ok('Clone panel is not displayed')
+            .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
             .expect(addRedisDatabasePage.hostInput.getAttribute('value')).eql(ossStandaloneConfig.host, 'Wrong host value')
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossStandaloneConfig.port, 'Wrong port value')
             .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value');
@@ -67,14 +67,14 @@ test
         await myRedisDatabasePage.clickOnEditDBByName(ossClusterConfig.ossClusterDatabaseName);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t
-            .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').visible).ok('Clone panel is not displayed')
+            .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossClusterConfig.ossClusterPort, 'Wrong port value')
             .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossClusterConfig.ossClusterDatabaseName, 'Wrong host value');
         // Edit Database alias before cloning
         await t.typeText(addRedisDatabasePage.databaseAliasInput, newOssDatabaseAlias, { replace: true });
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(newOssDatabaseAlias).visible).ok('DB was not closed');
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossClusterConfig.ossClusterDatabaseName).visible).ok('Original DB is not displayed');
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(newOssDatabaseAlias).exists).ok('DB was not closed');
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossClusterConfig.ossClusterDatabaseName).exists).ok('Original DB is not displayed');
     });
 test
     .before(async() => {
@@ -96,7 +96,7 @@ test
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
         await t
-            .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').visible).ok('Clone panel is not displayed')
+            .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
             .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group alias value')
             .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group name value');
         // Validate Databases section

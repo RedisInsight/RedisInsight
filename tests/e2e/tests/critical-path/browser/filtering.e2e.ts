@@ -34,7 +34,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can search a key with selected data type is filters', async t => {
         keyName = common.generateWord(10);
-        //Add new key
+        // Add new key
         await browserPage.addStringKey(keyName);
         // Search by key with full name & specified type
         await browserPage.selectFilterGroupType(KeyTypesTexts.String);
@@ -48,12 +48,12 @@ test
         // Check the filtering starts by press Enter
         await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
         await t.pressKey('enter');
-        await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');
+        await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
         // Check the filtering starts by clicks the control
         await common.reloadPage();
         await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
         await t.click(browserPage.searchButton);
-        await t.expect(browserPage.searchAdvices.visible).ok('The filtering is set');
+        await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
     });
 test
     .after(async() => {
@@ -93,6 +93,6 @@ test
         }
         // Check removing of the label
         await t.click(browserPage.deleteFilterButton);
-        await t.expect(browserPage.multiSearchArea.find(browserPage.cssFilteringLabel).visible).notOk('The label of filtering type is removed');
+        await t.expect(browserPage.multiSearchArea.find(browserPage.cssFilteringLabel).exists).notOk('The label of filtering type is removed');
         await t.expect(browserPage.keysSummary.textContent).contains('Total', 'The filter is removed');
     });

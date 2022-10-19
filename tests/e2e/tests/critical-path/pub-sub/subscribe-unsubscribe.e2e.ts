@@ -48,7 +48,7 @@ test('Verify that when user subscribe to the pubsub channel he can see all the m
 test('Verify that the focus gets always shifted to a newest message (auto-scroll)', async t => {
     await pubSubPage.subsribeToChannelAndPublishMessage('test', 'first message');
     // Verify that when user click Publish and the publication is successful, he can see a response: badge with the number <# of clients received>
-    await t.expect(pubSubPage.clientBadge.visible).ok('Client badge is not displayed');
+    await t.expect(pubSubPage.clientBadge.exists).ok('Client badge is not displayed');
     await t.expect(pubSubPage.clientBadge.textContent).eql('1', 'Client badge is not displayed', { timeout: 10000 });
 
     // Go to My Redis databases Page
@@ -103,7 +103,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     // Verify internal link to pubsub page in CLI
     await t.expect(cliPage.cliLinkToPubSub.exists).ok('Link to pubsub page is not displayed');
     await t.click(cliPage.cliLinkToPubSub);
-    await t.expect(pubSubPage.pubSubPageContainer.visible).ok('Pubsub page is opened');
+    await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
 });
 test('Verify that the Message field input is preserved until user Publish a message', async t => {
     // Fill in Channel and Message inputs

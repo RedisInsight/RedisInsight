@@ -74,8 +74,10 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
+  const [firstDataLoaded, setFirstDataLoaded] = useState(!!keysState.keys.length)
 
   const itemsRef = useRef(keysState.keys)
+  const isNotRendered = useRef(true)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
@@ -98,6 +100,12 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
+
+    if (!isNotRendered.current && !loading) {
+      setFirstDataLoaded(true)
+    }
+
+    isNotRendered.current = false
     if (itemsRef.current.length === 0) {
       rerender({})
       return
@@ -122,6 +130,9 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const getNoItemsMessage = () => {
+    if (isNotRendered.current) {
+      return ''
+    }
     if (total === 0) {
       return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
     }
@@ -359,7 +370,7 @@ const KeyList = forwardRef((props: Props, ref) => {
               columns={columns}
               loadMoreItems={onLoadMoreItems}
               onWheel={onWheelSearched}
-              loading={loading}
+              loading={loading || !firstDataLoaded}
               items={itemsRef.current}
               totalItemsCount={keysState.total ? keysState.total : Infinity}
               scanned={isSearched || isFiltered ? keysState.scanned : 0}

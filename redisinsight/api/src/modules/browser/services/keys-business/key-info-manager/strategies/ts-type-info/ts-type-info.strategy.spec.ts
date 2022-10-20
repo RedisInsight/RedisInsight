@@ -78,7 +78,7 @@ describe('TSTypeInfoStrategy', () => {
           ],
         ]);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key])
+        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key], 'utf8')
         .mockResolvedValue(mockTSInfoReply);
     });
     it('should return appropriate value', async () => {
@@ -143,7 +143,7 @@ describe('TSTypeInfoStrategy', () => {
         message: "ERR unknown command 'ts.info'",
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key])
+        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key], 'utf8')
         .mockResolvedValue(replyError);
 
       const result = await strategy.getInfo(

@@ -12,7 +12,7 @@ import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
-import formatToText from './cliTextFormatter'
+import formatToText from './transformers/cliTextFormatter'
 
 export enum CliPrefix {
   Cli = 'cli',
@@ -93,18 +93,18 @@ const clearOutput = (dispatch: any) => {
 }
 
 const cliParseCommandsGroupResult = (
-  result: IGroupModeCommand,
-  index: number
+  result: IGroupModeCommand
 ) => {
   const executionCommand = wbSummaryCommand(result.command)
-  const executionResult = cliParseTextResponse(result.response || '(nil)', result.command, result.status)
-  return (
-    <Fragment key={`group-result-${index}`}>
-      {executionCommand}
-      {executionResult}
-      {'\n'}
-    </Fragment>
-  )
+
+  let executionResult = []
+  if (result.status === CommandExecutionStatus.Success) {
+    executionResult = formatToText(result.response || '(nil)', result.command).split('\n')
+  } else {
+    executionResult = [cliParseTextResponse(result.response || '(nil)', result.command, result.status)]
+  }
+
+  return [executionCommand, ...executionResult]
 }
 
 const updateCliHistoryStorage = (

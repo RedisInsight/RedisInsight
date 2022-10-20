@@ -84,6 +84,35 @@ export class CliPage {
     }
 
     /**
+   * Add keys from CLI with delimiter
+   * @param keyCommand The command from cli to add key
+   * @param amount The amount of the keys
+   */
+    async addKeysFromCliWithDelimiter(keyCommand: string, amount: number): Promise<void> {
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        //Add keys
+        const keyValueArray = await common.createArrayWithKeyValueAndDelimiter(amount);
+        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
+    }
+
+    /**
+   * Delete keys from CLI with delimiter
+   * @param amount The amount of the keys
+   */
+    async deleteKeysFromCliWithDelimiter(amount: number): Promise<void> {
+        //Open CLI
+        await t.click(this.cliExpandButton);
+        //Add keys
+        const keyValueArray = await common.createArrayWithKeyAndDelimiter(amount);
+        await t.typeText(this.cliCommandInput, `DEL ${keyValueArray.join(' ')}`, { paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
+    }
+
+    /**
    * Send command in Cli
    * @param command The command to send
    */

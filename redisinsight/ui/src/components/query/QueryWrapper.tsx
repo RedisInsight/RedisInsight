@@ -6,9 +6,9 @@ import { useParams } from 'react-router-dom'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { getMultiCommands, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
+import { getMultiCommands, isGroupMode, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import Query from './Query'
 import styles from './Query/styles.module.scss'
@@ -16,32 +16,38 @@ import styles from './Query/styles.module.scss'
 export interface Props {
   query: string
   activeMode: RunQueryMode
+  resultsMode?: ResultsMode
   setQuery: (script: string) => void
   setQueryEl: Function
   setIsCodeBtnDisabled: (value: boolean) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onSubmit: (value?: string) => void
   onQueryChangeMode: () => void
+  onChangeGroupMode: () => void
 }
 
 interface IState {
   activeMode: RunQueryMode
+  resultsMode?: ResultsMode
 }
 
 let state: IState = {
   activeMode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Default
 }
 
 const QueryWrapper = (props: Props) => {
   const {
     query = '',
     activeMode,
+    resultsMode,
     setQuery,
     setQueryEl,
     setIsCodeBtnDisabled,
     onKeyDown,
     onSubmit,
-    onQueryChangeMode
+    onQueryChangeMode,
+    onChangeGroupMode
   } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const {
@@ -52,6 +58,7 @@ const QueryWrapper = (props: Props) => {
 
   state = {
     activeMode,
+    resultsMode
   }
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
@@ -73,7 +80,8 @@ const QueryWrapper = (props: Props) => {
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
-        rawMode: state.activeMode === RunQueryMode.Raw
+        rawMode: state.activeMode === RunQueryMode.Raw,
+        group: isGroupMode(state.resultsMode)
       }
     })()
 
@@ -101,12 +109,14 @@ const QueryWrapper = (props: Props) => {
     <Query
       query={query}
       activeMode={activeMode}
+      resultsMode={resultsMode}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
       setIsCodeBtnDisabled={setIsCodeBtnDisabled}
       onKeyDown={onKeyDown}
       onSubmit={handleSubmit}
       onQueryChangeMode={onQueryChangeMode}
+      onChangeGroupMode={onChangeGroupMode}
     />
   )
 }

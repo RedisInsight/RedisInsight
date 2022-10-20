@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import parse from 'html-react-parser'
 
@@ -12,11 +12,17 @@ import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
-import formatToText from './cliTextFormatter'
+import formatToText from './transformers/cliTextFormatter'
 
 export enum CliPrefix {
   Cli = 'cli',
   QueryCard = 'query-card',
+}
+
+interface IGroupModeCommand {
+  command: string
+  response: string
+  status: CommandExecutionStatus
 }
 
 const cliParseTextResponseWithRedirect = (
@@ -73,8 +79,32 @@ const cliCommandWrapper = (command: string) => (
   </span>
 )
 
+const wbSummaryCommand = (command: string) => (
+  <span
+    className="cli-command-wrapper"
+    data-testid="wb-command"
+  >
+    {`> ${command} \n`}
+  </span>
+)
+
 const clearOutput = (dispatch: any) => {
   dispatch(resetOutput())
+}
+
+const cliParseCommandsGroupResult = (
+  result: IGroupModeCommand
+) => {
+  const executionCommand = wbSummaryCommand(result.command)
+
+  let executionResult = []
+  if (result.status === CommandExecutionStatus.Success) {
+    executionResult = formatToText(result.response || '(nil)', result.command).split('\n')
+  } else {
+    executionResult = [cliParseTextResponse(result.response || '(nil)', result.command, result.status)]
+  }
+
+  return [executionCommand, ...executionResult]
 }
 
 const updateCliHistoryStorage = (
@@ -154,6 +184,7 @@ export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
+  cliParseCommandsGroupResult,
   cliCommandOutput,
   bashTextValue,
   cliCommandWrapper,

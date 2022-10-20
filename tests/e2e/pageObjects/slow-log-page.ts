@@ -10,7 +10,6 @@ export class SlowLogPage {
     //CSS Selectors
     cssSelectorDurationValue = '[data-testid=duration-value]';
     //BUTTONS
-    slowLogPageButton = Selector('[data-testid=slowlog-page-btn]');
     slowLogSortByTimestamp = Selector('[data-testid=header-sorting-button]');
     slowLogNumberOfCommandsDropdown = Selector('[data-testid=count-select]');
     slowLogConfigureButton = Selector('[data-testid=configure-btn]');
@@ -23,6 +22,7 @@ export class SlowLogPage {
     slowLogRefreshButton = Selector('[data-testid=refresh-slowlog-btn]');
     slowLogClearButton = Selector('[data-testid=clear-btn]');
     slowLogConfirmClearButton = Selector('[data-testid=reset-confirm-btn]');
+    slowLogTab = Selector('[data-testid=analytics-tab-SlowLog]');
     //INPUTS
     slowLogSlowerThanConfig = Selector('[data-testid=slower-than-input]');
     slowLogMaxLengthConfig = Selector('[data-testid=max-len-input]');
@@ -42,11 +42,13 @@ export class SlowLogPage {
      * @param unit Value for unit property
      */
     async changeSlowerThanParameter(slowerThan: number, unit?: Selector): Promise<void> {
-        await t.click(this.slowLogConfigureButton);
-        await t.typeText(this.slowLogSlowerThanConfig, slowerThan.toString(), { replace: true });
+        await t
+            .click(this.slowLogConfigureButton)
+            .typeText(this.slowLogSlowerThanConfig, slowerThan.toString(), { replace: true, paste: true });
         if (unit !== undefined) {
-            await t.click(this.slowLogConfigureUnitButton);
-            await t.click(unit);
+            await t
+                .click(this.slowLogConfigureUnitButton)
+                .click(unit);
         }
         await t.click(this.slowLogSaveConfigureButton);
     }
@@ -56,9 +58,10 @@ export class SlowLogPage {
      * @param maxLength Value for slowlog-max-len property
      */
     async changeMaxLengthParameter(maxLength: number): Promise<void> {
-        await t.click(this.slowLogConfigureButton);
-        await t.typeText(this.slowLogMaxLengthConfig, maxLength.toString(), { replace: true });
-        await t.click(this.slowLogSaveConfigureButton);
+        await t
+            .click(this.slowLogConfigureButton)
+            .typeText(this.slowLogMaxLengthConfig, maxLength.toString(), { replace: true, paste: true })
+            .click(this.slowLogSaveConfigureButton);
     }
 
     /**
@@ -75,8 +78,9 @@ export class SlowLogPage {
      * Reset max-length and slowlog-log-slower-than to default
      */
     async resetToDefaultConfig(): Promise<void> {
-        await t.click(this.slowLogConfigureButton);
-        await t.click(this.slowLogDefaultConfigureButton);
-        await t.click(this.slowLogSaveConfigureButton);
+        await t
+            .click(this.slowLogConfigureButton)
+            .click(this.slowLogDefaultConfigureButton)
+            .click(this.slowLogSaveConfigureButton);
     }
 }

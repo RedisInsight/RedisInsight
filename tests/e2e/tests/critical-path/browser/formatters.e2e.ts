@@ -89,6 +89,7 @@ formattersForEditSet.forEach(formatter => {
         await browserPage.openKeyDetails(keysData[0].keyName);
         await browserPage.selectFormatter(formatter.format);
         await browserPage.editHashKeyValue(invalidText);
+        await t.click(browserPage.saveButton);
         // Verify that invalid value can be saved
         await t.expect(browserPage.hashFieldValue.textContent).contains(invalidText, `Invalid ${formatter.format} value is not saved`);
         // Add valid value which can be converted
@@ -197,7 +198,7 @@ notEditableFormattersSet.forEach(formatter => {
                 // Hover on disabled button
                 await t.hover(editBtn);
                 // Verify tooltip content
-                await t.expect(browserPage.tooltip.textContent).contains('Cannot change data in this format', 'Tooltip has wrong text');
+                await t.expect(browserPage.tooltip.textContent).contains('Cannot edit the value in this format', 'Tooltip has wrong text');
             }
         }
     });

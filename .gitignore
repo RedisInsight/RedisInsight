@@ -16,6 +16,7 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+**/coverage
 
 # IDEs and editors
 /.idea
@@ -58,3 +59,6 @@ vendor
 
 # Parcel
 .parcel-cache
+
+# caches
+.temp_cache

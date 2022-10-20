@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
+import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
-  fetchInstanceAction, fetchInstancesAction,
-  getDatabaseConfigInfoAction, instancesSelector,
+  fetchInstanceAction,
+  fetchInstancesAction,
+  getDatabaseConfigInfoAction,
+  instancesSelector,
 } from 'uiSrc/slices/instances/instances'
 import {
   appContextSelector,
@@ -22,6 +25,8 @@ import BottomGroupComponents from 'uiSrc/components/bottom-group-components/Bott
 import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
+import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
+import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -67,7 +72,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
 
-    if (contextInstanceId !== connectionInstanceId) {
+    if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
       resetContext()
     }
 
@@ -91,6 +96,9 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setBulkActionsInitialState())
     dispatch(setAppContextInitialState())
     dispatch(resetKeysData())
+    dispatch(setClusterDetailsInitialState())
+    dispatch(setDatabaseAnalysisInitialState())
+    dispatch(setInitialAnalyticsSettings())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

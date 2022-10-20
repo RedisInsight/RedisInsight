@@ -1,4 +1,4 @@
-import {RequestMock, t} from 'testcafe';
+import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import {apiUrl, commonUrl} from './conf';
 
@@ -45,10 +45,37 @@ export class Common {
     }
 
     /**
+    * Create array of keys and values
+    * @param length The amount of array elements
+    */
+    async createArrayWithKeyValueAndDelimiter(length: number): Promise<string[]> {
+        const keyNameArray: string[] = [];
+        for(let i = 1; i <= length; i++) {
+            const key = `"key${i}:test${i}"`;
+            const value = `"value${this.generateSentence(i * 2)}"`;
+            keyNameArray.push(key, value);
+        }
+        return keyNameArray;
+    }
+
+    /**
+    * Create array of keys and values
+    * @param length The amount of array elements
+    */
+    async createArrayWithKeyAndDelimiter(length: number): Promise<string[]> {
+        const keyNameArray: string[] = [];
+        for(let i = 1; i <= length; i++) {
+            const key = `"key${i}:test${i}"`;
+            keyNameArray.push(key);
+        }
+        return keyNameArray;
+    }
+
+    /**
     * Create array of keys and values for using in OSS Cluster
     * @param length The amount of array elements
     */
-     async createArrayWithKeyValueForOSSCluster(length: number): Promise<string[]> {
+    async createArrayWithKeyValueForOSSCluster(length: number): Promise<string[]> {
         const arr: string[] = [];
         for(let i = 1; i <= length * 2; i++) {
             arr[i] = `{user1}:${chance.word({ length: 10 })}-key${i}`;
@@ -129,5 +156,14 @@ export class Common {
     */
     async reloadPage(): Promise<void> {
         await t.eval(() => location.reload());
+    }
+
+    /**
+     * Check opened URL
+     * @param expectedUrl Expected link that is compared with actual
+     */
+    async checkURL(expectedUrl: string): Promise<void> {
+        const getPageUrl = ClientFunction(() => window.location.href);
+        await t.expect(getPageUrl()).eql(expectedUrl, 'Opened URL is not correct');
     }
 }

@@ -24,7 +24,7 @@ export class MonitorPage {
     monitorArea = Selector('[data-testid=monitor]');
     monitorWarningMessage = Selector('[data-testid=monitor-warning-message]');
     monitorCommandLinePart = Selector('[data-testid=monitor] span');
-    monitorCommandLineTimestamp = Selector('[data-testid=monitor] span').withText(/[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}/);
+    monitorCommandLineTimestamp = Selector('[data-testid=monitor] span').withText(/[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}/);
     monitorNoPermissionsMessage = Selector('[data-testid=monitor-error-message]');
     saveLogToolTip = Selector('[data-testid=save-log-tooltip]');
     monitorNotStartedElement = Selector('[data-testid=monitor-not-started]');
@@ -51,8 +51,9 @@ export class MonitorPage {
      * Start monitor function
      */
     async startMonitor(): Promise<void> {
-        await t.click(this.expandMonitor);
-        await t.click(this.startMonitorButton);
+        await t
+            .click(this.expandMonitor)
+            .click(this.startMonitorButton);
         //Check for "info" command that is sent automatically every 5 seconds from BE side
         await this.checkCommandInMonitorResults('info');
     }
@@ -60,9 +61,10 @@ export class MonitorPage {
      * Start monitor with Save log function
      */
     async startMonitorWithSaveLog(): Promise<void> {
-        await t.click(this.expandMonitor);
-        await t.click(this.saveLogSwitchButton);
-        await t.click(this.startMonitorButton);
+        await t
+            .click(this.expandMonitor)
+            .click(this.saveLogSwitchButton)
+            .click(this.startMonitorButton);
         //Check for "info" command that is sent automatically every 5 seconds from BE side
         await this.checkCommandInMonitorResults('info');
     }
@@ -70,13 +72,15 @@ export class MonitorPage {
      * Stop monitor function
      */
     async stopMonitor(): Promise<void> {
-        await t.click(this.runMonitorToggle);
-        await t.expect(this.resetProfilerButton.visible).ok('Reset profiler button appeared');
+        await t
+            .click(this.runMonitorToggle)
+            .expect(this.resetProfilerButton.exists).ok('Reset profiler button not appeared');
     }
 
     //Reset profiler
     async resetProfiler(): Promise<void> {
-        await t.click(this.runMonitorToggle);
-        await t.click(this.resetProfilerButton);
+        await t
+            .click(this.runMonitorToggle)
+            .click(this.resetProfilerButton);
     }
 }

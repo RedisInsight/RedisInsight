@@ -48,8 +48,8 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
-        const firstDatabaseModules = [];
-        const secondDatabaseModules = [];
+        const firstDatabaseModules: string[] = [];
+        const secondDatabaseModules: string[] = [];
         //Remember modules
         let countOfModules = await browserPage.modulesButton.count;
         for(let i = 0; i < countOfModules; i++) {
@@ -162,9 +162,9 @@ test
         await t.wait(fiveSecondsTimeout);
         const cpuBeforeEdit = (await browserPage.overviewCpu.textContent).split(' ')[0];
         //Verify that additional information in Overview: Connected Clients, Commands/Sec, CPU (%) is displayed
-        await t.expect(browserPage.overviewConnectedClients.visible).ok('Connected Clients is dispalyed in the Overview');
-        await t.expect(browserPage.overviewCommandsSec.visible).ok('Commands/Sec is dispalyed in the Overview');
-        await t.expect(browserPage.overviewCpu.visible).ok('CPU (%) is dispalyed in the Overview');
+        await t.expect(browserPage.overviewConnectedClients.exists).ok('Connected Clients is dispalyed in the Overview');
+        await t.expect(browserPage.overviewCommandsSec.exists).ok('Commands/Sec is dispalyed in the Overview');
+        await t.expect(browserPage.overviewCpu.exists).ok('CPU (%) is dispalyed in the Overview');
         //Run Create hash index command
         await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);

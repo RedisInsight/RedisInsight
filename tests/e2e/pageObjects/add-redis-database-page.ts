@@ -87,11 +87,12 @@ export class AddRedisDatabasePage {
         if (!!parameters.databasePassword) {
             await t.typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true });
         }
-        //Enter logical index
-        await t.click(this.databaseIndexCheckbox);
-        await t.typeText(this.databaseIndexInput, index, { replace: true, paste: true});
-        //Click for saving
-        await t.click(this.addRedisDatabaseButton);
+        // Enter logical index
+        await t
+            .click(this.databaseIndexCheckbox)
+            .typeText(this.databaseIndexInput, index, { replace: true, paste: true})
+        // Click for saving
+            .click(this.addRedisDatabaseButton);
     }
 
     /**
@@ -223,4 +224,14 @@ export type databaseParameters = {
     name?: string,
     connectionType?: string,
     lastConnection?: string
+};
+
+/**
+ * Nodes in OSS Cluster parameters
+ * @param host The host of the node
+ * @param port The port of the node
+ */
+export type ClusterNodes = {
+    host: string,
+    port: string
 };

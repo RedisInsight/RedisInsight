@@ -17,6 +17,7 @@ import {
   EuiTitle,
   EuiToolTip
 } from '@elastic/eui'
+import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -41,15 +42,14 @@ import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
 import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
-
 import { BuildType } from 'uiSrc/constants/env'
+
 import NotificationMenu from './components/notifications-center'
 
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
-const slowLogPath = `/${PageNames.slowLog}`
 const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
@@ -86,6 +86,10 @@ const NavigationMenu = () => {
     dispatch(setShortcutsFlyoutState(true))
   }
 
+  const isAnalyticsPath = (activePage: string) => !!ANALYTICS_ROUTES.find(
+    ({ path }) => (`/${last(path.split('/'))}` === activePage)
+  )
+
   const privateRoutes: INavigations[] = [
     {
       tooltipText: 'Browser',
@@ -116,12 +120,12 @@ const NavigationMenu = () => {
       },
     },
     {
-      tooltipText: 'Slow Log',
-      ariaLabel: 'SlowLog page button',
-      onClick: () => handleGoPage(Pages.slowLog(connectedInstanceId)),
-      dataTestId: 'slowlog-page-btn',
+      tooltipText: 'Analysis Tools',
+      ariaLabel: 'Analysis Tools',
+      onClick: () => handleGoPage(Pages.analytics(connectedInstanceId)),
+      dataTestId: 'analytics-page-btn',
       connectedInstanceId,
-      isActivePage: activePage === slowLogPath,
+      isActivePage: isAnalyticsPath(activePage),
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },

@@ -37,8 +37,9 @@ export class BulkActionsPage {
    * Open Bulk Actions and confirm deletion
    */
     async startBulkDelete(): Promise<void> {
-        await t.click(browserPage.bulkActionsButton);
-        await t.click(this.deleteButton);
-        await t.click(this.bulkApplyButton);
+        await t
+            .click(browserPage.bulkActionsButton)
+            .click(this.deleteButton)
+            .click(this.bulkApplyButton);
     }
 }

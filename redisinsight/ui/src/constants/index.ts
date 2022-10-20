@@ -23,4 +23,5 @@ export * from './browser'
 export * from './durationUnits'
 export * from './streamViews'
 export * from './bulkActions'
+export * from './workbench'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

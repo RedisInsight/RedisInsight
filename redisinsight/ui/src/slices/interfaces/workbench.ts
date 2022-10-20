@@ -36,13 +36,31 @@ export interface StateWorkbenchEnablementArea {
 }
 
 export interface CommandExecutionUI extends Partial<CommandExecution> {
+  id?: string
   loading?: boolean
   isOpen?: boolean
   error?: string
-  emptyCommand: boolean
+  emptyCommand?: boolean
 }
 
 export enum RunQueryMode {
   Raw = 'RAW',
   ASCII = 'ASCII',
+}
+
+export enum ResultsMode {
+  Default = 'DEFAULT',
+  GroupMode = 'GROUP_MODE',
+}
+
+export interface ResultsSummary {
+  total: number
+  success: number
+  fail: number
+}
+
+export interface ExecuteQueryParams {
+  batchSize: number
+  activeRunQueryMode: RunQueryMode
+  resultsMode: ResultsMode
 }

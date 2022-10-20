@@ -1,4 +1,3 @@
-import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
@@ -13,28 +12,25 @@ import {
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
 const monitorPage = new MonitorPage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const chance = new Chance();
+const common = new Common();
 
-const keyName = `${chance.word({ length: 20 })}-key`;
-const keyValue = `${chance.word({ length: 10 })}-value`;
+const keyName = `${common.generateWord(20)}-key`;
+const keyValue = `${common.generateWord(10)}-value`;
 
 fixture `Monitor`
-    .meta({ type: 'critical_path' })
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-    })
-    .afterEach(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
-    .meta({ rte: rte.standalone })
     .after(async() => {
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -47,7 +43,7 @@ test
         await t.expect(monitorPage.startMonitorButton.exists).ok('Start profiler button');
         //Verify that user can see message inside Monitor "Running Monitor will decrease throughput, avoid running it in production databases." when opens it for the first time
         await t.expect(monitorPage.monitorWarningMessage.exists).ok('Profiler warning message');
-        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases').exists).ok('Profiler warning message is correct');
+        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases.').exists).ok('Profiler warning message is not correct');
         //Verify that user can run Monitor by clicking "Run" command in the message inside Monitor
         await t.click(monitorPage.startMonitorButton);
         await t.expect(monitorPage.monitorIsStartedText.innerText).eql('Profiler is started.');
@@ -56,8 +52,12 @@ test
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
 test
-    .meta({ rte: rte.standalone })('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
-        //Define commands in different clients
+    .after(async t => {
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
+    //Define commands in different clients
         const cli_command = 'command';
         const workbench_command = 'hello';
         const common_command = 'info';

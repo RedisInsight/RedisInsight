@@ -320,7 +320,11 @@ const keysSlice = createSlice({
 
     // reset keys for keys slice
     resetKeys: (state) => cloneDeep(
-      { ...initialState, selectedKey: getInitialSelectedKeyState(state as KeysStore) }
+      {
+        ...initialState,
+        viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
+        selectedKey: getInitialSelectedKeyState(state as KeysStore)
+      }
     ),
 
     resetKeysData: (state) => {
@@ -397,7 +401,6 @@ export let sourceKeysFetch: Nullable<CancelTokenSource> = null
 
 export function setInitialStateByType(type: string) {
   return (dispatch: AppDispatch) => {
-
     if (type === KeyTypes.Hash) {
       dispatch(setHashInitialState())
     }
@@ -427,15 +430,18 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
-      const { data, status } = await apiService.get(
+      const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding },
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH,
+        },
+        {
+          params: { encoding },
           cancelToken: sourceKeysFetch.token,
-        }
+        },
       )
 
       sourceKeysFetch = null
@@ -510,15 +516,18 @@ export function fetchMoreKeys(oldKeys: IKeyPropTypes[] = [], cursor: string, cou
       const state = stateInit()
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
-      const { data, status } = await apiService.get(
+      const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
         ),
         {
-          params: { cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, encoding },
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH,
+        },
+        {
+          params: { encoding },
           cancelToken: sourceKeysFetch.token,
-        }
+        },
       )
 
       sourceKeysFetch = null

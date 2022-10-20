@@ -1,8 +1,5 @@
 .main {
-  margin: 0 16px 0;
-  height: calc(100% - 70px);
-  background-color: var(--euiColorEmptyShade);
-  padding: 24px 18px;
+  height: 100%;
 
   .title {
     font-size: 16px;
@@ -10,7 +7,8 @@
   }
 
   .actionsLine {
-    margin-bottom: 12px;
+    margin-top: 6px;
+    margin-bottom: 6px;
   }
 
   .countSelectWrapper {
@@ -18,9 +16,15 @@
   }
 
   .countSelect {
-    width: 86px;
+    min-width: 58px;
+    max-width: 84px;
     height: 30px;
     padding-left: 12px;
     padding-right: 32px;
+    border: none !important;
+
+    & ~ :global(.euiFormControlLayoutIcons) svg {
+      width: 12px;
+    }
   }
 }

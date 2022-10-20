@@ -72,6 +72,7 @@ describe('list slice', () => {
   afterAll(() => {
     dateNow.mockRestore()
   })
+
   describe('setListInitialState', () => {
     it('should properly set initialState', () => {
       // Arrange

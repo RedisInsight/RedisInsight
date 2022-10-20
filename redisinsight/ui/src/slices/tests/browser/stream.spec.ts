@@ -1415,6 +1415,7 @@ describe('stream slice', () => {
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
+
     describe('ackPendingEntriesAction', () => {
       it('succeed to acknowledge data', async () => {
         // Arrange

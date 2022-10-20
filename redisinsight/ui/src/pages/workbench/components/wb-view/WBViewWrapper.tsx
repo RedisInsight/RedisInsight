@@ -4,6 +4,7 @@ import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import { chunk, without } from 'lodash'
+import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import {
   Nullable,
@@ -11,6 +12,8 @@ import {
   splitMonacoValuePerLines,
   getMultiCommands,
   scrollIntoView,
+  getExecuteParams,
+  isGroupMode,
 } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import {
@@ -22,10 +25,10 @@ import {
   resetWBHistoryItems,
   fetchWBCommandAction,
 } from 'uiSrc/slices/workbench/wb-results'
-import { ConnectionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { ConnectionType, ExecuteQueryParams, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
@@ -34,14 +37,13 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
+import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
+
 import WBView from './WBView'
 
-interface IState {
+interface IState extends ExecuteQueryParams {
   loading: boolean
   instance: Instance
-  batchSize: number
-  activeRunQueryMode: RunQueryMode
   unsupportedCommands: string[]
   blockingCommands: string[]
   visualizations: IPluginVisualization[]
@@ -57,6 +59,7 @@ let state: IState = {
   blockingCommands: [],
   visualizations: [],
   scriptEl: null,
+  resultsMode: ResultsMode.Default,
 }
 
 const WBViewWrapper = () => {
@@ -69,10 +72,12 @@ const WBViewWrapper = () => {
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
   const [script, setScript] = useState(scriptContext)
-  const [multiCommands, setMultiCommands] = useState<string[]>([])
   const [scriptEl, setScriptEl] = useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
   const [activeRunQueryMode, setActiveRunQueryMode] = useState<RunQueryMode>(
     (localStorageService?.get(BrowserStorageItem.RunQueryMode) ?? RunQueryMode.ASCII)
+  )
+  const [resultsMode, setResultsMode] = useState<ResultsMode>(
+    (localStorageService?.get(BrowserStorageItem.wbGroupMode) ?? ResultsMode.Default)
   )
 
   const instance = useSelector(connectedInstanceSelector)
@@ -86,6 +91,7 @@ const WBViewWrapper = () => {
     visualizations,
     batchSize,
     activeRunQueryMode,
+    resultsMode,
   }
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const scriptRef = useRef(script)
@@ -112,14 +118,12 @@ const WBViewWrapper = () => {
   }, [blockingCommands])
 
   useEffect(() => {
-    if (multiCommands?.length) {
-      handleSubmit(multiCommands.join('\n'))
-    }
-  }, [multiCommands])
-
-  useEffect(() => {
     localStorageService.set(BrowserStorageItem.RunQueryMode, activeRunQueryMode)
   }, [activeRunQueryMode])
+
+  useEffect(() => {
+    localStorageService.set(BrowserStorageItem.wbGroupMode, resultsMode)
+  }, [resultsMode])
 
   const handleChangeQueryRunMode = () => {
     setActiveRunQueryMode(
@@ -139,43 +143,65 @@ const WBViewWrapper = () => {
     })
   }
 
+  const handleChangeGroupMode = () => {
+    setResultsMode(isGroupMode(resultsMode) ? ResultsMode.Default : ResultsMode.GroupMode)
+  }
+
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
+    executeParams: CodeButtonParams = {}
   ) => {
-    const { loading, batchSize } = state
-    const isNewCommand = () => !commandId
-    const commandsForExecuting = splitMonacoValuePerLines(removeMonacoComments(commandInit))
-      .map((command) => removeMonacoComments(decode(command).trim()))
-    const [commands, ...rest] = chunk(commandsForExecuting, batchSize > 1 ? batchSize : 1)
+    if (!commandInit?.length) return
+
+    const { batchSize, activeRunQueryMode, resultsMode } = getExecuteParams(executeParams, state)
+    const isNewCommand = !commandId
+
+    const commandsForExecuting = without(
+      splitMonacoValuePerLines(commandInit)
+        .map((command) => removeMonacoComments(decode(command).trim())),
+      ''
+    )
+
+    const chunkSize = isGroupMode(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
+
+    const [commands, ...rest] = chunk(commandsForExecuting, chunkSize)
     const multiCommands = rest.map((command) => getMultiCommands(command))
-    if (!commands.length || loading) {
-      setMultiCommands(multiCommands)
+
+    if (!commands?.length) {
+      handleSubmit(multiCommands.join('\n'), commandId, executeParams)
       return
     }
 
-    isNewCommand() && scrollResults('start')
-
-    sendCommand(commands, multiCommands)
+    isNewCommand && scrollResults('start')
+    sendCommand(
+      commands,
+      multiCommands,
+      { activeRunQueryMode, resultsMode },
+      () => handleSubmit(multiCommands.join('\n'), commandId, executeParams)
+    )
   }
 
   const sendCommand = (
     commands: string[],
     multiCommands: string[] = [],
+    executeParams: any = state,
+    onSuccess: () => void
   ) => {
-    const { activeRunQueryMode } = state
+    const { activeRunQueryMode, resultsMode } = executeParams
     const { connectionType, host, port } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
+        resultsMode,
         commands,
         multiCommands,
         mode: activeRunQueryMode,
-        onSuccessAction: (multiCommands) => onSuccess(multiCommands),
+        onSuccessAction: onSuccess,
       }))
       return
     }
 
-    const options: SendClusterCommandDto = {
+    const options: CreateCommandExecutionsDto = {
       commands,
       nodeOptions: {
         host,
@@ -188,15 +214,12 @@ const WBViewWrapper = () => {
       sendWBCommandClusterAction({
         commands,
         options,
-        mode: state.activeRunQueryMode,
+        mode: activeRunQueryMode,
+        resultsMode,
         multiCommands,
-        onSuccessAction: (multiCommands) => onSuccess(multiCommands),
+        onSuccessAction: onSuccess,
       })
     )
-  }
-
-  const onSuccess = (multiCommands: string[] = []) => {
-    setMultiCommands(multiCommands)
   }
 
   const scrollResults = (inline: ScrollLogicalPosition = 'start') => {
@@ -208,7 +231,7 @@ const WBViewWrapper = () => {
   }
 
   const handleQueryDelete = (commandId: string) => {
-    dispatch(deleteWBCommandAction(commandId, onSuccess))
+    dispatch(deleteWBCommandAction(commandId))
   }
 
   const handleQueryOpen = (commandId: string = '') => {
@@ -220,13 +243,18 @@ const WBViewWrapper = () => {
     setScript('')
   }
 
-  const sourceValueSubmit = (value?: string, commandId?: Nullable<string>, clearEditor = true) => {
+  const sourceValueSubmit = (
+    value?: string,
+    commandId?: Nullable<string>,
+    executeParams: CodeButtonParams = { clearEditor: true }
+  ) => {
     if (state.loading || (!value && !script)) return
 
-    handleSubmit(value, commandId)
-    setTimeout(() => {
-      (cleanupWB && clearEditor) && resetCommand()
-    }, 0)
+    const { clearEditor } = executeParams
+    handleSubmit(value, commandId, executeParams)
+    if (cleanupWB && clearEditor) {
+      resetCommand()
+    }
   }
 
   return (
@@ -242,6 +270,8 @@ const WBViewWrapper = () => {
       onQueryOpen={handleQueryOpen}
       onQueryDelete={handleQueryDelete}
       onQueryChangeMode={handleChangeQueryRunMode}
+      resultsMode={resultsMode}
+      onChangeGroupMode={handleChangeGroupMode}
     />
   )
 }

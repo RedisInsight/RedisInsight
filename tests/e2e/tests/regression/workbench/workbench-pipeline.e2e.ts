@@ -23,13 +23,21 @@ fixture `Workbench Pipeline`
         await t.click(myRedisDatabasePage.settingsButton);
         await t.click(settingsPage.accordionWorkbenchSettings);
     })
-    .afterEach(async () => {
-        //Delete database
+    .afterEach(async() => {
+        // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test
     .meta({ env: env.web })('Verify that user can see the text in settings for pipeline with link', async t => {
         const pipelineText = 'Sets the size of a command batch for the pipeline(opens in a new tab or window) mode in Workbench. 0 or 1 pipelines every command.';
+
+        // Verify that user can enter only numbers >0 in "Commands in pipeline" input
+        await t.hover(settingsPage.commandsInPipelineValue);
+        await t.click(settingsPage.commandsInPipelineInput);
+        await t.typeText(settingsPage.commandsInPipelineInput, pipelineValues[0], { replace: true });
+        // Verify that negative number converted to positive
+        await t.expect(settingsPage.commandsInPipelineInput.value).eql(pipelineValues[1], 'Value is incorrect');
+
         // Verify text in setting for pipeline
         await t.expect(settingsPage.accordionWorkbenchSettings.textContent).contains(pipelineText, 'Text is incorrect');
         await t.click(settingsPage.pipelineLink);
@@ -37,13 +45,6 @@ test
         await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page is incorrect');
         await t.switchToParentWindow();
     });
-test('Verify that user can enter only numbers >0 in "Commands in pipeline" input', async t => {
-    await t.hover(settingsPage.commandsInPipelineValue);
-    await t.click(settingsPage.commandsInPipelineInput);
-    await t.typeText(settingsPage.commandsInPipelineInput, pipelineValues[0], { replace: true });
-    // Verify that negative number converted to positive
-    await t.expect(settingsPage.commandsInPipelineInput.value).eql(pipelineValues[1], 'Value is incorrect');
-});
 test.skip('Verify that only chosen in pipeline number of commands is loading at the same time in Workbench', async t => {
     await settingsPage.changeCommandsInPipeline(pipelineValues[1]);
     // Go to Workbench page
@@ -65,6 +66,7 @@ test.skip('Verify that user can see spinner over Run button and grey preloader f
 });
 test('Verify that user can interact with the Editor while command(s) in progress', async t => {
     const valueInEditor = '100';
+
     await settingsPage.changeCommandsInPipeline(pipelineValues[2]);
     // Go to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
@@ -83,11 +85,12 @@ test('Verify that command results are added to history in order most recent - on
         'CLIENT LIST'
     ];
     const reverseCommands = multipleCommands.slice().reverse();
+
     await settingsPage.changeCommandsInPipeline(pipelineValues[2]);
     // Go to Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(multipleCommands.join('\n'));
-    //Check that the results for all commands are displayed in workbench history in reverse order (most recent - on top)
+    // Check that the results for all commands are displayed in workbench history in reverse order (most recent - on top)
     for (let i = 0; i < multipleCommands.length; i++) {
         await t.expect(workbenchPage.queryCardCommand.nth(i).textContent).contains(reverseCommands[i], 'Wrong order of commands');
     }

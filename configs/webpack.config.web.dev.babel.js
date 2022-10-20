@@ -5,6 +5,7 @@
  * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
+import path from 'path';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import ip from 'ip';
@@ -20,6 +21,18 @@ export default merge(commonConfig, {
   target: 'web',
 
   mode: 'development',
+
+  cache: {
+    type: 'filesystem',
+    allowCollectingMemory: true,
+    cacheDirectory: path.resolve(__dirname, '../.temp_cache'),
+    name: 'webpack',
+    maxAge: 86_400_000, // 1 day
+    buildDependencies: {
+      // This makes all dependencies of this file - build dependencies
+      config: [__filename],
+    }
+  },
 
   devtool: 'source-map',
 

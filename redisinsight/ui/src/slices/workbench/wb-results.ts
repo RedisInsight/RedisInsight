@@ -5,19 +5,19 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
-import { RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
+  isGroupMode,
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
+import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
 import {
   CommandExecution,
-  CommandExecutionUI,
-  CreateCommandExecutionDto,
   StateWorkbenchResults,
 } from '../interfaces'
 
@@ -63,7 +63,7 @@ const workbenchResultsSlice = createSlice({
       })
     },
 
-    processWBCommandFailure: (state, { payload }: { payload: CommandExecutionUI }) => {
+    processWBCommandFailure: (state, { payload }: { payload: { id: string, error: string } }) => {
       state.items = [...state.items].map((item) => {
         if (item.id === payload.id) {
           return { ...item, loading: false, error: payload?.error }
@@ -199,6 +199,7 @@ export function sendWBCommandAction({
   commands = [],
   multiCommands = [],
   mode = RunQueryMode.ASCII,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
@@ -206,7 +207,8 @@ export function sendWBCommandAction({
   commands: string[]
   multiCommands?: string[]
   commandId?: string
-  mode?: RunQueryMode
+  mode: RunQueryMode
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -215,7 +217,10 @@ export function sendWBCommandAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({
+        commands: isGroupMode(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
+        commandId
+      }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
@@ -225,12 +230,12 @@ export function sendWBCommandAction({
         {
           commands,
           mode,
+          resultsMode
         }
       )
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
-
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -249,15 +254,17 @@ export function sendWBCommandClusterAction({
   multiCommands = [],
   options,
   mode = RunQueryMode.ASCII,
+  resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
   onSuccessAction,
   onFailAction,
 }: {
   commands: string[]
-  options: CreateCommandExecutionDto
+  options: CreateCommandExecutionsDto
   commandId?: string
   multiCommands?: string[]
   mode?: RunQueryMode,
+  resultsMode?: ResultsMode
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -266,7 +273,10 @@ export function sendWBCommandClusterAction({
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
-      dispatch(sendWBCommand({ commands, commandId }))
+      dispatch(sendWBCommand({
+        commands: isGroupMode(resultsMode) ? [`${commands.length} - Commands`] : commands,
+        commandId
+      }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
@@ -277,13 +287,13 @@ export function sendWBCommandClusterAction({
           ...options,
           commands,
           mode,
-          outputFormat: CliOutputFormatterType.Raw,
+          resultsMode,
+          outputFormat: CliOutputFormatterType.Raw
         }
       )
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
-
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {

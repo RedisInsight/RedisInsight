@@ -8,6 +8,8 @@ export class CaCertificate {
     type: String,
   })
   @Expose()
+  @IsNotEmpty()
+  @IsString({ always: true })
   id: string;
 
   @ApiProperty({

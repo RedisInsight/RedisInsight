@@ -16,7 +16,7 @@ import { ClientCertificateService } from 'src/modules/certificate/client-certifi
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 
 @ApiTags('TLS Certificates')
-@Controller('instance/certificates/client')
+@Controller('certificates/client')
 @UseInterceptors(ClassSerializerInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 export class ClientCertificateController {

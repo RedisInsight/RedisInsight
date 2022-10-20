@@ -1,4 +1,3 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   Column, Entity, ManyToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -112,6 +111,7 @@ export class DatabaseEntity {
 
   @Expose()
   @Column({ nullable: true })
+  @DataAsJsonString()
   nodes: string;
 
   @Expose()

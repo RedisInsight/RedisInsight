@@ -56,7 +56,7 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
     const found = await this.repository.findOneBy({ name: clientCertificate.name });
     if (found) {
       this.logger.error(
-        `Failed to create certificate. ${ERROR_MESSAGES.CLIENT_CERT_EXIST}. name: ${clientCertificate.name}`,
+        `Failed to create certificate: ${clientCertificate.name}. ${ERROR_MESSAGES.CLIENT_CERT_EXIST}`,
       );
       throw new BadRequestException(ERROR_MESSAGES.CLIENT_CERT_EXIST);
     }
@@ -79,11 +79,11 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
     //  3. why we need to fail if no cert found?
     const found = await this.repository.findOneBy({ id });
     if (!found) {
-      this.logger.error(`Failed to delete certificate. Not Found. id: ${id}`);
+      this.logger.error(`Failed to delete client certificate: ${id}`);
       throw new NotFoundException();
     }
 
     await this.repository.delete(id);
-    this.logger.log(`Succeed to delete certificate. id: ${id}`);
+    this.logger.log(`Succeed to delete client certificate: ${id}`);
   }
 }

@@ -1,8 +1,9 @@
 import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
 } from 'typeorm';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { Transform } from 'class-transformer';
+import { DataAsJsonString } from 'src/common/decorators';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('database_analysis')
 export class DatabaseAnalysisEntity {
@@ -14,60 +15,32 @@ export class DatabaseAnalysisEntity {
   databaseId: string;
 
   @ManyToOne(
-    () => DatabaseInstanceEntity,
+    () => DatabaseEntity,
     {
       nullable: false,
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'databaseId' })
-  database: DatabaseInstanceEntity;
+  database: DatabaseEntity;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   filter: string;
 
   @Column({ nullable: false })
   delimiter: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   progress: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   totalKeys: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   totalMemory: string;
 
   @Column({ nullable: true, type: 'blob' })
@@ -127,14 +100,7 @@ export class DatabaseAnalysisEntity {
   topKeysMemory: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   expirationGroups: string;
 
   @Column({ nullable: true })

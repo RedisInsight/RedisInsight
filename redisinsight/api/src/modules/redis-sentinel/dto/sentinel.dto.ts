@@ -9,10 +9,6 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
-  CaCertCollisionValidator,
-  ClientCertCollisionValidator,
-} from 'src/validators';
-import {
   EndpointDto,
   TlsDto,
 } from 'src/modules/instances/dto/database-instance.dto';
@@ -46,8 +42,8 @@ export class GetSentinelMastersDto extends EndpointDto {
   @IsOptional()
   @IsNotEmptyObject()
   @Type(() => TlsDto)
-  @Validate(CaCertCollisionValidator)
-  @Validate(ClientCertCollisionValidator)
+  // @Validate(CaCertCollisionValidator)
+  // @Validate(ClientCertCollisionValidator)
   @ValidateNested()
   tls?: TlsDto;
 }

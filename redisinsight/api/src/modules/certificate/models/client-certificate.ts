@@ -8,6 +8,8 @@ export class ClientCertificate {
     type: String,
   })
   @Expose()
+  @IsNotEmpty()
+  @IsString({ always: true })
   id: string;
 
   @ApiProperty({

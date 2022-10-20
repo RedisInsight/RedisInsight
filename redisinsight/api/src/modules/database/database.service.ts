@@ -82,13 +82,12 @@ export class DatabaseService {
     try {
       this.logger.log('Creating new database.');
 
-      const database = await this.repository.create(
+      return await this.repository.create(
         await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
       );
 
       // const redisInfo = await this.getInfo(result.id, AppTool.Common, true);
       // this.analytics.sendInstanceAddedEvent(result, redisInfo);
-      return database;
     } catch (error) {
       this.logger.error('Failed to add database.', error);
 

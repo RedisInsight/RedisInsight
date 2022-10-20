@@ -16,7 +16,7 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 
 @ApiTags('TLS Certificates')
-@Controller('instance/certificates/ca')
+@Controller('certificates/ca')
 @UseInterceptors(ClassSerializerInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CaCertificateController {

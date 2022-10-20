@@ -29,7 +29,7 @@ export class DatabaseFactory {
    * @param database
    */
   async createDatabaseModel(database: Database): Promise<Database> {
-    let model;
+    let model = await this.createStandaloneDatabaseModel(database);
 
     const client = await this.redisService.createStandaloneClient(
       database,
@@ -44,8 +44,6 @@ export class DatabaseFactory {
       model = await this.createSentinelDatabaseModel(database, client);
     } else if (await this.databaseInfoProvider.isCluster(client)) {
       model = await this.createClusterDatabaseModel(database, client);
-    } else {
-      model = await this.createStandaloneDatabaseModel(database);
     }
 
     model.modules = await this.databaseInfoProvider.determineDatabaseModules(client);
@@ -70,20 +68,14 @@ export class DatabaseFactory {
       model.provider = getHostingProvider(model.host);
     }
 
-    if (model.caCert?.id && !model.caCert?.certificate) {
-      // load ca cert by id
+    // fetch ca cert if needed to be able to connect
+    if (model.caCert?.id) {
       model.caCert = await this.caCertificateService.get(model.caCert?.id);
-    } else if (!model.caCert?.id && model.caCert?.certificate) {
-      // create new ca cert
-      model.caCert = await this.caCertificateService.create(model.caCert);
     }
 
-    if (model.clientCert?.id && !model.clientCert?.certificate) {
-      // load client cert by id
+    // fetch client cert if needed to be able to connect
+    if (model.clientCert?.id) {
       model.clientCert = await this.clientCertificateService.get(model.clientCert?.id);
-    } else if (!model.clientCert?.id && model.clientCert?.certificate) {
-      // create new client cert
-      model.clientCert = await this.clientCertificateService.create(model.clientCert);
     }
 
     return model;

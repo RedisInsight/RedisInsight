@@ -12,7 +12,7 @@ import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-a
 
 export const routes: Routes = [
   {
-    path: '/instance',
+    path: '/databases',
     module: InstancesModule,
     children: [
       {

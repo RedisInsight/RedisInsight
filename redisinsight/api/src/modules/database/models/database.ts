@@ -48,7 +48,6 @@ export class Database {
   @Expose()
   @IsNotEmpty()
   @IsInt({ always: true })
-  @Type(() => Number)
   port: number;
 
   @ApiProperty({
@@ -68,7 +67,6 @@ export class Database {
   @Expose()
   @IsInt()
   @Min(0)
-  @Type(() => Number)
   @IsOptional()
   db?: number;
 
@@ -106,12 +104,14 @@ export class Database {
   @ApiProperty({
     description: 'The database name from provider',
   })
+  @Expose()
   nameFromProvider: string | null;
 
   @ApiProperty({
     description: 'The redis database hosting provider',
     example: HostingProvider.RE_CLOUD,
   })
+  @Expose()
   provider: string;
 
   @ApiProperty({
@@ -150,7 +150,7 @@ export class Database {
   @Expose()
   modules?: RedisModuleDto[];
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Use TLS to connect.',
     type: Boolean,
   })
@@ -164,19 +164,18 @@ export class Database {
     type: String,
   })
   @Expose()
-  @Type(() => String)
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   tlsServername?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The certificate returned by the server needs to be verified.',
     type: Boolean,
     default: false,
   })
   @Expose()
   @IsOptional()
-  @Type(() => Boolean)
   @IsBoolean({ always: true })
   verifyServerCert?: boolean;
 

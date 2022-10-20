@@ -7,10 +7,12 @@ export abstract class CaCertificateRepository {
    * @return CaCertificate
    */
   abstract get(id: string): Promise<CaCertificate>;
+
   /**
    * Get list of certificates with [id, name] fields only
    */
   abstract list(): Promise<CaCertificate[]>;
+
   /**
    * Create a new CA certificate.
    * @param caCertificate

@@ -80,7 +80,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    */
   public async create(database: Database): Promise<Database> {
-    const entity = classToClass(DatabaseEntity, database);
+    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
     return classToClass(
       Database,
       await this.modelEncryptor.decryptEntity(
@@ -101,7 +101,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @throws TBD
    */
   public async update(id: string, database: Partial<Database>): Promise<Database> {
-    const entity = classToClass(DatabaseEntity, database);
+    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
     await this.repository.update(id, await this.modelEncryptor.encryptEntity(entity));
     return this.get(id);
   }
@@ -111,5 +111,27 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    */
   public async delete(id: string): Promise<void> {
     await this.repository.delete(id);
+  }
+
+  /**
+   * Get certificates or create certificates if needed
+   * TODO: Rethink implementation to avoid possible transaction issues
+   * @param database
+   * @private
+   */
+  private async populateCertificates(database: Database): Promise<Database> {
+    const model = database;
+
+    // fetch ca cert if needed to be able to connect
+    if (!model.caCert?.id && model.caCert?.certificate) {
+      model.caCert = await this.caCertificateRepository.create(model.caCert);
+    }
+
+    // fetch client cert if needed to be able to connect
+    if (!model.clientCert?.id && (model.clientCert?.certificate || model.clientCert?.key)) {
+      model.clientCert = await this.clientCertificateRepository.create(model.clientCert);
+    }
+
+    return model;
   }
 }

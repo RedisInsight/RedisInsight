@@ -1,13 +1,10 @@
-.chartsWrapper {
-  background-color: var(--euiColorLightestShade);
-  border-radius: 16px;
+.wrapper {
 
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin-bottom: 24px;
-  margin-top: 16px;
-  overflow: hidden;
+  .chartsWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
 
   &.loadingWrapper {
     margin-top: 36px;
@@ -18,7 +15,7 @@
     height: 180px;
     margin: 60px 0;
     border-radius: 100%;
-    background-color: var(--separatorColor);
+    background-color: var(--euiColorLightestShade);
   }
 
   .chartCenter {

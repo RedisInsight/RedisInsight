@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import { forIn } from 'lodash'
+import React, { useEffect, useState } from 'react'
 import {
   EuiBasicTableColumn,
   EuiInMemoryTable,
@@ -11,7 +12,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
-import { formatBytes, formatLongName, Nullable } from 'uiSrc/utils'
+import { extrapolate, formatBytes, formatExtrapolation, formatLongName, Nullable } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { GroupBadge } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
@@ -28,13 +29,15 @@ export interface Props {
   data: Nullable<NspSummary[]>
   defaultSortField: string
   delimiter: string
+  isExtrapolated: boolean
+  extrapolation: number
   dataTestid?: string
 }
 
 const NameSpacesTable = (props: Props) => {
-  const { data, defaultSortField, delimiter, dataTestid = '' } = props
+  const { data, defaultSortField, delimiter, isExtrapolated, extrapolation, dataTestid = '' } = props
   const [sort, setSort] = useState<PropertySort>({ field: defaultSortField, direction: 'desc' })
-  const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({})
+  const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState<any>({})
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -42,6 +45,21 @@ const NameSpacesTable = (props: Props) => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const { viewType } = useSelector(keysSelector)
+
+  useEffect(() => {
+    setItemIdToExpandedRowMap((prev: any) => {
+      const items: any = {}
+      forIn(prev, (_val, nsp: string) => {
+        const item = data?.find((d) => d.nsp === nsp)
+
+        if (item) {
+          items[nsp] = expandedRow(item)
+        }
+      })
+
+      return items
+    })
+  }, [isExtrapolated])
 
   const handleRedirect = (nsp: string, filter: string) => {
     dispatch(setBrowserTreeDelimiter(delimiter))
@@ -60,43 +78,12 @@ const NameSpacesTable = (props: Props) => {
 
   const toggleDetails = (item: NspSummary) => {
     const itemIdToExpandedRowMapValues = { ...itemIdToExpandedRowMap }
-    if (itemIdToExpandedRowMapValues[item.nsp]) {
-      delete itemIdToExpandedRowMapValues[item.nsp]
+    const nsp = item.nsp as string
+
+    if (itemIdToExpandedRowMapValues[nsp]) {
+      delete itemIdToExpandedRowMapValues[nsp]
     } else {
-      itemIdToExpandedRowMapValues[item.nsp] = (
-        <div style={{ width: '100%' }}>
-          {item.types.map((type, index) => {
-            const [number, size] = formatBytes(type.memory, 3, true)
-            return (
-              <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
-                <div className="truncateText">
-                  <EuiToolTip
-                    title="Key Pattern"
-                    anchorClassName={styles.tooltip}
-                    position="bottom"
-                    content={`${item.nsp}:*`}
-                  >
-                    <EuiButtonEmpty
-                      className={cx(styles.link, styles.expanded)}
-                      onClick={() => handleRedirect(item.nsp as string, type.type)}
-                    >
-                      {`${item.nsp}${delimiter}*`}
-                    </EuiButtonEmpty>
-                  </EuiToolTip>
-                </div>
-                <div className={styles.badgesContainer}><GroupBadge type={type.type} /></div>
-                <div className={styles.rightAlign}>
-                  <span className={styles.count} data-testid="usedMemory-value">
-                    {number}
-                  </span>
-                  <span className={styles.valueUnit}>{size}</span>
-                </div>
-                <div className={styles.rightAlign}>{type.keys}</div>
-              </div>
-            )
-          })}
-        </div>
-      )
+      itemIdToExpandedRowMapValues[nsp] = expandedRow(item)
     }
     setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues)
   }
@@ -104,6 +91,50 @@ const NameSpacesTable = (props: Props) => {
   const setDataTestId = ({ nsp }: { nsp: string }) => ({
     'data-testid': `row-${nsp}`
   })
+
+  const expandedRow = (item: NspSummary) => (
+    <div style={{ width: '100%' }}>
+      {item.types.map((type, index) => {
+        const extrapolated = extrapolate(type.memory, { apply: isExtrapolated, extrapolation, showPrefix: false })
+        const [number, size] = formatBytes(extrapolated as number, 3, true)
+        const formatNumber = formatExtrapolation(number, isExtrapolated)
+
+        return (
+          <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
+            <div className="truncateText">
+              <EuiToolTip
+                title="Key Pattern"
+                anchorClassName={styles.tooltip}
+                position="bottom"
+                content={`${item.nsp}:*`}
+              >
+                <EuiButtonEmpty
+                  className={cx(styles.link, styles.expanded)}
+                  onClick={() => handleRedirect(item.nsp as string, type.type)}
+                >
+                  {`${item.nsp}${delimiter}*`}
+                </EuiButtonEmpty>
+              </EuiToolTip>
+            </div>
+            <div className={styles.badgesContainer}><GroupBadge type={type.type} /></div>
+            <div className={styles.rightAlign}>
+              <span className={styles.count} data-testid="usedMemory-value">
+                {formatNumber}
+              </span>
+              <span className={styles.valueUnit}>{size}</span>
+            </div>
+            <div className={styles.rightAlign}>
+              {extrapolate(
+                type.keys,
+                { extrapolation, apply: isExtrapolated },
+                (val: number) => numberWithSpaces(Math.round(val))
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
 
   const columns: EuiBasicTableColumn<NspSummary>[] = [
     {
@@ -159,16 +190,20 @@ const NameSpacesTable = (props: Props) => {
       sortable: true,
       align: 'right',
       render: (value: number) => {
-        const [number, size] = formatBytes(value, 3, true)
+        const extrapolated = extrapolate(value, { apply: isExtrapolated, extrapolation, showPrefix: false }) as number
+        const [number, size] = formatBytes(extrapolated, 3, true)
+
+        const formatValue = formatExtrapolation(number, isExtrapolated)
+        const formatValueBytes = formatExtrapolation(numberWithSpaces(Math.round(extrapolated)), isExtrapolated)
 
         return (
           <EuiToolTip
-            content={`${numberWithSpaces(value)} B`}
+            content={`${formatValueBytes} B`}
             data-testid="usedMemory-tooltip"
           >
             <>
               <span className={styles.count} data-testid={`nsp-usedMemory-value=${value}`}>
-                {number}
+                {formatValue}
               </span>
               <span className={styles.valueUnit}>{size}</span>
             </>
@@ -184,7 +219,11 @@ const NameSpacesTable = (props: Props) => {
       align: 'right',
       render: (value: number) => (
         <span className={styles.count} data-testid={`keys-value-${value}`}>
-          {numberWithSpaces(value)}
+          {extrapolate(
+            value,
+            { extrapolation, apply: isExtrapolated },
+            (val: number) => numberWithSpaces(Math.round(val))
+          )}
         </span>
       )
     },
@@ -201,8 +240,8 @@ const NameSpacesTable = (props: Props) => {
               <EuiButtonIcon
                 style={{ marginRight: '6px' }}
                 onClick={() => toggleDetails(item)}
-                aria-label={itemIdToExpandedRowMap[nsp] ? 'Collapse' : 'Expand'}
-                iconType={itemIdToExpandedRowMap[nsp] ? 'arrowUp' : 'arrowDown'}
+                aria-label={itemIdToExpandedRowMap[nsp as string] ? 'Collapse' : 'Expand'}
+                iconType={itemIdToExpandedRowMap[nsp as string] ? 'arrowUp' : 'arrowDown'}
                 data-testid={`expand-arrow-${nsp}`}
               />
             )}

@@ -76,26 +76,28 @@ const TopNamespace = (props: Props) => {
           />
         )}
       </div>
-      {tableView === TableView.MEMORY && (
-      <Table
-        data={data?.topMemoryNsp ?? []}
-        defaultSortField="memory"
-        delimiter={data?.delimiter ?? ''}
-        isExtrapolated={isExtrapolated}
-        extrapolation={extrapolation}
-        dataTestid="nsp-table-memory"
-      />
-      )}
-      {tableView === TableView.KEYS && (
-        <Table
-          data={data?.topKeysNsp ?? []}
-          defaultSortField="keys"
-          delimiter={data?.delimiter ?? ''}
-          isExtrapolated={isExtrapolated}
-          extrapolation={extrapolation}
-          dataTestid="nsp-table-keys"
-        />
-      )}
+      <div className="section-content">
+        {tableView === TableView.MEMORY && (
+          <Table
+            data={data?.topMemoryNsp ?? []}
+            defaultSortField="memory"
+            delimiter={data?.delimiter ?? ''}
+            isExtrapolated={isExtrapolated}
+            extrapolation={extrapolation}
+            dataTestid="nsp-table-memory"
+          />
+        )}
+        {tableView === TableView.KEYS && (
+          <Table
+            data={data?.topKeysNsp ?? []}
+            defaultSortField="keys"
+            delimiter={data?.delimiter ?? ''}
+            isExtrapolated={isExtrapolated}
+            extrapolation={extrapolation}
+            dataTestid="nsp-table-keys"
+          />
+        )}
+      </div>
     </div>
   )
 }

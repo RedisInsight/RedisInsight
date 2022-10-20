@@ -138,7 +138,7 @@ const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }:
           />
         )}
       </div>
-      <div className={styles.chartsWrapper} data-testid="summary-per-data-charts">
+      <div className={cx('section-content', styles.chartsWrapper)} data-testid="summary-per-data-charts">
         <DonutChart
           name="memory"
           data={memoryData}

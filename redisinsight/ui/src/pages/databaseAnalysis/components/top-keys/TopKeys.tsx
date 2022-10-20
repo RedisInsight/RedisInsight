@@ -60,22 +60,24 @@ const TopKeys = ({ data, loading }: Props) => {
           by Length
         </EuiButton>
       </div>
-      {tableView === TableView.MEMORY && (
-        <Table
-          data={topKeysMemory}
-          defaultSortField="memory"
-          delimiter={delimiter}
-          dataTestid="top-keys-table-memory"
-        />
-      )}
-      {tableView === TableView.KEYS && (
-        <Table
-          data={topKeysLength}
-          defaultSortField="length"
-          delimiter={delimiter}
-          dataTestid="top-keys-table-length"
-        />
-      )}
+      <div className="section-content">
+        {tableView === TableView.MEMORY && (
+          <Table
+            data={topKeysMemory}
+            defaultSortField="memory"
+            delimiter={delimiter}
+            dataTestid="top-keys-table-memory"
+          />
+        )}
+        {tableView === TableView.KEYS && (
+          <Table
+            data={topKeysLength}
+            defaultSortField="length"
+            delimiter={delimiter}
+            dataTestid="top-keys-table-length"
+          />
+        )}
+      </div>
     </div>
   )
 }

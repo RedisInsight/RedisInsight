@@ -106,7 +106,7 @@ const ExpirationGroupsView = (props: Props) => {
           data-testid="show-no-expiry-switch"
         />
       </div>
-      <div className={styles.content}>
+      <div className={cx('section-content', styles.content)}>
         <div className={styles.chart}>
           <AutoSizer>
             {({ width, height }) => (

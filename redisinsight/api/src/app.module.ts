@@ -4,7 +4,6 @@ import {
 } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RouterModule } from 'nest-router';
 import { join } from 'path';
 import config from 'src/utils/config';
@@ -54,7 +53,6 @@ const PATH_CONFIG = config.get('dir_path');
     BulkActionsModule,
     ClusterMonitorModule,
     DatabaseAnalysisModule,
-    EventEmitterModule.forRoot(),
     ...(SERVER_CONFIG.staticContent
       ? [
         ServeStaticModule.forRoot({

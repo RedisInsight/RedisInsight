@@ -1,14 +1,20 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { MOCK_ANALYSIS_REPORT_DATA } from 'uiSrc/mocks/data/analysis'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatBytes, getGroupTypeDisplay } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { fireEvent, render, screen, within } from 'uiSrc/utils/test-utils'
 
 import AnalysisDataView, { Props } from './AnalysisDataView'
 
-const mockedProps = mock<Props>()
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
+const mockedProps = mock<Props>()
 const mockReports = [
   {
     id: MOCK_ANALYSIS_REPORT_DATA.id,
@@ -19,6 +25,11 @@ const mockReports = [
     createdAt: '2022-09-23T05:15:19.000Z'
   }
 ]
+
+const summaryContainerId = 'summary-per-data'
+const analyticsTTLContainerId = 'analysis-ttl'
+const topNameSpacesContainerId = 'top-namespaces'
+const extrapolateResultsId = 'extrapolate-results'
 
 describe('AnalysisDataView', () => {
   it('should render', () => {
@@ -104,7 +115,7 @@ describe('AnalysisDataView', () => {
       <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
     )
 
-    fireEvent.click(within(screen.getByTestId('summary-per-data')).getByTestId('extrapolate-results'))
+    fireEvent.click(within(screen.getByTestId(summaryContainerId)).getByTestId(extrapolateResultsId))
 
     expect(screen.getByTestId('total-memory-value')).toHaveTextContent(`${formatBytes(mockedData.totalMemory.total, 3)}`)
     expect(screen.getByTestId('total-keys-value')).toHaveTextContent(`${numberWithSpaces(mockedData.totalKeys.total)}`)
@@ -157,7 +168,7 @@ describe('AnalysisDataView', () => {
     render(
       <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
     )
-    fireEvent.click(within(screen.getByTestId('analysis-ttl')).getByTestId('extrapolate-results'))
+    fireEvent.click(within(screen.getByTestId(analyticsTTLContainerId)).getByTestId(extrapolateResultsId))
 
     const expirationGroup = mockedData.expirationGroups[1]
 
@@ -198,7 +209,7 @@ describe('AnalysisDataView', () => {
     render(
       <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
     )
-    fireEvent.click(within(screen.getByTestId('top-namespaces')).getByTestId('extrapolate-results'))
+    fireEvent.click(within(screen.getByTestId(topNameSpacesContainerId)).getByTestId(extrapolateResultsId))
 
     const nspTopKeyItem = mockedData.topKeysNsp[0]
     expect(screen.getByTestId(`nsp-usedMemory-value=${nspTopKeyItem.memory}`))
@@ -221,7 +232,7 @@ describe('AnalysisDataView', () => {
       <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
     )
 
-    expect(screen.queryByTestId('extrapolate-results')).not.toBeInTheDocument()
+    expect(screen.queryByTestId(extrapolateResultsId)).not.toBeInTheDocument()
 
     expect(screen.getByTestId('total-memory-value')).toHaveTextContent(`${formatBytes(mockedData.totalMemory.total, 3)}`)
     expect(screen.getByTestId('total-keys-value')).toHaveTextContent(`${numberWithSpaces(mockedData.totalKeys.total)}`)
@@ -237,5 +248,41 @@ describe('AnalysisDataView', () => {
 
     expect(screen.getAllByTestId(`keys-value-${nspTopKeyItem.keys}`)[0])
       .toHaveTextContent(`${numberWithSpaces(nspTopKeyItem.keys)}`)
+  })
+
+  it('should call proper telemetry events after click extrapolation', () => {
+    const mockedData = {
+      ...MOCK_ANALYSIS_REPORT_DATA,
+      progress: {
+        total: 80,
+        scanned: 10000,
+        processed: 40
+      }
+    }
+    const sendEventTelemetryMock = jest.fn()
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(
+      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+    )
+
+    const clickAndCheckTelemetry = (el: HTMLInputElement) => {
+      fireEvent.click(el)
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.DATABASE_ANALYSIS_EXTRAPOLATION_CHANGED,
+        eventData: {
+          databaseId: INSTANCE_ID_MOCK,
+          from: !el.checked,
+          to: el.checked
+        }
+      })
+      sendEventTelemetry.mockRestore()
+    }
+
+    [summaryContainerId, analyticsTTLContainerId, topNameSpacesContainerId].forEach((id) => {
+      const extrapolateSwitch = within(screen.getByTestId(id)).getByTestId(extrapolateResultsId)
+      clickAndCheckTelemetry(extrapolateSwitch as HTMLInputElement)
+      clickAndCheckTelemetry(extrapolateSwitch as HTMLInputElement)
+    })
   })
 })

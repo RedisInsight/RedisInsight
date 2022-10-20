@@ -51,7 +51,7 @@ const DatabaseAnalysisPage = () => {
 
   const handleSelectAnalysis = (reportId: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent.MEMORY_ANALYSIS_HISTORY_VIEWED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_HISTORY_VIEWED,
       eventData: {
         databaseId: instanceId,
       }

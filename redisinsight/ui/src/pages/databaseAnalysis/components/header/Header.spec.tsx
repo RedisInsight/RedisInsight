@@ -74,7 +74,7 @@ describe('DatabaseAnalysisHeader', () => {
     fireEvent.click(screen.getByTestId('start-database-analysis-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.MEMORY_ANALYSIS_STARTED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_STARTED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
       }

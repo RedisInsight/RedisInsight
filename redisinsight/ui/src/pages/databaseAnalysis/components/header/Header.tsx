@@ -69,7 +69,7 @@ const Header = (props: Props) => {
 
   const handleClick = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.MEMORY_ANALYSIS_STARTED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_STARTED,
       eventData: {
         databaseId: instanceId,
       }

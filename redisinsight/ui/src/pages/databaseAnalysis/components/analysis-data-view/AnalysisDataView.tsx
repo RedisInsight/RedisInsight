@@ -36,7 +36,7 @@ const AnalysisDataView = (props: Props) => {
 
   const onSwitchExtrapolation = (value: boolean) => {
     sendEventTelemetry({
-      event: TelemetryEvent.MEMORY_ANALYSIS_EXTRAPOLATION_CHANGED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_EXTRAPOLATION_CHANGED,
       eventData: {
         databaseId: instanceId,
         from: !value,

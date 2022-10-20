@@ -583,7 +583,7 @@ export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
         dispatch(loadKeyInfoSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
         if (isEqualBuffers(state.browser.keys.selectedKey?.data?.name, key)) {
-          dispatch(updateKeySizeFromList({ key, size: data?.size }))
+          // dispatch(updateKeySizeFromList({ key, size: data?.size }))
         }
       }
 
@@ -647,7 +647,7 @@ export function refreshKeyInfoAction(key: RedisResponseBuffer) {
         dispatch(refreshKeyInfoSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
         if (isEqualBuffers(state.browser.keys.selectedKey?.data?.name, key)) {
-          dispatch(updateKeySizeFromList({ key, size: data?.size }))
+          // dispatch(updateKeySizeFromList({ key, size: data?.size }))
         }
       }
     } catch (error) {

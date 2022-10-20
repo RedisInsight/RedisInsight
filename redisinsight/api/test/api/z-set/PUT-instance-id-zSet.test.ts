@@ -20,10 +20,9 @@ const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   members: Joi.array().items(Joi.object().keys({
     name: Joi.string().required().label('.name'),
-    // todo: allow(true) - is incorrect but will be transformed to number by BE. Investigate/fix it
-    score: Joi.number().required().allow(true).label('.score'),
+    score: Joi.number().required().allow('inf', '-inf').label('.score'),
   })).messages({
-    'number.base': '{#lavel} must be a number',
+    'number.base': '{#lavel} must be a string or a number',
     'array.sparse': 'members must be either object or array',
     'array.base': 'property {#label} must be either object or array',
   }),

@@ -1,4 +1,3 @@
-import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
@@ -13,16 +12,17 @@ import {
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
 const monitorPage = new MonitorPage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const chance = new Chance();
+const common = new Common();
 
-const keyName = `${chance.word({ length: 20 })}-key`;
-const keyValue = `${chance.word({ length: 10 })}-value`;
+const keyName = `${common.generateWord(20)}-key`;
+const keyValue = `${common.generateWord(10)}-value`;
 
 fixture `Monitor`
     .meta({ type: 'critical_path', rte: rte.standalone })

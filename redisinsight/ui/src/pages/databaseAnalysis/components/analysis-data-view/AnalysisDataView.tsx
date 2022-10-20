@@ -4,7 +4,7 @@ import { isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
-import { DEFAULT_EXTRAPOLATION, EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
+import { DEFAULT_EXTRAPOLATION, EmptyMessage, SectionName } from 'uiSrc/pages/databaseAnalysis/constants'
 import {
   TopKeys,
   EmptyAnalysisMessage,
@@ -34,13 +34,14 @@ const AnalysisDataView = (props: Props) => {
     }
   }, [data])
 
-  const onSwitchExtrapolation = (value: boolean) => {
+  const onSwitchExtrapolation = (value: boolean, section: SectionName) => {
     sendEventTelemetry({
       event: TelemetryEvent.DATABASE_ANALYSIS_EXTRAPOLATION_CHANGED,
       eventData: {
         databaseId: instanceId,
         from: !value,
-        to: value
+        to: value,
+        section
       }
     })
   }

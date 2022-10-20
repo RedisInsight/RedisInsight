@@ -6,7 +6,7 @@ import { DonutChart } from 'uiSrc/components/charts'
 import { ChartData } from 'uiSrc/components/charts/donut-chart/DonutChart'
 import { KeyIconSvg, MemoryIconSvg } from 'uiSrc/components/database-overview/components/icons'
 import { GROUP_TYPES_COLORS, GroupTypesColors } from 'uiSrc/constants'
-import { DEFAULT_EXTRAPOLATION } from 'uiSrc/pages/databaseAnalysis'
+import { DEFAULT_EXTRAPOLATION, SectionName } from 'uiSrc/pages/databaseAnalysis'
 import { extrapolate, formatBytes, getGroupTypeDisplay, Nullable } from 'uiSrc/utils'
 import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
 
@@ -18,7 +18,7 @@ export interface Props {
   data: Nullable<DatabaseAnalysis>
   loading: boolean
   extrapolation?: number
-  onSwitchExtrapolation?: (value: boolean) => void
+  onSwitchExtrapolation?: (value: boolean, section: SectionName) => void
 }
 
 const widthResponsiveSize = 1024
@@ -132,7 +132,7 @@ const SummaryPerData = ({ data, loading, extrapolation, onSwitchExtrapolation }:
             checked={isExtrapolated}
             onChange={(e) => {
               setIsExtrapolated(e.target.checked)
-              onSwitchExtrapolation?.(e.target.checked)
+              onSwitchExtrapolation?.(e.target.checked, SectionName.SUMMARY_PER_DATA)
             }}
             data-testid="extrapolate-results"
           />

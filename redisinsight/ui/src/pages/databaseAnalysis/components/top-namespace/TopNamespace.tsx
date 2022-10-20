@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import cx from 'classnames'
 import { EuiButton, EuiSwitch, EuiTitle } from '@elastic/eui'
-import { Nullable } from 'uiSrc/utils'
-import { DEFAULT_EXTRAPOLATION, TableView } from 'uiSrc/pages/databaseAnalysis'
+import cx from 'classnames'
+import React, { useEffect, useState } from 'react'
+import { DEFAULT_EXTRAPOLATION, SectionName, TableView } from 'uiSrc/pages/databaseAnalysis'
 import { TableLoader } from 'uiSrc/pages/databaseAnalysis/components'
+import { Nullable } from 'uiSrc/utils'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
-
 import Table from './Table'
 import styles from './styles.module.scss'
 
@@ -13,7 +12,7 @@ export interface Props {
   data: Nullable<DatabaseAnalysis>
   loading: boolean
   extrapolation: number
-  onSwitchExtrapolation?: (value: boolean) => void
+  onSwitchExtrapolation?: (value: boolean, section: SectionName) => void
 }
 
 const TopNamespace = (props: Props) => {
@@ -70,7 +69,7 @@ const TopNamespace = (props: Props) => {
             checked={isExtrapolated}
             onChange={(e) => {
               setIsExtrapolated(e.target.checked)
-              onSwitchExtrapolation?.(e.target.checked)
+              onSwitchExtrapolation?.(e.target.checked, SectionName.TOP_NAMESPACES)
             }}
             data-testid="extrapolate-results"
           />

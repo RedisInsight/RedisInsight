@@ -2,6 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { MOCK_ANALYSIS_REPORT_DATA } from 'uiSrc/mocks/data/analysis'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
+import { SectionName } from 'uiSrc/pages/databaseAnalysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatBytes, getGroupTypeDisplay } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
@@ -266,23 +267,28 @@ describe('AnalysisDataView', () => {
       <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
     )
 
-    const clickAndCheckTelemetry = (el: HTMLInputElement) => {
+    const clickAndCheckTelemetry = (el: HTMLInputElement, section: SectionName) => {
       fireEvent.click(el)
       expect(sendEventTelemetry).toBeCalledWith({
         event: TelemetryEvent.DATABASE_ANALYSIS_EXTRAPOLATION_CHANGED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
           from: !el.checked,
-          to: el.checked
+          to: el.checked,
+          section
         }
       })
       sendEventTelemetry.mockRestore()
     }
 
-    [summaryContainerId, analyticsTTLContainerId, topNameSpacesContainerId].forEach((id) => {
+    [
+      { id: summaryContainerId, section: SectionName.SUMMARY_PER_DATA },
+      { id: analyticsTTLContainerId, section: SectionName.MEMORY_LIKELY_TO_BE_FREED },
+      { id: topNameSpacesContainerId, section: SectionName.TOP_NAMESPACES },
+    ].forEach(({ id, section }) => {
       const extrapolateSwitch = within(screen.getByTestId(id)).getByTestId(extrapolateResultsId)
-      clickAndCheckTelemetry(extrapolateSwitch as HTMLInputElement)
-      clickAndCheckTelemetry(extrapolateSwitch as HTMLInputElement)
+      clickAndCheckTelemetry(extrapolateSwitch as HTMLInputElement, section)
+      clickAndCheckTelemetry(extrapolateSwitch as HTMLInputElement, section)
     })
   })
 })

@@ -25,6 +25,12 @@
   }
 }
 
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .loading {
   height: 17px;
   max-width: 600px;

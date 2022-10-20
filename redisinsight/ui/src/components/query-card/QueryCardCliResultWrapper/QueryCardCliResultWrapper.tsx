@@ -5,8 +5,9 @@ import { isArray } from 'lodash'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { formatToText, isGroupMode, Maybe } from 'uiSrc/utils'
+import { cliParseTextResponse, formatToText, isGroupMode, Maybe } from 'uiSrc/utils'
 
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
 import QueryCardCliGroupResult from '../QueryCardCliGroupResult'
 import styles from './styles.module.scss'
@@ -27,7 +28,7 @@ const QueryCardCliResultWrapper = (props: Props) => {
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
-        <div data-testid="query-cli-result" style={{ height: '100%' }}>
+        <div data-testid="query-cli-result" className={cx(styles.content)}>
           {isNotStored && (
             <EuiText className={styles.alert} data-testid="query-cli-warning">
               <EuiIcon type="alert" className={styles.alertIcon} />
@@ -39,7 +40,11 @@ const QueryCardCliResultWrapper = (props: Props) => {
             : (
               <QueryCardCliDefaultResult
                 isFullScreen={isFullScreen}
-                items={formatToText(result[0].response || '(nil)', query).split('\n')}
+                items={
+                  result[0].status === CommandExecutionStatus.Success
+                    ? formatToText(result[0].response || '(nil)', query).split('\n')
+                    : [cliParseTextResponse(result[0].response || '(nil)', '', result[0].status)]
+                }
               />
             )}
         </div>

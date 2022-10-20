@@ -65,6 +65,7 @@
 }
 
 :global(.fullscreen .query-card-output-response-success) {
+  height: 100%;
   max-height: calc(100vh - 65px);
   display: flex;
 }
